@@ -13,6 +13,7 @@ import saadadb.vo.request.SIAPRequest;
 /**
  * Endpoint of SIA services
  * @author michel
+ * @version $Id$
  *
  * @version 07/2011 switch to the new SIA request processing
  */

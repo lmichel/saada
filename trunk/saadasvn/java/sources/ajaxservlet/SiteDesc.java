@@ -13,6 +13,7 @@ import saadadb.database.Database;
 import ajaxservlet.json.JsonUtils;
 
 /**
+ * @version $Id$
  * Used to init the web root in the JS interface
  * Servlet implementation class SiteDesc
  */

@@ -9,6 +9,7 @@ import saadadb.vo.request.SSAPRequest;
 /**
  * Endpoint of SSA services
  * @author michel
+ * @version $Id$
  *
  * 07/2011 switch to the new SSA request processing
  */
