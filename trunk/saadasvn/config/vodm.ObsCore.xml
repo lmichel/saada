@@ -1,0 +1,755 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xmlns:http://www.ivoa..net/xml/VOTable-1.1.xsd" version="1.1">
+<RESOURCE type="VO Protocol Result Description">
+<DESCRIPTION>Saada VO service mapping</DESCRIPTION>
+<INFO name="ObsCore" value="OK"/>
+<TABLE name="Results">
+ <PARAM name="dm" value="ObsCore" datatype="char" arraysize="*" />
+ <FIELD name="group" datatype="char" arraysize="*" />
+ <FIELD name="name" datatype="char" arraysize="*" />
+ <FIELD name="ucd" datatype="char" arraysize="*" />
+ <FIELD name="utype" datatype="char" arraysize="*" />
+ <FIELD name="type" datatype="char" arraysize="*" />
+ <FIELD name="arraysize" datatype="int" />
+ <FIELD name="unit" datatype="char" arraysize="*"/>
+ <FIELD name="hidden" datatype="boolean" />
+ <FIELD name="default_value" datatype="char" arraysize="*" />
+ <FIELD name="desciption" datatype="char" arraysize="*" />
+ <FIELD name="requ_level" datatype="char" arraysize="*">
+   <DESCRIPTION>MAN=1 REC=2 OPT=3</DESCRIPTION>
+ </FIELD>
+ <DATA>
+ <TABLEDATA>
+   <TR>
+    <TD>Observation</TD>
+    <TD>dataproduct_type</TD>
+    <TD></TD>
+    <TD>obs:Observation.ProductType</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>see proposal</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Observation</TD>
+    <TD>calib_level</TD>
+    <TD></TD>
+    <TD>obs:Observation.calibLevel</TD>
+    <TD>int</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Calibration status of the observation: in {0, 1, 2, 3}</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Observation</TD>
+    <TD>em_domain</TD>
+    <TD></TD>
+    <TD>obs:Observation.waveband</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>vr:waveband in { RADIO, MILLIMETER, INFRARED, OPTICAL, UV, EUV, X-RAY, GAMMA-RAY } cf VODataservice</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_ra</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Location.coord.Position2D.Value2.C1</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Central Spatial Position in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_dec</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Location.coord.Position2D.Value2.C2</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Central Spatial Position in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_ra_min</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Bounds.limits.CoordInterval.LoLimit2Vec.C1</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Min ra coordinates of spatial bounding box in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_ra_max</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Bounds.limits.CoordInterval.HiLimit2Vec.C1</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Max RA coordinates of spatial bounding box in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_dec_min</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Bounds.limits.CoordInterval.LoLimit2Vec.C2</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Min DEC limit in spatial Position in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_dec_max</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Location.limits.CoordInterval.HiLimit2Vec.C2</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Max DEC limit in spatial Position in ICRS</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_resolution</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Resolution.refVal</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Spatial resolution of data</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_ucd</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.ucd</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>(pos or u,v data)</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_region</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Coverage.Support.Area</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Region covered in STC or ADQL</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_resolution_bound_min</TD>
+    <TD></TD>
+    <TD>obs:Char/Spatial.Resolution.bounds.Limits.Interval.LoLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>arcsec</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Resolution min value on spectral axis (FHWM of PSF)</TD>
+    <TD>1</TD>
+   </TR>
+    <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_resolution_bound_max</TD>
+    <TD></TD>
+    <TD>obs:Char/Spatial.Resolution.bounds.Limits.Interval.HiLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>arcsec</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Resolution max value on spectral axis (FHWM of PSF)</TD>
+    <TD>1</TD>
+   </TR>
+  <TR>
+    <TD>SpatialAxis</TD>
+    <TD>astrometric_cal_status</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.calibStatus</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>NOT CALIBRATED, FINE, COARSE</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>astrom_precision_stat</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Accuracy.StatError.errorRefVal.value</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>arcsec</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Astrometric precision along the spatial axis</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_pixel_size</TD>
+    <TD></TD>
+    <TD>obs:Char/SpatialAxis.Sampling.refVal.period</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>arcsec</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Pixel spacing in spatial units</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_start</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Coverage.Bounds.Limits.TimeInterval.StartTime</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>MJD</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Start time</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_stop</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Coverage.Bounds.Limits.TimeInterval.StopTime</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>MJD</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Stop time</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_span</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Coverage.Bounds.Extent</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>d</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Total observation elapsed time</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_exptime</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Coverage.Support.Extent</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>s</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Total exposure time</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_resolution</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Resolution.refVal</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>s</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Temporal resolution FWHM</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_cal_status</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.calibStatus</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Type of coord calibration</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_stat_err</TD>
+    <TD></TD>
+    <TD>obs:Char/TimeAxis.Accuracy.StatError.errorRefVal.value</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>s</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Time coord statistical error</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_min</TD>
+    <TD></TD>
+    <TD>obs:Char/SpectralAxis.Coverage.Bounds.limits.Interval.LoLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>start in spectral coordinates</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_max</TD>
+    <TD></TD>
+    <TD>obs:Char/SpectralAxis.Coverage.Bounds.limits.Interval.HiLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>stop in spectral coordinates</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_res_power</TD>
+    <TD></TD>
+    <TD>obs:Char/SpectralAxis.Resolution.ResolPower</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Value of the resolution power along the SpectralAxis.</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_resol</TD>
+    <TD></TD>
+    <TD>obs:Char/SpectralAxis.Resolution.refVal.value</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Value of Resolution along the SpectralAxis</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_resolPower_min</TD>
+    <TD></TD>
+    <TD>obs:Char/Spectral.Resolution.bounds.Limits.Interval.LoLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Resolution power min value on spectral axis</TD>
+    <TD>1</TD>
+   </TR>
+    <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_resolPower_max</TD>
+    <TD></TD>
+    <TD>obs:Char/Spectral.Resolution.bounds.Limits.Interval.HiLim</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Resolution power max value on spectral axis</TD>
+    <TD>1</TD>
+   </TR>
+    <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_stat_err</TD>
+    <TD></TD>
+    <TD>obs:Char/SpectralAxis.Accuracy.StatError.errorRefVal.value</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>m</TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Spectral coord statistical error</TD>
+    <TD>1</TD>
+   </TR>
+ <TR>
+    <TD>ObservableAxis</TD>
+    <TD>o_ucd</TD>
+    <TD></TD>
+    <TD>obs:Char/ObservableAxis.ucd</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Nature of the observable axis; necessary for polarision data or any kind of flux. Values in { phot.flux, phot.flux.density, phot.count, phot.mag }</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>ObservableAxis</TD>
+    <TD>o_cal_status</TD>
+    <TD></TD>
+    <TD>obs:Char/ObservableAxis.calibStatus</TD>
+    <TD>int</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Level of calibration for the observable coord</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>ObservableAxis</TD>
+    <TD>o_detection_limit</TD>
+    <TD></TD>
+    <TD>obs:Char/ObservableAxis.Resolution.refval</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Averaguex r,e pshoolut.tfilounx .adleonnsgi toyb, servable</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>ObservableAxis</TD>
+    <TD>o_stat_err</TD>
+    <TD></TD>
+    <TD>obs:Char/ObservableAxis.Accuracy.StatError.errorRefVal.value</TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Observable statistical error</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>DataID</TD>
+    <TD>obs_creator_did</TD>
+    <TD></TD>
+    <TD>obs:DataID.CreatorDID</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Ivoa ID given by the creator</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>DataID</TD>
+    <TD>creation_date</TD>
+    <TD></TD>
+    <TD>obs:DataID.Date</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Format ISO8601 or MJD</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>DataID</TD>
+    <TD>obs_collection_name</TD>
+    <TD></TD>
+    <TD>obs:DataID.Collection</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Or archive name</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>DataID</TD>
+    <TD>obs_creator_name</TD>
+    <TD></TD>
+    <TD>obs:DataID.Creator</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of the creator of the data</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>obs_publisher_did</TD>
+    <TD></TD>
+    <TD>obs:Curation.PublisherDID</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Data set ID given by the publisher.</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>publisher_name</TD>
+    <TD></TD>
+    <TD>obs:Curation.Publisher</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Archive service ,CADC,CDS,StSci</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>publisher_id</TD>
+    <TD></TD>
+    <TD>obs:Curation.PublisherID</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>ivoaID for the Publisher</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>bib_reference</TD>
+    <TD></TD>
+    <TD>obs:Curation.Reference</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Service bibliographic reference</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>data_rights</TD>
+    <TD></TD>
+    <TD>obs:Curation.Rights</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Public/Reserved/Proprietary/</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Curation</TD>
+    <TD>nb_members</TD>
+    <TD></TD>
+    <TD>obs:Observation.numsegm</TD>
+    <TD>int</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Nb of obs. elements in an association</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Target</TD>
+    <TD>targe_name</TD>
+    <TD></TD>
+    <TD>obs:Target.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>object of interest</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Target</TD>
+    <TD>target_class</TD>
+    <TD></TD>
+    <TD>obs:Target.Class</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Class of the Target object as in SSA</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>obs_ProObsinsnam</TD>
+    <TD></TD>
+    <TD>obs:Provenance/ObsConfig.instrument.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>In uppercase ?</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>PI_name</TD>
+    <TD></TD>
+    <TD>obs:Provenance/PI.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of Principal Investigator</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>filter_band</TD>
+    <TD></TD>
+    <TD>obs:Provenance/ObsConfig.Filter.bandName</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>For instance : U, B u, g i, k</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>filter_name</TD>
+    <TD></TD>
+    <TD>obs:Provenance/ObsConfig.Filter.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Filter name as stated into the archive: e.g FW66</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>camera_name</TD>
+    <TD></TD>
+    <TD>obs:Provenance/ObsConfig.camera.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of camera</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>optical_element_name</TD>
+    <TD></TD>
+    <TD>obs:Provenace:ObsConfig.opticalElem.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of optical element</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Provenance</TD>
+    <TD>telescope_name</TD>
+    <TD></TD>
+    <TD>obs:Provenance/ObsConfig.telescope.name</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of telescope</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Access</TD>
+    <TD>access_url</TD>
+    <TD></TD>
+    <TD>obs:Acces.Reference</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>URL used to access dataset</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Access</TD>
+    <TD>removed_</TD>
+    <TD></TD>
+    <TD>removed</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Name of telescope</TD>
+    <TD>1</TD>
+   </TR>
+  </TABLEDATA>
+ </DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

@@ -1,0 +1,5 @@
+CREATE FUNCTION corner10_dec(de DOUBLE ,size_de DOUBLE ) RETURNS DOUBLE  DETERMINISTIC
+BEGIN
+DECLARE d DOUBLE DEFAULT (de - (size_de/2));
+  RETURN corner00_dec(de, size_de);
+END;

@@ -1,0 +1,310 @@
+jQuery.extend({
+
+	SapModel: function(pmodel){
+		/**
+		 * keep a reference to ourselves
+		 */
+		var that = this;
+		/**
+		 * who is listening to us?
+		 */
+		var listeners = new Array();
+		/*
+		 * What we have to store and play with
+		 */		
+		var collection ;
+		var category ;
+
+		/**
+		 * add a listener to this view
+		 */
+		this.addListener = function(list){
+			listeners.push(list);
+		}
+		/*
+		 * Event processing
+		 */
+		this.processTreeNodeEvent = function(treepath){
+			var jsondata;
+			var params;
+			if( treepath.length == 3 ){
+				collection = treepath[0];
+				category = treepath[1];
+			}
+			else if ( treepath.length == 2 ){
+				collection = treepath[0];
+				category = treepath[1];
+			}
+			else {
+				alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js");
+				return;
+			}
+			$("#siapscope").html("Service scope: Not Set");
+			if( category == 'IMAGE' ) {
+				$("#saptab").tabs({
+					disabled: [1,2],
+					selected: 0
+				});
+				$("#siapscope").html("Service scope: IMAGES of " + collection);
+
+			}
+			else if( category == 'SPECTRUM' ) {
+				$("#ssapscope").html("Service scope: SPECTRA of " + collection);
+				$("#saptab").tabs({
+					disabled: [0,2],
+					selected: 1
+				});
+			}
+			else if( category == 'ENTRY' ) {
+				$("#csscope").html("Service scope: Table ENTRIES of " + collection);
+				$("#saptab").tabs({
+					disabled: [0,1],
+					selected: 2
+				});
+			}
+			else {
+				$("#saptab").tabs({
+					disabled: [0,1,2]
+				});
+				$("#siapscope").html("Service scope: Not Set");
+				$("#ssapscope").html("Service scope: Not Set");
+				$("#cspscope").html("Service scope: Not Set");
+			}
+		}
+		
+		/*********************
+		 * SIAP Event processing
+		 */
+		this.processSIAPQueryEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#siapcoordval').val());
+			if( pos == '' ) {
+				alert("No position given");
+				return;
+			}
+			var rad = jQuery.trim($('#siapradiusdval').val());
+			if( rad == '' ) {
+				alert("No size given");
+				return;
+			}
+			if( isNaN(rad) ) {
+				alert("Size must be  numeric");
+				return;
+			}
+			if( rad < 0 || rad > 1) {
+				alert("Size must be  between 0 and 1");
+				return;
+			}
+			var url = base_url + 'siaservice?collection=[' + collection + ']&';
+			var inter = $('#siapintersect option:selected').val();
+			if( inter != 'COVERS') {
+				url += 'INTERSECT=' + inter + '&';
+			}
+			if( $("input[value=siapcutout]").attr('checked') == true ) {				
+				url += 'MODE=CUTOUT&';
+			}
+			url += 'size=' + escape(rad) + '&pos=' + escape(pos) ;
+			
+			if( $('input[name=siapdl]:checked').val() == 'votable' ) {
+				window.open(url, 'SIAP Result');
+			}
+			else {
+				if( sampView.isSampConnect() ) {
+					WebSampConnector.sendMsg('table.load.votable','SaadaSIAP','image' ,url,'');
+				}
+				else {
+					alert('No active SAMP connnection');
+				}
+			}
+		}
+
+		this.processSIAPCapabilityEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#siapcoordval').val());
+			var rad = jQuery.trim($('#siapradiusdval').val());
+
+			var url = base_url + 'siaservice?collection=[' + collection + ']&';
+			var inter = $('#siapintersect option:selected').val();
+			if( inter != 'COVERS') {
+				url += 'INTERSECT=' + inter + '&';
+			}
+			if( $("input[value=siapcutout]").attr('checked') == true ) {				
+				url += 'MODE=CUTOUT&';
+			}
+			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
+			window.open(url, 'SIAP Capability');
+		}
+		
+		
+		this.processSIAPRegistryEvent= function(){
+			var url = 'getregistry?type=registry&get=SIA&coll=[' + collection + ']&';
+			window.open(url, 'SIAP Registry');
+		}
+		this.processSIAPGluEvent= function(){
+			var url = 'getregistry?type=glu&get=SIA&coll=[' + collection + ']&';
+			window.open(url, 'SIAP Glu');
+		}
+
+		/*********************
+		 * SSAP Event processing
+		 */
+		this.processSSAPQueryEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#ssapcoordval').val());
+			if( pos == '' ) {
+				alert("No position given");
+				return;
+			}
+			var rad = jQuery.trim($('#ssapradiusdval').val());
+			if( rad == '' ) {
+				alert("No size given");
+				return;
+			}
+			if( isNaN(rad) ) {
+				alert("Size must be  numeric");
+				return;
+			}
+			if( rad < 0 || rad > 1) {
+				alert("Size must be  between 0 and 1");
+				return;
+			}
+			
+			var band1 = jQuery.trim($('#ssapbandmin').val());
+			var band2 = jQuery.trim($('#ssapbandmax').val());
+			var unit  = $('#ssapunit option:selected').val();
+			var band = '';
+			if( band1 != '' && band2 != '' ) {
+				band = '&band=' + band1 + '/' + band2 + '[' + unit + ']';
+			}
+			var url = base_url + 'ssaservice?collection=[' + collection + ']&';
+			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + band;
+			
+			if( $('input[name=ssapdl]:checked').val() == 'votable' ) {
+				window.open(url, 'SSA Result');
+			}
+			else {
+				if( sampView.isSampConnect() ) {
+					WebSampConnector.sendMsg('table.load.votable','SaadaSSA','Spectra' ,url,'');
+				}
+				else {
+					alert('No active SAMP connnection');
+				}
+			}
+		}
+
+		this.processSSAPCapabilityEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#ssapcoordval').val());
+			var rad = jQuery.trim($('#ssapradiusdval').val());
+
+			var url = base_url + 'ssaservice?collection=[' + collection + ']&';
+			var inter = $('#ssapintersect option:selected').val();
+			if( inter != 'COVERS') {
+				url += 'INTERSECT=' + inter + '&';
+			}
+			if( $("input[value=ssapcutout]").attr('checked') == true ) {				
+				url += 'MODE=CUTOUT&';
+			}
+			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
+			window.open(url, 'SSA Capability');
+		}
+		
+		
+		this.processSSAPRegistryEvent= function(){
+			var url = 'getregistry?type=registry&get=SIA&coll=[' + collection + ']&';
+			window.open(url, 'SSA Registry');
+		}
+		this.processSSAPGluEvent= function(){
+			var url = 'getregistry?type=glu&get=SIA&coll=[' + collection + ']&';
+			window.open(url, 'SSA Glu');
+		}
+
+
+		/*********************
+		 * CS Event processing
+		 */
+		this.processCSQueryEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#cscoordval').val());
+			if( pos == '' ) {
+				alert("No position given");
+				return;
+			}
+			var rad = jQuery.trim($('#csradiusdval').val());
+			if( rad == '' ) {
+				alert("No size given");
+				return;
+			}
+			if( isNaN(rad) ) {
+				alert("Size must be  numeric");
+				return;
+			}
+			if( rad < 0 || rad > 1) {
+				alert("Size must be  between 0 and 1");
+				return;
+			}
+			var url = base_url + 'conesearch?collection=[' + collection + ']&';
+
+			url += 'SR=' + escape(rad) + '&RA=' + escape(pos) ;
+			
+			if( $('input[name=csdl]:checked').val() == 'votable' ) {
+				window.open(url, 'CS Result');
+			}
+			else {
+				if( sampView.isSampConnect() ) {
+					WebSampConnector.sendMsg('table.load.votable','SaadaCS','Table entries' ,url,'');
+				}
+				else {
+					alert('No active SAMP connnection');
+				}
+			}
+		}
+
+		this.processCSCapabilityEvent= function(){
+			if( !collection ) {
+				alert("No data collection has been selected");
+				return;				
+			}
+			var pos = jQuery.trim($('#cspcoordval').val());
+			var rad = jQuery.trim($('#cspradiusdval').val());
+
+			var url = base_url + 'conesearch?collection=[' + collection + ']&';
+			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
+			window.open(url, 'CS Capability');
+		}
+		
+		
+		this.processCSRegistryEvent= function(){
+			var url = 'getregistry?type=registry&get=CS&coll=[' + collection + ']&';
+			window.open(url, 'CS Registry');
+		}
+		this.processCSGluEvent= function(){
+			var url = 'getregistry?type=glu&get=CS&coll=[' + collection + ']&';
+			window.open(url, 'CS Glu');
+		}
+
+		/*
+		 * Listener notifications
+		 */
+		this.notifyInitDone = function(){
+			$.each(listeners, function(i){
+				listeners[i].isInit(attributesHandlers, relations);
+			});
+		}
+	}
+});
