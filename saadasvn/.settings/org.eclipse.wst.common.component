@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="saadasvn">
+        <wb-resource deploy-path="/" source-path="/web"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
+        <dependent-module archiveName="generate.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/saada/deploy/TestBeds/version2_0/dbms_PSQL/saadadb/XIDResult/class_mapping/generate.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="saadasvn"/>
+        <property name="java-output-path" value="/saadasvn/build/classes"/>
+    </wb-module>
+</project-modules>

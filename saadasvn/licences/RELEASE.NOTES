@@ -1,0 +1,60 @@
+-------------------------------------------------
+Saada1.6.0 Release notes
+
+L. MICHEL
+May 2011
+-------------------------------------------------
+
+
+Saada 1.5.1.b
+-------------
+
+Bug fixed: download facility for product not using the repository
+
+
+Saada 1.5.1
+-----------
+
+- SQL database:
+* Support of MSQL 5.xxxx in addition with POstgres 8.xxxx
+
+- Query engine
+* Use of  spatial indexation based on Qboxes
+* Better memory management in the pattern processing
+
+- Indexation
+*  Possibility to load data without buildind indexes. That save a lot of time when multiple dataset are loaded successively in the same collection/class.
+*  Indexes can be removed and /or rebuilt from the admin tool.
+April
+- Improvement of the Web interface
+* Possibility of loading any data selection in files (VOTable or FITS) or directly in VO clients (Topcat or Aladin)
+* Cosmetics
+
+- Support if RICE compressed FITS images
+
+Saada 1.5.0.2
+------------- 
+- All Java code downgraded to Java 1.5
+- Admintool:
+  . Various GUI behavior fixes
+  . New panel used to change the SaadaDB Web parameters
+- Web interface
+  . Any data selections can be donwloaded in VOtables
+  . VO services can return VOTable either in VO format (SIAP, SSA or CS) 
+    or in native format (Saada keywords)
+	
+Saada1.5.0.1
+------------
+- Admintool:
+  . Save/Load of configuration
+  . Step by step relationship creation.
+
+- SaadaQL engine fix in complex pattern processing.
+
+Saada 1.5.0 is a complete redesign of large parts of Saada:
+- The dataloader configuration is more flexible.
+- The graphical administration tools are completely new.
+- The way to compute relationships is now based on an extension of SaadaQL.
+
+The relational schema of Saada1.5.0 is not compatible with this of Saada1.4.1
+
