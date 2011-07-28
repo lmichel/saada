@@ -16,8 +16,6 @@ import uws.service.BasicUWS;
 import uws.service.QueuedBasicUWS;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
-import ajaxservlet.accounting.UserAccount;
-import ajaxservlet.accounting.UserTrap;
 
 /** 
  * Servlet implementation class datapack

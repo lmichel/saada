@@ -12,7 +12,8 @@ import saadadb.vo.QueryFileReport;
 
 /**
  * Servlet implementation class GetQueryReport
- */
+  * @version $Id$
+*/
 public class GetQueryReport extends SaadaServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
 

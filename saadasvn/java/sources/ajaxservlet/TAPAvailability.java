@@ -10,6 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
 
+/**
+ * @author laurent
+ * @version $Id$
+ *
+ */
 public class TAPAvailability extends SaadaServlet {
 
 	private static final long serialVersionUID = 1L;

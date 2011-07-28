@@ -17,6 +17,11 @@ import uws.service.QueuedBasicUWS;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
 
+/**
+ * @author laurent
+ * @version $Id$
+ *
+ */
 public class TAPASync extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
 	

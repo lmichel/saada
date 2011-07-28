@@ -4,6 +4,7 @@ package ajaxservlet;
 /**
  * Endpoint of SIA services
  * @author michel
+ * @version $Id$
  *
  * 07/2011 switch to the new SIA request processing
  */

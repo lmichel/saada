@@ -27,7 +27,7 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
 
 /**
  * @author laurent
- *
+ * @version $Id$
  */
 public class ZipFormator extends QueryResultFormator {
 	private String responseDir;

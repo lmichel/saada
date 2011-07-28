@@ -13,6 +13,7 @@ import saadadb.vo.BuildRegistry;
 
 /**
  * Servlet implementation class GetRegistry
+  * @version $Id$
  * 
  * Return either a registry template or a glu mark for the resources described by the parameters
  */

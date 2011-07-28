@@ -8,17 +8,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ajaxservlet.accounting.UserTrap;
-
 import saadadb.collection.Category;
 import saadadb.collection.ImageSaada;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.database.Repository;
-import saadadb.util.Messenger;
+import ajaxservlet.accounting.UserTrap;
 
 /**
+ *  
+ * @version $Id$
  * Servlet implementation class Download
  */
 public class Download extends SaadaServlet {
