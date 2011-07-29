@@ -17,9 +17,9 @@ import saadadb.database.Repository;
 import ajaxservlet.accounting.UserTrap;
 
 /**
- *  
+ * @author laurentmichel
  * @version $Id$
- * Servlet implementation class Download
+ *
  */
 public class Download extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
