@@ -101,8 +101,4 @@ public abstract class ClauseDM {
 		}
 	}
 
-	public static void main(String[] args) {
-		 * @version $Id$
-		
-	}
 }

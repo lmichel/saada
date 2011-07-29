@@ -13,6 +13,10 @@ import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Metaclass;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class ClassManager extends EntityManager{
 
 	/** * @version $Id$
@@ -180,12 +184,5 @@ public class ClassManager extends EntityManager{
 
 		//		}
 	}
-	public static void main(String[] args) {
-		 * @version $Id$
-		
-	}
-
-
-
 
 }

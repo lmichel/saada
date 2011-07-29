@@ -1,4 +1,5 @@
- * @version $Id$package saadadb.admin.dialogs;
+package saadadb.admin.dialogs;
+
 
 import java.awt.Container;
 import java.awt.Dimension;
@@ -36,9 +37,14 @@ import saadadb.util.Messenger;
 /** * @version $Id$
 
  * @author laurentmichel
+ * @version $Id$package saadadb.admin.dialogs;
  *
  */
 public class SQLIndexPanel extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String sql_table;
 	ArrayList<Object[]> table;
 	JTable jtable;

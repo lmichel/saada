@@ -1,7 +1,6 @@
 package saadadb.vo.request;
 
 import saadadb.exceptions.QueryException;
-import saadadb.vo.formator.version;
 import saadadb.vo.request.formator.fits.ConeSearchToFITSFormator;
 import saadadb.vo.request.formator.votable.ConeSearchVotableFormator;
 import saadadb.vo.request.query.ConeSearchQuery;

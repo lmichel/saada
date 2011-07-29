@@ -3,6 +3,10 @@ package saadadb.prdconfiguration;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class CoordSystem{
     private boolean autodetect = false;
     private String system="";
@@ -17,8 +21,7 @@ public class CoordSystem{
 	 * the equinox has to be "J1950" or "J2000".
 	 * If the coordinate system corresponds to "galactic", the equinox has to be "J2000".
 	 *@return boolean true or false if this coordinates system and this equinox are confirmed
-	 * * @version $Id$
-/
+	 */
 	public boolean isValid(){
 
 		if( autodetect ) {

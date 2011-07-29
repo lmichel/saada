@@ -234,9 +234,5 @@ public class Converter {
 	return(source.symbol+"=>"+target.symbol+"(x"+factor+")");
     }
 
-	public static void main(String[] args) {
-		 * @version $Id$
-		
-	}
 	
 }
