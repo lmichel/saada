@@ -268,6 +268,7 @@ public class SaadaServlet extends HttpServlet {
 	 * @param req
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected Map<String, String> getFlatParameterMap (HttpServletRequest req) {
 		LinkedHashMap<String, String>	retour = new LinkedHashMap<String, String>();
 		Map<String, String[]> op = req.getParameterMap();
