@@ -23,7 +23,8 @@ import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
 public class NewSaadaDBTool extends JFrame {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

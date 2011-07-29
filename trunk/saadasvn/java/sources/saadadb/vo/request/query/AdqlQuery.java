@@ -16,7 +16,8 @@ import adqlParser.parser.AdqlParser;
 
 /**
  * @author laurent
- * @version 07/2011
+ * @version $Id$
+
  */
 public class AdqlQuery extends VOQuery {
 	private static final int DEFAULTSIZE = 100000;

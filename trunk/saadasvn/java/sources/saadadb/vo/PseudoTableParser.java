@@ -16,7 +16,8 @@ public class PseudoTableParser {
 	ArrayList<String> classes = new ArrayList<String>();
 	String pseudotable;
 
-	/**
+	/** * @version $Id$
+
 	 * @param pseudotable
 	 * @throws QueryException
 	 */

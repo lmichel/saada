@@ -1,5 +1,10 @@
 package saadadb.util;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class TileRiceDecompressor {
 
 	static final public void setInt(byte[] t,int i,int val) {

@@ -18,7 +18,8 @@ public class ConfigurationEntry extends ConfigurationDefaultHandler{
 	protected ConfigurationTable configurationTable;
 	private TreeSet<Integer> ignored_cols = new TreeSet<Integer>();;
 
-	/**
+	/** * @version $Id$
+
 	 * @param configTable
 	 * @param tabArg
 	 * @throws SaadaException

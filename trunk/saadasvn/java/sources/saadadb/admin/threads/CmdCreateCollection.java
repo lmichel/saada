@@ -22,7 +22,8 @@ public class CmdCreateCollection extends CmdThread {
 	private String name;
 	private boolean just_comment = false;
 	private String comment;
-	/**
+	/** * @version $Id$
+
 	 * @param frame
 	 */
 	public CmdCreateCollection(Frame frame) {

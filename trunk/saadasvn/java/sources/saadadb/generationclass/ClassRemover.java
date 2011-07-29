@@ -9,7 +9,8 @@ public class ClassRemover {
 	public static String separ = System.getProperty("file.separator");
 	private static String mapping_classpath =  Database.getRoot_dir() + separ + "class_mapping";
 
-	/**
+	/** * @version $Id$
+
 	 * Remove both java and class files from the class_mapping directory
 	 * @param class_name
 	 */

@@ -5,7 +5,8 @@ import java.util.TreeMap;
 import saadadb.exceptions.QueryException;
 
 
-/**
+/** * @version $Id$
+
  * USAGE: FisrtNearestNeighbour nn = new FisrtNearestNeighbour();
  * ....
  * nn.init(collection, classes[], category);

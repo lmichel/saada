@@ -159,7 +159,8 @@ public class QueryPatternTester {
 	public Set<String> getQuerySet(String mode) {
 		return this.query_set.get(mode).getAllQueries();
 	}
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 * @throws SyntaxSaadaQLException
 	 * @throws QuerySaadaQLException

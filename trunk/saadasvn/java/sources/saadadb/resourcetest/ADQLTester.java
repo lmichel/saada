@@ -7,7 +7,8 @@ import saadadb.vo.ADQLExecutor;
 
 public class ADQLTester {
 
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception{

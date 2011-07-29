@@ -15,7 +15,8 @@ import saadadb.util.Messenger;
  * @author Clémentine Frère
  * 
  * contact : frere.clementine[at]gmail.com
- *
+ * * @version $Id$
+
  */
 
 public class FilterBase {

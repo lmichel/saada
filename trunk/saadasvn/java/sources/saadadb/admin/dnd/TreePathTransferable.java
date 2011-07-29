@@ -6,6 +6,11 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 
 import javax.swing.tree.TreePath;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class TreePathTransferable implements Transferable {
 
 	public static DataFlavor XNODE_FLAVOR = new DataFlavor(TreePath.class, "Tree Path");

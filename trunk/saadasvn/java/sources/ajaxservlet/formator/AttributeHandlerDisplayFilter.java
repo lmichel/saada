@@ -12,6 +12,11 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.query.result.OidsaadaResultSet;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class AttributeHandlerDisplayFilter implements DisplayFilter {
 	private ArrayList<String> datatable_columns;
 

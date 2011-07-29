@@ -17,6 +17,11 @@ import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class Mapping {
 	
 	private static final long serialVersionUID = 1L;

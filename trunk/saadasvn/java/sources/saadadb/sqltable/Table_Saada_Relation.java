@@ -12,10 +12,12 @@ import saadadb.util.Messenger;
 
 public abstract class Table_Saada_Relation extends SQLTable{
 	
-	/**
+	/** * @version $Id$
+
 	 * @throws AbortException
 	 */
-	public static  void createTable() throws SaadaException {
+	p * 
+blic static  void createTable() throws SaadaException {
 		SQLTable.createTable("saada_relation", "id " + Database.getWrapper().getSerialToken() + ", name " + Database.getWrapper().getIndexableTextType() + ", primary_coll text, primary_cat text, secondary_coll text, secondary_cat text, correlator text NULL, indexed boolean default false, description text NULL"
 				, "name"
 				, false);

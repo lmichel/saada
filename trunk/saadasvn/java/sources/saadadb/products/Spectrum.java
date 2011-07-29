@@ -28,7 +28,8 @@ import saadadb.util.SaadaConstant;
  */
 public class Spectrum extends Product {
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
     /*

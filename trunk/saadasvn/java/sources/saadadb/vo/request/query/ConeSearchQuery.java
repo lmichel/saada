@@ -19,7 +19,8 @@ import saadadb.vo.PseudoTableParser;
  * Translate CS parameters in a SAADAQL query and run it
  * @author laurent
  * 
- * @version 06/2011
+ *  * @version $Id$
+
  *
  */
 public class ConeSearchQuery extends VOQuery {

@@ -22,6 +22,11 @@ import saadadb.admin.dialogs.DialogConfigFileChooser;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class JDataLoaderConfPanel extends JPanel {
 	protected JButton save_conf_button;
 	protected JButton saveas_conf_button;

@@ -15,7 +15,8 @@ public class PathName implements ProductIdentificationConstraint{
     private String name;
     /**Constructor
      *@param String the constraint name in pathname 
-     */
+     * * @version $Id$
+/
     public PathName(String name){
 	//Initializes the forces name of the parent file
 	this.name = name;

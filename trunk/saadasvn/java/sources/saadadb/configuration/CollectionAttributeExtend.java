@@ -17,7 +17,8 @@ import saadadb.util.Messenger;
 public class CollectionAttributeExtend extends Hashtable<String,LinkedHashMap<String, String>>{
 	
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	public static String separ = System.getProperty("file.separator");

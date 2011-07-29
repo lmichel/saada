@@ -8,7 +8,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SaadaLink extends SaadaDMBrik implements Comparable, Comparator {
 	SaadaRelation relation;

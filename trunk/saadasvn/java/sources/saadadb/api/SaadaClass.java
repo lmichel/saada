@@ -14,7 +14,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SaadaClass extends SaadaDMBrik {
 	private final MetaClass metaclass;

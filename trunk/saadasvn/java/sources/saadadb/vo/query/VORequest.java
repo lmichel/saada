@@ -5,6 +5,8 @@ package saadadb.vo.query;
 
 import java.util.Map;
 
+import saadadb.vo.formator.version;
+
 /**
  * Request and subclasses handle totality  of the process, from the params to the
  * report delivery
@@ -17,7 +19,7 @@ import java.util.Map;
  * .. send rreport to the response
  * </code>
  * @author laurentmichel
- *
+ *@version $Id$
  */
 public abstract class VORequest {
 	final protected VOQuery voQuery;

@@ -1,5 +1,10 @@
 package saadadb.voservices;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VOSaadaSoapBindingStub extends org.apache.axis.client.Stub implements saadadb.voservices.VOSaadaService {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();

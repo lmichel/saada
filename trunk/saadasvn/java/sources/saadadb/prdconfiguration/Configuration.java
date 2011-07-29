@@ -5,7 +5,8 @@ import java.io.File;
 import saadadb.classmapping.Mapping;
 import saadadb.classmapping.TypeMapping;
 import saadadb.products.Product;
-/**
+/** * @version $Id$
+
  * Interface for the specification of a configuration.
  * An object that implements the Configuration interface can be used in a standard way in all the Saada application.
  *@author Millan Patrick

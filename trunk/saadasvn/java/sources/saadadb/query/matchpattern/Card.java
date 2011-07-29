@@ -5,6 +5,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.parser.Operator;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public final class Card{
 	private static final Card card0   = newCard0();
 	private static final Card card1   = newCard1();

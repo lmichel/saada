@@ -13,7 +13,9 @@ public class MappingEntry extends Mapping {
      * and sends trace message if necessary. 
      *@param Product the tested product.
      *@return boolean true or false if the tested product is valid.
-     */
+     * * @version $Id$
+ * @version $Id$
+/
     public boolean isProductValid(Product product){
     	if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Check if ENTRY mapping is valid " + product.getClass().getName());
 

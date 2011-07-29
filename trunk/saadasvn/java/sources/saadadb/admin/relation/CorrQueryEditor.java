@@ -36,7 +36,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class CorrQueryEditor extends JPanel {
 	/**

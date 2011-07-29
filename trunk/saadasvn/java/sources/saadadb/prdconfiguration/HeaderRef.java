@@ -16,7 +16,8 @@ public class HeaderRef {
 		this.setNumber(number);
 	}
 	
-	/**
+	/** * @version $Id$
+
 	 * @param name
 	 */
 	public HeaderRef(String name) {

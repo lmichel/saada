@@ -25,7 +25,8 @@ import saadadb.util.SaadaConstant;
 /**
  * 
  * @author Clémentine Frère
- * 
+ *  * @version $Id$
+
  * contact : frere.clementine[at]gmail.com
  *
  */

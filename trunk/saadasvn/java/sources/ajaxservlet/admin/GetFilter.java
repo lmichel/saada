@@ -17,6 +17,7 @@ import ajaxservlet.json.JsonUtils;
 
 /**
  * Servlet implementation class GetFilter
+ * @version $Id$
  */
 public class GetFilter extends SaadaServlet {
 	private static final long serialVersionUID = 1L;

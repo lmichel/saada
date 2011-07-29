@@ -4,7 +4,8 @@ package saadadb.unit;
                 Astroformat class
  *==================================================================*/
 
-/**
+/** * @version $Id$
+
  * This class contains definitions used in Parsing and Editing of numbers,
  * and the default representation of the <b>NaN</b> <em>(null)</em> value.
  * @author Francois Ochsenbein -- francois@astro.u-strasbg.fr
@@ -13,6 +14,10 @@ package saadadb.unit;
  * @version 1.2 : 30-Oct-2006 added DATE_DIFF
  */
 
+/**
+ * @author laurentmichel
+ *
+ */
 public class Astroformat {
     /** The default way of representing the NULL (unknown) numbers .
      * The first element of the array contains the default_null.

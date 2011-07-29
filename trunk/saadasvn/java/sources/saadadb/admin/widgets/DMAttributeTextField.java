@@ -13,6 +13,11 @@ import saadadb.meta.MetaCollection;
 import saadadb.query.parser.UnitHandler;
 import saadadb.unit.Unit;
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class DMAttributeTextField extends TreepathDropableTextField {
 	private String dm_unit;
 	private MetaClass mc;

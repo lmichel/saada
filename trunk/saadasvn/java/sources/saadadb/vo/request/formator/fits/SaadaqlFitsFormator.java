@@ -10,7 +10,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version 07/2011
+ *  * @version $Id$
+
  */
 public class SaadaqlFitsFormator extends FitsFormator {
 

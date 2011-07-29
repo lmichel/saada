@@ -114,7 +114,8 @@ public class VOProduct extends File implements ProductFile {
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getTableEntry()
-	 */
+	 * * @version $Id$
+/
 	public LinkedHashMap<String, Integer> getTableEntry() throws IgnoreException {
 		LinkedHashMap<String, Integer> entry = new LinkedHashMap<String, Integer>();
 		/*

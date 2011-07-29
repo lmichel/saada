@@ -28,7 +28,8 @@ import saadadb.util.Messenger;
 public class MysqlWrapper extends DbmsWrapper {
 	private final TreeSet<String> recorded_tmptbl = new TreeSet<String>();
 
-	/**
+	/** * @version $Id$
+
 	 * @param server_or_driver
 	 * @param port_or_url
 	 * @throws ClassNotFoundException

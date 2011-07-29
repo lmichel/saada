@@ -14,7 +14,8 @@ import saadadb.util.Messenger;
  *@since 2.0
  *@see Mapping
  *@see Mapping
- */
+ * * @version $Id$
+/
 public class MappingImage extends Mapping {
     /**Constructor of the 2D images mapping (Default constructor).
      *@param Configuration the configuration of this mapping. 

@@ -21,7 +21,8 @@ public class TimeSaada {
 	etat = true;
     }
     /** Fonction qui sert, comme son nom l'indique, a mettre en route le chrono
-     */
+     * * @version $Id$
+/
     public void start() {
 	timeDeb = System.currentTimeMillis();
 	timeInter = timeDeb;

@@ -8,6 +8,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.SaadaConstant;
 
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class CounterPart implements HasKCoo {
 	protected double pos_x_csa;
 	protected double pos_y_csa;

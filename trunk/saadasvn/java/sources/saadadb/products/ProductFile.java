@@ -10,7 +10,8 @@ import nom.tam.fits.FitsException;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
-/**
+/**v * @version $Id$
+
  * Interface for the specification of a product file.
  * An object that implements the ProductFile interface can be used in a standard way in all the Saada application.
  * This interface extends the Enumeration interface.

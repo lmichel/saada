@@ -13,6 +13,11 @@ import java.awt.dnd.DragSourceListener;
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VoDataProductTreeDragSource implements DragGestureListener, DragSourceListener {
 	private JTree tree;
 	  public VoDataProductTreeDragSource(JTree tree) {

@@ -2,6 +2,11 @@ package saadadb.kdtree;
 
 import java.util.Comparator;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public final class KCooComparatorManager {
 	private final KCooComparator[] cTab;
 	

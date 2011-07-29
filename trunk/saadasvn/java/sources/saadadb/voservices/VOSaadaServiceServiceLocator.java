@@ -1,5 +1,10 @@
 package saadadb.voservices;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VOSaadaServiceServiceLocator extends org.apache.axis.client.Service implements saadadb.voservices.VOSaadaServiceService {
 
     // Use to get a proxy class for VOSaada

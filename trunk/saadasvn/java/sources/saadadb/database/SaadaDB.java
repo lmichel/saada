@@ -14,6 +14,11 @@ import java.lang.reflect.Method;
 import saadadb.configuration.SaadaDBConf;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class SaadaDB {
 
 	public static SaadaDBConf getSaadaDBConfig() {

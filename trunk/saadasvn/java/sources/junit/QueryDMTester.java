@@ -8,6 +8,11 @@ import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.constbuilders.UCDField;
 import saadadb.query.merger.Merger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class QueryDMTester extends TestCase {
 
 	public QueryDMTester(String name) {

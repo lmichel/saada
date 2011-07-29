@@ -10,7 +10,8 @@ import saadadb.exceptions.QueryException;
  * nn.init(collection, classes[], category);
  * nearest = nn.getCounterparts(target, -1, 0.2);
  * @author michel
- *
+ * * @version $Id$
+
  * @param <E>
  */
 public class FirstNearestNeighbour<E extends HasKCoo> extends KDTree {

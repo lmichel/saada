@@ -29,7 +29,8 @@ import saadadb.vo.formator.SsaToVOTableFormator;
  * This parser implements the 1.0 version of SSA which can be found at :
  *         http://www.ivoa.net/Documents/WD/SSA/ssa-20040524.html
  * The parser is compliant with the specification given above.
- *  @version 07/2011
+ * @version $Id$
+
  */
 public class SsaTranslator extends VOTranslator {
 

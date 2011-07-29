@@ -9,6 +9,11 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
  *@since 2.0
  *@see TypeMapping
  */
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class Mapping_1_1 extends TypeMapping{
     /**Constructor.
      *@param Configuration the configuration of this mapping.

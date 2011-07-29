@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class Parser implements ParserConstants {
         private static final String   UNIT       = "[+\\-/\\.\\[\\]\\w]+";
         private static final String   K_VALUE    = "[+\\-]?[1-9]\\d*";

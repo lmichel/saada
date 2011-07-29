@@ -29,7 +29,8 @@ public class DMField extends UTypeField {
 
 	/* (non-Javadoc)
 	 * @see saadadb.query.constbuilders.SaadaQLConstraint#computeWhereStatement(java.lang.String)
-	 */
+	 * * @version $Id$
+/
 	public String computeWhereStatement(String computed_column) throws SaadaException{
 		String[] computedValues = this.getOperands();
 		switch(Operator.getCode(this.getOp())){

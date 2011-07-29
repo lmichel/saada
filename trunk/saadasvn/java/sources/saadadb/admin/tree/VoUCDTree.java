@@ -5,7 +5,8 @@ import java.awt.Frame;
 
 public class VoUCDTree extends VoTree {
 	/**
-	 * 
+	 * * @version $Id$
+ 
 	 */
 	private static final long serialVersionUID = 1L;
 	String[] flat_ucd = {

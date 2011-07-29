@@ -14,7 +14,8 @@ import saadadb.relationship.KeyIndex;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-/**
+/** * @version $Id$
+
  * This class run an SQL query and merge it with a pattern result set.
  * The SQL query is supposed to have an oidsaada in the first column. There is no check.
  * Both query and merge are done at the first access to the result.

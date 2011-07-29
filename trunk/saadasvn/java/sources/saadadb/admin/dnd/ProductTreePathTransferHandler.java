@@ -12,7 +12,8 @@ import saadadb.util.Messenger;
 
 
 public class ProductTreePathTransferHandler extends TransferHandler {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

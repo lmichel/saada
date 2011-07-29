@@ -8,6 +8,11 @@ import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class QueryDMTester {
 
 	public static void main(String[] args) throws Exception{

@@ -10,7 +10,7 @@ import cds.savot.model.SavotParam;
 /**
  * Build a VOTable for a query which is neither a SIAP, nor a SSA and nor a CS
  * @author michel
- *
+ *@version $Id$
  */
 public class OtherAPToVoTableFormator extends VOTableFormator {
 	/**

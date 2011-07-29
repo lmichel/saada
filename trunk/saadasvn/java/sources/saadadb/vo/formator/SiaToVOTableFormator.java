@@ -27,7 +27,7 @@ public class SiaToVOTableFormator extends VOTableFormator {
 	public static final String version = "1.00";
 
 
-	/**
+	/**@version $Id$
 	 * Constructor.
 	 * @throws SaadaException 
 	 */

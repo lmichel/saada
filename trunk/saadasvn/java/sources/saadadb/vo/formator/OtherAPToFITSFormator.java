@@ -6,7 +6,7 @@ import saadadb.database.Database;
 
 public class OtherAPToFITSFormator extends FITSFormator{
 
-	/**
+	/**@version $Id$
 	 * Constructor.
 	 * @throws Exception 
 	 */

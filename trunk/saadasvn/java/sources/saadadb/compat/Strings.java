@@ -29,7 +29,8 @@ public class Strings extends Objects
 
   /**
    * CharSequence version of indexOf
-   *
+   * * @version $Id$
+
    * @param s CharSequence
    * @param c char
    * @param fromIndex int

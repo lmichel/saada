@@ -4,7 +4,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * 06/2011: IP V6 address filtering
  */

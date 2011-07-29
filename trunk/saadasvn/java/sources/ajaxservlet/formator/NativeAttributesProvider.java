@@ -4,6 +4,11 @@ import java.util.*;
 import saadadb.collection.*;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class NativeAttributesProvider {
 	private SaadaInstance saadai;
 	private int cat;

@@ -12,7 +12,8 @@ import ajaxservlet.SaadaServlet;
 import ajaxservlet.accounting.QueryContext;
 import ajaxservlet.accounting.UserTrap;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class NextPage
  */
 public class NextPage extends SaadaServlet {

@@ -12,7 +12,8 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
  *@since 2.0
  *@see Mapping
  *@see Mapping
- */
+ * * @version $Id$
+/
 public class MappingMisc extends Mapping {
 	/**Constructor of the miscs mapping (Default constructor).
 	 *@param Configuration the configuration of this mapping. 

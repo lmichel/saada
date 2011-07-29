@@ -9,6 +9,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ProgressPanel extends JPanel {
 	protected JFrame frame;
 	JLabel[] labels = {new JLabel("1- Check SaadaDB Directory")

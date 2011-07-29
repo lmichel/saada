@@ -15,6 +15,11 @@ import javax.swing.TransferHandler;
 
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public abstract class SaadaTransferHandler extends TransferHandler {
     
     protected abstract String exportString(JComponent c);

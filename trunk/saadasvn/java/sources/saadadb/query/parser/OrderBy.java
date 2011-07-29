@@ -13,7 +13,8 @@ import saadadb.exceptions.SaadaException;
 * ORDER BY attr [ ASC | DESC ]
 * 
 * It stores the attribut, the option and the kind of attribute (of class or of collection) 
-* 
+*  * @version $Id$
+
 * @author F.X. Pineau
 */
 public final class OrderBy{

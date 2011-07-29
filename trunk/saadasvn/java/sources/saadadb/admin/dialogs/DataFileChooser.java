@@ -32,7 +32,8 @@ import saadadb.database.Database;
 import saadadb.util.RegExp;
 
 public class DataFileChooser extends JDialog {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

@@ -11,7 +11,8 @@ import saadadb.vo.request.formator.archive.ZipFormator;
 import saadadb.vo.request.query.SaadaqlQuery;
 
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * @version 07/2011
  */

@@ -12,6 +12,11 @@ import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class RelationRemove extends RelationIndexation {
 	private RelationConfPanel config_panel;
 

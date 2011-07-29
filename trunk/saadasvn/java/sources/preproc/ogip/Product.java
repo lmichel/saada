@@ -17,7 +17,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author abouchacra
- *
+ * * @version $Id$
+
  */
 public class Product extends File {
 

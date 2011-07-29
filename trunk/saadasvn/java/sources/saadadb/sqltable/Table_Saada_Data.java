@@ -6,7 +6,8 @@ import saadadb.database.Database;
 
 public class Table_Saada_Data extends SQLTable {
 
-	/**
+	/** * @version $Id$
+
 	 * @param tableName
 	 * @param cls
 	 * @throws Exception

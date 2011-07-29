@@ -24,7 +24,8 @@ public abstract class QNode {
 	public static final String SEPAR_ON = "[,\\s\\(\\+\\-\\*/]";
 	public static final String SEPAR_OFF = "[,\\s\\)\\+\\-\\*/]";
 
-	/**
+	/** * @version $Id$
+
 	 * @param name
 	 */
 	public QNode(String name, Merger merger) {

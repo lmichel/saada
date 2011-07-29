@@ -23,7 +23,8 @@ public class SaadaQLResultSet extends OidResultSet {
 	// private SaadaQLMetaSet col_names;
 
 
-	/**
+	/** * @version $Id$
+
 	 * @param sql_query
 	 * @param oidPattern
 	 * @param limit

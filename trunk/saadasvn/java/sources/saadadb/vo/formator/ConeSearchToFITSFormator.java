@@ -13,10 +13,11 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.util.Messenger;
 import saadadb.vo.translator.ConeSearchTranslator;
+* 
 
 /**
  * @author michel
- *
+ *@version $Id$
  */
 public class ConeSearchToFITSFormator extends FITSFormator {
 	

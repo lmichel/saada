@@ -1,5 +1,10 @@
 package saadaql.correlator;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ParserTokenManager implements ParserConstants
 {
   public static  java.io.PrintStream debugStream = System.out;

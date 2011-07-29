@@ -18,7 +18,8 @@ import saadadb.vo.request.query.SaadaqlQuery;
 import saadadb.vo.request.query.VOQuery;
 
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * @version 07/2011
  */

@@ -22,6 +22,11 @@ import saadadb.meta.MetaCollection;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.util.SaadaConstant;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 abstract public class DefaultDisplayFilter implements DisplayFilter,
 		Serializable {
 	private static final long serialVersionUID = 1L;

@@ -4,7 +4,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
 public class Utils {
-	/**
+	/** * @version $Id$
+
 	 * @param str
 	 * @throws QueryException
 	 */

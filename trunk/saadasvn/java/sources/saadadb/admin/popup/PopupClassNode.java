@@ -12,7 +12,8 @@ import saadadb.exceptions.FatalException;
 public class PopupClassNode extends PopupNode {
 
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 

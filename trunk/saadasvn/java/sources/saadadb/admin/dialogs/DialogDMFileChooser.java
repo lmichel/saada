@@ -13,7 +13,8 @@ import saadadb.database.Database;
 
 public class DialogDMFileChooser extends JFileChooser {
 	
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

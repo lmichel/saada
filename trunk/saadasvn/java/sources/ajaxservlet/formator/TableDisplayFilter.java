@@ -25,7 +25,8 @@ import saadadb.util.ChangeKey;
 /**
  * Model data of category TABLE
  * @author laurent
- *
+ * * @version $Id$
+
  */
 public class TableDisplayFilter extends DefaultDisplayFilter implements Serializable{
 	private static final long serialVersionUID = 1L;

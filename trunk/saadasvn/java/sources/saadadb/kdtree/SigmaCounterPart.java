@@ -7,6 +7,11 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.SaadaConstant;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class SigmaCounterPart extends CounterPart {
 	protected double error;
 	public SigmaCounterPart(ResultSet rs) throws SQLException{

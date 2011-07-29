@@ -9,7 +9,8 @@ public class MappingTable extends Mapping {
 	/**Constructor of the tables mapping (Default constructor).
 	 *@param Configuration the configuration of this mapping. 
 	 * @throws IgnoreException 
-	 */   
+	 * * @version $Id$
+/   
 
 				/* ######################################################
 				 * 

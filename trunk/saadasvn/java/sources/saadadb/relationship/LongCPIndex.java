@@ -30,7 +30,8 @@ import saadadb.util.Messenger;
  */
 public class LongCPIndex extends KeyIndex {
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	protected BitSet[] cp_tag;

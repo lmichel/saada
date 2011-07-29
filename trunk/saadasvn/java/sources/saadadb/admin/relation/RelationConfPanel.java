@@ -28,6 +28,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class RelationConfPanel extends JPanel {
 	public MappingRelationPanel mapping_panel;
 	public JFrame frame;

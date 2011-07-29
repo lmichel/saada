@@ -8,7 +8,8 @@ package saadadb.exceptions;
  */
 public class FatalException extends SaadaException{
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	

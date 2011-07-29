@@ -21,7 +21,8 @@ import saadadb.query.parser.PositionParser;
 
 import ajaxservlet.SaadaServlet;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class SimbadTooltip
  */
 public class SimbadTooltip extends SaadaServlet {

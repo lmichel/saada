@@ -11,7 +11,8 @@ public class TokenMgrError extends Error
     */
    static final int LEXICAL_ERROR = 0;
 
-   /**
+   /** * @version $Id$
+ * 
     * An attempt wass made to create a second instance of a static token manager.
     */
    static final int STATIC_LEXER_ERROR = 1;

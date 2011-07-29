@@ -4,7 +4,8 @@ package saadadb.query.executor;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class Query_Report {
 	protected Report report ;

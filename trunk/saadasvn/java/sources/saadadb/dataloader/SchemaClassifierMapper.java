@@ -20,7 +20,8 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SchemaClassifierMapper extends SchemaMapper {
 	private String requested_classname;

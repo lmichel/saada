@@ -14,7 +14,8 @@ import saadadb.vo.PseudoTableParser;
 import saadadb.vo.formator.QueryInfos;
 
 
-/**
+/** * @version $Id$
+
  * Ancestor for the VO translators to SaadaQL/s
  */
 public class VOTranslator {

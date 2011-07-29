@@ -32,7 +32,8 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 public class MappingRelationPanel extends JPanel {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

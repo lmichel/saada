@@ -29,7 +29,8 @@ import saadadb.util.Messenger;
  * These test beds are usually run by script from code updated by SVN. This tool allows to run (and debug) one 
  * test without commiting code.
  * USAGE: Sequence [PSQL|MSQL|SQLITE|all] [test#|all] [follow]
- * 
+ *  * @version $Id$
+
  * @author laurent
  *
  */

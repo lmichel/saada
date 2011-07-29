@@ -17,7 +17,8 @@ import saadadb.vo.request.ConeSearchRequest;
  * collection: 
  * filename  : response path
  * @author laurent
- *
+ * * @version $Id$
+
  */
 public class ConeSearchRequestTester {
 

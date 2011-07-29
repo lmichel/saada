@@ -7,7 +7,8 @@ import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 
 
-/**
+/** * @version $Id$
+
  * @author michel
  * This class is use to test queries on position. Both position and search radius are given to the creator.
  * A votable is the built with one source for each node of a grid with 1 arcmin as step and covering 1.5 time

@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 
 import saadadb.products.Product;
 import saadadb.util.Messenger;
-/**
+/** * @version $Id$
+
  *This class serves for describing the constraints of file name in mode "pattern regex"
  *The constraint is on the name of the tested file (product)
  *This name does contain the forces name

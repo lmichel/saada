@@ -16,6 +16,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class DialogUCD extends JDialog implements ActionListener,
 		PropertyChangeListener {
 	private String typed_comment = "";

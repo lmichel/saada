@@ -11,7 +11,8 @@ import cds.savot.model.SavotTD;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
-/**
+/** * @version $Id$
+
  * Convert an ASCII file with columns with fixed width into as VOTable
  * ASCII file format:
  * Line beginning with #, / or ; are considered as comment. 

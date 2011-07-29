@@ -7,7 +7,8 @@ import javax.swing.JTable;
 
 public class PopupCollEdit extends PopupNode {
 
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

@@ -23,6 +23,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class PostgresWrapper extends DbmsWrapper {
 
 	private PostgresWrapper(String server_or_driver, String port_or_url) throws ClassNotFoundException {

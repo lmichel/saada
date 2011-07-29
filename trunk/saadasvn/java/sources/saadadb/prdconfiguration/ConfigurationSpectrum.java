@@ -22,7 +22,8 @@ import saadadb.util.Messenger;
  */
 /**
  * @author abouchacra
- *
+ * * @version $Id$
+
  */
 public class ConfigurationSpectrum extends ConfigurationDefaultHandler {
     protected boolean recordSpectralCoordinate = false; 

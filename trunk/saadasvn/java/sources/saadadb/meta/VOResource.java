@@ -35,7 +35,8 @@ import cds.savot.model.TDSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * @version 07/2011 Make sure that position UCDs are set
  */

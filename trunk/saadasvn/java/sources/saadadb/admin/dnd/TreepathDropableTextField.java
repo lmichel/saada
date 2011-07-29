@@ -3,6 +3,11 @@ package saadadb.admin.dnd;
 import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public abstract class TreepathDropableTextField extends JTextField{
 		protected TreePath treepath;
 

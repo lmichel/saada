@@ -1,7 +1,8 @@
 package saadadb.configuration;
 
 
-/**
+/** * @version $Id$
+
  * <p>Title: System d'archivage automatique des donnes astrononique</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>

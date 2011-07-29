@@ -12,7 +12,8 @@ import saadadb.query.result.SaadaInstanceResultSet;
 /**
  * This is a simple interface with the very common services a formator must support.
  * @author laurent
- *
+ * * @version $Id$
+
  * @version 06/2011 creation
  */
 public interface Formator {

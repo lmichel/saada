@@ -6,6 +6,11 @@ import java.util.Iterator;
 
 import saadadb.meta.AttributeHandler;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ADQLResultSet extends SaadaQLResultSet {
 
 	public ADQLResultSet(ResultSet rs, HashMap<String,AttributeHandler> columnMeta) throws Exception {

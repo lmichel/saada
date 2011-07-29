@@ -25,7 +25,8 @@ public class VoClassTree extends VoDataProductTree {
 		buildTree();
 	}
 
-	/**
+	/** * @version $Id$
+
 	 * @param filename
 	 * @throws FatalException 
 	 */

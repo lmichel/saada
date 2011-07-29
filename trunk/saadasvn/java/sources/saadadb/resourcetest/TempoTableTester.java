@@ -7,7 +7,8 @@ import saadadb.sqltable.SQLTable;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class TempoTableTester {
 

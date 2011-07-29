@@ -8,6 +8,11 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class PopupCatNode extends PopupNode {
 	
 	private static final long serialVersionUID = 1L;

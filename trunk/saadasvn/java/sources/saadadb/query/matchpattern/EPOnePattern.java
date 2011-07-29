@@ -31,7 +31,8 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.TimeSaada;
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau, L. Michel
  */
 public class EPOnePattern extends Query_Report {

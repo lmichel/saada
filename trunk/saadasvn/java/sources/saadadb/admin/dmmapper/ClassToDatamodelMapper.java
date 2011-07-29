@@ -56,7 +56,8 @@ public class ClassToDatamodelMapper extends JFrame{
 
 
 
-	/**
+	/** * @version $Id$
+
 	 * @param data_model
 	 * @param classe
 	 * @throws Exception

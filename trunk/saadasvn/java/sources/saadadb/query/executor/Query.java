@@ -44,7 +44,8 @@ import saadadb.util.TimeSaada;
 /**
  * @author laurent
  * 05/2011: add method getUCDColumns
- *
+ * * @version $Id$
+
  */
 public class Query extends Query_Report{
 	private SelectFromIn        sfiClause;        

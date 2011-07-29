@@ -2,6 +2,11 @@ package saadadb.exceptions;
 
 
 
+/**
+ * @author laurentmichel
+ *s- * @version $Id$
+
+ */
 abstract public class SaadaException extends Exception{
 	public static final String VOTABLE_FORMAT   = "VOTable Format Error";
 	public static final String FITS_FORMAT      = "FITS Format Error";

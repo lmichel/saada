@@ -6,7 +6,8 @@ import saadadb.exceptions.SaadaException;
 /**
  * class producing the datatable content depending on 
  * the class calling it
- * 
+ *  * @version $Id$
+
  * @author Clémentine Frère
  * contact : frere.clementine@gmail.com
  *

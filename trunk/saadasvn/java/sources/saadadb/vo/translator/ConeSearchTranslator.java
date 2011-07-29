@@ -23,7 +23,8 @@ import saadadb.vo.formator.ConeSearchToVOTableFormator;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class ConeSearchTranslator extends VOTranslator {
 	

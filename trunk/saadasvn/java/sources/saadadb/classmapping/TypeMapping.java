@@ -15,7 +15,8 @@ public abstract class TypeMapping{
 	public static final int MAPPING_USER = 2;
 	public static final int MAPPING_CLASSIFIER = 3;
 	
-	/**
+	/** * @version $Id$
+s
 	 * @param m
 	 * @return
 	 * @throws SaadaException 

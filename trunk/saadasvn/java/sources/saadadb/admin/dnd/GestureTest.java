@@ -25,6 +25,11 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class GestureTest extends JFrame implements DragGestureListener {
 
   DragSource ds;

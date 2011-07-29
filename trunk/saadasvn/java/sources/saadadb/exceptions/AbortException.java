@@ -5,10 +5,12 @@ import saadadb.sqltable.TransactionMaker;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class AbortException extends FatalException {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

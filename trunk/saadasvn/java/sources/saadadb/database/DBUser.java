@@ -1,5 +1,10 @@
 package saadadb.database;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 class DBUser {
 	
 	private String name;

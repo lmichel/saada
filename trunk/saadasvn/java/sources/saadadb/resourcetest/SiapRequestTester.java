@@ -20,7 +20,8 @@ import saadadb.vo.request.SIAPRequest;
  * collection: 
  * filename  : response path
  * @author laurent
- *
+ * * @version $Id$
+
  */
 public class SiapRequestTester {
 

@@ -5,7 +5,8 @@ import java.util.LinkedHashMap;
 import saadadb.exceptions.FatalException;
 import saadadb.query.result.SaadaQLResultSet;
 
-/**
+/** * @version $Id$
+
  * This interface is used by Saada instance to implement datamodels.
  * Classes implementing DMInterface are always inner classes of @SaadaInstance
  * A SaadaInstance contains one DMInterface implementation for each implemented datamodel.

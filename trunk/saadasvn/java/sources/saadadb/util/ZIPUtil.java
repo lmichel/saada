@@ -16,7 +16,8 @@ import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.SaadaException;
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * @version 07/2011
  */

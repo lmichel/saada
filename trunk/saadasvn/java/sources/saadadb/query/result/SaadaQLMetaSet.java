@@ -15,7 +15,8 @@ import saadadb.util.Messenger;
  * with the attributes handlers if the touched Saada class attributes
  * The name of the SQL result column is taken
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SaadaQLMetaSet {
 	protected  LinkedHashMap<String, ColumnRef> metatree;

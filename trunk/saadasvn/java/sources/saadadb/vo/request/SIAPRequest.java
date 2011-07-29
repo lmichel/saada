@@ -8,8 +8,9 @@ import saadadb.vo.request.query.SIAPQuery;
  * Translate SIAP parameters in a SAADAQL query and run it
  * and build the response files
  * @author laurent
+ *  * @version $Id$
+
  * 
- * @version 06/2011
  *
  */
 public class SIAPRequest extends VOParameterRequest {

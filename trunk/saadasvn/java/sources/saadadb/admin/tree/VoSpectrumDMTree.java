@@ -3,6 +3,11 @@ package saadadb.admin.tree;
 import java.awt.Frame;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VoSpectrumDMTree extends VoTree {
 	public String[] spectral_utypes = {
 			"SampleExtent (em.*;spect.binSize)",

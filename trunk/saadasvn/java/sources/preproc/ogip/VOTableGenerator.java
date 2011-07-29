@@ -24,6 +24,11 @@ import cds.savot.model.SavotVOTable;
 import cds.savot.model.TDSet;
 import cds.savot.writer.SavotWriter;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VOTableGenerator {
 
 	

@@ -16,6 +16,11 @@ import saadadb.query.parser.UnitHandler;
 import saadadb.util.Messenger;
 import cds.astro.Unit;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public final class RelationUCDsManager {
 
 	/*class

@@ -6,7 +6,8 @@ import java.util.TreeMap;
 
 import md5.MD5;
 import saadadb.meta.AttributeHandler;
-/**
+/** * @version $Id$
+
  * <p>Title: System d'archivage automatique des donnes astrononique</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>

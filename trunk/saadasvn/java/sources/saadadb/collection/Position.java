@@ -5,7 +5,8 @@ import saadadb.database.MysqlWrapper;
 import saadadb.util.SaadaConstant;
 import cds.astro.Coo;
 import cds.astro.Qbox;
-/**
+/** * @version $Id$
+
  * <p>Title: </p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2003</p>

@@ -19,7 +19,8 @@ import saadadb.util.Messenger;
 
 public class AddColumnsToClass {
 
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 */
 	public static void main(String[] args) {

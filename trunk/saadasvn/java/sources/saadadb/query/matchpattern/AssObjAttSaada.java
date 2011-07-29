@@ -11,7 +11,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.query.parser.ClauseSQL;
 
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public final class AssObjAttSaada extends ClauseSQL {

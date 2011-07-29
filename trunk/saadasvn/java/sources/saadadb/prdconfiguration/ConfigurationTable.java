@@ -25,7 +25,8 @@ public class ConfigurationTable extends ConfigurationDefaultHandler {
 	/**Boolean indicating the recording of the deliberate element mapping for the entries**/
 	protected boolean recordEntryMapping;
 
-	/**
+	/** * @version $Id$
+
 	 * @param configName
 	 * @param tabArg
 	 * @throws SaadaException 

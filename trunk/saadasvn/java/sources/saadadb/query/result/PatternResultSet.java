@@ -18,7 +18,8 @@ public class PatternResultSet extends OidResultSet {
 	private int position=0;
 	private long current_oid;
 	
-	/**
+	/** * @version $Id$
+
 	 * @param oidPattern
 	 * @throws SQLException 
 	 */

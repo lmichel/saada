@@ -13,7 +13,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class ObjectScaner {
 	static private boolean verbose = false;

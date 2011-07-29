@@ -13,7 +13,9 @@ import saadadb.products.Product;
  *@see Vector
  */
 public class ProductSignature extends Vector{
-    /**
+    /** * @version $Id$
+ * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

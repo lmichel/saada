@@ -18,7 +18,7 @@ import cds.savot.model.SavotValues;
  */
 public class ConeSearchToVOTableFormator extends VOTableFormator {
 
-	/**
+	/**@version $Id$
 	 * Constructor.
 	 * @throws SaadaException 
 	 */

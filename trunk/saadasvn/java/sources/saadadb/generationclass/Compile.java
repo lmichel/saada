@@ -22,7 +22,8 @@ public class Compile{
     public static void compileIt(File sourcefile) throws Exception{
     	compileIt(sourcefile,Database.getLogDir() );
     }
-   /**
+   /** * @version $Id$
+
      * @param sourcefile
      * @param classdir
      * @param log_dir

@@ -9,12 +9,13 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.vo.formator.VOResultFormator;
+import saadadb.vo.formator.version;
 
 /**
  * Implementation of VOQueries build and run the query from parameters
  * given from outside @link VORequest
  * @author laurentmichel
- *
+ *@version $Id$
  */
 public abstract class VOQuery {
 	protected static ArrayList<String> formatAllowedValues ;

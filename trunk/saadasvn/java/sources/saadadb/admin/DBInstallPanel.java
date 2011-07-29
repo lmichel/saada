@@ -28,6 +28,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
 import saadadb.util.RegExp;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class DBInstallPanel extends JPanel{
 	protected JFrame frame;
 	private JButton	mod_name = new JButton("Modify");

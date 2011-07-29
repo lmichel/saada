@@ -13,7 +13,8 @@ import saadadb.exceptions.QueryException;
 
 public abstract class CmdThread extends Thread {
 	protected Frame frame;
-	/*
+	/* * @version $Id$
+
 	 * Command run by sub classes of saada_process can be paused/resumed
 	 * by the progress dialog
 	 */

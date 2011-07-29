@@ -29,7 +29,8 @@ import cds.astro.Astrocoo;
 
 public class Entry extends Product {
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 

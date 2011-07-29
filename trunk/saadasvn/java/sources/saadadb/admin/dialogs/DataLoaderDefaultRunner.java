@@ -22,7 +22,8 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 
 public class DataLoaderDefaultRunner extends JDialog implements ActionListener,
 		PropertyChangeListener {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	protected static final long serialVersionUID = 1L;

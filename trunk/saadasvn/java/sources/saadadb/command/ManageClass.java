@@ -5,7 +5,8 @@ import saadadb.collection.ClassManager;
 
 public class ManageClass extends ManageEntity {
 
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	public ManageClass() {

@@ -12,7 +12,8 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import ajaxservlet.SaadaServlet;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class JSDataTree
  */
 public class JSDataTree extends SaadaServlet {

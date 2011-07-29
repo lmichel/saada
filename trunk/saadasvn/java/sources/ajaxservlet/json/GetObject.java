@@ -23,7 +23,8 @@ import ajaxservlet.formator.DisplayFilter;
 import ajaxservlet.formator.InstanceDisplayFilter;
 import ajaxservlet.formator.LinkDisplayFilter;
 
-/**
+/** * @version $Id$
+
  * Return the description of the instance having oid = oid
  * Or the counterpart if there is a relation parameter
  * Protocol

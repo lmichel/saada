@@ -31,7 +31,8 @@ import saadadb.exceptions.SaadaException;
 
 public class Messenger implements Serializable{
 	/**
-	 * 
+	 * * @version $Id$
+ 
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final int DEBUG    = -1 ;

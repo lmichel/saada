@@ -32,7 +32,8 @@ import saadadb.util.Messenger;
  */
 public class SchemaFusionMapper extends SchemaMapper {
 
-	/**
+	/** * @version $Id$
+
 	 * @param handler 
 	 * @param configuration
 	 */

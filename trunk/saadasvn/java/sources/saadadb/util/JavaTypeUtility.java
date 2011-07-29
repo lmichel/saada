@@ -11,7 +11,8 @@ import saadadb.exceptions.SaadaException;
  * Some function helping to deal with Java type at class creation
  * FITS fmt -<> Java type conversion
  * Java type comparison
- * 
+ *  * @version $Id$
+
  * @author laurent
  *
  */

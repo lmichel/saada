@@ -38,7 +38,8 @@ import saadadb.util.TileRiceDecompressor;
 
 /**
  * @author laurent MICHEL
- * 
+ *  * @version $Id$
+
  * 06/2011: Returns table rows a an array with the right type taken from the TFORM 
  *          keyword instead of using the reflexion of on data itself (fails on NULL value)
  */

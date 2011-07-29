@@ -8,6 +8,11 @@ import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class QueryAllColumnRunner {
 
 	private static void usage() {

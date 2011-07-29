@@ -26,7 +26,8 @@ import cds.astro.Coo;
  * After is look for the area where a search box matches that image in various SIAP modes.
  * 2 boxes are tested: one smaller than the image and one bigger
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SIAPQueryTester {
 	String collection, collection_table;

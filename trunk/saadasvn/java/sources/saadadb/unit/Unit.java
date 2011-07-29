@@ -23,7 +23,8 @@ import saadadb.util.Messenger;
                 Unit class
  *==================================================================*/
 
-/**
+/** * @version $Id$
+
  * Class able to deal with scientific units and make the appropriate
  * conversions. 
  * This class is an application of the

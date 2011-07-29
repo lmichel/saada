@@ -18,7 +18,8 @@ import saadadb.meta.MetaClass;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * The KDTree class contains methods to:
  *  - create a KDTree (create)
  *  - check if a table is a KDTree or not (check)

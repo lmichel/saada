@@ -14,7 +14,8 @@ import adqlParser.parser.AdqlParser;
 
 /**
  * As the {@link SaadaQLExecutor} class the ADQLExecutor class executes a query but written in ADQL.
- *  
+ *   * @version $Id$
+
  * @author Gregory Mantelet
  */
 public class ADQLExecutor {

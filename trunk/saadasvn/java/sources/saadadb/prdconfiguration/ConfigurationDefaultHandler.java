@@ -26,7 +26,8 @@ import saadadb.products.Table;
 import saadadb.util.DefineType;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-/**
+/** * @version $Id$
+
  *@author Millan Patrick
  *@version 2.0
  *@since 2.0

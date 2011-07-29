@@ -6,7 +6,8 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public abstract class Category {
 	static public final int ROOT_PRODUCT =0;
