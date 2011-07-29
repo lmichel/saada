@@ -22,7 +22,7 @@ import saadadb.vo.request.formator.VOResultFormator;
  * @author michel
  *
  */
-public abstract class FITSFormator extends VOResultFormator {
+public abstract class FITSFormator extends VOResultFormator  {
 	protected Fits fits ;
 	protected int nb_columns;
 	protected ArrayList<UTypeHandler> column_set = new ArrayList<UTypeHandler>();
