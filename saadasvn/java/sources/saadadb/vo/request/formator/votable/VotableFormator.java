@@ -46,7 +46,7 @@ import cds.savot.writer.SavotWriter;
  */
 /**
  * @author laurentmichel
- *
+ * @version $Id$
  */
 public abstract class VotableFormator extends  QueryResultFormator {
 
