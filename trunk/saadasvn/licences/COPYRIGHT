@@ -40,3 +40,17 @@ SQLITE: The present distribution includes for conveniance a SQLilte driver avail
             for download at  http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC
                 Copyright © 2010 Taro L.Saito
 
+JQuery + plugins
+----------------
+JQuery   	http://jquery.com/
+DataTable   http://www.datatables.net/
+jsonSuggest http://plugins.jquery.com/project/jsonsuggest
+jsTree      http://www.jstree.com
+simplModel  http://plugins.jquery.com/project/SimpleModal
+Splitter    http://plugins.jquery.com/plugin-tags/jquery-splitter
+
+XML to Json conversion
+-----------------------
+Xml-to-Json http://www.bramstein.com/projects/xsltjson/
+Saxon9      http://www.saxon9.com/
+
