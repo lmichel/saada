@@ -7,7 +7,8 @@ package saadadb.unit;
 //import java.io.*;
 //import java.util.*;
 
-/**
+/** * @version $Id$
+
  * Class for 'nice' edition of numbers. 
  * This class contains options for the edition of integer / float numbers;
  * the edited value is appended to the StringBuffer generally specified

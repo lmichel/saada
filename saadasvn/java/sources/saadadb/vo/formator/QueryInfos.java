@@ -10,7 +10,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/**
+/**@version $Id$
  * Contains all the information about a SaadaQL query that the QueryFormater needs to know 
  */
 public class QueryInfos {

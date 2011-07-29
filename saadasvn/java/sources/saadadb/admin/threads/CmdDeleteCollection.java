@@ -20,7 +20,8 @@ import saadadb.util.Messenger;
 public class CmdDeleteCollection extends CmdThread {
 	private String name;
 
-	/**
+	/** * @version $Id$
+
 	 * @param frame
 	 * @param tree_path_elements
 	 */

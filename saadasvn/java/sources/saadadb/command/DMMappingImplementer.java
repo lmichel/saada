@@ -9,7 +9,8 @@ import saadadb.util.Messenger;
 /**
  * Apply the DM mapping file given as parameter
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class DMMappingImplementer {
 	

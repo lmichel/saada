@@ -14,7 +14,8 @@ public class Objects
 {
   protected Objects() {}
 
-  /**
+  /** * @version $Id$
+
    * Maps an array using Map.
    * If Map m is considered as a map from its keys to its values, then
    * for each x in domain m(x) is calculated and stored into resulting array

@@ -40,7 +40,8 @@ import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public abstract class ImageUtils {
 
-	/**
+	/** * @version $Id$
+
 	 * Creates a JPEG file corresponding to the 2D image product with the
 	 * calibres in parameter.
 	 * @param nameFileOut

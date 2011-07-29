@@ -134,7 +134,8 @@ public class QueryTester {
 
 	
 
-	/**
+	/** * @version $Id$
+
 	 * @return
 	 */
 	public static String[] CP_queries() {

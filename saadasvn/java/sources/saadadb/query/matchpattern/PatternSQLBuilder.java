@@ -13,7 +13,8 @@ import saadadb.query.constbuilders.UTypeField;
 import saadadb.query.merger.Merger;
 import saadadb.query.parser.SelectFromIn;
 
-/**
+/** * @version $Id$
+
  * @author michel
  * Build the SQL query requested by the pattern
  */

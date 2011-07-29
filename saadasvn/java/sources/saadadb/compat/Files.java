@@ -27,7 +27,8 @@ public class Files extends Strings
 {
   private static final char altSeparatorChar = File.separatorChar == '/' ? '\\' : '/';
 
-  /**
+  /** * @version $Id$
+
    * Calculates full path of a file
    * @param file
    * @return full path

@@ -25,6 +25,10 @@ import saadadb.util.Messenger;
 import saadadb.util.ZIPUtil;
 import saadadb.vo.QueryFileReport;
 
+/**
+ * @author laurentmichel
+ *@version $Id$
+ */
 public class OtherAPToZIPFormator extends VOResultFormator{
 
 	public OtherAPToZIPFormator(String votable_desc, String vores_type,

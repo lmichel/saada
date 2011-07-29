@@ -20,7 +20,8 @@ import saadadb.query.constbuilders.NativeSQLConstraint;
 import saadadb.query.constbuilders.PositionConstraint;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 
-/**
+/** * @version $Id$
+s
  * @author F.X. Pineau
  */
 public final class WherePosition{

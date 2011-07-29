@@ -6,7 +6,8 @@ import saadadb.meta.AttributeHandler;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SaadaAttribute extends SaadaDMBrik{
     private AttributeHandler handler = null;	

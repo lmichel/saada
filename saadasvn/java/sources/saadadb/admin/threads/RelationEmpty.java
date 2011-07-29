@@ -10,6 +10,11 @@ import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class RelationEmpty extends RelationIndexation {
 	
 	public RelationEmpty(Frame frame, String relation) {

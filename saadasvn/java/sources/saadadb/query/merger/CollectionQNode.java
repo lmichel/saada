@@ -25,7 +25,8 @@ public class CollectionQNode extends QNode {
 	private LinkedHashMap<String, ClassQNode> class_nodes;
 	private final int category;
 
-	/**
+	/** * @version $Id$
+
 	 * @param collection
 	 * @throws FatalException
 	 */

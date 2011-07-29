@@ -10,14 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import ajaxservlet.accounting.UserAccount;
 import ajaxservlet.accounting.UserTrap;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class ResetFilter
  * @version $Id$
  */
 public class ResetFilter extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
+    /** * @version $Id$
+
      * @see HttpServlet#HttpServlet()
      */
     public ResetFilter() {
@@ -25,9 +27,11 @@ public class ResetFilter extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
-	/**
+	/** * @version $Id$
+
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
+	 * * @version $Id$
+/
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		process(request, response);
 	}

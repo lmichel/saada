@@ -20,7 +20,8 @@ import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.vo.formator.SiaToVOTableFormator;
 
-/**
+/** * @version $Id$
+
  * Parser which translates a URL representing a HTTP GET request into a SaadaQL/s String
  *
  * This parser implements the 1.0 version of SIA which can be found at :

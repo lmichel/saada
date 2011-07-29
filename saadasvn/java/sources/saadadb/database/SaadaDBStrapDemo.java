@@ -9,7 +9,8 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 
 
-/**
+/** * @version $Id$
+
  * This class is never used. It is a template for the code generator GenerationClassSaada
  * @author michel
  *

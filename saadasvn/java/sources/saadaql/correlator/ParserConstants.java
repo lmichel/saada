@@ -1,5 +1,10 @@
 package saadaql.correlator;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public interface ParserConstants {
 
   int EOF = 0;

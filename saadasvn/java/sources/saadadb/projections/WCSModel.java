@@ -13,7 +13,8 @@ import saadadb.products.Spectrum;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-/**
+/** * @version $Id$
+
  * Class modeling a set of WCS keyword.
  * This class is the first stone for a future clean implementation of projections
  * Axes are referenced from 0 to NAXIS-1

@@ -26,7 +26,8 @@ public class UTypeHandler {
 	private String comment;
 	private boolean hidden=false;
 
-	/**
+	/** * @version $Id$
+
 	 * @param resultSet
 	 * @throws SQLException 
 	 */

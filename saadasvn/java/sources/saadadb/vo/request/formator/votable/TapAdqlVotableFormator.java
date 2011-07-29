@@ -24,7 +24,8 @@ import cds.savot.model.SavotField;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
-/**
+/** * @version $Id$
+
  * @author laurent
  * @version 07/2011
  */

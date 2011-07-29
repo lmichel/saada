@@ -7,7 +7,8 @@ import saadadb.admin.mapping.MappingKWPanel;
 
 public class AppendMappingTextField extends MappingTextField {
 
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

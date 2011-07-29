@@ -12,7 +12,8 @@ import saadadb.util.RegExp;
 
 public class DialogFileChooser extends JFileChooser {
 	
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

@@ -30,7 +30,7 @@ import cds.savot.writer.SavotWriter;
 
 /**
  * Formats the result of an ADQL query in a VOTable document.
- * 
+ * @version $Id$
  * @author Gr&eacute;gory Mantelet (CDS)
  * @version 10/05/2010
  *

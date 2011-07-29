@@ -15,7 +15,8 @@ import saadadb.util.Messenger;
 
 public class ClassManager extends EntityManager{
 
-	/**
+	/** * @version $Id$
+
 	 * Although all method could be static, we need to make an instance to monitor the progress from 
 	 * the GUI
 	 */
@@ -178,6 +179,10 @@ public class ClassManager extends EntityManager{
 		SQLTable.addQueryToTransaction("DELETE FROM saada_loaded_file WHERE classname = '" + name + "'", "saada_loaded_file");
 
 		//		}
+	}
+	public static void main(String[] args) {
+		 * @version $Id$
+		
 	}
 
 

@@ -9,6 +9,11 @@ package saadadb.relationship;
  * @version 00000001
  */
 import saadadb.collection.SaadaInstance;
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public   abstract class  RelationSaada {
   public SaadaInstance objPrimary;
   public SaadaInstance objSecondary ;

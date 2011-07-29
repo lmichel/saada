@@ -48,7 +48,8 @@ import cds.astro.FK5;
  *
  */
 public class Product /*extends File*/ {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

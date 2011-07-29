@@ -13,7 +13,8 @@ import saadadb.util.RegExp;
 
 public class Launch {
 
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 * @throws LoadDataException 
 	 */

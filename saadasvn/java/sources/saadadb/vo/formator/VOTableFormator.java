@@ -54,6 +54,10 @@ import cds.savot.writer.SavotWriter;
  */
 /**
  * @author laurentmichel
+ *@version $Id$
+ */
+/**
+ * @author laurentmichel
  *
  */
 public abstract class VOTableFormator extends VOResultFormator {

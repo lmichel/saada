@@ -7,6 +7,11 @@ import java.util.LinkedHashMap;
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class AnyFile extends File implements ProductFile {
 
 

@@ -16,10 +16,11 @@ import saadadb.query.parser.PositionParser;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.util.Merger;
 import saadadb.vo.PseudoTableParser;
+import saadadb.vo.formator.version;
 
 /**
  * @author laurentmichel
- *
+ *@version $Id$
  */
 public class SIAPQuery extends VOQuery {
 	public static final int I_COVERS = 1, I_ENCLOSED = 2, I_CENTER = 3, I_OVERLAPS = 4;

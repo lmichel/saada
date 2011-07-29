@@ -38,7 +38,8 @@ import saadadb.util.Messenger;
 public class GenerationClassProduct{
 	private static String separ = System.getProperty("file.separator");
 	
-	/**
+	/** * @version $Id$
+
 	 * @param writer
 	 * @throws GenerateClassException
 	 * @throws IOException 

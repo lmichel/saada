@@ -8,7 +8,8 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.NativeSQLConstraint;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public abstract class ClauseSQL {

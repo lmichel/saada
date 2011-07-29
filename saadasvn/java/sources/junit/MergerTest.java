@@ -13,7 +13,8 @@ import saadadb.query.merger.Merger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  * example of running query:
 
 SELECT oidsaada, column1, column2 FROM(

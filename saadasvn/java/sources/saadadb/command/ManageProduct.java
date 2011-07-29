@@ -5,7 +5,8 @@ import saadadb.collection.ProductManager;
 
 public class ManageProduct extends ManageEntity{
 	
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	public ManageProduct() {

@@ -21,7 +21,8 @@ public class RelationPopulate extends CmdThread {
 	protected String query;
 	private RelationConfPanel config_panel;
 	
-	/**
+	/** * @version $Id$
+
 	 * @param frame
 	 * @param rel_conf
 	 */

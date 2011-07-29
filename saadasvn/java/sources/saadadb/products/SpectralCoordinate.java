@@ -26,7 +26,8 @@ public class SpectralCoordinate{
 
 	private int type;
 	private int naxis;
-	/*
+	/* * @version $Id$
+
 	 * Default values are not defined in order to avoid to populate the database with 0 values 
 	 * when spectral coordinates can not be computed
 	 */

@@ -10,6 +10,11 @@ import UCD_pkg.UCD;
 import UCD_pkg.UCDService;
 import UCD_pkg.UCDServiceLocator;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class UCDAssign{
     // locator creation
     private UCDService locator = null;

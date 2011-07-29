@@ -14,7 +14,8 @@ import saadadb.util.Messenger;
  * Implementation of VOQuery builds and run the query from parameters
  * given from outside @link VORequest
  * @author laurentmichel
- * @version 07/2011
+ * @version $Id$
+
  */
 public abstract class VOQuery {
 	protected static ArrayList<String> formatAllowedValues ;

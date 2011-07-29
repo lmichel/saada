@@ -11,7 +11,8 @@ import saadadb.exceptions.SaadaException;
 abstract public class DefaultPreviews {
 	public static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
 
-	/**
+	/** * @version $Id$
+
 	 * @param oid
 	 * @param size
 	 * @return

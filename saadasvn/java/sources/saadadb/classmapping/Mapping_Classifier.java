@@ -15,7 +15,8 @@ public class Mapping_Classifier extends TypeMapping{
     }  
     /**Tests if the class name is null.
      *@return boolean true or false if the class name is null, or not.
-     */
+     * * @version $Id$
+/
     public boolean isValid(){
 	return (className!=null);
     }

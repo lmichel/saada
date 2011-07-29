@@ -206,7 +206,8 @@ public class Converter {
 	return(target.editedValue());
     }
 
-    /**
+    /** * @version $Id$
+
      * Convert a value, return its edited form.
      * Convert the value from <em>source</em> unit into <em>target</em> unit
      * @param	value the value (expressed in source)
@@ -232,5 +233,10 @@ public class Converter {
     public String toString() {
 	return(source.symbol+"=>"+target.symbol+"(x"+factor+")");
     }
+
+	public static void main(String[] args) {
+		 * @version $Id$
+		
+	}
 	
 }

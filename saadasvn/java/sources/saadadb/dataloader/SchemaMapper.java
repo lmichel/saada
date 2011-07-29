@@ -40,7 +40,8 @@ public abstract class SchemaMapper {
 	protected boolean build_index = true;
 	protected Loader loader;
 
-	/**
+	/** * @version $Id$
+
 	 * @param products
 	 * @param handler
 	 */

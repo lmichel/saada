@@ -7,7 +7,8 @@ import javax.swing.JMenuItem;
 public class PopupCollNode extends PopupNode {
 
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,7 @@ import saadadb.vo.translator.VOTranslator;
 
 /**
  * @author michel
- *
+ *@version $Id$
  */
 public abstract class VOResultFormator {
 	protected static int incr = 1;

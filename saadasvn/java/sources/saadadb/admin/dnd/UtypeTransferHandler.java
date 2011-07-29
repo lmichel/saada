@@ -1,3 +1,5 @@
+ * @version $Id$
+ * @version $Id$
 package saadadb.admin.dnd;
 
 /*
@@ -12,7 +14,8 @@ import saadadb.admin.ResultSetTableModel;
 
 public class UtypeTransferHandler extends SaadaTransferHandler {
     /**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	private int[] rows = null;

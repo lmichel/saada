@@ -1,5 +1,10 @@
 package saadadb.voservices;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public interface VOSaadaServiceService extends javax.xml.rpc.Service {
     public java.lang.String getVOSaadaAddress();
 

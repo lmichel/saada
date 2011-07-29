@@ -76,7 +76,8 @@ import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
 
-/**
+/** * @version $Id$
+
  * Manipulation des coordonnees
  *
  * @author Francois Bonnarel [CDS], Pierre Fernique [CDS]

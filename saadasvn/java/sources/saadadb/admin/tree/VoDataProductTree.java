@@ -35,7 +35,8 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
+	/** * @version $Id$
+
 	 * @param frame
 	 * @param top_node
 	 * @param filename

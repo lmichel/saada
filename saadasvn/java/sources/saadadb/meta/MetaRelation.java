@@ -57,7 +57,8 @@ public class MetaRelation extends MetaObject {
 		return primary_coll;
 	}
 
-	/**
+	/** * @version $Id$
+
 	 * @return Returns the secondary_category.
 	 */
 	public int getSecondary_category() {

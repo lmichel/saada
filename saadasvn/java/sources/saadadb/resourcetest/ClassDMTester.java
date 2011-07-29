@@ -10,6 +10,11 @@ import saadadb.meta.DMInterface;
 import saadadb.query.result.SaadaQLResultSet;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ClassDMTester extends SaadaInstance {
 
 	@Override

@@ -3,6 +3,11 @@ package saadadb.admin.threads;
 //import javax.swing.SwingWorker;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class IndexWorker /*extends SwingWorker<String, Object> */{
 	
 	public String doInBackground() {

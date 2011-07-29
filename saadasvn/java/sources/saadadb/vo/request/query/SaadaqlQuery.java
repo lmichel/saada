@@ -20,7 +20,8 @@ import saadadb.util.Messenger;
 /**
  * Run a SaadaQL in the VO request context which is used iether by VO services by the download service
  * @author laurent
- * @version 07.2011
+ * @version $Id$
+
  */
 public class SaadaqlQuery extends VOQuery {
 	public static final Pattern limitPattern = Pattern.compile(".*Limit\\s+[0-9]+.*", Pattern.DOTALL);	

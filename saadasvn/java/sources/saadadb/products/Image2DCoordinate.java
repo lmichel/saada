@@ -17,7 +17,8 @@ import cds.astro.FK4;
 import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
-/**
+/** * @version $Id$
+
  *@author Millan Patrick
  *@version 2.0
  *@since 2.0

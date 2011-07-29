@@ -14,6 +14,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class BuildIndex extends CmdThread {
 	private String table;
 	String[] columns = null;

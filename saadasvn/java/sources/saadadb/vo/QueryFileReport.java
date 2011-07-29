@@ -32,7 +32,8 @@ import saadadb.vo.translator.SiaTranslator;
 import saadadb.vo.translator.SsaTranslator;
 import saadadb.vo.translator.VOTranslator;
 
-/**
+/** * @version $Id$
+
  * @author michel
  *
  */

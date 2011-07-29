@@ -23,7 +23,8 @@ import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+s
  * @author michel
  * 05/2011: add method getUCDs
  * 05/2011: add methods getRelationNamesStarting/Ending from/on  Class

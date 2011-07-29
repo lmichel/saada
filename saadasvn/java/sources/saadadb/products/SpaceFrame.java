@@ -217,7 +217,9 @@ public class SpaceFrame {
 	 */
 	SpaceFrame(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) {
 		this.tableAttributeHandler = tableAttributeHandler;
-		/*
+		/* * @version $Id$
+ * @version $Id$
+
 		 * Take first the coosys if not null and look for keywords matching that system
 		 */
 		if( infoCooSys != null ) {

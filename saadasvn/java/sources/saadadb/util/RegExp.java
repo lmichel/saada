@@ -6,7 +6,8 @@ import saadadb.database.Database;
 /**
  * This class is a simple dictionnary of regular expressions used in Saada
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class RegExp {
 	/*

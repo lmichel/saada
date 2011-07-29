@@ -38,7 +38,8 @@ public class SQLiteWrapper extends DbmsWrapper {
 	private final static String suffix = ".sqlitedb";
 	private static final String driver_classname = "org.sqlite.JDBC";
 
-	/**
+	/** * @version $Id$
+
 	 * @param server_or_driver
 	 * @param port_or_url
 	 * @throws ClassNotFoundException

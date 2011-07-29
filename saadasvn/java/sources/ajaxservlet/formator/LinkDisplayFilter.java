@@ -14,7 +14,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 
 public class LinkDisplayFilter extends DefaultDisplayFilter {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

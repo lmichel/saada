@@ -6,6 +6,11 @@ import saadadb.database.Database;
 import saadadb.dataloader.Loader;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ReadLinkedData {
 
 	public static void main(String[] args) throws Exception {

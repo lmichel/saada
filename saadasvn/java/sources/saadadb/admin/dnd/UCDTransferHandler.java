@@ -12,7 +12,8 @@ import saadadb.admin.ResultSetTableModel;
 
 public class UCDTransferHandler extends SaadaTransferHandler {
     /**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	private int[] rows = null;

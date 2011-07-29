@@ -18,7 +18,8 @@ import saadadb.meta.VOResource;
 import saadadb.query.constbuilders.DMField;
 
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public abstract class ClauseDM {
@@ -98,5 +99,10 @@ public abstract class ClauseDM {
 			this.s=s;
 			this.utypec=utypec;
 		}
+	}
+
+	public static void main(String[] args) {
+		 * @version $Id$
+		
 	}
 }

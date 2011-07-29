@@ -27,7 +27,8 @@ public class DefaultFormats {
 		formatInit = true;
 	   }
 	}
-	/**
+	/** * @version $Id$
+
 	 * @param res
 	 * @param message
 	 */

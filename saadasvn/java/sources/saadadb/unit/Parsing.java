@@ -6,7 +6,8 @@ package saadadb.unit;
 
 import java.text.ParseException;
 
-/**
+/** * @version $Id$
+
  * This class interprets text and is able to convert to numbers,
  * or find a symbol in a list of symbols. 
  * Numbers can use <B>...&times;10+/-exp</B> as well as 

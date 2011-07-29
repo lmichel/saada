@@ -1,5 +1,6 @@
 package saadadb.util;
-/**
+/** * @version $Id$
+
  * <p>Title: SAADA </p>
  * <p>Description: Automatic Archival System For Astronomical Data -
     This is framework of a PhD funded by the CNES and by the Region Alsace.</p>

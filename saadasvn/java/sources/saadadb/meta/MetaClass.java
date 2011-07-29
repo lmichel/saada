@@ -17,7 +17,8 @@ import saadadb.sqltable.SQLQuery;
 
 
 
-/**
+/** * @version $Id$
+
  * @author michel
  * 12/2009: add method getUCDField
  * 05/2001: add methods getUCDs

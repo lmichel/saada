@@ -10,7 +10,8 @@ import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/**
+/** * @version $Id$
+
  * Build registry and GLU record from a template
  * @author michel
  *

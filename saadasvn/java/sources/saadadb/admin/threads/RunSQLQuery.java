@@ -6,6 +6,11 @@ import java.awt.Frame;
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.sqltable.SQLTable;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class RunSQLQuery extends CmdThread {
 	private String query;
 	

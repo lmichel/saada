@@ -10,7 +10,8 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
  *@since 2.0
  */
 public class Misc extends Product{
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

@@ -8,7 +8,8 @@ import saadadb.relationship.KeyIndex;
 import saadadb.relationship.LongCPIndex;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * Povide some usefull tools for the Query Engine of Saada
  * <p>
  * <b>WARNING:</b> for all operations involving Index and BitSet, List (of Long,Double) and/or BitSet

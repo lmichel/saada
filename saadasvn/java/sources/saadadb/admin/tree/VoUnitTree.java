@@ -2,6 +2,11 @@ package saadadb.admin.tree;
 
 import java.awt.Frame;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VoUnitTree extends VoTree {
 	String[] flat_units = {
 			  "Energy.erg"

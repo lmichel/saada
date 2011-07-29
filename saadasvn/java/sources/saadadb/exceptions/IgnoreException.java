@@ -9,7 +9,8 @@ import saadadb.util.Messenger;
  *
  */
 public class IgnoreException extends SaadaException {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

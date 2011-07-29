@@ -18,7 +18,8 @@ import ajaxservlet.accounting.QueryContext;
 import ajaxservlet.accounting.UserTrap;
 import ajaxservlet.formator.*;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class RunQuery
  */
 public class RunQuery extends SaadaServlet {

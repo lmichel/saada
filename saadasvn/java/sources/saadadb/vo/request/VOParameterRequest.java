@@ -6,7 +6,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 import saadadb.vo.request.query.VOQuery;
 
-/**
+/** * @version $Id$
+
  * Superclass of all parameter bases VO queries
  * @author laurent
  * @version 06/2011

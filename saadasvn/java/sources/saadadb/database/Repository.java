@@ -12,7 +12,8 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * some utilities handling repository files.
  * @author michel
  * @version $Id$

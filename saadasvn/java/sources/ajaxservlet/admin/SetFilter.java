@@ -20,7 +20,7 @@ import ajaxservlet.formator.StoredFilter;
 
 /**
  * Servlet implementation class SetFilter
- *  * @version $Id$
+ * @version $Id$
 
  */
 public class SetFilter extends HttpServlet {

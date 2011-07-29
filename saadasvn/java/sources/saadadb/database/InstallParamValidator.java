@@ -8,7 +8,8 @@ import saadadb.util.RegExp;
 
 public class InstallParamValidator {
 
-	/**
+	/** * @version $Id$
+
 	 * @param name
 	 * @return
 	 * @throws FatalException

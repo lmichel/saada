@@ -23,7 +23,8 @@ import saadadb.query.parser.Operator;
 import saadadb.query.parser.UnitHandler;
 import saadadb.util.ChangeKey;
 
-/**
+/** * @version $Id$
+
  * Model a field mapped either with a UCD or with a DM field. 
  * @author michel
  *

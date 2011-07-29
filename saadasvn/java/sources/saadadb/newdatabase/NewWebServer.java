@@ -24,7 +24,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 class NewWebServer extends NewSaadaDB {
 

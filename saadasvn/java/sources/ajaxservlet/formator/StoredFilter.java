@@ -26,7 +26,8 @@ public class StoredFilter {
 	private ArrayList<String> collection_show;
 	private ArrayList<String> collection_query;
 
-	/**
+	/** * @version $Id$
+
 	 * creates a StoredFilter from a file containing
 	 * the JSONstring of the said filter
 	 * @param json

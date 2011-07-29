@@ -13,7 +13,8 @@ import saadadb.relationship.KeyIndex;
 import saadadb.relationship.LongCPIndex;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * @author michel
  *
  */

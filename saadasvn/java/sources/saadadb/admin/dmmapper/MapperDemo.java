@@ -49,7 +49,8 @@ import saadadb.util.Messenger;
 
 
 public class MapperDemo  extends JFrame {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

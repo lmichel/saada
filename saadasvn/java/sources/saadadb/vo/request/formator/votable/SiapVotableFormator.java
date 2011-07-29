@@ -21,7 +21,8 @@ import cds.savot.model.SavotValues;
 
 /**
  * @author laurent
- * @version 07/2011
+ * @version  * @version $Id$
+
  */
 public class SiapVotableFormator extends VotableFormator {
 

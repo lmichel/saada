@@ -21,7 +21,8 @@ import saadadb.query.matchpattern.Qualifier;
 
 /**
  * @author F.X. Pineau
- * 
+ *  * @version $Id$
+
  * Syntaxe: matchPattern{ "relation"
  *	 1 Cardinality("<=",1,0)
  *	 n Qualifier("pixel","][",1,3)

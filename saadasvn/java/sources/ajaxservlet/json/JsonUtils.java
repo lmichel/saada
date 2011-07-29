@@ -11,6 +11,11 @@ import org.json.simple.JSONObject;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public abstract class JsonUtils {
 	static boolean STDOUT = Messenger.debug_mode;;
 	

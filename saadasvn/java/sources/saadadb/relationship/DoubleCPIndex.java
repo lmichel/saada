@@ -25,7 +25,8 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class DoubleCPIndex extends KeyIndex {
 	protected BitSet[] cp_tag;

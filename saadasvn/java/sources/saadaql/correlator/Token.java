@@ -1,6 +1,7 @@
 package saadaql.correlator;
 
-/**
+/** * @version $Id$
+
  * Describes the input token stream.
  */
 

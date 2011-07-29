@@ -15,7 +15,9 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 
-/**
+/** * @version $Id$
+ * @version $Id$
+
  * @author F.X. Pineau
  */
 public final class WhereRelation{

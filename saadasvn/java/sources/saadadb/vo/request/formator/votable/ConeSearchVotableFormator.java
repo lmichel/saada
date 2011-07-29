@@ -18,7 +18,8 @@ import cds.savot.model.TDSet;
 
 /**
  * @author laurent
- * @version 07/2011
+ * * @version $Id$
+
  */
 public class ConeSearchVotableFormator extends VotableFormator{
 

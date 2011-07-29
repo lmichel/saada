@@ -23,7 +23,8 @@ import cds.astro.Qbox;
 /**
  * @author michel
  * @version $Id$
- *
+ * * @version $Id$
+
  */
 public class Database {
 

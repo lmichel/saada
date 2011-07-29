@@ -26,7 +26,8 @@ import saadadb.util.SaadaConstant;
 /**
  * Model data of category TABLE
  * @author laurent
- *
+ * * @version $Id$
+
  */
 public class EntryDisplayFilter extends DefaultDisplayFilter {
 	private static final long serialVersionUID = 1L;

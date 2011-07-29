@@ -14,7 +14,8 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SQLLikeResultSet  extends OidResultSet {
 	private ResultSet real_resultset;

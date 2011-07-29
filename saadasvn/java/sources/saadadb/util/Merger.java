@@ -3,7 +3,8 @@ package saadadb.util;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  * 12/2009: ignore empty items in arrays to merge
  */
 public class Merger {

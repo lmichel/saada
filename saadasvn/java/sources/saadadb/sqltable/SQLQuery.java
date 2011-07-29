@@ -13,6 +13,11 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class SQLQuery {
 	protected Statement _stmts;
 	protected String  query;

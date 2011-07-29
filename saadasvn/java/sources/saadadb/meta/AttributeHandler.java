@@ -22,7 +22,8 @@ import saadadb.util.RegExp;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 
-/**
+/** * @version $Id$
+
  * @author michel
  * 01/2010 method toString
  */

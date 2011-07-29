@@ -8,7 +8,8 @@ import saadadb.meta.AttributeHandler;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public abstract class OidResultSet {
 	protected SaadaQLMetaSet col_names;

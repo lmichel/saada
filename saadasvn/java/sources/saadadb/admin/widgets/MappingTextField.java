@@ -14,11 +14,13 @@ import saadadb.admin.mapping.MappingKWPanel;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class MappingTextField extends TreepathDropableTextField {
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	protected MappingKWPanel form;

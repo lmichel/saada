@@ -35,7 +35,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 
 public class PopupNode extends JPopupMenu implements ActionListener{
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

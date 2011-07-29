@@ -9,6 +9,11 @@ import saadadb.admin.SaadaDBAdmin;
 import saadadb.command.SaadaProcess;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class DummyTask extends CmdThread {
 	
 	public DummyTask(Frame frame) {

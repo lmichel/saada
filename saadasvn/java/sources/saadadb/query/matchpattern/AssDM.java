@@ -11,6 +11,11 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.query.parser.ClauseDM;
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class AssDM extends ClauseDM {
 	
 	private static final String syntax = "AssDM { \\[ucd\\] op 'text'|number|(number,number) [\\[unit\\]] [ and|or ...] }";

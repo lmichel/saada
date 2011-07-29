@@ -19,7 +19,8 @@ import saadadb.util.Messenger;
  *
  */
 public class ProductManager extends EntityManager {
-	/**
+	/** * @version $Id$
+
 	 * Although all method could be static, we need to make an instance to monitor the progress from 
 	 * the GUI
 	 */

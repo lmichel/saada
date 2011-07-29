@@ -6,7 +6,8 @@ import saadadb.exceptions.SaadaException;
 
 public abstract class Table_Saada_Ucd extends SQLTable{
 	
-	/**
+	/** * @version $Id$
+
 	 * @throws AbortException
 	 * @throws CollectionException 
 	 */

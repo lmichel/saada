@@ -11,7 +11,8 @@ import saadadb.sqltable.Table_SaadaDB;
  */
 public class ManageDatabase {
 
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 * @throws FatalException 
 	 */

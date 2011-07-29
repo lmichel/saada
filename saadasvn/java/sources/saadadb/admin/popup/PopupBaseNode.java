@@ -8,7 +8,8 @@ import saadadb.admin.dmmapper.MapperDemo;
 
 
 public class PopupBaseNode extends PopupNode {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

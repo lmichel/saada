@@ -20,7 +20,13 @@ import saadadb.util.Messenger;
  * @since 2.0
  */
 public class Table extends Product {
-	/**
+	/** * @version $Id$
+ * @version $Id$
+ * @version $Id$
+ * @version $Id$
+ * @version $Id$
+vvvvv * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

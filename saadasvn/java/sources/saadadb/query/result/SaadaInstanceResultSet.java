@@ -22,7 +22,8 @@ import saadadb.util.SaadaConstant;
  * The current row is returned as a SaadaInstance supposed to instanciate the right class.
  * No check is done. 
  * Method requiring random access are implemented but throw exceptions
- * 
+ *  * @version $Id$
+
  * @author laurentmichel
  * 03/2011
  *

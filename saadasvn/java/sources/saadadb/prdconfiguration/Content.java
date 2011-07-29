@@ -20,7 +20,8 @@ public class Content implements ProductIdentificationConstraint{
     /**Constructor
      *@param String Name of the attribute constraint in file contents
      *@param String Value that must correspond to this attribute in file contents
-     */
+     * * @version $Id$
+/
     public Content(String attribute, String value){
 	//Initializes the attribute constaint in file contents
 	this.attribute = attribute;

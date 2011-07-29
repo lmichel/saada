@@ -10,7 +10,8 @@ package saadadb.unit;
  */
 
 
-/**
+/** * @version $Id$
+
  * This class defines what is a unit; it is required for the Unit class.
  * It is used by Unit, and is not public.
  */

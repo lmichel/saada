@@ -11,7 +11,8 @@ import saadadb.collection.Category;
 public class ExtMappingTextField extends MappingTextField {
 
 
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

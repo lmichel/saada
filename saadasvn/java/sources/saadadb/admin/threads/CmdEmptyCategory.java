@@ -18,6 +18,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class CmdEmptyCategory extends CmdThread {
 
 	private String collection;

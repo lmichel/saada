@@ -28,7 +28,8 @@ import ajaxservlet.formator.SpectrumDisplayFilter;
 import ajaxservlet.formator.TableDisplayFilter;
 
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class GetMeta
  * Protocol
  * --------------------------------------------------------

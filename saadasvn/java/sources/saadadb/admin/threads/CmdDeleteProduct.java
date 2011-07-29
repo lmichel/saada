@@ -17,6 +17,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class CmdDeleteProduct extends CmdThread {
 	private JTable jtable;
 	Object[] tree_path_components;

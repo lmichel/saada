@@ -19,7 +19,8 @@ public class RelationCreate extends RelationIndexation {
 	private RelationConf config;
 	private RelationConfPanel config_panel;
 	
-	/**
+	/** * @version $Id$
+
 	 * @param frame
 	 * @param conf
 	 */

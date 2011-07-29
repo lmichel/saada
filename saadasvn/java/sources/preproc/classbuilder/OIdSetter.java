@@ -12,6 +12,11 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class OIdSetter {
 
 	public static void  main(String[] args)  {

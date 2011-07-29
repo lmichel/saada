@@ -19,7 +19,8 @@ import saadadb.util.RegExp;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class Loader extends SaadaProcess {
 	

@@ -9,7 +9,8 @@ import saadadb.meta.MetaClass;
 /**
  * Store the stuff needed by the GUI to display counterpart matching a relation pattern
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class CounterpartSelector implements Serializable{
 	/**

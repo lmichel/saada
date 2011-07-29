@@ -19,7 +19,8 @@ import saadadb.command.SaadaProcess;
 import saadadb.util.Messenger;
 
 public class ProgressDialog extends JDialog  {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

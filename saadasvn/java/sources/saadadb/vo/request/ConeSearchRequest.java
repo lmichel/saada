@@ -1,6 +1,7 @@
 package saadadb.vo.request;
 
 import saadadb.exceptions.QueryException;
+import saadadb.vo.formator.version;
 import saadadb.vo.request.formator.fits.ConeSearchToFITSFormator;
 import saadadb.vo.request.formator.votable.ConeSearchVotableFormator;
 import saadadb.vo.request.query.ConeSearchQuery;
@@ -9,8 +10,7 @@ import saadadb.vo.request.query.ConeSearchQuery;
  * Translate CS parameters in a SAADAQL query and run it
  * and build the response files
  * @author laurent
- * 
- * @version 06/2011
+ * @version $Id$
  *
  */
 public class ConeSearchRequest extends SaadaqlRequest {

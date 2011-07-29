@@ -30,7 +30,7 @@ import ajaxservlet.formator.DefaultPreviews;
  * 
  * @author Gr&eacute;gory Mantelet (CDS)
  * @version 10/05/2010
- *
+ *@version $Id$
  */
 public class TapToJsonFormator extends  VOResultFormator {
 

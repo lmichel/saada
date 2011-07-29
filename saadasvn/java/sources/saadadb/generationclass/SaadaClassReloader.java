@@ -24,7 +24,8 @@ import saadadb.util.Messenger;
  *  That is the case in servlet mode
  *
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class SaadaClassReloader extends ClassLoader {
 	private String class_to_reload;

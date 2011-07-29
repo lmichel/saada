@@ -31,7 +31,8 @@ import java.util.Stack;
  * Null elements are prohibited.  This class is likely to be faster than
  * {@link Stack} when used as a stack, and faster than {@link LinkedList}
  * when used as a queue.
- *
+ * * @version $Id$
+
  * <p>Most <tt>ArrayDeque</tt> operations run in amortized constant time.
  * Exceptions include {@link #remove(Object) remove}, {@link
  * #removeFirstOccurrence removeFirstOccurrence}, {@link #removeLastOccurrence

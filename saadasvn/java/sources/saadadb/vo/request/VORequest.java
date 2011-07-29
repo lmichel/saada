@@ -15,7 +15,8 @@ import saadadb.util.Messenger;
 import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.query.VOQuery;
 
-/**
+/** * @version $Id$
+
  * Request and subclasses handle totality  of the process, from the params to the
  * report delivery
  * At servlet level, we sould have something like

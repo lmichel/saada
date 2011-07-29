@@ -20,7 +20,8 @@ import saadadb.admin.tree.VoTree;
 import saadadb.admin.tree.VoUCDTree;
 
 public class VoTreeFrame extends JFrame {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

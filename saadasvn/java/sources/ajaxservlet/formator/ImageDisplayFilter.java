@@ -22,6 +22,11 @@ import saadadb.meta.MetaCollection;
 import saadadb.util.ChangeKey;
 import saadadb.util.SaadaConstant;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ImageDisplayFilter extends DefaultDisplayFilter {
 	private static final long serialVersionUID = 1L;
 	private static final Map<String, AttributeHandler> extatt_columns = new  LinkedHashMap<String, AttributeHandler>(Database.getCachemeta().getAtt_extend(Category.IMAGE));

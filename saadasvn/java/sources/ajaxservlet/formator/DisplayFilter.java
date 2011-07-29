@@ -19,7 +19,8 @@ import saadadb.query.result.OidsaadaResultSet;
  */
 public interface DisplayFilter {
 	
-	/**
+	/** * @version $Id$
+
 	 * Set the oid of the object to process
 	 * @param oid
 	 * @throws FatalException 

@@ -1,7 +1,8 @@
 package saadadb.prdconfiguration;
 
 import saadadb.products.Product;
-/**
+/** * @version $Id$
+
  *Interface for specification of product identification constraint
  *An object that implements the ProductIdentificationConstraint interface can be used in a standard in all Saada application
  *@author Millan Patrick

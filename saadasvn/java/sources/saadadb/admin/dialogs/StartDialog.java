@@ -16,7 +16,8 @@ import saadadb.admin.SaadaDBAdmin;
 /**
  * Open a splash window while the metadata cache intit 
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class StartDialog extends JWindow  {
 	/**

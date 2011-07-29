@@ -16,7 +16,8 @@ import saadadb.database.Database;
 import saadadb.util.RegExp;
 
 public class NameInput extends JDialog implements ActionListener, PropertyChangeListener {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

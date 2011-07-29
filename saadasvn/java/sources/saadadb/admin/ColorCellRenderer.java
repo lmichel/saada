@@ -8,7 +8,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 
 class ColorCellRenderer extends DefaultTableCellRenderer {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

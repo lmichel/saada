@@ -8,7 +8,8 @@ import saadadb.util.Messenger;
 
 import com.sun.tools.doclets.internal.toolkit.Configuration;
 ;
-/**
+/** * @version $Id$
+
  *This class is specification of a image2D configuration
  *@author Millan Patrick
  *@version 2.0

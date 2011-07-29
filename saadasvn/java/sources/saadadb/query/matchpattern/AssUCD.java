@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.parser.ClauseUCD;
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public final class AssUCD extends ClauseUCD{

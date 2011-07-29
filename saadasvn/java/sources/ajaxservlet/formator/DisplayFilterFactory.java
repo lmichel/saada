@@ -10,7 +10,8 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 /**
- * 
+ *  * @version $Id$
+
  * @author Clémentine Frère
  * 
  * contact : frere.clementine[at]gmail.com

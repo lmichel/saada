@@ -7,7 +7,8 @@ import java.io.PrintWriter;
 
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * This is the Client part of the Saada VO service.
  * It allows you to do VOQL queries on a Saada database,
  * and to get a VOTable file or URL as a result.

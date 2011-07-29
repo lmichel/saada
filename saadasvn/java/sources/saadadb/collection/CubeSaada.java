@@ -10,6 +10,11 @@ package saadadb.collection;
  * @version 00000001
  */
 import saadadb.util.SaadaConstant;
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class CubeSaada  extends WCSSaada {
   public double size_alpha_csa=SaadaConstant.DOUBLE;
   public double size_delta_csa=SaadaConstant.DOUBLE;

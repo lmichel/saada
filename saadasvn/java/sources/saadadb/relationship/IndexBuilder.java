@@ -23,7 +23,8 @@ import saadadb.util.TimeSaada;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class IndexBuilder extends SaadaProcess { 
 

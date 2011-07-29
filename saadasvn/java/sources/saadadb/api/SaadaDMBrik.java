@@ -5,7 +5,8 @@ import saadadb.exceptions.SaadaException;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 class SaadaDMBrik {
     protected String name;

@@ -74,7 +74,8 @@ import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 import cds.savot.writer.SavotWriter;
 
-/**
+/** * @version $Id$
+
  * <p>A sample designed to read and write an xml file </p>
  * @author Andre Schaaff
  * @version 2.7 Copyright CDS 2002-2008

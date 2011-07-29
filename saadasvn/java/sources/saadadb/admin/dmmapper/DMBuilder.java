@@ -51,7 +51,8 @@ public class DMBuilder extends JFrame{
 	private boolean dmvalid = false;;
 
 	
-	/**
+	/** * @version $Id$
+
 	 * @param data_model
 	 * @param classe
 	 * @throws Exception

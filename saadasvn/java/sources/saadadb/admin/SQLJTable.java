@@ -32,7 +32,8 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 public class SQLJTable extends JTable {
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

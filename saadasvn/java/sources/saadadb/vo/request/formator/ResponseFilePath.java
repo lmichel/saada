@@ -17,7 +17,8 @@ import saadadb.util.Messenger;
 public class ResponseFilePath {
 	private String responseFilePath = null;;
 
-	/**
+	/** * @version $Id$
+
 	 * @return
 	 */
 	public String getResponseFilePath() {

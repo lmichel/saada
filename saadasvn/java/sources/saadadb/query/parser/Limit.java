@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public final class Limit{

@@ -17,7 +17,8 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/**
+/** * @version $Id$
+
  * @author michel
  * 05/2001: add methods getUCDs
  */

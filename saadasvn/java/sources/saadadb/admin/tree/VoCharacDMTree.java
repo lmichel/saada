@@ -3,6 +3,11 @@ package saadadb.admin.tree;
 import java.awt.Frame;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class VoCharacDMTree extends VoTree {
 	String[] flat_utypes = {
 			"ChAxis.AxisName (Axis name )",

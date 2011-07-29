@@ -26,7 +26,7 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
- *
+ *@version $Id$
  */
 public abstract class FITSFormator extends VOResultFormator {
 	protected Fits fits ;

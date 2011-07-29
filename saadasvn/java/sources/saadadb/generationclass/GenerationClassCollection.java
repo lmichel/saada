@@ -20,7 +20,8 @@ import saadadb.util.Messenger;
 public class GenerationClassCollection{
 
 
-	/**
+	/** * @version $Id$
+
 	 * @param connector 
 	 * @throws Exception
 	 */

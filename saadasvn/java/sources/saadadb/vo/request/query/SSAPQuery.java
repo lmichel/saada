@@ -21,7 +21,8 @@ import saadadb.vo.PseudoTableParser;
 
 /**
  * @author laurent
- * @version 07/2011
+ * @version $Id$
+
  */
 public class SSAPQuery extends VOQuery {
 	public ArrayList<String>  formatTypes = new ArrayList<String>();

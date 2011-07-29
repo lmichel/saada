@@ -45,7 +45,8 @@ import saadaql.correlator.Parser.ConditionKnn;
 
 public final class CorrQueryTranslator {
 	private final String query;
-	/*
+	/* * @version $Id$
+
 	 * Parameters used by the KDTree
 	 */
 	private KDTree neighbour_detector=null;

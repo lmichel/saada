@@ -11,6 +11,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class CopyFile{
     
     public static void copy(File in, File out) throws Exception {

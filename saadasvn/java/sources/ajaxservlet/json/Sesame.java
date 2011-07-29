@@ -13,7 +13,8 @@ import saadadb.query.parser.PositionParser;
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.formator.DefaultFormats;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class Sesame
  */
 public class Sesame extends SaadaServlet  {

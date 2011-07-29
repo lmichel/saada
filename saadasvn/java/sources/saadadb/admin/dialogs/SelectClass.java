@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
 
 public class SelectClass extends JDialog implements ActionListener, PropertyChangeListener {
 	/**
-	 * 
+	 *  * @version $Id$
+
 	 */
 	private static final long serialVersionUID = 1L;
 	private String class_name = null;

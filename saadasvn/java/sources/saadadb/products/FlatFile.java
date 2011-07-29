@@ -21,7 +21,8 @@ public class FlatFile extends Product {
 		super(file, conf);
 	}
 
-	/**
+	/** * @version $Id$
+
 	 * This method builds a SaadaInstance and stores it into the DB
 	 * It is used for all data categories except for entries where the SaadaInstance step is skipped
 	 * @param saada_class

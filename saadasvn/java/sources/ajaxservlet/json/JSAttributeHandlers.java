@@ -31,7 +31,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaRelation;
 
-/**
+/** * @version $Id$
+
  * Servlet implementation class JSAttributeHandlers
  */
 public class JSAttributeHandlers extends SaadaServlet implements Servlet {

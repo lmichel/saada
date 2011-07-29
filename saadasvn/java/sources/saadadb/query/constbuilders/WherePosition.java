@@ -15,7 +15,8 @@ import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
  
-/**
+/** * @version $Id$
+
  * @author F.X. Pineau
  */
 public final class WherePosition extends SaadaQLConstraint {

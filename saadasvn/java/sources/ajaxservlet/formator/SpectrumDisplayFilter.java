@@ -23,6 +23,11 @@ import saadadb.util.ChangeKey;
 import saadadb.util.SaadaConstant;
 
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 	private static final long serialVersionUID = 1L;
 	private static final Map<String, AttributeHandler> extatt_columns 

@@ -21,7 +21,8 @@ public class Merger {
 	private ArrayList<String> covered_classes = null;
 	private VOResource vor;
 	private boolean allcolumns;
-	/**
+	/** * @version $Id$
+
 	 * @param sfi
 	 * @throws FatalException
 	 */

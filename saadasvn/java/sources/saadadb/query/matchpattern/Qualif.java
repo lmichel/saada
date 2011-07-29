@@ -7,6 +7,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.parser.Operator;
 
 
+/**
+ * @author laurentmichel
+ *v * @version $Id$
+
+ */
 public final class Qualif implements Serializable{
 	/**
 	 * 

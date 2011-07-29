@@ -8,6 +8,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import saadadb.admin.SaadaDBAdmin;
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class GestualTree extends JTree implements DragGestureListener {
 
 	public GestualTree(DefaultMutableTreeNode top) {

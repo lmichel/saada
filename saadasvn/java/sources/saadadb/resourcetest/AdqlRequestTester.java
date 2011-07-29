@@ -10,7 +10,8 @@ import saadadb.vo.request.TapAdqlRequest;
 
 public class AdqlRequestTester {
 
-	/**
+	/** * @version $Id$
+
 	 * @param args
 	 * @throws Exception
 	 */

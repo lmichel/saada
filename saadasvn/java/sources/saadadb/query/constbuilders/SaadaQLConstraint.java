@@ -21,7 +21,9 @@ public abstract class SaadaQLConstraint {
 	private int mode = -1;
 	
 	
-	/**
+	/** * @version $Id$
+ * @version $Id$
+
 	 * @param mode
 	 * @throws QueryException
 	 */

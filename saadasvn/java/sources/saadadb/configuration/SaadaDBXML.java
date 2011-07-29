@@ -27,6 +27,11 @@ import org.w3c.dom.NodeList;
 
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class SaadaDBXML {
   private static String separ = System.getProperty("file.separator");
   public SaadaDBXML() {

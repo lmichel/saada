@@ -5,7 +5,8 @@ import saadadb.util.TimeSaada;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class Report {
 	private String exec_report="";

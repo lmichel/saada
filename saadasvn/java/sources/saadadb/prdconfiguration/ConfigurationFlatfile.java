@@ -6,6 +6,11 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class ConfigurationFlatfile extends ConfigurationDefaultHandler {
 
 	public ConfigurationFlatfile(String configName, ArgsParser tabArg) throws FatalException, IgnoreException  {

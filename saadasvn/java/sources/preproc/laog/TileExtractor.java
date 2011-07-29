@@ -29,7 +29,8 @@ import nom.tam.fits.FitsException;
  * pre release misa a jour du SIAP
  *
  ******************************************************************************/
-/**
+/** * @version $Id$
+
  * Program extracting 'box' around a star from a 'mega' fits file and save it
  * into a new file. The argument of the programs are:
  * @param inFile 'mega' FITS file name

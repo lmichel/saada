@@ -30,7 +30,8 @@ import cds.astro.Qbox;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  * 07/2009:getInCircle uses QBOX for small cones and BOX + distance for larger ones 
  */
 abstract public class DbmsWrapper {

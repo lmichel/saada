@@ -3,6 +3,11 @@ package saadadb.sqltable;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public abstract  class Table_Saada_Group extends SQLTable {
 
 

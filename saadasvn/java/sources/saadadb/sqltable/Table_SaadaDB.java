@@ -61,7 +61,8 @@ public class Table_SaadaDB extends SQLTable {
 		//SQLTable.runQueryUpdateSQL("insert into saadadb DEFAULT VALUES", false, null);
 	}
 	
-	/**
+	/** * @version $Id$
+
 	 * Change the URL root of the database.
 	 * Param is normally checked by @see saadadb.command.ArgsParser
 	 * @param param_value

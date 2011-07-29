@@ -25,7 +25,8 @@ import saadadb.util.RegExp;
  * If it doesn't, error_msg is displayed
  */
 public class EditableLabel extends JPanel{
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

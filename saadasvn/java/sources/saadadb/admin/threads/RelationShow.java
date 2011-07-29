@@ -25,7 +25,8 @@ public class RelationShow extends RelationIndexation{
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.RelationIndexation#runCommand()
-	 */
+	 * * @version $Id$
+/
 	protected void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {

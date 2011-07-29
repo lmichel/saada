@@ -12,6 +12,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.query.parser.ClauseDM;
 
+/** * @version $Id$
+
+ * @author laurentmichel
+ *
+ */
 public class AssUType extends ClauseDM{
 	private static final String syntax = "AssUType { \\[ucd\\] op 'text'|number|(number,number) [\\[unit\\]] [ and|or ...] }";
 	private static final String regex  = ASS_UType + FacWS + ASS_CLAUSE_LD + FacWS + "(" + InUCDStat+ ")" + FacWS + ASS_CLAUSE_RD;

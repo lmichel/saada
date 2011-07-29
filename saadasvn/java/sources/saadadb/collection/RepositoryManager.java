@@ -12,7 +12,8 @@ import saadadb.util.Messenger;
 /**
  * Handle repositoy operations
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class RepositoryManager {
 

@@ -12,6 +12,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurentmichel
+ * * @version $Id$
+
+ */
 public class CmdSaveClass extends CmdThread {
 	private SQLJTable sql_table;
 	private Object[] tree_path_components;

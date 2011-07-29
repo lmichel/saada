@@ -16,7 +16,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
 
 public class Table_Saada_Metacoll extends SQLTable {
-	/**
+	/** * @version $Id$
+
 	 * @throws AbortException
 	 * @throws CollectionException 
 	 */

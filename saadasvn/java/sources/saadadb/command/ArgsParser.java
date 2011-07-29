@@ -25,7 +25,8 @@ import saadadb.util.SaadaConstant;
 /**
  * Check the command line parameters
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class ArgsParser implements Serializable{
 	/**

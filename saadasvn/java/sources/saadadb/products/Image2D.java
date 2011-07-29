@@ -30,7 +30,8 @@ import saadadb.util.Messenger;
  */
 public class Image2D extends Product {
 	boolean load_vignette = true;
-	/**
+	/** * @version $Id$
+
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

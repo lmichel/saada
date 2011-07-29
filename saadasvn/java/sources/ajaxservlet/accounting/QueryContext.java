@@ -14,6 +14,11 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import ajaxservlet.formator.DisplayFilter;
 
+/**
+ * @author laurentmichel
+  * @version $Id$
+*
+ */
 public class QueryContext implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String query;

@@ -21,7 +21,8 @@ import saadadb.util.Messenger;
  * @author michel
  *
  */
-/**
+/** * @version $Id$
+
  * @author michel
  * 01/2010: suppression de la generation de code correlateur
  */

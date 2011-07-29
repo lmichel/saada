@@ -10,7 +10,8 @@ import saadadb.database.Database;
 
 /**
  * @author michel
- *
+ * * @version $Id$
+
  */
 public class CollectionTextField extends TreepathDropableTextField {
 	/**
