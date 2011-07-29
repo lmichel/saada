@@ -48,7 +48,7 @@ import cds.savot.writer.SavotWriter;
  * @author laurentmichel
  *
  */
-public abstract class VOTableFormator extends VOResultFormator {
+public abstract class VOTableFormator extends VOResultFormator  {
 
 	protected SavotWriter writer;	
 	protected SavotTable table;

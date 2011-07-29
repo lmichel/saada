@@ -48,7 +48,7 @@ import cds.savot.writer.SavotWriter;
  * @author laurentmichel
  *
  */
-public abstract class VotableFormator extends QueryResultFormator {
+public abstract class VotableFormator extends  QueryResultFormator {
 
 	protected SavotWriter writer;	
 	protected SavotTable table;
