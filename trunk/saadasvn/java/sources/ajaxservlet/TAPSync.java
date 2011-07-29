@@ -49,6 +49,8 @@ import saadadb.vo.tap.TAPToolBox.TAPParameters;
  * </i><BR /><BR />
  * 
  * @author Gr&eacute;gory Mantelet
+ * @version $Id$
+
  * @see SaadaServlet
  */
 public class TAPSync extends SaadaServlet {
