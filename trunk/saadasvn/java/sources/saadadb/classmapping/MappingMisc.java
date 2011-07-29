@@ -8,12 +8,8 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
  * At present, it exists nay difference enters this class managing this mapping and the mapping class by default.
  * This class exits only for ease in the furure the development of new specific features.
  *@author Millan Patrick
- *@version 2.0
- *@since 2.0
- *@see Mapping
- *@see Mapping
- * * @version $Id$
-/
+ *@version $Id$
+ */
 public class MappingMisc extends Mapping {
 	/**Constructor of the miscs mapping (Default constructor).
 	 *@param Configuration the configuration of this mapping. 

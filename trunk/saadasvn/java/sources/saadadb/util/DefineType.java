@@ -10,8 +10,8 @@ import saadadb.exceptions.AbortException;
  *@version 2.0
  *@since 2.0
  *@see Hashtable
- * * @version $Id$
- * /
+ * @version $Id$
+ */
 public class DefineType extends Hashtable{
 	/**The standard integer corresponding to the "java.util.Date" type**/
 	public static final int FIELD_DATE = 0;

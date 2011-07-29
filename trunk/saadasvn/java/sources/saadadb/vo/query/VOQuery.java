@@ -9,7 +9,6 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.vo.formator.VOResultFormator;
-import saadadb.vo.formator.version;
 
 /**
  * Implementation of VOQueries build and run the query from parameters

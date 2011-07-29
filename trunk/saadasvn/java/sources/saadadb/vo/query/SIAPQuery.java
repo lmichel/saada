@@ -16,7 +16,6 @@ import saadadb.query.parser.PositionParser;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.util.Merger;
 import saadadb.vo.PseudoTableParser;
-import saadadb.vo.formator.version;
 
 /**
  * @author laurentmichel

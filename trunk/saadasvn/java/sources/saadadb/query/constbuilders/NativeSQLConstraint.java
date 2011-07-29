@@ -2,6 +2,10 @@ package saadadb.query.constbuilders;
  
 import saadadb.exceptions.QueryException;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class NativeSQLConstraint extends SaadaQLConstraint{
 	
 	
@@ -16,8 +20,4 @@ public class NativeSQLConstraint extends SaadaQLConstraint{
 		this.sqlcolnames = attributes;
 	}
 
-	public static void main(String[] args) {
-		 * @version $Id$
-		
-	}
 }

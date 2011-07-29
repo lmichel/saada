@@ -1,5 +1,4 @@
- * @version $Id$
- * @version $Id$
+
 package saadadb.admin.dnd;
 
 /*
@@ -12,6 +11,10 @@ import javax.swing.table.DefaultTableModel;
 
 import saadadb.admin.ResultSetTableModel;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class UtypeTransferHandler extends SaadaTransferHandler {
     /**
 	 *  * @version $Id$

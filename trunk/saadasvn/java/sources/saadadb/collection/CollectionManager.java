@@ -16,6 +16,10 @@ import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class CollectionManager extends EntityManager {
 
 
@@ -266,12 +270,7 @@ public class CollectionManager extends EntityManager {
 			SQLTable.addQueryToTransaction("DELETE FROM " + table_name + " WHERE name_coll = '" + this.name + "'", table_name);					
 		}
 	}
-	public static void main(String[] args) {
-		 * @version $Id$
-		 * @version $Id$
-		 * @version $Id$
 
-	}
 }
 
 

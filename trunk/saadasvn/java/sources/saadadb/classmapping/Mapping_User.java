@@ -3,17 +3,14 @@ package saadadb.classmapping;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 /** This class models the mapping in user mode.
  *@author Millan Patrick
- *@version 2.0
- *@since 2.0
- *@see TypeMapping
+ *@version $Id$
  */
 public class Mapping_User extends TypeMapping{ 
     /**Constructor.
      *@param Configuration the configuration of this mapping.
      *@param String the mapping type of this configuration.
      *@param String the class name of products described by this configuration.
-     * * @version $Id$
-/
+     */
     public Mapping_User(ConfigurationDefaultHandler configuration, String typeMapping, String className){
 	this.configuration = configuration;
 	this.typeMapping = typeMapping;

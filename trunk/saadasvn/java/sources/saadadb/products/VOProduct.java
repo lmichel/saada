@@ -33,6 +33,10 @@ import cds.savot.model.TableSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class VOProduct extends File implements ProductFile {
 
 	private static final long serialVersionUID = 1L;
@@ -114,8 +118,7 @@ public class VOProduct extends File implements ProductFile {
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getTableEntry()
-	 * * @version $Id$
-/
+	 */
 	public LinkedHashMap<String, Integer> getTableEntry() throws IgnoreException {
 		LinkedHashMap<String, Integer> entry = new LinkedHashMap<String, Integer>();
 		/*

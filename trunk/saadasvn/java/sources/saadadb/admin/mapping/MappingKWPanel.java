@@ -47,7 +47,7 @@ import saadadb.util.RegExp;
 
 /**
  * @author michel
- * * @version $Id$
+ * @version $Id$
 
  */
 public class MappingKWPanel extends JPanel implements ActionListener {

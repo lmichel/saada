@@ -9,6 +9,10 @@ import saadadb.products.Product;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 
+/**
+ * @author laurent
+ * @version $Id$
+ */
 public class MappingSpectrum extends Mapping {
     
 	private static final long serialVersionUID = 1L;
@@ -25,8 +29,7 @@ public class MappingSpectrum extends Mapping {
     /**Constructor of the spectra mapping (Default constructor).
      *@param Configuration the configuration of this spectra mapping. 
      * @throws ParsingException 
-     * * @version $Id$
-/    
+     */    
 	private int scPriority=DefineType.FIRST;
 
 	public MappingSpectrum(ConfigurationDefaultHandler configuration) throws IgnoreException, FatalException{

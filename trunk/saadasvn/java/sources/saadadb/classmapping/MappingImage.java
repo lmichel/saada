@@ -10,12 +10,8 @@ import saadadb.util.Messenger;
  * At present, it exists nay difference enters this class managing this mapping and the mapping class by default.
  * This class exits only for ease in the furure the development of new specific features.
  *@author Millan Patrick
- *@version 2.0
- *@since 2.0
- *@see Mapping
- *@see Mapping
- * * @version $Id$
-/
+ *@version $Id$
+ */
 public class MappingImage extends Mapping {
     /**Constructor of the 2D images mapping (Default constructor).
      *@param Configuration the configuration of this mapping. 

@@ -5,7 +5,6 @@ package saadadb.vo.query;
 
 import java.util.Map;
 
-import saadadb.vo.formator.version;
 
 /**
  * Request and subclasses handle totality  of the process, from the params to the

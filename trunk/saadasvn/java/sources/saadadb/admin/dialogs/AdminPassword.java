@@ -18,11 +18,11 @@ import javax.swing.JTextField;
 import saadadb.database.Database;
 
 
-public  * @version $Id$
-/* @version $Id$
-
-	 * 
-	 */
+/**
+ * @author laurent
+ * @version $Id$
+ */
+public class AdminPassword extends JDialog implements ActionListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
 	private String typed_name = null;
 	private String typed_passwd = null;
