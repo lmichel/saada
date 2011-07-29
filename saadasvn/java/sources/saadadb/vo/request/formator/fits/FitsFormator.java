@@ -22,7 +22,7 @@ import saadadb.vo.request.formator.QueryResultFormator;
  * @author michel
  * @version 07/2011
  */
-public abstract class FitsFormator extends QueryResultFormator {
+public abstract class FitsFormator extends QueryResultFormator { 
 	protected Fits fits ;
 	protected int nb_columns;
 	protected ArrayList<UTypeHandler> column_set = new ArrayList<UTypeHandler>();
