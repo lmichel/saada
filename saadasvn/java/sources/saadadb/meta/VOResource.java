@@ -312,7 +312,7 @@ public class VOResource {
 	}
 
 	/**
-	 * <Make a copy of the map in order to avoid a cache alteration. This copy is filtered to discard internal keywords
+	 * Make a copy of the map in order to avoid a cache alteration. This copy is filtered to discard internal keywords
 	 * @param lah
 	 * @return
 	 */
