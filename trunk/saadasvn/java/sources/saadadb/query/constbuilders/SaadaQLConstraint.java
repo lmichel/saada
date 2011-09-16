@@ -9,11 +9,16 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.VOResource;
 
+/**
+ * @author laurent
+ * @version @Id$
+ */
 public abstract class SaadaQLConstraint {
 	final static public int NATIVE=0;
 	final static public int POSITION=1;
 	final static public int DM_MAPPED=2;
 	final static public int COL_MAPPED=3;
+	final static public int GLOBAL=4;
 	private boolean taken_by_class= false;
 	private boolean taken_by_collection= false;
 	public String where;
@@ -21,14 +26,12 @@ public abstract class SaadaQLConstraint {
 	private int mode = -1;
 	
 	
-	/** * @version $Id$
- * @version $Id$
-
+	/**
 	 * @param mode
 	 * @throws QueryException
 	 */
 	SaadaQLConstraint(int mode) throws QueryException {
-		if( mode < NATIVE || mode > COL_MAPPED) {
+		if( mode < NATIVE || mode > GLOBAL) {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "SQLConstraint mode must be between 0 and 3");
 		}
 		this.mode = mode;
@@ -40,6 +43,7 @@ public abstract class SaadaQLConstraint {
 	 */
 	public String[] getResultColNames(String key) {
 		switch(this.mode) {
+		case GLOBAL:
 		case NATIVE: ArrayList<String> al= new ArrayList<String>();
 		for( String s: sqlcolnames) {
 			al.add(getNativeResultColName(key, s));
@@ -74,11 +78,18 @@ public abstract class SaadaQLConstraint {
 	/**
 	 * @return
 	 */
-	public boolean isNative() {
-		return ( mode == NATIVE );
+	public boolean isGlobal() {
+		return ( mode == GLOBAL );
 	}
 	/**
 	 * @return
+	 */
+	public boolean isNative() {
+		return ( mode == NATIVE );
+	}
+	
+	/**
+	 * * @return
 	 */
 	public boolean isPosition() {
 		return ( mode == POSITION );
