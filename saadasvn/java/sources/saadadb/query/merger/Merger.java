@@ -201,6 +201,14 @@ public class Merger {
 		for( Entry<String, CollectionQNode>e: collection_nodes.entrySet()) {
 			covered_classes.addAll(e.getValue().getCoveredClasses());
 		}
+		
+		for( SaadaQLConstraint sqc: this.builders.values()) {
+			if( sqc.isGlobal() ) {
+				retour += "\n" + sqc.getWhere();
+			}
+		}
+
+		
 		return retour;
 	}
 	
