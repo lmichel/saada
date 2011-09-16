@@ -27,6 +27,7 @@ import saadadb.query.matchpattern.Qualif;
 import saadadb.query.matchpattern.Qualifier;
 import saadadb.query.merger.Merger;
 import saadadb.query.parser.Limit;
+import saadadb.query.parser.OrderBy;
 import saadadb.query.parser.SelectFromIn;
 import saadadb.query.parser.Utils;
 import saadadb.query.parser.WhereAttributeSaada;
@@ -55,6 +56,8 @@ public class Query extends Query_Report{
 	private WhereDM             wdmClause ;
 	private WhereRelation       wrClause;	
 	private Limit               limitClause ;
+	private OrderBy             obClause;
+
 	private String query_string;
 	private long index_owner_key;
 	private Merger merger;
@@ -237,7 +240,7 @@ public class Query extends Query_Report{
 		//		wuClause  = null ;
 		//		wUtClause  = null ;
 		wrClause  = null ;
-		//		obClause  = null ;
+		obClause  = null ;
 		limitClause = null;
 		//		wuManager = null;
 		//		wUtManager = null;
@@ -260,6 +263,9 @@ public class Query extends Query_Report{
 		}
 		if( this.wpClause != null ) {
 			builders.put("coord", this.wpClause.getSaadaQLConstraint());
+		}
+		if( this.obClause != null ) {
+			builders.put("order", this.obClause.getSaadaQLConstraint());
 		}
 		if( this.wuClause != null ) {
 			for( UCDField field: this.wuClause.getSaadaQLConstraints()) {
@@ -312,6 +318,11 @@ public class Query extends Query_Report{
 			this.wdmClause  = new WhereDM(strQtemp, vor);
 			strQtemp = strQtemp.replace(this.wdmClause.getStrMatch(), "");
 		}		
+		if(OrderBy.isIn(strQtemp)){
+			this.obClause = new OrderBy(strQtemp);
+			strQtemp = strQtemp.replace(this.obClause.getStrMatch(), "");
+//			this.checkOrderBy();
+		}
 		if (WhereRelation.isIn(strQtemp)) {
 			this.wrClause = new WhereRelation(strQtemp, this.vor);
 			strQtemp = strQtemp.replace(this.wrClause.getStrMatch(), "");
