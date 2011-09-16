@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.query.constbuilders.OrderByConstraint;
+import saadadb.query.constbuilders.SaadaQLConstraint;
 
 /**
 * This class parse the SaadaQL clause:
@@ -29,6 +31,7 @@ public final class OrderBy{
 	private static final Pattern pattern = Pattern.compile(regex);
 	
 	private String strMatch;
+	private String attr;
 	
 	private String theStatement; //= constraint
 	private boolean isDesc = false;
@@ -40,12 +43,12 @@ public final class OrderBy{
 	}
 	
 	public static final String   getSyntax (){return syntax       ;}
-	protected final String getStrMatch     (){return this.strMatch    ;}
+	public final String getStrMatch        (){return this.strMatch    ;}
 	protected final String getTheStatement (){return this.theStatement;}
 	protected final int    getType         (){return (this.haveSpecialKey())?BOTH:this.type;}
     protected final String getOrder        (){return (isDesc)?"DESC":"";}
 	
-    protected static final boolean isIn(String strQ){return pattern.matcher(strQ).find();}
+    public static final boolean isIn(String strQ){return pattern.matcher(strQ).find();}
 	
 	/**
 	 * @param strQ
@@ -56,6 +59,7 @@ public final class OrderBy{
 		if(m.find()){
 			this.strMatch = m.group(0);
 			this.theStatement = m.group(1);
+			this.attr = m.group(1);
 			if(m.group(2)!=null && m.group(2).matches("\\s+(?i)(desc)")){
 				this.isDesc = true;
 			}
@@ -100,5 +104,18 @@ public final class OrderBy{
 		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Order By type code \""+val+"\" unknowed!");
 		return 0;
 	}
+	/**
+	 * @return
+	 * @throws QueryException
+	 * @throws SaadaException
+	 */
+	public SaadaQLConstraint getSaadaQLConstraint() throws QueryException, SaadaException {
+		return new OrderByConstraint(this.strMatch,new String[]{this.attr});
+	}
 	
+	public  String getSQL(String alias){
+		return this.strMatch;
+	}
+
+
 }
