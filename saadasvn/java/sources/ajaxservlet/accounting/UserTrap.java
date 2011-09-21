@@ -18,8 +18,7 @@ public class UserTrap {
 
 	public static UserAccount getUserAccount(HttpServletRequest req) throws ServletException {
 		try {
-			HttpSession session = req.getSession(true);  
-
+			HttpSession session = req.getSession();  
 			session.setMaxInactiveInterval(-1);
 			String session_id = session.getId();
 			if (session.isNew()) {
