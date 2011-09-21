@@ -17,8 +17,7 @@ import saadadb.exceptions.AbortException;
 
 public class AbortExceptionDialog extends JDialog implements ActionListener, PropertyChangeListener {
 	/**
-	 *  * @version $Id$
-
+	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private JOptionPane optionPane;
