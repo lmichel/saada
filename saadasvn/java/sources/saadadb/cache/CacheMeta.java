@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -23,8 +24,7 @@ import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/** * @version $Id$
-s
+/**
  * @author michel
  * 05/2011: add method getUCDs
  * 05/2011: add methods getRelationNamesStarting/Ending from/on  Class
@@ -61,13 +61,31 @@ public class CacheMeta {
 	private boolean loaded = false;
 
 	private String tables = "";
-
+	/*
+	 * Collection attributes not published by TAP
+	 */
+	private static Set<String> ignoreCollAttrs = null;
+	
 
 	public CacheMeta() throws FatalException {
+		if( ignoreCollAttrs == null ) {
+			ignoreCollAttrs = new LinkedHashSet<String>();
+			ignoreCollAttrs.add("date_load");
+			ignoreCollAttrs.add("product_url_csa");
+			ignoreCollAttrs.add("sky_pixel_csa");
+			ignoreCollAttrs.add("oidtable");
+			ignoreCollAttrs.add("shape_csa");
+			ignoreCollAttrs.add("date_load");
+			ignoreCollAttrs.add("y_colname_csa");
+			ignoreCollAttrs.add("x_colname_csa");
+			ignoreCollAttrs.add("y_min_csa");
+			ignoreCollAttrs.add("y_max_csa");
+			ignoreCollAttrs.add("y_max_csa");
+		}
 		this.reload(true);
 	}
 
-	public String getTables(){
+	public String getTables() throws FatalException{
 		/*
 		 * Pre set the xml description of classes :used by TAP.tables
 		 */
@@ -249,9 +267,24 @@ public class CacheMeta {
 		this.class_names = (this.classes.keySet().toArray(new String[0]));
 	}
 
-	private static String generateXMLTable(MetaClass mc){
+	private  String generateXMLTable(MetaClass mc) throws FatalException{
 		String xml = "\t\t<table xsi:type=\"output\">\n\t\t\t<name>"+mc.getName()+"</name>\n\t\t\t<description>"+mc.getDescription()+"</description>";
-		Collection<AttributeHandler> coll = mc.getAttributes_handlers().values();
+		Collection<AttributeHandler> coll = this.getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
+		for(AttributeHandler ah : coll) {
+			if( !ignoreCollAttrs.contains(ah.getNameattr())) {
+				xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
+					+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
+					+ah.getComment()+"]]></description>"
+				+"\n\t\t\t\t<unit>"
+				+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
+				+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
+				+ah.getUtype()+"</utype>"
+				+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
+				+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
+			}
+		}
+	
+		coll = mc.getAttributes_handlers().values();
 		for(AttributeHandler ah : coll)
 			xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
 				+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
