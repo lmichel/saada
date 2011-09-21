@@ -13,11 +13,6 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import cds.astro.Astrocoo;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class RenameWFI {
 
 	public static void main(String[] args) throws Exception{

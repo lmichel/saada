@@ -3,11 +3,6 @@ package preproc.xid;
 import saadadb.database.Database;
 import saadadb.sqltable.SQLTable;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class SetPgm {
 	public static void main(String[] args) throws Exception {
 		Database.init("Napoli");
