@@ -18,11 +18,6 @@ import saadadb.util.SaadaConstant;
  * @author XXXX
  * @version 00000001
  */ 
-/** * @version $Id$
-
- * @author laurentmichel
- *
- */
 public class FlatfileSaada extends SaadaInstance{
     
     public String product_url_csa = SaadaConstant.STRING;

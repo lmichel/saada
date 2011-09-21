@@ -5,8 +5,7 @@ import saadadb.exceptions.SaadaException;
 public abstract class  EntityManager extends SaadaProcess {
 	protected String name ;
 	
-	/** * @version $Id$
-
+	/**
 	 * Although all method could be static, we need to make an instance to monitor the progress from 
 	 * the GUI
 	 */	

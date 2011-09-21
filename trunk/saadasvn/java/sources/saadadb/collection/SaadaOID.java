@@ -13,8 +13,7 @@ import saadadb.sqltable.SQLQuery;
 
 /**
  * @author michel
- * * @version $Id$
-
+ *
  */
 public abstract class SaadaOID {
 	/*

@@ -11,9 +11,7 @@ import saadadb.util.Messenger;
 public class CreateCollectionIndex {
 
 
-	/** * @version $Id$
- * @version $Id$
-
+	/**
 	 * Index all class tables for the category in the collection and also index the collection table
 	 * @param collection
 	 * @param category

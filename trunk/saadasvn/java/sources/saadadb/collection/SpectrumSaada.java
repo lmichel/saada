@@ -10,11 +10,6 @@ package saadadb.collection;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class SpectrumSaada extends WCSSaada{
 
 	public double x_min_csa   = SaadaConstant.DOUBLE;

@@ -19,8 +19,7 @@ import saadadb.util.Messenger;
  *
  */
 public class ProductManager extends EntityManager {
-	/** * @version $Id$
-
+	/**
 	 * Although all method could be static, we need to make an instance to monitor the progress from 
 	 * the GUI
 	 */
@@ -33,37 +32,46 @@ public class ProductManager extends EntityManager {
 	 */
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
-		
+
 	}
 
 
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
-		
+
 	}
 
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
-		
+
 	}
 
 
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
-		
+
 	}
 
 
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
-		
+
 	}
 
 
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
-		
+		try {
+			String[] soids =  ap.getRemove().split("[,;]");
+			long retour[] = new long[soids.length];
+			for( int j=0 ; j<soids.length ; j++ ) {
+				retour[j] = Long.parseLong(soids[j]);
+			}
+			removeProducts(retour);
+		} catch (Exception e) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	}
 
 	/**************************************
@@ -97,7 +105,7 @@ public class ProductManager extends EntityManager {
 			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
-		
+
 	}
 	/**
 	 * @param oids
@@ -138,10 +146,6 @@ public class ProductManager extends EntityManager {
 				in_stm += ", " + oids[i];
 			}
 			in_stm += ")";
-			/*
-			 * Begins a possibly heavy transaction
-			 */
-			SQLTable.beginTransaction();
 			/*
 			 * If products to remove are tables: process first entries
 			 */
@@ -250,7 +254,6 @@ public class ProductManager extends EntityManager {
 				squery.close();
 				SQLTable.addQueryToTransaction("DELETE FROM saada_loaded_file WHERE oidsaada IN " + in_stm, "saada_loaded_file");
 			}
-			SQLTable.commitTransaction();
 		} catch(AbortException e ) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		} catch(Exception e ) {

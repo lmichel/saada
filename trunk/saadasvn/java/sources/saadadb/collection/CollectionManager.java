@@ -1,7 +1,5 @@
 package saadadb.collection;
 
-import java.io.File;
-
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
@@ -16,14 +14,7 @@ import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.Messenger;
 
-/**
- * @author laurent
- * @version $Id$
- */
 public class CollectionManager extends EntityManager {
-
-
-
 
 	/***********************************
 	 * Inherited abstract methods
@@ -270,7 +261,6 @@ public class CollectionManager extends EntityManager {
 			SQLTable.addQueryToTransaction("DELETE FROM " + table_name + " WHERE name_coll = '" + this.name + "'", table_name);					
 		}
 	}
-
 }
 
 

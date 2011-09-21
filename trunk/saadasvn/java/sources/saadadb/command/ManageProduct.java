@@ -5,8 +5,7 @@ import saadadb.collection.ProductManager;
 
 public class ManageProduct extends ManageEntity{
 	
-	/** * @version $Id$
-
+	/**
 	 * 
 	 */
 	public ManageProduct() {
@@ -19,11 +18,9 @@ public class ManageProduct extends ManageEntity{
 		processCommand(new ManageProduct(), args);
 	}
 
-
-
 	@Override
 	public void usage() {
-		System.out.println("USAGE: java ManageCclass -[empty|remove]=class_name [-force] SaadaDB_Name");
+		System.out.println("USAGE: java ManageProduct -remove=oid1,...oidn  SaadaDB_Name");
 		System.exit(1);						
 	}
 	

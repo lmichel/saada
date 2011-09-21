@@ -8,11 +8,6 @@ import saadadb.relationship.RelationManager;
 /**
  * Command line interface with RelationManager
  * @author michel
- * * @version $Id$
-
- */
-/**
- * @author laurentmichel
  *
  */
 public class ManageRelation extends ManageEntity {

@@ -25,8 +25,7 @@ import saadadb.util.SaadaConstant;
 /**
  * Check the command line parameters
  * @author michel
- * * @version $Id$
-
+ *
  */
 public class ArgsParser implements Serializable{
 	/**
@@ -81,7 +80,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-repository=") &&
 							!args[i].startsWith("-filter=") &&
 							!args[i].startsWith("-create") &&
-							!args[i].startsWith("-oid") &&
+							!args[i].startsWith("-oids") &&
 							!args[i].startsWith("-force") &&
 							!args[i].startsWith("-debug") &&
 							!args[i].startsWith("-silent") &&
@@ -780,13 +779,18 @@ public class ArgsParser implements Serializable{
 	 *  Returns the name of the entity to remove 
 	 * @return
 	 */
-	public long getOid() {
+	public long[] getOids() throws Exception{
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-oid")) {
-				return Long.parseLong(getArgsValue(args[i]));	
+			if( args[i] .startsWith("-oids")) {
+				String[] soids =  getArgsValue(args[i]).split("[,;]");
+				long retour[] = new long[soids.length];
+				for( int j=0 ; j<soids.length ; j++ ) {
+					retour[j] = Long.parseLong(soids[j]);
+				}
+				return retour;
 			}
 		}
-		return SaadaConstant.LONG;		
+		return null;		
 	}
 
 	/**
@@ -955,7 +959,7 @@ public class ArgsParser implements Serializable{
 	 * @param arg
 	 * @return
 	 */
-	static private String getArgsValue(String arg) {
+	static public String getArgsValue(String arg) {
 		if( arg == null ) {
 			return null;
 		}

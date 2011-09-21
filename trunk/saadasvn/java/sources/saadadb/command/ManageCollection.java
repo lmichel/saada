@@ -6,8 +6,7 @@ import saadadb.collection.CollectionManager;
 /**
  * Command line interface with CollectionManager
  * @author michel
- * * @version $Id$
-
+ *
  */
 public class ManageCollection extends ManageEntity{
 
