@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -128,6 +129,8 @@ public class SaadaServlet extends HttpServlet {
 	 */
 	public void getErrorPage(HttpServletRequest req, HttpServletResponse res, String msg) {
 		try {
+			Messenger.printMsg(Messenger.ERROR, msg);			
+			res.setContentType("text/html");
 			res.getOutputStream().println(DefaultPreviews.getErrorDiv(msg));
 		} catch (Exception e1) {
 			Messenger.printStackTrace(e1);
@@ -179,7 +182,7 @@ public class SaadaServlet extends HttpServlet {
 		if (queryString != null) {
 			full_url += "?"+queryString;
 		}		
-		return req.getMethod() + " from " + req.getRemoteAddr() + ": " + full_url ;
+		return req.getMethod() + " from " + req.getRemoteAddr() + ": " + full_url  + " " + req.getSession().getId();
 	}
 
 	/**
@@ -197,32 +200,48 @@ public class SaadaServlet extends HttpServlet {
 			getErrorPage(req, res, "File " + f.getAbsolutePath() + " does not exist or cannot be read");
 			return;
 		}
-		if( product_path.toLowerCase().endsWith(".htm") || product_path.toLowerCase().endsWith(".html") ) {
+		String name_f =f.getName();;
+		String s_product = product_path;
+		if( product_path.toLowerCase().endsWith(".gz") ) {
+			res.setHeader("Content-Encoding", "gzip");
+			s_product = product_path.replaceAll("(?i)(\\.gz$)", "");
+		}
+		else if( product_path.toLowerCase().endsWith(".gzip") ) {
+			res.setHeader("Content-Encoding", "gzip");
+			s_product = product_path.replaceAll("(?i)(\\.gzip$)", "");
+		}
+		else if( product_path.toLowerCase().endsWith(".zip") ) {
+			res.setHeader("Content-Encoding", "zip");
+			s_product = product_path.replaceAll("(?i)(\\.zip$)", "");
+		}
+		
+		if( s_product.toLowerCase().endsWith(".htm") || s_product.toLowerCase().endsWith(".html") ) {
 			res.setContentType("text/html;charset=ISO-8859-1");
-		} else if( product_path.toLowerCase().endsWith(".pdf")  ) {
+		} else if( s_product.toLowerCase().endsWith(".pdf")  ) {
 			res.setContentType("application/pdf");
-		} else if( product_path.toLowerCase().endsWith(".png")  ) {
+		} else if( s_product.toLowerCase().endsWith(".png")  ) {
 			res.setContentType("image/png");
-		} else if( product_path.toLowerCase().endsWith(".jpeg") || product_path.toLowerCase().endsWith(".jpg")) {
+		} else if( s_product.toLowerCase().endsWith(".jpeg") || s_product.toLowerCase().endsWith(".jpg")) {
 			res.setContentType("image/jpeg");
-		} else if( product_path.toLowerCase().endsWith(".gif") ) {
+		} else if( s_product.toLowerCase().endsWith(".gif") ) {
 			res.setContentType("image/gif");
-		} else if( product_path.toLowerCase().endsWith(".txt")  ) {
+		} else if( s_product.toLowerCase().endsWith(".txt")  ) {
 			res.setContentType("text/plain");
-		} else if( product_path.matches(RegExp.FITS_FILE)) {
-			res.setContentType( "application/fits");						
-		} else if( product_path.matches(RegExp.VOTABLE_FILE)) {
-			res.setContentType("application/x-votable+xml");						
-			//res.setContentType("text/xml");
-		} else if( product_path.toLowerCase().endsWith(".xml")  ) {
+		} else if( s_product.matches(RegExp.FITS_FILE)) {
+			res.setContentType( "application/fits");                                                
+		} else if( s_product.matches(RegExp.VOTABLE_FILE)) {
+			res.setContentType("application/x-votable+xml");                                                
+		} else if( s_product.toLowerCase().endsWith(".xml")  ) {
 			res.setContentType("text/xml");
 		} else if (contentType != null) {
 			res.setContentType(contentType);
 		} else  {
 			res.setContentType("application/octet-stream");
 		}
-		res.setHeader("Content-Disposition", "attachment; filename=\"" + f.getName() + "\"");
 
+		res.setHeader("Content-Disposition", "attachment; filename=\""+ name_f + "\"");
+		res.setHeader("Content-Length"     , Long.toString(f.length()));
+		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
 		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);
 
 		BufferedInputStream fl = new BufferedInputStream(new FileInputStream(product_path));
@@ -233,7 +252,8 @@ public class SaadaServlet extends HttpServlet {
 			bos.write(b, 0, len);
 		}				
 		bos.flush();
-		bos.close();		
+		bos.close();
+		fl.close();
 	}
 	
 	/**
