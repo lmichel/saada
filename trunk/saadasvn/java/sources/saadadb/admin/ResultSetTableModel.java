@@ -22,8 +22,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
-/** * @version $Id$
-
+/**
  * This class takes a JDBC ResultSet object and implements the TableModel
  * interface in terms of it so that a Swing JTable component can display the
  * contents of the ResultSet.  Note that it requires a scrollable JDBC 2.0 
