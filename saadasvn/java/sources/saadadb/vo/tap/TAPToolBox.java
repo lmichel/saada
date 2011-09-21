@@ -50,8 +50,8 @@ import uws.job.AbstractJob;
  * }<br />
  * 
  * @author Gr&eacute;gory Mantelet (CDS)
- * @version $Id$
-
+ * @version 04/2010
+ * @version 07/2011 getContentType and getFormat moved to VOResultformator
  */
 public class TAPToolBox {
 
