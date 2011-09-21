@@ -30,8 +30,7 @@ import saadadb.util.Messenger;
 import saadadb.vo.formator.QueryInfos;
 import saadadb.vo.formator.VOTableField;
 
-/** * @version $Id$
-
+/**
  * Parser which translates a VOQL/x file into a SaadaQL/s String
  *
  * This parser implements the 1.01 version of ADQL which can be found at :
