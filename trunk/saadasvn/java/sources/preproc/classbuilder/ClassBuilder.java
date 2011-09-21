@@ -13,11 +13,6 @@ import saadadb.meta.VOResource;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class ClassBuilder {
 
 	public static void  main(String[] args)  {
