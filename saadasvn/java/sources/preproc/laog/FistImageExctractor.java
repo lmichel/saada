@@ -17,8 +17,7 @@ import nom.tam.fits.ImageHDU;
 import nom.tam.image.ImageTiler;
 import nom.tam.util.BufferedDataOutputStream;
 
-/** * @version $Id$
-
+/**
  * Program extracting 'box' around a star from a 'mega' fits file and save it
  * into a new file. The argument of the programs are:
  * @param decal is a ga
