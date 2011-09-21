@@ -12,11 +12,6 @@ import saadadb.database.Database;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class EPICSpectraBiner {
 
 	private String mask;

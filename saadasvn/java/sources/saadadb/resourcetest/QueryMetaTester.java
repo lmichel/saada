@@ -6,11 +6,6 @@ import saadadb.database.Database;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class QueryMetaTester {
 
 	public static void main(String[] args)  {

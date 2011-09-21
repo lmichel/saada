@@ -16,8 +16,7 @@ import saadadb.query.parser.PositionParser;
 import saadadb.sqltable.SQLTable;
 import cds.astro.Astrocoo;
 
-/* * @version $Id$
-
+/*
  * This class is use to test queries on position. Both position and search radius are given to the creator.
  * A votable is the built with one source for each node of a grid with 1 arcmin as step and covering 1.5 time
  * the search radius. This VOtable is ingested into the database and a the query centered on that grid is run.

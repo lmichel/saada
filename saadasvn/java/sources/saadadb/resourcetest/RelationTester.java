@@ -6,11 +6,6 @@ import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class RelationTester extends GridBuilder {
 
 	RelationTester(String pos, int size, String collection) throws Exception {

@@ -34,8 +34,7 @@ import saadadb.util.Messenger;
  */
 /**
  * @author michel
- * * @version $Id$
-
+ *
  */
 public class QueryUCDTester { 
 	private final String[] filenames = new String[]{"/tmp/ucdvotable1.xml", "/tmp/ucdvotable2.xml"};

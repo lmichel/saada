@@ -12,8 +12,6 @@ public class SaadaqlRequestTester {
 
 
 	/**
-	 *  * @version $Id$
-
 	 * @param args
 	 * @throws Exception
 	 */
