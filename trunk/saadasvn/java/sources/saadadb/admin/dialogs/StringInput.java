@@ -13,8 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 public class StringInput extends JDialog implements ActionListener, PropertyChangeListener {
-	/** * @version $Id$
-
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
