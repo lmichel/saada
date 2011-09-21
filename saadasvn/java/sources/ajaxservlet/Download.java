@@ -1,5 +1,6 @@
 package ajaxservlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -17,9 +18,9 @@ import saadadb.database.Repository;
 import ajaxservlet.accounting.UserTrap;
 
 /**
- * @author laurentmichel
+ *  
  * @version $Id$
- *
+ * Servlet implementation class Download
  */
 public class Download extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
@@ -93,7 +94,7 @@ public class Download extends SaadaServlet {
 						product_path += "." + ext;
 					}
 				}
-				downloadProduct(request, response, product_path);
+					downloadProduct(request, response, product_path);
 				return;
 			}
 			else if( report != null ) { 
