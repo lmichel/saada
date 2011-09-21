@@ -16,8 +16,7 @@ import saadadb.util.Messenger;
 
 public class QueryRunner {
 
-	/** * @version $Id$
-
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {

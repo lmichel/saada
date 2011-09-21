@@ -13,8 +13,7 @@ import saadadb.vo.request.SSAPRequest;
 
 /**
  * @author laurent
- * * @version $Id$
-
+ *
  */
 public class SsapRequestTester {
 

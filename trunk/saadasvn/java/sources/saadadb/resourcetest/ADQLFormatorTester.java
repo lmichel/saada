@@ -10,9 +10,7 @@ import saadadb.vo.tap.TAPToolBox;
 
 public class ADQLFormatorTester {
 
-	/** 
-	 * @version $Id$
-
+	/**
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception{

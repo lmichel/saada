@@ -16,8 +16,7 @@ import saadadb.query.result.SaadaQLResultSet;
  * the control of the object selected by the query
  * The grid is built by moving a position by 1arcmin steps. That is not efficient, but this feature was expected to be used 
  * on others contexts.
-* * @version $Id$
-
+*
  */
 public class QueryPosTester extends GridBuilder{
 

@@ -11,8 +11,7 @@ import saadadb.vo.request.ZipRequest;
 
 public class ZipRequestTester {
 
-	/** * @version $Id$
-
+	/**
 	 * @param args
 	 * @throws Exception
 	 */
