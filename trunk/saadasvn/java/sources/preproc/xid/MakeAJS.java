@@ -22,11 +22,6 @@ import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
 import saadadb.vo.formator.ConeSearchToVOTableFormator;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class MakeAJS {
 	static final String script_dir = "/data/XID_WFIfc/";
 	static final String fc_dir = "/rawdata/XIDResult/wfi_iap/fc/";
