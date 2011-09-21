@@ -16,8 +16,7 @@ import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
 
-/** * @version $Id$
-
+/**
  * Convert an CSV Vizier ASACII table into a VOTable
  * ASCII file format should look like that
  * #Coosys	J2000:	eq_FK5 J2000
