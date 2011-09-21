@@ -5,8 +5,7 @@ import saadadb.query.merger.QNode;
 
 /**
  * @author michel
- * * @version $Id$
-
+ *
  */
 public class QNodeTester extends TestCase {
 
