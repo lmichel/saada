@@ -13,14 +13,9 @@ import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Metaclass;
 import saadadb.util.Messenger;
 
-/**
- * @author laurent
- * @version $Id$
- */
 public class ClassManager extends EntityManager{
 
-	/** * @version $Id$
-
+	/**
 	 * Although all method could be static, we need to make an instance to monitor the progress from 
 	 * the GUI
 	 */
@@ -184,5 +179,8 @@ public class ClassManager extends EntityManager{
 
 		//		}
 	}
+
+
+
 
 }

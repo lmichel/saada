@@ -7,11 +7,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class ManageTableIndex extends SaadaProcess {
 	private String table_name;
 

@@ -2,8 +2,7 @@ package saadadb.collection;
 
 import saadadb.util.SaadaConstant;
 
-/** * @version $Id$
-
+/**
  * <p>Title: SAADA</p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002-3000</p>

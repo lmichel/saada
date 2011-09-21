@@ -17,8 +17,7 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
  * @version 0.0001
  * @author michel
  * 04/2009: methods getLoaderConfig and getRepositoryPath added
- * * @version $Id$
-
+ *
  */
 public class EntrySaada extends Position {
 

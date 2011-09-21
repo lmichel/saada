@@ -60,8 +60,7 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
- * * @version $Id$
-
+ *
  * 04/2009: methods getLoaderConfig and getRepositoryPath added 
  * 09/2009: fix of getCounterpartsMatchingQuery: take class constrains in account, support of multiple qualif constrains
  */

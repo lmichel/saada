@@ -5,11 +5,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class DeleteTableIndex {
 	
 	static public void main(String[] args) throws SaadaException {

@@ -15,8 +15,7 @@ public class ImageSaada extends WCSSaada {
 		super();
 	}
 	
-    /** * @version $Id$
-
+    /**
      * @return Returns the naxis1.
      */
     public int getNaxis1() {
