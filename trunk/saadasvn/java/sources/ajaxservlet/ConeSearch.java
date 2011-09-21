@@ -1,13 +1,6 @@
 package ajaxservlet;
 
 
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import saadadb.database.Database;
-import saadadb.vo.request.ConeSearchRequest;
-
 /**
  * Endpoint of SIA services
  * @author michel
@@ -15,6 +8,12 @@ import saadadb.vo.request.ConeSearchRequest;
  *
  * 07/2011 switch to the new SIA request processing
  */
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import saadadb.database.Database;
+import saadadb.vo.request.ConeSearchRequest;
+
 public class ConeSearch extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
 	private static int count = 0;
