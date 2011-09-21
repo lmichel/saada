@@ -25,8 +25,7 @@ import cds.savot.model.SavotTable;
 import cds.savot.model.SavotVOTable;
 import cds.savot.writer.SavotWriter;
 
-/** * @version $Id$
-
+/**
  * Convert an ASCII file with columns with fixed width into as VOTable
  * ASCII file format is handled by subclasses
  * Any format error throws a FatalExcption
