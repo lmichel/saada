@@ -24,8 +24,7 @@ import cds.savot.model.SavotField;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
-/** * @version $Id$
-
+/**
  * @author laurent
  * @version 07/2011
  */
@@ -105,15 +104,17 @@ public class TapAdqlVotableFormator extends VotableFormator {
 				// gets its value:
 				Object val = adqlResultSet.getObject(colname);
 				// replace oid with DL URL for data produc files
+				boolean formated = false;
 				if( colname.equals("oidsaada")) {
 					long oid = Long.parseLong(val.toString());
 					if( SaadaOID.getCategoryNum(oid) != Category.ENTRY ) {
-						val = new String(Database.getUrl_root() + "/getroduct?oid=" + val);
+						formated = true;
+						val = new String(Database.getUrl_root() + "/getproduct?oid=" + val);
 					}
 				}
 				// write the value in a TD element:
 				if (val != null){
-					if( sf.getDataType().equals("char"))
+					if( formated || sf.getDataType().equals("char"))
 						addCDataTD(val.toString());
 					else
 						addTD(val.toString());
@@ -134,9 +135,25 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	protected void writeProtocolParamDescription() throws Exception {
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.vo.request.formator.QueryResultFormator#setProtocolParams(java.util.Map)
+	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
 		this.protocolParams = fmtParams;
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.vo.request.formator.votable.VotableFormator#writeExtMetaReferences()
+	 */
+	protected void writeExtMetaReferences() throws QueryException {}
+
+	/* (non-Javadoc)
+	 * @see saadadb.vo.request.formator.votable.VotableFormator#writeHousekeepingFieldAndGroup()
+	 */
+	protected void writeHousekeepingFieldAndGroup() {
+		
+	}
+
 
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.votable.VOTableFormator#writeDMFieldsAndGroups()
@@ -170,6 +187,13 @@ public class TapAdqlVotableFormator extends VotableFormator {
 				f.setArraySize("*");
 			}else {
 				f = (new UTypeHandler(meta)).getSavotField(cpt);
+				/*
+				 * oidsaada could be replaced with download URLs
+				 */
+				if(meta.getNameattr().equals("oidsaada")) {
+					f.setDataType("char");
+					f.setArraySize("*");					
+				}
 			}
 
 			dataModelFieldSet.addItem(f);

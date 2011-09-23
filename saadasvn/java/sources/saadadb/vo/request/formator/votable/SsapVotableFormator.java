@@ -15,8 +15,7 @@ import saadadb.query.result.SaadaInstanceResultSet;
 
 /**
  * @author laurent
- *  * @version $Id$
-
+ * @version 07/2011
  */
 public class SsapVotableFormator extends VotableFormator {
 

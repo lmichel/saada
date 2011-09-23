@@ -14,8 +14,7 @@ import cds.savot.model.TDSet;
 
 /**
  * @author laurent
- *  * @version $Id$
-
+ * @version 07/2011
  */
 public class SaadaqlVotableFormator extends VotableFormator {
 	

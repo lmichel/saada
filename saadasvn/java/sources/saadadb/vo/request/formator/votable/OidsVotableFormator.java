@@ -15,8 +15,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
 
-/** * @version $Id$
-
+/**
  * @author laurent
  * @version 07/2011
  */
