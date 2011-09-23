@@ -22,9 +22,8 @@ import saadadb.vo.PseudoTableParser;
  * and build the response files
  * @author laurent
  * 
- *  * @version $Id$
-
- *1
+ * @version 06/2011
+ *
  */
 public class SIAPQuery extends VOQuery {
 	public static final int   I_COVERS = 1, I_ENCLOSED = 2, I_CENTER = 3, I_OVERLAPS = 4;
