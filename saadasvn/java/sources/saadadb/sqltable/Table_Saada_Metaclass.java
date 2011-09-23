@@ -8,8 +8,7 @@ import saadadb.exceptions.SaadaException;
 
 public abstract class Table_Saada_Metaclass extends SQLTable{
 	
-	/** * @version $Id$
-
+	/**
 	 * @throws AbortException
 	 * @throws CollectionException 
 	 */

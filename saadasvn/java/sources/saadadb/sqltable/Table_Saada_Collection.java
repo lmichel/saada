@@ -14,8 +14,7 @@ public abstract  class Table_Saada_Collection extends SQLTable {
 		SQLTable.createTable("saada_collection", "id int, name " + Database.getWrapper().getIndexableTextType() + ", description text", "name", false);
 	}
 	
-	/** * @version $Id$
-
+	/**
 	 * @param coll_name
 	 * @param str_cat
 	 * @throws FatalException 

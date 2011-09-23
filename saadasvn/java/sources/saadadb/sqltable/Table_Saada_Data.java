@@ -6,12 +6,12 @@ import saadadb.database.Database;
 
 public class Table_Saada_Data extends SQLTable {
 
-	/** * @version $Id$
-
+	/**
 	 * @param tableName
 	 * @param cls
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void createBusinessTable(String tableName, Class cls) throws Exception{
 		
 		String sql = "oidsaada int8, namesaada " + Database.getWrapper().getIndexableTextType() + " NULL, md5keysaada " + Database.getWrapper().getIndexableTextType() + "  NULL ";

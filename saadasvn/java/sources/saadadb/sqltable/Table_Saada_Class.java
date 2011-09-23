@@ -19,8 +19,7 @@ public abstract  class Table_Saada_Class extends SQLTable {
 //		SQLTable.addQueryToTransaction("create unique index saada_class1 on saada_class(class_id)", "saada_class");
 //		SQLTable.addQueryToTransaction("create  index saada_class2 on saada_class(name)", "saada_class");
 	}
-	/** * @version $Id$
-
+	/**
 	 * add class into table saada_class
 	 * @throws SaadaException 
 	 * @throws AbortException 

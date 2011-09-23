@@ -9,8 +9,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
-/** * @version $Id$
-
+/**
  * This class offers a global solution to the transaction management.
  * As update  queries can be run from any part of the code, it may be difficult to well
  * place transaction/commit statements.

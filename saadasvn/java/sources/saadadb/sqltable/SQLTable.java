@@ -15,8 +15,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id$
-
+ *
  * 07/2009: SQL queries limited at 5000000 rows by JDBC
  *          Creation of method runLargeQuerySQL for very large resultSet
  * 03/2010: Method forceQueryUpdateSQL(String[]/...) ignore exception 

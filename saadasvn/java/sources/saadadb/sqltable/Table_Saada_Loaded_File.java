@@ -16,8 +16,7 @@ import saadadb.util.Messenger;
 
 public class Table_Saada_Loaded_File {
 
-	/** * @version $Id$
-
+	/**
 	 * @throws AbortException
 	 */
 	public static  void createTable() throws SaadaException {
