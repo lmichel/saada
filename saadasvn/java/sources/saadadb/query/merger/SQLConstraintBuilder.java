@@ -10,8 +10,7 @@ public abstract class SQLConstraintBuilder {
 	private boolean taken_by_collection= false;
 	public String where;
 	public String sql_colname;
-	/** * @version $Id$
-
+	/**
 	 * @return the debug_where
 	 */
 	public String getWhere() {
