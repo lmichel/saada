@@ -15,8 +15,7 @@ import saadadb.query.constbuilders.SaadaQLConstraint;
 * ORDER BY attr [ ASC | DESC ]
 * 
 * It stores the attribut, the option and the kind of attribute (of class or of collection) 
-*  * @version $Id$
-
+* 
 * @author F.X. Pineau
 */
 public final class OrderBy{
@@ -43,7 +42,7 @@ public final class OrderBy{
 	}
 	
 	public static final String   getSyntax (){return syntax       ;}
-	public final String getStrMatch        (){return this.strMatch    ;}
+	public final String getStrMatch     (){return this.strMatch    ;}
 	protected final String getTheStatement (){return this.theStatement;}
 	protected final int    getType         (){return (this.haveSpecialKey())?BOTH:this.type;}
     protected final String getOrder        (){return (isDesc)?"DESC":"";}
