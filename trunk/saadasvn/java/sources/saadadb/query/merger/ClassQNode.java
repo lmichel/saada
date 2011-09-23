@@ -20,11 +20,6 @@ import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.parser.UnitHandler;
 import saadadb.util.RegExp;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class ClassQNode extends QNode{
 	private  MetaClass metaclass = null;
 	protected SetOfSelectedColumns set_of_selected_columns = new SetOfSelectedColumns();
