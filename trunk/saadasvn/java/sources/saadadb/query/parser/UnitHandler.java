@@ -18,8 +18,7 @@ public class UnitHandler {
 		}
 	}
 
-	/** * @version $Id$
-
+	/**
 	 * @param userValue
 	 * @param userUnit
 	 * @param ahUnit

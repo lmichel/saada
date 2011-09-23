@@ -47,8 +47,7 @@ public abstract class Operator {
 	public static final void checkCode(int op) throws SaadaException{
 		getString(op);
 	}
-	/** * @version $Id$
-
+	/**
 	 * Comparator
 	 * @param d
 	 * @param op

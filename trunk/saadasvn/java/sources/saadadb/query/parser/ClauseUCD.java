@@ -18,7 +18,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.query.constbuilders.UCDField;
 
 
-/** * @version $Id$s
+/**
  * @author F.X. Pineau
  */
 public abstract class ClauseUCD {

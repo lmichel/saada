@@ -22,8 +22,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/** * @version $Id$
-
+/**
  * This class parse the SaadaQL clause:
  * SELECT category FROM * | class1 [, ...] IN * | coll [, ...]
  * 

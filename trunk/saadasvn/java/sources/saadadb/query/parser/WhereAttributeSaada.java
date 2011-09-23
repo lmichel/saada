@@ -9,8 +9,7 @@ import java.util.regex.Pattern;
 
 import saadadb.exceptions.QueryException;
 
-/** * @version $Id$
-
+/**
  * @author F.X. Pineau
  */
 public final class WhereAttributeSaada extends ClauseSQL {

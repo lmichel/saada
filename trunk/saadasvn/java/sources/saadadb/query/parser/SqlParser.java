@@ -17,8 +17,7 @@ import Zql.ZQuery;
 import Zql.ZStatement;
 import Zql.ZqlParser;
 
-/** * @version $Id$
-
+/**
  * Made a long time ago...
  * @author pineau 
  */
