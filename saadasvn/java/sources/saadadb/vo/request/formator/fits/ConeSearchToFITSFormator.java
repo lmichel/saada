@@ -15,8 +15,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- *  * @version $Id$
-
+ * @version 07/2011
  */
 public class ConeSearchToFITSFormator extends FitsFormator {
 
