@@ -2,11 +2,6 @@ package saadadb.vo.request.formator.votable;
 
 import cds.savot.model.SavotField;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class VOTableField extends SavotField {
     
     // Stores th type of field: saada (or collection) field, class field or user-defined field
