@@ -24,9 +24,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 	private Pos_List positions = new Pos_List();
 	private double r  ;
 
-	/** * @version $Id$
- * @version $Id$
-
+	/**
 	 * @param op
 	 * @param pos
 	 * @param si

@@ -4,11 +4,6 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class UTypeField extends MappedField {
 	protected VOResource vor;
 
