@@ -9,8 +9,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
-/** * @version $Id$
-
+/**
  * <p>Title: SAADA </p>
  * <p>Description: Automatic Archival System For Astronomical Data -
     This is framework of a PhD funded by the CNES and by the Region Alsace.</p>

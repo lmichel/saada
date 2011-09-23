@@ -10,8 +10,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
-/** * @version $Id$
-
+/**
  * Run query on large collection with a JDBC cursor. No memroyHeapSpace error 
  * Cannot scroll back: Must be used to generate result files not to browse data
  * Possible issues with SaadaResultSet because the scrolling is off. 

@@ -17,8 +17,7 @@ import saadadb.util.Messenger;
 
 public class Table_Saada_VO_Resources extends SQLTable {
 
-	/** * @version $Id$
-
+	/**
 	 * @param connector : used to know the director where resource files are stored
 	 * @throws AbortException
 	 */

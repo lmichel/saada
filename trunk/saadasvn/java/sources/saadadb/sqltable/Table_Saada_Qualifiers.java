@@ -14,8 +14,7 @@ public abstract class Table_Saada_Qualifiers extends SQLTable {
 		super();
 	}
 
-	/** * @version $Id$
-
+	/**
 	 * @throws AbortException
 	 */
 	public static  void createTable() throws SaadaException {
