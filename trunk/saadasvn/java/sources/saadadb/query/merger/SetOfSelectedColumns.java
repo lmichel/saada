@@ -7,8 +7,7 @@ import java.util.Map.Entry;
 /**
  * Used as message between ClassQnode and  COllectionQNode
  * @author michel
- * * @version $Id$
-
+ *
  */
 public class SetOfSelectedColumns {
 	protected LinkedHashMap<String, ColumunSelectDef> select_class = new LinkedHashMap<String, ColumunSelectDef>();
