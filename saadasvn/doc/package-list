@@ -55,6 +55,7 @@ saadadb.unit
 saadadb.util
 saadadb.vo
 saadadb.vo.formator
+saadadb.vo.query
 saadadb.vo.request
 saadadb.vo.request.formator
 saadadb.vo.request.formator.archive
