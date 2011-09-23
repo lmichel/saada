@@ -70,8 +70,7 @@ public class QueryOrg extends Query_Report{
 //		this.vor = Database.getCachemeta().getVOResource(dm_name);
 //	}
 //	
-//	/** * @version $Id$
-
+//	/**
 //	 * @return
 //	 */
 //	public VOResource getDM() {
