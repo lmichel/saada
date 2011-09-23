@@ -9,10 +9,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.VOResource;
 
-/**
- * @author laurent
- * @version @Id$
- */
 public abstract class SaadaQLConstraint {
 	final static public int NATIVE=0;
 	final static public int POSITION=1;
