@@ -3,8 +3,7 @@ package saadadb.query.merger;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/** * @version $Id$
-
+/**
  * @author michel
  * Definition of a column in select clause. As queries often cover multiple tables, alias are needed
  * STANDARD mode: SELECT a.expsession AS alias
