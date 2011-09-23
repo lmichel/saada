@@ -15,8 +15,7 @@ import saadadb.vo.request.formator.QueryResultFormator;
 
 /**
  * @author laurent
- *  * @version $Id$
-
+ * @version 07/2011
  */
 public abstract class JsonFormator extends QueryResultFormator {
 	private PrintWriter writer;

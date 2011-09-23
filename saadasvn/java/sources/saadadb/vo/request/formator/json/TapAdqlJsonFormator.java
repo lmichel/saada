@@ -25,7 +25,7 @@ import adqlParser.query.ADQLOperand;
 
 /**
  * @author laurent
- * @version $Id$
+ * @version 07/2011
  */
 public class TapAdqlJsonFormator extends JsonFormator {
 
