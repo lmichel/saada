@@ -3,8 +3,9 @@ package saadadb.query.merger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -21,8 +22,7 @@ public class Merger {
 	private ArrayList<String> covered_classes = null;
 	private VOResource vor;
 	private boolean allcolumns;
-	/** * @version $Id$
-
+	/**
 	 * @param sfi
 	 * @throws FatalException
 	 */
@@ -207,8 +207,6 @@ public class Merger {
 				retour += "\n" + sqc.getWhere();
 			}
 		}
-
-		
 		return retour;
 	}
 	

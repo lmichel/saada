@@ -93,7 +93,7 @@ public abstract class QNode {
 		for(String sql_colname: scb.getSqlcolnames())  {
 
 			String rcn;
-			if( scb.isNative() ) {
+			if( scb.isNative() || scb.isGlobal() ) {
 				rcn = SaadaQLConstraint.getNativeResultColName(result_colname, sql_colname); 
 			}
 			else if( scb.isPosition() ) {
@@ -106,14 +106,13 @@ public abstract class QNode {
 			ColumunSelectDef csd = new ColumunSelectDef(sql_colname, rcn, ColumunSelectDef.STANDARD);
 			this.addSelectedColumn(rcn, csd);
 		}
-		String where = scb.getWhere();
-		if( this.where.length() != 0 ) {
-			this.where += " AND "; 
+		if( !scb.isGlobal() ) {
+			String where = scb.getWhere();
+			if( this.where.length() != 0 ) {
+				this.where += " AND "; 
+			}
+			this.where += where;
 		}
-		if( !where.trim().startsWith("(")) {
-			where = "(" + where + ")";
-		}
-		this.where += where;
 	}
 
 	/**
@@ -123,7 +122,7 @@ public abstract class QNode {
 	 * @throws Exception 
 	 */
 	public void setAllcolumnsSelect() throws QueryException, Exception {}
-	
+
 	/**
 	 * Does nothing but for classes
 	 * @param result_column_name
@@ -161,7 +160,7 @@ public abstract class QNode {
 	 */
 	public static String insertAlias(String source, String[] atts, String alias) {
 		String retour = source.trim();
-	/*
+		/*
 		 * Parcourir les attribut de classe 
 		 */
 		for( String att: atts) {
@@ -177,7 +176,7 @@ public abstract class QNode {
 			 */
 			if( !is_const &&  retour.indexOf(att) >= 0 ) {
 				Pattern p = Pattern.compile("(?:^|" + SEPAR_ON + ")(" + att + ")(?:$|" + SEPAR_OFF + ")", Pattern.DOTALL | Pattern.MULTILINE);
-//				Pattern p = Pattern.compile("([\\s\\(\\+\\-\\*/]?|^)(" + att + ")[\\s\\)\\+\\-\\*/]?", Pattern.DOTALL);
+				//				Pattern p = Pattern.compile("([\\s\\(\\+\\-\\*/]?|^)(" + att + ")[\\s\\)\\+\\-\\*/]?", Pattern.DOTALL);
 				Matcher m = p.matcher(retour);
 				ArrayList<Integer> insert = new ArrayList<Integer>();
 				boolean found = false;

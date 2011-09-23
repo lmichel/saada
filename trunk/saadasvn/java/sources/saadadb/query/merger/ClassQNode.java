@@ -12,10 +12,10 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
+import saadadb.meta.VOResource;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.parser.UnitHandler;
 import saadadb.util.RegExp;
@@ -47,7 +47,7 @@ public class ClassQNode extends QNode{
 	 * @see saadadb.query.merger.QNode#getFields()
 	 */
 	public Field[] getFields() throws FatalException, ClassNotFoundException {
-	 return  SaadaClassReloader.forGeneratedName( this.name).getFields();
+	 return Class.forName("generated." + Database.getDbname() + "." + this.name).getFields();
 	}
 
 	/* (non-Javadoc)
@@ -68,7 +68,7 @@ public class ClassQNode extends QNode{
 	public void readSaadaQLConstraints(LinkedHashMap<String, SaadaQLConstraint> builders) throws Exception {
 		for( Entry<String, SaadaQLConstraint>eb: builders.entrySet()) {
 			SaadaQLConstraint scb = eb.getValue();
-			if( scb.isNative() ) {
+			if( scb.isNative() ||  scb.isGlobal()) {
 				this.readSaadaQLConstraint(eb.getKey(), scb);	
 				scb.takeByClass();
 			}
@@ -88,7 +88,7 @@ public class ClassQNode extends QNode{
 		/*
 		 * Ici rechercher le mapping
 		 */
-		SaadaInstance si = (SaadaInstance)  SaadaClassReloader.forGeneratedName( this.metaclass.getName()).newInstance();		
+		SaadaInstance si = (SaadaInstance) Class.forName("generated." + Database.getDbname() + "." + this.metaclass.getName()).newInstance();		
 		si.activateDataModel(this.merger.getVor().getJavaName() );
 		String computed_column = si.getSQLField(scb.getMetacolname());
 		UTypeHandler uth = scb.getDM().getUTypeHandler(scb.getMetacolname() );
@@ -196,7 +196,7 @@ public class ClassQNode extends QNode{
 		 * Take the DM columns
 		 */
 		else {
-			SaadaInstance si = (SaadaInstance)  SaadaClassReloader.forGeneratedName(this.metaclass.getName()).newInstance();		
+			SaadaInstance si = (SaadaInstance) Class.forName("generated." + Database.getDbname() + "." + this.metaclass.getName()).newInstance();		
 			si.activateDataModel(this.merger.getVor().getJavaName() );
 			for( UTypeHandler uth: this.merger.getVor().getUTypeHandlers()) {
 				si.activateDataModel(this.merger.getVor().getJavaName() );
