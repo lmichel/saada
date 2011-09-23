@@ -3,8 +3,7 @@ package saadadb.query.parser;
 import saadadb.collection.Category;
 import saadadb.util.RegExp;
 
-/** * @version $Id$
-
+/**
  * @author F.X. Pineau
  */
 public final class SaadaQLRegex {

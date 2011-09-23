@@ -11,11 +11,6 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 
-/**
- * @author laurentmichel
- * * @version $Id$
-
- */
 public class WhereDM extends ClauseDM {
 	private static final String syntax = "WhereDM { \\[ucd\\] op 'text'|number|(number,number) [\\[unit\\]] [ and|or ...] }";
 	private static final String regex  = WHERE_DM + FacWS + WHERE_CLAUSE_LD + FacWS + "(" + InTYPEStat+ ")" + FacWS + WHERE_CLAUSE_RD;

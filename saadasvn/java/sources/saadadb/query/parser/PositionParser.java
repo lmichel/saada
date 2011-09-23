@@ -32,8 +32,7 @@ public class PositionParser {
 	private Astroframe astroframe;
 	private String arg;
 	
-	/** * @version $Id$
-
+	/**
 	 * @param position
 	 * @throws ParsingException
 	 */
