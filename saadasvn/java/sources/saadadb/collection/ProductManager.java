@@ -194,7 +194,7 @@ public class ProductManager extends EntityManager {
 				 */
 				this.processUserRequest();
 				SQLTable.dropTableIndex(ecoll_table, null);
-				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table + " WHERE oidsaada IN " + join, coll_table);
+				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table.toLowerCase() + " WHERE oidtable IN " + in_stm, coll_table);
 				SQLTable.indexTable(ecoll_table, null);
 			}
 
