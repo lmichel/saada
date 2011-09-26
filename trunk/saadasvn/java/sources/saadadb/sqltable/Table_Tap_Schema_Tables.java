@@ -1,5 +1,6 @@
 package saadadb.sqltable;
 
+import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 
 import saadadb.exceptions.AbortException;
@@ -67,5 +68,20 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 				, new Object[]{schema, table, "table",description, utype});
 	}
 	
+	/**
+	 * Returns true if bale is already referenced in tap_schema_tables
+	 * @param table
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean knowsTable(String table) throws Exception {
+		SQLQuery sq = new SQLQuery();
+		ResultSet rs = sq.run("SELECT table_name FROM " + tableName + " WHERE table_name = '" + table + "' LIMIT 1");
+		while (rs.next()) {
+			return true;
+		}
+		rs.close();
+		return  false;
+	}
 
 }
