@@ -422,8 +422,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		SQLTable.addQueryToTransaction("CREATE TRIGGER " + relation_conf.getNameRelation() + "_secclass  \n"
 				+ "BEFORE INSERT ON " + relation_conf.getNameRelation() +"\n"
 				+ "FOR EACH ROW \n"
-				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)"
-				,null /*relation_conf.getNameRelation()*/ );
+				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)");
 	}
 
 	@Override
@@ -439,8 +438,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		SQLTable.addQueryToTransaction("CREATE TRIGGER " + relationName + "_secclass  \n"
 				+ "BEFORE INSERT ON " + relationName + "\n"
 				+ "FOR EACH ROW \n"
-				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)"
-				,null /*relation_conf.getNameRelation()*/ );
+				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)" );
 	}
 
 	@Override
