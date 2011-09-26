@@ -22,7 +22,7 @@ public class ManageTapService extends ManageEntity {
 	 * @param args
 	 */
 	public static void main(String[] args)  {
-		processCommand(new ManageCollection(), args);
+		processCommand(new ManageTapService(), args);
 	}
 
 	/* (non-Javadoc)
