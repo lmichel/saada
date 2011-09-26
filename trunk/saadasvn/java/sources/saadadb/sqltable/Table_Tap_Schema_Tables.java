@@ -2,8 +2,10 @@ package saadadb.sqltable;
 
 import java.util.LinkedHashMap;
 
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.Messenger;
 
 /**
  * @author laurent
@@ -12,7 +14,7 @@ import saadadb.meta.AttributeHandler;
  */
 public class Table_Tap_Schema_Tables extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
-
+	public static final String tableName = "tap_schema_tables";
 	static {
 		attMap = new LinkedHashMap<String, AttributeHandler>();
 		AttributeHandler ah;
@@ -41,7 +43,29 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 			if( sql.length() > 0 ) sql += ", ";
 			sql += ah.getNameattr() + "  " + ah.getType();
 		}
-		SQLTable.createTable("tap_schema_tables", sql, null, false);
+		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
+		SQLTable.createTable(tableName, sql, null, false);
 	}
+	
+	/**
+	 * @throws AbortException
+	 */
+	public static void dropTable() throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Drop table " + tableName);
+		SQLTable.dropTable(tableName);
+	}
+	/**
+	 * @param schema
+	 * @param table
+	 * @param description
+	 * @param utype
+	 * @throws AbortException
+	 */
+	public static void addTable(String schema, String table, String description, String utype) throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Add table " + table + " to " + tableName);
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+				, new Object[]{schema, table, "table",description, utype});
+	}
+	
 
 }

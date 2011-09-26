@@ -1,6 +1,7 @@
 package saadadb.sqltable;
 
 import java.sql.BatchUpdateException;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 
@@ -23,7 +24,7 @@ import saadadb.util.Messenger;
  *
  */
 public class TransactionMaker {
-	ArrayList<String> queries = new ArrayList<String>();
+	ArrayList<QueryString> queries = new ArrayList<QueryString>();
 	private  boolean locked = false;
 	private  boolean forced_mode = false;
 
@@ -41,7 +42,19 @@ public class TransactionMaker {
 		if( query != null && query.length() > 0 ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Add query #" + queries.size() + " to transaction : " + query);
-			queries.add(query);
+			queries.add(new QueryString(query, null));
+		}
+	}
+	
+	/**
+	 * @param query
+	 * @param params
+	 */
+	protected void addQuery(String query, Object[] params) {
+		if( query != null && query.length() > 0 ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Add query #" + queries.size() + " to transaction : " + query);
+			queries.add(new QueryString(query, params));
 		}
 	}
 
@@ -71,7 +84,6 @@ public class TransactionMaker {
 	protected synchronized void makeTransaction() throws AbortException {
 		Statement stmt = null;
 		String last_q = "";
-		boolean batchmode = false;
 		lock();
 		long start = System.currentTimeMillis();
 		try {
@@ -79,26 +91,18 @@ public class TransactionMaker {
 			 * Mysql appreciates very well explicit unlocks before to commit. Otherwise, It could
 			 * Require explicit locks everywhere even in SELECT
 			 */
-			queries.add( Database.getWrapper().unlockTables());
+			queries.add( new QueryString(Database.getWrapper().unlockTables(), null));
 			Database.get_connection().setAutoCommit(false);
 			stmt = Database.get_connection().createStatement(); 
 			int cpt = 0;
-			boolean batch_empty = true;
-			for(String q: queries) {
-				//			for( int i=0 ; i<queries.size() ; i++) {
-				//				String q = queries.get(i);
+			for(QueryString qs: queries) {
+				String q = qs.query;
 				cpt++;
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG,"UPDATE: " + q);
 				if( q.trim().startsWith("LOADTSVTABLE") ) {
-					if( batchmode && !batch_empty && Database.getWrapper().tsvLoadNotSupported()) {
-						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Execute batch before to load ASCII file");
-						stmt.executeBatch();
-						stmt.close();
-					}
 					String[] fs = q.split(" ");
-					if( !batchmode ) last_q  = q; 
+					last_q  = q; 
 					if( Database.getWrapper().tsvLoadNotSupported() ) {
 						Database.getWrapper().storeTable(fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;			
 					}
@@ -108,20 +112,21 @@ public class TransactionMaker {
 							if (Messenger.debug_mode)
 								Messenger.printMsg(Messenger.DEBUG, "LOADTSVTABLE: run: " + stq);
 							last_q = stq;
-							execStatement(stmt, stq, batchmode);
+							execStatement(stmt, stq);
 						}
 					}
 				}
-				else {
+				else if( qs.params == null ){
 					last_q = q;
-					execStatement(stmt, q, batchmode);
-					batch_empty = false;
+					execStatement(stmt, q);
 				}
-			}
-			if(  !forced_mode && (batchmode  && !batch_empty) ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Execute last batch");
-				stmt.executeBatch();
+				else {
+					PreparedStatement pstmt =  Database.get_connection().prepareStatement(q);
+					for( int i=0 ; i<qs.params.length ; i++ ) {
+						pstmt.setObject(i+1,qs.params[i] );
+					}
+					execStatement(pstmt, q);
+				}
 			}
 			stmt.close();
 			if (Messenger.debug_mode)
@@ -131,7 +136,7 @@ public class TransactionMaker {
 			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Transaction done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
-			queries = new ArrayList<String>();
+			queries = new ArrayList<QueryString>();
 			unlock();
 		} catch (BatchUpdateException be) {
 			Messenger.printStackTrace(be);
@@ -151,7 +156,7 @@ public class TransactionMaker {
 				Database.get_connection().rollback();
 			} catch (Exception e2) { }
 			unlock();
-			if( !batchmode ) Messenger.printMsg(Messenger.ERROR, "on query : " + last_q);
+			Messenger.printMsg(Messenger.ERROR, "on query : " + last_q);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 
@@ -164,19 +169,36 @@ public class TransactionMaker {
 	 * @param batch_mode
 	 * @throws Exception
 	 */
-	private void execStatement(Statement stmt, String query, boolean batch_mode) throws Exception {
+	private void execStatement(Statement stmt, String query) throws Exception {
 		if( !forced_mode ) {
-			if( batch_mode ) {
-				stmt.addBatch(query);
-			}
-			else {
-				stmt.executeUpdate(query);
-			}
+			stmt.executeUpdate(query);
 		}
 		else {
 			Database.get_connection().setAutoCommit(true);
 			try {
 				stmt.executeUpdate(query);	
+			}
+			catch (Exception e) {
+				Messenger.printMsg(Messenger.WARNING, "SQL error (ignored in transaction in forced mode) "  + e.getMessage());
+			}
+		}
+
+	}
+	/**
+	 * Wrap the prepared statement execution according to the transaction mode
+	 * @param pstmt
+	 * @param query
+	 * @param batch_mode
+	 * @throws Exception
+	 */
+	private void execStatement(PreparedStatement pstmt, String query) throws Exception {
+		if( !forced_mode ) {
+			pstmt.executeUpdate();
+		}
+		else {
+			Database.get_connection().setAutoCommit(true);
+			try {
+				pstmt.executeUpdate();	
 			}
 			catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "SQL error (ignored in transaction in forced mode) "  + e.getMessage());
@@ -220,10 +242,10 @@ public class TransactionMaker {
 		}
 		else {
 			String retour = "BEGIN TRANSACTION\n";
-			for(String q: queries) {
+			for(QueryString qs: queries) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG,"UPDATE: " + q);
-				retour += q + "\n";		
+					Messenger.printMsg(Messenger.DEBUG,"UPDATE: " + qs.query);
+				retour += qs.query + "\n";		
 			}
 			return retour + "END TRANSACTION\n";
 
@@ -236,7 +258,7 @@ public class TransactionMaker {
 	public void abortTransaction()  {
 		try {		
 			unlock();	
-			queries = new ArrayList<String>();
+			queries = new ArrayList<QueryString>();
 
 			Database.get_connection().rollback();
 			
@@ -246,6 +268,22 @@ public class TransactionMaker {
 //			stmt.close();
 		} catch (Exception e) {
 		}	
+	}
+	
+	/**
+	 * @author laurent
+	 * @version $Id$
+	 */
+	class QueryString {
+		protected String query;
+		protected Object[] params;
+		
+		public QueryString(String query, Object[] params) {
+			this.query = query;
+			this.params = params;
+		}
+		
+		
 	}
 
 	public static void main(String[] args) throws Exception{
