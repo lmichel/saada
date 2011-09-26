@@ -125,7 +125,7 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 				size = new Integer(m.group(2));
 			}
 			SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-					, new Object[]{tableName, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()
+					, new Object[]{table, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()
 					             , type, size, indexed, 1, ((standard)?1: 0)});
 		}
 	}
