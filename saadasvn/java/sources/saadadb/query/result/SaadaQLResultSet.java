@@ -23,13 +23,13 @@ public class SaadaQLResultSet extends OidResultSet {
 	// private SaadaQLMetaSet col_names;
 
 
-	/** * @version $Id$
-
+	/**
 	 * @param sql_query
 	 * @param oidPattern
 	 * @param limit
 	 * @param const_att
 	 * @throws Exception
+	 * @version $Id$
 	 */
 	public SaadaQLResultSet(String sql_query, Set<Long> oidPattern, int limit, AttributeHandler[] ucols, Set<AttributeHandler> const_att) throws Exception {
 		super(limit);
@@ -729,8 +729,7 @@ public class SaadaQLResultSet extends OidResultSet {
 			currentoid++;
 		}
 		if( !query.equals("")) {
-			SQLTable.addQueryToTransaction(insert_query + query
-					, null);
+			SQLTable.addQueryToTransaction(insert_query + query);
 
 			query = "";
 			num_row = 0;
