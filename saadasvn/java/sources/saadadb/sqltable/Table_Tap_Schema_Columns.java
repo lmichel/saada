@@ -1,11 +1,16 @@
 package saadadb.sqltable;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import saadadb.database.Database;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.sqltable.SQLTable;
+import saadadb.util.Messenger;
 
 /**
  * @author laurent
@@ -14,12 +19,13 @@ import saadadb.sqltable.SQLTable;
  */
 public class Table_Tap_Schema_Columns extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
-
+	public static final String tableName = "tap_schema_columns";
+	public static final Pattern sqlTypePattern = Pattern.compile("([A-Za-z]+)\\(([0-9]+)\\)");
 	static {
 		attMap = new LinkedHashMap<String, AttributeHandler>();
 		AttributeHandler ah;
 		ah = new AttributeHandler();
-		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("VARCHAR"); ah.setComment("table name from TAP_SCHEMA_tables");
+		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("VARCHAR(255)"); ah.setComment("table name from TAP_SCHEMA_tables");
 		attMap.put("table_name", ah);
 		ah = new AttributeHandler();
 		ah.setNameattr("column_name"); ah.setNameattr("column_name"); ah.setType("VARCHAR"); ah.setComment("column name");
@@ -61,14 +67,67 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 			if( sql.length() > 0 ) sql += ", ";
 			sql += ah.getNameattr() + "  " + ah.getType();
 		}
-		SQLTable.createTable("tap_schema_columns", sql, null, false);
+		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
+		SQLTable.createTable(tableName, sql, null, false);
 	}
 
-	public static void main(String[] args) throws SaadaException{
-		Database.init("XIDResult");
-		SQLTable.beginTransaction();
-		createTable();
-		SQLTable.commitTransaction();
+	/**
+	 * @throws AbortException
+	 */
+	public static void dropTable() throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Drop table " + tableName);
+		SQLTable.dropTable(tableName);
+	}
+
+	/**
+	 * Stores the description of the columns of the table in tap_schema.columns.
+	 * All columns are declared as principal as default ADQL queries return all columns
+	 * of the queried table
+	 * @param table     : name of the table whose columns are to be referenced
+	 * @param attMap	: Map of attribute handler describing the columns
+	 * @param standard  : Compliant with a DM or not
+	 * @throws Exception
+	 */
+	public static void addTable(String table, Map<String, AttributeHandler> attMap, boolean standard) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Add columns of table " + table + " to " + tableName);
+		Map<String, String> mi = Database.getWrapper().getExistingIndex(table);
+		Collection<String> colIndexed  = null;
+		if( mi != null )colIndexed =  mi.values();
+		for( AttributeHandler ah: attMap.values()) {
+			String colName = ah.getNameattr();
+			int indexed = 0;
+			if( colIndexed != null ) for( String col : colIndexed ) {
+				if( col.equals(colName) ) {
+					indexed = 1;
+					break;
+				}
+			}
+			String type;
+			Integer size = null;
+			/*
+			 * Type can be either in SQL or in  Java.
+			 * Let's try Java first
+			 */
+			try {
+				type = Database.getWrapper().getSQLTypeFromJava(ah.getType() ) ;
+				/*
+				 * Conversion failed: must be a native SQL type
+				 */
+			} catch (Exception e) {
+				type = ah.getType();
+			}
+			/*
+			 * Extract type and size if needed
+			 */
+			Matcher m;
+			if( (m = sqlTypePattern.matcher(type)).find() && m.groupCount() == 2) {
+				type = m.group(1);
+				size = new Integer(m.group(2));
+			}
+			SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+					, new Object[]{tableName, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()
+					             , type, size, indexed, 1, ((standard)?1: 0)});
+		}
 	}
 
 }

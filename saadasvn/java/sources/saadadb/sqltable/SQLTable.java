@@ -51,6 +51,23 @@ public abstract class SQLTable {
 			transaction_maker.addQuery(query);
 		}
 	}
+	/**
+	 * Add query to the current transaction maker if it exist:
+	 * @param query
+	 * @param params  : params for the prepared statement
+	 * @throws AbortException
+	 */
+	public static  void addQueryToTransaction(String query, Object[] params) throws AbortException {
+		if( transaction_maker == null ) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which has not been initiated");
+		}
+		else if( !transaction_maker.isFree()) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which is busy");
+		}
+		else {
+			transaction_maker.addQuery(query, params);
+		}
+	}
 
 	/**
 	 * @param table_name
@@ -257,12 +274,12 @@ public abstract class SQLTable {
 
 	/**
 	 * @param table
-	 * @throws AbortException 
+	 * @throws AbortException
 	 */
 	public static void dropTable(String table) throws AbortException {
 		try {
 			if( Database.getWrapper().tableExist(table)) {
-				addQueryToTransaction(Database.getWrapper().dropTable(table), table);				
+				addQueryToTransaction(Database.getWrapper().dropTable(table));				
 			}
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR,e);
