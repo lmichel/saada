@@ -128,9 +128,9 @@ public class DataLoaderRunner extends DataLoaderDefaultRunner implements ActionL
 		 * Class creation fails (of course) for flatfiles. For this reason
 		 * the use of configuration is disabled here 
 		 */
-		if( category == Category.FLATFILE) {
-			use_conf.setEnabled(false);
-		}
+//		if( category == Category.FLATFILE) {
+//			use_conf.setEnabled(false);
+//		}
 		conf_label1 = new JLabel("Configuration Name:");
 		conf_label2 = SaadaDBAdmin.getPlainLabel("The configuration must exist prior to load data");
 		conf_label3 = SaadaDBAdmin.getPlainLabel("It can be created with the Dataloader Configuration tab.");
