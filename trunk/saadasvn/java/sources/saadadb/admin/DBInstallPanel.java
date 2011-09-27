@@ -212,7 +212,6 @@ public class DBInstallPanel extends JPanel{
 						SaadaDBAdmin.showFatalError(DBInstallPanel.this.frame, e);
 						return;
 					}
-
 					try {
 						SQLTable.beginTransaction();
 						Table_SaadaDB.changeRepdir(selected_file.getAbsolutePath());
@@ -233,8 +232,17 @@ public class DBInstallPanel extends JPanel{
 				int retour = fcd.showOpenDialog(DBInstallPanel.this.frame);
 				if (retour == JFileChooser.APPROVE_OPTION) {
 					File selected_file = fcd.getSelectedFile();
-					try {
-						InstallParamValidator.canBeTomcatDir(selected_file.getAbsolutePath());
+					try {						
+						try {
+							/*
+							 * Check first if TOMCAT_HOKE has been selected
+							 * If not we just check that the directory is writable
+							 */
+							InstallParamValidator.canBeTomcatDir(selected_file.getAbsolutePath()+ File.separator + "webapps");
+						} catch (FatalException e) {
+							InstallParamValidator.canBeTomcatWebappsDir(selected_file.getAbsolutePath() );				
+						}
+
 					} catch(FatalException e) {
 						SaadaDBAdmin.showFatalError(DBInstallPanel.this.frame, e);
 						return;
