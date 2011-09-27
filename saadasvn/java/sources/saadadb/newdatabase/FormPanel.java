@@ -52,8 +52,8 @@ import saadadb.util.RegExp;
 
 
 public class FormPanel extends JPanel {
-	/** * @version $Id$
-
+	/**
+	 *  @version $Id$
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
