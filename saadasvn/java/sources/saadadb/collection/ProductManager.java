@@ -122,6 +122,11 @@ public class ProductManager extends EntityManager {
 		 * This method can only work if all oids are from the same collection/category/class.
 		 */
 		for( long oid: oids) {
+			try {
+				Database.getCache().getObject(oid);
+			} catch (Exception e) {
+				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");
+			}
 			if( (oid >> 32) != (oids[0] >> 32) ) {
 				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "OIDs to be removed are not all from the same collection/category/class");
 			}
@@ -132,7 +137,15 @@ public class ProductManager extends EntityManager {
 			 * Build some metadata names used afters
 			 */
 			int category            = SaadaOID.getCategoryNum(oids[0]);
-			String classe           = Database.getCachemeta().getClass(SaadaOID.getClassNum(oids[0])).getName();
+			String classe, eclasse;
+			if( category == Category.FLATFILE ) {
+				classe = "FLATFILE";
+				eclasse = null;
+			}
+			else {
+				classe = Database.getCachemeta().getClass(SaadaOID.getClassNum(oids[0])).getName();
+				eclasse = Database.getCachemeta().getClass(classe).getAssociate_class();
+			}
 			String coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
 			String[] start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
 			String[] end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
@@ -150,8 +163,7 @@ public class ProductManager extends EntityManager {
 			 * If products to remove are tables: process first entries
 			 */
 			this.processUserRequest();
-			String eclasse = Database.getCachemeta().getClass(classe).getAssociate_class();
-			if( eclasse != null && eclasse.length() > 0 ) {
+			if( category == Category.TABLE && eclasse != null && eclasse.length() > 0 ) {
 				this.processUserRequest();
 				String ecoll_table = Database.getCachemeta().getCollectionTableName(coll, Database.getCachemeta().getClass(eclasse).getCategory());
 				String join = "(SELECT e.oidsaada FROM " + ecoll_table + " as e, " + coll_table + " as t WHERE e.oidtable = t.oidsaada AND t.oidsaada IN " + in_stm + ")";
@@ -180,21 +192,21 @@ public class ProductManager extends EntityManager {
 				/*
 				 * Update the class level first in order to keep the join with table which uses the collection table
 				 */
-				/*
-				 * Flatfiles have no class
-				 */
-				if( !eclasse.endsWith("UserColl") ) {
-					this.processUserRequest();
-					SQLTable.dropTableIndex(eclasse, null);
-					SQLTable.addQueryToTransaction("DELETE FROM " + eclasse + " WHERE oidsaada IN " + join, coll_table);
-					SQLTable.indexTable(eclasse, null);
-				}
+//				/*
+//				 * Flatfiles have no class
+//				 */
+//				if( !eclasse.endsWith("UserColl") ) {
+//					this.processUserRequest();
+//					SQLTable.dropTableIndex(eclasse, null);
+//					SQLTable.addQueryToTransaction("DELETE FROM " + eclasse + " WHERE oidsaada IN " + join, coll_table);
+//					SQLTable.indexTable(eclasse, null);
+//				}
 				/*
 				 * Remove collection level data
 				 */
 				this.processUserRequest();
 				SQLTable.dropTableIndex(ecoll_table, null);
-				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table.toLowerCase() + " WHERE oidtable IN " + in_stm, coll_table);
+				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table + " WHERE oidtable IN " + in_stm, coll_table);
 				SQLTable.indexTable(ecoll_table, null);
 			}
 
@@ -220,7 +232,7 @@ public class ProductManager extends EntityManager {
 			/*
 			 * Flatfiles have no class
 			 */
-			if( !classe.endsWith("UserColl") ) {
+			if( !classe.equals("FLATFILE")) {
 				this.processUserRequest();
 				SQLTable.dropTableIndex(classe, null);
 				SQLTable.addQueryToTransaction("DELETE FROM  " + classe + " WHERE oidsaada IN " +in_stm, classe);
@@ -231,7 +243,7 @@ public class ProductManager extends EntityManager {
 			 */
 			this.processUserRequest();
 			SQLTable.dropTableIndex(coll_table, null);
-			SQLTable.addQueryToTransaction("DELETE FROM " + coll_table.toLowerCase() + " WHERE oidsaada IN  " + in_stm, coll_table);
+			SQLTable.addQueryToTransaction("DELETE FROM " + coll_table + " WHERE oidsaada IN  " + in_stm, coll_table);
 			SQLTable.indexTable(coll_table, null);
 
 			/*
