@@ -86,7 +86,7 @@ public class CacheManager {
     /**
      * return SaadaInstance
      * @param oid identifier of object
-     * @exception CacheManagerException
+     * @exception FatalException if object not found
      */
     public synchronized SaadaInstance getObject(long oid) throws FatalException{
     	SaadaInstance retour;
