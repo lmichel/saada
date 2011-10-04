@@ -1,5 +1,6 @@
 package adqlParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +13,9 @@ import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
+import saadadb.meta.UTypeHandler;
+import saadadb.meta.VOResource;
+import saadadb.util.Messenger;
 import adqlParser.parser.ParseException;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLComparison;
@@ -22,22 +26,22 @@ import adqlParser.query.ColumnSearchHandler;
 import adqlParser.query.ComparisonOperator;
 
 public class SmartJoin {
-	
+
 	/** List of columns which can be found either in class or collection of a SaadaDB. */
 	public final static String[] MIXED_COLUMNS = new String[]{"oidsaada", "namesaada"};
-	
+
 	protected CacheMeta cache;
-	
+
 	protected HashMap<String, Vector<String>> lstColumns = new HashMap<String, Vector<String>>();
-	
+
 	protected HashMap<String,String> lstTablesAlias = new HashMap<String,String>();
-	
+
 	protected boolean debug = false;
-	
+
 	public SmartJoin(){
 		cache = Database.getCachemeta();
 	}
-		
+
 	/**
 	 * @return The debug.
 	 */
@@ -51,15 +55,15 @@ public class SmartJoin {
 	public final void setDebug(boolean debug) {
 		this.debug = debug;
 	}
-	
-	
-/* ****************** */
-/* * UCD MANAGEMENT * */
-/* ****************** */
+
+
+	/* ****************** */
+	/* * UCD MANAGEMENT * */
+	/* ****************** */
 	protected HashMap<String,SaadaADQLTable> getTableAliases(SaadaADQLQuery query){
 		HashMap<String, SaadaADQLTable> aliases = new HashMap<String, SaadaADQLTable>();
 		Iterator<ADQLTable> itTables = query.getTables();
-		
+
 		while(itTables.hasNext()){
 			SaadaADQLTable item = (SaadaADQLTable)itTables.next();
 			String alias = item.getAlias();
@@ -69,36 +73,36 @@ public class SmartJoin {
 			}
 			aliases.put(alias.toLowerCase(), item); 
 		}
-		
+
 		return aliases;
 	}
-	
+
 	protected String getTableAlias(SaadaADQLQuery query, String tableName){
 		String alias = null;
-		
+
 		Iterator<ADQLTable> itTables = query.getTables();
 		while(alias == null && itTables.hasNext()){
 			ADQLTable table = itTables.next();
 			if (table.getTable().equalsIgnoreCase(tableName))
 				alias = table.getAlias();
 		}
-		
+
 		return alias;
 	}
-	
+
 	protected static class UCDTransformation {
 		public final AttributeHandler columnMeta;
 		public final String columnName;
 		public final String joinTable;
 		public final boolean joinRequired;
-		
+
 		public UCDTransformation(AttributeHandler meta){
 			columnMeta = meta;
 			columnName= columnMeta.getNameattr();
 			joinTable = null;
 			joinRequired = false;
 		}
-		
+
 		public UCDTransformation(AttributeHandler meta, String table){
 			columnMeta = meta;
 			columnName = columnMeta.getNameattr();
@@ -106,19 +110,19 @@ public class SmartJoin {
 			joinRequired = true;
 		}
 	}
-	
+
 	public Vector<SaadaADQLQuery> readUcdsAndTransformQuery(SaadaADQLQuery query) throws ParseException {
 		Vector<SaadaADQLQuery> unionItems = new Vector<SaadaADQLQuery>();
-		
-	// Get tables alias:
+
+		// Get tables alias:
 		HashMap<String, SaadaADQLTable> lstTablesAlias = getTableAliases(query);
-		
-	// Get the first UCD function:
+
+		// Get the first UCD function:
 		ADQLObject ucdFunction = query.getFirst(UCDSearchHandler.getInstance());
 		if (debug) System.out.println("### FOUND UCD: "+ucdFunction);
 		String ucdName = null, tableName = null;
-		
-	// Return without modification if there is no UCD function:
+
+		// Return without modification if there is no UCD function:
 		if (ucdFunction == null)
 			return unionItems;
 		else{
@@ -126,15 +130,15 @@ public class SmartJoin {
 			ucdName = ucd.getUCD();
 			tableName = ucd.getTable();
 		}
-		
-	// Get the list of all implied tables:
+
+		// Get the list of all implied tables:
 		Vector<UCDTransformation> vTransformations = new Vector<UCDTransformation>();
 		SaadaADQLTable table = lstTablesAlias.get(tableName.toLowerCase());
 		if (table == null)
 			throw new ParseException("The table \""+tableName+"\" is not selected in this query !");
 		if (table.isSubQuery())
 			throw new ParseException("The table \""+tableName+"\" is a sub-query: the UCD function first parameter must be the name of a table of the database !");
-		
+
 		// CASE: class
 		if (table.isClass()){
 			AttributeHandler ucdField = table.getMetaCollection().getUCDField(ucdName, true);
@@ -145,8 +149,8 @@ public class SmartJoin {
 			}
 			vTransformations.add(new UCDTransformation(ucdField));
 			if (debug) System.out.println("### NEW TRANSFO: "+ucdName+" AS "+ucdField.getNameattr()+" IN "+tableName);
-			
-		// CASE: collection
+
+			// CASE: collection
 		}else{
 			AttributeHandler ucdField = table.getMetaCollection().getUCDField(ucdName, true);
 			if (ucdField == null){
@@ -167,8 +171,8 @@ public class SmartJoin {
 				if (debug) System.out.println("### NEW TRANSFO: "+ucdName+" AS "+ucdField.getNameattr()+" IN "+tableName);
 			}
 		}
-		
-	// For each implied table, replace the UCD function by the appropriate column reference and read the other UCD functions:
+
+		// For each implied table, replace the UCD function by the appropriate column reference and read the other UCD functions:
 		for(UCDTransformation ucdTransfo : vTransformations){		
 			// Copy the given query:
 			SaadaADQLQuery copy = (SaadaADQLQuery)query.getCopy();
@@ -202,13 +206,13 @@ public class SmartJoin {
 			else
 				unionItems.addAll(result);
 		}
-		
+
 		return unionItems;
 	}
-	
-/* ************** */
-/* * SMART JOIN * */
-/* ************** */
+
+	/* ************** */
+	/* * SMART JOIN * */
+	/* ************** */
 
 	private static class JoinIndication {
 		public boolean classUsed = false;
@@ -216,69 +220,94 @@ public class SmartJoin {
 		public boolean addCollection = false;
 		public String collectionName = "";
 		public String collectionAlias = "";
-		
+
 		public void setCollection(String collAlias){
 			addCollection = false;
 			collectionAlias = collAlias;
 		}
-		
+
 		public void setCollection(String collName, String collAlias){
 			addCollection = true;
 			collectionName = collName;
 			collectionAlias = collAlias;
 		}
 	}
-	
+
 	protected void extractColumnsAndTableAlias(SaadaADQLQuery q){
 		lstColumns.clear();
 		lstTablesAlias.clear();
-		
+
 		Iterator<ADQLTable> itTables = q.getTables();
 		while(itTables.hasNext()){
 			SaadaADQLTable table = (SaadaADQLTable)itTables.next();
 			String tableAlias = (table.getAlias()==null)?table.getTable():table.getAlias();
 			lstTablesAlias.put(tableAlias, table.getTable());
 			try {
-				// If it corresponds to a class:
-				if (SaadaDBConsistency.getClassName(table.getTable()) != null){
-					// add all the columns of the class:
-					AttributeHandler[] ahs = cache.getClassAttributes(SaadaDBConsistency.getClassName(table.getTable()));
-					for(int i=0; i<ahs.length; i++){
-						Vector<String> vTables = lstColumns.get(ahs[i].getNameattr());
+				/*
+				 * If classe is a VO model, we just publish the SQL table in the "ivoa" schema
+				 */
+				VOResource vor;
+				if( (vor = VOResource.getResource(table.getTable())) != null) {
+					Messenger.printMsg(Messenger.TRACE, table.getTable() + " is a VO model");
+					ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
+					for( UTypeHandler uth: uths) {
+						AttributeHandler ah = uth.getAttributeHandlerr();
+						ah.setNameattr(ah.getNameorg());
+						Vector<String> vTables = lstColumns.get(ah.getNameattr());
 						if (vTables == null){
 							vTables = new Vector<String>();
-							lstColumns.put(ahs[i].getNameattr(), vTables);
+							lstColumns.put(ah.getNameattr(), vTables);
 						}
 						vTables.add(tableAlias);
-						if (debug) System.out.println("### ADDED: "+ahs[i].getNameattr()+" [in "+table.getAlias()+"]");
+						if (debug) System.out.println("### ADDED: "+ah.getNameattr()+" [in "+table.getAlias()+"]");
+
 					}
-					
-				}else{
-					int ind = table.getTable().lastIndexOf('_');
-					// If it corresponds to a collection_category:
-					if (ind > 0){
-						String collectionName = table.getTable().substring(0, ind);
-						if (SaadaDBConsistency.getCollectionName(collectionName) != null){
-							int cat = Category.getCategory(table.getTable());
-							// add all the columns of the category:
-							Iterator<Map.Entry<String,AttributeHandler>> it = MetaCollection.getAttribute_handlers(cat).entrySet().iterator();
-							while(it.hasNext()){
-								Map.Entry<String,AttributeHandler> item = it.next();
-								Vector<String> vTables = lstColumns.get(item.getKey());
-								if (vTables == null){
-									vTables = new Vector<String>();
-									lstColumns.put(item.getKey(), vTables);
+				}
+				/*
+				 * Access to a Saada resource
+				 */
+				else {
+					// If it corresponds to a class:
+					if (SaadaDBConsistency.getClassName(table.getTable()) != null){
+						// add all the columns of the class:
+						AttributeHandler[] ahs = cache.getClassAttributes(SaadaDBConsistency.getClassName(table.getTable()));
+						for(int i=0; i<ahs.length; i++){
+							Vector<String> vTables = lstColumns.get(ahs[i].getNameattr());
+							if (vTables == null){
+								vTables = new Vector<String>();
+								lstColumns.put(ahs[i].getNameattr(), vTables);
+							}
+							vTables.add(tableAlias);
+							if (debug) System.out.println("### ADDED: "+ahs[i].getNameattr()+" [in "+table.getAlias()+"]");
+						}
+
+					}else{
+						int ind = table.getTable().lastIndexOf('_');
+						// If it corresponds to a collection_category:
+						if (ind > 0){
+							String collectionName = table.getTable().substring(0, ind);
+							if (SaadaDBConsistency.getCollectionName(collectionName) != null){
+								int cat = Category.getCategory(table.getTable());
+								// add all the columns of the category:
+								Iterator<Map.Entry<String,AttributeHandler>> it = MetaCollection.getAttribute_handlers(cat).entrySet().iterator();
+								while(it.hasNext()){
+									Map.Entry<String,AttributeHandler> item = it.next();
+									Vector<String> vTables = lstColumns.get(item.getKey());
+									if (vTables == null){
+										vTables = new Vector<String>();
+										lstColumns.put(item.getKey(), vTables);
+									}
+									vTables.add(tableAlias);
+									if (debug) System.out.println("### ADDED: "+item.getKey()+" [in "+tableAlias+"]");
 								}
-								vTables.add(tableAlias);
-								if (debug) System.out.println("### ADDED: "+item.getKey()+" [in "+tableAlias+"]");
 							}
 						}
 					}
 				}
-			} catch (FatalException e) {/* The table doesn't exist. */;}
+			} catch (Exception e) {/* The table doesn't exist. */;}
 		}
 	}
-	
+
 	/**
 	 * (PSEUDO MERGER of SAADA)<br />
 	 * For each class found in the FROM list, this function adds its corresponding collection (if it's not already done)
@@ -300,24 +329,24 @@ public class SmartJoin {
 		HashMap<String, Vector<ADQLColumn>> mapKnownCols = new HashMap<String, Vector<ADQLColumn>>();
 		HashMap<ADQLColumn, Vector<String>> mapUnknownCols = new HashMap<ADQLColumn, Vector<String>>();
 		HashMap<String, JoinIndication> joinIndications = new HashMap<String, JoinIndication>();
-		
-	// STEP 0: INITIALIZE COLUMNS LIST AND TABLES ALIAS LIST:
+
+		// STEP 0: INITIALIZE COLUMNS LIST AND TABLES ALIAS LIST:
 		extractColumnsAndTableAlias(query);
-		
-	// STEP 1: SORT IMPLIED COLUMNS BY CLASS:
+
+		// STEP 1: SORT IMPLIED COLUMNS BY CLASS:
 		classifyImpliedColumns(query.getAll(ColumnSearchHandler.getInstance()), mixedCols, mapKnownCols, mapUnknownCols);
-		
-	// STEP 2: LOOK IF IT IS NEEDED TO MAKE A JOIN WITH COLLECTIONS:
+
+		// STEP 2: LOOK IF IT IS NEEDED TO MAKE A JOIN WITH COLLECTIONS:
 		int nbTablesToUse = 0;
-//		if (mapUnknownCols.size() > 0)
-			nbTablesToUse = lookForJoin(query, mapKnownCols, mapUnknownCols, joinIndications);
-//		else
-//			nbTablesToUse = query.getNbTables();
-		
-	// STEP 3: CHECK THE UNKWOWN COLUMNS LIST:
+		//		if (mapUnknownCols.size() > 0)
+		nbTablesToUse = lookForJoin(query, mapKnownCols, mapUnknownCols, joinIndications);
+		//		else
+		//			nbTablesToUse = query.getNbTables();
+
+		// STEP 3: CHECK THE UNKWOWN COLUMNS LIST:
 		checkUnknownColumns(mapUnknownCols);
-		
-	// JUST A LITTLE DEBUGGING MESSAGE:
+
+		// JUST A LITTLE DEBUGGING MESSAGE:
 		if (debug){
 			System.out.println("### KNOWN COLUMNS ###");
 			Iterator<String> itKnown = mapKnownCols.keySet().iterator();
@@ -352,20 +381,20 @@ public class SmartJoin {
 			System.out.println("\n### NB TABLES TO USE = "+nbTablesToUse+" ###");
 			System.out.println();
 		}
-		
-	// STEP 4: SORT ALL MIXED COLUMNS:
+
+		// STEP 4: SORT ALL MIXED COLUMNS:
 		if (nbTablesToUse > 1)
 			classifyMixedColumns(mixedCols, mapKnownCols, joinIndications, query);
-		
-	// STEP 5: UPDATE THE CLAUSE FROM AND MAKE REQUIRED JOINS:
+
+		// STEP 5: UPDATE THE CLAUSE FROM AND MAKE REQUIRED JOINS:
 		updateFromAndJoin(joinIndications, mapKnownCols, query);
-		
+
 		if (debug)
 			System.out.println("### ADQL QUERY AFTER MERGING ###\n"+query+"\n################################\n");
-		
+
 		return query;
 	}
-	
+
 	/**
 	 * Classifies the given columns in three categories:
 	 * <ul>
@@ -394,22 +423,22 @@ public class SmartJoin {
 			if (mixed)
 				// add it to the mixed columns list:
 				mixedCols.add(col);
-			
+
 			else {
 				Vector<String> classesName = lstColumns.get(col.getColumn());
 				// if it doesn't correspond to an existing class...
 				if (classesName == null || classesName.size() <= 0){
 					// ...add the current column to the UNKNOWN class:
 					mapUnknownCols.put(col, new Vector<String>());
-				// it it corresponds to more than one class...
+					// it it corresponds to more than one class...
 				}else if (classesName.size() > 1){
 					// ...add it to its class if a table prefix is given:
 					if (col.getPrefix() != null){
 						if (mapKnownCols.get(col.getPrefix()) == null)
 							mapKnownCols.put(col.getPrefix(), new Vector<ADQLColumn>());
 						mapKnownCols.get(col.getPrefix()).add(col);
-						
-					// ...else throw an error:
+
+						// ...else throw an error:
 					}else{
 						String[] tables = new String[classesName.size()];
 						int i=0;
@@ -417,7 +446,7 @@ public class SmartJoin {
 							tables[i++] = table;
 						throw new ParseException("Ambiguous column reference: \""+col+"\" may reference to either "+tables+" !");
 					}
-				// else...
+					// else...
 				}else{
 					// ...add the current column to its class:
 					if (!mapKnownCols.containsKey(classesName.get(0)))
@@ -427,7 +456,7 @@ public class SmartJoin {
 			}
 		}
 	}
-	
+
 	/**
 	 * Determines, for each table selected in the clause FROM (joined tables included), whether it is used in the query and
 	 * whether a join to its collection is needed.
@@ -451,13 +480,13 @@ public class SmartJoin {
 			ADQLTable table = itTables.next();
 			while(table != null){
 				String tableAlias = (table.getAlias()==null)?table.getTable():table.getAlias();
-				
+
 				// Don't consider tables which reference sub-queries:
 				if (table.isSubQuery()){
 					table = (table.getJoin() == null)?null:table.getJoin().getJoinedTable();
 					continue;
 				}
-				
+
 				// If this table corresponds to a class of Saada:
 				String className = SaadaDBConsistency.getClassName(table.getTable());
 				if (className != null){
@@ -465,7 +494,7 @@ public class SmartJoin {
 					// are some columns associated with this class ?
 					joinIndic.classUsed = mapKnownCols.containsKey(tableAlias);
 					if (joinIndic.classUsed) nbTablesToUse++;
-					
+
 					try{
 						MetaClass meta = cache.getClass(className);
 						// get the name of its collection:
@@ -482,7 +511,7 @@ public class SmartJoin {
 							joinIndic.setCollection(collectionAlias);
 						// get all columns used by this category of data:
 						Map<String, AttributeHandler> mapCollectionColumns = MetaCollection.getAttribute_handlers(meta.getCategory());
-						
+
 						// for each unknown column...
 						Iterator<Map.Entry<ADQLColumn, Vector<String>>> itUnknown = mapUnknownCols.entrySet().iterator();
 						while(itUnknown.hasNext()){
@@ -517,7 +546,7 @@ public class SmartJoin {
 		}
 		return nbTablesToUse;
 	}
-	
+
 	/**
 	 * Ensures that all columns of the unknown columns list are now known.
 	 * 
@@ -536,7 +565,7 @@ public class SmartJoin {
 			// ...associated with at least one table, else throw an error:
 			if (item.getValue().size() == 0)
 				throw new ParseException("The column \""+item.getKey()+"\" doesn't exist in any selected table !");
-			
+
 			// ...associated with only one table or they have a prefix, else throw an error:
 			else if (item.getValue().size() != 1 && item.getKey().getPrefix() == null){
 				String[] tables = new String[item.getValue().size()];
@@ -547,7 +576,7 @@ public class SmartJoin {
 			}
 		}
 	}
-	
+
 	/**
 	 * In function of the joins to make, this method classify all the mixed columns.
 	 * 
@@ -576,10 +605,10 @@ public class SmartJoin {
 					if (table != null)
 						tableName = ((table.getAlias()==null)?table.getTable():table.getAlias());
 				}
-			// else get directly the prefix of the table:
+				// else get directly the prefix of the table:
 			}else
 				tableName = col.getPrefix();
-			
+
 			// Change the prefix of the current mixed column...
 			JoinIndication joinIndic = joinIndications.get(tableName);
 			if (joinIndic != null){
@@ -594,7 +623,7 @@ public class SmartJoin {
 					// ...into the class alias if the collection is not used:
 					col.setPrefix(tableName);
 			}
-			
+
 			// Add the current mixed column in the corresponding table (class or collection, it depends of the join indication):
 			Vector<ADQLColumn> vTemp = mapKnownCols.get(tableName);
 			if (vTemp == null){
@@ -606,7 +635,7 @@ public class SmartJoin {
 			System.out.println("### MIXED COLUMN \""+col+"\" ADDED IN \""+tableName+"\"");
 		}
 	}
-	
+
 	/**
 	 * Update the query in a function of each join indication:
 	 * <ul>
@@ -633,7 +662,7 @@ public class SmartJoin {
 			Map.Entry<String, JoinIndication> item = itJoins.next();
 			String className = item.getKey();
 			JoinIndication indic = item.getValue();
-			
+
 			// CASE: class and collection used:
 			if (indic.classUsed && indic.collectionUsed){
 				// ...add the collection into the clause FROM:
@@ -648,8 +677,8 @@ public class SmartJoin {
 				Vector<ADQLColumn> collectionColumns = mapKnownCols.get(indic.collectionAlias);
 				for(ADQLColumn col : collectionColumns)
 					col.setPrefix(indic.collectionAlias);
-				
-			// CASE: collection used but not class:
+
+				// CASE: collection used but not class:
 			}else if (!indic.classUsed && indic.collectionUsed){
 				// ...look for the corresponding table in the clause FROM:
 				Iterator<ADQLTable> itTables = q.getTables();
@@ -665,8 +694,8 @@ public class SmartJoin {
 						table = (table.getJoin() != null)?table.getJoin().getJoinedTable():null;
 					}
 				}
-				
-			// CASE: neither class or collection are used (CASE THEORATICALLY IMPOSSIBLE AT THIS PARSING STEP):
+
+				// CASE: neither class or collection are used (CASE THEORATICALLY IMPOSSIBLE AT THIS PARSING STEP):
 			}else if (!indic.classUsed && !indic.collectionUsed){
 				//System.out.println("WARNING: the table \""+className+"\" is never used !");
 				//q.removeTable(className);

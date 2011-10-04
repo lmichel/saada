@@ -67,7 +67,35 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
 				, new Object[]{schema, table, "table",description, utype});
 	}
-	
+
+	/**
+	 * @param schemaName
+	 * @throws AbortException 
+	 */
+	public static void dropPublishedSchema(String schemaName) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop table of  schema " + schemaName);
+		SQLQuery sq = new SQLQuery();
+		ResultSet rs = sq.run("SELECT table_name  FROM " + tableName + " WHERE  schema_name = '" + schemaName + "' AND table_name = '" + tableName + "'" );
+		while( rs.next() ) {
+			Table_Tap_Schema_Tables.dropPublishedTable(schemaName, rs.getString(1));
+		}
+		sq.close();
+
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "'");		
+	}
+
+	/**
+	 * @param schemaName
+	 * @param tableName
+	 * @throws AbortException
+	 */
+	public static void dropPublishedTable(String schemaName, String table) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop table " + schemaName + "." + table);
+		Table_Tap_Schema_Keys.dropPublishedTable(table);
+		Table_Tap_Schema_Columns.dropPublishedTable(table);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "' AND table_name = '" + table + "'");		
+	}
+
 	/**
 	 * Returns true if bale is already referenced in tap_schema_tables
 	 * @param table

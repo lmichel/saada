@@ -50,6 +50,9 @@ public class SaadaServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 
+	public static boolean isInit(){
+		return INIT;
+	}
 	@Override
 	public void init(ServletConfig conf) throws ServletException {
 		super.init(conf);
@@ -63,22 +66,30 @@ public class SaadaServlet extends HttpServlet {
 					cpt ++;
 				}
 				synchronized (this) {
-					if(  !INIT ) {
-						INIT_IN_PROGRESS = true;					
-						Messenger.printMsg(Messenger.TRACE, "Init started by" + conf.getServletName());
-						Messenger.debug_mode = false;
-						LocalConfig lc = new LocalConfig();
-						Database.init(lc.db_name);
-						if( lc.urlroot != null && lc.urlroot.length() > 0 ){
-							Database.getConnector().setUrl_root(lc.urlroot);
+					if(  !INIT  ) {
+						if( !saadaservlet.SaadaServlet.isInit() ) {
+							INIT_IN_PROGRESS = true;					
+							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by" + conf.getServletName());
+							Messenger.debug_mode = false;
+							LocalConfig lc = new LocalConfig();
+							Database.init(lc.db_name);
+							if( lc.urlroot != null && lc.urlroot.length() > 0 ){
+								Database.getConnector().setUrl_root(lc.urlroot);
+							}
+							if( lc.saadadbroot != null && lc.saadadbroot.length() > 0 ){
+								Database.getConnector().setRoot_dir(lc.saadadbroot);
+							}
+							INIT_IN_PROGRESS = false;
+							INIT = true;
+							Repository.sweepReportDir();
+							Messenger.printMsg(Messenger.TRACE, "Ajax interface init done by "+  conf.getServletName());
 						}
-						if( lc.saadadbroot != null && lc.saadadbroot.length() > 0 ){
-							Database.getConnector().setRoot_dir(lc.saadadbroot);
+						else {
+							INIT_IN_PROGRESS = false;
+							INIT = true;
+							Messenger.printMsg(Messenger.TRACE, "Ajax interface done by saadaservlet.SaadaServlet ");
+
 						}
-						INIT_IN_PROGRESS = false;
-						INIT = true;
-						Repository.sweepReportDir();
-						Messenger.printMsg(Messenger.TRACE, "Init done by "+  conf.getServletName());
 					}
 					/*
 					 * Compulsory to restart after a failure
@@ -214,7 +225,7 @@ public class SaadaServlet extends HttpServlet {
 			res.setHeader("Content-Encoding", "zip");
 			s_product = product_path.replaceAll("(?i)(\\.zip$)", "");
 		}
-		
+
 		if( s_product.toLowerCase().endsWith(".htm") || s_product.toLowerCase().endsWith(".html") ) {
 			res.setContentType("text/html;charset=ISO-8859-1");
 		} else if( s_product.toLowerCase().endsWith(".pdf")  ) {
@@ -255,7 +266,7 @@ public class SaadaServlet extends HttpServlet {
 		bos.close();
 		fl.close();
 	}
-	
+
 	/**
 	 * Push the content of an XML file to the servlet response
 	 * @param urlPath     : Pathn name of the xml file

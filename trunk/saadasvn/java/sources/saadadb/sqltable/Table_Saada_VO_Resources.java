@@ -30,12 +30,12 @@ public class Table_Saada_VO_Resources extends SQLTable {
 				, "pk"
 				, false);
 		loadFromConfigFiles(connector);
-//		saveDefaultSSAResource();
-//		saveDefaultSIAResource();
-//		saveDefaultCSResource();
-//		saveEpicSSAResource();
+		//		saveDefaultSSAResource();
+		//		saveDefaultSIAResource();
+		//		saveDefaultCSResource();
+		//		saveEpicSSAResource();
 	}
-	
+
 	/**
 	 */
 	private static void saveDefaultSSAResource() {
@@ -71,7 +71,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 			}
 		}
 	}
-	
+
 	/**
 	 */
 	private static void saveDefaultSIAResource() {
@@ -99,7 +99,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 				new UTypeHandler("Scale"    ,"","VOX:Image_Scale","double", -1, false, "", ""),
 				new UTypeHandler("SaadaName","","VOX:Image_Title","char"  ,-1, false, "", "")
 		});
-		
+
 		for( Entry<String, UTypeHandler[]> e: SIA_DM.entrySet() ) {
 			for( UTypeHandler uth: e.getValue()) {
 				try {
@@ -111,7 +111,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 			}
 		}
 	}
-	
+
 	/**
 	 */
 	private static void saveDefaultCSResource() {
@@ -135,7 +135,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 				new UTypeHandler("RA"     ,""             ,"POS_EQ_RA_MAIN"           ,"double",  1, false, ""       , ""),
 				new UTypeHandler("DEC"    ,""             ,"POS_EQ_DEC_MAIN"          ,"double",  1, false, ""       , ""),
 		});
-		
+
 		for( Entry<String, UTypeHandler[]> e: CS_DM.entrySet() ) {
 			for( UTypeHandler uth: e.getValue()) {
 				try {
@@ -153,7 +153,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	 */
 	private static void saveEpicSSAResource() throws AbortException {
 		LinkedHashMap<String, UTypeHandler[]>SSA_DM = null;
-		
+
 		SSA_DM = new LinkedHashMap<String, UTypeHandler[]>();
 
 		SSA_DM.put("Query", new UTypeHandler[]{new UTypeHandler("","Query.Score","1.0","REC","","float",1),
@@ -289,7 +289,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 			}
 		}	
 	} 	
-	
+
 	/**
 	 * @throws AbortException 
 	/**
@@ -300,8 +300,8 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	 */
 	public static void storeField(String resources, String group, UTypeHandler uth) throws Exception {
 		String query = "INSERT INTO saada_vo_resources VALUES (" + Database.getWrapper().getInsertAutoincrementStatement() +  ", " 
-	            + "'"   + resources + "'"
-			    + ", '" + group + "'";
+		+ "'"   + resources + "'"
+		+ ", '" + group + "'";
 		if( uth.getNickname() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getNickname()) + "'";
 		}
@@ -338,46 +338,47 @@ public class Table_Saada_VO_Resources extends SQLTable {
 		}
 		else {
 			query += ", ''";
-			
+
 		}
 		if( uth.getComment() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getComment()) + "'";
 		}
 		else {
 			query += ", ''";
-			
+
 		}
 		SQLTable.addQueryToTransaction(query + ")", "saada_vo_resources");
 	}
-	
+
 	/**
 	 * @param connector 
 	 * @throws Exception 
 	 * 
 	 */
 	public static void loadFromConfigFiles(SaadaDBConnector connector) throws Exception {
-			File confdir = new File(connector.getRoot_dir() + Database.getSepar() + "config");
-			if( confdir.isDirectory() == false ) {
-				FatalException.throwNewException(SaadaException.MISSING_FILE,  "<" + confdir + "> is not a directory. Your SaadaDB install is corrupted");
-			}
-			else {
-				String[] files = confdir.list();
-				String base = confdir.getAbsolutePath() + Database.getSepar();
-				for( String file: files ) {
-					File cf = new File(base + file);
-					if( file.matches("vodm\\..*\\.xml") && cf.isFile() ) {
-						Messenger.printMsg(Messenger.TRACE, "Load DM file " + file);
-						loadFromConfigFile(cf.getAbsolutePath());
-					}
+		File confdir = new File(connector.getRoot_dir() + Database.getSepar() + "config");
+		if( confdir.isDirectory() == false ) {
+			FatalException.throwNewException(SaadaException.MISSING_FILE,  "<" + confdir + "> is not a directory. Your SaadaDB install is corrupted");
+		}
+		else {
+			String[] files = confdir.list();
+			String base = confdir.getAbsolutePath() + Database.getSepar();
+			for( String file: files ) {
+				File cf = new File(base + file);
+				if( file.matches("vodm\\..*\\.xml") && cf.isFile() ) {
+					Messenger.printMsg(Messenger.TRACE, "Load DM file " + file);
+					loadFromConfigFile(cf.getAbsolutePath());
 				}
 			}
+		}
 	}
-	
+
 	/**
 	 * @param resource
 	 * @throws AbortException
 	 */
 	public static void removeResource(String resource) throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Remove resource " + resource);
 		SQLTable.addQueryToTransaction("DELETE FROM saada_vo_resources WHERE resource = '" + resource + "'", "saada_vo_resources");
 	}
 	/**
@@ -387,14 +388,15 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	public static void loadFromConfigFile(String file_path ) throws Exception {
 		VOResource vor = new VOResource(file_path);
 		Table_Saada_VO_Resources.removeResource(vor.getName());
+		Messenger.printMsg(Messenger.TRACE, "Load resource file " + file_path);
 		for( Entry<String, Set<UTypeHandler>> e: vor.getGroups().entrySet() ) {
 			for( UTypeHandler uth: e.getValue()) {
 				Table_Saada_VO_Resources.storeField(vor.getName(), e.getKey(), uth);
 			}
 		}	
 	}
-	
-	
+
+
 	/**
 	 * @param args
 	 * @throws Exception
@@ -410,7 +412,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 		saveDefaultCSResource();
 		loadFromConfigFiles(Database.getConnector());
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());

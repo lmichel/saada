@@ -1,6 +1,5 @@
 package ajaxservlet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -94,7 +93,8 @@ public class Download extends SaadaServlet {
 						product_path += "." + ext;
 					}
 				}
-					downloadProduct(request, response, product_path);
+				System.out.println("@@@@ " + product_path);	
+				downloadProduct(request, response, product_path);
 				return;
 			}
 			else if( report != null ) { 
