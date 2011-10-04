@@ -3,6 +3,7 @@
  */
 package saadadb.sqltable;
 
+import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 
 import saadadb.exceptions.AbortException;
@@ -56,6 +57,21 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	public static void dropTable() throws AbortException {
 		Messenger.printMsg(Messenger.TRACE, "Drop table " + tableName);
 		SQLTable.dropTable(tableName);
+	}
+
+	/**
+	 * @param schemaName
+	 * @throws AbortException 
+	 */
+	public static void dropPublishedTable(String table) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
+		SQLQuery sq = new SQLQuery();
+		ResultSet rs = sq.run("SELECT key_id FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'" );
+		while( rs.next() ) {
+			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getInt(1));
+		}
+		sq.close();
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'");		
 	}
 
 }

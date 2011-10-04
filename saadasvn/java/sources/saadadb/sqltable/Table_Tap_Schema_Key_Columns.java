@@ -45,11 +45,21 @@ public class Table_Tap_Schema_Key_Columns extends SQLTable {
 	}
 	
 	/**
+	 * @param ketId
+	 * @throws AbortException
+	 */
+	public static void dropPublishedKey(int ketId) throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  key_id = " + ketId );		
+	}
+	
+	/**
 	 * @throws AbortException
 	 */
 	public static void dropTable() throws AbortException {
 		Messenger.printMsg(Messenger.TRACE, "Drop table " + tableName);
 		SQLTable.dropTable(tableName);
 	}
+
 
 }

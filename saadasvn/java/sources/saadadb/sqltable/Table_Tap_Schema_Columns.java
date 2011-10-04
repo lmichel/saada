@@ -130,4 +130,13 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 		}
 	}
 
+	/**
+	 * @param schemaName
+	 * @throws AbortException 
+	 */
+	public static void dropPublishedTable(String table) throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  table_name = '" + table + "'");		
+	}
+
 }

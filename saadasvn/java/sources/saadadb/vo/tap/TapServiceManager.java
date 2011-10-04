@@ -5,6 +5,7 @@ package saadadb.vo.tap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -18,6 +19,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
+import saadadb.meta.UTypeHandler;
+import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Tap_Schema_Columns;
@@ -33,21 +36,21 @@ import saadadb.util.Messenger;
  */
 public class TapServiceManager extends EntityManager {
 	public final static Set<String> ignoreCollAttrs = new LinkedHashSet<String>();
-	
+
 
 	static {
-			ignoreCollAttrs.add("date_load");
-			ignoreCollAttrs.add("product_url_csa");
-			ignoreCollAttrs.add("sky_pixel_csa");
-			ignoreCollAttrs.add("oidtable");
-			ignoreCollAttrs.add("shape_csa");
-			ignoreCollAttrs.add("date_load");
-			ignoreCollAttrs.add("y_colname_csa");
-			ignoreCollAttrs.add("x_colname_csa");
-			ignoreCollAttrs.add("y_min_csa");
-			ignoreCollAttrs.add("y_max_csa");
-			ignoreCollAttrs.add("y_max_csa");
-		}
+		ignoreCollAttrs.add("date_load");
+		ignoreCollAttrs.add("product_url_csa");
+		ignoreCollAttrs.add("sky_pixel_csa");
+		ignoreCollAttrs.add("oidtable");
+		ignoreCollAttrs.add("shape_csa");
+		ignoreCollAttrs.add("date_load");
+		ignoreCollAttrs.add("y_colname_csa");
+		ignoreCollAttrs.add("x_colname_csa");
+		ignoreCollAttrs.add("y_min_csa");
+		ignoreCollAttrs.add("y_max_csa");
+		ignoreCollAttrs.add("y_max_csa");
+	}
 
 	/**
 	 * @param name
@@ -73,10 +76,10 @@ public class TapServiceManager extends EntityManager {
 		try {
 			int missingTable = serviceExists();
 			if( missingTable < 0 ) {
-				QueryException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove command first");
+				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove command first");
 			}
 			else if( missingTable == 1 ) {
-				QueryException.throwNewException(SaadaException.CORRUPTED_DB, "TAP service already exists. Please remove it first before to overide");
+				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "TAP service already exists. Please remove it first before to overide");
 			}
 			int detectedTables = 0;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Keys.tableName) ) detectedTables++;
@@ -84,7 +87,7 @@ public class TapServiceManager extends EntityManager {
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Columns.tableName) ) detectedTables++;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Tables.tableName) ) detectedTables++;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Schemas.tableName) ) detectedTables++;
-			
+
 			/*
 			 * Create TAP_SCHEMA tables
 			 */
@@ -113,7 +116,7 @@ public class TapServiceManager extends EntityManager {
 			/*
 			 * Reference TAPS_SCHEMA table columns 
 			 */
-			
+
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Schemas.tableName    , Table_Tap_Schema_Schemas.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Tables.tableName     , Table_Tap_Schema_Tables.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Columns.tableName    , Table_Tap_Schema_Columns.attMap, true);
@@ -136,8 +139,6 @@ public class TapServiceManager extends EntityManager {
 	 */
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -146,17 +147,45 @@ public class TapServiceManager extends EntityManager {
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
 		try {
-			int missingTable = serviceExists();
-			if( missingTable == 0 ) {
-				QueryException.throwNewException(SaadaException.CORRUPTED_DB, "No Tap service detected");
+			String toRemove = ap.getRemove();
+			if( toRemove.equalsIgnoreCase("service")) {
+				int missingTable = serviceExists();
+				if( missingTable == 0 ) {
+					FatalException.throwNewException(SaadaException.CORRUPTED_DB, "No Tap service detected");
+				}
+				Table_Tap_Schema_Keys.dropTable();
+				Table_Tap_Schema_Key_Columns.dropTable();
+				Table_Tap_Schema_Columns.dropTable();
+				Table_Tap_Schema_Tables.dropTable();
+				Table_Tap_Schema_Schemas.dropTable();
 			}
-			Table_Tap_Schema_Keys.dropTable();
-			Table_Tap_Schema_Key_Columns.dropTable();
-			Table_Tap_Schema_Columns.dropTable();
-			Table_Tap_Schema_Tables.dropTable();
-			Table_Tap_Schema_Schemas.dropTable();
-		} catch (Exception e) {
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+			else {
+				String[] sc = toRemove.split("\\.");
+				/*
+				 * One field: that is a request to unpublish a whole schema;
+				 */
+				if( sc.length == 1 ) {
+					if( ! Table_Tap_Schema_Schemas.knowsSchema(sc[0]) ) {
+						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "There is not schema '" + sc[0] + "' published");			
+					}
+					Table_Tap_Schema_Schemas.dropPublishedSchema(sc[0]);
+				}
+				/*
+				 * 2 fields: that is a request to unpublish a table within a schema;
+				 */
+				else if( sc.length == 2 ){
+					Table_Tap_Schema_Tables.dropPublishedTable(sc[0], sc[1]);
+				}
+				else {
+					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "-empty must be like 'schema.table' or 'schema'");			
+				}
+
+			}
+		} catch (SaadaException e) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+		}catch (Exception e2) {
+			Messenger.printStackTrace(e2);
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e2);
 		}
 	}
 
@@ -167,33 +196,65 @@ public class TapServiceManager extends EntityManager {
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
 		try {
-		String classe = ap.getClassName();
-		String description = ap.getComment();
-		MetaClass mc = Database.getCachemeta().getClass(classe);
-		String collection = mc.getCollection_name();
-		if( Table_Tap_Schema_Tables.knowsTable(classe)) {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + classe + " alreday published in the TAP service");
-		}
-		if( !Table_Tap_Schema_Schemas.knowsSchema(collection) ) {
-			Table_Tap_Schema_Schemas.addSchema(collection, "Schema matching the Saada collection " + collection, null);
-		}
-		Table_Tap_Schema_Tables.addTable(collection, classe, description, null);
-		
-		Collection<AttributeHandler> coll = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
-		LinkedHashMap<String, AttributeHandler> mah = new LinkedHashMap<String, AttributeHandler>();
-		for(AttributeHandler ah : coll) {
-			String na = ah.getNameattr();
-			if( !ignoreCollAttrs.contains(na)) {
-				mah.put(na, ah);
+			int missingTable = serviceExists();
+			if( missingTable < 0 ) {
+				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove and create again the service");
 			}
-		}
-		mah.putAll(mc.getAttributes_handlers());
-		Table_Tap_Schema_Columns.addTable(classe, mah, false);
+			else if( missingTable == 0 ) {
+				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "TAP service does nor exist exists. Please create it first");
+			}
+			String classe = ap.getPopulate();
+			String description = ap.getComment();
+
+			String collection = null;
+			LinkedHashMap<String, AttributeHandler> mah = new LinkedHashMap<String, AttributeHandler>();
+			VOResource vor;
+			/*
+			 * If classe is a VO model, we just publish the SQL table in the "ivoa" schema
+			 */
+			if( (vor = VOResource.getResource(classe)) != null) {
+				Messenger.printMsg(Messenger.TRACE, classe + " is a VO model");
+				ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
+				collection = "ivoa";
+				for( UTypeHandler uth: uths) {
+					AttributeHandler ah = uth.getAttributeHandlerr();
+					ah.setNameattr(ah.getNameorg());
+					mah.put(ah.getNameattr(), ah);
+				}
+			}
+			/*
+			 * If classe is a Saada class, we publish the join class/collection
+			 */
+			else {
+				Messenger.printMsg(Messenger.TRACE, classe + " is a Saada class");
+				MetaClass mc = Database.getCachemeta().getClass(classe);
+				collection = mc.getCollection_name();
+
+				Collection<AttributeHandler> coll = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
+				for(AttributeHandler ah : coll) {
+					String na = ah.getNameattr();
+					if( !ignoreCollAttrs.contains(na)) {
+						mah.put(na, ah);
+					}
+				}
+				mah.putAll(mc.getAttributes_handlers());
+			}
+			/*
+			 * TAP SCHEMA table update
+			 */
+			if( Table_Tap_Schema_Tables.knowsTable(classe)) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + classe + " alreday published in the TAP service");
+			}
+			if( !Table_Tap_Schema_Schemas.knowsSchema(collection) ) {
+				Table_Tap_Schema_Schemas.addSchema(collection, "Schema matching the Saada collection " + collection, null);
+			}
+			Table_Tap_Schema_Tables.addTable(collection, classe, description, null);
+			Table_Tap_Schema_Columns.addTable(classe, mah, false);
 		} catch (SaadaException e) {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}catch (Exception e2) {
 			Messenger.printStackTrace(e2);
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, e2);
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e2);
 		}
 	}
 
@@ -213,7 +274,7 @@ public class TapServiceManager extends EntityManager {
 	public void comment(ArgsParser ap) throws SaadaException {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/**
 	 * Check the status of the TAP service
 	 * @return 1 if all TAP_SCHEMA tables are here, 0 if no table is here or minus the number of missing tables
@@ -254,7 +315,7 @@ public class TapServiceManager extends EntityManager {
 			retour.append("<schema>\n");
 			retour.append("    <name>" + schema_name + "</name>\n");
 			if( schema_desc != null && schema_desc.length() > 0)			
-				retour.append("    <description><![CDATA[" + schema_desc + "]]></description\n");
+				retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
 			/*
 			 * Loop on tables
 			 */
@@ -268,9 +329,9 @@ public class TapServiceManager extends EntityManager {
 				retour.append("    <table>\n");
 				retour.append("        <name>" + table_name + "</name>\n");
 				if( table_desc != null && table_desc.length() > 0)			
-					retour.append("        <description><![CDATA[" + table_desc + "]]></description\n");
+					retour.append("        <description><![CDATA[" + table_desc + "]]></description>\n");
 				if( table_type != null && table_type.length() > 0)			
-					retour.append("        <type>" + table_type + "</type\n");
+					retour.append("        <type>" + table_type + "</type>\n");
 				/*
 				 * Loop on columns
 				 */
@@ -278,32 +339,32 @@ public class TapServiceManager extends EntityManager {
 				ResultSet rs_columns = qcolumns.run("SELECT * FROM " + Table_Tap_Schema_Columns.tableName 
 						+ " WHERE table_name = '" + table_name + "'");
 				while(rs_columns.next()) {
-				    retour.append("        <columns>\n");
+					retour.append("        <column>\n");
 					retour.append("            <name>" + rs_columns.getString(2) + "</name>\n");
 					retour.append("            <description>" + rs_columns.getString(3) + "</description>\n");
 					Object v = rs_columns.getObject(4);
 					if( v != null ) {
 						retour.append("            <unit>" + v + "</unit>\n");					
 					}
-				    v = rs_columns.getObject(5);
-				    if( v != null ) {
+					v = rs_columns.getObject(5);
+					if( v != null ) {
 						retour.append("            <ucd>" + v + "</ucd>\n");					
 					}
-				    v = rs_columns.getObject(6);
-				    if( v != null ) {
+					v = rs_columns.getObject(6);
+					if( v != null ) {
 						retour.append("            <utype>" + v + "</utype>\n");					
 					}
-				    v = rs_columns.getObject(7);
-				    if( v != null ) {
+					v = rs_columns.getObject(7);
+					if( v != null ) {
 						retour.append("            <dataType xsi:type=\"vod:TAPType\">" + v );		
-					    v = rs_columns.getObject(8);
-					    if( v != null ) {
+						v = rs_columns.getObject(8);
+						if( v != null ) {
 							retour.append("\n                <arraysize>" + v + "</arraysize>\n           ");		
-					    }
+						}
 						retour.append("</dataType>\n");		
-	
+
 					}
-					retour.append("        </columns>\n");				
+					retour.append("        </column>\n");				
 				}
 				rs_columns.close();
 				retour.append("    </table>\n");
@@ -315,9 +376,9 @@ public class TapServiceManager extends EntityManager {
 		rs_schema.close();
 		return retour;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		Database.init("XIDResult");
+		Database.init("XCatDR3");
 		System.out.println(TapServiceManager.getXML());
 	}
 }

@@ -11,6 +11,10 @@ import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
 import adqlParser.parser.AdqlParser;
+import adqlParser.parser.DBConsistency;
+import adqlParser.parser.DefaultDBConsistency;
+import adqlParser.parser.ParseException;
+import adqlParser.parser.QueryBuilderTools;
 
 /**
  * As the {@link SaadaQLExecutor} class the ADQLExecutor class executes a query but written in ADQL.
@@ -52,10 +56,12 @@ public class ADQLExecutor {
 		Messenger.printMsg(Messenger.TRACE, "ADQL executor : ADQL query received :\n" + queryStr);
 		
 		// Execute the given query:
-		SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
-		AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
+		AdqlParser parse;
+		SaadaDBConsistency dbConsistency;
+			dbConsistency = new SaadaDBConsistency();
+			parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
+			query = (SaadaADQLQuery)parse.Query();
 //		parse.setDebug(true);
-		query = (SaadaADQLQuery)parse.Query();
 		
 		if (limit > -1)
 			query.setLimit(limit);

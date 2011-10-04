@@ -519,7 +519,8 @@ public class AdqlParser implements AdqlParserConstants {
 	final public ADQLQuery QueryExpression() throws ParseException {
 		trace_call("QueryExpression");
 		try {
-			query = buildTools.createQuery(); dbCheck.addContext(query);
+			query = buildTools.createQuery(); 
+			dbCheck.addContext(query);
 			Select();
 			From();
 			switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {

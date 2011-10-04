@@ -31,7 +31,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		ah = new AttributeHandler();
 		ah.setNameattr("utype"); ah.setNameattr("utype"); ah.setType("VARCHAR"); ah.setComment("UTYPE if schema corresponds to a data model");
 		attMap.put("utype", ah);
-		}
+	}
 	/**
 	 * @throws SaadaException
 	 */
@@ -44,7 +44,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
 		SQLTable.createTable(tableName, sql, null, false);
 	}
-	
+
 	/**
 	 * @throws AbortException
 	 */
@@ -64,7 +64,17 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
 				, new Object[]{schemaName,description, utype});
 	}
-	
+
+	/**
+	 * @param schemaName
+	 * @throws AbortException 
+	 */
+	public static void dropPublishedSchema(String schemaName) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop schema " + schemaName + " to " + tableName);
+		Table_Tap_Schema_Tables.dropPublishedSchema(schemaName);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "'");		
+	}
+
 	/**
 	 * Returns true if bale is already referenced in tap_schema_tables
 	 * @param table
@@ -80,5 +90,5 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		rs.close();
 		return  false;
 	}
-	
+
 }

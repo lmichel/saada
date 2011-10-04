@@ -16,6 +16,8 @@ import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
 import adqlParser.parser.AdqlParser;
+import adqlParser.parser.DefaultDBConsistency;
+import adqlParser.parser.QueryBuilderTools;
 
 /**
  * @author laurent
@@ -107,22 +109,46 @@ public class AdqlQuery extends VOQuery {
 
 	@Override
 	public void runQuery() throws Exception {		
-		SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
-		AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
-		adqlQuery = (SaadaADQLQuery)parse.Query();
+//		try {
+			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
+			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
+			adqlQuery = (SaadaADQLQuery)parse.Query();
 
-		if (limit > -1)
-			adqlQuery.setLimit(limit);
-		if( limit <= 0 || limit > DEFAULTSIZE) {
-			Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
-			adqlQuery.setLimit(DEFAULTSIZE);
-		}
-		resultSet = new ADQLResultSet(adqlQuery.runQuery(), dbConsistency.getColumnsMeta());
+			if (limit > -1)
+				adqlQuery.setLimit(limit);
+			if( limit <= 0 || limit > DEFAULTSIZE) {
+				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
+				adqlQuery.setLimit(DEFAULTSIZE);
+			}
+			resultSet = new ADQLResultSet(adqlQuery.runQuery(), dbConsistency.getColumnsMeta());
 
-		if(resultSet == null) {
-			QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
-		}
+			if(resultSet == null) {
+				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
+			}
+//		} catch( adqlParser.parser.ParseException e) {
+//			DefaultDBConsistency dbConsistency = new DefaultDBConsistency();
+//			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, QueryBuilderTools());
+//			adqlQuery = (SaadaADQLQuery)parse.Query();
+//
+//			if (limit > -1)
+//				adqlQuery.setLimit(limit);
+//			if( limit <= 0 || limit > DEFAULTSIZE) {
+//				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
+//				adqlQuery.setLimit(DEFAULTSIZE);
+//			}
+//			resultSet = new ADQLResultSet(adqlQuery.runQuery(), null);
+//
+//			if(resultSet == null) {
+//				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
+//			}
+//
+//		}
 
+	}
+
+	private QueryBuilderTools QueryBuilderTools() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
