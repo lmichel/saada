@@ -512,7 +512,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		stmt.executeUpdate("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
 				+ " RETURNS VOID \n"
 				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
-		/*
+		/* 
 		 * Cannot make a SELECT in an update statement
 		 */
 		stmt.execute("SELECT \n"
