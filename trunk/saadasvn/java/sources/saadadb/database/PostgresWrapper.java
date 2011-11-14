@@ -485,7 +485,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		}
 		SQLTable.addQueryToTransaction("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
 				+ " RETURNS VOID \n"
-				+ " 	AS $$ CREATE LANGUAGE plpgsq $$ LANGUAGE SQL;\n");
+				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
 		SQLTable.commitTransaction();
 		/*
 		 * Cannot make a SELECT in an update statement
