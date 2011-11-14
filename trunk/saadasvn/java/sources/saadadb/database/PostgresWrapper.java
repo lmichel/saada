@@ -511,7 +511,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	protected void installLanguage(Statement stmt) throws Exception {
 		stmt.executeUpdate("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
 				+ " RETURNS VOID \n"
-				+ " 	AS $$ CREATE LANGUAGE plpgsq $$ LANGUAGE SQL;\n");
+				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
 		/*
 		 * Cannot make a SELECT in an update statement
 		 */
