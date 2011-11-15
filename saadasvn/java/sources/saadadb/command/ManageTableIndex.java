@@ -18,10 +18,14 @@ public class ManageTableIndex extends SaadaProcess {
 			Database.getConnector().setAdminMode(ap.getPassword());
 			String table_name ;
 			if( (table_name = ap.getCreate()) != null && table_name.length() > 0 ) {
-				(new ManageTableIndex(table_name)).indexTable();				
+				SQLTable.beginTransaction();
+				(new ManageTableIndex(table_name)).indexTable();		
+				SQLTable.commitTransaction();
 			}
 			else if( (table_name = ap.getRemove()) != null && table_name.length() > 0 ) {
+				SQLTable.beginTransaction();
 				(new ManageTableIndex(table_name)).dropTableIndex();				
+				SQLTable.commitTransaction();
 			}
 			else {
 				usage();				
