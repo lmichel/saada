@@ -77,7 +77,7 @@ public class FilterBase {
 				String path = rootdir.getAbsolutePath();
 				String[] list = rootdir.list();
 
-				if (list.length > 0) {
+				if (list != null && list.length > 0) {
 					for (int i = 0; i < list.length; i++) {
 						String filename = list[i];
 						if (filename.startsWith("df.") && filename.endsWith(".json")) {
