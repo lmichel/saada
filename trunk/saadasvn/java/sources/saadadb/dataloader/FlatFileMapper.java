@@ -57,8 +57,8 @@ public class FlatFileMapper extends SchemaMapper {
 			/*
 			 * Drop SQL indexes
 			 */
-			SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(configuration.getCollectionName(), configuration.getCategorySaada()), this.loader);
 			SQLTable.beginTransaction();
+			SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(configuration.getCollectionName(), configuration.getCategorySaada()), this.loader);
 			/*
 			 * Build the dump table
 			 */
