@@ -1287,6 +1287,19 @@ public abstract class SaadaInstance implements DMInterface {
 			return SaadaConstant.LONG;
 		}
 	}
+	
+	/**
+	 *  @return
+	 * @throws SaadaException 
+	 */
+	public String getFileName() throws SaadaException {
+		try {
+			File f = new File(this.getRepositoryPath());
+			return f.getName();
+		} catch (FatalException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * @return
