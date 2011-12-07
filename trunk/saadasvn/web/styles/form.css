@@ -69,6 +69,12 @@ div#saptab div {
 	height: 80%;
 	vertical-align: middle;
 }
+#obtab2 {
+	background-color: white !important;
+	width: 450px;
+	height: 40;
+	vertical-align: middle;
+}
 
 #kweditor {
 	background: white;
@@ -86,12 +92,21 @@ div#saptab div {
 }
 
 #ConstraintsList {
-	width: 480px;
-	height: 175px;
+	width: 450px;
+	height: 120px;
 	padding-left: 10;
 	border-width : 1;
 	border-color: dimgray;
 }
+#orderby {
+	width: 120px;
+	height: 30px;
+	padding-left: 10;
+	border-width : 1;
+	border-color: dimgray;
+}
+
+#SortableConstraintsList {}
 
 #ucdtab {
 	background: white;
@@ -420,7 +435,7 @@ a.closekw {
 	width: 0px;
 	overflow: visible;
 	padding: 16px 0 2px 16px;
-	background: transparent url(../images/close-icon.png) bottom left
+	background: transparent url(../images/small_trash.png) bottom left
 		no-repeat;
 	vertical-align: middle;
 }
