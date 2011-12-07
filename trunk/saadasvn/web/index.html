@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="styleimport/datatable.css" />
 <link rel="stylesheet" type="text/css" href="styles/simplemodal.css" />
 <link rel="stylesheet" type="text/css" href="styleimport/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="styleimport/jquery.alerts.css" />
 
 <script type="text/javascript" language="javascript" src="jsimport/jquery.js"></script>
 <script type="text/javascript" language="javascript" src="jsimport/jquery.ui.core.js"></script>
@@ -24,6 +25,10 @@
 <script type="text/javascript" language="javascript" src="jsimport/splitter.js"></script>
 <script type="text/javascript" language="javascript" src="jsimport/jquery.simplemodal.js"></script> 
 <script type="text/javascript" language="javascript" src="jsimport/jquery.jsonSuggest-2.js"></script> 
+<script type="text/javascript" language="javascript" src="jsimport/jquery.alerts.js"></script> 
+<script type="text/javascript" language="javascript" src="jsimport/jquery.jeditable.js"></script> 
+
+<script type="text/javascript" language="javascript" src="userscripts/local.js"></script>
 
 <script type="text/javascript" language="javascript" src="javascript/websampconnector.js"></script>
 
@@ -47,20 +52,23 @@
 <script type="text/javascript" language="javascript" src="javascript/tapControler.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/filterManagerModel.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/filterManagerView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/filterManagerController.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/filterManagerControler.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/patternModel.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/patternView.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/patternControler.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/sampModel.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/sampView.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/sampControler.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/cartModel.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/cartView.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/cartControler.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/jobModel.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/jobView.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/jobControler.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/jobDictionnary.js"></script>
 <script type="text/javascript" language="javascript" src="javascript/zipjobModel.js"></script>
-<script type="text/javascript" src="javascript/ready.js"></script>
-<script type="text/javascript" src="javascript/resize.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/ready.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/resize.js"></script>
 
 </head>
 <body>
@@ -70,17 +78,22 @@
 		<div id=pagetitle style='width: 100%'><span class=pagetitle>TITLE</span>
 		<span class=pagetitlepath id=titlepath></span></div>
 		<div id=externaltools> 
-			<a href="javascript:void(0);" class="formexpender" title="Expend query form" 
+			<a href="javascript:void(0);" title="Database description"
+			onclick='resultPaneView.fireOpenDescription();' id='opendesc'><span>about</span></a>&nbsp;
+			<a href="javascript:void(0);" class="formexpender" title="Expand query form" 
 			onclick='resultPaneView.fireExpendForm();' id='formexpender'></a>
-			<a href="javascript:void(0);" id=displayfilter title="Edit display filter" class='displayfilter' onclick='alert("Drag and Drop the data node you want to setup displayed columns");'></a>
+			<a href="javascript:void(0);" id=displayfilter title="Edit display filter" class='displayfilter' onclick='filterManagerView.fireShowFilterManager(globalTreePath);'></a>
 		
 			<a href="javascript:void(0);" id=showquerymeta title='Show Metadata' class=question></a>
 	<!-- 		<a href="javascript:void(0);"  title='Download the current selection in a FITS file' -->
 	<!-- 		class=fits onclick='resultPaneView.fireDownloadFITS();'></a>  -->
-			<a href="javascript:void(0);" title='Download the current selection in a VOTable'
-			class=votable onclick='resultPaneView.fireDownloadVOTable();'></a> 		
-			<a href="javascript:void(0);" title='Download the current selection in a ZIP ball'
-			class=zip onclick='resultPaneView.fireDownloadZip();'></a> 		
+			<!--  a href="javascript:void(0);" title='Download the current selection in a VOTable'
+			class=votable onclick='resultPaneView.fireDownloadVOTable();'></a --> 		
+			<!-- href="javascript:void(0);" title='Download the current selection in a ZIP ball'
+			class=zip onclick='resultPaneView.fireDownloadZip();'></a --> 		
+			<a href="javascript:void(0);" title='Open the shopping cart'
+		    class=cart onclick='cartView.fireOpenCart();' id=zipbutton></a> 		
+			
 	<!--		<a href="javascript:void(0);" class=topcat></a> -->
 	<!--		<a href="javascript:void(0);" class=aladin></a> -->
 	<!--		<a href="javascript:void(0);" class=ivoa></a> -->
@@ -101,18 +114,17 @@
 				<div id="treedisp"></div>
 			</div>
 			<div id="resultpane">
-				<h2 class=help>&nbsp;You can access data by dropping any data node on some active area</h2>
+				<h2 class=help>&nbsp;What to do now?</h2>
 				<ul>
-					<li class=help style="font-size: large;"><b>Here</b> to display the content of the data collection</li>
-					<li class=help style="font-size: large;"><b>On the query area below</b> to setup a query on that data collection</li>
-					<li class=help style="font-size: large;"><a href="javascript:void(0);" title='Download the current selection in a VOTable' class=votable ></a>
-					<b>VOTable download icon</b> to download the data selection in a VOTable</li>
-					<li class=help style="font-size: large;"><a href="javascript:void(0);" title='Download the current selection in a ZIP ball' class=zip></a>
-					<b>ZIP download icon</b> to display the data selection in a ZIP ball</li>
-					<li class=help style="font-size: large;"><a href="javascript:void(0);" id=showquerymeta title='Show Metadata' class=question></a>
-					<b>Meta icon</b> to know more about the data selection</li>
-					<li class=help style="font-size: large;"><a href="javascript:void(0);" id=displayfilter title="Edit display filter" class='displayfilter' ></a>
-					<b>Filter icon</b> to set up columns to be displayed</li>
+					<li class=help style="font-size: large;"><b>Double click </b> on a data node <img src="images/dataNode.png"/> to display its content.</li>
+					<li class=help style="font-size: large;"><b>Drop a data node </b> on the meta icon <a href="javascript:void(0);" id=showquerymeta title='Show Metadata' class=question></a>
+					to know more about the data selection</li>
+					<li class=help style="font-size: large;"><b>Click on the filter icon</b> <a href="javascript:void(0);" id=displayfilter title="Edit display filter" class='displayfilter' ></a>
+					to set up columns to be displayed</li>
+					<li class=help style="font-size: large;"><b>Click on the query form expander icon</b> <a href="javascript:void(0);" class=formexpender ></a>
+					to expand or collapse the query form</li>
+					<li class=help style="font-size: large;"><b>Click on the cart icon</b> <a href="javascript:void(0);"  class=cart ></a> to manage the content of the shoppping cart</li>
+					<li class=help style="font-size: large;"><b>Drop a data node </b> on the query area below</b> <img src="images/queryForm.png"/> to setup a query on that data collection</li>
 				</ul>
 			</div>
 		</div>
@@ -121,20 +133,20 @@
 				<div style="text-align: center ;padding: 5px; border-style: hidden;">
 					<a href="javascript:void(0);" class=accept id=submitquery title='Execute the query in the current mode'></a><hr>
 				</div> 
+				<div style="text-align: left ; text-align: center; border-style: hidden; ">
+					<span class=help>Result Limit</span><br>
+					<center><input type=text id='qlimit' class=numinputvalue 
+	        		style="font-size: small;font-family: Arial, Helvetica, sans-serif;" value='100'></center>  
+				</div>
+				<div style="text-align: left;text-align: center; border-style: hidden; ">
+					<span id=qhistocount class=help>-/-</span><br> 
+					<span id=histoarrows><img src="images/histoleft-grey.png"><img src="images/historight-grey.png"></span><HR>
+				</div>
 				<div style="text-align: left ;padding: 5px; border-style: hidden; ">
 					<span class=help>Query Mode</span><br>
 					<input class=langswitch type="radio" name="qlang" id="saadaqllang" value="saadaql" checked><span >SaadaQL</span><br />
-					<input class=langswitch type="radio" name="qlang" id="taplang" value="tap"><span>TAP</span><br />
+					<!--  input class=langswitch type="radio" name="qlang" id="taplang" value="tap"><span>TAP</span><br /> -->
 					<input class=langswitch type="radio" name="qlang" id="saplang"value="sap" ><span>S*AP</span><hr>
-				</div>
-				<div style="text-align: left ;padding: 5px; text-align: center; border-style: hidden; ">
-					<span class=help>Result Limit</span><br>
-					<center></center><input type=text id='qlimit' class=numinputvalue 
-	        		style="font-size: small;font-family: Arial, Helvetica, sans-serif;" value='100'></center><hr>  
-				</div>
-				<div style="text-align: left ;padding: 5px;text-align: center; border-style: hidden; ">
-					<span id=qhistocount class=help>-/-</span><br> 
-					<span id=histoarrows><img src="images/histoleft-grey.png"><img src="images/historight-grey.png"></span>
 				</div>
 			</div>
 			<div id="formpane">
@@ -194,10 +206,20 @@
 	 						<div style="background: white;">
 	 							<span class=help>Active Constraints<br /></span>
 	 						</div>
-	        				<div id="ConstraintsList" ></div>
+	        				<div id="ConstraintsList" class='SortableConstraintsList' ></div>
 	        				<div style="background-color: white; width:336px;">
-	        					<span class=typomsg></span>
+	        					<span style="height:18;" class=typomsg></span>
 	        				</div>	
+	        				<div id='obtab2'>
+	        					<div id="orderby" class='SortableConstraintsList'></div>
+	 							<div style="background: white;">
+	 								<span class=help>&nbsp;Order By<br/></span>
+	 								<input type="radio" name=sens value="asc" checked>
+	 								<span class=help>Asc</span>
+	 								<input type="radio" name=sens value="des" >
+	 								<span class=help>Des</span>
+	 							</div>
+	 						</div>
 	   					</div>
 	  				</div>
 	  				<div id="ucdtab" class=queryformtab >
