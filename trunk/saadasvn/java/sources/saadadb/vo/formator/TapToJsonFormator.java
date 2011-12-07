@@ -224,7 +224,7 @@ public class TapToJsonFormator extends  VOResultFormator {
 				for( int col=1 ; col<=nbCol ; col++) {
 					Object val ;
 					if( col == (oidsaada + 1) ) {
-						val = DefaultPreviews.getDetailLink(rs.getLong(col));
+						val = DefaultPreviews.getDetailLink(rs.getLong(col), null);
 					}
 					else if( col == (oidtable + 1) ) {
 						val = DefaultPreviews.getHeaderLink(rs.getLong(col));						

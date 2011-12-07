@@ -83,11 +83,26 @@ public abstract class VORequest {
 		else if( "zip".equalsIgnoreCase(format) || "zipball".equalsIgnoreCase(format)) {
 			this.addZipFormator();
 		}
+		else if( "cart".equalsIgnoreCase(format) || "shoppingcart".equalsIgnoreCase(format)) {
+			this.addCartFormator();
+		}
 		else {
 			QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unrecognized format: " + format );		
 		}
 	}
-
+	
+	/**
+	 * @return
+	 */
+	public ArrayList<Long> getOids() {
+		return oids;
+	}
+	/**
+	 * @return
+	 */
+	public VOQuery getVoQuery() {
+		return voQuery;
+	}
 	/**
 	 * @throws QueryException
 	 */
@@ -118,6 +133,12 @@ public abstract class VORequest {
 	protected void addZipFormator() throws QueryException {
 		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, this.getClass() + " does not support Zipped reponse");
 	}
+	/**
+	 * @throws QueryException
+	 */
+	protected void addCartFormator() throws QueryException {
+		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, this.getClass() + " does not support Shopping Cart reponse");
+	}
 
 	/**
 	 * Set the directory and the prefix of names of the response files.
@@ -136,7 +157,7 @@ public abstract class VORequest {
 			}
 		}
 	}
-
+	
 	/**
 	 * Tell to formators to include relationships in responses. 
 	 * There is no validation at this level

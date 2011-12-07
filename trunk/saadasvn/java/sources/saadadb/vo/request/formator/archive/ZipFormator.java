@@ -19,7 +19,10 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
-import saadadb.util.ZIPUtil;
+import saadadb.util.WorkDirectory;
+import saadadb.util.zip.ZIPUtil;
+import saadadb.util.zip.ZipEntryRef;
+import saadadb.util.zip.ZipMap;
 import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.request.formator.votable.OidsVotableFormator;
 import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
@@ -31,10 +34,11 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
  */
 public class ZipFormator extends QueryResultFormator {
 	private String responseDir;
-	private Map<String, Set<String>> dataTree = new LinkedHashMap<String, Set<String>>();
+	private ZipMap dataTree = new ZipMap();
 	public final static int MAX_PRIMARY_SIZE = 200; //Mb
 	public final String jobId;
-	
+	private String rootDir;
+
 	/**
 	 * @param jobId
 	 */
@@ -94,18 +98,21 @@ public class ZipFormator extends QueryResultFormator {
 
 	@Override
 	public void buildDataResponse() throws Exception {
+		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
 		for( String rel: relationsToInclude ) {
 			this.addSecondarySelection(rel);
 		}
 		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
+		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
 	}
 
 	/**
 	 * @throws Exception
 	 */
 	private void addPrimarySelection() throws Exception {
-		TreeSet<String> ts = new TreeSet<String>();;
+
+		TreeSet<ZipEntryRef> ts = new TreeSet<ZipEntryRef>();;
 		/*
 		 * Searches data are entry: we build a FITS table 
 		 * should be configurable vs VOTable
@@ -114,11 +121,11 @@ public class ZipFormator extends QueryResultFormator {
 			OidsVotableFormator primaryFormator = new OidsVotableFormator();
 			primaryFormator.setProtocolParams(this.protocolParams);
 			primaryFormator.setResultSet(oids);
-			primaryFormator.setResponseFilePath(this.responseDir, "PrimarySelection_" + this.jobId);
+			primaryFormator.setResponseFilePath(this.responseDir, "SourceSelection.vot");
 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Store primary response file " + primaryFormator.getResponseFilePath() );
-			ts.add(primaryFormator.getResponseFilePath());
+			ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, "SourceSelection.vot", primaryFormator.getResponseFilePath(), ZipEntryRef.WITH_REL));
 			primaryFormator.buildDataResponse();			
 		}
 		/*
@@ -127,8 +134,17 @@ public class ZipFormator extends QueryResultFormator {
 		else {
 			long primary_size = 0;
 			for( long oid: this.oids ) {
+				SaadaInstance si = Database.getCache().getObject(oid);
 				String path = Database.getCache().getObject(oid).getRepositoryPath();
-				ts.add(path);
+				/*
+				 * Add the oid to the name when there are relations in order to enable users to sort out individual links
+				 */
+				if( this.relationsToInclude.size() > 0 ) {
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, oid + "_" + si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));
+				}
+				else {
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));					
+				}
 				Messenger.printMsg(Messenger.TRACE, "Add primary file " + path );
 				primary_size += (new File(path)).length()/1000000;
 				if(  primary_size > MAX_PRIMARY_SIZE) {
@@ -137,14 +153,14 @@ public class ZipFormator extends QueryResultFormator {
 				}
 			}
 		}
-		dataTree.put("primary_selection" , ts);
+		dataTree.put(this.rootDir, ts);
 	}
 
 	/**
 	 * @param relationName
 	 */
 	private void addSecondarySelection(String relationName) throws Exception {
-		Set<String> ts = new TreeSet<String>();
+		Set<ZipEntryRef> ts = new TreeSet<ZipEntryRef>();
 		MetaRelation mr = Database.getCachemeta().getRelation(relationName);
 		String cp_class = "";
 		boolean multiclass = false;
@@ -160,6 +176,7 @@ public class ZipFormator extends QueryResultFormator {
 			 * Build a table with all counterparts for catalogue entries
 			 */
 			if( mr.getSecondary_category() == Category.ENTRY ) {
+				ArrayList<Long> loc_entry_cp_oids = new ArrayList<Long>();
 				for( long entry_cp_oid: cps ){
 					if( !multiclass ) {
 						if( cp_class.length() == 0 ) {
@@ -172,18 +189,30 @@ public class ZipFormator extends QueryResultFormator {
 						}
 					}
 					entry_cp_oids.add(entry_cp_oid);
+					loc_entry_cp_oids.add(entry_cp_oid);
 				}
+				OidsVotableFormator secondaryFormator = new OidsVotableFormator();
+				secondaryFormator.setProtocolParams(this.protocolParams);
+				secondaryFormator.setResultSet(loc_entry_cp_oids);
+				secondaryFormator.setResponseFilePath(this.responseDir, oid + "_" + relationName + ".vot");
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
+							+ secondaryFormator.getResponseFilePath()  + "(relation " + relationName + ")");
+				System.out.println("@@@@@@@@@@@@@@@ " + secondaryFormator.getResponseFilePath());
+				ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, oid + "_" + relationName + ".vot", secondaryFormator.getResponseFilePath(), 0));
+				secondaryFormator.buildDataResponse();			
 			}
 			/*
 			 * Store the product file for others categories
 			 */
 			else {
 				for(long cp: cps){
-					ts.add(Database.getCache().getObject(cp).getRepositoryPath());
+					si = Database.getCache().getObject(cp);
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, oid + "_" + si.getFileName(),si.getRepositoryPath(), 0));
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
-							+ Database.getCache().getObject(cp).getRepositoryPath()  
-							+ "(relation " + relationName + ")");
+								+ Database.getCache().getObject(cp).getRepositoryPath()  
+								+ "(relation " + relationName + ")");
 				}
 			}
 			if( cpt > this.limit) {
@@ -202,11 +231,11 @@ public class ZipFormator extends QueryResultFormator {
 			secondaryFormator.setResponseFilePath(this.responseDir, "SecondarySelection" + this.jobId);
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
-					+ secondaryFormator.getResponseFilePath()  + "(relation " + relationName + ")");
-			ts.add(secondaryFormator.getResponseFilePath());
+						+ secondaryFormator.getResponseFilePath()  + "(relation " + relationName + ")");
+			ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, relationName + "_merged.vot", secondaryFormator.getResponseFilePath(), 0));
 			secondaryFormator.buildDataResponse();			
 		}
-		dataTree.put(relationName , ts);
+		dataTree.put(this.rootDir + "/" + relationName , ts);
 	}
 	@Override
 	protected void writeHouskeepingData(SaadaInstance obj)

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import saadadb.collection.SaadaInstance;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
 import cds.savot.model.ParamSet;
@@ -17,12 +18,12 @@ import cds.savot.model.TDSet;
  * @version 07/2011
  */
 public class SaadaqlVotableFormator extends VotableFormator {
-	
+
 	public SaadaqlVotableFormator() throws QueryException {
 		limit = 100000;
 		protocolName = "Native Saada";
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.VOResultFormator#setResultSet(saadadb.query.result.SaadaInstanceResultSet)
 	 */
@@ -35,13 +36,21 @@ public class SaadaqlVotableFormator extends VotableFormator {
 	 * @see saadadb.vo.request.formator.VOResultFormator#setProtocolParams(java.util.Map)
 	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
+		System.out.println("@@@@@@@@@@@ setProtocolParams ");
 		this.protocolParams = fmtParams;
-		String[] classes = this.protocolParams.get("class").split(",");
-		if( classes.length == 1 && !classes[0].equals("*") ) {
-			setDataModel("native class" + classes[0] ) ;
+		String str ;
+		if( (str = this.protocolParams.get("class")) != null ) {
+			String[] classes = str.split(",");
+			if( classes.length == 1 && !classes[0].equals("*") ) {
+				setDataModel("native class" + classes[0] ) ;
+				return;
+			}			
+		}
+		if ((str = this.protocolParams.get("category")) != null) {
+			setDataModel("native" + str) ;
 		}
 		else {
-			setDataModel("native" + this.protocolParams.get("category")) ;
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot extract DM from paramters" );
 		}
 	}
 

@@ -93,7 +93,6 @@ public class SaadaqlQuery extends VOQuery {
 				Messenger.printMsg(Messenger.DEBUG, "Set limit to " + limit + " in SaadaQL string");
 		}
 		else {
-			System.out.println(queryString);
 			queryString += ("\nLimit " + limit);
 			Messenger.printMsg(Messenger.DEBUG, "Append limit " + limit + " in SaadaQL string");
 			System.out.println(queryString);
