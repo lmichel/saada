@@ -56,9 +56,7 @@ public class RunQuery extends SaadaServlet {
 			query = (String) request.getAttribute("query");
 			treepath = (String) request.getAttribute("treepath");
 		}
-		try {
-			new FilterBase(Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar(), false);
-			
+		try {			
 			String[] qs = query.split("\\s", -1) ;
 			
 			ServletOutputStream out = response.getOutputStream();

@@ -1,6 +1,7 @@
 package ajaxservlet.accounting;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -8,6 +9,8 @@ import saadadb.compat.Files;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.util.Messenger;
+import saadadb.util.WorkDirectory;
+import ajaxservlet.formator.FilterBase;
 import ajaxservlet.formator.StoredFilter;
 
 /**
@@ -20,7 +23,7 @@ public class UserAccount implements Serializable {
 	protected QueryContext                  queryContext;
 	protected HashMap<String, StoredFilter> userfilters;
 	private String 							reportDir;
-	
+	public static final String              cartDirectory = "cartBuilder";
 	UserAccount(String session_id) throws Exception {
 		this.sessionId = session_id;
 		userfilters = new HashMap<String, StoredFilter>();
@@ -50,6 +53,13 @@ public class UserAccount implements Serializable {
 	public String getReportDir() {
 		return reportDir;
 	}
+	
+	/**
+	 * @return
+	 */
+	public String getCartDir() {
+		return reportDir + File.separator + cartDirectory + File.separator;
+	}
 
 	/**
 	 * @param queryContext
@@ -77,7 +87,7 @@ public class UserAccount implements Serializable {
 	 * add the filter to the userfilters base
 	 * @param sf filter to be added
 	 */
-	public void addFilter(StoredFilter sf) {
+	public void addFilter(StoredFilter sf) throws Exception{
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
 		if (coll.compareTo("Any-Collection") == 0) {
@@ -87,6 +97,18 @@ public class UserAccount implements Serializable {
 
 		userfilters.remove(kw);
 		userfilters.put(kw, sf);
+		/*
+		 * Save the filter in the user base
+		 */
+		if( FilterBase.filterDirectory != null ) {
+			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
+			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory + File.separator + this.sessionId);
+			sf.store(FilterBase.filterDirectory + File.separator + this.sessionId + File.separator + "df." + kw + ".json");
+		}
+		else {
+			Messenger.printMsg(Messenger.WARNING, "Cannot store user filter in " + FilterBase.filterDirectory );
+		}
+		
 	}
 	
 	
@@ -99,7 +121,7 @@ public class UserAccount implements Serializable {
 	 * @param cat
 	 * @return a filter or null
 	 */
-	public StoredFilter getFilter(String coll, String cat) {
+	public StoredFilter getFilter(String coll, String cat)  throws Exception{
 		
 		StoredFilter result = null;
 		String keys = coll+"."+cat;
@@ -119,7 +141,7 @@ public class UserAccount implements Serializable {
 	 * given category in the userbase
 	 * @param cat
 	 */
-	public void resetCat(String cat) {
+	public void resetCat(String cat) throws Exception {
 		HashMap<String, StoredFilter> result = new HashMap<String, StoredFilter>();
 		for (String key : userfilters.keySet()) {
 			if (!key.endsWith(cat)) {
@@ -128,8 +150,8 @@ public class UserAccount implements Serializable {
 		}
 		userfilters = result;
 
-		String dir  = Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
-		File directory = new File (dir);
+		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
+		File directory = new File (FilterBase.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].endsWith(cat+".json")) {
@@ -146,11 +168,11 @@ public class UserAccount implements Serializable {
 	 * @param coll
 	 * @param cat
 	 */
-	public void resetFilter(String coll, String cat) {
+	public void resetFilter(String coll, String cat)  throws Exception{
 		String key = coll+"."+cat;
 		userfilters.remove(key);
-		String dir  = Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
-		File directory = new File (dir);
+		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
+		File directory = new File (FilterBase.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].endsWith(coll+"_"+cat+".json")) {
@@ -165,10 +187,10 @@ public class UserAccount implements Serializable {
 	 * resets the userfilter base and cleans
 	 * the userfilters ..config/directory
 	 */
-	public void resetAll() {
+	public void resetAll()  throws Exception{
 		userfilters = new HashMap<String, StoredFilter>();
-		String dir  = Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
-		File directory = new File(dir);
+		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
+		File directory = new File(FilterBase.filterDirectory);
 		
 		String[] list = directory.list();
 		
@@ -184,7 +206,7 @@ public class UserAccount implements Serializable {
 	/**
 	 * 
 	 */
-	public void destroySession() {				
+	public void destroySession() throws Exception {				
 		Messenger.printMsg(Messenger.TRACE, "Remove resources of session" + sessionId);
 		resetAll();		
 		Files.deleteFile(reportDir);

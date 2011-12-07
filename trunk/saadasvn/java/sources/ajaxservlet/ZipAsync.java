@@ -1,6 +1,7 @@
 package ajaxservlet;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
@@ -21,7 +22,7 @@ import uws.service.UserIdentifier;
  * Servlet implementation class datapack
  * @version $Id: datapack.java 295 2011-07-26 12:29:22Z saada $
  */
-public class ZipAsync extends SaadaServlet implements Servlet {
+public class ZipAsync extends SaadaServlet  {
 	private static final long serialVersionUID = 1L;
 
 	protected BasicUWS<ZipperJob> zipUWS = null;

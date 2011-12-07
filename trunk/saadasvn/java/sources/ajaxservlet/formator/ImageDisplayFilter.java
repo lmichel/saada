@@ -88,10 +88,10 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
 			}
 			else if( "Aladin".equals(s)) {
-				retour.add(sff.getAladinSAMP());
+				retour.add(DefaultPreviews.getAladinSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada));
@@ -160,7 +160,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DefaultDisplayFilter#getLinks()
 	 */
-	public List<String> getLinks() {
+	public List<String> getLinks() throws Exception {
 		ImageSaada instance;
 		List<String> retour = new ArrayList<String>();
 
@@ -170,8 +170,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
 				retour.add(DefaultFormats.getString(instance.size_alpha_csa) + " x " + DefaultFormats.getString(instance.size_delta_csa) + "Deg");
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
-				retour.add("<a href='javascript:void(0);' class=aladinsmall onclick='sampView.fireSendImage(\"" + instance.getOid() + "\");'></a>"
-						+ "&nbsp;<a class=download href='" + instance.getDownloadURL(true) + "'></A>");
+				retour.addAll(super.getLinks());
 			}
 		} catch (FatalException e) {}
 		return retour;
@@ -193,7 +192,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Plot\", \"DL Link\", \"Detail\", \"Position\", \"Name\", \"Aladin\", \"Size (deg)\"],";
+		result += "\"specialField\": [\"Plot\", \"Access\", \"Position\", \"Name\", \"Size (deg)\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";

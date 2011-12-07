@@ -2,8 +2,6 @@ package ajaxservlet.accounting;
 
 
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -44,7 +42,7 @@ public class UserTrap {
 
 		}
 	}
-	public static void destroySession(HttpServletRequest request) throws IOException {
+	public static void destroySession(HttpServletRequest request) throws Exception {
 		HttpSession session = request.getSession(true);  
 		if ( !session.isNew()) {
 			UserAccount account =  (UserAccount) session.getAttribute("account");	

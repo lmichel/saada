@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.*;
 
 import saadadb.database.Database;
+import saadadb.util.Messenger;
 
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.formator.*;
@@ -57,23 +58,23 @@ public class GetFilter extends SaadaServlet {
 	 */
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			this.printAccess(request, false);
+			this.printAccess(request, true);
 			String cat = request.getParameter("cat");
 			String coll = request.getParameter("coll");
 			ServletOutputStream out = response.getOutputStream();  
 
-			DisplayFilterFactory dff = new DisplayFilterFactory();
 			StoredFilter filter;
 			filter = DisplayFilterFactory.getStoredFilter(coll, cat, request);
 			String jsonfilter = null;
 			if (filter != null) {
 				jsonfilter = filter.getRawJSON();
 			} else {
+				Messenger.printMsg(Messenger.TRACE, "No stored filter found");
 				jsonfilter = DisplayFilterFactory.getDefaultJSON(cat);
 			}
 			JsonUtils.teePrint(out, jsonfilter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.reportJsonError(request, response, e);
 		}
 	}
 

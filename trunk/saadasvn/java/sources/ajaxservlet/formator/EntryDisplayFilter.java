@@ -36,8 +36,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 	public EntryDisplayFilter(String coll) throws FatalException {
 		super(coll);
 //		datatable_columns.add("Aladin");
-		datatable_columns.add("Detail");
-		datatable_columns.add("Table Header");
+		datatable_columns.add("Access");
 		datatable_columns.add("Position");
 		datatable_columns.add("Error (arcsec)");
 		datatable_columns.add("Name");
@@ -88,7 +87,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 //			else if( "Aladin".equals(s)) {
 //				retour.add("<a href='javascript:void(0);' title='Marks this source on Aladin view' class=aladinsmall onclick='sampView.firePointatSky(" + instance.getPos_ra_csa() + "," + instance.getPos_dec_csa() + ");'></a>");
@@ -180,7 +179,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Detail\", \"Table Header\", \"Position\", \"Error (arcsec)\", \"Name\"],";
+		result += "\"specialField\": [\"Access\", \"Position\", \"Error (arcsec)\", \"Name\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";
