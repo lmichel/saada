@@ -35,10 +35,11 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 
 	public SpectrumDisplayFilter(String coll) throws FatalException {
 		super(coll);
-		datatable_columns.add("DL Link");
+		datatable_columns.add("Access");
+/*		datatable_columns.add("DL Link");
 		datatable_columns.add("Visu");
 		datatable_columns.add("Detail");
-		datatable_columns.add("Position");
+*/		datatable_columns.add("Position");
 		datatable_columns.add("Name");
 		datatable_columns.add("Range (" + Database.getSpect_unit() + ")");
 	}
@@ -86,10 +87,17 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Visu".equals(s)) {
-				retour.add("<a href='javascript:void(0);' class=vospecsmall onclick='sampView.fireSendSpectra(\"" + instance.getOid() + "\");'></a>");
+				retour.add("<a href='javascript:void(0);' class=dl_ivoa onclick='sampView.fireSendSpectra(\"" + instance.getOid() + "\");'></a>");
+			}
+			else if( "Access".equals(s)) {
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)
+						+ DefaultPreviews.getInfoLink(oidsaada)
+						+ DefaultPreviews.getDLLink(oidsaada)
+						+ DefaultPreviews.getCartLink(oidsaada)
+						+ DefaultPreviews.getSpecSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada));
@@ -165,12 +173,12 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
+				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
 				retour.add(DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
 				retour.add(DefaultFormats.getString(instance.x_min_csa) + " - " + DefaultFormats.getString(instance.x_max_csa) + " " + Database.getSpect_unit());
-				retour.add("<a href='javascript:void(0);' class=vospecsmall onclick='sampView.fireSendSpectra(\"" + instance.getOid() + "\");'></a>"
-						+ "&nbsp;<a class=download href='" + instance.getDownloadURL(true) + "'></A>");
+				retour.addAll(super.getLinks());
 			}
-		} catch (FatalException e) {}
+		} catch (Exception e) {}
 		return retour;
 
 	}
@@ -190,7 +198,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"DL Link\", \"Detail\", \"Position\", \"Name\", \"Visu\", \"Range (" + Database.getSpect_unit() + ")\"],";
+		result += "\"specialField\": [\"Access\", \"Position\", \"Name\", \"Range (" + Database.getSpect_unit() + ")\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";

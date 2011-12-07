@@ -31,7 +31,6 @@ public class GetJsonArray extends HttpServlet {
 			file = (String) request.getAttribute("file");
 		}
 		if( file != null ) {
-			System.out.println(file);
 			InputStream is = getServletConfig().getServletContext().getResourceAsStream("jsonsample/" + file + ".json") ;
 			try {
 				if( is == null ) {

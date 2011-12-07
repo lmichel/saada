@@ -93,7 +93,6 @@ public class Download extends SaadaServlet {
 						product_path += "." + ext;
 					}
 				}
-				System.out.println("@@@@ " + product_path);	
 				downloadProduct(request, response, product_path);
 				return;
 			}

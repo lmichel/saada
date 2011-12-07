@@ -80,7 +80,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			 if( "Detail".equals(s)) {
-					retour.add(DefaultPreviews.getDetailLink(oidsaada));
+					retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada));
@@ -171,7 +171,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"DL Link\", \"Detail\", \"Name\"],";
+		result += "\"specialField\": [\"Access\", \"Name\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";

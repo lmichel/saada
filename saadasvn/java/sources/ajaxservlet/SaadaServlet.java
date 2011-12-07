@@ -92,7 +92,7 @@ public class SaadaServlet extends HttpServlet {
 						}
 					}
 					/*
-					 * Compulsory to restart after a failure
+					 * ComSaadaServletpulsory to restart after a failure
 					 */
 					Database.get_connection().setAutoCommit(true);
 				}
@@ -203,7 +203,6 @@ public class SaadaServlet extends HttpServlet {
 	 * @throws Exception
 	 */
 	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path ) throws Exception{
-		String contentType = getServletContext().getMimeType(product_path);
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Download file " + product_path);
 		File f = new File(product_path);
@@ -211,7 +210,24 @@ public class SaadaServlet extends HttpServlet {
 			getErrorPage(req, res, "File " + f.getAbsolutePath() + " does not exist or cannot be read");
 			return;
 		}
-		String name_f =f.getName();;
+		downloadProduct(req, res, product_path,f.getName() );
+	}
+	/**
+	 * @param req
+	 * @param res
+	 * @param product_path
+	 * @param attachement
+	 * @throws Exception
+	 */
+	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path, String attachement ) throws Exception{
+		String contentType = getServletContext().getMimeType(product_path);
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Download file " + product_path);
+		File f = new File(product_path);
+		if( !f.exists() || !f.isFile() ) {
+			reportJsonError(req, res, "File " + f.getAbsolutePath() + " does not exist or is not a file");
+			return;
+		}
 		String s_product = product_path;
 		if( product_path.toLowerCase().endsWith(".gz") ) {
 			res.setHeader("Content-Encoding", "gzip");
@@ -250,7 +266,7 @@ public class SaadaServlet extends HttpServlet {
 			res.setContentType("application/octet-stream");
 		}
 
-		res.setHeader("Content-Disposition", "attachment; filename=\""+ name_f + "\"");
+		res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
 		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);
@@ -266,6 +282,7 @@ public class SaadaServlet extends HttpServlet {
 		bos.close();
 		fl.close();
 	}
+
 
 	/**
 	 * Push the content of an XML file to the servlet response

@@ -70,11 +70,12 @@ public class DisplayFilterFactory {
 			return new DynamicDisplayFilter(sf, coll);
 		}
 		
-		
-		new FilterBase(Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar(), false);
+		FilterBase.init(false);
 		DisplayFilter result = null;
 		sf = FilterBase.get(coll, cat);
-		if (sf != null) return new DynamicDisplayFilter(sf, coll);
+		if (sf != null) {
+			return new DynamicDisplayFilter(sf, coll);
+		}
 
 		if ("TABLE".equals(cat)) {
 			result = new TableDisplayFilter(coll);
@@ -108,16 +109,13 @@ public class DisplayFilterFactory {
 	 * @throws Exception
 	 */
 	public static StoredFilter getStoredFilter(String coll, String cat, HttpServletRequest request) throws Exception {
+		FilterBase.init(false);
 		UserAccount useracc = UserTrap.getUserAccount(request);
 		StoredFilter sf = useracc.getFilter(coll, cat);
-		if (sf != null) return sf;
-		
-		new FilterBase(Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar(), false);
-		DisplayFilter result = null;
-		sf = FilterBase.get(coll, cat);
-		if (sf != null) return sf;
-		
-		return null;
+		if (sf != null) {
+			return sf;
+		}
+		return  FilterBase.get(coll, cat);
 	}
 	
 	/**

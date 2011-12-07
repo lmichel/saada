@@ -128,7 +128,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 		return collformator.valid(ah);
 	}
 
-	public List<String> getLinks() {
+	public List<String> getLinks() throws Exception {
 		if( collformator != null ) {
 			return collformator.getLinks();
 		}

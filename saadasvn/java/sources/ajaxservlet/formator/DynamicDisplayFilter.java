@@ -1,7 +1,6 @@
 package ajaxservlet.formator;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +8,17 @@ import java.util.Set;
 
 import org.json.simple.JSONArray;
 
-import saadadb.collection.*;
+import saadadb.collection.Category;
+import saadadb.collection.EntrySaada;
+import saadadb.collection.SaadaInstance;
+import saadadb.collection.SaadaOID;
+import saadadb.collection.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.query.result.OidsaadaResultSet;
-import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
 
@@ -158,6 +158,9 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			} else if ("Position".equals(speField)) {
 				retour.add(sff.getPos());
 
+			} else if ("Access".equals(speField)) {
+				retour.add(sff.getAccess());
+
 			} else if ("Position with error".equals(speField)) {
 				retour.add(sff.getPosWithError());
 
@@ -165,13 +168,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(sff.getSize());
 
 			} else if ("Aladin".equals(speField)) {
-				retour.add(sff.getAladinSAMP());
+				retour.add(DefaultPreviews.getAladinSAMP(oidsaada));
 
 			} else if ("Visu".equals(speField)) {
-				retour.add(sff.getSpecSAMP());
+				retour.add(DefaultPreviews.getSpecSAMP(oidsaada));
 
 			} else if ("TopCat".equals(speField)) {
-				retour.add(sff.getTopcatSAMP());
+				retour.add(DefaultPreviews.getTopcatSAMP(oidsaada));
 
 			} else if ("Simbad".equals(speField)) {
 				retour.add(sff.getSimbad());
@@ -183,7 +186,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(si.namesaada);
 
 			} else if ("Detail".equals(speField)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 
 			} else if ("Plot".equals(speField)) {
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
@@ -244,12 +247,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 					retour.add(DefaultPreviews.getFlatfilePreview(counterpart, 64));
 					break;
 				default :
-					retour.add("<span>"+ instance.getNameSaada() + " " + (DefaultPreviews.getDetailLink(counterpart)) + "</span>");
-
+					//retour.add("<span>"+ instance.getNameSaada() + " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
+					retour.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
 				}
 				break;
 			default :
-				retour.add("<span>" + nbcounter + " links</span>");
+				retour.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
+				//retour.add("<span>" + nbcounter + " links</span>");
 				break;
 			}
 		}

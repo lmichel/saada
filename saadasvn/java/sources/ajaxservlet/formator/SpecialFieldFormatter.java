@@ -1,6 +1,7 @@
 package ajaxservlet.formator;
 
 import saadadb.collection.*;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 
 /**
@@ -15,12 +16,12 @@ import saadadb.exceptions.SaadaException;
 public class SpecialFieldFormatter {
 	private SaadaInstance saadai;
 	private int cat;
-	
+
 	public SpecialFieldFormatter (SaadaInstance si) {
 		saadai = si;
 		cat = si.getCategory();
 	}
-	
+
 	public String getDLLink() {
 		try {
 			if (cat != Category.ENTRY) {
@@ -33,7 +34,7 @@ public class SpecialFieldFormatter {
 		}
 		return null;
 	}
-	
+
 	public String getPos() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
@@ -41,57 +42,99 @@ public class SpecialFieldFormatter {
 		}
 		return null;
 	}
-	
+
 	public String getPosWithError() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
 			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" href='javascript:void(0);' onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
+		}
+		return null;
 	}
-	return null;
-}
-	
+
 	public String getSize() {
 		if (cat == Category.IMAGE) {
 			return (DefaultFormats.getString(((ImageSaada) saadai).size_alpha_csa) + " x " + DefaultFormats.getString(((ImageSaada) saadai).size_delta_csa));
 		}
 		return null;
 	}
-	
-	public String getAladinSAMP(){
-		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
-			return ("<a href='javascript:void(0);' class=aladinsmall onclick='sampView.fireSendImage(\"" + saadai.getOid() + "\");'></a>");
-		} else {
-			return null;
-		}
-	}
-	
-	public String getSpecSAMP() {
-		if (cat == Category.SPECTRUM) {
-			return ("<a href='javascript:void(0);' class=vospecsmall onclick='sampView.fireSendSpectra(\"" + saadai.getOid() + "\");'></a>");
-		}
-		return null;
-	}
-	
-	public String getTopcatSAMP() {
-		if (cat != Category.FLATFILE) {
-			// TODO add method
-			return ("-");
-		}
-		return null;
-	}
-	
+
+
+
+
 	public String getSimbad() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			return ("<a href='javascript:void(0);' class=simbad onclick='resultPaneView.fireShowSimbad(\"" + DefaultFormats.getHMSCoord(((Position)saadai).getPos_ra_csa(), ((Position)saadai).getPos_dec_csa()) + "\");'></a>");
 		}
 		return null;
 	}
-	
+
 	public String getVizier() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			// TODO add method
 		}
 		return null;
+	}
+
+	public String getAccess() throws SaadaException {
+		long oid = saadai.getOid();
+		switch( cat ) {
+		case Category.SPECTRUM:
+			return DefaultPreviews.getDetailLink(oid, null)
+			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+ DefaultPreviews.getSpecSAMP(oid);
+		case Category.FLATFILE:
+			return  DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid);
+		case Category.TABLE:
+			return DefaultPreviews.getDetailLink(oid, null)
+			+ DefaultPreviews.getSourcesLink(oid)
+			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+ DefaultPreviews.getTopcatSAMP(oid);
+		case Category.ENTRY:
+			return DefaultPreviews.getDetailLink(oid, null)
+			+ DefaultPreviews.getHeaderLink(oid)
+			+ DefaultPreviews.getSkyAtSAMP(oid);
+		default: 			
+			return DefaultPreviews.getDetailLink(oid, null)
+			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+  DefaultPreviews.getAladinSAMP(oid);
+
+		}
+	}
+	public String getAccessForDetail() throws SaadaException {
+		long oid = saadai.getOid();
+		switch( cat ) {
+		case Category.SPECTRUM:
+			return DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+ DefaultPreviews.getSpecSAMP(oid);
+		case Category.FLATFILE:
+			return  DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid);
+		case Category.TABLE:
+			return  DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+ DefaultPreviews.getTopcatSAMP(oid);
+		case Category.ENTRY:
+			return DefaultPreviews.getHeaderLink(oid)
+			+ DefaultPreviews.getSkyAtSAMP(oid);
+		default: 			
+			return DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getCartLink(oid)
+			+  DefaultPreviews.getAladinSAMP(oid);
+
+		}
 	}
 
 }

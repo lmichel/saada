@@ -156,7 +156,7 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Preview\", \"DL Link\", \"Name\"],";
+		result += "\"specialField\": [\"Preview\", \"Access\", \"Name\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";

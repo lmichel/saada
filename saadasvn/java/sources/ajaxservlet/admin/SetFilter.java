@@ -14,6 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import saadadb.database.Database;
+import ajaxservlet.SaadaServlet;
 import ajaxservlet.accounting.UserAccount;
 import ajaxservlet.accounting.UserTrap;
 import ajaxservlet.formator.StoredFilter;
@@ -23,7 +24,7 @@ import ajaxservlet.formator.StoredFilter;
  * @version $Id$
 
  */
-public class SetFilter extends HttpServlet {
+public class SetFilter extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -56,34 +57,15 @@ public class SetFilter extends HttpServlet {
 	 * 
 	 * @param request
 	 * @param response
-	 * @throws ServletException
-	 * @throws IOException
 	 */
-	protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void process(HttpServletRequest request, HttpServletResponse response)  {
 		try {
 			UserAccount ua = UserTrap.getUserAccount(request);
-			
-			String jsondata = request.getParameter("filter");
-
-			JSONParser jp = new JSONParser();
-			Object json = jp.parse(jsondata);
-			String filename = "df." + ua.getSessionID() + request.getParameter("name") + ".json";
-			String dir  = Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
-			File child = new File(dir);
-			if (!child.exists()) (new File(dir)).mkdir();
-			File filter = new File(dir + "/" + filename );
-			FileWriter fw = new FileWriter(filter, false);
-			fw.write(jsondata);
-			fw.close();
-			
-			FileReader fr = new FileReader(filter);
-			StoredFilter sf = new StoredFilter(fr);
-			
-			ua.addFilter(sf);
-			
-			
-		} catch (ParseException e) {
-			e.printStackTrace();
+			this.printAccess(request, true);			
+			String jsondata = request.getParameter("filter");			
+			ua.addFilter(new StoredFilter(jsondata));	
+		} catch (Exception e) {
+			this.reportJsonError(request, response, e);
 		}
 	}
 

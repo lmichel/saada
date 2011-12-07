@@ -34,10 +34,8 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 
 	public TableDisplayFilter(String coll) throws FatalException {
 		super(coll);
-		datatable_columns.add("DL Link");
-		datatable_columns.add("Header");
+		datatable_columns.add("Access");
 		datatable_columns.add("Table");
-		datatable_columns.add("Entries");
 	}
 
 
@@ -165,7 +163,7 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"DL Link\", \"Header\", \"Table\", \"Entries\"],";
+		result += "\"specialField\": [\"Access\", \"Table\"],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";

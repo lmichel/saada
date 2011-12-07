@@ -28,7 +28,7 @@ import saadadb.util.SaadaConstant;
 
  */
 abstract public class DefaultDisplayFilter implements DisplayFilter,
-		Serializable {
+Serializable {
 	private static final long serialVersionUID = 1L;
 	protected final LinkedHashSet<String> datatable_columns = new LinkedHashSet<String>();
 	protected long oidsaada = SaadaConstant.LONG;
@@ -81,13 +81,13 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 	public void setMetaClass(MetaClass mc) throws FatalException {
 		this.mc = mc;
 	}
-	
+
 	/**
 	 * abstract method redefined by all the subclasses
 	 * that will specialize it with their category
 	 */
 	protected abstract void setRelations();
-	
+
 	/**
 	 * add the relations names to columns_rel
 	 * depending on the category
@@ -95,14 +95,14 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 	 * @param cat
 	 */
 	protected void setRelations(int cat) {
-	if (metacoll != null) {
-		String[] relnames;
-		relnames = Database.getCachemeta().getRelationNamesStartingFromColl(metacoll.getName(), cat);
-		for (String val : relnames) {
-			columns_rel.add("Rel : " + val);
+		if (metacoll != null) {
+			String[] relnames;
+			relnames = Database.getCachemeta().getRelationNamesStartingFromColl(metacoll.getName(), cat);
+			for (String val : relnames) {
+				columns_rel.add("Rel : " + val);
+			}
 		}
-	}
-		
+
 	}
 
 	/*
@@ -137,7 +137,7 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 			retour.add(lbl);
 		}
 	}
-	
+
 	protected void addRelToDisplayColumns(LinkedHashSet<String> retour) {
 		if (columns_rel.size() > 0) {
 			for (String val : columns_rel) {
@@ -149,7 +149,7 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 	abstract public Set<String> getDisplayedColumns();
 
 	abstract public Set<AttributeHandler> getQueriableColumns()
-			throws FatalException;
+	throws FatalException;
 
 	public boolean valid(AttributeHandler ah) {
 		if (ignored_keywords.contains(ah.getNameattr())) {
@@ -160,44 +160,41 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 
 	abstract public List<String> getRow(Object obj, int rank) throws Exception;
 
-	public void getRel(List<String> result) {
+	public void getRel(List<String> result) throws Exception{
 
-		try {
-			SaadaInstance si = Database.getCache().getObject(oidsaada);
+		SaadaInstance si = Database.getCache().getObject(oidsaada);
 
-			if (columns_rel.size() > 0) {
-				for (String rel : columns_rel) {
-					rel = rel.substring(6);
-					int nbcounter = si.getCounterparts(rel).length;
-					switch (nbcounter) {
-					case 0:
-						result.add("<span>No link</span>");
-						break;
-					case 1:
+		if (columns_rel.size() > 0) {
+			for (String rel : columns_rel) {
+				rel = rel.substring(6);
+				int nbcounter = si.getCounterparts(rel).length;
+				switch (nbcounter) {
+				case 0:
+					result.add("<span>No link</span>");
+					break;
+				case 1:
 
-						long counterpart = (si.getCounterparts(rel))[0];
-						int tmpcat = SaadaOID.getCategoryNum(counterpart);
-						switch (tmpcat) {
-						case (Category.IMAGE):
-							result.add(DefaultPreviews.getImageVignette(
-									counterpart, 64));
-							break;
-						case (Category.FLATFILE):
-							result.add(DefaultPreviews.getFlatfilePreview(
-									counterpart, 64));
-							break;
-						default:
-							result.add("<span>"+ Database.getCache().getObject(counterpart).getNameSaada()+ " " + (DefaultPreviews.getDetailLink(counterpart))+ "</span>");
-						}
-						break;
+					long counterpart = (si.getCounterparts(rel))[0];
+					int tmpcat = SaadaOID.getCategoryNum(counterpart);
+					switch (tmpcat) {
+					case (Category.IMAGE):
+						result.add(DefaultPreviews.getImageVignette(
+								counterpart, 64));
+					break;
+					case (Category.FLATFILE):
+						result.add(DefaultPreviews.getFlatfilePreview(
+								counterpart, 64));
+					break;
 					default:
-						result.add("<span>" + nbcounter + " links</span>");
-						break;
+						result.add("<span>"+ Database.getCache().getObject(counterpart).getNameSaada()+ " " + (DefaultPreviews.getDetailLink(counterpart, null))+ "</span>");
 					}
+					break;
+				default:
+					System.out.println("QQQQQQQQQQQQQQQQ");
+					result.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
+					break;
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -209,9 +206,9 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
 				return SaadaOID.getCategoryName(oidsaada)
-						+ " "
-						+ Database.getCache().getObject(oidsaada)
-								.getNameSaada();
+				+ " "
+				+ Database.getCache().getObject(oidsaada)
+				.getNameSaada();
 			} catch (FatalException e) {
 				return e.toString();
 			}
@@ -220,10 +217,16 @@ abstract public class DefaultDisplayFilter implements DisplayFilter,
 		}
 	}
 
-	public List<String> getLinks() {
-		return new ArrayList<String>();
+	public List<String> getLinks() throws Exception {
+		List<String> retour = new ArrayList<String>();
+
+		if( oidsaada != SaadaConstant.LONG) {
+			SpecialFieldFormatter sfm = new SpecialFieldFormatter(Database.getCache().getObject(oidsaada));
+			retour.add(sfm.getAccessForDetail());
+		}
+		return retour;
 	}
-	
+
 	abstract public String getJSONString() ;
 
 }

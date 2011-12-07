@@ -8,13 +8,22 @@ package ajaxservlet.formator;
  *
  */
 
-import java.util.*;
-import java.io.*;
-import org.json.simple.*;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-public class StoredFilter {
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import saadadb.util.Messenger;
+
+public class StoredFilter implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String rawjson;
 	private ArrayList<String> collection;
 	private String category;
@@ -32,7 +41,7 @@ public class StoredFilter {
 	 * the JSONstring of the said filter
 	 * @param json
 	 */
-	public StoredFilter(FileReader json) {
+	public StoredFilter(FileReader json)  throws Exception{
 		String rawContent = "";
 		collection = new ArrayList<String>();
 		relationship_show = new ArrayList<String>();
@@ -40,88 +49,98 @@ public class StoredFilter {
 		specialField = new ArrayList<String>();
 		collection_show = new ArrayList<String>();
 		collection_query = new ArrayList<String>();
-		try {
 
-			// remplissage du String avec le contenu du fichier
-			char tmp;
-			while (json.ready()) {
-				tmp = (char) json.read();
-				rawContent += tmp;
-			}
-			rawjson = rawContent;
-
-			// initialisation des variable non-listes
-			JSONParser parser = new JSONParser();
-			Object obj = parser.parse(rawContent);
-			JSONObject obj1 = (JSONObject) obj;
-			category = (String) obj1.get("category");
-			String tmp2 = (String) obj1.get("ucd.show");
-			ucd_show = (tmp2.compareTo("true") == 0) ? true : false;
-			tmp2 = (String) obj1.get("ucd.query");
-			ucd_query = (tmp2.compareTo("true") == 0) ? true : false;
-
-			// initialisation des attributs liste
-			JSONArray array;
-			JSONObject obj2;
-			
-			array = (JSONArray) obj1.get("collection");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				collection.add(var);
-			}
-			
-			array = (JSONArray) obj1.get("specialField");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				specialField.add(var);
-			}
-			
-			obj2 = (JSONObject) obj1.get("relationship");
-			array = (JSONArray) obj2.get("show");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				relationship_show.add(var);
-			}
-			
-			array = (JSONArray) obj2.get("query");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				if (var != null) {
-					relationship_query.add(var);
-				} else {
-					relationship_query.add("Any-Relation");
-				}
-			}
-			
-			
-			obj2 = (JSONObject) obj1.get("collections");
-			array = (JSONArray) obj2.get("show");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				collection_show.add(var);
-			}
-			
-			array = (JSONArray) obj2.get("query");
-			
-			for (int i = 0; i < array.size(); i++) {
-				String var = (String) array.get(i);
-				collection_query.add(var);
-			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// remplissage du String avec le contenu du fichier
+		char tmp;
+		while (json.ready()) {
+			tmp = (char) json.read();
+			rawContent += tmp;
 		}
+		init(rawContent);
+	}
+	public StoredFilter(String rawContent)  throws Exception{
+		collection = new ArrayList<String>();
+		relationship_show = new ArrayList<String>();
+		relationship_query = new ArrayList<String>();
+		specialField = new ArrayList<String>();
+		collection_show = new ArrayList<String>();
+		collection_query = new ArrayList<String>();
+		init(rawContent);
 	}
 
+	public void init(String rawContent) throws Exception {
+		rawjson = rawContent;
+		// initialisation des variable non-listes
+		JSONParser parser = new JSONParser();
+		Object obj = parser.parse(rawContent);
+		JSONObject obj1 = (JSONObject) obj;
+		category = (String) obj1.get("category");
+		String tmp2 = (String) obj1.get("ucd.show");
+		ucd_show = (tmp2.compareTo("true") == 0) ? true : false;
+		tmp2 = (String) obj1.get("ucd.query");
+		ucd_query = (tmp2.compareTo("true") == 0) ? true : false;
+
+		// initialisation des attributs liste
+		JSONArray array;
+		JSONObject obj2;
+
+		array = (JSONArray) obj1.get("collection");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			collection.add(var);
+		}
+
+		array = (JSONArray) obj1.get("specialField");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			specialField.add(var);
+		}
+
+		obj2 = (JSONObject) obj1.get("relationship");
+		array = (JSONArray) obj2.get("show");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			relationship_show.add(var);
+		}
+
+		array = (JSONArray) obj2.get("query");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			if (var != null) {
+				relationship_query.add(var);
+			} else {
+				relationship_query.add("Any-Relation");
+			}
+		}
+
+
+		obj2 = (JSONObject) obj1.get("collections");
+		array = (JSONArray) obj2.get("show");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			collection_show.add(var);
+		}
+
+		array = (JSONArray) obj2.get("query");
+
+		for (int i = 0; i < array.size(); i++) {
+			String var = (String) array.get(i);
+			collection_query.add(var);
+		}
+
+	}
+
+	public void store(String filename) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Save filtere " + filename);
+		FileWriter fw = new FileWriter(filename);
+		fw.write(this.rawjson);
+		fw.close();
+	}
 	public ArrayList<String> getCollection() {
 		return collection;
 	}
@@ -161,13 +180,13 @@ public class StoredFilter {
 	public ArrayList<String> getCollection_query() {
 		return collection_query;
 	}
-	
+
 	public String getRawJSON() {
 		return rawjson;
 	}
-	
+
 	public String toString() {
 		return ("Filtre : [" + this.getCollection()+ "," + this.getCategory() + "]");
 	}
-	
+
 }

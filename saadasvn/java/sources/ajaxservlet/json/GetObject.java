@@ -15,11 +15,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import saadadb.api.SaadaLink;
+import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
+import saadadb.meta.MetaRelation;
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.formator.DisplayFilter;
+import ajaxservlet.formator.DisplayFilterFactory;
 import ajaxservlet.formator.InstanceDisplayFilter;
 import ajaxservlet.formator.LinkDisplayFilter;
 
@@ -143,74 +146,11 @@ public class GetObject extends SaadaServlet {
 					jo.put("links", colarray);	
 					JsonUtils.teePrint(out, jo.toJSONString());
 					out.close();
-/*					
-					
-					JsonUtils.teePrint(out,"{");
-					JsonUtils.teePrint(out,JsonUtils.getParam("title",colform.getTitle()) + ",");
-
-					JsonUtils.teePrint(out,"  \"collectionlevel\" : {");
-					List<String>  data = colform.getCollectionKWTable();
-					JsonUtils.teePrint(out,JsonUtils.getParam("iTotalRecords", data.size(), "    ") + ",");
-					JsonUtils.teePrint(out,JsonUtils.getParam("iTotalDisplayRecords", data.size(), "    ") + ",");
-					JsonUtils.teePrint(out,"    \"aoColumns\": [");
-					String comma = "";
-					JsonUtils.teePrint(out,"    " + comma);
-					JsonUtils.teePrint(out,"    {\"sTitle\": \"Keyword\"},");
-					JsonUtils.teePrint(out,"    {\"sTitle\": \"Value\"},");
-					JsonUtils.teePrint(out,"    {\"sTitle\": \"Value\"},");
-					JsonUtils.teePrint(out,"    {\"sTitle\": \"Comment\"}");
-					JsonUtils.teePrint(out,"    ],");
-					JsonUtils.teePrint(out,"    \"aaData\": [");
-					comma = "        ";
-					for( String sr : data) {
-						JsonUtils.teePrint(out, comma);
-						JsonUtils.teePrint(out, "        " + sr);
-						comma = "        ,";
-
-					}
-					JsonUtils.teePrint(out,"    ] },");
-
-					JsonUtils.teePrint(out,"  \"classlevel\" : {");
-					data = colform.getClassKWTable();
-					JsonUtils.teePrint(out,JsonUtils.getParam("iTotalRecords", data.size(), "    ") + ",");
-					JsonUtils.teePrint(out,JsonUtils.getParam("iTotalDisplayRecords", data.size(), "    ") + ",");
-					JsonUtils.teePrint(out,"    \"aoColumns\": [");
-					comma = "";
-					JsonUtils.teePrint(out,"    " + comma);
-					Set<String> cdd = colform.getDisplayedColumns();
-					comma = "    ";
-					for( String cd: cdd) {
-						JsonUtils.teePrint(out, comma + "{\"sTitle\": \"" + cd + "\"}");
-						comma = "        ,";
-					}
-					JsonUtils.teePrint(out,"    ],");
-					JsonUtils.teePrint(out,"    \"aaData\": [");
-					comma = "        ";
-					for( String sr : data) {
-						JsonUtils.teePrint(out, comma);
-						JsonUtils.teePrint(out, "        " + sr);
-						comma = "        ,";
-
-					}
-					JsonUtils.teePrint(out,"    ] },");
-
-					JsonUtils.teePrint(out,"\"relations\": ");
-					JsonUtils.teePrint(out
-							,JsonUtils.getRow(Database.getCachemeta().getRelationNamesStartingFromColl(
-									SaadaOID.getCollectionName(oid), SaadaOID.getCategoryNum(oid))));
-
-					JsonUtils.teePrint(out,"     ,");
-					JsonUtils.teePrint(out,"\"links\": ");
-					JSONArray list = new JSONArray();
-					for( String link: colform.getLinks() ) {
-						list.add(link);
-					}
-					JsonUtils.teePrint(out,list.toString());
-
-					JsonUtils.teePrint(out,"}");*/
 				}
 				else {
-					DisplayFilter colform  = new LinkDisplayFilter(relation);
+					MetaRelation mr = Database.getCachemeta().getRelation(relation);
+					DisplayFilter colform = DisplayFilterFactory.getFilter(mr.getSecondary_coll(), Category.explain(mr.getSecondary_category()), request);
+
 					colform.setOId(oid);
 					SaadaInstance  si = Database.getCache().getObject(oid);
 					SaadaLink[] sls   = si.getStartingLinks(relation);

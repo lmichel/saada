@@ -110,6 +110,7 @@ public interface DisplayFilter {
 	/**
 	 * return a list of things to be displayed under the tile e.g.
 	 * @return
+	 * @throws Exception 
 	 */
-	public List<String> getLinks() ;
+	public List<String> getLinks() throws Exception ;
 }
