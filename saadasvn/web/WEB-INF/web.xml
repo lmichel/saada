@@ -310,6 +310,16 @@
   </servlet-mapping>
   <servlet>
     <description></description>
+    <display-name>ResetFilter</display-name>
+    <servlet-name>ResetFilter</servlet-name>
+    <servlet-class>ajaxservlet.admin.ResetFilter</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResetFilter</servlet-name>
+    <url-pattern>/resetfilter</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
     <display-name>SetFilter</display-name>
     <servlet-name>SetFilter</servlet-name>
     <servlet-class>ajaxservlet.admin.SetFilter</servlet-class>
@@ -328,7 +338,16 @@
     <servlet-name>SetUserFilter</servlet-name>
     <url-pattern>/setuserfilter</url-pattern>
   </servlet-mapping>
-  
+  <servlet>
+    <description></description>
+    <display-name>getProductInfo</display-name>
+    <servlet-name>getProductInfo</servlet-name>
+    <servlet-class>ajaxservlet.GetProductInfo</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>getProductInfo</servlet-name>
+    <url-pattern>/getproductinfo</url-pattern>
+  </servlet-mapping>
   <servlet>
     <description></description>
     <display-name>ZipAsync</display-name>
@@ -338,5 +357,25 @@
   <servlet-mapping>
     <servlet-name>ZipAsync</servlet-name>
     <url-pattern>/datapack/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CartBuilder</display-name>
+    <servlet-name>CartBuilder</servlet-name>
+    <servlet-class>ajaxservlet.CartBuilder</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CartBuilder</servlet-name>
+    <url-pattern>/cart/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CartClient</display-name>
+    <servlet-name>CartClient</servlet-name>
+    <servlet-class>ajaxservlet.CartClient</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CartClient</servlet-name>
+    <url-pattern>/cartclient</url-pattern>
   </servlet-mapping>
 </web-app>
