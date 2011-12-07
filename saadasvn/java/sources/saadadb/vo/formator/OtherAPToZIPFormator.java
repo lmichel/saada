@@ -22,7 +22,7 @@ import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
-import saadadb.util.ZIPUtil;
+import saadadb.util.zip.ZIPUtil;
 import saadadb.vo.QueryFileReport;
 
 /**
@@ -174,7 +174,8 @@ public class OtherAPToZIPFormator extends VOResultFormator{
 
 				}
 			}
-			return ZIPUtil.buildZipBall(data_tree, this.result_filename);
+			//return ZIPUtil.buildZipBall(data_tree, this.result_filename);
+			return null;
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
 			return this.buildResultErrorFile(e.toString());		

@@ -97,7 +97,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 		 */
 		this.writeExtensions();
 		this.writer.writeDocumentEnd();
-
+		Messenger.printMsg(Messenger.TRACE, "Data written in  " + this.responseFilePath);
 	}
 
 	/**
