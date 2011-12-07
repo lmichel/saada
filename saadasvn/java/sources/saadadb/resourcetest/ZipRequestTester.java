@@ -6,7 +6,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.vo.request.SaadaqlRequest;
 import saadadb.vo.request.ZipRequest;
 
 public class ZipRequestTester {
@@ -28,7 +27,7 @@ public class ZipRequestTester {
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
-		ZipRequest request = new ZipRequest("NoSession", "/home/michel/Desktop");
+		ZipRequest request = new ZipRequest("NoSession", "/home/michel/Desktop/ZIP");
 		//request.addFormator("votable");
 		request.addFormator("zip");
 		request.setResponseFilePath("ZippedSaadaql");

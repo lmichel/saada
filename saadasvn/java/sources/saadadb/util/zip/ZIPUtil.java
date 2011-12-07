@@ -1,55 +1,49 @@
-package saadadb.util;
+package saadadb.util.zip;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import saadadb.database.Database;
 import saadadb.database.Repository;
-import saadadb.exceptions.SaadaException;
+import saadadb.util.Messenger;
 
-/** * @version $Id$
-
+/**
  * @author laurent
- * @version 07/2011
+ * @version $Id: ZIPUtil.java 64 2011-10-07 12:05:00Z laurent.mistahl $
  */
 public class ZIPUtil {
 	public static final int MAX_SIZE = 300; //Mb	
-	
 
-	public static final String buildZipBall(Map<String, Set<String>> data_tree, String out_filename) throws IOException, SaadaException {
+
+	public static final void buildZipBall(ZipMap zipMap, String outputFilepath) throws Exception {
 		/*
 		 * Build now the zip file
 		 */
-		String outFilename =  out_filename;
+		String outFilename =  outputFilepath;
 		if( !outFilename.endsWith(".zip") ) {
 			outFilename += ".zip";
 		}
-		Messenger.printMsg(Messenger.TRACE, "Build ZIP file <" + out_filename + ">");
+		Messenger.printMsg(Messenger.TRACE, "Build ZIP file <" + outputFilepath + ">");
 		ZipOutputStream out;
-		if( new File(out_filename).isAbsolute() ) {
-			out = new ZipOutputStream(new FileOutputStream(outFilename));			
-		}
-		else {
-			out = new ZipOutputStream(new FileOutputStream(Repository.getVoreportsPath()
-					+ Database.getSepar() 
-					+ outFilename));
-		}
+		out = new ZipOutputStream(new FileOutputStream(outFilename));			
+
 		long file_size=0;
 		boolean full = false;
-		for(String dir: data_tree.keySet()) {
-			Set<String> files = data_tree.get(dir);
-
-			for( String fileitem : files) {
+		for(String dir: zipMap.keySet()) {
+			Set<ZipEntryRef> zers = zipMap.get(dir);
+			TreeSet<String> storedRef = new TreeSet<String>();
+			for( ZipEntryRef zer : zers) {
+				String fileitem = zer.getUri();
 				byte[] buf = new byte[1024];
+
 				/*
 				 * We suppose that files exist but can be compressed
 				 */
@@ -67,19 +61,29 @@ public class ZIPUtil {
 					Messenger.printMsg(Messenger.ERROR, "File <" + fileitem + "> or <" + fileitem + ".gz> not found");
 					continue;
 				}
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Compress " + fileitem);
-				ZipEntry ze = new ZipEntry(dir + "/" + (new File(fileitem)).getName());
-				out.putNextEntry(ze);
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
+				Messenger.printMsg(Messenger.TRACE, "Compress " + fileitem);
+				String str = dir + "/" + zer.getName();
+				ZipEntry ze = new ZipEntry(str);
+				if( !storedRef.contains(str)) {
+					out.putNextEntry(ze);
+					storedRef.add(str);
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						out.write(buf, 0, len);
+					}
+					in.close();
+					out.closeEntry();	
 				}
-				in.close();
-				out.closeEntry();	
+
 				if( file_size > MAX_SIZE) {
-					Messenger.printMsg(Messenger.WARNING, "The size of zipped file exceed " + MAX_SIZE + "Mb: zipball truncated");
-					full = true;
+					String msg = "The size of the zipped file exceed " + MAX_SIZE + "Mb: zipball truncated";
+					Messenger.printMsg(Messenger.WARNING, msg);
+					full = true;		
+					Messenger.printMsg(Messenger.TRACE, "Compress truncated.txt");
+					ze = new ZipEntry("truncated.txt");
+					out.putNextEntry(ze);
+				    out.write(msg.getBytes(), 0 , msg.length());
+					out.closeEntry();	
 					break;
 				}
 			}
@@ -90,9 +94,6 @@ public class ZIPUtil {
 
 		out.closeEntry();	
 		out.close();	
-		return Repository.getVoreportsPath()
-		+ Database.getSepar() 
-		+ outFilename	;
 	}
 
 	/**
@@ -104,7 +105,8 @@ public class ZIPUtil {
 	public static  String gunzip(String input_file) throws Exception {
 
 		if( input_file.toLowerCase().endsWith(".gz") ) {
-			Messenger.printMsg(Messenger.DEBUG, "Gunzip " + input_file);
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Gunzip " + input_file);
 			InputStream in = new FileInputStream(input_file);
 			String outputfile = input_file.substring(0, input_file.length() - 3);
 			OutputStream out = new FileOutputStream(outputfile);
