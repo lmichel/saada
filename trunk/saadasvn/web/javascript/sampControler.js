@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	SampController: function(model, view){
+	SampControler: function(model, view){
 		/**
 		 * listen to the view
 		 */

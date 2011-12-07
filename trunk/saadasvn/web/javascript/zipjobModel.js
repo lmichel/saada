@@ -8,17 +8,15 @@ jQuery.extend({
 		/*
 		 * Job description params
 		 */
-		var xmlRoot;
-		var jobId;
-		var phase;
-		var params;
-		var results;
+		var xmlRoot = '';
+		var jobId = '';
+		var phase = '';
+		var params = '';
+		var results = '';
 
 		this.init = function(xmlSummary) {
 			var xmlRoot = $(xmlSummary).find("[nodeName=uws:job]");
-			logMsg('init ' + xmlRoot.find("[nodeName=uws:jobId]").text());
 			that.jobId = xmlRoot.find("[nodeName=uws:jobId]").text();
-			logMsg('init ' + xmlRoot.find("[nodeName=uws:phase]").text());
 			that.phase = xmlRoot.find("[nodeName=uws:phase]").text();
 			that.params = new Array();
 			xmlRoot.find("[nodeName=uws:parameters]").find("[nodeName=uws:parameter]").each(function() {
@@ -26,28 +24,37 @@ jQuery.extend({
 			});	
 			that.results = new Array();
 			xmlRoot.find("[nodeName=uws:results]").find("[nodeName=uws:result]").each(function() {
-				logMsg("href " +  $(this).attr("xlink:href"));
 				that.results[that.results.length] = $(this).attr("xlink:href");
-				logMsg("href2 " +  that.results);
 			});
-		}
+		};
 		
 		that.init(xmlSummary);
 
 		this.kill = function() {
 			$.ajax({
 				type: 'DELETE',
-				url: "datapack/zipper/" + that.jobId,
+				url: "cart/zipper/" + that.jobId,
 				success: function(xmljob, status) {
 					alert("Job killed");
 				}
 			});
-		}
+		};
 
 		this.refresh = function(status) {
-			$.get("datapack/zipper/" + that.jobId
+			$.get("cart/zipper/" + that.jobId
 				, function(data) {that.init(data);status = that.phase;}
 			    , "xml") ;
-		}
+		};
+		this.download = function() {
+			if( that.results.length >= 1 ) {
+				var url = that.results[0];
+				logMsg("download " + url);
+				window.location = url;
+			}
+			else {
+				logged_alert("No ZIP archive available");
+			}
+ 		};
+
 	}
 });

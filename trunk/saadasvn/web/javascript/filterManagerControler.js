@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	FilterManagerController: function(model, view){
+	FilterManagerControler: function(model, view){
 		
 		var vlist = {
 				controlShowFilterManager: function(treepath){

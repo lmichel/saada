@@ -9,19 +9,13 @@ jQuery.extend({
 		 * who is listening to us?
 		 */
 		var listeners = new Array();
-		var dataJSONObject;
-		/**
-		 * Query displayed data are coming from
-		 */
-		var current_query = "";
-		var treePath = new Array();
 
 		/*
 		 * What we have to store and play with
 		 */
-		var collection;
-		var category;
-		
+		var collection = '';
+		var category = '';
+
 		var path = $(location).attr('href');
 		if (path.endsWith("#")) path = path.substr(0, path.length - 1);
 
@@ -34,71 +28,53 @@ jQuery.extend({
 		var droppednatives = new Array();
 		var droppedrelations = new Array();
 
-		var spefieldkey = 1;
-		var nativekey = 1;
-		var relationkey = 1;
-		
-		var currentfilter;
+
 		var universal = false;
-		/**
-		 * add a listener to this view
-		 */
-		
-		String.prototype.startsWith = function(str) {
-			return (this.match("^"+str)==str);
-		}
-		
-		String.prototype.endsWith = function(str) {
-			return (this.match(str+"$")==str);
-		}
-			
+
 		this.addListener = function(list) {
 			listeners.push(list);
-		}
+		};
 
-		this.setTreePath = function(treepath) {
-			treePath = treepath;
-		}
 
 		this.initSpeFieldsList = function(category) {
 			switch (category) {
 			case 'ENTRY':
-				speFields = [ 'Detail', 'Position', 'Position with error', 'Table Header', 'Error (arcsec)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
+				speFields = [ 'Access', 'Detail', 'Position', 'Position with error', 'Table Header', 'Error (arcsec)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
 				break;
 			case 'SPECTRUM':
-				speFields = [ 'Detail', 'DL Link', 'Position', 'Position with error', 'Aladin', 'Visu', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
+				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Aladin', 'Visu', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
 				break;
 			case 'IMAGE':
-				speFields = [ 'Detail', 'DL Link', 'Position', 'Position with error', 'Size (deg)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name', 'Plot', 'Size (deg)' ];
+				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Size (deg)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name', 'Plot', 'Size (deg)' ];
 				break;
 			case 'FLATFILE':
-				speFields = [ 'Preview', 'Detail', 'DL Link', 'Name' ];
+				speFields = [ 'Access', 'Preview', 'Detail', 'DL Link', 'Name' ];
 				break;
 			case 'TABLE':
-				speFields = [ 'DL Link', 'Header', 'Table', 'Entries' ];
+				speFields = [ 'Access', 'DL Link', 'Header', 'Table', 'Entries' ];
 				break;
 			case 'MISC':
-				speFields = [ 'Detail', 'DL Link', 'Name' ];
+				speFields = ['Access',  'Detail', 'DL Link', 'Name' ];
 				break;
 			}
-		}
-		
+		};
+
 		this.initNativesList = function(jsondata) {
-			
+
 			attributesHandlers = new Array();
-			
-			for (i = 0; i < jsondata.attributes.length; i++) {
+
+			for ( var i = 0; i < jsondata.attributes.length; i++) {
 				if (!(jsondata.attributes[i].nameattr).startsWith("_")) attributesHandlers[jsondata.attributes[i].nameattr] = jsondata.attributes[i];
 			}
-		}
-		
+		};
+
 		this.initQueriablesUCDList = function(jsondata) {
-			
+
 			var with_ucd = false;
-			
+
 			queriableUCDs = new Array();
-			
-			for (i = 0; i < jsondata.queriableucds.length; i++) {
+
+			for (var i = 0; i < jsondata.queriableucds.length; i++) {
 				var ah = jsondata.queriableucds[i];
 				var ucd = ah.ucd;
 				if (queriableUCDs[ucd] == null || queriableUCDs[ucd] == undefined) {
@@ -122,75 +98,77 @@ jQuery.extend({
 				}
 				with_ucd = true;
 			}
-			
-		}
-		
+
+		};
+
 		this.initRelationsList = function(jsondata) {
 
 			relations = new Array();
 			if (jsondata.relations != null) {
-				for (i = 0; i < jsondata.relations.length; i++) {
+				for (var i = 0; i < jsondata.relations.length; i++) {
 					relations[jsondata.relations[i].name] = jsondata.relations[i];
 				}
 			}
-		}
+		};
 
-		this.processShowFilterManager = function(treepath) {
+		this.processShowFilterManager = function() {
 			attributesHandlers = new Array();
 			queriableUCDs = new Array();
 			relations = new Array();
-			
-			var jsondata;
 			var params;
-			
-			if (treepath.length == 3) {
-				collection = treepath[0];
-				category = treepath[1];
-				classe = treepath[2];
+
+			if (globalTreePath.length == 3) {
+				collection = globalTreePath[0];
+				category = globalTreePath[1];
+				classe = globalTreePath[2];
 				params = {query: "ah", name:  classe };
-			} else if (treepath.length == 2) {
-				collection = treepath[0];
-				category = treepath[1];
+			} else if (globalTreePath.length == 2) {
+				collection = globalTreePath[0];
+				category = globalTreePath[1];
 				classe = '*'; 
 				params = {query: "ah", name:  collection + '.' +category };
 			} else {
-				alert(treepath.length + " Query can only be applied on one data category or one data class (should never happen here: filterManagerModel.js");
+				alert(globalTreePath.length + " Query can only be applied on one data category or one data class (should never happen here: filterManagerModel.js");
 				return;
 			}
 
-			that.initSpeFieldsList(treepath[1]);
-			
+			that.initSpeFieldsList(globalTreePath[1]);
+
 			showProcessingDialog();
-			
-			$.getJSON("getmeta?", params, function(jsondata) {
+
+			$.getJSON("getmeta", params, function(jsondata) {
 				hideProcessingDialog();
 				if (processJsonError(jsondata, "Can not get data tree node description")) {
 					hideProcessingDialog();
 					return;
 				}
-				
+
 				that.initNativesList(jsondata);
 				that.initRelationsList(jsondata);
 				that.initQueriablesUCDList(jsondata);
-				
+
 				var param = "cat=" + category + "&coll=" + collection;
-				
+
 				var data = null;
-				$.getJSON("getfilter?", param, function(jsondata) {
-					data = jsondata;
+				$.getJSON("getfilter", param, function(jsondata) {
+					if( processJsonError(jsondata, "Can not save filter") ) {
+						return;
+					}
+					else {
+						data = jsondata;
+					}
 				});
-				
+
 				if (data == null) {
 					data = "{\"collection\": [\"" + collection + "\"],\"category\": \"" + category + "\",\"relationship\": {\"show\": [\"\"],\"query\": [\"Any-Relation\"]}, \"ucd.show\": " +
 					"\"false\",\"ucd.query\": \"false\",\"specialField\": [\"\"],\"collections\": " +
 					"{\"show\": [\"\"],\"query\": [\"\"]}}";
 				}
-
 				universal = $('#unifilter').attr('checked'); 
 				that.filterIsReady(data, speFields, attributesHandlers, relations);
 			});
-		}
-		
+		};
+
 		this.processInitExisting = function() {
 
 			var param = "cat=" + category + "&coll=" + collection;
@@ -199,11 +177,11 @@ jQuery.extend({
 			droppedspefields = new Array();
 			droppednatives = new Array();
 			droppedrelations = new Array();
-			
-			$.getJSON("getfilter?", param, function(jsondata) {
-				
+
+			$.getJSON("getfilter", param, function(jsondata) {
+
 				if (jsondata != null) {
-					for (i = 0; i < jsondata.specialField.length; i ++) {
+					for (var i = 0; i < jsondata.specialField.length; i ++) {
 						sfname = jsondata.specialField[i];
 						var index = jQuery.inArray(sfname, droppedspefields);
 						if (index == -1) {
@@ -211,9 +189,9 @@ jQuery.extend({
 							that.SpeFieldsUpdated(i, sfname);
 						}
 					}
-					
+
 					if (jsondata.collections.show.length > 0) {
-						for (i = 0; i < jsondata.collections.show.length; i ++) {
+						for (var i = 0; i < jsondata.collections.show.length; i ++) {
 							nname = jsondata.collections.show[i];
 
 							if (droppednatives[nname] == null) {
@@ -222,7 +200,7 @@ jQuery.extend({
 							}
 						}
 					}
-					
+
 					for (i = 0; i < jsondata.relationship.show.length; i ++) {
 						rname = jsondata.relationship.show[i];
 						if (rname != 'Any-Relation') {
@@ -245,27 +223,27 @@ jQuery.extend({
 					}
 				}
 			});
-			
-		}
+
+		};
 
 		this.processSpeFieldEvent = function(uidraggable) {
 			var sfname = uidraggable.find(".item").text();
-			
+
 			var index = jQuery.inArray(sfname, droppedspefields);
 			if (index == -1) {
 				droppedspefields.push(sfname);
 				that.SpeFieldsUpdated(droppedspefields.length, sfname);
 			}
-		}
+		};
 
 		this.processNativeEvent = function(uidraggable) {
 			var nname = uidraggable.find(".hidden").text();
-			
+
 			if (droppednatives[nname] == null) {
 				droppednatives[nname] = attributesHandlers[nname];
 				that.NativesUpdated(nname, droppednatives[nname].nameorg);
 			}
-		}
+		};
 
 		this.processRelationsEvent = function(uidraggable) {
 			var rname = uidraggable.find(".item").text();
@@ -275,29 +253,30 @@ jQuery.extend({
 				droppedrelations.push(rname);
 				that.RelationsUpdated(droppedrelations.length, rname);
 			}
-		}
-		
+		};
+
 		this.processSpeFieldRemove = function(sfname) {
 			droppedspefields = jQuery.grep(droppedspefields, function(value) {
 				return value != sfname;
 			});
-		}
-		
+		};
+
 		this.processNativeRemove = function(nname) {
 			delete droppednatives[nname];
-		}
-		
+		};
+
 		this.processRelationRemove = function(rname) {
 			droppedrelations = jQuery.grep(droppedrelations, function(value) {
 				return value != rname;
 			});
-		}
-		
+		};
+
 		this.processSaveFilter = function() {
+			var newfilter = '';
 			if (universal) {
-				var newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
+				newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
 			} else {
-				var newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
+				newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
 			}
 			newfilter += "\"category\": \"" + category + "\",";
 			newfilter += "\"relationship\": {";
@@ -331,12 +310,12 @@ jQuery.extend({
 			newfilter += "],";
 			newfilter += "\"collections\": {";
 			newfilter += "\"show\": [";
-			
+
 			var length = 0;
 			for (i in droppednatives) {
 				length++; 
 			}
-			
+
 			var iterator = 0;
 			for (i in droppednatives) { 
 				iterator ++; 
@@ -345,7 +324,7 @@ jQuery.extend({
 					newfilter += ", ";
 				}
 			}
-			
+
 			newfilter += "],";
 			newfilter += "\"query\": [\"\"]}}";
 			var param = escape(newfilter);
@@ -355,20 +334,29 @@ jQuery.extend({
 			if (universal) {
 				var answer = confirm('This filter will be applied to all the collections. If you created any other filter for the category ' + category +' it will be overwritten. \n Are you sure you want to save ?');
 				if (answer) {
-					$.post(tmppath);
-					alert('Filter saved.');
+					$.post(tmppath, function(jsondata){
+						if( processJsonError(jsondata, "Can not save filter") ) {
+							return;
+						}
+						else {alert('Filter saved.');}
+					});
 				}
 			} else {
-				$.post(tmppath);
-				alert('Filter saved.');
+				$.post(tmppath, function(jsondata){
+					if( processJsonError(jsondata, "Can not save filter") ) {
+						return;
+					}
+					else {alert('Filter saved.');}
+				});
 			}
-		}
-		
+		};
+
 		this.processShowFilterPreview = function() {
+			var newfilter = '';
 			if (universal) {
-				var newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
+				newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
 			} else {
-				var newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
+				newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
 			}
 			newfilter += "\n\t\"category\": \"" + category + "\",";
 			newfilter += "\n\t\"relationship\": {";
@@ -402,12 +390,12 @@ jQuery.extend({
 			newfilter += "],";
 			newfilter += "\n\t\"collections\": {";
 			newfilter += "\n\t\t\"show\": [";
-			
+
 			var length = 0;
 			for (i in droppednatives) {
 				length++; 
 			}
-			
+
 			var iterator = 0;
 			for (i in droppednatives) { 
 				iterator ++; 
@@ -416,16 +404,16 @@ jQuery.extend({
 					newfilter += ", ";
 				}
 			}
-			
+
 			newfilter += "],";
 			newfilter += "\n\t\t\"query\": [\"\"]\n\t}\n}";
 			that.PreviewIsReady(newfilter, collection, category);
-		}
-		
+		};
+
 		this.processApplyToAllColl = function () {
 			universal = !universal;
-		}
-		
+		};
+
 		this.processResetFilter = function () {
 			if (!universal) {
 				var question = 'Delete the custom filter for '+collection+', '+category+'?';
@@ -444,8 +432,8 @@ jQuery.extend({
 					alert('Filter reset complete.');
 				}
 			}
-		}
-		
+		};
+
 		this.processResetAll = function () {
 			var question = 'Delete all the custom filters?';
 			var answer = confirm(question);
@@ -454,36 +442,35 @@ jQuery.extend({
 				$.post(tmppath);
 				alert('Filter reset complete.');
 			}
-		}
-		
+		};
+
 		this.filterIsReady = function(jsdata, speFields, attributesHandlers, relations) {
 			$.each(listeners, function(i) {
 				listeners[i].filterManagerIsReady(jsdata, speFields, attributesHandlers, relations);
 			});
-		}
-		
+		};
+
 		this.SpeFieldsUpdated = function(index, sfname) {
 			$.each(listeners, function(i){
 				listeners[i].notifySpeFieldsUpdate(index, sfname);
 			});
-		}
-		
+		};
 		this.NativesUpdated = function(nname, nnameorg) {
 			$.each(listeners, function(i){
 				listeners[i].notifyNativesUpdate(nname, nnameorg);
 			});
-		}
-		
+		};
+
 		this.RelationsUpdated = function(index, rname) {
 			$.each(listeners, function(i){
 				listeners[i].notifyRelationsUpdate(index, rname);
 			});
-		}
-		
+		};
+
 		this.PreviewIsReady = function(filter, collection, category) {
 			$.each(listeners, function(i){
 				listeners[i].notifyPreviewIsReady(filter, collection, category);
 			});
-		}
+		};
 	}
 });

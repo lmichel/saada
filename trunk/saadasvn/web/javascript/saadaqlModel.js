@@ -16,12 +16,13 @@ jQuery.extend({
 		var queriableUCDs = new Array();
 		var relations = new Array();
 		var editors = new Array();
+		var orberby = '';
 		var ucdeditors = new Array();
 		var const_key = 1;
 		var patternModel = pmodel;			
-		var collection ;
-		var classe;
-		var category ;
+		var collection = '';
+		var classe = '';
+		var category = '';
 		var histoQuery = new Array();
 		var histoQueryPtr = -1;
 		/**
@@ -29,12 +30,11 @@ jQuery.extend({
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 		/*
 		 * Event processing
 		 */
 		this.processTreeNodeEvent = function(treepath, andsubmit, defaultquery){
-			var jsondata;
 			var params;
 			if( treepath.length == 3 ){
 				collection = treepath[0];
@@ -49,7 +49,7 @@ jQuery.extend({
 				params = {query: "ah", name:  collection + '.' +category };
 			}
 			else {
-				alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
+				logged_alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
 				return;
 			}
 			showProcessingDialog();
@@ -62,7 +62,7 @@ jQuery.extend({
 				editors = new Array();
 				ucdeditors = new Array();
 				attributesHandlers = new Array();
-				for( i=0 ; i<jsondata.attributes.length ; i++ ) {
+				for( var i=0 ; i<jsondata.attributes.length ; i++ ) {
 					attributesHandlers[jsondata.attributes[i].nameattr] = jsondata.attributes[i];
 				}
 				/*
@@ -70,7 +70,7 @@ jQuery.extend({
 				 */
 				var with_ucd = false;
 				queriableUCDs = new Array();
-				for( i=0 ; i<jsondata.queriableucds.length ; i++ ) {
+				for(var  i=0 ; i<jsondata.queriableucds.length ; i++ ) {
 					var ah = jsondata.queriableucds[i];
 					var ucd = ah.ucd;
 					if( queriableUCDs[ucd] == null || queriableUCDs[ucd] == undefined) {
@@ -138,7 +138,7 @@ jQuery.extend({
 				}
 			});
 
-		}
+		};
 
 		this.processAttributeEvent= function(uidraggable){
 			var kwname = uidraggable.find(".item").text().split(' ')[0];
@@ -154,8 +154,27 @@ jQuery.extend({
 			editors[div_key] =  new $.KWConstraintControler(m, v);
 			m.notifyInitDone();
 			const_key++;
-		}
+		};
 
+		this.processOrderByEvent= function(uidraggable){
+			var kwname = uidraggable.find(".item").text().split(' ')[0];
+			var ah = attributesHandlers[kwname];
+			var m = new $.KWConstraintModel(true, { 
+				"nameattr" : ah.nameattr 
+				, "nameorg" : ah.nameorg
+				, "type" : "orderby"
+					, "ucd" : ah.ucd
+					, "utype" : ah.utype
+					, "unit" : ah.unit
+					, "comment" : ah.description}
+			, this);
+
+			var div_key = "ob" +  const_key;
+			var v = new $.KWConstraintView(div_key, 'orderby');
+			orderby =  new $.KWConstraintControler(m, v);
+			m.notifyInitDone();
+		};
+		
 		this.processOIDTableEvent= function(oidtable){
 			var ah = attributesHandlers["oidtable"];
 			if( ah != undefined) {
@@ -173,7 +192,7 @@ jQuery.extend({
 				$("#" + div_key + "_val").val(oidtable);
 				const_key++;
 			}
-		}
+		};
 
 		this.processUCDEvent= function(uidraggable){
 			var ucd = uidraggable.find(".item").text().split(' ')[0];
@@ -188,7 +207,7 @@ jQuery.extend({
 			ucdeditors[div_key] =  new $.UCDConstraintControler(m, v);
 			m.notifyInitDone();
 			const_key++;
-		}
+		};
 
 		this.processInputCoord= function(coord, radius){
 			var frame = 'J2000,ICRS';
@@ -196,11 +215,11 @@ jQuery.extend({
 			that.notifyCoordDone("coo" +  const_key, 'isInCircle("' + coord + '", ' + radius + ', ' + frame + ')');
 			that.updateQuery();
 			const_key++;
-		}
+		};
 
 		this.processSelectRelation= function(relation) {
 			patternModel.initRelation(relations[relation]);
-		}
+		};
 
 		this.updateQuery = function() {
 			/*
@@ -247,12 +266,19 @@ jQuery.extend({
 				query += "\nWhereRelation { \n" + cq + "\n    }";
 			}
 
+			$("#orderby span").each(function() {
+				query += "\nOrder By " + $(this).text();
+				if( $("input[name=sens]:checked").attr("value") == 'des' ) {
+					query += " desc";
+				}
+			});
+
 			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
 				query += '\nLimit ' + $("#qlimit").val();
 			}
 
 			that.notifyQueryUpdated(query);
-		}
+		};
 
 		this.processRemoveFirstAndOr = function(key) {
 			delete editors[key];
@@ -265,7 +291,7 @@ jQuery.extend({
 				ucdeditors[k].controlRemoveAndOr();
 				break;
 			}
-		}
+		};
 
 		this.processStoreHisto = function(query) {
 			if( histoQuery.length > 0 && histoQuery[histoQuery.length-1].query == query ) {
@@ -280,11 +306,11 @@ jQuery.extend({
 			}
 
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
-		}
+		};
 
 		this.displayHisto = function() {
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
-		}
+		};
 
 		this.processHisto = function(direction) {
 			if( direction == 'next') {
@@ -302,7 +328,7 @@ jQuery.extend({
 				that.processTreeNodeEvent(histoQuery[histoQueryPtr].treepath, false,  histoQuery[histoQueryPtr].query);
 			}
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
-		}
+		};
 
 		/*
 		 * Listener notifications
@@ -311,17 +337,17 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].isInit(attributesHandlers, relations, queriableUCDs);
 			});
-		}
+		};
 		this.notifyCoordDone = function(key, constr){
 			$.each(listeners, function(i){
 				listeners[i].coordDone(key, constr);
 			});
-		}
+		};
 		this.notifyQueryUpdated= function(query) {
 			$.each(listeners, function(i){
 				listeners[i].queryUpdated(query);
 			});
-		}
+		};
 
 	}
 });

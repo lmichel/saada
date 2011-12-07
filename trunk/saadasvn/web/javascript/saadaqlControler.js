@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	SaadaQLController: function(model, view){
+	SaadaQLControler: function(model, view){
 		/**
 		 * listen to the view
 		 */
@@ -10,6 +10,9 @@ jQuery.extend({
 				},
 				controlAttributeEvent: function(uidraggable){
 					model.processAttributeEvent(uidraggable);
+				},
+				controlOrderByEvent: function(uidraggable){
+					model.processOrderByEvent(uidraggable);
 				},
 				controlOIDTableEvent: function(oidtable){
 					model.processOIDTableEvent(oidtable);

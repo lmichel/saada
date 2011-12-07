@@ -14,14 +14,14 @@ jQuery.extend({
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 
 		this.fireSampInit = function(){
 			$.each(listeners, function(i){
 				listeners[i].controlSampInit();
 			});
-		}
-		
+		};
+
 		this.fireSendImage= function(oid){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -30,7 +30,7 @@ jQuery.extend({
 			else {
 				alert('No active SAMP connnection');
 			}
-		}
+		};
 		this.fireSendSpectra= function(oid){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -39,7 +39,7 @@ jQuery.extend({
 			else {
 				alert('No active SAMP connnection');
 			}
-		}
+		};
 		this.fireSendSIAQuery= function(query){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -51,7 +51,7 @@ jQuery.extend({
 			else {
 				alert('No active SAMP connnection');
 			}
-		}
+		};
 		this.fireSendSSAQuery= function(query){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -63,16 +63,19 @@ jQuery.extend({
 			else {
 				alert('No active SAMP connnection');
 			}
-		}
+		};
 		this.fireSendTapDownload= function(url){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
-					WebSampConnector.sendMsg('table.load.votable','From TAP Result' ,'VOTable', url,'');
+				WebSampConnector.sendMsg('table.load.votable','From TAP Result' ,'VOTable', url,'');
 			}
 			else {
 				alert('No active SAMP connnection');
 			}
-		}
+		}	;
+		this.fireSendTapDownload= function(ra, dec){
+			WebSampConnector.pointAtSky(ra, dec);
+		};
 		this.fireSendCSQuery= function(query){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -84,7 +87,7 @@ jQuery.extend({
 			else {
 				alert('No active SAMP connnection');
 			}
-		}		
+		}	;	
 		this.firePointatSky= function(pos){
 			if( that.isSampConnect() ) {
 				showSampMessageSent();
@@ -95,11 +98,16 @@ jQuery.extend({
 						return;
 					}
 					else {
+						showSampMessageSent();
+						logMsg([data.alpha, data.delta]);
 						WebSampConnector.pointAtSky(data.alpha, data.delta);
 					}
 				});
 			}
-		}		
+			else {
+				//alert('No active SAMP connnection');
+			}
+		}	;	
 		this.isSampConnect = function() {
 			try {
 				var connected = WebSampConnector.isConnected();
@@ -107,7 +115,7 @@ jQuery.extend({
 				return false;
 			}
 			return  connected ;
-		}
+		};
 
 	}
 });
