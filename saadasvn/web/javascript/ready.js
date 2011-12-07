@@ -146,9 +146,13 @@ function openSimbadDialog(pos) {
 				"bAutoWidth" : true,
 				"bDestroy" : true
 			});
+			if( jsdata.aaData.length > 0 ) {
+				$('#simbadtable').append("<img src='http://alasky.u-strasbg.fr/cgi/simbad-thumbnails/get-thumbnail.py?name=" 
+						+ escape((jsdata.aaData[0])[0]) + "'/>");
+			}
 
 			var simbadpage = "<a class=simbad target=blank href=\"http://simbad.u-strasbg.fr/simbad/sim-coo?Radius=1&Coord=" + escape(pos) + "\"></a>";
-			$('#diagdiv').dialog({  width: 'auto', title: "Simbad Summary for Position " + pos + simbadpage});
+			$('#diagdiv').dialog({  width: 'auto', title: "Simbad Summary for Position " + pos + simbadpage });
 			sampView.firePointatSky(pos);
 		}
 	});
