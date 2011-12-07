@@ -4,29 +4,29 @@
 if(!String.prototype.startsWith){
 	String.prototype.startsWith = function (str) {
 		return !this.indexOf(str);
-	}
+	};
 };
 if(!String.prototype.endsWith){
 	String.prototype.endsWith = function(suffix) {
-		return this.indexOf(suffix, this.length - suffix.length) !== -1;
-	}
+		return (this.indexOf(suffix, this.length - suffix.length) !== -1);
+	};
 };
 
 if(!String.prototype.hashCode){
 	String.prototype.hashCode = function(){
 		var hash = 0;
 		if (this.length == 0) return code;
-		for (i = 0; i < this.length; i++) {
+		for (var i= 0; i < this.length; i++) {
 			char = this.charCodeAt(i);
 			hash = 31*hash+char;
 			hash = hash & hash; 
 		}
 		return hash;
-	}
+	};
 };
 if(!String.prototype.trim){
 	String.prototype.trim = function(){
-	} 
+	} ;
 };
 
 var DEBUG = true;
@@ -35,12 +35,28 @@ function logMsg(message) {
 		console.log(message);
 	}
 }
+function logged_alert(message, title) {
+	logMsg("ALERT " + message);
+	jAlert(message, title);
+}
+
+var globalTreePath = new Array();
 function setTitlePath(treepath) {
+	globalTreePath = treepath;
+
 	$('#titlepath').html('<i>');
-	for( i=0 ; i<treepath.length  ; i++ ) {
+	for( var i=0 ; i<treepath.length  ; i++ ) {
 		if( i > 0 )$('#titlepath').append('&gt;');
 		$('#titlepath').append(treepath[i]);
 	}
+}
+function getTreePathAsKey() {
+	var retour = '';
+	for( var i=0 ; i<globalTreePath.length  ; i++ ) {
+		if( i > 0 )retour += '_';
+		retour += globalTreePath[i];
+	}
+	return retour;
 }
 
 var stillToBeOpen = false;
@@ -88,13 +104,13 @@ function showSampMessageSent() {
 }
 
 //function showQuerySent() {
-//	stillToBeOpen = true;
-//	if( $('#saadaworking').length == 0){		
-//		$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-//	}
-//	$('#saadaworking').html("Query submitted");
-//	$('#saadaworking').css('visibility', 'visible');
-//	setTimeout(" $('#saadaworking').css('visibility', 'hidden');", 2000);
+//stillToBeOpen = true;
+//if( $('#saadaworking').length == 0){		
+//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
+//}
+//$('#saadaworking').html("Query submitted");
+//$('#saadaworking').css('visibility', 'visible');
+//setTimeout(" $('#saadaworking').css('visibility', 'hidden');", 2000);
 //}
 
 
@@ -130,7 +146,7 @@ function openSimbadDialog(pos) {
 				"bAutoWidth" : true,
 				"bDestroy" : true
 			});
-			
+
 			var simbadpage = "<a class=simbad target=blank href=\"http://simbad.u-strasbg.fr/simbad/sim-coo?Radius=1&Coord=" + escape(pos) + "\"></a>";
 			$('#diagdiv').dialog({  width: 'auto', title: "Simbad Summary for Position " + pos + simbadpage});
 			sampView.firePointatSky(pos);
@@ -242,6 +258,7 @@ var sapView ;
 var sampView ;
 var tapView ;
 var filterManagerView;
+var cartView;
 
 /*
  * To be set from a JSP 
@@ -252,31 +269,35 @@ var booleansupported = false;
 $().ready(function() {
 	var resultPaneModel      = new $.ResultPaneModel();
 	resultPaneView           = new $.ResultPaneView();
-	var resultPaneController = new $.ResultPaneController(resultPaneModel, resultPaneView);
+	var resultPaneControler = new $.ResultPaneControler(resultPaneModel, resultPaneView);
 
 	var patternModel      = new $.PatternModel();
 	var patternView       = new $.PatternView();
-	var patternController = new $.PatternController(patternModel, patternView);
+	var patternControler = new $.PatternControler(patternModel, patternView);
 
 	var saadaqlModel      = new $.SaadaQLModel(patternModel);
 	saadaqlView           = new $.SaadaQLView();
-	var saadaqlController = new $.SaadaQLController(saadaqlModel, saadaqlView);
+	var saadaqlControler = new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
 	var sapModel      = new $.SapModel();
 	sapView           = new $.SapView();
-	var sapController = new $.SapController(sapModel, sapView);
+	var sapControler = new $.SapControler(sapModel, sapView);
 
 	var sampModel       = new $.SampModel();
 	sampView            = new $.SampView();
-	var sampController  = new $.SampController(sampModel, sampView);
+	var sampControler  = new $.SampControler(sampModel, sampView);
 
 	var tapModel       = new $.TapModel();
 	tapView            = new $.TapView();
-	var tapController  = new $.TapController(tapModel, tapView);
-	
+	var tapControler  = new $.TapControler(tapModel, tapView);
+
 	var filterManagerModel       = new $.FilterManagerModel();
 	filterManagerView            = new $.FilterManagerView();
-	var filterManagerController  = new $.FilterManagerController(filterManagerModel, filterManagerView);
+	var filterManagerControler  = new $.FilterManagerControler(filterManagerModel, filterManagerView);
+
+	var cartModel       = new $.CartModel();
+	cartView            = new $.CartView();
+	var cartControler  = new $.CartControler(cartModel, cartView);
 
 	/*
 	 * Splitter functions of accesspane, the container of the db tree, 
@@ -308,15 +329,16 @@ $().ready(function() {
 		if( processJsonError(data, "Cannot make data tree") ) {
 			return;
 		}
-		$("div#treedisp").jstree({
+		dataTree = $("div#treedisp").jstree({
 			"json_data"   : data , 
-			"plugins"     : [ "themes", "json_data", "dnd", "crrm"],
-			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta,#displayfilter",
+			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
+			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
+				
 				"drop_finish" : function (data) {
 					var parent = data.r;
 					var treepath = data.o.attr("id").split('.');
 					if( treepath.length < 2 ) {
-						alert("Query can only be applied on one data category or one data class");
+						logged_alert("Query can only be applied on one data category or one data class");
 					}
 					else {
 						while(parent.length != 0  ) {
@@ -331,14 +353,14 @@ $().ready(function() {
 								resultPaneView.fireShowMetaNode(treepath);	
 								return;
 							}
-							
-							else if(parent.attr('id') == "displayfilter" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireTreeNodeEvent(treepath);	
-								filterManagerView.fireShowFilterManager(treepath);	
-								return;
-							}
-							
+
+//							else if(parent.attr('id') == "displayfilter" ) {
+//							setTitlePath(treepath);
+//							resultPaneView.fireTreeNodeEvent(treepath);	
+//							filterManagerView.fireShowFilterManager(treepath);	
+//							return;
+//							}
+
 							else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
 								saadaqlView.fireTreeNodeEvent(treepath);	
 								sapView.fireTreeNodeEvent(treepath);	
@@ -354,6 +376,23 @@ $().ready(function() {
 			"crrm" : {"move" : {"check_move" : function (m) {return false; }}
 			}
 		}); // end of jstree
+//		dataTree.bind("select_node.jstree", function (e, data) {
+//			alert(data);
+//		});
+		dataTree.bind("dblclick.jstree", function (e, data) {
+			var node = $(e.target).closest("li");
+			var id = node[0].id; //id of the selected node					
+			var treepath = id.split('.');
+			if( treepath.length < 2 ) {
+				alert("Query can only be applied on one data category or one data class");
+			}
+			else {
+				showProcessingDialog();
+				resultPaneView.fireSetTreePath(treepath);	
+				setTitlePath(treepath);
+				resultPaneView.fireTreeNodeEvent(treepath);	
+			}
+		});
 	}); // end of ajax
 
 
@@ -419,6 +458,11 @@ $().ready(function() {
 	$("#ConstraintsList").droppable({
 		drop: function(event, ui){
 			saadaqlView.fireAttributeEvent(ui.draggable);		
+		}
+	});
+	$("#orderby").droppable({
+		drop: function(event, ui){
+			saadaqlView.fireOrderByEvent(ui.draggable);		
 		}
 	});
 	$("#UCDConstraintsList").droppable({
@@ -514,6 +558,12 @@ $().ready(function() {
 		patternView.fireAcceptPattern();
 	});
 	/*
+	 * Order by
+	 */
+	$("input[name=sens]").click(function(){
+		saadaqlView.fireUpdateQueryEvent();		
+	});
+	/*
 	 * Query language selector
 	 */
 	$(".langswitch").click(function() {
@@ -582,10 +632,10 @@ $().ready(function() {
 	 * This callback can be changed changed at everytime: do not use the "onclick" HTML  
 	 * attribute which is not overriden by JQuery "click" callback
 	 */
-	$('#showquerymeta').click(function(){alert("No meta data available yet")});
+	$('#showquerymeta').click(function(){logged_alert("No meta data available yet");});
 
 	sampView.fireSampInit();
 	tapView.fireRefreshJobList();
-	$("[name=qlang]").filter("[value=�\"saadaql\"]").attr("checked","checked");
+	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 
 });

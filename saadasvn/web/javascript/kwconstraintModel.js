@@ -1,8 +1,6 @@
 jQuery.extend({
 
 	KWConstraintModel: function(first, ah, model, def_value){
-		var val1;
-		var val2;
 		var that = this;
 
 		var listeners = new Array();
@@ -11,14 +9,14 @@ jQuery.extend({
 
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 
 		var attributehandler = ah;
 		var saadaqlmodel = model;
 		var default_value = def_value;
-		var operator ;
-		var operand ;
-		var andor ;
+		var operator= '' ;
+		var operand = '';
+		var andor = '';
 
 		if( ah.nameattr == 'Cardinality' || ah.nameattr.startsWith('Qualifier ')) {
 			operators = ["=", "!=", ">", "<", "][", "]=[", "[]", "[=]"];			
@@ -41,14 +39,22 @@ jQuery.extend({
 			operators = ["=", "!=", "LIKE", "NOT LIKE", 'IS NULL'];
 			andors = ['AND', 'OR'];
 		}
-	
+
 		if( first == true ) {
+			andors = [];
+		}
+		if( attributehandler.type == 'orderby' ) {
+			operators = [];
 			andors = [];
 		}
 
 		this.processEnterEvent = function(ao, op, opd) {
 			andor = ao;
-			if( attributehandler.type == 'String') {
+			if( attributehandler.type == 'orderby') {
+				saadaqlmodel.updateQuery();
+				return;
+			}
+			else if( attributehandler.type == 'String') {
 				if( !that.checkAndFormatString(op, opd) ) {
 					return;
 				}
@@ -63,7 +69,7 @@ jQuery.extend({
 				that.removeAndOr();
 			}
 			saadaqlmodel.updateQuery();
-		}
+		};
 
 		this.checkAndFormatNum = function(op, opd) {
 			/*
@@ -134,7 +140,7 @@ jQuery.extend({
 				operand = opd;
 				return 1 ;			
 			}
-		}
+		};
 
 		this.checkAndFormatString = function(op, opd) {
 			if( op == 'IS NULL' ) {
@@ -157,19 +163,21 @@ jQuery.extend({
 				operator = op;
 				return 1;			
 			}
-		}
+		};
 
 		this.processRemoveConstRef = function(ahname) {
 			saadaqlmodel.processRemoveConstRef(ahname);
-		}
-		
-		this.processRemoveFirstAndOr = function(key) {
-			saadaqlmodel.processRemoveFirstAndOr(key);
-		}
-		
+		};
+
+		this.processRemoveFirstAndOr = function(key) {			
+			if( attributehandler.type != 'orderby') {
+				saadaqlmodel.processRemoveFirstAndOr(key);
+			}
+		};
+
 		this.removeAndOr = function() {
 			andor = "";
-		}
+		};
 
 		this.getADQL = function(attQuoted) {		
 			if(  ah.nameattr.startsWith('Qualifier ')) {
@@ -188,17 +196,17 @@ jQuery.extend({
 			else {
 				return andor + ' ' + attributehandler.nameattr + ' ' + operator + ' ' + operand;
 			}
-		}
+		};
 		this.notifyInitDone = function(){
 			$.each(listeners, function(i){
 				listeners[i].isInit(attributehandler, operators, andors, default_value);
 			});
-		}
+		};
 		this.notifyTypomsg = function(fault, msg) {
 			$.each(listeners, function(i){
 				listeners[i].printTypomsg(fault,msg);
 			});			
-		}
+		};
 
 	}
 });

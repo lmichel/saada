@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	TapController: function(model, view){
+	TapControler: function(model, view){
 		/**
 		 * listen to the view
 		 */

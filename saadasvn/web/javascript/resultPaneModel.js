@@ -87,7 +87,7 @@ jQuery.extend({
 			}
 		}
 
-		this.processShowRecord= function(oid){
+		this.processShowRecord= function(oid, panelToOpen){
 			var jsdata ="";
 			showProcessingDialog();
 			$.getJSON("getobject", {oid: oid }, function(data) {
@@ -102,7 +102,7 @@ jQuery.extend({
 					histo_ptr = histo.length - 1;
 					var limit = 'MaxRight';
 					if( histo.length == 1  ) limit = 'NoHisto';
-					that.notifyDetailLoaded(oid, jsdata, limit);
+					that.notifyDetailLoaded(oid, jsdata, limit, panelToOpen);
 				}
 			});
 		}
@@ -410,9 +410,9 @@ jQuery.extend({
 				listeners[i].jobFailed(textStatus);
 			});
 		}
-		this.notifyDetailLoaded= function(oid, jsdata, limit){
+		this.notifyDetailLoaded= function(oid, jsdata, limit, panelToOpen){
 			$.each(listeners, function(i){
-				listeners[i].detailIsLoaded(oid, jsdata, limit);
+				listeners[i].detailIsLoaded(oid, jsdata, limit, panelToOpen);
 			});
 		}
 		this.notifyMetaLoaded= function(jsdata, limit){

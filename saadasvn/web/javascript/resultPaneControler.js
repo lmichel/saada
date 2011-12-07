@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	ResultPaneController: function(model, view){
+	ResultPaneControler: function(model, view){
 		/**
 		 * listen to the view
 		 */
@@ -9,8 +9,8 @@ jQuery.extend({
 					model.processSaadaQLQueryEvent(query);
 					saadaqlView.fireStoreHisto(query);
 				},
-				controlShowRecord: function(oid){
-					model.processShowRecord(oid);
+				controlShowRecord: function(oid, panelToOpen){
+					model.processShowRecord(oid, panelToOpen);
 				},
 				controlShowMeta: function(){
 					model.processShowMeta();
@@ -71,8 +71,8 @@ jQuery.extend({
 				tableIsInit : function(dataJSONObject, query){
 					view.initTable(dataJSONObject, query);
 				},
-				detailIsLoaded: function(oid, dataJSONObject, limit){
-					view.showDetail(oid, dataJSONObject, limit);
+				detailIsLoaded: function(oid, dataJSONObject, limit, panelToOpen){
+					view.showDetail(oid, dataJSONObject, limit, panelToOpen);
 				},
 				metaIsLoaded: function(dataJSONObject, limit){
 					view.showMeta(dataJSONObject, limit);

@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	PatternController: function(model, view){
+	PatternControler: function(model, view){
 		/**
 		 * listen to the view
 		 */

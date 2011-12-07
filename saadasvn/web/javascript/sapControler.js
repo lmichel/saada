@@ -1,6 +1,6 @@
 jQuery.extend({
 
-	SapController: function(model, view){
+	SapControler: function(model, view){
 		/**
 		 * listen to the view
 		 */

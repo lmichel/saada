@@ -14,28 +14,33 @@ jQuery.extend({
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 
 		this.fireTreeNodeEvent = function(treepath, andsubmit, defaultQuery){
 			$.each(listeners, function(i){
 				listeners[i].controlTreeNodeEvent(treepath, andsubmit, defaultQuery);
 			});
-		}
+		};
 		this.fireAttributeEvent = function(uidraggable){
 			$.each(listeners, function(i){
 				listeners[i].controlAttributeEvent(uidraggable);
 			});
-		}
+		};
+		this.fireOrderByEvent = function(uidraggable){
+			$.each(listeners, function(i){
+				listeners[i].controlOrderByEvent(uidraggable);
+			});
+		};
 		this.fireOIDTableEvent = function(oidtable){
 			$.each(listeners, function(i){
 				listeners[i].controlOIDTableEvent(oidtable);
 			});
-		}
+		};
 		this.fireUCDEvent = function(uidraggable){
 			$.each(listeners, function(i){
 				listeners[i].controlUCDEvent(uidraggable);
 			});
-		}
+		};
 		this.fireInputCoordEvent = function(){
 			if( $("#coordval").val() == '' || $("#radiusval").val() == '' ) {
 				alert("Both position and radius must be given");
@@ -44,17 +49,17 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].controlInputCoord($("#coordval").val(), $("#radiusval").val());
 			});
-		}
+		};
 		this.fireUpdateQueryEvent = function(){
 			$.each(listeners, function(i){
 				listeners[i].controlUpdateQueryEvent();
 			});
-		}
+		};
 		this.fireSelectRelationEvent = function(relation){
 			$.each(listeners, function(i){
 				listeners[i].controlSelectRelationEvent(relation);
 			});
-		}
+		};
 		this.fireHisto = function(direction){
 			$("#saadaqltab").tabs({
 				selected: 4
@@ -62,31 +67,32 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].controlHisto(direction);
 			});
-		}
+		};
 		this.fireStoreHisto = function(query){
 			$.each(listeners, function(i){
 				listeners[i].controlStoreHisto(query);
 			});
-		}
+		};
 		this.fireDisplayHisto = function(){
 			$.each(listeners, function(i){
 				listeners[i].controlDisplayHisto();
 			});
-		}
+		};
 		this.showProgressStatus = function(){
 			alert("Job in progress");
-		}
+		};
 		this.showFailure = function(textStatus){
 			alert("view: " + textStatus);
-		}		
+		}	;	
 		this.displayResult= function(dataJSONObject){
-		}
+		};
 		this.initForm= function(attributesHandlers, relations, queriableUCDs){
 			/*
 			 * Reset form
 			 */
 			$('#CoordList').html('');
 			$('#ConstraintsList').html('');
+			$('#orderby').html('');
 			$('#UCDConstraintsList').html('');
 			$('#relationselect').html('');
 			$('#patterncardqual').html('');
@@ -112,7 +118,7 @@ jQuery.extend({
 					revert: "true"
 				});
 				$( "div#meta li" ).draggable({ 
-					connectToSortable: "#ConstraintsList",
+					connectToSortable: ".SortableConstraintsList",
 					helper: "clone", 
 					revert: "invalid"
 				});
@@ -153,11 +159,11 @@ jQuery.extend({
 			 * Populate the relation selector
 			 */
 			var options = "<option>-- Select a relation --</option>";
-			for( i in relations  ) {
-				options += "<option>" + relations[i].name + "</option>"
+			for( var i in relations  ) {
+				options += "<option>" + relations[i].name + "</option>";
 			}
 			$("#relationselect").html(options);
-		}
+		};
 
 		this.coordDone= function(key, constr){
 			$('#CoordList').append("<div id=" + key + "></div>");
@@ -168,10 +174,10 @@ jQuery.extend({
 				$('#' +  key).remove();
 				that.fireUpdateQueryEvent();
 			});
-		}
+		};
 
 		this.queryUpdated= function(query){
 			$('#saadaqltext').val(query);
-		}
+		};
 	}
 });

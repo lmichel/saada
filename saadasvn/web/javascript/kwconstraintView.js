@@ -17,7 +17,7 @@ jQuery.extend({
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 
 
 		this.initForm= function(ah, operators, andors, default_value){
@@ -27,8 +27,8 @@ jQuery.extend({
 			 * AND/OR operators
 			 */
 			if( andors.length > 0 ) {
-			    var select='<select id=' + id_root + "_andor style=\"font-size: small;font-family: courier;\">";
-				for( i=0 ; i<andors.length; i++ ) {
+				var select='<select id=' + id_root + "_andor style=\"font-size: small;font-family: courier;\">";
+				for( var i=0 ; i<andors.length; i++ ) {
 					var op = andors[i];
 					select += '<option value=' + op + '>' +op + '</option>';
 				}	
@@ -40,7 +40,7 @@ jQuery.extend({
 			 * Logical operators
 			 */
 			if( operators.length > 0 ) {
-			    var select='<select id=' + id_root + "_op style=\"font-size: small;font-family: courier;\">";
+				var select='<select id=' + id_root + "_op style=\"font-size: small;font-family: courier;\">";
 				for( i=0 ; i<operators.length; i++ ) {
 					var op = operators[i];
 					var selected = '';
@@ -65,7 +65,7 @@ jQuery.extend({
 						+ "_val class=inputvalue style=\"font-size: small;font-family: courier;\" value='" 
 						+ default_value + "'>");
 			}
-			$('#' + id_root).append('<a id=' + id_root + '_close href="javascript:void(0);" class=closekw></a>');
+			$('#' + id_root).append('&nbsp;<a id=' + id_root + '_close href="javascript:void(0);" class=closekw></a>');
 			$('#' + constlist_id).append("</div>");		
 
 			$('#' +  id_root + "_close").click(function() {
@@ -88,21 +88,35 @@ jQuery.extend({
 						, $('#' +  id_root + "_val").val());				
 			});
 			$('#' +  id_root + "_val").keyup(function(event) {
+				/*
+				 * Run the query is CR is typed in a KW editor
+				 */
+				if (event.which == '13') {
+					if(  $('span.typomsg').css('color') == 'green') {
+						resultPaneView.fireSubmitQueryEvent();
+					}
+					else {
+						alert("Current contraint is not valid: can not run the query");
+					}
+				}
+				else {
+					that.fireEnterEvent($('#' +  id_root + "_andor option:selected").text()
+							, $('#' +  id_root + "_op option:selected").text()
+							, this.value);
+				}
+			});
+			$('#' +  id_root + "_val").click(function(event) {
 				that.fireEnterEvent($('#' +  id_root + "_andor option:selected").text()
 						, $('#' +  id_root + "_op option:selected").text()
 						, this.value);
-			});
-			$('#' +  id_root + "_val").click(function() {
-				that.fireEnterEvent($('#' +  id_root + "_andor option:selected").text()
-				          , $('#' +  id_root + "_op option:selected").text()
-				          , this.value);
+
 			});
 
 
 			that.fireEnterEvent($('#' +  id_root + "_andor option:selected").text()
 					,$('#' +  id_root + "_op option:selected").text()
 					,$('#' +  id_root + "_val").val());
-		}
+		};
 
 		this.printTypomsg= function(fault, msg){
 			$(".typomsg").each(function() {
@@ -114,27 +128,27 @@ jQuery.extend({
 				}
 				$(this).text(msg);
 			});
-		}
-		
+		};
+
 		this.removeAndOr = function() {
 			$('#' + id_root + "_andor" ).remove();
-		}
-		
+		};
+
 		this.fireRemoveFirstAndOr = function(id_root){
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveFirstAndOr(id_root);
 			});
-		}
+		};
 		this.fireEnterEvent = function(andor, operator, operand){
 			$.each(listeners, function(i){
 				listeners[i].controlEnterEvent(andor, operator, operand);
 			});
-		}
+		};
 
 		this.fireRemoveConstRef = function(ahname){
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveConstRef(ahname);
 			});
-		}
+		};
 	}
 });
