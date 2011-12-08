@@ -29,6 +29,9 @@ public class SaadaProcess {
 		Messenger.setMaxProgress(10);
 		for( int i=0 ; i<10 ; i++ ) {
 			Messenger.printMsg(Messenger.TRACE, " blabla " + i);
+			if( (i%2) == 0 ) Messenger.diskAccess();
+			else if( (i%3) == 0 ) Messenger.dbAccess();
+			else if( (i%5) == 0 ) Messenger.procAccess();
 //			if( i == 3) {int[] x = new int[0]; x[12] = 6;}
 			try {
 				this.processUserRequest();
@@ -42,7 +45,7 @@ public class SaadaProcess {
 				Messenger.printStackTrace(e);
 			}
 		}
-
+		Messenger.noMoreAccess();
 	}
 	
 	/**
