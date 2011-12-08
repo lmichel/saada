@@ -22,6 +22,7 @@ public class CartClient extends SaadaServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		printAccess(request, true);
 		getErrorPage( request,  response, "Unsupported GET method"); 
 	}
 
@@ -40,7 +41,7 @@ public class CartClient extends SaadaServlet {
 			out.println("\n************************************************");
 			out.println("\n\nuserscripts/local.js file file must be edited by hand to point on your own cart client\n\n");
 			out.println("This test URL received the following parameters\n");
-			out.println("\tsaadadburl="+ request.getParameter("saadadburl") );
+			out.println("\tsaadadburl="+ URLDecoder.decode(request.getParameter("saadadburl"), "UTF8") );
 			out.println("\tcartcontent=" + URLDecoder.decode(request.getParameter("cartcontent"), "UTF8") + "\n");
 
 		} catch (Exception e) {
