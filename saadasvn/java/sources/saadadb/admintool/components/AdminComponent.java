@@ -86,6 +86,37 @@ public abstract class AdminComponent extends JPanel {
 				JOptionPane.ERROR_MESSAGE);
 	}
 
+	/**
+	 * @param frame
+	 * @param message
+	 * @return
+	 */
+	public static final boolean showConfirmDialog(Component frame, String message) {
+		Object[] options = {"Yes", "No"};
+		int n = JOptionPane.showOptionDialog(frame,
+				message,
+				"Need a Confirmation",
+				JOptionPane.YES_NO_CANCEL_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+				null,
+				options,
+				options[1]);
+
+		if( n == 0 ) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public static final void showSuccess(Component frame, String message) {
+		JOptionPane.showMessageDialog(frame,
+				message,
+				"Success",
+				JOptionPane.PLAIN_MESSAGE);		
+	}	
+
 	
 	/**
 	 * @param txt

@@ -16,18 +16,27 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.ComponentTitledBorder;
+import saadadb.command.SaadaProcess;
+import saadadb.util.Messenger;
 
 public  class ProcessPanel extends AdminPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	protected CmdThread cmdThread;
+	private JTextArea outputArea;
+	private JLabel procLight;
+	private JLabel diskLight ;
+	private JLabel dbLight;
+	private Color NO_ACCESS_COLOR;
 	public ProcessPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, PROCESS_PANEL, null, ancestor);
 	}
@@ -88,7 +97,7 @@ public  class ProcessPanel extends AdminPanel {
 		c.weightx = 0; c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 		tPanel.add(new JLabel(new ImageIcon("icons/question.png")), c);
-		
+
 		c.gridx = 3; c.gridy = 1;
 		c.weightx = 0.75; c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
@@ -107,62 +116,135 @@ public  class ProcessPanel extends AdminPanel {
 	@Override
 	protected void setActivePanel() {
 		JPanel tPanel = this.addSubPanel("Console");
-		JScrollPane jcp = new JScrollPane();
-		JTextArea jte = new JTextArea();
-		jcp.add(jte);
-		jte.setBackground(IVORY);
-		
+		outputArea = new JTextArea();
+		outputArea.setBackground(IVORY);
+		JScrollPane jcp = new JScrollPane(outputArea);
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0; c.gridy = 0;	
 		c.weightx = 1; c.weighty = 1;	
 		c.fill = GridBagConstraints.BOTH;
+		tPanel.add(jcp, c);	
 
-		tPanel.add(jcp, c);
-		jcp.setPreferredSize(tPanel.getPreferredSize());
-		 c = new GridBagConstraints();
-		 c.gridx = 0; c.gridy = 0;	
+		c = new GridBagConstraints();
+		c.gridx = 0; c.gridy = 0;	
 		c.weightx = 0; c.weighty = 0;	
 		c.anchor = GridBagConstraints.PAGE_END;
-		
-		
+
+
 		tPanel = this.addSubPanel("Process Control");
 		//tPanel.setPreferredSize(new Dimension(1000, 36));
 		tPanel.setMaximumSize(new Dimension(1000, 36));
 		JButton jb = new JButton(new ImageIcon("icons/Run.png"));
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if( Messenger.pauseRequested()) {
+					Messenger.resume();
+				}
+				else {
+					Messenger.pause();
+				}
+			}
+		});
 		tPanel.add(jb, c);
 		c.gridx++;
 		jb = new JButton(new ImageIcon("icons/Abort.png"));
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if( Messenger.pauseRequested()) {
+					Messenger.resume();
+				}
+				Messenger.abort();
+			}
+		});
 		tPanel.add(jb, c);
 		c.gridx++;
 		jb = new JButton(new ImageIcon("icons/DebugMode.png"));
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Messenger.debug_mode = !Messenger.debug_mode;
+			}
+		});
 		tPanel.add(jb, c);
 		c.gridx++;
 		jb = new JButton(new ImageIcon("icons/Ant.png"));
 		tPanel.add(jb, c);
 		c.gridx++;
-		
+
 		c.weightx = 1; c.weighty = 0;	
 		c.anchor= GridBagConstraints.SOUTHEAST;
 		JPanel stsPanel = new JPanel();
 		Border empty = new EmptyBorder(new Insets(2,2,2,2));
-
+		
+		procLight = new JLabel(new ImageIcon("icons/Processor.png"));
 		stsPanel.setLayout(new BoxLayout(stsPanel, BoxLayout.LINE_AXIS));
-		JLabel jl = new JLabel(new ImageIcon("icons/Processor.png"));
-		jl.setBorder(empty);
-		stsPanel.add(jl);
-		
-		jl = new JLabel(new ImageIcon("icons/Disk.png"));
-		jl.setBorder(empty);	
-		stsPanel.add(jl);
-		
-		jl = new JLabel(new ImageIcon("icons/Database.png"));
-		jl.setBorder(empty);	
-		stsPanel.add(jl);
-		
+		procLight.setBorder(empty);
+		stsPanel.add(procLight);
+
+		diskLight = new JLabel(new ImageIcon("icons/Disk.png"));
+		diskLight.setBorder(empty);	
+		stsPanel.add(diskLight);
+
+		dbLight   = new JLabel(new ImageIcon("icons/Database.png"));
+		dbLight.setBorder(empty);	
+		stsPanel.add(dbLight);
+
 		stsPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
 
-		tPanel.add(stsPanel, c);		
+		tPanel.add(stsPanel, c);	
+		NO_ACCESS_COLOR = tPanel.getBackground();
+		this.noMoreAccess();
+
 	}
 
+	public void diskAccess() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dbLight.setBackground(NO_ACCESS_COLOR);
+				diskLight.setBackground(Color.GREEN);
+				procLight.setBackground(NO_ACCESS_COLOR);
+			}
+		});
+	}
+	public void procAccess() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dbLight.setBackground(NO_ACCESS_COLOR);
+				diskLight.setBackground(NO_ACCESS_COLOR);
+				procLight.setBackground(Color.GREEN);
+			}
+		});
+	}
+	public void dbAccess() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dbLight.setBackground(Color.GREEN);
+				diskLight.setBackground(NO_ACCESS_COLOR);
+				procLight.setBackground(NO_ACCESS_COLOR);
+			}
+		});
+	}
+	public void noMoreAccess() {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				dbLight.setOpaque(true);
+				dbLight.setBackground(NO_ACCESS_COLOR);
+				diskLight.setOpaque(true);
+				diskLight.setBackground(NO_ACCESS_COLOR);
+				procLight.setOpaque(true);
+				procLight.setBackground(NO_ACCESS_COLOR);
+			}
+		});
+	}
+
+	public JTextArea getOutputArea() {
+		return outputArea;
+	}
+
+	public void setCmdThread(CmdThread cmdThread) {
+		this.cmdThread = cmdThread;
+		Messenger.setGui_area_output(outputArea);
+		this.cmdThread.start();
+		this.outputArea.setText("");
+	}
 
 }

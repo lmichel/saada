@@ -52,6 +52,7 @@ import saadadb.cache.CacheMeta;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.executor.Query;
 import saadadb.util.Messenger;
@@ -153,8 +154,8 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				if( path != null ) {
 					try {
 						MetaDataPanel.this.frame.setDataTreePath(new DataTreePath(path));
-					} catch (FatalException e1) {
-						Messenger.trapFatalException(new FatalException(SaadaException.DB_ERROR, e1.getMessage()));
+					} catch (QueryException e1) {
+						Messenger.trapQueryException(e1);
 					}
 				}
 				
