@@ -2,7 +2,7 @@ package saadadb.admintool.utils;
 
 import javax.swing.tree.TreePath;
 
-import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
 
@@ -26,7 +26,7 @@ public class DataTreePath {
 		this.classe = classe;
 	}
 	
-	public DataTreePath(TreePath treePath) throws FatalException {
+	public DataTreePath(TreePath treePath) throws QueryException {
 		int count = treePath.getPathCount();
 		Object[] pathEle = treePath.getPath();
 		if( count ==3 ) {
@@ -34,7 +34,7 @@ public class DataTreePath {
 			this.category = pathEle[2].toString();;
 			this.classe = null;		
 		}
-		else if( count ==34 ) {
+		else if( count == 4 ) {
 			this.collection = pathEle[1].toString();;
 			this.category = pathEle[2].toString();;
 			this.classe = pathEle[3].toString();;		
@@ -42,7 +42,8 @@ public class DataTreePath {
 		else {
 			this.collection = null;
 			this.category = null;
-			this.classe = null;					FatalException.throwNewException(SaadaException.WRONG_PARAMETER
+			this.classe = null;					
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER
 					, "Data tree path must point on a category or a class");
 		}
 	}
