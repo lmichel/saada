@@ -1,0 +1,120 @@
+/**
+ * 
+ */
+package saadadb.admintool.panels;
+
+import java.awt.GridBagConstraints;
+
+import javax.swing.JPanel;
+
+import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.ChoiceItem;
+
+/**
+ * @author laurentmichel
+ *
+ */
+public class ManageDataPanel extends ChoicePanel {
+
+	public ManageDataPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, MANAGE_DATA, null, ancestor);
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void setActivePanel() {
+		JPanel tPanel;
+		GridBagConstraints c = new GridBagConstraints();
+
+		
+		tPanel = this.addSubPanel("Data Loader");
+		c.gridx = 0;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Load Data", "icons/LoadData.png"
+				, new Runnable(){public void run(){
+					rootFrame.activePanel(LOAD_DATA);}});
+		c.gridx = 1;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		(new ChoiceItem(rootFrame, tPanel, c
+				, "Statistic", "icons/Statistics.png"
+				, new Runnable(){public void run(){
+					System.out.println("loaddata");}})).inactive();
+		
+	
+
+		tPanel = this.addSubPanel("Collection Level");		
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Comment Collection", "icons/CommentCollection.png"
+				, new Runnable(){public void run(){
+					System.out.println("comment collection");}});
+		c.gridx = 1;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Empty Collection", "icons/EmptyCollection.png"
+				, new Runnable(){public void run(){
+					System.out.println("empty collection");}});
+		
+		c.gridx = 2;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;	
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Remove Collection", "icons/DropCollection.png"
+				, new Runnable(){public void run(){
+					System.out.println("remove collection");}});		
+		
+		tPanel = this.addSubPanel("Class Level");		
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Comment Class", "icons/CommentClass.png"
+				, new Runnable(){public void run(){
+					System.out.println("comment class");}});
+		c.gridx = 1;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Remove Class", "icons/DropClass.png"
+				, new Runnable(){public void run(){
+					System.out.println("remove class");}});		
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Empty Category", "icons/EmptyCategory.png"
+				, new Runnable(){public void run(){
+					System.out.println("empty category");}});
+		c.gridx = 1;
+		c.gridy = 1;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Empty Class", "icons/EmptyClass.png"
+				, new Runnable(){public void run(){
+					System.out.println("empty class");}});		
+	}
+
+
+}
