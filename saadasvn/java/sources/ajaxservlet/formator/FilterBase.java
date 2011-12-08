@@ -2,6 +2,7 @@ package ajaxservlet.formator;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Date;
 import java.util.HashMap;
 
 import saadadb.database.Database;
@@ -23,6 +24,8 @@ public class FilterBase {
 	private static HashMap<String, StoredFilter> filters;
 	public static final String filterDirectory = Database.getRepository() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
 	private static boolean loaded = false;
+	private static long lastInit = 0;
+	public static final long INIT_PERIOD = 60;
 
 
 	/**
@@ -52,7 +55,10 @@ public class FilterBase {
 	 * @throws Exception
 	 */
 	private static boolean loadFilters(boolean force) throws Exception {
-		if (!loaded || force) {
+		long tc = (new Date()).getTime()/1000;
+		if (!loaded || force || (tc -lastInit) > INIT_PERIOD ) {
+			Messenger.printMsg(Messenger.TRACE, "Init filter base");
+			lastInit = tc;
 			filters = new HashMap<String, StoredFilter>();
 			FileReader fr;
 			StoredFilter sf;
@@ -80,7 +86,7 @@ public class FilterBase {
 						FilterBase.filters.put(kw, sf);
 					}
 				}
-			}
+			} 
 			if (FilterBase.filters.size() > 0) {
 				Messenger.printMsg(Messenger.TRACE, "Init FilterBase : done.");
 				loaded = true;
