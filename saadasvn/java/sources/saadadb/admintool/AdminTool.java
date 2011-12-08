@@ -3,6 +3,7 @@
  */
 package saadadb.admintool;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.admin.dialogs.AdminPassword;
+import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
 import saadadb.admintool.panels.ChoicePanel;
@@ -36,7 +38,9 @@ import saadadb.admintool.panels.RelationChoicePanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
+import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
@@ -57,12 +61,16 @@ public class AdminTool extends BaseFrame {
 	private ChoicePanel loadDataPanel;
 	private ChoicePanel voPublishPanel;
 	private ChoicePanel relationPanel;
-	private ProcessPanel processPanel;
+	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 
+
+
+	private  String logFile = null;
 
 
 	public AdminTool(boolean nolog, Point p) throws SaadaException {
 		super("Saada  Admintool");
+		connectMessaging(nolog);
 		/*
 		 * Exit after confirmation when click on the window close button
 		 */
@@ -113,7 +121,7 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 1;
 		c.weighty = 1;
 		leftPanel.add(metaDataTree,c);
-		JButton 		b = new JButton("Look at Current Process");
+		JButton b = new JButton("Look at Current Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int x = (int)(Math.random() * 10);
@@ -122,14 +130,24 @@ public class AdminTool extends BaseFrame {
 				activePanel.setCurrentTask("Au Boulot");
 			}
 		});
-
 		c.gridx = 0;
 		c.gridy = 1;	
 		c.weightx = 0;
 		c.weighty = 0;
-
 		leftPanel.add(b, c);
-		//metaDataTree.add(b);
+		b = new JButton("Start Process");
+		b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				activePanel(AdminComponent.PROCESS_PANEL);
+				processPanel.setCmdThread(new DummyTask(AdminTool.this));
+			}
+		});
+		c.gridx = 0;
+		c.gridy = 2;	
+		c.weightx = 0;
+		c.weighty = 0;
+		leftPanel.add(b, c);
+		
 		/*
 		 * Build the right tab panel
 		 */
@@ -168,7 +186,38 @@ public class AdminTool extends BaseFrame {
 
 
 	}
+	
+	public ProcessPanel getProcessPanel() {
+		return processPanel;
+	}
 
+
+	/**
+	 * @param nolog
+	 */
+	private void connectMessaging(boolean nolog) {
+		/*
+		 * Make sure to close and rename the log file when exit
+		 */
+		Date date = new Date();
+		String sdate = DateFormat.getDateInstance(DateFormat.SHORT,Locale.FRANCE).format(date);
+		sdate += date.toString().substring(10,19);
+		logFile  = Repository.getLogsPath() 
+		+  Database.getSepar() + "SaadaAdmin." + sdate.replaceAll("[ :\\/]", "_") + ".log";
+		Messenger.setGraphicMode(this);
+		if( !nolog ) {
+			Messenger.openLog(logFile);
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					Messenger.closeLog();
+					System.out.println("Log saved in " + logFile);
+				}
+			});
+		}
+
+	}
+	
 	public void activePanel(String panelTitle)  {
 		if( panelTitle.equals(AdminComponent.ROOT_PANEL) ) {
 			if( choicePanelRoot == null ) {
@@ -196,9 +245,6 @@ public class AdminTool extends BaseFrame {
 			}
 			activePanel = relationPanel;
 		} else 	if( panelTitle.equals(AdminComponent.PROCESS_PANEL) ) {
-			if( processPanel == null ) {
-				processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
-			}
 			activePanel = processPanel;
 		}
 
@@ -241,8 +287,21 @@ public class AdminTool extends BaseFrame {
 		this.dataTreePath = dataTreePath;
 		if( this.activePanel != null ) {
 			this.activePanel.setDataTreePath(dataTreePath);
-		}
-		
+		}	
 	}
+	
+	public void diskAccess() {
+		this.processPanel.diskAccess();
+	}
+	public void procAccess() {
+		this.processPanel.procAccess();
+	}
+	public void dbAccess() {
+		this.processPanel.dbAccess();
+	}
+	public void noMoreAccess() {
+		this.processPanel.noMoreAccess();
+	}
+
 
 }
