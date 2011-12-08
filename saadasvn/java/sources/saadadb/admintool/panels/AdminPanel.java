@@ -13,7 +13,6 @@ import javax.swing.border.TitledBorder;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.DataTreePath;
-import utils.TreePath;
 
 /**
  * @author laurentmichel
