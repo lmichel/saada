@@ -29,6 +29,7 @@ import saadadb.sqltable.Table_Saada_Qualifiers;
 import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.sqltable.Table_Saada_VO_Resources;
 import saadadb.util.Messenger;
+import saadadb.util.WorkDirectory;
 
 /**
  * @author michel
@@ -72,16 +73,13 @@ public class NewSaadaDB {
 			Messenger.printMsg(Messenger.TRACE,
 					"Creating the SaadaDB base dir in "
 							+ db_root.getAbsolutePath() );
-			if( !db_root.mkdirs() ) {
-				FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can't create " + db_root.getAbsolutePath());
-			}
+			WorkDirectory.validWorkingDirectory(db_root.getAbsolutePath() );
+
 			// creer un r�pertoire pour les products (les collections des
 			// produits seront h�berg� ici)
 			File db_rep = new File(this.connector.getRepository());
 			Messenger.printMsg(Messenger.TRACE, "Creating the repository in " + db_rep.getAbsolutePath());
-			if( !db_rep.mkdirs() ) {
-				FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can't create " + db_rep.getAbsolutePath());
-			}
+			WorkDirectory.validWorkingDirectory(db_rep.getAbsolutePath());
 			/*
 			 * Directories to store flatfiles and query results files
 			 * accessed by /getproduct?..
