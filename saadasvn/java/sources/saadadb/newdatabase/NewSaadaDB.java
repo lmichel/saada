@@ -73,12 +73,14 @@ public class NewSaadaDB {
 			Messenger.printMsg(Messenger.TRACE,
 					"Creating the SaadaDB base dir in "
 							+ db_root.getAbsolutePath() );
+			WorkDirectory.emptyDirectory(db_root);
 			WorkDirectory.validWorkingDirectory(db_root.getAbsolutePath() );
 
 			// creer un r�pertoire pour les products (les collections des
 			// produits seront h�berg� ici)
 			File db_rep = new File(this.connector.getRepository());
 			Messenger.printMsg(Messenger.TRACE, "Creating the repository in " + db_rep.getAbsolutePath());
+			WorkDirectory.emptyDirectory(db_rep);
 			WorkDirectory.validWorkingDirectory(db_rep.getAbsolutePath());
 			/*
 			 * Directories to store flatfiles and query results files
