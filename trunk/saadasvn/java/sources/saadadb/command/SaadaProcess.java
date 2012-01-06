@@ -66,14 +66,10 @@ public class SaadaProcess {
 			if( Messenger.abortRequested() ) {	
 				System.out.println("notify");
 				this.notifyAll();	
-				System.out.println("1");
 				Messenger.resetUserRequests();
-				System.out.println("2");
 				AbortException.throwNewException(SaadaException.USER_ABORT, "User Request");
 			}
-			System.out.println("3");
 			Messenger.resetUserRequests();
-			System.out.println("4");
 		}
 	}
 
