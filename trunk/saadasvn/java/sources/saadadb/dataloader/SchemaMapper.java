@@ -185,7 +185,7 @@ public abstract class SchemaMapper {
 		}
 		SQLTable.lockTable("saada_class");
 		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("SELECT count(*) FROM saada_class WHERE name " + Database.getWrapper().getRegexpOp() + " '" + classname + "(_[0-9]+)?" + suffixe + "'");
+		ResultSet rs = squery.run("SELECT count(*) FROM saada_class WHERE name " + Database.getWrapper().getRegexpOp() + " '^" + classname + "(_[0-9]+)?" + suffixe + "$'");
 		int num=0;
 		/*
 		 * If a class exists with the requested name, _num is appended.
