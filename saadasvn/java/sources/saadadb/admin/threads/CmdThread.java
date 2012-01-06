@@ -10,6 +10,7 @@ import saadadb.admin.dialogs.ProgressDialog;
 import saadadb.command.SaadaProcess;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
+import saadadb.util.Messenger;
 
 public abstract class CmdThread extends Thread {
 	protected Frame frame;
@@ -20,7 +21,7 @@ public abstract class CmdThread extends Thread {
 	 */
 	protected SaadaProcess saada_process;
 	private ProgressDialog progress_dialog;
-	
+
 	/**
 	 * @param frame
 	 */
@@ -42,7 +43,7 @@ public abstract class CmdThread extends Thread {
 	public void openProgressDialog() {
 		progress_dialog = new ProgressDialog(frame, "Progress", CmdThread.this);				
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -55,7 +56,7 @@ public abstract class CmdThread extends Thread {
 			}
 		});
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
@@ -69,7 +70,7 @@ public abstract class CmdThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * @return
 	 * @throws QueryException 
@@ -79,9 +80,12 @@ public abstract class CmdThread extends Thread {
 	protected boolean getParam() throws QueryException, FatalException, Exception {
 		return  SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?");
 	}
-	
+
+
 	/**
 	 * 
 	 */
 	protected abstract void runCommand() ;
 }
+
+

@@ -300,7 +300,7 @@ public class AdminTool extends BaseFrame {
 		this.processPanel.dbAccess();
 	}
 	public void noMoreAccess() {
-		this.processPanel.noMoreAccess();
+		this.processPanel.noMoreHarwareAccess();
 	}
 
 

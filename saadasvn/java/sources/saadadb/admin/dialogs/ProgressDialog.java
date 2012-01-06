@@ -60,7 +60,7 @@ public class ProgressDialog extends JDialog  {
 		pause_resume_btn.addActionListener(new ActionListener() {
 			public synchronized void actionPerformed(ActionEvent e) {
 				if(pause_resume_btn.getText().equalsIgnoreCase("pause") ) {
-					Messenger.pause();
+					Messenger.requestPause();
 					suspendProgressBar();				
 					pause_resume_btn.setText("Resume");
 				}
@@ -79,10 +79,10 @@ public class ProgressDialog extends JDialog  {
 		
 		abort_btn.addActionListener(new ActionListener() {
 			public synchronized void actionPerformed(ActionEvent e) {
-				Messenger.pause();
+				Messenger.requestPause();
 				if( SaadaDBAdmin.showConfirmDialog(ProgressDialog.this.getParent(), "Are you sure?")  ) {
 					ProgressDialog.this.resume();
-					Messenger.abort();	
+					Messenger.requestAbort();	
 				}
 				else {
 					ProgressDialog.this.resume();
@@ -115,7 +115,7 @@ public class ProgressDialog extends JDialog  {
 	 * Notify all saada processed to resume
 	 */
 	public synchronized void resume() {
-		Messenger.resume();
+		Messenger.requestResume();
 		SaadaProcess running_process = thread.getProcess();
 		if( running_process != null ) {
 			synchronized (running_process) {

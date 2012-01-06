@@ -11,7 +11,7 @@ import nom.tam.fits.FitsException;
 /*******************************************************************************
  * LAOG project
  *
- * "@(#) $Id: TileExtractor.java,v 1.3 2010/01/05 14:24:16 saada Exp $"
+ * "@(#) $Id$"
  *
  * History
  * -------

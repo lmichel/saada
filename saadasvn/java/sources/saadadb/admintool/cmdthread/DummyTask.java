@@ -3,17 +3,13 @@ package saadadb.admintool.cmdthread;
 import java.awt.Cursor;
 import java.awt.Frame;
 
-import javax.swing.SwingUtilities;
-
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.command.SaadaProcess;
 import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
- * * @version $Id$
-
+ * @version $Id$
  */
 public class DummyTask extends CmdThread {
 	
