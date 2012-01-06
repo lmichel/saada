@@ -72,7 +72,9 @@ public class NewSaadaDB {
 			Messenger.printMsg(Messenger.TRACE,
 					"Creating the SaadaDB base dir in "
 							+ db_root.getAbsolutePath() );
-			db_root.mkdirs();
+			if( !db_root.mkdirs() ) {
+				FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can't create " + db_root.getAbsolutePath());
+			}
 			// creer un r�pertoire pour les products (les collections des
 			// produits seront h�berg� ici)
 			File db_rep = new File(this.connector.getRepository());
