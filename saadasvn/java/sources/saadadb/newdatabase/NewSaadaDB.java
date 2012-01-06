@@ -77,7 +77,9 @@ public class NewSaadaDB {
 			// produits seront h�berg� ici)
 			File db_rep = new File(this.connector.getRepository());
 			Messenger.printMsg(Messenger.TRACE, "Creating the repository in " + db_rep.getAbsolutePath());
-			db_rep.mkdirs();
+			if( !db_rep.mkdirs() ) {
+				FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can't create " + db_rep.getAbsolutePath());
+			}
 			/*
 			 * Directories to store flatfiles and query results files
 			 * accessed by /getproduct?..
