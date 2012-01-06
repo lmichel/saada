@@ -30,6 +30,7 @@ public class Repository {
 	public static final String INDEXRELATIONS = "indexrelations";
 	public static final String EMBEDDEDDB     = "embeddeddb";
 	public static final String DMS     	      = "dms";
+	public static final String CONFIG     	  = "config";
 	/*
 	 * These fields are set into the accessors because the class can be used before the repository is created
 	 * We supposed the accessors to be called after the repository is created 
@@ -40,6 +41,7 @@ public class Repository {
 	public static String INDEXRELATIONS_PATH = null;
 	public static String EMBEDDEDDB_PATH     = null;
 	public static String DMS_PATH            = null;
+	public static String CONFIG_PATH         = null;
 
 	/**
 	 * @return
@@ -109,7 +111,6 @@ public class Repository {
 		return DMS_PATH;
 	}
 	/**
-	/**
 	 * @return
 	 */
 	public static final String getEmbeddeddbPath() {
@@ -118,6 +119,16 @@ public class Repository {
 			+ separ
 			+ EMBEDDEDDB ;		
 		return EMBEDDEDDB_PATH;
+	}
+	/**
+	 * @return
+	 */
+	public static final String getConfigPath() {
+		if( CONFIG_PATH == null ) 
+			CONFIG_PATH =  Database.getRepository()
+			+ separ
+			+ CONFIG ;		
+		return CONFIG_PATH;
 	}
 	/**
 	 *  remove VO reports  older the 30000 sec

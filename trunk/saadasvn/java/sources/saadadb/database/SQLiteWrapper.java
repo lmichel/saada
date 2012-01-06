@@ -86,8 +86,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			 * Used in dev mode to avoid jar building at any time
 			 * The C library is supposed to be named libSQLITEProc.so
 			 */
-			String root_dir;
-			root_dir = "/Users/laurentmichel/Documents/workspace/SQLITEProc/Debug/";
+			String root_dir = "/Users/laurentmichel/Documents/workspace/SQLITEProc/Debug/";
 			//root_dir = "/home/michel/workspace/SQLITEProc/Debug/";
 			root_dir  += HardwareDescriptor.getArchDependentLibName("libSQLITEProc");
 			if( new File(root_dir).exists() ) {
@@ -107,6 +106,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			 * Link the application with the SQL procedures
 			 */				
 			String proc_libname  = HardwareDescriptor.getArchDependentLibName("libSQLITEProc");
+			Messenger.printMsg(Messenger.TRACE, "Looking for native library " + proc_libname);
 			InputStream in = cl.getResourceAsStream(proc_libname);
 			if (in == null) {
 				throw new Exception("library "+proc_libname+" not found (supposed to be in sqliteprocs.jar)");

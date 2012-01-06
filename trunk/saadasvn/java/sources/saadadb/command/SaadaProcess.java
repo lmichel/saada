@@ -14,40 +14,41 @@ public class SaadaProcess {
 	 * This variable is static because the part of the commands using it are static methods. 
 	 */
 	private static int end_value=-1;
-	
+
 	public SaadaProcess() {
 		SaadaProcess.end_value = 0;
 	}
-	
+
 	public SaadaProcess(int end_value) {
 		SaadaProcess.end_value = end_value;
 	}
 	/**
 	 * dummy task just for debugging purpose
+	 * @throws AbortException 
 	 */
-	public void faitTonBoulot()  {
+	public void faitTonBoulot() throws AbortException  {
 		Messenger.setMaxProgress(10);
 		for( int i=0 ; i<10 ; i++ ) {
-			Messenger.printMsg(Messenger.TRACE, " blabla " + i);
+			Messenger.printMsg(Messenger.TRACE, " blabla " + i + " " + Thread.currentThread() + " " + Thread.currentThread().getState());
 			if( (i%2) == 0 ) Messenger.diskAccess();
 			else if( (i%3) == 0 ) Messenger.dbAccess();
 			else if( (i%5) == 0 ) Messenger.procAccess();
-//			if( i == 3) {int[] x = new int[0]; x[12] = 6;}
+			//			if( i == 3) {int[] x = new int[0]; x[12] = 6;}
+			//try {
+			this.processUserRequest();
+			Messenger.setProgress(i);
+			//			} catch (AbortException e1) {
+			//				return ;
+			//			}
 			try {
-				this.processUserRequest();
-				Messenger.setProgress(i);
-			} catch (AbortException e1) {
-				return ;
-			}
-			try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				Messenger.printStackTrace(e);
 			}
 		}
 		Messenger.noMoreAccess();
 	}
-	
+
 	/**
 	 * Ckeck for a pause or for an obort request
 	 * @throws AbortException
@@ -61,36 +62,54 @@ public class SaadaProcess {
 	 * @throws AbortException
 	 */
 	public void abortOnRequested() throws AbortException {
-		if( Messenger.abortRequested() ) {	
-			Messenger.resetAbortRequest();
-			AbortException.throwNewException(SaadaException.USER_ABORT, "User Request");
+		synchronized (this) {
+			if( Messenger.abortRequested() ) {	
+				System.out.println("notify");
+				this.notifyAll();	
+				System.out.println("1");
+				Messenger.resetUserRequests();
+				System.out.println("2");
+				AbortException.throwNewException(SaadaException.USER_ABORT, "User Request");
+			}
+			System.out.println("3");
+			Messenger.resetUserRequests();
+			System.out.println("4");
 		}
-		Messenger.resetAbortRequest();
 	}
 
 	/**
 	 * Suspend the current thread if a pause request has been detected by the Messenger
+	 * @throws AbortException 
 	 */
-	public synchronized void waitIfPauseRequested() {
+	public synchronized void waitIfPauseRequested() throws AbortException {
 		if( Messenger.pauseRequested() ) {		
 			try {
 				Messenger.printMsg(Messenger.TRACE, "Pended on user request");
 				synchronized (this) {
-					this.wait();					
+					this.wait();	
+					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
+					SaadaProcess.this.abortOnRequested()	;
 				}
-			} catch (InterruptedException e) {
-				Messenger.printStackTrace(e);
+			} catch (Exception e) {
+				AbortException.throwNewException(SaadaException.USER_ABORT, e);
 			}
 		}
 	}
 
+	public void wakeUp() {
+		synchronized (this) {
+			Messenger.printMsg(Messenger.TRACE, "Send notification to all threads");
+			this.notifyAll();	
+		}
+
+	}
 	/**
 	 * @return
 	 */
 	public int getEndValue() {
 		return end_value;
 	}
-	
+
 	/**
 	 * @param end_value
 	 */
@@ -102,5 +121,5 @@ public class SaadaProcess {
 			SaadaProcess.end_value  = end_value;
 		}
 	}
-	
+
 }

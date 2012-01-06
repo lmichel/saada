@@ -319,34 +319,31 @@ public class Messenger implements Serializable{
 			Messenger.progress_bar.setMaximum(val);
 		}
 	}
-	public synchronized static void pause()   {
+	public synchronized static void requestPause()   {
+		Messenger.printMsg(Messenger.TRACE, "Pause requested: Effective at the next check point");
 		Messenger.pause = true;
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Pause requested");
 	}
-
-	public synchronized static void abort()   {
-		Messenger.abort = true;
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Abort requested");
-	}
-
 	public static boolean pauseRequested() {
-		return pause;
+		return Messenger.pause;
+	}
+
+	public synchronized static void requestAbort()   {
+		Messenger.printMsg(Messenger.TRACE, "Abort requested: Effective at the next check point");
+		Messenger.abort = true;
 	}
 
 	public static boolean abortRequested() {
-		return abort;
+		return Messenger.abort;
 	}
 
-	public synchronized static void resume() {
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Resume requested");
+	public synchronized static void requestResume() {
+		Messenger.printMsg(Messenger.TRACE, "Resume requested");
 		Messenger.pause = false;
 	}
 
-	public static void resetAbortRequest() {
-		abort = false;
+	public static void resetUserRequests() {
+		Messenger.abort = false;
+		Messenger.pause = false;
 	}
 
 	/**

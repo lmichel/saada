@@ -15,6 +15,11 @@ import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
 
+/**
+ * @author laurent
+ * @version $Id$
+ *
+ */
 public class ChoiceItem extends AdminComponent {
 	private String label;
 	private JPanel choicePanel;

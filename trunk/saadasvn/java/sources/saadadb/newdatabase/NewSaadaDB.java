@@ -94,6 +94,8 @@ public class NewSaadaDB {
 			reposi_root.mkdirs();
 			reposi_root = new File(this.connector.getRepository() + separ + Repository.DMS);
 			reposi_root.mkdirs();
+			reposi_root = new File(this.connector.getRepository() + separ + Repository.CONFIG);
+			reposi_root.mkdirs();
 			
 			for( String f: (new File(SAADA_HOME + separ + "dbtemplate")).list()) {
 				Files.copy(SAADA_HOME + separ + "dbtemplate" + separ + f

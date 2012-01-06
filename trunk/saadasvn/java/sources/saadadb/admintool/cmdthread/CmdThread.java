@@ -14,9 +14,7 @@ import saadadb.exceptions.QueryException;
  */
 public abstract class CmdThread extends Thread {
 	protected Frame frame;
-	/* * @version $Id$
-
-	 * Command run by sub classes of saada_process can be paused/resumed
+	/** Command run by sub classes of saada_process can be paused/resumed
 	 * by the progress dialog
 	 */
 	protected SaadaProcess saada_process;
@@ -62,6 +60,22 @@ public abstract class CmdThread extends Thread {
 		return  SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?");
 	}
 	
+	public void wakeUp() {
+		saada_process.wakeUp();
+	}
+		
+	public boolean isRunning() {
+		return (this.getState().equals(Thread.State.RUNNABLE)  ||
+				this.getState().equals(Thread.State.TIMED_WAITING) );
+	}
+	
+	public boolean isWaiting() {
+		return (this.getState().equals(Thread.State.WAITING) );
+	}
+	
+	public boolean isCompleted() {
+		return (this.getState().equals(Thread.State.TERMINATED) );
+	}
 	/**
 	 * 
 	 */
