@@ -76,7 +76,7 @@ public class NewSaadaDB {
 			// creer un r�pertoire pour les products (les collections des
 			// produits seront h�berg� ici)
 			File db_rep = new File(this.connector.getRepository());
-			Messenger.printMsg(Messenger.TRACE, "Creating the repository in " + db_rep.getName());
+			Messenger.printMsg(Messenger.TRACE, "Creating the repository in " + db_rep.getAbsolutePath());
 			db_rep.mkdirs();
 			/*
 			 * Directories to store flatfiles and query results files
