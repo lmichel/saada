@@ -3,17 +3,22 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageProducer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.utils.RGBGrayFilter;
 
 /**
  * @author laurent
@@ -25,7 +30,10 @@ public class ChoiceItem extends AdminComponent {
 	private JPanel choicePanel;
 	private JPanel localPanel;
 	private Runnable runnable;
-	private ImageIcon activeIcon;
+	private Icon activeIcon;
+	private Icon inactiveIcon;
+	private JLabel iconLabel;
+	private JLabel textLabel;
 	private boolean active;
 
 	public ChoiceItem(AdminTool rootFrame,  JPanel choicePanel, GridBagConstraints gbc, String label, String activeImage, Runnable runnable) {
@@ -34,17 +42,18 @@ public class ChoiceItem extends AdminComponent {
 		this.choicePanel = choicePanel;
 		this.runnable = runnable;
 		if( activeImage != null ) this.activeIcon = new ImageIcon(activeImage);
-		JLabel jLabel = new JLabel(this.activeIcon);
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jLabel.setBorder(new EmptyBorder(10, 10, 1, 10));
-		this.localPanel.add(jLabel);
+		iconLabel = new JLabel(this.activeIcon);
+		iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		iconLabel.setBorder(new EmptyBorder(10, 10, 1, 10));
+		this.localPanel.add(iconLabel);
+		makeIncativeIcon();
 
-		jLabel = new JLabel(this.label);
-		jLabel.setFont(plainFont);		
-		jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jLabel.setBorder(new EmptyBorder(1, 10, 5, 10));
-
-		this.localPanel.add(jLabel);
+		textLabel = new JLabel(this.label);
+		textLabel.setFont(plainFont);		
+		textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		textLabel.setBorder(new EmptyBorder(1, 10, 5, 10));
+		this.localPanel.add(textLabel);
+		
 		choicePanel.add(this.localPanel, gbc);
 		this.localPanel.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {	
@@ -68,6 +77,12 @@ public class ChoiceItem extends AdminComponent {
 		this.active();
 	}
 
+	
+	private void makeIncativeIcon() {
+		inactiveIcon = RGBGrayFilter.getDisabledIcon(iconLabel, this.activeIcon);
+		System.out.println(inactiveIcon);
+
+	}
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
 	 */
@@ -84,6 +99,8 @@ public class ChoiceItem extends AdminComponent {
 	public void active() {
 		active = true;
 		this.localPanel.setBackground(LIGHTBACKGROUND);       
+		iconLabel.setIcon(activeIcon);
+		textLabel.setForeground(Color.BLACK);
 
 	}
 
@@ -92,8 +109,9 @@ public class ChoiceItem extends AdminComponent {
 	 */
 	public void inactive() {
 		active = false;	
-		this.localPanel.setBackground(Color.LIGHT_GRAY);       
 		localPanel.setBorder(null);
+		iconLabel.setIcon(inactiveIcon);
+		textLabel.setForeground(Color.LIGHT_GRAY);
 
 	}
 
