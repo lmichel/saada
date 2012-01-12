@@ -1,6 +1,6 @@
 # This file can be pur at the webapp root to indicate the saadadb name of the current application
 saadadbname=XIDResult
 #urlroot=http://jacds.u-strasbg.fr/saadasvn
-urlroot=http://localhost:8888/saadasvn
+urlroot=http://localhost:8888/Saada1.7
 #saadadbroot=/Users/laurentmichel/Desktop/DossierBoston/saadadbs/AJAX
 #debug=on
