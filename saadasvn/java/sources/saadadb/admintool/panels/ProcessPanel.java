@@ -30,6 +30,9 @@ import saadadb.util.Messenger;
 
 
 /**
+ * Panel showing the current action progress.
+ * It is activated after the action is started
+ * 
  * @author laurent
  * @version $Id$
  *

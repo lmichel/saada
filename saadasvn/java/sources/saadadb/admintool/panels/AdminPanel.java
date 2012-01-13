@@ -80,16 +80,19 @@ public abstract class AdminPanel extends AdminComponent {
 	
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		super.setDataTreePath(dataTreePath);
-		treePathLabel.setText(dataTreePath.toString());
+		if( treePathLabel != null )
+			treePathLabel.setText(dataTreePath.toString());
 	}
 	
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
-		selectResourceLabel.setText(selectedResource);
+		if( selectResourceLabel != null )
+			selectResourceLabel.setText(selectedResource);
 	}
 	public void setCurrentTask(String currentTask) {	
 		super.setCurrentTask(currentTask);
-		currentTaskLabel.setText(currentTask);
+		if( currentTaskLabel != null )
+			currentTaskLabel.setText(currentTask);
 	}
 	
 	/**
