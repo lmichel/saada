@@ -34,6 +34,8 @@ public abstract class AdminComponent extends JPanel {
 	public static final String MANAGE_RELATIONS  = "Manage Relationships";
 	public static final String PROCESS_PANEL     = "Process Panel";
 	
+	public static final String CREATE_COLLECTION     = "Create Collection";
+	
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;
 	protected String currentTask;

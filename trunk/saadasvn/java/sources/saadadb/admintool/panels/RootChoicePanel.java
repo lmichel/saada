@@ -29,7 +29,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Create Collection", "icons/CreateColl.png"
 				, new Runnable(){public void run() {
 					try {
-						rootFrame.activePanel("Manage Data");
+						rootFrame.activePanel(CREATE_COLLECTION);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -42,7 +42,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Data", "icons/ManageData.png"
 				, new Runnable(){public void run(){
 					try {
-						rootFrame.activePanel("Manage Data");
+						rootFrame.activePanel(MANAGE_DATA);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

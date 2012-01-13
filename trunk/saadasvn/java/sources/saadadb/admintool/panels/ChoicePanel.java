@@ -17,6 +17,14 @@ import javax.swing.JPanel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.ComponentTitledBorder;
 
+/**
+ * Super class of all panels showing a set of functions as clickable icons.
+ * Sub classes of ChoicePanel never run  actions, they just propose action selectors
+ * 
+ * @author laurent
+ * @version $Id$
+ *
+ */
 public abstract class ChoicePanel extends AdminPanel {
 	/**
 	 * 
