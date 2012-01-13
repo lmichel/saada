@@ -2,11 +2,13 @@ package saadadb.admintool.cmdthread;
 
 
 import java.awt.Frame;
+import java.util.Map;
 
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.command.SaadaProcess;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 
 /**
  * @author laurent
@@ -34,7 +36,12 @@ public abstract class CmdThread extends Thread {
 		return saada_process;
 	}
 
-
+	/**
+	 * Take params reveived from the task panel
+	 * @param params
+	 * @throws SaadaException
+	 */
+	public abstract void setParams(Map<String, Object> params) throws SaadaException;
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
