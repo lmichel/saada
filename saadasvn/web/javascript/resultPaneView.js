@@ -320,7 +320,7 @@ jQuery
 				if( relation == panelToOpen) {
 					numPanelToOpen = i+2;
 				}
-				table += "<h4 id=" + relation + " class='detailhead'> <img src=\"images/tright.png\"> Relation " + relation 
+				table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
 				+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
 				table += "<div class='detaildata'></div>";
 			}
@@ -334,18 +334,19 @@ jQuery
 			$('#detaildiv').html(table);
 
 			/*
-			 * Clickon relation relation title bars: 
+			 * Click on relation relation title bars: 
 			 * on the bar: open/close the data panel
 			 * on tne Info button: display relation info
 			 */			
 			for (var i = 0; i < jsdata.relations.length; i++) {
 				var relation= jsdata.relations[i];
 				$('#' + relation).click(function(e) {
+					var relation = $(e.target).attr('id');
 					if( $(e.target).is('a') ) {
 						resultPaneView.fireGetRelationInfo(relation);
 					}
 					else {
-						resultPaneView.fireShowCounterparts(oid , relation ); 
+						resultPaneView.fireShowCounterparts(oid, relation ); 
 						switchArrow(relation);
 					}
 				});
