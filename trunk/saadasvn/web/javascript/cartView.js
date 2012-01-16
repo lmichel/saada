@@ -191,8 +191,8 @@ jQuery.extend({
 				$.modal.close();
 				return;
 			}
-			var tableId = "folder_" + nodekey;
 			for( var nodekey in cartData) {
+				var tableId = "folder_" + nodekey;
 				table += "<h4 id=\"mappedmeta\" class='detailhead'> <img src=\"images/tdown.png\">Node  " + nodekey + " </h4>";
 				table += "<div class='detaildata'>";
 				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"" + tableId +"\" class=\"display\"></table>";
@@ -200,6 +200,7 @@ jQuery.extend({
 			}
 			$('#table_div').html(table);
 			for( var nodekey in cartData) {
+				var tableId = "folder_" + nodekey;
 				var folder = cartData[nodekey];
 				var aaData = new Array();
 				var cb = "<INPUT TYPE=CHECKBOX name=\"" + nodekey + " url\" class=\"include_relation\" />";
@@ -224,7 +225,8 @@ jQuery.extend({
 							"aaSorting" : [],
 							"bSort" : false,
 							"bFilter" : false,
-							"bAutoWidth" : true
+							"bAutoWidth" : true,
+							"bDestroy": true
 						});
 				/* Apply the jEditable handlers to the table */
 				$('span', folderTables[folderTables.length-1].fnGetNodes()).editable( 
