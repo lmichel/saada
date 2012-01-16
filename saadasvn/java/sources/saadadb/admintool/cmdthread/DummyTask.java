@@ -2,9 +2,11 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Cursor;
 import java.awt.Frame;
+import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.command.SaadaProcess;
+import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 /**
@@ -33,6 +35,12 @@ public class DummyTask extends CmdThread {
 			frame.setCursor(cursor_org);
 			AdminComponent.showFatalError(frame, "operation failed.");
 		}
+	}
+
+	@Override
+	public void setParams(Map<String, Object> params) throws SaadaException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
