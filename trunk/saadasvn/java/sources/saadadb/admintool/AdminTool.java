@@ -35,7 +35,9 @@ import saadadb.admintool.panels.ManageDataPanel;
 import saadadb.admintool.panels.MetaDataPanel;
 import saadadb.admintool.panels.ProcessPanel;
 import saadadb.admintool.panels.RelationChoicePanel;
+import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
+import saadadb.admintool.panels.tasks.CreateCollPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
@@ -61,6 +63,9 @@ public class AdminTool extends BaseFrame {
 	private ChoicePanel loadDataPanel;
 	private ChoicePanel voPublishPanel;
 	private ChoicePanel relationPanel;
+	
+	private TaskPanel createCollPanel;
+	
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 
 
@@ -244,6 +249,11 @@ public class AdminTool extends BaseFrame {
 				relationPanel = new RelationChoicePanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = relationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.CREATE_COLLECTION) ) {
+			if( createCollPanel == null ) {
+				createCollPanel = new CreateCollPanel(this, AdminComponent.ROOT_PANEL);
+			}
+			activePanel = createCollPanel;
 		} else 	if( panelTitle.equals(AdminComponent.PROCESS_PANEL) ) {
 			activePanel = processPanel;
 		}
@@ -255,6 +265,40 @@ public class AdminTool extends BaseFrame {
 		splitPane.setRightComponent(activePanel);
 		splitPane.setDividerLocation(dl);
 	}
+	
+	/**
+	 * Synchronize the collection nodes of the tree with real meta_data
+	 */
+	public void refreshTree() {
+		try {
+			metaDataTree.synchronizeCollectionNodes();
+		} catch (SaadaException e) {
+			AdminComponent.showFatalError(this, "An internal error occured (see console)");
+		}
+	}
+
+
+	@Override
+	public void setDataTreePath(DataTreePath dataTreePath) {
+		this.dataTreePath = dataTreePath;
+		if( this.activePanel != null ) {
+			this.activePanel.setDataTreePath(dataTreePath);
+		}	
+	}
+	
+	public void diskAccess() {
+		this.processPanel.diskAccess();
+	}
+	public void procAccess() {
+		this.processPanel.procAccess();
+	}
+	public void dbAccess() {
+		this.processPanel.dbAccess();
+	}
+	public void noMoreAccess() {
+		this.processPanel.noMoreHarwareAccess();
+	}
+
 	/**
 	 * @param args
 	 */
@@ -280,27 +324,6 @@ public class AdminTool extends BaseFrame {
 			Messenger.printStackTrace(e);
 			System.exit(1);
 		}
-	}
-
-	@Override
-	public void setDataTreePath(DataTreePath dataTreePath) {
-		this.dataTreePath = dataTreePath;
-		if( this.activePanel != null ) {
-			this.activePanel.setDataTreePath(dataTreePath);
-		}	
-	}
-	
-	public void diskAccess() {
-		this.processPanel.diskAccess();
-	}
-	public void procAccess() {
-		this.processPanel.procAccess();
-	}
-	public void dbAccess() {
-		this.processPanel.dbAccess();
-	}
-	public void noMoreAccess() {
-		this.processPanel.noMoreHarwareAccess();
 	}
 
 
