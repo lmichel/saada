@@ -170,6 +170,7 @@ public class TransactionMaker {
 	 * @throws Exception
 	 */
 	private void execStatement(Statement stmt, String query) throws Exception {
+		Messenger.dbAccess();
 		if( !forced_mode ) {
 			stmt.executeUpdate(query);
 		}
@@ -179,9 +180,11 @@ public class TransactionMaker {
 				stmt.executeUpdate(query);	
 			}
 			catch (Exception e) {
+				Messenger.procAccess();
 				Messenger.printMsg(Messenger.WARNING, "SQL error (ignored in transaction in forced mode) "  + e.getMessage());
 			}
 		}
+		Messenger.procAccess();
 
 	}
 	/**
@@ -192,6 +195,7 @@ public class TransactionMaker {
 	 * @throws Exception
 	 */
 	private void execStatement(PreparedStatement pstmt, String query) throws Exception {
+		Messenger.dbAccess();
 		if( !forced_mode ) {
 			pstmt.executeUpdate();
 		}
@@ -199,11 +203,14 @@ public class TransactionMaker {
 			Database.get_connection().setAutoCommit(true);
 			try {
 				pstmt.executeUpdate();	
+				Messenger.procAccess();
 			}
 			catch (Exception e) {
+				Messenger.procAccess();
 				Messenger.printMsg(Messenger.WARNING, "SQL error (ignored in transaction in forced mode) "  + e.getMessage());
 			}
 		}
+		Messenger.procAccess();
 
 	}
 
@@ -257,6 +264,7 @@ public class TransactionMaker {
 	 */
 	public void abortTransaction()  {
 		try {		
+			Messenger.dbAccess();
 			unlock();	
 			queries = new ArrayList<QueryString>();
 
