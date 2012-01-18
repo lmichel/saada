@@ -22,10 +22,17 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.ComponentTitledBorder;
+import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.components.JBlinkingButton;
+import saadadb.admintool.components.RunPauseButton;
+import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.utils.DataTreePath;
+import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 
@@ -42,90 +49,43 @@ public  class ProcessPanel extends AdminPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected CmdThread cmdThread;
 	private JTextArea outputArea;
 	private JLabel procLight;
 	private JLabel diskLight ;
 	private JLabel dbLight;
-	private JBlinkingButton runPauseButton ;
+	private RunPauseButton runPauseButton ;
 	private JBlinkingButton abortButton ;
 	private Color NO_HARDWARE_ACCESS_COLOR;
 	private Timer threadChecker;
+	private JLabel statusLabel;
+
 
 	public ProcessPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, PROCESS_PANEL, null, ancestor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public void setDataTreePath(DataTreePath dataTreePath) {
+	}
+
+	/**
+	 * Tree path can only be set by the calling panel
+	 * @param dataTreePath
+	 */
+	public void setDataTreePathLabel(String dataTreePathLabel) {
+			treePathLabel.setText(dataTreePathLabel);
 	}
 
 	/**
 	 * 
 	 */
 	protected void setToolBar() {
-		JPanel tPanel = new JPanel();
-		tPanel.setLayout(new GridBagLayout());
-		tPanel.setPreferredSize(new Dimension(1000,64));
-		tPanel.setMaximumSize(new Dimension(1000,64));
-		tPanel.setBackground(LIGHTBACKGROUND);
-		JLabel tl = getTitleLabel(" " + title + " ");
-		tl.setOpaque(true);
-		tl.setBorder(BorderFactory.createLineBorder(Color.black));
-		this.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
-		//tPanel.setBackground(Color.RED);
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(1, 7, 1, 1);
-		JButton jb;
-		c.gridx = 0; c.gridy = 0;
-		c.gridwidth = 1; c.gridheight = 3;
-		c.weightx = 0; c.weighty = 1;
-		c.anchor = GridBagConstraints.SOUTH;
-
-		if( ! title.equals(ROOT_PANEL)) {
-
-			jb = new JButton(new ImageIcon("icons/back.png"));
-			jb.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					rootFrame.activePanel(ancestor);				
-				}});
-			tPanel.add(jb, c);
-			c.gridx++;
-		}
-
-		if( c != null || ! ancestor.equals(ROOT_PANEL)) {
-			jb = new JButton(new ImageIcon("icons/maison.png"));
-			jb.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					rootFrame.activePanel(ROOT_PANEL);				
-				}});
-
-			tPanel.add(jb, c);
-		}
-
-
-		c.gridx = 2; c.gridy = 0;
-		c.gridwidth = 2; c.gridheight = 1;
-		c.weightx = 0.8; c.weighty = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		if( treePathLabel == null ) treePathLabel = getSubTitleLabel("TreePath");
-		tPanel.add(treePathLabel, c);
-
-		c.gridx = 2; c.gridy = 1;
-		c.gridwidth = 1; c.gridheight = 1;
-		c.weightx = 0; c.weighty = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		tPanel.add(new JLabel(new ImageIcon("icons/question.png")), c);
-
-		c.gridx = 3; c.gridy = 1;
-		c.weightx = 0.75; c.weighty = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		if( selectResourceLabel == null ) selectResourceLabel = getSubTitleLabel("No selected resource");
-		tPanel.add(selectResourceLabel, c);
-
-		c.gridx = 2; c.gridy = 2;
-		c.gridwidth = 2; c.gridheight = 1;
-		c.weightx = 0.8; c.weighty = 1;
-		if( currentTaskLabel == null ) currentTaskLabel = getSubTitleLabel("No task");
-		tPanel.add(currentTaskLabel, c);
-
-		this.add(tPanel);
+		this.initTreePathLabel();
+		this.initSelectResourceLabel();
+		this.initCurrentTaskLabel();
+		this.add(new ToolBarPanel(this, true, true, true));
 	}
 
 	@Override
@@ -149,46 +109,9 @@ public  class ProcessPanel extends AdminPanel {
 		tPanel = this.addSubPanel("Process Control");
 		//tPanel.setPreferredSize(new Dimension(1000, 36));
 		tPanel.setMaximumSize(new Dimension(1000, 36));
-		runPauseButton = new JBlinkingButton(new ImageIcon("icons/Run.png"));
-		runPauseButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if( cmdThread != null ) {
-					if( cmdThread.isRunning()	){
-						Messenger.requestPause();
-						runPauseButton.startBlinking();
-						threadChecker  = new Timer(1000, new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-							if( cmdThread.isWaiting() ){
-									threadChecker.stop();
-									runPauseButton.stopBlinking(true);
-								}
-							}
-						});
-						threadChecker.start();
-					}
-					else if( cmdThread.isWaiting()) {
-						Messenger.requestResume();
-						cmdThread.wakeUp();
-						threadChecker  = new Timer(1000, new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-							if( cmdThread.isRunning() ){
-									threadChecker.stop();
-									runPauseButton.stopBlinking(false);
-								}
-							}
-						});
-						threadChecker.start();			
-					}
-					else {
-						AdminComponent.showInfo(ProcessPanel.this, "No running command: last command was " + cmdThread.getState());
-					}
-				}
-				else {
-					AdminComponent.showInfo(ProcessPanel.this, "No active command");				
-				}
-			}
-		});
+		runPauseButton = new RunPauseButton(this);
 		tPanel.add(runPauseButton, c);
+		
 		c.gridx++;
 		abortButton = new JBlinkingButton(new ImageIcon("icons/Abort.png"));
 		abortButton.addActionListener(new ActionListener() {
@@ -199,16 +122,16 @@ public  class ProcessPanel extends AdminPanel {
 						cmdThread.wakeUp();
 						Messenger.requestAbort();
 						abortButton.startBlinking();
-						threadChecker  = new Timer(1000, new ActionListener() {
-							public void actionPerformed(ActionEvent e) {
-							if( cmdThread.isCompleted()){
-									threadChecker.stop();
-									runPauseButton.stopBlinking(false);
-									abortButton.stopBlinking(false);
-								}
-							}
-						});
-						threadChecker.start();
+//						threadChecker  = new Timer(1000, new ActionListener() {
+//							public void actionPerformed(ActionEvent e) {
+//								if( cmdThread.isCompleted()){
+//									threadChecker.stop();
+//									runPauseButton.stopBlinking(false);
+//									abortButton.stopBlinking(false);
+//								}
+//							}
+//						});
+//						threadChecker.start();
 					}
 					else {
 						AdminComponent.showInfo(ProcessPanel.this, "No running command: last command was " + cmdThread.getState());
@@ -221,18 +144,24 @@ public  class ProcessPanel extends AdminPanel {
 		});
 		tPanel.add(abortButton, c);
 		c.gridx++;
-		JButton jb = new JButton(new ImageIcon("icons/DebugMode.png"));
+
+		tPanel.add(new DebugButton(), c);
+		c.gridx++;
+		JButton jb = new JButton(new ImageIcon("icons/Ant.png"));
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Messenger.debug_mode = !Messenger.debug_mode;
+				cmdThread = new ThreadCreateCollection(rootFrame);
+				AdminComponent.showInfo(rootFrame,cmdThread.getAntTarget());
 			}
 		});
-		tPanel.add(jb, c);
-		c.gridx++;
-		jb = new JButton(new ImageIcon("icons/Ant.png"));
-		tPanel.add(jb, c);
-		c.gridx++;
 
+		tPanel.add((new AntButton(this)), c);
+		c.gridx++;
+		c.weightx = 1; c.weighty = 0;	
+		c.anchor = GridBagConstraints.SOUTHEAST;
+		tPanel.add((statusLabel = new JLabel("STATUS")), c);
+
+		c.gridx++;
 		c.weightx = 1; c.weighty = 0;	
 		c.anchor= GridBagConstraints.SOUTHEAST;
 		JPanel stsPanel = new JPanel();
@@ -303,13 +232,47 @@ public  class ProcessPanel extends AdminPanel {
 		return outputArea;
 	}
 
+	public boolean hasARunningThread() {
+		return !(this.cmdThread  == null || this.cmdThread.isCompleted());
+	}
+	
 	public void setCmdThread(CmdThread cmdThread) {
-		this.cmdThread = cmdThread;
-		this.noMoreHarwareAccess();
-		Messenger.setGui_area_output(outputArea);
-		Messenger.resetUserRequests();
-		this.cmdThread.start();
-		this.outputArea.setText("");
+		if( this.cmdThread  == null || this.cmdThread.isCompleted()) {
+			this.cmdThread = cmdThread;
+			this.noMoreHarwareAccess();
+			Messenger.setGui_area_output(outputArea);
+			Messenger.resetUserRequests();
+			System.out.println("@@@@@@ " + this.cmdThread.getState());
+			this.cmdThread.start();
+			this.outputArea.setText("");
+			this.currentTaskLabel.setText(this.cmdThread.toString());
+			threadChecker  = new Timer(1000, new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("@@@@@@  + threadChecker" + ProcessPanel.this.cmdThread.isCompleted() + " " + ProcessPanel.this.cmdThread.getState());
+					ProcessPanel.this.runPauseButton.updateIcon();
+					ProcessPanel.this.statusLabel.setText(ProcessPanel.this.cmdThread.getState().toString());
+					if( ProcessPanel.this.cmdThread.isCompleted()) {
+						System.out.println("@@@@@@  + STOP" + threadChecker.getActionCommand() + threadChecker);
+						threadChecker.stop();
+						runPauseButton.stopBlinking(false);
+						abortButton.stopBlinking(false);
+					}
+				}
+			});
+			threadChecker.start();
+		}
+		else {
+			AdminComponent.showInfo(rootFrame, "Another thread is running");
+		}
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#initCmdThread()
+	 */
+	@Override
+	public void initCmdThread() {		
 	}
 
 }

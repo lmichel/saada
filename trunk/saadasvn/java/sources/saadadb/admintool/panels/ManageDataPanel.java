@@ -59,7 +59,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Comment Collection", "icons/CommentCollection.png"
 				, new Runnable(){public void run(){
-					System.out.println("comment collection");}});
+					rootFrame.activePanel(COMMENT_COLLECTION);}});
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -67,7 +67,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Empty Collection", "icons/EmptyCollection.png"
 				, new Runnable(){public void run(){
-					System.out.println("empty collection");}});
+					rootFrame.activePanel(EMPTY_COLLECTION);}});
 		
 		c.gridx = 2;
 		c.gridy = 0;
@@ -76,7 +76,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Remove Collection", "icons/DropCollection.png"
 				, new Runnable(){public void run(){
-					System.out.println("remove collection");}});		
+					rootFrame.activePanel(DROP_COLLECTION);}});		
 		
 		tPanel = this.addSubPanel("Class Level");		
 		c.gridx = 0;

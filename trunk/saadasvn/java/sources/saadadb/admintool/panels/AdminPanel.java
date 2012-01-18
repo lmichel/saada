@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.DataTreePath;
 
@@ -26,7 +27,33 @@ public abstract class AdminPanel extends AdminComponent {
 	protected String icon,title, ancestor;
 	protected JLabel treePathLabel ;
 	protected JLabel selectResourceLabel ;
+	protected CmdThread cmdThread ;
 	protected JLabel currentTaskLabel ;
+	
+	public JLabel getTreePathLabel() {
+		return treePathLabel;
+	}
+
+	public void initTreePathLabel() {
+		 treePathLabel = AdminComponent.getSubTitleLabel("TreePath");
+	}
+
+	public JLabel getSelectResourceLabel() {
+		return selectResourceLabel;
+	}
+
+	public void initSelectResourceLabel() {
+		selectResourceLabel = AdminComponent.getSubTitleLabel("No selected resource");
+	}
+
+	public JLabel getCurrentTaskLabel() {
+		return currentTaskLabel;
+	}
+
+	public void initCurrentTaskLabel() {
+		currentTaskLabel = AdminComponent.getSubTitleLabel("No task");
+	}
+
 
 	public AdminPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame);
@@ -36,9 +63,22 @@ public abstract class AdminPanel extends AdminComponent {
 		this.setMainPanel();
 		this.setToolBar();
 		this.setActivePanel();
-
 	}
 
+	public void setAncestor(String ancestor) {
+		this.ancestor = ancestor;
+	}
+	
+	public String getAncestor(){
+		return this.ancestor;
+	}
+	
+	public CmdThread getCmdThread() {
+		return cmdThread;
+	}
+	
+	public abstract void initCmdThread();
+	
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
 	 */

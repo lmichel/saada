@@ -28,6 +28,7 @@ package saadadb.admintool.components;
  * redistribute the Software for such purposes.
  */    
 
+import java.awt.Component;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +48,7 @@ import saadadb.util.RegExp;
 class RegexFormatter extends DefaultFormatter {
 	private Pattern pattern;
 	private Matcher matcher;
+	private Component componentToActive;
 
 	public RegexFormatter() {
 		super();
@@ -57,10 +59,11 @@ class RegexFormatter extends DefaultFormatter {
 	 * pattern specifies the regular expression that will be used
 	 * to determine if a value is legal.
 	 */
-	public RegexFormatter(String pattern) throws PatternSyntaxException {
+	public RegexFormatter(String pattern, Component componentToActive) throws PatternSyntaxException {
 		this();
-		System.out.println("@@@@@@@@@ " + pattern);
 		setPattern(Pattern.compile(pattern));
+		setAllowsInvalid(false);
+		this.componentToActive = componentToActive;
 	}
 
 	/**
@@ -119,30 +122,26 @@ class RegexFormatter extends DefaultFormatter {
 	        Pattern pPattern = getPattern();
 	        
 	        if (pPattern != null) {
+	        	if( text.length() == 0 ) {
+	                if( this.componentToActive != null ) {
+	                	this.componentToActive.setEnabled(false);
+	                }
+	                return super.stringToValue(text);
+	        		
+	        	}
 	            Matcher mMatcher = pPattern.matcher(text);
 	            
 	            if (mMatcher.matches()) {
-	            	System.out.println("match");
 	                setMatcher(mMatcher);
+	                if( this.componentToActive != null ) {
+	                	this.componentToActive.setEnabled(true);
+	                }
 	                return super.stringToValue(text);
 	            }
+
 	            throw new ParseException("Pattern did not match", 0);
 	        }
 	        return text;
 	    }	  
 	   
-	   public static void main(String[] a) throws ParseException{
-		    JFrame frame = new JFrame();
-		    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		   JFormattedTextField formattedField = new JFormattedTextField(new RegexFormatter(RegExp.COLLNAME));
-
-		    frame.add(formattedField,"North");
-		    
-		    frame.add(new JFormattedTextField(new MaskFormatter("####")),"South");
-
-		    frame.setSize(300, 200);
-		    frame.setVisible(true);
-		  }
-
 }

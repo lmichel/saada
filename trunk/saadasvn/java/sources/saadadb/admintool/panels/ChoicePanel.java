@@ -34,6 +34,9 @@ public abstract class ChoicePanel extends AdminPanel {
 	public ChoicePanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame, title, icon, ancestor);
 	}
+	
+	public void initCmdThread(){}
+
 
 	/**
 	 * 

@@ -12,19 +12,27 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.ThreadCreateCollection;
+import saadadb.admintool.cmdthread.ThreadDropCollection;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.ComponentTitledBorder;
+import saadadb.admintool.components.FreeTextField;
 import saadadb.admintool.components.NodeNameTextField;
+import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.util.RegExp;
 
 
@@ -35,12 +43,32 @@ import saadadb.util.RegExp;
  */
 public class CreateCollPanel extends TaskPanel {
 	private static final long serialVersionUID = 1L;
-	private NodeNameTextField nameField ;
+	protected NodeNameTextField nameField ;
+	protected FreeTextField commentField;
+	protected RunTaskButton runButton;
 	
 	public CreateCollPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, CREATE_COLLECTION, null, ancestor);
+		cmdThread = new ThreadCreateCollection(rootFrame);
 	}
 	
+	/**
+	 * Used by subclasses
+	 * @param rootFrame
+	 * @param title
+	 * @param cmdThread
+	 * @param ancestor
+	 */
+	protected CreateCollPanel(AdminTool rootFrame, String title,
+			CmdThread cmdThread, String ancestor) {
+		super(rootFrame, title, null, ancestor);
+		this.cmdThread = cmdThread;
+	}
+
+	public void initCmdThread() {
+		cmdThread = new ThreadCreateCollection(rootFrame);
+	}
+
 	/**
 	 * 
 	 */
@@ -87,6 +115,12 @@ public class CreateCollPanel extends TaskPanel {
 		this.add(tPanel);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public void setDataTreePath(DataTreePath dataTreePath) {
+	}
+
 
 	@Override
 	protected void setActivePanel() {
@@ -107,11 +141,12 @@ public class CreateCollPanel extends TaskPanel {
 		c.weightx = 0.8;
 		c.weighty = 0.5;
 		c.anchor = GridBagConstraints.WEST;
+		runButton = new RunTaskButton(this);
 		try {
-			nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$");
+			nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
+			nameField.addPropertyChangeListener("value", this);
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			AdminComponent.showFatalError(rootFrame, e1);
 		}
 		tPanel.add(nameField, c);
 		
@@ -127,21 +162,18 @@ public class CreateCollPanel extends TaskPanel {
 		c.weightx = 0.8;
 		c.weighty = 0.5;
 		c.anchor = GridBagConstraints.WEST;
-		JScrollPane jsc = new JScrollPane(new JTextArea(6, 24));
-		tPanel.add(jsc, c);
-		JButton jb = new JButton(new ImageIcon("icons/Run.png"));
-		jb.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		this.setActionBar(new Component[]{jb, new JButton(new ImageIcon("icons/Ant.png"))});
-//		new ChoiceItem(rootFrame, tPanel, c
-//				, "Load Data", "icons/LoadData.png"
-//				, new Runnable(){public void run(){
-//					System.out.println("loadcdata");}});
+		commentField = new FreeTextField(6, 24);
+		tPanel.add(commentField.getPanel(), c);
+		this.setActionBar(new Component[]{runButton, (new AntButton(this))});
 		}
+
+	@Override
+	protected Map<String, Object> getParamMap() {
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+		map.put("name", this.nameField.getText());
+		map.put("comment", this.commentField.getText());
+		return map;
+	}
+
 
 }

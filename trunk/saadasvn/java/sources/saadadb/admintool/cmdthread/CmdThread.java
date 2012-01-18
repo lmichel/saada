@@ -43,13 +43,19 @@ public abstract class CmdThread extends Thread {
 	 */
 	public abstract void setParams(Map<String, Object> params) throws SaadaException;
 	
+	/**
+	 * Returns the ANT target doing the command in script mode
+	 * @return
+	 */
+	public abstract String getAntTarget() ;
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run(){		
 		try {
-			if( this.getParam() == true ) {
+			if( this.checkParams() == true ) {
 				this.runCommand();
 			}
 		} catch (Exception e) {
@@ -63,7 +69,7 @@ public abstract class CmdThread extends Thread {
 	 * @throws FatalException 
 	 * @throws Exception 
 	 */
-	protected boolean getParam() throws QueryException, FatalException, Exception {
+	protected boolean checkParams() throws QueryException, FatalException, Exception {
 		return  SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?");
 	}
 	
@@ -83,7 +89,8 @@ public abstract class CmdThread extends Thread {
 	public boolean isCompleted() {
 		return (this.getState().equals(Thread.State.TERMINATED) );
 	}
-	/**
+
+/**
 	 * 
 	 */
 	public abstract void runCommand() ;

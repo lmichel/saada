@@ -3,7 +3,6 @@
  */
 package saadadb.admintool;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -25,22 +24,14 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.admin.dialogs.AdminPassword;
+import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
-import saadadb.admintool.panels.ChoicePanel;
-import saadadb.admintool.panels.RootChoicePanel;
-import saadadb.admintool.panels.LoadDataPanel;
-import saadadb.admintool.panels.ManageDataPanel;
-import saadadb.admintool.panels.MetaDataPanel;
-import saadadb.admintool.panels.ProcessPanel;
-import saadadb.admintool.panels.RelationChoicePanel;
-import saadadb.admintool.panels.TaskPanel;
-import saadadb.admintool.panels.VOPublishPanel;
-import saadadb.admintool.panels.tasks.CreateCollPanel;
+import saadadb.admintool.panels.*;
+import saadadb.admintool.panels.tasks.*;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
-import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.SaadaException;
@@ -57,15 +48,17 @@ public class AdminTool extends BaseFrame {
 	public static final int height = 500;
 	private JSplitPane splitPane;
 	public MetaDataPanel metaDataTree;
-	private AdminComponent activePanel;
+	private AdminPanel  activePanel;
 	private ChoicePanel choicePanelRoot;
 	private ChoicePanel manageDataPanel;
 	private ChoicePanel loadDataPanel;
 	private ChoicePanel voPublishPanel;
 	private ChoicePanel relationPanel;
-	
+
 	private TaskPanel createCollPanel;
-	
+	private TaskPanel dropCollPanel;
+	private TaskPanel emptyCollPanel;
+
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 
 
@@ -143,8 +136,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.PROCESS_PANEL);
-				processPanel.setCmdThread(new DummyTask(AdminTool.this));
+				activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
 		c.gridx = 0;
@@ -152,7 +144,7 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 0;
 		c.weighty = 0;
 		leftPanel.add(b, c);
-		
+
 		/*
 		 * Build the right tab panel
 		 */
@@ -191,7 +183,7 @@ public class AdminTool extends BaseFrame {
 
 
 	}
-	
+
 	public ProcessPanel getProcessPanel() {
 		return processPanel;
 	}
@@ -222,7 +214,7 @@ public class AdminTool extends BaseFrame {
 		}
 
 	}
-	
+
 	public void activePanel(String panelTitle)  {
 		if( panelTitle.equals(AdminComponent.ROOT_PANEL) ) {
 			if( choicePanelRoot == null ) {
@@ -254,7 +246,20 @@ public class AdminTool extends BaseFrame {
 				createCollPanel = new CreateCollPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = createCollPanel;
+		} else 	if( panelTitle.equals(AdminComponent.DROP_COLLECTION) ) {
+			if( dropCollPanel == null ) {
+				dropCollPanel = new DropCollPanel(this, AdminComponent.ROOT_PANEL);
+			}
+			activePanel = dropCollPanel;
+		} else 	if( panelTitle.equals(AdminComponent.EMPTY_COLLECTION) ) {
+			if( emptyCollPanel == null ) {
+				emptyCollPanel = new EmptyCollPanel(this, AdminComponent.ROOT_PANEL);
+			}
+			activePanel = emptyCollPanel;
 		} else 	if( panelTitle.equals(AdminComponent.PROCESS_PANEL) ) {
+			processPanel.setAncestor(activePanel.getTitle());
+			if( activePanel.getTreePathLabel() != null )
+				processPanel.setDataTreePathLabel(activePanel.getTreePathLabel().getText());
 			activePanel = processPanel;
 		}
 
@@ -265,7 +270,17 @@ public class AdminTool extends BaseFrame {
 		splitPane.setRightComponent(activePanel);
 		splitPane.setDividerLocation(dl);
 	}
-	
+
+	public void activeProcessPanel(CmdThread cmdThread) {
+		if( processPanel.hasARunningThread() ) {
+			AdminComponent.showInfo(this, "Another thread is running");
+		}
+		else {
+			activePanel(AdminComponent.PROCESS_PANEL);
+			processPanel.setCmdThread(cmdThread);
+		}
+	}
+
 	/**
 	 * Synchronize the collection nodes of the tree with real meta_data
 	 */
@@ -285,7 +300,7 @@ public class AdminTool extends BaseFrame {
 			this.activePanel.setDataTreePath(dataTreePath);
 		}	
 	}
-	
+
 	public void diskAccess() {
 		this.processPanel.diskAccess();
 	}
