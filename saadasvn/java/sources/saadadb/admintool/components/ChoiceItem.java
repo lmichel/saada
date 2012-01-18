@@ -60,6 +60,7 @@ public class ChoiceItem extends AdminComponent {
 				if( active ) {
 					if( ChoiceItem.this.localPanel.getBorder() != null )   
 						ChoiceItem.this.runnable.run();
+					localPanel.setBorder(null);
 					localPanel.setBackground(LIGHTBACKGROUND);      
 				}
 			}
@@ -90,7 +91,6 @@ public class ChoiceItem extends AdminComponent {
 		this.localPanel = new JPanel();
 		this.localPanel.setBackground(LIGHTBACKGROUND);       
 		this.localPanel.setLayout(new BoxLayout(localPanel, BoxLayout.PAGE_AXIS));
-
 	}
 
 	/**
@@ -101,7 +101,6 @@ public class ChoiceItem extends AdminComponent {
 		this.localPanel.setBackground(LIGHTBACKGROUND);       
 		iconLabel.setIcon(activeIcon);
 		textLabel.setForeground(Color.BLACK);
-
 	}
 
 	/**

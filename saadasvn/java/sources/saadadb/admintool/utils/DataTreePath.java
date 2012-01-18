@@ -14,7 +14,7 @@ public class DataTreePath {
 	public final String collection;
 	public final String category;
 	public final String classe;
-	
+
 	/**
 	 * @param collection
 	 * @param category
@@ -25,11 +25,16 @@ public class DataTreePath {
 		this.category = category;
 		this.classe = classe;
 	}
-	
+
 	public DataTreePath(TreePath treePath) throws QueryException {
 		int count = treePath.getPathCount();
 		Object[] pathEle = treePath.getPath();
-		if( count ==3 ) {
+		if( count ==2 ) {
+			this.collection = pathEle[1].toString();;
+			this.category = null;;
+			this.classe = null;		
+		}
+		else if( count ==3 ) {
 			this.collection = pathEle[1].toString();;
 			this.category = pathEle[2].toString();;
 			this.classe = null;		
@@ -54,11 +59,15 @@ public class DataTreePath {
 	public boolean isClassLevel() {
 		return (classe != null);
 	}
-	
+
+
 	public String toString() {
 		String retour=collection + "." + category ;
-		if( classe != null) {
-			retour += "." + classe;
+		if( category != null) {
+			retour += "." + category;
+			if( classe != null) {
+				retour += "." + classe;
+			}
 		}
 		return retour;
 	}

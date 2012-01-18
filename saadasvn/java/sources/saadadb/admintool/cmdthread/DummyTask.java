@@ -19,7 +19,7 @@ public class DummyTask extends CmdThread {
 		super(frame);
 	}
 	
-	protected boolean getParam() {
+	protected boolean checkParams() {
 		return  true;
 	}
 		
@@ -41,6 +41,11 @@ public class DummyTask extends CmdThread {
 	public void setParams(Map<String, Object> params) throws SaadaException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public String getAntTarget() {
+		return null;
 	}
 
 }

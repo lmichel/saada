@@ -14,9 +14,11 @@ public class JBlinkingButton extends JButton {
 	private static Color BLKCOLOR = Color.ORANGE;
 	private Timer blinker;
 	public static final int BLINK_PERIOD = 500;
+	
 	public JBlinkingButton(Icon icon) {
 		super(icon);
 		bkgColor = this.getBackground();
+		this.setOpaque(true);
 	}
 	
 	public void  startBlinking() {
