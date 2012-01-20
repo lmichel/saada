@@ -18,14 +18,7 @@ public class DebugButton extends JButton{
 		noDebugColor = this.getBackground();
 		debugColor = Color.ORANGE;
 		this.setOpaque(true);
-
-		
-		if( Messenger.debug_mode ) {
-			setBackground(debugColor);
-		}
-		else {
-			setBackground(noDebugColor);
-		}
+		this.active();
 
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -38,10 +31,15 @@ public class DebugButton extends JButton{
 				}
 			}
 		});
-		
-		
-		
-		
 	}
 
+	public void active() {
+		if( Messenger.debug_mode ) {
+			setBackground(debugColor);
+		}
+		else {
+			setBackground(noDebugColor);
+		}
+
+	}
 }

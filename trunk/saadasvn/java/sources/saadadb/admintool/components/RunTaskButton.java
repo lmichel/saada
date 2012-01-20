@@ -28,8 +28,9 @@ public class RunTaskButton extends JButton {
 				AdminTool rootFrame = RunTaskButton.this.adminPanel.rootFrame;
 				try {
 					((JButton)(e.getSource())).setEnabled(false);
-					RunTaskButton.this.adminPanel.setCmdParams();
-					rootFrame.activeProcessPanel(cmdThread);
+					if( RunTaskButton.this.adminPanel.setCmdParams()  == true ) {
+						rootFrame.activeProcessPanel(cmdThread);
+					}
 				} catch (SaadaException e1) {
 					AdminComponent.showFatalError(rootFrame, e1);
 					rootFrame.activePanel(RunTaskButton.this.adminPanel.getTitle());
@@ -37,4 +38,12 @@ public class RunTaskButton extends JButton {
 			}
 		});
 	}
+	
+	public void activate() {
+		this.setEnabled(true);
+	}
+	public void inActivate() {
+		this.setEnabled(false);
+	}
+
 }

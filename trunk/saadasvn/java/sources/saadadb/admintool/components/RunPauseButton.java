@@ -7,23 +7,23 @@ import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.panels.AdminPanel;
+import saadadb.admintool.panels.TaskPanel;
 import saadadb.util.Messenger;
 
 public class RunPauseButton extends JBlinkingButton {
-	private final AdminPanel adminPanel;
+	private final TaskPanel taskPanel;
 	private Timer commandChecker;
 	private CmdThread cmdThread;
 	private ImageIcon runIcon = new ImageIcon("icons/Run.png");
 	private ImageIcon pauseIcon = new ImageIcon("icons/Pause.png");
 
-	public RunPauseButton(AdminPanel adminPanel) {
+	public RunPauseButton(TaskPanel taskPanel) {
 		super(new ImageIcon("icons/Run.png"));
-		this.adminPanel =adminPanel;
+		this.taskPanel =taskPanel;
 
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cmdThread = RunPauseButton.this.adminPanel.getCmdThread();
+				cmdThread = RunPauseButton.this.taskPanel.getCmdThread();
 
 				if( cmdThread != null ) {
 					if( cmdThread.isRunning()	){
@@ -57,11 +57,11 @@ public class RunPauseButton extends JBlinkingButton {
 						RunPauseButton.this.commandChecker.start();			
 					}
 					else {
-						AdminComponent.showInfo(RunPauseButton.this.adminPanel, "No running command: last command was " + cmdThread.getState());
+						AdminComponent.showInfo(RunPauseButton.this.taskPanel, "No running command: last command was " + cmdThread.getState());
 					}
 				}
 				else {
-					AdminComponent.showInfo(RunPauseButton.this.adminPanel, "No active command");				
+					AdminComponent.showInfo(RunPauseButton.this.taskPanel, "No active command");				
 				}
 			}
 		});
@@ -80,7 +80,7 @@ public class RunPauseButton extends JBlinkingButton {
 			}
 		}
 		else {
-			cmdThread = RunPauseButton.this.adminPanel.getCmdThread();
+			cmdThread = RunPauseButton.this.taskPanel.getCmdThread();
 			this.setIcon(runIcon);
 		}
 	}
