@@ -51,8 +51,7 @@ public class LoadDataPanel extends ChoicePanel {
 		c.weighty = 0.5;
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Load Data", "icons/LoadData.png"
-				, new Runnable(){public void run(){
-					System.out.println("loadcdata");}});
+				, new Runnable(){public void run(){rootFrame.activePanel(DATA_LOADER);}});
 	
 	}
 

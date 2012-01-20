@@ -4,6 +4,7 @@
 package saadadb.admintool.panels;
 
 import java.awt.GridBagLayout;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -13,7 +14,9 @@ import javax.swing.border.TitledBorder;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.exceptions.SaadaException;
 
 /**
  * @author laurentmichel
@@ -27,15 +30,15 @@ public abstract class AdminPanel extends AdminComponent {
 	protected String icon,title, ancestor;
 	protected JLabel treePathLabel ;
 	protected JLabel selectResourceLabel ;
-	protected CmdThread cmdThread ;
 	protected JLabel currentTaskLabel ;
-	
+	public final DebugButton debugButton = new DebugButton();
+
 	public JLabel getTreePathLabel() {
 		return treePathLabel;
 	}
 
 	public void initTreePathLabel() {
-		 treePathLabel = AdminComponent.getSubTitleLabel("TreePath");
+		treePathLabel = AdminComponent.getSubTitleLabel("TreePath");
 	}
 
 	public JLabel getSelectResourceLabel() {
@@ -68,17 +71,14 @@ public abstract class AdminPanel extends AdminComponent {
 	public void setAncestor(String ancestor) {
 		this.ancestor = ancestor;
 	}
-	
+
 	public String getAncestor(){
 		return this.ancestor;
 	}
-	
-	public CmdThread getCmdThread() {
-		return cmdThread;
-	}
-	
-	public abstract void initCmdThread();
-	
+
+
+
+
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
 	 */
@@ -100,7 +100,7 @@ public abstract class AdminPanel extends AdminComponent {
 	public String getTitle() {
 		return title;
 	}
-	
+
 
 	/**
 	 * @param title
@@ -117,13 +117,15 @@ public abstract class AdminPanel extends AdminComponent {
 		return tPanel;
 
 	}
-	
+
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		super.setDataTreePath(dataTreePath);
-		if( treePathLabel != null )
-			treePathLabel.setText(dataTreePath.toString());
+		if( dataTreePath != null ) {
+			super.setDataTreePath(dataTreePath);
+			if( treePathLabel != null )
+				treePathLabel.setText(dataTreePath.toString());
+		}
 	}
-	
+
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
 		if( selectResourceLabel != null )
@@ -134,15 +136,20 @@ public abstract class AdminPanel extends AdminComponent {
 		if( currentTaskLabel != null )
 			currentTaskLabel.setText(currentTask);
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected abstract void setToolBar() ;
-	
+
 	/**
 	 * 
 	 */
 	protected abstract void setActivePanel() ;
+
+	/**
+	 * called when the panel get the focus
+	 */
+	public abstract void active() ;
 
 }

@@ -3,10 +3,10 @@ package saadadb.admintool.panels;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -22,17 +22,14 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.AntButton;
-import saadadb.admintool.components.ComponentTitledBorder;
-import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.components.JBlinkingButton;
 import saadadb.admintool.components.RunPauseButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 
@@ -44,7 +41,7 @@ import saadadb.util.Messenger;
  * @version $Id$
  *
  */
-public  class ProcessPanel extends AdminPanel {
+public  class ProcessPanel extends TaskPanel {
 	/**
 	 * 
 	 */
@@ -63,7 +60,7 @@ public  class ProcessPanel extends AdminPanel {
 	public ProcessPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, PROCESS_PANEL, null, ancestor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
@@ -75,7 +72,7 @@ public  class ProcessPanel extends AdminPanel {
 	 * @param dataTreePath
 	 */
 	public void setDataTreePathLabel(String dataTreePathLabel) {
-			treePathLabel.setText(dataTreePathLabel);
+		treePathLabel.setText(dataTreePathLabel);
 	}
 
 	/**
@@ -111,7 +108,7 @@ public  class ProcessPanel extends AdminPanel {
 		tPanel.setMaximumSize(new Dimension(1000, 36));
 		runPauseButton = new RunPauseButton(this);
 		tPanel.add(runPauseButton, c);
-		
+
 		c.gridx++;
 		abortButton = new JBlinkingButton(new ImageIcon("icons/Abort.png"));
 		abortButton.addActionListener(new ActionListener() {
@@ -122,16 +119,6 @@ public  class ProcessPanel extends AdminPanel {
 						cmdThread.wakeUp();
 						Messenger.requestAbort();
 						abortButton.startBlinking();
-//						threadChecker  = new Timer(1000, new ActionListener() {
-//							public void actionPerformed(ActionEvent e) {
-//								if( cmdThread.isCompleted()){
-//									threadChecker.stop();
-//									runPauseButton.stopBlinking(false);
-//									abortButton.stopBlinking(false);
-//								}
-//							}
-//						});
-//						threadChecker.start();
 					}
 					else {
 						AdminComponent.showInfo(ProcessPanel.this, "No running command: last command was " + cmdThread.getState());
@@ -145,7 +132,7 @@ public  class ProcessPanel extends AdminPanel {
 		tPanel.add(abortButton, c);
 		c.gridx++;
 
-		tPanel.add(new DebugButton(), c);
+		tPanel.add(debugButton, c);
 		c.gridx++;
 		JButton jb = new JButton(new ImageIcon("icons/Ant.png"));
 		jb.addActionListener(new ActionListener() {
@@ -235,24 +222,21 @@ public  class ProcessPanel extends AdminPanel {
 	public boolean hasARunningThread() {
 		return !(this.cmdThread  == null || this.cmdThread.isCompleted());
 	}
-	
+
 	public void setCmdThread(CmdThread cmdThread) {
 		if( this.cmdThread  == null || this.cmdThread.isCompleted()) {
 			this.cmdThread = cmdThread;
 			this.noMoreHarwareAccess();
 			Messenger.setGui_area_output(outputArea);
 			Messenger.resetUserRequests();
-			System.out.println("@@@@@@ " + this.cmdThread.getState());
 			this.cmdThread.start();
 			this.outputArea.setText("");
 			this.currentTaskLabel.setText(this.cmdThread.toString());
 			threadChecker  = new Timer(1000, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					System.out.println("@@@@@@  + threadChecker" + ProcessPanel.this.cmdThread.isCompleted() + " " + ProcessPanel.this.cmdThread.getState());
 					ProcessPanel.this.runPauseButton.updateIcon();
 					ProcessPanel.this.statusLabel.setText(ProcessPanel.this.cmdThread.getState().toString());
 					if( ProcessPanel.this.cmdThread.isCompleted()) {
-						System.out.println("@@@@@@  + STOP" + threadChecker.getActionCommand() + threadChecker);
 						threadChecker.stop();
 						runPauseButton.stopBlinking(false);
 						abortButton.stopBlinking(false);
@@ -266,13 +250,25 @@ public  class ProcessPanel extends AdminPanel {
 		}
 	}
 
-
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.TaskPanel#getParamMap()
+	 */
+	protected Map<String, Object> getParamMap() {
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#initCmdThread()
 	 */
 	@Override
 	public void initCmdThread() {		
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#active()
+	 */
+	public void active() {
+		debugButton.active();
 	}
 
 }

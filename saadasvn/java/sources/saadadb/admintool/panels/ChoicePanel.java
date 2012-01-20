@@ -103,6 +103,10 @@ public abstract class ChoicePanel extends AdminPanel {
 		this.add(tPanel);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#active()
+	 */
+	public void active() {}
 
 
 }

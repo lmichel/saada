@@ -39,6 +39,14 @@ public class RootChoicePanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		new ChoiceItem(rootFrame, tPanel, c
+				, "Load Data", "icons/LoadData.png"
+				, new Runnable(){public void run(){rootFrame.activePanel(DATA_LOADER);}});
+
+		c.gridx = 0;
+		c.gridy = 1;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		new ChoiceItem(rootFrame, tPanel, c
 				, "Manage Data", "icons/ManageData.png"
 				, new Runnable(){public void run(){
 					try {
@@ -48,7 +56,7 @@ public class RootChoicePanel extends ChoicePanel {
 					}
 					}});
 		
-		c.gridx = 0;
+		c.gridx = 1;
 		c.gridy = 1;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
@@ -56,7 +64,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Meta Data", "icons/MetaData.png"
 				, new Runnable(){public void run(){
 					System.out.println("loaddata");}});
-		c.gridx = 1;
+		c.gridx = 2;
 		c.gridy = 1;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
