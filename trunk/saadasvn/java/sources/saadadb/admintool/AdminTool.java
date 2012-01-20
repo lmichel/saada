@@ -29,8 +29,10 @@ import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
 import saadadb.admintool.panels.*;
+import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.tasks.*;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.database.Repository;
@@ -58,6 +60,21 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel createCollPanel;
 	private TaskPanel dropCollPanel;
 	private TaskPanel emptyCollPanel;
+	private TaskPanel commentCollPanel;
+
+	private TaskPanel emptyCategoryPanel;
+
+	private TaskPanel dropClassPanel;
+	private TaskPanel emptyClassPanel;
+	private TaskPanel commentClassPanel;
+
+	private TaskPanel dataLoaderPanel;;
+	
+	private EditPanel miscMapperPanel;;
+	private EditPanel spectrumMapperPanel;;
+	private EditPanel tableMapperPanel;;
+	private EditPanel imageMapperPanel;;
+	private EditPanel flatfileMapperPanel;;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 
@@ -136,7 +153,9 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activeProcessPanel(new DummyTask(AdminTool.this));
+				activePanel(AdminComponent.MISC_MAPPER);
+
+				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
 		c.gridx = 0;
@@ -181,7 +200,6 @@ public class AdminTool extends BaseFrame {
 			}
 		}
 
-
 	}
 
 	public ProcessPanel getProcessPanel() {
@@ -216,6 +234,9 @@ public class AdminTool extends BaseFrame {
 	}
 
 	public void activePanel(String panelTitle)  {
+		/*
+		 * Choice panels
+		 */
 		if( panelTitle.equals(AdminComponent.ROOT_PANEL) ) {
 			if( choicePanelRoot == null ) {
 				choicePanelRoot = new RootChoicePanel(this, AdminComponent.ROOT_PANEL);
@@ -228,7 +249,7 @@ public class AdminTool extends BaseFrame {
 			activePanel = manageDataPanel;
 		} else 	if( panelTitle.equals(AdminComponent.LOAD_DATA) ) {
 			if( loadDataPanel == null ) {
-				loadDataPanel = new LoadDataPanel(this, AdminComponent.MANAGE_DATA);
+				loadDataPanel = new LoadDataPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = loadDataPanel;
 		} else 	if( panelTitle.equals(AdminComponent.VO_PUBLISH) ) {
@@ -241,31 +262,92 @@ public class AdminTool extends BaseFrame {
 				relationPanel = new RelationChoicePanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = relationPanel;
+			/*
+			 * Collection mqnagement tasks
+			 */
 		} else 	if( panelTitle.equals(AdminComponent.CREATE_COLLECTION) ) {
 			if( createCollPanel == null ) {
-				createCollPanel = new CreateCollPanel(this, AdminComponent.ROOT_PANEL);
+				createCollPanel = new CollCreatePanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = createCollPanel;
 		} else 	if( panelTitle.equals(AdminComponent.DROP_COLLECTION) ) {
 			if( dropCollPanel == null ) {
-				dropCollPanel = new DropCollPanel(this, AdminComponent.ROOT_PANEL);
+				dropCollPanel = new CollDropPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = dropCollPanel;
 		} else 	if( panelTitle.equals(AdminComponent.EMPTY_COLLECTION) ) {
 			if( emptyCollPanel == null ) {
-				emptyCollPanel = new EmptyCollPanel(this, AdminComponent.ROOT_PANEL);
+				emptyCollPanel = new CollEmptyPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = emptyCollPanel;
+		} else 	if( panelTitle.equals(AdminComponent.COMMENT_COLLECTION) ) {
+			if( commentCollPanel == null ) {
+				commentCollPanel = new CollCommentPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = commentCollPanel;
+			/*
+			 * Category management tasks
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.EMPTY_CATEGORY) ) {
+			if( emptyCategoryPanel == null ) {
+				emptyCategoryPanel = new CategoryEmptyPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = emptyCategoryPanel;
+			/*
+			 * Data loading task
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.DATA_LOADER) ) {
+			if( dataLoaderPanel == null ) {
+				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.LOAD_DATA);
+			}
+			activePanel = dataLoaderPanel;
+			/*
+			 * Data loading task
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.MISC_MAPPER) ) {
+			if( miscMapperPanel == null ) {
+				miscMapperPanel = new MappingKWPanel(this, AdminComponent.MISC_MAPPER, Category.MISC, AdminComponent.DATA_LOADER);
+			}
+			activePanel = miscMapperPanel;
+		} else 	if( panelTitle.equals(AdminComponent.SPECTRUM_MAPPER) ) {
+			if( spectrumMapperPanel == null ) {
+				spectrumMapperPanel = new MappingKWPanel(this, AdminComponent.SPECTRUM_MAPPER, Category.SPECTRUM, AdminComponent.DATA_LOADER);
+			}
+			activePanel = spectrumMapperPanel;
+		} else 	if( panelTitle.equals(AdminComponent.TABLE_MAPPER) ) {
+			if( tableMapperPanel == null ) {
+				tableMapperPanel = new MappingKWPanel(this, AdminComponent.TABLE_MAPPER, Category.TABLE, AdminComponent.DATA_LOADER);
+			}
+			activePanel = tableMapperPanel;
+		} else 	if( panelTitle.equals(AdminComponent.IMAGE_MAPPER) ) {
+			if( imageMapperPanel == null ) {
+				imageMapperPanel = new MappingKWPanel(this,AdminComponent.IMAGE_MAPPER , Category.IMAGE, AdminComponent.DATA_LOADER);
+			}
+			activePanel = imageMapperPanel;
+		} else 	if( panelTitle.equals(AdminComponent.FLATFILE_MAPPER) ) {
+			if( flatfileMapperPanel == null ) {
+				flatfileMapperPanel = new MappingKWPanel(this, AdminComponent.FLATFILE_MAPPER, Category.FLATFILE,  AdminComponent.DATA_LOADER);
+			}
+			activePanel = flatfileMapperPanel;
+
+			/*
+			 * Process pqnel used by all tasks
+			 */
 		} else 	if( panelTitle.equals(AdminComponent.PROCESS_PANEL) ) {
 			processPanel.setAncestor(activePanel.getTitle());
 			if( activePanel.getTreePathLabel() != null )
 				processPanel.setDataTreePathLabel(activePanel.getTreePathLabel().getText());
 			activePanel = processPanel;
 		}
-
 		else {
 			System.err.println("Panel " + panelTitle + " not referenced");
 		}
+		activePanel.active();
+		this.activePanel.setDataTreePath(this.dataTreePath);
+
+		/*
+		 * Make the active panel visible
+		 */
 		int dl = splitPane.getDividerLocation();
 		splitPane.setRightComponent(activePanel);
 		splitPane.setDividerLocation(dl);
@@ -292,6 +374,31 @@ public class AdminTool extends BaseFrame {
 		}
 	}
 
+	/**
+	 * Synchronize the category leaf of the collection nodes of the tree with real meta_data
+	 * @param collection
+	 * @param category
+	 */
+	public void refreshTree(String collection, String category) {
+		try {
+			metaDataTree.synchronizeCategoryNodes(collection, category);
+			if( category.equalsIgnoreCase("TABLE")) {
+				metaDataTree.synchronizeCategoryNodes(collection, "ENTRY");			
+			}
+		} catch (SaadaException e) {
+			AdminComponent.showFatalError(this, "An internal error occured (see console)");
+		}
+	}
+
+	/**
+	 * Synchronize all categories leaf of the collection nodes of the tree with real meta_data
+	 * @param collection
+	 */
+	public void refreshTree(String collection) {
+		for( int i=1 ; i<Category.NB_CAT ; i++) {
+			this.refreshTree(collection, Category.NAMES[i]);
+		}
+	}
 
 	@Override
 	public void setDataTreePath(DataTreePath dataTreePath) {

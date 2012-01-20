@@ -60,9 +60,25 @@ public class DataTreePath {
 		return (classe != null);
 	}
 
+	/**
+	 * @return
+	 */
+	public boolean isCategoryLevel() {
+		return (classe == null && category != null);
+	}
 
+	/**
+	 * @return
+	 */
+	public boolean isCollectionLevel() {
+		return (classe == null && category == null && collection != null);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
-		String retour=collection + "." + category ;
+		String retour=collection  ;
 		if( category != null) {
 			retour += "." + category;
 			if( classe != null) {
