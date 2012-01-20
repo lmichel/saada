@@ -148,7 +148,6 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 */			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Messenger.printMsg(Messenger.TRACE, "sousou");
 				System.out.println(tree.getPathForLocation(e.getX(), e.getY()));
 				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
 				if( path != null ) {
@@ -259,6 +258,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		String[] classes = Database.getCachemeta().getClassesOfCollection(coll_name, category);
 		DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(Category.explain(category));
 		model.insertNodeInto(categoryNode, collnode, collnode.getChildCount());
+		System.out.println("@@@@@@ addCategoryNode" );
 		/*
 		 * No class for flatfiles
 		 */
@@ -267,6 +267,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			 * Loop on classes
 			 */    	
 			for( int cl=0 ; cl<classes.length ; cl++ ) {
+				System.out.println("@@@@@@ addCategoryNode" + classes[cl]);
 				model.insertNodeInto(new DefaultMutableTreeNode(classes[cl]), categoryNode, categoryNode.getChildCount());
 			}
 		} 
@@ -442,7 +443,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					hasFocus);
 			/*
 			 * Leaf refers to the visible leaf not top the tree leaf.
-			 * they differ when a branch is folden. This test is
+			 * they differ when a branch is folder. This test is
 			 * not sufficiant to detect that we are on a class node.
 			 * We assume that class nodes are at 4th position in the tree path
 			 */

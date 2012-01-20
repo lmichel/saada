@@ -23,6 +23,7 @@ import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ComponentTitledBorder;
+import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.exceptions.SaadaException;
 
@@ -33,6 +34,7 @@ import saadadb.exceptions.SaadaException;
  *
  */
 public abstract class TaskPanel extends AdminPanel implements PropertyChangeListener{
+	protected CmdThread cmdThread ;
 	
 	public TaskPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame, title, icon, ancestor);
@@ -55,12 +57,50 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		tPanel.setPreferredSize(new Dimension(1000,48));
 		tPanel.setMaximumSize(new Dimension(1000,48));
 		tPanel.setBackground(LIGHTBACKGROUND);
-		for(Component c: buttons){
-			tPanel.add(c);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0; c.gridx = 0;
+		c.anchor = GridBagConstraints.PAGE_END;
+		c.weightx = 0;
+		for(Component comp: buttons){
+			tPanel.add(comp, c);
+			c.gridx++;
 		}
+		/*
+		 * Just to push all previous components to the left
+		 */
+		c.weightx = 1;
+		tPanel.add(new JLabel(" "), c);
 		this.add(tPanel);	
 	}
 	
+	
+	public CmdThread getCmdThread() {
+		return cmdThread;
+	}
+	
+	public abstract void initCmdThread();
+	
+	/**
+	 * Give input parameters to the cmd thread an hash map
+	 * @return
+	 * @throws SaadaException
+	 */
+	public boolean setCmdParams() throws SaadaException {
+		if( cmdThread != null ) {
+			Map<String, Object> map = this.getParamMap();
+			if( map == null ) {
+				AdminComponent.showFatalError(rootFrame, "NO parameters have been given to the command");
+				return false;				
+			}
+			cmdThread.setParams(map);
+			return true;
+		}
+		else {
+			AdminComponent.showFatalError(rootFrame, "There is no command attached to this task panel");
+			return false;
+		}
+	}
+
 	/**
 	 * Returns an hashmap with parameters required by the cmd thread
 	 * Map keys are supposed to be understood by the cmd thread. There is no
@@ -69,17 +109,11 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 	 */
 	protected abstract Map<String, Object> getParamMap();
 	
-	/**
-	 * Give input parameters to the cmd thread an hash map
-	 * @throws SaadaException
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#active()
 	 */
-	public void setCmdParams() throws SaadaException {
-		if( cmdThread != null ) {
-			cmdThread.setParams(this.getParamMap());
-		}
-		else {
-			AdminComponent.showFatalError(rootFrame, "There is no command attached to this task panel");
-		}
+	public void active() {
+		debugButton.active();
 	}
 	
 	/* (non-Javadoc)
