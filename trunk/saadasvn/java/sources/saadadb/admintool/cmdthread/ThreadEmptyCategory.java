@@ -12,31 +12,40 @@ import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
-public class ThreadDropCollection extends CmdThread{
-	protected String name;
+public class ThreadEmptyCategory extends ThreadDropCollection{
+	protected String collection;
+	protected String category;
 
-	public ThreadDropCollection(Frame frame) {
+	public ThreadEmptyCategory(Frame frame) {
 		super(frame);
-		this.name = null;
+		this.collection = null;
+		this.category = null;
 	}
 
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
-		name = (String) params.get("name");
+		collection = (String) params.get("collection");
+		category = (String) params.get("category");
 	}
+
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
 	protected boolean checkParams() {
-		return AdminComponent.showConfirmDialog(frame, "Do you really want to drop the content of the collection " + name);
+		if( collection == null ||category == null ) {
+			AdminComponent.showInputError(frame, "Both collection and category mustbe given");
+			return false;
+		}
+		else {
+			return AdminComponent.showConfirmDialog(frame
+					, "Do you really want to empty the content of the category " + collection + "." + category);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -46,15 +55,15 @@ public class ThreadDropCollection extends CmdThread{
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {
-			saada_process = new CollectionManager(name);
+			saada_process = new CollectionManager(collection);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).remove(new ArgsParser(new String[]{Messenger.getDebugParam()}));
+			((CollectionManager)saada_process).empty(new ArgsParser(new String[]{"-category=" + category, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Collection <" + name + "> removed");		
+					((AdminTool)(frame)).refreshTree(collection, category);
+					AdminComponent.showSuccess(frame, "Collection <" + collection + "." + category + "> emptied");		
 				}				
 			});
 		} catch (AbortException e) {
@@ -74,7 +83,7 @@ public class ThreadDropCollection extends CmdThread{
 	}
 
 	public String toString() {
-		return "Drop collection " + this.name;
+		return "Empty collection " + this.name;
 	}
 
 
