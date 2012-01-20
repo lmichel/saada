@@ -1,5 +1,6 @@
 package saadadb.admintool.cmdthread;
 
+
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
@@ -11,17 +12,14 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
-public class ThreadDropCollection extends CmdThread{
-	protected String name;
+public class ThreadCommentCollection extends ThreadCreateCollection {
 
-	public ThreadDropCollection(Frame frame) {
+	public ThreadCommentCollection(Frame frame) {
 		super(frame);
 		this.name = null;
 	}
@@ -29,15 +27,9 @@ public class ThreadDropCollection extends CmdThread{
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		name = (String) params.get("name");
+		comment = (String) params.get("comment");		
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.admin.threads.CmdThread#getParam()
-	 */
-	@Override
-	protected boolean checkParams() {
-		return AdminComponent.showConfirmDialog(frame, "Do you really want to drop the content of the collection " + name);
-	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#runCommand()
@@ -48,25 +40,21 @@ public class ThreadDropCollection extends CmdThread{
 		try {
 			saada_process = new CollectionManager(name);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).remove(new ArgsParser(new String[]{Messenger.getDebugParam()}));
+			((CollectionManager)saada_process).comment(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
+
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Collection <" + name + "> removed");		
+					AdminComponent.showSuccess(frame, "Desciption set for collection <" + name  + ">");		
 				}				
 			});
-		} catch (AbortException e) {
-			frame.setCursor(cursor_org);
-			AdminComponent.showFatalError(frame, e);
-		}catch (Exception e) {
-			SQLTable.abortTransaction();
-			frame.setCursor(cursor_org);
-			AdminComponent.showFatalError(frame, e);
-		}
-	}
+		} catch (SaadaException e) {
+			Messenger.trapFatalException(e);
+		}	
 
+	}
 
 	@Override
 	public String getAntTarget() {
@@ -74,9 +62,7 @@ public class ThreadDropCollection extends CmdThread{
 	}
 
 	public String toString() {
-		return "Drop collection " + this.name;
+		return "Comment collection " + this.name;
 	}
-
-
 
 }

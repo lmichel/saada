@@ -2,7 +2,6 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Cursor;
 import java.awt.Frame;
-import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
@@ -12,11 +11,8 @@ import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
 public class ThreadEmptyCollection extends ThreadDropCollection{
 
@@ -42,12 +38,12 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 		try {
 			saada_process = new CollectionManager(name);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).empty(null);
+			((CollectionManager)saada_process).empty(new ArgsParser(new String[]{Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					((AdminTool)(frame)).refreshTree();
+					((AdminTool)(frame)).refreshTree(name);
 					AdminComponent.showSuccess(frame, "Collection <" + name + "> emptied");		
 				}				
 			});

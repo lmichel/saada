@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -20,28 +21,22 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 public class ThreadCreateCollection extends CmdThread {
-	private String name;
-	private boolean just_comment = false;
-	private String comment;
+	protected String name;
+	protected String comment;
 
 	public ThreadCreateCollection(Frame frame) {
 		super(frame);
 		this.name = null;
 	}
-	
-	public ThreadCreateCollection(Frame frame, Object[] tree_path_components) {
-		super(frame);
-		this.name = tree_path_components[1].toString();
-		just_comment = true;
-	}
+
 
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
-    	name = (String) params.get("name");
-    	comment = (String) params.get("comment");		
+		name = (String) params.get("name");
+		comment = (String) params.get("comment");		
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
@@ -57,60 +52,34 @@ public class ThreadCreateCollection extends CmdThread {
 		}	
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#runCommand()
 	 */
 	@Override
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
-		if( just_comment  ) {
-			try {
-			frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		try {
 			saada_process = new CollectionManager(name);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).create(new ArgsParser(new String[]{"-comment=" +comment}));
+			((CollectionManager)saada_process).create(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-
-			frame.setCursor(cursor_org);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Collection <" + name  + "> created");		
+					AdminComponent.showSuccess(frame, "Collection <" + name + "> created");		
+					((AdminTool)(frame)).setDataTreePath(new DataTreePath(name, null, null));
 				}				
 			});
-			} catch (FatalException e) {
-				frame.setCursor(cursor_org);
-				Messenger.trapFatalException(e);
-			}	
-		}
-		else {
-			try {
-				frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-				saada_process = new CollectionManager(name);
-				SQLTable.beginTransaction();
-				((CollectionManager)saada_process).create(new ArgsParser(new String[]{"-comment=" +comment}));
-				SQLTable.commitTransaction();
-				Database.getCachemeta().reload(true);
-				frame.setCursor(cursor_org);
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						((AdminTool)(frame)).refreshTree();
-						AdminComponent.showSuccess(frame, "Collection <" + name + "> created");		
-					}				
-				});
-			} catch (AbortException e) {
-				frame.setCursor(cursor_org);
-				AdminComponent.showFatalError(frame, e);
-			}catch (Exception e) {
-				SQLTable.abortTransaction();
-				frame.setCursor(cursor_org);
-				AdminComponent.showFatalError(frame, e);
-			}
+		} catch (AbortException e) {
+			Messenger.trapFatalException(e);
+		}catch (Exception e) {
+			frame.setCursor(cursor_org);
+			AdminComponent.showFatalError(frame, e);
 		}
 	}
-	
+
 	@Override
 	public String getAntTarget() {
 		return "ANT target for " + this.name;
