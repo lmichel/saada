@@ -39,9 +39,20 @@ public abstract class AdminComponent extends JPanel {
 	public static final String EMPTY_COLLECTION    = "Empty Collection";
 	public static final String COMMENT_COLLECTION  = "Comment Collection";
 	
+	public static final String EMPTY_CATEGORY    = "Empty Category";
+	
+	public static final String DATA_LOADER = "Data Loader";
+	
+	public static final String MISC_MAPPER     = "KW Mapper for MISC";
+	public static final String TABLE_MAPPER    = "KW Mapper for Tables";
+	public static final String SPECTRUM_MAPPER = "KW Mapper for Spectra";
+	public static final String IMAGE_MAPPER    = "KW Mapper for Images";
+	public static final String FLATFILE_MAPPER = "KW Mapper for Flatfiles";
+	
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;
 	protected String currentTask;
+	
 	
 	/**
 	 * @param rootFrame
@@ -178,5 +189,11 @@ public abstract class AdminComponent extends JPanel {
 	public  void setCurrentTask(String currentTask) {
 		this.currentTask = currentTask;
 	}
+
+	public AdminTool getRootFrame() {
+		return rootFrame;
+	}
+	
+	
 
 }
