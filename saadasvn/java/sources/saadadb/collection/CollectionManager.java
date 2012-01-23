@@ -178,7 +178,7 @@ public class CollectionManager extends EntityManager {
 		}
 		else {
 			try {
-				SQLTable.addQueryToTransaction("UPDATE saada_this.name SET description = '" + comment + "' WHERE name = '" + this.name + "'");
+				SQLTable.addQueryToTransaction("UPDATE saada_collection SET description = '" + comment.replaceAll("'", " ") + "' WHERE name = '" + this.name + "'");
 			} catch (AbortException e) {
 				e.printStackTrace();
 				FatalException.throwNewException(SaadaException.DB_ERROR, e);

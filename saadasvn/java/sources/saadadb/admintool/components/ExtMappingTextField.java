@@ -66,12 +66,12 @@ public class ExtMappingTextField extends MappingTextField {
 //			SaadaDBAdmin.showFatalError(this.getParent(), "Primary header cannot be selected as extension to be load");
 //			return false;						
 //		}
-		else if( (this.form.category == Category.TABLE /*|| this.form.spc_btn.isSelected() */) 
+		else if( (this.form.getCategory() == Category.TABLE /*|| this.form.spc_btn.isSelected() */) 
 				&& !ext_comp[2].endsWith("TABLE)") ){
 			SaadaDBAdmin.showFatalError(this.getParent(), "You must select a (BIN)TABLE extension");
 			return false;	
 		}
-		else if( this.form.category == Category.IMAGE && !ext_comp[2].endsWith("IMAGE)") ){
+		else if( this.form.getCategory() == Category.IMAGE && !ext_comp[2].endsWith("IMAGE)") ){
 			SaadaDBAdmin.showFatalError(this.getParent(), "You must select a IMAGE extension");
 			return false;	
 		}

@@ -2,6 +2,7 @@ package saadadb.exceptions;
 
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
+import saadadb.util.Messenger;
 
 /**
  * @author michel
@@ -39,7 +40,9 @@ public class AbortException extends FatalException {
 	 * @see saadadb.exceptions.IgnoreException#throwNewException(java.lang.String, java.lang.Exception)
 	 */
 	public static void throwNewException(String msg, Exception e) throws AbortException {
+		Messenger.dbAccess();
 		AbortException.abort();
+		Messenger.procAccess();
 		throw new AbortException(msg, SaadaException.getExceptionMessage(e));
 	}
 	

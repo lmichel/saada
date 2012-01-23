@@ -63,7 +63,7 @@ class NewWebServer extends NewSaadaDB {
 		FileWriter fw = new FileWriter(rootDir  + separ + "web" + separ + "dbname.txt");
 		fw.write("# This file can be put at the webapp root to indicate the saadadb name of the current application\n");
 		fw.write("saadadbname=" + nameDB + "\n");
-		fw.write("#urlroot=" + this.connector.getUrl_root() + "\n");
+		fw.write("urlroot=" + this.connector.getUrl_root() + "\n");
 		fw.write("#saadadbroot=" + rootDir + "\n");
 		fw.write("#debug=off	\n");
 		fw.close();
