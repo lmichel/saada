@@ -3,6 +3,7 @@
  */
 package saadadb.admintool;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -10,6 +11,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
@@ -128,7 +130,7 @@ public class AdminTool extends BaseFrame {
 		 */
 		JPanel leftPanel = new JPanel();
 		leftPanel.setLayout(new GridBagLayout());
-		leftPanel.setPreferredSize(new Dimension(500,  height));
+		//leftPanel.setPreferredSize(new Dimension(500,  height));
 		metaDataTree = new MetaDataPanel(this, 250, 100);;
 		c.gridx = 0;
 		c.gridy = 0;	
@@ -169,15 +171,16 @@ public class AdminTool extends BaseFrame {
 		 */
 		choicePanelRoot = new RootChoicePanel(this, "Root Panel");
 		activePanel = choicePanelRoot;
-		activePanel.setPreferredSize(new Dimension(250,  height));
+		activePanel.setPreferredSize(new Dimension(500,  height));
 		c.gridx = 0;
 		c.gridy = 0;		
-		//this.add(onglets, c);
+
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				leftPanel, activePanel);	
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerLocation(250);
-		this.add(splitPane, c);
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(splitPane, BorderLayout.CENTER);
 
 		/*
 		 * and show

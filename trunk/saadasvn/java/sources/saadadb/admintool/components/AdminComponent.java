@@ -7,6 +7,7 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.utils.DataTreePath;
@@ -24,8 +25,11 @@ public abstract class AdminComponent extends JPanel {
 	public static final Color LIGHTBACKGROUND = new Color(245, 245, 245);
 	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,14);
 	public static final Font italicFont = new Font("Helvetica",Font.ITALIC,14);
+	public static final Font helpFont = new Font("Helvetica",Font.ITALIC,10);
 	public static final Font titleFont = new Font("Helvetica",Font.BOLD,16);
 	public static final Font subtTitleFont = new Font("Helvetica",Font.ITALIC,16);
+
+	public static int STRING_FIELD_NAME = 30;
 
 	public static final String ROOT_PANEL  = "Root Panel";
 	public static final String MANAGE_DATA = "Manage Data";
@@ -144,6 +148,20 @@ public abstract class AdminComponent extends JPanel {
 		retour.setFont(plainFont);		
 		return retour;
 	}
+
+	/**
+	 * @param txt
+	 * @return
+	 */
+	public final static Component getHelpLabel(String txt) {
+		JTextArea retour = new  JTextArea(txt);
+		//retour.setEditable(false);	
+		retour.setFont(helpFont);		
+		retour.setBackground(LIGHTBACKGROUND);
+		retour.setForeground(Color.GRAY);
+		return retour;
+	}
+
 	/**
 	 * @param txt
 	 * @return

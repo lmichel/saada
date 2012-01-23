@@ -20,7 +20,6 @@ import saadadb.prdconfiguration.ConfigurationTable;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
-import saadadb.util.SaadaConstant;
 
 /**
  * Check the command line parameters
@@ -800,13 +799,19 @@ public class ArgsParser implements Serializable{
 		Messenger.debug_mode = false;		
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-debug")) {
-				Messenger.printMsg(Messenger.TRACE, "Debug mode on");
-				Messenger.debug_mode = true;
+				String param = getArgsValue(args[i]);
+				if( "off".equalsIgnoreCase(param) || "false".equalsIgnoreCase(param)
+						|| "no".equalsIgnoreCase(param) ) {
+					Messenger.switchDebugOff();
+				}
+				else {
+					Messenger.switchDebugOn();
+				}
 				return;
 			}
 		}
 	}
-	
+
 	/**
 	 * Switch on debug mode is the arg debug is found
 	 */
@@ -914,7 +919,7 @@ public class ArgsParser implements Serializable{
 		}
 		return null;		
 	}
-	
+
 	/**
 	 * Starting collection: collname_category
 	 * @return
@@ -939,7 +944,7 @@ public class ArgsParser implements Serializable{
 		}
 		return null;		
 	}
-	
+
 	/**
 	 * returns a list of qualifier names
 	 * @return
@@ -1093,7 +1098,8 @@ public class ArgsParser implements Serializable{
 			al.add(args[i]);
 		}
 		al.add(Database.getDbname());
-		return al.toArray(new String[0]);
+		args = al.toArray(new String[0]);
+		return args;
 	}
 
 	/**

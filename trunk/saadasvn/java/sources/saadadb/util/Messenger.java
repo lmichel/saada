@@ -24,6 +24,7 @@ import saadadb.admin.dialogs.IgnoreExceptionDialog;
 import saadadb.admin.dialogs.QueryExceptionDialog;
 import saadadb.admin.dialogs.StartDialog;
 import saadadb.admintool.AdminTool;
+import saadadb.command.ArgsParser;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
@@ -117,7 +118,25 @@ public class Messenger implements Serializable{
 		Messenger.output = System.out;
 	}
 
-
+	public static void switchDebugOn() {
+		Messenger.printMsg(Messenger.TRACE, "Debug mode on");
+		Messenger.debug_mode = true;
+	}
+	
+	public static void switchDebugOff() {
+		Messenger.printMsg(Messenger.TRACE, "Debug mode off");
+		Messenger.debug_mode = false;
+	}
+	
+	/**
+	 * Return the debug mode as an Messenger {@link ArgsParser} parameter
+	 * Used to transmit he debug mode to task spawn by the {@link AdminTool}
+	 * @return
+	 */
+	public static String getDebugParam() {
+		return  "-debug=" + Messenger.debug_mode;
+	}
+	
 	/**
 	 * @param gui_output The gui_output to set.
 	 */
