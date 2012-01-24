@@ -2,8 +2,6 @@ package saadadb.admintool.panels.editors;
 
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -13,12 +11,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -28,20 +27,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
-
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadEmptyCategory;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.AppendMappingTextField;
+import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.ExtMappingTextField;
+import saadadb.admintool.components.MapperPrioritySelector;
 import saadadb.admintool.components.ReplaceMappingTextField;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.dialogs.DialogConfName;
+import saadadb.admintool.dialogs.DialogConfigFileChooser;
+import saadadb.admintool.dialogs.DialogFileChooser;
 import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.api.SaadaDB;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -53,14 +53,18 @@ import saadadb.util.RegExp;
 
 
 
-public class MappingKWPanel extends EditPanel implements ActionListener {
+/**
+ * TODO : specialize this class by inheritance
+ * @author laurentmichel
+ *
+ */
+public class MappingKWPanel extends EditPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	protected JLabel conf_name ;
 	private int category;
-
+	private String confName = "Default";
 
 	private AppendMappingTextField name_compo;
 	protected AppendMappingTextField e_name_compo;
@@ -141,7 +145,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 
 			GridBagConstraints ccs = new GridBagConstraints();
 
-			ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0.33;ccs.anchor = GridBagConstraints.LINE_START;
+			ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0.33;ccs.anchor = GridBagConstraints.CENTER;
 			JLabel ds = AdminComponent.getPlainLabel("<HTML><A HREF=>Form Reset</A>");
 			ds.addMouseListener(new MouseAdapter(){
 				public void mouseReleased(MouseEvent e) {
@@ -162,7 +166,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 						for( int i=0 ; i<args.length ; i++ ) {
 							summary += args[i] + "\n";
 						}
-						//SaadaDBAdmin.showCopiableInfo(frame, summary,"Loader Parameters");
+						AdminComponent.showCopiableInfo(rootFrame, summary,"Loader Parameters");
 					}
 				}
 			});
@@ -173,23 +177,23 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			ds.setToolTipText("Show dataloader parameters matching the current configuration.");
 			ds.addMouseListener(new MouseAdapter(){
 				public void mouseReleased(MouseEvent e) {
-					//					DialogFileChooser fcd = new DialogFileChooser();
-					////					String filename  = fcd.open(frame.frame, true);
-					////					if( filename.length() == 0 ) {
-					///						return ;
-					//					}
-					////.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-					//					JFrame window = new JFrame(new File(filename).getName());
-					//					VoDataProductTree vot;
-					//					vot = new VoDataProductTree(window
-					//							, "ext/keywords (drag & drop to the loader configuration panel)"
-					//							, filename);
-					//					frame.setCursor(Cursor.getDefaultCursor());
-					//					vot.buildTree(new Dimension(300, 500));
-					//					vot.setPreferredSize(new Dimension(300, 500));
-					//					window.add(vot);
-					//					window.pack();
-					//					window.setVisible(true);				
+					DialogFileChooser fcd = new DialogFileChooser();
+					String filename  = fcd.open(rootFrame, true);
+					if( filename.length() == 0 ) {
+						return ;
+					}
+					rootFrame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+					JFrame window = new JFrame(new File(filename).getName());
+					VoDataProductTree vot;
+					vot = new VoDataProductTree(window
+							, "ext/keywords (drag & drop to the loader configuration panel)"
+							, filename);
+					rootFrame.setCursor(Cursor.getDefaultCursor());
+					vot.buildTree(new Dimension(300, 500));
+					vot.setPreferredSize(new Dimension(300, 500));
+					window.add(vot);
+					window.pack();
+					window.setVisible(true);				
 				}
 			});
 			category_panel.add(ds, ccs);
@@ -209,20 +213,27 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addExtensionPanel() {
 		if( extension_panel == null ) {
-			extension_panel = new JPanel(new GridBagLayout());					
+			CollapsiblePanel extension_collpanel = new CollapsiblePanel("Extension to Load");	
+			extension_panel = extension_collpanel.getContentPane();
 			extension_panel.setBackground(LIGHTBACKGROUND);
+			extension_panel.setLayout(new GridBagLayout());
 			GridBagConstraints ccs = new GridBagConstraints();
 
-			extension_panel.setBorder(BorderFactory.createTitledBorder("Extension to Load"));
-			ccs.gridx = 0; ccs.gridy = 0; 
-			extension_panel.add(AdminComponent.getPlainLabel("Extension name or number (prefixed with a #) "), ccs);
+			ccs.gridx = 0; ccs.gridy = 0; ccs.anchor = GridBagConstraints.LINE_START; ccs.weightx = 0;
 			extension_field = new ExtMappingTextField(this, 1, false, null);
 			extension_field.setColumns(15);		
-
-			ccs.gridx = 1; ccs.gridy = 0;ccs.fill = GridBagConstraints.HORIZONTAL;
 			extension_panel.add(extension_field, ccs);
+
+			ccs.gridx++; ccs.weightx = 1.0;
+			extension_panel.add(AdminComponent.getHelpLabel(
+					new String[]{"Drop an extension from the Data Sample window" 
+							, "or put a number prefixed with a #"
+							, "Keywords of the first extension are loaded by default"})
+							, ccs);
+
+
 			globalGridConstraint.weightx = 0;
-			this.add(extension_panel, globalGridConstraint);
+			editorPanel.add(extension_collpanel, globalGridConstraint);
 			/*
 			 * changing the extension may induce a form reset
 			 */
@@ -242,8 +253,9 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addClassPanel() {
 		if( class_panel == null ) {
-			System.out.println("COUCUO");
-			class_panel = new JPanel(new GridBagLayout());					
+			CollapsiblePanel class_collpanel = new CollapsiblePanel("Class Mapping");	
+			class_panel = class_collpanel.getContentPane();
+			class_panel.setLayout(new GridBagLayout());					
 			class_panel.setBackground(LIGHTBACKGROUND);;					
 			GridBagConstraints ccs = new GridBagConstraints();
 
@@ -255,15 +267,14 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			fusion_btn.setToolTipText("One class (with a default name) created for each group of identical product files");
 			class_field    = new JTextField();
 
-			class_panel.setBorder(BorderFactory.createTitledBorder("Class Mapping"));
 			ccs.gridx = 0; ccs.gridy = 0;
 			ccs.weightx = 0.0;                       //reset to default
 			ccs.anchor = GridBagConstraints.LINE_END;
 			class_panel.add(AdminComponent.getPlainLabel("Mapping Mode "), ccs);
-			
+
 			ccs.anchor = GridBagConstraints.LINE_START;
 			ccs.gridx = 1; ccs.gridy = 0; ccs.gridwidth = 2;
-			new PrioritySelector(new JRadioButton[] {classifier_btn, fusion_btn, noclass_btn}, noclass_btn, new ButtonGroup(), new JComponent[] {class_field}, class_panel, ccs);
+			new MapperPrioritySelector(new JRadioButton[] {classifier_btn, fusion_btn, noclass_btn}, noclass_btn, new ButtonGroup(), new JComponent[] {class_field}, class_panel, ccs);
 
 			ccs.gridx = 0; ccs.gridy = 1;ccs.anchor = GridBagConstraints.LINE_END;ccs.gridwidth = 1;
 			class_panel.add(AdminComponent.getPlainLabel("Class Name"), ccs);
@@ -281,8 +292,13 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 
 			ccs.gridx = 2; ccs.gridy = 1; 
 			ccs.weightx = 1.0;                       
-			class_panel.add(getHelpLabel("The class name must only contain letters, numbers or undescores\n. It can not starts with a number.\nIt must be unique in the DB."), ccs);
-			editorPanel.add(class_panel, globalGridConstraint);
+			class_panel.add(getHelpLabel(
+					new String[] {"The class name must only contain letters, numbers or undescores."
+							, "It can not starts with a number"
+							, "It must be unique in the DB."})
+							, ccs);
+
+			editorPanel.add(class_collpanel, globalGridConstraint);
 		}
 
 	}
@@ -291,9 +307,11 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addNamePanel() {
 		if( name_panel == null ) {
-			name_panel = new JPanel();	
+			CollapsiblePanel name_collpanel = new CollapsiblePanel("Instance Name");	
+			name_panel = name_collpanel.getContentPane();
 			name_panel.setLayout(new GridBagLayout());
 			name_panel.setBackground(LIGHTBACKGROUND);
+			
 			name_compo = new AppendMappingTextField(this, 2, false, null);
 			name_compo.setColumns(STRING_FIELD_NAME);
 			GridBagConstraints cae = new GridBagConstraints();
@@ -304,8 +322,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			cae.weightx = 1.0;                       //reset to default
 			cae.gridx++;
 			name_panel.add(getHelpLabel("List of keywords used to build the product name\nKWs must be comme separated.\nConstant string must be quoted"), cae);
-			name_panel.setBorder(BorderFactory.createTitledBorder("Instance Name"));
-			editorPanel.add(name_panel, globalGridConstraint);
+			editorPanel.add(name_collpanel, globalGridConstraint);
 		}
 	}	
 
@@ -314,7 +331,8 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addIgnoredPanel() {
 		if( ignored_panel == null ) {
-			ignored_panel = new JPanel();	
+			CollapsiblePanel ignored_collpanel = new CollapsiblePanel("Ignored Keywords");	
+			ignored_panel = ignored_collpanel.getContentPane();
 			ignored_panel.setLayout(new GridBagLayout());
 			ignored_panel.setBackground(LIGHTBACKGROUND);
 			ignored_compo = new AppendMappingTextField(this, 2, false, null);
@@ -327,8 +345,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			cae.weightx = 1.0;                       //reset to default
 			cae.gridx++;
 			ignored_panel.add(getHelpLabel("List of ignored Keywords\nKWs must be comme separated."), cae);
-			ignored_panel.setBorder(BorderFactory.createTitledBorder("Ignored Keywords"));
-			editorPanel.add(ignored_panel, globalGridConstraint);
+			editorPanel.add(ignored_collpanel, globalGridConstraint);
 		}
 	}	
 	/**
@@ -336,9 +353,9 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	void addAttExtendPanel() {
 		if( extatt_panel == null ) {
-			extatt_panel = new JPanel();	
+			CollapsiblePanel extatt_collpanel = new CollapsiblePanel("Extended Collection Attributes");	
+			extatt_panel = extatt_collpanel.getContentPane();
 			extatt_panel.setBackground(LIGHTBACKGROUND);
-			extatt_panel.setBorder(BorderFactory.createTitledBorder("Extended Collection Attributes"));
 			extatt_panel.setLayout(new GridBagLayout());
 			switch( this.category ) {
 			case Category.MISC: ext_att = Database.getCachemeta().getAtt_extend_misc_names(); break;
@@ -354,45 +371,40 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			int numLabels = ext_att.length;
 			extatt_fields = new ReplaceMappingTextField[numLabels];
 			if( numLabels > 0 ) {
-			for (int i = 0; i < numLabels; i++) {
-				cae.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-				cae.fill = GridBagConstraints.NONE;      //reset to default
-				cae.weightx = 0.0;                       //reset to default
-				extatt_panel.add(AdminComponent.getPlainLabel(ext_att[i]), cae);
-				extatt_fields[i] = new ReplaceMappingTextField(this, 2, false, null);
-				extatt_fields[i].setColumns(10);
-				cae.gridwidth = GridBagConstraints.REMAINDER;     //end row
-				cae.fill = GridBagConstraints.HORIZONTAL;
-				cae.weightx = 1.0;
-				extatt_panel.add(extatt_fields[i], cae);
-			}
+				for (int i = 0; i < numLabels; i++) {
+					cae.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+					cae.fill = GridBagConstraints.NONE;      //reset to default
+					cae.weightx = 0.0;                       //reset to default
+					extatt_panel.add(AdminComponent.getPlainLabel(ext_att[i]), cae);
+					extatt_fields[i] = new ReplaceMappingTextField(this, 2, false, null);
+					extatt_fields[i].setColumns(10);
+					cae.gridwidth = GridBagConstraints.REMAINDER;     //end row
+					cae.fill = GridBagConstraints.HORIZONTAL;
+					cae.weightx = 1.0;
+					extatt_panel.add(extatt_fields[i], cae);
+				}
 			}
 			else {
 				cae.anchor = GridBagConstraints.WEST;
-//				cae.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-//				cae.fill = GridBagConstraints.NONE;      //reset to default
+				//				cae.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
+				//				cae.fill = GridBagConstraints.NONE;      //reset to default
 				cae.weightx = 1.0;                       //reset to default
 				extatt_panel.add(AdminComponent.getHelpLabel("No extended attribute.\nExtended attributes must be set at DB creation time.\nThey can no longer be added after that."), cae);
 			}
 
-			editorPanel.add(extatt_panel, globalGridConstraint);		
+			editorPanel.add(extatt_collpanel, globalGridConstraint);		
 		}
 	}
-	private Component JEditorPane(String string) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
 	 * 
 	 */
 	private void addCoordSysPanel() {
 		if( coordsys_panel == null ) {
-			coordsys_panel = new JPanel();
+			CollapsiblePanel coordsys_collpanel = new CollapsiblePanel("Coordinate System");	
+			coordsys_panel = coordsys_collpanel.getContentPane();
 			coordsys_panel.setBackground(LIGHTBACKGROUND);	
 			coordsys_panel.setLayout(new GridBagLayout());
 			GridBagConstraints ccs = new GridBagConstraints();
-			coordsys_panel.setBorder(BorderFactory.createTitledBorder("Coordinate System"));
 
 			coosys_only_btn  = new JRadioButton("only");
 			coosys_first_btn = new JRadioButton("first");
@@ -402,22 +414,29 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			coosys_field = new AppendMappingTextField(this, 2, false, bg);
 			coosys_combo = new JComboBox(new String[]{"ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
 
-			ccs.gridx = 0; ccs.gridy = 0;
-			coordsys_panel.add(AdminComponent.getPlainLabel("Priority of the mapping Vs an automatic detection"), ccs);
-			ccs.gridx = 1; ccs.gridy = 0;
-			new PrioritySelector(new JRadioButton[] {coosys_only_btn, coosys_first_btn, coosys_last_btn, coosys_no_btn}, coosys_no_btn, bg
+			ccs.gridx = 0; ccs.gridy = 0; ccs.weightx = 0;ccs.gridwidth = 2;
+			new MapperPrioritySelector(new JRadioButton[] {coosys_only_btn, coosys_first_btn, coosys_last_btn, coosys_no_btn}, coosys_no_btn, bg
 					, new JComponent[]{coosys_field, coosys_combo}
-			, coordsys_panel, ccs);
-			ccs.gridx = 0; ccs.gridy = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			coordsys_panel.add(AdminComponent.getPlainLabel("Select a Supported Coordinate Systems"), ccs);
+					, coordsys_panel, ccs);
+			
+			ccs.gridx = 2; ccs.gridy = 0;ccs.weightx = 1;ccs.anchor = GridBagConstraints.LINE_START; ccs.gridwidth = 1;
+			coordsys_panel.add(AdminComponent.getHelpLabel("Mapping priority Vs automatic detection"), ccs);
 
-			coosys_combo.addActionListener(this);
-			ccs.gridx = 1; ccs.gridy = 1; ccs.gridwidth = 3;ccs.anchor = GridBagConstraints.LINE_START;
+			ccs.gridx = 0; ccs.gridy = 1; ccs.weightx = 0;
+			coosys_combo.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if( e.getSource() == coosys_combo) {
+						coosys_field.setText("'" + coosys_combo.getSelectedItem() + "'");
+						if( MappingKWPanel.this.coosys_no_btn.isSelected() ) {
+							MappingKWPanel.this.coosys_first_btn.setSelected(true) ;
+						}
+					}
+				}
+
+			});
 			coordsys_panel.add(coosys_combo, ccs);
-
-			ccs.gridx = 0; ccs.gridy = 2; ccs.gridwidth = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			coordsys_panel.add(AdminComponent.getPlainLabel("Give quoted constant vakues or keywords"), ccs);
-			ccs.gridx = 1; ccs.gridy = 2; ccs.gridwidth = 3; ccs.fill = GridBagConstraints.HORIZONTAL;
+			
+			ccs.gridx = 1; ccs.gridy = 1; ccs.weightx = 0;ccs.fill = GridBagConstraints.HORIZONTAL;
 			coosys_field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if( MappingKWPanel.this.coosys_no_btn.isSelected() ) {
@@ -426,8 +445,17 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				}	
 			});
 			coordsys_panel.add(coosys_field, ccs);
-
-			this.add(coordsys_panel, globalGridConstraint);
+			
+			ccs.gridx = 2; ccs.gridy = 1; ccs.weightx = 1;
+			coordsys_panel.add(AdminComponent.getHelpLabel(
+					new String[] {
+							"Select a Coordinate Systems"
+							, "or give quoted constant values"
+							, "or a keyword dropped from the Data Sample window "})
+					, ccs);
+		
+		
+			editorPanel.add(coordsys_collpanel, globalGridConstraint);
 		}
 	}
 
@@ -436,11 +464,11 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addPositionPanel() {
 		if( coord_panel == null ) {
-			coord_panel = new JPanel();	
+			CollapsiblePanel coord_collpanel = new CollapsiblePanel("Error on Position");	
+			coord_panel = coord_collpanel.getContentPane();
 			coord_panel.setBackground(LIGHTBACKGROUND);
 			coord_panel.setLayout(new GridBagLayout());
 			GridBagConstraints ccs = new GridBagConstraints();
-			coord_panel.setBorder(BorderFactory.createTitledBorder("Position"));
 			ButtonGroup bg = new ButtonGroup();
 			coo_only_btn = new JRadioButton("only");
 			coo_first_btn = new JRadioButton("first");
@@ -448,19 +476,15 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			coo_no_btn = new JRadioButton("no mapping");
 			coo_field = new AppendMappingTextField(this, 2, false, bg);
 
-			ccs.gridx = 0; ccs.gridy = 0;
-			coord_panel.add(AdminComponent.getPlainLabel("Priority of the mapping Vs an automatic detection"), ccs);
-			ccs.gridx = 1; ccs.gridy = 0;
-			new PrioritySelector(new JRadioButton[] {coo_only_btn, coo_first_btn, coo_last_btn, coo_no_btn}, coo_no_btn, bg
+			ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0;
+			new MapperPrioritySelector(new JRadioButton[] {coo_only_btn, coo_first_btn, coo_last_btn, coo_no_btn}, coo_no_btn, bg
 					, new JComponent[]{coo_field}
-			, coord_panel, ccs);
-			ccs.gridx = 0; ccs.gridy = 1; ccs.gridwidth = 4; ccs.anchor = GridBagConstraints.LINE_START;
-			coord_panel.add(AdminComponent.getPlainLabel("Give an object name, a numerical position or keywords"), ccs);
+			        , coord_panel, ccs);
 
-
-			ccs.gridx = 0; ccs.gridy = 2; ccs.gridwidth = 1; ccs.anchor = GridBagConstraints.LINE_START;
-			coord_panel.add(AdminComponent.getPlainLabel("with the following format RA[,DEC]"), ccs);
-			ccs.gridx = 1; ccs.gridy = 2; ccs.gridwidth = 3; ccs.fill = GridBagConstraints.HORIZONTAL;
+			ccs.gridx = 1; ccs.gridy = 0;ccs.weightx = 1;ccs.anchor = GridBagConstraints.LINE_START;
+			coord_panel.add(AdminComponent.getHelpLabel("Mapping priority Vs automatic detection"), ccs);
+			
+			ccs.gridx = 0; ccs.gridy = 1;ccs.weightx = 0;ccs.fill = GridBagConstraints.HORIZONTAL;
 			coo_field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if( MappingKWPanel.this.coo_no_btn.isSelected() ) {
@@ -470,8 +494,16 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			});
 			coord_panel.add(coo_field, ccs);
 
+			ccs.gridx = 1; ccs.gridy = 1;ccs.weightx = 1;
+			coord_panel.add(AdminComponent.getHelpLabel(
+					new String[] {
+							"Give a quoted object name or position or keywords"
+					  	  , "with the following format RA[,DEC]"
+					  	  , "Keywords can (must) be dropped from the Data Sample window"
+					})
+					, ccs);
 
-			this.add(coord_panel, globalGridConstraint);
+			editorPanel.add(coord_collpanel, globalGridConstraint);
 		}
 	}
 
@@ -480,11 +512,11 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addErrorPositionPanel() {
 		if( coorderror_panel == null ) {
-			coorderror_panel = new JPanel();	
+			CollapsiblePanel coorderror_collpanel = new CollapsiblePanel("Error on Position");	
+			coorderror_panel = coorderror_collpanel.getContentPane();
 			coorderror_panel.setBackground(LIGHTBACKGROUND);
 			coorderror_panel.setLayout(new GridBagLayout());
 			GridBagConstraints ccs = new GridBagConstraints();
-			coorderror_panel.setBorder(BorderFactory.createTitledBorder("Position Errors"));
 			ButtonGroup bg = new ButtonGroup();
 			errcoo_only_btn = new JRadioButton("only");
 			errcoo_first_btn = new JRadioButton("first");
@@ -492,21 +524,17 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			errcoo_no_btn = new JRadioButton("no mapping");
 			errcoo_unit = new JComboBox(new String[]{"deg", "arcsec", "arcmin", "mas"});
 			errcoo_field = new AppendMappingTextField(this, 2, false, bg);
+			errcoo_field.setColumns(15);
 
-			coorderror_panel.add(AdminComponent.getPlainLabel("Priority of the mapping Vs an automatic detection"), ccs);
-			ccs.gridx = 1; ccs.gridy = 0;
-			new PrioritySelector(new JRadioButton[] {errcoo_only_btn, errcoo_first_btn, errcoo_last_btn, errcoo_no_btn}, errcoo_no_btn, bg
+			ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0;ccs.anchor = GridBagConstraints.LINE_START;ccs.gridwidth = 2;
+			new MapperPrioritySelector(new JRadioButton[] {errcoo_only_btn, errcoo_first_btn, errcoo_last_btn, errcoo_no_btn}, errcoo_no_btn, bg
 					, new JComponent[]{errcoo_unit, errcoo_field}
-			, coorderror_panel, ccs);
-			ccs.gridx = 0; ccs.gridy = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			coorderror_panel.add(AdminComponent.getPlainLabel("Select Error Unit (degree taken by default)"), ccs);
+			    	, coorderror_panel, ccs);
 
-			ccs.gridx = 1; ccs.gridy = 1; ccs.gridwidth = 3;ccs.anchor = GridBagConstraints.LINE_START;
-			coorderror_panel.add(errcoo_unit, ccs);
-
-			ccs.gridx = 0; ccs.gridy = 2; ccs.gridwidth = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			coorderror_panel.add(AdminComponent.getPlainLabel("<HTML>Give quoted constant value or Keywords<BR>with the following format ERA[,EDEC[,EANGLE]]"), ccs);
-			ccs.gridx = 1; ccs.gridy = 2; ccs.gridwidth = 3; ccs.fill = GridBagConstraints.HORIZONTAL;
+			ccs.gridx = 2; ccs.gridy = 0;ccs.weightx = 1;ccs.anchor = GridBagConstraints.LINE_START;ccs.gridwidth = 1;
+			coorderror_panel.add(AdminComponent.getHelpLabel("Mapping priority Vs automatic detection"), ccs);
+			
+			ccs.gridx = 0; ccs.gridy = 1;ccs.weightx = 0;
 			errcoo_field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if( MappingKWPanel.this.errcoo_no_btn.isSelected() ) {
@@ -515,9 +543,20 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				}	
 			});
 			coorderror_panel.add(errcoo_field, ccs);
+			
+			ccs.gridx = 1; ccs.gridy = 1;ccs.weightx = 0;
+			coorderror_panel.add(errcoo_unit, ccs);
+			
+			ccs.gridx = 2; ccs.gridy = 1;ccs.weightx = 1;
+			coorderror_panel.add(AdminComponent.getHelpLabel(
+					new String[] {
+							"Give quoted constant values or keywords"
+					  	  , "with the following format ERA[,EDEC[,EANGLE]]"
+					  	  , "Keywords can (must) be dropped from the Data Sample window"
+					})
+					, ccs);
 
-
-			this.add(coorderror_panel, globalGridConstraint);
+			editorPanel.add(coorderror_collpanel, globalGridConstraint);
 		}
 
 	}
@@ -527,11 +566,14 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	private void addSpectCoordPanel() {
 		if( spccoord_panel == null ) {
-			spccoord_panel = new JPanel();	
+			CollapsiblePanel spccoord_collpanel = new CollapsiblePanel("Spectral Coordinate");	
+			spccoord_panel = spccoord_collpanel.getContentPane();
 			spccoord_panel.setBackground(LIGHTBACKGROUND);
 			spccoord_panel.setLayout(new GridBagLayout());
 			GridBagConstraints ccs = new GridBagConstraints();
-			spccoord_panel.setBorder(BorderFactory.createTitledBorder("SpectralCoordinate"));
+//			Border b = BorderFactory.createTitledBorder("Spectral Coordinate");
+//			b.
+//			spccoord_panel.setBorder();
 			ButtonGroup bg = new ButtonGroup();
 			spec_only_btn = new JRadioButton("only");
 			spec_first_btn = new JRadioButton("first");
@@ -559,21 +601,18 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			specunit_combo.addItem("GeV" );
 			specunit_combo.addItem("TeV" );
 			spec_field = new ReplaceMappingTextField(this, 2, false, bg);
+			spec_field.setColumns(15);
 
-			ccs.gridx = 0; ccs.gridy = 0;
-			spccoord_panel.add(AdminComponent.getPlainLabel("Priority of the mapping Vs an automatic detection"), ccs);
-			ccs.gridx = 1; ccs.gridy = 0;
-			new PrioritySelector(new JRadioButton[] {spec_only_btn, spec_first_btn, spec_last_btn, spec_no_btn}, spec_no_btn, bg
+
+			ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0;ccs.anchor = GridBagConstraints.LINE_START;ccs.gridwidth = 2;
+			new MapperPrioritySelector(new JRadioButton[] {spec_only_btn, spec_first_btn, spec_last_btn, spec_no_btn}, spec_no_btn, bg
 					, new JComponent[]{specunit_combo, spec_field}
-			, spccoord_panel, ccs);
-			ccs.gridx = 0; ccs.gridy = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			spccoord_panel.add(AdminComponent.getPlainLabel("Dispertion Unit"), ccs);
+					, spccoord_panel, ccs);
 
-			ccs.gridx = 1; ccs.gridy = 1; ccs.gridwidth = 3; ccs.fill = GridBagConstraints.HORIZONTAL;
-			spccoord_panel.add(specunit_combo, ccs);			
-			ccs.gridx = 0; ccs.gridy = 2; ccs.gridwidth = 1; ccs.anchor = GridBagConstraints.LINE_END;
-			spccoord_panel.add(AdminComponent.getPlainLabel("Name of the Dispersion Column or Field"), ccs);
-			ccs.gridx = 1; ccs.gridy = 2; ccs.gridwidth = 3; ccs.fill = GridBagConstraints.HORIZONTAL;
+			ccs.gridx = 2; ccs.gridy = 0;ccs.weightx = 1;ccs.anchor = GridBagConstraints.LINE_START;ccs.gridwidth = 1;
+			spccoord_panel.add(AdminComponent.getHelpLabel("Mapping priority Vs automatic detection"), ccs);
+			
+			ccs.gridx = 0; ccs.gridy = 1;ccs.weightx = 0;
 			spec_field.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if( MappingKWPanel.this.spec_no_btn.isSelected() ) {
@@ -582,9 +621,21 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				}	
 			});
 			spccoord_panel.add(spec_field, ccs);
-			this.add(spccoord_panel, globalGridConstraint);
-		}
 
+			ccs.gridx = 1; ccs.gridy = 1;ccs.weightx = 0;
+			spccoord_panel.add(specunit_combo, ccs);			
+		
+			ccs.gridx = 2; ccs.gridy = 1;ccs.weightx = 1;
+			spccoord_panel.add(AdminComponent.getHelpLabel(
+					new String[] {
+							"Give a quoted range or the keyword representing"
+						  , "the dispersion column (in case of table store)."
+					  	  , "Keywords can (must) be dropped from the Data Sample window"
+					})
+					, ccs);
+			
+			editorPanel.add(spccoord_collpanel, globalGridConstraint);
+		}
 	}
 
 	/**
@@ -593,22 +644,36 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	private void addSourcePanel() {
 
 		if( entry_panel == null ) {
+			GridBagConstraints localGridConstraint = new GridBagConstraints();
+			localGridConstraint.weightx = 1;			
+			localGridConstraint.fill = GridBagConstraints.HORIZONTAL;
+			localGridConstraint.anchor = GridBagConstraints.PAGE_START;
+			localGridConstraint.gridx = 0;
+			localGridConstraint.gridy = 0;
+
 			entry_panel = new JPanel();
 			entry_panel.setBackground(LIGHTBACKGROUND);
 			entry_panel.setBorder(BorderFactory.createTitledBorder("Table Entry Mapping"));
-			entry_panel.setLayout(new BorderLayout());
-			entry_panel.add(AdminComponent.getPlainLabel("The following parameters are related to the table entries"), BorderLayout.NORTH);
-			entry_panel.add(AdminComponent.getPlainLabel("Requested Keywords must be searched in the table columns"), BorderLayout.SOUTH);
-			this.add(entry_panel, globalGridConstraint);
-		}
-		if( e_name_panel == null ) {
+			entry_panel.setLayout(new GridBagLayout());
+			entry_panel.add(AdminComponent.getHelpLabel(
+					new String[] {
+							"The following parameters are related to the table entries"
+							, "Requested Keywords must be searched in the table columns"})
+					, localGridConstraint);
+			localGridConstraint.gridy++;
+					
+
 			e_name_panel = new JPanel();	
 			e_name_panel.setBackground(LIGHTBACKGROUND);
 			e_name_compo = new AppendMappingTextField(this, 2, true, null);
 			e_name_compo.setColumns(STRING_FIELD_NAME);
 			e_name_panel.add(e_name_compo);
 			e_name_panel.setBorder(BorderFactory.createTitledBorder("Entry Name"));
-			this.add(e_name_panel, globalGridConstraint);
+			entry_panel.add(e_name_panel, localGridConstraint);
+			localGridConstraint.gridy++;
+			
+			editorPanel.add(entry_panel, globalGridConstraint);
+
 		}
 		if( e_ignored_panel == null ) {
 			e_ignored_panel = new JPanel();	
@@ -619,7 +684,8 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			e_ignored_panel.setBorder(BorderFactory.createTitledBorder("Ignored Keywords"));
 			//c.gridx = 0;
 			//c.gridy = 1;		
-			this.add(e_ignored_panel, globalGridConstraint);
+			editorPanel.add(e_ignored_panel, globalGridConstraint);
+			globalGridConstraint.gridy++;
 		}
 		if( e_extatt_panel == null ) {
 			e_extatt_panel = new JPanel();	
@@ -627,7 +693,8 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 			e_extatt_panel.setBorder(BorderFactory.createTitledBorder("Extended Collection Attributes for Entries"));
 			e_extatt_panel.setLayout(new GridBagLayout());
 			this.addEAttExtendPanel();
-			this.add(e_extatt_panel, globalGridConstraint);		
+			editorPanel.add(e_extatt_panel, globalGridConstraint);		
+			globalGridConstraint.gridy++;
 		}
 		this.addCoordSysPanel();
 		this.addPositionPanel();
@@ -729,14 +796,16 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		default: break;
 		}
 
-		if( name_compo.getText().length() > 0 ) {
+		if( name_compo != null &&  name_compo.getText().length() > 0 ) {
 			params.add("-name=" + name_compo.getText());			
 		}
 
-		for( int i=0 ; i<ext_att.length ; i++ ) {
-			if( extatt_fields[i].getText().length() > 0 ) {
-				params.add("-ukw");			
-				params.add(ext_att[i] + "=" + extatt_fields[i].getText());							
+		if( ext_att != null ) {
+			for( int i=0 ; i<ext_att.length ; i++ ) {
+				if( extatt_fields[i].getText().length() > 0 ) {
+					params.add("-ukw");			
+					params.add(ext_att[i] + "=" + extatt_fields[i].getText());							
+				}
 			}
 		}
 
@@ -834,7 +903,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		ArgsParser retour;
 		try {
 			retour = new ArgsParser((String[])(params.toArray(new String[0])));
-			retour.setName(conf_name.getText());
+			retour.setName(confName);
 			return retour;
 		} catch (FatalException e) {
 			Messenger.trapFatalException(e);
@@ -843,6 +912,11 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	}
 
 	public void buildMiscPanel() {
+		this.addClassPanel();
+		globalGridConstraint.gridy++;
+
+		this.addExtensionPanel();
+		globalGridConstraint.gridy ++;
 		this.addNamePanel();
 		globalGridConstraint.gridy ++;
 		this.addIgnoredPanel();
@@ -859,12 +933,14 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		this.updateUI();
 	}
 	public void buildFlatfilePanel() {
+		System.out.println("FLATFILE");
 		this.addNamePanel();
+		globalGridConstraint.gridy ++;
 		//this.removeIgnoredPanel();
 		//this.removeExtensionPanel();
 		//this.removeAttExtendPanel();
 		//this.removeSourcePanel();
-		//this.addAttExtendPanel();
+		this.addAttExtendPanel();
 		//this.removeCoordSysPanel();
 		//this.removePositionPanel();
 		//this.removeErrorPositionPanel();
@@ -872,37 +948,58 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		this.updateUI();	
 	}
 	public void buildImagePanel() {
+		this.addClassPanel();
+		globalGridConstraint.gridy++;
 		this.addExtensionPanel();
+		globalGridConstraint.gridy++;
 		this.addNamePanel();
+		globalGridConstraint.gridy++;
 		this.addIgnoredPanel();
+		globalGridConstraint.gridy++;
 		//this.removeAttExtendPanel();
 		//this.removeSpectCoordPanel();			
 		//this.removeSourcePanel();
 		//this.addAttExtendPanel();
 		this.addCoordSysPanel();
+		globalGridConstraint.gridy++;
 		this.addPositionPanel();
+		globalGridConstraint.gridy++;
 		this.addErrorPositionPanel();
 		this.updateUI();
 	}
 	public void buildSpectraPanel() {
+		this.addClassPanel();
+		globalGridConstraint.gridy++;
 		this.addExtensionPanel();
+		globalGridConstraint.gridy++;
 		this.addNamePanel();
+		globalGridConstraint.gridy++;
 		this.addIgnoredPanel();
+		globalGridConstraint.gridy++;
 		//this.removeAttExtendPanel();
 		//this.removeSourcePanel();
 		//this.addAttExtendPanel();
 		this.addCoordSysPanel();
+		globalGridConstraint.gridy++;
 		this.addPositionPanel();
+		globalGridConstraint.gridy++;
 		this.addErrorPositionPanel();
+		globalGridConstraint.gridy++;
 		this.addSpectCoordPanel();
 		this.updateUI();
 	}
 	public void buildTablePanel() {
+		this.addClassPanel();
+		globalGridConstraint.gridy++;
 		this.addExtensionPanel();
+		globalGridConstraint.gridy++;
 		this.addNamePanel();
+		globalGridConstraint.gridy++;
 		this.addIgnoredPanel();
+		globalGridConstraint.gridy++;
 		//this.removeAttExtendPanel();
-		//this.addAttExtendPanel();
+		this.addAttExtendPanel();
+		globalGridConstraint.gridy++;
 		//this.removeCoordSysPanel();
 		//this.removePositionPanel();
 		//this.removeErrorPositionPanel();
@@ -913,14 +1010,6 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	/* (non-Javadoc)
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
-	public void actionPerformed(ActionEvent e) {
-		if( e.getSource() == coosys_combo) {
-			this.coosys_field.setText("'" + coosys_combo.getSelectedItem() + "'");
-			if( MappingKWPanel.this.coosys_no_btn.isSelected() ) {
-				MappingKWPanel.this.coosys_first_btn.setSelected(true) ;
-			}
-		}
-	}
 
 	/**
 	 * @param parser
@@ -929,7 +1018,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		try {
 			if( parser != null ) {
 				this.last_saved = parser.toString();
-				setConf_name(parser.getName());
+				setConfName(parser.getName());
 				String param=null;
 				/*
 				 * load class mapping
@@ -1184,7 +1273,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				}
 			}				
 			else {
-				setConf_name(null);
+				setConfName(null);
 			}
 
 		} catch (Exception e) {
@@ -1200,17 +1289,9 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	/**
 	 * @param name
 	 */
-	protected void setConf_name(String name) {
-		/*
-		 * New config at starting time: no name neither config loaded while
-		 * "set as default" hasn't been clicked
-		 */
-		if( name == null ) {
-			conf_name.setText("null");			
-		}
-		else {
-			conf_name .setText(name);
-		}
+	protected void setConfName(String name) {
+		confName = name;
+		setSelectedResource(confName, null);
 	}
 
 	/**
@@ -1218,7 +1299,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 */
 	public void reset(boolean keep_ext) {	
 		this.last_saved = "";
-		this.conf_name.setText("null");
+		this.confName = null;
 		if( name_compo != null ) name_compo.setText("");
 		if( e_name_compo != null ) e_name_compo.setText("");
 
@@ -1290,13 +1371,13 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				name = "NewConfig";
 			}
 			while( 1 == 1 ) {
-				//				DialogConfName dial = new DialogConfName(this.frame.frame, "Configuration Name", name);
-				//				dial.pack();
-				//				dial.setLocationRelativeTo(rootFrame);
-				//				dial.setVisible(true);
+				DialogConfName dial = new DialogConfName(rootFrame, "Configuration Name", name);
+				dial.pack();
+				dial.setLocationRelativeTo(rootFrame);
+				dial.setVisible(true);
 				String prefix = null;
-				//				prefix = Category.explain(this.category);
-				//				name = name=dial.getTyped_name();
+				prefix = Category.explain(this.category);
+				name = dial.getTyped_name();
 				if( name == null ) {
 					return;
 				}
@@ -1314,7 +1395,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 					}
 					else {
 						ap.setName(name);
-						this.setConf_name(name);
+						this.setConfName(name);
 						fos = new FileOutputStream(SaadaDB.getRoot_dir() 
 								+ Database.getSepar() + "config" 
 								+ Database.getSepar() + prefix + "." + name + ".config");
@@ -1326,9 +1407,30 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				}
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
-			AdminComponent.showFatalError(this, ex.toString());
+			Messenger.printStackTrace(ex);
+			AdminComponent.showFatalError(this, ex);
 			return;
+		}
+	}
+
+	/**
+	 * @param conf_path
+	 */
+	public void loadConfFile(String conf_path) {
+		ArgsParser ap = null;
+		if( conf_path.length() != 0 ) {
+			
+			try {
+				FileInputStream fis = new FileInputStream(conf_path);
+				ObjectInputStream in = new ObjectInputStream(fis);
+				ap = (ArgsParser)in.readObject();
+				in.close();
+				loadConfig(ap);
+			} catch(Exception ex) {
+				Messenger.printStackTrace(ex);
+				showFatalError(rootFrame, ex);
+				return;
+			}				
 		}
 	}
 
@@ -1336,8 +1438,7 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	 * 
 	 */
 	public void save() {
-		String name = this.conf_name.getText();
-		if( name.equals("") || name.equalsIgnoreCase("null") ) {
+		if( "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
 			this.saveAs();
 		}
 		else if( !this.hasChanged() ){
@@ -1352,15 +1453,15 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 				String prefix = Category.explain(this.category);
 				fos = new FileOutputStream(SaadaDB.getRoot_dir() 
 						+ Database.getSepar() + "config" 
-						+ Database.getSepar() + prefix + "." + name + ".config");
+						+ Database.getSepar() + prefix + "." + confName + ".config");
 				out = new ObjectOutputStream(fos);
 				out.writeObject(ap);
 				out.close();
 				this.last_saved  = ap.toString();
 
 			} catch(Exception ex) {
-				ex.printStackTrace();
-				AdminComponent.showFatalError(this, ex.toString());
+				Messenger.printStackTrace(ex);
+				AdminComponent.showFatalError(this, ex);
 				return;
 			}
 		}
@@ -1447,7 +1548,6 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		globalGridConstraint.gridx = 0;
 		globalGridConstraint.gridy = 0;
 
-
 		GridBagConstraints localGridConstraint = new GridBagConstraints();
 		localGridConstraint.weightx = 1;			
 		localGridConstraint.weighty = 1;			
@@ -1464,16 +1564,24 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		this.addCategoryPanel();
 		globalGridConstraint.gridy++;
 
-		this.addClassPanel();
-		globalGridConstraint.gridy++;
-
 		/*
 		 * Category set here because this code is executed by a super class creator
 		 * before the category parameter is used
 		 */
 		if( this.title.equals(MISC_MAPPER) ){
 			category = Category.MISC;
-			this.buildMiscPanel();
+		}
+		if( this.title.equals(FLATFILE_MAPPER) ){
+			category = Category.FLATFILE;
+		}
+		if( this.title.equals(IMAGE_MAPPER) ){
+			category = Category.IMAGE;
+		}
+		if( this.title.equals(SPECTRUM_MAPPER) ){
+			category = Category.SPECTRUM;
+		}
+		if( this.title.equals(TABLE_MAPPER) ){
+			category = Category.TABLE;
 		}
 		switch( this.category ) {
 		case Category.MISC: this.buildMiscPanel(); break;
@@ -1483,10 +1591,29 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 		case Category.FLATFILE: this.buildFlatfilePanel(); break;
 		}
 		tPanel.add(new JScrollPane(editorPanel), localGridConstraint);
-		
-		this.setActionBar();
 
-		
+		this.setActionBar();
+		this.setConfName("Default");
+
+		loadButton.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				DialogConfigFileChooser dial = new DialogConfigFileChooser(category);
+				String conf_path = dial.open(rootFrame);
+				loadConfFile(conf_path);
+			}
+		});
+		saveButton.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				save();				
+			}
+		});
+		saveAsButton.addActionListener(new ActionListener() {			
+			public void actionPerformed(ActionEvent arg0) {
+				saveAs();				
+			}
+		});
+
+
 	}
 
 	// TODO Auto-generated method stub
@@ -1497,82 +1624,6 @@ public class MappingKWPanel extends EditPanel implements ActionListener {
 	public void active() {
 		// TODO Auto-generated method stub
 
-	}
-	
-	/*
-	 * Inner class managing priority buttons
-	 */
-	class PrioritySelector {
-		private JRadioButton[] buttons;
-		private JRadioButton nomapping;
-		private JComponent[] components;
-		private JPanel panel;
-		private GridBagConstraints ccs;
-		private ButtonGroup bg;
-
-		/**
-		 * @param buttons
-		 * @param nomapping
-		 * @param components
-		 */
-		public PrioritySelector(JRadioButton[] buttons, JRadioButton nomapping, ButtonGroup bg, JComponent[] components, JPanel panel, GridBagConstraints ccs) {
-			this.buttons = buttons;
-			this.nomapping = nomapping;
-			this.components = components;
-			this.bg = bg;
-			this.panel = panel;
-			JPanel jp = new JPanel();
-			jp.setBackground(LIGHTBACKGROUND);
-			jp.setLayout(new BoxLayout(jp, BoxLayout.LINE_AXIS));
-
-			for( JRadioButton b: buttons) {
-				if( b.getText().equalsIgnoreCase("only")) {
-					b.setToolTipText("Only the rule given below will be applied");
-				}
-				else if( b.getText().equalsIgnoreCase("first")) {
-					b.setToolTipText("The rule given below will be applied first and then, in case of failure,  an automatic detection.");
-				}
-				else if( b.getText().equalsIgnoreCase("last")) {
-					b.setToolTipText("An automatic detection will be applied first and then, in case of failure, the rule given below.");
-				}
-				else if( b.getText().equalsIgnoreCase("no mapping")) {
-					b.setToolTipText("Only the automatic detection will be applied ");
-				}
-			}
-			for( JRadioButton jrb: buttons) {
-				jrb.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if( e.getSource() == PrioritySelector.this.nomapping ) {
-							PrioritySelector.this.setEnable(false);
-						}
-						else 
-							PrioritySelector.this.setEnable(true);
-					}
-				});
-				if( jrb == nomapping ) {
-					jrb.setSelected(true);
-				}
-				else {
-					jrb.setSelected(false);
-				}
-				jp.add(jrb);	
-				bg.add(jrb);
-			}
-			panel.add(jp, ccs);
-			this.setEnable(false);
-		}
-
-		/**
-		 * @param b
-		 */
-		protected void setEnable(boolean b) {
-			for( JComponent jc: components) {
-				if( jc.getClass().getName().matches(".*Text.*") ) {
-					((JTextComponent)jc).setEditable(b);
-				}
-				jc.setEnabled(b);
-			}
-		}
 	}
 
 }

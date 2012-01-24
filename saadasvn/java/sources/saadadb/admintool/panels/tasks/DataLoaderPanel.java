@@ -30,6 +30,7 @@ import saadadb.admintool.dialogs.DataFileChooser;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
+import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
 
@@ -94,7 +95,11 @@ public class DataLoaderPanel extends TaskPanel {
 					category = dataTreePath.category;
 				}
 
-				configChooser.setCategory(category);
+				try {
+					configChooser.setCategory(category);
+				} catch (FatalException e) {
+					Messenger.trapFatalException(e);
+				}
 				runButton.activate();
 			}
 			treePathLabel.setText(dataTreePath.toString());
