@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.ConfFileFilter;
 import saadadb.api.SaadaDB;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -82,15 +83,16 @@ public class LoaderConfigChooser extends JPanel {
 
 	/**
 	 * @param category
+	 * @throws FatalException 
 	 */
-	public void setCategory(String category) {
+	public void setCategory(String category) throws FatalException {
 		this.category = category;
 		DefaultListModel model = (DefaultListModel) confList.getModel();
 		model.removeAllElements();
 		model.addElement("Default");
 		File base_dir = new File( CONF_DIR);
 		if( base_dir.isDirectory()) {
-			DataFileFilter dff = new DataFileFilter(category);
+			ConfFileFilter dff = new ConfFileFilter(category);
 			for( File c: base_dir.listFiles() ) {
 				if( dff.accept(c) ) {
 					model.addElement(c.getName().split("\\.")[1]);
@@ -113,35 +115,5 @@ public class LoaderConfigChooser extends JPanel {
 		}
 	}
 
-	/**
-	 * @author michel
-	 *
-	 */
-	public class DataFileFilter extends FileFilter {
-		private String category  = null;
 
-		public DataFileFilter(String category) {
-			this.category =category;
-		}
-
-
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
-			}
-
-			String filename = f.getName();
-			if( filename.matches(this.category + ".*\\.config") ) {
-				return true;	
-			} else {
-				return false;
-			}				
-		}
-
-		//The description of this filter
-		public String getDescription() {
-			return "Dataloader config files for category " + category;				
-
-		}
-	}
 }
