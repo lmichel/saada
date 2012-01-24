@@ -23,13 +23,13 @@ public abstract class AdminComponent extends JPanel {
 	protected final AdminTool rootFrame;
 	public static final Color IVORY = new Color(255, 255, 240);
 	public static final Color LIGHTBACKGROUND = new Color(245, 245, 245);
-	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,14);
-	public static final Font italicFont = new Font("Helvetica",Font.ITALIC,14);
+	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,12);
+	public static final Font italicFont = new Font("Helvetica",Font.ITALIC,12);
 	public static final Font helpFont = new Font("Helvetica",Font.ITALIC,10);
-	public static final Font titleFont = new Font("Helvetica",Font.BOLD,16);
-	public static final Font subtTitleFont = new Font("Helvetica",Font.ITALIC,16);
+	public static final Font titleFont = new Font("Helvetica",Font.BOLD,14);
+	public static final Font subtTitleFont = new Font("Helvetica",Font.ITALIC,14);
 
-	public static int STRING_FIELD_NAME = 30;
+	public static int STRING_FIELD_NAME = 20;
 
 	public static final String ROOT_PANEL  = "Root Panel";
 	public static final String MANAGE_DATA = "Manage Data";
@@ -83,6 +83,23 @@ public abstract class AdminComponent extends JPanel {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * @param txt
+	 * @return
+	 */
+	public final static void showCopiableInfo(Component frame, String message, String title) {
+		JTextArea jta = new  JTextArea(message);
+		jta.setEditable(false);	
+		jta.setFont(plainFont);		
+		jta.setBackground(LIGHTBACKGROUND);		
+		/*
+		 * Mettre un scroller
+		 */
+		JOptionPane.showMessageDialog(frame,
+				jta,
+				"Loader Parameters",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
 
 	public static final void showFatalError(Component frame, String message) {
 		JOptionPane.showMessageDialog(frame,
@@ -155,7 +172,24 @@ public abstract class AdminComponent extends JPanel {
 	 */
 	public final static Component getHelpLabel(String txt) {
 		JTextArea retour = new  JTextArea(txt);
-		//retour.setEditable(false);	
+		retour.setEditable(false);	
+		retour.setFont(helpFont);		
+		retour.setBackground(LIGHTBACKGROUND);
+		retour.setForeground(Color.GRAY);
+		return retour;
+	}
+	
+	/**
+	 * @param phrases
+	 * @return
+	 */
+	public final static Component getHelpLabel(String[] phrases) {
+		
+		JTextArea retour = new  JTextArea();
+		for( String str: phrases) {
+			retour.append(str + "\n");
+		}
+		retour.setEditable(false);	
 		retour.setFont(helpFont);		
 		retour.setBackground(LIGHTBACKGROUND);
 		retour.setForeground(Color.GRAY);
