@@ -38,6 +38,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
@@ -71,7 +72,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel commentClassPanel;
 
 	private TaskPanel dataLoaderPanel;;
-	
+
 	private EditPanel miscMapperPanel;;
 	private EditPanel spectrumMapperPanel;;
 	private EditPanel tableMapperPanel;;
@@ -155,8 +156,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.MISC_MAPPER);
-
+				activePanel(AdminComponent.TABLE_MAPPER);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -171,14 +171,14 @@ public class AdminTool extends BaseFrame {
 		 */
 		choicePanelRoot = new RootChoicePanel(this, "Root Panel");
 		activePanel = choicePanelRoot;
-		activePanel.setPreferredSize(new Dimension(500,  height));
+		activePanel.setPreferredSize(new Dimension(600,  height));
 		c.gridx = 0;
 		c.gridy = 0;		
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				leftPanel, activePanel);	
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(250);
+		splitPane.setDividerLocation(200);
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(splitPane, BorderLayout.CENTER);
 
@@ -236,6 +236,9 @@ public class AdminTool extends BaseFrame {
 
 	}
 
+	/**
+	 * @param panelTitle
+	 */
 	public void activePanel(String panelTitle)  {
 		/*
 		 * Choice panels
@@ -408,7 +411,36 @@ public class AdminTool extends BaseFrame {
 		this.dataTreePath = dataTreePath;
 		if( this.activePanel != null ) {
 			this.activePanel.setDataTreePath(dataTreePath);
-		}	
+			/*
+			 * Mapper form must change when another category is selected
+			 */
+			if( this.activePanel instanceof MappingKWPanel ) {
+				if( dataTreePath.category != null ) {
+					String category = dataTreePath.category;
+					try {
+						if( ((MappingKWPanel)(this.activePanel)).getCategory() != Category.getCategory(category) ) {
+							if( "FLATFILE".equalsIgnoreCase(category)) {
+								activePanel(AdminComponent.FLATFILE_MAPPER);
+							}
+							else if( "IMAGE".equalsIgnoreCase(category)) {
+								activePanel(AdminComponent.IMAGE_MAPPER);
+							}
+							else if( "MISC".equalsIgnoreCase(category)) {
+								activePanel(AdminComponent.MISC_MAPPER);
+							}
+							else if( "SPECTRUM".equalsIgnoreCase(category)) {
+								activePanel(AdminComponent.SPECTRUM_MAPPER);
+							}
+							else if( "TABLE".equalsIgnoreCase(category)) {
+								activePanel(AdminComponent.TABLE_MAPPER);
+							}	
+						}
+					} catch (FatalException e) {
+						Messenger.trapFatalException(e);
+					}
+				}
+			}	
+		}
 	}
 
 	public void diskAccess() {
