@@ -435,15 +435,15 @@ public class Messenger implements Serializable{
 	 * @param ie
 	 * @return
 	 */
-	public static void trapFatalException(SaadaException ie) {		
+	public static void trapFatalException(SaadaException e) {		
 		if( Messenger.mode == Messenger.COMMAND_LINE ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
+			Messenger.printMsg(Messenger.ERROR, e.toString());
 			Messenger.printMsg(Messenger.ERROR, "Program exits on fatal error.");
 			System.exit(1);
 		}
 		else if( Messenger.mode == Messenger.GRAPHIC ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
-			new FatalExceptionDialog(Messenger.frame, ie);
+			Messenger.printMsg(Messenger.ERROR, e.toString());
+			new FatalExceptionDialog(Messenger.frame, e);
 		}
 	}
 
@@ -452,12 +452,12 @@ public class Messenger implements Serializable{
 	 * @param ie
 	 * @return
 	 */
-	public static int trapIgnoreException(IgnoreException ie) {
-		if( IgnoreException.isIgnored(ie)) {
+	public static int trapIgnoreException(IgnoreException e) {
+		if( IgnoreException.isIgnored(e)) {
 			return Messenger.CONTINUE;
 		}
 		else {
-			return Messenger.promptUser(ie);
+			return Messenger.promptUser(e);
 		}
 	}
 
