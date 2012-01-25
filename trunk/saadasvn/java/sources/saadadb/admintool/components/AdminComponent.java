@@ -20,7 +20,7 @@ import saadadb.util.Messenger;
  */
 public abstract class AdminComponent extends JPanel {
 	private static final long serialVersionUID = 1L;
-	protected final AdminTool rootFrame;
+	public final AdminTool rootFrame;
 	public static final Color IVORY = new Color(255, 255, 240);
 	public static final Color LIGHTBACKGROUND = new Color(245, 245, 245);
 	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,12);
@@ -170,7 +170,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @param txt
 	 * @return
 	 */
-	public final static Component getHelpLabel(String txt) {
+	public final static JTextArea getHelpLabel(String txt) {
 		JTextArea retour = new  JTextArea(txt);
 		retour.setEditable(false);	
 		retour.setFont(helpFont);		
@@ -183,7 +183,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @param phrases
 	 * @return
 	 */
-	public final static Component getHelpLabel(String[] phrases) {
+	public final static JTextArea getHelpLabel(String[] phrases) {
 		
 		JTextArea retour = new  JTextArea();
 		for( String str: phrases) {

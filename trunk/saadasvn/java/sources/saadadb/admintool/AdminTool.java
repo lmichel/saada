@@ -156,7 +156,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.TABLE_MAPPER);
+				activePanel(AdminComponent.SPECTRUM_MAPPER);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
