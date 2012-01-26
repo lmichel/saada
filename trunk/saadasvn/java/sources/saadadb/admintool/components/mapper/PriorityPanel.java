@@ -7,33 +7,33 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 
 public abstract class PriorityPanel extends MappingPanel {
 
-	protected JRadioButton spec_only_btn;
-	protected JRadioButton spec_first_btn ;
-	protected JRadioButton spec_last_btn ;
-	protected JRadioButton spec_no_btn ;
+	protected JRadioButton onlyBtn;
+	protected JRadioButton firstBtn ;
+	protected JRadioButton lastBtn ;
+	protected JRadioButton noBtn ;
 	protected ButtonGroup buttonGroup ;
 
 	
 	public PriorityPanel(MappingKWPanel mappingPanel, String title) {
 		super(mappingPanel, title);
-		spec_only_btn = new JRadioButton("only");
-		spec_first_btn = new JRadioButton("first");
-		spec_last_btn = new JRadioButton("last");
-		spec_no_btn = new JRadioButton("no mapping");
+		onlyBtn = new JRadioButton("only");
+		firstBtn = new JRadioButton("first");
+		lastBtn = new JRadioButton("last");
+		noBtn = new JRadioButton("no mapping");
 		buttonGroup = new ButtonGroup();
 	}
 	
 	public boolean isOnly() {
-		return spec_only_btn.isSelected();
+		return onlyBtn.isSelected();
 	}
 	public boolean isFirst() {
-		return spec_first_btn.isSelected();
+		return firstBtn.isSelected();
 	}
 	public boolean isLast() {
-		return spec_last_btn.isSelected();
+		return lastBtn.isSelected();
 	}
 	public boolean isNo() {
-		return spec_no_btn.isSelected();
+		return noBtn.isSelected();
 	}
 	public String getMode() {
 		if( isOnly()) {
@@ -50,23 +50,31 @@ public abstract class PriorityPanel extends MappingPanel {
 		}
 	}
 	public void setMode(String mode) {
-		spec_only_btn.setSelected(false);
-		spec_first_btn.setSelected(false);
-		spec_last_btn.setSelected(false);
-		spec_no_btn.setSelected(false);
+		onlyBtn.setSelected(false);
+		firstBtn.setSelected(false);
+		lastBtn.setSelected(false);
+		noBtn.setSelected(false);
 
 		if( mode.equals("only")) {
-			spec_only_btn.setSelected(true);
+			onlyBtn.setSelected(true);
 		}
 		else if( mode.equals("first")) {
-			spec_first_btn.setSelected(true);
+			firstBtn.setSelected(true);
 		}
 		else if( mode.equals("last")) {
-			spec_last_btn.setSelected(true);
+			lastBtn.setSelected(true);
 		}
 		else{
-			spec_no_btn.setSelected(true);
+			noBtn.setSelected(true);
 		}
 	}
+	
+	public boolean valid() {
+		if( this.isNo() ) {
+			return true;
+		}
+		return super.valid();
+	}
+
 
 }

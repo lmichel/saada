@@ -10,11 +10,11 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.util.DefineType;
 import saadadb.util.RegExp;
 
@@ -74,10 +74,8 @@ public class ClassMapperPanel extends MappingPanel {
 
 		ccs.gridx = 2; ccs.gridy = 1; 
 		ccs.weightx = 1.0;  
-		setHelpLabel(new String[] {"The class name must only contain letters, numbers or undescores."
-						, "It can not starts with a number"});
-
-
+		panel.add(helpLabel, ccs);
+		setHelpLabel(HelpDesk.CLASS_MAPPING);
 	}
 	@Override
 	public String getText() {
@@ -94,7 +92,7 @@ public class ClassMapperPanel extends MappingPanel {
 			return "-classfusion=" + classField.getText();											
 		}
 		else {
-			return null;
+			return "";
 		}
 	}
 

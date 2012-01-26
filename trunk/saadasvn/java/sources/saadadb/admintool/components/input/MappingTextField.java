@@ -116,7 +116,7 @@ public class MappingTextField extends TreepathDropableTextField {
 				return true;
 			}
 			else {
-				AdminComponent.showFatalError(this.getParent(), "Only attributes from extension <" + current_extension + "> can be choosen");
+				AdminComponent.showFatalError(this.getParent(), "Only attributes from extension <" + current_extension + "> or from primary header can be choosen");
 				return false;
 			}
 		}

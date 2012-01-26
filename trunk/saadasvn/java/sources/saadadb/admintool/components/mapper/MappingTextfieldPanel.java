@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.command.ArgsParser;
 
 /**
  * @author laurentmichel
@@ -18,9 +19,11 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
  */
 public class MappingTextfieldPanel extends MappingPanel{
 	public final AppendMappingTextField mappingTextField;
+	private boolean forEntry;
 
 	public MappingTextfieldPanel(MappingKWPanel mappingPanel, String title, boolean forEntry) {
 		super(mappingPanel, title);
+		this.forEntry = forEntry;
 		JPanel panel =  container.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -51,6 +54,14 @@ public class MappingTextfieldPanel extends MappingPanel{
 			mappingTextField.setText(text);
 		}
 	}
+	
+	/**
+	 * @param parser
+	 */
+	public void setParams(String[] parserArgs) {
+		setText(getMergedComponent(parserArgs));	
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.components.MappingPanel#reset()
 	 */

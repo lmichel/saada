@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.utils.HelpDesk;
 
 public class ExtensionTextFieldPanel extends MappingPanel {
 
@@ -26,9 +27,7 @@ public class ExtensionTextFieldPanel extends MappingPanel {
 		panel.add(mappingTextField, cae);
 		cae.weightx = 1.0; cae.gridx++;
 		panel.add(helpLabel, cae);
-		setHelpLabel(new String[]{"Drop an extension from the Data Sample window" 
-							, "or put a number prefixed with a #"
-							, "Keywords of the first extension are loaded by default"});
+		setHelpLabel(HelpDesk.EXTENSION_MAPPING);
 	}
 
 	public boolean checkChange() {
