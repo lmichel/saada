@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -17,9 +18,11 @@ import saadadb.database.Database;
 public class ExtAttMapperPanel extends MappingPanel {
 	public final ReplaceMappingTextField[] mappingTextFields;
 	public final JLabel[] mappingTextLabels;
+	public final int category;
 
 	public ExtAttMapperPanel(MappingKWPanel mappingPanel, String title, int category) {
 		super(mappingPanel, title);
+		this.category = category;
 		JPanel panel =  container.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -56,10 +59,8 @@ public class ExtAttMapperPanel extends MappingPanel {
 		}
 		else {
 			cae.anchor = GridBagConstraints.WEST;
-			//				cae.gridwidth = GridBagConstraints.RELATIVE; //next-to-last
-			//				cae.fill = GridBagConstraints.NONE;      //reset to default
 			cae.weightx = 1.0;                       //reset to default
-			panel.add(AdminComponent.getHelpLabel("No extended attribute.\nExtended attributes must be set at DB creation time.\nThey can no longer be added after that."), cae);
+			panel.add(AdminComponent.getHelpLabel(HelpDesk.get(HelpDesk.EXTATT_MISSING)), cae);
 		}
 
 
@@ -69,7 +70,12 @@ public class ExtAttMapperPanel extends MappingPanel {
 		ArrayList<String> retour = new ArrayList<String>();
 		for( int i=0 ; i<mappingTextFields.length ; i++) {
 			if( mappingTextFields[i].getText().length() > 0 ) {
-				retour.add("-ukw");			
+				if( category == Category.ENTRY ){
+					retour.add("-ukw");		
+				}
+				else {
+					retour.add("-eukw");							
+				}
 				retour.add(mappingTextLabels[i].getText() + "=" + mappingTextFields[i].getText());							
 			}			
 		}
@@ -96,13 +102,24 @@ public class ExtAttMapperPanel extends MappingPanel {
 		}
 	}
 
-	@Override
 	public void setParams(ArgsParser parser) {
-		dispersionMapper.setMode(parser.getSpectralMappingPriority());
-		dispersionMapper.setText(parser.getSpectralColumn());	
-		dispersionMapper.setUnit(parser.getSpectralUnit());
-
-		// TODO Auto-generated method stub
-		
+		String[] ext_att = null;
+		switch( this.category ) {
+		case Category.MISC: ext_att = Database.getCachemeta().getAtt_extend_misc_names(); break;
+		case Category.IMAGE: ext_att = Database.getCachemeta().getAtt_extend_image_names(); break;
+		case Category.SPECTRUM: ext_att = Database.getCachemeta().getAtt_extend_spectrum_names(); break;
+		case Category.TABLE: ext_att = Database.getCachemeta().getAtt_extend_table_names();break;
+		case Category.FLATFILE: ext_att = Database.getCachemeta().getAtt_extend_flatfile_names(); break;
+		}
+		if( ext_att != null ) {
+			for( int i=0 ; i<mappingTextLabels.length ; i++ ) {
+				if( category == Category.ENTRY ) {
+					mappingTextFields[i].setText(parser.getEntryUserKeyword(mappingTextLabels[i].getText()));					
+				}
+				else {
+					mappingTextFields[i].setText(parser.getUserKeyword(mappingTextLabels[i].getText()));
+				}
+			}
+		}
 	}
 }

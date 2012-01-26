@@ -15,18 +15,14 @@ public class AntButton extends JButton{
 	private final TaskPanel adminPanel;
 
 	public AntButton(TaskPanel adminPanel) {
-		super(new ImageIcon("icons/Ant.png"));
+		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Ant.png")));
 		this.adminPanel =adminPanel;
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("@@@@ " + e.getSource());
 				CmdThread ct =  AntButton.this.adminPanel.getCmdThread ();
-				System.out.println("@@@@ 2" );
 				if( ct != null ) {
 					try {
-						System.out.println("@@@@ 3" );
 						if( AntButton.this.adminPanel.setCmdParams() )  {
-							System.out.println("@@@@ 4" );
 							AdminComponent.showInfo(AntButton.this.adminPanel.rootFrame, ct.getAntTarget());
 						}
 					} catch (SaadaException e1) {

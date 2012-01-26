@@ -41,7 +41,7 @@ public class CollapsiblePanel extends JPanel {
 
     //Container State
     boolean collapsed; // stores curent state of the collapsable panel
-
+    public static final Color INPUT_ERROR_COLOR = Color.decode("0xF48C7D");
     /**
      * Constructor for an option button controlled collapsable panel.
      * This is useful when a group of options each have unique sub contents. The radio buttons should be created,
@@ -81,6 +81,8 @@ public class CollapsiblePanel extends JPanel {
 
         panel = new JPanel();
         panel.setLayout(new BorderLayout());
+        panel.setBackground(AdminComponent.LIGHTBACKGROUND);
+        this.setBackground(AdminComponent.LIGHTBACKGROUND);
 
         add(titleComponent, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
@@ -161,6 +163,18 @@ public class CollapsiblePanel extends JPanel {
     }
 
     /**
+     * Highlight an expend the panel if on Error
+     * @param onError
+     */
+    public void setOnError(boolean onError) {
+    	if( onError ) {
+        	this.setBackground(INPUT_ERROR_COLOR);
+        	this.setCollapsed(false);
+    	} else {
+        	this.setBackground(AdminComponent.LIGHTBACKGROUND);
+    	}
+    }
+    /**
      * Returns the current state of the panel, collapsed (true) or expanded (false).
      *
      * @return collapsed Returns true if the panel is collapsed and false if it is expanded
@@ -178,11 +192,11 @@ public class CollapsiblePanel extends JPanel {
         ImageIcon[] iconArrow = new ImageIcon[2];
         URL iconURL;
 
-        iconURL = getClass().getResource("/images/arrow_collapsed.gif");
+        iconURL = getClass().getResource("/icons/arrowCollapsed.png");
         if (iconURL != null) {
             iconArrow[COLLAPSED] = new ImageIcon(iconURL);
         }
-        iconURL = getClass().getResource("/images/arrow_expanded.gif");
+        iconURL = getClass().getResource("/icons/arrowExpanded.png");
         if (iconURL != null) {
             iconArrow[EXPANDED] = new ImageIcon(iconURL);
         }

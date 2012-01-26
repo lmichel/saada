@@ -41,7 +41,7 @@ public class ToolBarPanel extends JPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		if( ! adminLabel.getTitle().equals(AdminComponent.ROOT_PANEL)) {
 
-			jb = new JButton(new ImageIcon("icons/back.png"));
+			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					adminLabel.rootFrame.activePanel(adminLabel.getAncestor());				
@@ -51,7 +51,7 @@ public class ToolBarPanel extends JPanel {
 		}
 
 		if( c != null || ! adminLabel.getAncestor().equals(AdminComponent.ROOT_PANEL)) {
-			jb = new JButton(new ImageIcon("icons/maison.png"));
+			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					adminLabel.rootFrame.activePanel(AdminComponent.ROOT_PANEL);				
@@ -76,7 +76,7 @@ public class ToolBarPanel extends JPanel {
 			c.gridwidth = 1; c.gridheight = 1;
 			c.weightx = 0; c.weighty = 1;
 			c.anchor = GridBagConstraints.LINE_START;
-			this.add(new JLabel(new ImageIcon("icons/question.png")), c);
+			this.add(new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/question.png"))), c);
 			c.gridx = 3; c.gridy = 1;
 			c.weightx = 0.75; c.weighty = 1;
 			c.anchor = GridBagConstraints.LINE_START;

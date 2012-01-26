@@ -4,8 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -14,6 +14,7 @@ import javax.swing.JRadioButton;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
@@ -55,8 +56,8 @@ public class DispersionMapperPanel extends PriorityPanel {
 
 
 		ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0;ccs.anchor = GridBagConstraints.LINE_START;ccs.gridwidth = 2;
-		new MapperPrioritySelector(new JRadioButton[] {spec_only_btn, spec_first_btn, spec_last_btn, spec_no_btn}
-		, spec_no_btn
+		new MapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}
+		, noBtn
 		, buttonGroup
 		, new JComponent[]{specunit_combo, spec_field}
 		, panel, ccs);
@@ -67,8 +68,8 @@ public class DispersionMapperPanel extends PriorityPanel {
 		ccs.gridx = 0; ccs.gridy = 1;ccs.weightx = 0;
 		spec_field.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( spec_no_btn.isSelected() ) {
-					spec_first_btn.setSelected(true) ;
+				if( noBtn.isSelected() ) {
+					firstBtn.setSelected(true) ;
 				}
 			}	
 		});
@@ -78,14 +79,8 @@ public class DispersionMapperPanel extends PriorityPanel {
 		panel.add(specunit_combo, ccs);			
 
 		ccs.gridx = 2; ccs.gridy = 1;ccs.weightx = 1;
-		panel.add(AdminComponent.getHelpLabel(
-				new String[] {
-						"Give a quoted range or the keyword representing"
-						, "the dispersion column (in case of table store)."
-						, "Keywords can (must) be dropped from the Data Sample window"
-				})
-				, ccs);
-
+		panel.add(helpLabel, ccs);
+		setHelpLabel(HelpDesk.DISPERSION_MAPPING);
 	}
 
 	public String getUnit(){
@@ -97,7 +92,6 @@ public class DispersionMapperPanel extends PriorityPanel {
 				specunit_combo.setSelectedIndex(i);
 			}
 		}
-
 	}
 	@Override
 	public String getText() {
@@ -119,7 +113,10 @@ public class DispersionMapperPanel extends PriorityPanel {
 		spec_field.setText("");
 		setMode("no");
 	}
-	
+
+	/**
+	 * @param parser
+	 */
 	public void setParams(ArgsParser parser) {
 		try {
 			setMode(parser.getSpectralMappingPriority());
@@ -129,5 +126,25 @@ public class DispersionMapperPanel extends PriorityPanel {
 		setText(parser.getSpectralColumn());	
 		setUnit(parser.getSpectralUnit());	
 	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList<String> getParams() {
+		ArrayList<String> retour = new ArrayList<String>();
+		if( !this.isNo() ) {
+			retour.add("-spcmapping=" + this.getMode());						
+
+			if(  this.getText().length() > 0 ) {
+				retour.add("-spccolumn=" + this.getText());			
+			}
+			String param = this.getUnit();
+			if( param.length() > 0 ) {
+				retour.add("-spcunit=" + param);							
+			}
+		}
+		return retour;
+	}
+
 
 }

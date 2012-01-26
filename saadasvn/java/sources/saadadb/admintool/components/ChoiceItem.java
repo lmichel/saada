@@ -41,7 +41,7 @@ public class ChoiceItem extends AdminComponent {
 		this.label = label;
 		this.choicePanel = choicePanel;
 		this.runnable = runnable;
-		if( activeImage != null ) this.activeIcon = new ImageIcon(activeImage);
+		if( activeImage != null ) this.activeIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(activeImage));
 		iconLabel = new JLabel(this.activeIcon);
 		iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		iconLabel.setBorder(new EmptyBorder(10, 10, 1, 10));
@@ -81,8 +81,6 @@ public class ChoiceItem extends AdminComponent {
 	
 	private void makeIncativeIcon() {
 		inactiveIcon = RGBGrayFilter.getDisabledIcon(iconLabel, this.activeIcon);
-		System.out.println(inactiveIcon);
-
 	}
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
