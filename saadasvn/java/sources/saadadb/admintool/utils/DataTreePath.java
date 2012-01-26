@@ -87,5 +87,4 @@ public class DataTreePath {
 		}
 		return retour;
 	}
-
 }

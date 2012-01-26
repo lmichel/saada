@@ -61,7 +61,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 		if( ! title.equals(ROOT_PANEL)) {
 
-			jb = new JButton(new ImageIcon("icons/back.png"));
+			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					rootFrame.activePanel(ancestor);				
@@ -71,7 +71,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		}
 
 		if( c != null || ! ancestor.equals(ROOT_PANEL)) {
-			jb = new JButton(new ImageIcon("icons/maison.png"));
+			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					rootFrame.activePanel(ROOT_PANEL);				

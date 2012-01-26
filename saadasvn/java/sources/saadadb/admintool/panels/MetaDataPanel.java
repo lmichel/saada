@@ -27,6 +27,7 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -72,6 +73,32 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	protected BaseFrame frame;
 	protected DefaultTreeModel model;
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Collections");
+	private Timer simplCLickTimer = new Timer(500, new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			processSimpleClick();
+		}
+	});
+	private TreePath clickedTreePath ;
+;
+	void processSimpleClick(){
+		if( simplCLickTimer.isRunning()) {
+			if( clickedTreePath != null ) {
+				try {
+					MetaDataPanel.this.frame.setDataTreePath(new DataTreePath(clickedTreePath));
+				} catch (QueryException e1) {
+					Messenger.trapQueryException(e1);
+				}
+			}
+			tree.setSelectionPath(clickedTreePath);
+			simplCLickTimer.stop();
+		}
+	}
+	void processDoubleClick(){
+		if( simplCLickTimer.isRunning()) {
+			simplCLickTimer.stop();
+			AdminComponent.showInfo(frame, "double");
+		}
+	}
 
 	public MetaDataPanel(BaseFrame frame, int largeur, int hauteur) throws SaadaException {
 		this.frame = frame;
@@ -121,8 +148,9 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			boolean memoBoutonDroit = false;
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("press");
-				System.out.println(tree.getPathForLocation(e.getX(), e.getY()));
+				System.out.println("press ******** " + tree.getPathForLocation(e.getX(), e.getY()));
+				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
+
 /*
 				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
 				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
@@ -148,17 +176,15 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 */			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				System.out.println("releasedd ******** " + tree.getPathForLocation(e.getX(), e.getY()));
 				System.out.println(tree.getPathForLocation(e.getX(), e.getY()));
-				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-				if( path != null ) {
-					try {
-						MetaDataPanel.this.frame.setDataTreePath(new DataTreePath(path));
-					} catch (QueryException e1) {
-						Messenger.trapQueryException(e1);
-					}
+				clickedTreePath = tree.getPathForLocation(e.getX(), e.getY());
+				if( e.getClickCount() == 2) {
+					processDoubleClick();
 				}
-				
-				tree.setSelectionPath(path);
+//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
+
+				tree.setSelectionPath(clickedTreePath);
 //				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
 //				}
 //				else if (memoBoutonDroit || e.getButton() == 3) {
