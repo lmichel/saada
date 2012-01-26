@@ -431,7 +431,7 @@ public class AdminTool extends BaseFrame {
 							else if( "SPECTRUM".equalsIgnoreCase(category)) {
 								activePanel(AdminComponent.SPECTRUM_MAPPER);
 							}
-							else if( "TABLE".equalsIgnoreCase(category)) {
+							else if( "TABLE".equalsIgnoreCase(category) || "ENTRY".equalsIgnoreCase(category)) {
 								activePanel(AdminComponent.TABLE_MAPPER);
 							}	
 						}
