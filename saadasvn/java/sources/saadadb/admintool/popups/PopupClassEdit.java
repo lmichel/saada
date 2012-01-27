@@ -1,9 +1,12 @@
 package saadadb.admintool.popups;
 
+import java.awt.Container;
 import java.awt.Frame;
 
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
+
+import saadadb.admintool.AdminTool;
 
 public class PopupClassEdit extends PopupNode {
 
@@ -13,14 +16,14 @@ public class PopupClassEdit extends PopupNode {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PopupClassEdit(Frame frame, Object[] tree_path_components,
+	public PopupClassEdit(AdminTool rootFrame, Object[] tree_path_components,
 			String title) {
-		super(frame, tree_path_components, title);
+		super(rootFrame, tree_path_components, title);
 	}
 
-	public PopupClassEdit(Frame frame, Object[] tree_path_components,
+	public PopupClassEdit(AdminTool rootFrame, Object[] tree_path_components,
 			JTable jtable, String title) {
-		super(frame, tree_path_components, jtable, title);
+		super(rootFrame, tree_path_components, jtable, title);
 		JMenuItem item ;
 		item = new JMenuItem(MAP_META);
 		this.add(item);
@@ -37,9 +40,9 @@ public class PopupClassEdit extends PopupNode {
 		item.addActionListener(this);	
 		
 		this.addSeparator();
-		item = new JMenuItem(BUILD_INDEX);
-		item.addActionListener(this);
-		this.add(item);
+//		item = new JMenuItem(BUILD_INDEX);
+//		item.addActionListener(this);
+//		this.add(item);
 
 	}
 

@@ -1,9 +1,11 @@
 package saadadb.admintool.popups;
 
-import java.awt.Frame;
+import java.awt.Container;
 
 import javax.swing.JMenuItem;
 import javax.swing.JTable;
+
+import saadadb.admintool.AdminTool;
 
 public class PopupCollEdit extends PopupNode {
 
@@ -13,14 +15,14 @@ public class PopupCollEdit extends PopupNode {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PopupCollEdit(Frame frame, Object[] tree_path_components,
+	public PopupCollEdit(AdminTool rootFrame, Object[] tree_path_components,
 			String title) {
-		super(frame, tree_path_components, title);
+		super(rootFrame, tree_path_components, title);
 	}
 
-	public PopupCollEdit(Frame frame, Object[] tree_path_components,
+	public PopupCollEdit(AdminTool rootFrame, Object[] tree_path_components,
 			JTable jtable, String title) {
-		super(frame, tree_path_components, jtable, title);
+		super(rootFrame, tree_path_components, jtable, title);
 		JMenuItem item ;
 		item = new JMenuItem(SAVE_MAPPING);
 		this.add(item);
