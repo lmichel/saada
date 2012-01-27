@@ -80,7 +80,7 @@ public class AdminTool extends BaseFrame {
 	private EditPanel flatfileMapperPanel;;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
-
+	private CmdThread windowThread;		
 
 
 	private  String logFile = null;
@@ -367,6 +367,23 @@ public class AdminTool extends BaseFrame {
 			this.activePanel(AdminComponent.PROCESS_PANEL);
 			processPanel.setCmdThread(cmdThread);
 		}
+	}
+	
+	/**
+	 * @param cmdThread
+	 */
+	public void activeWindowProcess(CmdThread cmdThread, DataTreePath dataTreePath) {
+		if( processPanel.hasARunningThread()  || (windowThread != null &&  !windowThread.isCompleted() ) ){
+			AdminComponent.showInfo(this, "Another thread is running, please wait...");
+		}
+		else {
+			windowThread = cmdThread;
+			this.activePanel(AdminComponent.PROCESS_PANEL);
+			processPanel.setAncestor(AdminComponent.ROOT_PANEL);
+			processPanel.setDataTreePath(dataTreePath);
+			processPanel.setDataTreePathLabel(dataTreePath.toString());
+			processPanel.setCmdThread(cmdThread);
+		}	
 	}
 
 	/**

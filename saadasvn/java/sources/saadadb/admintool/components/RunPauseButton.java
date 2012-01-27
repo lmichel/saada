@@ -14,8 +14,8 @@ public class RunPauseButton extends JBlinkingButton {
 	private final TaskPanel taskPanel;
 	private Timer commandChecker;
 	private CmdThread cmdThread;
-	private ImageIcon runIcon = new ImageIcon("icons/Run.png");
-	private ImageIcon pauseIcon = new ImageIcon("icons/Pause.png");
+	private ImageIcon runIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Run.png"));
+	private ImageIcon pauseIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Pause.png"));
 
 	public RunPauseButton(TaskPanel taskPanel) {
 		super(new ImageIcon("icons/Run.png"));

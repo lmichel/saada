@@ -21,8 +21,8 @@ public class PopupProduct extends PopupNode {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PopupProduct(AdminTool rootFrame, DataTableWindow jtable, String title) throws SaadaException {
-		super(rootFrame, jtable.getDataTreePath(), title);
+	public PopupProduct(DataTableWindow jtable, String title) throws SaadaException {
+		super(jtable.rootFrame, jtable.getDataTreePath(), title);
 		JMenuItem item ;
 		item = new JMenuItem(DELETE_PRODUCTS);
 		if( jtable.getProductTable().getSelectedRowCount() == 0 ) {

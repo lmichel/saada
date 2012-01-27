@@ -31,6 +31,7 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -56,8 +57,8 @@ public class SQLJTable extends JTable {
 	private static Triangle both_triangle = new Triangle();
 	private  int order_column = -1;
 
-	public SQLJTable(AdminTool rootFrame, String sql, DataTableWindow jtable, int panel_type, boolean with_menu) throws QueryException {
-		this.rootFrame = rootFrame;
+	public SQLJTable(String sql, DataTableWindow jtable, int panel_type, boolean with_menu) throws QueryException {
+		this.rootFrame = jtable.rootFrame;
 		this.panel_type = panel_type;
 		this.jtable = jtable;
 		this.dataTreePath = jtable.getDataTreePath();;
@@ -119,12 +120,17 @@ public class SQLJTable extends JTable {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger() || e.getButton() == 3 /*&& SQLJTable.this.getSelectedRowCount() > 0*/ ) {
-					PopupNode menu;
+					PopupNode menu = null;;
 					switch(SQLJTable.this.panel_type) {
 					/*ColorCellRenderer
 					 * Popup on product: propose to remove
 					 */
-					case PRODUCT_PANEL: menu = new PopupProduct(rootFrame, SQLJTable.this.jtable,  "Actions on Ingested Product Files"); 
+					case PRODUCT_PANEL: try {
+							menu = new PopupProduct(SQLJTable.this.jtable,  "Actions on Ingested Product Files");
+						} catch (SaadaException e1) {
+							AdminComponent.showFatalError(rootFrame, e1);
+							return;
+						} 
 					menu.show(SQLJTable.this, e.getX(), e.getY());
 					break;
 					/*
@@ -134,10 +140,10 @@ public class SQLJTable extends JTable {
 					 */
 					case CLASS_PANEL: menu=null;
 					if( dataTreePath.isClassLevel() ) {
-						menu = new PopupClassEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Class"); 
+						//enu = new PopupClassEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Class"); 
 					}
 					else if(  dataTreePath.isCategoryLevel() ) {
-						menu = new PopupCollEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Collection"); 
+						//menu = new PopupCollEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Collection"); 
 					}
 					menu.show(SQLJTable.this, e.getX(), e.getY());
 					break;
