@@ -110,7 +110,7 @@ public  class ProcessPanel extends TaskPanel {
 		tPanel.add(runPauseButton, c);
 
 		c.gridx++;
-		abortButton = new JBlinkingButton(new ImageIcon("icons/Abort.png"));
+		abortButton = new JBlinkingButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Abort.png")));
 		abortButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if( cmdThread != null ) {
@@ -134,7 +134,7 @@ public  class ProcessPanel extends TaskPanel {
 
 		tPanel.add(debugButton, c);
 		c.gridx++;
-		JButton jb = new JButton(new ImageIcon("icons/Ant.png"));
+		JButton jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Ant.png")));
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cmdThread = new ThreadCreateCollection(rootFrame);
@@ -154,16 +154,16 @@ public  class ProcessPanel extends TaskPanel {
 		JPanel stsPanel = new JPanel();
 		Border empty = new EmptyBorder(new Insets(2,2,2,2));
 
-		procLight = new JLabel(new ImageIcon("icons/Processor.png"));
+		procLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Processor.png")));
 		stsPanel.setLayout(new BoxLayout(stsPanel, BoxLayout.LINE_AXIS));
 		procLight.setBorder(empty);
 		stsPanel.add(procLight);
 
-		diskLight = new JLabel(new ImageIcon("icons/Disk.png"));
+		diskLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Disk.png")));
 		diskLight.setBorder(empty);	
 		stsPanel.add(diskLight);
 
-		dbLight   = new JLabel(new ImageIcon("icons/Database.png"));
+		dbLight   = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database.png")));
 		dbLight.setBorder(empty);	
 		stsPanel.add(dbLight);
 

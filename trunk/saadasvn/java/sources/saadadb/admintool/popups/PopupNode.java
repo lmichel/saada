@@ -85,7 +85,7 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 			try {
 				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame);
 				cdp.setParams(params);
-				rootFrame.activeWindowProcess(cdp);
+				rootFrame.activeWindowProcess(cdp, dataTreePath);
 			} catch (SaadaException e1) {
 				AdminComponent.showFatalError(rootFrame, e1);
 			}
