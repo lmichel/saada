@@ -361,10 +361,10 @@ public class AdminTool extends BaseFrame {
 
 	public void activeProcessPanel(CmdThread cmdThread) {
 		if( processPanel.hasARunningThread() ) {
-			AdminComponent.showInfo(this, "Another thread is running");
+			AdminComponent.showInfo(this, "Another thread is running, please wait...");
 		}
 		else {
-			activePanel(AdminComponent.PROCESS_PANEL);
+			this.activePanel(AdminComponent.PROCESS_PANEL);
 			processPanel.setCmdThread(cmdThread);
 		}
 	}
