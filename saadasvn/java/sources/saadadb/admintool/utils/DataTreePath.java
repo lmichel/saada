@@ -1,5 +1,7 @@
 package saadadb.admintool.utils;
 
+import java.util.ArrayList;
+
 import javax.swing.tree.TreePath;
 
 import saadadb.exceptions.QueryException;
@@ -86,5 +88,20 @@ public class DataTreePath {
 			}
 		}
 		return retour;
+	}
+	/**
+	 * @return
+	 */
+	public String[] getElements() {
+		ArrayList<String> retour = new ArrayList<String>();
+		retour.add(collection);
+		if( category != null) {
+			retour .add(category);
+			if( classe != null) {
+				retour.add(classe);
+			}
+		}
+		return retour.toArray(new String[0]);
+		
 	}
 }
