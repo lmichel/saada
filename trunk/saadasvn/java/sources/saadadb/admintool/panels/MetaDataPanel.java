@@ -3,6 +3,7 @@ package saadadb.admintool.panels;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
@@ -20,10 +21,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -48,7 +51,9 @@ import saadadb.admin.popup.PopupNode;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
+import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.windows.DataTableWindow;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -70,7 +75,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	 */
 	private static final long serialVersionUID = 1L;
 	protected JTree tree;
-	protected BaseFrame frame;
+	protected AdminTool frame;
 	protected DefaultTreeModel model;
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Collections");
 	private Timer simplCLickTimer = new Timer(500, new ActionListener() {
@@ -79,7 +84,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		}
 	});
 	private TreePath clickedTreePath ;
-;
+	;
 	void processSimpleClick(){
 		if( simplCLickTimer.isRunning()) {
 			if( clickedTreePath != null ) {
@@ -96,11 +101,22 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	void processDoubleClick(){
 		if( simplCLickTimer.isRunning()) {
 			simplCLickTimer.stop();
-			AdminComponent.showInfo(frame, "double");
+			if( clickedTreePath.getPathCount() >= 2) {
+				try {
+					DataTableWindow dtw = new DataTableWindow(frame, clickedTreePath);
+					dtw.open();
+				} catch (QueryException e) {
+					Messenger.trapQueryException(e);
+				}
+			}
+			else {
+				AdminComponent.showInputError(frame, "Only category ether class nodes can be displayed");
+			}
+
 		}
 	}
 
-	public MetaDataPanel(BaseFrame frame, int largeur, int hauteur) throws SaadaException {
+	public MetaDataPanel(AdminTool frame, int largeur, int hauteur) throws SaadaException {
 		this.frame = frame;
 		model = new DefaultTreeModel(top);
 		tree = new JTree(model){
@@ -151,7 +167,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				System.out.println("press ******** " + tree.getPathForLocation(e.getX(), e.getY()));
 				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
 
-/*
+				/*
 				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
 				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
 //					try {
@@ -173,7 +189,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					memoBoutonDroit = false;
 					return;
 				}
-*/			}
+				 */			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				System.out.println("releasedd ******** " + tree.getPathForLocation(e.getX(), e.getY()));
@@ -182,43 +198,43 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				if( e.getClickCount() == 2) {
 					processDoubleClick();
 				}
-//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
+				//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
 
 				tree.setSelectionPath(clickedTreePath);
-//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
-//				}
-//				else if (memoBoutonDroit || e.getButton() == 3) {
-//					if (path != null) {  
-//						PopupNode menu;
-//						switch(path.getPathCount()) {
-//						/*
-//						 * base level
-//						 */
-//						case 1: menu = new PopupBaseNode(MetaDataPanel.this.frame, null, "- Root Node -"); 
-//						menu.show(tree, e.getX(), e.getY());
-//						break;
-//						/*
-//						 * collection level
-//						 */
-//						case 2: menu = new PopupCollNode(MetaDataPanel.this.frame, path.getPath(), "- Collection Node -"); 
-//						Messenger.printMsg(Messenger.TRACE, "sousou");
-//						menu.show(tree, e.getX(), e.getY());
-//						break;
-//						/*
-//						 * category level
-//						 */
-//						case 3: menu = new PopupCatNode(MetaDataPanel.this.frame, path.getPath(), "- Category Node -"); 
-//						menu.show(tree, e.getX(), e.getY());
-//						break;
-//						/*
-//						 * class level
-//						 */
-//						case 4: menu = new PopupClassNode(MetaDataPanel.this.frame, path.getPath(), "- Class Node -");
-//						menu.show(tree, e.getX(), e.getY());
-//						break;
-//						}
-//					}
-//				}
+				//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
+				//				}
+				//				else if (memoBoutonDroit || e.getButton() == 3) {
+				//					if (path != null) {  
+				//						PopupNode menu;
+				//						switch(path.getPathCount()) {
+				//						/*
+				//						 * base level
+				//						 */
+				//						case 1: menu = new PopupBaseNode(MetaDataPanel.this.frame, null, "- Root Node -"); 
+				//						menu.show(tree, e.getX(), e.getY());
+				//						break;
+				//						/*
+				//						 * collection level
+				//						 */
+				//						case 2: menu = new PopupCollNode(MetaDataPanel.this.frame, path.getPath(), "- Collection Node -"); 
+				//						Messenger.printMsg(Messenger.TRACE, "sousou");
+				//						menu.show(tree, e.getX(), e.getY());
+				//						break;
+				//						/*
+				//						 * category level
+				//						 */
+				//						case 3: menu = new PopupCatNode(MetaDataPanel.this.frame, path.getPath(), "- Category Node -"); 
+				//						menu.show(tree, e.getX(), e.getY());
+				//						break;
+				//						/*
+				//						 * class level
+				//						 */
+				//						case 4: menu = new PopupClassNode(MetaDataPanel.this.frame, path.getPath(), "- Class Node -");
+				//						menu.show(tree, e.getX(), e.getY());
+				//						break;
+				//						}
+				//					}
+				//				}
 			}
 		});	
 		/*
