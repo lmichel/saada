@@ -18,7 +18,7 @@ public class RunTaskButton extends JButton {
 	private CmdThread cmdThread;
 
 	public RunTaskButton(TaskPanel adminPanel) {
-		super(new ImageIcon("icons/Run.png"));
+		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Run.png")));
 		this.adminPanel = adminPanel;
 		this.setEnabled(false);
 		this.addActionListener(new ActionListener() {

@@ -219,7 +219,7 @@ public class ResultSetTableModel implements TableModel {
 				 */
 				if( previous_ucd != null && previous_ucd.length() > 0 ) {
 					DialogUCD cd = null;
-					cd = new DialogUCD(frame.getFrame()
+					cd = new DialogUCD(null
 							, "Set UCD"
 							, new String[]{new_ucd, new_ucd + ";" + previous_ucd, previous_ucd + ";" + new_ucd, previous_ucd, "no UCD"}
 					, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment);					
@@ -249,7 +249,7 @@ public class ResultSetTableModel implements TableModel {
 					 */
 					else {
 						DialogUCD cd = null;
-						cd = new DialogUCD(frame.getFrame()
+						cd = new DialogUCD(null
 								, "Set UCD"
 								, null
 								, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
@@ -314,7 +314,7 @@ public class ResultSetTableModel implements TableModel {
 				if( previous_utype != null && previous_utype.length() > 0 ) {
 
 					DialogUCD cd = null;
-					cd = new DialogUCD(frame.getFrame()
+					cd = new DialogUCD(null
 							, "Set UType"
 							, new String[]{new_utype, previous_utype, "no Utype"}
 					, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
@@ -344,7 +344,7 @@ public class ResultSetTableModel implements TableModel {
 					 */
 					else {
 						DialogUCD cd = null;
-						cd = new DialogUCD(frame.getFrame()
+						cd = new DialogUCD(null
 								, "Set UType"
 								, null
 								, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
@@ -387,7 +387,7 @@ public class ResultSetTableModel implements TableModel {
 				if( previous_unit != null && previous_unit.length() > 0 ) {
 
 					DialogUCD cd = null;
-					cd = new DialogUCD(frame.getFrame()
+					cd = new DialogUCD(null
 							, "Set UType"
 							, new String[]{new_unit, previous_unit, "none"}
 					, null );					
