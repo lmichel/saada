@@ -3,6 +3,7 @@ package saadadb.admintool.components;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -18,10 +19,16 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-
-import saadadb.exceptions.AbortException;
+import saadadb.admintool.AdminTool;
+import saadadb.admintool.popups.PopupClassEdit;
+import saadadb.admintool.popups.PopupCollEdit;
+import saadadb.admintool.popups.PopupNode;
+import saadadb.admintool.popups.PopupProduct;
+import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLQuery;
@@ -36,22 +43,24 @@ public class SQLJTable extends JTable {
 	public static final int CLASS_PANEL = 0;
 	public static final int COLL_PANEL = 1;
 	public static final int PRODUCT_PANEL = 2;
-	
-	private final Frame frame;
-	Object[] tree_path_components;
+
+	private final AdminTool rootFrame;
+	private DataTreePath dataTreePath;
+	private DataTableWindow jtable;
 	private final int  panel_type;
 	private final String sql;
-	
+
 	private boolean down_sorting = true;
 	private static Triangle down_triangle = new Triangle(true);
 	private static Triangle up_triangle = new Triangle(false);
 	private static Triangle both_triangle = new Triangle();
 	private  int order_column = -1;
-	
-	public SQLJTable(Frame frame, String sql, Object[] tree_path_components, int panel_type, boolean with_menu) throws QueryException {
-		this.frame = frame;
+
+	public SQLJTable(AdminTool rootFrame, String sql, DataTableWindow jtable, int panel_type, boolean with_menu) throws QueryException {
+		this.rootFrame = rootFrame;
 		this.panel_type = panel_type;
-		this.tree_path_components = tree_path_components;
+		this.jtable = jtable;
+		this.dataTreePath = jtable.getDataTreePath();;
 		this.sql = sql;
 		/*
 		 * No action can be done simultaneoulsy on several class attributes
@@ -74,6 +83,7 @@ public class SQLJTable extends JTable {
 			this.makeOrderingEnabled();
 		}
 		this.setModel(sql);
+		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		/*
 		 * popup menus allowed
 		 */
@@ -81,7 +91,26 @@ public class SQLJTable extends JTable {
 			this.makPopupEnabled();
 		}
 	}
-	
+
+	public Component prepareRenderer(TableCellRenderer renderer,
+			int rowIndex, int vColIndex) {
+		Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
+		if(isCellSelected(rowIndex, vColIndex))  {
+			c.setForeground(Color.WHITE);
+			c.setBackground(Color.GRAY);
+
+		} else {
+			c.setForeground(Color.BLACK);
+			if (rowIndex % 2 == 0 ) {
+				c.setBackground(AdminComponent.LIGHTBACKGROUND);
+			} else {
+				c.setBackground(Color.WHITE);
+			}
+		}
+		return c;
+	}
+
+
 	/**
 	 * 
 	 */
@@ -95,7 +124,7 @@ public class SQLJTable extends JTable {
 					/*ColorCellRenderer
 					 * Popup on product: propose to remove
 					 */
-					case PRODUCT_PANEL: menu = new PopupProduct(SQLJTable.this.frame, SQLJTable.this.tree_path_components, SQLJTable.this, "Actions on Ingested Product Files"); 
+					case PRODUCT_PANEL: menu = new PopupProduct(rootFrame, SQLJTable.this.jtable,  "Actions on Ingested Product Files"); 
 					menu.show(SQLJTable.this, e.getX(), e.getY());
 					break;
 					/*
@@ -104,11 +133,11 @@ public class SQLJTable extends JTable {
 					 * nothing for collection level
 					 */
 					case CLASS_PANEL: menu=null;
-					if( SQLJTable.this.tree_path_components.length == 4 ) {
-						menu = new PopupClassEdit(SQLJTable.this.frame, SQLJTable.this.tree_path_components, SQLJTable.this, "Actions on Class"); 
+					if( dataTreePath.isClassLevel() ) {
+						menu = new PopupClassEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Class"); 
 					}
-					else if( SQLJTable.this.tree_path_components.length == 3 ) {
-						menu = new PopupCollEdit(SQLJTable.this.frame, SQLJTable.this.tree_path_components, SQLJTable.this, "Actions on Class"); 
+					else if(  dataTreePath.isCategoryLevel() ) {
+						menu = new PopupCollEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Collection"); 
 					}
 					menu.show(SQLJTable.this, e.getX(), e.getY());
 					break;
@@ -130,7 +159,7 @@ public class SQLJTable extends JTable {
 			}
 		});		
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -144,7 +173,7 @@ public class SQLJTable extends JTable {
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -153,7 +182,7 @@ public class SQLJTable extends JTable {
 				label.setBorder(BorderFactory.createLineBorder(Color.gray));
 				return label;
 			}
-			
+
 		}
 		header.setDefaultRenderer(new IconTableCellRenderer());
 		/*
@@ -162,7 +191,7 @@ public class SQLJTable extends JTable {
 		header.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mouseClicked(MouseEvent e) {						
-				
+
 				int col = SQLJTable.this.columnAtPoint(e.getPoint());
 				try {
 					String desc = "";
@@ -176,8 +205,6 @@ public class SQLJTable extends JTable {
 						SQLJTable.this.down_sorting = false;
 					}
 					SQLJTable.this.order_column = col;
-					SQLJTable.this.frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-					SQLJTable.this.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					SQLJTable.this.setModel(SQLJTable.this.sql.replace("limit 1000", "") + " order by " + SQLJTable.this.getColumnName(col) + desc + " limit 1000");
 				} catch (Exception e1) {
 					Messenger.printStackTrace(e1);
@@ -191,7 +218,7 @@ public class SQLJTable extends JTable {
 	 * @throws Exception 
 	 * 
 	 */
-	private void setModel(String sql) throws QueryException{
+	public void setModel(String sql) throws QueryException{
 		SQLQuery squery = new SQLQuery();
 
 		ResultSet resultSet = squery.run(sql);
@@ -228,7 +255,7 @@ public class SQLJTable extends JTable {
 		} 
 		squery.close();
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -243,11 +270,7 @@ public class SQLJTable extends JTable {
 			return up_triangle;
 		}
 	}
-	
-	public Frame getFrame() {
-		return this.frame;
-	}
-	
+
 	/**
 	 * Returns true if at least one cell has been modified in the row
 	 * @param row
@@ -256,31 +279,31 @@ public class SQLJTable extends JTable {
 	public boolean hasModifiedItem(int row) {
 		return  ((ResultSetTableModel)(this.getModel())).hasModifiedItem(row);
 	}
-	
+
 	/**
 	 * Save into the DB the modified rows
 	 * @throws FatalException 
 	 */
 	public void saveModifiedRows() throws FatalException {
 		String base_stmt;
-		if( tree_path_components.length == 4 ) {
-			base_stmt = "UPDATE saada_metaclass_" + tree_path_components[2].toString().toLowerCase() + " ";
+		if( dataTreePath.isClassLevel()) {
+			base_stmt = "UPDATE saada_metaclass_" + dataTreePath.category.toString().toLowerCase() + " ";
 		}
 		else {
-			base_stmt = "UPDATE saada_metacoll_" + tree_path_components[2].toString().toLowerCase() + " ";			
+			base_stmt = "UPDATE saada_metacoll_" + dataTreePath.category.toString().toLowerCase() + " ";			
 		}
 		for( String stmt: ((ResultSetTableModel)(this.getModel())).getUpdateSQLStatements()) {
 			SQLTable.addQueryToTransaction(base_stmt + stmt);
 		}
 	}
-	
+
 	/**
 	 * @return Returns the panel_type.
 	 */
 	public int getPanel_type() {
 		return panel_type;
 	}
-	
+
 
 	/**
 	 * Inner class providing litle ordering arrows
@@ -298,7 +321,7 @@ public class SQLJTable extends JTable {
 		Triangle(boolean up) {
 			this.up = up;
 		}
-		
+
 		Triangle() {
 			this.both = true;
 			this.up = true;
@@ -306,11 +329,11 @@ public class SQLJTable extends JTable {
 		public int getIconHeight() {
 			return size;
 		}
-		
+
 		public int getIconWidth() {
 			return size;
 		}
-		
+
 		public void paintIcon(Component c, Graphics g, int x, int y) {
 			int[] xp = new int[3];
 			int[] yp = new int[3];
@@ -328,6 +351,6 @@ public class SQLJTable extends JTable {
 			}
 			g.fillPolygon(xp,yp,3);
 		}
-		
+
 	}
 }
