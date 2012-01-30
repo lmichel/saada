@@ -74,24 +74,28 @@ public class CategoryEmptyPanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		if( dataTreePath.isCollectionLevel() ) {
-			showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
-		}
-		else {
-			super.setDataTreePath(dataTreePath);
-			treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category);
-			MetaCollection mc;
-			try {
-				mc = Database.getCachemeta().getCollection(dataTreePath.collection);
-				nameField.setText(mc.getName());
-				if( "ENTRY".equals(dataTreePath.category)) {
-					categoryField.setText("TABLE");
+		if( this.isDataTreePathLocked() ){
+			showInputError(rootFrame, "Can not change data treepath in this context");
+		}else if( dataTreePath != null ) {
+			if( dataTreePath.isCollectionLevel() ) {
+				showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
+			}
+			else {
+				super.setDataTreePath(dataTreePath);
+				treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category);
+				MetaCollection mc;
+				try {
+					mc = Database.getCachemeta().getCollection(dataTreePath.collection);
+					nameField.setText(mc.getName());
+					if( "ENTRY".equals(dataTreePath.category)) {
+						categoryField.setText("TABLE");
+					}
+					else {
+						categoryField.setText(dataTreePath.category);
+					}
+				} catch (FatalException e) {
+					showFatalError(rootFrame, e);
 				}
-				else {
-					categoryField.setText(dataTreePath.category);
-				}
-			} catch (FatalException e) {
-				showFatalError(rootFrame, e);
 			}
 		}
 	}

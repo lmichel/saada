@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,7 +41,7 @@ import saadadb.util.Messenger;
  */
 public class DataLoaderPanel extends TaskPanel {
 
-	private LoaderConfigChooser configChooser;
+	protected  LoaderConfigChooser configChooser;
 	protected JRadioButton repCopy ;
 	protected JRadioButton repMove ;
 	protected JRadioButton repKeep ;
@@ -80,7 +81,9 @@ public class DataLoaderPanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		if( dataTreePath != null ) {
+		if( this.isDataTreePathLocked() ){
+			showInputError(rootFrame, "Can not change data treepath in this context");
+		}else if( dataTreePath != null ) {
 			if( dataTreePath.isCollectionLevel() ) {
 				showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
 				runButton.inActivate();
@@ -96,14 +99,13 @@ public class DataLoaderPanel extends TaskPanel {
 				}
 
 				try {
-					configChooser.setCategory(category);
+					configChooser.setCategory(category, null);
 				} catch (FatalException e) {
 					Messenger.trapFatalException(e);
 				}
 				runButton.activate();
 			}
 			treePathLabel.setText(dataTreePath.toString());
-
 		}
 	}
 
@@ -165,6 +167,10 @@ public class DataLoaderPanel extends TaskPanel {
 		repCopy = new JRadioButton("Copy Input Files into the Repository");
 		repMove = new JRadioButton("Move Input Files to the Repository");
 		repKeep = new JRadioButton("Use Input Files as Repository");
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(repCopy); 
+		bg.add(repMove); 
+		bg.add(repKeep); 
 		noIndex = new JRadioButton("Do not rebuild indexes after loading");
 		tPanel.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
@@ -177,6 +183,8 @@ public class DataLoaderPanel extends TaskPanel {
 		tPanel.add(repKeep, c);
 		c.gridy ++;
 		tPanel.add(repMove, c);
+		c.gridy ++;
+		tPanel.add(new JLabel("  "), c);
 		c.gridy ++;
 		tPanel.add(noIndex, c);
 		c.gridx = 1;c.weightx = 1;
@@ -204,8 +212,8 @@ public class DataLoaderPanel extends TaskPanel {
 					}
 				}
 				else {
-					datafileSummary.setText("No file selected");
-					AdminComponent.showInputError(rootFrame, "No Selected Data Files!");
+//					datafileSummary.setText("No file selected");
+//					AdminComponent.showInputError(rootFrame, "No Selected Data Files!");
 				}
 			}
 		});
@@ -214,14 +222,12 @@ public class DataLoaderPanel extends TaskPanel {
 		c.gridx = 0;c.gridy = 0;
 		c.weightx = 0;
 
-		c.anchor = GridBagConstraints.WEST;
+		c.anchor = GridBagConstraints.WEST; c.gridwidth = 2;
 		tPanel.add(directory, c);
-		c.gridy ++;
+		c.gridy ++; c.gridwidth = 1;
 		tPanel.add(dirBrowser, c);
-		c.gridy ++;
-		tPanel.add(datafileSummary, c);
 		c.gridx = 1;c.weightx = 1;
-		tPanel.add(new JLabel(""), c);
+		tPanel.add(datafileSummary, c);
 
 		runButton = new RunTaskButton(this);
 		this.setActionBar(new Component[]{runButton
@@ -230,6 +236,16 @@ public class DataLoaderPanel extends TaskPanel {
 
 	}
 
-
+	/**
+	 * Called by the cnfig editor to set the new config
+	 * @param confName
+	 */
+	public void setConfig(String confName) {
+		try {
+			configChooser.setCategory(this.category, confName);
+		} catch (FatalException e) {
+			Messenger.trapFatalException(e);
+		}
+	}
 
 }

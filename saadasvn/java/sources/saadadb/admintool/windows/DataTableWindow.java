@@ -1,11 +1,21 @@
 package saadadb.admintool.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
@@ -28,7 +38,7 @@ public class DataTableWindow extends OuterWindow {
 	}
 
 	private void buidSQL() {
-		sqlQuery = "select ";
+		sqlQuery = "SELECT ";
 		title= "??";
 		String[] rejected_coll_clos = null;
 		String coll_table_name = dataTreePath.collection+ "_" + dataTreePath.category.toLowerCase();;
@@ -53,7 +63,7 @@ public class DataTableWindow extends OuterWindow {
 				}
 				sqlQuery += rejected_coll_clos[i] ;
 			}
-			sqlQuery += " from " + coll_table_name + " limit 1000";
+			sqlQuery += "\nFROM " + coll_table_name + "\nLIMIT 1000";
 			title = dataTreePath.category + " data of collection <" + dataTreePath.collection + "> (truncated to 1000)";
 		}
 		/*
@@ -79,9 +89,9 @@ public class DataTableWindow extends OuterWindow {
 			for( int i=0 ; i<rejected_class_clos.length ; i++  ) {
 				sqlQuery += ", class." + rejected_class_clos[i] ;
 			}
-			sqlQuery += " from " + dataTreePath.collection 
-				+ "_" + dataTreePath.category.toLowerCase() + " as coll, " 
-				+  dataTreePath.classe	+ " as class where coll.oidsaada = class.oidsaada limit 1000";
+			sqlQuery += "\nFROM " + dataTreePath.collection 
+				+ "_" + dataTreePath.category.toLowerCase() + " AS coll, " 
+				+  dataTreePath.classe	+ " AS class\nWHERE coll.oidsaada = class.oidsaada\nLIMIT 1000";
 			title = "Data (" + dataTreePath.category + ") of class <" + dataTreePath.classe  + ">  of collection <" + dataTreePath.collection + "> (truncated to 1000)";
 		}
 		else {
@@ -108,7 +118,36 @@ public class DataTableWindow extends OuterWindow {
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane jsp = new JScrollPane(productTable);
 		jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
-		this.getContentPane().add(jsp);
+		
+		JPanel qp = new JPanel();
+		final JTextArea jta = new JTextArea(sqlQuery);
+		qp.setLayout(new BoxLayout(qp,BoxLayout.PAGE_AXIS));
+		qp.add(new JScrollPane(jta));
+		JButton jb = new JButton("SUBMIT");
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				refresh(jta.getText());
+			}
+		});
+		qp.add(jb);
+		
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, qp);	
+		splitPane.setOneTouchExpandable(true);
+		splitPane.setDividerLocation(350);
+		this.getContentPane().setLayout(new BorderLayout());
+		this.getContentPane().add(splitPane, BorderLayout.CENTER);
+
+	}
+	
+	public void refresh(String newQuery) {
+		if( productTable != null ) {
+			try {
+				this.sqlQuery = newQuery;
+				this.productTable.setModel(sqlQuery);
+			} catch (QueryException e) {
+				Messenger.trapQueryException(e);
+			}
+		}
 	}
 
 	public void refresh() {

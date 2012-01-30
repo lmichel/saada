@@ -61,6 +61,7 @@ public abstract class OuterWindow extends JFrame {
 			return;
 		}
 		this.pack();
+		this.setLocationRelativeTo(rootFrame);
 		this.setVisible(true);
 		this.setCursor(Cursor.getDefaultCursor());
 	}

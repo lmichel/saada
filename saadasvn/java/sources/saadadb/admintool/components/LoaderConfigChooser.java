@@ -3,20 +3,24 @@ package saadadb.admintool.components;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 
+import saadadb.admintool.AdminTool;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.ConfFileFilter;
 import saadadb.api.SaadaDB;
 import saadadb.command.ArgsParser;
@@ -31,22 +35,59 @@ public class LoaderConfigChooser extends JPanel {
 	private static final String CONF_DIR = SaadaDB.getRoot_dir()  + Database.getSepar() + "config";
 	private TaskPanel taskPanel ;
 	private ArgsParser argsParser;
+	private JButton editConf = new JButton("Edit Selected Conf.");
+	private JButton newConf = new JButton("New Conf.");
+
 
 	public LoaderConfigChooser(TaskPanel taskPanel) {
 		this.taskPanel = taskPanel;
 		this.confList.setVisibleRowCount(6);
 		this.confList.setFixedCellWidth(15);
-
+		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		description.setEditable(false);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0; c.gridy = 0;
-		JScrollPane scrollPane = new JScrollPane(confList);
-		scrollPane.setPreferredSize(new Dimension(100,100));
+		c.gridx = 0; c.gridy = 0;c.weightx = 0;
+		this.add(newConf, c);
+		this.newConf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				activeEditorPanel() ;
+			}			
+		});
 
-		this.add(scrollPane);
-		c.gridx++;
-		this.add(new JScrollPane(description));
+
+		c.gridy++;
+		this.add(editConf, c);		
+		this.editConf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( confList.getSelectedValue() != null) {
+					activeEditorPanel() ;
+					if( ! confList.getSelectedValue().toString().equalsIgnoreCase("default") ){
+						String filterName = confList.getSelectedValue().toString();
+						AdminTool at = LoaderConfigChooser.this.taskPanel.rootFrame;
+						try {
+							FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
+							ObjectInputStream in = new ObjectInputStream(fis);
+							argsParser = (ArgsParser)in.readObject();
+							in.close();
+							((MappingKWPanel)(at.getActivePanel())).loadConfig(argsParser);
+						} catch (Exception e) {
+							AdminComponent.showFatalError(at, e);
+						}		
+					}
+				} else {
+					AdminComponent.showInputError(LoaderConfigChooser.this.taskPanel.rootFrame, "Select a config please");					
+				}
+			}
+		});
+
+		c.gridx++;c.gridy = 0; c.gridheight = 2;
+		JScrollPane scrollPane = new JScrollPane(confList);
+		scrollPane.setPreferredSize(new Dimension(150,100));
+		this.add(scrollPane, c);
+
+		c.gridx++;		c.weightx = 1;
+		this.add(new JScrollPane(description), c);
 
 		confList.addListSelectionListener(new ListSelectionListener() {
 
@@ -76,30 +117,58 @@ public class LoaderConfigChooser extends JPanel {
 					LoaderConfigChooser.this.taskPanel.setSelectedResource("Filter: " + filterName, null);
 				}	
 			}
-
 		});
-
 	}
 
+	private void activeEditorPanel() {
+		AdminTool at = LoaderConfigChooser.this.taskPanel.rootFrame;
+
+		if( category == null ) {
+			AdminComponent.showFatalError(at, "No valid data category");
+			return;
+		} else if( category.equalsIgnoreCase("FLATFILE") ) {
+			at.activePanel(AdminComponent.FLATFILE_MAPPER);
+		} else if( category.equalsIgnoreCase("MISC")) {
+			at.activePanel(AdminComponent.MISC_MAPPER);
+		} else if( category.equalsIgnoreCase("IMAGE") ) {
+			at.activePanel(AdminComponent.IMAGE_MAPPER);
+		} else if( category.equalsIgnoreCase("SPECTRUM") ) {
+			at.activePanel(AdminComponent.SPECTRUM_MAPPER);
+		} else if( category .equalsIgnoreCase("ENTRY ")|| category.equalsIgnoreCase("TABLE")) {
+			at.activePanel(AdminComponent.TABLE_MAPPER);
+		} else {
+			AdminComponent.showFatalError(at, "No valid data category");
+			return;
+		}
+		at.getActivePanel().lockDataTreePath();
+	}
 	/**
 	 * @param category
 	 * @throws FatalException 
 	 */
-	public void setCategory(String category) throws FatalException {
+	public void setCategory(String category, String toSelect) throws FatalException {
 		this.category = category;
 		DefaultListModel model = (DefaultListModel) confList.getModel();
 		model.removeAllElements();
 		model.addElement("Default");
 		File base_dir = new File( CONF_DIR);
+		boolean nothingSelected = true;
 		if( base_dir.isDirectory()) {
 			ConfFileFilter dff = new ConfFileFilter(category);
 			for( File c: base_dir.listFiles() ) {
-				if( dff.accept(c) ) {
-					model.addElement(c.getName().split("\\.")[1]);
+				if( dff.accept(c) ) { 
+					String name = c.getName().split("\\.")[1];
+					model.addElement(name);
+					if( toSelect != null && name.equals(toSelect)) {
+						nothingSelected = false;
+						confList.setSelectedValue(name, true);
+					}
 				}
 			}
 		}
+		if( nothingSelected) {
 		confList.setSelectedIndex(0);
+		}
 	}
 
 	/**
