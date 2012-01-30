@@ -44,7 +44,7 @@ public class ToolBarPanel extends JPanel {
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					adminLabel.rootFrame.activePanel(adminLabel.getAncestor());				
+					adminLabel.rootFrame.activePanel(adminLabel.getAncestor());		
 				}});
 			this.add(jb, c);
 			c.gridx++;

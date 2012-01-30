@@ -66,6 +66,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel commentCollPanel;
 
 	private TaskPanel emptyCategoryPanel;
+	private MetaDataEditorPanel metaDataPanel;
 
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
@@ -156,7 +157,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.SPECTRUM_MAPPER);
+				activePanel(AdminComponent.DATA_LOADER);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -269,6 +270,15 @@ public class AdminTool extends BaseFrame {
 			}
 			activePanel = relationPanel;
 			/*
+			 * Meta data management
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.MANAGE_METADATA) ) {
+			if( metaDataPanel == null ) {
+				metaDataPanel = new MetaDataEditorPanel(this,  AdminComponent.ROOT_PANEL);
+			}
+			activePanel = metaDataPanel;
+
+			/*
 			 * Collection mqnagement tasks
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.CREATE_COLLECTION) ) {
@@ -306,9 +316,12 @@ public class AdminTool extends BaseFrame {
 			if( dataLoaderPanel == null ) {
 				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.LOAD_DATA);
 			}
+			if( activePanel instanceof MappingKWPanel) {
+				System.out.println(activePanel.getSelectResourceLabel().getText());
+			}
 			activePanel = dataLoaderPanel;
 			/*
-			 * Data loading task
+			 * Data loadewr configuration
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.MISC_MAPPER) ) {
 			if( miscMapperPanel == null ) {
@@ -349,6 +362,11 @@ public class AdminTool extends BaseFrame {
 			System.err.println("Panel " + panelTitle + " not referenced");
 		}
 		activePanel.active();
+		/*
+		 * Data treepath must be locked later  by the ancestor
+		 */
+		activePanel.unlockDataTreePath();
+
 		this.activePanel.setDataTreePath(this.dataTreePath);
 
 		/*
@@ -359,8 +377,11 @@ public class AdminTool extends BaseFrame {
 		splitPane.setDividerLocation(dl);
 	}
 
+	public AdminPanel getActivePanel() {
+		return activePanel;
+	}
 	public void activeProcessPanel(CmdThread cmdThread) {
-		if( processPanel.hasARunningThread() ) {
+		if( processPanel.hasARunningThread() || (windowThread != null &&  !windowThread.isCompleted() )) {
 			AdminComponent.showInfo(this, "Another thread is running, please wait...");
 		}
 		else {
@@ -427,11 +448,13 @@ public class AdminTool extends BaseFrame {
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		this.dataTreePath = dataTreePath;
 		if( this.activePanel != null ) {
-			this.activePanel.setDataTreePath(dataTreePath);
 			/*
-			 * Mapper form must change when another category is selected
+			 * Mapper form must change when the category is changed
 			 */
 			if( this.activePanel instanceof MappingKWPanel ) {
+				if( this.activePanel.isDataTreePathLocked() )  {
+					AdminComponent.showInfo(this, "This action has no effect while the data loader configuration");
+				}
 				if( dataTreePath.category != null ) {
 					String category = dataTreePath.category;
 					try {
@@ -456,7 +479,10 @@ public class AdminTool extends BaseFrame {
 						Messenger.trapFatalException(e);
 					}
 				}
-			}	
+			}
+			else {
+				this.activePanel.setDataTreePath(dataTreePath);				
+			}
 		}
 	}
 

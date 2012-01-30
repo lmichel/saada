@@ -274,7 +274,7 @@ public class DataFileChooser extends JDialog {
 						vot.setPreferredSize(new Dimension(300, 500));
 						window.add(vot);
 						window.pack();
-						window.setLocationRelativeTo(DataFileChooser.this);
+						window.setLocationRelativeTo(DataFileChooser.this.getOwner());
 						window.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 						window.setVisible(true);
 					}					

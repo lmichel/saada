@@ -55,7 +55,9 @@ public abstract class PriorityPanel extends MappingPanel {
 		lastBtn.setSelected(false);
 		noBtn.setSelected(false);
 
-		if( mode.equals("only")) {
+		if( mode == null ) {
+			noBtn.setSelected(true);
+		} else if( mode.equals("only")) {
 			onlyBtn.setSelected(true);
 		}
 		else if( mode.equals("first")) {

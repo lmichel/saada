@@ -30,6 +30,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import saadadb.admin.dialogs.DataLoaderDefaultRunner;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
@@ -50,6 +51,7 @@ import saadadb.admintool.dialogs.DialogConfName;
 import saadadb.admintool.dialogs.DialogConfigFileChooser;
 import saadadb.admintool.dialogs.DialogFileChooser;
 import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
@@ -677,11 +679,17 @@ public class MappingKWPanel extends EditPanel {
 									+ Database.getSepar() + prefix + "." + name + ".config");
 							out = new ObjectOutputStream(fos);
 							out.writeObject(ap);
-							out.close();
+							out.close();				
+							if( this.ancestor.equals(DATA_LOADER)) {
+								rootFrame.activePanel(DATA_LOADER);
+								((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+							}
+
 							return;
 						}
 					}
 				}
+
 			}
 		} catch(Exception ex) {
 			Messenger.printStackTrace(ex);
@@ -719,7 +727,10 @@ public class MappingKWPanel extends EditPanel {
 			this.saveAs();
 		}
 		else if( !this.hasChanged() ){
-			//SaadaDBAdmin.showFatalError(this.frame, "Already saved " + this.last_saved + " " + this.getArgsParser().toString());
+			if( this.ancestor.equals(DATA_LOADER)) {
+				rootFrame.activePanel(DATA_LOADER);
+				((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+			}
 			return;
 		}
 		else if( checkParams() ) {
@@ -735,6 +746,10 @@ public class MappingKWPanel extends EditPanel {
 				out.writeObject(ap);
 				out.close();
 				this.last_saved  = ap.toString();
+				if( this.ancestor.equals(DATA_LOADER)) {
+					rootFrame.activePanel(DATA_LOADER);
+					((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+				}
 
 			} catch(Exception ex) {
 				Messenger.printStackTrace(ex);

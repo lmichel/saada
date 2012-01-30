@@ -15,11 +15,11 @@ import saadadb.meta.MetaCollection;
 
 public class CollDropPanel extends CollCreatePanel {
 
-	
+
 	public CollDropPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, DROP_COLLECTION, new ThreadDropCollection(rootFrame), ancestor);
 	}
-	
+
 	/**
 	 * Used by subclasses
 	 * @param rootFrame
@@ -36,22 +36,25 @@ public class CollDropPanel extends CollCreatePanel {
 		this.initTreePathLabel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		super.setDataTreePath(dataTreePath);
-		treePathLabel.setText(dataTreePath.collection);
-		MetaCollection mc;
-		try {
-			mc = Database.getCachemeta().getCollection(dataTreePath.collection);
-			nameField.setText(mc.getName());
-			commentField.setText(mc.getDescription());
-		} catch (FatalException e) {
-			showFatalError(rootFrame, e);
+		if( this.isDataTreePathLocked() ){
+			showInputError(rootFrame, "Can not change data treepath in this context");
+		}else  if( dataTreePath != null ) {
+			super.setDataTreePath(dataTreePath);
+			treePathLabel.setText(dataTreePath.collection);
+			MetaCollection mc;
+			try {
+				mc = Database.getCachemeta().getCollection(dataTreePath.collection);
+				nameField.setText(mc.getName());
+				commentField.setText(mc.getDescription());
+			} catch (FatalException e) {
+				showFatalError(rootFrame, e);
+			}
 		}
-		
 	}
 
 	protected void setActivePanel() {
@@ -60,14 +63,14 @@ public class CollDropPanel extends CollCreatePanel {
 		commentField.setEditable(false);
 
 	}
-	
+
 	@Override
 	protected Map<String, Object> getParamMap() {
 		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put("name", this.nameField.getText());
 		return map;
 	}
-	
+
 	public void initCmdThread() {
 		cmdThread = new ThreadDropCollection(rootFrame);
 	}
