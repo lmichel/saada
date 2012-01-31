@@ -89,12 +89,15 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 			} catch (SaadaException e1) {
 				AdminComponent.showFatalError(rootFrame, e1);
 			}
-			
-			
-			//ct = new CmdDeleteProduct(frame, tree_path_components, jtable);
 		}
 		else if( item.equals(MAP_META) ) {	
-			//VoTreeFrame.getInstance((SaadaDBAdmin)frame, jtable);
+			try {
+				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame);
+				cdp.setParams(params);
+				rootFrame.activeWindowProcess(cdp, dataTreePath);
+			} catch (SaadaException e1) {
+				AdminComponent.showFatalError(rootFrame, e1);
+			}
 		}
 		else if( item.equals(CANCEL_MAPPING) ) {	
 //			try {

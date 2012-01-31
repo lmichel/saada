@@ -1,14 +1,10 @@
 package saadadb.admintool.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -109,10 +105,10 @@ public class DataTableWindow extends OuterWindow {
 		 */
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		if( dataTreePath.category.equalsIgnoreCase("ENTRY") ) {
-			productTable = new SQLJTable(sqlQuery, this, SQLJTable.PRODUCT_PANEL, false);
+			productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);
 		}
 		else {
-			productTable = new SQLJTable(sqlQuery, this, SQLJTable.PRODUCT_PANEL, true);				
+			productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);				
 		}
 		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -123,6 +119,7 @@ public class DataTableWindow extends OuterWindow {
 		final JTextArea jta = new JTextArea(sqlQuery);
 		qp.setLayout(new BoxLayout(qp,BoxLayout.PAGE_AXIS));
 		qp.add(new JScrollPane(jta));
+		
 		JButton jb = new JButton("SUBMIT");
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -136,9 +133,11 @@ public class DataTableWindow extends OuterWindow {
 		splitPane.setDividerLocation(350);
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(splitPane, BorderLayout.CENTER);
-
 	}
 	
+	/**
+	 * @param newQuery
+	 */
 	public void refresh(String newQuery) {
 		if( productTable != null ) {
 			try {
@@ -150,6 +149,9 @@ public class DataTableWindow extends OuterWindow {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void refresh() {
 		if( productTable != null ) {
 			try {
