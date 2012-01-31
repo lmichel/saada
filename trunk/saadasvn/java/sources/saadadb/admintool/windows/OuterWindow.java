@@ -23,7 +23,7 @@ import saadadb.admintool.components.AdminComponent;
 public abstract class OuterWindow extends JFrame {
 	private static final Dimension defaultDim = new Dimension (500, 500);
 	protected Dimension dimension;
-	public final AdminTool rootFrame;
+	public static AdminTool rootFrame;
 	protected JPanel panel ;
 	protected String title;
 	
@@ -34,7 +34,7 @@ public abstract class OuterWindow extends JFrame {
 	OuterWindow(AdminTool rootFrame) {
 		super("Data View");
 		dimension = new Dimension(defaultDim.width, defaultDim.height);
-		this.rootFrame = rootFrame;
+		OuterWindow.rootFrame = rootFrame;
 		this.panel = new JPanel();
 		this.setPreferredSize(dimension);
 		this.getContentPane().setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -52,7 +52,6 @@ public abstract class OuterWindow extends JFrame {
 	 * 
 	 */
 	public void open(){
-		System.out.println(this.getPreferredSize());
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		try {
 			this.setContent();

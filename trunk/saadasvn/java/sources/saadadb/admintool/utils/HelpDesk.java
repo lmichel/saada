@@ -13,7 +13,8 @@ public class HelpDesk {
 	public static final int POSERROR_MAPPING = 5;
 	public static final int ENTRY_MAPPING = 6;
 	public static final int EXTENSION_MAPPING = 7;
-	public static final int CLASS_MAPPING = 7;
+	public static final int CLASS_MAPPING = 8;
+	public static final int METADATA_EDITOR = 9;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -54,7 +55,10 @@ public class HelpDesk {
 				"The class name must only contain letters, numbers or undescores."
 				, "It can not starts with a number"
 				});
-
+		map.put(METADATA_EDITOR, new String[] {
+				"Click on a data node (class or category) to display the related meta data."
+				, "Right click on the meta data table to edit Utypes, UCds, units or field descriptions."
+				});
 	}
 	
 	/**

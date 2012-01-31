@@ -9,6 +9,7 @@ import javax.swing.JTable;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadDeleteProduct;
+import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.SaadaException;
@@ -21,11 +22,11 @@ public class PopupProduct extends PopupNode {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PopupProduct(DataTableWindow jtable, String title) throws SaadaException {
-		super(jtable.rootFrame, jtable.getDataTreePath(), title);
+	public PopupProduct(AdminTool rootFrame, DataTreePath dataTreePath, SQLJTable sqlTable , String title) throws SaadaException {
+		super(rootFrame, dataTreePath, title);
 		JMenuItem item ;
 		item = new JMenuItem(DELETE_PRODUCTS);
-		if( jtable.getProductTable().getSelectedRowCount() == 0 ) {
+		if( sqlTable.getSelectedRowCount() == 0 ) {
 			item.setEnabled(false);
 		}
 		this.add(item);

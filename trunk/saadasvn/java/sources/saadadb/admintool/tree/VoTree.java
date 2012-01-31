@@ -143,10 +143,7 @@ public abstract class VoTree extends JPanel {
 			}
 			
 		});
-
 		frame.add(onglets);
 		frame.pack();
-		frame.setVisible(true);
-		
 	}
 }

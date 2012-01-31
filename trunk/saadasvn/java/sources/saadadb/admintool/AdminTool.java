@@ -241,6 +241,14 @@ public class AdminTool extends BaseFrame {
 	 * @param panelTitle
 	 */
 	public void activePanel(String panelTitle)  {
+		if( activePanel!= null && activePanel.hasChanged() && !panelTitle.equals(AdminComponent.PROCESS_PANEL) )  {
+			if( !AdminComponent.showConfirmDialog(this, "Modifications not saved. Do you want to continue anyway?") ) {
+				return;
+			}
+			else {
+				activePanel.resetChanges();
+			}
+		}
 		/*
 		 * Choice panels
 		 */
