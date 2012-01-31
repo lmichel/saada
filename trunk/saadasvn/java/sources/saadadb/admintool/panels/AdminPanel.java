@@ -168,7 +168,7 @@ public abstract class AdminPanel extends AdminComponent {
 		return false;
 	}
 
-	public void resetChanges() {
+	public void cancelChanges() {
 	}
 
 }
