@@ -73,6 +73,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel commentClassPanel;
 
 	private TaskPanel dataLoaderPanel;;
+	private TaskPanel createRelationPanel;
 
 	private EditPanel miscMapperPanel;;
 	private EditPanel spectrumMapperPanel;;
@@ -157,7 +158,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.DATA_LOADER);
+				activePanel(AdminComponent.CREATE_RELATION);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -246,7 +247,7 @@ public class AdminTool extends BaseFrame {
 				return;
 			}
 			else {
-				activePanel.resetChanges();
+				activePanel.cancelChanges();
 			}
 		}
 		/*
@@ -356,7 +357,15 @@ public class AdminTool extends BaseFrame {
 				flatfileMapperPanel = new MappingKWPanel(this, AdminComponent.FLATFILE_MAPPER, Category.FLATFILE,  AdminComponent.DATA_LOADER);
 			}
 			activePanel = flatfileMapperPanel;
-
+			/*
+			 * Relationship management
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.CREATE_RELATION) ) {
+			if( createRelationPanel == null ) {
+				createRelationPanel = new RelationCreatePanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = createRelationPanel;
+			
 			/*
 			 * Process pqnel used by all tasks
 			 */
