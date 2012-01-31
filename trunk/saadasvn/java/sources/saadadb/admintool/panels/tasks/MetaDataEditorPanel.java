@@ -66,6 +66,9 @@ public class MetaDataEditorPanel extends TaskPanel {
 				, debugButton});
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( productTable!= null && productTable.hasChanged() )  {
 			if( !AdminComponent.showConfirmDialog(this, "Modifications not saved. Do you want to continue anyway?") ) {
@@ -130,19 +133,25 @@ public class MetaDataEditorPanel extends TaskPanel {
 		}
 	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
 		this.initTreePathLabel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#hasChanged()
+	 */
 	public boolean hasChanged() {
 		return (productTable == null)? false:  productTable.hasChanged();
 	}
 	
-	public void resetChanges() {
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#cancelChanges()
+	 */
+	public void cancelChanges() {
 		if( productTable!= null && productTable.hasChanged() )  {
 			try {
 				productTable.setModel(sqlQuery);
