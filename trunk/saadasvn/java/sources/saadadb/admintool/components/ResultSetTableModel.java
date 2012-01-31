@@ -15,7 +15,7 @@ import java.util.TreeSet;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import saadadb.admin.dialogs.DialogUCD;
+import saadadb.admintool.dialogs.DialogUCD;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -196,6 +196,7 @@ public class ResultSetTableModel implements TableModel {
 		 * Points onto the ucd column
 		 */
 		for( int i=0 ; i<nbc ; i++ ) {
+			System.out.println(getColumnName(i));
 			if( getColumnName(i).equals("ucd") ) {
 				/*
 				 * Store the previous ucd
@@ -219,12 +220,12 @@ public class ResultSetTableModel implements TableModel {
 				 */
 				if( previous_ucd != null && previous_ucd.length() > 0 ) {
 					DialogUCD cd = null;
-					cd = new DialogUCD(null
+					cd = new DialogUCD(frame.getRootFrame()
 							, "Set UCD"
 							, new String[]{new_ucd, new_ucd + ";" + previous_ucd, previous_ucd + ";" + new_ucd, previous_ucd, "no UCD"}
 					, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment);					
 					cd.pack();
-					cd.setLocationRelativeTo(frame);
+					cd.setLocationRelativeTo(frame.getRootFrame());
 					cd.setVisible(true);
 					/*
 					 * Comment field in dialog is set to null when Cancel is clicked
@@ -240,24 +241,22 @@ public class ResultSetTableModel implements TableModel {
 					}
 				}
 				else {
+					setValueAt(new_ucd, row, i);
 					if( previous_comment.length() == 0 ) {
-						setValueAt(new_ucd, row, i);
 						setValueAt(comment, row, comment_col);				    								
 					}
 					/*
 					 * Propose a comment merged with the previous one and the DM attribute description
 					 */
 					else {
-						DialogUCD cd = null;
-						cd = new DialogUCD(null
+						DialogUCD cd =  new DialogUCD(frame.getRootFrame()
 								, "Set UCD"
 								, null
 								, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
 						cd.pack();
-						cd.setLocationRelativeTo(frame);
+						cd.setLocationRelativeTo(frame.getRootFrame());
 						cd.setVisible(true);
 						if( cd.getTyped_comment() != null ) {
-							setValueAt(new_ucd, row, i);
 							setValueAt(cd.getTyped_comment(), row, comment_col);
 						}
 					}
@@ -289,8 +288,10 @@ public class ResultSetTableModel implements TableModel {
 		/*
 		 * Points onto the ucd column
 		 */
+		boolean colFound = false;
 		for( int i=0 ; i<nbc ; i++ ) {
 			if( getColumnName(i).equals("utype") ) {
+				colFound = true;
 				/*
 				 * Store the previous ucd
 				 */
@@ -314,12 +315,12 @@ public class ResultSetTableModel implements TableModel {
 				if( previous_utype != null && previous_utype.length() > 0 ) {
 
 					DialogUCD cd = null;
-					cd = new DialogUCD(null
+					cd = new DialogUCD(frame.getRootFrame()
 							, "Set UType"
 							, new String[]{new_utype, previous_utype, "no Utype"}
 					, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
 					cd.pack();
-					cd.setLocationRelativeTo(frame);
+					cd.setLocationRelativeTo(frame.getRootFrame());
 					cd.setVisible(true);
 					/*
 					 * Comment field in dialog is set to null when Cancel is clicked
@@ -343,13 +344,12 @@ public class ResultSetTableModel implements TableModel {
 					 * Propose a comment merged with the previous one and the DM attribute description
 					 */
 					else {
-						DialogUCD cd = null;
-						cd = new DialogUCD(null
+						DialogUCD cd =  new DialogUCD(frame.getRootFrame()
 								, "Set UType"
 								, null
 								, (previous_comment.length() > 0)? (previous_comment + " " + comment): comment );					
 						cd.pack();
-						cd.setLocationRelativeTo(frame);
+						cd.setLocationRelativeTo(frame.getRootFrame());
 						cd.setVisible(true);
 						if( cd.getTyped_comment() != null ) {
 							setValueAt(new_utype, row, i);
@@ -360,6 +360,9 @@ public class ResultSetTableModel implements TableModel {
 				return;
 			}
 		}
+		if( !colFound ) {
+			AdminComponent.showInfo(frame, "This table has no editable UType column:");
+		}
 	}
 
 	/**
@@ -369,11 +372,13 @@ public class ResultSetTableModel implements TableModel {
 	 */
 	public void setUnit(String str, int row) {
 		int nbc=rs_copy.nb_columns;
+		boolean colFound = false;
 		/*
 		 * Points onto the ucd column
 		 */
 		for( int i=0 ; i<nbc ; i++ ) {
 			if( getColumnName(i).equals("unit") ) {
+				colFound = true;
 				/*
 				 * Store the previous ucd
 				 */
@@ -386,13 +391,12 @@ public class ResultSetTableModel implements TableModel {
 				 */
 				if( previous_unit != null && previous_unit.length() > 0 ) {
 
-					DialogUCD cd = null;
-					cd = new DialogUCD(null
+					DialogUCD cd =  new DialogUCD(frame.getRootFrame()
 							, "Set UType"
 							, new String[]{new_unit, previous_unit, "none"}
 					, null );					
 					cd.pack();
-					cd.setLocationRelativeTo(frame);
+					cd.setLocationRelativeTo(frame.getRootFrame());
 					cd.setVisible(true);
 					/*
 					 * Selected UCD field in dialog is set to null when Cancel is clicked
@@ -411,6 +415,9 @@ public class ResultSetTableModel implements TableModel {
 					return;
 				}
 			}
+		}
+		if( !colFound ) {
+			AdminComponent.showInfo(frame, "This table has no editable Unit column:");
 		}
 	}
 
@@ -470,7 +477,7 @@ public class ResultSetTableModel implements TableModel {
 		/*
 		 * Extract the column numbers of the field to be updated
 		 */
-		int comment_col = -1, ucd_col = -1,  utype_col = -1, unit_col = -1, quer_col = -1, form_col = -1;
+		int comment_col = -1, ucd_col = -1,  utype_col = -1, unit_col = -1, quer_col = -1, form_col = -1, name_col = -1;;
 		for( int i=0 ; i<nbc ; i++ ) {
 			if( getColumnName(i).equals("comment") ) {
 				comment_col = i;
@@ -490,30 +497,39 @@ public class ResultSetTableModel implements TableModel {
 			else if( getColumnName(i).equals("format") ) {
 				form_col = i;
 			}
+			else if( getColumnName(i).equals("name_attr") ) {
+				name_col = i;
+			}
 		}
 		for( int i: ts){
-			String rbq = this.getValueAt(i, quer_col).toString();
-			String bq;
-			if( "true".equalsIgnoreCase(rbq) ) {
-				bq = Database.getWrapper().getBooleanAsString(true);
-				
+			String strQuery = "\nSET "
+					+ "ucd = '"      + ((String)(this.getValueAt(i, ucd_col))).replaceAll("'", "")    + "'"
+					+ ", comment = '"  + ((String)(this.getValueAt(i, comment_col))).replaceAll("'", "")+ "'";
+			if( utype_col != -1 ) 
+				strQuery += ", utype = '"    + ((String)(this.getValueAt(i, utype_col))).replaceAll("'", "")  + "'";
+			if( unit_col != -1 ) 
+				strQuery +=  ", unit = '"     + ((String)(this.getValueAt(i, unit_col))).replaceAll("'", "")   + "'";
+			if( quer_col != -1 ) {
+				String rbq = this.getValueAt(i, quer_col).toString();
+				String bq;
+				if( "true".equalsIgnoreCase(rbq) ) {
+					bq = Database.getWrapper().getBooleanAsString(true);
+
+				}
+				else {
+					bq = Database.getWrapper().getBooleanAsString(false);
+				}
+				strQuery += ", queriable = " + bq   + " ";
 			}
-			else {
-				bq = Database.getWrapper().getBooleanAsString(false);
-			}
-			//String bq = Database.getWrapper().getBooleanValue(((Boolean)(this.getValueAt(i, quer_col))));
-			retour.add(  "SET "
-					+ "ucd = '"      + ((String)(this.getValueAt(i, ucd_col))).replaceAll("'", "")    + "', "
-					+ "utype = '"    + ((String)(this.getValueAt(i, utype_col))).replaceAll("'", "")  + "', "
-					+ "comment = '"  + ((String)(this.getValueAt(i, comment_col))).replaceAll("'", "")+ "', "
-					+ "unit = '"     + ((String)(this.getValueAt(i, unit_col))).replaceAll("'", "")   + "', "
-					+ "queriable = " + bq   + ", "
-					+ "format = '"   + ((String)(this.getValueAt(i, form_col))).replaceAll("'", "")   + "' "
+			if( form_col != -1 )
+				strQuery += ", format = '"   + ((String)(this.getValueAt(i, form_col))).replaceAll("'", "")   + "'";
+			
 					/*
 					 * pk = -1 is used for updating collection metadata tables. AS metadata are the same
 					 * for all collection, they are defined once with pk = -1
 					 */
-					+ "WHERE pk = "  + this.getValueAt(i, 0) + " or pk = -1 ");
+			strQuery += "\nWHERE name_attr = '"  + this.getValueAt(i, name_col) + "'";
+			retour.add(strQuery);
 		}
 		return retour;
 	}

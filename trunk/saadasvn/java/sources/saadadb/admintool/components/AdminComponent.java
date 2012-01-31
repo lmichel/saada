@@ -11,6 +11,7 @@ import javax.swing.JTextArea;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.util.Messenger;
 
 
@@ -185,7 +186,6 @@ public abstract class AdminComponent extends JPanel {
 	 * @return
 	 */
 	public final static JTextArea getHelpLabel(String[] phrases) {
-		
 		JTextArea retour = new  JTextArea();
 		for( String str: phrases) {
 			retour.append(str + "\n");
@@ -196,6 +196,15 @@ public abstract class AdminComponent extends JPanel {
 		retour.setForeground(Color.GRAY);
 		return retour;
 	}
+	
+	/**
+	 * @param textKey
+	 * @return
+	 */
+	public final static JTextArea getHelpLabel(int textKey) {
+		return  getHelpLabel(HelpDesk.get(textKey));
+	}
+
 
 	/**
 	 * @param txt

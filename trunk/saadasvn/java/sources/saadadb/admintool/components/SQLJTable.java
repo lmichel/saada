@@ -3,9 +3,6 @@ package saadadb.admintool.components;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,16 +16,12 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.popups.PopupClassEdit;
-import saadadb.admintool.popups.PopupCollEdit;
 import saadadb.admintool.popups.PopupNode;
 import saadadb.admintool.popups.PopupProduct;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -37,6 +30,11 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 public class SQLJTable extends JTable {
+	public AdminTool getRootFrame() {
+		return rootFrame;
+	}
+
+
 	/**
 	 * 
 	 */
@@ -47,7 +45,7 @@ public class SQLJTable extends JTable {
 
 	private final AdminTool rootFrame;
 	private DataTreePath dataTreePath;
-	private DataTableWindow jtable;
+	//***private DataTableWindow jtable;
 	private final int  panel_type;
 	private final String sql;
 
@@ -56,12 +54,13 @@ public class SQLJTable extends JTable {
 	private static Triangle up_triangle = new Triangle(false);
 	private static Triangle both_triangle = new Triangle();
 	private  int order_column = -1;
+	protected boolean modified = false;
 
-	public SQLJTable(String sql, DataTableWindow jtable, int panel_type, boolean with_menu) throws QueryException {
-		this.rootFrame = jtable.rootFrame;
+	public SQLJTable(AdminTool rootFrame, DataTreePath dataTreePath, String sql, int panel_type) throws QueryException {
+		this.rootFrame = rootFrame;
 		this.panel_type = panel_type;
-		this.jtable = jtable;
-		this.dataTreePath = jtable.getDataTreePath();;
+		//this.jtable = jtable;
+		this.dataTreePath = dataTreePath;;
 		this.sql = sql;
 		/*
 		 * No action can be done simultaneoulsy on several class attributes
@@ -82,35 +81,12 @@ public class SQLJTable extends JTable {
 			this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);                
 			this.setRowSelectionAllowed(true);
 			this.makeOrderingEnabled();
+			this.makPopupEnabled();
+
 		}
 		this.setModel(sql);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		/*
-		 * popup menus allowed
-		 */
-		if( with_menu ) {
-			this.makPopupEnabled();
-		}
 	}
-
-	public Component prepareRenderer(TableCellRenderer renderer,
-			int rowIndex, int vColIndex) {
-		Component c = super.prepareRenderer(renderer, rowIndex, vColIndex);
-		if(isCellSelected(rowIndex, vColIndex))  {
-			c.setForeground(Color.WHITE);
-			c.setBackground(Color.GRAY);
-
-		} else {
-			c.setForeground(Color.BLACK);
-			if (rowIndex % 2 == 0 ) {
-				c.setBackground(AdminComponent.LIGHTBACKGROUND);
-			} else {
-				c.setBackground(Color.WHITE);
-			}
-		}
-		return c;
-	}
-
 
 	/**
 	 * 
@@ -126,27 +102,12 @@ public class SQLJTable extends JTable {
 					 * Popup on product: propose to remove
 					 */
 					case PRODUCT_PANEL: try {
-							menu = new PopupProduct(SQLJTable.this.jtable,  "Actions on Ingested Product Files");
-						} catch (SaadaException e1) {
-							AdminComponent.showFatalError(rootFrame, e1);
-							return;
-						} 
+						menu = new PopupProduct(rootFrame, dataTreePath, SQLJTable.this,   "Actions on Ingested Product Files");
+					} catch (SaadaException e1) {
+						AdminComponent.showFatalError(rootFrame, e1);
+						return;
+					} 
 					menu.show(SQLJTable.this, e.getX(), e.getY());
-					break;
-					/*
-					 * Popup on class attributes: edit UCD, UTYPES....
-					 * for business level.
-					 * nothing for collection level
-					 */
-					case CLASS_PANEL: menu=null;
-					if( dataTreePath.isClassLevel() ) {
-						//enu = new PopupClassEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Class"); 
-					}
-					else if(  dataTreePath.isCategoryLevel() ) {
-						//menu = new PopupCollEdit(rootFrame, dataTreePath, SQLJTable.this, "Actions on Collection"); 
-					}
-					menu.show(SQLJTable.this, e.getX(), e.getY());
-					break;
 					}
 				}
 			}
@@ -251,15 +212,10 @@ public class SQLJTable extends JTable {
 			else if( cid.equals("oidsaada") ) {
 				tableColumn.setPreferredWidth (160);	
 			}
-			/*
-			 * ColorCellRenderer disabled row selection mode: just used for editable table.
-			 * (need to be improved)
-			 */
-			if( this.panel_type ==  CLASS_PANEL) {
-				columnModel.getColumn(i).setCellRenderer(new ColorCellRenderer());
-			}
+			columnModel.getColumn(i).setCellRenderer(new ColorCellRenderer());
 		} 
 		squery.close();
+		this.modified = false;
 	}
 
 	/**
@@ -301,6 +257,7 @@ public class SQLJTable extends JTable {
 		for( String stmt: ((ResultSetTableModel)(this.getModel())).getUpdateSQLStatements()) {
 			SQLTable.addQueryToTransaction(base_stmt + stmt);
 		}
+		this.modified = false;
 	}
 
 	/**
@@ -357,6 +314,9 @@ public class SQLJTable extends JTable {
 			}
 			g.fillPolygon(xp,yp,3);
 		}
-
+	}
+	
+	public boolean hasChanged() {
+		return modified;
 	}
 }
