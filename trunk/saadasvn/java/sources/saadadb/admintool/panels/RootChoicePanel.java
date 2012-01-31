@@ -63,7 +63,7 @@ public class RootChoicePanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Manage Meta Data", "icons/MetaData.png"
 				, new Runnable(){public void run(){
-					System.out.println("loaddata");}});
+					rootFrame.activePanel(MANAGE_METADATA);}});
 		c.gridx = 2;
 		c.gridy = 1;	
 		c.weightx = 0.5;

@@ -32,6 +32,7 @@ public abstract class AdminPanel extends AdminComponent {
 	protected JLabel selectResourceLabel ;
 	protected JLabel currentTaskLabel ;
 	public final DebugButton debugButton = new DebugButton();
+	private boolean lockDataTreePath = false;
 
 	public JLabel getTreePathLabel() {
 		return treePathLabel;
@@ -76,8 +77,16 @@ public abstract class AdminPanel extends AdminComponent {
 		return this.ancestor;
 	}
 
-
-
+	public void lockDataTreePath() {
+		System.err.println("lock");
+		lockDataTreePath = true;
+	}
+	public void unlockDataTreePath() {
+		lockDataTreePath = false;
+	}
+	public boolean isDataTreePathLocked() {
+		return lockDataTreePath;
+	}
 
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
@@ -119,7 +128,7 @@ public abstract class AdminPanel extends AdminComponent {
 	}
 
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		if( dataTreePath != null ) {
+		if( dataTreePath != null && !lockDataTreePath ) {
 			super.setDataTreePath(dataTreePath);
 			if( treePathLabel != null )
 				treePathLabel.setText(dataTreePath.toString());
@@ -151,5 +160,15 @@ public abstract class AdminPanel extends AdminComponent {
 	 * called when the panel get the focus
 	 */
 	public abstract void active() ;
+
+	/**
+	 * @return
+	 */
+	public boolean hasChanged() {
+		return false;
+	}
+
+	public void resetChanges() {
+	}
 
 }
