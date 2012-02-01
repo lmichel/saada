@@ -54,6 +54,8 @@ public abstract class AdminComponent extends JPanel {
 	public static final String IMAGE_MAPPER    = "KW Mapper for Images";
 	public static final String FLATFILE_MAPPER = "KW Mapper for Flatfiles";
 	
+	public static final String CREATE_RELATION = "Relationship Creation";
+	
 	public static final String MANAGE_METADATA = "Manage Meta Data";
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;
