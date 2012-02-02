@@ -34,6 +34,8 @@ import saadadb.admintool.components.input.CollectionTextField;
 import saadadb.admintool.components.input.FreeTextField;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.database.Database;
@@ -422,25 +424,27 @@ public class RelationCreatePanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {
 		JPanel tPanel;
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5,5,5,5);
+		MyGBC mc = new MyGBC(5,5,5,5);
 		
-		tPanel = this.addSubPanel("Description");
-		c.insets = new Insets(5,5,5,5);
-		c.gridx = 0;
-		c.gridy = 0;	
-		c.weightx = 0;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.EAST;
+		tPanel = this.addSubPanel("Relationship");
+		mc.right();
+		tPanel.add(getPlainLabel("Relation Name"), mc);
+		
+		mc.next();mc.left();
 		try {
 			nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
 		} catch (ParseException e) {
 			AdminComponent.showFatalError(rootFrame, e);
 		}
-		tPanel.add(nameField, c);
-		c.gridy++;
+		tPanel.add(nameField, mc);
+		mc.rowEnd();
+		tPanel.add(getHelpLabel(HelpDesk.NODE_NAME), mc);
+		
+		mc.newRow();mc.right();
+		tPanel.add(getPlainLabel("Description"), mc);
+		mc.next();mc.left();
 		commentField = new FreeTextField(6, 24);
-		tPanel.add(new JScrollPane(commentField), c);
+		tPanel.add(new JScrollPane(commentField), mc);
 
 		
 		tPanel = this.addSubPanel("Primary Collection");

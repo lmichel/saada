@@ -15,6 +15,10 @@ public class HelpDesk {
 	public static final int EXTENSION_MAPPING = 7;
 	public static final int CLASS_MAPPING = 8;
 	public static final int METADATA_EDITOR = 9;
+	public static final int NODE_NAME = 10;
+	public static final int RELATION_PRIMARY = 11;
+	public static final int RELATION_SECONDARY = 12;
+	public static final int RELATION_QUALIFIER = 13;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -58,6 +62,24 @@ public class HelpDesk {
 		map.put(METADATA_EDITOR, new String[] {
 				"Click on a data node (class or category) to display the related meta data."
 				, "Right click on the meta data table to edit Utypes, UCds, units or field descriptions."
+				});
+		map.put(NODE_NAME, new String[] {
+				"Name must only contain numbers"
+				, "characters and _ and not start with a number"
+				, "Forbidden characers are automatically rejected"
+				});
+		map.put(RELATION_PRIMARY, new String[] {
+				"Primary collection is set by clicking in the choosen category node on the data tree."
+				, "It can not be edited by hand."
+				});
+		map.put(RELATION_SECONDARY, new String[] {
+				"Secondary collection is set by dropping the choosen category node on the text field."
+				, "It can not be edited by hand."
+				});
+		map.put(RELATION_QUALIFIER, new String[] {
+				"Qualifier names must only contain numbers, characters and _ and not start with a number"
+				, "You can add as many qualifiers as you want."
+				, "The value of any qualifier named 'distance' will be automatically computed if possible"
 				});
 	}
 	
