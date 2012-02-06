@@ -155,7 +155,13 @@ public class SsapVotableFormator extends VotableFormator {
 		param.setValue(this.protocolParams.get("band"));
 		paramSet.addItem(param);
 
-
+		param = new SavotParam();
+		param.setName("INPUT:TIME");
+		param.setDataType("char");
+		param.setArraySize("*");
+		param.setDescription("");
+		param.setDescription("Requested format of time (returns null values currently)");
+		paramSet.addItem(param);
 
 		param = new SavotParam();
 		param.setName("INPUT:FORMAT");
@@ -164,7 +170,6 @@ public class SsapVotableFormator extends VotableFormator {
 		param.setArraySize("*");
 		param.setDescription("Requested format of spectra");
 		paramSet.addItem(param);
-
 
 		param = new SavotParam();
 		param.setName("INPUT:collection");
