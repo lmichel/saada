@@ -404,15 +404,15 @@ public class Messenger implements Serializable{
 	 * @param ie
 	 * @return
 	 */
-	public static void trapQueryException(QueryException ie) {		
+	public static void trapQueryException(QueryException e) {		
 		if( Messenger.mode == Messenger.COMMAND_LINE ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
+			Messenger.printMsg(Messenger.ERROR, e.toString());
 			Messenger.printMsg(Messenger.ERROR, "Program exits on fatal error.");
 			System.exit(1);
 		}
 		else if( Messenger.mode == Messenger.GRAPHIC ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
-			new QueryExceptionDialog(Messenger.frame, ie);
+			Messenger.printMsg(Messenger.ERROR, e.toString());
+			new QueryExceptionDialog(Messenger.frame, e);
 		}
 	}
 
@@ -420,15 +420,15 @@ public class Messenger implements Serializable{
 	 * @param ie
 	 * @return
 	 */
-	public static void trapAbortException(AbortException ie) {		
+	public static void trapAbortException(AbortException e) {		
 		if( Messenger.mode == Messenger.COMMAND_LINE ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
+			Messenger.printMsg(Messenger.ERROR, e.toString());
 			Messenger.printMsg(Messenger.ERROR, "Program exits on fatal error.");
 			System.exit(1);
 		}
 		else if( Messenger.mode == Messenger.GRAPHIC ) {
-			Messenger.printMsg(Messenger.ERROR, ie.toString());
-			new AbortExceptionDialog(Messenger.frame, ie);
+			Messenger.printMsg(Messenger.ERROR, e.toString());
+			new AbortExceptionDialog(Messenger.frame, e);
 		}
 	}
 	/**

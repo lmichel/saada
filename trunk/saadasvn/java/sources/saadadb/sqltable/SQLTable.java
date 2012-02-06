@@ -287,6 +287,18 @@ public abstract class SQLTable {
 	}
 
 	/**
+	 * @param tableName
+	 * @return
+	 */
+	public static boolean tableExist(String tableName) {
+		try {
+			return (Database.getWrapper().tableExist(tableName) || Database.getWrapper().tableExist(tableName.toLowerCase()));
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			return false;
+		}
+	}
+	/**
 	 * @param table
 	 * @param sp used for progress bar
 	 * @throws AbortException

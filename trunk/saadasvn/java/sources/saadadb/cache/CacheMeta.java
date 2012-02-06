@@ -22,6 +22,7 @@ import saadadb.meta.MetaCollection;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.vo.tap.TapServiceManager;
 
@@ -474,7 +475,10 @@ public class CacheMeta {
 		else {
 			ArrayList<String> retour = new ArrayList<String>();
 			for( int i=0 ; i<this.relation_names.length ; i++) {
+				System.out.println(this.relation_names[i]);
 				MetaRelation mr = (this.relations.get(this.relation_names[i]));
+				System.out.println(collection + " " +mr.getSecondary_coll() + " " + category);
+
 				if( collection.equals(mr.getSecondary_coll()) && 
 						category == mr.getSecondary_category() ) {
 					retour.add(this.relation_names[i]);					
@@ -1153,7 +1157,7 @@ public class CacheMeta {
 				retour.add(ah);				
 			}
 		}
-		return retour.toArray(new AttributeHandler[0]);
-		
+		return retour.toArray(new AttributeHandler[0]);	
 	}
+	
 }
