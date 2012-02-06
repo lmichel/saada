@@ -1,0 +1,126 @@
+/**
+ * 
+ */
+package saadadb.admintool.panels.tasks;
+
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
+import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.ThreadLoadData;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.AntButton;
+import saadadb.admintool.components.LoaderConfigChooser;
+import saadadb.admintool.components.RelationshipChooser;
+import saadadb.admintool.components.RunTaskButton;
+import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.dialogs.DataFileChooser;
+import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
+import saadadb.command.ArgsParser;
+import saadadb.exceptions.FatalException;
+import saadadb.util.Messenger;
+
+
+/**
+ * @author laurentmichel
+ *
+ */
+public class RelationDropPanel extends TaskPanel {
+
+	protected  RelationshipChooser configChooser;
+	protected RunTaskButton runButton;
+
+
+	public RelationDropPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, DROP_RELATION, null, ancestor);
+		cmdThread = new ThreadLoadData(rootFrame);
+	}
+
+	/**
+	 * Used by subclasses
+	 * @param rootFrame
+	 * @param title
+	 * @param cmdThread
+	 * @param ancestor
+	 */
+	protected RelationDropPanel(AdminTool rootFrame, String title,
+			CmdThread cmdThread, String ancestor) {
+		super(rootFrame, title, null, ancestor);
+		this.cmdThread = cmdThread;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public void setDataTreePath(DataTreePath dataTreePath) {
+		super.setDataTreePath(dataTreePath);
+		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
+			try {
+				setSelectedResource("No selected resource", null);
+				configChooser.setDataTreePath(dataTreePath);
+			} catch (FatalException e) {
+				Messenger.trapFatalException(e);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	protected void setToolBar() {
+		this.initTreePathLabel();
+		this.initSelectResourceLabel();
+		this.add(new ToolBarPanel(this, true, true, false));
+	}
+
+	@Override
+	protected Map<String, Object> getParamMap() {
+		if( configChooser.getSelectedRelation() != null ) {
+			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			map.put("relation", configChooser.getSelectedRelation());
+			return map;
+		}
+		else {
+			return null;	
+		}
+	}
+
+	@Override
+	public void initCmdThread() {
+		cmdThread = new ThreadLoadData(rootFrame);
+	}
+
+	@Override
+	protected void setActivePanel() {
+		runButton = new RunTaskButton(this);
+
+		JPanel tPanel = this.addSubPanel("Relationship Selector");
+		configChooser = new RelationshipChooser(this, runButton);
+		MyGBC c = new MyGBC(5,5,5,5);
+		tPanel.add(configChooser, c);
+		c.newRow();
+		tPanel.add(getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
+		
+
+		this.setActionBar(new Component[]{runButton
+				, debugButton
+				, (new AntButton(this))});
+	}
+}

@@ -35,7 +35,7 @@ public class ThreadDropCollection extends CmdThread{
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		return AdminComponent.showConfirmDialog(frame, "Do you really want to drop the content of the collection " + name);
 	}
 

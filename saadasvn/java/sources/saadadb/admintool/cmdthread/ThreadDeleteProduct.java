@@ -42,7 +42,7 @@ public class ThreadDeleteProduct extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		if( dataTable == null ) {
 			AdminComponent.showFatalError(frame, "No JTable where to read oids of products to remove (Inner error)");
 			return  false;

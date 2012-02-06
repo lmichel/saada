@@ -120,12 +120,8 @@ public class CategoryEmptyPanel extends TaskPanel {
 		c.weighty = 0.5;
 		c.anchor = GridBagConstraints.WEST;
 		runButton = new RunTaskButton(this);
-		try {
-			nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
-			nameField.addPropertyChangeListener("value", this);
-		} catch (ParseException e1) {
-			AdminComponent.showFatalError(rootFrame, e1);
-		}
+		nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
+		nameField.addPropertyChangeListener("value", this);
 		tPanel.add(nameField, c);
 
 		c.gridx = 0;

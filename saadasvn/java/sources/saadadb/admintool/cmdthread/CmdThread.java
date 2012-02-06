@@ -69,7 +69,7 @@ public abstract class CmdThread extends Thread {
 	 * @throws FatalException 
 	 * @throws Exception 
 	 */
-	protected boolean checkParams() throws QueryException, FatalException, Exception {
+	public boolean checkParams() throws QueryException, FatalException, Exception {
 		return  SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?");
 	}
 	

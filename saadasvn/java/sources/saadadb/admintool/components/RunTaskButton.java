@@ -31,7 +31,7 @@ public class RunTaskButton extends JButton {
 					if( RunTaskButton.this.adminPanel.setCmdParams()  == true ) {
 						rootFrame.activeProcessPanel(cmdThread);
 					}
-				} catch (SaadaException e1) {
+				} catch (Exception e1) {
 					AdminComponent.showFatalError(rootFrame, e1);
 					rootFrame.activePanel(RunTaskButton.this.adminPanel.getTitle());
 				}

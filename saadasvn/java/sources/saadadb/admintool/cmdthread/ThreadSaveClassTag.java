@@ -33,7 +33,7 @@ public class ThreadSaveClassTag extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		if( sqlTable == null ) {
 			AdminComponent.showFatalError(frame, "No meta data table to save (Inner error)");
 			return  false;

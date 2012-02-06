@@ -54,7 +54,12 @@ public abstract class AdminComponent extends JPanel {
 	public static final String IMAGE_MAPPER    = "KW Mapper for Images";
 	public static final String FLATFILE_MAPPER = "KW Mapper for Flatfiles";
 	
-	public static final String CREATE_RELATION = "Relationship Creation";
+	public static final String CREATE_RELATION   = "Create Relationship";
+	public static final String COMMENT_RELATION  = "Comment Relationship";
+	public static final String DROP_RELATION     = "Drop Relationship";
+	public static final String EMPTY_RELATION    = "Empty Relationship";
+	public static final String POPULATE_RELATION = "Populate Relationship";
+	public static final String INDEX_RELATION    = "Index Relationship";
 	
 	public static final String MANAGE_METADATA = "Manage Meta Data";
 	protected DataTreePath dataTreePath;

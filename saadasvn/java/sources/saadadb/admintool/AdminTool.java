@@ -74,6 +74,11 @@ public class AdminTool extends BaseFrame {
 
 	private TaskPanel dataLoaderPanel;;
 	private TaskPanel createRelationPanel;
+	private TaskPanel dropRelationPanel;
+	private TaskPanel commentRelationPanel;
+	private TaskPanel emptyRelationPanel;
+	private TaskPanel populateRelationPanel;
+	private TaskPanel indexRelationPanel;
 
 	private EditPanel miscMapperPanel;;
 	private EditPanel spectrumMapperPanel;;
@@ -158,7 +163,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.CREATE_RELATION);
+				activePanel(AdminComponent.DROP_RELATION);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -365,7 +370,11 @@ public class AdminTool extends BaseFrame {
 				createRelationPanel = new RelationCreatePanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = createRelationPanel;
-			
+		} else 	if( panelTitle.equals(AdminComponent.DROP_RELATION) ) {
+			if( dropRelationPanel == null ) {
+				dropRelationPanel = new RelationDropPanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = dropRelationPanel;
 			/*
 			 * Process pqnel used by all tasks
 			 */

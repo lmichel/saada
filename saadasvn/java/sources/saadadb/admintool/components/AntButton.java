@@ -25,7 +25,7 @@ public class AntButton extends JButton{
 						if( AntButton.this.adminPanel.setCmdParams() )  {
 							AdminComponent.showInfo(AntButton.this.adminPanel.rootFrame, ct.getAntTarget());
 						}
-					} catch (SaadaException e1) {
+					} catch (Exception e1) {
 						AdminComponent.showFatalError(AntButton.this.adminPanel.getRootFrame(), e1);
 					}
 				}

@@ -19,7 +19,7 @@ public class DummyTask extends CmdThread {
 		super(frame);
 	}
 	
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		return  true;
 	}
 		
