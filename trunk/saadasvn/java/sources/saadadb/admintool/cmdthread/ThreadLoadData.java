@@ -47,7 +47,7 @@ public class ThreadLoadData extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		if( ap == null ) {
 			AdminComponent.showFatalError(frame, "No loader parameter given");
 			return false;

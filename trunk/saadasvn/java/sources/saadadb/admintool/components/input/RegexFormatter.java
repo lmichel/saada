@@ -127,18 +127,16 @@ class RegexFormatter extends DefaultFormatter {
 	                	this.componentToActive.setEnabled(false);
 	                }
 	                return super.stringToValue(text);
-	        		
 	        	}
 	            Matcher mMatcher = pPattern.matcher(text);
 	            
 	            if (mMatcher.matches()) {
 	                setMatcher(mMatcher);
-	                if( this.componentToActive != null ) {
+ 	                if( this.componentToActive != null ) {
 	                	this.componentToActive.setEnabled(true);
 	                }
 	                return super.stringToValue(text);
 	            }
-
 	            throw new ParseException("Pattern did not match", 0);
 	        }
 	        return text;

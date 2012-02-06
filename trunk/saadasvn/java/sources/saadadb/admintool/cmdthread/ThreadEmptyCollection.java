@@ -25,7 +25,7 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		return AdminComponent.showConfirmDialog(frame, "Do you really want to empty the content of the collection " + name);
 	}
 

@@ -38,11 +38,7 @@ public class ClassMapperPanel extends MappingPanel {
 		fusion_btn.setToolTipText("One class merging all product files will be created");
 		noclass_btn    = new JRadioButton("Default");
 		fusion_btn.setToolTipText("One class (with a default name) created for each group of identical product files");
-		try {
-			classField    = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
-		} catch (ParseException e1) {
-			AdminComponent.showFatalError(mappingPanel.rootFrame, e1);
-		}
+		classField    = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
 
 		ccs.gridx = 0; ccs.gridy = 0;
 		ccs.weightx = 0.0;                       //reset to default

@@ -41,7 +41,7 @@ public class ThreadCreateCollection extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		if( name == null ) {
 			AdminComponent.showFatalError(frame, "No collection name given");
 			return false;

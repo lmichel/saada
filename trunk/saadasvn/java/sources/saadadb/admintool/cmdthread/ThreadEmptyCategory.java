@@ -37,7 +37,7 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	protected boolean checkParams() {
+	public boolean checkParams() {
 		if( collection == null ||category == null ) {
 			AdminComponent.showInputError(frame, "Both collection and category mustbe given");
 			return false;
