@@ -232,6 +232,12 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 		}
 	}
 
+	/**
+	 * @param rank
+	 * @param key
+	 * @return
+	 * @throws QueryException
+	 */
 	public Object getObject(int rank, String key) throws QueryException {
 		if( "oidsaada".equals(key)) {
 			return getOId(rank);
