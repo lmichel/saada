@@ -5,7 +5,6 @@ import java.util.Map;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.ThreadDropCollection;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
@@ -17,7 +16,7 @@ public class CollDropPanel extends CollCreatePanel {
 
 
 	public CollDropPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, DROP_COLLECTION, new ThreadDropCollection(rootFrame), ancestor);
+		super(rootFrame, DROP_COLLECTION, new ThreadDropCollection(rootFrame, DROP_COLLECTION), ancestor);
 	}
 
 	/**
@@ -72,7 +71,7 @@ public class CollDropPanel extends CollCreatePanel {
 	}
 
 	public void initCmdThread() {
-		cmdThread = new ThreadDropCollection(rootFrame);
+		cmdThread = new ThreadDropCollection(rootFrame, DROP_COLLECTION);
 	}
 
 

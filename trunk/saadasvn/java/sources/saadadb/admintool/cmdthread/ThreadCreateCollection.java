@@ -14,7 +14,6 @@ import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -24,8 +23,8 @@ public class ThreadCreateCollection extends CmdThread {
 	protected String name;
 	protected String comment;
 
-	public ThreadCreateCollection(Frame frame) {
-		super(frame);
+	public ThreadCreateCollection(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 		this.name = null;
 	}
 
@@ -34,6 +33,7 @@ public class ThreadCreateCollection extends CmdThread {
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		name = (String) params.get("name");
 		comment = (String) params.get("comment");		
+		resourceLabel = "Collection " + name;
 	}
 
 
@@ -41,7 +41,7 @@ public class ThreadCreateCollection extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		if( name == null ) {
 			AdminComponent.showFatalError(frame, "No collection name given");
 			return false;

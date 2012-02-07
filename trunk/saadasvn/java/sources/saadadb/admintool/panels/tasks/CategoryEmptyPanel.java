@@ -6,7 +6,6 @@ package saadadb.admintool.panels.tasks;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import javax.swing.JTextField;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadEmptyCategory;
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
@@ -42,7 +40,7 @@ public class CategoryEmptyPanel extends TaskPanel {
 
 	public CategoryEmptyPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, EMPTY_CATEGORY, null, ancestor);
-		cmdThread = new ThreadEmptyCategory(rootFrame);
+		cmdThread = new ThreadEmptyCategory(rootFrame, EMPTY_CATEGORY);
 	}
 
 	/**
@@ -59,7 +57,7 @@ public class CategoryEmptyPanel extends TaskPanel {
 	}
 
 	public void initCmdThread() {
-		cmdThread = new ThreadEmptyCategory(rootFrame);
+		cmdThread = new ThreadEmptyCategory(rootFrame, EMPTY_CATEGORY);
 	}
 
 	/**

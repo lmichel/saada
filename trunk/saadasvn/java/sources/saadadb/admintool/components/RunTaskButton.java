@@ -5,13 +5,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.Timer;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.TaskPanel;
-import saadadb.exceptions.SaadaException;
 
 public class RunTaskButton extends JButton {
 	private final TaskPanel adminPanel;
@@ -28,7 +25,7 @@ public class RunTaskButton extends JButton {
 				AdminTool rootFrame = RunTaskButton.this.adminPanel.rootFrame;
 				try {
 					((JButton)(e.getSource())).setEnabled(false);
-					if( RunTaskButton.this.adminPanel.setCmdParams()  == true ) {
+					if( RunTaskButton.this.adminPanel.setCmdParams(true)  == true ) {
 						rootFrame.activeProcessPanel(cmdThread);
 					}
 				} catch (Exception e1) {

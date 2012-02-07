@@ -7,9 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.TaskPanel;
-import saadadb.exceptions.SaadaException;
 
 public class AntButton extends JButton{
 	private final TaskPanel adminPanel;
@@ -22,7 +20,7 @@ public class AntButton extends JButton{
 				CmdThread ct =  AntButton.this.adminPanel.getCmdThread ();
 				if( ct != null ) {
 					try {
-						if( AntButton.this.adminPanel.setCmdParams() )  {
+						if( AntButton.this.adminPanel.setCmdParams(false) )  {
 							AdminComponent.showInfo(AntButton.this.adminPanel.rootFrame, ct.getAntTarget());
 						}
 					} catch (Exception e1) {

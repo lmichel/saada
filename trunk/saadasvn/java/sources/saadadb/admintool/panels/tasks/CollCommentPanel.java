@@ -12,7 +12,7 @@ public class CollCommentPanel extends CollDropPanel {
 
 	
 	public CollCommentPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, COMMENT_COLLECTION, new ThreadCommentCollection(rootFrame), ancestor);
+		super(rootFrame, COMMENT_COLLECTION, new ThreadCommentCollection(rootFrame, COMMENT_COLLECTION), ancestor);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class CollCommentPanel extends CollDropPanel {
 	}
 	
 	public void initCmdThread() {
-		cmdThread = new ThreadCommentCollection(rootFrame);
+		cmdThread = new ThreadCommentCollection(rootFrame, COMMENT_COLLECTION);
 	}
 
 

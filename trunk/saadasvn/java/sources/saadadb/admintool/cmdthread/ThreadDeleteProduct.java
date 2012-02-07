@@ -5,21 +5,16 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.windows.DataTableWindow;
-import saadadb.collection.Category;
 import saadadb.collection.ProductManager;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
-import saadadb.util.Messenger;
 
 /** * @version $Id: CmdDeleteProduct.java 118 2012-01-06 14:33:51Z laurent.mistahl $
 
@@ -29,8 +24,8 @@ import saadadb.util.Messenger;
 public class ThreadDeleteProduct extends CmdThread {
 	private DataTableWindow dataTable;
 
-	public ThreadDeleteProduct(Frame frame) {
-		super(frame);
+	public ThreadDeleteProduct(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 	}
 	
 	@Override
@@ -42,7 +37,7 @@ public class ThreadDeleteProduct extends CmdThread {
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		if( dataTable == null ) {
 			AdminComponent.showFatalError(frame, "No JTable where to read oids of products to remove (Inner error)");
 			return  false;
@@ -52,7 +47,9 @@ public class ThreadDeleteProduct extends CmdThread {
 			return false;
 		}
 		else {
-			return AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + dataTable.getProductTable().getSelectedColumnCount() + " products");
+			return (!withConfirm
+					||
+					AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + dataTable.getProductTable().getSelectedColumnCount() + " products"));
 		}
 	}
 

@@ -20,26 +20,32 @@ import saadadb.util.Messenger;
 public class ThreadSaveClassTag extends CmdThread {
 	private SQLJTable sqlTable;
 
-	public ThreadSaveClassTag(Frame frame, DataTreePath dataTreePath) {
-		super(frame);
+	public ThreadSaveClassTag(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 	}
 
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		this.sqlTable = (SQLJTable) params.get("datatable");
+		if( this.sqlTable != null ) {
+			resourceLabel = this.sqlTable.getDataTreePath().toString();
+		}
+
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		if( sqlTable == null ) {
 			AdminComponent.showFatalError(frame, "No meta data table to save (Inner error)");
 			return  false;
 		}
 		else {
-			return AdminComponent.showConfirmDialog(frame, "Do you really want to save meta dat tag");
+			return (!withConfirm 
+					||
+					AdminComponent.showConfirmDialog(frame, "Do you really want to save meta dat tag"));
 		}
 	}
 
@@ -50,12 +56,11 @@ public class ThreadSaveClassTag extends CmdThread {
 	protected boolean getParam() {
 		return true;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see gui.CmdThread#runCommand()
 	 */
 	public void runCommand() {
-		Cursor cursor_org = frame.getCursor();
 		try {
 			SQLTable.beginTransaction();
 			sqlTable.saveModifiedRows();
@@ -70,7 +75,6 @@ public class ThreadSaveClassTag extends CmdThread {
 		} catch (AbortException e) {
 			Messenger.trapFatalException(e);
 		}catch (Exception e) {
-			frame.setCursor(cursor_org);
 			AdminComponent.showFatalError(frame, e);
 		}
 	}

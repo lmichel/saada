@@ -1,32 +1,18 @@
 package saadadb.admintool.panels.tasks;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.ThreadRelationCreate;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.AntButton;
@@ -41,12 +27,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
-import saadadb.database.Database;
-import saadadb.exceptions.SaadaException;
-import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.Table_Saada_Relation;
-import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 public class RelationCreatePanel extends TaskPanel {
@@ -412,7 +393,7 @@ public class RelationCreatePanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationCreate(rootFrame);
+		cmdThread = new ThreadRelationCreate(rootFrame, CREATE_RELATION);
 	}
 
 	/* (non-Javadoc)

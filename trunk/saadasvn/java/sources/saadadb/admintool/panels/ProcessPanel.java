@@ -137,7 +137,7 @@ public  class ProcessPanel extends TaskPanel {
 		JButton jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Ant.png")));
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cmdThread = new ThreadCreateCollection(rootFrame);
+				cmdThread = new ThreadCreateCollection(rootFrame, CREATE_COLLECTION);
 				AdminComponent.showInfo(rootFrame,cmdThread.getAntTarget());
 			}
 		});
@@ -231,7 +231,8 @@ public  class ProcessPanel extends TaskPanel {
 			Messenger.resetUserRequests();
 			this.cmdThread.start();
 			this.outputArea.setText("");
-			this.currentTaskLabel.setText(this.cmdThread.toString());
+			this.currentTaskLabel.setText(this.cmdThread.taskTitle);
+			this.selectResourceLabel.setText(this.cmdThread.getResourceLabel());
 			threadChecker  = new Timer(1000, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					ProcessPanel.this.runPauseButton.updateIcon();

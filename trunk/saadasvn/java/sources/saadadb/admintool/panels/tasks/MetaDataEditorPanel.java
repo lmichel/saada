@@ -18,7 +18,6 @@ import javax.swing.JTable;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadSaveClassTag;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.components.ToolBarPanel;
@@ -47,7 +46,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadSaveClassTag(rootFrame, dataTreePath) ;
+		cmdThread = new ThreadSaveClassTag(rootFrame, MANAGE_METADATA) ;
 	}
 
 	@Override

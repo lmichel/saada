@@ -39,7 +39,7 @@ public class CollCreatePanel extends TaskPanel {
 	
 	public CollCreatePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, CREATE_COLLECTION, null, ancestor);
-		cmdThread = new ThreadCreateCollection(rootFrame);
+		cmdThread = new ThreadCreateCollection(rootFrame, CREATE_COLLECTION);
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class CollCreatePanel extends TaskPanel {
 	}
 
 	public void initCmdThread() {
-		cmdThread = new ThreadCreateCollection(rootFrame);
+		cmdThread = new ThreadCreateCollection(rootFrame,CREATE_COLLECTION);
 	}
 
 

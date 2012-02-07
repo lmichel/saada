@@ -15,8 +15,8 @@ import saadadb.util.Messenger;
  */
 public class DummyTask extends CmdThread {
 	
-	public DummyTask(Frame frame) {
-		super(frame);
+	public DummyTask(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 	}
 	
 	public boolean checkParams() {
