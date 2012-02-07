@@ -190,7 +190,6 @@ Serializable {
 					}
 					break;
 				default:
-					System.out.println("QQQQQQQQQQQQQQQQ");
 					result.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
 					break;
 				}

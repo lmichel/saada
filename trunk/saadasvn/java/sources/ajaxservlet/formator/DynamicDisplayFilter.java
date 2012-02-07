@@ -19,6 +19,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.query.result.OidsaadaResultSet;
+import saadadb.util.ChangeKey;
 import saadadb.util.SaadaConstant;
 
 
@@ -39,6 +40,8 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	protected final LinkedHashSet<AttributeHandler> columns_ucds = new LinkedHashSet<AttributeHandler>();
 	protected final LinkedHashSet<String> columns_rel = new LinkedHashSet<String>();
 	protected MetaClass mc = null;
+	protected OidsaadaResultSet resultSet;
+
 
 	private StoredFilter sf;
 
@@ -104,6 +107,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		}
 		for (String val : columns_rel) {
 			result.add(val);
+		}
+		for (AttributeHandler ah : this.columns_ucds) {
+			String lbl = "UCD " + ah.getUcd();
+			if (ah.getUnit().length() > 0) {
+				lbl += "(" + ah.getUnit() + ")";
+			}
+			result.add(lbl);
 		}
 		return result;
 	}
@@ -226,6 +236,12 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			retour.add(res);
 		}
 		
+		for (AttributeHandler ah : columns_ucds) {
+			si.loadBusinessAttribute();
+			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
+					+ " (" + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + ")");
+			}
+		
 		for (String rel : columns_rel) {
 			rel = rel.substring(6);
 			int nbcounter = si.getCounterparts(rel).length;
@@ -313,11 +329,12 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	}
 
 	public void setResultSet(OidsaadaResultSet resultSet) {
-		// TODO add method body
+		this.resultSet = resultSet;
 	}
 
 	public void addUCDColumn(AttributeHandler ah) {
-		// TODO add method body
+		if (ah != null)
+			this.columns_ucds.add(ah);
 	}
 	
 	public String getJSONString() {

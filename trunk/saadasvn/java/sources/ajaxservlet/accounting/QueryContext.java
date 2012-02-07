@@ -47,7 +47,8 @@ public class QueryContext implements Serializable {
 
 		this.resultSize = resultSet.size();
 		for( AttributeHandler ah: q.getUCDColumns()) {
-			colfmtor.addUCDColumn(ah);
+			System.out.println("@@@@@@ QC " + ah);
+			colfmtor.addUCDColumn(ah); 
 		}
 	}
 	
