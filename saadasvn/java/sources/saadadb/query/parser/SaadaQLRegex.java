@@ -55,6 +55,7 @@ public final class SaadaQLRegex {
 	public static final String WHERE_ATTR_CLASS = "WhereAttributeClass";
 	public static final String WHERE_POSITION   = "WherePosition"      ;
 	public static final String WHERE_RELATION   = "WhereRelation"      ;
+	public static final String ATTR_FILTER      = "AttributeFilter"    ;
 	
 	public static final String MATCH_PATTERN    = "matchPattern"      ;
 	

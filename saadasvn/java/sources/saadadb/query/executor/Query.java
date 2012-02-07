@@ -26,6 +26,7 @@ import saadadb.query.matchpattern.PatternSQLBuilder;
 import saadadb.query.matchpattern.Qualif;
 import saadadb.query.matchpattern.Qualifier;
 import saadadb.query.merger.Merger;
+import saadadb.query.parser.AttributeFilter;
 import saadadb.query.parser.Limit;
 import saadadb.query.parser.OrderBy;
 import saadadb.query.parser.SelectFromIn;
@@ -57,6 +58,7 @@ public class Query extends Query_Report{
 	private WhereRelation       wrClause;	
 	private Limit               limitClause ;
 	private OrderBy             obClause;
+	private AttributeFilter      afClause;
 
 	private String query_string;
 	private long index_owner_key;
@@ -186,53 +188,64 @@ public class Query extends Query_Report{
 	 */
 	public final Set<AttributeHandler> buildListAttrHandPrinc() throws SaadaException, NullPointerException{
 		Set<AttributeHandler> alAH = new LinkedHashSet<AttributeHandler>();
+
+		Map<String,AttributeHandler> mAH = MetaCollection.getAttribute_handlers(this.sfiClause.getCatego());
+		if( this.afClause != null  ){
+			for( String c: this.afClause.getGolumns()) {
+				AttributeHandler ah = mAH.get(c);
+				if( ah != null ) {
+					alAH.add(mAH.get(c));
+				}
+			}
+		}
 		for(String colName:this.merger.getCollectionNames()){
 			//** Add collection attribute
-			Map<String,AttributeHandler> mAH = MetaCollection.getAttribute_handlers(this.sfiClause.getCatego());
-			if(this.wasClause!=null)
+			if(this.wasClause!=null) {
 				for(String attrName:this.wasClause.getAttributeList()) {
 					AttributeHandler ah = mAH.get(attrName);
 					if( ah != null ) {
 						alAH.add(mAH.get(attrName));
 					}
 				}
-
-			//								if(this.wuClause!=null) {
-			//									for(String attrName:this.wuClause.getAttributeList(this.sfiClause.getCatego(),colName,className)) {
-			//										alAH.add(mAHC.get(attrName));
-			//									}
-			//								}
-
-			//			if(this.obClause!=null && (this.obClause.getType()==OrderBy.ON_COLL || this.obClause.getType()==OrderBy.BOTH))
-			//				alAH.add(mAH.get(this.obClause.getTheStatement()));
-			//** Add class attribute
-			//			for(String className:this.listClass(colName)){
-			//				if(!className.equals("*")){
-			//					Map<String,AttributeHandler> mAHC = Database.getCachemeta().getClass(className).getAttributes_handlers();
-			//					if(this.wacClause!=null)
-			//						for(String attrName:this.wacClause.getAttributeList())
-			//							alAH.add(mAHC.get(attrName));
-			//					if(this.wuManager!=null) {
-			//						for(String attrName:this.wuManager.getAttributeList(this.sfiClause.getCatego(),colName,className)) {
-			//							alAH.add(mAHC.get(attrName));
-			//						}
-			//					}
-			//					if(this.wUtManager!=null)
-			//						for(String attrName:this.wUtManager.getAttributeList(this.sfiClause.getCatego(),colName,className))
-			//							alAH.add(mAHC.get(attrName));
-			//					if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH))
-			//						alAH.add(mAHC.get(this.obClause.getTheStatement()));
-			//				}
-			//			}
+			}
 		}
+		for( AttributeHandler ah : getUCDColumns() ) {
+			alAH.add(ah);
+		}
+		if(this.obClause!=null && (this.obClause.getType()==OrderBy.ON_COLL || this.obClause.getType()==OrderBy.BOTH)) {
+			alAH.add(mAH.get(this.obClause.getTheStatement()));
+		}
+
+		//** Add class attribute
+		//						for(String className:this.listClass(colName)){
+		//							if(!className.equals("*")){
+		//								Map<String,AttributeHandler> mAHC = Database.getCachemeta().getClass(className).getAttributes_handlers();
+		//								if(this.wacClause!=null)
+		//									for(String attrName:this.wacClause.getAttributeList())
+		//										alAH.add(mAHC.get(attrName));
+		//								if(this.wuManager!=null) {
+		//									for(String attrName:this.wuManager.getAttributeList(this.sfiClause.getCatego(),colName,className)) {
+		//										alAH.add(mAHC.get(attrName));
+		//									}
+		//								}
+		//								if(this.wUtManager!=null)
+		//									for(String attrName:this.wUtManager.getAttributeList(this.sfiClause.getCatego(),colName,className))
+		//										alAH.add(mAHC.get(attrName));
+		//								if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH))
+		//									alAH.add(mAHC.get(this.obClause.getTheStatement()));
+		//							}
+		//						}
+		//}
 		return alAH;
 	}
+	
 	/**
 	 * 
 	 */
 	private final void init() {
 		query_string = null ;
 		sfiClause = null ;        
+		afClause = null ;        
 		//		wpClause  = null ;
 		wasClause = null ;       
 		wdmClause = null;
@@ -296,6 +309,10 @@ public class Query extends Query_Report{
 			this.limitClause = new Limit(strQtemp);
 			strQtemp = strQtemp.replace(this.limitClause.getStrMatch(), "");
 		}
+		if (AttributeFilter.isIn(strQtemp)) {
+			this.afClause = new AttributeFilter(strQtemp);
+			strQtemp = strQtemp.replace(this.afClause.getStrMatch(), "");
+		}
 		/*
 		 * Parse the WhereAttributeSaada clause
 		 */
@@ -321,7 +338,7 @@ public class Query extends Query_Report{
 		if(OrderBy.isIn(strQtemp)){
 			this.obClause = new OrderBy(strQtemp);
 			strQtemp = strQtemp.replace(this.obClause.getStrMatch(), "");
-//			this.checkOrderBy();
+			//			this.checkOrderBy();
 		}
 		if (WhereRelation.isIn(strQtemp)) {
 			this.wrClause = new WhereRelation(strQtemp, this.vor);

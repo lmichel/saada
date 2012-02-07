@@ -37,6 +37,9 @@ public class QueryContext implements Serializable {
 		this.executeQuery();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	private void executeQuery () throws Exception {
 		Query q = new Query();
 		resultSet = q.runBasicQuery(query);
@@ -56,8 +59,7 @@ public class QueryContext implements Serializable {
 	}
 	public List<Long> getPage(int start, int length) throws QueryException {
 		return resultSet.getPage(start, length);
-	}
-	
+	}	
 	public Set<String> getColumns() {
 		return colfmtor.getDisplayedColumns();
 	}

@@ -12,7 +12,7 @@ import saadadb.exceptions.QueryException;
 /**
  * @author F.X. Pineau
  */
-public final class WhereAttributeSaada extends ClauseSQL {
+public final class WhereAttributeSaada extends ClauseSQL{
 	private static final String syntax = WHERE_ATTR_SAADA+" { SqlLikeStatement }"; 
 	private static final String inStat  = "[^\\{\\}]+";  // Inner Statement
 	private static final Pattern pattern = Pattern.compile(WHERE_ATTR_SAADA + FacWS + WHERE_CLAUSE_LD + FacWS +"("+ inStat +")"+ FacWS + WHERE_CLAUSE_RD);

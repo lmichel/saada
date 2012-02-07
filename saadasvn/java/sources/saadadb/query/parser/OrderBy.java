@@ -43,8 +43,8 @@ public final class OrderBy{
 	
 	public static final String   getSyntax (){return syntax       ;}
 	public final String getStrMatch     (){return this.strMatch    ;}
-	protected final String getTheStatement (){return this.theStatement;}
-	protected final int    getType         (){return (this.haveSpecialKey())?BOTH:this.type;}
+	public final String getTheStatement (){return this.theStatement;}
+	public final int    getType         (){return (this.haveSpecialKey())?BOTH:this.type;}
     protected final String getOrder        (){return (isDesc)?"DESC":"";}
 	
     public static final boolean isIn(String strQ){return pattern.matcher(strQ).find();}

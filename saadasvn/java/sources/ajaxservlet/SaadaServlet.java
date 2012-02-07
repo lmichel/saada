@@ -55,6 +55,8 @@ public class SaadaServlet extends HttpServlet {
 	}
 	@Override
 	public void init(ServletConfig conf) throws ServletException {
+		System.out.println("QQQQQQ");
+		Messenger.setServletMode();
 		super.init(conf);
 		base_dir = conf.getServletContext().getRealPath("") + Database.getSepar();
 		if( !JSON_FILE_MODE ) {
@@ -69,19 +71,20 @@ public class SaadaServlet extends HttpServlet {
 					if(  !INIT  ) {
 						if( !SaadaServlet.isInit() ) {
 							INIT_IN_PROGRESS = true;					
-							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by" + conf.getServletName());
+							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by " + conf.getServletName());
 							Messenger.debug_mode = false;
 							LocalConfig lc = new LocalConfig();
+							System.out.println(lc.db_name);
 							Database.init(lc.db_name);
-							if( lc.urlroot != null && lc.urlroot.length() > 0 ){
-								Database.getConnector().setUrl_root(lc.urlroot);
-							}
-							if( lc.saadadbroot != null && lc.saadadbroot.length() > 0 ){
-								Database.getConnector().setRoot_dir(lc.saadadbroot);
-							}
-							INIT_IN_PROGRESS = false;
-							INIT = true;
-							Repository.sweepReportDir();
+//							if( lc.urlroot != null && lc.urlroot.length() > 0 ){
+//								Database.getConnector().setUrl_root(lc.urlroot);
+//							}
+//							if( lc.saadadbroot != null && lc.saadadbroot.length() > 0 ){
+//								Database.getConnector().setRoot_dir(lc.saadadbroot);
+//							}
+//							INIT_IN_PROGRESS = false;
+//							INIT = true;
+//							Repository.sweepReportDir();
 							Messenger.printMsg(Messenger.TRACE, "Ajax interface init done by "+  conf.getServletName());
 						}
 						else {
