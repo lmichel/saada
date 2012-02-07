@@ -445,6 +445,12 @@ public class Messenger implements Serializable{
 			Messenger.printMsg(Messenger.ERROR, e.toString());
 			new FatalExceptionDialog(Messenger.frame, e);
 		}
+		/*
+		 * do no exit in servlet mode
+		 */
+		else {
+			Messenger.printMsg(Messenger.ERROR, e.toString());
+		}
 	}
 
 

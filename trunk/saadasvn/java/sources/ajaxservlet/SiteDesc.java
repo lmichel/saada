@@ -31,6 +31,7 @@ public class SiteDesc extends SaadaServlet implements Servlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("ccccc");
 		ServletOutputStream out = response.getOutputStream();
 		JsonUtils.teePrint(out, "{");
 		JsonUtils.teePrint(out, JsonUtils.getParam("dbname", Database.getName()) + ",");

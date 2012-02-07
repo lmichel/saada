@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.meta.AttributeHandler;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaQLResultSet;
@@ -42,6 +43,9 @@ public class QueryRunner {
 //			}
 //			Messenger.printMsg(Messenger.TRACE, cpt  + " oids found");
 			OidsaadaResultSet ors = q.runBasicQuery(query);
+			for( AttributeHandler ah:  q.buildListAttrHandPrinc()) {
+				System.out.println(ah.getNameattr());
+			}
 //			Messenger.printMsg(Messenger.TRACE, "Declared size " + srs.getSize() );
 			int cpt = 0;
 			while( ors.next()) {

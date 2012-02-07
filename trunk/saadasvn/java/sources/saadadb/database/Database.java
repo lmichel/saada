@@ -60,7 +60,7 @@ public class Database {
 				Qbox.setLevel(10);
 			}catch(Exception e){
 				Messenger.printStackTrace(e);
-				System.exit(1);
+				Messenger.trapFatalException( new FatalException(e.getMessage(), SaadaException.getExceptionMessage(e)));
 			}
 		DefineType.init();
 		/*
@@ -78,21 +78,13 @@ public class Database {
 	 * @throws FatalException 
 	 */
 	public static void initConnector(String db_name, boolean force) throws Exception {
-//		if(Database.connector != null && Database.connector.getJDBCConnection() != null ) {
-//	      	  Messenger.printMsg(Messenger.WARNING, "Close the former connection"); 
-//				Database.connector.getJDBCConnection().close();
-//			}
 		Database.connector = SaadaDBConnector.getConnector(db_name, force);
 	}
 	
 	/**
-	 * Used by the DB confif setup: allows tro use all DB stuff before aby SaadaDB does exist
+	 * Used by the DB config setup: allows to use all DB stuff before any SaadaDB does exist
 	 */
 	public static void setConnector(SaadaDBConnector connector) throws Exception {
-//		if(Database.connector != null && Database.connector.getJDBCConnection() != null ) {
-//      	  Messenger.printMsg(Messenger.WARNING, "Close the former connection");
-//			Database.connector.getJDBCConnection().close();
-//		}
 		Database.connector = connector;
 	}
 	/**
