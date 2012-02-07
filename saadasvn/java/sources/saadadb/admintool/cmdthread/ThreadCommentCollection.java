@@ -12,22 +12,23 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 public class ThreadCommentCollection extends ThreadCreateCollection {
 
-	public ThreadCommentCollection(Frame frame) {
-		super(frame);
+	public ThreadCommentCollection(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 		this.name = null;
 	}
 
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		name = (String) params.get("name");
-		comment = (String) params.get("comment");		
+		comment = (String) params.get("comment");	
+		resourceLabel = "Collection " + name;
+
 	}
 
 

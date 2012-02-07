@@ -16,6 +16,8 @@ import saadadb.exceptions.SaadaException;
  */
 public abstract class CmdThread extends Thread {
 	protected Frame frame;
+	public final String taskTitle;
+	protected String resourceLabel = "No specific resource";
 	/** Command run by sub classes of saada_process can be paused/resumed
 	 * by the progress dialog
 	 */
@@ -24,11 +26,15 @@ public abstract class CmdThread extends Thread {
 	/**
 	 * @param frame
 	 */
-	public CmdThread(Frame frame) {
+	public CmdThread(Frame frame, String taskTitle) {
 		super();
 		this.frame = frame;
+		this.taskTitle = taskTitle;
 	}		
 
+	public String getResourceLabel() {
+		return resourceLabel;
+	}
 	/**
 	 * @return
 	 */
@@ -44,7 +50,7 @@ public abstract class CmdThread extends Thread {
 	public abstract void setParams(Map<String, Object> params) throws SaadaException;
 	
 	/**
-	 * Returns the ANT target doing the command in script mode
+	 * Returns the ANT target doing the task in script mode
 	 * @return
 	 */
 	public abstract String getAntTarget() ;
@@ -55,9 +61,9 @@ public abstract class CmdThread extends Thread {
 	@Override
 	public void run(){		
 		try {
-			if( this.checkParams() == true ) {
+			//if( this.checkParams() == true ) {
 				this.runCommand();
-			}
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,8 +75,8 @@ public abstract class CmdThread extends Thread {
 	 * @throws FatalException 
 	 * @throws Exception 
 	 */
-	public boolean checkParams() throws QueryException, FatalException, Exception {
-		return  SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?");
+	public boolean checkParams(boolean withConfirm) throws QueryException, FatalException, Exception {
+		return  (!withConfirm || SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?"));
 	}
 	
 	public void wakeUp() {

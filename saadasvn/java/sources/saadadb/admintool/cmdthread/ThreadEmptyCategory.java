@@ -20,8 +20,8 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 	protected String collection;
 	protected String category;
 
-	public ThreadEmptyCategory(Frame frame) {
-		super(frame);
+	public ThreadEmptyCategory(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 		this.collection = null;
 		this.category = null;
 	}
@@ -30,6 +30,8 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		collection = (String) params.get("collection");
 		category = (String) params.get("category");
+		resourceLabel = "Collection " + collection + "." + category;;
+
 	}
 
 
@@ -37,14 +39,16 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		if( collection == null ||category == null ) {
 			AdminComponent.showInputError(frame, "Both collection and category mustbe given");
 			return false;
 		}
 		else {
-			return AdminComponent.showConfirmDialog(frame
-					, "Do you really want to empty the content of the category " + collection + "." + category);
+			return (!withConfirm 
+					||
+					AdminComponent.showConfirmDialog(frame
+					, "Do you really want to empty the content of the category " + collection + "." + category));
 		}
 	}
 

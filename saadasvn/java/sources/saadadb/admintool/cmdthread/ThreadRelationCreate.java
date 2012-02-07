@@ -16,20 +16,24 @@ import saadadb.util.Messenger;
 public class ThreadRelationCreate extends CmdThread {
 	private RelationConf config;
 	
-	public ThreadRelationCreate(Frame frame) {
-		super(frame);
+	public ThreadRelationCreate(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 	}
 	
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {
 		config = (RelationConf) params.get("config");
+		if( config != null ){
+			resourceLabel = "Relation " + config.getNameRelation();;
+
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		System.out.println("config" + config);
 		if( config == null ) {
 			return false;

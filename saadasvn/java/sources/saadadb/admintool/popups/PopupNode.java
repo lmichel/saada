@@ -83,7 +83,7 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 
 		if( item.equals(DELETE_PRODUCTS) ) {
 			try {
-				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame);
+				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame, DELETE_PRODUCTS);
 				cdp.setParams(params);
 				rootFrame.activeWindowProcess(cdp, dataTreePath);
 			} catch (SaadaException e1) {
@@ -92,7 +92,7 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 		}
 		else if( item.equals(MAP_META) ) {	
 			try {
-				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame);
+				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame, DELETE_PRODUCTS);
 				cdp.setParams(params);
 				rootFrame.activeWindowProcess(cdp, dataTreePath);
 			} catch (SaadaException e1) {

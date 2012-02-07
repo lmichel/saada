@@ -42,6 +42,16 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Load Data", "icons/LoadData.png"
 				, new Runnable(){public void run(){rootFrame.activePanel(DATA_LOADER);}});
 
+		
+		c.gridx = 2;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		(new ChoiceItem(rootFrame, tPanel, c
+				, "Edit Filter", "icons/Filter.png"
+				, new Runnable(){public void run(){
+					System.out.println("new filter");}})).inactive();
+
 		c.gridx = 0;
 		c.gridy = 1;	
 		c.weightx = 0.5;

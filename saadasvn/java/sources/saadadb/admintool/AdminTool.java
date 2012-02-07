@@ -328,7 +328,7 @@ public class AdminTool extends BaseFrame {
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.DATA_LOADER) ) {
 			if( dataLoaderPanel == null ) {
-				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.LOAD_DATA);
+				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			if( activePanel instanceof MappingKWPanel) {
 				System.out.println(activePanel.getSelectResourceLabel().getText());
@@ -375,6 +375,16 @@ public class AdminTool extends BaseFrame {
 				dropRelationPanel = new RelationDropPanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = dropRelationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.INDEX_RELATION) ) {
+			if( indexRelationPanel == null ) {
+				indexRelationPanel = new RelationIndexPanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = indexRelationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.EMPTY_RELATION) ) {
+			if( emptyRelationPanel == null ) {
+				emptyRelationPanel = new RelationEmptyPanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = emptyRelationPanel;
 			/*
 			 * Process pqnel used by all tasks
 			 */

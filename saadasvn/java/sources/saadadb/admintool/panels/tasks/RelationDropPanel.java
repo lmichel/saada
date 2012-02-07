@@ -4,36 +4,22 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.ThreadLoadData;
-import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.cmdthread.ThreadRelationDrop;
 import saadadb.admintool.components.AntButton;
-import saadadb.admintool.components.LoaderConfigChooser;
 import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
-import saadadb.admintool.dialogs.DataFileChooser;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -50,7 +36,6 @@ public class RelationDropPanel extends TaskPanel {
 
 	public RelationDropPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, DROP_RELATION, null, ancestor);
-		cmdThread = new ThreadLoadData(rootFrame);
 	}
 
 	/**
@@ -92,8 +77,10 @@ public class RelationDropPanel extends TaskPanel {
 
 	@Override
 	protected Map<String, Object> getParamMap() {
+		System.out.println(configChooser.getSelectedRelation() );
 		if( configChooser.getSelectedRelation() != null ) {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+			System.out.println("coucuou");
 			map.put("relation", configChooser.getSelectedRelation());
 			return map;
 		}
@@ -104,7 +91,7 @@ public class RelationDropPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadLoadData(rootFrame);
+		cmdThread = new ThreadRelationDrop(rootFrame, DROP_RELATION);
 	}
 
 	@Override

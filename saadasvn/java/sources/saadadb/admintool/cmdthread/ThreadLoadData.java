@@ -1,7 +1,6 @@
 package saadadb.admintool.cmdthread;
 
 
-import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Map;
@@ -9,11 +8,8 @@ import java.util.Map;
 import javax.swing.SwingUtilities;
 
 import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.dialogs.DataLoaderDefaultRunner;
-import saadadb.admin.dialogs.DataLoaderRunner;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
@@ -21,9 +17,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
 public class ThreadLoadData extends CmdThread {
 	private ArgsParser ap;
@@ -31,8 +25,8 @@ public class ThreadLoadData extends CmdThread {
 	
 	private boolean with_conf=false;
 
-	public ThreadLoadData(Frame frame) {
-		super(frame);
+	public ThreadLoadData(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 	}
 
 
@@ -41,13 +35,15 @@ public class ThreadLoadData extends CmdThread {
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		ap = (ArgsParser)(params.get("params"));
 		fileList = (ArrayList<String>)(params.get("filelist"));
+		resourceLabel = "Collection " + ap.getCollection() + "." + ap.getCategory();
+
 	}
 	
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
+	public boolean checkParams(boolean withConfirm) {
 		if( ap == null ) {
 			AdminComponent.showFatalError(frame, "No loader parameter given");
 			return false;

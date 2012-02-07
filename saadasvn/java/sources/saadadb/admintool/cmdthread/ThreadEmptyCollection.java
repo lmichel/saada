@@ -16,8 +16,8 @@ import saadadb.util.Messenger;
 
 public class ThreadEmptyCollection extends ThreadDropCollection{
 
-	public ThreadEmptyCollection(Frame frame) {
-		super(frame);
+	public ThreadEmptyCollection(Frame frame, String taskTitle) {
+		super(frame,taskTitle);
 		this.name = null;
 	}
 
@@ -25,8 +25,10 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
-		return AdminComponent.showConfirmDialog(frame, "Do you really want to empty the content of the collection " + name);
+	public boolean checkParams(boolean withConfirm) {
+		return (!withConfirm
+				||
+				AdminComponent.showConfirmDialog(frame, "Do you really want to empty the content of the collection " + name));
 	}
 
 	/* (non-Javadoc)

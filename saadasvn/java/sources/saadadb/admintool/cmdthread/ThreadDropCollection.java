@@ -21,22 +21,26 @@ import saadadb.util.RegExp;
 public class ThreadDropCollection extends CmdThread{
 	protected String name;
 
-	public ThreadDropCollection(Frame frame) {
-		super(frame);
+	public ThreadDropCollection(Frame frame, String taskTitle) {
+		super(frame, taskTitle);
 		this.name = null;
 	}
 
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		name = (String) params.get("name");
+		resourceLabel = "Collection " + name;
+
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
 	 */
 	@Override
-	public boolean checkParams() {
-		return AdminComponent.showConfirmDialog(frame, "Do you really want to drop the content of the collection " + name);
+	public boolean checkParams(boolean withConfirm) {
+		return (!withConfirm 
+				||
+				AdminComponent.showConfirmDialog(frame, "Do you really want to drop the content of the collection " + name));
 	}
 
 	/* (non-Javadoc)

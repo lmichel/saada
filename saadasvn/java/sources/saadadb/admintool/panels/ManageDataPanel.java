@@ -30,24 +30,24 @@ public class ManageDataPanel extends ChoicePanel {
 		JPanel tPanel;
 		GridBagConstraints c = new GridBagConstraints();
 
-		
-		tPanel = this.addSubPanel("Data Loader");
-		c.gridx = 0;
-		c.gridy = 0;	
-		c.weightx = 0.5;
-		c.weighty = 0.5;
-		new ChoiceItem(rootFrame, tPanel, c
-				, "Load Data", "icons/LoadData.png"
-				, new Runnable(){public void run(){
-					rootFrame.activePanel(LOAD_DATA);}});
-		c.gridx = 1;
-		c.gridy = 0;	
-		c.weightx = 0.5;
-		c.weighty = 0.5;
-		(new ChoiceItem(rootFrame, tPanel, c
-				, "Statistic", "icons/Statistics.png"
-				, new Runnable(){public void run(){
-					System.out.println("loaddata");}})).inactive();
+//		
+//		tPanel = this.addSubPanel("Data Loader");
+//		c.gridx = 0;
+//		c.gridy = 0;	
+//		c.weightx = 0.5;
+//		c.weighty = 0.5;
+//		new ChoiceItem(rootFrame, tPanel, c
+//				, "Load Data", "icons/LoadData.png"
+//				, new Runnable(){public void run(){
+//					rootFrame.activePanel(LOAD_DATA);}});
+//		c.gridx = 1;
+//		c.gridy = 0;	
+//		c.weightx = 0.5;
+//		c.weighty = 0.5;
+//		(new ChoiceItem(rootFrame, tPanel, c
+//				, "Statistic", "icons/Statistics.png"
+//				, new Runnable(){public void run(){
+//					System.out.println("loaddata");}})).inactive();
 		
 	
 

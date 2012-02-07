@@ -68,7 +68,8 @@ public class SQLJTable extends JTable {
 		if( this.panel_type ==  CLASS_PANEL) {
 			this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			this.setDragEnabled(true);  
-			/*
+			this.makePopupEnabled();
+		/*
 			 * done by PopupNode because the TransferHandler is not the same
 			 * for UCD or UTYPES
 			 */
@@ -81,7 +82,7 @@ public class SQLJTable extends JTable {
 			this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);                
 			this.setRowSelectionAllowed(true);
 			this.makeOrderingEnabled();
-			this.makPopupEnabled();
+			this.makePopupEnabled();
 
 		}
 		this.setModel(sql);
@@ -91,7 +92,7 @@ public class SQLJTable extends JTable {
 	/**
 	 * 
 	 */
-	private void makPopupEnabled() {
+	private void makePopupEnabled() {
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -103,11 +104,12 @@ public class SQLJTable extends JTable {
 					 */
 					case PRODUCT_PANEL: try {
 						menu = new PopupProduct(rootFrame, dataTreePath, SQLJTable.this,   "Actions on Ingested Product Files");
+						menu.show(SQLJTable.this, e.getX(), e.getY());
+
 					} catch (SaadaException e1) {
 						AdminComponent.showFatalError(rootFrame, e1);
 						return;
 					} 
-					menu.show(SQLJTable.this, e.getX(), e.getY());
 					}
 				}
 			}
@@ -258,6 +260,13 @@ public class SQLJTable extends JTable {
 			SQLTable.addQueryToTransaction(base_stmt + stmt);
 		}
 		this.modified = false;
+	}
+	
+	/**
+	 * @return
+	 */
+	public DataTreePath getDataTreePath() {
+		return dataTreePath;
 	}
 
 	/**

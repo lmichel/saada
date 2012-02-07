@@ -22,7 +22,6 @@ import javax.swing.JTextField;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadLoadData;
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.LoaderConfigChooser;
 import saadadb.admintool.components.RunTaskButton;
@@ -61,7 +60,7 @@ public class DataLoaderPanel extends TaskPanel {
 
 	public DataLoaderPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, DATA_LOADER, null, ancestor);
-		cmdThread = new ThreadLoadData(rootFrame);
+		cmdThread = new ThreadLoadData(rootFrame, DATA_LOADER);
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class DataLoaderPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadLoadData(rootFrame);
+		cmdThread = new ThreadLoadData(rootFrame, DATA_LOADER);
 	}
 
 	@Override

@@ -85,7 +85,7 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 	 * @return
 	 * @throws Exception 
 	 */
-	public boolean setCmdParams() throws Exception {
+	public boolean setCmdParams(boolean withConfirm) throws Exception {
 		if( cmdThread != null ) {
 			Map<String, Object> map = this.getParamMap();
 			if( map == null ) {
@@ -94,9 +94,9 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 			}
 			cmdThread.setParams(map);
 			/*
-			 * Check param here to avoid opening the porcess panel in case of failing check
+			 * Check param here to avoid opening the process panel in case of failing check
 			 */
-			return cmdThread.checkParams();
+			return cmdThread.checkParams(withConfirm);
 		}
 		else {
 			AdminComponent.showFatalError(rootFrame, "There is no command attached to this task panel");
