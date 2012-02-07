@@ -129,7 +129,6 @@ public class CacheMeta {
 				Messenger.printStackTrace(e);
 				FatalException.throwNewException(SaadaException.METADATA_ERROR, e);
 			}
-
 		}
 		Messenger.debug_mode = dm;
 	}
@@ -242,6 +241,7 @@ public class CacheMeta {
 			MetaClass mc = null;
 			while ( rs.next() ) {
 				classname = rs.getString("name_class");
+
 				if( !last_classname.equals(classname) ) {
 					/*
 					 * finalize the previous metaclass
