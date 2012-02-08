@@ -163,7 +163,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.DROP_RELATION);
+				activePanel(AdminComponent.POPULATE_RELATION);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -385,6 +385,11 @@ public class AdminTool extends BaseFrame {
 				emptyRelationPanel = new RelationEmptyPanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = emptyRelationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.POPULATE_RELATION) ) {
+			if( populateRelationPanel == null ) {
+				populateRelationPanel = new RelationPopulatePanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = populateRelationPanel;
 			/*
 			 * Process pqnel used by all tasks
 			 */
