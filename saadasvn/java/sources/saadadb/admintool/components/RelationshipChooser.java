@@ -28,14 +28,20 @@ public class RelationshipChooser extends JPanel {
 	private TaskPanel taskPanel ;
 	private String selectedRelation = null;
 	private Component toActivate;
+	private Runnable runnable;
 
 	public RelationshipChooser(TaskPanel taskPanel, Component toActivate) {
+		this(taskPanel, toActivate, null);
+	}
+
+	public RelationshipChooser(TaskPanel taskPanel, Component toActivate, Runnable runnable) {
 		this.toActivate = toActivate;
 		this.taskPanel = taskPanel;
 		this.confList.setVisibleRowCount(6);
 		this.confList.setFixedCellWidth(15);
+		this.runnable = runnable;
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		description.setEditable(false);
+		this.description.setEditable(false);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0; c.gridy = 0;c.weightx = 0;
@@ -51,10 +57,10 @@ public class RelationshipChooser extends JPanel {
 				if( confList.getSelectedValue() != null ) {
 					selectedRelation = confList.getSelectedValue().toString().replaceAll("< ", "").replaceAll(" >", "");
 					selectedRelation = selectedRelation.split("(</b>)|<b>")[1].trim();;
-					System.out.println("@@@@ " + selectedRelation);
 					try {
 						description.setText(Database.getCachemeta().getRelation(selectedRelation).toString());
 						if( RelationshipChooser.this.toActivate != null) RelationshipChooser.this.toActivate.setEnabled(true);
+						if( RelationshipChooser.this.runnable != null ) RelationshipChooser.this.runnable.run();
 					} catch (Exception e) {
 						AdminComponent.showFatalError(RelationshipChooser.this.taskPanel.rootFrame, e);
 					}

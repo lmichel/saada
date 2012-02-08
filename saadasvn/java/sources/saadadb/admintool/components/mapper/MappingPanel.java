@@ -11,7 +11,6 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.command.ArgsParser;
 
 /**
  * @author laurentmichel
