@@ -47,10 +47,6 @@ import saadadb.util.Messenger;
  */
 public class RelationEmptyPanel extends RelationDropPanel {
 
-	protected  RelationshipChooser configChooser;
-	protected RunTaskButton runButton;
-
-
 	public RelationEmptyPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, EMPTY_RELATION, null, ancestor);
 		cmdThread = new ThreadRelationEmpty(rootFrame, EMPTY_RELATION);

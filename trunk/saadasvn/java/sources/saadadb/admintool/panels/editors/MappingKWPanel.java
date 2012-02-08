@@ -947,10 +947,6 @@ public class MappingKWPanel extends EditPanel {
 
 	}
 
-	// TODO Auto-generated method stub
-
-	//	}
-
 	@Override
 	public void active() {
 		// TODO Auto-generated method stub
