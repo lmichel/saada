@@ -47,10 +47,6 @@ import saadadb.util.Messenger;
  */
 public class RelationIndexPanel extends RelationDropPanel {
 
-	protected  RelationshipChooser configChooser;
-	protected RunTaskButton runButton;
-
-
 	public RelationIndexPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, INDEX_RELATION, null, ancestor);
 		cmdThread = new ThreadRelationIndex(rootFrame, INDEX_RELATION);

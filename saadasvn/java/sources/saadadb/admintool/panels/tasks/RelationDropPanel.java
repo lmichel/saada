@@ -66,8 +66,8 @@ public class RelationDropPanel extends TaskPanel {
 		}
 	}
 
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
 		this.initTreePathLabel();
