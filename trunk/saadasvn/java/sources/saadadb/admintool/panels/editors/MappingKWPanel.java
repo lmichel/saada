@@ -1,7 +1,6 @@
 package saadadb.admintool.panels.editors;
 
 
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -17,33 +16,21 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.crypto.spec.PSource;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
-import saadadb.admin.dialogs.DataLoaderDefaultRunner;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.ToolBarPanel;
-import saadadb.admintool.components.input.AppendMappingTextField;
-import saadadb.admintool.components.input.ExtMappingTextField;
-import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.components.mapper.ClassMapperPanel;
 import saadadb.admintool.components.mapper.CoordSysMapperPanel;
 import saadadb.admintool.components.mapper.DispersionMapperPanel;
 import saadadb.admintool.components.mapper.ExtAttMapperPanel;
 import saadadb.admintool.components.mapper.ExtensionTextFieldPanel;
-import saadadb.admintool.components.mapper.MapperPrioritySelector;
 import saadadb.admintool.components.mapper.MappingTextfieldPanel;
 import saadadb.admintool.components.mapper.PositionErrorMapperPanel;
 import saadadb.admintool.components.mapper.PositionMapperPanel;
@@ -53,14 +40,12 @@ import saadadb.admintool.dialogs.DialogFileChooser;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.tree.VoDataProductTree;
-import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.api.SaadaDB;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
