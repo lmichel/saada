@@ -5,7 +5,6 @@ import java.awt.GridBagConstraints;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ChoiceItem;
 
 public class RelationChoicePanel extends ChoicePanel {
@@ -56,7 +55,7 @@ public class RelationChoicePanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Populate relationship", "icons/PopulateRel.png"
 				, new Runnable(){public void run(){
-					System.out.println("TAP");}});
+					rootFrame.activePanel(POPULATE_RELATION);}});
 		
 		c.gridx = 1;
 		c.gridy = 0;
