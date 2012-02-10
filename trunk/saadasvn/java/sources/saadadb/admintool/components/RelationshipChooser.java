@@ -49,7 +49,7 @@ public class RelationshipChooser extends JPanel {
 		scrollPane.setPreferredSize(new Dimension(250,100));
 		this.add(scrollPane, c);
 
-		c.gridx++;		c.weightx = 1;
+		c.gridx++;c.weightx = 1;
 		this.add(new JScrollPane(description), c);
 
 		confList.addListSelectionListener(new ListSelectionListener() {

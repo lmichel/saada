@@ -141,7 +141,8 @@ public class CollapsiblePanel extends JPanel {
             //collapse the panel, remove content and set border to empty border
             remove(panel);
             arrow.setIcon(iconArrow[COLLAPSED]);
-            border = new CollapsableTitledBorder(collapsedBorderLine, titleComponent);
+            //border = new CollapsableTitledBorder(collapsedBorderLine, titleComponent);
+            border = new CollapsableTitledBorder(expandedBorderLine, titleComponent);
 
             for(CollapeListener collapeListener : collapeListeners) {
                     collapeListener.collaped();
