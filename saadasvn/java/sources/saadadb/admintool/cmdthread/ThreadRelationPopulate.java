@@ -2,30 +2,24 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Cursor;
 import java.awt.Frame;
-import java.util.Map;
+
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.configuration.RelationConf;
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.SaadaException;
+import saadadb.relationship.IndexBuilder;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-public class ThreadRelationCreate extends CmdThread {
-	protected RelationConf config;
-	
-	public ThreadRelationCreate(Frame frame, String taskTitle) {
+public class ThreadRelationPopulate extends ThreadRelationCreate {
+
+	public ThreadRelationPopulate(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
-	}
-	
-	@Override
-	public void setParams(Map<String, Object> params) throws SaadaException {
-		config = (RelationConf) params.get("config");
-		if( config != null ){
-			resourceLabel = "Relation " + config.getNameRelation();;
-		}
 	}
 
 	/* (non-Javadoc)
@@ -36,7 +30,24 @@ public class ThreadRelationCreate extends CmdThread {
 		if( config == null ) {
 			return false;
 		}
-		return true;
+		else {
+			JCheckBox withEmpty = new JCheckBox("Do you want to first empty the relation?");
+			JCheckBox withIndex = new JCheckBox("Do you want to index the relation after?");
+			
+		      JPanel myPanel = new JPanel();
+		      myPanel.add(withEmpty);
+		      myPanel.add(withIndex);
+
+		      int result = JOptionPane.showConfirmDialog(frame, myPanel, 
+		               "Do you want to proceed?", JOptionPane.OK_CANCEL_OPTION);
+		      if (result == JOptionPane.OK_OPTION) {
+		         System.out.println("x value: " + withEmpty.getText());
+		         System.out.println("y value: " + withIndex.getText());
+		      }
+
+			
+		      return false;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -46,9 +57,12 @@ public class ThreadRelationCreate extends CmdThread {
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {
-			SQLTable.beginTransaction();
 			RelationManager rm = new RelationManager(config);
-			rm.create();
+
+			SQLTable.beginTransaction();
+			rm.populateWithQuery();
+			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
+			ib.createIndexRelation();
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> created");		
@@ -68,4 +82,3 @@ public class ThreadRelationCreate extends CmdThread {
 		return null;
 	}
 }
-
