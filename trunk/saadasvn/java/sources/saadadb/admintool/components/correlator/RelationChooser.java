@@ -16,6 +16,7 @@ import saadadb.exceptions.FatalException;
 
 public class RelationChooser extends CollapsiblePanel {
 	private RelationshipChooser configChooser;
+	RelationPopulatePanel taskPanel ;
 	
 	/**
 	 * @param taskPanel
@@ -23,7 +24,13 @@ public class RelationChooser extends CollapsiblePanel {
 	 */
 	public RelationChooser(RelationPopulatePanel taskPanel, Component toActive) {
 		super("Relationship Selector");
-		configChooser = new RelationshipChooser(taskPanel, toActive);
+		this.taskPanel = taskPanel;
+		configChooser = new RelationshipChooser(taskPanel, toActive, new Runnable() {
+			public void run() {
+				RelationChooser.this.taskPanel.load();				
+			}
+			
+		});
 		MyGBC mc = new MyGBC(5,5,5,5); mc.anchor = GridBagConstraints.NORTH;
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.getContentPane().add(configChooser, mc);
