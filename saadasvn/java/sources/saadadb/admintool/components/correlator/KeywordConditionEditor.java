@@ -1,31 +1,27 @@
 package saadadb.admintool.components.correlator;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 
-import saadadb.admin.relation.CorrQueryEditor;
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
-import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
-import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.configuration.RelationConf;
+import saadadb.database.Database;
+import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
+import saadadb.meta.MetaClass;
+import saadadb.meta.MetaCollection;
+import saadadb.util.Messenger;
 
 
 public class KeywordConditionEditor extends CollapsiblePanel {
@@ -33,8 +29,8 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 	private JComboBox secondary_att = new JComboBox();
 	private JTextArea condition = new JTextArea(12, 48);
 	private RelationPopulatePanel taskPanel;
-	private JTextArea active_att_receiver;
-	
+	private RelationConf relationConf;
+
 	/**
 	 * @param taskPanel
 	 * @param toActive
@@ -43,60 +39,130 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 		super("Condition based on Keywords");
 		this.taskPanel = taskPanel;
 		this.condition.setToolTipText("Primary and secondary records are linked when the condition (SQL statement) is true.");
-		this.condition.addCaretListener(new CaretListener() {
-
-			public void caretUpdate(CaretEvent e) {
-				JTextArea jta = (JTextArea) e.getSource();
-				if( jta != KeywordConditionEditor.this.active_att_receiver )  {
-					KeywordConditionEditor.this.activateQueryField((JTextArea) e.getSource());
-				}
-			}
-			
-		});
 		primary_att.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
-				if( primary_att.getSelectedItem() != null && active_att_receiver != null 
-						&& !primary_att.getSelectedItem().toString().startsWith("-")) {
-					active_att_receiver.insert(primary_att.getSelectedItem().toString().split(" ")[0]
-							                 , active_att_receiver.getCaretPosition());
+				if( primary_att.getSelectedItem() != null && !primary_att.getSelectedItem().toString().startsWith("-")) {
+					condition.insert(primary_att.getSelectedItem().toString().split(" ")[0]
+					                 , condition.getCaretPosition());
 				}
 			}
 		});
 		secondary_att.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
-				if( secondary_att.getSelectedItem() != null && active_att_receiver != null 
-						&& !secondary_att.getSelectedItem().toString().startsWith("-")) {
-					active_att_receiver.insert(secondary_att.getSelectedItem().toString().split(" ")[0]
-							                 , active_att_receiver.getCaretPosition());
+				if( secondary_att.getSelectedItem() != null && !secondary_att.getSelectedItem().toString().startsWith("-")) {
+					condition.insert(secondary_att.getSelectedItem().toString().split(" ")[0]
+					                 , condition.getCaretPosition());
 				}
 			}
 		});
-		
+
 		MyGBC mc = new MyGBC(5,5,5,5); 
-		
+
 		JPanel panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		mc.gridwidth = 6;
 		panel.add(new JScrollPane(condition), mc);
-		mc.newRow(); mc.gridwidth = 3;
+		mc.newRow(); mc.gridwidth = 2;
 		panel.add(primary_att, mc);
-		mc.gridx = 3;mc.gridwidth = 3;
+		mc.gridx = 2;mc.gridwidth = 2;
 		panel.add(secondary_att, mc);
+		mc.gridx = 4;mc.gridwidth = 2;
+		panel.add(new SQLConditionHelper(taskPanel.rootFrame, condition), mc);
 	}
-	
+
 	/**
-	 * @param field
+	 * @param primaryClass
+	 * @param secondaryClass
 	 */
-	public void activateQueryField(JTextArea field) {
-		if( active_att_receiver != null ) {
-			active_att_receiver.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));					
+	public void updateAvailableAttributes(String primaryClass, String secondaryClass) {
+		String[] classes=null;;
+		String text=null;
+		JComboBox combo = null;
+		int cat;
+		if( this.relationConf == null ) {
+			return;
 		}
-		if( field.isEditable() && field.isEnabled()) {
-			active_att_receiver = field;
-			active_att_receiver.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+		for( String prefix: new String[]{"p.", "s."}) {
+			/*
+			 * Get pointers on primary or secondary widgets
+			 */
+			if( prefix.equalsIgnoreCase("p.") ) {
+				text = primaryClass;
+				combo = primary_att;
+				combo.removeAllItems();
+				combo.addItem("- Primary Attributes -");
+				cat = this.relationConf.getColPrimary_type();
+			}
+			else if( prefix.equalsIgnoreCase("s.") ) {
+				text = secondaryClass;
+				combo = secondary_att;
+				combo.removeAllItems();
+				combo.addItem("- Secondary Attributes -");
+				cat = this.relationConf.getColSecondary_type();
+			}
+			else {
+				return;
+			}
+			/*
+			 * insert collection attributes
+			 */
+
+			for( AttributeHandler ah: MetaCollection.getAttribute_handlers(cat).values() ) {
+				combo.addItem(prefix + ah.getNameattr() + " (" + ah.getType() + ")");
+			}
+			if( text.length() > 0 ) {
+				classes = text.split("\\s*,\\s*", 0);
+				/*
+				 * insert class attributes
+				 */
+				if( classes.length == 1 && !classes[0].trim().equals("*") ) {
+					try {
+						MetaClass mcl = Database.getCachemeta().getClass(classes[0]);
+						for( AttributeHandler ah: mcl.getAttributes_handlers().values() ) {
+							combo.addItem(prefix + ah.getNameattr() + " (" + ah.getType() + ")");
+						}
+					} catch (SaadaException e) {
+						Messenger.printStackTrace(e);
+						return;
+					}
+				}
+			}
 		}
+	}
+
+	/**
+	 * @param conf
+	 */
+	public void load(RelationConf conf) {
+		this.relationConf = conf;
+		String correlator = conf.getQuery();
+		Pattern p = Pattern.compile("Condition\\s*\\{([^\\{\\}]*)\\}", Pattern.DOTALL);
+		Matcher m = p.matcher(correlator);		
+		condition.setText("");
+		if( m.find() ) {
+			condition.setText(m.group(1));
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public String getCorrelator() {
+		if( condition.getText().trim().length() > 0 ) {
+			return "Condition{" + condition.getText() + "}\n";
+		}
+		else {
+			return "";
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void reset() {
+		this.primary_att.removeAllItems();
+		this.secondary_att.removeAllItems();
+		this.condition.setText("");
 	}
 
 }
