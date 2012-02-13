@@ -31,6 +31,7 @@ public abstract class OuterWindow extends JFrame {
 		this(rootFrame);
 		this.setTitle(title);
 	}
+	
 	OuterWindow(AdminTool rootFrame) {
 		super("Data View");
 		dimension = new Dimension(defaultDim.width, defaultDim.height);
@@ -38,7 +39,6 @@ public abstract class OuterWindow extends JFrame {
 		this.panel = new JPanel();
 		this.setPreferredSize(dimension);
 		this.getContentPane().setBackground(AdminComponent.LIGHTBACKGROUND);
-
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public abstract class OuterWindow extends JFrame {
 	 * @throws Exception 
 	 * 
 	 */
-	protected abstract void setContent() throws Exception ;
+	protected  void setContent() throws Exception {}
 	
 
 }
