@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -24,6 +25,9 @@ public abstract class AdminComponent extends JPanel {
 	public final AdminTool rootFrame;
 	public static final Color IVORY = new Color(255, 255, 240);
 	public static final Color LIGHTBACKGROUND = new Color(245, 245, 245);
+
+	public static final Color OLD_HEADER = new Color(74, 179, 194);
+	public static final Color NEW_HEADER = new Color(0, 161,255);
 	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,12);
 	public static final Font italicFont = new Font("Helvetica",Font.ITALIC,12);
 	public static final Font helpFont = new Font("Helvetica",Font.ITALIC,10);
@@ -38,35 +42,40 @@ public abstract class AdminComponent extends JPanel {
 	public static final String VO_PUBLISH  = "VO Publishing";
 	public static final String MANAGE_RELATIONS  = "Manage Relationships";
 	public static final String PROCESS_PANEL     = "Process Panel";
-	
+
 	public static final String CREATE_COLLECTION   = "Create Collection";
 	public static final String DROP_COLLECTION     = "Drop Collection";
 	public static final String EMPTY_COLLECTION    = "Empty Collection";
 	public static final String COMMENT_COLLECTION  = "Comment Collection";
-	
+
 	public static final String EMPTY_CATEGORY    = "Empty Category";
-	
+
 	public static final String DATA_LOADER = "Data Loader";
-	
+
 	public static final String MISC_MAPPER     = "KW Mapper for MISC";
 	public static final String TABLE_MAPPER    = "KW Mapper for Tables";
 	public static final String SPECTRUM_MAPPER = "KW Mapper for Spectra";
 	public static final String IMAGE_MAPPER    = "KW Mapper for Images";
 	public static final String FLATFILE_MAPPER = "KW Mapper for Flatfiles";
-	
+
 	public static final String CREATE_RELATION   = "Create Relationship";
 	public static final String COMMENT_RELATION  = "Comment Relationship";
 	public static final String DROP_RELATION     = "Drop Relationship";
 	public static final String EMPTY_RELATION    = "Empty Relationship";
 	public static final String POPULATE_RELATION = "Populate Relationship";
 	public static final String INDEX_RELATION    = "Index Relationship";
-	
+
 	public static final String MANAGE_METADATA = "Manage Meta Data";
+	public static final String MANAGE_PRODUCT  = "Manage Products";
+
+	public static final String VO_CURATOR = "VO Curator";
+
+
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;
 	protected String currentTask;
-	
-	
+
+
 	/**
 	 * @param rootFrame
 	 */
@@ -91,7 +100,7 @@ public abstract class AdminComponent extends JPanel {
 				"Information",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	/**
 	 * @param txt
 	 * @return
@@ -116,7 +125,7 @@ public abstract class AdminComponent extends JPanel {
 				"Fatal Internal Error",
 				JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 	public static final void showFatalError(Component frame, Exception e) {
 		Messenger.printStackTrace(e);
 		JOptionPane.showMessageDialog(frame,
@@ -155,7 +164,31 @@ public abstract class AdminComponent extends JPanel {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * @param frame
+	 * @param message
+	 * @param comps
+	 * @return
+	 */
+	public static final boolean showConfirmDialog(Component frame, String message, Component[] comps) {
+		JPanel myPanel = new JPanel();
+		myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.PAGE_AXIS));
+		for( Component c:comps) {
+			myPanel.add(c);
+		}
+		int result = JOptionPane.showConfirmDialog(frame, myPanel, 
+				"Do you want to proceed?", JOptionPane.OK_CANCEL_OPTION);
+		if (result == JOptionPane.OK_OPTION) {
+			return true;
+		}
+		else {
+			return false;
+		}
+
+	}
+
+
 	public static final void showSuccess(Component frame, String message) {
 		JOptionPane.showMessageDialog(frame,
 				message,
@@ -163,7 +196,7 @@ public abstract class AdminComponent extends JPanel {
 				JOptionPane.PLAIN_MESSAGE);		
 	}	
 
-	
+
 	/**
 	 * @param txt
 	 * @return
@@ -187,7 +220,7 @@ public abstract class AdminComponent extends JPanel {
 		retour.setForeground(Color.GRAY);
 		return retour;
 	}
-	
+
 	/**
 	 * @param phrases
 	 * @return
@@ -203,7 +236,7 @@ public abstract class AdminComponent extends JPanel {
 		retour.setForeground(Color.GRAY);
 		return retour;
 	}
-	
+
 	/**
 	 * @param textKey
 	 * @return
@@ -243,14 +276,14 @@ public abstract class AdminComponent extends JPanel {
 		retour.setFont(subtTitleFont);		
 		return retour;
 	}
-	
+
 	/**
 	 * 
 	 */
 	public  void setDataTreePath(DataTreePath dataTreePath) {
 		this.dataTreePath = dataTreePath;
 	}
-	
+
 	public  void setSelectedResource(String selectedResource, String explanation) {
 		this.selectedResource = selectedResource;
 	}
@@ -262,7 +295,7 @@ public abstract class AdminComponent extends JPanel {
 	public AdminTool getRootFrame() {
 		return rootFrame;
 	}
-	
-	
+
+
 
 }
