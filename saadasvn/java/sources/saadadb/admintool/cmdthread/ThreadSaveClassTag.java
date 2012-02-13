@@ -79,7 +79,8 @@ public class ThreadSaveClassTag extends CmdThread {
 		}
 	}
 
+	@Override
 	public String getAntTarget() {
-		return "No ant target for this task";
+		return "No Ant task available to save meta data.\nmust be done from the admintool";
 	}
 }

@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
@@ -87,6 +88,6 @@ public class ThreadLoadData extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "Load data with " + ap.toString();
+		return AntDesk.getAntFile(AdminComponent.LOAD_DATA, taskTitle, ap.toXML());
 	}
 }

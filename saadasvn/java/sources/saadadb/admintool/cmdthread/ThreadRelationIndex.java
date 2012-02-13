@@ -3,6 +3,7 @@ package saadadb.admintool.cmdthread;
 import java.awt.Frame;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
@@ -55,8 +56,9 @@ public class ThreadRelationIndex extends ThreadRelationDrop {
 
 	@Override
 	public String getAntTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		return AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
+				, taskTitle
+				, new String[]{"-index=\"" + relation + "\""});
 	}
 }
 

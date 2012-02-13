@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -59,9 +60,8 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 
 	@Override
 	public String getAntTarget() {
-		return "ANT target for " + this.name;
+		return "No Ant task available to comment any entity.\nmust be done either at creagtion time or from the admintool";
 	}
-
 	public String toString() {
 		return "Comment collection " + this.name;
 	}

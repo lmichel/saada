@@ -5,21 +5,24 @@ import java.awt.Frame;
 import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
+import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
+import saadadb.util.Merger;
 import saadadb.util.Messenger;
 
 public class ThreadRelationCreate extends CmdThread {
 	protected RelationConf config;
-	
+
 	public ThreadRelationCreate(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
 	}
-	
+
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException {
 		config = (RelationConf) params.get("config");
@@ -54,7 +57,7 @@ public class ThreadRelationCreate extends CmdThread {
 			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> created");		
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
-			} catch (Exception ae) {			
+		} catch (Exception ae) {			
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(ae);
 			frame.setCursor(cursor_org);
@@ -64,8 +67,18 @@ public class ThreadRelationCreate extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		String retour = "";
+		try {
+			retour =  AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
+					, taskTitle
+					, new String[]{"-create=\"" + config.getNameRelation() + "\""
+					, "-from=\"" +  config.getColPrimary_name() + "." + Category.explain(config.getColPrimary_type()) + "\""
+					, "-to=\"" +  config.getColSecondary_name() + "." + Category.explain(config.getColSecondary_type()) + "\""
+					, "-comment=\""+ config.getDescription().replaceAll("\"", "") + "\""
+					, "-qualifiers=\"" +  Merger.getMergedArray(config.getQualifier().keySet().toArray(new String[0])) + "\""
+			});
+		} catch (Exception e) {}
+		return retour;
 	}
 }
 

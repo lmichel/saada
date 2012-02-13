@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
@@ -66,8 +67,9 @@ public class ThreadRelationDrop extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		return AntDesk.getAntFile(AdminComponent.DROP_RELATION
+				, taskTitle
+				, new String[]{"-remove=\"" + relation + "\""});
 	}
 }
 
