@@ -32,6 +32,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
 import saadadb.admintool.panels.*;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.panels.editors.VOCuratorPanel;
 import saadadb.admintool.panels.tasks.*;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
@@ -84,7 +85,9 @@ public class AdminTool extends BaseFrame {
 	private EditPanel spectrumMapperPanel;;
 	private EditPanel tableMapperPanel;;
 	private EditPanel imageMapperPanel;;
-	private EditPanel flatfileMapperPanel;;
+	private EditPanel flatfileMapperPanel;
+	
+	private EditPanel voCurator;;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -163,7 +166,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.POPULATE_RELATION);
+				activePanel(AdminComponent.VO_CURATOR);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -390,6 +393,15 @@ public class AdminTool extends BaseFrame {
 				populateRelationPanel = new RelationPopulatePanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = populateRelationPanel;
+			/*
+			 * VO publishing
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.VO_CURATOR) ) {
+			if( voCurator == null ) {
+				voCurator = new VOCuratorPanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = voCurator;
+			
 			/*
 			 * Process pqnel used by all tasks
 			 */
