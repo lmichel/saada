@@ -98,7 +98,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		c.weightx = 0.75; c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 
-		if( selectResourceLabel == null ) selectResourceLabel = getSubTitleLabel("No selected resource");
+		if( selectResourceLabel == null ) selectResourceLabel = getSubTitleLabel("");
 		tPanel.add(selectResourceLabel, c);
 		this.add(tPanel);
 	}

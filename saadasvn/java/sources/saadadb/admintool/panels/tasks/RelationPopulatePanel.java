@@ -1,29 +1,16 @@
 package saadadb.admintool.panels.tasks;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadRelationPopulate;
-import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
@@ -38,10 +25,6 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
-import saadadb.meta.AttributeHandler;
-import saadadb.meta.MetaClass;
-import saadadb.meta.MetaCollection;
 import saadadb.meta.MetaRelation;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
@@ -76,9 +59,11 @@ public class RelationPopulatePanel extends TaskPanel {
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		super.setDataTreePath(dataTreePath);
-		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
-			try {
-				setSelectedResource("No selected resource", null);
+		try {
+			this.relationChooser.setDataTreePath(null);
+			setSelectedResource("", null);
+
+			if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
 				this.collectionCoverage.reset();
 				this.knnEditor.reset();
 				this.keywordConditionEditor.reset();
@@ -91,9 +76,9 @@ public class RelationPopulatePanel extends TaskPanel {
 				this.keywordConditionEditor.setCollapsed(true);
 				this.qualifierSetter.setCollapsed(true);
 				this.saveButton.setEnabled(false);
-			} catch (FatalException e) {
-				Messenger.trapFatalException(e);
 			}
+		} catch (FatalException e) {
+			Messenger.trapFatalException(e);
 		}
 	}
 
@@ -102,48 +87,6 @@ public class RelationPopulatePanel extends TaskPanel {
 		LinkedHashMap<String, Object> retour = new LinkedHashMap<String, Object>();
 		this.setConfig();
 		retour.put("config", this.relationConf);
-
-
-		//		String name = this.nameField.getText();
-		//		if( SQLTable.tableExist(name)  ) {
-		//			AdminComponent.showFatalError(rootFrame, "The name <" + name + "> is already used");
-		//			return retour;
-		//		}
-		//		else if( !name.matches(RegExp.CLASSNAME) ) {
-		//			AdminComponent.showFatalError(rootFrame, "Relation name <" + name + "> badly formed");			
-		//			return retour;
-		//		}
-		//		else if( primaryField.getText().trim().length() == 0 ) {
-		//			AdminComponent.showInfo(rootFrame, "No primary collection given");						
-		//			return retour;
-		//		}
-		//		else if( secondaryField.getText().trim().length() == 0 ) {
-		//			AdminComponent.showFatalError(rootFrame, "No secondary collection given");						
-		//			return retour;
-		//		}
-		//		else {
-		//			try {
-		//				RelationConf relationConfiguration = new RelationConf();
-		//				String[] collcat = primaryField.getText().trim().split("\\.");
-		//				relationConfiguration.setNameRelation(name);
-		//				relationConfiguration.setDescription(this.commentField.getText().trim());
-		//				relationConfiguration.setColPrimary_name(collcat[0]);
-		//				relationConfiguration.setColPrimary_type(Category.getCategory(collcat[1]));
-		//				collcat = secondaryField.getText().trim().split("\\.");
-		//
-		//				relationConfiguration.setColSecondary_name(collcat[0]);
-		//				relationConfiguration.setColSecondary_type(Category.getCategory(collcat[1]));
-		//				relationConfiguration.setClass_name(name);	
-		//				for( int i=0 ; i<this.qualList.getItemCount() ; i++ ) {
-		//					relationConfiguration.setQualifier(qualList.getItemAt(i).toString(), "double");
-		//				}
-		//				retour.put("config", relationConfiguration);
-		//				relationConfiguration.save();
-		//				return retour;
-		//			} catch(Exception e) {
-		//				showFatalError(rootFrame, e);
-		//			}
-		//		}
 		return retour;
 	}
 

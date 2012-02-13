@@ -83,7 +83,7 @@ public class VOPublishPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "VO Services Summary", "icons/VOServices.png"
 				, new Runnable(){public void run(){
-					System.out.println("summary");}});
+					rootFrame.activePanel(VO_CURATOR);}});
 	}
 
 }
