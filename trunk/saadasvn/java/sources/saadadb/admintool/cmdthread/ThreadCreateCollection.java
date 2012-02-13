@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
@@ -82,7 +83,9 @@ public class ThreadCreateCollection extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "ANT target for " + this.name;
+		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
+				, taskTitle
+				, new String[]{"-create=\"" + name + "\"", "-comment=\""+ comment.replaceAll("\"", "") + "\""});
 	}
 
 	public String toString() {

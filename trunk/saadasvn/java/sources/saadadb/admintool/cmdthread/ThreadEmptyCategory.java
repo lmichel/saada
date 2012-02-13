@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -83,7 +84,9 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 
 	@Override
 	public String getAntTarget() {
-		return "ANT target for " + this.name;
+		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
+				, taskTitle
+				, new String[]{"-empty=\"" + name + "\"", "-category=" + category});
 	}
 
 	public String toString() {

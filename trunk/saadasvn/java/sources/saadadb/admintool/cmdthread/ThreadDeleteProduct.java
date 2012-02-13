@@ -9,6 +9,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.admintool.windows.DataTableWindow;
 import saadadb.collection.ProductManager;
 import saadadb.database.Database;
@@ -23,6 +24,7 @@ import saadadb.sqltable.SQLTable;
  */
 public class ThreadDeleteProduct extends CmdThread {
 	private DataTableWindow dataTable;
+	long oids_to_remove[] ;
 
 	public ThreadDeleteProduct(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
@@ -94,6 +96,9 @@ public class ThreadDeleteProduct extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "product remove";
+		return AntDesk.getAntFile(AdminComponent.MANAGE_PRODUCT
+				, taskTitle
+				, new String[]{"-remove=\"" + oids_to_remove + "\""});
 	}
+
 }

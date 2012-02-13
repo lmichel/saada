@@ -1,5 +1,6 @@
 package saadadb.admintool.cmdthread;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
 
@@ -8,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
@@ -17,7 +19,9 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 public class ThreadRelationPopulate extends ThreadRelationCreate {
-
+	private static boolean emptyFirst = false;
+	private static  boolean indexAfter = true;
+	
 	public ThreadRelationPopulate(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
 	}
@@ -32,20 +36,16 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 		}
 		else {
 			JCheckBox withEmpty = new JCheckBox("Do you want to first empty the relation?");
+			withEmpty.setSelected(emptyFirst);
 			JCheckBox withIndex = new JCheckBox("Do you want to index the relation after?");
+			withIndex.setSelected(indexAfter);
+			boolean retour = AdminComponent.showConfirmDialog(frame, "Do you want to proceed?", new Component[] {withEmpty, withIndex});
 			
-		      JPanel myPanel = new JPanel();
-		      myPanel.add(withEmpty);
-		      myPanel.add(withIndex);
-
-		      int result = JOptionPane.showConfirmDialog(frame, myPanel, 
-		               "Do you want to proceed?", JOptionPane.OK_CANCEL_OPTION);
-		      if (result == JOptionPane.OK_OPTION) {
-		         System.out.println("x value: " + withEmpty.getText());
-		         System.out.println("y value: " + withIndex.getText());
+			if( retour ) {
+				emptyFirst = withEmpty.isSelected();
+				indexAfter = withIndex.isSelected();
 		      }
-
-			
+		
 		      return false;
 		}
 	}
@@ -78,7 +78,9 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 
 	@Override
 	public String getAntTarget() {
-		// TODO Auto-generated method stub
-		return null;
+		return AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
+				, taskTitle
+				, new String[]{"-populate=\"" + config.getNameRelation() + "\""
+				, "-query=\"" + config.getQuery().replaceAll("\"", "\\\"") + "\""});
 	}
 }

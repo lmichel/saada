@@ -8,15 +8,14 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
 public class ThreadDropCollection extends CmdThread{
 	protected String name;
@@ -74,7 +73,9 @@ public class ThreadDropCollection extends CmdThread{
 
 	@Override
 	public String getAntTarget() {
-		return "ANT target for " + this.name;
+		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
+				, taskTitle
+				, new String[]{"-remove=\"" + name + "\""});
 	}
 
 	public String toString() {
