@@ -124,15 +124,4 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 	}
-
-	/**
-	 * @throws Exception 
-	 * 
-	 */
-	public void save() throws Exception {
-	}
-
-
-	
-
 }

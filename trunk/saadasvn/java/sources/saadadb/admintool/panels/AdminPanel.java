@@ -3,6 +3,7 @@
  */
 package saadadb.admintool.panels;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -52,7 +53,7 @@ public abstract class AdminPanel extends AdminComponent {
 	}
 
 	public void initSelectResourceLabel() {
-		selectResourceLabel = AdminComponent.getSubTitleLabel("No selected resource");
+		selectResourceLabel = AdminComponent.getSubTitleLabel("");
 	}
 
 	public JLabel getCurrentTaskLabel() {
@@ -131,24 +132,56 @@ public abstract class AdminPanel extends AdminComponent {
 		return tPanel;
 
 	}
+	
+	private void highlightDataTreePath() {
+		if( treePathLabel != null )
+			treePathLabel.setForeground(NEW_HEADER);
+		if( currentTaskLabel != null )
+			currentTaskLabel.setForeground(OLD_HEADER);
+		if( selectResourceLabel != null )
+			selectResourceLabel.setForeground(OLD_HEADER);
+	}
+	private void highlightSelectResource() {
+		if( treePathLabel != null )
+			treePathLabel.setForeground(OLD_HEADER);
+		if( currentTaskLabel != null )
+			currentTaskLabel.setForeground(OLD_HEADER);
+		if( selectResourceLabel != null )
+			selectResourceLabel.setForeground(NEW_HEADER);
+	}
+	private void highlightCurrentTask() {
+		if( treePathLabel != null )
+			treePathLabel.setForeground(OLD_HEADER);
+		if( currentTaskLabel != null )
+			currentTaskLabel.setForeground(NEW_HEADER);
+		if( selectResourceLabel != null )
+			selectResourceLabel.setForeground(OLD_HEADER);
+	}
 
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath != null && !lockDataTreePath ) {
 			super.setDataTreePath(dataTreePath);
 			if( treePathLabel != null )
 				treePathLabel.setText(dataTreePath.toString());
+			highlightDataTreePath();
 		}
 	}
 
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
-		if( selectResourceLabel != null )
+		if( selectResourceLabel != null ) {
 			selectResourceLabel.setText(selectedResource);
+			if( selectedResource.length() > 0)
+				highlightSelectResource();
+		}
 	}
 	public void setCurrentTask(String currentTask) {	
 		super.setCurrentTask(currentTask);
-		if( currentTaskLabel != null )
+		if( currentTaskLabel != null ) {
 			currentTaskLabel.setText(currentTask);
+			if( currentTask.length() > 0)
+				highlightCurrentTask();
+		}
 	}
 
 	/**
@@ -175,5 +208,13 @@ public abstract class AdminPanel extends AdminComponent {
 
 	public void cancelChanges() {
 	}
+	
+	/**
+	 * @throws Exception 
+	 * 
+	 */
+	public void save() throws Exception {
+	}
+
 
 }

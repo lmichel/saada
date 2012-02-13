@@ -58,7 +58,7 @@ public class RelationDropPanel extends TaskPanel {
 		super.setDataTreePath(dataTreePath);
 		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
 			try {
-				setSelectedResource("No selected resource", null);
+				setSelectedResource("", null);
 				configChooser.setDataTreePath(dataTreePath);
 			} catch (FatalException e) {
 				Messenger.trapFatalException(e);
