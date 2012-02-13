@@ -177,7 +177,7 @@ public class LoaderConfigChooser extends JPanel {
 	 */
 	public ArgsParser getArgsParser() {
 		try {
-			return new ArgsParser(argsParser.getArgs());
+			return ( argsParser != null)? new ArgsParser(argsParser.getArgs()): null;
 		} catch (FatalException e) {
 			Messenger.trapFatalException(e);
 			return null;

@@ -77,18 +77,19 @@ public class RelationshipChooser extends JPanel {
 
 		DefaultListModel model = (DefaultListModel) confList.getModel();
 		model.removeAllElements();
-		for(String r: Database.getCachemeta().getRelationNamesStartingFromColl(
-				dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-			MetaRelation mr = Database.getCachemeta().getRelation(r);
-			JLabel jl = new JLabel("<html><b>" + r + "</b> > " + mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()));
-			model.addElement(jl.getText());			
-		}
-		System.out.println(Category.getCategory(dataTreePath.category.toUpperCase()));
-		for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
-				dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-			MetaRelation mr = Database.getCachemeta().getRelation(r);
-			JLabel jl = new JLabel("<html>" + mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()) + " > <b>" + r + "</b>");
-			model.addElement(jl.getText());			
+		if(dataTreePath != null ){
+			for(String r: Database.getCachemeta().getRelationNamesStartingFromColl(
+					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
+				MetaRelation mr = Database.getCachemeta().getRelation(r);
+				JLabel jl = new JLabel("<html><b>" + r + "</b> > " + mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()));
+				model.addElement(jl.getText());			
+			}
+			for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
+					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
+				MetaRelation mr = Database.getCachemeta().getRelation(r);
+				JLabel jl = new JLabel("<html>" + mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()) + " > <b>" + r + "</b>");
+				model.addElement(jl.getText());			
+			}
 		}
 	}
 
