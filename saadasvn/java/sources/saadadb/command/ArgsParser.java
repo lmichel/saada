@@ -1151,4 +1151,16 @@ public class ArgsParser implements Serializable{
 		}
 		return retour + ")";
 	}
+	
+	/**
+	 * @return
+	 */
+	public String toXML() {
+		String retour = "";
+		for( String p: this.args) {
+			retour += "        <arg value=\"" + p + "\"/>\n";
+		}
+		return retour;
+	}
+
 }

@@ -376,9 +376,4 @@ public class TapServiceManager extends EntityManager {
 		rs_schema.close();
 		return retour;
 	}
-
-	public static void main(String[] args) throws Exception {
-		Database.init("XCatDR3");
-		System.out.println(TapServiceManager.getXML());
-	}
 }
