@@ -62,6 +62,14 @@
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
  	</target>
+  	<target name="admintool">
+    	<java fork="true"  classname="saadadb.admintool.AdminTool">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
 	
 	<!--
 	  compile saadadb.jar
