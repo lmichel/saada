@@ -23,7 +23,7 @@ public class SimpleTextForm extends CollapsiblePanel {
 		super(text);
 		JPanel panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
-		MyGBC mgbc = new MyGBC(5,5,5,5);
+		MyGBC mgbc = new MyGBC(5,5,5,5); mgbc.anchor = GridBagConstraints.NORTH;
 		for( int i=0 ; i<labels.length ; i++ ) {
 			mgbc.right(false);
 			panel.add(AdminComponent.getPlainLabel(labels[i]), mgbc);

@@ -3,7 +3,9 @@
  */
 package saadadb.admintool.panels.editors;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -20,6 +22,7 @@ import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.SimpleTextForm;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 
 
@@ -69,10 +72,6 @@ public class VOCuratorPanel extends EditPanel {
 		authIdentifier  = new JTextField(20);
 		authShortName  = new JTextField(20);
 		
-
-		MyGBC imcep = new MyGBC(0,0,0,0);
-		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
-
 		JPanel tPanel = this.addSubPanel("VO Authority");
 		JPanel editorPanel = new JPanel();
 		editorPanel.setLayout(new GridBagLayout());
@@ -117,7 +116,12 @@ public class VOCuratorPanel extends EditPanel {
 				,new String[] {"Subject", "Reference URL", "Description", "Type", "Level"}
 				,new Component[]{contentSubject, contentReferenceURL, new JScrollPane(contentDescription), contentType, contentLevel});
 		editorPanel.add(cp, emc);
-		
+		emc.newRow();
+
+		editorPanel.add(getHelpLabel(HelpDesk.VO_CURATION), emc);
+
+		MyGBC imcep = new MyGBC(0,0,0,0);
+		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 		
 
@@ -134,11 +138,14 @@ public class VOCuratorPanel extends EditPanel {
 		JPanel tPanel = new JPanel();
 		tPanel.setLayout(new GridBagLayout());
 		tPanel.setBackground(LIGHTBACKGROUND);
+		tPanel.setPreferredSize(new Dimension(1000,48));
+		tPanel.setMaximumSize(new Dimension(1000,48));
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridy = 0; c.gridx = 0;
 		c.anchor = GridBagConstraints.PAGE_END;
 		c.weightx = 0;
-
+		c.weighty = 0;
+		c.fill = GridBagConstraints.NONE;
 		tPanel.add(saveButton, c);
 		c.gridx++;
 		

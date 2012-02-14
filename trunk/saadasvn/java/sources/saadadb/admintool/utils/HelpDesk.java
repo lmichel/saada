@@ -19,6 +19,7 @@ public class HelpDesk {
 	public static final int RELATION_COLLECTIONS = 11;
 	public static final int RELATION_QUALIFIER = 12;
 	public static final int RELATION_SELECTOR = 13;
+	public static final int VO_CURATION = 13;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -86,6 +87,12 @@ public class HelpDesk {
 				"Cick on a data node to display all relationships touching it"
 				, "Select the relationship of interest in the list"
 				});
+		map.put(VO_CURATION, new String[] {
+				"This page does not publish anything in some registry"
+				, "The purpose of the information given here "
+				, "is just to provide helpful templates of registry resources"
+				, "for data collection hosted by this SaadaDB."
+		});
 	}
 	
 	/**
