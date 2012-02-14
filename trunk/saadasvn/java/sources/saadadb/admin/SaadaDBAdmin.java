@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -229,8 +230,7 @@ public class SaadaDBAdmin  extends JFrame {
 		this.pack();
 		this.setVisible(true);	
 		Messenger.hideSplash();		
-		//setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("/base2/XIDResult/saadadbs/XIDResult/web/images/saadatransp-text.gif")));
-		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("saadadb/icons/saada_transp_square.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
 
 		/*
 		 * Ask for the administrator password
