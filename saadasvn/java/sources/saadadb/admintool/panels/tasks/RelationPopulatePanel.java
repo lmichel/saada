@@ -226,8 +226,7 @@ public class RelationPopulatePanel extends TaskPanel {
 		editorPanel.add(qualifierSetter, emc);
 		qualifierSetter.setVisible(false);
 
-		MyGBC imcep = new MyGBC(0,0,0,0);
-		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
+		MyGBC imcep = new MyGBC(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 
 

@@ -1,31 +1,20 @@
 package saadadb.admintool.panels;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadCreateCollection;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.ComponentTitledBorder;
-import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.components.ToolBarPanel;
-import saadadb.exceptions.SaadaException;
 
 /**
  * Input panel for administration task (create collection ......)

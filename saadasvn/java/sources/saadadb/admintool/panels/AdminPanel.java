@@ -84,7 +84,6 @@ public abstract class AdminPanel extends AdminComponent {
 	}
 
 	public void lockDataTreePath() {
-		System.err.println("lock");
 		lockDataTreePath = true;
 	}
 	public void unlockDataTreePath() {

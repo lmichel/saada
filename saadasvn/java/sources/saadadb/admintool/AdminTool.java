@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.DateFormat;
@@ -27,13 +26,33 @@ import javax.swing.SwingUtilities;
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.admin.dialogs.AdminPassword;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
-import saadadb.admintool.panels.*;
+import saadadb.admintool.panels.AdminPanel;
+import saadadb.admintool.panels.ChoicePanel;
+import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.panels.LoadDataPanel;
+import saadadb.admintool.panels.ManageDataPanel;
+import saadadb.admintool.panels.MetaDataPanel;
+import saadadb.admintool.panels.ProcessPanel;
+import saadadb.admintool.panels.RelationChoicePanel;
+import saadadb.admintool.panels.RootChoicePanel;
+import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
-import saadadb.admintool.panels.tasks.*;
+import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
+import saadadb.admintool.panels.tasks.CollCommentPanel;
+import saadadb.admintool.panels.tasks.CollCreatePanel;
+import saadadb.admintool.panels.tasks.CollDropPanel;
+import saadadb.admintool.panels.tasks.CollEmptyPanel;
+import saadadb.admintool.panels.tasks.DataLoaderPanel;
+import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
+import saadadb.admintool.panels.tasks.RelationCreatePanel;
+import saadadb.admintool.panels.tasks.RelationDropPanel;
+import saadadb.admintool.panels.tasks.RelationEmptyPanel;
+import saadadb.admintool.panels.tasks.RelationIndexPanel;
+import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -133,6 +152,7 @@ public class AdminTool extends BaseFrame {
 				//}
 			}
 		});
+		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
 
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -203,6 +223,8 @@ public class AdminTool extends BaseFrame {
 		this.pack();
 		Messenger.hideSplash();		
 		this.setVisible(true);	
+		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
+
 		/*
 		 * Ask for the administrator password
 		 */

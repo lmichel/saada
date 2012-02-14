@@ -29,7 +29,7 @@ public class ToolBarPanel extends JPanel {
 		adminLabel.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(1, 7, 1, 1);
-		
+
 		JButton jb;
 		c.gridx = 0; c.gridy = 0;
 		c.gridwidth = 1; c.gridheight = 0;
@@ -59,36 +59,41 @@ public class ToolBarPanel extends JPanel {
 
 			this.add(jb, c);
 		}
-
-		if( withTreePath ) {
-
+		/*
+		 * Put an empty label to push button on the left
+		 */
+		if( !withTreePath && ! withSelectedResource && ! withTaskLabel) {
 			c.gridx = 2; c.gridy = 0;
 			c.gridwidth = 2; c.gridheight = 1;
 			c.weightx = 0.8; c.weighty = 1;
 			c.anchor = GridBagConstraints.LINE_START;
-			this.add(adminLabel.getTreePathLabel(), c);
+			this.add(new JLabel(""), c);
 		}
-
-
-		
-		if( withSelectedResource ) {
-			c.gridx = 2; c.gridy = 1;
-			c.gridwidth = 1; c.gridheight = 1;
-			c.weightx = 0; c.weighty = 1;
-			c.anchor = GridBagConstraints.LINE_START;
-			this.add(new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/question.png"))), c);
-			c.gridx = 3; c.gridy = 1;
-			c.weightx = 0.75; c.weighty = 1;
-			c.anchor = GridBagConstraints.LINE_START;
-			this.add(adminLabel.getSelectResourceLabel(), c);
-		}
-		
-		if( withTaskLabel ) {
-
-		c.gridx = 2; c.gridy = 2;
-		c.gridwidth = 2; c.gridheight = 1;
-		c.weightx = 0.8; c.weighty = 1;
-		this.add(adminLabel.getCurrentTaskLabel(), c);
+		else {
+			if( withTreePath ) {
+				c.gridx = 2; c.gridy = 0;
+				c.gridwidth = 2; c.gridheight = 1;
+				c.weightx = 0.8; c.weighty = 1;
+				c.anchor = GridBagConstraints.LINE_START;
+				this.add(adminLabel.getTreePathLabel(), c);
+			}		
+			if( withSelectedResource ) {
+				c.gridx = 2; c.gridy = 1;
+				c.gridwidth = 1; c.gridheight = 1;
+				c.weightx = 0; c.weighty = 1;
+				c.anchor = GridBagConstraints.LINE_START;
+				this.add(new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/question.png"))), c);
+				c.gridx = 3; c.gridy = 1;
+				c.weightx = 0.75; c.weighty = 1;
+				c.anchor = GridBagConstraints.LINE_START;
+				this.add(adminLabel.getSelectResourceLabel(), c);
+			}		
+			if( withTaskLabel ) {
+				c.gridx = 2; c.gridy = 2;
+				c.gridwidth = 2; c.gridheight = 1;
+				c.weightx = 0.8; c.weighty = 1;
+				this.add(adminLabel.getCurrentTaskLabel(), c);
+			}
 		}
 
 	}

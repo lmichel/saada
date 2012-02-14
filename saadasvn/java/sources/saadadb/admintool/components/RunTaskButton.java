@@ -20,22 +20,24 @@ public class RunTaskButton extends JButton {
 		this.setEnabled(false);
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RunTaskButton.this.adminPanel.initCmdThread();
-				RunTaskButton.this.cmdThread = RunTaskButton.this.adminPanel.getCmdThread();
-				AdminTool rootFrame = RunTaskButton.this.adminPanel.rootFrame;
-				try {
-					((JButton)(e.getSource())).setEnabled(false);
-					if( RunTaskButton.this.adminPanel.setCmdParams(true)  == true ) {
-						rootFrame.activeProcessPanel(cmdThread);
+				if( RunTaskButton.this.adminPanel != null ) {
+					RunTaskButton.this.adminPanel.initCmdThread();
+					RunTaskButton.this.cmdThread = RunTaskButton.this.adminPanel.getCmdThread();
+					AdminTool rootFrame = RunTaskButton.this.adminPanel.rootFrame;
+					try {
+						((JButton)(e.getSource())).setEnabled(false);
+						if( RunTaskButton.this.adminPanel.setCmdParams(true)  == true ) {
+							rootFrame.activeProcessPanel(cmdThread);
+						}
+					} catch (Exception e1) {
+						AdminComponent.showFatalError(rootFrame, e1);
+						rootFrame.activePanel(RunTaskButton.this.adminPanel.getTitle());
 					}
-				} catch (Exception e1) {
-					AdminComponent.showFatalError(rootFrame, e1);
-					rootFrame.activePanel(RunTaskButton.this.adminPanel.getTitle());
 				}
 			}
 		});
 	}
-	
+
 	public void activate() {
 		this.setEnabled(true);
 	}
