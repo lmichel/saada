@@ -52,7 +52,7 @@ public class NewSaadaDB {
 	 * @throws FatalException
 	 */
 	public NewSaadaDB(String saada_home, String admin_password) throws  FatalException {
-		this.SAADA_HOME = saada_home;
+		NewSaadaDB.SAADA_HOME = saada_home;
 		this.connector = SaadaDBConnector.getConnector(null,  false);
 		this.connector.ParserSaadaDBConfFile(SAADA_HOME + separ + "config" + separ + "saadadb.xml");
 		this.SAADA_DB_HOME = this.connector.getRoot_dir();
@@ -253,10 +253,6 @@ public class NewSaadaDB {
 		}
 	}
 
-	protected static boolean isSaadaDBExist(String name, Hashtable list_db) {
-		return list_db.containsKey(name);
-	}
-	
 	/**
 	 * @param args
 	 * @throws FatalException 
