@@ -72,7 +72,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	 * @throws FatalException 
 	 * 
 	 */
-	protected  SaadaDBConnector() throws FatalException {
+	public  SaadaDBConnector() throws FatalException {
 		this.init();
 	}
 
