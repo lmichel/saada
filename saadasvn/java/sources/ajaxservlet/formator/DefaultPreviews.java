@@ -29,14 +29,14 @@ abstract public class DefaultPreviews {
 	}
 
 	/**
-	 * All links pointing on something else that am AJAX call must be open in a new windows
+	 * Alll links pointing on something else that am AJAX call must be open in a new windows
 	 * @param oid
 	 * @return
 	 * @throws SaadaException
 	 */
 	public static final String getHeaderLink(long oid) throws SaadaException {
 		EntrySaada si =  (EntrySaada) Database.getCache().getObject(oid);
-		return "<a title='Get the table header' class=dl_header href='javascript:void(0)' onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\");'></A>";
+		return "<a title='Get the tyable header' class=dl_header href='javascript:void(0)' onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\");'></A>";
 	}
 	public static final String  getDetailLink(long oid, String panelToOpen) throws SaadaException {
 		String panarg = (panelToOpen == null )? "null": "\"" + panelToOpen + "\"";
@@ -51,7 +51,7 @@ abstract public class DefaultPreviews {
 	}
 	public static final String getCartLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		return "<a class=dl_cart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl(\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
+		return "<a class=dl_cart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
 		//return "<a class=dl_cart title=\"Add to cart\" href=\"#\" onclick='cartView.fireAddUrl(\"" + si.getDownloadURL(true) + "\");'></a>";
 	}
 	public static final String getDLLink(long oid) throws SaadaException {
