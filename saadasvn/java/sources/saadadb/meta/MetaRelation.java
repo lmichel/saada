@@ -202,7 +202,8 @@ public class MetaRelation extends MetaObject {
 			+ "- Qualifiers  :" + quals +"\n"
 			+ "- Stored Correlator:\n" +  this.getCorrelator() +"\n"
 			+ "- Content     :" + content +"\n"
-			+ "- Description :" + this.getDescription().trim()+"\n";
+			+ "- Description :" + this.getDescription().trim()+"\n"
+			+ "- Indexed     :" + this.isIndexed();
 		} catch(Exception e ) {
 			e.printStackTrace();
 			return null;
