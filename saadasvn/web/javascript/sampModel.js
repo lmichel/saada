@@ -4,7 +4,9 @@ jQuery.extend({
 		/**
 		 * keep a reference to ourselves
 		 */
-		var that = this;
+		var that = this;					
+		var attempt = 0;
+
 		/**
 		 * who is listening to us?
 		 */
@@ -34,7 +36,8 @@ jQuery.extend({
 				}
 				if( connected == false ) {
 					WebSampConnector.connect();
-					setTimeout(that.checkConnection, 7000);
+					that.attempt = 0;
+					setTimeout(that.checkConnection, 1000);
 				}
 				else {
 					WebSampConnector.disconnect();
@@ -46,10 +49,23 @@ jQuery.extend({
 
 		this.checkConnection = function() {
 			try {
-				if( WebSampConnector.isConnected() == false ) {				
-					$("#sampconnector").css("background", "url(images/disconnected.png)center left no-repeat");
-					$(".ivoa").css('visibility', 'hidden');
-					alert('Connection failed: Make sure you have a SAMP hub running');
+				if( WebSampConnector.isConnected() == false ) {	
+					if( attempt > 7 ) {		
+						$("#sampconnector").css("background", "url(images/disconnected.png)center left no-repeat");
+						$(".ivoa").css('visibility', 'hidden');
+						logged_alert('Connection failed: Make sure you have a SAMP hub running<br>'
+								+ 'If not, you can start one by clicking on one icon below<br>'
+								+ '<a href=http://aladin.u-strasbg.fr/java/nph-aladin.pl?frame=get&id=AladinBeta.jnlp><img valign=center height=24 src="http://aladin.u-strasbg.fr/aladin_large.gif"></a>'
+						 		+ '<BR><a href=http://www.star.bris.ac.uk/~mbt/topcat/topcat-full.jnlp><img valign=center  height=24 src="http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif"></a>'
+						 		+ '<br>Once the applicaiton is running, close this dialog and try again to connect<br>'
+						 		);
+					}   //http://aladin.u-strasbg.fr/aladin_large.gif 
+						//http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif
+					//http://vo.imcce.fr/webservices/share/logo/logo_VOParis.png
+					else {
+						attempt++;
+						setTimeout(that.checkConnection, 1000);
+					}
 				}
 				else {
 					$("#sampconnector").css("background", "url(images/connected.png)center left no-repeat");	
@@ -58,10 +74,10 @@ jQuery.extend({
 			} catch(err) {
 				$("#sampconnector").css("background", "url(images/disconnected.png)center left no-repeat");
 				$(".ivoa").css('visibility', 'hidden');
-				alert('Connection failed: Make sure the applet WebSampConnector is authorized to run');				
+				logged_alert(err + '\nConnection failed: Make sure the applet WebSampConnector is authorized to run');				
 			}
 
 		}
-	
+
 	}	
 });

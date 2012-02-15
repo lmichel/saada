@@ -36,13 +36,15 @@ jQuery.extend({
 		};
 		this.removeJobResult = function(nodekey, jobid) {
 			var entry;
+			var sjobid = unescape(jobid);
 			if( (entry = cartData[nodekey]) == undefined ) {
 				logged_alert("There is no data associated with node " + nodekey + " in the cart", "input Error");
 			}
 			else {
 				var queries = entry.queries;
 				for( var i=0 ; i<queries.length ; i++ ) {
-					if( queries[i].uri == jobid ) {
+					logMsg(queries[i].uri + " " + sjobid );
+					if( queries[i].uri == sjobid ) {
 						queries.splice(i,1);
 						if( queries.length == 0 && entry.files.length == 0 ) {
 							delete cartData[nodekey];
@@ -59,7 +61,6 @@ jQuery.extend({
 			if( (entry = cartData[nodekey]) == undefined ) {
 				cartData[nodekey] = {queries: new Array(), files: new Array()};
 				cartData[nodekey].files[0] = {name: name, uri: oid, relations: []};
-				logMsg("add URL1 " + nodekey + " (" + name + " " + oid + ")");
 			}
 			else {
 				var files = entry.files;
@@ -70,7 +71,6 @@ jQuery.extend({
 					}
 				}
 				cartData[nodekey].files[i] = {name: name, uri: oid, relations: []};			
-				logMsg("add URL2 " + nodekey + " (" + name + " " + oid + ")");
 			}			
 		};
 		this.removeUrl = function(nodekey, url) {
@@ -81,15 +81,12 @@ jQuery.extend({
 			else {
 				var files = entry.files;
 				for( var i=0 ; i<files.length ; i++ ) {
-					logger.debug("To remove " + files[i].uri + " in " + url);
 					if( files[i].uri == url ) {
 						files.splice(i,1);
 						if( files.length == 0 && entry.queries.length == 0 ) {
-							logger.debug("remove " + nodekey + " in " + url);
 
 							delete cartData[nodekey];
 						}		
-
 						return;
 					}
 				}
@@ -180,16 +177,29 @@ jQuery.extend({
 				}
 			});
 		};
-		
+
 		this.delegateCartDownload= function() {
-			logMsg(PeerCartClient);
-			var form = [ '<form target=_blank method="POST" action="', PeerCartClient, '">' ];
+			if ($('#detaildiv').length == 0) {
+				$(document.documentElement)
+				.append(
+				"<div id=detaildiv style='height: 99%; width: 99%; display: none;'><div style='color: black;' id=description name=pouet></div></div>");
+			}
+			$('#detaildiv').css('height', '99%');
+			$('#detaildiv').html('<iframe id="iframeid" name="iframename" style="height: 99%; width: 99%"></iframe>');
+			$('#detaildiv').modal();
 
-			form.push('<input type="hidden" name="saadadburl" value="', window.location.replace('/#', ''),'/cart/zipper" />');
-			form.push('<input type="hidden" name="cartcontent" value="',escape(JSON.stringify(cartData)), '"/>');
-			form.push('</form>');
-
-			jQuery(form.join('')).appendTo('body')[0].submit();			
+			if ($('#delegateFormId').length == 0) {
+				var form = [ '<form id="delegateFormId" target="iframename" method="POST" action="', PeerCartClient, '">' ];
+				form.push('<input type="hidden" name="saadadburl" value="'
+						, escape($(location).attr('href').replace('/#', '') + '/cart/zipper')
+						, '" />');
+				form.push('<input type="hidden" name="cartcontent" value="'
+						, escape(JSON.stringify(cartData))
+						, '"/>');
+				form.push('</form>');
+				jQuery(form.join('')).appendTo('body');
+			}
+			$('#delegateFormId').submit();
 		};
 
 		this.killArchiveBuilding = function() {

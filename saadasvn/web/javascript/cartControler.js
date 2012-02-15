@@ -15,7 +15,7 @@ jQuery.extend({
 					model.addUrl(name, oid);
 				},
 				controlRemoveUrl : function(nodekey, url){
-					model.removeJobUrl(nodekey, url);
+					model.removeUrl(nodekey, url);
 				},
 				controlOpenCart : function(){
 					model.notifyCartOpen();
