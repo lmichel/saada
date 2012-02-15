@@ -81,8 +81,9 @@ public abstract class Table_Saada_Relation extends SQLTable{
 			SQLQuery squery = new SQLQuery();
 			ResultSet rs = squery.run("select indexed from saada_relation where name = '" + rel_name + "'");
 			while( rs.next()) {
+				boolean retour = rs.getBoolean(1);
 				squery.close();
-				return rs.getBoolean(1);
+				return retour;
 			}
 			squery.close();
 		} catch (Exception e) {
