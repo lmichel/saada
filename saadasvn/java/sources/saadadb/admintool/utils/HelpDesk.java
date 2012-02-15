@@ -19,7 +19,7 @@ public class HelpDesk {
 	public static final int RELATION_COLLECTIONS = 11;
 	public static final int RELATION_QUALIFIER = 12;
 	public static final int RELATION_SELECTOR = 13;
-	public static final int VO_CURATION = 13;
+	public static final int VO_CURATION = 14;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
