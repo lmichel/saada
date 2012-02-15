@@ -21,24 +21,58 @@ jQuery.extend({
 			listeners.push(list);
 		};
 
-		this.fireAddJobResult = function(query) {
-			logged_alert("Query result  added to the cart");
-			$.each(listeners, function(i){
-				listeners[i].controlAddJobResult(getTreePathAsKey(), query);
-			});
+		this.fireAddJobResult = function(element, query) {
+			var elementClass = element.attr('class');
+			if( elementClass == 'dl_cart' ) {
+				element.attr('class', 'dl_cart_added');
+				logMsg("add " + getTreePathAsKey() + " <> " + query);
+				$.each(listeners, function(i){
+					listeners[i].controlAddJobResult(getTreePathAsKey(), query);
+				});
+			}
+			else {
+				element.attr('class', 'dl_cart');
+				$.each(listeners, function(i){
+					listeners[i].controlRemoveJobResult(getTreePathAsKey(), query);
+				});
+			}
+//			logMsg(element.attr('class'));
+//			logged_alert("Query result  added to the cart");
+//			$.each(listeners, function(i){
+//				listeners[i].controlAddJobResult(getTreePathAsKey(), query);
+//			});
 		};
 		this.fireRemoveJobResult = function(nodekey, jobid) {
+			logMsg("remove " + nodekey() + " <> " + jobid);
+			
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveJobResult(nodekey, jobid);
 			});
 		};
-		this.fireAddUrl = function(name, oid) {
-			logged_alert("File  " + name + " added to the cart");
-			$.each(listeners, function(i){
-				listeners[i].controlAddUrl(name, oid);
-			});
+		this.fireAddUrl = function(element, name, oid) {
+			var elementClass = element.attr('class');
+			if( elementClass == 'dl_cart' ) {
+				element.attr('class', 'dl_cart_added');
+				logMsg("add " + name + " <> " + oid);
+				$.each(listeners, function(i){
+					listeners[i].controlAddUrl(name, oid);
+				});
+			}
+			else {
+				element.attr('class', 'dl_cart');
+				$.each(listeners, function(i){
+					listeners[i].controlRemoveUrl(getTreePathAsKey(), oid);
+				});
+			}
+//
+//			logged_alert("File  " + name + " added to the cart");
+//			$.each(listeners, function(i){
+//				listeners[i].controlAddUrl(name, oid);
+//			});
 		};
 		this.fireRemoveUrl = function(nodekey, url) {
+			logMsg("removeURL " + nodekey() + " <> " + jobid);
+
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveUrl(nodekey, url);
 			});
@@ -160,6 +194,7 @@ jQuery.extend({
 			$('#detaildiv_cleanall').click( function() {
 				that.fireCleanCart("");
 				modalbox.close();
+				$(".dl_cart_added").attr("class","dl_cart");
 				return false;
 			} );
 			$('#detaildiv_submit').click( function() {

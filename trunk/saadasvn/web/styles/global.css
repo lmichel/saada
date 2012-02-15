@@ -1019,6 +1019,17 @@ a.dl_cart {
 	background: transparent url(../images/dl_cart.png) center left
 		no-repeat;
 }
+a.dl_cart_added {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0px 9px 23px;
+	background: transparent url(../images/dl_cart.png) center left no-repeat;
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+		
+}
 a:hover.dl_cart {
 	filter: alpha(opacity = 50);
 	-moz-opacity: 0.5;

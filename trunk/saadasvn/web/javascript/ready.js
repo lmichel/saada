@@ -642,4 +642,8 @@ $().ready(function() {
 	tapView.fireRefreshJobList();
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 
+	$(window).bind('beforeunload', function(){
+		return 'WARNING: Reloading or leaving this page will lost the current session';
+	});
+
 });
