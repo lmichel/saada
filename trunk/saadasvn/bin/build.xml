@@ -128,11 +128,10 @@
   		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
 		<jar destfile="${TOMCAT_HOME}/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
   		
-
 	</target>
 		
 	<!--
-	  Remove the application from Tomcat. Must be used when Tomcat is halted
+	  Remove the application from Tomcat. Musn't be used when Tomcat is running
 	--> 
   	<target name="tomcat.remove">
 		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
