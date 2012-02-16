@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -126,11 +127,26 @@ public abstract class AdminPanel extends AdminComponent {
 		tPanel.setLayout(new GridBagLayout());
 		tPanel.setBorder(new TitledBorder(title));
 		tPanel.setBackground(LIGHTBACKGROUND); 
-
-		this.add(tPanel);
+		JScrollPane jsp = new JScrollPane(tPanel);
+		jsp.setBorder(BorderFactory.createEmptyBorder());
+		this.add(new JScrollPane(tPanel));
 		return tPanel;
 
 	}
+//	/**
+//	 * @param title
+//	 * @return 
+//	 */
+//	protected JPanel addScrollSubPanel(String title) {
+//
+//		JPanel tPanel = new JPanel();
+//		tPanel.setLayout(new GridBagLayout());
+//		tPanel.setBorder(new TitledBorder(title));
+//		tPanel.setBackground(LIGHTBACKGROUND); 
+//
+//		this.add(new JScrollPane(tPanel));
+//		return tPanel;
+//	}
 	
 	private void highlightDataTreePath() {
 		if( treePathLabel != null )
