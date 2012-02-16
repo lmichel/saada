@@ -3,12 +3,16 @@ package saadadb.vo.registry;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import javax.swing.JTextField;
+
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Authority;
+import saadadb.util.Messenger;
 
 /**
  * Modeler of the VO authority
@@ -31,6 +35,9 @@ public class Authority extends EntityManager{
 	private String contentSubject;
 	private String contentRefURL;
 	private String contentDescription;
+	private String contentType;
+	private String contentLevel;
+
 	
 	private static Authority authorityInstance;
 	
@@ -128,7 +135,18 @@ public class Authority extends EntityManager{
 	public void setContentDescription(String contentDescription) {
 		this.contentDescription = contentDescription;
 	}
-
+	public String getContentType() {
+		return contentType;
+	}
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+	public String getContentLevel() {
+		return contentLevel;
+	}
+	public void setContentLevel(String contentLevel) {
+		this.contentLevel = contentLevel;
+	}
 	public String getXML() {
 		return
 		  "<title>" + this.getAuthTitle() + "</title>"
@@ -153,45 +171,48 @@ public class Authority extends EntityManager{
 		+ "    <description>" + this.getContentDescription() + "</description>"
 		+ "    <referenceURL>" + this.getContentRefURL() + "</referenceURL>"
 		+ "</content>";
-		
 	}
-
+	public void load() throws QueryException {
+		try {
+			Table_Saada_VO_Authority.loadTable(Authority.authorityInstance);
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
+	}
 	@Override
-	public void create(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
-		
+	public void create(ArgsParser ap) throws QueryException {
+		try {
+			Table_Saada_VO_Authority.createTable(Authority.authorityInstance);
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	}
-
 	@Override
-	public void empty(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
-		
+	public void empty(ArgsParser ap) throws QueryException {
+		try {
+			Table_Saada_VO_Authority.emptyTable();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	}
-
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
+		try {
+			Table_Saada_VO_Authority.removeTable();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	}
-
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
-		
+		create(ap);		
 	}
-
 	@Override
-	public void index(ArgsParser ap) throws SaadaException {
-	}
-
+	public void index(ArgsParser ap) throws SaadaException {}
 	@Override
-	public void comment(ArgsParser ap) throws SaadaException {
-	}
-	
-	public static void main(String[] args) throws Exception {
-		Database.init("ThreeXMM");
-		Authority a = Authority.getInstance();
-		a.setAuthShortName("moi");
-		SQLTable.beginTransaction();
-		Table_Saada_VO_Authority.createTable(a);
-		SQLTable.commitTransaction();
-	}
+	public void comment(ArgsParser ap) throws SaadaException {}
 }
