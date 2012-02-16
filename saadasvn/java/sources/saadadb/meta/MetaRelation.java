@@ -18,6 +18,7 @@ public class MetaRelation extends MetaObject {
 	int         secondary_category;
 	String      correlator;
 	String      description;
+	boolean 	indexed;
 	ArrayList<String> 	qualifier_names = new ArrayList<String>();
 
 	public MetaRelation(ResultSet rs) throws Exception {
@@ -37,6 +38,8 @@ public class MetaRelation extends MetaObject {
 			qualifier_names.add(qrs.getString(1));
 		}	
 		squery.close();
+		this.indexed = Table_Saada_Relation.isIndexed(this.name);
+
 	}
 
 	public MetaRelation(String name, int id) {
@@ -100,7 +103,7 @@ public class MetaRelation extends MetaObject {
 	 * @throws FatalException 
 	 */
 	public boolean isIndexed() throws FatalException {
-		return Table_Saada_Relation.isIndexed(this.name);
+		return this.indexed;
 	}
 
 	/**

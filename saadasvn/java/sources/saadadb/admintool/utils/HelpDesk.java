@@ -86,6 +86,7 @@ public class HelpDesk {
 		map.put(RELATION_SELECTOR, new String[] {
 				"Cick on a data node to display all relationships touching it"
 				, "Select the relationship of interest in the list"
+				, "Red relationships are not indexed"
 				});
 		map.put(VO_CURATION, new String[] {
 				"This page does not publish anything in some registry"
