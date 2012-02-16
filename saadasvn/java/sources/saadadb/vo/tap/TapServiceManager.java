@@ -4,7 +4,6 @@
 package saadadb.vo.tap;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -22,7 +21,6 @@ import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
-import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Tap_Schema_Columns;
 import saadadb.sqltable.Table_Tap_Schema_Key_Columns;
 import saadadb.sqltable.Table_Tap_Schema_Keys;
