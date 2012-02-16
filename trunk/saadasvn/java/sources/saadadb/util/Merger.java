@@ -20,7 +20,7 @@ public class Merger {
 		else {
 			String retour ="";
 			for( int i=0 ; i<array.length ; i++) {
-				if( array[i].trim().length() == 0 ) {
+				if( array[i] == null || array[i].trim().length() == 0 ) {
 					continue;
 				}
 				if( retour.length() > 0 ) {
