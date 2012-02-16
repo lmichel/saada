@@ -3,13 +3,13 @@
  */
 package saadadb.admintool.panels.editors;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -17,13 +17,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.SimpleTextForm;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.exceptions.QueryException;
+import saadadb.util.Messenger;
+import saadadb.vo.registry.Authority;
 
 
 /**
@@ -35,6 +37,8 @@ public class VOCuratorPanel extends EditPanel {
 	private JTextField authTitle;
 	private JTextField authIdentifier;
 	private JTextField authShortName;
+	private JTextField authOrg;
+	
 	private JTextField curPublisher;
 	private JTextField curName;
 	private JTextField curLogo;
@@ -42,7 +46,7 @@ public class VOCuratorPanel extends EditPanel {
 	private JTextField contactName;
 	private JTextArea contactAdress;
 	private JTextField contactEmail;
-	private JTextField contactTelephone;
+	private JTextField contactTel;
 	
 	private JTextField contentSubject;
 	private JTextField contentReferenceURL;
@@ -50,6 +54,7 @@ public class VOCuratorPanel extends EditPanel {
 	private JTextField contentType;
 	private JTextField contentLevel;
 
+	private Authority authority;
 	
 	/**
 	 * @param rootFrame
@@ -57,6 +62,15 @@ public class VOCuratorPanel extends EditPanel {
 	 */
 	public VOCuratorPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, VO_CURATOR, null, ancestor);
+		saveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Authority.getInstance().create(null);
+				} catch (QueryException e) {
+					Messenger.trapQueryException(e);
+				}				
+			}			
+		});
 	}
 
 	@Override
@@ -68,6 +82,13 @@ public class VOCuratorPanel extends EditPanel {
 
 	@Override
 	protected void setActivePanel() {
+		authority = Authority.getInstance();
+		try {
+			authority.load();
+		} catch (QueryException e) {
+			Messenger.trapQueryException(e);
+			return;
+		}
 		authTitle = new JTextField(20);
 		authIdentifier  = new JTextField(20);
 		authShortName  = new JTextField(20);
@@ -98,11 +119,11 @@ public class VOCuratorPanel extends EditPanel {
 		contactName = new JTextField(20);
 		contactAdress = new JTextArea(5, 20);
 		contactEmail = new JTextField(20);
-		contactTelephone = new JTextField(20);
+		contactTel = new JTextField(20);
 
 		cp = new SimpleTextForm("Contact"
 				,new String[] {"Contact", "Address", "EMail", "Telephone"}
-				,new Component[]{contactName, new JScrollPane(contactAdress), contactEmail, contactTelephone});
+				,new Component[]{contactName, new JScrollPane(contactAdress), contactEmail, contactTel});
 		editorPanel.add(cp, emc);
 		emc.newRow();
 
