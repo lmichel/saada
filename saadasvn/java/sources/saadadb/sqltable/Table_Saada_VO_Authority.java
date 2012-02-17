@@ -33,6 +33,7 @@ public class Table_Saada_VO_Authority extends SQLTable {
 				StringBuilder bfn = new StringBuilder(fn);
 				String mn = "get" + (bfn.replace(0, 1, fn.substring(0,1).toUpperCase())).toString();
 				Method meth = c.getMethod(mn);
+				System.out.println(mn + " " + meth.invoke(authority));
 				insertValues.add( Merger.quoteString(
 						Database.getWrapper().getEscapeQuote((String)meth.invoke(authority)))
 				);

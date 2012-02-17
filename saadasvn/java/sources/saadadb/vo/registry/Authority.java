@@ -215,4 +215,11 @@ public class Authority extends EntityManager{
 	public void index(ArgsParser ap) throws SaadaException {}
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {}
+	
+	public static void main(String[] args) throws SaadaException {
+		Database.init("ThreeXMM");
+		SQLTable.beginTransaction();
+		Authority.getInstance().remove(null);
+		SQLTable.commitTransaction();
+	}
 }
