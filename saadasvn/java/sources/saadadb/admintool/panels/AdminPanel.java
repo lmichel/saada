@@ -200,12 +200,12 @@ public abstract class AdminPanel extends AdminComponent {
 	}
 
 	/**
-	 * 
+	 * Set the both Browsing icons and labels in the tool bar.
 	 */
 	protected abstract void setToolBar() ;
 
 	/**
-	 * 
+	 * Put widget in the active area of the panel;¢
 	 */
 	protected abstract void setActivePanel() ;
 
