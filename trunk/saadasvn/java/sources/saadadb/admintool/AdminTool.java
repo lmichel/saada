@@ -40,6 +40,7 @@ import saadadb.admintool.panels.RootChoicePanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
 import saadadb.admintool.panels.tasks.CollCommentPanel;
@@ -107,6 +108,7 @@ public class AdminTool extends BaseFrame {
 	private EditPanel flatfileMapperPanel;
 	
 	private EditPanel voCurator;;
+	private EditPanel tapService;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -186,7 +188,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.VO_CURATOR);
+				activePanel(AdminComponent.TAP_PUBLISH);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -423,6 +425,11 @@ public class AdminTool extends BaseFrame {
 				voCurator = new VOCuratorPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = voCurator;
+		} else 	if( panelTitle.equals(AdminComponent.TAP_PUBLISH) ) {
+			if( tapService == null ) {
+				tapService = new TAPServicePanel(this, AdminComponent.TAP_PUBLISH);
+			}
+			activePanel = tapService;
 			
 			/*
 			 * Process pqnel used by all tasks

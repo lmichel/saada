@@ -5,9 +5,13 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
+import saadadb.admintool.components.voresources.TapServiceList;
+import saadadb.admintool.components.voresources.TapSelector;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.util.Messenger;
 
 
@@ -40,8 +44,14 @@ public class ProductTreePathTransferHandler extends TransferHandler {
        			}
        			else if( df[i].getRepresentationClass().getName().equals("javax.swing.tree.TreePath") ) {
        	      		TreePath treepath = (TreePath) trsf.getTransferData(new DataFlavor(Class.forName("javax.swing.tree.TreePath"), ""));
-       	       		TreepathDropableTextField tf = (TreepathDropableTextField) c;
-       	       		return tf.setText(treepath); 				
+       	      		if( c instanceof TreepathDropableTextField) {
+       	      			TreepathDropableTextField tf = (TreepathDropableTextField) c;
+       	      			return tf.setText(treepath); 
+       	      		}
+       	      		else if( c instanceof TapServiceList) {
+       	      			return ((TapServiceList)c).addResource(new DataTreePath(treepath));
+       	      		}
+       	      		System.out.println(c);
        			}
        		}
        	} catch(Exception e) {Messenger.printStackTrace(e);}

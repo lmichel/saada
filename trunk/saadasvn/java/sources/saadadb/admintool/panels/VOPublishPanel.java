@@ -56,7 +56,7 @@ public class VOPublishPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Publish TAP service", "icons/TAP.png"
 				, new Runnable(){public void run(){
-					System.out.println("TAP");}});
+					rootFrame.activePanel(TAP_PUBLISH);}});
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;

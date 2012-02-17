@@ -62,7 +62,6 @@ public class RelationshipChooser extends JPanel {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if( confList.getSelectedValue() != null ) {
 					selectedRelation = confList.getSelectedValue().toString();
-					System.out.println("filtered " + selectedRelation);
 					//selectedRelation = selectedRelation.split("(</b>)|<b>")[1].trim();;
 					try {
 						description.setText(Database.getCachemeta().getRelation(selectedRelation).toString());
