@@ -9,6 +9,7 @@ import javax.swing.JList;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
+import saadadb.admintool.components.voresources.TapServiceItem;
 import saadadb.admintool.components.voresources.TapServiceList;
 import saadadb.admintool.components.voresources.TapSelector;
 import saadadb.admintool.utils.DataTreePath;
@@ -51,7 +52,9 @@ public class ProductTreePathTransferHandler extends TransferHandler {
        	      		else if( c instanceof TapServiceList) {
        	      			return ((TapServiceList)c).addResource(new DataTreePath(treepath));
        	      		}
-       	      		System.out.println(c);
+       	      		else if( c instanceof TapServiceItem) {
+       	      			return ((TapServiceItem)c).fireAddResource(new DataTreePath(treepath));
+       	      		}
        			}
        		}
        	} catch(Exception e) {Messenger.printStackTrace(e);}

@@ -11,6 +11,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 
 import saadadb.admintool.components.AdminComponent;
@@ -40,12 +41,13 @@ public class TapSelector extends JPanel {
 	public TapSelector(TAPServicePanel tapServicePanel) {
 		this.tapServicePanel = tapServicePanel;
 		this.resourceList = new TapServiceList(this);
-		this.resourceList.setPreferredSize(new Dimension(350,100));
 		
 		MyGBC mgbc = new MyGBC(5,5,5,5);
 		mgbc.gridx = 0; mgbc.gridy = 0;mgbc.weightx = 1; mgbc.weighty = 1;
 		this.setLayout(new GridBagLayout());
-		this.add(this.resourceList, mgbc);
+		JScrollPane jsp = new JScrollPane(this.resourceList);
+		jsp.setPreferredSize(new Dimension(350,100));
+		this.add(jsp, mgbc);
 	}
 	
 
