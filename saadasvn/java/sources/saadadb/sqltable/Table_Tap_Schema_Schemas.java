@@ -4,9 +4,11 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
@@ -89,6 +91,22 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		}
 		rs.close();
 		return  false;
+	}
+	
+	/**
+	 * Return the list of published schemas
+	 * @return
+	 * @throws Exception
+	 */
+	public static String[] getSchemaList() throws Exception {
+		SQLQuery sq = new SQLQuery();
+		ArrayList<String> retour = new ArrayList<String>(); 
+		ResultSet rs = sq.run("SELECT schema_name FROM " + tableName);
+		while (rs.next()) {
+			retour.add(rs.getString(1));
+		}
+		rs.close();
+		return  retour.toArray(new String[0]);
 	}
 
 }

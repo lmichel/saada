@@ -50,7 +50,24 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
 		SQLTable.createTable(tableName, sql, null, false);
 	}
-	
+
+	/**
+	 * Make a collection <> class join ohn oidsaada.
+	 * 2 joins are created: classTable and callTable_rev
+	 * @param collTable
+	 * @param classTable
+	 * @throws AbortException
+	 */
+	public static void addSaadaJoin(String collTable, String classTable) throws AbortException {
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
+				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join"});
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
+				, new Object[]{classTable + "_rev", collTable, classTable , "Collection to Class Saada join"});
+		Table_Tap_Schema_Key_Columns.addSaadaJoin(classTable);
+
+	}
+
+
 	/**
 	 * @throws AbortException
 	 */
