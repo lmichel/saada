@@ -1,6 +1,7 @@
 package saadadb.admintool.panels;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -103,13 +104,8 @@ public  class ProcessPanel extends TaskPanel {
 		c.anchor = GridBagConstraints.PAGE_END;
 
 
-		tPanel = this.addSubPanel("Process Control");
-		//tPanel.setPreferredSize(new Dimension(1000, 36));
-		tPanel.setMaximumSize(new Dimension(1000, 36));
 		runPauseButton = new RunPauseButton(this);
-		tPanel.add(runPauseButton, c);
 
-		c.gridx++;
 		abortButton = new JBlinkingButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Abort.png")));
 		abortButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -129,11 +125,7 @@ public  class ProcessPanel extends TaskPanel {
 				}
 			}
 		});
-		tPanel.add(abortButton, c);
-		c.gridx++;
 
-		tPanel.add(debugButton, c);
-		c.gridx++;
 		JButton jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Ant.png")));
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -141,37 +133,16 @@ public  class ProcessPanel extends TaskPanel {
 				AdminComponent.showInfo(rootFrame,cmdThread.getAntTarget());
 			}
 		});
-
-		tPanel.add((new AntButton(this)), c);
-		c.gridx++;
-		c.weightx = 1; c.weighty = 0;	
-		c.anchor = GridBagConstraints.SOUTHEAST;
-		tPanel.add((statusLabel = new JLabel("STATUS")), c);
-
-		c.gridx++;
-		c.weightx = 1; c.weighty = 0;	
-		c.anchor= GridBagConstraints.SOUTHEAST;
-		JPanel stsPanel = new JPanel();
-		Border empty = new EmptyBorder(new Insets(2,2,2,2));
-
 		procLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Processor.png")));
-		stsPanel.setLayout(new BoxLayout(stsPanel, BoxLayout.LINE_AXIS));
-		procLight.setBorder(empty);
-		stsPanel.add(procLight);
-
 		diskLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Disk.png")));
-		diskLight.setBorder(empty);	
-		stsPanel.add(diskLight);
-
 		dbLight   = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database.png")));
-		dbLight.setBorder(empty);	
-		stsPanel.add(dbLight);
+		this.setProcessControlBar(new Component[] {runPauseButton, abortButton, debugButton, jb}
+		, statusLabel
+		, new JLabel[]{procLight, diskLight, dbLight});
 
-		stsPanel.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-
-		tPanel.add(stsPanel, c);	
 		NO_HARDWARE_ACCESS_COLOR = tPanel.getBackground();
 		this.noMoreHarwareAccess();
+
 
 	}
 

@@ -29,6 +29,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.HardwareDescriptor;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
@@ -48,7 +49,7 @@ public class TAPServicePanel extends EditPanel {
 	 * @param ancestor
 	 */
 	public TAPServicePanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, VO_CURATOR, null, ancestor);
+		super(rootFrame, TAP_PUBLISH, null, ancestor);
 	}
 	
 
@@ -64,7 +65,11 @@ public class TAPServicePanel extends EditPanel {
 
 	@Override
 	protected void setActivePanel() {
-		tapSelector = new TapSelector(this);
+		try {
+			tapSelector = new TapSelector(this);
+		} catch (Exception e) {
+			showFatalError(rootFrame, e);
+		}
 		JPanel tPanel = this.addSubPanel("Published TAP tables");
 		MyGBC emc = new MyGBC(5,5,5,5);
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
@@ -89,7 +94,12 @@ public class TAPServicePanel extends EditPanel {
 		this.saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
+					SQLTable.beginTransaction();
+					Table_Saada_VO_Capabilities.emptyTable();
+					tapSelector.makeSaveQuery();
+					SQLTable.commitTransaction();
 					showSuccess(TAPServicePanel.this.rootFrame, "VO Authority saved");
+					tapSelector.loadCapabilities();
 				} catch (Exception e) {
 					showFatalError(rootFrame, e);
 				}				

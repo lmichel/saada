@@ -100,7 +100,8 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-to")&&
 							!args[i].startsWith("-qualifiers")&&
 							!args[i].startsWith("-if=") &&
-							!args[i].startsWith("-of=") 
+							!args[i].startsWith("-of=") &&
+							!args[i].startsWith("-protocol=") 
 					) {
 						msg += " <" + args[i] + ">";
 					}
@@ -939,6 +940,17 @@ public class ArgsParser implements Serializable{
 	public String getTo()   {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-to=")) {
+				return getArgsValue(args[i]);							
+			}
+		}
+		return null;		
+	}
+	/**
+	 * @return
+	 */
+	public String getProtocol()   {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-protocol=")) {
 				return getArgsValue(args[i]);							
 			}
 		}
