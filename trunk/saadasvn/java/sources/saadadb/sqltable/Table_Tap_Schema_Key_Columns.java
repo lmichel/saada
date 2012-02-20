@@ -61,5 +61,17 @@ public class Table_Tap_Schema_Key_Columns extends SQLTable {
 		SQLTable.dropTable(tableName);
 	}
 
+	/**
+	 * Add 2 columns joined on oidsaada with classTable as key 
+	 * @param classTable
+	 * @throws AbortException
+	 */
+	public static void addSaadaJoin(String classTable) throws AbortException {
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
+				, new Object[]{classTable, "oidsaada", "oidsaada"});
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
+				, new Object[]{classTable + "_rev", "oidsaada", "oidsaada"});
+	}
+
 
 }
