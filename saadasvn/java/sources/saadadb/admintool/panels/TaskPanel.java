@@ -4,12 +4,16 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
@@ -59,6 +63,40 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		 */
 		c.weightx = 1;
 		tPanel.add(new JLabel(" "), c);
+		this.add(tPanel);	
+	}
+	protected void setProcessControlBar(Component[] buttons, JLabel statusLabel, JLabel[] hardwareLights) {
+		JPanel tPanel = new JPanel();
+		tPanel.setLayout(new GridBagLayout());
+		tPanel.setPreferredSize(new Dimension(1000,48));
+		tPanel.setMaximumSize(new Dimension(1000,48));
+		tPanel.setBackground(LIGHTBACKGROUND);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0; c.gridx = 0;
+		c.anchor = GridBagConstraints.PAGE_END;
+		c.weightx = 0;
+		for(Component comp: buttons){
+			tPanel.add(comp, c);
+			c.gridx++;
+		}
+		
+		c.gridx++;
+		c.weightx = 1; c.weighty = 0;	
+		c.anchor = GridBagConstraints.SOUTHEAST;
+		tPanel.add((statusLabel = new JLabel("STATUS")), c);
+
+		c.gridx++;
+		c.weightx = 1; c.weighty = 0;	
+		c.anchor= GridBagConstraints.SOUTHEAST;
+		JPanel stsPanel = new JPanel();
+		stsPanel.setLayout(new BoxLayout(stsPanel, BoxLayout.LINE_AXIS));
+		Border empty = new EmptyBorder(new Insets(2,2,2,2));
+		for( JLabel cmp: hardwareLights) {
+			cmp.setBorder(empty);
+			stsPanel.add(cmp);
+			
+		}
+		tPanel.add(stsPanel, c);	
 		this.add(tPanel);	
 	}
 	
