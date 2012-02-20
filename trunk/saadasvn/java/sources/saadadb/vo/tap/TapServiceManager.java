@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
@@ -21,12 +22,14 @@ import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Tap_Schema_Columns;
 import saadadb.sqltable.Table_Tap_Schema_Key_Columns;
 import saadadb.sqltable.Table_Tap_Schema_Keys;
 import saadadb.sqltable.Table_Tap_Schema_Schemas;
 import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
+import saadadb.vo.registry.Capability;
 
 /**
  * @author laurent
@@ -223,7 +226,7 @@ public class TapServiceManager extends EntityManager {
 			/*
 			 * If classe is a Saada class, we publish the join class/collection
 			 */
-			else {
+			else if(Database.getCachemeta().classExists(classe)) {
 				Messenger.printMsg(Messenger.TRACE, classe + " is a Saada class");
 				MetaClass mc = Database.getCachemeta().getClass(classe);
 				collection = mc.getCollection_name();
@@ -373,5 +376,46 @@ public class TapServiceManager extends EntityManager {
 		retour.append("</vosi:tableset>\n");
 		rs_schema.close();
 		return retour;
+	}
+
+	/**
+	 * republish all TAP tabkle declared in the saada_vo_capabilities table.
+	 * All previous table published are first removed except those of the ivoa schema.
+	 * @throws Exception
+	 */
+	public void synchronizeWithGlabalCapabilities() throws Exception {
+		/*
+		 * Drop all schema except ivoa which is published from another way
+		 */
+		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
+		for( String schema: schemas) {
+			if( !schema.equalsIgnoreCase("ivoa") ) {
+				Table_Tap_Schema_Schemas.dropPublishedSchema(schema);
+			}
+		}
+		/*
+		 * republish all tables
+		 */
+		ArrayList<Capability> lc = new ArrayList<Capability>();
+		Table_Saada_VO_Capabilities.loadCapabilities(lc, "TAP");
+		for( Capability cap: lc) {
+			String dtp[] = cap.getDataTreePath().split("\\.");
+			String collName = dtp[0];
+			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(dtp[01]));
+			String classTable = "";
+			ArgsParser ap = new ArgsParser(
+					new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
+			this.populate(ap);
+			/*
+			 * Comes from the IG no format checking needed
+			 */
+			if( dtp.length == 3) {
+				classTable = dtp[2];
+				ap = new ArgsParser(
+						new String[] {"-populate=" + classTable, "-comment=" + cap.getDescription(), Messenger.getDebugParam()});
+				this.populate(ap);
+				Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);
+			}
+		}
 	}
 }
