@@ -29,7 +29,6 @@ public class RelationChooser extends CollapsiblePanel {
 			public void run() {
 				RelationChooser.this.taskPanel.load();				
 			}
-			
 		});
 		MyGBC mc = new MyGBC(5,5,5,5); mc.anchor = GridBagConstraints.NORTH;
 		this.getContentPane().setLayout(new GridBagLayout());
