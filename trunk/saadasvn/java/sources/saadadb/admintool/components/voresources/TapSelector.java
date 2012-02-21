@@ -14,7 +14,7 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Capabilities;
 
 
 public class TapSelector extends JPanel {
@@ -51,10 +51,10 @@ public class TapSelector extends JPanel {
 	 * 
 	 */
 	public void loadCapabilities() throws Exception {
-		ArrayList<Capability> lc = new ArrayList<Capability>();
+		ArrayList<Capabilities> lc = new ArrayList<Capabilities>();
 		Table_Saada_VO_Capabilities.loadCapabilities(lc, "TAP");
 		this.resourceList.reset();
-		for( Capability cap: lc) {
+		for( Capabilities cap: lc) {
 			this.resourceList.addResource(cap);
 		}		
 		this.resourceList.displayListItems();
@@ -75,5 +75,8 @@ public class TapSelector extends JPanel {
 	}
 	public String getDescription() {
 		return this.descPanel.getText();
+	}
+	public boolean isEmpty() {
+		return (this.resourceList.items.size() == 0) ? true: false;
 	}
 }
