@@ -49,6 +49,7 @@ import saadadb.admintool.panels.tasks.CollDropPanel;
 import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
+import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.panels.tasks.RelationCreatePanel;
 import saadadb.admintool.panels.tasks.RelationDropPanel;
 import saadadb.admintool.panels.tasks.RelationEmptyPanel;
@@ -109,6 +110,8 @@ public class AdminTool extends BaseFrame {
 	
 	private EditPanel voCurator;;
 	private EditPanel tapService;
+
+	private TaskPanel obscoreMapperPanel;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -188,7 +191,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.TAP_PUBLISH);
+				activePanel(AdminComponent.OBSCORE_MAPPER);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -427,9 +430,14 @@ public class AdminTool extends BaseFrame {
 			activePanel = voCurator;
 		} else 	if( panelTitle.equals(AdminComponent.TAP_PUBLISH) ) {
 			if( tapService == null ) {
-				tapService = new TAPServicePanel(this, AdminComponent.TAP_PUBLISH);
+				tapService = new TAPServicePanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = tapService;
+		} else 	if( panelTitle.equals(AdminComponent.OBSCORE_MAPPER) ) {
+			if( obscoreMapperPanel== null ) {
+				obscoreMapperPanel = new ObscoreMapperPanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = obscoreMapperPanel;
 			
 			/*
 			 * Process pqnel used by all tasks
