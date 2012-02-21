@@ -1,5 +1,8 @@
 package saadadb.vo.registry;
 
+import saadadb.database.Database;
+import saadadb.exceptions.QueryException;
+
 public class Record {
 	private Authority authority;
 	private static final String header;
@@ -21,8 +24,42 @@ public class Record {
 			+ "status=\"active\" \n"
 			+ "updated=\"2007-05-21T00:00:00\" \n"
 			+ "xsi:schemaLocation=\"http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0\" \n"
-			+ "xsi:type=\"vg:Authority\">";
-
+			+ "xsi:type=\"vg:Authority\">\n";
 	}
 	
+	/**
+	 * @throws QueryException
+	 */
+	public Record() throws QueryException {
+		this.authority = new Authority();
+		this.authority.load();
+	}
+	
+	/**
+	 * @return
+	 */
+	public StringBuffer getTAPRecord() {
+		StringBuffer retour = new StringBuffer();
+		retour.append(header);
+		retour.append(this.authority.getXML());
+		
+		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\n");
+		retour.append("   <interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/availability</accessURL>\n");
+		retour.append("   </interface>\n");
+		retour.append("  </capability>\n");
+		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#capabilities\">\n");
+		retour.append("   <interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/capabilities</accessURL>\n");
+		retour.append("   </interface>\n");
+		retour.append("  </capability>\n");
+		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#tables\">\n");
+		retour.append("    <interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "tap/tables</accessURL>\n");
+		retour.append("   </interface>\n");
+		retour.append("  </capability>\n");
+		retour.append("</ri:Resource>\n"); 
+		
+		return retour;
+	}
 }

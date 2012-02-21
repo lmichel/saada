@@ -29,7 +29,7 @@ import saadadb.sqltable.Table_Tap_Schema_Keys;
 import saadadb.sqltable.Table_Tap_Schema_Schemas;
 import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Capabilities;
 
 /**
  * @author laurent
@@ -69,9 +69,6 @@ public class TapServiceManager extends EntityManager {
 	/* (non-Javadoc)
 	 * @see saadadb.command.EntityManager#create(saadadb.command.ArgsParser)
 	 */
-	/* (non-Javadoc)
-	 * @see saadadb.command.EntityManager#create(saadadb.command.ArgsParser)
-	 */
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
 		try {
@@ -80,7 +77,7 @@ public class TapServiceManager extends EntityManager {
 				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove command first");
 			}
 			else if( missingTable == 1 ) {
-				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "TAP service already exists. Please remove it first before to overide");
+				FatalException.throwNewException(SaadaException.WRONG_RESOURCE, "TAP service already exists. Please remove it first before to overide");
 			}
 			int detectedTables = 0;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Keys.tableName) ) detectedTables++;
@@ -152,7 +149,7 @@ public class TapServiceManager extends EntityManager {
 			if( toRemove.equalsIgnoreCase("service")) {
 				int missingTable = serviceExists();
 				if( missingTable == 0 ) {
-					FatalException.throwNewException(SaadaException.CORRUPTED_DB, "No Tap service detected");
+					FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
 				}
 				Table_Tap_Schema_Keys.dropTable();
 				Table_Tap_Schema_Key_Columns.dropTable();
@@ -202,7 +199,7 @@ public class TapServiceManager extends EntityManager {
 				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove and create again the service");
 			}
 			else if( missingTable == 0 ) {
-				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "TAP service does nor exist exists. Please create it first");
+				FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
 			}
 			String classe = ap.getPopulate();
 			String description = ap.getComment();
@@ -300,13 +297,13 @@ public class TapServiceManager extends EntityManager {
 		}
 	}
 
-	public static StringBuffer getXML() throws Exception{	
+	public static StringBuffer getXMLTables() throws Exception{	
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 				+ "     xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">\n");
 
 		/*
-		 * Loop on schames
+		 * Loop on schemas
 		 */
 		SQLQuery qschema = new SQLQuery();
 		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.tableName);
@@ -327,48 +324,7 @@ public class TapServiceManager extends EntityManager {
 				String table_name = rs_tables.getString(1);
 				String table_desc = rs_tables.getString(2);
 				String table_type = rs_tables.getString(3);
-				retour.append("    <table>\n");
-				retour.append("        <name>" + table_name + "</name>\n");
-				if( table_desc != null && table_desc.length() > 0)			
-					retour.append("        <description><![CDATA[" + table_desc + "]]></description>\n");
-				if( table_type != null && table_type.length() > 0)			
-					retour.append("        <type>" + table_type + "</type>\n");
-				/*
-				 * Loop on columns
-				 */
-				SQLQuery qcolumns= new SQLQuery();
-				ResultSet rs_columns = qcolumns.run("SELECT * FROM " + Table_Tap_Schema_Columns.tableName 
-						+ " WHERE table_name = '" + table_name + "'");
-				while(rs_columns.next()) {
-					retour.append("        <column>\n");
-					retour.append("            <name>" + rs_columns.getString(2) + "</name>\n");
-					retour.append("            <description>" + rs_columns.getString(3) + "</description>\n");
-					Object v = rs_columns.getObject(4);
-					if( v != null ) {
-						retour.append("            <unit>" + v + "</unit>\n");					
-					}
-					v = rs_columns.getObject(5);
-					if( v != null ) {
-						retour.append("            <ucd>" + v + "</ucd>\n");					
-					}
-					v = rs_columns.getObject(6);
-					if( v != null ) {
-						retour.append("            <utype>" + v + "</utype>\n");					
-					}
-					v = rs_columns.getObject(7);
-					if( v != null ) {
-						retour.append("            <dataType xsi:type=\"vod:TAPType\">" + v );		
-						v = rs_columns.getObject(8);
-						if( v != null ) {
-							retour.append("\n                <arraysize>" + v + "</arraysize>\n           ");		
-						}
-						retour.append("</dataType>\n");		
-
-					}
-					retour.append("        </column>\n");				
-				}
-				rs_columns.close();
-				retour.append("    </table>\n");
+				retour .append(getXMLTable(table_name, table_desc, table_type));
 			}
 			rs_tables.close();
 			retour.append("</schema>\n");
@@ -378,12 +334,68 @@ public class TapServiceManager extends EntityManager {
 		return retour;
 	}
 
+	public static StringBuffer getXMLTable(String table_name, String table_desc, String table_type) throws Exception{	
+		StringBuffer retour = new StringBuffer();
+		retour.append("    <table>\n");
+		retour.append("        <name>" + table_name + "</name>\n");
+		if( table_desc != null && table_desc.length() > 0)			
+			retour.append("        <description><![CDATA[" + table_desc + "]]></description>\n");
+		if( table_type != null && table_type.length() > 0)			
+			retour.append("        <type>" + table_type + "</type>\n");
+		/*
+		 * Loop on columns
+		 */
+		SQLQuery qcolumns= new SQLQuery();
+		ResultSet rs_columns = qcolumns.run("SELECT * FROM " + Table_Tap_Schema_Columns.tableName 
+				+ " WHERE table_name = '" + table_name + "'");
+		while(rs_columns.next()) {
+			retour.append("        <column>\n");
+			retour.append("            <name>" + rs_columns.getString(2) + "</name>\n");
+			retour.append("            <description>" + rs_columns.getString(3) + "</description>\n");
+			Object v = rs_columns.getObject(4);
+			if( v != null ) {
+				retour.append("            <unit>" + v + "</unit>\n");					
+			}
+			v = rs_columns.getObject(5);
+			if( v != null ) {
+				retour.append("            <ucd>" + v + "</ucd>\n");					
+			}
+			v = rs_columns.getObject(6);
+			if( v != null ) {
+				retour.append("            <utype>" + v + "</utype>\n");					
+			}
+			v = rs_columns.getObject(7);
+			if( v != null ) {
+				retour.append("            <dataType xsi:type=\"vod:TAPType\">" + v );		
+				v = rs_columns.getObject(8);
+				if( v != null ) {
+					retour.append("\n                <arraysize>" + v + "</arraysize>\n           ");		
+				}
+				retour.append("</dataType>\n");		
+
+			}
+			retour.append("        </column>\n");				
+		}
+		rs_columns.close();
+		retour.append("    </table>\n");
+		return retour;
+	}
+
+
 	/**
 	 * republish all TAP tabkle declared in the saada_vo_capabilities table.
 	 * All previous table published are first removed except those of the ivoa schema.
 	 * @throws Exception
 	 */
 	public void synchronizeWithGlabalCapabilities() throws Exception {
+		int missingTable = serviceExists();
+		if( missingTable < 0 ) {
+			FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove and create again the service");
+		}
+		else if( missingTable == 0 ) {
+			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
+		}
+
 		/*
 		 * Drop all schema except ivoa which is published from another way
 		 */
@@ -396,9 +408,9 @@ public class TapServiceManager extends EntityManager {
 		/*
 		 * republish all tables
 		 */
-		ArrayList<Capability> lc = new ArrayList<Capability>();
+		ArrayList<Capabilities> lc = new ArrayList<Capabilities>();
 		Table_Saada_VO_Capabilities.loadCapabilities(lc, "TAP");
-		for( Capability cap: lc) {
+		for( Capabilities cap: lc) {
 			String dtp[] = cap.getDataTreePath().split("\\.");
 			String collName = dtp[0];
 			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(dtp[01]));

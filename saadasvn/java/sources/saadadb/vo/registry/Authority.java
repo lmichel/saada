@@ -1,9 +1,6 @@
 package saadadb.vo.registry;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
-import javax.swing.JTextField;
+import java.net.UnknownHostException;
 
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
@@ -41,7 +38,7 @@ public class Authority extends EntityManager{
 	
 	private static Authority authorityInstance;
 	
-	private Authority() {
+	Authority() {
 	}
 	
 	public static Authority getInstance() {
@@ -55,126 +52,192 @@ public class Authority extends EntityManager{
 		return authTitle;
 	}
 	public void setAuthTitle(String authTitle) {
-		this.authTitle = authTitle;
+		if( authTitle== null || "null".equalsIgnoreCase(authTitle)){
+			this.authTitle = "SaadaDB " + Database.getDbname();
+		} else {
+			this.authTitle = authTitle;
+		}
 	}
 	public String getAuthIdentifier() {
 		return authIdentifier;
 	}
-	public void setAuthIdentifier(String authdentifier) {
-		this.authIdentifier = authdentifier;
+	public void setAuthIdentifier(String authIdentifier) {
+		if( authIdentifier== null || "null".equalsIgnoreCase(authIdentifier)){
+			this.authIdentifier = "ivo://";
+		} else {
+			this.authIdentifier = authIdentifier;
+		}
 	}
 	public String getAuthShortName() {
 		return authShortName;
 	}
 	public void setAuthOrg(String authOrg) {
-		this.authOrg = authOrg;
+		if( authOrg== null || "null".equalsIgnoreCase(authOrg)){
+			this.authOrg = "";
+		} else {
+			this.authOrg = authOrg;
+		}
 	}
 	public String getAuthOrg() {
 		return authOrg;
 	}
-	public void setAuthShortName(String shortName) {
-		this.authShortName = shortName;
+	public void setAuthShortName(String authShortName) {
+		if( authShortName== null || "null".equalsIgnoreCase(authShortName)){
+			this.authShortName = "SaadaDB " + Database.getDbname();
+		} else {
+			this.authShortName = authShortName;
+		}
 	}
 	public String getCurationPublisher() {
 		return curationPublisher;
 	}
 	public void setCurationPublisher(String curationPublisher) {
-		this.curationPublisher = curationPublisher;
+		if( curationPublisher== null || "null".equalsIgnoreCase(curationPublisher)){
+			this.curationPublisher = "";
+		} else {
+			this.curationPublisher = curationPublisher;
+		}
 	}
 	public String getCurationName() {
 		return curationName;
 	}
 	public void setCurationName(String curationName) {
-		this.curationName = curationName;
+		if( curationName== null || "null".equalsIgnoreCase(curationName)){
+			this.curationName = "";
+		} else {
+			this.curationName = curationName;
+		}
 	}
 	public String getCurationLogo() {
 		return curationLogo;
 	}
 	public void setCurationLogo(String curationLogo) {
-		this.curationLogo = curationLogo;
+		if( curationLogo== null || "null".equalsIgnoreCase(curationLogo)){
+			this.curationLogo = "http://code.google.com/p/saada/logo?cct=1311864309";
+		} else {
+			this.curationLogo = curationLogo;
+		}
 	}
 	public String getContactName() {
 		return contactName;
 	}
 	public void setContactName(String contactName) {
-		this.contactName = contactName;
+		if( contactName== null || "null".equalsIgnoreCase(contactName)){
+			this.contactName = "";
+		} else {
+			this.contactName = contactName;
+		}
 	}
 	public String getContactAdresse() {
 		return contactAdresse;
 	}
 	public void setContactAdresse(String contactAdresse) {
-		this.contactAdresse = contactAdresse;
+		if( contactAdresse== null || "null".equalsIgnoreCase(contactAdresse)){
+			this.contactAdresse = "";
+		} else {
+			this.contactAdresse = contactAdresse;
+		}
 	}
 	public String getContactMail() {
 		return contactMail;
 	}
 	public void setContactMail(String contactMail) {
-		this.contactMail = contactMail;
+		if( contactMail== null || "null".equalsIgnoreCase(contactMail)){
+			try {
+				this.contactMail = System.getProperty("user.name")  + "@" +  java.net.InetAddress.getLocalHost().getHostName();
+			} catch (UnknownHostException e) {}
+		} else {
+			this.contactMail = contactMail;
+		}
 	}
 	public String getContactTel() {
 		return contactTel;
 	}
 	public void setContactTel(String contactTel) {
-		this.contactTel = contactTel;
+		if( contactTel== null || "null".equalsIgnoreCase(contactTel)){
+			this.contactTel = "";
+		} else {
+			this.contactTel = contactTel;
+		}
 	}
 	public String getContentSubject() {
 		return contentSubject;
 	}
 	public void setContentSubject(String contentSubject) {
-		this.contentSubject = contentSubject;
+		if( contentSubject== null || "null".equalsIgnoreCase(contentSubject)){
+			this.contentSubject = "Content of the SaadaDB " + Database.getDbname();;
+		} else {
+			this.contentSubject = contentSubject;
+		}
 	}
 	public String getContentRefURL() {
 		return contentRefURL;
 	}
 	public void setContentRefURL(String contentRefURL) {
-		this.contentRefURL = contentRefURL;
+		if( contentRefURL== null || "null".equalsIgnoreCase(contentRefURL)){
+			this.contentRefURL = Database.getUrl_root();
+		} else {
+			this.contentRefURL = contentRefURL;
+		}
 	}
 	public String getContentDescription() {
 		return contentDescription;
 	}
 	public void setContentDescription(String contentDescription) {
-		this.contentDescription = contentDescription;
+		if( contentDescription== null || "null".equalsIgnoreCase(contentDescription)){
+			this.contentDescription = "Content of the SaadaDB " + Database.getDbname();
+		} else {
+			this.contentDescription = contentDescription;
+		}
 	}
 	public String getContentType() {
 		return contentType;
 	}
 	public void setContentType(String contentType) {
-		this.contentType = contentType;
+		if( contentType== null || "null".equalsIgnoreCase(contentType)){
+			this.contentType = "";
+		} else {
+			this.contentType = contentType;
+		}
 	}
 	public String getContentLevel() {
 		return contentLevel;
 	}
 	public void setContentLevel(String contentLevel) {
-		this.contentLevel = contentLevel;
+		if( contentLevel== null || "null".equalsIgnoreCase(contentLevel)){
+			this.contentLevel = "";
+		} else {
+			this.contentLevel = contentLevel;
+		}
 	}
 	public String getXML() {
 		return
-		  "<title>" + this.getAuthTitle() + "</title>"
-		+ "<shortName>" + this.getAuthShortName() + "</shortName>"
-		+ "<managingOrg>" + this.getAuthOrg() + "</managingOrg>"
-		+ "<identifier>" + this.getAuthIdentifier() + "</identifier>"
-		+ "<curation>"
+		  "<title>" + this.getAuthTitle() + "</title>\n"
+		+ "<shortName>" + this.getAuthShortName() + "</shortName>\n"
+		+ "<managingOrg>" + this.getAuthOrg() + "</managingOrg>\n"
+		+ "<identifier>" + this.getAuthIdentifier() + "</identifier>\n"
+		+ "<curation>\n"
 		+ "    <publisher>" + this.curationPublisher + "</publisher>"
-		+ "    <creator>"
-		+ "        <name>" + this.getCurationName() + "</name>"
-		+ "        <logo>" + this.getCurationLogo() + "</logo>"
-		+ "    </creator>"
-		+ "    <contact>"
-		+ "        <name>" + this.getContactName() + "</name>"
-		+ "        <address>" + this.getContactAdresse() + "</address>"
-		+ "        <email>" + this.getContactMail() + "</email>"
-		+ "        <telephone>" + this.getContactTel() + "</telephone>"
-		+ "    </contact>"
-		+ "</curation>"
-		+ "<content>"
-		+ "    <subject>" + this.getContentSubject() + "</subject>"
-		+ "    <description>" + this.getContentDescription() + "</description>"
-		+ "    <referenceURL>" + this.getContentRefURL() + "</referenceURL>"
-		+ "</content>";
+		+ "    <creator>\n"
+		+ "        <name>" + this.getCurationName() + "</name>\n"
+		+ "        <logo>" + this.getCurationLogo() + "</logo>\n"
+		+ "    </creator>\n"
+		+ "    <contact>\n"
+		+ "        <name>" + this.getContactName() + "</name>\n"
+		+ "        <address>" + this.getContactAdresse() + "</address>\n"
+		+ "        <email>" + this.getContactMail() + "</email>\n"
+		+ "        <telephone>" + this.getContactTel() + "</telephone>\n"
+		+ "    </contact>\n"
+		+ "</curation>\n"
+		+ "<content>\n"
+		+ "    <subject>" + this.getContentSubject() + "</subject>\n"
+		+ "    <description>" + this.getContentDescription() + "</description>\n"
+		+ "    <referenceURL>" + this.getContentRefURL() + "</referenceURL>\n"
+		+ "</content>\n";
 	}
 	public void load() throws QueryException {
 		try {
-			Table_Saada_VO_Authority.loadTable(Authority.authorityInstance);
+			Table_Saada_VO_Authority.loadTable(Authority.getInstance());
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -183,7 +246,7 @@ public class Authority extends EntityManager{
 	@Override
 	public void create(ArgsParser ap) throws QueryException {
 		try {
-			Table_Saada_VO_Authority.createTable(Authority.authorityInstance);
+			Table_Saada_VO_Authority.createTable(Authority.getInstance());
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);

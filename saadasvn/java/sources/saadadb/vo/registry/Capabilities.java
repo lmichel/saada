@@ -6,7 +6,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
 
-public class Capability extends EntityManager {
+public class Capabilities extends EntityManager {
 	private String dataTreePath;
 	private String protocol;
 	private String accessURL;
@@ -77,8 +77,6 @@ public class Capability extends EntityManager {
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
 		readArgs(ap);
-		// TODO Auto-generated method stub
-
 	}
 
 	/**

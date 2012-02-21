@@ -64,8 +64,7 @@ public class Table_Saada_VO_Authority extends SQLTable {
 	}
 	
 	public static  void loadTable(Authority authority) throws Exception {
-		Authority a = Authority.getInstance();
-		Class c = a.getClass();
+		Class c = authority.getClass();
 		ArrayList<String> columns = new ArrayList<String>();
 		ArrayList<Method> setter = new ArrayList<Method>();
 		Class[] params = new Class[1];

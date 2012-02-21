@@ -87,26 +87,6 @@ public class CacheMeta {
 		this.reload(true);
 	}
 
-	public String getTables() throws Exception{
-		return TapServiceManager.getXML().toString();
-//		/*
-//		 * Pre set the xml description of classes :used by TAP.tables
-//		 */
-//		if( tables.length() == 0 ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Build XML description of tables");
-//			tables = "<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">"
-//				+"\n\t<schema>\n\t\t<name>default</name>";
-//
-//			for( MetaClass mc: this.classes.values() ){
-//				tables += "\n"+generateXMLTable(mc);
-//			}
-//			tables += "\n\t</schema>\n</vosi:tableset>";
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, tables.length() + " bytes of XML produced");
-//		}
-//		return tables;
-	}
 
 	/**
 	 * @param force
