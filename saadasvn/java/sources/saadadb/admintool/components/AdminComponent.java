@@ -70,6 +70,7 @@ public abstract class AdminComponent extends JPanel {
 
 	public static final String VO_CURATOR = "VO Curator";
 	public static final String TAP_PUBLISH = "TAP Service Setup";
+	public static final String OBSCORE_MAPPER = "ObsCore Mapper";
 
 
 	protected DataTreePath dataTreePath;
