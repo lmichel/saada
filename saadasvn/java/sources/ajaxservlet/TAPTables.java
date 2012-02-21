@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
+import saadadb.vo.tap.TapServiceManager;
 
 /**
  * @author laurent
@@ -20,16 +21,11 @@ public class TAPTables extends SaadaServlet {
 		try {
 		printAccess(req, true);
 		res.setContentType("text/xml");
-System.out.println("1");
 		PrintWriter pw = res.getWriter();
-		System.out.println("1");
 
 		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		pw.println("<?xml-stylesheet type=\"text/xsl\" href=\""+Database.getUrl_root()+"/styles/tables.xsl\"?>");
-		System.out.println("1");
-
-		pw.println(Database.getCachemeta().getTables());
-		System.out.println("1");
+		pw.println(TapServiceManager.getXMLTables());
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
