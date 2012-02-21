@@ -25,26 +25,26 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Capabilities;
 
 
 public class TapServiceItem extends JPanel {
 	public static final Color SELECTED = AdminComponent.OLD_HEADER;
 	public static final Color UNSELECTED = Color.WHITE;
-	protected Capability capability;
+	protected Capabilities capability;
 	private JButton button = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/greenLight.png")));
 	private JLabel label = new JLabel();
 	private boolean removed = false;
 	private boolean selected = false;
 
 	protected TapServiceItem(DataTreePath dataTreePath) throws SaadaException {
-		this.capability = new Capability();
+		this.capability = new Capabilities();
 		this.capability.setProtocol("TAP");
 		this.capability.setDataTreePath(dataTreePath.toString());
 		this.setDefaultDescription();
 		this.setUI();
 	}
-	protected TapServiceItem(Capability capability) throws SaadaException {
+	protected TapServiceItem(Capabilities capability) throws SaadaException {
 		this.capability = capability;
 		this.setDefaultDescription();
 		this.setUI();

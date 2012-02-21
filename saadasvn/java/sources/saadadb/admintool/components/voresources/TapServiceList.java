@@ -16,13 +16,13 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Capabilities;
 
 
 public class TapServiceList extends JPanel {
 	private TapSelector tapSelector;
 
-	private ArrayList<TapServiceItem> items = new ArrayList<TapServiceItem>();
+	protected  ArrayList<TapServiceItem> items = new ArrayList<TapServiceItem>();
 
 	/**
 	 * @param taskPanel
@@ -32,7 +32,7 @@ public class TapServiceList extends JPanel {
 		this.tapSelector = tapSelector;
 		this.setTransferHandler(new ProductTreePathTransferHandler(3));	
 		this.setLayout(new GridBagLayout());
-		this.setBackground(Color.GRAY);
+		//this.setBackground(Color.G);
 	}
 
 	public void reset() {
@@ -43,7 +43,6 @@ public class TapServiceList extends JPanel {
 	protected void unSelectAll() {
 		for( TapServiceItem tsi: items) {
 			if( tsi.isSelected() ) {
-				System.out.println("###### " + tsi.getDataTreePath() + " " + this.getDescription());
 				tsi.capability.setDescription(this.getDescription());
 			}
  			tsi.unSelect();
@@ -118,7 +117,7 @@ public class TapServiceList extends JPanel {
 			return true;
 		}
 	}
-	public boolean addResource(Capability capability) throws SaadaException {
+	public boolean addResource(Capabilities capability) throws SaadaException {
 			if( this.checkExist(capability.getDataTreePath()) )  return false;
 			this.items.add(new TapServiceItem(capability));
 			this.displayListItems();
