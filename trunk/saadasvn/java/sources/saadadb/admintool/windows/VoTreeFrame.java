@@ -34,19 +34,19 @@ public class VoTreeFrame extends OuterWindow {
 		onglets.setPreferredSize(dim);
 		
 		VoTree votree = new VoUCDTree(this);
-		votree.buildTree(dim);
+		votree.drawTree(dim);
 		onglets.addTab("UCD", null, votree, "qqqqqqqA");
 
 		votree = new VoCharacDMTree(this);
-		votree.buildTree(dim);
+		votree.drawTree(dim);
 		onglets.addTab("Charac DM", null, votree, "qqqqqqqA");
 		
 		votree = new VoSpectrumDMTree(this);
-		votree.buildTree(dim);
+		votree.drawTree(dim);
 		onglets.addTab("Spectrum DM", null, votree, "qqqqqqqA");
 
 		votree = new VoUnitTree(this);
-		votree.buildTree(dim);
+		votree.drawTree(dim);
 		onglets.addTab("Units", null, votree, "qqqqqqqA");
 		onglets.addChangeListener(new ChangeListener() {
 
