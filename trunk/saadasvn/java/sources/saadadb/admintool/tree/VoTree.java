@@ -1,6 +1,7 @@
 package saadadb.admintool.tree;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
 
@@ -11,6 +12,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -18,36 +20,45 @@ import saadadb.admin.dnd.GestualTree;
 
 public abstract class VoTree extends JPanel {
 	protected GestualTree tree;
-	protected Window frame;
-	protected String top_node="NoTopNode";
-	
+	protected Container frame;
+	protected String topNode="NoTopNode";
+
 	public String[] flat_types;
-	
+
 	/** * @version $Id: VoTree.java 118 2012-01-06 14:33:51Z laurent.mistahl $
 
 	 * @param frame
 	 * @param top_node
 	 */
-	public VoTree(Window frame, String top_node) {
+	public VoTree(Container frame, String top_node) {
 		this.frame = frame;
-		this.top_node = top_node;
+		setTopNode(top_node);
+	}
+	public VoTree(Container frame) {
+		this.frame = frame;
+		setTopNode(null);
+	}
+
+	protected void setTopNode(String topNode) {
+		this.topNode = (topNode == null || topNode.trim().length() == 0) ? "root": topNode;
 	}
 	/**
 	 * Build the tree with flat input data
 	 */
-	public void buildTree(Dimension dim) {
-		//this.setPreferredSize(new Dimension(dim));
-		
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode(top_node);
+	public void drawTree(Dimension dim) {
+		DefaultMutableTreeNode top = null;
+		top = new DefaultMutableTreeNode(topNode);
 		tree = new GestualTree(top);
 		tree.setEditable(false);	
-		//tree.setDragEnabled(true);
+
+		tree.setDragEnabled(true);
 		DefaultMutableTreeNode last_node=top;
 		for( int i=0 ; i<flat_types.length ; i++ ) {
 			/*
 			 * Input data are transformed in a set of string matching the future nodes
 			 */
 			String[] utype_tokens = this.getPathComponents(flat_types[i]);
+
 			/*
 			 * Skip empty lines
 			 */
@@ -98,7 +109,6 @@ public abstract class VoTree extends JPanel {
 		for( int i=0 ; i<top.getChildCount() ; i++ ) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) top.getChildAt(i);
 			tree.scrollPathToVisible(new TreePath(node.getPath()));
-
 		}
 		JScrollPane scrollPane = new JScrollPane(tree);
 		scrollPane.setPreferredSize(dim);
@@ -107,41 +117,44 @@ public abstract class VoTree extends JPanel {
 		this.setDragFeatures();
 	}
 
+	/**
+	 * 
+	 */
 	protected void setDragFeatures() {
 		tree.setDragEnabled(true);
 	}
-	
+
 	/**
 	 * @param string
 	 * @return
 	 */
 	abstract String[] getPathComponents(String string) ;
-	
-	
+
+
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();		
 		JTabbedPane onglets = new JTabbedPane();
 		onglets.setPreferredSize(new Dimension(300, 500));
-		
+
 		VoTree vot = new VoUCDTree(frame);
-		vot.buildTree(new Dimension(300, 500));
+		vot.drawTree(new Dimension(300, 500));
 		onglets.addTab("UCD", null, vot, "qqqqqqqA");
 
 		vot = new VoCharacDMTree(frame);
-		vot.buildTree(new Dimension(300, 500));
+		vot.drawTree(new Dimension(300, 500));
 		onglets.addTab("Charac DM", null, vot, "qqqqqqqA");
-		
+
 		vot = new VoSpectrumDMTree(frame);
-		vot.buildTree(new Dimension(300, 500));
+		vot.drawTree(new Dimension(300, 500));
 		onglets.addTab("Spectrum DM", null, vot, "qqqqqqqA");
 
 		onglets.addChangeListener(new ChangeListener() {
 
 			public void stateChanged(ChangeEvent e) {
-		        JTabbedPane tab = (JTabbedPane)e.getSource();
-		        int sIdx = tab.getSelectedIndex();
+				JTabbedPane tab = (JTabbedPane)e.getSource();
+				int sIdx = tab.getSelectedIndex();
 			}
-			
+
 		});
 		frame.add(onglets);
 		frame.pack();
