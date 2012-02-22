@@ -34,6 +34,7 @@ public abstract class VoTree extends JPanel {
 	}
 	/**
 	 * Build the tree with flat input data
+	 * @param dim
 	 */
 	public void buildTree(Dimension dim) {
 		//this.setPreferredSize(new Dimension(dim));
