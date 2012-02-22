@@ -3,6 +3,7 @@ package saadadb.meta;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -156,7 +157,7 @@ public class MetaClass extends MetaObject{
 	public AttributeHandler[] getClassAttributes() {
 		return this.attribute_handlers.values().toArray(new AttributeHandler[0]);
 	}
-	public Map<String,AttributeHandler> getAttributes_handlers() {
+	public HashMap<String,AttributeHandler> getAttributes_handlers() {
 		return this.attribute_handlers;
 	}
 	public final Set<String> getClassAttribute_names() {

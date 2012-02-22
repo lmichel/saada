@@ -3,6 +3,7 @@ package saadadb.meta;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -212,7 +213,7 @@ public class MetaCollection extends MetaObject {
 	 * @param category
 	 * @return
 	 */
-	public static  final Map<String,AttributeHandler> getAttribute_handlers(int category){
+	public static  final HashMap<String,AttributeHandler> getAttribute_handlers(int category){
 		switch(category){
 		case Category.CUBE:    return MetaCollection.getAttribute_handlers_cube();
 		case Category.ENTRY :  return MetaCollection.getAttribute_handlers_entry();

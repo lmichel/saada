@@ -72,7 +72,7 @@ import saadadb.util.Messenger;
  *
  */
 public class AdminTool extends BaseFrame {
-	public static final int height = 500;
+	public static final int height = 700;
 	private JSplitPane splitPane;
 	public MetaDataPanel metaDataTree;
 	private AdminPanel  activePanel;
@@ -107,7 +107,7 @@ public class AdminTool extends BaseFrame {
 	private EditPanel tableMapperPanel;;
 	private EditPanel imageMapperPanel;;
 	private EditPanel flatfileMapperPanel;
-	
+
 	private EditPanel voCurator;;
 	private EditPanel tapService;
 
@@ -206,7 +206,7 @@ public class AdminTool extends BaseFrame {
 		 */
 		choicePanelRoot = new RootChoicePanel(this, "Root Panel");
 		activePanel = choicePanelRoot;
-		activePanel.setPreferredSize(new Dimension(600,  height));
+		activePanel.setPreferredSize(new Dimension(700,  height));
 		c.gridx = 0;
 		c.gridy = 0;		
 
@@ -438,7 +438,7 @@ public class AdminTool extends BaseFrame {
 				obscoreMapperPanel = new ObscoreMapperPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = obscoreMapperPanel;
-			
+
 			/*
 			 * Process pqnel used by all tasks
 			 */
@@ -451,7 +451,6 @@ public class AdminTool extends BaseFrame {
 		else {
 			System.err.println("Panel " + panelTitle + " not referenced");
 		}
-		activePanel.active();
 		/*
 		 * Data treepath must be locked later  by the ancestor
 		 */
@@ -465,6 +464,12 @@ public class AdminTool extends BaseFrame {
 		int dl = splitPane.getDividerLocation();
 		splitPane.setRightComponent(activePanel);
 		splitPane.setDividerLocation(dl);
+
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				activePanel.updateUI();
+			}
+		});
 	}
 
 	public AdminPanel getActivePanel() {
@@ -479,7 +484,7 @@ public class AdminTool extends BaseFrame {
 			processPanel.setCmdThread(cmdThread);
 		}
 	}
-	
+
 	/**
 	 * @param cmdThread
 	 */
