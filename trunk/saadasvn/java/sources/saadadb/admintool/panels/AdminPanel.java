@@ -40,6 +40,7 @@ public abstract class AdminPanel extends AdminComponent {
 	protected JLabel currentTaskLabel ;
 	public final DebugButton debugButton = new DebugButton();
 	private boolean lockDataTreePath = false;
+	private boolean changed = false;
 
 	public JLabel getTreePathLabel() {
 		return treePathLabel;
@@ -93,6 +94,17 @@ public abstract class AdminPanel extends AdminComponent {
 	public boolean isDataTreePathLocked() {
 		return lockDataTreePath;
 	}
+	public boolean hasChanged() {
+		return changed;
+	}
+
+	public void cancelChanges() {
+		changed = false;
+	}
+	public void notifyChange() {
+		changed = true;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see components.AdminComponent#setMainPanel()
@@ -214,15 +226,6 @@ public abstract class AdminPanel extends AdminComponent {
 	 */
 	public abstract void active() ;
 
-	/**
-	 * @return
-	 */
-	public boolean hasChanged() {
-		return false;
-	}
-
-	public void cancelChanges() {
-	}
 	
 	/**
 	 * @throws Exception 

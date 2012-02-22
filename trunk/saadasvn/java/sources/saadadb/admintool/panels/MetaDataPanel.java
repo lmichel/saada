@@ -300,7 +300,6 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		String[] classes = Database.getCachemeta().getClassesOfCollection(coll_name, category);
 		DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(Category.explain(category));
 		model.insertNodeInto(categoryNode, collnode, collnode.getChildCount());
-		System.out.println("@@@@@@ addCategoryNode" );
 		/*
 		 * No class for flatfiles
 		 */
@@ -309,7 +308,6 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			 * Loop on classes
 			 */    	
 			for( int cl=0 ; cl<classes.length ; cl++ ) {
-				System.out.println("@@@@@@ addCategoryNode" + classes[cl]);
 				model.insertNodeInto(new DefaultMutableTreeNode(classes[cl]), categoryNode, categoryNode.getChildCount());
 			}
 		} 
