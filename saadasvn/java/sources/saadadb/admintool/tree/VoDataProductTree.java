@@ -1,6 +1,7 @@
 package saadadb.admintool.tree;
 
 
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
@@ -41,7 +42,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	 * @param top_node
 	 * @param filename
 	 */
-	public VoDataProductTree(Window frame, String top_node, String filename) {
+	public VoDataProductTree(Container frame, String top_node, String filename) {
 		super(frame, top_node);
 		try {
 			buildTree(filename);
@@ -52,8 +53,11 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 		}
 	}
 
-	public VoDataProductTree(Window frame, String top_node) {
+	public VoDataProductTree(Container frame, String top_node) {
 		super(frame, top_node);
+	}
+	public VoDataProductTree(Container frame) {
+		super(frame);
 	}
 	/**
 	 * @param filename
@@ -172,7 +176,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 		vot = new VoDataProductTree(frame
 				, "ext/keywords"
 				, "/home/michel/saada/deploy/TestBench1_5/033.fits_src_classyes/data/033-EUVEngc4151imgx1.fits");
-		vot.buildTree(new Dimension(300, 500));
+		vot.drawTree(new Dimension(300, 500));
 		vot.setPreferredSize(new Dimension(300, 500));
 		frame.add(vot);
 		frame.pack();
