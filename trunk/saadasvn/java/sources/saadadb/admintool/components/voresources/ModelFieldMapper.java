@@ -8,7 +8,9 @@ import java.awt.GridBagLayout;
 
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.exceptions.SaadaException;
 
 /**
  * @author laurentmichel
@@ -28,6 +30,10 @@ public class ModelFieldMapper extends CollapsiblePanel{
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
 		this.getContentPane().add(modelViewPanel, emc);
 
+	}
+
+	public void setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
+		modelViewPanel.setDataTreePath(dataTreePath);		
 	}
 
 }

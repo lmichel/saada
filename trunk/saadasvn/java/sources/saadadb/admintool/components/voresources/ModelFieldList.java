@@ -45,13 +45,12 @@ public class ModelFieldList extends JPanel {
 	 */
 	public ModelFieldList(ModelViewPanel modelViewPanel) throws SaadaException {
 		this.modelViewPanel = modelViewPanel;
-		this.setTransferHandler(new ProductTreePathTransferHandler(3));	
 		this.setLayout(new GridBagLayout());
 		this.displayListItems();
 	}
 
 
-	protected void unSelectAll() {System.out.println("AAAAAA");
+	protected void unSelectAll() {
 	for( FieldItem tsi: items) {
 		tsi.unSelect();
 	}
@@ -109,11 +108,13 @@ public class ModelFieldList extends JPanel {
 		for( FieldItem it: items) {
 			if( it.selected ) {
 				it.mappingStmt = this.modelViewPanel.mapField.getText();
+				this.modelViewPanel.notifyChange();
+				return;
 			}
 		}	
 	}
 
-
+	@SuppressWarnings("serial")
 	public class FieldItem extends JPanel {
 		public  final Color SELECTED = AdminComponent.OLD_HEADER;
 		public  final Color UNSELECTED = Color.WHITE;
@@ -167,6 +168,8 @@ public class ModelFieldList extends JPanel {
 					mfl.modelViewPanel.setUtypeHandler(uth, mappingStmt);
 					mfl.unSelectAll();
 					select();
+					// Taking the focus notifies the text field tat a change mst be processed 
+					mfl.requestFocus();
 				}		
 				public void mousePressed(MouseEvent arg0) {}			
 				public void mouseExited(MouseEvent arg0) {}		
@@ -186,8 +189,8 @@ public class ModelFieldList extends JPanel {
 			this.selected = true;
 		}
 		public void unSelect() {
-				this.setBackground(UNSELECTED);
-				this.label.setForeground(Color.BLACK);
+			this.setBackground(UNSELECTED);
+			this.label.setForeground(Color.BLACK);
 			if( this.selected) {
 				//this.capability.setDescription( ((TapServiceList)(this.getParent())).getDescription());
 			}
