@@ -157,7 +157,7 @@ public class MappingKWPanel extends EditPanel {
 							, "ext/keywords (drag & drop to the loader configuration panel)"
 							, filename);
 					rootFrame.setCursor(Cursor.getDefaultCursor());
-					vot.buildTree(new Dimension(300, 500));
+					vot.drawTree(new Dimension(300, 500));
 					vot.setPreferredSize(new Dimension(300, 500));
 					window.add(vot);
 					window.pack();
