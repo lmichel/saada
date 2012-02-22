@@ -26,9 +26,10 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.tree.VoDataProductTree;
+
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.database.Database;
 import saadadb.util.RegExp;
 
@@ -45,7 +46,7 @@ public class DataFileChooser extends JDialog {
 	private JButton accept = new JButton("Load Files");
 	private JButton cancel = new JButton("cancel");
 	
-	private String current_dir = SaadaDBAdmin.current_dir;
+	private String current_dir = "";
 	private boolean full_directory = true;
 	
 	public DataFileChooser(TaskPanel taskPanel, ArrayList<String> file_list) {
@@ -260,7 +261,7 @@ public class DataFileChooser extends JDialog {
 		open.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if( files.getSelectedIndices().length != 1 ) {
-					SaadaDBAdmin.showInputError(DataFileChooser.this, "Select just one file");
+					AdminComponent.showInputError(DataFileChooser.this, "Select just one file");
 				}
 				else {
 					String filename = current_dir + Database.getSepar() + files.getSelectedValues()[0];
@@ -270,7 +271,7 @@ public class DataFileChooser extends JDialog {
 							, "ext/keywords"
 							, filename);
 					if( vot.flat_types != null ) {
-						vot.buildTree(new Dimension(300, 500));
+						vot.drawTree(new Dimension(300, 500));
 						vot.setPreferredSize(new Dimension(300, 500));
 						window.add(vot);
 						window.pack();
@@ -284,7 +285,7 @@ public class DataFileChooser extends JDialog {
 		
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SaadaDBAdmin.current_dir = current_dir;
+				//SaadaDBAdmin.current_dir = current_dir;
 				current_dir = null;
 				setVisible(false);				
 			}			
@@ -292,7 +293,7 @@ public class DataFileChooser extends JDialog {
 		
 		accept.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SaadaDBAdmin.current_dir = current_dir;
+				//SaadaDBAdmin.current_dir = current_dir;
 				setVisible(false);				
 			}			
 		});
