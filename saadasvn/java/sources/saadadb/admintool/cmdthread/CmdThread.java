@@ -4,7 +4,7 @@ package saadadb.admintool.cmdthread;
 import java.awt.Frame;
 import java.util.Map;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.command.SaadaProcess;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -76,7 +76,7 @@ public abstract class CmdThread extends Thread {
 	 * @throws Exception 
 	 */
 	public boolean checkParams(boolean withConfirm) throws QueryException, FatalException, Exception {
-		return  (!withConfirm || SaadaDBAdmin.showConfirmDialog(this.frame, "Are you sure you want to do that?"));
+		return  (!withConfirm || AdminComponent.showConfirmDialog(this.frame, "Are you sure you want to do that?"));
 	}
 	
 	public void wakeUp() {

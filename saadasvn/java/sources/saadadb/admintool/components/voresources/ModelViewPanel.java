@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.input.DMAttributeTextField;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.tree.FilteredFieldTree;
 import saadadb.admintool.tree.VoClassTree;
@@ -33,7 +34,7 @@ public class ModelViewPanel extends JPanel {
 	private ObscoreMapperPanel obscoreMapperPanel;
 	private ModelFieldList resourceList;
 	private JEditorPane descPanel;
-	protected JTextField mapField;
+	protected DMAttributeTextField mapField;
 	private JButton checkButton;
 	private FilteredFieldTree classTree;
 
@@ -78,7 +79,8 @@ public class ModelViewPanel extends JPanel {
 		this.add(new JLabel("Mapping Statement"), mgbc);
 
 		mgbc.newRow(); mgbc.gridx = 1;
-		mapField = new JTextField(24);
+		mapField = new DMAttributeTextField();
+		mapField.setColumns(24);
 		this.add(mapField, mgbc);
 
 		mgbc.newRow(); mgbc.gridx = 1;

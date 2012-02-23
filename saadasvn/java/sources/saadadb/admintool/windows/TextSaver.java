@@ -14,9 +14,7 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.xml.soap.Text;
 
-import saadadb.admin.DBInstallPanel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SaveButton;

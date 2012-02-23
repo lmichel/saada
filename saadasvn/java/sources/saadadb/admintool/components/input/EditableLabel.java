@@ -13,8 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import saadadb.admin.SaadaDBAdmin;
-import saadadb.exceptions.AbortException;
-import saadadb.sqltable.SQLTable;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -44,7 +43,7 @@ public class EditableLabel extends JPanel{
 		this.error_msg = error_msg;
 		this.ref_regexp = ref_regexp;		
 		this.to_do_when_ok = to_do_when_ok;
-		label = SaadaDBAdmin.getPlainLabel(text);
+		label = AdminComponent.getPlainLabel(text);
 		edit_label = new JTextField(label.getText());
 		edit_label.setColumns(size);;
 		label.setPreferredSize(new Dimension((int)(edit_label.getPreferredSize().getWidth()) + 15, (int)(edit_label.getPreferredSize().getHeight())));

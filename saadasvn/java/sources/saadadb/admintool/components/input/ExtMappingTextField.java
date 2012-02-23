@@ -3,7 +3,7 @@ package saadadb.admintool.components.input;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
 
@@ -59,7 +59,7 @@ public class ExtMappingTextField extends MappingTextField {
 		String extension_desc = treepath.getPathComponent(1).toString();
 		String[] ext_comp = extension_desc.split(" ");
 		if( ext_comp.length != 3 ) {
-			SaadaDBAdmin.showFatalError(this.getParent(), "Extension description<" + extension_desc  + "> badly formed");
+			AdminComponent.showFatalError(this.getParent(), "Extension description<" + extension_desc  + "> badly formed");
 			return false;
 		}
 //		else if( ext_comp[0].startsWith("#0") ) {
@@ -68,11 +68,11 @@ public class ExtMappingTextField extends MappingTextField {
 //		}
 		else if( (this.form.getCategory() == Category.TABLE /*|| this.form.spc_btn.isSelected() */) 
 				&& !ext_comp[2].endsWith("TABLE)") ){
-			SaadaDBAdmin.showFatalError(this.getParent(), "You must select a (BIN)TABLE extension");
+			AdminComponent.showFatalError(this.getParent(), "You must select a (BIN)TABLE extension");
 			return false;	
 		}
 		else if( this.form.getCategory() == Category.IMAGE && !ext_comp[2].endsWith("IMAGE)") ){
-			SaadaDBAdmin.showFatalError(this.getParent(), "You must select a IMAGE extension");
+			AdminComponent.showFatalError(this.getParent(), "You must select a IMAGE extension");
 			return false;	
 		}
 		else {	
@@ -90,7 +90,7 @@ public class ExtMappingTextField extends MappingTextField {
 			ext_name = new_val;
 		}
 		if( previous_value.length() > 0 && !previous_value.equals(new_val)) {
-			if( SaadaDBAdmin.showConfirmDialog(this.getParent(), "Changing the extension will reset the current form!") == true ) {
+			if( AdminComponent.showConfirmDialog(this.getParent(), "Changing the extension will reset the current form!") == true ) {
 				this.form.reset(true);
 				this.setPrevious_value(new_val);
 				return true;

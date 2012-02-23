@@ -14,7 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.MyGBC;
@@ -177,11 +177,11 @@ public class KNNEditor extends CollapsiblePanel {
 		//K-NN", "1st-NN
 		if( knn_mode.getSelectedItem().toString().equals("K-NN") ) {
 			if( knn_k.getText().length() == 0 ) {
-				SaadaDBAdmin.showInputError(this.getParent(), "K value must be given");
+				AdminComponent.showInputError(this.getParent(), "K value must be given");
 				return "";
 			}
 			else if( knn_dist.getText().length() == 0 ) {
-				SaadaDBAdmin.showInputError(this.getParent(), "A distance value must be given");
+				AdminComponent.showInputError(this.getParent(), "A distance value must be given");
 				return "";
 			}
 			else {
@@ -190,7 +190,7 @@ public class KNNEditor extends CollapsiblePanel {
 		}
 		else if( knn_mode.getSelectedItem().toString().equals("1st-NN") ) {
 			if( knn_dist.getText().length() == 0 ) {
-				SaadaDBAdmin.showInputError(this.getParent(), "A distance value must be given");
+				AdminComponent.showInputError(this.getParent(), "A distance value must be given");
 				return "";
 			}
 			else {

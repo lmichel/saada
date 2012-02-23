@@ -7,9 +7,9 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.dnd.ProductTreePathTransferHandler;
-import saadadb.admin.dnd.TreepathDropableTextField;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dnd.ProductTreePathTransferHandler;
+import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 
 /**

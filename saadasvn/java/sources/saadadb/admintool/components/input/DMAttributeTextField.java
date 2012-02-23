@@ -4,9 +4,9 @@ import java.awt.Color;
 
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.dnd.ProductTreePathTransferHandler;
-import saadadb.admin.dnd.TreepathDropableTextField;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dnd.ProductTreePathTransferHandler;
+import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
@@ -23,6 +23,13 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 	private MetaClass mc;
 	private AttributeHandler ah;
 	private String conv_fct;
+	
+	public DMAttributeTextField() {
+		/*
+		 * Takes the second node, without extension checking
+		 */
+		this.setTransferHandler(new ProductTreePathTransferHandler(1));				
+	}
 	
 	public DMAttributeTextField(MetaClass mc, String dm_unit) {
 		this.dm_unit = dm_unit.trim();
@@ -67,13 +74,13 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 
 					return true;
 				} catch (Exception e) {
-					SaadaDBAdmin.showInputError(this.getParent(), e.toString());
+					AdminComponent.showInputError(this.getParent(), e.toString());
 					return false;
 				}
 			}
 			else {
 				this.conv_fct = ah.getNameattr();
-				return SaadaDBAdmin.showConfirmDialog(this.getParent(), "Attribute <" + ah.getNameattr() + "> has no unit: It will be taken as " + this.dm_unit + ". Do you keep it?");
+				return AdminComponent.showConfirmDialog(this.getParent(), "Attribute <" + ah.getNameattr() + "> has no unit: It will be taken as " + this.dm_unit + ". Do you keep it?");
 			}
 		}
 		else {
@@ -83,7 +90,7 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 			}
 			else {
 				this.conv_fct = ah.getNameattr();
-				return SaadaDBAdmin.showConfirmDialog(this.getParent(), "Data model attribute has no unit.Attribute <" 
+				return AdminComponent.showConfirmDialog(this.getParent(), "Data model attribute has no unit.Attribute <" 
 						+ ah.getNameattr() + "> will be considered as unitless although it is declared as " + source_unit + ". Do you keep it?");
 			}
 		}

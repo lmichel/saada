@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
@@ -72,7 +71,7 @@ public class ThreadLoadData extends CmdThread {
 					} catch (FatalException e) {
 						Messenger.trapFatalException(e);
 					}
-					SaadaDBAdmin.showSuccess(frame, "Data Loading successfull");		
+					AdminComponent.showSuccess(frame, "Data Loading successfull");		
 				}				
 			});
 		} catch (AbortException ae) {
