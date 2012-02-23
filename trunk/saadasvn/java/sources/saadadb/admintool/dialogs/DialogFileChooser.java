@@ -7,7 +7,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.util.RegExp;
 
 public class DialogFileChooser extends JFileChooser {
@@ -17,13 +17,13 @@ public class DialogFileChooser extends JFileChooser {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static String current_dir = SaadaDBAdmin.current_dir;
+	private static String current_dir;
 	
 	/**
 	 * 
 	 */
 	public DialogFileChooser() {
-		super(SaadaDBAdmin.current_dir);
+		super();
 		this.addChoosableFileFilter(new DataFileFilter());
 	}
 	
@@ -58,11 +58,11 @@ public class DialogFileChooser extends JFileChooser {
 				else {
 					current_dir = selected_file.getParent();       			
 				}
-				SaadaDBAdmin.current_dir = current_dir;
+				//AdminComponent.current_dir = current_dir;
 				return selected_file.getAbsolutePath();
 			}
 			else {
-				SaadaDBAdmin.showInputError(frame, "File <" + selected_file + "> does not exists.");
+				AdminComponent.showInputError(frame, "File <" + selected_file + "> does not exists.");
 				return "";
 			}
 		}
@@ -105,7 +105,7 @@ public class DialogFileChooser extends JFileChooser {
 				}
 			}catch(Exception e) {
 				filter = null;
-				SaadaDBAdmin.showFatalError(null, "Wrong filename filter: " + e.getMessage() + " CLose the window and fix your filter (regexp)");
+				AdminComponent.showFatalError(null, "Wrong filename filter: " + e.getMessage() + " CLose the window and fix your filter (regexp)");
 				return false;
 			}
 		}

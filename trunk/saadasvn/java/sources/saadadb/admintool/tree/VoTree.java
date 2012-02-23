@@ -16,7 +16,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.dnd.GestualTree;
+import saadadb.admintool.dnd.GestualTree;
 
 public abstract class VoTree extends JPanel {
 	protected GestualTree tree;
@@ -114,14 +114,6 @@ public abstract class VoTree extends JPanel {
 		scrollPane.setPreferredSize(dim);
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
-		this.setDragFeatures();
-	}
-
-	/**
-	 * 
-	 */
-	protected void setDragFeatures() {
-		tree.setDragEnabled(true);
 	}
 
 	/**

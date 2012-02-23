@@ -23,11 +23,10 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.dialogs.AdminPassword;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
+import saadadb.admintool.dialogs.AdminPassword;
 import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.ChoicePanel;
 import saadadb.admintool.panels.EditPanel;
@@ -130,7 +129,7 @@ public class AdminTool extends BaseFrame {
 		this.addWindowListener(new WindowAdapter(){
 			@Override
 			public void windowClosing(WindowEvent we){	        	
-				if( SaadaDBAdmin.showConfirmDialog(AdminTool.this, "Do you really want to exit?") ==  true ) {
+				if( AdminComponent.showConfirmDialog(AdminTool.this, "Do you really want to exit?") ==  true ) {
 					System.exit(1);
 				}
 			}

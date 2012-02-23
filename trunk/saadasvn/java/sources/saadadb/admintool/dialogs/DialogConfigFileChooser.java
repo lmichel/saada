@@ -6,7 +6,7 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.ConfFileFilter;
 import saadadb.api.SaadaDB;
 import saadadb.database.Database;
@@ -51,7 +51,7 @@ public class DialogConfigFileChooser extends JFileChooser {
 			}
 		}
 		if( !dff.hasCandidate() ) {
-			SaadaDBAdmin.showInputError(frame, "No configuration file found, create first a new configuration.");
+			AdminComponent.showInputError(frame, "No configuration file found, create first a new configuration.");
 			return "";        		
 		}
 		else {
@@ -63,7 +63,7 @@ public class DialogConfigFileChooser extends JFileChooser {
 					return selected_file.getAbsolutePath();
 				}
 				else {
-					SaadaDBAdmin.showInputError(frame, "File <" + selected_file + "> does not exists.");
+					AdminComponent.showInputError(frame, "File <" + selected_file + "> does not exists.");
 					return "";
 				}
 			}

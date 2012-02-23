@@ -6,7 +6,7 @@ import java.awt.dnd.DragGestureListener;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 
 /** * @version $Id: GestualTree.java 118 2012-01-06 14:33:51Z laurent.mistahl $
 
@@ -21,7 +21,7 @@ public class GestualTree extends JTree implements DragGestureListener {
 
 
 	public void dragGestureRecognized(DragGestureEvent dge) {
-		SaadaDBAdmin.showSuccess(this, "coucou");
+		AdminComponent.showSuccess(this, "coucou");
 	}
 
 }

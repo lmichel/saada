@@ -4,7 +4,6 @@ package saadadb.admintool.tree;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
@@ -22,8 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.dnd.TreePathTransferable;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.FitsProduct;
 import saadadb.products.ProductFile;
@@ -48,7 +47,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			buildTree(filename);
 		} catch (Exception e) {
 			flat_types = null;
-			SaadaDBAdmin.showFatalError(frame, e.toString());
+			AdminComponent.showFatalError(frame, e.toString());
 			return;
 		}
 	}
@@ -73,7 +72,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			prd = new VOProduct(filename);				
 		}
 		else {
-			SaadaDBAdmin.showFatalError(frame, "Type of file <" + filename + "> not recognized");
+			AdminComponent.showFatalError(frame, "Type of file <" + filename + "> not recognized");
 			return;
 		}
 		LinkedHashMap<String, ArrayList<AttributeHandler>> prd_map=null;
@@ -133,7 +132,6 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			Transferable transferable = new TreePathTransferable(dragPath);
 			dge.startDrag(DragSource.DefaultMoveDrop, transferable, this);
 		}
-
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {

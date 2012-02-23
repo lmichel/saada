@@ -3,9 +3,9 @@ package saadadb.admintool.components.input;
 
 import javax.swing.tree.TreePath;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.dnd.ProductTreePathTransferHandler;
-import saadadb.admin.dnd.TreepathDropableTextField;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dnd.ProductTreePathTransferHandler;
+import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.database.Database;
 
 /**
@@ -51,11 +51,11 @@ public class CollectionTextField extends TreepathDropableTextField {
 	 */
 	protected boolean valid() {
 		if( this.treepath.getPathCount() < 3 ) {
-			SaadaDBAdmin.showFatalError(this.getParent(), "A collection + a category must be pasted");		
+			AdminComponent.showFatalError(this.getParent(), "A collection + a category must be pasted");		
 			return false;
 		}
 		else if( !Database.getCachemeta().collectionExists(treepath.getPathComponent(1).toString()) ) {
-			SaadaDBAdmin.showFatalError(this.getParent(), "Collection <" + treepath.getPathComponent(1).toString() +"> does not exist");		
+			AdminComponent.showFatalError(this.getParent(), "Collection <" + treepath.getPathComponent(1).toString() +"> does not exist");		
 			return false;			
 		}
 		else {
