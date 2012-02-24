@@ -152,77 +152,17 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			boolean memoBoutonDroit = false;
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("press ******** " + tree.getPathForLocation(e.getX(), e.getY()));
 				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
 
-				/*
-				TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
-//					try {
-//						if( MetaDataPanel.this.frame instanceof AdminTool)
-//							((AdminTool)(MetaDataPanel.this.frame)).showProduct(path.getPath());
-//						else if( MetaDataPanel.this.frame instanceof MapperDemo)
-//							((MapperDemo)(MetaDataPanel.this.frame)).showProduct(path.getPath());
-//					} catch (Exception e2)  {
-//						Messenger.printStackTrace(e2);
-//					}
-				}
-				// On va ouvrir le Popup sur le mouseUp()
-				else if( e.isPopupTrigger() || e.getButton() == 3 ) {
-					// indispensable car sous MacOS, isPopupTrigger ne r�pond true que dans mousePressed, pas dans mouseReleased
-					memoBoutonDroit = true;
-					return;
-				} 
-				else {
-					memoBoutonDroit = false;
-					return;
-				}
-				 */			}
+			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println("releasedd ******** " + tree.getPathForLocation(e.getX(), e.getY()));
-				System.out.println(tree.getPathForLocation(e.getX(), e.getY()));
 				clickedTreePath = tree.getPathForLocation(e.getX(), e.getY());
 				if( e.getClickCount() == 2) {
 					processDoubleClick();
 				}
-				//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
 
 				tree.setSelectionPath(clickedTreePath);
-				//				if( path != null && (path.getPathCount() == 4 || path.getPathCount() == 3) && e.getClickCount() == 2 ) {
-				//				}
-				//				else if (memoBoutonDroit || e.getButton() == 3) {
-				//					if (path != null) {  
-				//						PopupNode menu;
-				//						switch(path.getPathCount()) {
-				//						/*
-				//						 * base level
-				//						 */
-				//						case 1: menu = new PopupBaseNode(MetaDataPanel.this.frame, null, "- Root Node -"); 
-				//						menu.show(tree, e.getX(), e.getY());
-				//						break;
-				//						/*
-				//						 * collection level
-				//						 */
-				//						case 2: menu = new PopupCollNode(MetaDataPanel.this.frame, path.getPath(), "- Collection Node -"); 
-				//						Messenger.printMsg(Messenger.TRACE, "sousou");
-				//						menu.show(tree, e.getX(), e.getY());
-				//						break;
-				//						/*
-				//						 * category level
-				//						 */
-				//						case 3: menu = new PopupCatNode(MetaDataPanel.this.frame, path.getPath(), "- Category Node -"); 
-				//						menu.show(tree, e.getX(), e.getY());
-				//						break;
-				//						/*
-				//						 * class level
-				//						 */
-				//						case 4: menu = new PopupClassNode(MetaDataPanel.this.frame, path.getPath(), "- Class Node -");
-				//						menu.show(tree, e.getX(), e.getY());
-				//						break;
-				//						}
-				//					}
-				//				}
 			}
 		});	
 		/*

@@ -215,15 +215,15 @@ public class MetaCollection extends MetaObject {
 	 */
 	public static  final HashMap<String,AttributeHandler> getAttribute_handlers(int category){
 		switch(category){
-		case Category.CUBE:    return MetaCollection.getAttribute_handlers_cube();
-		case Category.ENTRY :  return MetaCollection.getAttribute_handlers_entry();
-		case Category.FLATFILE:return MetaCollection.getAttribute_handlers_flatfile();
-		case Category.IMAGE:   return MetaCollection.getAttribute_handlers_image();
-		case Category.MISC:    return MetaCollection.getAttribute_handlers_misc();
+		case Category.CUBE:    return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_cube().clone();
+		case Category.ENTRY :  return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_entry().clone();
+		case Category.FLATFILE:return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_flatfile().clone();
+		case Category.IMAGE:   return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_image().clone();
+		case Category.MISC:    return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_misc().clone();
 		//case Category.NB_CAT:return this.getAttribute_handlers_nb_cat();
 		//case Category.ROOT_PRODUCT:return this.getAttribute_handlers_root_product();
-		case Category.SPECTRUM:return MetaCollection.getAttribute_handlers_spectrum();
-		case Category.TABLE:   return MetaCollection.getAttribute_handlers_table();
+		case Category.SPECTRUM:return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_spectrum().clone();
+		case Category.TABLE:   return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_table().clone();
 		}
 		return null;
 	}

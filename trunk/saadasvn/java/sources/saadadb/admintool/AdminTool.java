@@ -320,7 +320,6 @@ public class AdminTool extends BaseFrame {
 				metaDataPanel = new MetaDataEditorPanel(this,  AdminComponent.ROOT_PANEL);
 			}
 			activePanel = metaDataPanel;
-
 			/*
 			 * Collection mqnagement tasks
 			 */
@@ -358,9 +357,6 @@ public class AdminTool extends BaseFrame {
 		} else 	if( panelTitle.equals(AdminComponent.DATA_LOADER) ) {
 			if( dataLoaderPanel == null ) {
 				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.ROOT_PANEL);
-			}
-			if( activePanel instanceof MappingKWPanel) {
-				System.out.println(activePanel.getSelectResourceLabel().getText());
 			}
 			activePanel = dataLoaderPanel;
 			/*

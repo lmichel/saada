@@ -121,7 +121,6 @@ public class DataLoaderPanel extends TaskPanel {
 	@Override
 	protected Map<String, Object> getParamMap() {
 		ArgsParser ap = configChooser.getArgsParser();
-		System.out.println(ap);
 		if( ap != null ) {
 			String rep = "";
 			if( repMove.isSelected() ) {
@@ -130,7 +129,6 @@ public class DataLoaderPanel extends TaskPanel {
 			else if( repKeep.isSelected() ) {
 				rep = "no";					
 			}
-			System.out.println(directory.getText());
 			ap.completeArgs(collection, directory.getText(), rep, noIndex.isSelected(), Messenger.debug_mode);
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("params", ap);
@@ -138,8 +136,6 @@ public class DataLoaderPanel extends TaskPanel {
 			if( selectedFiles != null && selectedFiles.size() > 0 ) {
 				map.put("filelist", selectedFiles);
 			}
-			System.out.println(ap);
-
 			return map;
 		}
 		else {

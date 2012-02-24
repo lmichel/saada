@@ -40,15 +40,15 @@ public class DataFileChooser extends JDialog {
 	private JButton purge = new JButton("Remove");
 	private JButton keep = new JButton("Keep");
 	private JButton open = new JButton("Open the Selected File");
-	
+
 	private JList directories = new JList();
 	private JList files = new JList();
 	private JButton accept = new JButton("Load Files");
 	private JButton cancel = new JButton("cancel");
-	
+
 	private String current_dir = "";
 	private boolean full_directory = true;
-	
+
 	public DataFileChooser(TaskPanel taskPanel, ArrayList<String> file_list) {
 		super(taskPanel.getRootFrame(), true);
 
@@ -61,12 +61,12 @@ public class DataFileChooser extends JDialog {
 		c.insets = new Insets(5,3,5,3);
 		c.anchor = GridBagConstraints.LINE_END;
 		this.add(new JLabel("New Filename Mask (Reg Exp) "), c);
-		
+
 		c.gridx = 1;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.gridwidth = 2;	
 		this.add(mask, c);
-		
+
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 1;	
@@ -77,7 +77,7 @@ public class DataFileChooser extends JDialog {
 		c.anchor = GridBagConstraints.LINE_START;
 		c.gridwidth = 2;	
 		this.add(combo_mask, c);
-		
+
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 1;	
@@ -90,7 +90,7 @@ public class DataFileChooser extends JDialog {
 		c.anchor = GridBagConstraints.LINE_START;
 		c.gridx = 2;
 		this.add(keep, c);
-		
+
 		c.gridx = 0;
 		c.gridy = 3;
 		c.gridwidth = 1;	
@@ -127,7 +127,7 @@ public class DataFileChooser extends JDialog {
 		c.gridy = 5;	
 		c.anchor = GridBagConstraints.LINE_START;
 		this.add(cancel, c);
-		
+
 		setBehavior();
 		setFileList(file_list);
 		this.pack();
@@ -144,7 +144,7 @@ public class DataFileChooser extends JDialog {
 		DefaultListModel dlm = new DefaultListModel();
 		dlm.addElement(".");
 		dlm.addElement("..");
-		
+
 		files.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		directories.setModel(dlm);
 		/*
@@ -165,7 +165,7 @@ public class DataFileChooser extends JDialog {
 				}
 			}
 		});
-		
+
 		/*
 		 * Select a mask in the combo: update the file selection
 		 */
@@ -194,13 +194,13 @@ public class DataFileChooser extends JDialog {
 				}
 				if( !found ) {	
 					//reduce size of other widgets.....in some circumstance
-//					DefaultComboBoxModel dcbm = (DefaultComboBoxModel) combo_mask.getModel();
-//					dcbm.addElement(mask.getText());
-//					dcbm.setSelectedItem(mask.getText());
+					//					DefaultComboBoxModel dcbm = (DefaultComboBoxModel) combo_mask.getModel();
+					//					dcbm.addElement(mask.getText());
+					//					dcbm.setSelectedItem(mask.getText());
 				}
 				setDirectory(".", mask.getText());
 			}
-			
+
 		});		
 		/*
 		 * Remove selected file from the list
@@ -226,7 +226,7 @@ public class DataFileChooser extends JDialog {
 				files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
 				full_directory = false;
 			}
-			
+
 		});
 		/*
 		 * Remove selected file from the list
@@ -252,9 +252,9 @@ public class DataFileChooser extends JDialog {
 				files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
 				full_directory = false;
 			}
-			
+
 		});
-		
+
 		/*
 		 * Open a file preview
 		 */
@@ -282,7 +282,7 @@ public class DataFileChooser extends JDialog {
 				}
 			}
 		});
-		
+
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//SaadaDBAdmin.current_dir = current_dir;
@@ -290,7 +290,7 @@ public class DataFileChooser extends JDialog {
 				setVisible(false);				
 			}			
 		});
-		
+
 		accept.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//SaadaDBAdmin.current_dir = current_dir;
@@ -299,13 +299,12 @@ public class DataFileChooser extends JDialog {
 		});
 		setDirectory(".", ".*");
 	}
-	
+
 	/**
 	 * Update both directories and file lists with the new directory;
 	 * @param new_dir
 	 */
 	private void setDirectory(String new_dir, String filter) {
-		System.out.println("@@@@@ setDirectory " + new_dir);
 		File dir;
 		if( new_dir.equals("..")) {
 			dir = (new File(current_dir)).getParentFile();
@@ -393,9 +392,9 @@ public class DataFileChooser extends JDialog {
 		/*
 		 * All files contained in the directory are considered as selected while the user didn't make its own selection.
 		 */
-		
+
 	}
-	
+
 	protected void setFileList(ArrayList<String> file_list) {
 		if( file_list != null && file_list.size() > 0) {
 			DefaultListModel fdlm = new DefaultListModel();
@@ -414,7 +413,7 @@ public class DataFileChooser extends JDialog {
 	public String getCurrentDir() {
 		return current_dir;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -426,12 +425,11 @@ public class DataFileChooser extends JDialog {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * @return Returns the content of the file list
 	 */
 	public ArrayList<String> getSelectedDataFiles() {
-		System.out.println("@@@@@@  getSelectedDataFiles " + current_dir);
 		if( current_dir == null  ) {
 			return null;
 		}
@@ -443,48 +441,39 @@ public class DataFileChooser extends JDialog {
 			 * If no file are selected, we suppose that all are to be loaded
 			 */
 			if( selected_indices.length == 0) {	
-				System.out.println("@@@@@@  getSelectedDataFiles no file");
 
-//				if( full_directory ) {
-//					return retour;
-//				}
-//				else {
-//					full_directory = false;
-					int size = ((DefaultListModel)files.getModel()).getSize();
-					for( int i=0 ; i<size ; i++ ) {
-						String fn = dlm.get(i).toString();
-						System.out.println("@@@@@@  getSelectedDataFiles " + fn);
+				int size = ((DefaultListModel)files.getModel()).getSize();
+				for( int i=0 ; i<size ; i++ ) {
+					String fn = dlm.get(i).toString();
 
-						/*
-						 * Remove the empty string set to avoid widget crushing
-						 */
-						if(fn.length() > 0 ) {
-							retour.add(fn);
-						}
-//					}
+					/*
+					 * Remove the empty string set to avoid widget crushing
+					 */
+					if(fn.length() > 0 ) {
+						retour.add(fn);
+					}
+					//					}
 				}
 			}
 			/*
 			 * Else we only keep tye selected ones
 			 */
 			else {
-				System.out.println("@@@@@@  getSelectedDataFiles file");
 				full_directory = false;
 				for( int s: selected_indices) {
 					String fn = dlm.get(s).toString();
 					/*
 					 * Remove the empty string put to avoid widget crushing
 					 */
-					System.out.println("@@@@@@  getSelectedDataFiles " + fn);
-				if(fn.length() > 0 ) {
+					if(fn.length() > 0 ) {
 						retour.add(fn);
 					}
 				}
 			}
 			return retour;
 		}
- 	}
-	
+	}
+
 	/**
 	 * @param args
 	 */

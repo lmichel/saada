@@ -20,6 +20,7 @@ public class HelpDesk {
 	public static final int RELATION_QUALIFIER = 12;
 	public static final int RELATION_SELECTOR = 13;
 	public static final int VO_CURATION = 14;
+	public static final int MODEL_MAPPER = 15;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -93,6 +94,13 @@ public class HelpDesk {
 				, "The purpose of the information given here "
 				, "is just to provide helpful templates of registry resources"
 				, "for data collection hosted by this SaadaDB."
+		});
+		map.put(MODEL_MAPPER, new String[] {
+				"Set DM fields as a computation of native fields"
+				, "Select first the class to map by clicking on a class node of the Database map ."
+				, "Select the field you want to map and fill the mapping statement."
+				, "The mapping statement must be a valid SQL statement mixing class fields and constant values."
+				, "Class fields ca be dropped from the Saada attribute tree to the mapping statement"
 		});
 	}
 	

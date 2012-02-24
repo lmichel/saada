@@ -71,5 +71,9 @@ public class VoUnitTree extends VoTree {
 		return unit_tokens;
 
 	}
+	
+	protected void setDragFeatures() {
+	}
+
 
 }

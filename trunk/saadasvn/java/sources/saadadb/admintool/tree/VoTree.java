@@ -3,7 +3,6 @@ package saadadb.admintool.tree;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Window;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -12,7 +11,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -110,12 +108,18 @@ public abstract class VoTree extends JPanel {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) top.getChildAt(i);
 			tree.scrollPathToVisible(new TreePath(node.getPath()));
 		}
+		this.removeAll();
 		JScrollPane scrollPane = new JScrollPane(tree);
 		scrollPane.setPreferredSize(dim);
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
+		this.setDragFeatures();
 	}
-
+	
+	/**
+	 * 
+	 */
+	abstract protected void setDragFeatures() ;
 	/**
 	 * @param string
 	 * @return

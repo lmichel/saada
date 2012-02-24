@@ -25,7 +25,11 @@ public abstract class AdminComponent extends JPanel {
 	public final AdminTool rootFrame;
 	public static final Color IVORY = new Color(255, 255, 240);
 	public static final Color LIGHTBACKGROUND = new Color(245, 245, 245);
-
+	public static final Color OK_COLOR = new Color(0x4F7B60);
+	public static final Color KO_COLOR = Color.RED;
+	/*
+	 * Used by the panel header. the last line changed takes NEW_HEADER
+	 */
 	public static final Color OLD_HEADER = new Color(74, 179, 194);
 	public static final Color NEW_HEADER = new Color(0, 161,255);
 	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,12);

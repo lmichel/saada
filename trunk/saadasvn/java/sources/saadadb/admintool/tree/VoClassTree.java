@@ -1,6 +1,10 @@
 package saadadb.admintool.tree;
 
 import java.awt.Container;
+import java.awt.Point;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +12,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
+import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
@@ -82,6 +88,7 @@ public class VoClassTree extends VoDataProductTree {
 	 * @throws FatalException
 	 */
 	protected  void filterTree(String filterRegExp) throws FatalException {
+		if( tree == null ) return;
 		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
 		DefaultMutableTreeNode top = (DefaultMutableTreeNode) model.getRoot();
 
@@ -97,7 +104,6 @@ public class VoClassTree extends VoDataProductTree {
 			 * Input data are transformed in a set of string matching the future nodes
 			 */
 			String[] utype_tokens = this.getPathComponents(flat_types[i]);
-
 			/*
 			 * Skip empty lines
 			 */
@@ -147,5 +153,4 @@ public class VoClassTree extends VoDataProductTree {
 		}
 		model.reload();
 	}
-
 }

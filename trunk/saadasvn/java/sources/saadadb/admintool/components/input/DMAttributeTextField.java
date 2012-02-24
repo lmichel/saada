@@ -1,12 +1,16 @@
 package saadadb.admintool.components.input;
 
 import java.awt.Color;
+import java.util.HashMap;
 
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.dnd.TreepathDropableTextField;
+import saadadb.collection.Category;
+import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
@@ -20,7 +24,7 @@ import saadadb.unit.Unit;
  */
 public class DMAttributeTextField extends TreepathDropableTextField {
 	private String dm_unit;
-	private MetaClass mc;
+	private HashMap<String, AttributeHandler> attributeHandlers;
 	private AttributeHandler ah;
 	private String conv_fct;
 	
@@ -31,21 +35,10 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 		this.setTransferHandler(new ProductTreePathTransferHandler(1));				
 	}
 	
-	public DMAttributeTextField(MetaClass mc, String dm_unit) {
-		this.dm_unit = dm_unit.trim();
-		this.setMetaClass(mc);
-		/*
-		 * Takes the second node, without extension checking
-		 */
-		this.setTransferHandler(new ProductTreePathTransferHandler(1));		
-	}
 	@Override
 	public boolean setText(TreePath treepath) {
 		this.treepath = treepath;
-		this.ah = mc.getAttributes_handlers().get(this.treepath.getPathComponent(1).toString().trim());
-		if( this.ah == null ) {
-			this.ah = MetaCollection.getAttribute_handlers(mc.getCategory()).get(this.treepath.getPathComponent(1).toString().trim());
-		}
+		this.ah = attributeHandlers.get(this.treepath.getPathComponent(1).toString().trim());
 		if( valid() && this.isEditable() ) {
 			setBackground(Color.WHITE);
 			this.setText(this.getText() + " " + this.conv_fct );	
@@ -59,8 +52,32 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 	/**
 	 * @param mc
 	 */
-	public void setMetaClass(MetaClass mc) {
-		this.mc = mc;
+	public void setAttributesHandlers( HashMap<String, AttributeHandler> attributeHandlers) {
+		this.attributeHandlers = attributeHandlers;
+	}
+	/**
+	 * @param mc
+	 * @throws FatalException 
+	 */
+	public void setAttributeHandlers( MetaClass mc) throws FatalException {
+		this.attributeHandlers = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory());
+		this.attributeHandlers.putAll(mc.getAttributes_handlers());
+	}
+	/**
+	 * @param mc
+	 * @param category
+	 * @throws FatalException
+	 */
+	public void setAttributeHandlers( int category) throws FatalException {
+		this.attributeHandlers = MetaCollection.getAttribute_handlers(category);
+	}
+	/**
+	 * @param mc
+	 * @param category
+	 * @throws FatalException
+	 */
+	public void setAttributeHandlers(String category) throws FatalException {
+		this.attributeHandlers = MetaCollection.getAttribute_handlers(Category.getCategory(category));
 	}
 	
 	@Override

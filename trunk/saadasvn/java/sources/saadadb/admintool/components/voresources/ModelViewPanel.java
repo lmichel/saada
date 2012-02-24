@@ -1,13 +1,17 @@
 package saadadb.admintool.components.voresources;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +24,7 @@ import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.tree.FilteredFieldTree;
 import saadadb.admintool.tree.VoClassTree;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -33,16 +38,15 @@ import saadadb.meta.VOResource;
 public class ModelViewPanel extends JPanel {
 	private ObscoreMapperPanel obscoreMapperPanel;
 	private ModelFieldList resourceList;
-	private JEditorPane descPanel;
+	protected JEditorPane descPanel;
 	protected DMAttributeTextField mapField;
 	private JButton checkButton;
 	private FilteredFieldTree classTree;
 
-	private MetaClass metaClass;
-	private MetaCollection metaCollection;
-	private String category;
-
-
+	protected MetaClass metaClass;
+	protected MetaCollection metaCollection;
+	protected String category;
+	
 	/**
 	 * @param taskPanel
 	 * @param toActive
@@ -50,42 +54,45 @@ public class ModelViewPanel extends JPanel {
 	 */
 	public ModelViewPanel(ObscoreMapperPanel obscoreMapperPanel) throws Exception {
 		this.obscoreMapperPanel = obscoreMapperPanel;
-		this.resourceList = new ModelFieldList(this);
+		
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 
 		MyGBC mgbc = new MyGBC(5,5,5,5);
-		mgbc.gridx = 0; mgbc.gridy = 0;mgbc.weightx = 1; mgbc.weighty = 1;mgbc.gridheight = 5;
+		mgbc.weightx = 1; mgbc.weighty = 1;mgbc.anchor = GridBagConstraints.NORTH;
 		this.setLayout(new GridBagLayout());
-		JScrollPane jsp = new JScrollPane(this.resourceList);
-		jsp.setPreferredSize(new Dimension(200,250));
-		this.add(jsp, mgbc);
 		
-		mgbc.next();mgbc.gridheight = 1;
-		this.add(new JLabel("Field Description"), mgbc);
+		this.resourceList = new ModelFieldList(this);
+		this.resourceList.setPreferredSize(new Dimension(230,400));
+		this.add(this.resourceList, mgbc);
 		
-		mgbc.next();mgbc.gridheight = 5;
-		classTree = new FilteredFieldTree("Saada Attributes", 250, 170);		
-		this.add(classTree, mgbc);
+		this.descPanel = new JEditorPane("text/html", "");
+		this.descPanel.setEditable(false);
+		this.descPanel.setPreferredSize(new Dimension(230, 220));
+		this.mapField = new DMAttributeTextField();
+		this.mapField.setColumns(24);
+		this.checkButton = new JButton("Check and Store");
+		JPanel jp = new JPanel();
+		jp.setBorder(BorderFactory.createTitledBorder("Field Mapper"));
+		jp.setLayout(new BoxLayout(jp, BoxLayout.PAGE_AXIS));	
+		jp.setPreferredSize(new Dimension(230,300));
 
-		mgbc.newRow(); mgbc.gridx = 1;mgbc.gridheight = 1;
-		descPanel = new JEditorPane("text/html", "");
-		descPanel.setEditable(false);
+		jp.add(new JLabel("Field Description"));
 		JScrollPane js = new JScrollPane(descPanel);
-		js.setPreferredSize(new Dimension(250, 170));
-		descPanel.setPreferredSize(new Dimension(250, 170));
-		this.add(js, mgbc);
+		js.setPreferredSize(new Dimension(230, 220));
+		jp.add(js);
+		jp.add(new JLabel("Mapping Statement"));
+		jp.add(mapField);
+		jp.add(checkButton);
+		mgbc.next();
+		this.add(jp,mgbc);
+		
+		mgbc.rowEnd();
+		this.classTree = new FilteredFieldTree("Saada Attributes", 230,400);				
+		this.add(classTree, mgbc);
+		
+		mgbc.newRow(); mgbc.gridwidth = 3;
+		this.add(AdminComponent.getHelpLabel(HelpDesk.MODEL_MAPPER), mgbc);
 
-		mgbc.newRow(); mgbc.gridx = 1;
-		this.add(new JLabel("Mapping Statement"), mgbc);
-
-		mgbc.newRow(); mgbc.gridx = 1;
-		mapField = new DMAttributeTextField();
-		mapField.setColumns(24);
-		this.add(mapField, mgbc);
-
-		mgbc.newRow(); mgbc.gridx = 1;
-		checkButton = new JButton("Check and Store");
-		this.add(checkButton, mgbc);
 		this.updateUI();
 		mapField.addFocusListener(new FocusListener() {		
 			public void focusLost(FocusEvent arg0) {
@@ -98,6 +105,11 @@ public class ModelViewPanel extends JPanel {
 				resourceList.storeCurrentMapping();			
 			}
 		});
+		checkButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				resourceList.checkContent(true);
+			}
+		});
 	}
 
 	public boolean setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
@@ -105,15 +117,20 @@ public class ModelViewPanel extends JPanel {
 			metaClass = null;
 			metaCollection = Database.getCachemeta().getCollection(dataTreePath.collection);
 			category = dataTreePath.category;
-			classTree.setAttributeHandlers(MetaCollection.getAttribute_handlers(Category.getCategory(category)));
+			classTree.setAttributeHandlers(category);
+			mapField.setAttributeHandlers(category);
+			resourceList.resetFields();
 			return true;
 		} else if( dataTreePath.isClassLevel() ) {
 			metaClass = Database.getCachemeta().getClass(dataTreePath.classe);
 			metaCollection = null;
 			category = dataTreePath.category;
-			classTree.setAttributeHandlers(metaClass.getAttributes_handlers());
+			classTree.setAttributeHandlers(metaClass);
+			mapField.setAttributeHandlers(metaClass);
+			resourceList.resetFields();
 			return true;
 		} else {
+			resourceList.resetFields();
 			AdminComponent.showInputError(obscoreMapperPanel.rootFrame, "Selet a data tree node either at category or class level");
 			return false;
 		}
@@ -139,7 +156,7 @@ public class ModelViewPanel extends JPanel {
 				+ "<TR><TD ALIGN=RIGHT><B>Type</TD><TD>" + uth.getType()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B>UType</TD><TD>" + uth.getUtype()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B>Unit</TD><TD>" + uth.getUnit()+ "</TD></TR>"
-				+ "<TR><TD ALIGN=RIGHT><B>Descrption</TD><TD>" + uth.getComment()+ "</TD></TR></TABLE><BR>"
+				+ "<TR><TD ALIGN=RIGHT><B>Description</TD><TD>" + uth.getComment()+ "</TD></TR></TABLE><BR>"
 		);	
 	}
 

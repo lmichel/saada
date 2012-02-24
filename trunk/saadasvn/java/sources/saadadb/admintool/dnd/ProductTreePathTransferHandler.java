@@ -66,8 +66,12 @@ public class ProductTreePathTransferHandler extends TransferHandler {
      */
     public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
       	for( int i=0 ; i<transferFlavors.length ; i++) {
+
     		if( "javax.swing.tree.TreePath".equals(transferFlavors[i].getRepresentationClass().getName()) ) {
     			return true;
+    		}
+    		else {
+            	return false;
     		}
     	}
     	return false;

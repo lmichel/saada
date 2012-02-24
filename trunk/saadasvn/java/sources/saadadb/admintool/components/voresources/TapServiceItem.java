@@ -94,10 +94,6 @@ public class TapServiceItem extends JPanel {
 			public void mouseEntered(MouseEvent arg0) {}	
 			public void mouseClicked(MouseEvent arg0) {}
 		});
-		//		           for(Iterator i = UIManager.getDefaults().entrySet().iterator(); i.hasNext(); ) {
-		//			                Map.Entry next = (Map.Entry)i.next();
-		//			                System.out.println(next.getKey());
-		//		           }
 	}
 	protected String getDataTreePath() {
 		return this.capability.getDataTreePath();
@@ -108,7 +104,6 @@ public class TapServiceItem extends JPanel {
 	public void select() {
 		this.setBackground(SELECTED);
 		this.label.setForeground(Color.WHITE);
-		System.out.println(" capa.desc " + this.capability.getDescription());
 		((TapServiceList)(this.getParent())).setDescription(this.capability.getDescription());
 		this.selected = true;
 	}

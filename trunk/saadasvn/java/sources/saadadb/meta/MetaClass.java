@@ -158,13 +158,11 @@ public class MetaClass extends MetaObject{
 		return this.attribute_handlers.values().toArray(new AttributeHandler[0]);
 	}
 	public HashMap<String,AttributeHandler> getAttributes_handlers() {
-		return this.attribute_handlers;
+		return (HashMap<String, AttributeHandler>) this.attribute_handlers.clone();
 	}
 	public final Set<String> getClassAttribute_names() {
 		return this.attribute_handlers.keySet();
 	}
-
-
 	public final boolean attributeExists(String attrName){
 		return this.attribute_handlers.containsKey(attrName);
 	}

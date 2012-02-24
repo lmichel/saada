@@ -1,6 +1,8 @@
 package saadadb.admintool.tree;
 
 import java.awt.Frame;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragSource;
 
 
 /**
@@ -448,5 +450,8 @@ public class VoCharacDMTree extends VoTree {
 		utype_tokens[utype_tokens.length - 1] = utype + " " + comment;
 		return utype_tokens;
 
+	}
+	
+	protected void setDragFeatures() {
 	}
 }
