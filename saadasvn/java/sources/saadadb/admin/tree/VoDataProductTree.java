@@ -123,13 +123,13 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 	 */
 	public void dragGestureRecognized(DragGestureEvent dge) {
+		System.out.println("ADMIN dragGestureRecognized" );
 		Point location = dge.getDragOrigin();
 		TreePath dragPath = tree.getPathForLocation(location.x, location.y);            
 		if (dragPath != null && tree.isPathSelected(dragPath)) {
 			Transferable transferable = new TreePathTransferable(dragPath);
 			dge.startDrag(DragSource.DefaultMoveDrop, transferable, this);
 		}
-
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {
@@ -148,6 +148,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	}
 
 	protected void setDragFeatures() {
+		System.out.println("setDragFeatures ADMIN");
 		DragSource ds = new DragSource();
 		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY, this);
 
@@ -171,7 +172,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 		VoDataProductTree vot;
 		vot = new VoDataProductTree(frame
 				, "ext/keywords"
-				, "/home/michel/saada/deploy/TestBench1_5/033.fits_src_classyes/data/033-EUVEngc4151imgx1.fits");
+				, "/Users/laurentmichel/Desktop/DossierBoston/xmmsl1D_clean.fits.gz");
 		vot.buildTree(new Dimension(300, 500));
 		vot.setPreferredSize(new Dimension(300, 500));
 		frame.add(vot);

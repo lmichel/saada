@@ -74,7 +74,8 @@ public class ModelFiedlEditor extends JPanel {
 		c.gridx = 0;c.gridy++; c.gridwidth = 1;
 		this.add(check_button, c);
 
-		this.mapper = new DMAttributeTextField(mc, "");
+		this.mapper = new DMAttributeTextField();
+		this.mapper.setAttributeHandlers(mc);
 		this.mapper.setColumns(32);
 		if( dm_impl != null ) {
 			String str = dm_impl.getSQLField(uth.getUtypeOrNickname());
@@ -115,7 +116,7 @@ public class ModelFiedlEditor extends JPanel {
 
 	public void setMetaClass(MetaClass mc) throws FatalException {					
 		mapper.setText("");
-		mapper.setMetaClass(mc);
+		mapper.setAttributeHandlers(mc);
 		if( dm_impl != null ) {
 			try {
 				String str = dm_impl.getSQLField(uth.getUtypeOrNickname());

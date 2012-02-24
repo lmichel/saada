@@ -33,7 +33,7 @@ public abstract class OuterWindow extends JFrame {
 	}
 	
 	OuterWindow(AdminTool rootFrame) {
-		super("Data View");
+		super("Resource Viewer");
 		dimension = new Dimension(defaultDim.width, defaultDim.height);
 		OuterWindow.rootFrame = rootFrame;
 		this.panel = new JPanel();

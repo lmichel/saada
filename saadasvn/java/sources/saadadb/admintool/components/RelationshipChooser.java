@@ -116,9 +116,6 @@ public class RelationshipChooser extends JPanel {
 				String end   = mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category());
 				String retour  = "";
 				String ep;
-				System.out.println(RelationshipChooser.this.endPoint);
-				System.out.println(start);
-				System.out.println(end + "\n");
 				if( RelationshipChooser.this.endPoint.equals(start)) {
 					ep = "(to " + end + ")"; 
 				}

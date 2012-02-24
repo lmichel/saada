@@ -485,5 +485,9 @@ public class VoUCDTree extends VoTree {
 		utype_tokens[utype_tokens.length - 1] = string;
 		return utype_tokens;
 	}
+	
+	protected void setDragFeatures() {
+	}
+
 
 }

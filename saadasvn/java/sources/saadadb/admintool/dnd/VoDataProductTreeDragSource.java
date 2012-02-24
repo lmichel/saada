@@ -22,7 +22,6 @@ public class VoDataProductTreeDragSource implements DragGestureListener, DragSou
 	private JTree tree;
 	  public VoDataProductTreeDragSource(JTree tree) {
 	    this.tree = tree;
-	    System.out.println("init");
 
 	    // Use the default DragSource
 	    DragSource dragSource = DragSource.getDefaultDragSource();

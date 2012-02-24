@@ -77,10 +77,8 @@ public class RelationDropPanel extends TaskPanel {
 
 	@Override
 	protected Map<String, Object> getParamMap() {
-		System.out.println(configChooser.getSelectedRelation() );
 		if( configChooser.getSelectedRelation() != null ) {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
-			System.out.println("coucuou");
 			map.put("relation", configChooser.getSelectedRelation());
 			return map;
 		}

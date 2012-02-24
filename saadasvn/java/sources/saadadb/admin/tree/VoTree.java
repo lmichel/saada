@@ -99,7 +99,6 @@ public abstract class VoTree extends JPanel {
 		for( int i=0 ; i<top.getChildCount() ; i++ ) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) top.getChildAt(i);
 			tree.scrollPathToVisible(new TreePath(node.getPath()));
-
 		}
 		JScrollPane scrollPane = new JScrollPane(tree);
 		scrollPane.setPreferredSize(dim);

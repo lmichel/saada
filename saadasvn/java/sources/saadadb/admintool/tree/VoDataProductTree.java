@@ -45,6 +45,8 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 		super(frame, top_node);
 		try {
 			buildTree(filename);
+			this.setDragFeatures();
+
 		} catch (Exception e) {
 			flat_types = null;
 			AdminComponent.showFatalError(frame, e.toString());
@@ -54,9 +56,11 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 
 	public VoDataProductTree(Container frame, String top_node) {
 		super(frame, top_node);
+		this.setDragFeatures();
 	}
 	public VoDataProductTree(Container frame) {
 		super(frame);
+		this.setDragFeatures();
 	}
 	/**
 	 * @param filename
@@ -127,7 +131,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	 */
 	public void dragGestureRecognized(DragGestureEvent dge) {
 		Point location = dge.getDragOrigin();
-		TreePath dragPath = tree.getPathForLocation(location.x, location.y);            
+		TreePath dragPath = tree.getPathForLocation(location.x, location.y);    
 		if (dragPath != null && tree.isPathSelected(dragPath)) {
 			Transferable transferable = new TreePathTransferable(dragPath);
 			dge.startDrag(DragSource.DefaultMoveDrop, transferable, this);
@@ -150,9 +154,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	}
 
 	protected void setDragFeatures() {
-		DragSource ds = new DragSource();
-		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY, this);
-
+		(new DragSource()).createDefaultDragGestureRecognizer(tree, DnDConstants.ACTION_COPY, this);
 	}
 	/* (non-Javadoc)
 	 * @see gui.VOTree#getPathComponents(java.lang.String)
@@ -164,22 +166,23 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	}
 
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		JFrame frame = new JFrame();		
 		JTabbedPane onglets = new JTabbedPane();
 		VoDataProductTree vot;
 		vot = new VoDataProductTree(frame
 				, "ext/keywords"
-				, "/home/michel/saada/deploy/TestBench1_5/033.fits_src_classyes/data/033-EUVEngc4151imgx1.fits");
-		vot.drawTree(new Dimension(300, 500));
+				,"/Users/laurentmichel/Desktop/DossierBoston/xmmsl1D_clean.fits.gz");
+		try {
+			vot.buildTree("/Users/laurentmichel/Desktop/DossierBoston/xmmsl1D_clean.fits.gz");
+			vot.drawTree(new Dimension(300, 200));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		vot.setPreferredSize(new Dimension(300, 500));
 		frame.add(vot);
 		frame.pack();
 		frame.setVisible(true);
 	}
-
-
 }

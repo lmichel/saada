@@ -124,5 +124,8 @@ public class VoSpectrumDMTree extends VoTree {
 		return utype_tokens;
 	}
 	
+	protected void setDragFeatures() {
+	}
+
 
 }

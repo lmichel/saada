@@ -196,7 +196,6 @@ public class ResultSetTableModel implements TableModel {
 		 * Points onto the ucd column
 		 */
 		for( int i=0 ; i<nbc ; i++ ) {
-			System.out.println(getColumnName(i));
 			if( getColumnName(i).equals("ucd") ) {
 				/*
 				 * Store the previous ucd

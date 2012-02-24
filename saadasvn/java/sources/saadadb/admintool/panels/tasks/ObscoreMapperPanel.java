@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
@@ -17,10 +18,7 @@ import saadadb.admintool.components.voresources.ModelFieldMapper;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
-import saadadb.meta.MetaCollection;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
 
@@ -41,7 +39,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 	@Override
 	public void initCmdThread() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -59,25 +57,25 @@ public class ObscoreMapperPanel extends TaskPanel {
 		this.setSelectedResource("VO Model ObsCore", null);
 	}
 
-
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath == null ) {
 			return;
-		} else if( dataTreePath.isCollectionLevel() ) {
-			showInputError(rootFrame, "No category (IMAGE,ENTRY....) nor class in the selected data tree node");
-			return;
-		} else 	if( this.hasChanged() && !showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
-			return;
-		} else {
-			super.setDataTreePath(dataTreePath);
-			try {
-				modelFieldMapper.setDataTreePath(dataTreePath);
-			} catch (SaadaException e) {
-				showFatalError(rootFrame, e);
+		} else if( dataTreePath.isClassLevel() ) {
+			if( !this.hasChanged() ||
+			    showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
+				super.setDataTreePath(dataTreePath);
+				try {
+					modelFieldMapper.setDataTreePath(dataTreePath);
+				} catch (SaadaException e) {
+					showFatalError(rootFrame, e);
+				}
 			}
+		} else {
+			showInputError(rootFrame, "DM mapping can only be done at class level. Select a class (a tree leaf) on the Database map");
+			return;
 		}
 	}
 
@@ -96,7 +94,11 @@ public class ObscoreMapperPanel extends TaskPanel {
 		MyGBC emc = new MyGBC(5,5,5,5);
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
 		tPanel.add(modelFieldMapper, emc);
+		modelFieldMapper.setCollapsed(false);
 		
+		emc.newRow();
+		tPanel.add(new CollapsiblePanel("Manage Data Classes Published in ObsCore"), emc);
+
 		this.setActionBar(new Component[]{runButton, saveButton
 				, debugButton});
 

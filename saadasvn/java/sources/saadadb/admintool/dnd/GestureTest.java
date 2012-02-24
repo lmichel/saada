@@ -57,8 +57,6 @@ public class GestureTest extends JFrame implements DragGestureListener {
   }
 
   public void dragGestureRecognized(DragGestureEvent dge) {
-	  
-    System.out.println("Drag Gesture Recognized!" + dge.getComponent());
   }
 
   public static void main(String args[]) {
