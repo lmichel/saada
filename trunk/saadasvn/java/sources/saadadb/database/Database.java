@@ -37,13 +37,17 @@ public class Database {
 	public static String max_short = Short.toString(Short.MAX_VALUE);
 
 	public static CacheManager cache ;
-	
+
 	public static CacheManagerRelationIndex cacheindex = null;
 
 	public static CacheMeta cachemeta;
 
 	private static boolean init_done = false;
-	
+	/*
+	 * Used when a the rooturl is specific to one WEB applicaiton instance different from this
+	 * stored in the DB (Multiple WEB apps on one DB)
+	 */
+	private static String localUrl_root = "";
 
 
 	/**
@@ -62,15 +66,15 @@ public class Database {
 				Messenger.printStackTrace(e);
 				Messenger.trapFatalException( new FatalException(e.getMessage(), SaadaException.getExceptionMessage(e)));
 			}
-		DefineType.init();
-		/*
-		 * Flag must be set here to avoid recursivity in cacheindex.getCache(20);
-		 */
-		Database.init_done = true;
-		cache.getCache(5000);
+			DefineType.init();
+			/*
+			 * Flag must be set here to avoid recursivity in cacheindex.getCache(20);
+			 */
+			Database.init_done = true;
+			cache.getCache(5000);
 		}
 	}
-	
+
 	/**
 	 * This operation is separated from the above init because the DBMSwrapper is used to create tables and table creation
 	 * must be achieved before to init the cache
@@ -80,7 +84,7 @@ public class Database {
 	public static void initConnector(String db_name, boolean force) throws Exception {
 		Database.connector = SaadaDBConnector.getConnector(db_name, force);
 	}
-	
+
 	/**
 	 * Used by the DB config setup: allows to use all DB stuff before any SaadaDB does exist
 	 */
@@ -99,7 +103,7 @@ public class Database {
 	public static SaadaDBConnector getConnector() {
 		return connector;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws FatalException 
@@ -117,7 +121,14 @@ public class Database {
 	 * @return
 	 */
 	public static String getUrl_root() {
-		return connector.getUrl_root();
+		if( localUrl_root.length() > 0 ) {
+			return localUrl_root;
+		} else {
+			return connector.getUrl_root();
+		}
+	}
+	public static void setUrl_root(String url_root) {
+		localUrl_root = url_root;
 	}
 	/**
 	 * @return
@@ -257,7 +268,7 @@ public class Database {
 	public static String getSpect_type() {
 		return connector.getSpect_type();
 	}
-	
+
 
 	/**
 	 * @return object persistence of this OID
@@ -273,7 +284,7 @@ public class Database {
 			Field fieldlist[] = obj.getClass().getDeclaredFields();
 			String sql = "";
 			sql = " Select * from " + _nameclass
-							+ " where  oidsaada = " + oid;
+			+ " where  oidsaada = " + oid;
 			SQLQuery squery = new SQLQuery();
 			ResultSet rs = squery.run(sql);
 			if (rs.next()) {
@@ -284,7 +295,7 @@ public class Database {
 				 * ObsCOre obj have no MD5
 				 */
 				if( sm != null) {
-				obj.setContentsignature(rs.getString("md5keysaada").trim());
+					obj.setContentsignature(rs.getString("md5keysaada").trim());
 				}
 				for (int i = 0; i < fieldlist.length; i++) {
 					obj.changeField(fieldlist[i], rs);
@@ -317,7 +328,7 @@ public class Database {
 			return null;
 		}
 		SaadaInstance obj = (SaadaInstance)  SaadaClassReloader.forGeneratedName( _nameclass.trim())
-				.newInstance();
+		.newInstance();
 		obj.setOid(oid);
 		return obj;
 	}
@@ -373,7 +384,7 @@ public class Database {
 	public static String getSepar() {
 		return separ;
 	}
-	
+
 	/**
 	 * @return Returns the path separator usable in Regexp (\ -> \\).
 	 */
@@ -391,7 +402,7 @@ public class Database {
 	 * (out of a SaadaDB). At database creation Database.init(), is replaced with Database.init("DBNAME")
 	 */
 	public static void init() {
-		
+
 	}
- 
+
 }

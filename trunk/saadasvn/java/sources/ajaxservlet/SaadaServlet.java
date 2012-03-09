@@ -360,6 +360,7 @@ public class SaadaServlet extends HttpServlet {
 						String retour =  buff.trim().split("=")[1];
 						Messenger.printMsg(Messenger.TRACE, "readURLRoot: " + retour);
 						this.urlroot = retour;
+						Database.setUrl_root(this.urlroot);
 					}
 					else if( buff.matches("saadadbroot=.*")) {
 						String retour =  buff.trim().split("=")[1];
