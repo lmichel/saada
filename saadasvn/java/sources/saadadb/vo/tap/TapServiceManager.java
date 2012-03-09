@@ -383,11 +383,11 @@ public class TapServiceManager extends EntityManager {
 
 
 	/**
-	 * republish all TAP tabkle declared in the saada_vo_capabilities table.
+	 * republish all TAP tables declared in the saada_vo_capabilities table.
 	 * All previous table published are first removed except those of the ivoa schema.
 	 * @throws Exception
 	 */
-	public void synchronizeWithGlabalCapabilities() throws Exception {
+	public void synchronizeWithGlobalCapabilities() throws Exception {
 		int missingTable = serviceExists();
 		if( missingTable < 0 ) {
 			FatalException.throwNewException(SaadaException.CORRUPTED_DB, "There are some relics of a previous implementation of TAP service. Please run the remove and create again the service");

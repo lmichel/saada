@@ -108,10 +108,10 @@ public class TAPServicePanel extends EditPanel {
 					SQLTable.beginTransaction();
 					Table_Saada_VO_Capabilities.emptyTable("TAP");
 					tapSelector.makeSaveQuery();
-					tsm .synchronizeWithGlabalCapabilities();
+					tsm .synchronizeWithGlobalCapabilities();
 					SQLTable.commitTransaction();
 					tapSelector.loadCapabilities();
-					showSuccess(TAPServicePanel.this.rootFrame, "VO authority saved");
+					showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
 				} catch (SaadaException e1) {
 					SQLTable.abortTransaction();
 					if( e1.getMessage().equals(SaadaException.MISSING_RESOURCE)) {
@@ -119,10 +119,12 @@ public class TAPServicePanel extends EditPanel {
 							try {
 								SQLTable.beginTransaction();
 								tsm.create(null);
-								tsm .synchronizeWithGlabalCapabilities();
+								SQLTable.commitTransaction();
+								SQLTable.beginTransaction();
+								tsm .synchronizeWithGlobalCapabilities();
 								SQLTable.commitTransaction();
 								tapSelector.loadCapabilities();
-								showSuccess(TAPServicePanel.this.rootFrame, "VO Authority saved");
+								showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
 							} catch (Exception e) {
 								SQLTable.abortTransaction();
 								showFatalError(rootFrame, e1);

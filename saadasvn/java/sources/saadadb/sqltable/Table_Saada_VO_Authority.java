@@ -14,7 +14,8 @@ import saadadb.vo.registry.Authority;
 
 
 public class Table_Saada_VO_Authority extends SQLTable {
-
+	public static final String tableName = "saadadb_vo_authority";
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static  void createTable(Authority authority) throws Exception {
 		Authority a = Authority.getInstance();
@@ -40,8 +41,8 @@ public class Table_Saada_VO_Authority extends SQLTable {
 			}
 		}
 
-		if( !SQLTable.tableExist("saadadb_vo_authority")) {
-			SQLTable.createTable("saadadb_vo_authority"
+		if( !SQLTable.tableExist(tableName)) {
+			SQLTable.createTable(tableName
 					,createStmt
 					, null
 					, false);
@@ -50,20 +51,25 @@ public class Table_Saada_VO_Authority extends SQLTable {
 		}
 
 		SQLTable.addQueryToTransaction(
-				Database.getWrapper().getInsertStatement("saadadb_vo_authority"
+				Database.getWrapper().getInsertStatement(tableName
 						, insertColumns.toArray(new String[0])
 						, insertValues.toArray(new String[0]))
-						,  "saadadb_vo_authority");
+						,  tableName);
 	}
 
 	public static void emptyTable() throws AbortException {
-		SQLTable.addQueryToTransaction("DELETE FROM saadadb_vo_authority");
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName);
 	}
 	public static void removeTable() throws FatalException {
-		SQLTable.addQueryToTransaction(Database.getWrapper().dropTable("saadadb_vo_authority"));
+		SQLTable.addQueryToTransaction(Database.getWrapper().dropTable(tableName));
 	}
 	
 	public static  void loadTable(Authority authority) throws Exception {
+		if( !SQLTable.tableExist(tableName)) {
+			SQLTable.beginTransaction();
+			createTable(authority);
+			SQLTable.commitTransaction();
+		}
 		Class c = authority.getClass();
 		ArrayList<String> columns = new ArrayList<String>();
 		ArrayList<Method> setter = new ArrayList<Method>();
@@ -79,7 +85,7 @@ public class Table_Saada_VO_Authority extends SQLTable {
 		}
 
 		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("SELECT * FROM saadadb_vo_authority");
+		ResultSet rs = squery.run("SELECT * FROM " + tableName);
 		ResultSetMetaData rsm = rs.getMetaData();
 		int colCount = rsm.getColumnCount();
 		while( rs.next()) {
