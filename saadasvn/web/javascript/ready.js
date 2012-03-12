@@ -59,6 +59,15 @@ function getTreePathAsKey() {
 	return retour;
 }
 
+var changeLocationAuthorized = false;
+function changeLocation(url){
+	changeLocationAuthorized = true;
+	logMsg(changeLocationAuthorized);
+	window.location = url;
+	logMsg("apres " + changeLocationAuthorized);
+
+}
+
 var stillToBeOpen = false;
 var simbadToBeOpen = false;
 
@@ -639,11 +648,20 @@ $().ready(function() {
 	$('#showquerymeta').click(function(){logged_alert("No meta data available yet");});
 
 	sampView.fireSampInit();
-	tapView.fireRefreshJobList();
+	//tapView.fireRefreshJobList();
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 
-	$(window).bind('beforeunload', function(){
-		return 'WARNING: Reloading or leaving this page will lost the current session';
-	});
+//	$(window).bind('beforeunload', function(){
+//		if( !changeLocationAuthorized ) {
+//			logMsg("NOT auth");
+//
+//			var retour =  'WARNING: Reloading or leaving this page will lost the current session'+  changeLocationAuthorized;
+//			return retour;
+//		}
+//		else {
+//			logMsg("auth");
+//			changeLocationAuthorized = false;
+//		}
+//	});
 
 });
