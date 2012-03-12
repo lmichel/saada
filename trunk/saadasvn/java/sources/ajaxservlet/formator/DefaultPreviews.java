@@ -108,17 +108,24 @@ abstract public class DefaultPreviews {
 			/*
 			 * Look for a file with the same name but enable to  be displayed by the browser
 			 */
+			String vproduct = "No preview";
 			for(String app: disp_formats) {
 				if( (new File(sp + "." + app)).exists() ) {							
-					String vproduct = "getproduct?" 
-						+ "oid=" + oid 
-						+ "&ext=" + app;
-					return "<A border=0 TITLE='Show real size' href='javascript:void(0);' onclick='resultPaneView.fireShowPreview(\"" 
-					+ vproduct + "\", \"" 
-					+ fi.getNameSaada()+ "\");'>" 
-					+ "<IMG class=vignette  SRC='"  + vproduct + "'"  + " HEIGHT=" + size  +" ALIGN=top></A>";	
+					vproduct = "<IMG class=vignette  SRC='"  +"getproduct?" 
+					+ "oid=" + oid 
+					+ "&ext=" + app + "'"  + " HEIGHT=" + size  +" ALIGN=top>";
+					break;
 				}
 			}
+
+			//					return "<A border=0 TITLE='Show real size' href='javascript:void(0);' onclick='resultPaneView.fireShowPreview(\"" 
+			//					+ "getproduct?" 
+			//					+ "oid=" + oid  + "\", \"" 
+			//					+ fi.getNameSaada()+ "\");'>" 
+			//					+ "<IMG class=vignette  SRC='"  + vproduct + "'"  + " HEIGHT=" + size  +" ALIGN=top></A>";	
+			return "<A border=0 target=blank TITLE='Show real size' href='getproduct?oid=" + oid + "'>" 
+			+ vproduct + "</A>";	
+
 		} catch (SaadaException e) {}
 		return "no preview";
 	}
