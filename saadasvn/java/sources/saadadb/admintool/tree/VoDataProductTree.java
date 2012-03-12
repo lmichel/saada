@@ -29,13 +29,18 @@ import saadadb.products.ProductFile;
 import saadadb.products.VOProduct;
 import saadadb.util.RegExp;
 
+/**
+ * @author laurent
+ * @version $Id$
+ *
+ */
 public class VoDataProductTree extends VoTree implements DragGestureListener,  DragSourceListener{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/** * @version $Id: VoDataProductTree.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** 
 
 	 * @param frame
 	 * @param top_node
@@ -125,7 +130,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	}
 
 	/*
-	 * Drag gesture must be redifined in subclasses
+	 * Drag gesture must be redefined in subclasses
 	 * (non-Javadoc)
 	 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 	 */
