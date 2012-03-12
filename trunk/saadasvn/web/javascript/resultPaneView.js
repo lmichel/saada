@@ -602,6 +602,7 @@ jQuery
 				 * Connect the table with the DB
 				 */
 				$('#datatable').dataTable({
+			        "aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
 					"bProcessing" : true,
 					"aaSorting" : [],
