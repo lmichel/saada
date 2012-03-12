@@ -170,6 +170,7 @@ public class GetObject extends SaadaServlet {
 					ja = new JSONArray();
 					int cpt=0;
 					for( SaadaLink sl : sls ) {
+						colform.setOId(sl.getEndindOID());
 						JSONArray list = new JSONArray();
 						if( cpt++ > 100 ) {
 							list.add("truncated");
