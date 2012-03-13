@@ -217,7 +217,8 @@ public abstract class AdminPanel extends AdminComponent {
 	protected abstract void setToolBar() ;
 
 	/**
-	 * Put widget in the active area of the panel;¢
+	 * Put widget in the active area of the panel
+	 * 
 	 */
 	protected abstract void setActivePanel() ;
 
