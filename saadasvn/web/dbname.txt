@@ -1,4 +1,4 @@
-# This file can be pur at the webapp root to indicate the saadadb name of the current application
+# This file can be put at the webapp root to indicate the saadadb name of the current application
 saadadbname=ThreeXMM
 #saadadbname=XIDResult
 #urlroot=http://jacds.u-strasbg.fr/saadasvn

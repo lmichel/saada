@@ -256,6 +256,8 @@ jQuery
 				$(document.documentElement)
 				.append(
 				"<div id=detaildiv style='width: 99%; display: none;'><div style='color: black;' id=description></div></div>");
+			} else {
+				$('#detaildiv').html("<div style='color: black;' id=description></div>");
 			}
 			$('#description').load("help/description.html");
 			$('#detaildiv').modal();
