@@ -48,9 +48,7 @@ jQuery.extend({
 		this.download = function() {
 			if( that.results.length >= 1 ) {
 				var url = that.results[0];
-				logMsg("download " + url);
-			//	changeLocation(url);
-				window.location = url;
+				changeLocation(url);
 			}
 			else {
 				logged_alert("No ZIP archive available");

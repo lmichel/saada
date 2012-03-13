@@ -59,13 +59,23 @@ function getTreePathAsKey() {
 	return retour;
 }
 
-var changeLocationAuthorized = false;
+/*
+ * Using a Jquery bind() here has a strange behaviour...
+ * http://stackoverflow.com/questions/4458630/unable-to-unbind-the-window-beforeunload-event-in-jquery
+ */
+window.onbeforeunload = function() {
+	if( !authOK) {
+		return  'WARNING: Reloading or leaving this page will lost the current session';
+	}
+	else {
+		authOK = false;
+	}
+};
+var authOK = false;
 function changeLocation(url){
-	changeLocationAuthorized = true;
-	logMsg(changeLocationAuthorized);
+	logMsg("changeLocation " + url);
+	authOK = true;
 	window.location = url;
-	logMsg("apres " + changeLocationAuthorized);
-
 }
 
 var stillToBeOpen = false;
@@ -346,7 +356,7 @@ $().ready(function() {
 			"json_data"   : data , 
 			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
 			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-				
+
 				"drop_finish" : function (data) {
 					var parent = data.r;
 					var treepath = data.o.attr("id").split('.');
@@ -390,7 +400,7 @@ $().ready(function() {
 			}
 		}); // end of jstree
 //		dataTree.bind("select_node.jstree", function (e, data) {
-//			alert(data);
+//		alert(data);
 //		});
 		dataTree.bind("dblclick.jstree", function (e, data) {
 			var node = $(e.target).closest("li");
@@ -650,18 +660,5 @@ $().ready(function() {
 	sampView.fireSampInit();
 	//tapView.fireRefreshJobList();
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
-
-//	$(window).bind('beforeunload', function(){
-//		if( !changeLocationAuthorized ) {
-//			logMsg("NOT auth");
-//
-//			var retour =  'WARNING: Reloading or leaving this page will lost the current session'+  changeLocationAuthorized;
-//			return retour;
-//		}
-//		else {
-//			logMsg("auth");
-//			changeLocationAuthorized = false;
-//		}
-//	});
 
 });
