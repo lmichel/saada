@@ -56,7 +56,7 @@ abstract public class DefaultPreviews {
 	}
 	public static final String getDLLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		return "<a title='Download the porduct file' class=dl_download href='" + si.getDownloadURL(true) + "'></A>";
+		return "<a title='Download the porduct file' class=dl_download  href='javascript:void(0);' onclick='changeLocation(\"" + si.getDownloadURL(true) + "\");'></A>";
 		//		SaadaInstance si =  Database.getCache().getObject(oid);
 		//		File f = new File(si.getRepositoryPath());
 		//		if( !f.exists()) {
