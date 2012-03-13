@@ -1,11 +1,16 @@
 -------------------------------------------------
-Saada1.6.0 README
+Saada1.6.5 README
 
 L. MICHEL
-May 2011
+March 2012
 -------------------------------------------------
 
----- MAC (not tested yet) ----------------------
+---- SaadaDB Upgrade -----------
+Install the new Saada distrib
+go in SAADA_HOME/bin
+run ./upgrade
+
+---- MAC  ----------------------
 
 The Mac distrib has been tested on this configuration
 Model Name:       iMacBookPro
@@ -14,6 +19,8 @@ Processor Speed:  2.66 GHz
 OS:               Leopard 10.6.7
 
 ---- XP/SP2 VISTA (7 not tested yet) -----------------
+
+WARNING  SQLite is not supported by Saada on MS Windows
 
 Saada works on the 2 plateforms with the condition to 
 share with both postgres and tomcat (if exist) users 
