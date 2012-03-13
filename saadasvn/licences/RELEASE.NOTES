@@ -1,10 +1,20 @@
 -------------------------------------------------
-Saada1.6.0 Release notes
+Version Saada1.6.5
 
 L. MICHEL
-May 2011
+March 2012
 -------------------------------------------------
 
+Saada 1.6.5
+-----------
+
+Web interface
+	- new Icons
+	- Double click on data node instead of DnD
+	- Cart delegation service
+	- Cart management easier
+	
+Migration tool
 
 Saada 1.5.1.b
 -------------
