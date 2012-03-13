@@ -33,7 +33,7 @@ public class StartDialog extends JWindow  {
 	 * @throws MalformedURLException 
 	 */
 	public StartDialog() throws MalformedURLException {
-		JLabel l = new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("icons/splash.png")));
+		JLabel l = new JLabel(new ImageIcon(this.getClass().getClassLoader().getResource("images/splash.png")));
 		task_output.setBackground(SaadaDBAdmin.beige_color);
 		
 		Container cont = getContentPane();
