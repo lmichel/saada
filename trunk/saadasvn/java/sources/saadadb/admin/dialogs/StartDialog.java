@@ -44,7 +44,7 @@ public class StartDialog extends JWindow  {
 		this.pack();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension labelSize = this.getPreferredSize();
-		setLocation(screenSize.width/2 - (labelSize.width/2),
+		setLocation(screenSize.width/2  - (labelSize.width/2),
 				    screenSize.height/2 - (labelSize.height/2));
 		this.setVisible(true);	
 	}
