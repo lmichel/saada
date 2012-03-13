@@ -239,7 +239,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		for (AttributeHandler ah : columns_ucds) {
 			si.loadBusinessAttribute();
 			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
-					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(na)</a>");
+					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(?)</a>");
 			}
 		
 		for (String rel : columns_rel) {
