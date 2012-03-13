@@ -154,7 +154,7 @@ public class NewSaadaDBTool extends JFrame {
 		/*
 		 * and show
 		 */
-		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("saadadb/icons/saada_transp_square.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
 		this.pack();
 		this.setVisible(true);
 	}
