@@ -135,7 +135,7 @@ public class SaadaLink extends SaadaDMBrik implements Comparable, Comparator {
 	}
 
 	/**
-	 * used to sort links by qualifier (firts -> last)
+	 * used to sort links by qualifier (first -> last)
 	 * @param arg0
 	 * @param arg1
 	 * @return
