@@ -10,6 +10,7 @@ import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
 import saadadb.collection.EntrySaada;
+import saadadb.collection.Position;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.SpectrumSaada;
@@ -243,7 +244,15 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 		
 		for (String rel : columns_rel) {
-			rel = rel.substring(6);
+			/*
+			 * filter Json string
+			 */
+			String rfs[] = rel.split("[ :]");
+			rel = rfs[rfs.length - 1].trim();
+			if( !Database.getCachemeta().getRelation(rel).isIndexed() ){
+				retour.add("<span>No index!!</span>");
+				continue;
+			}
 			int nbcounter = si.getCounterparts(rel).length;
 			switch (nbcounter) {
 			case 0 : 
@@ -314,8 +323,16 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	public String getTitle() {
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
-				return SaadaOID.getCategoryName(oidsaada) + " "
-						+ Database.getCache().getObject(oidsaada) .getNameSaada();
+				SaadaInstance si = Database.getCache().getObject(oidsaada);
+				String pos = "";
+				if( si instanceof Position ) {
+					Position p = (Position)si;
+					pos = DefaultFormats.getHMSCoord(p.getPos_ra_csa(), p.getPos_dec_csa());
+				}
+				return SaadaOID.getCategoryName(oidsaada) + "  "
+						+ Database.getCache().getObject(oidsaada) .getNameSaada()
+						+ " " 
+						+ pos;
 			} catch (FatalException e) {
 				return e.toString();
 			}

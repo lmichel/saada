@@ -36,7 +36,7 @@ abstract public class DefaultPreviews {
 	 */
 	public static final String getHeaderLink(long oid) throws SaadaException {
 		EntrySaada si =  (EntrySaada) Database.getCache().getObject(oid);
-		return "<a title='Get the tyable header' class=dl_header href='javascript:void(0)' onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\");'></A>";
+		return "<a title='Get the table header' class=dl_header href='javascript:void(0)' onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\");'></A>";
 	}
 	public static final String  getDetailLink(long oid, String panelToOpen) throws SaadaException {
 		String panarg = (panelToOpen == null )? "null": "\"" + panelToOpen + "\"";
@@ -56,29 +56,8 @@ abstract public class DefaultPreviews {
 	}
 	public static final String getDLLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		return "<a title='Download the porduct file' class=dl_download  href='javascript:void(0);' onclick='changeLocation(\"" + si.getDownloadURL(true) + "\");'></A>";
-		//		SaadaInstance si =  Database.getCache().getObject(oid);
-		//		File f = new File(si.getRepositoryPath());
-		//		if( !f.exists()) {
-		//			return "Not Found";
-		//		}
-		//		else {
-		//			long size = f.length();
-		//			String unit = "b";
-		//			if( size > 1000000000) {
-		//				size /= 1000000000;
-		//				unit = "Gb";				
-		//			}
-		//			else if( size > 1000000) {
-		//				size /= 1000000;
-		//				unit = "Mb";				
-		//			}
-		//			else if( size > 1000) {
-		//				size /= 1000;
-		//				unit = "Kb";				
-		//			}
-		//			return "<a target=blank class=download href='" + si.getDownloadURL(true) + "'></A><br><span>" + size + unit + "</span>";
-		//		}
+		
+		return "<a title='Download the porduct file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "&qq=aaa.pdf\", \"preview\");'></A>";
 	}
 
 	/**
@@ -109,6 +88,12 @@ abstract public class DefaultPreviews {
 			 * Look for a file with the same name but enable to  be displayed by the browser
 			 */
 			String vproduct = "No preview";
+			/*
+			 * Filename is appended to the URLto help browsers to use their own viewer instead
+			 * of downloading or waiting the beginning of the transfer (FTTP header reception) to 
+			 * propose what to do with the file
+			 */
+			String extParam = "&filename=" + sp.substring(sp.lastIndexOf(File.separator) + 1);
 			for(String app: disp_formats) {
 				if( (new File(sp + "." + app)).exists() ) {							
 					vproduct = "<IMG class=vignette  SRC='"  +"getproduct?" 
@@ -117,13 +102,7 @@ abstract public class DefaultPreviews {
 					break;
 				}
 			}
-
-			//					return "<A border=0 TITLE='Show real size' href='javascript:void(0);' onclick='resultPaneView.fireShowPreview(\"" 
-			//					+ "getproduct?" 
-			//					+ "oid=" + oid  + "\", \"" 
-			//					+ fi.getNameSaada()+ "\");'>" 
-			//					+ "<IMG class=vignette  SRC='"  + vproduct + "'"  + " HEIGHT=" + size  +" ALIGN=top></A>";	
-			return "<A border=0 target=blank TITLE='Show real size' href='getproduct?oid=" + oid + "'>" 
+			return "<A border=0 target=blank TITLE='Show real size' href='javascript:void(0);' onclick='changeLocation(\"getproduct?oid=" + oid + extParam + "\");'>" 
 			+ vproduct + "</A>";	
 
 		} catch (SaadaException e) {}

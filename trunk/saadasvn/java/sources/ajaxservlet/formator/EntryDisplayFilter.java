@@ -86,7 +86,8 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
-			if( "Detail".equals(s)) {
+			System.out.println("   @@@@ " + s);
+			if( "Acces".equals(s)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 //			else if( "Aladin".equals(s)) {
