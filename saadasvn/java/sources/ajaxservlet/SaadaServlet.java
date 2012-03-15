@@ -214,6 +214,7 @@ public class SaadaServlet extends HttpServlet {
 		}
 		downloadProduct(req, res, product_path,f.getName() );
 	}
+	
 	/**
 	 * @param req
 	 * @param res
@@ -268,7 +269,7 @@ public class SaadaServlet extends HttpServlet {
 			res.setContentType("application/octet-stream");
 		}
 
-		res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
+		//res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
 		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);

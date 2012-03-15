@@ -148,12 +148,10 @@ public class GetObject extends SaadaServlet {
 					out.close();
 				}
 				else {
-					MetaRelation mr = Database.getCachemeta().getRelation(relation);
-					DisplayFilter colform = DisplayFilterFactory.getFilter(mr.getSecondary_coll(), Category.explain(mr.getSecondary_category()), request);
-
+					DisplayFilter colform = new LinkDisplayFilter(relation, request);
 					colform.setOId(oid);
 					SaadaInstance  si = Database.getCache().getObject(oid);
-					SaadaLink[] sls   = si.getStartingLinks(relation);
+					SaadaLink[] sls   = si.getStartingRelation(relation).getCounterparts(si.getOid(), true);
 
 					JSONObject jo = new JSONObject();
 					jo.put("relation", relation);

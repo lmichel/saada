@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 import com.mysql.jdbc.DatabaseMetaData;
 
 import saadadb.collection.Category;
+import saadadb.collection.Position;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.SpectrumSaada;
@@ -166,7 +167,15 @@ Serializable {
 
 		if (columns_rel.size() > 0) {
 			for (String rel : columns_rel) {
-				rel = rel.substring(6);
+				/*
+				 * filter Json string
+				 */
+				String rfs[] = rel.split("[ :]");
+				rel = rfs[rfs.length - 1].trim();
+				if( !Database.getCachemeta().getRelation(rel).isIndexed() ){
+					result.add("<span>No index!!</span>");
+					continue;
+				}
 				int nbcounter = si.getCounterparts(rel).length;
 				switch (nbcounter) {
 				case 0:
@@ -204,10 +213,18 @@ Serializable {
 	public String getTitle() {
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
-				return SaadaOID.getCategoryName(oidsaada)
-				+ " "
-				+ Database.getCache().getObject(oidsaada)
-				.getNameSaada();
+				SaadaInstance si = Database.getCache().getObject(oidsaada);
+				String pos = "";
+				if( si instanceof Position ) {
+					Position p = (Position)si;
+					pos = DefaultFormats.getHMSCoord(p.getPos_ra_csa(), p.getPos_dec_csa());
+				}
+				String cat =  SaadaOID.getCategoryName(oidsaada);
+				if( cat.equals("ENTRY")) cat = "TABLE ENTRY"; 
+				return cat + "  <i>"
+						+ Database.getCache().getObject(oidsaada) .getNameSaada()
+						+ "</i> - " 
+						+ pos;
 			} catch (FatalException e) {
 				return e.toString();
 			}
