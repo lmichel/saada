@@ -31,7 +31,7 @@ jQuery.extend({
 				$(this).css("background", "url(images/connecting.gif)center left no-repeat");
 				var connected = false;
 				try {
-					var connected = WebSampConnector.isConnected();
+					connected = WebSampConnector.isConnected();
 				}catch(err) {
 				}
 				if( connected == false ) {
@@ -55,9 +55,9 @@ jQuery.extend({
 						$(".ivoa").css('visibility', 'hidden');
 						logged_alert('Connection failed: Make sure you have a SAMP hub running<br>'
 								+ 'If not, you can start one by clicking on one icon below<br>'
-								+ '<a href=http://aladin.u-strasbg.fr/java/nph-aladin.pl?frame=get&id=AladinBeta.jnlp><img valign=center height=24 src="http://aladin.u-strasbg.fr/aladin_large.gif"></a>'
-						 		+ '<BR><a href=http://www.star.bris.ac.uk/~mbt/topcat/topcat-full.jnlp><img valign=center  height=24 src="http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif"></a>'
-						 		+ '<br>Once the applicaiton is running, close this dialog and try again to connect<br>'
+								+ '<a href="javascript:void(0);" onclick="changeLocation(\'http://aladin.u-strasbg.fr/java/nph-aladin.pl?frame=get&id=AladinBeta.jnlp\');"><img valign=center height=24 src="http://aladin.u-strasbg.fr/aladin_large.gif"></a>'
+						 		+ '<BR><a href="javascript:void(0);" onclick="changeLocation(\'http://www.star.bris.ac.uk/~mbt/topcat/topcat-full.jnlp\');"><img valign=center  height=24 src="http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif"></a>'
+						 		+ '<br>Once the application is running, close this dialog and try again to connect<br>'
 						 		);
 					}   //http://aladin.u-strasbg.fr/aladin_large.gif 
 						//http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif

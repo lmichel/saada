@@ -75,7 +75,7 @@ var authOK = false;
 function changeLocation(url){
 	logMsg("changeLocation " + url);
 	authOK = true;
-	window.location = url;
+	window.open (url, "_blank");
 }
 
 var stillToBeOpen = false;
@@ -157,7 +157,7 @@ function openSimbadDialog(pos) {
 			$('#simbadtable').dataTable({
 				"aoColumns" : jsdata.aoColumns,
 				"aaData" : jsdata.aaData,
-				"sDom" : '<"top">rt<"bottom">',
+				"sDom" : 'rt',
 				"bPaginate" : false,
 				"aaSorting" : [],
 				"bSort" : false,
@@ -166,11 +166,13 @@ function openSimbadDialog(pos) {
 				"bDestroy" : true
 			});
 			if( jsdata.aaData.length > 0 ) {
+				logMsg((jsdata.aaData[0])[0]);
+				logMsg(encodeURIComponent((jsdata.aaData[0])[0]));
 				$('#simbadtable').append("<img src='http://alasky.u-strasbg.fr/cgi/simbad-thumbnails/get-thumbnail.py?name=" 
-						+ escape((jsdata.aaData[0])[0]) + "'/>");
+						+ encodeURIComponent((jsdata.aaData[0])[0]) + "'/>");
 			}
 
-			var simbadpage = "<a class=simbad target=blank href=\"http://simbad.u-strasbg.fr/simbad/sim-coo?Radius=1&Coord=" + escape(pos) + "\"></a>";
+			var simbadpage = "<a class=simbad target=blank href=\"http://simbad.u-strasbg.fr/simbad/sim-coo?Radius=1&Coord=" + encodeURIComponent(pos) + "\"></a>";
 			$('#diagdiv').dialog({  width: 'auto', title: "Simbad Summary for Position " + pos + simbadpage });
 			sampView.firePointatSky(pos);
 		}
