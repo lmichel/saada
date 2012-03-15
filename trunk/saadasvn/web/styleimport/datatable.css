@@ -82,7 +82,7 @@
 .dataTables_paginate {
 	width: 44px;
 	* width: 50px;
-	float: right;
+	float: center;
 	text-align: right;
 	border-width: 0px;
 	
