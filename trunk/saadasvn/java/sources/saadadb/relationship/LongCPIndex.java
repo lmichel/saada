@@ -854,6 +854,7 @@ public class LongCPIndex extends KeyIndex {
 			}
 			in.close();
 		} catch( Exception e) {
+			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
 		}
 		
