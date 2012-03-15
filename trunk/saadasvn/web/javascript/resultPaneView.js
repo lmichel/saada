@@ -327,7 +327,6 @@ jQuery
 				table += "<div class='detaildata'></div>";
 			}
 
-
 			if ($('#detaildiv').length == 0) {
 				$(document.documentElement)
 				.append(
@@ -406,7 +405,7 @@ jQuery
 			$('#' + id).dataTable({
 				"aoColumns" : jsdata.aoColumns,
 				"aaData" : jsdata.aaData,
-				"sDom" : '<"top">rt<"bottom">',
+				"sDom" : 'rt',
 				"bPaginate" : false,
 				"aaSorting" : [],
 				"bSort" : false,
@@ -610,6 +609,7 @@ jQuery
 					"aaSorting" : [],
 					"bSort" : false,
 					"bFilter" : false,
+			//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
 					"sAjaxSource" : "nextpage"
 				});
 			}
@@ -657,8 +657,9 @@ jQuery
 		};
 
 		this.overPosition = function(pos) {
-			simbadToBeOpen = true;
-			setTimeout("if( simbadToBeOpen == true ) openSimbadDialog(\"" + pos + "\");", 1000);
+//			simbadToBeOpen = true;
+//			setTimeout("if( simbadToBeOpen == true ) openSimbadDialog(\"" + pos + "\");", 1000);
+			openSimbadDialog(pos );
 		};
 		this.outPosition = function() {
 			simbadToBeOpen = false;
