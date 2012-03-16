@@ -537,12 +537,72 @@ public class VOResource {
 	public String getMappingFilepath(String class_name) {
 		return "dmmap." + this.getJavaName() + "." + class_name + ".xml" ;
 	}
+	
+	/**
+	 * Return a map attr<->mapping read in the class mapping file mapping file
+	 * @param class_name
+	 * @return
+	 * @throws FatalException
+	 */
+	public Map<String, String> readClassMapping(String class_name) throws FatalException {
+		String configfile = Database.getConnector().getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + getMappingFilepath(class_name) ;
+		if( !(new File(configfile).exists()) ) {
+			Messenger.printMsg(Messenger.WARNING, "No mapping file found for class " + class_name);
+			return null;
+		}
+		Messenger.printMsg(Messenger.TRACE, "read class mapping in " +  getMappingFilepath(class_name) );
+
+		Map<String, String> retour = new LinkedHashMap<String, String>();
+		SavotPullParser parser = new SavotPullParser(configfile, SavotPullEngine.ROWREAD);	
+		/*
+		 * Requested to init Savot
+		 */
+		SavotTR currentTR = parser.getNextTR(); 
+		SavotVOTable voTable = parser.getVOTable();
+		SavotResource currentResource = (SavotResource) (voTable.getResources().getItemAt(0));
+		SavotTable stable = (SavotTable) currentResource.getTables().getItemAt(0);
+		ParamSet ps = stable.getParams();
+		String resource_name = "";
+		for( int i=0 ; i<ps.getItemCount() ; i++ ) {
+			SavotParam sp = (SavotParam) ps.getItemAt(i);
+			if( sp.getName().equals("dm")  ) {
+				resource_name = sp.getValue();
+				break;
+			}
+		}
+		if( resource_name.equals("") ) {
+			FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> param <dm> not exist or has no value");
+			return null;
+		}
+		if( !this.name.equals(resource_name)) {
+			FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> refers to a wrong DM (" + resource_name + ")");
+			return null;			
+		}
+		int cpt = 1;
+		do {  
+			if( currentTR == null ) {
+				Messenger.printMsg(Messenger.WARNING, "Class mapping <" + configfile + "> has no data");
+				break;
+			}
+			TDSet tds = currentTR.getTDSet();
+			Vector tdv = tds.getItems();
+			if( tdv.size() != 2 ) {
+				FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> badly formated at <TR> #" + cpt); 
+				return null;
+			}
+			retour.put(tdv.get(0).toString(), tdv.get(1).toString());
+			cpt++;
+		}while( (currentTR = parser.getNextTR()) != null );
+		return retour;
+	}
+
 	/**
 	 * @param filename
 	 * @throws IOException
 	 */
 	public void saveClassMapping(String class_name, Map<String, String> mapping) throws IOException {
 		String filename = Database.getConnector().getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + getMappingFilepath(class_name) ;
+		Messenger.printMsg(Messenger.TRACE, "save class mapping in " +  getMappingFilepath(class_name) );
 		File out = new File(filename );
 		BufferedWriter bw = new BufferedWriter(new FileWriter(out));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
