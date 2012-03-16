@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -17,6 +18,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.DMAttributeTextField;
@@ -36,7 +38,7 @@ import saadadb.meta.VOResource;
 
 
 public class ModelViewPanel extends JPanel {
-	private ObscoreMapperPanel obscoreMapperPanel;
+	ObscoreMapperPanel obscoreMapperPanel;
 	private ModelFieldList resourceList;
 	protected JEditorPane descPanel;
 	protected DMAttributeTextField mapField;
@@ -96,30 +98,47 @@ public class ModelViewPanel extends JPanel {
 		this.updateUI();
 		mapField.addFocusListener(new FocusListener() {		
 			public void focusLost(FocusEvent arg0) {
-				resourceList.storeCurrentMapping();
+				try {
+					resourceList.storeCurrentMapping();
+				} catch (IOException e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}
 			}			
 			public void focusGained(FocusEvent arg0) {}
 		});
 		mapField.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent arg0) {
-				resourceList.storeCurrentMapping();			
+				try {
+					resourceList.storeCurrentMapping();
+				} catch (IOException e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}			
 			}
 		});
 		checkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				resourceList.checkContent(true);
+				System.out.println("@@@@ 2");
+				if( resourceList.checkContent(true) ) {
+					System.out.println("@@@@ 2");
+					try {
+						resourceList.storeCurrentMapping();
+					} catch (IOException e) {
+						AdminComponent.showFatalError(getParent(), e);
+					}
+				}
 			}
 		});
 	}
 
 	public boolean setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
+		this.descPanel.setText("");
+		resourceList.resetFields();
 		if( dataTreePath.isCategoryLevel() ) {
 			metaClass = null;
 			metaCollection = Database.getCachemeta().getCollection(dataTreePath.collection);
 			category = dataTreePath.category;
 			classTree.setAttributeHandlers(category);
 			mapField.setAttributeHandlers(category);
-			resourceList.resetFields();
 			return true;
 		} else if( dataTreePath.isClassLevel() ) {
 			metaClass = Database.getCachemeta().getClass(dataTreePath.classe);
@@ -127,10 +146,8 @@ public class ModelViewPanel extends JPanel {
 			category = dataTreePath.category;
 			classTree.setAttributeHandlers(metaClass);
 			mapField.setAttributeHandlers(metaClass);
-			resourceList.resetFields();
 			return true;
 		} else {
-			resourceList.resetFields();
 			AdminComponent.showInputError(obscoreMapperPanel.rootFrame, "Selet a data tree node either at category or class level");
 			return false;
 		}
@@ -152,11 +169,12 @@ public class ModelViewPanel extends JPanel {
 	public void setUtypeHandler(UTypeHandler uth, String mappingStmt) {
 		this.mapField.setText(mappingStmt);
 		this.descPanel.setText(
-				"<table><TR><TD ALIGN=RIGHT><B>Name</TD><TD>" + uth.getNickname() + "</TD></TR>"
-				+ "<TR><TD ALIGN=RIGHT><B>Type</TD><TD>" + uth.getType()+ "</TD></TR>"
-				+ "<TR><TD ALIGN=RIGHT><B>UType</TD><TD>" + uth.getUtype()+ "</TD></TR>"
-				+ "<TR><TD ALIGN=RIGHT><B>Unit</TD><TD>" + uth.getUnit()+ "</TD></TR>"
-				+ "<TR><TD ALIGN=RIGHT><B>Description</TD><TD>" + uth.getComment()+ "</TD></TR></TABLE><BR>"
+				"<table><TR><TD ALIGN=RIGHT><B><FONT size=-1>Name</TD><TD><FONT size=-1>" + uth.getNickname() + "</TD></TR>"
+				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Type</TD><TD><FONT size=-1>" + uth.getType()+ "</TD></TR>"
+				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>UType</TD><TD><FONT size=-1>" + uth.getUtype()+ "</TD></TR>"
+				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Unit</TD><TD><FONT size=-1>" + uth.getUnit()+ "</TD></TR></TABLE>"
+				//+ "<TR><TD ALIGN=RIGHT><B>Description</TD><TD>" + uth.getComment()+ "</TD></TR></TABLE><BR>"
+				+ "<HR><FONT size=-1>" + uth.getComment() + "<HR>"
 		);	
 	}
 

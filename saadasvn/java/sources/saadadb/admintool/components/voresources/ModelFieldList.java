@@ -11,7 +11,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -22,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -33,6 +36,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
@@ -125,7 +129,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			tsi.unSelect();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -195,18 +199,30 @@ public class ModelFieldList extends JPanel implements ActionListener{
 	}
 
 	/**
+	 * @throws IOException 
 	 * 
 	 */
-	protected void storeCurrentMapping() {
-		for( FieldItem it: items) {
-			if( it.selected ) {
-				it.mappingStmt = this.modelViewPanel.mapField.getText();
-				this.modelViewPanel.notifyChange();
-				return;
+	protected void storeCurrentMapping() throws IOException {		
+		VOResource vor;
+System.out.println("@@@@ SAVE" + this.modelViewPanel.metaClass);
+		/*
+		 * Called at opening time *get focus' before the vor is set
+		 */
+		if( (vor = this.modelViewPanel.obscoreMapperPanel.vor) != null && this.modelViewPanel.metaClass != null ) {
+			LinkedHashMap<String, String> mapping = new LinkedHashMap <String, String>();
+
+			for( FieldItem it: items) {
+				if( it.selected ) {
+					it.mappingStmt = this.modelViewPanel.mapField.getText();
+					this.modelViewPanel.notifyChange();
+				}	
+				System.out.println(it.uth.getNickname() + "  " +  it.mappingStmt);
+				mapping.put(it.uth.getNickname(), it.mappingStmt);
 			}
-		}	
+			vor.saveClassMapping(this.modelViewPanel.metaClass.getName(), mapping);
+		}
 	}
-	
+
 	/**
 	 * @param with_dialog
 	 * @return
@@ -224,26 +240,27 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			return false;
 		}
 		String stmt = this. formatMappingText(sit.uth);
+
+		SQLQuery squery = null;
 		try {
 			if(stmt.length() == 0 ) {
 				sit.setNotSet();
 				return true;								
 			}
-			SQLQuery squery = new SQLQuery();
 			String from;
 			MetaClass mc = this.modelViewPanel.metaClass;
-			MetaCollection mco= this.modelViewPanel.metaCollection;
-			
+			MetaCollection mco=  this.modelViewPanel.metaCollection;
 			if( mc == null && mco == null ) {
 				sit.setFailed();			
 				if( with_dialog)AdminComponent.showInputError(this.getParent(), "No selected data tree node");	
 				return false;
 			}
 			else if( mc != null ) {
-				from = mc +  ", " + Database.getCachemeta().getCollectionTableName(mco.getName(), mc.getCategory());
+				from = mc.getName() +  ", " + Database.getCachemeta().getCollectionTableName(mc.getCollection_name(), mc.getCategory());
 			} else {
 				from = Database.getCachemeta().getCollectionTableName(mco.getName(), Category.getCategory(this.modelViewPanel.category));
 			}
+			squery = new SQLQuery();
 			if( squery.run("Select " + stmt + " from " + from + "  limit 1") != null ) {
 				sit.setOK();
 				squery.close();
@@ -255,8 +272,11 @@ public class ModelFieldList extends JPanel implements ActionListener{
 				sit.setFailed();			
 			}
 		} catch (Exception e) {
-			sit.setFailed();			
-			if( with_dialog)AdminComponent.showInputError(this.getParent(), e.toString());
+			sit.setFailed();	
+			try {
+				if( squery != null ) squery.close();
+			} catch (QueryException e1) {}
+			if( with_dialog)  AdminComponent.showInputError(this.getParent(), e.toString());
 		}
 		return false;
 	}
@@ -316,6 +336,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		private Color borderColor;
 
 		protected FieldItem(UTypeHandler uth) throws SaadaException {
+			this.label.setFont(UIManager.getFont("Tree.font"));
 			this.uth = uth;
 			this.setUI();
 		}
@@ -347,7 +368,11 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			this.addMouseListener(new MouseAdapter() {		
 				public void mouseReleased(MouseEvent arg0) {
 					ModelFieldList mfl= ModelFieldList.this;
-					mfl.storeCurrentMapping();
+					try {
+						mfl.storeCurrentMapping();
+					} catch (IOException e) {
+						AdminComponent.showFatalError(getParent(), e);
+					}
 					mfl.modelViewPanel.setUtypeHandler(uth, mappingStmt);
 					mfl.unSelectAll();
 					select();
