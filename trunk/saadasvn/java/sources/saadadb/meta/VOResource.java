@@ -39,6 +39,7 @@ import cds.savot.pull.SavotPullParser;
 
  * @author laurent
  * @version 07/2011 Make sure that position UCDs are set
+ * 03/2012: Add meth  readClassMapping
  */
 public class VOResource {
 	private  String name;
