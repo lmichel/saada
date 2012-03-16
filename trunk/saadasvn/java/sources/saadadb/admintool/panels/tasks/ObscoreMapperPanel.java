@@ -30,7 +30,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 	private ModelFieldMapper modelFieldMapper;
 	private RunTaskButton runButton;
 	private SaveButton saveButton;
-	private VOResource vor;
+	public VOResource vor;
 
 	public ObscoreMapperPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, OBSCORE_MAPPER, null, ancestor);
