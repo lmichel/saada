@@ -294,7 +294,7 @@ var booleansupported = false;
 $().ready(function() {
 	var resultPaneModel      = new $.ResultPaneModel();
 	resultPaneView           = new $.ResultPaneView();
-	var resultPaneControler = new $.ResultPaneControler(resultPaneModel, resultPaneView);
+	new $.ResultPaneControler(resultPaneModel, resultPaneView);
 
 	var patternModel      = new $.PatternModel();
 	var patternView       = new $.PatternView();
