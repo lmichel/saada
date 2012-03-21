@@ -117,9 +117,7 @@ public class ModelViewPanel extends JPanel {
 		});
 		checkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("@@@@ 2");
 				if( resourceList.checkContent(true) ) {
-					System.out.println("@@@@ 2");
 					try {
 						resourceList.storeCurrentMapping();
 					} catch (IOException e) {
@@ -130,7 +128,7 @@ public class ModelViewPanel extends JPanel {
 		});
 	}
 
-	public boolean setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
+	public boolean setDataTreePath(DataTreePath dataTreePath) throws Exception {
 		this.descPanel.setText("");
 		resourceList.resetFields();
 		if( dataTreePath.isCategoryLevel() ) {
@@ -146,6 +144,7 @@ public class ModelViewPanel extends JPanel {
 			category = dataTreePath.category;
 			classTree.setAttributeHandlers(metaClass);
 			mapField.setAttributeHandlers(metaClass);
+			resourceList.loadMapping();
 			return true;
 		} else {
 			AdminComponent.showInputError(obscoreMapperPanel.rootFrame, "Selet a data tree node either at category or class level");
