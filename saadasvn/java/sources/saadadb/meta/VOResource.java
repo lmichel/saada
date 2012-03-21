@@ -547,13 +547,13 @@ public class VOResource {
 	 */
 	public Map<String, String> readClassMapping(String class_name) throws FatalException {
 		String configfile = Database.getConnector().getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + getMappingFilepath(class_name) ;
+		Map<String, String> retour = new LinkedHashMap<String, String>();
 		if( !(new File(configfile).exists()) ) {
 			Messenger.printMsg(Messenger.WARNING, "No mapping file found for class " + class_name);
-			return null;
+			return retour;
 		}
 		Messenger.printMsg(Messenger.TRACE, "read class mapping in " +  getMappingFilepath(class_name) );
 
-		Map<String, String> retour = new LinkedHashMap<String, String>();
 		SavotPullParser parser = new SavotPullParser(configfile, SavotPullEngine.ROWREAD);	
 		/*
 		 * Requested to init Savot
@@ -591,7 +591,9 @@ public class VOResource {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return null;
 			}
-			retour.put(tdv.get(0).toString(), tdv.get(1).toString());
+			if(((SavotTD)(tdv.get(1))).getContent().length() > 1 )
+				System.out.println("load @@@@@@ " + ((SavotTD)(tdv.get(0))).getContent()+ " " +  ((SavotTD)(tdv.get(1))).getContent());
+			retour.put(((SavotTD)(tdv.get(0))).getContent(),((SavotTD)(tdv.get(1))).getContent());
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
 		return retour;
