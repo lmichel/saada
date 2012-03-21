@@ -32,7 +32,7 @@ public class ModelFieldMapper extends CollapsiblePanel{
 
 	}
 
-	public void setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
+	public void setDataTreePath(DataTreePath dataTreePath) throws Exception {
 		modelViewPanel.setDataTreePath(dataTreePath);		
 	}
 

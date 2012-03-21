@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -204,7 +205,6 @@ public class ModelFieldList extends JPanel implements ActionListener{
 	 */
 	protected void storeCurrentMapping() throws IOException {		
 		VOResource vor;
-System.out.println("@@@@ SAVE" + this.modelViewPanel.metaClass);
 		/*
 		 * Called at opening time *get focus' before the vor is set
 		 */
@@ -216,14 +216,41 @@ System.out.println("@@@@ SAVE" + this.modelViewPanel.metaClass);
 					it.mappingStmt = this.modelViewPanel.mapField.getText();
 					this.modelViewPanel.notifyChange();
 				}	
-				System.out.println(it.uth.getNickname() + "  " +  it.mappingStmt);
 				mapping.put(it.uth.getNickname(), it.mappingStmt);
 			}
 			vor.saveClassMapping(this.modelViewPanel.metaClass.getName(), mapping);
 		}
 	}
+	
+	/**
+	 * Load the DM fields mapping from the xml file
+	 * @throws Exception
+	 */
+	protected void loadMapping() throws Exception {		
+		VOResource vor;
+		this.modelViewPanel.mapField.setText("");
+		for( FieldItem it: items) {
+			it.mappingStmt = "";
+		}
+		/*
+		 * Called at opening time *get focus' before the vor is set
+		 */
+		if( (vor = this.modelViewPanel.obscoreMapperPanel.vor) != null && this.modelViewPanel.metaClass != null ) {
+			Map<String, String> mapping = vor.readClassMapping(this.modelViewPanel.metaClass.getName());
+
+			for( FieldItem it: items) {
+				String txt = mapping.get(it.uth.getNickname());
+				if( txt != null && txt.length() > 0 && !txt.equals("null") ) {
+					System.out.println(" @@@@@@@ " + txt);
+					it.mappingStmt =  txt;
+					this.checkContent(it, false);
+				}
+			}
+		}
+	}
 
 	/**
+	 * Check the mapping of the selected field
 	 * @param with_dialog
 	 * @return
 	 */
@@ -239,7 +266,17 @@ System.out.println("@@@@ SAVE" + this.modelViewPanel.metaClass);
 			if( with_dialog)AdminComponent.showInputError(this.getParent(), "No selected DM field");	
 			return false;
 		}
-		String stmt = this. formatMappingText(sit.uth);
+		return this.checkContent(sit, with_dialog);
+	}
+
+	/**
+	 * Check the mapping of the field
+	 * @param sit : field to be checked
+	 * @param with_dialog
+	 * @return
+	 */
+	public boolean checkContent(FieldItem sit, boolean with_dialog) {
+		String stmt = this.formatMappingText(sit);
 
 		SQLQuery squery = null;
 		try {
@@ -285,11 +322,13 @@ System.out.println("@@@@ SAVE" + this.modelViewPanel.metaClass);
 	 * @param uth
 	 * @return
 	 */
-	private String formatMappingText(UTypeHandler uth) {
-		String mt = this.modelViewPanel.mapField.getText().trim();
+	private String formatMappingText(FieldItem fieldItem) {
+		String mt = fieldItem.mappingStmt.trim();
+		UTypeHandler uth = fieldItem.uth;
 		if( mt.length() == 0 ) {
 			mt = "'null'";
 		}
+		
 		if( mt.startsWith("'") ){
 			if( uth.getType().equals("char")) {
 				return mt;
