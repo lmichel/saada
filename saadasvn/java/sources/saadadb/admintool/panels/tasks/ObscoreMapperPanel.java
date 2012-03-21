@@ -69,7 +69,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 				super.setDataTreePath(dataTreePath);
 				try {
 					modelFieldMapper.setDataTreePath(dataTreePath);
-				} catch (SaadaException e) {
+				} catch (Exception e) {
 					showFatalError(rootFrame, e);
 				}
 			}
