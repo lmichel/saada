@@ -24,7 +24,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 public class DataTableWindow extends OuterWindow {
-	private String sqlQuery;
+	protected String sqlQuery;
 	private DataTreePath dataTreePath;
 	private SQLJTable productTable;
 
@@ -33,7 +33,12 @@ public class DataTableWindow extends OuterWindow {
 		this.dataTreePath = new DataTreePath(treePath);
 	}
 
-	private void buidSQL() {
+	protected DataTableWindow(AdminTool rootFrame) throws QueryException {
+		super(rootFrame);
+		this.dataTreePath = null;
+	}
+
+	protected void buidSQL() {
 		sqlQuery = "SELECT ";
 		title= "??";
 		String[] rejected_coll_clos = null;
@@ -104,12 +109,7 @@ public class DataTableWindow extends OuterWindow {
 		 * => no popup menu on tabel.
 		 */
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		if( dataTreePath.category.equalsIgnoreCase("ENTRY") ) {
 			productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);
-		}
-		else {
-			productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);				
-		}
 		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane jsp = new JScrollPane(productTable);
