@@ -592,7 +592,6 @@ public class VOResource {
 				return null;
 			}
 			if(((SavotTD)(tdv.get(1))).getContent().length() > 1 )
-				System.out.println("load @@@@@@ " + ((SavotTD)(tdv.get(0))).getContent()+ " " +  ((SavotTD)(tdv.get(1))).getContent());
 			retour.put(((SavotTD)(tdv.get(0))).getContent(),((SavotTD)(tdv.get(1))).getContent());
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
