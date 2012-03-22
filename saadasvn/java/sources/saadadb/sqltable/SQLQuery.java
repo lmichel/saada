@@ -69,7 +69,7 @@ public class SQLQuery {
 			try {
 				SQLTable.lockTables(null, tables_to_lock);
 				/*
-				 * Abort exception is downgraded in QueryException because we are here in read mode.
+				 * Abort exception is downraded in QueryException because we are here in read mode.
 				 */
 			} catch (AbortException e) {
 				QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -78,6 +78,10 @@ public class SQLQuery {
 		return this.run(sql);
 	}
 
+	/**
+	 * @return
+	 * @throws QueryException
+	 */
 	public ResultSet run() throws  QueryException {
 		try {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select query: " + this.query);
@@ -87,6 +91,7 @@ public class SQLQuery {
 				resultset = _stmts.executeQuery(query); 
 			} catch(Exception e) {
 				_stmts.close();
+				Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 				Messenger.printMsg(Messenger.WARNING, "Reopen DB connection due to " + e);
 				Database.get_connection().close();
 				SaadaDBConnector sc = SaadaDBConnector.getConnector(null, false);
@@ -100,7 +105,7 @@ public class SQLQuery {
 		} catch (Exception e) {
 			this.close();
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
-			Messenger.printStackTrace(e);
+			//Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 		return null;
