@@ -1,6 +1,8 @@
 package saadadb.admintool.components.voresources;
 
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -43,12 +45,14 @@ public class ModelViewPanel extends JPanel {
 	protected JEditorPane descPanel;
 	protected DMAttributeTextField mapField;
 	private JButton checkButton;
+	private JButton quickLookButton;
+	private JButton resetButton;
 	private FilteredFieldTree classTree;
 
 	protected MetaClass metaClass;
 	protected MetaCollection metaCollection;
 	protected String category;
-	
+
 	/**
 	 * @param taskPanel
 	 * @param toActive
@@ -56,29 +60,30 @@ public class ModelViewPanel extends JPanel {
 	 */
 	public ModelViewPanel(ObscoreMapperPanel obscoreMapperPanel) throws Exception {
 		this.obscoreMapperPanel = obscoreMapperPanel;
-		
+
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 
 		MyGBC mgbc = new MyGBC(5,5,5,5);
-		mgbc.weightx = 1; mgbc.weighty = 1;mgbc.anchor = GridBagConstraints.NORTH;
+		mgbc.weightx = 1; mgbc.weighty = 1;mgbc.anchor = GridBagConstraints.NORTH;mgbc.gridheight= 2;
 		this.setLayout(new GridBagLayout());
-		
+
 		this.resourceList = new ModelFieldList(this);
 		this.resourceList.setPreferredSize(new Dimension(230,400));
 		this.add(this.resourceList, mgbc);
-		
+
 		this.descPanel = new JEditorPane("text/html", "");
 		this.descPanel.setEditable(false);
 		this.descPanel.setPreferredSize(new Dimension(230, 220));
 		this.mapField = new DMAttributeTextField();
 		this.mapField.setColumns(24);
-		this.checkButton = new JButton("Check and Store");
+		this.checkButton = new JButton("Check Mapping");
+		this.resetButton = new JButton("Reset");
+		this.quickLookButton = new JButton("QuickLook");
 		JPanel jp = new JPanel();
 		jp.setBorder(BorderFactory.createTitledBorder("Field Mapper"));
 		jp.setLayout(new BoxLayout(jp, BoxLayout.PAGE_AXIS));	
 		jp.setPreferredSize(new Dimension(230,300));
 
-		jp.add(new JLabel("Field Description"));
 		JScrollPane js = new JScrollPane(descPanel);
 		js.setPreferredSize(new Dimension(230, 220));
 		jp.add(js);
@@ -87,12 +92,26 @@ public class ModelViewPanel extends JPanel {
 		jp.add(checkButton);
 		mgbc.next();
 		this.add(jp,mgbc);
-		
-		mgbc.rowEnd();
+
+		mgbc.gridheight= 1;mgbc.gridy++;		
+		jp = new JPanel();
+		jp.setPreferredSize(new Dimension(230,50));
+		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
+		//jp.setBorder(BorderFactory.createTitledBorder(""));
+		//jp.setLayout(new BoxLayout(jp, BoxLayout.LINE_AXIS));	
+		jp.setLayout(new FlowLayout());	
+		this.resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		jp.add(resetButton);
+		this.quickLookButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		jp.add(quickLookButton);
+		this.add(jp,mgbc);
+
+		mgbc.next(); 
+		mgbc.rowEnd();mgbc.gridheight= 2;mgbc.gridy--;
 		this.classTree = new FilteredFieldTree("Saada Attributes", 230,400);				
 		this.add(classTree, mgbc);
-		
-		mgbc.newRow(); mgbc.gridwidth = 3;
+
+		mgbc.newRow();mgbc.gridy++;mgbc.gridwidth = 3;
 		this.add(AdminComponent.getHelpLabel(HelpDesk.MODEL_MAPPER), mgbc);
 
 		this.updateUI();
@@ -106,14 +125,16 @@ public class ModelViewPanel extends JPanel {
 			}			
 			public void focusGained(FocusEvent arg0) {}
 		});
-		mapField.addActionListener(new ActionListener() {			
+		mapField.addActionListener(new ActionListener() {		
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					resourceList.storeCurrentMapping();
-				} catch (IOException e) {
-					AdminComponent.showFatalError(getParent(), e);
-				}			
-			}
+				if( resourceList.checkContent(true) ) {
+					try {
+						resourceList.storeCurrentMapping();
+					} catch (IOException e) {
+						AdminComponent.showFatalError(getParent(), e);
+					}
+				}
+			}			
 		});
 		checkButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -126,6 +147,23 @@ public class ModelViewPanel extends JPanel {
 				}
 			}
 		});
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				resourceList.resetMapping();
+				mapField.setText("");
+			}
+		});
+		quickLookButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if( metaClass == null ) {
+					AdminComponent.showInputError(getParent(), "No class selected");	
+				} else {
+					String query = resourceList.getQuery();
+					AdminComponent.showInfo(getParent(), query);
+				}
+			}
+		});
+
 	}
 
 	public boolean setDataTreePath(DataTreePath dataTreePath) throws Exception {
@@ -147,11 +185,11 @@ public class ModelViewPanel extends JPanel {
 			resourceList.loadMapping();
 			return true;
 		} else {
-			AdminComponent.showInputError(obscoreMapperPanel.rootFrame, "Selet a data tree node either at category or class level");
+			AdminComponent.showInputError(obscoreMapperPanel.rootFrame, "Selet a data tree leaf (class level)");
 			return false;
 		}
 	}
-	
+
 	public void setDescription(String description){
 		this.descPanel.setText(description);
 	}
@@ -168,11 +206,10 @@ public class ModelViewPanel extends JPanel {
 	public void setUtypeHandler(UTypeHandler uth, String mappingStmt) {
 		this.mapField.setText(mappingStmt);
 		this.descPanel.setText(
-				"<table><TR><TD ALIGN=RIGHT><B><FONT size=-1>Name</TD><TD><FONT size=-1>" + uth.getNickname() + "</TD></TR>"
+				"<table cellpadding=2 cellspacing=0><TR><TD ALIGN=RIGHT><B><FONT size=-1>Name</TD><TD><FONT size=-1>" + uth.getNickname() + "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Type</TD><TD><FONT size=-1>" + uth.getType()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>UType</TD><TD><FONT size=-1>" + uth.getUtype()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Unit</TD><TD><FONT size=-1>" + uth.getUnit()+ "</TD></TR></TABLE>"
-				//+ "<TR><TD ALIGN=RIGHT><B>Description</TD><TD>" + uth.getComment()+ "</TD></TR></TABLE><BR>"
 				+ "<HR><FONT size=-1>" + uth.getComment() + "<HR>"
 		);	
 	}

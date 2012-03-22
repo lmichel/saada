@@ -221,7 +221,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			vor.saveClassMapping(this.modelViewPanel.metaClass.getName(), mapping);
 		}
 	}
-	
+
 	/**
 	 * Load the DM fields mapping from the xml file
 	 * @throws Exception
@@ -241,12 +241,25 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			for( FieldItem it: items) {
 				String txt = mapping.get(it.uth.getNickname());
 				if( txt != null && txt.length() > 0 && !txt.equals("null") ) {
-					System.out.println(" @@@@@@@ " + txt);
 					it.mappingStmt =  txt;
 					this.checkContent(it, false);
 				}
 			}
 		}
+	}
+
+	/**
+	 * 
+	 */
+	protected void resetMapping() {
+		for( FieldItem it: items) {
+			it.mappingStmt = "";
+			it.setNotSet();
+		}			
+	}
+	
+	protected String getQuery() {
+		return "pouet";
 	}
 
 	/**
@@ -275,7 +288,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 	 * @param with_dialog
 	 * @return
 	 */
-	public boolean checkContent(FieldItem sit, boolean with_dialog) {
+	private boolean checkContent(FieldItem sit, boolean with_dialog) {
 		String stmt = this.formatMappingText(sit);
 
 		SQLQuery squery = null;
@@ -298,7 +311,12 @@ public class ModelFieldList extends JPanel implements ActionListener{
 				from = Database.getCachemeta().getCollectionTableName(mco.getName(), Category.getCategory(this.modelViewPanel.category));
 			}
 			squery = new SQLQuery();
-			if( squery.run("Select " + stmt + " from " + from + "  limit 1") != null ) {
+			if(stmt == null || stmt.length() == 0 ) {
+				sit.setNotSet();
+				return true;			
+
+			}
+			else if( squery.run("Select " + stmt + " from " + from + "  limit 1") != null ) {
 				sit.setOK();
 				squery.close();
 				return true;			
@@ -328,7 +346,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		if( mt.length() == 0 ) {
 			mt = "'null'";
 		}
-		
+
 		if( mt.startsWith("'") ){
 			if( uth.getType().equals("char")) {
 				return mt;
@@ -371,7 +389,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		private JLabel label = new JLabel();
 		private boolean selected = false;
 		private boolean passed = false;
-		private String mappingStmt;
+		private String mappingStmt = "";;
 		private Color borderColor;
 
 		protected FieldItem(UTypeHandler uth) throws SaadaException {
