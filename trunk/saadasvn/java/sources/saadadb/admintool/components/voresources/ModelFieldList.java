@@ -257,9 +257,32 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			it.setNotSet();
 		}			
 	}
-	
-	protected String getQuery() {
-		return "pouet";
+
+	/**
+	 * Returns a query mapping the class into the DM view
+	 * @return
+	 * @throws FatalException 
+	 */
+	protected String getQuery() throws FatalException {
+		MetaClass mc = this.modelViewPanel.metaClass;
+
+		String query = "SELECT " + mc.getName() + ".oidsaada AS oidsaada ";
+		switch(modelViewPanel.metaClass.getCategory()) {
+		case Category.ENTRY:
+		case Category.SPECTRUM:
+		case Category.IMAGE: query += ", sky_pixel_csa AS sky_pixel_csa";
+		break;
+		default: break;
+		}
+		for( FieldItem it: items) {
+			String stmt = this.formatMappingText(it);
+
+			if( stmt != null && stmt.length() > 0) {
+				query += "\n     , " + stmt + " AS " + it.uth.getNickname();
+			}
+		}
+		query += "\nFROM "+ mc.getName() +  ", " + Database.getCachemeta().getCollectionTableName(mc.getCollection_name(), mc.getCategory());
+		return query + "\n LIMIT 50";
 	}
 
 	/**
@@ -280,6 +303,18 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			return false;
 		}
 		return this.checkContent(sit, with_dialog);
+	}
+
+	/**
+	 * CHACK ALL items
+	 * @return return false if at least one mapping is wrong
+	 */
+	public boolean checkContent() {
+		boolean retour = true;
+		for( FieldItem it: items) {
+			if( !this.checkContent(it, false) ) retour = false;
+		}	
+		return retour;
 	}
 
 	/**
@@ -311,7 +346,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 				from = Database.getCachemeta().getCollectionTableName(mco.getName(), Category.getCategory(this.modelViewPanel.category));
 			}
 			squery = new SQLQuery();
-			if(stmt == null || stmt.length() == 0 ) {
+			if( sit.mappingStmt == null || sit.mappingStmt.length() == 0 ) {
 				sit.setNotSet();
 				return true;			
 

@@ -30,13 +30,17 @@ import saadadb.admintool.tree.VoClassTree;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.admintool.windows.DataTableWindow;
+import saadadb.admintool.windows.MappedTableWindow;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
+import saadadb.util.Messenger;
 
 
 public class ModelViewPanel extends JPanel {
@@ -157,9 +161,16 @@ public class ModelViewPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if( metaClass == null ) {
 					AdminComponent.showInputError(getParent(), "No class selected");	
+				} else if( !resourceList.checkContent()){
+					AdminComponent.showInputError(getParent(), "Fix RED field mapping first please");	
 				} else {
-					String query = resourceList.getQuery();
-					AdminComponent.showInfo(getParent(), query);
+						try {
+						MappedTableWindow dtw = new MappedTableWindow(ModelViewPanel.this.obscoreMapperPanel.rootFrame
+								, resourceList.getQuery());
+						dtw.open();
+					} catch( Exception e) {
+						AdminComponent.showFatalError(getParent(), e);
+					}
 				}
 			}
 		});
