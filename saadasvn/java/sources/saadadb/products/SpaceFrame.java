@@ -8,6 +8,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;
@@ -16,8 +17,13 @@ import cds.astro.Galactic;
 import cds.astro.ICRS;
 import cds.savot.model.SavotCoosys;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
+ */
 public class SpaceFrame {
-	private String astro_frame;
 	private AttributeHandler ascension_kw;
 	private AttributeHandler declination_kw;
 	private Astroframe frame = null;
@@ -26,58 +32,13 @@ public class SpaceFrame {
 	private int status=0;
 	private LinkedHashMap<String, AttributeHandler> tableAttributeHandler;
 
-	public static final String ECL_SYSTEM = "(?i)(ecl_FK5|ecliptic)";
-	public static final String FK4_SYSTEM = "(?i)(eq_FK4|FK4)";
-	public static final String FK5_SYSTEM = "(?i)(eq_FK5|FK5)";
-	public static final String GALACTIC   = "(?i)(galactic)";		
-	public static final String ICRS       = "(?i)(icrs)";		
-
-	public static final String FK5_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String FK5_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String FK5_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
-	public static final String FK5_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
-	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^Bb]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
-	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^Bb]?(2000)?)|(_*de[^Bb]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
-
-	public static final String FK4_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String FK4_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String FK4_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
-	public static final String FK4_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
-	public static final String FK4_RA_KW        = "(?i)(_*ra[^(dec)]*b1950)";
-	public static final String FK4_DEC_KW       = "(?i)(_*de[^(ra)]*b1950)";
-	
-	public static final String ICRS_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String ICRS_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String ICRS_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
-	public static final String ICRS_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
-	public static final String ICRS_RA_KW        = "(?i)(_*ra[^(dec)*])";
-	public static final String ICRS_DEC_KW       = "(?i)(_*de[^(ra)]*)";
-	
-
-
-
-	public static final String ECLIPTIC_RA_MAINUCD   = "(?i)(POS_EC_RA_MAIN|(pos\\.ecliptic\\.lon;meta\\.main))";
-	public static final String ECLIPTIC_DEC_MAINUCD  = "(?i)(POS_EC_DEC_MAIN|(pos\\.ecliptic\\.lat;meta\\.main))";
-	public static final String ECLIPTIC_RA_UCD       = "(?i)(POS_EC_RA|(pos\\.ecliptic\\.lon))";
-	public static final String ECLIPTIC_DEC_UCD      = "(?i)(POS_EC_DEC|(pos\\.ecliptic\\.lat))";
-	public static final String ECLIPTIC_RA_KW        = "(?i)(_elon\\.*)";
-	public static final String ECLIPTIC_DEC_KW       = "(?i)(_elat\\.*)";
-
-	public static final String GALACTIC_RA_MAINUCD   = "(?i)(POS_GAL_LON_MAIN|(pos\\.galactic\\.lat;meta\\.main))";
-	public static final String GALACTIC_DEC_MAINUCD  = "(?i)(POS_GAL_LAT|(pos\\.ecliptic\\.dec;meta\\.main))";
-	public static final String GALACTIC_RA_UCD       = "(?i)(POS_GAL_LON|(pos\\.galactic\\.lon))";
-	public static final String GALACTIC_DEC_UCD      = "(?i)(POS_GAL_LAT|(pos\\.galactic\\.lat))";
-	public static final String GALACTIC_RA_KW        = "(?i)(_glon)";
-	public static final String GALACTIC_DEC_KW       = "(?i)(_glat)";
-
-	public static final String FIST_COOSYS_KW   = "(?i)(COO.*SYS|RADECSYS|SYSTEM)";
 	
 	/**
 	 * @param tableAttributeHandler
 	 */
 	SpaceFrame(LinkedHashMap<String, AttributeHandler> tableAttributeHandler) {
 		this.tableAttributeHandler = tableAttributeHandler;
-		AttributeHandler ah = searchByName(FIST_COOSYS_KW);
+		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
 		}
@@ -146,7 +107,7 @@ public class SpaceFrame {
 	 */
 	SpaceFrame(LinkedHashMap<String, AttributeHandler> tableAttributeHandler, LinkedHashMap<String, AttributeHandler> columnsAttributeHandler) {
 		this.tableAttributeHandler = tableAttributeHandler;
-		AttributeHandler ah = searchByName(FIST_COOSYS_KW);
+		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
 		}
@@ -223,35 +184,35 @@ public class SpaceFrame {
 		 * Take first the coosys if not null and look for keywords matching that system
 		 */
 		if( infoCooSys != null ) {
-			if( infoCooSys.getSystem().matches(ECL_SYSTEM) ) {
+			if( infoCooSys.getSystem().matches(RegExp.ECL_SYSTEM) ) {
 				this.frame = new Ecliptic();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForEclpiticKeywords();
 			}
-			else if( infoCooSys.getSystem().matches(FK4_SYSTEM) ) {
+			else if( infoCooSys.getSystem().matches(RegExp.FK4_SYSTEM) ) {
 				this.frame = new FK4();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForFK4Keywords();
 			}
-			else if( infoCooSys.getSystem().matches(FK5_SYSTEM) ) {
+			else if( infoCooSys.getSystem().matches(RegExp.FK5_SYSTEM) ) {
 				this.frame = new FK5();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForFK5Keywords();
 			}
-			else if( infoCooSys.getSystem().matches(GALACTIC) ) {
+			else if( infoCooSys.getSystem().matches(RegExp.GALACTIC) ) {
 				this.frame = new Galactic();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForGalacticKeywords();
 			}
-			else if( infoCooSys.getSystem().matches(ICRS) ) {
+			else if( infoCooSys.getSystem().matches(RegExp.ICRS) ) {
 				this.frame = new ICRS();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
@@ -326,19 +287,19 @@ public class SpaceFrame {
 		/*
 		 * Search by UCD first
 		 */
-		if( (ascension_kw = searchByUcd(FK5_RA_MAINUCD)) != null && (declination_kw = searchByUcd(FK5_DEC_MAINUCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_MAINUCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByUcd(FK5_RA_UCD)) != null && (declination_kw = searchByUcd(FK5_DEC_UCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_UCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByName(FK5_RA_KW)) != null && (declination_kw = searchByName(FK5_DEC_KW))  != null ) {
+		if( (ascension_kw = searchByName(RegExp.FK5_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK5_DEC_KW))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
@@ -353,19 +314,19 @@ public class SpaceFrame {
 		/*
 		 * Search by UCD first
 		 */
-		if( (ascension_kw = searchByUcd(FK4_RA_MAINUCD)) != null && (declination_kw = searchByUcd(FK4_DEC_MAINUCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_MAINUCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByUcd(FK4_RA_UCD)) != null && (declination_kw = searchByUcd(FK4_DEC_UCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_UCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByName(FK4_RA_KW)) != null && (declination_kw = searchByName(FK4_DEC_KW))  != null ) {
+		if( (ascension_kw = searchByName(RegExp.FK4_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK4_DEC_KW))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
@@ -379,19 +340,19 @@ public class SpaceFrame {
 		/*
 		 * Search by UCD first
 		 */
-		if( (ascension_kw = searchByUcd(ICRS_RA_MAINUCD)) != null && (declination_kw = searchByUcd(ICRS_DEC_MAINUCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_MAINUCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByUcd(ICRS_RA_UCD)) != null && (declination_kw = searchByUcd(ICRS_DEC_UCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_UCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByName(ICRS_RA_KW)) != null && (declination_kw = searchByName(ICRS_DEC_KW))  != null ) {
+		if( (ascension_kw = searchByName(RegExp.ICRS_RA_KW)) != null && (declination_kw = searchByName(RegExp.ICRS_DEC_KW))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
@@ -405,19 +366,19 @@ public class SpaceFrame {
 		/*
 		 * Search by UCD first
 		 */
-		if( (ascension_kw = searchByUcd(ECLIPTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(ECLIPTIC_DEC_MAINUCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_MAINUCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByUcd(ECLIPTIC_RA_UCD)) != null && (declination_kw = searchByUcd(ECLIPTIC_DEC_UCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_UCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByName(ECLIPTIC_RA_KW)) != null && (declination_kw = searchByName(ECLIPTIC_DEC_KW))  != null ) {
+		if( (ascension_kw = searchByName(RegExp.ECLIPTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.ECLIPTIC_DEC_KW))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
@@ -431,19 +392,19 @@ public class SpaceFrame {
 		/*
 		 * Search by UCD first
 		 */
-		if( (ascension_kw = searchByUcd(GALACTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(GALACTIC_DEC_MAINUCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_MAINUCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByUcd(GALACTIC_RA_UCD)) != null && (declination_kw = searchByUcd(GALACTIC_DEC_UCD))  != null ) {
+		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_UCD))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;
 			return ;			
 		}
-		if( (ascension_kw = searchByName(GALACTIC_RA_KW)) != null && (declination_kw = searchByName(GALACTIC_DEC_KW))  != null ) {
+		if( (ascension_kw = searchByName(RegExp.GALACTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.GALACTIC_DEC_KW))  != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Could take keywords <" + ascension_kw.getNameorg() + ">  and <" + declination_kw.getNameorg() + "> as position keywords");
 			status |= POS_KW_FOUND;

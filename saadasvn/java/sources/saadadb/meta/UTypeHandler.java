@@ -174,10 +174,10 @@ public class UTypeHandler {
 	 * Returns an attribute handler matching the instance parameters
 	 * @throws QueryException 
 	 */
-	public AttributeHandler getAttributeHandlerr() throws QueryException {
+	public AttributeHandler getAttributeHandler() throws QueryException {
 		AttributeHandler retour = new AttributeHandler();
 		if( this.nickname == null || this.nickname.length() == 0 ) {
-			QueryException.throwNewException(SaadaException.METADATA_ERROR, "Attempt to build an attribute hadlker withour name");
+			QueryException.throwNewException(SaadaException.METADATA_ERROR, "Attempt to build an attribute handler without name");
 		}
 		retour.setNameorg(this.nickname);
 		retour.setNameattr(ChangeKey.changeKey(this.nickname));
