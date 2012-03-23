@@ -277,11 +277,13 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		for( FieldItem it: items) {
 			String stmt = this.formatMappingText(it);
 
-			if( stmt != null && stmt.length() > 0) {
+			if( stmt != null && stmt.length() > 0 && !stmt.equals("null")) {
 				query += "\n     , " + stmt + " AS " + it.uth.getNickname();
 			}
 		}
-		query += "\nFROM "+ mc.getName() +  ", " + Database.getCachemeta().getCollectionTableName(mc.getCollection_name(), mc.getCategory());
+		String ct = Database.getCachemeta().getCollectionTableName(mc.getCollection_name(), mc.getCategory());
+		query += "\nFROM "+ mc.getName() ;
+		query += "\nINNER JOIN " + ct + " ON  " + ct + ".oidsaada = " + mc.getName() + ".oidsaada";
 		return query + "\n LIMIT 50";
 	}
 
@@ -379,7 +381,8 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		String mt = fieldItem.mappingStmt.trim();
 		UTypeHandler uth = fieldItem.uth;
 		if( mt.length() == 0 ) {
-			mt = "'null'";
+			mt = "null";
+			return mt;
 		}
 
 		if( mt.startsWith("'") ){
