@@ -162,7 +162,7 @@ public class ModelViewPanel extends JPanel {
 				if( metaClass == null ) {
 					AdminComponent.showInputError(getParent(), "No class selected");	
 				} else if( !resourceList.checkContent()){
-					AdminComponent.showInputError(getParent(), "Fix RED field mapping first please");	
+					AdminComponent.showInputError(getParent(), "Fix mapping errors first (red items)");	
 				} else {
 						try {
 						MappedTableWindow dtw = new MappedTableWindow(ModelViewPanel.this.obscoreMapperPanel.rootFrame
