@@ -1,6 +1,7 @@
 package saadadb.admintool.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,17 +28,30 @@ public class DataTableWindow extends OuterWindow {
 	protected String sqlQuery;
 	private DataTreePath dataTreePath;
 	private SQLJTable productTable;
+	protected  JTextArea queryTextArea = new JTextArea(sqlQuery);
 
+	/**
+	 * @param rootFrame
+	 * @param treePath
+	 * @throws QueryException
+	 */
 	public DataTableWindow(AdminTool rootFrame, TreePath treePath) throws QueryException {
 		super(rootFrame);
 		this.dataTreePath = new DataTreePath(treePath);
 	}
 
+	/**
+	 * @param rootFrame
+	 * @throws QueryException
+	 */
 	protected DataTableWindow(AdminTool rootFrame) throws QueryException {
 		super(rootFrame);
 		this.dataTreePath = null;
 	}
 
+	/**
+	 * 
+	 */
 	protected void buidSQL() {
 		sqlQuery = "SELECT ";
 		title= "??";
@@ -109,32 +123,47 @@ public class DataTableWindow extends OuterWindow {
 		 * => no popup menu on tabel.
 		 */
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-			productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);
+		productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);
 		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane jsp = new JScrollPane(productTable);
 		jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
 		
 		JPanel qp = new JPanel();
-		final JTextArea jta = new JTextArea(sqlQuery);
+		queryTextArea = new JTextArea(sqlQuery);
 		qp.setLayout(new BoxLayout(qp,BoxLayout.PAGE_AXIS));
-		qp.add(new JScrollPane(jta));
+		qp.add(new JScrollPane(queryTextArea));
 		
 		JButton jb = new JButton("SUBMIT");
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				refresh(jta.getText());
+				refresh(queryTextArea.getText());
 			}
 		});
-		qp.add(jb);
 		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, qp);	
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setDividerLocation(350);
 		this.getContentPane().setLayout(new BorderLayout());
 		this.getContentPane().add(splitPane, BorderLayout.CENTER);
+		Component c;
+		if( ( c = this.addCommandComponent()) != null ) {
+			this.getContentPane().add(c, BorderLayout.SOUTH);
+		}
 	}
 	
+	/**
+	 * @return
+	 */
+	protected Component addCommandComponent() {
+		JButton jb = new JButton("SUBMIT");
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				refresh(queryTextArea.getText());
+			}
+		});
+		return jb;
+	}
 	/**
 	 * @param newQuery
 	 */

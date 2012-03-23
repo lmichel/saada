@@ -5,11 +5,13 @@ package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.cmdthread.ThreadDmViewPopulate;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SaveButton;
@@ -38,14 +40,15 @@ public class ObscoreMapperPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		// TODO Auto-generated method stub
-
+		cmdThread = new ThreadDmViewPopulate(rootFrame, OBSCORE_MAPPER);
 	}
 
 	@Override
-	protected Map<String, Object> getParamMap() {
-		// TODO Auto-generated method stub
-		return null;
+	protected Map<String, Object> getParamMap() {		
+		LinkedHashMap<String, Object> retour = new LinkedHashMap<String, Object>();
+		retour.put("dm", vor);
+		retour.put("class", dataTreePath.classe);
+		return retour;
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
@@ -62,8 +65,10 @@ public class ObscoreMapperPanel extends TaskPanel {
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath == null ) {
+			runButton.setEnabled(false);
 			return;
 		} else if( dataTreePath.isClassLevel() ) {
+			runButton.setEnabled(true);
 			if( !this.hasChanged() ||
 			    showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
 				super.setDataTreePath(dataTreePath);
@@ -74,6 +79,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 				}
 			}
 		} else {
+			runButton.setEnabled(false);
 			showInputError(rootFrame, "DM mapping can only be done at class level. Select a class (a tree leaf) on the Database map");
 			return;
 		}

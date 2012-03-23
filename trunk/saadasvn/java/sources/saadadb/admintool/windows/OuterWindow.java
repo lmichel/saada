@@ -6,6 +6,7 @@ package saadadb.admintool.windows;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -39,6 +40,7 @@ public abstract class OuterWindow extends JFrame {
 		this.panel = new JPanel();
 		this.setPreferredSize(dimension);
 		this.getContentPane().setBackground(AdminComponent.LIGHTBACKGROUND);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
 	}
 	
 	/**
