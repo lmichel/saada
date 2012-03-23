@@ -136,6 +136,7 @@ public  class ProcessPanel extends TaskPanel {
 		procLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Processor.png")));
 		diskLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Disk.png")));
 		dbLight   = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database.png")));
+		statusLabel = new JLabel("task status");
 		this.setProcessControlBar(new Component[] {runPauseButton, abortButton, debugButton, jb}
 		, statusLabel
 		, new JLabel[]{procLight, diskLight, dbLight});

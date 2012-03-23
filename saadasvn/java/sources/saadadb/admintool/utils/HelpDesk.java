@@ -21,6 +21,7 @@ public class HelpDesk {
 	public static final int RELATION_SELECTOR = 13;
 	public static final int VO_CURATION = 14;
 	public static final int MODEL_MAPPER = 15;
+	public static final int MAPPING_QVIEW = 16;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -101,6 +102,15 @@ public class HelpDesk {
 				, "Select the field you want to map and fill the mapping statement."
 				, "The mapping statement must be a valid SQL statement mixing class fields and constant values."
 				, "Class fields ca be dropped from the Saada attribute tree to the mapping statement"
+		});
+		map.put(MAPPING_QVIEW, new String[] {
+				"Only non null DM columns are displayed"
+				, "Both oidsaada and sky_pixel_csa columns are added to the DM in order to enable"
+				, "the Saada download facility and to speed up positional queries"
+				, "The sky_pixel_csa will be updated from the position columns of the DM."
+				, "Modifications carried out on the above queries are not reported to the mapping."
+				, "They can be used to test some mapping setup, but new mappings must then "
+				, "be reported by hand to the back panel."
 		});
 	}
 	
