@@ -107,6 +107,59 @@ public class RegExp {
 	 */
 	public static final String NOT_SET_VALUE = "(NULL)|(NaN)|(Infinity)|(" + Integer.MAX_VALUE + ")";
 	
+	/**
+	 * Coordinate system
+	 */
+	public static final String ECL_SYSTEM = "(?i)(ecl_FK5|ecliptic)";
+	public static final String FK4_SYSTEM = "(?i)(eq_FK4|FK4)";
+	public static final String FK5_SYSTEM = "(?i)(eq_FK5|FK5)";
+	public static final String GALACTIC   = "(?i)(galactic)";		
+	public static final String ICRS       = "(?i)(icrs)";		
+
+	/**
+	 * Position kw
+	 */
+	public static final String FK5_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
+	public static final String FK5_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
+	public static final String FK5_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
+	public static final String FK5_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
+	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^Bb]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
+	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^Bb]?(2000)?)|(_*de[^Bb]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
+
+	public static final String FK4_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
+	public static final String FK4_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
+	public static final String FK4_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
+	public static final String FK4_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
+	public static final String FK4_RA_KW        = "(?i)(_*ra[^(dec)]*b1950)";
+	public static final String FK4_DEC_KW       = "(?i)(_*de[^(ra)]*b1950)";
+	
+	public static final String ICRS_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
+	public static final String ICRS_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
+	public static final String ICRS_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
+	public static final String ICRS_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
+	public static final String ICRS_RA_KW        = "(?i)(_*ra[^(dec)*])";
+	public static final String ICRS_DEC_KW       = "(?i)(_*de[^(ra)]*)";
+	
+
+
+
+	public static final String ECLIPTIC_RA_MAINUCD   = "(?i)(POS_EC_RA_MAIN|(pos\\.ecliptic\\.lon;meta\\.main))";
+	public static final String ECLIPTIC_DEC_MAINUCD  = "(?i)(POS_EC_DEC_MAIN|(pos\\.ecliptic\\.lat;meta\\.main))";
+	public static final String ECLIPTIC_RA_UCD       = "(?i)(POS_EC_RA|(pos\\.ecliptic\\.lon))";
+	public static final String ECLIPTIC_DEC_UCD      = "(?i)(POS_EC_DEC|(pos\\.ecliptic\\.lat))";
+	public static final String ECLIPTIC_RA_KW        = "(?i)(_elon\\.*)";
+	public static final String ECLIPTIC_DEC_KW       = "(?i)(_elat\\.*)";
+
+	public static final String GALACTIC_RA_MAINUCD   = "(?i)(POS_GAL_LON_MAIN|(pos\\.galactic\\.lat;meta\\.main))";
+	public static final String GALACTIC_DEC_MAINUCD  = "(?i)(POS_GAL_LAT|(pos\\.ecliptic\\.dec;meta\\.main))";
+	public static final String GALACTIC_RA_UCD       = "(?i)(POS_GAL_LON|(pos\\.galactic\\.lon))";
+	public static final String GALACTIC_DEC_UCD      = "(?i)(POS_GAL_LAT|(pos\\.galactic\\.lat))";
+	public static final String GALACTIC_RA_KW        = "(?i)(_glon)";
+	public static final String GALACTIC_DEC_KW       = "(?i)(_glat)";
+
+	public static final String FIST_COOSYS_KW   = "(?i)(COO.*SYS|RADECSYS|SYSTEM)";
+
+	
 	public static void main(String[] args) {
 		String ra = "__raj2000";
 		System.out.println(ra.matches(RegExp.RA_KW));

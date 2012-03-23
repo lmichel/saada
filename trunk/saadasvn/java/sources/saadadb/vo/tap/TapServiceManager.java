@@ -215,7 +215,7 @@ public class TapServiceManager extends EntityManager {
 				ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
 				collection = "ivoa";
 				for( UTypeHandler uth: uths) {
-					AttributeHandler ah = uth.getAttributeHandlerr();
+					AttributeHandler ah = uth.getAttributeHandler();
 					ah.setNameattr(ah.getNameorg());
 					mah.put(ah.getNameattr(), ah);
 				}

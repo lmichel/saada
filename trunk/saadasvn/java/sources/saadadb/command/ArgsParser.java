@@ -101,7 +101,8 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-qualifiers")&&
 							!args[i].startsWith("-if=") &&
 							!args[i].startsWith("-of=") &&
-							!args[i].startsWith("-protocol=") 
+							!args[i].startsWith("-protocol=") &&
+							!args[i].startsWith("-vomodel=") 
 					) {
 						msg += " <" + args[i] + ">";
 					}
@@ -969,6 +970,19 @@ public class ArgsParser implements Serializable{
 		}
 		return new String[0];
 	}
+	
+	/**
+	 * @return
+	 */
+	public String getVomodel()   {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-vomodel=")) {
+				return getArgsValue(args[i]);							
+			}
+		}
+		return null;		
+	}
+
 
 
 	/**
