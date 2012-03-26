@@ -29,7 +29,7 @@ public class ClassBuilder {
 			for( String group: vor.getGroups().keySet() ) {
 				UTypeHandler[] uths = vor.getGroupUtypeHandlers(group);
 				for( UTypeHandler uth: uths) {
-					AttributeHandler ah = uth.getAttributeHandlerr();
+					AttributeHandler ah = uth.getAttributeHandler();
 					ahs.put(ah.getNameorg(), ah);
 				}
 			}
