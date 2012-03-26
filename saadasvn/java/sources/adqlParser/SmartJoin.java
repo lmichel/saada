@@ -251,7 +251,7 @@ public class SmartJoin {
 					Messenger.printMsg(Messenger.TRACE, table.getTable() + " is a VO model");
 					ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
 					for( UTypeHandler uth: uths) {
-						AttributeHandler ah = uth.getAttributeHandlerr();
+						AttributeHandler ah = uth.getAttributeHandler();
 						ah.setNameattr(ah.getNameorg());
 						Vector<String> vTables = lstColumns.get(ah.getNameattr());
 						if (vTables == null){
