@@ -61,7 +61,7 @@ public class GetObject extends SaadaServlet {
 		String relation = request.getParameter("relation");
 		String target = request.getParameter("target");
 		ServletOutputStream out = response.getOutputStream();   
-		printAccess(request, true);
+		printAccess(request, false);
 		try {
 			long oid = Long.parseLong(soid);
 
