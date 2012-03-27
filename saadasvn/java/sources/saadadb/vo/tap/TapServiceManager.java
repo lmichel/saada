@@ -139,6 +139,19 @@ public class TapServiceManager extends EntityManager {
 	public void empty(ArgsParser ap) throws SaadaException {
 	}
 
+	/**
+	 * Removes all schemas except ivoa if all is false
+	 * @throws Exception
+	 */
+	public void remove(boolean all) throws Exception {
+		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
+		for( String schema: schemas) {
+			if( all || !schema.equalsIgnoreCase("ivoa") ) {
+				this.remove(new ArgsParser(new String[]{"-remove=" + schema}));
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.command.EntityManager#remove(saadadb.command.ArgsParser)
 	 */
@@ -156,6 +169,7 @@ public class TapServiceManager extends EntityManager {
 				Table_Tap_Schema_Columns.dropTable();
 				Table_Tap_Schema_Tables.dropTable();
 				Table_Tap_Schema_Schemas.dropTable();
+				Table_Saada_VO_Capabilities.emptyTable("Tap");
 			}
 			else {
 				String[] sc = toRemove.split("\\.");
@@ -241,7 +255,7 @@ public class TapServiceManager extends EntityManager {
 			 * TAP SCHEMA table update
 			 */
 			if( Table_Tap_Schema_Tables.knowsTable(classe)) {
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + classe + " alreday published in the TAP service");
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + classe + " already published in the TAP service");
 			}
 			if( !Table_Tap_Schema_Schemas.knowsSchema(collection) ) {
 				Table_Tap_Schema_Schemas.addSchema(collection, "Schema matching the Saada collection " + collection, null);
@@ -385,6 +399,7 @@ public class TapServiceManager extends EntityManager {
 	/**
 	 * republish all TAP tables declared in the saada_vo_capabilities table.
 	 * All previous table published are first removed except those of the ivoa schema.
+	 * All schemas must be first removed and the transaction committed
 	 * @throws Exception
 	 */
 	public void synchronizeWithGlobalCapabilities() throws Exception {
@@ -396,15 +411,15 @@ public class TapServiceManager extends EntityManager {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
 		}
 
-		/*
-		 * Drop all schema except ivoa which is published from another way
-		 */
-		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
-		for( String schema: schemas) {
-			if( !schema.equalsIgnoreCase("ivoa") ) {
-				Table_Tap_Schema_Schemas.dropPublishedSchema(schema);
-			}
-		}
+//		/*
+//		 * Drop all schema except ivoa which is published from another way
+//		 */
+//		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
+//		for( String schema: schemas) {
+//			if( !schema.equalsIgnoreCase("ivoa") ) {
+//				Table_Tap_Schema_Schemas.dropPublishedSchema(schema);
+//			}
+//		}
 		/*
 		 * republish all tables
 		 */
@@ -419,7 +434,7 @@ public class TapServiceManager extends EntityManager {
 					new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
 			this.populate(ap);
 			/*
-			 * Comes from the IG no format checking needed
+			 * Comes from the IG: no format checking needed
 			 */
 			if( dtp.length == 3) {
 				classTable = dtp[2];

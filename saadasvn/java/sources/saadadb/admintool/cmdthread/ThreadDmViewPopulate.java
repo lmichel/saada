@@ -12,8 +12,10 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
 import saadadb.vo.tap.DmServiceManager;
+import saadadb.vo.tap.TapServiceManager;
 
 public class ThreadDmViewPopulate extends CmdThread {
 	private VOResource vor;
@@ -55,13 +57,44 @@ public class ThreadDmViewPopulate extends CmdThread {
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {
+			/*
+			 * Add class data to the DM table
+			 */
 			SQLTable.beginTransaction();
 			DmServiceManager dsm = new DmServiceManager(vor);
 			dsm.populate(new ArgsParser(new String[]{"-populate=" + className, Messenger.getDebugParam()}));
 			SQLTable.beginTransaction();
 			SQLTable.indexTable(vor.getName(), dsm);
-			SQLTable.commitTransaction();
+			SQLTable.commitTransaction();			
 			AdminComponent.showSuccess(frame, "Class " + className + " added to the view of the DM " + vor.getName());		
+			/*
+			 * Make sure the DM is recorded to the TAP service
+			 */
+			if( !Table_Tap_Schema_Tables.knowsTable(vor.getName())) {
+				TapServiceManager tsm = new TapServiceManager();
+				ArgsParser ap = new ArgsParser(new String[]{"-populate=" + vor.getName(), Messenger.getDebugParam()});
+				try {
+					SQLTable.beginTransaction();
+					tsm.populate(ap);
+					SQLTable.commitTransaction();
+					AdminComponent.showSuccess(frame, "ObsCore table added to the TAP service");
+				} catch (SaadaException e1) {
+					SQLTable.abortTransaction();
+					if( e1.getMessage().equals(SaadaException.MISSING_RESOURCE)) {
+						if( AdminComponent.showConfirmDialog(frame, "No TAP service detected. Do you want to create it?") ) {
+							try {
+								SQLTable.beginTransaction();
+								tsm.create(null);
+								tsm.populate(ap);
+								SQLTable.commitTransaction();
+								AdminComponent.showSuccess(frame, "ObsCore table added to the TAP service");
+							} catch (Exception e) {
+								throw new Exception(e.getMessage());
+							}
+						}
+					}	
+				}
+			}
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 		} catch (Exception ae) {			

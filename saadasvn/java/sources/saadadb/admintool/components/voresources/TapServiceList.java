@@ -157,9 +157,11 @@ public class TapServiceList extends JPanel {
 	protected String getDescription() {
 		return this.tapSelector.getDescription();
 	}
-	public void makeSaveQuery() throws Exception {
+	public void saveCapabilities() throws Exception {
 		for( TapServiceItem tsi: items) {
+			System.out.println("tsiààà@@@@@@@ " + tsi.isRemoved());
 			if( !tsi.isRemoved()) {
+				System.out.println("remv" + tsi);
 				Table_Saada_VO_Capabilities.addCapability(tsi.capability);
 			}
 		}
