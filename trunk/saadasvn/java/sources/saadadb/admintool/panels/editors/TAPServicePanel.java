@@ -80,8 +80,6 @@ public class TAPServicePanel extends EditPanel {
 		MyGBC emc = new MyGBC(5,5,5,5);
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
 
-
-
 		MyGBC imcep = new MyGBC(0,0,0,0);
 		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
 		tPanel.add(new JScrollPane(tapSelector), imcep);
@@ -91,7 +89,13 @@ public class TAPServicePanel extends EditPanel {
 
 	@Override
 	public void active() {
-		// TODO Auto-generated method stub	
+		if( tapSelector != null ) {
+			try {
+				tapSelector.loadCapabilities();
+			} catch (Exception e) {
+				showFatalError(rootFrame, e);
+			}
+		}
 	}
 
 	protected void setActionBar() {
@@ -99,16 +103,19 @@ public class TAPServicePanel extends EditPanel {
 		this.saveButton.setEnabled(true);
 		this.saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if( tapSelector.isEmpty() ) {
-					showInputError(rootFrame, "No data collection selected" );
-					return;
-				}
+//				if( tapSelector.isEmpty() ) {
+//					showInputError(rootFrame, "No data collection selected" );
+//					return;
+//				}
 				TapServiceManager tsm = new TapServiceManager();
 				try {
 					SQLTable.beginTransaction();
 					Table_Saada_VO_Capabilities.emptyTable("TAP");
-					tapSelector.makeSaveQuery();
-					tsm .synchronizeWithGlobalCapabilities();
+					tapSelector.saveCapabilities();
+					tsm.remove(false);
+					SQLTable.commitTransaction();
+					SQLTable.beginTransaction();
+					tsm.synchronizeWithGlobalCapabilities();
 					SQLTable.commitTransaction();
 					tapSelector.loadCapabilities();
 					showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
@@ -164,7 +171,7 @@ public class TAPServicePanel extends EditPanel {
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}
-				
+
 			}			
 		});
 		xmlButton.setToolTipText("Show the registry record of the TAP service");

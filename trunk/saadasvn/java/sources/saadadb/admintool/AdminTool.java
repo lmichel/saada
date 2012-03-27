@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,6 +25,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
 import saadadb.admintool.dialogs.AdminPassword;
@@ -200,6 +202,17 @@ public class AdminTool extends BaseFrame {
 		c.weighty = 0;
 		leftPanel.add(b, c);
 
+		b = new JButton("Deploy Web application");
+		b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CmdThread ct = new ThreadDeployWebApp(AdminTool.this, "Deploy Webapp");
+				ct.run();
+			}
+		});
+		c.gridy = 3;	
+		c.weightx = 0;
+		c.weighty = 0;
+		leftPanel.add(b, c);
 		/*
 		 * Build the right tab panel
 		 */

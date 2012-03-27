@@ -67,8 +67,8 @@ public class TapSelector extends JPanel {
 		resourceList.addResource(dataTreePath);
 		return true;
 	}
-	public void makeSaveQuery() throws Exception {
-		resourceList.makeSaveQuery();
+	public void saveCapabilities() throws Exception {
+		resourceList.saveCapabilities();
 	}
 	public void setDescription(String description){
 		this.descPanel.setText(description);
