@@ -44,7 +44,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 			sql += ah.getNameattr() + "  " + ah.getType();
 		}
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
-		SQLTable.createTable(tableName, sql, null, false);
+		SQLTable.createTable(tableName, sql, "schema_name", false);
 	}
 
 	/**

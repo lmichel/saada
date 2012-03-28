@@ -212,7 +212,7 @@ public class VOResource {
 				return VOResource.getNativeVOResource(name, filterCollectionColumns(lah));
 			}
 			else{
-				Messenger.printMsg(Messenger.ERROR, "VOResource <" + name + "> not found");
+				Messenger.printMsg(Messenger.WARNING, "VOResource <" + name + "> not found");
 				return null;
 			}
 		}
@@ -273,7 +273,7 @@ public class VOResource {
 				if( (new File(configfile)).exists() ) {
 					return new VOResource(configfile);
 				}
-				Messenger.printMsg(Messenger.ERROR, "VOResource <" + configfile + "> not found");
+				Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found");
 				return null;
 			}
 		}

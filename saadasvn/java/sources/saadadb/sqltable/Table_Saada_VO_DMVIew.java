@@ -102,10 +102,31 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 				+   raCol + " IS NULL AND  "  + decCol + " IS NOT NULL");
 		while( rs.next() ) {
 			rs.updateLong(1, (new Qbox(new Coo(rs.getDouble(2), rs.getDouble(3)))).box());
-
 		}
 		rs.close();	
 	}
+	
+	/**
+	 * Returns true id the table mapping the VO resource (DM) vor as at least one row with a record
+	 * coming from data of class className
+	 * @param vor
+	 * @param className
+	 * @return
+	 * @throws Exception 
+	 */
+	public static boolean isClassReferenced(VOResource vor, String className) throws Exception {
+		int mask = (int)(SaadaOID.getMaskForClass(className) >> 32);
+		SQLQuery sqlquery = new SQLQuery();
+		ResultSet rs = sqlquery.run("SELECT * " 
+				+ " FROM " + vor.getName() 
+				+ " WHERE oidsaada >> 32 = " + mask  + " LIMIT 1");
+		while( rs.next() ) {
+			rs.close();
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Remove all rows coming from th class className
 	 * @param vor
