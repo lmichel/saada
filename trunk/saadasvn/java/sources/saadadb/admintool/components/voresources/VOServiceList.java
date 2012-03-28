@@ -1,6 +1,5 @@
 package saadadb.admintool.components.voresources;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -19,29 +18,38 @@ import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capabilities;
 
 
-public class TapServiceList extends JPanel {
-	private TapSelector tapSelector;
+/**
+ * JPanel containing a list of {@link VOServiceListItem}.
+ * Behave more or less as a JList
+ * @author michel
+ * @version $Id$
+ *
+ */
+public class VOServiceList extends JPanel {
+	private static final long serialVersionUID = 1L;
 
-	protected  ArrayList<TapServiceItem> items = new ArrayList<TapServiceItem>();
+	private VOServiceItemSelector itemSelector;
+	private String protocol;
+	protected  ArrayList<VOServiceListItem> items = new ArrayList<VOServiceListItem>();
 
 	/**
 	 * @param taskPanel
 	 * @param toActive
 	 */
-	public TapServiceList(TapSelector tapSelector) {
-		this.tapSelector = tapSelector;
+	public VOServiceList(VOServiceItemSelector itemSelector, String protocol) {
+		this.itemSelector = itemSelector;
+		this.protocol = protocol;
 		this.setTransferHandler(new ProductTreePathTransferHandler(3));	
 		this.setLayout(new GridBagLayout());
-		//this.setBackground(Color.G);
 	}
 
 	public void reset() {
-		items = new ArrayList<TapServiceItem>();
+		items = new ArrayList<VOServiceListItem>();
 		displayListItems();
 	}
 
 	protected void unSelectAll() {
-		for( TapServiceItem tsi: items) {
+		for( VOServiceListItem tsi: items) {
 			if( tsi.isSelected() ) {
 				tsi.capability.setDescription(this.getDescription());
 			}
@@ -54,7 +62,7 @@ public class TapServiceList extends JPanel {
 	 * @return
 	 */
 	private boolean checkExist(String dataTreePath) {
-		for( TapServiceItem tsi: items) {
+		for( VOServiceListItem tsi: items) {
 			if( dataTreePath.equals(tsi.getDataTreePath())) {
 				return true;
 			}
@@ -69,7 +77,7 @@ public class TapServiceList extends JPanel {
 		this.removeAll();
 		MyGBC gbc = new MyGBC(0, 0, 0, 0);
 
-		for( TapServiceItem tsi: items) {
+		for( VOServiceListItem tsi: items) {
 			tsi.setAlignmentX(Component.LEFT_ALIGNMENT);
 			gbc.left(true);gbc.rowEnd();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -89,8 +97,8 @@ public class TapServiceList extends JPanel {
 	 * @param dataTreePath
 	 */
 	protected void removeResource(String dataTreePath){
-		TapServiceItem toRemove= null;
-		for( TapServiceItem tsi: items) {
+		VOServiceListItem toRemove= null;
+		for( VOServiceListItem tsi: items) {
 			if( dataTreePath.toString().equals(tsi.getDataTreePath())) {
 				toRemove = tsi;
 			}
@@ -112,14 +120,14 @@ public class TapServiceList extends JPanel {
 		}
 		else {
 			if( this.checkExist(dataTreePath.toString()) )  return false;
-			this.items.add(new TapServiceItem(dataTreePath));
+			this.items.add(new VOServiceListItem(dataTreePath, protocol));
 			this.displayListItems();
 			return true;
 		}
 	}
 	public boolean addResource(Capabilities capability) throws SaadaException {
 			if( this.checkExist(capability.getDataTreePath()) )  return false;
-			this.items.add(new TapServiceItem(capability));
+			this.items.add(new VOServiceListItem(capability));
 			this.displayListItems();
 			return true;
 	}
@@ -131,7 +139,7 @@ public class TapServiceList extends JPanel {
 	 * @return
 	 * @throws FatalException
 	 */
-	public boolean addResource(DataTreePath dataTreePath, TapServiceItem neighbour) throws SaadaException {
+	public boolean addResource(DataTreePath dataTreePath, VOServiceListItem neighbour) throws SaadaException {
 		if( dataTreePath.isCollectionLevel() ) {
 			AdminComponent.showInputError(this.getParent(), "Selet a data tree node either at category or class level");
 			return false;
@@ -140,28 +148,26 @@ public class TapServiceList extends JPanel {
 			if( this.checkExist(dataTreePath.toString()) )  return false;
 			for(int i=0  ; i< items.size() ; i++ ) {
 				if( this.items.get(i).getDataTreePath().equals(neighbour.getDataTreePath())) {
-					this.items.add(i, new TapServiceItem(dataTreePath));
+					this.items.add(i, new VOServiceListItem(dataTreePath, protocol));
 					this.displayListItems();
 					return true;
 				}
 			}
-			this.items.add(new TapServiceItem(dataTreePath));
+			this.items.add(new VOServiceListItem(dataTreePath, protocol));
 			this.displayListItems();
 			return true;
 		}
 	}
 	
 	protected void setDescription(String description) {
-		this.tapSelector.setDescription(description);
+		this.itemSelector.setDescription(description);
 	}
 	protected String getDescription() {
-		return this.tapSelector.getDescription();
+		return this.itemSelector.getDescription();
 	}
 	public void saveCapabilities() throws Exception {
-		for( TapServiceItem tsi: items) {
-			System.out.println("tsiààà@@@@@@@ " + tsi.isRemoved());
+		for( VOServiceListItem tsi: items) {
 			if( !tsi.isRemoved()) {
-				System.out.println("remv" + tsi);
 				Table_Saada_VO_Capabilities.addCapability(tsi.capability);
 			}
 		}

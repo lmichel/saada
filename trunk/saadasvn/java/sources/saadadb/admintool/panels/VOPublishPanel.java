@@ -28,7 +28,7 @@ public class VOPublishPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Publish SIA", "icons/SIA.png"
 				, new Runnable(){public void run(){
-					System.out.println("SIA");}});
+					rootFrame.activePanel(SIA_PUBLISH);}});
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -64,7 +64,7 @@ public class VOPublishPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Publish ObsCore Table", "icons/ObsCore.png"
 				, new Runnable(){public void run(){
-					System.out.println("Obs Core");}});
+					rootFrame.activePanel(OBSCORE_MAPPER);}});
 		
 		c.gridx = 2;
 		c.gridy = 0;

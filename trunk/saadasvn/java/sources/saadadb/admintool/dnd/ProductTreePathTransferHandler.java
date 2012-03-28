@@ -9,9 +9,9 @@ import javax.swing.JList;
 import javax.swing.TransferHandler;
 import javax.swing.tree.TreePath;
 
-import saadadb.admintool.components.voresources.TapServiceItem;
-import saadadb.admintool.components.voresources.TapServiceList;
-import saadadb.admintool.components.voresources.TapSelector;
+import saadadb.admintool.components.voresources.VOServiceListItem;
+import saadadb.admintool.components.voresources.VOServiceList;
+import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.util.Messenger;
 
@@ -49,11 +49,11 @@ public class ProductTreePathTransferHandler extends TransferHandler {
        	      			TreepathDropableTextField tf = (TreepathDropableTextField) c;
        	      			return tf.setText(treepath); 
        	      		}
-       	      		else if( c instanceof TapServiceList) {
-       	      			return ((TapServiceList)c).addResource(new DataTreePath(treepath));
+       	      		else if( c instanceof VOServiceList) {
+       	      			return ((VOServiceList)c).addResource(new DataTreePath(treepath));
        	      		}
-       	      		else if( c instanceof TapServiceItem) {
-       	      			return ((TapServiceItem)c).fireAddResource(new DataTreePath(treepath));
+       	      		else if( c instanceof VOServiceListItem) {
+       	      			return ((VOServiceListItem)c).fireAddResource(new DataTreePath(treepath));
        	      		}
        			}
        		}

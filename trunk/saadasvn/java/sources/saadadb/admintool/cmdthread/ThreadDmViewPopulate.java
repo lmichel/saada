@@ -12,8 +12,11 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Saada_VO_Capabilities;
+import saadadb.sqltable.Table_Saada_VO_DMVIew;
 import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
+import saadadb.vo.registry.Capabilities;
 import saadadb.vo.tap.DmServiceManager;
 import saadadb.vo.tap.TapServiceManager;
 
@@ -44,9 +47,13 @@ public class ThreadDmViewPopulate extends CmdThread {
 			if( Database.getCachemeta().getClass(className) == null ){
 				return false;
 			}
-		} catch (FatalException e) {
+			if( Table_Saada_VO_DMVIew.isClassReferenced(vor, className) ) {
+				AdminComponent.showInfo(frame, "Class " + className + " is already referenced in table " + vor.getName());
+				return false;
+			}
+		} catch (Exception e) {
 			return false;
-		}		
+		} 	
 		return true;
 	}
 
@@ -68,14 +75,33 @@ public class ThreadDmViewPopulate extends CmdThread {
 			SQLTable.commitTransaction();			
 			AdminComponent.showSuccess(frame, "Class " + className + " added to the view of the DM " + vor.getName());		
 			/*
+			 * Make TAP service really exist
+			 */
+			TapServiceManager tsm = new TapServiceManager();
+			if( TapServiceManager.serviceExists() == 0 ) {
+				if( AdminComponent.showConfirmDialog(frame, "No TAP service detected. Do you want to create it (needed to register the ObsCore table)?") ) {
+						SQLTable.beginTransaction();
+						Messenger.printMsg(Messenger.TRACE, "Create TAP service");
+						tsm.create(null);
+						SQLTable.commitTransaction();
+				}	else {
+					AdminComponent.showInfo(frame, "ObsCore table registration canceled");
+					return;
+				}
+			}
+			/*
 			 * Make sure the DM is recorded to the TAP service
 			 */
 			if( !Table_Tap_Schema_Tables.knowsTable(vor.getName())) {
-				TapServiceManager tsm = new TapServiceManager();
 				ArgsParser ap = new ArgsParser(new String[]{"-populate=" + vor.getName(), Messenger.getDebugParam()});
 				try {
 					SQLTable.beginTransaction();
 					tsm.populate(ap);
+					Capabilities cpb = new Capabilities();
+					cpb.setDataTreePath("ivoa." + vor.getName());
+					cpb.setProtocol(Capabilities.TAP);
+					cpb.setDescription("Table of data maiing the DM " + vor.getName());
+					Table_Saada_VO_Capabilities.addCapability(cpb);
 					SQLTable.commitTransaction();
 					AdminComponent.showSuccess(frame, "ObsCore table added to the TAP service");
 				} catch (SaadaException e1) {
@@ -86,6 +112,11 @@ public class ThreadDmViewPopulate extends CmdThread {
 								SQLTable.beginTransaction();
 								tsm.create(null);
 								tsm.populate(ap);
+								Capabilities cpb = new Capabilities();
+								cpb.setDataTreePath("ivoa." + vor.getName());
+								cpb.setProtocol(Capabilities.TAP);
+								cpb.setDescription("Table of data maiing the DM " + vor.getName());
+								Table_Saada_VO_Capabilities.addCapability(cpb);
 								SQLTable.commitTransaction();
 								AdminComponent.showSuccess(frame, "ObsCore table added to the TAP service");
 							} catch (Exception e) {

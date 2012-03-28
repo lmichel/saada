@@ -16,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -41,6 +40,7 @@ import saadadb.admintool.panels.RootChoicePanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.panels.editors.SIAServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
@@ -111,6 +111,7 @@ public class AdminTool extends BaseFrame {
 
 	private EditPanel voCurator;;
 	private EditPanel tapService;
+	private EditPanel siaService;
 
 	private TaskPanel obscoreMapperPanel;
 
@@ -292,8 +293,7 @@ public class AdminTool extends BaseFrame {
 		if( activePanel!= null && activePanel.hasChanged() && !panelTitle.equals(AdminComponent.PROCESS_PANEL) )  {
 			if( !AdminComponent.showConfirmDialog(this, "Modifications not saved. Do you want to continue anyway?") ) {
 				return;
-			}
-			else {
+			} else {
 				activePanel.cancelChanges();
 			}
 		}
@@ -441,12 +441,16 @@ public class AdminTool extends BaseFrame {
 				tapService = new TAPServicePanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = tapService;
+		} else 	if( panelTitle.equals(AdminComponent.SIA_PUBLISH) ) {
+			if( siaService == null ) {
+				siaService = new SIAServicePanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = siaService;
 		} else 	if( panelTitle.equals(AdminComponent.OBSCORE_MAPPER) ) {
 			if( obscoreMapperPanel== null ) {
 				obscoreMapperPanel = new ObscoreMapperPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = obscoreMapperPanel;
-
 			/*
 			 * Process pqnel used by all tasks
 			 */

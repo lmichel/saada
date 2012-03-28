@@ -40,17 +40,17 @@ import saadadb.vo.tap.TapServiceManager;
  * @author laurentmichel
  *
  */
-public class TAPServicePanel extends EditPanel {
-	private static final long serialVersionUID = 1L;
+public class SIAServicePanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private VOServiceItemSelector itemSelector;
+	private Authority authority;
 
 	/**
 	 * @param rootFrame
 	 * @param ancestor
 	 */
-	public TAPServicePanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, TAP_PUBLISH, null, ancestor);
+	public SIAServicePanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, SIA_PUBLISH, null, ancestor);
 	}
 
 	@Override
@@ -76,28 +76,26 @@ public class TAPServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capabilities.TAP);
+			itemSelector = new VOServiceItemSelector(this, Capabilities.SIA);
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}
-		JPanel tPanel = this.addSubPanel("Published TAP tables");
+		JPanel tPanel = this.addSubPanel("Published SIA tables");
 
 		MyGBC imcep = new MyGBC(0,0,0,0);
 		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
 		tPanel.add(new JScrollPane(itemSelector), imcep);
 
-		JButton b = new JButton("Drop TAP service");
+		JButton b = new JButton("Empty SIA service");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if( showConfirmDialog(rootFrame, "Do you want to empty your TAP service (ObsCore table won't be removed)?") ) {
-					TapServiceManager tsm = new TapServiceManager();					
+				if( showConfirmDialog(rootFrame, "Do you want to empty your SIA service (no data is removed from the DB)?") ) {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
-						Table_Saada_VO_Capabilities.emptyTable(Capabilities.TAP);
-						tsm.remove(new ArgsParser(new String[]{"-remove=service"}));
+						Table_Saada_VO_Capabilities.emptyTable(Capabilities.SIA);
 						SQLTable.commitTransaction();
-						showInfo(rootFrame, "Tap Service removed");
+						showInfo(rootFrame, "SIA service empty");
 					} catch (SaadaException e) {
 						SQLTable.abortTransaction();
 						showFatalError(rootFrame, e);
@@ -121,49 +119,14 @@ public class TAPServicePanel extends EditPanel {
 		this.saveButton.setEnabled(true);
 		this.saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//				if( tapSelector.isEmpty() ) {
-				//					showInputError(rootFrame, "No data collection selected" );
-				//					return;
-				//				}
 				TapServiceManager tsm = new TapServiceManager();
 				try {
 					SQLTable.beginTransaction();
-					Table_Saada_VO_Capabilities.emptyTable(Capabilities.TAP);
+					Table_Saada_VO_Capabilities.emptyTable(Capabilities.SIA);
 					itemSelector.saveCapabilities();
 					SQLTable.commitTransaction();
-					
-					SQLTable.beginTransaction();
-					tsm.removeAllTables();
-					SQLTable.commitTransaction();
-					
-					tsm.synchronizeWithGlobalCapabilities();
-					
 					itemSelector.loadCapabilities();
-					showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
-				} catch (SaadaException e1) {
-					SQLTable.abortTransaction();
-					if( e1.getMessage().equals(SaadaException.MISSING_RESOURCE)) {
-						if( showConfirmDialog(rootFrame, "No TAP service detected. Do you want to create it?") ) {
-							try {
-								SQLTable.beginTransaction();
-								Messenger.printMsg(Messenger.TRACE, "Create TAP service");
-								tsm.create(null);
-								SQLTable.commitTransaction();
-								
-								Messenger.printMsg(Messenger.TRACE, "Add classes to TAP  service");
-								tsm .synchronizeWithGlobalCapabilities();
-								
-								itemSelector.loadCapabilities();
-								showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
-							} catch (Exception e) {
-								SQLTable.abortTransaction();
-								showFatalError(rootFrame, e);
-							}
-						}
-
-					} else {
-						showFatalError(rootFrame, e1);
-					}
+					showSuccess(SIAServicePanel.this.rootFrame, "SIA capabilities saved");
 				} catch (Exception e) {
 					SQLTable.abortTransaction();
 					showFatalError(rootFrame, e);
