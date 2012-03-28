@@ -51,7 +51,7 @@ public class Download extends SaadaServlet {
 		String product_path;
 		long oid;
 		String separ= Database.getSepar();
-		printAccess(request, true);
+		printAccess(request, false);
 		try {
 
 			String soid = request.getParameter("oid");
