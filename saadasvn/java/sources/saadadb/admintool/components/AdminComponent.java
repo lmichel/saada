@@ -75,6 +75,9 @@ public abstract class AdminComponent extends JPanel {
 	public static final String VO_CURATOR = "VO Curator";
 	public static final String TAP_PUBLISH = "TAP Service Setup";
 	public static final String OBSCORE_MAPPER = "ObsCore Mapper";
+	public static final String SIA_PUBLISH = "SIA Service Setup";
+	public static final String SSA_PUBLISH = "SSA Service Setup";
+	public static final String CONESEARCH_PUBLISH = "Conesearch Service Setup";
 
 
 	protected DataTreePath dataTreePath;
@@ -101,6 +104,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @param message
 	 */
 	public static final void showInfo(Component frame, String message) {
+		Messenger.printMsg(Messenger.TRACE, "Show Info " + message);
 		JOptionPane.showMessageDialog(frame,
 				getPlainLabel(message),
 				"Information",
@@ -112,6 +116,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @return
 	 */
 	public final static void showCopiableInfo(Component frame, String message, String title) {
+		Messenger.printMsg(Messenger.TRACE, "Show Info " + message);
 		JTextArea jta = new  JTextArea(message);
 		jta.setEditable(false);	
 		jta.setFont(plainFont);		
@@ -126,6 +131,7 @@ public abstract class AdminComponent extends JPanel {
 	}
 
 	public static final void showFatalError(Component frame, String message) {
+		Messenger.printMsg(Messenger.TRACE, "Show Fatal Error " + message);
 		JOptionPane.showMessageDialog(frame,
 				message,
 				"Fatal Internal Error",
@@ -141,6 +147,7 @@ public abstract class AdminComponent extends JPanel {
 	} 
 
 	public static final void showInputError(Component frame, String message) {
+		Messenger.printMsg(Messenger.TRACE, "Show Input Error " + message);
 		JOptionPane.showMessageDialog(frame,
 				message,
 				"Input Error",
@@ -153,6 +160,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @return
 	 */
 	public static final boolean showConfirmDialog(Component frame, String message) {
+		Messenger.printMsg(Messenger.TRACE, "Show Confirm " + message);
 		Object[] options = {"Yes", "No"};
 		int n = JOptionPane.showOptionDialog(frame,
 				message,
@@ -178,6 +186,7 @@ public abstract class AdminComponent extends JPanel {
 	 * @return
 	 */
 	public static final boolean showConfirmDialog(Component frame, String message, Component[] comps) {
+		Messenger.printMsg(Messenger.TRACE, "Show Confirm " + message);
 		JPanel myPanel = new JPanel();
 		myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.PAGE_AXIS));
 		for( Component c:comps) {
@@ -194,8 +203,8 @@ public abstract class AdminComponent extends JPanel {
 
 	}
 
-
 	public static final void showSuccess(Component frame, String message) {
+		Messenger.printMsg(Messenger.TRACE, "Show Success " + message);
 		JOptionPane.showMessageDialog(frame,
 				message,
 				"Success",

@@ -22,6 +22,8 @@ public class HelpDesk {
 	public static final int VO_CURATION = 14;
 	public static final int MODEL_MAPPER = 15;
 	public static final int MAPPING_QVIEW = 16;
+	public static final int VOITEM_DESCRIPTION = 17;
+	public static final int VOITEM_EDITION = 18;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -111,6 +113,20 @@ public class HelpDesk {
 				, "Modifications carried out on the above queries are not reported to the mapping."
 				, "They can be used to test some mapping setup, but new mappings must then "
 				, "be reported by hand to the back panel."
+		});
+		map.put(VOITEM_DESCRIPTION, new String[] {
+				"The description can be edited by hand."
+				,"It is stored in the saadadb_vo_capability table"
+				,"and put in registry marks proposed by Saada"
+				
+		});
+		map.put(VOITEM_EDITION, new String[] {
+				"Drop a data tree node in this area to add it ot the VO resource"
+				,"Uncheck the box to remove it from the list."
+				,"Edit its description if the description area."
+				,"All changes are save bi clicking on the floppy disk icon."
+				
+				
 		});
 	}
 	

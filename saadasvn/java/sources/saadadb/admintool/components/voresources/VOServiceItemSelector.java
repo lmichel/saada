@@ -1,49 +1,72 @@
 package saadadb.admintool.components.voresources;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.panels.editors.TAPServicePanel;
+import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capabilities;
 
 
-public class TapSelector extends JPanel {
-	private TAPServicePanel tapServicePanel;
-	private TapServiceList resourceList;
+/**
+ * Panel showing a list of items published in a VO resource.
+ * The VO resource is defined by all Capabilities matching the protocol
+ * A description is shown when an item is selected
+ * @author michel
+ * @version $Id$
+ *
+ */
+public class VOServiceItemSelector extends JPanel {
+	private static final long serialVersionUID = -5324001371175383374L;
+	private EditPanel tapServicePanel;
+	private VOServiceList resourceList;
 	private JTextArea descPanel;
-	
+	private String protocol;
 	
 	/**
 	 * @param taskPanel
 	 * @param toActive
 	 * @throws Exception 
 	 */
-	public TapSelector(TAPServicePanel tapServicePanel) throws Exception {
+	public VOServiceItemSelector(EditPanel tapServicePanel, String protocol) throws Exception {
+		this.protocol = protocol;
 		this.tapServicePanel = tapServicePanel;
-		this.resourceList = new TapServiceList(this);
+		this.resourceList = new VOServiceList(this, protocol);
+		this.resourceList.setBorder(BorderFactory.createTitledBorder("Saada resources currently published in " + protocol));
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		
 		MyGBC mgbc = new MyGBC(5,5,5,5);
-		mgbc.gridx = 0; mgbc.gridy = 0;mgbc.weightx = 1; mgbc.weighty = 1;
+		mgbc.gridx = 0; mgbc.gridy = 0;mgbc.weightx = 0.5; mgbc.weighty = 0.5;
 		this.setLayout(new GridBagLayout());
 		JScrollPane jsp = new JScrollPane(this.resourceList);
-		jsp.setPreferredSize(new Dimension(350,100));
+		jsp.setPreferredSize(new Dimension(350,200));
 		this.add(jsp, mgbc);
-		mgbc.newRow();
-		descPanel = new JTextArea(6,24);
-		this.add(new JScrollPane(this.descPanel), mgbc);
 		
+		mgbc.rowEnd();
+		JPanel dp = new JPanel();
+		dp.setLayout(new BoxLayout(dp, BoxLayout.PAGE_AXIS));
+		this.descPanel = new JTextArea(6,24);
+		JScrollPane jscp = new JScrollPane(this.descPanel);
+		jscp.setBorder(BorderFactory.createTitledBorder("Description of the selected item"));
+		dp.add(jscp);	
+		dp.add(AdminComponent.getHelpLabel(HelpDesk.VOITEM_DESCRIPTION));
+		this.add(dp, mgbc);
 		
+		mgbc.newRow();mgbc.weightx = 1; mgbc.weighty =1 ;mgbc.anchor = GridBagConstraints.NORTHWEST;		
+		this.add(AdminComponent.getHelpLabel(HelpDesk.VOITEM_EDITION), mgbc);
 		this.loadCapabilities();
 	}
 	/**
@@ -52,7 +75,7 @@ public class TapSelector extends JPanel {
 	 */
 	public void loadCapabilities() throws Exception {
 		ArrayList<Capabilities> lc = new ArrayList<Capabilities>();
-		Table_Saada_VO_Capabilities.loadCapabilities(lc, "TAP");
+		Table_Saada_VO_Capabilities.loadCapabilities(lc, protocol);
 		this.resourceList.reset();
 		for( Capabilities cap: lc) {
 			this.resourceList.addResource(cap);
@@ -66,6 +89,9 @@ public class TapSelector extends JPanel {
 		}
 		resourceList.addResource(dataTreePath);
 		return true;
+	}
+	public void reset() {
+		resourceList.reset();
 	}
 	public void saveCapabilities() throws Exception {
 		resourceList.saveCapabilities();
