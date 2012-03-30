@@ -190,10 +190,12 @@ public class Record {
 		retour.append("     </testQuery>\n");
 		retour.append("</capability>\n");
 		retour.append("<capability>\n");
- 		retour.append("<interface xsi:type=\"vr:WebBrowser\"><accessURL use=\"base\">\n");
-		retour.append("           http://skyview.gsfc.nasa.gov/cgi-bin/query.pl\n");
-		retour.append("         </accessURL></interface>\n");
-		retour.append("       </capability>\n");
+ 		retour.append("    <interface xsi:type=\"vr:WebBrowser\">");
+ 		retour.append("        <accessURL use=\"base\">\n");
+		retour.append("        http://skyview.gsfc.nasa.gov/cgi-bin/query.pl\n");
+		retour.append("        </accessURL>");
+		retour.append("    </interface>\n");
+		retour.append("</capability>\n");
 		return retour;
 	}
 }
