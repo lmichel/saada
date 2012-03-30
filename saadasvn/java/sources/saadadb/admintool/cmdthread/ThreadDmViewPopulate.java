@@ -16,7 +16,7 @@ import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Saada_VO_DMVIew;
 import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 import saadadb.vo.tap.DmServiceManager;
 import saadadb.vo.tap.TapServiceManager;
 
@@ -97,9 +97,9 @@ public class ThreadDmViewPopulate extends CmdThread {
 				try {
 					SQLTable.beginTransaction();
 					tsm.populate(ap);
-					Capabilities cpb = new Capabilities();
+					Capability cpb = new Capability();
 					cpb.setDataTreePath("ivoa." + vor.getName());
-					cpb.setProtocol(Capabilities.TAP);
+					cpb.setProtocol(Capability.TAP);
 					cpb.setDescription("Table of data maiing the DM " + vor.getName());
 					Table_Saada_VO_Capabilities.addCapability(cpb);
 					SQLTable.commitTransaction();
@@ -112,9 +112,9 @@ public class ThreadDmViewPopulate extends CmdThread {
 								SQLTable.beginTransaction();
 								tsm.create(null);
 								tsm.populate(ap);
-								Capabilities cpb = new Capabilities();
+								Capability cpb = new Capability();
 								cpb.setDataTreePath("ivoa." + vor.getName());
-								cpb.setProtocol(Capabilities.TAP);
+								cpb.setProtocol(Capability.TAP);
 								cpb.setDescription("Table of data maiing the DM " + vor.getName());
 								Table_Saada_VO_Capabilities.addCapability(cpb);
 								SQLTable.commitTransaction();
