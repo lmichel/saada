@@ -2,11 +2,12 @@ package saadadb.vo.registry;
 
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 
 public class Record {
 	private Authority authority;
 	private static final String header;
-	
+
 	static {
 		header = "<ri:Resource \n" 
 			+ "xmlns:ri=\"http://www.ivoa.net/xml/RegistryInterface/v1.0\" \n"
@@ -26,7 +27,7 @@ public class Record {
 			+ "xsi:schemaLocation=\"http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0\" \n"
 			+ "xsi:type=\"vg:Authority\">\n";
 	}
-	
+
 	/**
 	 * @throws QueryException
 	 */
@@ -34,7 +35,31 @@ public class Record {
 		this.authority = new Authority();
 		this.authority.load();
 	}
-	
+
+	/**
+	 * @param capability Capability to be set in the registry
+	 * @return
+	 * @throws QueryException
+	 */
+	public String getRecord(Capability capability) throws QueryException {
+		String protocol = capability.getProtocol();
+		if( Capability.TAP.equals(protocol)) {
+			return getTAPRecord().toString();
+		} else if( Capability.SIA.equals(protocol)) {
+			return getSIARecord(capability).toString();
+
+		} else if( Capability.SSA.equals(protocol)) {
+			return getSSARecord(capability).toString();
+
+		} else if( Capability.ConeSearch.equals(protocol)) {
+			return getCSRecord(capability).toString();
+
+		} else {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Not registry record available for protocol " + protocol);
+			return null;
+		}
+	}
+
 	/**
 	 * @return
 	 */
@@ -42,7 +67,7 @@ public class Record {
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());
-		
+
 		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\n");
 		retour.append("   <interface xsi:type=\"vs:ParamHTTP\">\n");
 		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/availability</accessURL>\n");
@@ -59,8 +84,30 @@ public class Record {
 		retour.append("   </interface>\n");
 		retour.append("  </capability>\n");
 		retour.append("</ri:Resource>\n"); 
-		
+
 		return retour;
+	}
+
+	public StringBuffer getSIARecord(Capability capability){
+		StringBuffer retour = new StringBuffer();
+		retour.append(header);
+		retour.append(this.authority.getXML());
+		return retour;
+
+	}
+	public StringBuffer getSSARecord(Capability capability){
+		StringBuffer retour = new StringBuffer();
+		retour.append(header);
+		retour.append(this.authority.getXML());
+		return retour;
+
+	}
+	public StringBuffer getCSRecord(Capability capability){
+		StringBuffer retour = new StringBuffer();
+		retour.append(header);
+		retour.append(this.authority.getXML());
+		return retour;
+
 	}
 
 	/**
