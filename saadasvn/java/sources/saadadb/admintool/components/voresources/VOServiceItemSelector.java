@@ -18,7 +18,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 
 
 /**
@@ -74,10 +74,10 @@ public class VOServiceItemSelector extends JPanel {
 	 * 
 	 */
 	public void loadCapabilities() throws Exception {
-		ArrayList<Capabilities> lc = new ArrayList<Capabilities>();
+		ArrayList<Capability> lc = new ArrayList<Capability>();
 		Table_Saada_VO_Capabilities.loadCapabilities(lc, protocol);
 		this.resourceList.reset();
-		for( Capabilities cap: lc) {
+		for( Capability cap: lc) {
 			this.resourceList.addResource(cap);
 		}		
 		this.resourceList.displayListItems();

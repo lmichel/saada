@@ -53,6 +53,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String COMMENT_COLLECTION  = "Comment Collection";
 
 	public static final String EMPTY_CATEGORY    = "Empty Category";
+	public static final String SQL_INDEX         = "SQL Index";
 
 	public static final String DATA_LOADER = "Data Loader";
 
@@ -79,12 +80,9 @@ public abstract class AdminComponent extends JPanel {
 	public static final String SSA_PUBLISH = "SSA Service Setup";
 	public static final String CONESEARCH_PUBLISH = "Conesearch Service Setup";
 
-
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;
 	protected String currentTask;
-
-
 	/**
 	 * @param rootFrame
 	 */
@@ -292,6 +290,16 @@ public abstract class AdminComponent extends JPanel {
 		return retour;
 	}
 
+	/**
+	 * @param txt
+	 * @return
+	 */
+	public final static JLabel getAnchorLabel(String txt) {
+		JLabel retour = new JLabel("<html><font size=-1><i><A href=#>" + txt + "</a>");
+		return retour;		
+	}
+	
+	
 	/**
 	 * 
 	 */
