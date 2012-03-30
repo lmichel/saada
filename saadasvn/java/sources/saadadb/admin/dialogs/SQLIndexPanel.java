@@ -161,6 +161,8 @@ public class SQLIndexPanel extends JFrame {
 		String retour = "<HTML>Table " + sql_table + "<BR>" + size + " rows " + limit + "<BR>" + jtable.getRowCount() + " columns(" +  nbi + " indexed)<BR>";
 		return retour;
 	}
+	
+	
 	private void setBehavior() {
 		apply_btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
