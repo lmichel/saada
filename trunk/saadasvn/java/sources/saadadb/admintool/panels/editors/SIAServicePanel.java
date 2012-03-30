@@ -31,7 +31,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 import saadadb.vo.registry.Record;
 import saadadb.vo.tap.TapServiceManager;
 
@@ -76,7 +76,7 @@ public class SIAServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capabilities.SIA);
+			itemSelector = new VOServiceItemSelector(this, Capability.SIA);
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}
@@ -93,7 +93,7 @@ public class SIAServicePanel extends EditPanel {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
-						Table_Saada_VO_Capabilities.emptyTable(Capabilities.SIA);
+						Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
 						SQLTable.commitTransaction();
 						showInfo(rootFrame, "SIA service empty");
 					} catch (SaadaException e) {
@@ -122,7 +122,7 @@ public class SIAServicePanel extends EditPanel {
 				TapServiceManager tsm = new TapServiceManager();
 				try {
 					SQLTable.beginTransaction();
-					Table_Saada_VO_Capabilities.emptyTable(Capabilities.SIA);
+					Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
 					itemSelector.saveCapabilities();
 					SQLTable.commitTransaction();
 					itemSelector.loadCapabilities();
@@ -146,22 +146,22 @@ public class SIAServicePanel extends EditPanel {
 		c.fill = GridBagConstraints.NONE;
 		tPanel.add(saveButton, c);
 		c.gridx++;	
-		XMLButton xmlButton = new XMLButton(this, new Runnable() {
-			public void run() {
-				try {
-					(new TextSaver(
-							rootFrame
-							, "TAP Registry Record"
-							, Database.getDbname() + "_TAPRegistry.xml"
-							,(new Record()).getTAPRecord().toString())).open();
-				} catch (QueryException e) {
-					Messenger.trapQueryException(e);
-				}
-
-			}			
-		});
-		xmlButton.setToolTipText("Show the registry record of the TAP service");
-		tPanel.add(xmlButton, c);
+//		XMLButton xmlButton = new XMLButton(this, new Runnable() {
+//			public void run() {
+//				try {
+//					(new TextSaver(
+//							rootFrame
+//							, "TAP Registry Record"
+//							, Database.getDbname() + "_TAPRegistry.xml"
+//							,(new Record()).getTAPRecord().toString())).open();
+//				} catch (QueryException e) {
+//					Messenger.trapQueryException(e);
+//				}
+//
+//			}			
+//		});
+//		xmlButton.setToolTipText("Show the registry record of the TAP service");
+//		tPanel.add(xmlButton, c);
 		c.gridx++;		
 		/*
 		 * Just to push all previous components to the left
