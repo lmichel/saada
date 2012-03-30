@@ -8,6 +8,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.registry.Capability;
 import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.formator.json.TapAdqlJsonFormator;
 import saadadb.vo.request.formator.votable.TapAdqlVotableFormator;
@@ -25,7 +26,7 @@ public class TapAdqlRequest extends VORequest {
 	private SaadaADQLQuery adqlQuery;
 
 	public TapAdqlRequest(String sessionID, String reportDir) {
-		super(new AdqlQuery(), "TAP", "1.0", sessionID, reportDir);
+		super(new AdqlQuery(), Capability.TAP, "1.0", sessionID, reportDir);
 	}
 
 	 /* (non-Javadoc)
