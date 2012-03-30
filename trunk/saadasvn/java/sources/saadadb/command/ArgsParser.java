@@ -798,7 +798,7 @@ public class ArgsParser implements Serializable{
 	 * Switch on debug mode is the arg debug is found
 	 */
 	public void setDebugMode() {
-		Messenger.debug_mode = false;		
+		//Messenger.debug_mode = false;		
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-debug")) {
 				String param = getArgsValue(args[i]);
