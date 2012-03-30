@@ -15,7 +15,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 
 
 /**
@@ -125,7 +125,7 @@ public class VOServiceList extends JPanel {
 			return true;
 		}
 	}
-	public boolean addResource(Capabilities capability) throws SaadaException {
+	public boolean addResource(Capability capability) throws SaadaException {
 			if( this.checkExist(capability.getDataTreePath()) )  return false;
 			this.items.add(new VOServiceListItem(capability));
 			this.displayListItems();

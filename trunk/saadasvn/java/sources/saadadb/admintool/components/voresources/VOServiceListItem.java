@@ -1,13 +1,16 @@
 package saadadb.admintool.components.voresources;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,10 +18,14 @@ import javax.swing.JPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.windows.TextSaver;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.vo.registry.Capabilities;
+import saadadb.util.Messenger;
+import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Record;
 
 
 /**
@@ -31,21 +38,32 @@ public class VOServiceListItem extends JPanel {
 	private static final long serialVersionUID = 1L;
 	public static final Color SELECTED = AdminComponent.OLD_HEADER;
 	public static final Color UNSELECTED = Color.WHITE;
-	protected Capabilities capability;
+	protected Capability capability;
 	private JCheckBox button = new JCheckBox();
 	private JLabel label = new JLabel();
 	private boolean removed = false;
 	private boolean selected = false;
 
+	/**
+	 * Creator used when items are added from the data tree
+	 * @param dataTreePath
+	 * @param protocol
+	 * @throws SaadaException
+	 */
 	protected VOServiceListItem(DataTreePath dataTreePath, String protocol) throws SaadaException {
-		this.capability = new Capabilities();
+		this.capability = new Capability();
 		this.capability.setProtocol(protocol);
 		this.capability.setDataTreePath(dataTreePath.toString());
 		this.button.setSelected(true);
 		this.setDefaultDescription();
 		this.setUI();
 	}
-	protected VOServiceListItem(Capabilities capability) throws SaadaException {
+	/**
+	 * Used when capabilities are reloaded from the table
+	 * @param capability
+	 * @throws SaadaException
+	 */
+	protected VOServiceListItem(Capability capability) throws SaadaException {
 		this.capability = capability;
 		this.setDefaultDescription();
 		this.button.setSelected(true);
@@ -71,14 +89,17 @@ public class VOServiceListItem extends JPanel {
 					label.setForeground(Color.BLACK);
 					VOServiceListItem.this.setBackground(UNSELECTED);		
 					removed = false;
-
 				}
 			}		
 		} );
 		this.add(this.button);
 		this.label.setText(capability.getDataTreePath());
 		this.label.setOpaque(false);
+		this.add(Box.createHorizontalStrut(10));
 		this.add(this.label);
+		if( !this.capability.getProtocol().equals(Capability.TAP )) {
+			addRegistryAnchor();
+		}
 		this.setBackground(UNSELECTED);
 		this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		this.setTransferHandler(new ProductTreePathTransferHandler(3));	
@@ -94,6 +115,31 @@ public class VOServiceListItem extends JPanel {
 			public void mouseEntered(MouseEvent arg0) {}	
 			public void mouseClicked(MouseEvent arg0) {}
 		});
+	}
+	private void addRegistryAnchor() {
+		JLabel anchor = AdminComponent.getAnchorLabel("show Reg");
+		anchor.addMouseListener(new MouseListener() {		
+			public void mouseReleased(MouseEvent arg0) {
+				try {
+					(new TextSaver(
+							null
+							, capability.getProtocol() + " Registry Record"
+							, capability.getProtocol() + "Registry." + Database.getDbname() + "." + capability.getDataTreePath() + ".xml"
+							,(new Record()).getRecord(capability).toString())).open();
+				} catch (QueryException e) {
+					Messenger.trapQueryException(e);
+				}
+			}		
+			public void mousePressed(MouseEvent arg0) {}			
+			public void mouseExited(MouseEvent arg0) {}		
+			public void mouseEntered(MouseEvent arg0) {}	
+			public void mouseClicked(MouseEvent arg0) {}
+		});
+
+		this.add(Box.createHorizontalStrut(10));
+		this.add(anchor);
+		
+
 	}
 	protected String getDataTreePath() {
 		return this.capability.getDataTreePath();

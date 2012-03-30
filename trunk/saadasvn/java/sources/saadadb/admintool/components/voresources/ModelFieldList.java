@@ -46,7 +46,7 @@ import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 
 
 public class ModelFieldList extends JPanel implements ActionListener{
