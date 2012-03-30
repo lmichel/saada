@@ -262,7 +262,7 @@ abstract public class BuildRegistry {
 		String description = "SIA service provided by the SaadaDB " + Database.getName() + "\n" ;
 		description       += "        Data collection(S) covered by the service: " + (new PseudoTableParser(pseudo_table)) + "\n";
 		if( datamodel != null && datamodel.length() > 0 ) {
-			description += "        Service compliantwith the data model " + datamodel+ "\n";
+			description += "        Service compliant with the data model " + datamodel+ "\n";
 		}
 		if( withrel ) {
 			description += "        Data linked with selected images are included in query results\n";
