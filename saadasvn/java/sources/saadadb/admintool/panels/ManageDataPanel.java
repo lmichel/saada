@@ -74,6 +74,16 @@ public class ManageDataPanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;	
 		new ChoiceItem(rootFrame, tPanel, c
+				, "Empty Category", "icons/EmptyCategory.png"
+				, new Runnable(){public void run(){
+					rootFrame.activePanel(EMPTY_CATEGORY);}});
+
+		
+		c.gridx = 3;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;	
+		new ChoiceItem(rootFrame, tPanel, c
 				, "Remove Collection", "icons/DropCollection.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_COLLECTION);}});		
@@ -87,7 +97,17 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Comment Class", "icons/CommentClass.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_COLLECTION);}});
+
 		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+
+		new ChoiceItem(rootFrame, tPanel, c
+				, "Empty Class", "icons/EmptyClass.png"
+				, new Runnable(){public void run(){
+					System.out.println("empty class");}});		
+		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
@@ -97,23 +117,17 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					System.out.println("remove class");}});		
 		
+		tPanel = this.addSubPanel("Manage SQL Index");		
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 0;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		new ChoiceItem(rootFrame, tPanel, c
-				, "Empty Category", "icons/EmptyCategory.png"
+				, "SQL Index", "icons/CommentCollection.png"
 				, new Runnable(){public void run(){
-					rootFrame.activePanel(EMPTY_CATEGORY);}});
-		c.gridx = 1;
-		c.gridy = 1;	
-		c.weightx = 0.5;
-		c.weighty = 0.5;
+					rootFrame.activePanel(SQL_INDEX);}});
 
-		new ChoiceItem(rootFrame, tPanel, c
-				, "Empty Class", "icons/EmptyClass.png"
-				, new Runnable(){public void run(){
-					System.out.println("empty class");}});		
+		
 	}
 
 
