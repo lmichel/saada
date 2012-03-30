@@ -1,8 +1,17 @@
 package saadadb.vo.registry;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.util.Messenger;
+import saadadb.vo.VOLimits;
 
 public class Record {
 	private Authority authority;
@@ -32,7 +41,7 @@ public class Record {
 	 * @throws QueryException
 	 */
 	public Record() throws QueryException {
-		this.authority = new Authority();
+		authority = Authority.getInstance();
 		this.authority.load();
 	}
 
@@ -43,21 +52,23 @@ public class Record {
 	 */
 	public String getRecord(Capability capability) throws QueryException {
 		String protocol = capability.getProtocol();
-		if( Capability.TAP.equals(protocol)) {
-			return getTAPRecord().toString();
-		} else if( Capability.SIA.equals(protocol)) {
-			return getSIARecord(capability).toString();
+		try {
+			if( Capability.TAP.equals(protocol)) {
+				return getTAPRecord().toString();
+			} else if( Capability.SIA.equals(protocol)) {
+				return getSIARecord(capability).toString();
 
-		} else if( Capability.SSA.equals(protocol)) {
-			return getSSARecord(capability).toString();
+			} else if( Capability.SSA.equals(protocol)) {
+				return getSSARecord(capability).toString();
 
-		} else if( Capability.ConeSearch.equals(protocol)) {
-			return getCSRecord(capability).toString();
-
-		} else {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Not registry record available for protocol " + protocol);
-			return null;
+			} else if( Capability.ConeSearch.equals(protocol)) {
+				return getCSRecord(capability).toString();
+			}
+		} catch (Exception e) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}
+		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Not registry record available for protocol " + protocol);
+		return null;
 	}
 
 	/**
@@ -88,13 +99,56 @@ public class Record {
 		return retour;
 	}
 
-	public StringBuffer getSIARecord(Capability capability){
+	public StringBuffer getSIARecord(Capability capability) throws Exception {
+		String url = Database.getUrl_root() + "/siaservice?collection=["  + capability.getDataTreePath().split("\\.")[0] + "]&withrel=true&";
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());
+		retour.append(this.filterTemplate("reg.template.sia.xml", url, capability));
 		return retour;
-
 	}
+
+	/**
+	 * returns the content of the registry record template with strings between @@ are replaced with
+	 * real values
+	 * @param filename registry template filename
+	 * @param url      base url f the service
+	 * @param capability service capability
+	 * @return
+	 * @throws Exception
+	 */
+	public CharSequence filterTemplate(String filename, String url, Capability capability) throws Exception {
+		StringBuffer retour = new StringBuffer();
+		BufferedReader br = new BufferedReader(new FileReader(Database.getRoot_dir() 
+				+ File.separator + "config" + File.separator + filename));
+		Pattern p = Pattern.compile(".*(@@[A-Z_]+@@).*", Pattern.DOTALL);
+		String boeuf;
+		while( (boeuf = br.readLine()) != null ) {
+			Matcher m = p.matcher(boeuf);
+			if( m.find() ) {
+				for( int i=1 ; i<=m.groupCount() ; i++ ) {
+					String grp = m.group(i);
+					if( grp.startsWith("@@VOLIMIT_")) {
+						String fgrp = grp.substring(10, grp.length()-2);
+						String rpl = VOLimits.class.getField(fgrp).get(null).toString();
+						boeuf = boeuf.replace(grp, rpl);
+					} else if( "@@SERVICE_URL@@".equals(grp)) {
+						boeuf = boeuf.replace(grp, url);
+					} else if( "@@COOSYS@@".equals(grp)) {
+						boeuf = boeuf.replace(grp, Database.getCooSys());
+					} else if( "@@ROOT_URL@@".equals(grp)) {
+						boeuf = boeuf.replace(grp, Database.getUrl_root());
+					} else {
+						Messenger.printMsg(Messenger.WARNING, "Unkonw Tag " + grp + " replaced with ???");
+						boeuf = boeuf.replace(grp, "???");
+					}
+				}
+			}
+			retour.append(boeuf + "\n");
+		}
+		return retour;
+	}
+
 	public StringBuffer getSSARecord(Capability capability){
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
@@ -107,95 +161,6 @@ public class Record {
 		retour.append(header);
 		retour.append(this.authority.getXML());
 		return retour;
-
 	}
 
-	/**
-	 * @return
-	 */
-	public StringBuffer getSIARecord() {
-		StringBuffer retour = new StringBuffer();
-		retour.append(header);
-		retour.append(this.authority.getXML());
-		retour.append("<capability standardID=\"ivo://ivoa.net/std/SIA\" xsi:type=\"sia:SimpleImageAccess\">\n");
-		retour.append("    <interface role=\"std\" xsi:type=\"vs:ParamHTTP\">\n");
-		retour.append("	       <accessURL use=\"base\">\n");
- 		retour.append("             http://skyview.gsfc.nasa.gov/cgi-bin/vo/sia.pl?survey=2mass&\n");
-		retour.append("        </accessURL>\n");
-		retour.append("        <queryType>GET</queryType>\n");
-		retour.append("        <resultType>text/xml+votable</resultType>\n");
-		retour.append("        <param>\n");
-		retour.append("            <name>POS</name>\n");
-		retour.append("            <description>\n");
- 		retour.append("            Search Position in the form \"ra,dec\" where ra and dec are given in decimal degrees\n");
-		retour.append("            in the ICRS coordinate system.\n");
-		retour.append("            </description>\n");
-		retour.append("            <unit>degrees</unit>\n");
-		retour.append("            <dataType>real</dataType>\n");
-		retour.append("        </param>\n");
-		retour.append("        <param>\n");
-		retour.append("            <name>SIZE</name>\n");
- 		retour.append("            <description>\n");
- 		retour.append("            Size of search region in the RA and Dec. directions.   \n");
- 		retour.append("            </description>\n");
- 		retour.append("            <unit>degrees</unit>\n");
- 		retour.append("            <dataType>real</dataType>\n");
- 		retour.append("        </param>\n");
- 		retour.append("        <param>\n");
- 		retour.append("            <name>FORMAT</name>\n");
- 		retour.append("            <description>\n");
- 		retour.append("            Requested format of images.\n");
-		retour.append("            </description>\n");
-		retour.append("            <dataType>string</dataType>\n");
-		retour.append("        </param>\n");
- 		retour.append("        <param>\n");
- 		retour.append("            <name>CFRAME</name>\n");
- 		retour.append("            <description>\n");
- 		retour.append("            Coordinate frame: ICRS, FK5, FK4, GAL, ECL\n");
- 		retour.append("            </description>\n");
-		retour.append("            <dataType>string</dataType>\n");
-		retour.append("        </param>\n");
-		retour.append("        <param>\n");
-		retour.append("            <name>EQUINOX</name>\n");
-		retour.append("            <description>\n");
-		retour.append("            Equinox used in FK4 or FK5 frames.\n");
-		retour.append("            </description>\n");
- 		retour.append("            <dataType>real</dataType>\n");
-		retour.append("        </param>\n");
- 		retour.append("    </interface>\n");
- 		retour.append("    <imageServiceType>Cutout</imageServiceType>\n");
- 		retour.append("    <maxQueryRegionSize>\n");
-		retour.append("        <long>360.0</long>\n");
-		retour.append("        <lat>180.0</lat>\n");
- 		retour.append("    </maxQueryRegionSize>\n");
- 		retour.append("    <maxImageExtent>\n");
- 		retour.append("        <long>360.0</long>\n");
- 		retour.append("        <lat>180.0</lat>\n");
- 		retour.append("    </maxImageExtent>\n");
- 		retour.append("    <maxImageSize>\n");
-		retour.append("        <long>5000</long>\n");
-		retour.append("        <lat>5000</lat>\n");
-		retour.append("    </maxImageSize>\n");
-		retour.append("    <maxFileSize>10000000</maxFileSize>\n");
-		retour.append("    <maxRecords>500</maxRecords>\n");
-		retour.append("    <testQuery>\n");
-		retour.append("        <pos>\n");
-		retour.append("            <long>0</long>\n");
-		retour.append("            <lat>0</lat>\n");
-		retour.append("        </pos>\n");
-		retour.append("        <size>\n");
-		retour.append("            <long>1</long>\n");
-		retour.append("            <lat>1</lat>\n");
-		retour.append("        </size>\n");
-		retour.append("     </testQuery>\n");
-		retour.append("</capability>\n");
-		retour.append("<capability>\n");
- 		retour.append("    <interface xsi:type=\"vr:WebBrowser\">");
- 		retour.append("        <accessURL use=\"base\">\n");
-		retour.append("        http://skyview.gsfc.nasa.gov/cgi-bin/query.pl\n");
-		retour.append("        </accessURL>");
-		retour.append("    </interface>\n");
-		retour.append("</capability>\n");
-		return retour;
-	}
 }
