@@ -62,4 +62,91 @@ public class Record {
 		
 		return retour;
 	}
+
+	/**
+	 * @return
+	 */
+	public StringBuffer getSIARecord() {
+		StringBuffer retour = new StringBuffer();
+		retour.append(header);
+		retour.append(this.authority.getXML());
+		retour.append("<capability standardID=\"ivo://ivoa.net/std/SIA\" xsi:type=\"sia:SimpleImageAccess\">\n");
+		retour.append("    <interface role=\"std\" xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("	       <accessURL use=\"base\">\n");
+ 		retour.append("             http://skyview.gsfc.nasa.gov/cgi-bin/vo/sia.pl?survey=2mass&\n");
+		retour.append("        </accessURL>\n");
+		retour.append("        <queryType>GET</queryType>\n");
+		retour.append("        <resultType>text/xml+votable</resultType>\n");
+		retour.append("        <param>\n");
+		retour.append("            <name>POS</name>\n");
+		retour.append("            <description>\n");
+ 		retour.append("            Search Position in the form \"ra,dec\" where ra and dec are given in decimal degrees\n");
+		retour.append("            in the ICRS coordinate system.\n");
+		retour.append("            </description>\n");
+		retour.append("            <unit>degrees</unit>\n");
+		retour.append("            <dataType>real</dataType>\n");
+		retour.append("        </param>\n");
+		retour.append("        <param>\n");
+		retour.append("            <name>SIZE</name>\n");
+ 		retour.append("            <description>\n");
+ 		retour.append("            Size of search region in the RA and Dec. directions.   \n");
+ 		retour.append("            </description>\n");
+ 		retour.append("            <unit>degrees</unit>\n");
+ 		retour.append("            <dataType>real</dataType>\n");
+ 		retour.append("        </param>\n");
+ 		retour.append("        <param>\n");
+ 		retour.append("            <name>FORMAT</name>\n");
+ 		retour.append("            <description>\n");
+ 		retour.append("            Requested format of images.\n");
+		retour.append("            </description>\n");
+		retour.append("            <dataType>string</dataType>\n");
+		retour.append("        </param>\n");
+ 		retour.append("        <param>\n");
+ 		retour.append("            <name>CFRAME</name>\n");
+ 		retour.append("            <description>\n");
+ 		retour.append("            Coordinate frame: ICRS, FK5, FK4, GAL, ECL\n");
+ 		retour.append("            </description>\n");
+		retour.append("            <dataType>string</dataType>\n");
+		retour.append("        </param>\n");
+		retour.append("        <param>\n");
+		retour.append("            <name>EQUINOX</name>\n");
+		retour.append("            <description>\n");
+		retour.append("            Equinox used in FK4 or FK5 frames.\n");
+		retour.append("            </description>\n");
+ 		retour.append("            <dataType>real</dataType>\n");
+		retour.append("        </param>\n");
+ 		retour.append("    </interface>\n");
+ 		retour.append("    <imageServiceType>Cutout</imageServiceType>\n");
+ 		retour.append("    <maxQueryRegionSize>\n");
+		retour.append("        <long>360.0</long>\n");
+		retour.append("        <lat>180.0</lat>\n");
+ 		retour.append("    </maxQueryRegionSize>\n");
+ 		retour.append("    <maxImageExtent>\n");
+ 		retour.append("        <long>360.0</long>\n");
+ 		retour.append("        <lat>180.0</lat>\n");
+ 		retour.append("    </maxImageExtent>\n");
+ 		retour.append("    <maxImageSize>\n");
+		retour.append("        <long>5000</long>\n");
+		retour.append("        <lat>5000</lat>\n");
+		retour.append("    </maxImageSize>\n");
+		retour.append("    <maxFileSize>10000000</maxFileSize>\n");
+		retour.append("    <maxRecords>500</maxRecords>\n");
+		retour.append("    <testQuery>\n");
+		retour.append("        <pos>\n");
+		retour.append("            <long>0</long>\n");
+		retour.append("            <lat>0</lat>\n");
+		retour.append("        </pos>\n");
+		retour.append("        <size>\n");
+		retour.append("            <long>1</long>\n");
+		retour.append("            <lat>1</lat>\n");
+		retour.append("        </size>\n");
+		retour.append("     </testQuery>\n");
+		retour.append("</capability>\n");
+		retour.append("<capability>\n");
+ 		retour.append("<interface xsi:type=\"vr:WebBrowser\"><accessURL use=\"base\">\n");
+		retour.append("           http://skyview.gsfc.nasa.gov/cgi-bin/query.pl\n");
+		retour.append("         </accessURL></interface>\n");
+		retour.append("       </capability>\n");
+		return retour;
+	}
 }
