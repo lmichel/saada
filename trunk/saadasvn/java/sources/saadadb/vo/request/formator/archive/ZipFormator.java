@@ -23,6 +23,7 @@ import saadadb.util.WorkDirectory;
 import saadadb.util.zip.ZIPUtil;
 import saadadb.util.zip.ZipEntryRef;
 import saadadb.util.zip.ZipMap;
+import saadadb.vo.VOLimits;
 import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.request.formator.votable.OidsVotableFormator;
 import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
@@ -35,7 +36,7 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
 public class ZipFormator extends QueryResultFormator {
 	private String responseDir;
 	private ZipMap dataTree = new ZipMap();
-	public final static int MAX_PRIMARY_SIZE = 200; //Mb
+	public final static int MAX_PRIMARY_SIZE = VOLimits.DOWNLOAD_MAXSIZE/1000000; //Mb
 	public final String jobId;
 	private String rootDir;
 
