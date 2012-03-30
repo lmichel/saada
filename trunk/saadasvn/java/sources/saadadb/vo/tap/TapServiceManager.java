@@ -22,6 +22,7 @@ import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Tap_Schema_Columns;
 import saadadb.sqltable.Table_Tap_Schema_Key_Columns;
@@ -29,7 +30,7 @@ import saadadb.sqltable.Table_Tap_Schema_Keys;
 import saadadb.sqltable.Table_Tap_Schema_Schemas;
 import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 
 /**
  * @author laurent
@@ -143,12 +144,16 @@ public class TapServiceManager extends EntityManager {
 	 * Removes all schemas except ivoa if all is false
 	 * @throws Exception
 	 */
-	public void remove(boolean all) throws Exception {
+	public void removeAllTables() throws Exception {
+		int missingTable = serviceExists();
+		if( missingTable == 0 ) {
+			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
+		}
 		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
 		for( String schema: schemas) {
-			if( all || !schema.equalsIgnoreCase("ivoa") ) {
+//			if( all || !schema.equalsIgnoreCase("ivoa") ) {
 				this.remove(new ArgsParser(new String[]{"-remove=" + schema}));
-			}
+	//		}
 		}
 	}
 
@@ -169,7 +174,7 @@ public class TapServiceManager extends EntityManager {
 				Table_Tap_Schema_Columns.dropTable();
 				Table_Tap_Schema_Tables.dropTable();
 				Table_Tap_Schema_Schemas.dropTable();
-				Table_Saada_VO_Capabilities.emptyTable("Tap");
+				Table_Saada_VO_Capabilities.emptyTable(Capability.TAP);
 			}
 			else {
 				String[] sc = toRemove.split("\\.");
@@ -215,19 +220,26 @@ public class TapServiceManager extends EntityManager {
 			else if( missingTable == 0 ) {
 				FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
 			}
-			String classe = ap.getPopulate();
+			// parameters of the resource to be published
+			String table = ap.getPopulate();
 			String description = ap.getComment();
+			String schema = null;
+			/*
+			 * A same table cannot be published twice
+			 */
+			if( Table_Tap_Schema_Tables.knowsTable(table)) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
+			}
 
-			String collection = null;
 			LinkedHashMap<String, AttributeHandler> mah = new LinkedHashMap<String, AttributeHandler>();
 			VOResource vor;
 			/*
 			 * If classe is a VO model, we just publish the SQL table in the "ivoa" schema
 			 */
-			if( (vor = VOResource.getResource(classe)) != null) {
-				Messenger.printMsg(Messenger.TRACE, classe + " is a VO model");
+			if( (vor = VOResource.getResource(table)) != null) {
+				Messenger.printMsg(Messenger.TRACE, table + " is a VO model");
 				ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
-				collection = "ivoa";
+				schema = "ivoa";
 				for( UTypeHandler uth: uths) {
 					AttributeHandler ah = uth.getAttributeHandler();
 					ah.setNameattr(ah.getNameorg());
@@ -237,31 +249,55 @@ public class TapServiceManager extends EntityManager {
 			/*
 			 * If classe is a Saada class, we publish the join class/collection
 			 */
-			else if(Database.getCachemeta().classExists(classe)) {
-				Messenger.printMsg(Messenger.TRACE, classe + " is a Saada class");
-				MetaClass mc = Database.getCachemeta().getClass(classe);
-				collection = mc.getCollection_name();
+			else if(Database.getCachemeta().classExists(table)) {
+				Messenger.printMsg(Messenger.TRACE, table + " is a Saada class");
+				MetaClass mc = Database.getCachemeta().getClass(table);
+				schema = mc.getCollection_name();
 
-				Collection<AttributeHandler> coll = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
-				for(AttributeHandler ah : coll) {
+//				Collection<AttributeHandler> coll = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
+//				for(AttributeHandler ah : coll) {
+//					String na = ah.getNameattr();
+//					if( !ignoreCollAttrs.contains(na)) {
+//						mah.put(na, ah);
+//					}
+//				}
+				mah.putAll(mc.getAttributes_handlers());
+			}
+			else {
+				int pos = table.lastIndexOf("_");
+				if( pos == -1 ) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " is neither q class nor a DM, and it can not be a collection table");					
+				}
+				String coll = table.substring(0, pos);
+				String cat = table.substring(pos + 1);
+				int ncat = -1;
+				try {
+					ncat = Category.getCategory(cat);
+				} catch (FatalException e) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category " + cat + " does not exist");					
+				}
+				if( ! Database.getCachemeta().collectionExists(coll) ) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Collection " + coll + " does not exist");					
+				}
+				Messenger.printMsg(Messenger.TRACE, table + " is a Saada collection");
+				Collection<AttributeHandler> ahs = Database.getCachemeta().getCollection(coll).getAttribute_handlers(ncat).values();
+				for(AttributeHandler ah : ahs) {
 					String na = ah.getNameattr();
 					if( !ignoreCollAttrs.contains(na)) {
 						mah.put(na, ah);
 					}
 				}
-				mah.putAll(mc.getAttributes_handlers());
+				schema = coll;
 			}
+	
 			/*
 			 * TAP SCHEMA table update
 			 */
-			if( Table_Tap_Schema_Tables.knowsTable(classe)) {
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + classe + " already published in the TAP service");
+			if( !Table_Tap_Schema_Schemas.knowsSchema(schema) ) {
+				Table_Tap_Schema_Schemas.addSchema(schema, "Schema matching the Saada collection " + schema, null);
 			}
-			if( !Table_Tap_Schema_Schemas.knowsSchema(collection) ) {
-				Table_Tap_Schema_Schemas.addSchema(collection, "Schema matching the Saada collection " + collection, null);
-			}
-			Table_Tap_Schema_Tables.addTable(collection, classe, description, null);
-			Table_Tap_Schema_Columns.addTable(classe, mah, false);
+			Table_Tap_Schema_Tables.addTable(schema, table, description, null);
+			Table_Tap_Schema_Columns.addTable(table, mah, false);
 		} catch (SaadaException e) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}catch (Exception e2) {
@@ -311,6 +347,11 @@ public class TapServiceManager extends EntityManager {
 		}
 	}
 
+	/**
+	 * Returns the XML description of the TAP resources
+	 * @return
+	 * @throws Exception
+	 */
 	public static StringBuffer getXMLTables() throws Exception{	
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
@@ -348,6 +389,15 @@ public class TapServiceManager extends EntityManager {
 		return retour;
 	}
 
+	/**
+	 * Returns the XML description of one table of the TAP service.
+	 * Parameters are those read from one row of the TAP_SCHEMA_TABLES table
+	 * @param table_name  
+	 * @param table_desc
+	 * @param table_type
+	 * @return
+	 * @throws Exception
+	 */
 	public static StringBuffer getXMLTable(String table_name, String table_desc, String table_type) throws Exception{	
 		StringBuffer retour = new StringBuffer();
 		retour.append("    <table>\n");
@@ -386,7 +436,6 @@ public class TapServiceManager extends EntityManager {
 					retour.append("\n                <arraysize>" + v + "</arraysize>\n           ");		
 				}
 				retour.append("</dataType>\n");		
-
 			}
 			retour.append("        </column>\n");				
 		}
@@ -410,38 +459,59 @@ public class TapServiceManager extends EntityManager {
 		else if( missingTable == 0 ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
 		}
-
-//		/*
-//		 * Drop all schema except ivoa which is published from another way
-//		 */
-//		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
-//		for( String schema: schemas) {
-//			if( !schema.equalsIgnoreCase("ivoa") ) {
-//				Table_Tap_Schema_Schemas.dropPublishedSchema(schema);
-//			}
-//		}
 		/*
-		 * republish all tables
+		 * republish all TAP tables refenced in the capability table 
 		 */
-		ArrayList<Capabilities> lc = new ArrayList<Capabilities>();
-		Table_Saada_VO_Capabilities.loadCapabilities(lc, "TAP");
-		for( Capabilities cap: lc) {
+		ArrayList<Capability> lc = new ArrayList<Capability>();
+		Table_Saada_VO_Capabilities.loadCapabilities(lc, Capability.TAP);
+		for( Capability cap: lc) {
 			String dtp[] = cap.getDataTreePath().split("\\.");
 			String collName = dtp[0];
-			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(dtp[01]));
+			String catName = dtp[1];
+			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(catName));
 			String classTable = "";
-			ArgsParser ap = new ArgsParser(
-					new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
-			this.populate(ap);
-			/*
-			 * Comes from the IG: no format checking needed
-			 */
-			if( dtp.length == 3) {
+
+			Messenger.printMsg(Messenger.TRACE, "Add " + cap.getDataTreePath() + " to TAP service");
+
+			ArgsParser ap;
+			if( dtp.length == 2 ) {
+				ap = new ArgsParser(
+						new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
+				/*
+				 * Transaction are pushed at Manager level because the populate method do some DB ckecking with
+				 * SELECT which are processed out of the current transaction ... sorry for thar
+				 */
+				SQLTable.beginTransaction();
+				this.populate(ap);
+				/*
+				 * Add joins to subclasses are already recorded
+				 */
+				for( String sclass: Database.getCachemeta().getClassNames(catName, Category.getCategory(catName))) {			
+					if( Table_Tap_Schema_Tables.knowsTable(sclass)) {
+						Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
+						Table_Tap_Schema_Keys.addSaadaJoin(collTable, sclass);					
+					}
+				}
+				SQLTable.commitTransaction();
+			}
+			
+			else if( dtp.length == 3) {
 				classTable = dtp[2];
 				ap = new ArgsParser(
 						new String[] {"-populate=" + classTable, "-comment=" + cap.getDescription(), Messenger.getDebugParam()});
+				SQLTable.beginTransaction();
 				this.populate(ap);
+				Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
 				Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);
+				SQLTable.commitTransaction();
+				/*
+				 * Add join to collection table if it has been recorded
+				 */
+				if( Table_Tap_Schema_Tables.knowsTable(collTable) )  {
+					Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
+					Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);					
+								
+				}
 			}
 		}
 	}
