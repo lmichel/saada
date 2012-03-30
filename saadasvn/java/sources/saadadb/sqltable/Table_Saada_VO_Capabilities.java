@@ -13,7 +13,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Merger;
 import saadadb.vo.registry.Authority;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 
 
 public class Table_Saada_VO_Capabilities extends SQLTable {
@@ -54,7 +54,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static  void addCapability(Capabilities capability) throws Exception {
+	public static  void addCapability(Capability capability) throws Exception {
 		createTable();
 		Class c = capability.getClass();
 		ArrayList<String> insertColumns = new ArrayList<String>();
@@ -83,7 +83,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws AbortException
 	 * @throws FatalException
 	 */
-	public static void commentCapability(Capabilities capability) throws AbortException, FatalException{
+	public static void commentCapability(Capability capability) throws AbortException, FatalException{
 		SQLTable.addQueryToTransaction("UPDATE " 
 				+ tableName 
 				+ " SET description = '" 
@@ -96,7 +96,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws AbortException
 	 * @throws FatalException
 	 */
-	public static void removeCapability(Capabilities capability) throws AbortException, FatalException{
+	public static void removeCapability(Capability capability) throws AbortException, FatalException{
 		SQLTable.addQueryToTransaction("DELETE FROM " 
 				+ tableName 
 				+ "' WHERE datatreepath = '" + capability.getDataTreePath() 
@@ -122,10 +122,10 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static  void loadCapabilities(Collection<Capabilities> capabilities, String protocol) throws Exception {
+	public static  void loadCapabilities(Collection<Capability> capabilities, String protocol) throws Exception {
 		// avoid errors at first call
 		createTable();
-		Class c = Class.forName("saadadb.vo.registry.Capabilities");
+		Class c = Class.forName("saadadb.vo.registry.Capability");
 		ArrayList<String> columns = new ArrayList<String>();
 		ArrayList<Method> setter = new ArrayList<Method>();
 		Class[] params = new Class[1];
@@ -144,7 +144,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 		ResultSetMetaData rsm = rs.getMetaData();
 		int colCount = rsm.getColumnCount();
 		while( rs.next()) {
-			Capabilities cap = new Capabilities();
+			Capability cap = new Capability();
 			capabilities.add(cap);
 			for( int i=1 ; i<=colCount ; i++ ) {
 				String cn = rsm.getColumnName(i);

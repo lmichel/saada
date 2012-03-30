@@ -6,7 +6,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capabilities;
+import saadadb.vo.registry.Capability;
 import saadadb.vo.request.TapAdqlRequest;
 
 public class AdqlRequestTester {
@@ -32,7 +32,7 @@ public class AdqlRequestTester {
 		TapAdqlRequest request = new TapAdqlRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
 		request.addFormator("json");
-		request.setResponseFilePath(Capabilities.TAP);
+		request.setResponseFilePath(Capability.TAP);
 		request.processRequest(pmap);
 	}
 }
