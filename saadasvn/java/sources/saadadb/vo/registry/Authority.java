@@ -38,7 +38,7 @@ public class Authority extends EntityManager{
 	
 	private static Authority authorityInstance;
 	
-	Authority() {
+	private Authority() {
 	}
 	
 	public static Authority getInstance() {
