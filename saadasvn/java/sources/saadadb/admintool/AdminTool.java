@@ -56,6 +56,7 @@ import saadadb.admintool.panels.tasks.RelationDropPanel;
 import saadadb.admintool.panels.tasks.RelationEmptyPanel;
 import saadadb.admintool.panels.tasks.RelationIndexPanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
+import saadadb.admintool.panels.tasks.SQLIndexPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -94,6 +95,8 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
 	private TaskPanel commentClassPanel;
+	
+	private TaskPanel sqlIndex;
 
 	private TaskPanel dataLoaderPanel;;
 	private TaskPanel createRelationPanel;
@@ -193,7 +196,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.OBSCORE_MAPPER);
+				activePanel(AdminComponent.SQL_INDEX);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -364,6 +367,15 @@ public class AdminTool extends BaseFrame {
 				emptyCategoryPanel = new CategoryEmptyPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = emptyCategoryPanel;
+			/*
+			 * Index category management tasks
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.SQL_INDEX) ) {
+			if( sqlIndex == null ) {
+				sqlIndex = new SQLIndexPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = sqlIndex;
+			
 			/*
 			 * Data loading task
 			 */
