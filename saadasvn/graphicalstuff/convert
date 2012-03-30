@@ -1,7 +1,7 @@
 #! /bin/bash
 
 IMAGES="CommentClass CommentCollection CommentRel ConeSearch CreateColl CreateIndex
-CreateRel Database DropClass DropCollection DropIndex DropRel DropRelIndex EmptyCategory
+CreateRel DropClass DropCollection DropIndex DropRel DropRelIndex EmptyCategory
 EmptyClass EmptyCollection EmptyRel Filter IndexRel ivoa LoadData
 ManageData MetaData ObsCore PopulateRel Relation RemoveData Satistics SelectFilter
 SIA SSA TAP Tool UserModel VOPublish VOServices Web"
