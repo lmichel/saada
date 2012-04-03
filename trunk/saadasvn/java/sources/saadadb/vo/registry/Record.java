@@ -105,6 +105,7 @@ public class Record {
 		retour.append(header);
 		retour.append(this.authority.getXML());
 		retour.append(this.filterTemplate("reg.template.sia.xml", url, capability));
+		retour.append("</ri:Resource>\n"); 
 		return retour;
 	}
 
@@ -153,6 +154,7 @@ public class Record {
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());
+		retour.append("</ri:Resource>\n"); 
 		return retour;
 
 	}
@@ -160,6 +162,7 @@ public class Record {
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());
+		retour.append("</ri:Resource>\n"); 
 		return retour;
 	}
 
