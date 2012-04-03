@@ -95,7 +95,11 @@ public class AntDesk {
 		    	,"      <java  classname=\"saadadb.command.ManageRelation\" fork=\"true\"  failonerror=\"true\"  >"
 				,"        <classpath refid=\"saadadb.classpath\"/>\n"
 		});
-
+		map.put(AdminComponent.SQL_INDEX, new String[] {
+				"  <target name=\"user.task\">"
+		    	,"      <java  classname=\"saadadb.command.ManageTableIndex\" fork=\"true\"  failonerror=\"true\"  >"
+				,"        <classpath refid=\"saadadb.classpath\"/>\n"
+		});
 	}
 
 	/**
@@ -167,6 +171,7 @@ public class AntDesk {
 		for( String p: params ) {
 			retour += "        <arg value=\"" + p + "\"/>\n";
 		}
+		retour += "        <arg value=\"${SAADA_DB_NAME}\"/>\n";
 		retour += "    </java>";
 		retour += "  </target>";
 		retour += "</project>";

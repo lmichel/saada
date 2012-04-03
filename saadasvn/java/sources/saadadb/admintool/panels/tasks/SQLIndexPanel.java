@@ -10,13 +10,10 @@ import java.awt.Label;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -24,11 +21,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadRelationIndex;
+import saadadb.admintool.cmdthread.ThreadIndexTable;
+import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.RunTaskButton;
+import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
 import saadadb.sqltable.SQLQuery;
 
@@ -42,61 +43,68 @@ public class SQLIndexPanel extends TaskPanel {
 	private JRadioButton indexAll ;
 	private JRadioButton indexSel;
 	private JTable jtable;
-	private JButton cancelBtn ;
-	private JButton applyBtn ;
 	private ButtonGroup actionGroup;
 	private JRadioButton dropAll ;
 	private JRadioButton dropSel;
 	private ArrayList<Object[]> table;
 	protected RunTaskButton runButton;
+	private JScrollPane columnPanel;
+	private JPanel description;
 
-
-
+	/**
+	 * @param rootFrame
+	 * @param ancestor
+	 */
 	public SQLIndexPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, SQL_INDEX, null, ancestor);
+		cmdThread = new ThreadIndexTable(this, INDEX_RELATION);
 	}
 
-	private String getDescription() throws Exception {
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	private void setDescription() throws Exception {
+		description.removeAll();
 		if( sqlTable == null ) {
-			return "No table Set";
-		}
-		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("select count(oidsaada) from (select oidsaada from " + sqlTable + " Limit 10000) as js") ;
-		int size = 0;
-		String limit = "";
-		while(rs.next()) {
-			size = rs.getInt(1);
-			if( size < 1000 ) {
-				limit = "<BR>Table with less than 1000 rows are not indexed";
-				indexAll.setEnabled(false);
-				indexAll.setEnabled(false);
+			description.add(getHelpLabel(HelpDesk.SQL_INDEX));
+		} else {
+			SQLQuery squery = new SQLQuery();
+			ResultSet rs = squery.run("select count(oidsaada) from (select oidsaada from " + sqlTable + " Limit 10000) as js") ;
+			int size = 0;
+			String limit = "";
+			runButton.activate();
+			while(rs.next()) {
+				size = rs.getInt(1);
+				if( size < 1000 ) {
+					limit = "<BR>Table with less than 1000 rows are not indexed";
+					runButton.inActivate();
+					//					indexAll.setEnabled(false);
+					//					indexAll.setEnabled(false);
+				}
+				else if( size >= 10000) {
+					limit = "(truncated)"; 
+				}
 			}
-			else if( size >= 10000) {
-				limit = "(truncated)"; 
+			squery.close();
+			int nbi=0;
+			for( int r=0 ; r<jtable.getRowCount() ; r++) {
+				if( !jtable.getModel().getValueAt(r, 2).toString().equals("-") ) {
+					nbi++;
+				}
 			}
+			String retour = "<HTML>Table " + sqlTable + "<BR>" + size + " rows " + limit + "<BR>" + jtable.getRowCount() + " columns(" +  nbi + " indexed)<BR>";
+			description.add(getPlainLabel(retour));
 		}
-		squery.close();
-		int nbi=0;
-		for( int r=0 ; r<jtable.getRowCount() ; r++) {
-			if( !jtable.getModel().getValueAt(r, 2).toString().equals("-") ) {
-				nbi++;
-			}
-		}
-		String retour = "<HTML>Table " + sqlTable + "<BR>" + size + " rows " + limit + "<BR>" + jtable.getRowCount() + " columns(" +  nbi + " indexed)<BR>";
-		return retour;
 	}
 
-	private JScrollPane buildColumnTable() throws Exception {		
-		if( sqlTable == null ) {
-			return new JScrollPane();
-		}
-
+	/**
+	 * @throws Exception
+	 */
+	public void buildColumnTable() throws Exception {		
 		ResultSet rs = Database.getWrapper().getTableColumns(sqlTable);
-		//rs.last();
 		Collection<String> ci = Database.getWrapper().getExistingIndex(sqlTable).values();
 		table = new ArrayList<Object[]>();
-		//table = new Object[rs.getRow()][3];
-		//rs.beforeFirst();
 		int r=0 ;
 		while(rs.next() ) {
 			String col_name = rs.getString("COLUMN_NAME");
@@ -114,7 +122,6 @@ public class SQLIndexPanel extends TaskPanel {
 		}
 		rs.close();
 		jtable = new JTable();
-		jtable.setPreferredScrollableViewportSize(new Dimension(300,300));
 		jtable.setModel(new AbstractTableModel() {
 			public Object getValueAt(int row, int col) {
 				return table.get(row)[col];
@@ -138,51 +145,94 @@ public class SQLIndexPanel extends TaskPanel {
 		jtable.getColumnModel().getColumn(0).setHeaderValue("Column Name");
 		jtable.getColumnModel().getColumn(1).setHeaderValue("Data Type");
 		jtable.getColumnModel().getColumn(2).setHeaderValue("Indexed");
-		jtable.setBackground(SaadaDBAdmin.beige_color);
-		return new JScrollPane(jtable);
-
+		jtable.setBackground(AdminComponent.IVORY);
+		columnPanel.setViewportView(jtable);
+		updateUI();
 	}
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationIndex(rootFrame, INDEX_RELATION);
+		cmdThread = new ThreadIndexTable(this, INDEX_RELATION);
 	}
 
-
 	@Override
-	protected Map<String, Object> getParamMap() {
-		// TODO Auto-generated method stub
+	protected Map<String, Object> getParamMap() {		
+		if( jtable != null ) {
+			LinkedHashMap<String, Object> retour = new LinkedHashMap<String, Object>();
+			if( dropAll.isSelected() || dropSel.isSelected()) {
+				retour.put("remove", true ) ;
+			} else {
+				retour.put("remove", false ) ;			
+			}
+			retour.put("table", sqlTable);
+			if( !dropAll.isSelected() && !indexAll.isSelected() ) {
+				ArrayList<String> scols = new ArrayList<String>();
+				int[] cs = jtable.getSelectedRows();
+				for( int c=0 ; c<cs.length ; c++ ) {
+					scols.add(jtable.getValueAt(cs[c], 0).toString());
+				}
+				retour.put("columns", scols);			
+			}
+			return retour;
+		}
 		return null;
 	}
 
+	@Override
+	protected void setToolBar() {
+		this.initTreePathLabel();
+		this.add(new ToolBarPanel(this, true, false, false));		
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public void setDataTreePath(DataTreePath dataTreePath) {
+		if( dataTreePath != null ) {
+			if( dataTreePath.isCollectionLevel()) {
+				showInputError(rootFrame, "Selected node must be either at category (IMAGE, ...) or at class level (leaf)");
+				return;
+			} else if( dataTreePath.isClassLevel()) {
+				sqlTable = dataTreePath.classe;
+			} else if( dataTreePath.isCategoryLevel() ) {
+				sqlTable = dataTreePath.toString().replace('.','_');
+			}
+			try {
+				super.setDataTreePath(dataTreePath);
+				this.buildColumnTable();
+				this.setDescription();
+			} catch (Exception e) {
+				showFatalError(rootFrame, e);
+			}
+		}
+	}
 
 	@Override
 	protected void setActivePanel() {
-		runButton = new RunTaskButton(this);
-		indexAll   = new JRadioButton("All Columns");
-		indexSel   = new JRadioButton("Selected Columns");
+		runButton   = new RunTaskButton(this);
+		indexAll    = new JRadioButton("All Columns");
+		indexSel    = new JRadioButton("Selected Columns");
 
-		indexAll   = new JRadioButton("All Columns");
-		indexSel   = new JRadioButton("Selected Columns");
-		cancelBtn       = new JButton("Cancel");
-		applyBtn        = new JButton("Apply");
+		indexAll    = new JRadioButton("All Columns");
+		indexSel    = new JRadioButton("Selected Columns");
 		actionGroup = new ButtonGroup();
-		dropAll    = new JRadioButton("All Columns");
-		dropSel    = new JRadioButton("Selected Columns");
-
+		dropAll     = new JRadioButton("All Columns");
+		dropSel     = new JRadioButton("Selected Columns");
+		columnPanel = new JScrollPane(getPlainLabel("No table selected"));
+		columnPanel.setPreferredSize(new Dimension(500, 400));
+		description = new JPanel();
+		description.setBackground(LIGHTBACKGROUND);
 		try {
+			this.setDescription();
 			JPanel tPanel = this.addSubPanel("Column Selector");
-			JScrollPane jsp = this.buildColumnTable();
-
 			GridBagConstraints ccs = new GridBagConstraints();
 			ccs.gridx = 0; ccs.gridy = 0;ccs.anchor = GridBagConstraints.WEST;
 			ccs.weightx = 0.5;ccs.weighty = 0.5;ccs.ipadx = 50;ccs.ipady = 10;
 			ccs.gridwidth = 4;
-			JLabel label = SaadaDBAdmin.getPlainLabel(getDescription());
-			tPanel.add(label, ccs);
+			tPanel.add(description, ccs);
 			ccs.ipadx = 5;ccs.ipady = 5;
 			ccs.gridx = 0; ccs.gridy++;ccs.anchor = GridBagConstraints.CENTER;
-			tPanel.add(jsp, ccs);
+			tPanel.add(columnPanel, ccs);
 			/*
 			 * Bottom pane
 			 */
@@ -191,7 +241,7 @@ public class SQLIndexPanel extends TaskPanel {
 			ccs.gridx = 0; ccs.anchor = GridBagConstraints.EAST;
 			tPanel.add(jlb, ccs);
 			ccs.gridx++;ccs.anchor = GridBagConstraints.WEST;
-			tPanel.add(dropSel, ccs);
+			tPanel.add(dropAll, ccs);
 			ccs.gridx++; 
 			tPanel.add(dropSel, ccs);
 			jlb = new JLabel("Build Indexes On", Label.LEFT);
@@ -206,21 +256,10 @@ public class SQLIndexPanel extends TaskPanel {
 			actionGroup.add(dropSel);
 			actionGroup.add(indexSel);
 			actionGroup.add(indexAll);
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-
-			buttonPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-			buttonPane.add(applyBtn);
-			buttonPane.add(Box.createRigidArea(new Dimension(10, 0)), 1);
-			buttonPane.add(cancelBtn);
-
-			ccs.gridy+= 1;ccs.ipady = 20;
-			tPanel.add(buttonPane, ccs);	
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}
-		this.setActionBar(new Component[]{runButton
-				, debugButton});
+		this.setActionBar(new Component[]{runButton, debugButton, (new AntButton(this))});
 	}
 
 }
