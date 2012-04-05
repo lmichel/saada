@@ -50,7 +50,8 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 		case Category.IMAGE    : collformator = new ImageDisplayFilter(mc.getCollection_name());break;
 		case Category.SPECTRUM : collformator = new SpectrumDisplayFilter(mc.getCollection_name());break;
 		case Category.MISC     : collformator = new MiscDisplayFilter(mc.getCollection_name());break;
-		case Category.FLATFILE : collformator = new FlatfileDisplayFilter(mc.getCollection_name());break;
+		// mc is  null for FLATFILES
+		case Category.FLATFILE : collformator = new FlatfileDisplayFilter(SaadaOID.getCollectionName(oidsaada));break;
 		default:
 		}
 		this.mc = mc;
