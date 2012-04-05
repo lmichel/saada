@@ -67,7 +67,8 @@ public class MysqlWrapper extends DbmsWrapper {
 
 	@Override
 	public void createDB(String dbname) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + ">");
+		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + "> at " + url);
+
 		Connection admin_connection = getConnection(url +"mysql", admin.getName(), admin.getPassword());
 		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
 		try {

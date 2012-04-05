@@ -62,7 +62,7 @@ public class PostgresWrapper extends DbmsWrapper {
 
 	@Override
 	public void createDB(String dbname) throws SQLException, FatalException {
-		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + ">");
+		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + "> at " + url);
 		Connection admin_connection = DriverManager.getConnection(url +"template1", admin.getName(), admin.getPassword());
 		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
 		try {
