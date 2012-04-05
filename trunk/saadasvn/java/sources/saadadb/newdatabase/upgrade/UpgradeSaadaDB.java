@@ -68,7 +68,7 @@ public class UpgradeSaadaDB {
 	 * @throws Exception
 	 */
 	private void upgradeWebApps() throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Redeplay Web interfae of the SaadaDB located at " + this.connector.getRoot_dir());
+		Messenger.printMsg(Messenger.TRACE, "Redeploy Web interface of the SaadaDB located at " + this.connector.getRoot_dir());
 		Project project = new Project();
 		project = new Project();
 		project.init();
