@@ -44,7 +44,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	}
 	
 	public void setMetaClass(MetaClass mc) throws FatalException {
-		switch( mc.getCategory()) {
+		switch( SaadaOID.getCategoryNum(oidsaada)) {
 		case Category.TABLE    : collformator = new TableDisplayFilter(mc.getCollection_name());break;
 		case Category.ENTRY    : collformator = new EntryDisplayFilter(mc.getCollection_name());break;
 		case Category.IMAGE    : collformator = new ImageDisplayFilter(mc.getCollection_name());break;
