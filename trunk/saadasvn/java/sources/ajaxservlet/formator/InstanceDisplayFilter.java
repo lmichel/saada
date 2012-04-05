@@ -42,7 +42,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 		}
 
 	}
-	
+
 	public void setMetaClass(MetaClass mc) throws FatalException {
 		switch( SaadaOID.getCategoryNum(oidsaada)) {
 		case Category.TABLE    : collformator = new TableDisplayFilter(mc.getCollection_name());break;
@@ -94,14 +94,16 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	@Override
 	public JSONArray getClassKWTable() throws Exception {
 		JSONArray retour = new JSONArray ();
-		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
-		for( AttributeHandler ah: mc.getAttributes_handlers().values()) {
-			JSONArray list = new JSONArray();
-			list.add(ah.getNameorg());
-			list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
-			list.add(ah.getUnit());
-			list.add(ah.getComment());
-			retour.add(list);
+		if( SaadaOID.getCategoryNum(oidsaada) != Category.FLATFILE ) {
+			MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
+			for( AttributeHandler ah: mc.getAttributes_handlers().values()) {
+				JSONArray list = new JSONArray();
+				list.add(ah.getNameorg());
+				list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
+				list.add(ah.getUnit());
+				list.add(ah.getComment());
+				retour.add(list);
+			}
 		}
 		return retour;
 	}
@@ -111,7 +113,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	public JSONArray getCollectionKWTable() throws Exception {
 		JSONArray retour = new JSONArray ();
 		SaadaInstance si = Database.getCache().getObject(oidsaada);
-		for( AttributeHandler ah:   MetaCollection.getAttribute_handlers(mc.getCategory()).values() )  {
+		for( AttributeHandler ah:   MetaCollection.getAttribute_handlers(SaadaOID.getCategoryNum(oidsaada)).values() )  {
 			if( this.valid(ah) ) {
 				JSONArray list = new JSONArray();
 				list.add(ah.getNameorg());
@@ -141,9 +143,9 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	@Override
 	protected void setRelations() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public String getJSONString() {
 		return null;
 	}
