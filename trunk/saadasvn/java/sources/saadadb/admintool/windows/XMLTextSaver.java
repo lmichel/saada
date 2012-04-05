@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -21,11 +20,10 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
-import xmleditorkit.XMLEditorKit;
 
-public class TextSaver extends OuterWindow {
+public class XMLTextSaver extends OuterWindow {
 	private SaveButton saveButton = new SaveButton(null);
-	private JEditorPane textArea = new JEditorPane();
+	private JTextArea textArea = new JTextArea();
 	private JFileChooser fileChooser;
 	private static  String defaultDir;
 
@@ -36,16 +34,15 @@ public class TextSaver extends OuterWindow {
 	 * @param defaultFile
 	 * @param content
 	 */
-	public TextSaver(AdminTool rootFrame, String title, String defaultDir, String defaultFile, String content) {
+	public XMLTextSaver(AdminTool rootFrame, String title, String defaultDir, String defaultFile, String content) {
 		super(rootFrame, "Save " + title);
-		textArea.setEditorKit(new XMLEditorKit());
 		if(content != null ) {
 			textArea.setText(content);
 		}
 		if( defaultDir != null ) {
-			TextSaver.defaultDir = defaultDir;
+			XMLTextSaver.defaultDir = defaultDir;
 		}
-		this.fileChooser = new JFileChooser(TextSaver.defaultDir);
+		this.fileChooser = new JFileChooser(XMLTextSaver.defaultDir);
 		this.fileChooser.setSelectedFile(new File(defaultFile));
 		Container panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
@@ -65,12 +62,12 @@ public class TextSaver extends OuterWindow {
 	 * @param defaultFile
 	 * @param content
 	 */
-	public TextSaver(AdminTool rootFrame, String title, String defaultFile, String content) {
+	public XMLTextSaver(AdminTool rootFrame, String title, String defaultFile, String content) {
 		this(rootFrame, title, null, defaultFile, content);
-		if( TextSaver.defaultDir == null ) {
-			TextSaver.defaultDir = Database.getRoot_dir() + File.separator + "config";
+		if( XMLTextSaver.defaultDir == null ) {
+			XMLTextSaver.defaultDir = Database.getRoot_dir() + File.separator + "config";
 		}
-		this.fileChooser = new JFileChooser(TextSaver.defaultDir);
+		this.fileChooser = new JFileChooser(XMLTextSaver.defaultDir);
 		this.fileChooser.setSelectedFile(new File(defaultFile));
 	}
 	
