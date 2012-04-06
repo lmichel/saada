@@ -16,7 +16,7 @@ body {
 }
 
 div {
-	background-color: #e0e0e0;
+	background-color: white;
 	border-width: 1px;
 	border-style: solid;
 	border-color: white;
@@ -582,7 +582,7 @@ a.formexpender {
 	display: inline-block;
 	width: 0px;
 	overflow: visible;
-	padding: 10px 0px 16px 40px;
+	padding: 8px 0px 16px 32px;
 	background: transparent url(../images/screen_down.png) center left
 		no-repeat;
 }
@@ -603,7 +603,7 @@ a.displayfilter {
 	display: inline-block;
 	width: 0px;
 	overflow: visible;
-	padding: 10px 0px 16px 40px;
+	padding: 8px 0px 16px 32px;
 	background: transparent url(../images/filter.png) center left
 		no-repeat;
 }
@@ -738,7 +738,7 @@ a:visited.detail {
  */
  
 div#banner {
-	height: 70px;
+	height: 80px;
 	vertical-align: middle;
 }
 
@@ -750,12 +750,14 @@ div#pagetitle {
 }
 
 div#externaltools {
-	width: 700;
+	padding: 5px 5px 0px 5px;
+	border-radius: 5px;
+	width: 300;
 	height: 38;
-	margin-left: 300px;
 	margin-left: 150px;
 	margin-top: 0px;
-	border-width: 0;
+	border-width: 0px;
+	background: #F5F5F5
 }
 
 /*************************************************************************
