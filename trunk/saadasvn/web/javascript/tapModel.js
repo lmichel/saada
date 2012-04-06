@@ -68,7 +68,7 @@ jQuery.extend({
 				return;
 			}
 			showProcessingDialog();
-			$.getJSON("getmeta?", params, function(jsondata) {
+			$.getJSON("getmeta", params, function(jsondata) {
 				hideProcessingDialog();
 				if( processJsonError(jsondata, "Cannot get meta data") ) {
 					return;
