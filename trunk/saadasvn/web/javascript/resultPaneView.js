@@ -306,12 +306,12 @@ jQuery
 			}
 			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');\"> <img src=\"images/tdown.png\"> Native Data </h4>";
 			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"detailtable\" class=\"display\"></table>";
+			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
 			table += "</div>";
 
 			table += "<h4 id=\"mapped\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mapped\');\"> <img src=\"images/tright.png\"> Mapped Data </h4>";
 			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"detailmappedtable\" class=\"display\"></table>";
+			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
 			table += "</div>";
 
 			/*
@@ -356,7 +356,7 @@ jQuery
 			$('#detailtable').dataTable({
 				"aoColumns" : jsdata.classlevel.aoColumns,
 				"aaData" : jsdata.classlevel.aaData,
-				"sDom" : '<"top"f>rt<"bottom">',
+				"sDom" : '<"top"f>rt',
 				"bPaginate" : false,
 				"aaSorting" : [],
 				"bSort" : false,
@@ -366,7 +366,7 @@ jQuery
 			$('#detailmappedtable').dataTable({
 				"aoColumns" : jsdata.collectionlevel.aoColumns,
 				"aaData" : jsdata.collectionlevel.aaData,
-				"sDom" : '<"top"f>rt<"bottom">',
+				"sDom" : '<"top"f>rt',
 				"bPaginate" : false,
 				"aaSorting" : [],
 				"bSort" : false,
@@ -401,7 +401,7 @@ jQuery
 			div
 			.html("<table id="
 					+ id
-					+ "  width=600px cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  class=\"display\"></table>");
+					+ "  width=600px cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  class=\"display\"></table>");
 			$('#' + id).dataTable({
 				"aoColumns" : jsdata.aoColumns,
 				"aaData" : jsdata.aaData,
@@ -456,17 +456,17 @@ jQuery
 			}
 			table += '<h2> ' + histo + ' DETAIL <span>' + title
 			+ '</span></h2>';
-			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Mapped Data </h4>";
+			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
 //			table += "<p id=nativemeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Mapped Data </p>";
 			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"detailtable\" class=\"display\"></table>";
+			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
 			table += "</div>";
 
 			if (jsdata.classLevel != null) {
-				table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\"> Native Data </h4>";
+				table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
 //				table += "<p id=mappedmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Native Data </p>";
 				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"detailmappedtable\" class=\"display\"></table>";
+				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
 				table += "</div>";
 			}
 
@@ -474,7 +474,7 @@ jQuery
 				table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
 //				table += "<p id=startingmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Relationships starting from it </p>";
 				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"startingmetatable\" class=\"display\"></table>";
+				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
 				table += "</div>";
 			}
 
@@ -482,7 +482,7 @@ jQuery
 				table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
 //				table += "<p id=endingmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Relationships ending at it </p>";
 				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"endingmetatable\" class=\"display\"></table>";
+				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
 				table += "</div>";
 			}
 
@@ -498,7 +498,7 @@ jQuery
 					{
 						"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
 						"aaData" : jsdata.collectionLevel.attributes.aaData,
-						"sDom" : '<"top"f>rt<"bottom">',
+						"sDom" : '<"top"f>rt',
 						"bPaginate" : false,
 						"aaSorting" : [],
 						"bSort" : false,
@@ -511,7 +511,7 @@ jQuery
 						{
 							"aoColumns" : jsdata.classLevel.attributes.aoColumns,
 							"aaData" : jsdata.classLevel.attributes.aaData,
-							"sDom" : '<"top"f>rt<"bottom">',
+							"sDom" : '<"top"f>rt',
 							"bPaginate" : false,
 							"aaSorting" : [],
 							"bSort" : false,
@@ -525,7 +525,7 @@ jQuery
 						{
 							"aoColumns" : jsdata.collectionLevel.startingRelations.aoColumns,
 							"aaData" : jsdata.collectionLevel.startingRelations.aaData,
-							"sDom" : '<"top"f>rt<"bottom">',
+							"sDom" : '<"top"f>rt',
 							"bPaginate" : false,
 							"aaSorting" : [],
 							"bSort" : false,
@@ -539,7 +539,7 @@ jQuery
 						{
 							"aoColumns" : jsdata.collectionLevel.endingRelations.aoColumns,
 							"aaData" : jsdata.collectionLevel.endingRelations.aaData,
-							"sDom" : '<"top"f>rt<"bottom">',
+							"sDom" : '<"top"f>rt',
 							"bPaginate" : false,
 							"aaSorting" : [],
 							"bSort" : false,
@@ -558,7 +558,7 @@ jQuery
 		};
 		this.showTapResult = function(jid, jsdata) {
 			setTitlePath([ 'TAP', 'Job', jid ]);
-			var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"datatable\" class=\"display\"></table>";
+			var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\"></table>";
 			$("#resultpane").html(table);
 
 			$('#datatable').dataTable({
@@ -583,7 +583,7 @@ jQuery
 				 * Get table columns
 				 */
 				var ahs = dataJSONObject["attributes"];
-				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"datatable\" class=\"display\">"
+				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\">"
 					+ "<thead>" + "<tr>";
 				for (var i = 0; i < ahs.length; i++) {
 					table += "<th>" + ahs[i].name + "</th>";
