@@ -187,7 +187,7 @@ jQuery.extend({
 
 			if ($('#delegateFormId').length == 0) {
 				//var form = [ '<form id="delegateFormId" target="iframename" method="POST" action="', PeerCartClient, '">' ];
-				var form = [ '<form id="delegateFormId" target="blank" method="POST" action="', PeerCartClient, '">' ];
+				var form = [ '<form id="delegateFormId" target="_sblank" method="POST" action="', PeerCartClient, '">' ];
 				form.push('<input type="hidden" name="saadadburl" value="'
 						, escape($(location).attr('href').replace('/#', '') + '/cart/zipper')
 						, '" />');
