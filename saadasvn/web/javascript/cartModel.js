@@ -106,13 +106,11 @@ jQuery.extend({
 					var num  = row[1];
 					var key  = row[0].split('+');
 					var node = key[0];
-					logMsg("@@@@ " + tokens+ '|' + row + '|' +  num + '|' +   key  + '|' +  node);
 					if( key[1] == 'query_result' ) {
 						that.addJobResult((old_cartData[node]).queries[num].name
 								, (old_cartData[node]).queries[num].uri);
 					}
 					else if( key[1] == 'single_file' ) {
-						logMsg("@@@@ " + (old_cartData[node]).files[num].uri);
 						that.addUrl((old_cartData[node]).files[num].name
 								, (old_cartData[node]).files[num].uri);
 					}
@@ -122,7 +120,6 @@ jQuery.extend({
 		};
 
 		this.changeName= function(nodekey, dataType, rowNum, newName) {
-			logMsg("@@@@@@ changeName" + nodekey + " " +  dataType+ " " + rowNum+ " " + newName);
 			if( dataType.toLowerCase() == "query_result" ) {
 				cartData[nodekey].queries[rowNum].name = newName;
 			}
@@ -179,26 +176,26 @@ jQuery.extend({
 		};
 
 		this.delegateCartDownload= function() {
-			if ($('#detaildiv').length == 0) {
-				$(document.documentElement)
-				.append(
-				"<div id=detaildiv style='height: 99%; width: 99%; display: none;'><div style='color: black;' id=description name=pouet></div></div>");
-			}
-			$('#detaildiv').css('height', '99%');
-			$('#detaildiv').html('<iframe id="iframeid" name="iframename" style="height: 99%; width: 99%"></iframe>');
-			$('#detaildiv').modal();
+//			if ($('#detaildiv').length == 0) {
+//				$(document.documentElement)
+//				.append(
+//				"<div id=detaildiv style='height: 99%; width: 99%; display: none;'><div style='color: black;' id=description name=pouet></div></div>");
+//			}
+//			$('#detaildiv').css('height', '99%');
+//			$('#detaildiv').html('<iframe id="iframeid" name="iframename" style="height: 99%; width: 99%"></iframe>');
+//			$('#detaildiv').modal();
 
 			if ($('#delegateFormId').length == 0) {
-				var form = [ '<form id="delegateFormId" target="iframename" method="POST" action="', PeerCartClient, '">' ];
+				//var form = [ '<form id="delegateFormId" target="iframename" method="POST" action="', PeerCartClient, '">' ];
+				var form = [ '<form id="delegateFormId" target="blank" method="POST" action="', PeerCartClient, '">' ];
 				form.push('<input type="hidden" name="saadadburl" value="'
 						, escape($(location).attr('href').replace('/#', '') + '/cart/zipper')
 						, '" />');
-				form.push('<input type="hidden" name="cartcontent" value="'
-						, escape(JSON.stringify(cartData))
-						, '"/>');
+				form.push('<input id="delegateCartContent" type="hidden" name="cartcontent" value=""/>');
 				form.push('</form>');
 				jQuery(form.join('')).appendTo('body');
 			}
+			$('#delegateCartContent').attr('value', escape(JSON.stringify(cartData)));			
 			$('#delegateFormId').submit();
 		};
 
