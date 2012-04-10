@@ -288,7 +288,7 @@ public class QueryFileReport {
 		try {
 //			ArgsParser ap = new ArgsParser(args);
 			//Messenger.debug_mode = false;
-			Database.init("Napoli");
+			Database.init("AJAX");
 			// http://saada:8888/XIDResult/getqueryreport?query=Select+ENTRY+From+*+In+SpectroscopicSample%0AWhereAttributeSaada+%7B%28E_MAG++is+not+null%29%7D&format=zipball&datamodel=XIDSrcModel&limit=100
 				
 				
@@ -318,8 +318,8 @@ public class QueryFileReport {
 //				System.out.println(str.replaceAll("<TD", "\n<TD"));
 //			}
 //			br.close();
-			query = "Select ENTRY From * In XMMNewton Limit 10";
-			QueryFileReport qfr = new QueryFileReport(QueryFileReport.CS, null, query, "votable");
+			query = "Select ENTRY From * In qwerty Limit 10";
+			QueryFileReport qfr = new QueryFileReport(QueryFileReport.CS, "cs", query, "votable");
 			qfr.getQueryReport("/Users/laurentmichel/Desktop/xcs.vot", 212);
 			br = new BufferedReader(new FileReader("/Users/laurentmichel/Desktop/xcs.vot"));
 			while( (str = br.readLine()) != null  ) {
