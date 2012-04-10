@@ -123,7 +123,7 @@ public class ManageDataPanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		new ChoiceItem(rootFrame, tPanel, c
-				, "SQL Index", "icons/CommentCollection.png"
+				, "SQL Index", "icons/IndexTable.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(SQL_INDEX);}});
 
