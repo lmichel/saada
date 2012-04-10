@@ -128,7 +128,10 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 
 	@Override
 	public boolean valid(AttributeHandler ah) {
-		return collformator.valid(ah);
+		if( collformator != null )
+			return collformator.valid(ah);
+		else
+			return true;
 	}
 
 	public List<String> getLinks() throws Exception {
