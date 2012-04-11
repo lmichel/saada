@@ -149,9 +149,9 @@ public class AntDesk {
 			retour += s + "\n";
 		}
 		retour +=  xmlParams;
-		retour += "    </java>";
-		retour += "  </target>";
-		retour += "</project>";
+		retour += "    </java>\n";
+		retour += "  </target>\n";
+		retour += "</project>\n";
 		return retour;
 	}
 	/**
@@ -172,9 +172,9 @@ public class AntDesk {
 			retour += "        <arg value=\"" + p + "\"/>\n";
 		}
 		retour += "        <arg value=\"${SAADA_DB_NAME}\"/>\n";
-		retour += "    </java>";
-		retour += "  </target>";
-		retour += "</project>";
+		retour += "    </java>\n";
+		retour += "  </target>\n";
+		retour += "</project>\n";
 		return retour;
 	}
 }
