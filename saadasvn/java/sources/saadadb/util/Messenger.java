@@ -55,7 +55,7 @@ public class Messenger implements Serializable{
 	public static final int CONTINUE = 0;
 	public static final int ABORT = 2;
 
-	public static boolean debug_mode=true;
+	public static boolean debug_mode=false;
 	public static boolean silent_mode=false;
 	protected static PrintStream output;
 	protected static String logfile;
