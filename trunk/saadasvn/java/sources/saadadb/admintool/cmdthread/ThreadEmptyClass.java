@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
+import saadadb.collection.ClassManager;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -15,9 +16,9 @@ import saadadb.exceptions.AbortException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-public class ThreadEmptyCollection extends ThreadDropCollection{
+public class ThreadEmptyClass extends ThreadDropCollection{
 
-	public ThreadEmptyCollection(Frame frame, String taskTitle) {
+	public ThreadEmptyClass(Frame frame, String taskTitle) {
 		super(frame,taskTitle);
 		this.name = null;
 	}
@@ -29,7 +30,7 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 	public boolean checkParams(boolean withConfirm) {
 		return (!withConfirm
 				||
-				AdminComponent.showConfirmDialog(frame, "Do you really want to empty the content of the collection " + name));
+				AdminComponent.showConfirmDialog(frame, "Do you really want to empty the class " + name));
 	}
 
 	/* (non-Javadoc)
@@ -39,15 +40,15 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {
-			saada_process = new CollectionManager(name);
+			saada_process = new ClassManager(name);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).empty(new ArgsParser(new String[]{Messenger.getDebugParam()}));
+			((ClassManager)saada_process).empty(new ArgsParser(new String[]{Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree(name);
-					AdminComponent.showSuccess(frame, "Collection <" + name + "> emptied");		
+					AdminComponent.showSuccess(frame, "Class <" + name + "> emptied");		
 				}				
 			});
 		} catch (AbortException e) {
@@ -63,13 +64,13 @@ public class ThreadEmptyCollection extends ThreadDropCollection{
 
 	@Override
 	public String getAntTarget() {
-		return AntDesk.getAntFile(AdminComponent.EMPTY_COLLECTION
+		return AntDesk.getAntFile(AdminComponent.EMPTY_CLASS
 				, taskTitle
 				, new String[]{"-empty=" + name });
 	}
 
 	public String toString() {
-		return "Empty collection " + this.name;
+		return "Empty class " + this.name;
 	}
 
 

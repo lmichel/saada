@@ -1,22 +1,34 @@
 package saadadb.admintool.cmdthread;
 
+import java.awt.Cursor;
 import java.awt.Frame;
+import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.SaadaException;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-public class ThreadRelationIndex extends ThreadRelationDrop {
+public class ThreadRelationComment extends CmdThread {
+	protected String relation;
+	protected String comment;
 
-	public ThreadRelationIndex(Frame frame, String taskTitle) {
+	public ThreadRelationComment(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
 	}
+	
+	@Override
+	public void setParams(Map<String, Object> params) throws SaadaException {
+		relation = (String) params.get("relation");
+		comment = (String) params.get("comment");
+		resourceLabel = "Relation " + relation;
 
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admin.threads.CmdThread#getParam()
@@ -27,9 +39,7 @@ public class ThreadRelationIndex extends ThreadRelationDrop {
 			return false;
 		}
 		else {
-			return (!withConfirm
-					||
-					AdminComponent.showConfirmDialog(frame, "Do you really want to index the relation <" + relation+ ">"));
+			return true;
 		}
 	}
 
@@ -38,27 +48,27 @@ public class ThreadRelationIndex extends ThreadRelationDrop {
 	 */
 	@Override
 	public void runCommand() {
+		Cursor cursor_org = frame.getCursor();
 		try {
 			SQLTable.beginTransaction();
 			RelationManager rm = new RelationManager(relation);
-			rm.empty(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
+			rm.comment(new ArgsParser(new String[]{"-comment=" +comment}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> indexed");		
+			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> commented");		
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
-		} catch (Exception ae) {			
+			} catch (Exception ae) {			
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(ae);
-			AdminComponent.showFatalError(frame, "Indexing relationship <" +relation + "> failed (see console).");
+			frame.setCursor(cursor_org);
+			AdminComponent.showFatalError(frame, "Commenting relationship <" +relation + "> failed (see console).");
 		}
 	}
 
 	@Override
 	public String getAntTarget() {
-		return AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
-				, taskTitle
-				, new String[]{"-index=" + relation });
+		return null;
 	}
 }
 

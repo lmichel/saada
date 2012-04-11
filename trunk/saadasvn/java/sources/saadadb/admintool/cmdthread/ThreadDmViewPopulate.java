@@ -138,7 +138,7 @@ public class ThreadDmViewPopulate extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "NO ant task available";
+		return null;
 	}
 }
 

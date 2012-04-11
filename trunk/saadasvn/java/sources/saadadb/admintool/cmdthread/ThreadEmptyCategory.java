@@ -81,12 +81,11 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 		}
 	}
 
-
 	@Override
 	public String getAntTarget() {
-		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
+		return AntDesk.getAntFile(AdminComponent.EMPTY_CATEGORY
 				, taskTitle
-				, new String[]{"-empty=\"" + name + "\"", "-category=" + category});
+				, new String[]{"-empty=" + name, "-category=" + category});
 	}
 
 	public String toString() {

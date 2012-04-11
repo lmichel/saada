@@ -55,7 +55,7 @@ public class ThreadDeployWebApp extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "No ANT target available";
+		return null;
 	}
 	public String toString() {
 		return "Deply Web App " ;

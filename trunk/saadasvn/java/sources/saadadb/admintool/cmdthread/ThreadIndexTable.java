@@ -105,11 +105,11 @@ public class ThreadIndexTable extends CmdThread {
 		if( remove ) {
 			return AntDesk.getAntFile(AdminComponent.SQL_INDEX
 					, taskTitle
-					, new String[]{"-remove=\"" + table + "\""});
+					, new String[]{"-remove=" + table });
 		} else {
 			return AntDesk.getAntFile(AdminComponent.SQL_INDEX
 					, taskTitle
-					, new String[]{"-create=\"" + table + "\""});		
+					, new String[]{"-create=" + table});		
 		}
 	}
 

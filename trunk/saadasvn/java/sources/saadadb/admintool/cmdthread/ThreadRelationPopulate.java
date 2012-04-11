@@ -44,6 +44,7 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			if( retour ) {
 				emptyFirst = withEmpty.isSelected();
 				indexAfter = withIndex.isSelected();
+				return true;
 		      }
 		
 		      return false;
@@ -80,7 +81,7 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 	public String getAntTarget() {
 		return AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
 				, taskTitle
-				, new String[]{"-populate=\"" + config.getNameRelation() + "\""
-				, "-query=\"" + config.getQuery().replaceAll("\"", "\\\"") + "\""});
+				, new String[]{"-populate=" + config.getNameRelation() 
+				, "-query=" + config.getQuery().replaceAll("\"", "\\\"")});
 	}
 }

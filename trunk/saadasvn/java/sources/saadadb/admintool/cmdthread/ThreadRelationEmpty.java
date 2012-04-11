@@ -58,7 +58,7 @@ public class ThreadRelationEmpty extends ThreadRelationDrop {
 	public String getAntTarget() {
 		return AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
 				, taskTitle
-				, new String[]{"-empty=\"" + relation + "\""});
+				, new String[]{"-empty=" + relation });
 	}
 }
 

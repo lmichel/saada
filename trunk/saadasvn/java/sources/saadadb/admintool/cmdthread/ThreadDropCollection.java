@@ -73,9 +73,9 @@ public class ThreadDropCollection extends CmdThread{
 
 	@Override
 	public String getAntTarget() {
-		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
+		return AntDesk.getAntFile(AdminComponent.DROP_COLLECTION
 				, taskTitle
-				, new String[]{"-remove=\"" + name + "\""});
+				, new String[]{"-remove=" + name });
 	}
 
 	public String toString() {

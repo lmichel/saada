@@ -85,7 +85,7 @@ public class ThreadCreateCollection extends CmdThread {
 	public String getAntTarget() {
 		return AntDesk.getAntFile(AdminComponent.CREATE_COLLECTION
 				, taskTitle
-				, new String[]{"-create=\"" + name + "\"", "-comment=\""+ comment.replaceAll("\"", "") + "\""});
+				, new String[]{"-create=" + name + "", "-comment="+ comment.replaceAll("\"", "") + ""});
 	}
 
 	public String toString() {

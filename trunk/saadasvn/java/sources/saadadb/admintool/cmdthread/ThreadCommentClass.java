@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
+import saadadb.collection.ClassManager;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -17,9 +18,9 @@ import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-public class ThreadCommentCollection extends ThreadCreateCollection {
+public class ThreadCommentClass extends ThreadCreateCollection {
 
-	public ThreadCommentCollection(Frame frame, String taskTitle) {
+	public ThreadCommentClass(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
 		this.name = null;
 	}
@@ -28,7 +29,7 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 	public void setParams(Map<String, Object> params) throws SaadaException {		
 		name = (String) params.get("name");
 		comment = (String) params.get("comment");	
-		resourceLabel = "Collection " + name;
+		resourceLabel = "Class " + name;
 
 	}
 
@@ -38,18 +39,17 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 	 */
 	@Override
 	public void runCommand() {
-		Cursor cursor_org = frame.getCursor();
 		try {
-			saada_process = new CollectionManager(name);
+			saada_process = new ClassManager(name);
 			SQLTable.beginTransaction();
-			((CollectionManager)saada_process).comment(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
+			((ClassManager)saada_process).comment(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Desciption set for collection <" + name  + ">");		
+					AdminComponent.showSuccess(frame, "Desciption set for class <" + name  + ">");		
 				}				
 			});
 		} catch (SaadaException e) {
@@ -63,7 +63,7 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 		return null;
 	}
 	public String toString() {
-		return "Comment collection " + this.name;
+		return "Comment class " + this.name;
 	}
 
 }
