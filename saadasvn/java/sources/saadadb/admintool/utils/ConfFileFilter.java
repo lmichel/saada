@@ -37,7 +37,7 @@ public class ConfFileFilter extends FileFilter {
 	}
 	public boolean accept(File f) {
 		if (f.isDirectory()) {
-			return true;
+			return false;
 		}
 		
 		String filename = f.getName();

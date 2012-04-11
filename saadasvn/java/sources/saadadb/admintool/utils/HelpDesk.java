@@ -25,6 +25,14 @@ public class HelpDesk {
 	public static final int VOITEM_DESCRIPTION = 17;
 	public static final int VOITEM_EDITION = 18;
 	public static final int SQL_INDEX = 19;
+	public static final int COLL_CREATE = 20;
+	public static final int COLL_DROP = 21;
+	public static final int COLL_COMMENT = 22;
+	public static final int COLL_EMPTY = 23;
+	public static final int CATEGORY_EMPTY = 24;
+	public static final int CLASS_DROP = 25;
+	public static final int CLASS_COMMENT = 26;
+	public static final int CLASS_EMPTY = 27;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -67,7 +75,8 @@ public class HelpDesk {
 				});
 		map.put(METADATA_EDITOR, new String[] {
 				"Click on a data node (class or category) to display the related meta data."
-				, "Right click on the meta data table to edit Utypes, UCds, units or field descriptions."
+				, "Click on the meta data cell you want to edit."
+				, "Utypes, UCds, units or field descriptions can be edited."
 				});
 		map.put(NODE_NAME, new String[] {
 				"Name must only contain numbers"
@@ -129,6 +138,33 @@ public class HelpDesk {
 		map.put(SQL_INDEX, new String[] {
 				"Select a node (class or collection level) "
 				,"to display its indexation status"
+		});
+		map.put(COLL_CREATE, new String[] {
+				"Type the name of the new collection (reg. exp: [_a-zA-Z][_a-zA-Z0-9]*)"
+				,"Type a description (optional) and run."
+		});
+		map.put(COLL_DROP, new String[] {
+				"Click on the collection to remove on the data tree and run."
+		});
+		map.put(COLL_EMPTY, new String[] {
+				"Click on the collection to empty on the data tree and run."
+		});
+		map.put(COLL_COMMENT, new String[] {
+				"Click on the collection to be commented on the data tree,"
+				,"Type a description and run."
+		});
+		map.put(CATEGORY_EMPTY, new String[] {
+				"Click on the collection/category node to empty on the data tree and run."
+		});
+		map.put(CLASS_DROP, new String[] {
+				"Click on the class to remove on the data tree and run."
+		});
+		map.put(CLASS_EMPTY, new String[] {
+				"Click on the class to empty on the data tree and run."
+		});
+		map.put(CLASS_COMMENT, new String[] {
+				"Click on the class to be commented on the data tree,"
+				,"Type a description and run."
 		});
 	}
 	

@@ -44,6 +44,9 @@ import saadadb.admintool.panels.editors.SIAServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
+import saadadb.admintool.panels.tasks.ClassCommentPanel;
+import saadadb.admintool.panels.tasks.ClassDropPanel;
+import saadadb.admintool.panels.tasks.ClassEmptyPanel;
 import saadadb.admintool.panels.tasks.CollCommentPanel;
 import saadadb.admintool.panels.tasks.CollCreatePanel;
 import saadadb.admintool.panels.tasks.CollDropPanel;
@@ -51,6 +54,7 @@ import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
+import saadadb.admintool.panels.tasks.RelationCommentPanel;
 import saadadb.admintool.panels.tasks.RelationCreatePanel;
 import saadadb.admintool.panels.tasks.RelationDropPanel;
 import saadadb.admintool.panels.tasks.RelationEmptyPanel;
@@ -66,14 +70,14 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
-
-
-
 /**
- * @author laurent
+ * Base frame of the administration tool
+ * @author michel
+ * @version $Id$
  *
  */
 public class AdminTool extends BaseFrame {
+	private static final long serialVersionUID = 1L;
 	public static final int height = 700;
 	private JSplitPane splitPane;
 	public MetaDataPanel metaDataTree;
@@ -255,7 +259,6 @@ public class AdminTool extends BaseFrame {
 				System.exit(1);
 			}
 		}
-
 	}
 
 	public ProcessPanel getProcessPanel() {
@@ -375,6 +378,24 @@ public class AdminTool extends BaseFrame {
 				sqlIndex = new SQLIndexPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = sqlIndex;
+			/*
+			 * Class level management tasks
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.DROP_CLASS) ) {
+			if( dropClassPanel == null ) {
+				dropClassPanel = new ClassDropPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = dropClassPanel;
+		} else 	if( panelTitle.equals(AdminComponent.EMPTY_CLASS) ) {
+			if( emptyClassPanel == null ) {
+				emptyClassPanel = new ClassEmptyPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = emptyClassPanel;
+		} else 	if( panelTitle.equals(AdminComponent.COMMENT_CLASS) ) {
+			if( commentClassPanel == null ) {
+				commentClassPanel = new ClassCommentPanel(this, AdminComponent.MANAGE_DATA);
+			}
+			activePanel = commentClassPanel;
 			
 			/*
 			 * Data loading task
@@ -440,6 +461,11 @@ public class AdminTool extends BaseFrame {
 				populateRelationPanel = new RelationPopulatePanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = populateRelationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.COMMENT_RELATION) ) {
+			if( commentRelationPanel == null ) {
+				commentRelationPanel = new RelationCommentPanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = commentRelationPanel;
 			/*
 			 * VO publishing
 			 */
