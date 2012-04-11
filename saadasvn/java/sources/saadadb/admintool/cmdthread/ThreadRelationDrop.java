@@ -61,7 +61,7 @@ public class ThreadRelationDrop extends CmdThread {
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(ae);
 			frame.setCursor(cursor_org);
-			AdminComponent.showFatalError(frame, "Creating relationship <" +relation + "> failed (see console).");
+			AdminComponent.showFatalError(frame, "Dropping relationship <" +relation + "> failed (see console).");
 		}
 	}
 
@@ -69,7 +69,7 @@ public class ThreadRelationDrop extends CmdThread {
 	public String getAntTarget() {
 		return AntDesk.getAntFile(AdminComponent.DROP_RELATION
 				, taskTitle
-				, new String[]{"-remove=\"" + relation + "\""});
+				, new String[]{"-remove=" + relation });
 	}
 }
 

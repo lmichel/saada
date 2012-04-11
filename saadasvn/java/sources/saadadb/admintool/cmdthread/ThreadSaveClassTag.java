@@ -1,7 +1,6 @@
 package saadadb.admintool.cmdthread;
 
 
-import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import javax.swing.SwingUtilities;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SQLJTable;
-import saadadb.admintool.utils.DataTreePath;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
@@ -81,6 +79,6 @@ public class ThreadSaveClassTag extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return "No Ant task available to save meta data.\nmust be done from the admintool";
+		return null;
 	}
 }

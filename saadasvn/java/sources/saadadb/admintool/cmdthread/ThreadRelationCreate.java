@@ -71,11 +71,11 @@ public class ThreadRelationCreate extends CmdThread {
 		try {
 			retour =  AntDesk.getAntFile(AdminComponent.EMPTY_RELATION
 					, taskTitle
-					, new String[]{"-create=\"" + config.getNameRelation() + "\""
-					, "-from=\"" +  config.getColPrimary_name() + "." + Category.explain(config.getColPrimary_type()) + "\""
-					, "-to=\"" +  config.getColSecondary_name() + "." + Category.explain(config.getColSecondary_type()) + "\""
-					, "-comment=\""+ config.getDescription().replaceAll("\"", "") + "\""
-					, "-qualifiers=\"" +  Merger.getMergedArray(config.getQualifier().keySet().toArray(new String[0])) + "\""
+					, new String[]{"-create=" + config.getNameRelation() 
+					, "-from=" +  config.getColPrimary_name() + "." + Category.explain(config.getColPrimary_type()) 
+					, "-to=" +  config.getColSecondary_name() + "." + Category.explain(config.getColSecondary_type()) 
+					, "-comment="+ config.getDescription().replaceAll("\"", "") 
+					, "-qualifiers=" +  Merger.getMergedArray(config.getQualifier().keySet().toArray(new String[0]))
 			});
 		} catch (Exception e) {}
 		return retour;
