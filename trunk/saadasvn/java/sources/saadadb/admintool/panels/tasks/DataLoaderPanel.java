@@ -162,6 +162,7 @@ public class DataLoaderPanel extends TaskPanel {
 		repCopy = new JRadioButton("Copy Input Files into the Repository");
 		repMove = new JRadioButton("Move Input Files to the Repository");
 		repKeep = new JRadioButton("Use Input Files as Repository");
+		repKeep.setSelected(true);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(repCopy); 
 		bg.add(repMove); 
@@ -186,7 +187,7 @@ public class DataLoaderPanel extends TaskPanel {
 		tPanel.add(new JLabel(""), c);
 
 
-		tPanel = this.addSubPanel("Input Files Selector");
+		tPanel = this.addSubPanel("Data Files Selector");
 		datafileSummary = new JLabel("no file selected");
 		directory = new JTextField(32);
 		dirBrowser = new JButton("Browse...");

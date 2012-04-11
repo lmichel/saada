@@ -35,7 +35,7 @@ public class RelationChoicePanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Comment Relationship", "icons/CommentRel.png"
 				, new Runnable(){public void run(){
-					System.out.println("SSA");}});
+					rootFrame.activePanel(COMMENT_RELATION);}});
 		
 		c.gridx = 2;
 		c.gridy = 0;	

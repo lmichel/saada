@@ -139,7 +139,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					default: break;
 					}
 				}
-				return tip == null ? null : tip + "<I>Right click to open action menu</I></HTML>";
+				return tip ;
 			}
 		};
 		ToolTipManager.sharedInstance().registerComponent(tree);

@@ -126,18 +126,18 @@ public  class ProcessPanel extends TaskPanel {
 			}
 		});
 
-		JButton jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Ant.png")));
-		jb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cmdThread = new ThreadCreateCollection(rootFrame, CREATE_COLLECTION);
-				AdminComponent.showInfo(rootFrame,cmdThread.getAntTarget());
-			}
-		});
+//		JButton jb = new AntButton(rootFrame.getActivePanel());
+//		jb.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				cmdThread = new ThreadCreateCollection(rootFrame, CREATE_COLLECTION);
+//				AdminComponent.showInfo(rootFrame,cmdThread.getAntTarget());
+//			}
+//		});
 		procLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Processor.png")));
 		diskLight = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Disk.png")));
 		dbLight   = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database.png")));
 		statusLabel = new JLabel("task status");
-		this.setProcessControlBar(new Component[] {runPauseButton, abortButton, debugButton, jb}
+		this.setProcessControlBar(new Component[] {runPauseButton, abortButton, debugButton}
 		, statusLabel
 		, new JLabel[]{procLight, diskLight, dbLight});
 

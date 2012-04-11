@@ -4,6 +4,7 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.GridBagConstraints;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,33 +12,29 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.ThreadRelationDrop;
+import saadadb.admintool.cmdthread.ThreadRelationComment;
 import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
-import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.components.input.FreeTextField;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
-
-
 /**
  * @author michel
  * @version $Id$
  *
  */
-public class RelationDropPanel extends TaskPanel {
+public class RelationCommentPanel extends RelationDropPanel {
 	private static final long serialVersionUID = 1L;
-	protected  RelationshipChooser relationChooser;
-	protected RunTaskButton runButton;
+	protected FreeTextField commentField;
 
-
-	public RelationDropPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, DROP_RELATION, null, ancestor);
+	public RelationCommentPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, COMMENT_RELATION, null, ancestor);
 	}
 
 	/**
@@ -47,7 +44,7 @@ public class RelationDropPanel extends TaskPanel {
 	 * @param cmdThread
 	 * @param ancestor
 	 */
-	protected RelationDropPanel(AdminTool rootFrame, String title,
+	protected RelationCommentPanel(AdminTool rootFrame, String title,
 			CmdThread cmdThread, String ancestor) {
 		super(rootFrame, title, null, ancestor);
 		this.cmdThread = cmdThread;
@@ -82,6 +79,7 @@ public class RelationDropPanel extends TaskPanel {
 		if( relationChooser.getSelectedRelation() != null ) {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("relation", relationChooser.getSelectedRelation());
+			map.put("comment", this.commentField.getText().trim());
 			return map;
 		}
 		else {
@@ -91,7 +89,7 @@ public class RelationDropPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationDrop(rootFrame, DROP_RELATION);
+		cmdThread = new ThreadRelationComment(rootFrame, COMMENT_RELATION);
 	}
 
 	@Override
@@ -100,11 +98,21 @@ public class RelationDropPanel extends TaskPanel {
 
 		JPanel tPanel = this.addSubPanel("Relationship Selector");
 		relationChooser = new RelationshipChooser(this, runButton);
-		MyGBC c = new MyGBC(5,5,5,5);
+		MyGBC c = new MyGBC(5,5,5,5);c.gridwidth = 2;
 		tPanel.add(relationChooser, c);
-		c.newRow();
+		
+		c.newRow();c.gridwidth = 2;		c.anchor = GridBagConstraints.WEST;
+
 		tPanel.add(getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
 		
+		c.newRow();c.gridwidth = 1;
+		c.anchor = GridBagConstraints.EAST;
+		tPanel.add(getPlainLabel("Description"), c);
+		
+		c.rowEnd();
+		c.anchor =  GridBagConstraints.WEST;
+		commentField = new FreeTextField(6, 24);
+		tPanel.add(commentField.getPanel(), c);
 
 		this.setActionBar(new Component[]{runButton
 				, debugButton

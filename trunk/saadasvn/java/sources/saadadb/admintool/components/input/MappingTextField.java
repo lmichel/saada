@@ -64,7 +64,9 @@ public class MappingTextField extends TreepathDropableTextField {
 	 */
 	public void setText(String text) {
 		this.previous_value = this.getText();
-		super.setText(text.trim());
+		if( text != null ) {
+			super.setText(text.trim());
+		}
 		this.setPriority();
 	}
 

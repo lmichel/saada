@@ -35,8 +35,8 @@ public class LoaderConfigChooser extends JPanel {
 	private static final String CONF_DIR = SaadaDB.getRoot_dir()  + Database.getSepar() + "config";
 	private TaskPanel taskPanel ;
 	private ArgsParser argsParser;
-	private JButton editConf = new JButton("Edit Selected Conf.");
-	private JButton newConf = new JButton("New Conf.");
+	private JButton editConf = new JButton("Edit Selected Filter");
+	private JButton newConf = new JButton("New Loader Filter");
 
 
 	public LoaderConfigChooser(TaskPanel taskPanel) {
