@@ -10,7 +10,17 @@ import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.windows.TextSaver;
 
+/**
+ * Opens q windows withe the XML ant task for the current thread
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class AntButton extends JButton{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final TaskPanel adminPanel;
 
 	public AntButton(TaskPanel adminPanel) {
@@ -22,10 +32,16 @@ public class AntButton extends JButton{
 				if( ct != null ) {
 					try {
 						if( AntButton.this.adminPanel.setCmdParams(false) )  {
+							String xml = ct.getAntTarget();
+							if( xml != null ) {
 							(new TextSaver(AntButton.this.adminPanel.rootFrame
 									, " Ant file for " + AntButton.this.adminPanel.getTitle()
 									, AntButton.this.adminPanel.getTitle().replaceAll(" " , "_") + ".xml"
-									, ct.getAntTarget())).open();
+									, xml)).open();
+							}
+							else {
+								AdminComponent.showInfo(AntButton.this.adminPanel.rootFrame, "No Ant task available, must be done from the admintool");
+							}
 						}
 					} catch (Exception e1) {
 						AdminComponent.showFatalError(AntButton.this.adminPanel.getRootFrame(), e1);

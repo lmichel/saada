@@ -5,15 +5,14 @@ import java.util.Map;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.ThreadCommentCollection;
+import saadadb.admintool.cmdthread.ThreadEmptyClass;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.HelpDesk;
 
-public class CollCommentPanel extends CollDropPanel {
-
-
-	public CollCommentPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, COMMENT_COLLECTION, new ThreadCommentCollection(rootFrame, COMMENT_COLLECTION), ancestor);
+public class ClassEmptyPanel extends ClassDropPanel {
+	
+	public ClassEmptyPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, EMPTY_CLASS, new ThreadEmptyClass(rootFrame, EMPTY_CLASS), ancestor);
 	}
 
 	/**
@@ -23,7 +22,7 @@ public class CollCommentPanel extends CollDropPanel {
 	 * @param cmdThread
 	 * @param ancestor
 	 */
-	protected CollCommentPanel(AdminTool rootFrame, String title,
+	protected ClassEmptyPanel(AdminTool rootFrame, String title,
 			CmdThread cmdThread, String ancestor) {
 		super(rootFrame, title, cmdThread, ancestor);
 	}
@@ -35,13 +34,13 @@ public class CollCommentPanel extends CollDropPanel {
 	}
 
 	protected void setHelpKey() {
-		help_key = HelpDesk.COLL_COMMENT;
+		help_key = HelpDesk.CLASS_EMPTY;
 	}
 
 	protected void setActivePanel() {
 		super.setActivePanel();
 		nameField.setEditable(false);
-		commentField.setEditable(true);
+		commentField.setEditable(false);
 	}
 
 	@Override
@@ -53,7 +52,7 @@ public class CollCommentPanel extends CollDropPanel {
 	}
 
 	public void initCmdThread() {
-		cmdThread = new ThreadCommentCollection(rootFrame, COMMENT_COLLECTION);
+		cmdThread = new ThreadEmptyClass(rootFrame, EMPTY_CLASS);
 	}
 
 

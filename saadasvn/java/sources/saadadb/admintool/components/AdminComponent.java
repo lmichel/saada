@@ -34,7 +34,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final Color NEW_HEADER = new Color(0, 161,255);
 	public static final Font plainFont = new Font("Helvetica",Font.PLAIN,12);
 	public static final Font italicFont = new Font("Helvetica",Font.ITALIC,12);
-	public static final Font helpFont = new Font("Helvetica",Font.ITALIC,10);
+	public static final Font helpFont = new Font("Helvetica",Font.ITALIC,12);
 	public static final Font titleFont = new Font("Helvetica",Font.BOLD,14);
 	public static final Font subtTitleFont = new Font("Helvetica",Font.ITALIC,14);
 
@@ -54,6 +54,10 @@ public abstract class AdminComponent extends JPanel {
 
 	public static final String EMPTY_CATEGORY    = "Empty Category";
 	public static final String SQL_INDEX         = "SQL Index";
+
+	public static final String DROP_CLASS     = "Drop Class";
+	public static final String EMPTY_CLASS    = "Empty Class";
+	public static final String COMMENT_CLASS  = "Comment Class";
 
 	public static final String DATA_LOADER = "Data Loader";
 

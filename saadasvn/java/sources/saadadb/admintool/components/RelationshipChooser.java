@@ -61,19 +61,26 @@ public class RelationshipChooser extends JPanel {
 		confList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if( confList.getSelectedValue() != null ) {
-					selectedRelation = confList.getSelectedValue().toString();
-					//selectedRelation = selectedRelation.split("(</b>)|<b>")[1].trim();;
-					try {
-						description.setText(Database.getCachemeta().getRelation(selectedRelation).toString());
-						if( RelationshipChooser.this.toActivate != null) RelationshipChooser.this.toActivate.setEnabled(true);
-						if( RelationshipChooser.this.runnable != null ) RelationshipChooser.this.runnable.run();
-					} catch (Exception e) {
-						AdminComponent.showFatalError(RelationshipChooser.this.taskPanel.rootFrame, e);
-					}
-					RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);
+					setDescription();
 				}	
 			}
 		});
+	}
+	
+	/**
+	 * 
+	 */
+	public void setDescription() {
+		selectedRelation = confList.getSelectedValue().toString();
+		//selectedRelation = selectedRelation.split("(</b>)|<b>")[1].trim();;
+		try {
+			description.setText(Database.getCachemeta().getRelation(selectedRelation).toString());
+			if( RelationshipChooser.this.toActivate != null) RelationshipChooser.this.toActivate.setEnabled(true);
+			if( RelationshipChooser.this.runnable != null ) RelationshipChooser.this.runnable.run();
+		} catch (Exception e) {
+			AdminComponent.showFatalError(RelationshipChooser.this.taskPanel.rootFrame, e);
+		}
+		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);		
 	}
 
 	public void setDataTreePath(DataTreePath dataTreePath) throws FatalException  {

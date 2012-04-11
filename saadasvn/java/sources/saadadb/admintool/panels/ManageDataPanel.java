@@ -96,7 +96,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Comment Class", "icons/CommentClass.png"
 				, new Runnable(){public void run(){
-					rootFrame.activePanel(COMMENT_COLLECTION);}});
+					rootFrame.activePanel(COMMENT_CLASS);}});
 
 		c.gridx = 1;
 		c.gridy = 0;
@@ -106,7 +106,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Empty Class", "icons/EmptyClass.png"
 				, new Runnable(){public void run(){
-					System.out.println("empty class");}});		
+					rootFrame.activePanel(EMPTY_CLASS);}});		
 		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -115,7 +115,7 @@ public class ManageDataPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Remove Class", "icons/DropClass.png"
 				, new Runnable(){public void run(){
-					System.out.println("remove class");}});		
+					rootFrame.activePanel(DROP_CLASS);}});		
 		
 		tPanel = this.addSubPanel("Manage SQL Index");		
 		c.gridx = 0;

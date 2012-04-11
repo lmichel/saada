@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
@@ -23,6 +24,8 @@ import saadadb.admintool.components.input.FreeTextField;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.util.RegExp;
 
 
@@ -36,6 +39,8 @@ public class CollCreatePanel extends TaskPanel {
 	protected NodeNameTextField nameField ;
 	protected FreeTextField commentField;
 	protected RunTaskButton runButton;
+	protected int help_key = HelpDesk.COLL_CREATE;
+	protected JLabel nodeLabel;
 	
 	public CollCreatePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, CREATE_COLLECTION, null, ancestor);
@@ -74,45 +79,46 @@ public class CollCreatePanel extends TaskPanel {
 	public void setDataTreePath(DataTreePath dataTreePath) {
 	}
 
+	protected void setHelpKey() {
+		help_key = HelpDesk.COLL_CREATE;
+	}
+	protected void setNodeLabel() {
+		nodeLabel = getPlainLabel("Collection Name");
+	}
 
 	@Override
-	protected void setActivePanel() {
+	protected void setActivePanel(){
+		this.setHelpKey();
+		this.setNodeLabel();
 		JPanel tPanel;
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5,5,5,5);
-		
-		tPanel = this.addSubPanel("Input Parameters");
-		c.gridx = 0;
-		c.gridy = 0;	
-		c.weightx = 0;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.EAST;
-		tPanel.add(getPlainLabel("Collection Name"), c);
-		
-		c.gridx = 1;
-		c.gridy = 0;	
-		c.weightx = 0.8;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.WEST;
 		runButton = new RunTaskButton(this);
 		nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
 		nameField.addPropertyChangeListener("value", this);
-		tPanel.add(nameField, c);
 		
-		c.gridx = 0;
-		c.gridy = 1;	
-		c.weightx = 0;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.EAST;
-		tPanel.add(getPlainLabel("Description"), c);
+		MyGBC mgbc = new MyGBC(5,5,5,5);		
+		tPanel = this.addSubPanel("Input Parameters");
+		mgbc.anchor = GridBagConstraints.EAST;
+		tPanel.add(nodeLabel, mgbc);		
+
+		mgbc.rowEnd();
+		mgbc.anchor =  GridBagConstraints.WEST;
+		tPanel.add(nameField, mgbc);
 		
-		c.gridx = 1;
-		c.gridy = 1;	
-		c.weightx = 0.8;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.WEST;
+		mgbc.newRow();
+		mgbc.anchor = GridBagConstraints.EAST;
+		tPanel.add(getPlainLabel("Description"), mgbc);
+		
+		mgbc.rowEnd();
+		mgbc.anchor =  GridBagConstraints.WEST;
 		commentField = new FreeTextField(6, 24);
-		tPanel.add(commentField.getPanel(), c);
+		tPanel.add(commentField.getPanel(), mgbc);
+		
+		
+		mgbc.newRow();
+		mgbc.gridwidth=2;
+		mgbc.anchor = GridBagConstraints.WEST;
+		tPanel.add(getHelpLabel(help_key), mgbc);
+
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});

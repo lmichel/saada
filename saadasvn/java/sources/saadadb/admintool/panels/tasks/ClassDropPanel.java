@@ -5,19 +5,21 @@ import java.util.Map;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.ThreadDropClass;
 import saadadb.admintool.cmdthread.ThreadDropCollection;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 
-public class CollDropPanel extends CollCreatePanel {
+public class ClassDropPanel extends CollCreatePanel {
 
 
-	public CollDropPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, DROP_COLLECTION, new ThreadDropCollection(rootFrame, DROP_COLLECTION), ancestor);
+	public ClassDropPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, DROP_CLASS, new ThreadDropClass(rootFrame, DROP_CLASS), ancestor);
 	}
 
 	/**
@@ -27,7 +29,7 @@ public class CollDropPanel extends CollCreatePanel {
 	 * @param cmdThread
 	 * @param ancestor
 	 */
-	protected CollDropPanel(AdminTool rootFrame, String title,
+	protected ClassDropPanel(AdminTool rootFrame, String title,
 			CmdThread cmdThread, String ancestor) {
 		super(rootFrame, title, cmdThread, ancestor);
 	}
@@ -44,11 +46,18 @@ public class CollDropPanel extends CollCreatePanel {
 		if( this.isDataTreePathLocked() ){
 			showInputError(rootFrame, "Can not change data treepath in this context");
 		}else  if( dataTreePath != null ) {
+			if( !dataTreePath.isClassLevel() ) {
+				showInputError(rootFrame, "Data tree node must be selected at class level (leaf)");
+				return;
+			}
+
 			super.setDataTreePath(dataTreePath);
+			treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category + "." + dataTreePath.classe);
+
 			treePathLabel.setText(dataTreePath.collection);
-			MetaCollection mc;
+			MetaClass mc;
 			try {
-				mc = Database.getCachemeta().getCollection(dataTreePath.collection);
+				mc = Database.getCachemeta().getClass(dataTreePath.classe);
 				nameField.setText(mc.getName());
 				commentField.setText(mc.getDescription());
 			} catch (FatalException e) {
@@ -58,7 +67,10 @@ public class CollDropPanel extends CollCreatePanel {
 	}
 	
 	protected void setHelpKey() {
-		help_key = HelpDesk.COLL_DROP;
+		help_key = HelpDesk.CLASS_DROP;
+	}
+	protected void setNodeLabel() {
+		nodeLabel = getPlainLabel("Class Name");
 	}
 
 	protected void setActivePanel() {
@@ -76,9 +88,6 @@ public class CollDropPanel extends CollCreatePanel {
 	}
 
 	public void initCmdThread() {
-		cmdThread = new ThreadDropCollection(rootFrame, DROP_COLLECTION);
+		cmdThread = new ThreadDropClass(rootFrame, DROP_CLASS);
 	}
-
-
-
 }

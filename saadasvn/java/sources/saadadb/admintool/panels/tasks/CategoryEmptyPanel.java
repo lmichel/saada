@@ -21,6 +21,8 @@ import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaCollection;
@@ -101,41 +103,33 @@ public class CategoryEmptyPanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {
 		JPanel tPanel;
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5,5,5,5);
-
-		tPanel = this.addSubPanel("Input Parameters");
-		c.gridx = 0;
-		c.gridy = 0;	
-		c.weightx = 0;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.EAST;
-		tPanel.add(getPlainLabel("Collection Name"), c);
-
-		c.gridx = 1;
-		c.gridy = 0;	
-		c.weightx = 0.8;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.WEST;
 		runButton = new RunTaskButton(this);
 		nameField = new NodeNameTextField(16, "^" + RegExp.COLLNAME + "$", runButton);
 		nameField.addPropertyChangeListener("value", this);
-		tPanel.add(nameField, c);
 
-		c.gridx = 0;
-		c.gridy = 1;	
-		c.weightx = 0;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.EAST;
-		tPanel.add(getPlainLabel("Category"), c);
+		MyGBC mgbc = new MyGBC(5,5,5,5);		
+		tPanel = this.addSubPanel("Input Parameters");
+		mgbc.anchor = GridBagConstraints.EAST;
+		tPanel.add(getPlainLabel("Collection Name"), mgbc);
 
-		c.gridx = 1;
-		c.gridy = 1;	
-		c.weightx = 0.8;
-		c.weighty = 0.5;
-		c.anchor = GridBagConstraints.WEST;
+		mgbc.rowEnd();
+		mgbc.anchor =  GridBagConstraints.WEST;
+		tPanel.add(nameField, mgbc);
+
+		mgbc.newRow();
+		mgbc.anchor = GridBagConstraints.EAST;
+		tPanel.add(getPlainLabel("Category "), mgbc);
+
+		mgbc.rowEnd();
+		mgbc.anchor =  GridBagConstraints.WEST;
 		categoryField = new JTextField(16);
-		tPanel.add(categoryField, c);
+		tPanel.add(categoryField, mgbc);
+		
+		mgbc.newRow();
+		mgbc.gridwidth=2;
+		mgbc.anchor = GridBagConstraints.WEST;
+		tPanel.add(getHelpLabel(HelpDesk.CATEGORY_EMPTY), mgbc);
+
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});
