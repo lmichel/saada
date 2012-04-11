@@ -25,7 +25,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	@SuppressWarnings({ "rawtypes" })
 	public static  void createTable() throws Exception {
 		if( !SQLTable.tableExist(tableName)) {
-			Class c = Class.forName("saadadb.vo.registry.Capabilities");
+			Class c = Class.forName("saadadb.vo.registry.Capability");
 			String createStmt = "";
 			for( Field f: c.getDeclaredFields()) {
 				if( f.getModifiers() == Modifier.PRIVATE) {
