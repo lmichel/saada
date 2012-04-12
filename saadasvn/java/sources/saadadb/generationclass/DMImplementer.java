@@ -23,6 +23,12 @@ import cds.savot.model.TDSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 
+/**
+ * Add DM accessors to a class
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class DMImplementer {
 	private String[] imports = new String[]{"java.util.LinkedHashMap", "saadadb.meta.DMInterface"
 			, "saadadb.query.result.SaadaQLResultSet", "java.sql.SQLException", "saadadb.exceptions.FatalException"};
@@ -35,9 +41,7 @@ public class DMImplementer {
 		loadMappingFile(mappingfilepath);
 	}
 	
-	/** * @version $Id$
-
-	 * @param mappingfilepath
+	/** @param mappingfilepath
 	 * @throws Exception
 	 */
 	public void loadMappingFile(String mappingfilepath) throws Exception {
