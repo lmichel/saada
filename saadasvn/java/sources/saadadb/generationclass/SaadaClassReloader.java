@@ -25,7 +25,9 @@ import saadadb.util.Messenger;
  *
  * @author michel
  * * @version $Id$
-
+ *
+ * 04/2012: Do not reload a class already loaded by the loader. 
+ *          Made otherwise strange messages like classA could not be casted to classA
  */
 public class SaadaClassReloader extends ClassLoader {
 	private String class_to_reload;
@@ -91,8 +93,13 @@ public class SaadaClassReloader extends ClassLoader {
 		try {
 			Class retour = loadedClasses.get(classname);
 			if( retour == null ) {
+				if(  (retour = Class.forName(PACKAGE  + classname)) != null ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Class " + classname + " already loaded by the standard loader");
+					return retour;
+				}
 				return SaadaClassReloader.reloadGeneratedClass(classname);
-			} 
+			}
 			else {
 				return retour;
 			}
@@ -100,7 +107,7 @@ public class SaadaClassReloader extends ClassLoader {
 			return SaadaClassReloader.reloadGeneratedClass(classname);
 		}
 	}
-
+	
 	/**
 	 * Builds a Saada class loader dedicated to the class classname (package generated.DBNAME) ans invoke it 
 	 * load the class. The class is loaded in any case whereas its components are just asked to the default
