@@ -84,6 +84,7 @@ public class DMImplementer {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
+			@SuppressWarnings("rawtypes")
 			Vector tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + mappingfilepath + "> badly formated at <TR> #" + cpt); 
