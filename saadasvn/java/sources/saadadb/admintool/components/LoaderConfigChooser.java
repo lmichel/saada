@@ -5,10 +5,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.peer.LightweightPeer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -19,45 +21,67 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.ConfFileFilter;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.api.SaadaDB;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
+/**
+ * Widget presenting all loader config available for a given node 
+ * It is connected to the congig editor {@link MappingKWPanel}
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class LoaderConfigChooser extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private JList confList = new JList(new DefaultListModel());
 	private String category;
 	private JTextArea description = new JTextArea(6, 24);
 	private static final String CONF_DIR = SaadaDB.getRoot_dir()  + Database.getSepar() + "config";
-	private TaskPanel taskPanel ;
+	private AdminPanel taskPanel ;
 	private ArgsParser argsParser;
 	private JButton editConf = new JButton("Edit Selected Filter");
 	private JButton newConf = new JButton("New Loader Filter");
 
 
-	public LoaderConfigChooser(TaskPanel taskPanel) {
+	public LoaderConfigChooser(AdminPanel taskPanel) {
 		this.taskPanel = taskPanel;
-		this.confList.setVisibleRowCount(6);
+		this.confList.setVisibleRowCount(8);
 		this.confList.setFixedCellWidth(15);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		description.setEditable(false);
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0; c.gridy = 0;c.weightx = 0;
-		this.add(newConf, c);
+		
+		MyGBC mgbc = new MyGBC(5,5,5,5);mgbc.gridheight = 2;
+		JScrollPane scrollPane = new JScrollPane(confList);
+		scrollPane.setPreferredSize(new Dimension(150,120));
+		this.add(scrollPane, mgbc);
+		
+		mgbc.rowEnd();mgbc.gridheight = 1;mgbc.anchor = GridBagConstraints.SOUTHWEST;
+		this.add(AdminComponent.getPlainLabel("Description of selected filter"), mgbc);
+		mgbc.newRow();mgbc.gridx++;
+		this.add(new JScrollPane(description), mgbc);
+		
+		mgbc.newRow();mgbc.gridwidth=2;
+		JPanel jp = new JPanel();
+		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
+		jp.setBorder(null);
+		jp.add(editConf);
+		jp.add(newConf);
+		this.add(jp, mgbc);
+		
 		this.newConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				activeEditorPanel() ;
 			}			
 		});
 
-
-		c.gridy++;
-		this.add(editConf, c);		
 		this.editConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if( confList.getSelectedValue() != null) {
@@ -80,14 +104,6 @@ public class LoaderConfigChooser extends JPanel {
 				}
 			}
 		});
-
-		c.gridx++;c.gridy = 0; c.gridheight = 2;
-		JScrollPane scrollPane = new JScrollPane(confList);
-		scrollPane.setPreferredSize(new Dimension(150,100));
-		this.add(scrollPane, c);
-
-		c.gridx++;		c.weightx = 1;
-		this.add(new JScrollPane(description), c);
 
 		confList.addListSelectionListener(new ListSelectionListener() {
 
@@ -141,6 +157,7 @@ public class LoaderConfigChooser extends JPanel {
 			return;
 		}
 		at.getActivePanel().lockDataTreePath();
+		at.getActivePanel().setAncestor(taskPanel.getTitle());
 	}
 	/**
 	 * @param category

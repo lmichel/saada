@@ -18,15 +18,15 @@ import saadadb.admintool.panels.AdminPanel;
 
 public class ToolBarPanel extends JPanel {
 
-	public ToolBarPanel(final AdminPanel adminLabel, boolean withTreePath, boolean withSelectedResource , boolean withTaskLabel) {
+	public ToolBarPanel(final AdminPanel adminPanel, boolean withTreePath, boolean withSelectedResource , boolean withTaskLabel) {
 		this.setLayout(new GridBagLayout());
 		this.setPreferredSize(new Dimension(1000,48));
 		this.setMaximumSize(new Dimension(1000,48));
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		JLabel tl = AdminComponent.getTitleLabel(" " + adminLabel.getTitle() + " ");
+		JLabel tl = AdminComponent.getTitleLabel(" " + adminPanel.getTitle() + " ");
 		tl.setOpaque(true);
 		tl.setBorder(BorderFactory.createLineBorder(Color.black));
-		adminLabel.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
+		adminPanel.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(1, 7, 1, 1);
 
@@ -39,22 +39,22 @@ public class ToolBarPanel extends JPanel {
 		if( c.gridheight == 0 ) c.gridheight = 1;
 		c.weightx = 0; c.weighty = 1;
 		c.anchor = GridBagConstraints.SOUTH;
-		if( ! adminLabel.getTitle().equals(AdminComponent.ROOT_PANEL)) {
+		if( ! adminPanel.getTitle().equals(AdminComponent.ROOT_PANEL)) {
 
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					adminLabel.rootFrame.activePanel(adminLabel.getAncestor());		
+					adminPanel.rootFrame.activePanel(adminPanel.getAncestor());		
 				}});
 			this.add(jb, c);
 			c.gridx++;
 		}
 
-		if( c != null || ! adminLabel.getAncestor().equals(AdminComponent.ROOT_PANEL)) {
+		if( c != null || ! adminPanel.getAncestor().equals(AdminComponent.ROOT_PANEL)) {
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					adminLabel.rootFrame.activePanel(AdminComponent.ROOT_PANEL);				
+					adminPanel.rootFrame.activePanel(AdminComponent.ROOT_PANEL);				
 				}});
 
 			this.add(jb, c);
@@ -75,7 +75,7 @@ public class ToolBarPanel extends JPanel {
 				c.gridwidth = 2; c.gridheight = 1;
 				c.weightx = 0.8; c.weighty = 1;
 				c.anchor = GridBagConstraints.LINE_START;
-				this.add(adminLabel.getTreePathLabel(), c);
+				this.add(adminPanel.getTreePathLabel(), c);
 			}		
 			if( withSelectedResource ) {
 				c.gridx = 2; c.gridy = 1;
@@ -86,13 +86,13 @@ public class ToolBarPanel extends JPanel {
 				c.gridx = 3; c.gridy = 1;
 				c.weightx = 0.75; c.weighty = 1;
 				c.anchor = GridBagConstraints.LINE_START;
-				this.add(adminLabel.getSelectResourceLabel(), c);
+				this.add(adminPanel.getSelectResourceLabel(), c);
 			}		
 			if( withTaskLabel ) {
 				c.gridx = 2; c.gridy = 2;
 				c.gridwidth = 2; c.gridheight = 1;
 				c.weightx = 0.8; c.weighty = 1;
-				this.add(adminLabel.getCurrentTaskLabel(), c);
+				this.add(adminPanel.getCurrentTaskLabel(), c);
 			}
 		}
 

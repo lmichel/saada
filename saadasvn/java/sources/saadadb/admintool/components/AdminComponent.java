@@ -59,7 +59,8 @@ public abstract class AdminComponent extends JPanel {
 	public static final String EMPTY_CLASS    = "Empty Class";
 	public static final String COMMENT_CLASS  = "Comment Class";
 
-	public static final String DATA_LOADER = "Data Loader";
+	public static final String DATA_LOADER     = "Data Loader";
+	public static final String FILTER_SELECTOR = "Filter Selector";
 
 	public static final String MISC_MAPPER     = "KW Mapper for MISC";
 	public static final String TABLE_MAPPER    = "KW Mapper for Tables";
@@ -83,6 +84,10 @@ public abstract class AdminComponent extends JPanel {
 	public static final String SIA_PUBLISH = "SIA Service Setup";
 	public static final String SSA_PUBLISH = "SSA Service Setup";
 	public static final String CONESEARCH_PUBLISH = "Conesearch Service Setup";
+	
+	public static final String DB_INSTALL = "Database Installation";
+	public static final String WEB_INSTALL = "Web Application Installation";
+
 
 	protected DataTreePath dataTreePath;
 	protected String selectedResource;

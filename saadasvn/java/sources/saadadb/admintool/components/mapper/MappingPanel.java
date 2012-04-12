@@ -33,6 +33,10 @@ public abstract class MappingPanel {
 
 	}
 
+	public void setCollapsed(boolean collapse) {
+		this.container.setCollapsed(collapse);
+	}
+	
 	public void setHelpLabel(int textKey) {
 		helpLabel.setText("");
 		String[] phrases = HelpDesk.get(textKey);
