@@ -14,23 +14,23 @@ import saadadb.util.Messenger;
  * @version $Id$
  *
  */
-public class SaveButton extends JButton{
+public class RenameButton extends JButton{
 	private static final long serialVersionUID = 1L;
 	private final AdminPanel adminPanel;
 
-	public SaveButton(AdminPanel adminPanel) {
-		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Save.png")));
+	public RenameButton(AdminPanel adminPanel) {
+		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Rename.png")));
 		this.adminPanel =adminPanel;
-		this.setToolTipText("Save current Work");
+		this.setToolTipText("Rename and Save");
 		this.setEnabled(false);
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( SaveButton.this.adminPanel != null ) {
+				if( RenameButton.this.adminPanel != null ) {
 					try {
-						SaveButton.this.adminPanel.save ();
+						RenameButton.this.adminPanel.rename ();
 					} catch (Exception e1) {
 						Messenger.printStackTrace(e1);
-						AdminComponent.showFatalError(SaveButton.this.adminPanel.rootFrame, e1);
+						AdminComponent.showFatalError(RenameButton.this.adminPanel.rootFrame, e1);
 					}
 				}
 			}
