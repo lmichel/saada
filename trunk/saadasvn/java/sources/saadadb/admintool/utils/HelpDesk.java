@@ -33,6 +33,12 @@ public class HelpDesk {
 	public static final int CLASS_DROP = 25;
 	public static final int CLASS_COMMENT = 26;
 	public static final int CLASS_EMPTY = 27;
+	public static final int FILTER_CHOOSER = 28;
+	public static final int DBINSTALL_NAME = 29;
+	public static final int DBINSTALL_DIR = 30;
+	public static final int DBINSTALL_REP = 31;
+	public static final int WEBINSTALL_DIR = 32;
+	public static final int WEBINSTALL_URL = 33;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -165,6 +171,27 @@ public class HelpDesk {
 		map.put(CLASS_COMMENT, new String[] {
 				"Click on the class to be commented on the data tree,"
 				,"Type a description and run."
+		});
+		map.put(FILTER_CHOOSER, new String[] {
+				"Select a node on the data tree either at category or class level"
+				,"to display all loader filters (or configuarion) available for the choosen category."
+				,"Click on one filter to see its description (formatted as command line parameters)"
+		});
+		map.put(DBINSTALL_NAME, new String[] {
+				"The Saada DB name cannot be changed without dammage"
+				," If you need to do it; consoder rebuilding a new DB"
+		});
+		map.put(DBINSTALL_DIR, new String[] {
+				"Changing the installation directory requires some manual setup:"
+                , "  - Move the content of the old SaadaDB directory to the new one" 
+                + "  - Update saadadb.properties file located in SaadaDBHOME/bin "
+                + "  - Start admintool from the new location"
+                + "  - Deploy the Web application."
+		});
+		map.put(DBINSTALL_REP, new String[] {
+				"This operation does not move data from the old repository to the new one."
+                , "  - Copy the old repository from the old location to the new one" 
+                + "  - Deploy the Web application."
 		});
 	}
 	

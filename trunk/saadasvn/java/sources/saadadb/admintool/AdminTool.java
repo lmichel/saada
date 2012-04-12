@@ -39,6 +39,8 @@ import saadadb.admintool.panels.RelationChoicePanel;
 import saadadb.admintool.panels.RootChoicePanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
+import saadadb.admintool.panels.editors.DBInstallPanel;
+import saadadb.admintool.panels.editors.FilterSelectorPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.SIAServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
@@ -115,10 +117,14 @@ public class AdminTool extends BaseFrame {
 	private EditPanel tableMapperPanel;;
 	private EditPanel imageMapperPanel;;
 	private EditPanel flatfileMapperPanel;
+	
+	private EditPanel dbInstallPanel;
+	private EditPanel webInstallPanel;
 
 	private EditPanel voCurator;;
 	private EditPanel tapService;
 	private EditPanel siaService;
+	private EditPanel filterSelector;
 
 	private TaskPanel obscoreMapperPanel;
 
@@ -200,7 +206,7 @@ public class AdminTool extends BaseFrame {
 		b = new JButton("Start Process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.SQL_INDEX);
+				activePanel(AdminComponent.FILTER_SELECTOR);
 				//activeProcessPanel(new DummyTask(AdminTool.this));
 			}
 		});
@@ -405,8 +411,13 @@ public class AdminTool extends BaseFrame {
 				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = dataLoaderPanel;
+		} else 	if( panelTitle.equals(AdminComponent.FILTER_SELECTOR) ) {
+			if( filterSelector == null ) {
+				filterSelector = new FilterSelectorPanel(this, AdminComponent.ROOT_PANEL);
+			}
+			activePanel = filterSelector;
 			/*
-			 * Data loadewr configuration
+			 * Data loader configuration
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.MISC_MAPPER) ) {
 			if( miscMapperPanel == null ) {
@@ -490,7 +501,15 @@ public class AdminTool extends BaseFrame {
 			}
 			activePanel = obscoreMapperPanel;
 			/*
-			 * Process pqnel used by all tasks
+			 * Installation panels
+			 */
+		} else 	if( panelTitle.equals(AdminComponent.DB_INSTALL) ) {
+			if( dbInstallPanel== null ) {
+				dbInstallPanel = new DBInstallPanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = dbInstallPanel;
+			/*
+			 * Process panel used by all tasks
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.PROCESS_PANEL) ) {
 			processPanel.setAncestor(activePanel.getTitle());
