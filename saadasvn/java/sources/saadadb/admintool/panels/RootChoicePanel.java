@@ -47,10 +47,10 @@ public class RootChoicePanel extends ChoicePanel {
 		c.gridy = 0;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
-		(new ChoiceItem(rootFrame, tPanel, c
+		new ChoiceItem(rootFrame, tPanel, c
 				, "Edit Filter", "icons/Filter.png"
 				, new Runnable(){public void run(){
-					System.out.println("new filter");}})).inactive();
+					rootFrame.activePanel(FILTER_SELECTOR);}});
 
 		c.gridx = 0;
 		c.gridy = 1;	
@@ -91,7 +91,7 @@ public class RootChoicePanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Database Installation", "icons/Tool.png"
 				, new Runnable(){public void run(){
-					System.out.println("loaddata");}});
+					rootFrame.activePanel(DB_INSTALL);}});
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;

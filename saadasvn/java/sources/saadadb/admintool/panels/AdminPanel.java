@@ -230,9 +230,10 @@ public abstract class AdminPanel extends AdminComponent {
 	
 	/**
 	 * @throws Exception 
-	 * 
 	 */
 	public void save() throws Exception {
+	}
+	public void rename() throws Exception {
 	}
 
 

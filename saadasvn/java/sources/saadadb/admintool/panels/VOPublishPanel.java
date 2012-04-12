@@ -33,19 +33,19 @@ public class VOPublishPanel extends ChoicePanel {
 		c.gridy = 0;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
-		(new ChoiceItem(rootFrame, tPanel, c
+	new ChoiceItem(rootFrame, tPanel, c
 				, "Publish SSA", "icons/SSA.png"
 				, new Runnable(){public void run(){
-					System.out.println("SSA");}})).inactive();
+					System.out.println("SSA");}});
 		
 		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
 		c.weighty = 0.5;
-		(new ChoiceItem(rootFrame, tPanel, c
+		new ChoiceItem(rootFrame, tPanel, c
 				, "Publish SCS", "icons/ConeSearch.png"
 				, new Runnable(){public void run(){
-					System.out.println("CS");}})).inactive();
+					System.out.println("CS");}});
 	
 
 		tPanel = this.addSubPanel("TAP Service");		
@@ -70,10 +70,10 @@ public class VOPublishPanel extends ChoicePanel {
 		c.gridy = 0;
 		c.weightx = 0.5;
 		c.weighty = 0.5;	
-		new ChoiceItem(rootFrame, tPanel, c
+		(new ChoiceItem(rootFrame, tPanel, c
 				, "Publish User Defined DM", "icons/UserModel.png"
 				, new Runnable(){public void run(){
-					System.out.println("user DM");}});		
+					System.out.println("user DM");}})).inactive();		
 		
 		tPanel = this.addSubPanel("Summary");		
 		c.gridx = 0;

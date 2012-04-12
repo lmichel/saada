@@ -150,7 +150,7 @@ public class DataLoaderPanel extends TaskPanel {
 
 	@Override
 	protected void setActivePanel() {
-		JPanel tPanel = this.addSubPanel("Data Loader Filter Selector");
+		JPanel tPanel = this.addSubPanel("Filter Chooser");
 		configChooser = new LoaderConfigChooser(this);
 		tPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
