@@ -25,7 +25,11 @@ import javax.swing.JScrollPane;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.LoaderConfigChooser;
+import saadadb.admintool.components.RenameButton;
+import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.components.XMLButton;
 import saadadb.admintool.components.mapper.ClassMapperPanel;
 import saadadb.admintool.components.mapper.CoordSysMapperPanel;
 import saadadb.admintool.components.mapper.DispersionMapperPanel;
@@ -41,19 +45,28 @@ import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.windows.TextSaver;
 import saadadb.api.SaadaDB;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
+import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.vo.registry.Capability;
+import saadadb.vo.registry.Record;
+import saadadb.vo.tap.TapServiceManager;
 
 
 
 /**
  * TODO : specialize this class by inheritance
- * @author laurentmichel
+ * @author michel
+ * @version $Id$
  *
  */
 public class MappingKWPanel extends EditPanel {
@@ -89,6 +102,8 @@ public class MappingKWPanel extends EditPanel {
 	private PositionMapperPanel e_positionMapper;
 	private PositionErrorMapperPanel positionErrorMapper;
 	private PositionErrorMapperPanel e_positionErrorMapper;
+	protected  LoaderConfigChooser configChooser;
+
 
 	/**
 	 * @param rootFrame
@@ -340,6 +355,7 @@ public class MappingKWPanel extends EditPanel {
 	 */
 	public void buildMiscPanel() {
 		classMapper = new ClassMapperPanel(this, "Class Mapping", false);
+		classMapper.setCollapsed(false);
 		editorPanel.add(classMapper.container, globalGridConstraint);
 		globalGridConstraint.gridy++;
 
@@ -380,6 +396,7 @@ public class MappingKWPanel extends EditPanel {
 	 */
 	public void buildImagePanel() {
 		classMapper = new ClassMapperPanel(this, "Class Mapping", false);
+		classMapper.setCollapsed(false);
 		editorPanel.add(classMapper.container, globalGridConstraint);
 		globalGridConstraint.gridy++;
 
@@ -419,6 +436,7 @@ public class MappingKWPanel extends EditPanel {
 	 */
 	public void buildSpectraPanel() {
 		classMapper = new ClassMapperPanel(this, "Class Mapping", false);
+		classMapper.setCollapsed(false);
 		editorPanel.add(classMapper.container, globalGridConstraint);
 		globalGridConstraint.gridy++;
 
@@ -460,6 +478,7 @@ public class MappingKWPanel extends EditPanel {
 	 */
 	public void buildTablePanel() {
 		classMapper = new ClassMapperPanel(this, "Class Mapping", false);
+		classMapper.setCollapsed(false);
 		editorPanel.add(classMapper.container, globalGridConstraint);
 		globalGridConstraint.gridy++;
 
@@ -623,7 +642,7 @@ public class MappingKWPanel extends EditPanel {
 	/**
 	 * 
 	 */
-	protected void saveAs() {
+	public void rename() {
 		try {
 			ArgsParser ap = this.getArgsParser();
 			if( checkParams() ) {
@@ -709,7 +728,7 @@ public class MappingKWPanel extends EditPanel {
 	 */
 	public void save() {
 		if( "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
-			this.saveAs();
+			this.rename();
 		}
 		else if( !this.hasChanged() ){
 			if( this.ancestor.equals(DATA_LOADER)) {
@@ -926,31 +945,47 @@ public class MappingKWPanel extends EditPanel {
 		this.setActionBar();
 		this.setConfName("Default");
 
-		loadButton.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent arg0) {
-				DialogConfigFileChooser dial = new DialogConfigFileChooser(category);
-				String conf_path = dial.open(rootFrame);
-				loadConfFile(conf_path);
-			}
-		});
-		saveButton.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent arg0) {
-				save();				
-			}
-		});
-		saveAsButton.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent arg0) {
-				saveAs();				
-			}
-		});
-
-
+//		saveButton.addActionListener(new ActionListener() {			
+//			public void actionPerformed(ActionEvent arg0) {
+//				save();				
+//			}
+//		});
+//		saveAsButton.addActionListener(new ActionListener() {			
+//			public void actionPerformed(ActionEvent arg0) {
+//				rename();				
+//			}
+//		});
 	}
 
+	protected void setActionBar() {
+		this.saveButton = new SaveButton(this);
+		this.saveButton.setEnabled(true);
+		this.saveAsButton = new RenameButton(this);
+		this.saveAsButton.setEnabled(true);
+
+		JPanel tPanel = new JPanel();
+		tPanel.setLayout(new GridBagLayout());
+		tPanel.setBackground(LIGHTBACKGROUND);
+		tPanel.setPreferredSize(new Dimension(1000,48));
+		tPanel.setMaximumSize(new Dimension(1000,48));
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridy = 0; c.gridx = 0;
+		c.anchor = GridBagConstraints.PAGE_END;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.NONE;
+		tPanel.add(saveButton, c);
+		c.gridx++;	
+		tPanel.add(saveAsButton, c);
+		c.gridx++;		
+		/*
+		 * Just to push all previous components to the left
+		 */
+		c.weightx = 1;
+		tPanel.add(new JLabel(" "), c);
+		this.add(tPanel);	
+	}
 	@Override
-	public void active() {
-		// TODO Auto-generated method stub
-
-	}
+	public void active() {}
 
 }

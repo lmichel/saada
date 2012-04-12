@@ -10,11 +10,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.RenameButton;
+import saadadb.admintool.components.SaveButton;
 
 public abstract class EditPanel extends AdminPanel{
 	protected JButton loadButton;
-	protected JButton saveAsButton;
-	protected JButton saveButton;
+	protected RenameButton saveAsButton;
+	protected SaveButton saveButton;
 
 	public EditPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame, title, icon, ancestor);
@@ -26,8 +28,8 @@ public abstract class EditPanel extends AdminPanel{
 	 */
 	protected void setActionBar() {
 		loadButton = new JButton("Load");
-		saveButton = new JButton("Save");
-		saveAsButton = new JButton("Save as");
+		saveButton = new SaveButton(this);
+		saveAsButton = new RenameButton(this);
 		JPanel tPanel = new JPanel();
 		tPanel.setLayout(new GridBagLayout());
 		tPanel.setBackground(LIGHTBACKGROUND);
