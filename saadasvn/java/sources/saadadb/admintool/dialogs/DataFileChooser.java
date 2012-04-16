@@ -30,9 +30,17 @@ import javax.swing.ListSelectionModel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.tree.VoDataProductTree;
+import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.util.RegExp;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ * 04/2012: include rootList in directory list
+ */
 public class DataFileChooser extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private JTextField mask = new JTextField("", 16);
@@ -46,12 +54,16 @@ public class DataFileChooser extends JDialog {
 	private JButton accept = new JButton("Load Files");
 	private JButton cancel = new JButton("cancel");
 
-	private String current_dir = "";
+	private static String current_dir = null;;
+	private JLabel currentDirLabel = AdminComponent.getPlainLabel(current_dir);
 	private boolean full_directory = true;
 
 	public DataFileChooser(TaskPanel taskPanel, ArrayList<String> file_list) {
-		super(taskPanel.getRootFrame(), true);
-
+		super(((taskPanel != null)?taskPanel.getRootFrame(): null), true);
+		if( current_dir == null ) {
+			current_dir = (new File(Database.getRoot_dir())).getParent();
+			currentDirLabel = AdminComponent.getPlainLabel(current_dir);
+		}
 		this.setResizable(false);
 		this.setLayout(new GridBagLayout());	
 		this.setTitle("Input Data Files Selector");
@@ -103,10 +115,16 @@ public class DataFileChooser extends JDialog {
 		this.add(open, c);
 
 		c.gridx = 0;
-		c.gridy = 4;	
+		c.gridwidth = 4;	
+		c.gridy = 4;
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(currentDirLabel, c);
+
+		c.gridx = 0;
+		c.gridy = 5;	
 		c.gridwidth = 3;	
 		c.fill  = GridBagConstraints.BOTH;
-		directories.setBorder(BorderFactory.createTitledBorder(current_dir));
+		directories.setBorder(BorderFactory.createTitledBorder("Directories"));
 		directories.setVisibleRowCount(10);
 		JScrollPane jsp1 = new JScrollPane(directories);
 		files.setBorder(BorderFactory.createTitledBorder("Data Files"));
@@ -120,16 +138,16 @@ public class DataFileChooser extends JDialog {
 		c.fill  = GridBagConstraints.NONE;
 		c.gridwidth = 1;	
 		c.gridx = 1;
-		c.gridy = 5;	
+		c.gridy = 6;	
 		c.anchor = GridBagConstraints.LINE_END;
 		this.add(accept, c);
 		c.gridx = 2;
-		c.gridy = 5;	
+		c.gridy = 6;	
 		c.anchor = GridBagConstraints.LINE_START;
 		this.add(cancel, c);
 
-		setBehavior();
-		setFileList(file_list);
+		this.setBehavior();
+		this.setFileList(file_list);
 		this.pack();
 		this.setLocationRelativeTo(taskPanel);
 		this.setVisible(true);			
@@ -142,7 +160,6 @@ public class DataFileChooser extends JDialog {
 	private void setBehavior() {
 		getRootPane().setDefaultButton(accept);
 		DefaultListModel dlm = new DefaultListModel();
-		dlm.addElement(".");
 		dlm.addElement("..");
 
 		files.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -286,7 +303,7 @@ public class DataFileChooser extends JDialog {
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//SaadaDBAdmin.current_dir = current_dir;
-				current_dir = null;
+				//current_dir = null;
 				setVisible(false);				
 			}			
 		});
@@ -305,23 +322,39 @@ public class DataFileChooser extends JDialog {
 	 * @param new_dir
 	 */
 	private void setDirectory(String new_dir, String filter) {
-		File dir;
-		if( new_dir.equals("..")) {
-			dir = (new File(current_dir)).getParentFile();
-			if( dir == null ) {
-				return;
+		File dir = null;
+		boolean isRoot = false;
+		DefaultListModel ddlm = new DefaultListModel();
+		for( File f: File.listRoots() ) {
+			if( new_dir.equals(f.getAbsolutePath()) ) {
+				isRoot = true;
+				dir = (new File(new_dir));
+			}
+			else {
+				ddlm.addElement(f.getAbsolutePath());
 			}
 		}
-		else if( !new_dir.equals(".") ) {
-			dir = new File(current_dir + System.getProperty("file.separator") + new_dir);
-		}
-		else {
-			dir = new File(current_dir);
+		//ddlm.addElement(".");
+		if( !isRoot) {
+			if( new_dir.equals("..")) {
+				dir = (new File(current_dir)).getParentFile();
+			} else if( new_dir.equals(".")) {
+				dir = new File(current_dir + System.getProperty("file.separator"));
+			} else {
+				dir = new File(current_dir + System.getProperty("file.separator") + new_dir);				
+			}
 		}
 		current_dir = dir.getAbsolutePath();
-		DefaultListModel ddlm = new DefaultListModel();
-		ddlm.addElement(".");
-		ddlm.addElement("..");
+		isRoot = false;
+		for( File f: File.listRoots() ) {
+			if( current_dir.equals(f.getAbsolutePath()) ) {
+				isRoot = true;
+			}
+		}
+		if( !isRoot) {
+			ddlm.addElement("..");
+		}
+
 		DefaultListModel fdlm = new DefaultListModel();
 		TreeSet<String> sorted_dirs = new TreeSet<String>();
 		TreeSet<String> sorted_files = new TreeSet<String>();
@@ -388,7 +421,8 @@ public class DataFileChooser extends JDialog {
 		if( fdlm.getSize() == 0 ) fdlm.addElement("");
 		files.setModel(fdlm);
 		files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
-		directories.setBorder(BorderFactory.createTitledBorder(current_dir));
+		//directories.setBorder(BorderFactory.createTitledBorder(current_dir));
+		currentDirLabel.setText(current_dir);
 		/*
 		 * All files contained in the directory are considered as selected while the user didn't make its own selection.
 		 */
@@ -476,8 +510,10 @@ public class DataFileChooser extends JDialog {
 
 	/**
 	 * @param args
+	 * @throws FatalException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FatalException {
+		Database.init((new ArgsParser(args)).getDBName());
 		DataFileChooser dfc = new DataFileChooser(null, null);
 		System.out.println(dfc.isFullDirectory() + " " + dfc.getCurrentDir() + " " + dfc.getSelectedDataFiles());
 	}
