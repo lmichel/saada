@@ -21,7 +21,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import cds.astro.Coo;
@@ -33,6 +32,7 @@ import cds.astro.Qbox;
  * * @version $Id$
 
  * 07/2009:getInCircle uses QBOX for small cones and BOX + distance for larger ones 
+ * 04/2012: Use qbox  i ADQL if columns are pos_ra/dec_csa
  */
 abstract public class DbmsWrapper {
 	protected static DbmsWrapper wrapper;
@@ -612,6 +612,10 @@ abstract public class DbmsWrapper {
 	 * @return
 	 */
 	static public String getADQLIsInCircleConstraint(String asc, String dec, String circleAsc, String circleDec, String radius) {
+		if( asc.equalsIgnoreCase("pos_ra_csa") && asc.equalsIgnoreCase("pos_dec_csa") ) {
+			return getIsInCircleConstraint("", Double.parseDouble(circleAsc), Double.parseDouble(circleDec), Double.parseDouble(radius));
+		}	
+		
 		// Compute a constraint delimiting a square surrounding the cone:
 		String B = getIsInBoxConstraint(asc, dec, circleAsc, circleDec, "("+radius+")*2", "("+radius+")*2");
 
