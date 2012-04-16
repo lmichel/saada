@@ -21,6 +21,8 @@ import saadadb.database.Database;
 /**
  * @author laurent
  * @version $Id: AdminPassword.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * 
+ * 04/2012: add the URL on the dialog to be sure where we are connecting
  */
 public class AdminPassword extends JDialog implements ActionListener, PropertyChangeListener {
 	private static final long serialVersionUID = 1L;
@@ -54,7 +56,12 @@ public class AdminPassword extends JDialog implements ActionListener, PropertyCh
 		name_field.setEditable(false);
 		password_field = new JPasswordField(20);
 		
-		Object[] array = {"Administrator Name", name_field, "Administrator Password", password_field};
+		JTextField driver_field = new JTextField(Database.getConnector().getJdbc_url(), 32);
+		driver_field.setEditable(false);
+		
+		Object[] array = {"Database URL"
+				,driver_field,
+				"Administrator Name", name_field, "Administrator Password", password_field};
 		
 		//Create an array specifying the number of dialog buttons
 		//and their text.
