@@ -45,7 +45,7 @@ public class SaadaSQLTranslator extends SQLTranslator {
 				sql = DbmsWrapper.getIsInBoxConstraint(p.getCoord1().toSQL(null), p.getCoord2().toSQL(null), b.getCoord1().toSQL(null), b.getCoord2().toSQL(null), b.getWidth().toSQL(null), b.getHeight().toSQL(null));
 				
 			// CIRCLE
-			}else if (rightParam instanceof ADQLFunction && ((ADQLFunction)rightParam).getName().equalsIgnoreCase("CIRCLE")){
+			} else if (rightParam instanceof ADQLFunction && ((ADQLFunction)rightParam).getName().equalsIgnoreCase("CIRCLE")){
 				CircleFunction c = (CircleFunction)rightParam;
 				sql = DbmsWrapper.getADQLIsInCircleConstraint(p.getCoord1().toSQL(null), p.getCoord2().toSQL(null), c.getCoord1().toSQL(null), c.getCoord2().toSQL(null), c.getRadius().toSQL(null));
 			}
