@@ -3,9 +3,16 @@ package saadadb.database;
 import java.io.File;
 
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.RegExp;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ * 04/2012: replace FatalException with QueryException
+ */
 public class InstallParamValidator {
 
 	/** * @version $Id$
@@ -34,13 +41,13 @@ public class InstallParamValidator {
 	 * @param name
 	 * @throws FatalException
 	 */
-	public static void canBeRepository(String name)throws FatalException {
+	public static void canBeRepository(String name)throws QueryException {
 		isDirectoryWritable(name);
 		try {
 			areSubdirWritable(name, new String[]{Repository.VOREPORTS, Repository.TMP, Repository.EMBEDDEDDB, Repository.LOGS, Repository.INDEXRELATIONS});
 		}
-		catch(FatalException e) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a repository:"  + e.getContext());				
+		catch(QueryException e) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a repository:"  + e.getContext());				
 		}
 	}
 	
@@ -48,7 +55,7 @@ public class InstallParamValidator {
 	 * @param name
 	 * @throws FatalException
 	 */
-	public static void canBeTomcatDir(String name) throws FatalException {
+	public static void canBeTomcatDir(String name) throws QueryException {
 		//isDirectoryWritable(name);
 		try {
 			String webappsdir = name + Database.getSepar() + "webapps";
@@ -57,20 +64,21 @@ public class InstallParamValidator {
 				areSubdirWritable(webappsdir, new String[]{""});
 			}
 			else {
-				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat home directory:" );								
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat home directory:" );								
 			}
 		}
-		catch(FatalException e) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
+		catch(QueryException e) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
 		}
 	}
-	public static void canBeTomcatWebappsDir(String name) throws FatalException {
+	public static void canBeTomcatWebappsDir(String name) throws QueryException {
 		//isDirectoryWritable(name);
 		try {
-			areSubdirWritable(name, new String[]{""});
+			File f = (new File(name)).getParentFile();
+			areSubdirWritable(f.getAbsolutePath(), new String[]{"webapps"});
 		}
-		catch(FatalException e) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
+		catch(QueryException e) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
 		}
 	}
 	
@@ -79,36 +87,36 @@ public class InstallParamValidator {
 	 * @param subdirs
 	 * @throws FatalException
 	 */
-	public static void areSubdirWritable(String name, String[] subdirs) throws FatalException {
+	public static void areSubdirWritable(String name, String[] subdirs) throws QueryException {
 		String msg = "";
 		for( String subdir: subdirs) {
 			try {
 				isDirectoryWritable(name +  Database.getSepar() + subdir);
-			} catch( FatalException e) {
+			} catch( QueryException e) {
 				msg += subdir + " ";
 			}
 		}
 		if( msg.length() > 0) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "These subdirectories <" + msg + "> are not writable or do not exist");							
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "These subdirectories <" + msg + "> are not writable or do not exist");							
 		}
 	}
 	/**
 	 * @param name
 	 * @throws FatalException
 	 */
-	public static void isDirectoryWritable(String name) throws FatalException {
+	public static void isDirectoryWritable(String name) throws QueryException {
 		if( name == null || name.length() == 0 ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Null or empty directory name");	
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Null or empty directory name");	
 		}
 		File f = new File(name);
 		if( !f.exists()  ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Directory <" + name + "> does no exist");	
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Directory <" + name + "> does no exist");	
 		}
 		else if(  !f.isDirectory()  ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> is not a directory");	
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> is not a directory");	
 		}
 		if( !f.canWrite() ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Can not write in directory <" + name + "> ");	
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Can not write in directory <" + name + "> ");	
 		}
 	}
 	
