@@ -3,7 +3,6 @@ package saadadb.vo.registry;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +12,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.vo.VOLimits;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class Record {
 	private Authority authority;
 	private static final String header;
@@ -100,7 +104,7 @@ public class Record {
 	}
 
 	public StringBuffer getSIARecord(Capability capability) throws Exception {
-		String url = Database.getUrl_root() + "/siaservice?collection=["  + capability.getDataTreePath().split("\\.")[0] + "]&withrel=true&";
+		String url = Database.getUrl_root() + "/siaservice?collection=["  + capability.getDataTreePath().collection + "]&withrel=true&";
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());

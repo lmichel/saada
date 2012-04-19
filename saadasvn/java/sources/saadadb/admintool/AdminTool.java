@@ -45,6 +45,7 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.SIAServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
+import saadadb.admintool.panels.editors.WebInstallPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
 import saadadb.admintool.panels.tasks.ClassCommentPanel;
 import saadadb.admintool.panels.tasks.ClassDropPanel;
@@ -505,9 +506,14 @@ public class AdminTool extends BaseFrame {
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.DB_INSTALL) ) {
 			if( dbInstallPanel== null ) {
-				dbInstallPanel = new DBInstallPanel(this, AdminComponent.VO_PUBLISH);
+				dbInstallPanel = new DBInstallPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = dbInstallPanel;
+		} else 	if( panelTitle.equals(AdminComponent.WEB_INSTALL) ) {
+			if( webInstallPanel== null ) {
+				webInstallPanel = new WebInstallPanel(this, AdminComponent.ROOT_PANEL);
+			}
+			activePanel = webInstallPanel;
 			/*
 			 * Process panel used by all tasks
 			 */

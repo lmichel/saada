@@ -22,7 +22,7 @@ import saadadb.admin.widgets.EditableLabel;
 import saadadb.database.Database;
 import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
@@ -30,14 +30,12 @@ import saadadb.util.RegExp;
 
 public class DBInstallPanel extends JPanel{
 	protected JFrame frame;
-	private JButton	mod_name = new JButton("Modify");
 	private JButton	mod_dir = new JButton("Modify");
 	private JLabel  dir_rep = SaadaDBAdmin.getPlainLabel(Database.getRepository());
 	private JButton	mod_rep = new JButton("Modify");
 	private JLabel  dir_tomcat = SaadaDBAdmin.getPlainLabel(Database.getConnector().getWebapp_home());
 	private JButton	mod_tomcat = new JButton("Modify");
 	private EditableLabel  dir_url ;
-	private JButton	mod_url = new JButton("Modify");
 
 	public DBInstallPanel(SaadaDBAdmin saadaDBAdmin, Dimension dim) {
 		super();
@@ -208,7 +206,7 @@ public class DBInstallPanel extends JPanel{
 					File selected_file = fcd.getSelectedFile();
 					try {
 						InstallParamValidator.canBeRepository(selected_file.getAbsolutePath());
-					} catch(FatalException e) {
+					} catch(QueryException e) {
 						SaadaDBAdmin.showFatalError(DBInstallPanel.this.frame, e);
 						return;
 					}
@@ -239,11 +237,11 @@ public class DBInstallPanel extends JPanel{
 							 * If not we just check that the directory is writable
 							 */
 							InstallParamValidator.canBeTomcatDir(selected_file.getAbsolutePath()+ File.separator + "webapps");
-						} catch (FatalException e) {
+						} catch (QueryException e) {
 							InstallParamValidator.canBeTomcatWebappsDir(selected_file.getAbsolutePath() );				
 						}
 
-					} catch(FatalException e) {
+					} catch(QueryException e) {
 						SaadaDBAdmin.showFatalError(DBInstallPanel.this.frame, e);
 						return;
 					}

@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
@@ -465,16 +466,16 @@ public class TapServiceManager extends EntityManager {
 		ArrayList<Capability> lc = new ArrayList<Capability>();
 		Table_Saada_VO_Capabilities.loadCapabilities(lc, Capability.TAP);
 		for( Capability cap: lc) {
-			String dtp[] = cap.getDataTreePath().split("\\.");
-			String collName = dtp[0];
-			String catName = dtp[1];
+			DataTreePath dataTreePath = cap.getDataTreePath();
+			String collName = cap.getDataTreePath().collection;
+			String catName = cap.getDataTreePath().collection;
 			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(catName));
 			String classTable = "";
 
 			Messenger.printMsg(Messenger.TRACE, "Add " + cap.getDataTreePath() + " to TAP service");
 
 			ArgsParser ap;
-			if( dtp.length == 2 ) {
+			if( dataTreePath.isCollectionLevel() ) {
 				ap = new ArgsParser(
 						new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
 				/*
@@ -495,8 +496,8 @@ public class TapServiceManager extends EntityManager {
 				SQLTable.commitTransaction();
 			}
 			
-			else if( dtp.length == 3) {
-				classTable = dtp[2];
+			else if( dataTreePath.isClassLevel()) {
+				classTable = dataTreePath.classe;
 				ap = new ArgsParser(
 						new String[] {"-populate=" + classTable, "-comment=" + cap.getDescription(), Messenger.getDebugParam()});
 				SQLTable.beginTransaction();

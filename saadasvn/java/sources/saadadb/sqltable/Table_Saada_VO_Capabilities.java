@@ -8,17 +8,20 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import saadadb.admintool.utils.DataTreePath;
+import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Merger;
+import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
 
 
 public class Table_Saada_VO_Capabilities extends SQLTable {
 	public static final String  tableName = "saadadb_vo_capability";
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -66,8 +69,10 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 				StringBuilder bfn = new StringBuilder(fn);
 				String mn = "get" + (bfn.replace(0, 1, fn.substring(0,1).toUpperCase())).toString();
 				Method meth = c.getMethod(mn);
+				Object val = meth.invoke(capability);
+				String sval = (val == null) ? null: val.toString();
 				insertValues.add( Merger.quoteString(
-						Database.getWrapper().getEscapeQuote((String)meth.invoke(capability)))
+						Database.getWrapper().getEscapeQuote(sval))
 				);
 			}
 		}
@@ -106,8 +111,8 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void emptyTable(String protocol) throws AbortException {
-			SQLTable.addQueryToTransaction("DELETE FROM " + tableName 
-					+ ((protocol != null && protocol.length()> 0 )? " WHERE protocol = '" + protocol + "'": ""));
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName 
+				+ ((protocol != null && protocol.length()> 0 )? " WHERE protocol = '" + protocol + "'": ""));
 	}
 	/**
 	 * @throws FatalException
@@ -115,7 +120,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	public static void removeTable() throws FatalException {
 		SQLTable.addQueryToTransaction(Database.getWrapper().dropTable(tableName));
 	}
-	
+
 	/**
 	 * @param capabilities
 	 * @param protocol
@@ -152,6 +157,21 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 			}
 		}
 		squery.close();
+	}
+
+	/**
+	 * Set DATALINK column with a datalink URL
+	 * @param capability
+	 * @throws FatalException
+	 */
+	public static void setDataLinks(Capability capability) throws FatalException {
+		DataTreePath dataTreePath = capability.getDataTreePath();
+		int category = Category.getCategory(dataTreePath.category);
+		if( Database.getCachemeta().getAtt_extend(category).get("DATALINK") != null ) {
+			Messenger.printMsg(Messenger.TRACE, "Set DATALINK columns for " + capability.getDataTreePathString());
+			String tbl = Database.getWrapper().getCollectionTableName(dataTreePath.collection, category);
+			SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = CONCAT('" + Database.getUrl_root() + "/datalink?oid=', oidsaada)" );
+		}
 	}
 }
 

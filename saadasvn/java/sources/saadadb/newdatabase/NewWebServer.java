@@ -1,15 +1,5 @@
 package saadadb.newdatabase;
 
-/**
- * <p>Title: System d'archivage automatique des donnes astrononique</p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: Observaroire Astronomique Strasbourg</p>
- * @version SAADA 1.0
- * @author: NGUYEN Ngoc Hoan
- * E-Mail: nguyen@saadadb.u-strasbg.fr</p>
- */
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,9 +15,10 @@ import saadadb.util.Messenger;
 /**
  * @author michel
  * * @version $Id$
+ * 04/2012: method buildDBNameFile isolated to be used from the admin tool
 
  */
-class NewWebServer extends NewSaadaDB {
+public class NewWebServer extends NewSaadaDB {
 
 	/**
 	 * @param saada_home
@@ -59,14 +50,7 @@ class NewWebServer extends NewSaadaDB {
 				+ separ + "web" + separ + "WEB-INF" + separ, "web.xml",
 				old2, remplace2, rootDir  + separ + "web"
 				+ separ + "WEB-INF" + separ);
-
-		FileWriter fw = new FileWriter(rootDir  + separ + "web" + separ + "dbname.txt");
-		fw.write("# This file can be put at the webapp root to indicate the saadadb name of the current application\n");
-		fw.write("saadadbname=" + nameDB + "\n");
-		fw.write("urlroot=" + this.connector.getUrl_root() + "\n");
-		fw.write("#saadadbroot=" + rootDir + "\n");
-		fw.write("#debug=off	\n");
-		fw.close();
+		buildDBNameFile(rootDir, nameDB, this.connector.getUrl_root());
 		
 		Project p = new Project();
 		p.init();
@@ -83,6 +67,24 @@ class NewWebServer extends NewSaadaDB {
 		Messenger.printMsg(Messenger.TRACE, "New web application ready to be deployed");
 	}
 	
+	/**
+	 * Build a dbname.txt file in the root of the web directory
+	 * This method doen use any Saada resource because it can be called from any context
+	 * @param rootDir : DB root directory
+	 * @param nameDB : SaadaDB name
+	 * @param urlRoot : URL of the SaadaDB webapp
+	 * @throws Exception
+	 */
+	public static void buildDBNameFile(String rootDir, String nameDB, String urlRoot) throws Exception {
+		FileWriter fw = new FileWriter(rootDir  + separ + "web" + separ + "dbname.txt");
+		fw.write("# This file can be put at the webapp root to indicate the saadadb name of the current application\n");
+		fw.write("saadadbname=" + nameDB + "\n");
+		fw.write("urlroot=" + urlRoot + "\n");
+		fw.write("#saadadbroot=" + rootDir + "\n");
+		fw.write("#debug=off	\n");
+		fw.close();
+		
+	}
 	
 
 	/**

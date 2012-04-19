@@ -12,6 +12,7 @@ import saadadb.admin.SaadaDBAdmin;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.newdatabase.NewWebServer;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
@@ -31,6 +32,7 @@ public class ThreadDeployWebApp extends CmdThread {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			NewWebServer.buildDBNameFile(Database.getRoot_dir(), Database.getName(), Database.getUrl_root());
 			Project p = new Project();
 			p.init();
 			ProjectHelper helper = ProjectHelper.getProjectHelper();

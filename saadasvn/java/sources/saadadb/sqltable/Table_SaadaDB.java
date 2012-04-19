@@ -116,7 +116,9 @@ public class Table_SaadaDB extends SQLTable {
 		//Database.getCachemeta().reload(true);
 		FileWriter writer;
 		try {
-			Database.initConnector(Database.getDbname(), true);
+			if( Database.getConnector() == null ) {
+				Database.initConnector(Database.getDbname(), true);
+			}
 			StringBuffer sb = new StringBuffer();
 			FileReader in = new FileReader(prop_filename);
 			BufferedReader reader =new BufferedReader(in);

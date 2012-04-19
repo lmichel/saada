@@ -184,14 +184,24 @@ public class HelpDesk {
 		map.put(DBINSTALL_DIR, new String[] {
 				"Changing the installation directory requires some manual setup:"
                 , "  - Move the content of the old SaadaDB directory to the new one" 
-                + "  - Update saadadb.properties file located in SaadaDBHOME/bin "
-                + "  - Start admintool from the new location"
-                + "  - Deploy the Web application."
+                , "  - Update saadadb.properties file located in SaadaDBHOME/bin "
+                , "  - Start admintool from the new location"
+                , "  - Deploy the Web application."
 		});
 		map.put(DBINSTALL_REP, new String[] {
 				"This operation does not move data from the old repository to the new one."
                 , "  - Copy the old repository from the old location to the new one" 
-                + "  - Deploy the Web application."
+                , "  - Deploy the Web application."
+		});
+		map.put(WEBINSTALL_DIR, new String[] {
+				"Change the Tomcat install dir where the Web application is deployed"
+                , "  - Works only if a writable directory named webapps does exist." 
+                , "  - This action redeploys the Web application"
+		});
+		map.put(WEBINSTALL_URL, new String[] {
+				"Change the database URL"
+                , "  - Must be used when the tomcat server runs behind front-end HTTP server." 
+                , "  - This action redeploys the Web application."
 		});
 	}
 	
