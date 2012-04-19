@@ -5,10 +5,10 @@ import java.awt.Frame;
 import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLTable;
@@ -98,7 +98,7 @@ public class ThreadDmViewPopulate extends CmdThread {
 					SQLTable.beginTransaction();
 					tsm.populate(ap);
 					Capability cpb = new Capability();
-					cpb.setDataTreePath("ivoa." + vor.getName());
+					cpb.setDataTreePath(new DataTreePath("ivoa", vor.getName(), null));
 					cpb.setProtocol(Capability.TAP);
 					cpb.setDescription("Table of data maiing the DM " + vor.getName());
 					Table_Saada_VO_Capabilities.addCapability(cpb);
@@ -113,7 +113,7 @@ public class ThreadDmViewPopulate extends CmdThread {
 								tsm.create(null);
 								tsm.populate(ap);
 								Capability cpb = new Capability();
-								cpb.setDataTreePath("ivoa." + vor.getName());
+								cpb.setDataTreePath(new DataTreePath("ivoa", vor.getName(), null));
 								cpb.setProtocol(Capability.TAP);
 								cpb.setDescription("Table of data maiing the DM " + vor.getName());
 								Table_Saada_VO_Capabilities.addCapability(cpb);

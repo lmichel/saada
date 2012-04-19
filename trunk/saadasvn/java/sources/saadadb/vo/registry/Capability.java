@@ -1,7 +1,6 @@
 package saadadb.vo.registry;
 
-import saadadb.command.ArgsParser;
-import saadadb.command.EntityManager;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -17,7 +16,7 @@ import saadadb.exceptions.SaadaException;
  *
  */
 public class Capability  {
-	private String dataTreePath;
+	private DataTreePath dataTreePath;
 	private String protocol;
 	private String accessURL;
 	private String description;
@@ -30,15 +29,28 @@ public class Capability  {
 	/*
 	 * accessors
 	 */
-	public String getDataTreePath() {
+	public String getDataTreePathString() {
+		return dataTreePath.toString();
+	}
+	public DataTreePath getDataTreePath() {
 		return dataTreePath;
 	}
-	public void setDataTreePath(String dataTreePath) throws QueryException {
+	public void setDataTreePath(DataTreePath dataTreePath) throws QueryException {
 		if( dataTreePath== null ){
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "NULL data tree path not allowed");
 		} else {
 			this.dataTreePath = dataTreePath;
 		}
+	}
+	public void setDataTreePath(String dataTreePath) throws QueryException {
+		String[] f = dataTreePath.split("\\.");
+		if( f.length < 2 ) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Badly formed datatreepath: " + dataTreePath);			
+		}
+		String col = f[0];
+		String cat = f[1];
+		String cla = ( f.length > 2 )? f[2]: null;
+		this.dataTreePath = new DataTreePath(col, cat, cla);
 	}
 	public String getProtocol() {
 		return protocol;
@@ -72,18 +84,16 @@ public class Capability  {
 	}
 	
 	public void setAccessURL() throws QueryException {
-		if( TAP.equals("this.protocol") ) {
+		if( TAP.equals(this.protocol) ) {
 			this.accessURL = Database.getUrl_root() + "/tap?";
 		}
-		else if( SIA.equals("this.protocol") ) {
+		else if( SIA.equals(this.protocol) ) {
 			this.accessURL = Database.getUrl_root() + "/tap?";
 		}
 		
 		if( accessURL== null ){
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "NULL accessURL not allowed");
-		} else {
-			this.accessURL = accessURL;
-		}
+		} 
 	}
 	
 	/*

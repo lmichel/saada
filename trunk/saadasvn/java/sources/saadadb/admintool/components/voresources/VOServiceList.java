@@ -126,7 +126,7 @@ public class VOServiceList extends JPanel {
 		}
 	}
 	public boolean addResource(Capability capability) throws SaadaException {
-			if( this.checkExist(capability.getDataTreePath()) )  return false;
+			if( this.checkExist(capability.getDataTreePathString()) )  return false;
 			this.items.add(new VOServiceListItem(capability));
 			this.displayListItems();
 			return true;
@@ -169,6 +169,10 @@ public class VOServiceList extends JPanel {
 		for( VOServiceListItem tsi: items) {
 			if( !tsi.isRemoved()) {
 				Table_Saada_VO_Capabilities.addCapability(tsi.capability);
+				/*
+				 * Used by the Datalink prototype
+				 */
+				Table_Saada_VO_Capabilities.setDataLinks(tsi.capability);
 			}
 		}
 	}

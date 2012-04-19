@@ -2,7 +2,6 @@ package ajaxservlet.json;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,14 +14,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import saadadb.api.SaadaLink;
-import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
-import saadadb.meta.MetaRelation;
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.formator.DisplayFilter;
-import ajaxservlet.formator.DisplayFilterFactory;
 import ajaxservlet.formator.InstanceDisplayFilter;
 import ajaxservlet.formator.LinkDisplayFilter;
 
@@ -146,8 +142,7 @@ public class GetObject extends SaadaServlet {
 					jo.put("links", colarray);	
 					JsonUtils.teePrint(out, jo.toJSONString());
 					out.close();
-				}
-				else {
+				} else {
 					DisplayFilter colform = new LinkDisplayFilter(relation, request);
 					colform.setOId(oid);
 					SaadaInstance  si = Database.getCache().getObject(oid);
@@ -172,8 +167,7 @@ public class GetObject extends SaadaServlet {
 						JSONArray list = new JSONArray();
 						if( cpt++ > 100 ) {
 							list.add("truncated");
-						}
-						else {
+						} else {
 							List<String> lr = colform.getRow(sl, -1);
 							for( String r: lr) {
 								list.add(r);
@@ -184,51 +178,18 @@ public class GetObject extends SaadaServlet {
 					jo.put("aaData",ja);					
 					JsonUtils.teePrint(out,jo.toJSONString());		
 					out.close();
-
-
-/*					JsonUtils.teePrint(out,"{");
-					JsonUtils.teePrint(out,JsonUtils.getParam("relation", relation) + ",");
-					JsonUtils.teePrint(out,JsonUtils.getParam("primary_oid", soid) + ",");
-					JsonUtils.teePrint(out,"\"aoColumns\": [");
-					String comma = "";
-					for( String c: colform.getDisplayedColumns() ) {
-						JsonUtils.teePrint(out, comma + "{\"sTitle\": \"" + c + "\"}");
-						comma = ",";
-					}
-					JsonUtils.teePrint(out,"], ");
-
-					JsonUtils.teePrint(out,"\"aaData\": [");
-					int cpt=0;
-					String coma = "";
-					for( SaadaLink sl : sls ) {
-						if( cpt++ > 100 ) {
-							JsonUtils.teePrint(out,"[\"truncated\"]");					
-
-						}
-						List<String> lr = colform.getRow(sl);
-						JSONArray list = new JSONArray();
-						for( String r: lr) {
-							list.add(r);
-						}
-						JsonUtils.teePrint(out, coma + list.toString() );
-						coma = ",";
-					}
-					JsonUtils.teePrint(out,"]}");		
-*/					out.close();
 				}
 			}
 			else {
 				if( relation == null ) {
 					request.setAttribute("file", "objectdetail");
-				}
-				else {
+				} else {
 					request.setAttribute("file", "counterparts");				
 				}
 				RequestDispatcher rd;
 				rd = request.getRequestDispatcher("getjsonarray");
 				rd.forward(request, response);
 			}
-
 		} catch(Exception e) {
 			reportJsonError(request, response,  e);
 			return;

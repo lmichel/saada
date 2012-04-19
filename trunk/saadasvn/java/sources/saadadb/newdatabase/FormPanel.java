@@ -46,6 +46,7 @@ import saadadb.database.PostgresWrapper;
 import saadadb.database.SQLiteWrapper;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.QueryException;
 import saadadb.util.HostAddress;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -278,7 +279,7 @@ public class FormPanel extends JPanel {
 			InstallParamValidator.validName(saadadb_name.getText().trim());
 			InstallParamValidator.isDirectoryWritable(saadadb_home.getText().trim());
 			InstallParamValidator.isDirectoryWritable(saadadb_rep.getText().trim());
-		} catch (FatalException e) {
+		} catch (QueryException e) {
 			Messenger.printStackTrace(e);
 			JOptionPane.showMessageDialog(frame,
 					e.getMessage(),
@@ -689,11 +690,11 @@ public class FormPanel extends JPanel {
 				 */
 			InstallParamValidator.canBeTomcatDir(tomcat_home.getText().trim());
 			tomcat_home.setText(tomcat_home.getText().trim() + Database.getSepar() + "webapps");
-			} catch (FatalException e) {
+			} catch (QueryException e) {
 				InstallParamValidator.canBeTomcatWebappsDir(tomcat_home.getText().trim());				
 			}
 			InstallParamValidator.validURL(url_root.getText().trim());
-		} catch (FatalException e) {
+		} catch (QueryException e) {
 			Messenger.printStackTrace(e);
 			JOptionPane.showMessageDialog(frame,
 					e.getMessage(),

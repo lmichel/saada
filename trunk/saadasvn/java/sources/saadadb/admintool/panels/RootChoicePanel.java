@@ -99,7 +99,7 @@ public class RootChoicePanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Web Publishing", "icons/Web.png"
 				, new Runnable(){public void run(){
-					System.out.println("loaddata");}});
+					rootFrame.activePanel(WEB_INSTALL);}});
 		
 		c.gridx = 2;
 		c.gridy = 0;

@@ -13,15 +13,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.input.StringInput;
 import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
@@ -49,8 +50,9 @@ public class DBInstallPanel extends EditPanel {
 
 	@Override
 	protected void setToolBar() {
-		// TODO Auto-generated method stub
-		
+		this.initTreePathLabel();
+		this.initSelectResourceLabel();
+		this.add(new ToolBarPanel(this, false, false, false));
 	}
 
 	@Override
@@ -103,7 +105,7 @@ public class DBInstallPanel extends EditPanel {
 					File selected_file = fcd.getSelectedFile();
 					try {
 						InstallParamValidator.canBeRepository(selected_file.getAbsolutePath());
-					} catch(FatalException e) {
+					} catch(QueryException e) {
 						showFatalError(DBInstallPanel.this.rootFrame, e);
 						return;
 					}
@@ -121,27 +123,33 @@ public class DBInstallPanel extends EditPanel {
 		});		
 
 
-		JPanel panel = this.addSubPanel("SaadaDB installation");
+		JPanel panel = this.addSubPanel("SaadaDB Installation");
 		MyGBC mgbc = new MyGBC(5,5,5,5);	mgbc.anchor = GridBagConstraints.EAST;	
 		panel.add(getPlainLabel("Name:"), mgbc);
 		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(getPlainLabel(Database.getName()), mgbc);
 		mgbc.rowEnd();
 		panel.add(getPlainLabel(""), mgbc);
+		mgbc.newRow();mgbc.gridwidth = 3;
+		panel.add(getHelpLabel(HelpDesk.DBINSTALL_NAME), mgbc);
 		
-		mgbc.newRow();mgbc.anchor = GridBagConstraints.EAST;
+		mgbc.newRow();mgbc.anchor = GridBagConstraints.EAST;mgbc.gridwidth = 1;
 		panel.add(getPlainLabel("Installation Directory "), mgbc);		
 		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(getPlainLabel(Database.getRoot_dir()), mgbc);
 		mgbc.rowEnd();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(modDir, mgbc);
+		mgbc.newRow();mgbc.gridwidth = 3;
+		panel.add(getHelpLabel(HelpDesk.DBINSTALL_DIR), mgbc);
 
-		mgbc.newRow(); mgbc.anchor = GridBagConstraints.EAST;
+		mgbc.newRow(); mgbc.anchor = GridBagConstraints.EAST;mgbc.gridwidth = 1;
 		panel.add(getPlainLabel("Repository "), mgbc);		
 		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(dirRep, mgbc);
 		mgbc.rowEnd();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(modRep, mgbc);	
+		mgbc.newRow();mgbc.gridwidth = 3;
+		panel.add(getHelpLabel(HelpDesk.DBINSTALL_REP), mgbc);
 	}
 
 	@Override

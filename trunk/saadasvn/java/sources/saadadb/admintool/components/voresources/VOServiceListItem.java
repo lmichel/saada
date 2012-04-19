@@ -1,7 +1,6 @@
 package saadadb.admintool.components.voresources;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -10,7 +9,6 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,7 +51,7 @@ public class VOServiceListItem extends JPanel {
 	protected VOServiceListItem(DataTreePath dataTreePath, String protocol) throws SaadaException {
 		this.capability = new Capability();
 		this.capability.setProtocol(protocol);
-		this.capability.setDataTreePath(dataTreePath.toString());
+		this.capability.setDataTreePath(dataTreePath);
 		this.button.setSelected(true);
 		this.setDefaultDescription();
 		this.setUI();
@@ -72,7 +70,7 @@ public class VOServiceListItem extends JPanel {
 	private void setDefaultDescription() throws FatalException {
 		if( this.capability.getDescription() == null || this.capability.getDescription().length() == 0 ) {
 			this.capability.setDescription(
-					Database.getCachemeta().getCollection(this.capability.getDataTreePath().split("\\.")[0]).getDescription());
+					Database.getCachemeta().getCollection(this.capability.getDataTreePath().collection).getDescription());
 		}
 	}
 	private void setUI() {
@@ -93,7 +91,7 @@ public class VOServiceListItem extends JPanel {
 			}		
 		} );
 		this.add(this.button);
-		this.label.setText(capability.getDataTreePath());
+		this.label.setText(capability.getDataTreePathString());
 		this.label.setOpaque(false);
 		this.add(Box.createHorizontalStrut(10));
 		this.add(this.label);
@@ -142,7 +140,7 @@ public class VOServiceListItem extends JPanel {
 
 	}
 	protected String getDataTreePath() {
-		return this.capability.getDataTreePath();
+		return this.capability.getDataTreePathString();
 	}
 	public boolean fireAddResource(DataTreePath dataTreePath) throws SaadaException {
 		return ((VOServiceList)(this.getParent())).addResource(dataTreePath, this);

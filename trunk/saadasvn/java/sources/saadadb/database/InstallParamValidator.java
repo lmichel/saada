@@ -21,9 +21,9 @@ public class InstallParamValidator {
 	 * @return
 	 * @throws FatalException
 	 */
-	public static void validName(String name) throws FatalException {
+	public static void validName(String name) throws QueryException {
 		if( !name.matches(RegExp.DBNAME) ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong SaadaDB Name");
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong SaadaDB Name");
 		}
 	}
 	
@@ -31,9 +31,9 @@ public class InstallParamValidator {
 	 * @param name
 	 * @throws FatalException
 	 */
-	public static void validURL(String name) throws FatalException {
+	public static void validURL(String name) throws QueryException {
 		if( !name.matches(RegExp.URL) ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> is not an URL");
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> is not an URL");
 		}
 	}
 	
