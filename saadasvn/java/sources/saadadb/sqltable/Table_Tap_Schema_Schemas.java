@@ -19,7 +19,7 @@ import saadadb.util.Messenger;
  */
 public class Table_Tap_Schema_Schemas extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
-	public static final String tableName = "tap_schema_schemas";
+	public static final String tableName = "schemas";
 
 	static {
 		attMap = new LinkedHashMap<String, AttributeHandler>();

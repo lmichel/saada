@@ -4,9 +4,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import saadadb.collection.Category;
+import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
@@ -31,7 +33,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 					, false);
 		}
 	}
-	
+
 	/**
 	 * @param coll_name
 	 * @throws FatalException 
@@ -49,6 +51,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 	 */
 	private static void addCollectionForCategory(String coll_name, int num_coll,  int cat) throws FatalException {
 		try {
+			LinkedHashMap<String, AttributeHandler> ahs = (new CollectionAttributeExtend()).getAttrSaada(Category.explain(cat));
 			String str_cat = Category.NAMES[cat].toLowerCase();
 			String data_table_name = Database.getWrapper().getCollectionTableName(coll_name, cat);;
 			String meta_table_name = "saada_metacoll_" + str_cat;
@@ -83,37 +86,33 @@ public class Table_Saada_Metacoll extends SQLTable {
 							continue;
 						}
 						//System.out.println(vt_class.get(k).getName() + " FIELD " + fl[i].getName() + " " + ftype);
-						AttributeHandler ah = new AttributeHandler();
-						ah.setNameorg(DefineType.getCollection_name_org().get(fname));
-						if( ah.getNameorg().length() == 0 ) {
-							ah.setNameorg(fname);
+						AttributeHandler  ah;
+						if( (ah = ahs.get(fname)) == null ){
+							ah = new AttributeHandler();
+							ah.setNameorg(DefineType.getCollection_name_org().get(fname));
+							if( ah.getNameorg().length() == 0 ) {
+								ah.setNameorg(fname);
+							}
+							ah.setNameattr(fname);
+							ah.setType(ftype);
+							ah.setQueriable(true);
+							ah.setCollname(coll_name);
+							ah.setUcd(DefineType.getCollection_ucds().get(fname));
+							ah.setUnit(DefineType.getCollection_units().get(fname));
+							ah.setComment("Attribute managed by Saada");
+							ah.setLevel('N');						
+						} else {
+							ah.setLevel('E');							
 						}
-						ah.setNameattr(fname);
-						ah.setType(ftype);
-						ah.setQueriable(true);
-						ah.setCollname(coll_name);
-						ah.setUcd(DefineType.getCollection_ucds().get(fname));
-						ah.setUnit(DefineType.getCollection_units().get(fname));
 						if( cat == Category.SPECTRUM ) {
 							ah.setVo_dm(DefineType.VO_SDM);
 							ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
 						}
-						/*
-						 * Extented attributes
-						 */
-						if( vt_class.get(k).getName().startsWith("generated") ) {
-							ah.setLevel('E');
-						}
-						/*
-						 * Native attributes
-						 */
-						else {
-							ah.setLevel('N');						
-						}
+	
 						String dumpline = max_key + "\t"
 						+ ah.getLevel() + "\t"
 						+ Database.getWrapper().getAsciiNull() + "\t"
-///						+ "\\N\t" 
+						///						+ "\\N\t" 
 						+ str_cat + "UserColl" + "\t"
 						+ ah.getNameattr() + "\t"
 						+ ah.getType() + "\t" 
@@ -122,16 +121,16 @@ public class Table_Saada_Metacoll extends SQLTable {
 						+ ah.getUtype() + "\t"
 						+ ah.getVo_dm() + "\t"
 						+ Database.getWrapper().getAsciiNull() + "\t"
-///						+ "\\N\t"
+						///						+ "\\N\t"
 						+ Database.getWrapper().getBooleanAsString(true) + "\t"
 						+ ah.getUnit()+ "\t"
-						+ "Attribute managed by Saada\t"
-//						+ coll_name + "\t"
-//						+ num_coll + "\t"
+						+ ah.getComment() + " \t"
+						//						+ coll_name + "\t"
+						//						+ num_coll + "\t"
 						+ "Generic\t"
 						+ "-1\t"
 						+Database.getWrapper().getAsciiNull();
-///						+ "\\N";
+						///						+ "\\N";
 						bustmpfile.write(dumpline + "\n");
 						max_key++;
 						if( sql.length() > 0  ) {
@@ -152,7 +151,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 				if( rs.getInt(1) == 0) {
 					SQLTable.addQueryToTransaction(Database.getWrapper().lockTables(new String[]{meta_table_name}, new String[]{meta_table_name + " as a"}));
 					SQLTable.addQueryToTransaction("LOADTSVTABLE " + meta_table_name + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
-							//"copy " + meta_table_name  + " from '"+ dumpfile.replaceAll("\\\\", "\\\\\\\\") + "'", false, meta_table_name);
+					//"copy " + meta_table_name  + " from '"+ dumpfile.replaceAll("\\\\", "\\\\\\\\") + "'", false, meta_table_name);
 					/*
 					 * Associate errors on position with position
 					 * These queries change the row order in the table, then the attribute order must
@@ -164,29 +163,29 @@ public class Table_Saada_Metacoll extends SQLTable {
 							, "a.name_coll = " + meta_table_name  + ".name_coll" 
 							, meta_table_name
 							, new String[]{"ass_error"}
-							, new String[]{meta_table_name + ".pk"}
-							, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_ra_csa'") );
+					, new String[]{meta_table_name + ".pk"}
+					, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_ra_csa'") );
 					SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
 							, meta_table_name + " as a"
 							, "a.name_coll = " + meta_table_name  + ".name_coll" 
 							, meta_table_name
 							, new String[]{"ass_error"}
-							, new String[]{meta_table_name + ".pk"}
-							, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_dec_csa'") );
-//					SQLTable.runQueryUpdateSQL("UPDATE " + meta_table_name  
-//							+ "   SET ass_error = pk "
-//							+ "  FROM " + meta_table_name + " a "
-//							+ " WHERE a.name_coll = " + meta_table_name  + ".name_coll AND a.name_attr = 'error_ra_csa' "
-//							+ "   AND " + meta_table_name + ".name_attr = 'pos_ra_csa'"
-//							, false
-//							, null );
-//					SQLTable.runQueryUpdateSQL(" UPDATE " + meta_table_name  
-//							+ "   SET ass_error = a.pk "
-//							+ "  FROM " + meta_table_name + " a "
-//							+ " WHERE a.name_coll =" + meta_table_name  + ".name_coll AND a.name_attr = 'error_dec_csa' "
-//							+ "   AND " + meta_table_name + ".name_attr = 'pos_dec_csa'"
-//							, false
-//							, null);
+					, new String[]{meta_table_name + ".pk"}
+					, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_dec_csa'") );
+					//					SQLTable.runQueryUpdateSQL("UPDATE " + meta_table_name  
+					//							+ "   SET ass_error = pk "
+					//							+ "  FROM " + meta_table_name + " a "
+					//							+ " WHERE a.name_coll = " + meta_table_name  + ".name_coll AND a.name_attr = 'error_ra_csa' "
+					//							+ "   AND " + meta_table_name + ".name_attr = 'pos_ra_csa'"
+					//							, false
+					//							, null );
+					//					SQLTable.runQueryUpdateSQL(" UPDATE " + meta_table_name  
+					//							+ "   SET ass_error = a.pk "
+					//							+ "  FROM " + meta_table_name + " a "
+					//							+ " WHERE a.name_coll =" + meta_table_name  + ".name_coll AND a.name_attr = 'error_dec_csa' "
+					//							+ "   AND " + meta_table_name + ".name_attr = 'pos_dec_csa'"
+					//							, false
+					//							, null);
 				}
 				break;
 			}

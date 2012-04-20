@@ -19,7 +19,7 @@ import saadadb.util.Messenger;
  */
 public class Table_Tap_Schema_Columns extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
-	public static final String tableName = "tap_schema_columns";
+	public static final String tableName = "columns";
 	public static final Pattern sqlTypePattern = Pattern.compile("([A-Za-z]+)\\(([0-9]+)\\)");
 	static {
 		attMap = new LinkedHashMap<String, AttributeHandler>();

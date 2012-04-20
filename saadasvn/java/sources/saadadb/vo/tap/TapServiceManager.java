@@ -431,10 +431,11 @@ public class TapServiceManager extends EntityManager {
 			}
 			v = rs_columns.getObject(7);
 			if( v != null ) {
-				retour.append("            <dataType xsi:type=\"vod:TAPType\">" + v );		
-				v = rs_columns.getObject(8);
-				if( v != null ) {
-					retour.append("\n                <arraysize>" + v + "</arraysize>\n           ");		
+				Object v2 = rs_columns.getObject(8);
+				if( v2 != null ) {
+					retour.append("            <dataType xsi:type=\"vod:TAPType\" arraysize=\"" + v2 + "\">" + v );		
+				} else {
+					retour.append("            <dataType xsi:type=\"vod:TAPType\" >" + v );							
 				}
 				retour.append("</dataType>\n");		
 			}
@@ -468,19 +469,19 @@ public class TapServiceManager extends EntityManager {
 		for( Capability cap: lc) {
 			DataTreePath dataTreePath = cap.getDataTreePath();
 			String collName = cap.getDataTreePath().collection;
-			String catName = cap.getDataTreePath().collection;
+			String catName = cap.getDataTreePath().category;
 			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(catName));
 			String classTable = "";
 
 			Messenger.printMsg(Messenger.TRACE, "Add " + cap.getDataTreePath() + " to TAP service");
 
 			ArgsParser ap;
-			if( dataTreePath.isCollectionLevel() ) {
+			if( dataTreePath.isCategoryLevel() ) {
 				ap = new ArgsParser(
 						new String[] {"-populate=" + collTable, "-comment=" + Database.getCachemeta().getCollection(collName).getDescription(), Messenger.getDebugParam()});
 				/*
 				 * Transaction are pushed at Manager level because the populate method do some DB ckecking with
-				 * SELECT which are processed out of the current transaction ... sorry for thar
+				 * SELECT which are processed out of the current transaction ... sorry for that 
 				 */
 				SQLTable.beginTransaction();
 				this.populate(ap);
@@ -511,7 +512,6 @@ public class TapServiceManager extends EntityManager {
 				if( Table_Tap_Schema_Tables.knowsTable(collTable) )  {
 					Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
 					Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);					
-								
 				}
 			}
 		}
