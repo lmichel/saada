@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import saadadb.collection.Category;
 import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.SaadaDBConnector;
+import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 
@@ -29,7 +30,7 @@ public class GenerationClassCollection{
 		for( int cat=1 ; cat<Category.NB_CAT ; cat++ ) {
 			String name = Category.explain(cat) + DefineType.TYPE_EXTEND_COLL;
 			String separ = System.getProperty("file.separator");
-			LinkedHashMap<String, String> keys = new CollectionAttributeExtend().getAttrSaada(Category.explain(cat));
+			LinkedHashMap<String, AttributeHandler> keys = (new CollectionAttributeExtend()).getAttrSaada(Category.explain(cat));
 			File name_file = new File(connector.getRoot_dir() 
 			+ separ + "class_mapping"  
 			+ separ + name + ".java");
@@ -40,16 +41,16 @@ public class GenerationClassCollection{
 			writer.write("public class " + name + " extends "+ Category.getCollectionExtension(cat)+" {  \n");
 			if(keys!=null){
 				if(!keys.isEmpty()){
-					for( String elements: keys.keySet() ) {
-						GenerationClassProduct.createType(writer, (String)keys.get(elements), elements);
+					for( String element: keys.keySet() ) {
+						GenerationClassProduct.createType(writer, keys.get(element).getType(), element);
 					}
 				}
 			}
 			GenerationClassProduct.createConstructor(writer, name);
 			if(keys!=null){
 				if(!keys.isEmpty()){
-					for( String elements: keys.keySet() ) {
-						createSetAndGet(writer, (String)keys.get(elements), elements);
+					for( String element: keys.keySet() ) {
+						createSetAndGet(writer, (String)keys.get(element).getType(), element);
 					}
 				}
 			}
