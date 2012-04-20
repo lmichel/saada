@@ -35,53 +35,54 @@ public class JSDataTree extends SaadaServlet {
 		String[] colls = Database.getCachemeta().getCollection_names();
 		printAccess(request, true);
 		try {
-		JsonUtils.teePrint(out, "{\"data\" : [");
-		boolean first = true;
-		for( String coll: colls ) {
-			if( !first ) {
-				JsonUtils.teePrint(out, "    ,");
-			}
-			JsonUtils.teePrint(out, "    {  \"attr\"     : { \"id\"   : \"" + coll + "\" },");
-			JsonUtils.teePrint(out, "       \"data\"     : { \"title\"   : \"" + coll + "\" },");
-			JsonUtils.teePrint(out, "       \"children\" : [");
-			boolean cfirst = true;
-			for( int cat: new int[] {Category.TABLE, Category.ENTRY,  Category.IMAGE,  Category.SPECTRUM,  Category.MISC,  Category.FLATFILE}) {
-				if( Category.FLATFILE == cat && Database.getCachemeta().getCollection(coll).hasFlatFiles())  {
-					if( !cfirst ) {
-						JsonUtils.teePrint(out, "        ,");
-					}
-					JsonUtils.teePrint(out, "        {\"attr\"     : { \"id\"   : \"" + coll + "." +  Category.explain(cat) + "\" },");
-					JsonUtils.teePrint(out, "         \"data\"     : \"" + Category.explain(cat) + "\",");
-					JsonUtils.teePrint(out, "         \"children\" : []}");
-					cfirst = false;
+			response.setContentType("application/json");
+			JsonUtils.teePrint(out, "{\"data\" : [");
+			boolean first = true;
+			for( String coll: colls ) {
+				if( !first ) {
+					JsonUtils.teePrint(out, "    ,");
 				}
-				else {
-					String[] classes = Database.getCachemeta().getClassesOfCollection(coll, cat);
-					if( classes.length > 0 ) {
+				JsonUtils.teePrint(out, "    {  \"attr\"     : { \"id\"   : \"" + coll + "\" },");
+				JsonUtils.teePrint(out, "       \"data\"     : { \"title\"   : \"" + coll + "\" },");
+				JsonUtils.teePrint(out, "       \"children\" : [");
+				boolean cfirst = true;
+				for( int cat: new int[] {Category.TABLE, Category.ENTRY,  Category.IMAGE,  Category.SPECTRUM,  Category.MISC,  Category.FLATFILE}) {
+					if( Category.FLATFILE == cat && Database.getCachemeta().getCollection(coll).hasFlatFiles())  {
 						if( !cfirst ) {
 							JsonUtils.teePrint(out, "        ,");
 						}
-						JsonUtils.teePrint(out, "        {\"attr\"     : { \"id\"   : \"" + coll + "." + Category.explain(cat) + "\" },");
+						JsonUtils.teePrint(out, "        {\"attr\"     : { \"id\"   : \"" + coll + "." +  Category.explain(cat) + "\" },");
 						JsonUtils.teePrint(out, "         \"data\"     : \"" + Category.explain(cat) + "\",");
-       		          	JsonUtils.teePrint(out, "         \"children\" : [");
-       					boolean clfirst = true;
-						for( String classe: classes ) {
-							if( !clfirst ) {
-								JsonUtils.teePrint(out, "            ,");
-							}
-							JsonUtils.teePrint(out, "            {\"attr\" : { \"id\"   : \"" + coll + "." +  Category.explain(cat) +  "." + classe + "\" },");
-							JsonUtils.teePrint(out, "             \"data\" : \"" + classe + "\"}");
-							clfirst = false;
-						}
+						JsonUtils.teePrint(out, "         \"children\" : []}");
 						cfirst = false;
-						JsonUtils.teePrint(out, "           ] } ");
+					}
+					else {
+						String[] classes = Database.getCachemeta().getClassesOfCollection(coll, cat);
+						if( classes.length > 0 ) {
+							if( !cfirst ) {
+								JsonUtils.teePrint(out, "        ,");
+							}
+							JsonUtils.teePrint(out, "        {\"attr\"     : { \"id\"   : \"" + coll + "." + Category.explain(cat) + "\" },");
+							JsonUtils.teePrint(out, "         \"data\"     : \"" + Category.explain(cat) + "\",");
+							JsonUtils.teePrint(out, "         \"children\" : [");
+							boolean clfirst = true;
+							for( String classe: classes ) {
+								if( !clfirst ) {
+									JsonUtils.teePrint(out, "            ,");
+								}
+								JsonUtils.teePrint(out, "            {\"attr\" : { \"id\"   : \"" + coll + "." +  Category.explain(cat) +  "." + classe + "\" },");
+								JsonUtils.teePrint(out, "             \"data\" : \"" + classe + "\"}");
+								clfirst = false;
+							}
+							cfirst = false;
+							JsonUtils.teePrint(out, "           ] } ");
+						}
 					}
 				}
+				JsonUtils.teePrint(out, " ] }  " );
+				first = false;
 			}
-			JsonUtils.teePrint(out, " ] }  " );
-			first = false;
-		}
-		JsonUtils.teePrint(out, " ] }");
+			JsonUtils.teePrint(out, " ] }");
 		} catch (Exception e) {
 			reportJsonError(request, response, e);
 		}
