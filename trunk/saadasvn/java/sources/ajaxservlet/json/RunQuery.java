@@ -57,6 +57,7 @@ public class RunQuery extends SaadaServlet {
 			treepath = (String) request.getAttribute("treepath");
 		}
 		try {			
+			response.setContentType("application/json");
 			String[] qs = query.split("\\s", -1) ;
 			
 			ServletOutputStream out = response.getOutputStream();

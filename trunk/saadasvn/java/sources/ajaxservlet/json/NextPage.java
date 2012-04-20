@@ -43,6 +43,7 @@ public class NextPage extends SaadaServlet {
 	protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		printAccess(request, false);
 		try {
+			response.setContentType("application/json");
 			QueryContext context = UserTrap.getUserAccount(request).getQueryContext();
 			ServletOutputStream out = response.getOutputStream();   
 			int displayStart  = Integer.parseInt(request.getParameter("iDisplayStart"));

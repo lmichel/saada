@@ -52,6 +52,7 @@ public class JSAttributeHandlers extends SaadaServlet implements Servlet {
 		String name = request.getParameter("name");
 		printAccess(request, false);
 		try {
+			response.setContentType("application/json");
 			String[] nodes = name.split("\\.");
 			int category;
 			String collection;
@@ -166,7 +167,8 @@ public class JSAttributeHandlers extends SaadaServlet implements Servlet {
 				JSONArray relval = new JSONArray();
 				relval.add(rn);
 				relval.add(mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()));
-				String sq = "";;
+				String sq = "";			response.setContentType("application/json");
+;
 				for( String q: qls) {
 					sq += q + " " ;
 				}

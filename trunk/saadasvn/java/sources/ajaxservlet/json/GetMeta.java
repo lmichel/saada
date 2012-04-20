@@ -66,6 +66,7 @@ public class GetMeta extends SaadaServlet {
 		RequestDispatcher rd = null;
 		printAccess(request, true);
 		try {
+			response.setContentType("application/json");
 			ServletOutputStream out = response.getOutputStream();
 			if( "datatree".equals(query)) {
 				rd = request.getRequestDispatcher("datatree");		

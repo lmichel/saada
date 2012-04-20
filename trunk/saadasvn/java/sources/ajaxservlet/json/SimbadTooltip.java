@@ -45,6 +45,7 @@ public class SimbadTooltip extends SaadaServlet {
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		printAccess(request, false);
 		try {
+			response.setContentType("application/json");
 			String position = request.getParameter("pos");
 			if( position == null || position.length() == 0 ){
 				reportJsonError(request, response, "Missing position parameter");
