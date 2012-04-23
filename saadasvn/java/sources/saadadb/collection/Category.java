@@ -29,25 +29,25 @@ public abstract class Category {
 		static public int getCategory(String string_cat) throws FatalException {
 			int pos = string_cat.lastIndexOf('_');
 			String str = string_cat.substring(pos+1).toLowerCase();
-			if( str.indexOf("table") != -1) {
+			if( str.endsWith("table") ) {
 				return Category.TABLE;
 			}
-			else if( str.indexOf("entry") != -1) {
+			else if( str.endsWith("entry") ) {
 				return Category.ENTRY;
 			}
-			else if( str.indexOf("image") != -1 && str.indexOf("image3d") == -1 ) {
+			else if( str.endsWith("image")  && str.endsWith("image3d") ) {
 				return Category.IMAGE;
 			}
-			else if( str.indexOf("spectrum") != -1 ) {
+			else if( str.endsWith("spectrum")  ) {
 				return Category.SPECTRUM;
 			}
-			else if( str.indexOf("image3d") != -1  || str.indexOf("cube") != -1 ) {
+			else if( str.endsWith("image3d")   || str.endsWith("cube") ) {
 				return Category.CUBE;
 			}
-			else if( str.indexOf("plot") != -1 || str.toLowerCase().indexOf("misc") != -1) {
+			else if( str.endsWith("plot") || str.endsWith("misc") ) {
 				return Category.MISC;
 			}
-			else if( str.indexOf("flatfile") != -1 || str.toLowerCase().indexOf("flatfile") != -1) {
+			else if( str.endsWith("flatfile")  || str.endsWith("flatfile") ) {
 				return Category.FLATFILE;
 			}
 			else {
