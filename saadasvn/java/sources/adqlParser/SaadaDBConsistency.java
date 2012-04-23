@@ -88,7 +88,9 @@ public class SaadaDBConsistency extends DBConsistency {
 				/*
 				 * In this case, TAP request access table which are not in then Saada schema
 				 */
-				if( tableName.startsWith("tap_schema") || VOResource.getResource(tableName) != null ){
+				if( tableName.startsWith("tables") || tableName.startsWith("schemas") || 
+						tableName.startsWith("columns") || tableName.startsWith("keys") ||	
+						tableName.startsWith("keys_columns") || VOResource.getResource(tableName) != null ){
 					exists = true;
 				}
 				else{
