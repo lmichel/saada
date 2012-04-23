@@ -87,7 +87,9 @@ public class Table_Saada_Metacoll extends SQLTable {
 						}
 						//System.out.println(vt_class.get(k).getName() + " FIELD " + fl[i].getName() + " " + ftype);
 						AttributeHandler  ah;
-						if( (ah = ahs.get(fname)) == null ){
+						if( (ah = ahs.get(fname)) != null ){
+							ah.setLevel('E');							
+						} else {
 							ah = new AttributeHandler();
 							ah.setNameorg(DefineType.getCollection_name_org().get(fname));
 							if( ah.getNameorg().length() == 0 ) {
@@ -101,9 +103,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 							ah.setUnit(DefineType.getCollection_units().get(fname));
 							ah.setComment("Attribute managed by Saada");
 							ah.setLevel('N');						
-						} else {
-							ah.setLevel('E');							
-						}
+						} 
 						if( cat == Category.SPECTRUM ) {
 							ah.setVo_dm(DefineType.VO_SDM);
 							ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
