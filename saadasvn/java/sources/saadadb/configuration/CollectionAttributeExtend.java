@@ -49,6 +49,7 @@ public class CollectionAttributeExtend extends Hashtable<String,LinkedHashMap<St
 			 * c:\... is taken as a URL bug #6506304
 			 */
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(Database.getRoot_dir()+document+".xml"));
+			Messenger.printMsg(Messenger.TRACE, "Reading " + Database.getRoot_dir()+document+".xml");
 		}catch(Exception e){
 			Messenger.printStackTrace(e);
 			isFileConfig = false;
@@ -61,19 +62,19 @@ public class CollectionAttributeExtend extends Hashtable<String,LinkedHashMap<St
 				for (int j=0; j<nodes_ch.getLength(); j++){
 					Element res_ch = (Element)nodes_ch.item(j);
 					NodeList nodes_desc = res_ch.getElementsByTagName(TAG_NAME_DESCRIPTION);
-					String description= "No description given";
-					if( nodes_desc.getLength() > 0 ) {
-						description =  nodes_desc.item(0).getTextContent();
-					}
 					AttributeHandler ah = new AttributeHandler();
 					ah.setNameorg(res_ch.getAttribute(ATTR_NAME));
 					ah.setNameattr(ChangeKey.changeKey(res_ch.getAttribute(ATTR_NAME)));
 					ah.setType(res_ch.getAttribute(ATTR_TYPE));
-					ah.setComment(description);
 					String ucd = res_ch.getAttribute(ATTR_UCD);
-					if ( ucd != null ) {
+					if ( ucd.length() != 0  ) {
 						ah.setUcd(ucd);						
 					}
+					String description= "No description given";
+					if( nodes_desc.getLength() > 0 ) {
+						description =  nodes_desc.item(0).getTextContent();
+					}
+					ah.setComment(description);
 					getAttrSaada(res.getAttribute(ATTR_NAME)).put(res_ch.getAttribute(ATTR_NAME), ah);
 				}				
 			}
