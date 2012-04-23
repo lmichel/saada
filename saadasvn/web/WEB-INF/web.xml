@@ -378,4 +378,14 @@
     <servlet-name>CartClient</servlet-name>
     <url-pattern>/cartclient</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>DataLink</display-name>
+    <servlet-name>DataLink</servlet-name>
+    <servlet-class>ajaxservlet.DataLink</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DataLink</servlet-name>
+    <url-pattern>/datalink</url-pattern>
+  </servlet-mapping>
 </web-app>
