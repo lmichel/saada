@@ -151,10 +151,11 @@ public class TapServiceManager extends EntityManager {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
 		}
 		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
+		boolean all = false;
 		for( String schema: schemas) {
-//			if( all || !schema.equalsIgnoreCase("ivoa") ) {
+			if( all || !schema.equalsIgnoreCase("ivoa") ) {
 				this.remove(new ArgsParser(new String[]{"-remove=" + schema}));
-	//		}
+			}
 		}
 	}
 
