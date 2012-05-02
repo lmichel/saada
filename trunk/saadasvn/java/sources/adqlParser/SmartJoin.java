@@ -1,5 +1,6 @@
 package adqlParser;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -247,6 +248,7 @@ public class SmartJoin {
 				 * If classe is a VO model, we just publish the SQL table in the "ivoa" schema
 				 */
 				VOResource vor;
+				ResultSet rs;
 				if( (vor = VOResource.getResource(table.getTable())) != null) {
 					Messenger.printMsg(Messenger.TRACE, table.getTable() + " is a VO model");
 					ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
@@ -262,6 +264,24 @@ public class SmartJoin {
 						if (debug) System.out.println("### ADDED: "+ah.getNameattr()+" [in "+table.getAlias()+"]");
 
 					}
+					/*
+					 * Look at a SQL table
+					 */
+				} else if( (rs = Database.getWrapper().getTableColumns(table.getTable())) != null ) {
+					while( rs.next()) {
+						AttributeHandler ah = new AttributeHandler() ;
+						ah.setNameattr(rs.getString("COLUMN_NAME"));
+						ah.setNameorg(rs.getString("COLUMN_NAME"));
+						ah.setType(rs.getString("TYPE_NAME"));
+						Vector<String> vTables = lstColumns.get(ah.getNameattr());
+						if (vTables == null){
+							vTables = new Vector<String>();
+							lstColumns.put(ah.getNameattr(), vTables);
+						}
+						vTables.add(tableAlias);
+						if (debug) System.out.println("### ADDED: "+ah.getNameattr()+" [in "+table.getAlias()+"]");
+					}
+					rs.close();
 				}
 				/*
 				 * Access to a Saada resource

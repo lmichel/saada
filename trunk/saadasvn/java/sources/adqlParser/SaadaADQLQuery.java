@@ -117,7 +117,8 @@ public class SaadaADQLQuery extends ADQLQuery {
 		Vector<SaadaADQLQuery> unionItems = smartJoin.readUcdsAndTransformQuery(this);
 		if (unionItems.isEmpty()){
 			SaadaADQLQuery copy = (SaadaADQLQuery)getCopy();
-			copy = smartJoin.applySmartJoin(copy);
+			// @@@@ smartJoin suppressed from 1.6.5
+			//copy = smartJoin.applySmartJoin(copy);
 			return copy.superToSQL(end, altTranslator);
 		}else{
 			String sql = null;
