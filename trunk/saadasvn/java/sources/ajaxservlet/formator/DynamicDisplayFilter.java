@@ -46,7 +46,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 
 	private StoredFilter sf;
 
-	
+
 	/**
 	 * creates a DisplayFilter from a StoredFilter
 	 * and the collection the filter is applied to
@@ -64,7 +64,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 
 			tmp_array = sf.getCollection_show();
-			
+
 			if (tmp_array.size() > 0) {
 				for (String val : tmp_array) {
 					if (!val.startsWith("_")) columns_natcol.add(val);
@@ -74,7 +74,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			/*
 			 * reste à initialiser UCDs
 			 */
-			
+
 			tmp_array = sf.getRelationship_show();
 			if (tmp_array.size() > 0) {
 				if (tmp_array.get(0).compareTo("Any-Relation") == 0) {
@@ -93,7 +93,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		}
 	}
 
-	
+
 	/**
 	 * returns a set of strings containing the titles
 	 * of the columns to be displayed by the filter
@@ -140,7 +140,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		if (mc != null) {
 			for (AttributeHandler ah : mc.getAttributes_handlers().values()) {
 				if (!ah.getCollname().startsWith("_"))
-				result.add(ah);
+					result.add(ah);
 			}
 		}
 		return result;
@@ -160,7 +160,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		SpecialFieldFormatter sff = new SpecialFieldFormatter(si);
 
 		List<String> retour = new ArrayList<String>();
-		
+
 
 		for (String speField : columns_specialf) {
 			if ("DL Link".equals(speField)) {
@@ -222,12 +222,15 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				} else {
 					retour.add("&plusmn;" + DefaultFormats.getString(3600 * e));
 				}
-				
+
 			} else if ("Preview".equals(speField)) {
 				retour.add(DefaultPreviews.getFlatfilePreview(oidsaada, 64));
-				
+
 			} else if ( speField.startsWith("Range") ) {
 				retour.add(DefaultFormats.getString(((SpectrumSaada)si).x_min_csa) + " - " + DefaultFormats.getString(((SpectrumSaada)si).x_max_csa) );
+			}
+			else if ( speField.startsWith("Gallery") ) {
+				retour.add(Long.toString(oidsaada) );
 			}
 		}
 
@@ -236,13 +239,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			String res = DefaultFormats.getString(si.getFieldValue(natcol));
 			retour.add(res);
 		}
-		
+
 		for (AttributeHandler ah : columns_ucds) {
 			si.loadBusinessAttribute();
 			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
 					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(?)</a>");
-			}
-		
+		}
+
 		for (String rel : columns_rel) {
 			/*
 			 * filter Json string
@@ -259,18 +262,18 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add("<span>No link</span>");
 				break;
 			case 1 :
-				
+
 				long counterpart = (si.getCounterparts(rel))[0];
 				SaadaInstance instance = Database.getCache().getObject(counterpart);
-				
+
 				int tmpcat = SaadaOID.getCategoryNum(counterpart);
 				switch (tmpcat) {
 				case (Category.IMAGE) :
 					retour.add(DefaultPreviews.getImageVignette(counterpart, 64));
-					break;
+				break;
 				case (Category.FLATFILE) :
 					retour.add(DefaultPreviews.getFlatfilePreview(counterpart, 64));
-					break;
+				break;
 				default :
 					//retour.add("<span>"+ instance.getNameSaada() + " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
 					retour.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
@@ -282,7 +285,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				break;
 			}
 		}
-		
+
 		return retour;
 	}
 
@@ -330,9 +333,9 @@ public class DynamicDisplayFilter implements DisplayFilter {
 					pos = DefaultFormats.getHMSCoord(p.getPos_ra_csa(), p.getPos_dec_csa());
 				}
 				return SaadaOID.getCategoryName(oidsaada) + "  "
-						+ Database.getCache().getObject(oidsaada) .getNameSaada()
-						+ " " 
-						+ pos;
+				+ Database.getCache().getObject(oidsaada) .getNameSaada()
+				+ " " 
+				+ pos;
 			} catch (FatalException e) {
 				return e.toString();
 			}
@@ -353,7 +356,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		if (ah != null)
 			this.columns_ucds.add(ah);
 	}
-	
+
 	public String getJSONString() {
 		return null;
 	}
