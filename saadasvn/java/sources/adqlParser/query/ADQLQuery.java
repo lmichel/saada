@@ -193,7 +193,7 @@ public class ADQLQuery implements ADQLObject {
 	 * @throws ParseException	If <i>table</i> is <i>null</i> or if it doesn't have a name or if it is a sub-query without an alias.
 	 */
 	public void addTable(ADQLTable table) throws ParseException {
-		if (table == null || (!table.isSubQuery() && table.getTable().trim().length() == 0))
+		if (table == null || (!table. isSubQuery() && table.getTable().trim().length() == 0))
 			throw new ParseException("Impossible to add the table \""+((table==null)?"NULL":table.toString())+"\" because this table has no name !");
 		
 		if (table.getAlias() == null){

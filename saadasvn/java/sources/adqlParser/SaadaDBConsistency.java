@@ -90,7 +90,7 @@ public class SaadaDBConsistency extends DBConsistency {
 				 */
 				if( tableName.startsWith("tables") || tableName.startsWith("schemas") || 
 						tableName.startsWith("columns") || tableName.startsWith("keys") ||	
-						tableName.startsWith("keys_columns") || VOResource.getResource(tableName) != null ){
+						tableName.startsWith("key_columns") || VOResource.getResource(tableName) != null ){
 					exists = true;
 				}
 				else{
