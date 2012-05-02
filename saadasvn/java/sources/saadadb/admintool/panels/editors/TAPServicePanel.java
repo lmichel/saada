@@ -138,6 +138,7 @@ public class TAPServicePanel extends EditPanel {
 					
 					tsm.synchronizeWithGlobalCapabilities();
 					
+					Messenger.printMsg(Messenger.TRACE, "Add selected tables to TAP service");
 					itemSelector.loadCapabilities();
 					showSuccess(TAPServicePanel.this.rootFrame, "Exposed tables saved");
 				} catch (SaadaException e1) {
@@ -150,7 +151,7 @@ public class TAPServicePanel extends EditPanel {
 								tsm.create(null);
 								SQLTable.commitTransaction();
 								
-								Messenger.printMsg(Messenger.TRACE, "Add classes to TAP  service");
+								Messenger.printMsg(Messenger.TRACE, "Add selected tables to TAP service");
 								tsm .synchronizeWithGlobalCapabilities();
 								
 								itemSelector.loadCapabilities();

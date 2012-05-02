@@ -73,9 +73,9 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	 * @throws AbortException 
 	 */
 	public static void dropPublishedSchema(String schemaName) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Drop table of  schema " + schemaName);
+		Messenger.printMsg(Messenger.TRACE, "Drop tables of  schema " + schemaName);
 		SQLQuery sq = new SQLQuery();
-		ResultSet rs = sq.run("SELECT table_name  FROM " + tableName + " WHERE  schema_name = '" + schemaName + "' AND table_name = '" + tableName + "'" );
+		ResultSet rs = sq.run("SELECT table_name  FROM " + tableName + " WHERE  schema_name = '" + schemaName + "'");
 		while( rs.next() ) {
 			Table_Tap_Schema_Tables.dropPublishedTable(schemaName, rs.getString(1));
 		}
@@ -104,12 +104,14 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	 */
 	public static boolean knowsTable(String table) throws Exception {
 		SQLQuery sq = new SQLQuery();
+		boolean retour = false;
 		ResultSet rs = sq.run("SELECT table_name FROM " + tableName + " WHERE table_name = '" + table + "' LIMIT 1");
 		while (rs.next()) {
-			return true;
+			retour = true;
+			break;
 		}
 		rs.close();
-		return  false;
+		return  retour;
 	}
 
 }

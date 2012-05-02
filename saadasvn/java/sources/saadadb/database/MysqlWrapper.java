@@ -524,7 +524,6 @@ public class MysqlWrapper extends DbmsWrapper {
 			}
 			return null;			
 		}
-
 	}
 
 	@Override

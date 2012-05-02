@@ -116,13 +116,14 @@ public class TapServiceManager extends EntityManager {
 			/*
 			 * Reference TAPS_SCHEMA table columns 
 			 */
-
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Schemas.tableName    , Table_Tap_Schema_Schemas.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Tables.tableName     , Table_Tap_Schema_Tables.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Columns.tableName    , Table_Tap_Schema_Columns.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Keys.tableName       , Table_Tap_Schema_Keys.attMap, true);
 			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Key_Columns.tableName, Table_Tap_Schema_Key_Columns.attMap, true);
 
+
+			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Keys.tableName, Table_Tap_Schema_Key_Columns.tableName, "key_id", "key_id");
 		} catch (SaadaException e) {
 			e.printStackTrace();
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -142,7 +143,7 @@ public class TapServiceManager extends EntityManager {
 	}
 
 	/**
-	 * Removes all schemas except ivoa if all is false
+	 * Removes all schemas except ivoa 
 	 * @throws Exception
 	 */
 	public void removeAllTables() throws Exception {
@@ -151,9 +152,8 @@ public class TapServiceManager extends EntityManager {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
 		}
 		String[] schemas = Table_Tap_Schema_Schemas.getSchemaList();
-		boolean all = false;
 		for( String schema: schemas) {
-			if( all || !schema.equalsIgnoreCase("ivoa") ) {
+			if(  !schema.equalsIgnoreCase("ivoa") && !schema.equalsIgnoreCase("TAP_SCHEMA")) {
 				this.remove(new ArgsParser(new String[]{"-remove=" + schema}));
 			}
 		}
@@ -167,6 +167,7 @@ public class TapServiceManager extends EntityManager {
 		try {
 			String toRemove = ap.getRemove();
 			if( toRemove.equalsIgnoreCase("service")) {
+				Messenger.printMsg(Messenger.TRACE, "Drop TAP service");
 				int missingTable = serviceExists();
 				if( missingTable == 0 ) {
 					FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
@@ -184,6 +185,7 @@ public class TapServiceManager extends EntityManager {
 				 * One field: that is a request to unpublish a whole schema;
 				 */
 				if( sc.length == 1 ) {
+					Messenger.printMsg(Messenger.TRACE, "Drop TAP schema " + sc[0]);
 					if( ! Table_Tap_Schema_Schemas.knowsSchema(sc[0]) ) {
 						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "There is not schema '" + sc[0] + "' published");			
 					}
@@ -193,6 +195,7 @@ public class TapServiceManager extends EntityManager {
 				 * 2 fields: that is a request to unpublish a table within a schema;
 				 */
 				else if( sc.length == 2 ){
+					Messenger.printMsg(Messenger.TRACE, "Drop TAP table " + sc[1]);
 					Table_Tap_Schema_Tables.dropPublishedTable(sc[0], sc[1]);
 				}
 				else {
@@ -255,14 +258,8 @@ public class TapServiceManager extends EntityManager {
 				Messenger.printMsg(Messenger.TRACE, table + " is a Saada class");
 				MetaClass mc = Database.getCachemeta().getClass(table);
 				schema = mc.getCollection_name();
-
-//				Collection<AttributeHandler> coll = Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
-//				for(AttributeHandler ah : coll) {
-//					String na = ah.getNameattr();
-//					if( !ignoreCollAttrs.contains(na)) {
-//						mah.put(na, ah);
-//					}
-//				}
+				mah.put("oidsaada", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("oidsaada"));
+				mah.put("namesaada", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("namesaada"));
 				mah.putAll(mc.getAttributes_handlers());
 			}
 			else {
@@ -291,7 +288,6 @@ public class TapServiceManager extends EntityManager {
 				}
 				schema = coll;
 			}
-	
 			/*
 			 * TAP SCHEMA table update
 			 */
@@ -313,8 +309,6 @@ public class TapServiceManager extends EntityManager {
 	 */
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
-
 	}
 
 	/* (non-Javadoc)
@@ -322,7 +316,6 @@ public class TapServiceManager extends EntityManager {
 	 */
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -486,34 +479,36 @@ public class TapServiceManager extends EntityManager {
 				 */
 				SQLTable.beginTransaction();
 				this.populate(ap);
+				SQLTable.commitTransaction();
 				/*
 				 * Add joins to subclasses are already recorded
 				 */
-				for( String sclass: Database.getCachemeta().getClassNames(catName, Category.getCategory(catName))) {			
+				SQLTable.beginTransaction();
+				for( String sclass: Database.getCachemeta().getClassNames(collName, Category.getCategory(catName))) {	
 					if( Table_Tap_Schema_Tables.knowsTable(sclass)) {
-						Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
+						Messenger.printMsg(Messenger.TRACE, "Add join " + collTable + " [X] " + sclass);
 						Table_Tap_Schema_Keys.addSaadaJoin(collTable, sclass);					
 					}
 				}
 				SQLTable.commitTransaction();
 			}
-			
+
 			else if( dataTreePath.isClassLevel()) {
 				classTable = dataTreePath.classe;
 				ap = new ArgsParser(
 						new String[] {"-populate=" + classTable, "-comment=" + cap.getDescription(), Messenger.getDebugParam()});
 				SQLTable.beginTransaction();
 				this.populate(ap);
-				Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
-				Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);
 				SQLTable.commitTransaction();
+				SQLTable.beginTransaction();
 				/*
 				 * Add join to collection table if it has been recorded
 				 */
-				if( Table_Tap_Schema_Tables.knowsTable(collTable) )  {
-					Messenger.printMsg(Messenger.TRACE, "Add join" + collTable + " [X] " + classTable);
-					Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);					
+				if( Table_Tap_Schema_Tables.knowsTable(collTable)) {
+					Messenger.printMsg(Messenger.TRACE, "Add join " + collTable + " [X] " + classTable);
+					Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);
 				}
+				SQLTable.commitTransaction();
 			}
 		}
 	}

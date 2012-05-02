@@ -52,7 +52,7 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	}
 
 	/**
-	 * Make a collection <> class join ohn oidsaada.
+	 * Make a collection <> class join on oidsaada.
 	 * 2 joins are created: classTable and callTable_rev
 	 * @param collTable
 	 * @param classTable
@@ -62,11 +62,23 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
 				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join"});
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
-				, new Object[]{classTable + "_rev", collTable, classTable , "Collection to Class Saada join"});
+				, new Object[]{classTable + "_rev", classTable, collTable,  "Collection to Class Saada join"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(classTable);
-
 	}
 
+	/**
+	 * Make a fromTable <> targetTable join on fromKey/targetKey.
+	 * @param fromTable
+	 * @param targetTable
+	 * @param fromKey
+	 * @param targetKey
+	 * @throws AbortException
+	 */
+	public static void addSaadaJoin(String fromTable, String targetTable, String fromKey, String targetKey) throws AbortException {
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
+				, new Object[]{fromTable, targetTable, fromTable , "Standard join"});
+		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
+	}
 
 	/**
 	 * @throws AbortException
@@ -81,11 +93,11 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException 
 	 */
 	public static void dropPublishedTable(String table) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
+		Messenger.printMsg(Messenger.TRACE, "Drop key of  table " + table);
 		SQLQuery sq = new SQLQuery();
 		ResultSet rs = sq.run("SELECT key_id FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'" );
 		while( rs.next() ) {
-			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getInt(1));
+			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
 		}
 		sq.close();
 		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'");		
