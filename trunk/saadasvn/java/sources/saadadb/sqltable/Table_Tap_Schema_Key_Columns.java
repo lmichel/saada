@@ -48,9 +48,9 @@ public class Table_Tap_Schema_Key_Columns extends SQLTable {
 	 * @param ketId
 	 * @throws AbortException
 	 */
-	public static void dropPublishedKey(int ketId) throws AbortException {
+	public static void dropPublishedKey(String ketId) throws AbortException {
 		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
-		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  key_id = " + ketId );		
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  key_id = '" + ketId + "'");		
 	}
 	
 	/**
@@ -62,15 +62,27 @@ public class Table_Tap_Schema_Key_Columns extends SQLTable {
 	}
 
 	/**
-	 * Add 2 columns joined on oidsaada with classTable as key 
-	 * @param classTable
+	 * Add 2 columns joined on oidsaada with keyId as key 
+	 * @param keyId
 	 * @throws AbortException
 	 */
-	public static void addSaadaJoin(String classTable) throws AbortException {
+	public static void addSaadaJoin(String keyId) throws AbortException {
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
-				, new Object[]{classTable, "oidsaada", "oidsaada"});
+				, new Object[]{keyId, "oidsaada", "oidsaada"});
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
-				, new Object[]{classTable + "_rev", "oidsaada", "oidsaada"});
+				, new Object[]{keyId + "_rev", "oidsaada", "oidsaada"});
+	}
+
+	/**
+	 * Add column joined on from/target with keyId as key 
+	 * @param keyId
+	 * @param from
+	 * @param target
+	 * @throws AbortException
+	 */
+	public static void addSaadaJoin(String keyId, String from, String target) throws AbortException {
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?)"
+				, new Object[]{keyId, from, target});
 	}
 
 
