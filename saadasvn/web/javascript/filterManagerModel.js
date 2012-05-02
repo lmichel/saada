@@ -39,22 +39,22 @@ jQuery.extend({
 		this.initSpeFieldsList = function(category) {
 			switch (category) {
 			case 'ENTRY':
-				speFields = [ 'Access', 'Detail', 'Position', 'Position with error', 'Table Header', 'Error (arcsec)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
+				speFields = [ 'Access', 'Detail', 'Position', 'Position with error', 'Table Header', 'Error (arcsec)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name', 'Gallery' ];
 				break;
 			case 'SPECTRUM':
-				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Aladin', 'Visu', 'TopCat', 'Simbad', 'VizieR', 'Name' ];
+				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Aladin', 'Visu', 'TopCat', 'Simbad', 'VizieR', 'Name' , 'Gallery'];
 				break;
 			case 'IMAGE':
-				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Size (deg)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name', 'Plot', 'Size (deg)' ];
+				speFields = [ 'Access', 'Detail', 'DL Link', 'Position', 'Position with error', 'Size (deg)', 'Aladin', 'TopCat', 'Simbad', 'VizieR', 'Name', 'Plot', 'Size (deg)' , 'Gallery'];
 				break;
 			case 'FLATFILE':
-				speFields = [ 'Access', 'Preview', 'Detail', 'DL Link', 'Name' ];
+				speFields = [ 'Access', 'Preview', 'Detail', 'DL Link', 'Name' , 'Gallery'];
 				break;
 			case 'TABLE':
-				speFields = [ 'Access', 'DL Link', 'Header', 'Table', 'Entries' ];
+				speFields = [ 'Access', 'DL Link', 'Header', 'Table', 'Entries' , 'Gallery'];
 				break;
 			case 'MISC':
-				speFields = ['Access',  'Detail', 'DL Link', 'Name' ];
+				speFields = ['Access',  'Detail', 'DL Link', 'Name' , 'Gallery'];
 				break;
 			}
 		};
