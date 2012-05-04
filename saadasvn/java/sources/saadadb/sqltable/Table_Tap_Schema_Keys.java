@@ -76,7 +76,7 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 */
 	public static void addSaadaJoin(String fromTable, String targetTable, String fromKey, String targetKey) throws AbortException {
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
-				, new Object[]{fromTable, targetTable, fromTable , "Standard join"});
+				, new Object[]{fromTable, fromTable, targetTable , "Standard join"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
 	}
 
