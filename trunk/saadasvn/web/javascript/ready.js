@@ -298,31 +298,31 @@ $().ready(function() {
 
 	var patternModel      = new $.PatternModel();
 	var patternView       = new $.PatternView();
-	var patternControler = new $.PatternControler(patternModel, patternView);
+	new $.PatternControler(patternModel, patternView);
 
 	var saadaqlModel      = new $.SaadaQLModel(patternModel);
 	saadaqlView           = new $.SaadaQLView();
-	var saadaqlControler = new $.SaadaQLControler(saadaqlModel, saadaqlView);
+	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
 	var sapModel      = new $.SapModel();
 	sapView           = new $.SapView();
-	var sapControler = new $.SapControler(sapModel, sapView);
+	new $.SapControler(sapModel, sapView);
 
 	var sampModel       = new $.SampModel();
 	sampView            = new $.SampView();
-	var sampControler  = new $.SampControler(sampModel, sampView);
+	new $.SampControler(sampModel, sampView);
 
 	var tapModel       = new $.TapModel();
 	tapView            = new $.TapView();
-	var tapControler  = new $.TapControler(tapModel, tapView);
+	new $.TapControler(tapModel, tapView);
 
 	var filterManagerModel       = new $.FilterManagerModel();
 	filterManagerView            = new $.FilterManagerView();
-	var filterManagerControler  = new $.FilterManagerControler(filterManagerModel, filterManagerView);
+	new $.FilterManagerControler(filterManagerModel, filterManagerView);
 
 	var cartModel       = new $.CartModel();
 	cartView            = new $.CartView();
-	var cartControler  = new $.CartControler(cartModel, cartView);
+	new $.CartControler(cartModel, cartView);
 
 	/*
 	 * Splitter functions of accesspane, the container of the db tree, 

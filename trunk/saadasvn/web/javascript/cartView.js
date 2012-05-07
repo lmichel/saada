@@ -51,7 +51,7 @@ jQuery.extend({
 		};
 		this.fireAddUrl = function(element, name, oid) {
 			var elementClass = element.attr('class');
-			if( elementClass == 'dl_cart' ) {
+			if( elementClass == 'dl_cart' || elementClass == 'dl_securecart') {
 				element.attr('class', 'dl_cart_added');
 				logMsg("add " + name + " <> " + oid);
 				$.each(listeners, function(i){
