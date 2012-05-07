@@ -3,5 +3,6 @@
 saadadbname=ThreeXMM
 #urlroot=http://localhost:8888/SaadaGUI
 urlroot=http://localhost:8888/Saada1.7
+securedownload=true
 #saadadbroot=/Users/laurentmichel/Desktop/DossierBoston/saadadbs/AJAX
 #debug=on
