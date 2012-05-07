@@ -1249,6 +1249,21 @@ public abstract class SaadaInstance implements DMInterface {
 			return retour;
 		}
 	}	
+	/**
+	 * @param full_path
+	 * @return
+	 * @throws FatalException 
+	 */
+	public String getSecureDownloadURL(boolean full_path) throws FatalException {
+		String retour;
+		retour = "securedownload?oid=" + this.oidsaada;
+		if( full_path ) {
+			return Database.getUrl_root() + "/" + retour;
+		}
+		else {
+			return retour;
+		}
+	}	
 
 	/**
 	 * @param filename

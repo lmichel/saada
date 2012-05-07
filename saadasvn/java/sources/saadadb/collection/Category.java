@@ -35,7 +35,7 @@ public abstract class Category {
 			else if( str.endsWith("entry") ) {
 				return Category.ENTRY;
 			}
-			else if( str.endsWith("image")  && str.endsWith("image3d") ) {
+			else if( str.endsWith("image")  || str.endsWith("image3d") ) {
 				return Category.IMAGE;
 			}
 			else if( str.endsWith("spectrum")  ) {

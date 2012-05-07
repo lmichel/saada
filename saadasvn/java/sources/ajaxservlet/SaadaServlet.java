@@ -48,6 +48,7 @@ public class SaadaServlet extends HttpServlet {
 	public static final boolean JSON_FILE_MODE = false;
 	public static String base_dir;
 	private static final long serialVersionUID = 1L;
+	public static boolean secureDownlad = false;
 
 
 	public static boolean isInit(){
@@ -73,7 +74,6 @@ public class SaadaServlet extends HttpServlet {
 							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by " + conf.getServletName());
 							Messenger.debug_mode = false;
 							LocalConfig lc = new LocalConfig();
-							System.out.println(lc.db_name);
 							Database.init(lc.db_name);
 							if( lc.urlroot != null && lc.urlroot.length() > 0 ){
 								Database.getConnector().setUrl_root(lc.urlroot);
@@ -269,7 +269,7 @@ public class SaadaServlet extends HttpServlet {
 			res.setContentType("application/octet-stream");
 		}
 
-		//res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
+		res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
 		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);
@@ -341,6 +341,7 @@ public class SaadaServlet extends HttpServlet {
 		private String db_name = null;
 		private String urlroot = null;
 		private String saadadbroot = null;
+		
 		LocalConfig()  throws Exception{
 			File f = new File(base_dir + "dbname.txt");
 			if( f.exists() ) {
@@ -368,7 +369,11 @@ public class SaadaServlet extends HttpServlet {
 						Messenger.printMsg(Messenger.TRACE, "saadadbroot: " + retour);
 						this.saadadbroot = retour;
 					}
-					else if( "debug=on".equalsIgnoreCase(buff)) {
+					else if( "securedownload=true".equalsIgnoreCase(buff.trim())) {
+						Messenger.printMsg(Messenger.TRACE, "Set download product in secure mode");
+						SaadaServlet.secureDownlad = true;
+					}
+					else if( "debug=on".equalsIgnoreCase(buff.trim())) {
 						Messenger.debug_mode = true;
 					}
 				}

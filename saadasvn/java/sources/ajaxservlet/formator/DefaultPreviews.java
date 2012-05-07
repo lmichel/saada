@@ -2,6 +2,8 @@ package ajaxservlet.formator;
 
 import java.io.File;
 
+import ajaxservlet.SaadaServlet;
+
 import saadadb.collection.EntrySaada;
 import saadadb.collection.FlatfileSaada;
 import saadadb.collection.Position;
@@ -47,17 +49,28 @@ abstract public class DefaultPreviews {
 	}
 	public static final String getInfoLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		return "<a title='Get info about the product file' class=dl_info href='javascript:void(0)' onclick='resultPaneView.fireGetProductInfo(\"" + si.getDownloadURL(true) + "\");'></A>";
+		if( SaadaServlet.secureDownlad ) {
+			return "<a title='Get info about the product file' class=dl_info href='javascript:void(0)' onclick='resultPaneView.fireGetProductInfo(\"" + si.getDownloadURL(true) + "\");'></A>";
+		} else {
+			return "<a title='Get info about the product file' class=dl_info href='javascript:void(0)' onclick='resultPaneView.fireGetProductInfo(\"" + si.getDownloadURL(true) + "\");'></A>";
+		}
 	}
 	public static final String getCartLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		return "<a class=dl_cart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
-		//return "<a class=dl_cart title=\"Add to cart\" href=\"#\" onclick='cartView.fireAddUrl(\"" + si.getDownloadURL(true) + "\");'></a>";
+		if( SaadaServlet.secureDownlad ) {
+		    return "<a class=dl_securecart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
+		} else {
+			return "<a class=dl_cart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
+		}
 	}
 	public static final String getDLLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
-		
-		return "<a title='Download the porduct file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "&qq=aaa.pdf\", \"preview\");'></A>";
+		if( SaadaServlet.secureDownlad ) {
+			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
+
+		} else {
+			return "<a title='Download the product file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
+		}
 	}
 
 	/**
@@ -114,7 +127,11 @@ abstract public class DefaultPreviews {
 	}
 
 	public static String getTopcatSAMP(long oid) throws FatalException {
-		return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getDownloadURL(true) + "\");'></a>");
+		if( SaadaServlet.secureDownlad ) {
+			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getSecureDownloadURL(true) + "\");'></a>");
+		} else {
+			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getDownloadURL(true) + "\");'></a>");
+		}
 	}
 
 	public static String getAladinSAMP(long oid){
