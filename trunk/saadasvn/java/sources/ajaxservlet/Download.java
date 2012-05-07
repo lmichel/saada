@@ -3,6 +3,7 @@ package ajaxservlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.util.Messenger;
 import ajaxservlet.accounting.UserTrap;
 
 /**
@@ -24,12 +26,6 @@ import ajaxservlet.accounting.UserTrap;
 public class Download extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public Download() {
-		super();
-	}
 
 
 	/**
@@ -46,12 +42,14 @@ public class Download extends SaadaServlet {
 		process(request, response);
 	}
 
-	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		int category ;
 		String product_path;
 		long oid;
 		String separ= Database.getSepar();
 		printAccess(request, false);
+
 		try {
 
 			String soid = request.getParameter("oid");
@@ -61,8 +59,16 @@ public class Download extends SaadaServlet {
 			}
 			String ext    = request.getParameter("ext");
 			String report = request.getParameter("report");
-
+System.out.println(secureDownlad);
 			if( soid != null  ) {
+				/*
+				 * If the query is set to download a data product, not a preview and the app is in secire more
+				 * the service is dispatched to secure download
+				 */
+				if( ext == null && secureDownlad == true ) {
+					response.sendRedirect(Database.getUrl_root() + "/securedownload?oid=" + soid);
+					return;						
+				}
 				oid = Long.parseLong(soid);
 				SaadaInstance si = Database.getCache().getObject(oid);
 				category = SaadaOID.getCategoryNum(oid);

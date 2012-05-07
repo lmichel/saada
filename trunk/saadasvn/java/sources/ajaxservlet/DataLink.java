@@ -97,7 +97,11 @@ public class DataLink extends SaadaServlet implements Servlet {
 					row.add(0, rel);
 					row.add(1, collection);
 					row.add(2, category);
-					row.add(3, Database.getCache().getObject(cpoid).getDownloadURL(true));	
+					if( SaadaServlet.secureDownlad ) {
+						row.add(3, Database.getCache().getObject(cpoid).getSecureDownloadURL(true));	
+					} else {
+						row.add(3, Database.getCache().getObject(cpoid).getDownloadURL(true));	
+					}
 					data.add(row);
 				}
 			}

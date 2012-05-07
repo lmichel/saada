@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import saadadb.database.Database;
 import saadadb.util.Messenger;
 import saadadb.vo.cart.CartJob;
 import uws.UWSException;
@@ -51,6 +52,10 @@ public class CartBuilder extends SaadaServlet {
 		try{
 			this.printAccess(req, false);
 			if( req.getRequestURI().endsWith("/download")) {
+				if( SaadaServlet.secureDownlad ) {
+					res.sendRedirect(Database.getUrl_root() + "/securedownload?download=cart");
+					return;
+				}
 				this.downloadProduct(req
 						, res
 						, UserTrap.getUserAccount(req).getCartDir() + File.separator + CartJob.zipName + ".zip"
