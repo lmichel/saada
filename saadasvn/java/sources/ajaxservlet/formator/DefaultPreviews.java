@@ -128,7 +128,7 @@ abstract public class DefaultPreviews {
 
 	public static String getTopcatSAMP(long oid) throws FatalException {
 		if( SaadaServlet.secureDownlad ) {
-			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getSecureDownloadURL(true) + "\");'></a>");
+			return ("<a  title='Send a VOTable to SAMP (restricted)' href='javascript:void(0);' class=dl_securesamp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getSecureDownloadURL(true) + "\");'></a>");
 		} else {
 			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getDownloadURL(true) + "\");'></a>");
 		}
@@ -137,6 +137,7 @@ abstract public class DefaultPreviews {
 	public static String getAladinSAMP(long oid){
 		return ("<a title='Send an image to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendImage(\"" + oid + "\");'></a>");
 	}
+	
 	public static String getSkyAtSAMP(long oid) throws FatalException{
 		Position si =  (Position)(Database.getCache().getObject(oid));
 		return ("<a title='Send a position to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.firePointatSky(\"" 
