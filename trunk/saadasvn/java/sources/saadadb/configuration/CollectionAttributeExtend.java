@@ -64,7 +64,7 @@ public class CollectionAttributeExtend extends Hashtable<String,LinkedHashMap<St
 					NodeList nodes_desc = res_ch.getElementsByTagName(TAG_NAME_DESCRIPTION);
 					AttributeHandler ah = new AttributeHandler();
 					ah.setNameorg(res_ch.getAttribute(ATTR_NAME));
-					ah.setNameattr(ChangeKey.changeKey(res_ch.getAttribute(ATTR_NAME)));
+					ah.setNameattr(res_ch.getAttribute(ATTR_NAME));
 					ah.setType(res_ch.getAttribute(ATTR_TYPE));
 					String ucd = res_ch.getAttribute(ATTR_UCD);
 					if ( ucd.length() != 0  ) {
