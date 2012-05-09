@@ -1011,6 +1011,25 @@ a:active.dl_samp {
 	opacity: 0.8;
 }
 
+a.dl_securesamp {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0px 9px 23px;
+	background: transparent url(../images/dl_key_ivoa.png) center left
+		no-repeat;
+}
+a:hover.dl_securesamp {
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
+a:active.dl_securesamp {
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.8;
+	opacity: 0.8;
+}
+
 a.dl_download {
 	display: inline-block;
 	width: 0px;
@@ -1034,7 +1053,7 @@ a.dl_securedownload {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_key_cart.png) center left
+	background: transparent url(../images/dl_key_download.png) center left
 		no-repeat;
 }
 a:hover.dl_securedownload {
