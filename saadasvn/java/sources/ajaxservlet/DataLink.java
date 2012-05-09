@@ -1,25 +1,24 @@
 package ajaxservlet;
 
 import java.io.IOException;
+
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import ajaxservlet.json.JsonUtils;
-
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
-import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.meta.MetaRelation;
+import ajaxservlet.json.JsonUtils;
 
-import netscape.javascript.JSObject;
 
 /**
  * Servlet implementation class DataLink
