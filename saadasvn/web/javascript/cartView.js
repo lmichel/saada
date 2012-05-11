@@ -52,14 +52,14 @@ jQuery.extend({
 		this.fireAddUrl = function(element, name, oid) {
 			var elementClass = element.attr('class');
 			if( elementClass == 'dl_cart' || elementClass == 'dl_securecart') {
-				element.attr('class', 'dl_cart_added');
+				element.attr('class', elementClass + '_added');
 				logMsg("add " + name + " <> " + oid);
 				$.each(listeners, function(i){
 					listeners[i].controlAddUrl(name, oid);
 				});
 			}
 			else {
-				element.attr('class', 'dl_cart');
+				element.attr('class', elementClass.replace('_added', ''));
 				$.each(listeners, function(i){
 					listeners[i].controlRemoveUrl(getTreePathAsKey(), oid);
 				});
