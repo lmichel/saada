@@ -61,16 +61,16 @@ public class Download extends SaadaServlet {
 			String report = request.getParameter("report");
 System.out.println(secureDownlad);
 			if( soid != null  ) {
+				oid = Long.parseLong(soid);
+				SaadaInstance si = Database.getCache().getObject(oid);
 				/*
 				 * If the query is set to download a data product, not a preview and the app is in secire more
 				 * the service is dispatched to secure download
 				 */
-				if( ext == null && secureDownlad == true ) {
+				if( ext == null && secureDownlad == true && si.getCategory() != Category.FLATFILE) {
 					response.sendRedirect(Database.getUrl_root() + "/securedownload?oid=" + soid);
 					return;						
 				}
-				oid = Long.parseLong(soid);
-				SaadaInstance si = Database.getCache().getObject(oid);
 				category = SaadaOID.getCategoryNum(oid);
 				if( category == Category.ENTRY) {
 					getErrorPage(request, response, "There are no product files associated with individual catalogue entries");
