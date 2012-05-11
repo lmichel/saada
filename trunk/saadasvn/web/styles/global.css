@@ -1,4 +1,3 @@
-/*
  * CSS rules by tags
  */
  
@@ -992,6 +991,25 @@ a.cart {
 /**************************
  * Small icons attached to data links
  */
+a.dl_stc {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0px 9px 23px;
+	background: transparent url(../images/STC.png) center left
+		no-repeat;
+}
+a:hover.dl_stc {
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
+a:active.dl_stc {
+	filter: alpha(opacity = 50);
+	-moz-opacity: 0.8;
+	opacity: 0.8;
+}
+
 a.dl_samp {
 	display: inline-block;
 	width: 0px;
@@ -1010,6 +1028,7 @@ a:active.dl_samp {
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
+
 
 a.dl_securesamp {
 	display: inline-block;
@@ -1105,7 +1124,7 @@ a.dl_securecart {
 	background: transparent url(../images/dl_key_cart.png) center left
 		no-repeat;
 }
-a.dl_cart_secureadded {
+a.dl_securecart_added {
 	display: inline-block;
 	width: 0px;
 	overflow: visible;
