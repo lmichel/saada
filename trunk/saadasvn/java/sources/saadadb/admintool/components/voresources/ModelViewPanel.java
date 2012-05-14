@@ -14,43 +14,42 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.DMAttributeTextField;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.tree.FilteredFieldTree;
-import saadadb.admintool.tree.VoClassTree;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.admintool.windows.MappedTableWindow;
-import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
-import saadadb.util.Messenger;
 
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class ModelViewPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	ObscoreMapperPanel obscoreMapperPanel;
 	private ModelFieldList resourceList;
 	protected JEditorPane descPanel;
 	protected DMAttributeTextField mapField;
+	private JButton defaultButton;
 	private JButton checkButton;
 	private JButton quickLookButton;
 	private JButton resetButton;
+	private JButton setAllDefaultButton;
 	private FilteredFieldTree classTree;
 
 	protected MetaClass metaClass;
@@ -68,7 +67,7 @@ public class ModelViewPanel extends JPanel {
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 
 		MyGBC mgbc = new MyGBC(5,5,5,5);
-		mgbc.weightx = 1; mgbc.weighty = 1;mgbc.anchor = GridBagConstraints.NORTH;mgbc.gridheight= 2;
+		mgbc.weightx = 1; mgbc.weighty = 1;mgbc.anchor = GridBagConstraints.NORTHWEST;mgbc.gridheight= 2;
 		this.setLayout(new GridBagLayout());
 
 		this.resourceList = new ModelFieldList(this);
@@ -80,9 +79,16 @@ public class ModelViewPanel extends JPanel {
 		this.descPanel.setPreferredSize(new Dimension(230, 220));
 		this.mapField = new DMAttributeTextField();
 		this.mapField.setColumns(24);
-		this.checkButton = new JButton("Check Mapping");
+		this.defaultButton = new JButton("Default");
+		this.defaultButton.setToolTipText("Set default mapping");
+		this.checkButton = new JButton("Check");
+		this.checkButton.setToolTipText("Check the mapping against the database");
 		this.resetButton = new JButton("Reset");
+		this.resetButton.setToolTipText("Empty all mapping");
 		this.quickLookButton = new JButton("QuickLook");
+		this.quickLookButton.setToolTipText("Generate and display a temporary ObsTap table");
+		this.setAllDefaultButton = new JButton("Default");
+		this.setAllDefaultButton.setToolTipText("Set all fields with default mapping");
 		JPanel jp = new JPanel();
 		jp.setBorder(BorderFactory.createTitledBorder("Field Mapper"));
 		jp.setLayout(new BoxLayout(jp, BoxLayout.PAGE_AXIS));	
@@ -93,24 +99,30 @@ public class ModelViewPanel extends JPanel {
 		jp.add(js);
 		jp.add(new JLabel("Mapping Statement"));
 		jp.add(mapField);
-		jp.add(checkButton);
+		JPanel bp = new JPanel();
+		bp.add(checkButton);
+		bp.add(defaultButton);
+		jp.add(bp);
 		mgbc.next();
+		mgbc.anchor = GridBagConstraints.NORTHWEST;
 		this.add(jp,mgbc);
 
 		mgbc.gridheight= 1;mgbc.gridy++;		
 		jp = new JPanel();
-		jp.setPreferredSize(new Dimension(230,50));
+		jp.setPreferredSize(new Dimension(230,70));
 		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
 		//jp.setBorder(BorderFactory.createTitledBorder(""));
 		//jp.setLayout(new BoxLayout(jp, BoxLayout.LINE_AXIS));	
 		jp.setLayout(new FlowLayout());	
 		this.resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jp.add(resetButton);
+		jp.add(this.resetButton);
+		this.setAllDefaultButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		jp.add(this.setAllDefaultButton);
 		this.quickLookButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		jp.add(quickLookButton);
+		jp.add(this.quickLookButton);
 		this.add(jp,mgbc);
 
-		mgbc.next(); 
+		//mgbc.next(); 
 		mgbc.rowEnd();mgbc.gridheight= 2;mgbc.gridy--;
 		this.classTree = new FilteredFieldTree("Saada Attributes", 230,400);				
 		this.add(classTree, mgbc);
@@ -151,10 +163,34 @@ public class ModelViewPanel extends JPanel {
 				}
 			}
 		});
+		defaultButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					resourceList.restoreDefault();
+					resourceList.storeCurrentMapping();
+				} catch (Exception e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}
+			}
+		});
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				resourceList.resetMapping();
 				mapField.setText("");
+			}
+		});
+		setAllDefaultButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if( metaClass == null ) {
+						AdminComponent.showInputError(getParent(), "No selected data tree node");	
+						return ;
+					} else if( AdminComponent.showConfirmDialog(getParent(), "Do you want to override all mapped fields")) {
+						resourceList.restoreAllDefault();
+					}
+				} catch (Exception e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}
 			}
 		});
 		quickLookButton.addActionListener(new ActionListener() {
@@ -164,7 +200,7 @@ public class ModelViewPanel extends JPanel {
 				} else if( !resourceList.checkContent()){
 					AdminComponent.showInputError(getParent(), "Fix mapping errors first (red items)");	
 				} else {
-						try {
+					try {
 						MappedTableWindow dtw = new MappedTableWindow(ModelViewPanel.this.obscoreMapperPanel.rootFrame
 								, resourceList.getQuery());
 						dtw.open();

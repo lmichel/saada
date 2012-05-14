@@ -20,12 +20,14 @@ import saadadb.admintool.components.voresources.ModelFieldMapper;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
+import saadadb.vo.registry.Authority;
+
 
 /**
- * @author laurentmichel
+ * @author michel
+ * @version $Id$
  *
  */
 public class ObscoreMapperPanel extends TaskPanel {
@@ -68,15 +70,16 @@ public class ObscoreMapperPanel extends TaskPanel {
 			runButton.setEnabled(false);
 			return;
 		} else if( dataTreePath.isClassLevel() ) {
-			runButton.setEnabled(true);
-			if( !this.hasChanged() ||
-			    showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
-				super.setDataTreePath(dataTreePath);
-				try {
+			try {
+				runButton.setEnabled(true);
+				Authority.load();
+				if( !this.hasChanged() ||
+						showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
+					super.setDataTreePath(dataTreePath);
 					modelFieldMapper.setDataTreePath(dataTreePath);
-				} catch (Exception e) {
-					showFatalError(rootFrame, e);
 				}
+			} catch (Exception e) {
+				showFatalError(rootFrame, e);
 			}
 		} else {
 			runButton.setEnabled(false);
@@ -101,7 +104,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
 		tPanel.add(modelFieldMapper, emc);
 		modelFieldMapper.setCollapsed(false);
-		
+
 		emc.newRow();
 		tPanel.add(new CollapsiblePanel("Manage Data Classes Published in ObsCore"), emc);
 

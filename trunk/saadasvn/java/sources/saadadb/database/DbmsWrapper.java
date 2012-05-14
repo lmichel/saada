@@ -762,6 +762,12 @@ abstract public class DbmsWrapper {
 	public abstract String getRegexpOp();
 
 	/**
+	 * @param arg1
+	 * @param arg2
+	 * @return
+	 */
+	public abstract String getStrcatOp(String arg1, String arg2);
+	/**
 	 * @return
 	 */
 	public abstract String getInsertStatement(String where, String[] fields, String[] values);

@@ -62,7 +62,9 @@ public class Table_Saada_VO_Authority extends SQLTable {
 	public static void removeTable() throws FatalException {
 		SQLTable.addQueryToTransaction(Database.getWrapper().dropTable(tableName));
 	}
-	
+	public static boolean tableExists() {
+		return SQLTable.tableExist(tableName);
+	}
 	public static  void loadTable(Authority authority) throws Exception {
 		if( !SQLTable.tableExist(tableName)) {
 			SQLTable.beginTransaction();

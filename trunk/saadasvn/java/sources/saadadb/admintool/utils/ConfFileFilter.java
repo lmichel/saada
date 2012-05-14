@@ -11,6 +11,12 @@ import saadadb.collection.Category;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 
+/**
+ * Filename filter for data loader config files
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class ConfFileFilter extends FileFilter {
 	private String category  = null;
 	private boolean candidate_found = false;

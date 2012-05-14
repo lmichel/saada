@@ -15,7 +15,7 @@ import saadadb.util.Messenger;
  * Modeler of the VO authority
  * @author laurent
  * @version $Id$
- *
+ * 05/2012: method hasBeenStored to know if default values must be used
  */
 public class Authority extends EntityManager{
 	private String authTitle;
@@ -34,8 +34,6 @@ public class Authority extends EntityManager{
 	private String contentDescription;
 	private String contentType;
 	private String contentLevel;
-
-	
 	private static Authority authorityInstance;
 	
 	private Authority() {
@@ -235,13 +233,17 @@ public class Authority extends EntityManager{
 		+ "    <referenceURL>" + this.getContentRefURL() + "</referenceURL>\n"
 		+ "</content>\n";
 	}
-	public void load() throws QueryException {
+	public static void load() throws QueryException {
 		try {
+			Messenger.printMsg(Messenger.TRACE, "Load authority");
 			Table_Saada_VO_Authority.loadTable(Authority.getInstance());
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
+	}
+	public boolean hasBeenStored() {
+		return  Table_Saada_VO_Authority.tableExists();
 	}
 	@Override
 	public void create(ArgsParser ap) throws QueryException {

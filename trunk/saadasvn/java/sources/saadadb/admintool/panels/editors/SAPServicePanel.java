@@ -34,7 +34,8 @@ import saadadb.vo.tap.TapServiceManager;
  * @author laurentmichel
  *
  */
-public class SIAServicePanel extends EditPanel {
+@SuppressWarnings("serial")
+public class SAPServicePanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private VOServiceItemSelector itemSelector;
 	private Authority authority;
@@ -43,7 +44,7 @@ public class SIAServicePanel extends EditPanel {
 	 * @param rootFrame
 	 * @param ancestor
 	 */
-	public SIAServicePanel(AdminTool rootFrame, String ancestor) {
+	public SAPServicePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, SIA_PUBLISH, null, ancestor);
 	}
 
@@ -61,6 +62,7 @@ public class SIAServicePanel extends EditPanel {
 		if( itemSelector != null ) {
 			try {
 				itemSelector.loadCapabilities();
+				Authority.load();
 			} catch (Exception e) {
 				showFatalError(rootFrame, e);
 			}
@@ -120,7 +122,7 @@ public class SIAServicePanel extends EditPanel {
 					itemSelector.saveCapabilities();
 					SQLTable.commitTransaction();
 					itemSelector.loadCapabilities();
-					showSuccess(SIAServicePanel.this.rootFrame, "SIA capabilities saved");
+					showSuccess(SAPServicePanel.this.rootFrame, "SIA capabilities saved");
 				} catch (Exception e) {
 					SQLTable.abortTransaction();
 					showFatalError(rootFrame, e);

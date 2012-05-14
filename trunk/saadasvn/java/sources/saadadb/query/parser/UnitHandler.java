@@ -107,7 +107,7 @@ public class UnitHandler {
 		}
 		return attrName;
 	}
-	
+		
 	public static void main(String[] args) throws Exception{
 		System.out.println((new Unit("arcsec")).convertFromStr(new Unit("100deg")));
 		System.out.println(UnitHandler.getConvFunction("m/s", "km/s", "AAAA"));
