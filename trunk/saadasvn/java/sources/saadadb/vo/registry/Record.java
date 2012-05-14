@@ -95,7 +95,7 @@ public class Record {
 		retour.append("  </capability>\n");
 		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#tables\">\n");
 		retour.append("    <interface xsi:type=\"vs:ParamHTTP\">\n");
-		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "tap/tables</accessURL>\n");
+		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/tables</accessURL>\n");
 		retour.append("   </interface>\n");
 		retour.append("  </capability>\n");
 		retour.append("</ri:Resource>\n"); 
@@ -169,5 +169,6 @@ public class Record {
 		retour.append("</ri:Resource>\n"); 
 		return retour;
 	}
+	
 
 }
