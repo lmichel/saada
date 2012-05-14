@@ -363,6 +363,14 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 	
 	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getStrcatoP(java.lang.String, java.lang.String)
+	 */
+	public String getStrcatOp(String arg1, String arg2) {
+		return arg1 + "||" + arg2;
+	}
+
+	
+	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getBooleanAsString(java.lang.Object)
 	 */
 	public boolean getBooleanValue(Object rsval) {

@@ -26,6 +26,7 @@ public class ToolBarPanel extends JPanel {
 		JLabel tl = AdminComponent.getTitleLabel(" " + adminPanel.getTitle() + " ");
 		tl.setOpaque(true);
 		tl.setBorder(BorderFactory.createLineBorder(Color.black));
+		tl.setBackground(Color.ORANGE);
 		adminPanel.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(1, 7, 1, 1);

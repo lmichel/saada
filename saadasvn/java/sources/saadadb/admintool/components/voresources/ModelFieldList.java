@@ -1,6 +1,5 @@
 package saadadb.admintool.components.voresources;
 
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -18,22 +16,17 @@ import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.HelpedTextField;
-import saadadb.admintool.dnd.ProductTreePathTransferHandler;
-import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.admintool.utils.ObsCoreDesk;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -44,11 +37,15 @@ import saadadb.meta.MetaCollection;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
-import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Capability;
 
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
+@SuppressWarnings("serial")
 public class ModelFieldList extends JPanel implements ActionListener{
 	private ModelViewPanel modelViewPanel;
 	private JCheckBox filterMand = new JCheckBox("Man");
@@ -213,7 +210,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 
 			for( FieldItem it: items) {
 				if( it.selected ) {
-					it.mappingStmt = this.modelViewPanel.mapField.getText();
+					it.setMappingStmt(this.modelViewPanel.mapField.getText());
 					this.modelViewPanel.notifyChange();
 				}	
 				mapping.put(it.uth.getNickname(), it.mappingStmt);
@@ -230,7 +227,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		VOResource vor;
 		this.modelViewPanel.mapField.setText("");
 		for( FieldItem it: items) {
-			it.mappingStmt = "";
+			it.setMappingStmt(ObsCoreDesk.getDefaultFieldMapping(it.uth.getNickname(), this.modelViewPanel.metaClass));
 		}
 		/*
 		 * Called at opening time *get focus' before the vor is set
@@ -306,9 +303,41 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		}
 		return this.checkContent(sit, with_dialog);
 	}
+	/**
+	 * Restore the default value for the selected field
+	 * @throws Exception
+	 */
+	public void restoreDefault() throws Exception {
+		for( FieldItem it: items) {
+			if( it.selected ) {
+				it.setMappingStmt(ObsCoreDesk.getDefaultFieldMapping(it.uth.getNickname(), modelViewPanel.metaClass));
+				this.modelViewPanel.setUtypeHandler(it.uth, it.mappingStmt);
+				this.checkContent(it, true);
+				break;
+			}
+		}	
+	}
+	/**
+	 * Restore the default value for all fields
+	 * @throws Exception
+	 */
+	public void restoreAllDefault() throws Exception {
+		for( FieldItem it: items) {
+			it.setMappingStmt(ObsCoreDesk.getDefaultFieldMapping(it.uth.getNickname(), modelViewPanel.metaClass));
+			this.modelViewPanel.setUtypeHandler(it.uth, it.mappingStmt);
+			this.checkContent(it, true);
+		}
+		for( FieldItem it: items) {
+			if( it.selected ) {
+				this.modelViewPanel.setUtypeHandler(it.uth, it.mappingStmt);
+				break;
+			}
+		}
+	}	
+
 
 	/**
-	 * CHACK ALL items
+	 * CHECK ALL items
 	 * @return return false if at least one mapping is wrong
 	 */
 	public boolean checkContent() {
@@ -427,6 +456,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		private JLabel label = new JLabel();
 		private boolean selected = false;
 		private boolean passed = false;
+		private boolean edited = false;
 		private String mappingStmt = "";;
 		private Color borderColor;
 
@@ -492,7 +522,10 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			}
 			return true;
 		}
-
+		public void setMappingStmt(String mappingStmt) {
+			this.mappingStmt = mappingStmt;
+			this.edited = true;
+		}
 		public void select() {
 			this.setBackground(SELECTED);
 			if( this.label.getForeground() == Color.black ) {

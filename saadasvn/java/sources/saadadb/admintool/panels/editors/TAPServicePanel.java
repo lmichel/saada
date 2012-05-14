@@ -67,6 +67,7 @@ public class TAPServicePanel extends EditPanel {
 		if( itemSelector != null ) {
 			try {
 				itemSelector.loadCapabilities();
+				Authority.load();
 			} catch (Exception e) {
 				showFatalError(rootFrame, e);
 			}

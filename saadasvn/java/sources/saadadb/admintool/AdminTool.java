@@ -42,7 +42,7 @@ import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.DBInstallPanel;
 import saadadb.admintool.panels.editors.FilterSelectorPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.admintool.panels.editors.SIAServicePanel;
+import saadadb.admintool.panels.editors.SAPServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOCuratorPanel;
 import saadadb.admintool.panels.editors.WebInstallPanel;
@@ -493,7 +493,7 @@ public class AdminTool extends BaseFrame {
 			activePanel = tapService;
 		} else 	if( panelTitle.equals(AdminComponent.SIA_PUBLISH) ) {
 			if( siaService == null ) {
-				siaService = new SIAServicePanel(this, AdminComponent.VO_PUBLISH);
+				siaService = new SAPServicePanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = siaService;
 		} else 	if( panelTitle.equals(AdminComponent.OBSCORE_MAPPER) ) {

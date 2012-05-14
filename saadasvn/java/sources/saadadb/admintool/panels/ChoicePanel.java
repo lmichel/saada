@@ -50,6 +50,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		JLabel tl = getTitleLabel(" " + title + " ");
 		tl.setOpaque(true);
 		tl.setBorder(BorderFactory.createLineBorder(Color.black));
+		tl.setBackground(Color.ORANGE);
 		this.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		//tPanel.setBackground(Color.RED);
 		GridBagConstraints c = new GridBagConstraints();
