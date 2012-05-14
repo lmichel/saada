@@ -17,22 +17,16 @@ import javax.swing.JScrollPane;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
-import saadadb.admintool.components.XMLButton;
 import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.admintool.windows.TextSaver;
-import saadadb.command.ArgsParser;
-import saadadb.database.Database;
-import saadadb.exceptions.QueryException;
+import saadadb.collection.Category;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.registry.Record;
 import saadadb.vo.tap.TapServiceManager;
 
 
@@ -76,7 +70,7 @@ public class SIAServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capability.SIA);
+			itemSelector = new VOServiceItemSelector(this, Capability.SIA, new int[]{Category.IMAGE, Category.SPECTRUM});
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}

@@ -41,10 +41,10 @@ public class VOServiceItemSelector extends JPanel {
 	 * @param toActive
 	 * @throws Exception 
 	 */
-	public VOServiceItemSelector(EditPanel tapServicePanel, String protocol) throws Exception {
+	public VOServiceItemSelector(EditPanel tapServicePanel, String protocol, int[] allowedCategories) throws Exception {
 		this.protocol = protocol;
 		this.tapServicePanel = tapServicePanel;
-		this.resourceList = new VOServiceList(this, protocol);
+		this.resourceList = new VOServiceList(this, protocol, allowedCategories);
 		this.resourceList.setBorder(BorderFactory.createTitledBorder("Saada resources currently published in " + protocol));
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		
@@ -84,7 +84,7 @@ public class VOServiceItemSelector extends JPanel {
 	}
 	public boolean setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
 		if( dataTreePath.isCollectionLevel() ) {
-			AdminComponent.showInputError(tapServicePanel.rootFrame, "Selet a data tree node either at category or class level");
+			AdminComponent.showInputError(tapServicePanel.rootFrame, "Select a data tree node either at category or class level");
 			return false;
 		}
 		resourceList.addResource(dataTreePath);

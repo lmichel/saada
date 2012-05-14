@@ -76,7 +76,7 @@ public class TAPServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capability.TAP);
+			itemSelector = new VOServiceItemSelector(this, Capability.TAP, null);
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}

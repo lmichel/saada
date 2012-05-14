@@ -12,6 +12,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.collection.Category;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
@@ -27,7 +28,7 @@ import saadadb.vo.registry.Capability;
  */
 public class VOServiceList extends JPanel {
 	private static final long serialVersionUID = 1L;
-
+	private int[] allowedCategories;
 	private VOServiceItemSelector itemSelector;
 	private String protocol;
 	protected  ArrayList<VOServiceListItem> items = new ArrayList<VOServiceListItem>();
@@ -36,7 +37,8 @@ public class VOServiceList extends JPanel {
 	 * @param taskPanel
 	 * @param toActive
 	 */
-	public VOServiceList(VOServiceItemSelector itemSelector, String protocol) {
+	public VOServiceList(VOServiceItemSelector itemSelector, String protocol, int[] allowedCategories) {
+		this.allowedCategories = allowedCategories;
 		this.itemSelector = itemSelector;
 		this.protocol = protocol;
 		this.setTransferHandler(new ProductTreePathTransferHandler(3));	
@@ -53,7 +55,7 @@ public class VOServiceList extends JPanel {
 			if( tsi.isSelected() ) {
 				tsi.capability.setDescription(this.getDescription());
 			}
- 			tsi.unSelect();
+			tsi.unSelect();
 		}
 		setDescription("");
 	}
@@ -115,24 +117,38 @@ public class VOServiceList extends JPanel {
 	 */
 	public boolean addResource(DataTreePath dataTreePath) throws SaadaException {
 		if( dataTreePath.isCollectionLevel() ) {
-			AdminComponent.showInputError(this.getParent(), "Selet a data tree node either at category or class level");
+			AdminComponent.showInputError(this.getParent(), "Select a data tree node either at category or class level");
 			return false;
 		}
 		else {
 			if( this.checkExist(dataTreePath.toString()) )  return false;
-			this.items.add(new VOServiceListItem(dataTreePath, protocol));
-			this.displayListItems();
-			return true;
+			int cat = Category.getCategory(dataTreePath.category);
+			if( allowedCategories != null ) {
+				for( int c: allowedCategories ) {
+					if( cat == c ) {
+						this.items.add(new VOServiceListItem(dataTreePath, protocol));
+						this.displayListItems();
+						return true;
+					}
+				}
+				AdminComponent.showInputError(this.getParent(), "Data category " 
+						+ dataTreePath.category + " not allowed for protocol " + this.protocol);
+				return false;				
+			} else {
+				this.items.add(new VOServiceListItem(dataTreePath, protocol));
+				this.displayListItems();
+				return true;
+			}
 		}
 	}
 	public boolean addResource(Capability capability) throws SaadaException {
-			if( this.checkExist(capability.getDataTreePathString()) )  return false;
-			this.items.add(new VOServiceListItem(capability));
-			this.displayListItems();
-			return true;
+		if( this.checkExist(capability.getDataTreePathString()) )  return false;
+		this.items.add(new VOServiceListItem(capability));
+		this.displayListItems();
+		return true;
 	}
-	
-	
+
+
 	/**
 	 * @param dataTreePath
 	 * @param neighbour
@@ -141,7 +157,7 @@ public class VOServiceList extends JPanel {
 	 */
 	public boolean addResource(DataTreePath dataTreePath, VOServiceListItem neighbour) throws SaadaException {
 		if( dataTreePath.isCollectionLevel() ) {
-			AdminComponent.showInputError(this.getParent(), "Selet a data tree node either at category or class level");
+			AdminComponent.showInputError(this.getParent(), "Select a data tree node either at category or class level");
 			return false;
 		}
 		else {
@@ -158,7 +174,7 @@ public class VOServiceList extends JPanel {
 			return true;
 		}
 	}
-	
+
 	protected void setDescription(String description) {
 		this.itemSelector.setDescription(description);
 	}

@@ -96,14 +96,14 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}
-			}
-			else {
-				AdminComponent.showInputError(frame, "Only category ether class nodes can be displayed");
+			} else {
+				AdminComponent.showInputError(frame, "Only category either class nodes can be displayed");
 			}
 
 		}
 	}
 
+	@SuppressWarnings("serial")
 	public MetaDataPanel(AdminTool frame, int largeur, int hauteur) throws SaadaException {
 		this.frame = frame;
 		model = new DefaultTreeModel(top);
@@ -149,7 +149,6 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
 		tree.addMouseListener(new MouseAdapter() {
-			boolean memoBoutonDroit = false;
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
