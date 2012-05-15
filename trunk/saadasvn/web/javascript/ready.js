@@ -88,7 +88,7 @@ function showProcessingDialog() {
 	}
 	$('#saadaworking').html("Waiting on Saada reply");
 	/*
-	 * It is better to immediately show the profress dialog in order to give a feed back to the user
+	 * It is better to immediately show the process dialog in order to give a feed back to the user
 	 * It we dopn't, user could click several time on submit a get lost with what happens
 	 *
 	 * setTimeout("if( stillToBeOpen == true ) $('#saadaworking').css('visibility', 'visible');", 500);
