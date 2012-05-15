@@ -23,6 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+import com.sun.jdi.connect.spi.TransportService.Capabilities;
+
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
@@ -72,6 +74,8 @@ import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import saadadb.util.Version;
+import saadadb.vo.registry.Capability;
 
 /**
  * Base frame of the administration tool
@@ -125,6 +129,8 @@ public class AdminTool extends BaseFrame {
 	private EditPanel voCurator;;
 	private EditPanel tapService;
 	private EditPanel siaService;
+	private EditPanel ssaService;
+	private EditPanel csService;
 	private EditPanel filterSelector;
 
 	private TaskPanel obscoreMapperPanel;
@@ -137,7 +143,7 @@ public class AdminTool extends BaseFrame {
 
 
 	public AdminTool(boolean nolog, Point p) throws SaadaException {
-		super("Saada  Admintool");
+		super("Saada " + Version.getVersion() + " - Admintool for Database " + Database.getDbname());
 		connectMessaging(nolog);
 		/*
 		 * Exit after confirmation when click on the window close button
@@ -154,7 +160,7 @@ public class AdminTool extends BaseFrame {
 
 		this.setResizable(true);
 		this.setLayout(new GridBagLayout());		
-		/*
+		/*Display the console panel connected on the current asynchronous process
 		 * Make sure to close and rename the log file when exit
 		 */
 		Date date = new Date();
@@ -191,6 +197,7 @@ public class AdminTool extends BaseFrame {
 		c.weighty = 1;
 		leftPanel.add(metaDataTree,c);
 		JButton b = new JButton("Look at Current Process");
+		b.setToolTipText("Display the console panel connected on the current asynchronous process");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int x = (int)(Math.random() * 10);
@@ -199,32 +206,33 @@ public class AdminTool extends BaseFrame {
 				activePanel.setCurrentTask("Au Boulot");
 			}
 		});
+//		c.gridx = 0;
+//		c.gridy = 1;	
+//		c.weightx = 0;
+//		c.weighty = 0;
+//		leftPanel.add(b, c);
+//		b = new JButton("Start Process");
+//		b.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent arg0) {
+//				activePanel(AdminComponent.FILTER_SELECTOR);
+//				//activeProcessPanel(new DummyTask(AdminTool.this));
+//			}
+//		});
 		c.gridx = 0;
-		c.gridy = 1;	
-		c.weightx = 0;
-		c.weighty = 0;
-		leftPanel.add(b, c);
-		b = new JButton("Start Process");
-		b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				activePanel(AdminComponent.FILTER_SELECTOR);
-				//activeProcessPanel(new DummyTask(AdminTool.this));
-			}
-		});
-		c.gridx = 0;
-		c.gridy = 2;	
+		c.gridy++;	
 		c.weightx = 0;
 		c.weighty = 0;
 		leftPanel.add(b, c);
 
 		b = new JButton("Deploy Web application");
+		b.setToolTipText("Deploy the web application in the Tomcat instance");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CmdThread ct = new ThreadDeployWebApp(AdminTool.this, "Deploy Webapp");
 				ct.run();
 			}
 		});
-		c.gridy = 3;	
+		c.gridy++;	
 		c.weightx = 0;
 		c.weighty = 0;
 		leftPanel.add(b, c);
@@ -493,9 +501,19 @@ public class AdminTool extends BaseFrame {
 			activePanel = tapService;
 		} else 	if( panelTitle.equals(AdminComponent.SIA_PUBLISH) ) {
 			if( siaService == null ) {
-				siaService = new SAPServicePanel(this, AdminComponent.VO_PUBLISH);
+				siaService = new SAPServicePanel(this, AdminComponent.VO_PUBLISH, AdminComponent.SIA_PUBLISH);
 			}
 			activePanel = siaService;
+		} else 	if( panelTitle.equals(AdminComponent.SSA_PUBLISH) ) {
+			if( ssaService == null ) {
+				ssaService = new SAPServicePanel(this, AdminComponent.VO_PUBLISH, AdminComponent.SSA_PUBLISH);
+			}
+			activePanel = ssaService;
+		} else 	if( panelTitle.equals(AdminComponent.CONESEARCH_PUBLISH) ) {
+			if( csService == null ) {
+				csService = new SAPServicePanel(this, AdminComponent.VO_PUBLISH, AdminComponent.CONESEARCH_PUBLISH);
+			}
+			activePanel = csService;
 		} else 	if( panelTitle.equals(AdminComponent.OBSCORE_MAPPER) ) {
 			if( obscoreMapperPanel== null ) {
 				obscoreMapperPanel = new ObscoreMapperPanel(this, AdminComponent.VO_PUBLISH);

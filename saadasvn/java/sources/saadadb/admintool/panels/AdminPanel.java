@@ -65,13 +65,36 @@ public abstract class AdminPanel extends AdminComponent {
 	public void initCurrentTaskLabel() {
 		currentTaskLabel = AdminComponent.getSubTitleLabel("No task");
 	}
-
-
+	
+	/**
+	 * @param rootFrame
+	 * @param title
+	 * @param icon
+	 * @param ancestor
+	 */
 	public AdminPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame);
 		this.icon = icon;
 		this.title = title;
 		this.ancestor = ancestor;
+		this.setMainPanel();
+		this.setToolBar();
+		this.setActivePanel();
+	}
+	
+	/**
+	 * @param rootFrame
+	 * @param title
+	 * @param icon
+	 * @param ancestor
+	 * @param param
+	 */
+	public AdminPanel(AdminTool rootFrame, String title, String icon, String ancestor, Object param) {
+		super(rootFrame);
+		this.icon = icon;
+		this.title = title;
+		this.ancestor = ancestor;
+		this.setParam(param);
 		this.setMainPanel();
 		this.setToolBar();
 		this.setActivePanel();
@@ -211,6 +234,12 @@ public abstract class AdminPanel extends AdminComponent {
 		}
 	}
 
+	/**
+	 * Process a param given to the creator. That allows to give parameters to the business instance before 
+	 * the creator is completed
+	 * @param param
+	 */
+	protected void setParam(Object param) {};
 	/**
 	 * Set the both Browsing icons and labels in the tool bar.
 	 */

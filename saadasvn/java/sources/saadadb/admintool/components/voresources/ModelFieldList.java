@@ -273,7 +273,6 @@ public class ModelFieldList extends JPanel implements ActionListener{
 		}
 		for( FieldItem it: items) {
 			String stmt = this.formatMappingText(it);
-
 			if( stmt != null && stmt.length() > 0 && !stmt.equals("null")) {
 				query += "\n     , " + stmt + " AS " + it.uth.getNickname();
 			}

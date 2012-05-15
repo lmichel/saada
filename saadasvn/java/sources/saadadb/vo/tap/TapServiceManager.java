@@ -460,7 +460,7 @@ public class TapServiceManager extends EntityManager {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "TAP service does nor exist exists. Please create it first");
 		}
 		/*
-		 * republish all TAP tables refenced in the capability table 
+		 * republish all TAP tables referenced in the capability table 
 		 */
 		ArrayList<Capability> lc = new ArrayList<Capability>();
 		Table_Saada_VO_Capabilities.loadCapabilities(lc, Capability.TAP);
@@ -468,6 +468,9 @@ public class TapServiceManager extends EntityManager {
 			DataTreePath dataTreePath = cap.getDataTreePath();
 			String collName = cap.getDataTreePath().collection;
 			String catName = cap.getDataTreePath().category;
+			if( "obscore".equalsIgnoreCase(catName)) {
+				continue;
+			}
 			String collTable = Database.getCachemeta().getCollectionTableName(collName, Category.getCategory(catName));
 			String classTable = "";
 

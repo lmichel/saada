@@ -72,7 +72,7 @@ public class XMLTextSaver extends OuterWindow {
 	}
 	
 	@Override
-	protected void setContent() throws Exception {
+	protected void setContent(int type) throws Exception {
 		saveButton.setEnabled(true);
 		saveButton.addActionListener(new ActionListener() {
 

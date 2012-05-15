@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.XMLButton;
@@ -192,7 +193,7 @@ public class TAPServicePanel extends EditPanel {
 							rootFrame
 							, "TAP Registry Record"
 							, Database.getDbname() + "_TAPRegistry.xml"
-							,(new Record()).getTAPRecord().toString())).open();
+							,(new Record()).getTAPRecord().toString())).open(SQLJTable.DMVIEW_PANEL);
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}

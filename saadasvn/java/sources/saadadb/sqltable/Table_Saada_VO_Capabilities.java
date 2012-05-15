@@ -13,6 +13,8 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
+import saadadb.query.executor.Query;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
@@ -108,6 +110,25 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 				+ "' AND protocol = '" + capability.getProtocol() + "'");
 	}
 	/**
+	 * @param capability
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean hasCapability(Capability capability) throws Exception {
+		ResultSet rs = (new SQLQuery()).run("SELECT * FROM "
+				+ tableName 
+				+ " WHERE datatreepath = '" + capability.getDataTreePath() + "'"
+				+ " AND protocol = '" + capability.getProtocol() + "'"
+				+ " LIMIT 1");
+		boolean retour = false;
+		while( rs.next()) {
+			retour = true;
+			break;
+		}
+		rs.close();
+		return retour;
+	}
+	/**
 	 * @throws AbortException
 	 */
 	public static void emptyTable(String protocol) throws AbortException {
@@ -164,14 +185,18 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @param capability
 	 * @throws FatalException
 	 */
-	public static void setDataLinks(Capability capability) throws FatalException {
+	public static void setDataLinks(Capability capability)  {
 		DataTreePath dataTreePath = capability.getDataTreePath();
-		int category = Category.getCategory(dataTreePath.category);
-		if( Database.getCachemeta().getAtt_extend(category).get("DATALINK") != null ) {
-			Messenger.printMsg(Messenger.TRACE, "Set DATALINK columns for " + capability.getDataTreePathString());
-			String tbl = Database.getWrapper().getCollectionTableName(dataTreePath.collection, category);
-			SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = oidsaada" );
-			SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = '" + Database.getUrl_root() + "/datalink?oid=' || DATALINK" );
+		try {
+			int category = Category.getCategory(dataTreePath.category);
+			if( Database.getCachemeta().getAtt_extend(category).get("DATALINK") != null ) {
+				Messenger.printMsg(Messenger.TRACE, "Set DATALINK columns for " + capability.getDataTreePathString());
+				String tbl = Database.getWrapper().getCollectionTableName(dataTreePath.collection, category);
+				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = oidsaada" );
+				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = " + Database.getWrapper().getStrcatOp("'" + Database.getUrl_root() + "/datalink?oid='", "DATALINK" ));
+			}
+		} catch(FatalException e) {
+			//Category not referenced: likely ObsCore
 		}
 	}
 }

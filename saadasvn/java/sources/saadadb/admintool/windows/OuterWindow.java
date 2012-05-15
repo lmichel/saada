@@ -53,10 +53,10 @@ public abstract class OuterWindow extends JFrame {
 	/**
 	 * 
 	 */
-	public void open(){
+	public void open(int type){
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		try {
-			this.setContent();
+			this.setContent(type);
 		} catch (Exception e) {
 			AdminComponent.showFatalError(this, e);
 			return;
@@ -71,7 +71,7 @@ public abstract class OuterWindow extends JFrame {
 	 * @throws Exception 
 	 * 
 	 */
-	protected  void setContent() throws Exception {}
+	protected  void setContent(int type) throws Exception {}
 	
 
 }

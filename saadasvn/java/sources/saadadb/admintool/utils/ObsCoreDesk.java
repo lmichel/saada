@@ -83,7 +83,7 @@ public class ObsCoreDesk {
 			return "'public'";
 		} else if( "access_url".equalsIgnoreCase(fieldName)  ) {
 			if( category != Category.ENTRY ) {
-				return "product_url_csa";
+				return Database.getWrapper().getStrcatOp(getConstant(Database.getUrl_root() + "/download?oid="),  metaClass.getName() + ".oidsaada" );
 			} else {
 				return "";
 			}			

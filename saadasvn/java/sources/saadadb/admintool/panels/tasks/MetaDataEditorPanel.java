@@ -114,7 +114,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 						jb.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
 								VoTreeFrame vtf = VoTreeFrame.getInstance(rootFrame, productTable);
-								vtf.open();
+								vtf.open(SQLJTable.META_PANEL);
 							}
 						});
 						tPanel.add(jb, c);

@@ -90,10 +90,10 @@ public class DefaultFormats {
 				if( str.length() > 24 ) {
 					vstr = "http://...." + str.substring(str.length()-10);
 				}
-				return "<A TITLE=\"" + str + "\" HREF=\"" + str + "\">" + vstr + "</A>";
+				return "<A target=\"blank\" title=\"" + str + "\" href=\"" + str + "\">" + vstr + "</A>";
 			}
 			else if( str.matches(RegExp.BIBCODE)  ) {
-				return "<A TITLE=\"bibcode\" HREF=\"http://cdsads.u-strasbg.fr/abs/" + str + "\">" + str + "</A>";
+				return "<A target=\"blank\" tilte=\"bibcode\" href=\"http://cdsads.u-strasbg.fr/abs/" + str + "\">" + str + "</A>";
 			}
 			else {
 				return str;

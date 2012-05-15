@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.windows.TextSaver;
@@ -123,7 +124,7 @@ public class VOServiceListItem extends JPanel {
 							null
 							, capability.getProtocol() + " Registry Record"
 							, capability.getProtocol() + "Registry." + Database.getDbname() + "." + capability.getDataTreePath() + ".xml"
-							,(new Record()).getRecord(capability).toString())).open();
+							,(new Record()).getRecord(capability).toString())).open(SQLJTable.DMVIEW_PANEL);
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}

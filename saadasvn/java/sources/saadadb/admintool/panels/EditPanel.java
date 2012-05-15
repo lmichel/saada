@@ -1,7 +1,5 @@
 package saadadb.admintool.panels;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -13,6 +11,7 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.RenameButton;
 import saadadb.admintool.components.SaveButton;
 
+@SuppressWarnings("serial")
 public abstract class EditPanel extends AdminPanel{
 	protected JButton loadButton;
 	protected RenameButton saveAsButton;
@@ -20,6 +19,9 @@ public abstract class EditPanel extends AdminPanel{
 
 	public EditPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame, title, icon, ancestor);
+	}
+	public EditPanel(AdminTool rootFrame, String title, String icon, String ancestor, Object param) {
+		super(rootFrame, title, icon, ancestor, param);
 	}
 
 	/**

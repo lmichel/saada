@@ -17,6 +17,7 @@ import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.voresources.ModelFieldMapper;
+import saadadb.admintool.components.voresources.ObsTapComponentList;
 import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
@@ -37,9 +38,8 @@ import saadadb.vo.registry.Capability;
 public class ObscoreMapperPanel extends TaskPanel {
 	private ModelFieldMapper modelFieldMapper;
 	private RunTaskButton runButton;
-	private SaveButton saveButton;
 	public VOResource vor;
-	private VOServiceItemSelector itemSelector;
+	private ObsTapComponentList componentSelector;
 
 
 	public ObscoreMapperPanel(AdminTool rootFrame, String ancestor) {
@@ -48,7 +48,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadDmViewPopulate(rootFrame, OBSCORE_MAPPER);
+		cmdThread = new ThreadDmViewPopulate(this, OBSCORE_MAPPER);
 	}
 
 	@Override
@@ -78,6 +78,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 		} else if( dataTreePath.isClassLevel() ) {
 			try {
 				runButton.setEnabled(true);
+				modelFieldMapper.setCollapsed(false);
 				Authority.load();
 				if( !this.hasChanged() ||
 						showConfirmDialog(rootFrame, "Do you want to discard the current changes?") ) {
@@ -93,35 +94,33 @@ public class ObscoreMapperPanel extends TaskPanel {
 			return;
 		}
 	}
-
+	public void updateComponents() throws Exception {
+		componentSelector.displayListItems();
+	}
 	@Override
 	protected void setActivePanel() {
 		runButton = new RunTaskButton(this);
-		saveButton = new SaveButton(this);
 		try {
 			vor = VOResource.getResource("ObsCore");
 			modelFieldMapper = new ModelFieldMapper(this);
-			itemSelector = new VOServiceItemSelector(this, Capability.TAP, null);
+			componentSelector = new ObsTapComponentList(this, vor);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			showFatalError(rootFrame, e);
 		}
-		JPanel tPanel = this.addSubPanel("Class to Obscore Mapper");
+		JPanel tPanel = this.addSubPanel("Mapper of Classes against the Obscore Table");
 		MyGBC emc = new MyGBC(5,5,5,5);
 		emc.weightx = 1;emc.fill = GridBagConstraints.BOTH;emc.anchor = GridBagConstraints.NORTH;
 		tPanel.add(modelFieldMapper, emc);
-		modelFieldMapper.setCollapsed(false);
-
-		emc.newRow();
+		modelFieldMapper.setCollapsed(true);
 		
-		CollapsiblePanel cpm = new CollapsiblePanel("Manage Data Classes Published in ObsCore");
-		cpm.getContentPane().add(itemSelector);
+		emc.newRow();
+		CollapsiblePanel cpm = new CollapsiblePanel("Data Classes Published in ObsCore");
+		cpm.getContentPane().add(componentSelector);
 		cpm.setCollapsed(true);
 		tPanel.add(cpm, emc);
 
-		this.setActionBar(new Component[]{runButton, saveButton
-				, debugButton});
-
+		this.setActionBar(new Component[]{runButton, debugButton});
 	}
 
 	public VOResource getVor() {

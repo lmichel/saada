@@ -106,7 +106,6 @@ public class VOServiceList extends JPanel {
 			}
 		}
 		items.remove(toRemove);
-
 		displayListItems();
 	}
 	/**

@@ -23,6 +23,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import xmleditorkit.XMLEditorKit;
 
+@SuppressWarnings("serial")
 public class TextSaver extends OuterWindow {
 	private SaveButton saveButton = new SaveButton(null);
 	private JEditorPane textArea = new JEditorPane();
@@ -74,8 +75,9 @@ public class TextSaver extends OuterWindow {
 		this.fileChooser.setSelectedFile(new File(defaultFile));
 	}
 	
+	
 	@Override
-	protected void setContent() throws Exception {
+	protected void setContent(int type) throws Exception {
 		saveButton.setEnabled(true);
 		saveButton.addActionListener(new ActionListener() {
 

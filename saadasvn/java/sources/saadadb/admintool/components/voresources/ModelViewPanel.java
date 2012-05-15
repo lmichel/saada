@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.components.input.DMAttributeTextField;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.tree.FilteredFieldTree;
@@ -175,8 +176,13 @@ public class ModelViewPanel extends JPanel {
 		});
 		resetButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				try {
 				resourceList.resetMapping();
 				mapField.setText("");
+				resourceList.storeCurrentMapping();
+				} catch (Exception e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}
 			}
 		});
 		setAllDefaultButton.addActionListener(new ActionListener() {
@@ -187,6 +193,7 @@ public class ModelViewPanel extends JPanel {
 						return ;
 					} else if( AdminComponent.showConfirmDialog(getParent(), "Do you want to override all mapped fields")) {
 						resourceList.restoreAllDefault();
+						resourceList.storeCurrentMapping();
 					}
 				} catch (Exception e) {
 					AdminComponent.showFatalError(getParent(), e);
@@ -203,7 +210,7 @@ public class ModelViewPanel extends JPanel {
 					try {
 						MappedTableWindow dtw = new MappedTableWindow(ModelViewPanel.this.obscoreMapperPanel.rootFrame
 								, resourceList.getQuery());
-						dtw.open();
+						dtw.open(SQLJTable.DMVIEW_PANEL);
 					} catch( Exception e) {
 						AdminComponent.showFatalError(getParent(), e);
 					}
