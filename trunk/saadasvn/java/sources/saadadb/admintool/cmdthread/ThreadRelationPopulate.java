@@ -35,9 +35,9 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			return false;
 		}
 		else {
-			JCheckBox withEmpty = new JCheckBox("Do you want to first empty the relation?");
+			JCheckBox withEmpty = new JCheckBox("Do you want to first empty the relation " + config.getNameRelation() + " ?");
 			withEmpty.setSelected(emptyFirst);
-			JCheckBox withIndex = new JCheckBox("Do you want to index the relation after?");
+			JCheckBox withIndex = new JCheckBox("Do you want to index the relation " + config.getNameRelation() + " after?");
 			withIndex.setSelected(indexAfter);
 			boolean retour = AdminComponent.showConfirmDialog(frame, "Do you want to proceed?", new Component[] {withEmpty, withIndex});
 			
@@ -59,14 +59,13 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			RelationManager rm = new RelationManager(config);
-
 			SQLTable.beginTransaction();
 			rm.populateWithQuery();
 			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
 			ib.createIndexRelation();
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> created");		
+			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> populated");		
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 			} catch (Exception ae) {			
