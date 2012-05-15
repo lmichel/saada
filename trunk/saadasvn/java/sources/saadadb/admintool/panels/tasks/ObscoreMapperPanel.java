@@ -17,15 +17,12 @@ import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.voresources.ModelFieldMapper;
-import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.collection.Category;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
-import saadadb.vo.registry.Capability;
 
 
 /**
@@ -33,14 +30,11 @@ import saadadb.vo.registry.Capability;
  * @version $Id$
  *
  */
-@SuppressWarnings("serial")
 public class ObscoreMapperPanel extends TaskPanel {
 	private ModelFieldMapper modelFieldMapper;
 	private RunTaskButton runButton;
 	private SaveButton saveButton;
 	public VOResource vor;
-	private VOServiceItemSelector itemSelector;
-
 
 	public ObscoreMapperPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, OBSCORE_MAPPER, null, ancestor);
@@ -101,7 +95,6 @@ public class ObscoreMapperPanel extends TaskPanel {
 		try {
 			vor = VOResource.getResource("ObsCore");
 			modelFieldMapper = new ModelFieldMapper(this);
-			itemSelector = new VOServiceItemSelector(this, Capability.TAP, null);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			showFatalError(rootFrame, e);
@@ -113,11 +106,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 		modelFieldMapper.setCollapsed(false);
 
 		emc.newRow();
-		
-		CollapsiblePanel cpm = new CollapsiblePanel("Manage Data Classes Published in ObsCore");
-		cpm.getContentPane().add(itemSelector);
-		cpm.setCollapsed(true);
-		tPanel.add(cpm, emc);
+		tPanel.add(new CollapsiblePanel("Manage Data Classes Published in ObsCore"), emc);
 
 		this.setActionBar(new Component[]{runButton, saveButton
 				, debugButton});
