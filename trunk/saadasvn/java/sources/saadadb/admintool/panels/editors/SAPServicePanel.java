@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.voresources.VOServiceItemSelector;
@@ -34,19 +35,51 @@ import saadadb.vo.tap.TapServiceManager;
  * @author laurentmichel
  *
  */
+@SuppressWarnings("serial")
 public class SAPServicePanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private VOServiceItemSelector itemSelector;
 	private Authority authority;
+	private String protocolID;
+	private String capName;
+	private int[] allowedCategories;
 
 	/**
 	 * @param rootFrame
 	 * @param ancestor
 	 */
-	public SAPServicePanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, SIA_PUBLISH, null, ancestor);
+	public SAPServicePanel(AdminTool rootFrame, String ancestor, String protocolID) {
+		super(rootFrame, protocolID, null, ancestor, protocolID);
+		this.protocolID = protocolID;
+		if( this.protocolID.equals(AdminComponent.SIA_PUBLISH)) {
+			this.capName = Capability.SIA;
+			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};			
+		} else if( this.protocolID.equals(AdminComponent.SSA_PUBLISH)) {
+			this.capName = Capability.SSA;
+			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};	
+		} else  if( this.protocolID.equals(AdminComponent.CONESEARCH_PUBLISH)) {
+			this.capName = Capability.ConeSearch;
+			this.allowedCategories = new int[]{Category.ENTRY,Category.IMAGE, Category.SPECTRUM};	
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setParam(java.lang.Object)
+	 */
+	protected void setParam(Object param) {
+		this.protocolID = param.toString();;
+		if( this.protocolID.equals(AdminComponent.SIA_PUBLISH)) {
+			this.capName = Capability.SIA;
+			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};			
+		} else if( this.protocolID.equals(AdminComponent.SSA_PUBLISH)) {
+			this.capName = Capability.SSA;
+			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};	
+		} else  if( this.protocolID.equals(AdminComponent.CONESEARCH_PUBLISH)) {
+			this.capName = Capability.ConeSearch;
+			this.allowedCategories = new int[]{Category.ENTRY,Category.IMAGE, Category.SPECTRUM};	
+		}
+	}
+	
 	@Override
 	protected void setToolBar() {
 		this.initTreePathLabel();
@@ -71,26 +104,26 @@ public class SAPServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capability.SIA, new int[]{Category.IMAGE, Category.SPECTRUM});
+			itemSelector = new VOServiceItemSelector(this,capName, allowedCategories);
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}
-		JPanel tPanel = this.addSubPanel("Published SIA tables");
+		JPanel tPanel = this.addSubPanel("Published " + capName + " tables");
 
 		MyGBC imcep = new MyGBC(0,0,0,0);
 		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
 		tPanel.add(new JScrollPane(itemSelector), imcep);
 
-		JButton b = new JButton("Empty SIA service");
+		JButton b = new JButton("Empty " + capName + " Service");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if( showConfirmDialog(rootFrame, "Do you want to empty your SIA service (no data is removed from the DB)?") ) {
+				if( showConfirmDialog(rootFrame, "Do you want to empty your " + capName + " service (no data is removed from the DB)?") ) {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
 						Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
 						SQLTable.commitTransaction();
-						showInfo(rootFrame, "SIA service empty");
+						showInfo(rootFrame, capName + "emptied");
 					} catch (SaadaException e) {
 						SQLTable.abortTransaction();
 						showFatalError(rootFrame, e);
@@ -117,11 +150,11 @@ public class SAPServicePanel extends EditPanel {
 				TapServiceManager tsm = new TapServiceManager();
 				try {
 					SQLTable.beginTransaction();
-					Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
+					Table_Saada_VO_Capabilities.emptyTable(capName);
 					itemSelector.saveCapabilities();
 					SQLTable.commitTransaction();
 					itemSelector.loadCapabilities();
-					showSuccess(SAPServicePanel.this.rootFrame, "SIA capabilities saved");
+					showSuccess(SAPServicePanel.this.rootFrame, capName + "capabilities saved");
 				} catch (Exception e) {
 					SQLTable.abortTransaction();
 					showFatalError(rootFrame, e);

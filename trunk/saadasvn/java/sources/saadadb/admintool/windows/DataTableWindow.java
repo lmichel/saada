@@ -24,6 +24,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
+@SuppressWarnings("serial")
 public class DataTableWindow extends OuterWindow {
 	protected String sqlQuery;
 	private DataTreePath dataTreePath;
@@ -116,14 +117,14 @@ public class DataTableWindow extends OuterWindow {
 	}
 
 	@Override
-	protected void setContent() throws Exception {
+	protected void setContent(int type) throws Exception {
 		this.buidSQL();
 		/*
 		 * Cannot manage product for entries because entries are not products
 		 * => no popup menu on tabel.
 		 */
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, SQLJTable.PRODUCT_PANEL);
+		productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, type);
 		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane jsp = new JScrollPane(productTable);

@@ -37,7 +37,7 @@ public class AntButton extends JButton{
 							(new TextSaver(AntButton.this.adminPanel.rootFrame
 									, " Ant file for " + AntButton.this.adminPanel.getTitle()
 									, AntButton.this.adminPanel.getTitle().replaceAll(" " , "_") + ".xml"
-									, xml)).open();
+									, xml)).open(SQLJTable.DMVIEW_PANEL);
 							}
 							else {
 								AdminComponent.showInfo(AntButton.this.adminPanel.rootFrame, "No Ant task available, must be done from the admintool");

@@ -103,7 +103,7 @@ public class VoTreeFrame extends OuterWindow {
 	}
 
 	@Override
-	protected void setContent() throws Exception {
+	protected void setContent(int type) throws Exception {
 		if( vofreeframe != null ) {
 			vofreeframe.jtable = jtable;
 			/*

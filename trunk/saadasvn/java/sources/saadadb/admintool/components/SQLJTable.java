@@ -42,6 +42,8 @@ public class SQLJTable extends JTable {
 	public static final int CLASS_PANEL = 0;
 	public static final int COLL_PANEL = 1;
 	public static final int PRODUCT_PANEL = 2;
+	public static final int META_PANEL = 3;
+	public static final int DMVIEW_PANEL = 4;
 
 	private final AdminTool rootFrame;
 	private DataTreePath dataTreePath;

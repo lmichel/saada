@@ -36,7 +36,7 @@ public class VOPublishPanel extends ChoicePanel {
 	new ChoiceItem(rootFrame, tPanel, c
 				, "Publish SSA", "icons/SSA.png"
 				, new Runnable(){public void run(){
-					System.out.println("SSA");}});
+					rootFrame.activePanel(SSA_PUBLISH);}});
 		
 		c.gridx = 2;
 		c.gridy = 0;	
@@ -45,7 +45,7 @@ public class VOPublishPanel extends ChoicePanel {
 		new ChoiceItem(rootFrame, tPanel, c
 				, "Publish SCS", "icons/ConeSearch.png"
 				, new Runnable(){public void run(){
-					System.out.println("CS");}});
+					rootFrame.activePanel(CONESEARCH_PUBLISH);}});
 	
 
 		tPanel = this.addSubPanel("TAP Service");		

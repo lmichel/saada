@@ -1,22 +1,21 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import cds.astro.Coo;
-import cds.astro.Qbox;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
+import cds.astro.Coo;
+import cds.astro.Qbox;
 
 /**
  * This static class handles current operation on an SQL table representing a view on a DM.
@@ -39,6 +38,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 	 * @throws Exception
 	 */
 	public static  void createTable(VOResource vor) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Create table " + vor.getName());
 		/*
 		 * Both columns are forced in order to keep the table well connected with Saada
 		 */
@@ -62,7 +62,6 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 	 * @throws Exception
 	 */
 	public static  void addClass(VOResource vor, String className) throws Exception {		
-
 		Map<String, String> mapping = vor.readClassMapping(className);
 		MetaClass mc = Database.getCachemeta().getClass(className);
 		String query = "INSERT INTO " + vor.getName() + "(";
@@ -85,7 +84,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 
 		SQLTable.addQueryToTransaction(query);
 	}
-	
+
 	/**
 	 * @param vor
 	 * @param className
@@ -94,6 +93,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 	 * @throws Exception 
 	 */
 	public static void ComputeSkyPixels(VOResource vor, String className, String raCol, String decCol) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Compute sky pixels for class " + className + " in DM view "  + vor.getName());
 		int mask = (int)(SaadaOID.getMaskForClass(className) >> 32);
 		SQLQuery sqlquery = new SQLQuery();
 		ResultSet rs = sqlquery.run("SELECT sky_pixel_csa, " +  raCol + ", "  + decCol 
@@ -105,7 +105,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 		}
 		rs.close();	
 	}
-	
+
 	/**
 	 * Returns true id the table mapping the VO resource (DM) vor as at least one row with a record
 	 * coming from data of class className
@@ -115,6 +115,9 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 	 * @throws Exception 
 	 */
 	public static boolean isClassReferenced(VOResource vor, String className) throws Exception {
+		if( ! SQLTable.tableExist( vor.getName() )) {
+			return false;
+		}
 		int mask = (int)(SaadaOID.getMaskForClass(className) >> 32);
 		SQLQuery sqlquery = new SQLQuery();
 		ResultSet rs = sqlquery.run("SELECT * " 
@@ -124,9 +127,46 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 			rs.close();
 			return true;
 		}
+		rs.close();
 		return false;
 	}
 	
+	/**
+	 * @param vor
+	 * @param className
+	 * @return
+	 * @throws Exception
+	 */
+	public static String getClassDataQuery(VOResource vor, String className) throws Exception {
+		int mask = (int)(SaadaOID.getMaskForClass(className) >> 32);
+		return "SELECT * " 
+				+ " FROM " + vor.getName() 
+				+ " WHERE oidsaada >> 32 = " + mask ;
+		
+	}
+
+	/**
+	 * Retirns a collection of all classes referenced by the DM view
+	 * @param vor
+	 * @return
+	 * @throws Exception
+	 */
+	public static Collection<String> getReferencedClasses(VOResource vor) throws Exception {
+		ArrayList<String> retour = new ArrayList<String>();
+		if( ! SQLTable.tableExist( vor.getName() )) {
+			return retour;
+		}
+		SQLQuery sqlquery = new SQLQuery();
+		ResultSet rs = sqlquery.run("SELECT DISTINCT ((oidsaada >> 32) & 65535)" 
+				+ " FROM " + vor.getName() );
+		while( rs.next() ) {
+			retour.add(Database.getCachemeta().getClass(rs.getInt(1)).getName());
+		}
+		rs.close();
+		return retour;
+
+	}
+
 	/**
 	 * Remove all rows coming from th class className
 	 * @param vor
@@ -135,15 +175,19 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 	 */
 	public static void removeClass(VOResource vor, String className) throws Exception {
 		int mask = (int)(SaadaOID.getMaskForClass(className) >> 32);
-		SQLTable.addQueryToTransaction("DELETE FROM " + vor.getName() + " WHERE oidsaada >> 32 = " + mask);
+		if( SQLTable.tableExist( vor.getName() )) {
+			SQLTable.addQueryToTransaction("DELETE FROM " + vor.getName() + " WHERE oidsaada >> 32 = " + mask);
+		}
 	}
-	
+
 	/**
 	 * @param vor
 	 * @throws AbortException
 	 */
 	public static void emptyTable(VOResource vor) throws AbortException {
-		SQLTable.addQueryToTransaction("DELETE FROM " + vor.getName());
+		if( SQLTable.tableExist( vor.getName() )) {
+			SQLTable.addQueryToTransaction("DELETE FROM " + vor.getName());
+		}
 
 	}
 	/**

@@ -39,6 +39,7 @@ public class HelpDesk {
 	public static final int DBINSTALL_REP = 31;
 	public static final int WEBINSTALL_DIR = 32;
 	public static final int WEBINSTALL_URL = 33;
+	public static final int OBSTAP_COMPONENT = 34;
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -202,6 +203,11 @@ public class HelpDesk {
 				"Change the database URL"
                 , "  - Must be used when the tomcat server runs behind front-end HTTP server." 
                 , "  - This action redeploys the Web application."
+		});
+		map.put(OBSTAP_COMPONENT, new String[] {
+				"This is the list of Saada data classes currently mapped"
+                , "and published in the Obstap serice."
+                , "Removing a class from the ObsCore table does not suppress its mapping."
 		});
 	}
 	

@@ -40,6 +40,7 @@ import javax.swing.tree.TreeSelectionModel;
 import saadadb.admin.dnd.TreePathTransferable;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.windows.DataTableWindow;
 import saadadb.cache.CacheMeta;
@@ -92,7 +93,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			if( clickedTreePath.getPathCount() >= 2) {
 				try {
 					DataTableWindow dtw = new DataTableWindow(frame, clickedTreePath);
-					dtw.open();
+					dtw.open(SQLJTable.PRODUCT_PANEL);
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}
