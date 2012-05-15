@@ -55,6 +55,7 @@ public class RelationManager extends  EntityManager {
 	 * @param config
 	 */
 	public RelationManager(RelationConf config) {
+		super(config.getNameRelation());
 		this.relation_conf = config;
 	}
 	
