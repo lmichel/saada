@@ -56,7 +56,6 @@ public class SimbadTooltip extends SaadaServlet {
 
 				String url = "http://simbad.u-strasbg.fr/simbad/sim-script?submit=submit+script&script=";
 				url += URLEncoder.encode("format object \"%IDLIST[%-30*]|-%COO(A)|%COO(D)|%OTYPELIST(S)\"\n" + pp.getPosition() + " radius=1m", "ISO-8859-1");
-				System.out.println(url);
 				URL simurl = new URL(url);
 				BufferedReader in = new BufferedReader(
 						new InputStreamReader(
@@ -189,7 +188,6 @@ public class SimbadTooltip extends SaadaServlet {
 		retour.put("aaData", dataarray);
 		retour.put("iTotalRecords", datasize);
 		retour.put("iTotalDisplayRecords", datasize);
-		System.out.println(retour.toJSONString());
 
 		in.close();
 	}
