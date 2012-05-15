@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
@@ -31,7 +32,7 @@ import saadadb.vo.registry.Capability;
  */
 public class VOServiceItemSelector extends JPanel {
 	private static final long serialVersionUID = -5324001371175383374L;
-	private EditPanel tapServicePanel;
+	private AdminPanel tapServicePanel;
 	private VOServiceList resourceList;
 	private JTextArea descPanel;
 	private String protocol;
@@ -41,7 +42,7 @@ public class VOServiceItemSelector extends JPanel {
 	 * @param toActive
 	 * @throws Exception 
 	 */
-	public VOServiceItemSelector(EditPanel tapServicePanel, String protocol, int[] allowedCategories) throws Exception {
+	public VOServiceItemSelector(AdminPanel tapServicePanel, String protocol, int[] allowedCategories) throws Exception {
 		this.protocol = protocol;
 		this.tapServicePanel = tapServicePanel;
 		this.resourceList = new VOServiceList(this, protocol, allowedCategories);
