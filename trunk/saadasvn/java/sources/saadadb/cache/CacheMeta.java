@@ -455,9 +455,7 @@ public class CacheMeta {
 		else {
 			ArrayList<String> retour = new ArrayList<String>();
 			for( int i=0 ; i<this.relation_names.length ; i++) {
-				System.out.println(this.relation_names[i]);
 				MetaRelation mr = (this.relations.get(this.relation_names[i]));
-				System.out.println(collection + " " +mr.getSecondary_coll() + " " + category);
 
 				if( collection.equals(mr.getSecondary_coll()) && 
 						category == mr.getSecondary_category() ) {
