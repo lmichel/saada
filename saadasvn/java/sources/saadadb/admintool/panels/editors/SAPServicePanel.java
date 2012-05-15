@@ -34,10 +34,10 @@ import saadadb.vo.tap.TapServiceManager;
  * @author laurentmichel
  *
  */
-@SuppressWarnings("serial")
 public class SAPServicePanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private VOServiceItemSelector itemSelector;
+	private Authority authority;
 
 	/**
 	 * @param rootFrame
