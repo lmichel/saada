@@ -24,7 +24,7 @@ import saadadb.util.TimeSaada;
 /**
  * @author michel
  * * @version $Id$
-
+ * 05/2012:  Make sure index are empty for relation without counterparts. (a NULL OIDS were set right now)
  */
 public class IndexBuilder extends SaadaProcess { 
 
@@ -167,7 +167,10 @@ public class IndexBuilder extends SaadaProcess {
 		}
 		squery.close();
 		rs = null;
-		corrI.put(oidprevious,al);
+		//Add nothing if there is no counterparts
+		if( oidprevious != 0 ) {
+			corrI.put(oidprevious,al);
+		}
 
 		LongCPIndex lci = new LongCPIndex(relationName, this.path,"corr");
 		lci.buildIndex(corrI);
@@ -217,7 +220,10 @@ public class IndexBuilder extends SaadaProcess {
 		}
 		squery.close();
 		rs = null;
-		qualI.put(oidprevious,al);
+		//Add nothing if there is no counterparts
+		if( oidprevious != 0 ) {
+			qualI.put(oidprevious,al);
+		}
 
 		DoubleCPIndex ri = new DoubleCPIndex(relationName, this.path, "qual." + qualifier);
 		ri.buildIndex(qualI);
@@ -268,7 +274,10 @@ public class IndexBuilder extends SaadaProcess {
 		}
 		squery.close();
 		rs = null;
-		corrI.put(oidprevious,al);
+		//Add nothing if there is no counterparts
+		if( oidprevious != 0 ) {
+			corrI.put(oidprevious,al);
+		}
 
 		LongCPIndex lci = new LongCPIndex(relationName, this.path,"corrclass." + className);
 		lci.buildIndex(corrI);
@@ -317,7 +326,10 @@ public class IndexBuilder extends SaadaProcess {
 		}
 		squery.close();
 		rs = null;
-		qualI.put(oidprevious,al);
+		//Add nothing if there is no counterparts
+		if( oidprevious != 0 ) {
+			qualI.put(oidprevious,al);
+		}
 
 		this.processUserRequest();
 		Messenger.incrementeProgress();

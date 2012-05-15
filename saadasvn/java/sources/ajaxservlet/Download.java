@@ -59,7 +59,6 @@ public class Download extends SaadaServlet {
 			}
 			String ext    = request.getParameter("ext");
 			String report = request.getParameter("report");
-System.out.println(secureDownlad);
 			if( soid != null  ) {
 				oid = Long.parseLong(soid);
 				SaadaInstance si = Database.getCache().getObject(oid);
