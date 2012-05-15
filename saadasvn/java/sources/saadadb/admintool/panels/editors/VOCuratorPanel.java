@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,6 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.SimpleTextForm;
 import saadadb.admintool.components.ToolBarPanel;
@@ -27,8 +29,8 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
-import saadadb.util.HardwareDescriptor;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
 
@@ -37,6 +39,7 @@ import saadadb.vo.registry.Authority;
  * @author laurentmichel
  *
  */
+@SuppressWarnings("serial")
 public class VOCuratorPanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private JTextField authTitle;
@@ -215,6 +218,25 @@ public class VOCuratorPanel extends EditPanel {
 		emc.newRow();
 
 		editorPanel.add(getHelpLabel(HelpDesk.VO_CURATION), emc);
+		emc.newRow();
+		JButton defBtn = new JButton("Default Values");
+		defBtn.setToolTipText("Remove the current definition from the database and propose the defaults values");
+		defBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					if( AdminComponent.showConfirmDialog(getParent(), "Current values will overriden")) {
+						SQLTable.beginTransaction();
+						Authority.getInstance().remove(null);
+						SQLTable.commitTransaction();
+						load();
+					}
+				} catch (SaadaException e) {
+					AdminComponent.showFatalError(getParent(), e);
+				}
+
+			}
+		});
+		editorPanel.add(defBtn, emc);
 
 		MyGBC imcep = new MyGBC(0,0,0,0);
 		imcep.reset(5,5,5,5);imcep.weightx = 1;imcep.weighty = 1;imcep.fill = GridBagConstraints.BOTH;
