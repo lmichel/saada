@@ -414,7 +414,7 @@ public class TapServiceManager extends EntityManager {
 		while(rs_columns.next()) {
 			retour.append("        <column>\n");
 			retour.append("            <name>" + rs_columns.getString(2) + "</name>\n");
-			retour.append("            <description><![CDATA[" + rs_columns.getString(3) + "]]</description>\n");
+			retour.append("            <description><![CDATA[" + rs_columns.getString(3) + "]]></description>\n");
 			Object v = rs_columns.getObject(4);
 			if( v != null ) {
 				retour.append("            <unit>" + v + "</unit>\n");					
