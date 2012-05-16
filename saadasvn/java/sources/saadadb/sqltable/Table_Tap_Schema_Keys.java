@@ -59,10 +59,10 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void addSaadaJoin(String collTable, String classTable) throws AbortException {
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
-				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join"});
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
-				, new Object[]{classTable + "_rev", classTable, collTable,  "Collection to Class Saada join"});
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join", "null"});
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+				, new Object[]{classTable + "_rev", classTable, collTable,  "Collection to Class Saada join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(classTable);
 	}
 
@@ -75,8 +75,8 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void addSaadaJoin(String fromTable, String targetTable, String fromKey, String targetKey) throws AbortException {
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?)"
-				, new Object[]{fromTable, fromTable, targetTable , "Standard join"});
+		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+				, new Object[]{fromTable, fromTable, targetTable , "Standard join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
 	}
 
