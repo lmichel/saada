@@ -68,6 +68,25 @@ public class CollectionCoverage extends CollapsiblePanel {
 
 		secondary_combo = new JComboBox();
 		secondary_combo.setToolTipText("List of sub-classes of the secondary collection - transfered to the text field when selected");
+		secondary_combo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if( secondary_combo.getSelectedItem() == null ) {
+					return;
+				}
+				String si = secondary_combo.getSelectedItem().toString();
+				String ct = secondary_classes.getText().trim();
+				if( !ct.equals(si) && !ct.matches(".*,\\s*" + si + ".*") && !ct.matches(".*" + si + "\\s*,.*")) {
+					if( si.startsWith("ANY")) {
+						secondary_classes.setText("*");
+					} else if( ct.length() == 0 || ct.equals("*")){
+						secondary_classes.setText(si);			
+					} else {
+						secondary_classes.setText((ct + "," + si).replaceAll(",,", ","));			
+					}
+					CollectionCoverage.this.taskPanel.updateAvailableAttributes();
+				}
+			}	
+		});
 
 		MyGBC mc = new MyGBC(5,5,5,5); mc.anchor = GridBagConstraints.NORTH;
 		JPanel panel = this.getContentPane();
