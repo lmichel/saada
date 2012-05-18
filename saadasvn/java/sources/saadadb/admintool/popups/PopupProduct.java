@@ -31,7 +31,7 @@ public class PopupProduct extends PopupNode {
 		}
 		this.add(item);
 		params = new LinkedHashMap<String, Object>();
-		params.put("datatable", jtable);
+		params.put("datatable", sqlTable.getCmdThreadParam());
 		item.addActionListener(this);		
 	}
 

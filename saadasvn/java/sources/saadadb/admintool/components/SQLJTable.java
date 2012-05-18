@@ -34,7 +34,6 @@ public class SQLJTable extends JTable {
 		return rootFrame;
 	}
 
-
 	/**
 	 * 
 	 */
@@ -50,6 +49,10 @@ public class SQLJTable extends JTable {
 	//***private DataTableWindow jtable;
 	private final int  panel_type;
 	private final String sql;
+	/*
+	 * Object transmitted to the Popup to feed the Cmd thread
+	 */
+	private Object cmdThreadParam;
 
 	private boolean down_sorting = true;
 	private static Triangle down_triangle = new Triangle(true);
@@ -90,7 +93,15 @@ public class SQLJTable extends JTable {
 		this.setModel(sql);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 	}
-
+	
+	public SQLJTable(AdminTool rootFrame, DataTreePath dataTreePath, Object cmdThreadParam, String sql, int panel_type) throws QueryException {
+		this(rootFrame, dataTreePath, sql, panel_type);
+		this.cmdThreadParam = cmdThreadParam;
+	}
+	
+	public Object getCmdThreadParam() {
+		return cmdThreadParam;
+	}
 	/**
 	 * 
 	 */
