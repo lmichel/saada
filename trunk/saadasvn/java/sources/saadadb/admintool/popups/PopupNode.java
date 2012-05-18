@@ -85,7 +85,9 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 			try {
 				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame, DELETE_PRODUCTS);
 				cdp.setParams(params);
-				rootFrame.activeWindowProcess(cdp, dataTreePath);
+				if (cdp.checkParams(true) ) {
+					rootFrame.activeWindowProcess(cdp, dataTreePath);
+				}
 			} catch (SaadaException e1) {
 				AdminComponent.showFatalError(rootFrame, e1);
 			}
@@ -100,43 +102,43 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 			}
 		}
 		else if( item.equals(CANCEL_MAPPING) ) {	
-//			try {
-//				((SaadaDBAdmin)(frame)).showClass(tree_path_components);
-//			} catch (QueryException e1) {
-//				Messenger.trapFatalException(e1);
-//			}
+			//			try {
+			//				((SaadaDBAdmin)(frame)).showClass(tree_path_components);
+			//			} catch (QueryException e1) {
+			//				Messenger.trapFatalException(e1);
+			//			}
 		}
 		else if( item.equals(SAVE_MAPPING) ) {	
-//			ct = new CmdSaveClass(frame, tree_path_components, (SQLJTable)jtable);
-//			try {
-//				((SaadaDBAdmin)(frame)).showClass(tree_path_components);
-//			} catch (Exception e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			//			ct = new CmdSaveClass(frame, tree_path_components, (SQLJTable)jtable);
+			//			try {
+			//				((SaadaDBAdmin)(frame)).showClass(tree_path_components);
+			//			} catch (Exception e1) {
+			//				// TODO Auto-generated catch block
+			//				e1.printStackTrace();
+			//			}
 		}
 
 		else if( item.equals(MAPP_DM)) {
 
-//			SelectClass sc;
-//			try {
-//				sc = new SelectClass(this.frame, Database.getCachemeta().getVOResourceNames());
-//				String c = sc.getTyped_name();		
-//				if( c!= null ) {
-//					(new ClassToDatamodelMapper(c, tree_path_components[1].toString(), Category.getCategory(tree_path_components[2].toString()))).selectClass(tree_path_components[3].toString());
-//				}
-//
-//			} catch (Exception e1) {
-//				Messenger.printStackTrace(e1);
-//			}
+			//			SelectClass sc;
+			//			try {
+			//				sc = new SelectClass(this.frame, Database.getCachemeta().getVOResourceNames());
+			//				String c = sc.getTyped_name();		
+			//				if( c!= null ) {
+			//					(new ClassToDatamodelMapper(c, tree_path_components[1].toString(), Category.getCategory(tree_path_components[2].toString()))).selectClass(tree_path_components[3].toString());
+			//				}
+			//
+			//			} catch (Exception e1) {
+			//				Messenger.printStackTrace(e1);
+			//			}
 
 		}
 		else if( item.equals(EDIT_DM)) {
-//			try {
-//				new DMBuilder();
-//			} catch (Exception e1) {
-//				Messenger.printStackTrace(e1);
-//			}
+			//			try {
+			//				new DMBuilder();
+			//			} catch (Exception e1) {
+			//				Messenger.printStackTrace(e1);
+			//			}
 		}
 		//		else if( item.equals(CREATE_RELATIONSHIP) ) {
 		//			ct = new CmdCreateRelation(frame, tree_path_components);
@@ -144,13 +146,13 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 		//		else if( item.equals(REMOVE_RELATIONSHIP) ) {
 		//			ct = new CmdDeleteRelation(frame, tree_path_components);
 		//		}
-//		if( ct != null ) {
-//			/*
-//			 * Thread die when main console closed
-//			 */
-//			ct.setDaemon(true);
-//			ct.start();
-//			ct.setPriority(Thread.MIN_PRIORITY);
-//		}
+		//		if( ct != null ) {
+		//			/*
+		//			 * Thread die when main console closed
+		//			 */
+		//			ct.setDaemon(true);
+		//			ct.start();
+		//			ct.setPriority(Thread.MIN_PRIORITY);
+		//		}
 	}
 }

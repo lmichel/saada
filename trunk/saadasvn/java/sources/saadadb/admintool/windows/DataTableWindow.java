@@ -124,7 +124,7 @@ public class DataTableWindow extends OuterWindow {
 		 * => no popup menu on tabel.
 		 */
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, type);
+		productTable = new SQLJTable(rootFrame, dataTreePath, this,  sqlQuery, type);
 		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
 		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane jsp = new JScrollPane(productTable);

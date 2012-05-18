@@ -61,6 +61,7 @@ public class ThreadDeleteProduct extends CmdThread {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+			System.out.println(dataTable);
 			final int[] rows = dataTable.getProductTable().getSelectedRows();
 			long oids_to_remove[] = new long[rows.length];
 			int cpt = 0;
