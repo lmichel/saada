@@ -15,6 +15,7 @@ import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.MetaRelation;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
@@ -279,20 +280,24 @@ public class CartFormator  extends QueryResultFormator{
 		long[] cpoids = si.getCounterparts(relation);
 		if( cpoids.length > 0 ) {
 			String root = node + "/" + relation;
-			if( Database.getCachemeta().getRelation(relation).getSecondary_category() != Category.ENTRY ) {
+			MetaRelation mr = Database.getCachemeta().getRelation(relation);
+			if( mr.getSecondary_category() != Category.ENTRY ) {
 				for( long cpoid: cpoids) {
 					SaadaInstance cpi = Database.getCache().getObject(cpoid);
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + cpi.getFileName(), cpi.getRepositoryPath());
 					this.dataTree.add(root, zer);
 				}
-			}
-			else {
+			} else {
 				String resultFilename = si.getOid() + "_LinkedSources.vot";
 				ArrayList<Long> loc_entry_cp_oids = new ArrayList<Long>();
 				for( long entry_cp_oid: cpoids ){
 					loc_entry_cp_oids.add(entry_cp_oid);
 				}
 				OidsVotableFormator secondaryFormator = new OidsVotableFormator();
+				/*
+				 * Notify the formator that VO table contain catalogue Entries
+				 */
+				this.protocolParams.put("category", Category.explain(mr.getSecondary_category()));
 				secondaryFormator.setProtocolParams(this.protocolParams);
 				secondaryFormator.setResultSet(loc_entry_cp_oids);
 				secondaryFormator.setResponseFilePath(this.responseDir, resultFilename);
