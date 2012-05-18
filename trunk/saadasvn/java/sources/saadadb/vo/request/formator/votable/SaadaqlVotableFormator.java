@@ -36,8 +36,10 @@ public class SaadaqlVotableFormator extends VotableFormator {
 	 * @see saadadb.vo.request.formator.VOResultFormator#setProtocolParams(java.util.Map)
 	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
-		System.out.println("@@@@@@@@@@@ setProtocolParams ");
 		this.protocolParams = fmtParams;
+		for( String k: fmtParams.keySet() ) {
+			System.out.println(k + " " + fmtParams.get(k));
+		}
 		String str ;
 		if( (str = this.protocolParams.get("class")) != null ) {
 			String[] classes = str.split(",");
