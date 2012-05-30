@@ -71,11 +71,11 @@ public abstract class VOQuery {
 	public boolean isMetaQuery(Map<String, String> params) {
 		/*
 		 * Metadata response must be returned if input parameters match mandatoryMetaParams (usually one parameter);
-		 * If one of these param is missing we consider that the requestshould return data
+		 * If one of these params is missing we consider that the request should return data
 		 */
 		for(String mp: mandatoryMetaParams) {
 			if( (params.get(mp.toLowerCase()) == null && params.get(mp.toUpperCase()) == null)
-			|| (!"metadata".equalsIgnoreCase(params.get(mp.toLowerCase())) && "metadata".equalsIgnoreCase(params.get(mp.toLowerCase())))  ) {
+			|| (!"metadata".equalsIgnoreCase(params.get(mp.toLowerCase())) && !"metadata".equalsIgnoreCase(params.get(mp.toUpperCase())))  ) {
 				return false;
 			}
 		}
