@@ -199,7 +199,7 @@ public class IndexBuilder extends SaadaProcess {
 		time.start();
 
 		SQLLargeQuery squery= new SQLLargeQuery();
-		ResultSet rs = squery.run("SELECT oidprimary,oidsecondary,"+qualifier+" FROM "+relationName+" ORDER BY oidprimary,oidsecondary");
+		ResultSet rs = squery.run("SELECT oidprimary,oidsecondary,"+qualifier+" FROM "+relationName+" WHERE " + qualifier + " IS NOT NULL ORDER BY oidprimary,oidsecondary");
 
 		this.processUserRequest();
 		Messenger.incrementeProgress();
@@ -308,7 +308,7 @@ public class IndexBuilder extends SaadaProcess {
 		SQLLargeQuery squery= new SQLLargeQuery();
 		ResultSet rs = squery.run("SELECT oidprimary,oidsecondary," + qualifier
 				+" FROM " + relationName
-				+" WHERE " + Database.getWrapper().getSecondaryClassColumn() + " = " + Database.getCachemeta().getClass(className).getId()
+				+" WHERE " + qualifier + " IS NOT NULL AND " + Database.getWrapper().getSecondaryClassColumn() + " = " + Database.getCachemeta().getClass(className).getId()
 				+" ORDER BY oidprimary,oidsecondary");
 
 		LinkedHashMap<Long, ArrayList<Object>> qualI = new LinkedHashMap<Long,ArrayList<Object>>();
