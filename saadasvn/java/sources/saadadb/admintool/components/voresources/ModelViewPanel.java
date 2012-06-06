@@ -202,7 +202,7 @@ public class ModelViewPanel extends JPanel {
 		});
 		quickLookButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if( metaClass == null ) {
+				if( metaClass == null && !category.equalsIgnoreCase("flatfile")) {
 					AdminComponent.showInputError(getParent(), "No class selected");	
 				} else if( !resourceList.checkContent()){
 					AdminComponent.showInputError(getParent(), "Fix mapping errors first (red items)");	
