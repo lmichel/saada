@@ -27,11 +27,13 @@ public class UnitHandler {
 	 */
 	public static final String computeValue(String userValue,String userUnit,String ahUnit) throws SaadaException {
 		if(userUnit.equals("none") && !ahUnit.replace("none","").equals("")){
-			Messenger.printMsg(Messenger.WARNING,"No unit defined for the value \""+userValue+"\"! Database unit=\""+ahUnit+"\". No conversion perform!");// The query may not be meanfull!");
+			if( Messenger.debug_mode )
+				Messenger.printMsg(Messenger.DEBUG,"No unit defined for the value \""+userValue+"\"! Database unit=\""+ahUnit+"\". No conversion perform!");// The query may not be meanfull!");
 			return userValue;
 		}
 		if((ahUnit.equals("none") || ahUnit.equals("")) && !userUnit.replace("none","").equals("")){
-			Messenger.printMsg(Messenger.WARNING,"No unit given in the query ! No conversion perform!");
+			if( Messenger.debug_mode )
+				Messenger.printMsg(Messenger.DEBUG,"No unit given in the query ! No conversion perform!");
 			return userValue;
 		}
 		/*
@@ -84,11 +86,13 @@ public class UnitHandler {
 	 */
 	public static final String getConvFunction(String userUnit,String ahUnit,String attrName) throws QueryException, ArithmeticException {
 		if(userUnit.equals("none")){
-			Messenger.printMsg(Messenger.WARNING,"No unit define for the attribute! No conversion perform!");
+			if( Messenger.debug_mode )
+				Messenger.printMsg(Messenger.DEBUG,"No unit defined for the attribute " + attrName + ": No conversion performed!");
 			return attrName;
 		}
 		if(ahUnit.length() == 0 || ahUnit.equals("none")){
-			Messenger.printMsg(Messenger.WARNING,"No unit define for the attribute \""+attrName+"\"! No conversion perform!");
+			if( Messenger.debug_mode )
+				Messenger.printMsg(Messenger.DEBUG,"No unit defined for the attribute "+attrName+": No conversion performed!");
 			return attrName;
 		}
 		/*
