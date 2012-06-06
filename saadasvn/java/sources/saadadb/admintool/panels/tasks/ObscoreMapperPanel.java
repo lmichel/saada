@@ -75,7 +75,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 		if( dataTreePath == null ) {
 			runButton.setEnabled(false);
 			return;
-		} else if( dataTreePath.isClassLevel() ) {
+		} else if( dataTreePath.isClassLevel() /*|| (dataTreePath.isCategoryLevel() && dataTreePath.category.equalsIgnoreCase("flatfile"))*/ ){
 			try {
 				runButton.setEnabled(true);
 				modelFieldMapper.setCollapsed(false);
