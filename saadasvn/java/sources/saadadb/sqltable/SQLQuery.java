@@ -84,6 +84,7 @@ public class SQLQuery {
 	 */
 	public ResultSet run() throws  QueryException {
 		try {
+			Messenger.dbAccess();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select query: " + this.query);
 			_stmts.setMaxRows(5000000);
 			long start = System.currentTimeMillis();
@@ -101,13 +102,16 @@ public class SQLQuery {
 			} 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
+			Messenger.procAccess();
 			return resultset;
 		} catch (Exception e) {
 			this.close();
+			Messenger.procAccess();
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			//Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
+		Messenger.procAccess();
 		return null;
 	}
 
