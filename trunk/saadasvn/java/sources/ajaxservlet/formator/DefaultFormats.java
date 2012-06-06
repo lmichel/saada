@@ -15,7 +15,7 @@ import cds.astro.Astrocoo;
 
 public class DefaultFormats {
 	static private DecimalFormat exp =  new DecimalFormat("0.00E00");
-	static private DecimalFormat deux = new DecimalFormat("0.000");
+	static private DecimalFormat deux = new DecimalFormat("0.0000");
 	static private DecimalFormat six = new DecimalFormat("0.000000");
 	static private boolean formatInit = false;
 	
