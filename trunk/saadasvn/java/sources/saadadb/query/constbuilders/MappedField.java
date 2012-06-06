@@ -89,6 +89,7 @@ abstract public class MappedField extends SaadaQLConstraint {
 	 * @throws SaadaException
 	 */
 	private final String[] getOperands(AttributeHandler ah) throws SaadaException{
+		String value = this.getValue();
 		if(ah.getType().equals("String")){
 			if( !this.getOp().matches("!?=\\*?") ) {
 				QueryException.throwNewException(SaadaException.SYNTAX_ERROR, "The attribute \""+ah.getNameattr()+"\" of the classe \""+ah.getClassname()+"\" type  is \"String\"! You can't use an operator different from \"=\" or \"!=\"!");				
@@ -96,24 +97,28 @@ abstract public class MappedField extends SaadaQLConstraint {
 			else if( !this.getUnit().matches("((none)|(nounit))?") )  {
 				QueryException.throwNewException(SaadaException.SYNTAX_ERROR, "The attribute \""+ah.getNameattr()+"\" of the classe \""+ah.getClassname()+"\" type  is \"String\"! Can not make unit conversion");								
 			}
-			else if(this.getValue().matches("\\'"+TextValue+"\\'")) {
-				return new String[]{this.getValue()};
+			else if(value.matches("\\'"+TextValue+"\\'")) {
+				return new String[]{value};
 			}
 			else {
-				return new String[]{"'"+this.getValue()+"'",null};
+				return new String[]{"'"+value+"'",null};
 			}
 		}
 		else {
-			if(this.getValue().matches(NumericValue)) {
-				return new String[]{UnitHandler.computeValue(this.getValue(),this.getUnit(),ah.getUnit())};
+			/*
+			 * Remove quotes for numeric attribute
+			 */
+			value = value.replaceAll("'", "");
+			if(value.matches(NumericValue)) {
+				return new String[]{UnitHandler.computeValue(value,this.getUnit(),ah.getUnit())};
 			}
-			else if(this.getValue().matches("\\("+FacWS+NumericValue+FacWS+ArgSep+FacWS+NumericValue+FacWS+"\\)")){
-				String[] values = this.getValue().replaceAll("\\s*\\(\\s*","").replaceAll("\\s*\\)\\s*","").split("\\s*,\\s*");
+			else if(value.matches("\\("+FacWS+NumericValue+FacWS+ArgSep+FacWS+NumericValue+FacWS+"\\)")){
+				String[] values = value.replaceAll("\\s*\\(\\s*","").replaceAll("\\s*\\)\\s*","").split("\\s*,\\s*");
 				values[0] = UnitHandler.computeValue(values[0],this.getUnit(),ah.getUnit());
 				values[1] = UnitHandler.computeValue(values[1],this.getUnit(),ah.getUnit());
 				return (Double.parseDouble(values[0])<Double.parseDouble(values[1]))?values:new String[]{values[1],values[0]};
 			}else{
-				QueryException.throwNewException(SaadaException.SYNTAX_ERROR, "Unknow value format: \""+this.getValue()+"\" ! (It's not supposed to happen!)");
+				QueryException.throwNewException(SaadaException.SYNTAX_ERROR, "Operand: <"+value+"> should be numeric for attribute " + ah.getNameorg() + " (as num or (num1,num2))");
 			}
 		}
 		return null;
