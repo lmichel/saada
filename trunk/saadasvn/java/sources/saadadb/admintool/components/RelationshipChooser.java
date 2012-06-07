@@ -3,7 +3,6 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -20,7 +19,6 @@ import javax.swing.event.ListSelectionListener;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
-import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
@@ -98,8 +96,6 @@ public class RelationshipChooser extends JPanel {
 			}
 			for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
 					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-				MetaRelation mr = Database.getCachemeta().getRelation(r);
-				JLabel jl = new JLabel("<html>" + mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()) + " &gt; <b>" + r + "</b></html>");
 				model.addElement(r);			
 			}
 		}
