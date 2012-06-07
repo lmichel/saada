@@ -26,6 +26,7 @@ import saadadb.admintool.components.ToolBarPanel;
  * @version $Id$
  *
  */
+@SuppressWarnings("serial")
 public abstract class TaskPanel extends AdminPanel implements PropertyChangeListener{
 	protected CmdThread cmdThread ;
 	
@@ -65,6 +66,7 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		tPanel.add(new JLabel(" "), c);
 		this.add(tPanel);	
 	}
+	
 	protected void setProcessControlBar(Component[] buttons, JLabel statusLabel, JLabel[] hardwareLights) {
 		JPanel tPanel = new JPanel();
 		tPanel.setLayout(new GridBagLayout());
