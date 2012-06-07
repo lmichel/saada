@@ -179,7 +179,7 @@ public class HelpDesk {
 				,"Click on one filter to see its description (formatted as command line parameters)"
 		});
 		map.put(DBINSTALL_NAME, new String[] {
-				"The Saada DB name cannot be changed without dammage"
+				"Neither Saada DB name nof JDBC parameters can be changed without dammage"
 				," If you need to do it; consoder rebuilding a new DB"
 		});
 		map.put(DBINSTALL_DIR, new String[] {
