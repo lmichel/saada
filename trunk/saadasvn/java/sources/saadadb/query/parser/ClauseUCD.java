@@ -20,6 +20,8 @@ import saadadb.query.constbuilders.UCDField;
 
 /**
  * @author F.X. Pineau
+ * 
+ * 06/2012: parse Method accept any operator with string like operands
  */
 public abstract class ClauseUCD {
 	private final String strMatch;
@@ -59,7 +61,7 @@ public abstract class ClauseUCD {
 						QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"In "+this.getClauseName()+": Unit \"" + unit + "\" not understood by the converter!");
 					}
 					if(m3.group(3).contains("'") && !m3.group(2).matches("!?=\\*?")){
-						QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"In "+this.getClauseName()+": Can't use a string value 'xxx' with operators different from \"=\" or \"!=\"");
+						//QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"In "+this.getClauseName()+": Can't use a string value 'xxx' with operators different from \"=\" or \"!=\"");
 					}
 					if(m3.group(3).contains("(") && !m3.group(2).contains("[")){
 						QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"In "+this.getClauseName()+": Can't use 2 numeric values (v1,v2) with operators different from \"[]\",\"[=]\",\"][\" or \"]=[\"");
