@@ -100,7 +100,7 @@ public class RegExp {
 	/*
 	 * VO resources
 	 */
-	public static final String UTYPE = "(?:\\w[\\w;:]*\\.)*(?:\\w[\\w;:]*)";
+	public static final String UTYPE = "(?:\\w[\\w;:-]*\\.)*(?:\\w[\\w;:-]*)";
 	public static final String UCD = "(?:(?:(?:\\w+\\.)*\\w+);)*(?:(?:\\w+\\.)*\\w+)";
 	/*
 	 * Used to detect not set field. Only the most current notset values are set here
