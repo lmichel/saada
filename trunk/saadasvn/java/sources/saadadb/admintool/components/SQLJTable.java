@@ -88,7 +88,6 @@ public class SQLJTable extends JTable {
 			this.setRowSelectionAllowed(true);
 			this.makeOrderingEnabled();
 			this.makePopupEnabled();
-
 		}
 		this.setModel(sql);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
