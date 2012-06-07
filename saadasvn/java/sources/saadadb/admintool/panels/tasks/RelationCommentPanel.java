@@ -21,6 +21,7 @@ import saadadb.admintool.components.input.FreeTextField;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -58,10 +59,19 @@ public class RelationCommentPanel extends RelationDropPanel {
 		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
 			try {
 				setSelectedResource("", null);
-				relationChooser.setDataTreePath(dataTreePath);
+				this.relationChooser.setDataTreePath(dataTreePath);
+				this.commentField.setText("");
 			} catch (FatalException e) {
 				Messenger.trapFatalException(e);
 			}
+		}
+	}
+	
+	public void setSelectedResource(String label, String explanation) {	
+		super.setSelectedResource(label, explanation);
+		String r = this.relationChooser.getSelectedRelation();
+		if( r != null) {
+			this.commentField.setText(Database.getCachemeta().getRelation(r).getDescription());
 		}
 	}
 
