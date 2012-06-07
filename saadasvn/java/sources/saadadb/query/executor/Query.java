@@ -145,7 +145,7 @@ public class Query extends Query_Report{
 	 * @return
 	 */
 	public HashMap<String, CounterpartSelector> getMatchingCounterpartQueries() {
-		return null; //matchingCounterpartQueries;
+		return matchingCounterpartQueries;
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class Query extends Query_Report{
 				for(String attrName:this.wasClause.getAttributeList()) {
 					AttributeHandler ah = mAH.get(attrName);
 					if( ah != null ) {
-						alAH.add(mAH.get(attrName));
+						alAH.add(ah);
 					}
 				}
 			}
@@ -217,28 +217,23 @@ public class Query extends Query_Report{
 		}
 
 		//** Add class attribute
-		//						for(String className:this.listClass(colName)){
-		//							if(!className.equals("*")){
-		//								Map<String,AttributeHandler> mAHC = Database.getCachemeta().getClass(className).getAttributes_handlers();
-		//								if(this.wacClause!=null)
-		//									for(String attrName:this.wacClause.getAttributeList())
-		//										alAH.add(mAHC.get(attrName));
-		//								if(this.wuManager!=null) {
-		//									for(String attrName:this.wuManager.getAttributeList(this.sfiClause.getCatego(),colName,className)) {
-		//										alAH.add(mAHC.get(attrName));
-		//									}
-		//								}
-		//								if(this.wUtManager!=null)
-		//									for(String attrName:this.wUtManager.getAttributeList(this.sfiClause.getCatego(),colName,className))
-		//										alAH.add(mAHC.get(attrName));
-		//								if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH))
-		//									alAH.add(mAHC.get(this.obClause.getTheStatement()));
-		//							}
-		//						}
-		//}
+		for(String className:this.merger.getCoveredClasses()){
+			Map<String,AttributeHandler> mAHC = Database.getCachemeta().getClass(className).getAttributes_handlers();
+			if(this.wasClause!=null) {
+				for(String attrName:this.wasClause.getAttributeList()) {
+					AttributeHandler ah = mAHC.get(attrName);
+					if( ah != null ) {
+						alAH.add(ah);
+					}
+				}
+			}
+			if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH))
+				alAH.add(mAHC.get(this.obClause.getTheStatement()));
+		}
+
 		return alAH;
 	}
-	
+
 	/**
 	 * 
 	 */
