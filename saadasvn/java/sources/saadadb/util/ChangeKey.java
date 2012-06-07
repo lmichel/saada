@@ -81,7 +81,7 @@ public class ChangeKey {
 
     		}
     	}
-    	return name;
+    	return name.replaceAll("-", "_");
     }
 	/*
 	 * PSQL being not case sensitive, one have to avoid duplicate keys
