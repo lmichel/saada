@@ -125,9 +125,23 @@ public class DBInstallPanel extends EditPanel {
 
 		JPanel panel = this.addSubPanel("SaadaDB Installation");
 		MyGBC mgbc = new MyGBC(5,5,5,5);	mgbc.anchor = GridBagConstraints.EAST;	
+		
 		panel.add(getPlainLabel("Name:"), mgbc);
 		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
 		panel.add(getPlainLabel(Database.getName()), mgbc);
+		mgbc.rowEnd();
+		panel.add(getPlainLabel(""), mgbc);
+		mgbc.newRow();mgbc.anchor = GridBagConstraints.EAST;mgbc.gridwidth = 1;
+		panel.add(getPlainLabel("JDBC URL: "), mgbc);		
+		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
+		panel.add(getPlainLabel(Database.getConnector().getJdbc_url()), mgbc);
+		mgbc.rowEnd();
+		panel.add(getPlainLabel(""), mgbc);
+		mgbc.newRow();mgbc.anchor = GridBagConstraints.EAST;mgbc.gridwidth = 1;
+		panel.add(getPlainLabel("JDBC Driver: "), mgbc);		
+		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
+		panel.add(getPlainLabel(Database.getConnector().getJdbc_driver()), mgbc);		
+		mgbc.rowEnd();mgbc.anchor = GridBagConstraints.WEST;
 		mgbc.rowEnd();
 		panel.add(getPlainLabel(""), mgbc);
 		mgbc.newRow();mgbc.gridwidth = 3;
