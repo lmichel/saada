@@ -37,7 +37,7 @@ public class RelationManager extends  EntityManager {
 	 */
 	public RelationManager(String name) {
 		super(name); 
-		
+
 		try {
 			this.relation_conf = new RelationConf(name);
 		} catch (Exception e) {
@@ -58,7 +58,7 @@ public class RelationManager extends  EntityManager {
 		super(config.getNameRelation());
 		this.relation_conf = config;
 	}
-	
+
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
 		if( ap != null ) {
@@ -66,8 +66,6 @@ public class RelationManager extends  EntityManager {
 		}
 		this.create();
 	}
-
-
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
@@ -79,8 +77,6 @@ public class RelationManager extends  EntityManager {
 
 	}
 
-
-
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
 		try {
@@ -91,8 +87,6 @@ public class RelationManager extends  EntityManager {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
-
-
 
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
@@ -113,8 +107,6 @@ public class RelationManager extends  EntityManager {
 		}
 	}
 
-
-
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
 		try {
@@ -127,6 +119,14 @@ public class RelationManager extends  EntityManager {
 
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
+		try {
+			Messenger.printMsg(Messenger.TRACE, "Save description of relation " + this.relation_conf.getNameRelation());
+			this.relation_conf.setDescription(ap.getComment());
+			Table_Saada_Relation.saveDescription(this.relation_conf);
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			FatalException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	} 
 
 	/**************************************
