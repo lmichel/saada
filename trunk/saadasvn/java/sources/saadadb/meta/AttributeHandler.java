@@ -7,14 +7,17 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import nom.tam.fits.HeaderCard;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.VOProduct;
+import saadadb.sqltable.SQLQuery;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
@@ -53,14 +56,14 @@ public class AttributeHandler implements Serializable{
 	private String comment = "";
 	public String value = "";
 	public String format = "";
-
-
+	// not stored in the DB currently but may be useful to feed some JSON message
+	public RangeValue range;
 
 	public AttributeHandler(){}
 
 	/**
-	 * Build the attribute handler from a SAVoT fielda SAVoT param
-	 * @param card
+	 * Build the attribute handler from a SAVoT field
+	 * @param savotParam
 	 */
 	public AttributeHandler(SavotParam savotParam) {
 		String name = savotParam.getName();
@@ -623,6 +626,38 @@ public class AttributeHandler implements Serializable{
 		}
 	} 
 	
+	
+	public void setRange() throws Exception {
+		if( this.classid == -1 ) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "getRange functionnality cannot be used out of a class context");
+			return ;
+		}
+		String table;
+		if( this.nameattr.startsWith("_")) {
+			table = this.classname; 
+		} else {
+			table = Database.getCachemeta().getCollectionTableName(this.getCollid(), Database.getCachemeta().getClass(this.classid).getCategory());
+		}
+		SQLQuery query = new SQLQuery();
+		this.range = new RangeValue();
+		ResultSet rs = query.run("SELECT DISTINCT " + this.nameattr + " FROM " + table + " LIMIT 11");
+		int cpt = 0 ;
+		while(rs.next() ) {
+			this.range.addToList(rs.getObject(1));
+			cpt++;
+			if( cpt > 10 ) {
+				break;
+			}
+		}
+		if( cpt > 10 ) {
+			rs = query.run("SELECT MIN(" + this.nameattr + "), MAX(" + this.nameattr + ") FROM " + table );			
+			while(rs.next() ) {
+				this.range.setMin(rs.getObject(1));
+				this.range.setMax(rs.getObject(2));
+			}
+		}
+		query.close();
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
