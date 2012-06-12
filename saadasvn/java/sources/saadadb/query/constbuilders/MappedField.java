@@ -78,9 +78,7 @@ abstract public class MappedField extends SaadaQLConstraint {
 			case OUT_S:
 				return  attrName+" < "+computedValues[0] +" OR "+attrName+" > "+computedValues[1];
 			default: QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Unknow operator! (It's not supposed to happen!)");return null;
-			
-		}
-		
+		}		
 	}
 	
 	/**
