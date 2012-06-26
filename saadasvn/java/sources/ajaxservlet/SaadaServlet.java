@@ -72,8 +72,6 @@ public class SaadaServlet extends HttpServlet {
 				}
 				synchronized (this) {
 					if(  !INIT  ) {
-						//StdOutErrLog.tieSystemOutAndErrToLog();
-						System.out.println(conf.getServletContext().getContextPath());
 						if( !SaadaServlet.isInit() ) {
 							INIT_IN_PROGRESS = true;					
 							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by " + conf.getServletName());
