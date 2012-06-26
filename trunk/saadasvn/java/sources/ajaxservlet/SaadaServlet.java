@@ -40,6 +40,7 @@ import ajaxservlet.json.JsonUtils;
  * @version $Id$
  *
  * 07/2011 add method dumpXmlFile
+ * 06/2012 Connect to a log file
  *
  */
 public class SaadaServlet extends HttpServlet {
@@ -47,6 +48,7 @@ public class SaadaServlet extends HttpServlet {
 	private static boolean INIT_IN_PROGRESS = false;
 	public static final boolean JSON_FILE_MODE = false;
 	public static String base_dir;
+	public static String app_dir;
 	private static final long serialVersionUID = 1L;
 	public static boolean secureDownlad = false;
 
@@ -59,6 +61,7 @@ public class SaadaServlet extends HttpServlet {
 		Messenger.setServletMode();
 		super.init(conf);
 		base_dir = conf.getServletContext().getRealPath("") + Database.getSepar();
+		app_dir = conf.getServletContext().getContextPath().replaceAll("/", "");
 		if( !JSON_FILE_MODE ) {
 			try {
 				int cpt = 0;
@@ -69,6 +72,8 @@ public class SaadaServlet extends HttpServlet {
 				}
 				synchronized (this) {
 					if(  !INIT  ) {
+						//StdOutErrLog.tieSystemOutAndErrToLog();
+						System.out.println(conf.getServletContext().getContextPath());
 						if( !SaadaServlet.isInit() ) {
 							INIT_IN_PROGRESS = true;					
 							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by " + conf.getServletName());
@@ -363,6 +368,18 @@ public class SaadaServlet extends HttpServlet {
 						Messenger.printMsg(Messenger.TRACE, "readURLRoot: " + retour);
 						this.urlroot = retour;
 						Database.setUrl_root(this.urlroot);
+					}
+					else if( buff.matches("logfile=.*")) {
+						String retour =  buff.trim().split("=")[1];
+						if( "none".equalsIgnoreCase(retour) ) {
+							return;
+						} else if( "default".equals(retour) ) {
+							retour = System.getProperty("catalina.home") + File.separator + "logs" + File.separator + app_dir + ".log";
+						} else if( !retour.startsWith(File.separator) ) {
+							retour = System.getProperty("catalina.home") + File.separator + "logs" + File.separator + retour;
+						}
+						Messenger.printMsg(Messenger.TRACE, "set log file: " + retour);
+						Messenger.init(retour);
 					}
 					else if( buff.matches("saadadbroot=.*")) {
 						String retour =  buff.trim().split("=")[1];
