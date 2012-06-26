@@ -62,7 +62,8 @@ public class SaadaServlet extends HttpServlet {
 		Messenger.setServletMode();
 		super.init(conf);
 		base_dir = conf.getServletContext().getRealPath("") + Database.getSepar();
-		app_dir = conf.getServletContext().getContextPath().replaceAll("/", "");
+		ServletContext sc = conf.getServletContext();
+		app_dir = sc.getContextPath().replaceAll("/", "");
 		if( !JSON_FILE_MODE ) {
 			try {
 				int cpt = 0;
