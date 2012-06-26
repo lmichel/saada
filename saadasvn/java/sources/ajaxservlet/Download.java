@@ -51,7 +51,6 @@ public class Download extends SaadaServlet {
 		printAccess(request, false);
 
 		try {
-
 			String soid = request.getParameter("oid");
 
 			if( soid != null ) {

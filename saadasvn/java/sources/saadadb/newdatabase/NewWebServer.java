@@ -77,12 +77,38 @@ public class NewWebServer extends NewSaadaDB {
 	 */
 	public static void buildDBNameFile(String rootDir, String nameDB, String urlRoot) throws Exception {
 		FileWriter fw = new FileWriter(rootDir  + separ + "web" + separ + "dbname.txt");
-		fw.write("# This file can be put at the webapp root to indicate the saadadb name of the current application\n");
+		fw.write("######################################################################\n");
+		fw.write("# This file allows som WEB application set up to be achieved by hand\n");
+		fw.write("# Require server restart\n");
+		fw.write("#\n\n");
+		fw.write("#########################\n");
+		fw.write("# Can be used to make the web aplication working on another SaadaDB.\n");
+		fw.write("# In this case, make sure the generated jar file is in WEB-INF/lib\n");
 		fw.write("saadadbname=" + nameDB + "\n");
+		fw.write("#########################\n");
+		fw.write("# Web application base urls. Must be set when the appliaction is moved by hand from \n");
+		fw.write("#     a server to another or when the tomcat is pushed behind a proxy.\n");
 		fw.write("urlroot=" + urlRoot + "\n");
+		fw.write("#########################\n");
+		fw.write("# If true product download requires an authentication.\n");
+		fw.write("# Authentication parameters must be set by hand in the tomcat config.\n");
+		fw.write("# (refer to the tutorial).\n");
 		fw.write("securedownlad=false\n");
+		fw.write("#########################\n");
+		fw.write("# Current SaadaDB root dir (no longer used)\n");
 		fw.write("#saadadbroot=" + rootDir + "\n");
-		fw.write("#debug=off	\n");
+		fw.write("#########################\n");
+		fw.write("# Set debug mode\n");
+		fw.write("debug=off	\n");
+		fw.write("#########################\n");
+		fw.write("# Set the tomcat log file. Possible values are:\n");
+		fw.write("#   none: Default Tomcat log file (TOMCAT_HOME/logs/catalina.out usually)\n");
+		fw.write("#   default: The log file has the same name as the webapps (last field of urlroot or SaadaDB name)\n");
+		fw.write("#            It is located in TOMCAT_HOME/logs/\n");
+		fw.write("#   Other name: Full path of the log file if starts with " + File.separator + "\n");		
+		fw.write("#               TOMCAT_HOME/logs//Othername.log otherwise\n");
+		fw.write("#   (refer to the tutorial).\n");
+		fw.write("logfile=none\n");
 		fw.close();
 		
 	}
