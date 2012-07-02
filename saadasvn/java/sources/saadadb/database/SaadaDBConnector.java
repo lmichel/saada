@@ -91,7 +91,7 @@ public class SaadaDBConnector extends DefaultHandler {
 			}
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
-			System.exit(1);
+			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
 
