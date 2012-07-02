@@ -303,6 +303,7 @@
 		<display-name>SiteDesc</display-name>
 		<servlet-name>SiteDesc</servlet-name>
 		<servlet-class>ajaxservlet.SiteDesc</servlet-class>
+        <load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SiteDesc</servlet-name>
