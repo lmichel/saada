@@ -26,7 +26,7 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong SaadaDB Name");
 		}
 	}
-	
+
 	/**
 	 * @param name
 	 * @throws FatalException
@@ -36,7 +36,7 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> is not an URL");
 		}
 	}
-	
+
 	/**
 	 * @param name
 	 * @throws FatalException
@@ -50,20 +50,36 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a repository:"  + e.getContext());				
 		}
 	}
-	
+
+	/**
+	 * Returns the TOMCAT_HOME directory attached to the directoiry name.
+	 * Returns name if the name directory contains a webapps subdir.
+	 * Returns its parent if it contains  a webapps subdir.
+	 * @param name
+	 * @return
+	 * @throws QueryException
+	 */
+	public static String getTomcatDir(String name) throws QueryException {
+		try {
+			canBeTomcatDir(name) ;
+			return name;
+
+		} catch(QueryException e) {
+			canBeTomcatWebappsDir(name) ;
+			return (new File(name)).getParent();
+		}
+	}
 	/**
 	 * @param name
 	 * @throws FatalException
 	 */
-	public static void canBeTomcatDir(String name) throws QueryException {
-		//isDirectoryWritable(name);
+	private static void canBeTomcatDir(String name) throws QueryException {
 		try {
 			String webappsdir = name + Database.getSepar() + "webapps";
 			File f = new File(webappsdir);
 			if( f.exists() && f.isDirectory() ) {
 				areSubdirWritable(webappsdir, new String[]{""});
-			}
-			else {
+			} else {
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat home directory:" );								
 			}
 		}
@@ -71,8 +87,7 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
 		}
 	}
-	public static void canBeTomcatWebappsDir(String name) throws QueryException {
-		//isDirectoryWritable(name);
+	private static void canBeTomcatWebappsDir(String name) throws QueryException {
 		try {
 			File f = (new File(name)).getParentFile();
 			areSubdirWritable(f.getAbsolutePath(), new String[]{"webapps"});
@@ -81,7 +96,7 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "<" + name + "> does no look like a Tomcat directory:"  + e.getContext());				
 		}
 	}
-	
+
 	/**
 	 * @param name
 	 * @param subdirs
@@ -119,5 +134,5 @@ public class InstallParamValidator {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Can not write in directory <" + name + "> ");	
 		}
 	}
-	
+
 }
