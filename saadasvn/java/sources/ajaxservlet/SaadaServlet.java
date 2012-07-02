@@ -353,7 +353,6 @@ public class SaadaServlet extends HttpServlet {
 				Messenger.printMsg(Messenger.TRACE, "file dbname.txt found at webapp root");
 				BufferedReader fr = new BufferedReader(new FileReader(f));
 				String buff;
-				String dbname = "";
 				while( (buff = fr.readLine()) != null ) {
 					if( buff.trim().startsWith("#") ) {
 						continue;
@@ -394,8 +393,7 @@ public class SaadaServlet extends HttpServlet {
 						Messenger.debug_mode = true;
 					}
 				}
-				if( dbname.length() > 0 ) {
-					db_name = dbname;
+				if( db_name.length() > 0 ) {
 					return;
 				}
 
