@@ -683,16 +683,10 @@ public class FormPanel extends JPanel {
 	 */
 	protected boolean validWebRootPanel() {
 		try {
-			try {
-				/*
-				 * Check first if TOMCAT_HOKE has been selected
-				 * If not we just check that the directory is writable
-				 */
-			InstallParamValidator.canBeTomcatDir(tomcat_home.getText().trim());
-			tomcat_home.setText(tomcat_home.getText().trim() + Database.getSepar() + "webapps");
-			} catch (QueryException e) {
-				InstallParamValidator.canBeTomcatWebappsDir(tomcat_home.getText().trim());				
-			}
+			/*
+			 * Check first if TOMCAT_HOKE has been selected
+			 */
+			tomcat_home.setText(InstallParamValidator.getTomcatDir(tomcat_home.getText().trim()));
 			InstallParamValidator.validURL(url_root.getText().trim());
 		} catch (QueryException e) {
 			Messenger.printStackTrace(e);

@@ -76,17 +76,9 @@ public class WebInstallPanel extends EditPanel {
 				int retour = fcd.showOpenDialog(rootFrame);
 				if (retour == JFileChooser.APPROVE_OPTION) {
 					File selected_file = fcd.getSelectedFile();
+					String td ="Not Set";
 					try {						
-						try {
-							/*
-							 * Check first if TOMCAT_HOME has been selected
-							 * If not we just check that the directory is writable
-							 */
-							InstallParamValidator.canBeTomcatDir(selected_file.getAbsolutePath()+ File.separator + "webapps");
-						} catch (QueryException e) {
-							InstallParamValidator.canBeTomcatWebappsDir(selected_file.getAbsolutePath() );				
-						}
-
+						td = InstallParamValidator.getTomcatDir(selected_file.getAbsolutePath());
 					} catch(QueryException e) {
 						SaadaDBAdmin.showFatalError(rootFrame, e);
 						return;
@@ -94,10 +86,10 @@ public class WebInstallPanel extends EditPanel {
 
 					try {
 						SQLTable.beginTransaction();
-						Table_SaadaDB.changeTomcatdir(selected_file.getAbsolutePath());
+						Table_SaadaDB.changeTomcatdir(td);
 						SQLTable.commitTransaction();
 						Database.init(Database.getName());
-						dirTomcat.setText(selected_file.getAbsolutePath());
+						dirTomcat.setText(td);
 						CmdThread ct = new ThreadDeployWebApp(WebInstallPanel.this.rootFrame, "Deploy Webapp");
 						ct.run();
 					} catch (SaadaException e) {
