@@ -78,7 +78,7 @@ public class NewWebServer extends NewSaadaDB {
 	public static void buildDBNameFile(String rootDir, String nameDB, String urlRoot) throws Exception {
 		FileWriter fw = new FileWriter(rootDir  + separ + "web" + separ + "dbname.txt");
 		fw.write("######################################################################\n");
-		fw.write("# This file allows som WEB application set up to be achieved by hand\n");
+		fw.write("# This file allows some WEB application set up to be achieved by hand\n");
 		fw.write("# Require server restart\n");
 		fw.write("#\n\n");
 		fw.write("#########################\n");
@@ -108,7 +108,7 @@ public class NewWebServer extends NewSaadaDB {
 		fw.write("#   Other name: Full path of the log file if starts with " + File.separator + "\n");		
 		fw.write("#               TOMCAT_HOME/logs//Othername.log otherwise\n");
 		fw.write("#   (refer to the tutorial).\n");
-		fw.write("logfile=none\n");
+		fw.write("logfile=default\n");
 		fw.close();
 		
 	}
