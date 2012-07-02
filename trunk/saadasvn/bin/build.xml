@@ -118,15 +118,15 @@
     	</copy>
   		
 		<echo>Remove the previous WebApp from ${TOMCAT_HOME}/webapps/</echo>
-		<delete dir="${TOMCAT_HOME}/${SAADA_DB_NAME}" failonerror="false" />
+		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
   		
   		<echo>Copy web directory tree in ${TOMCAT_HOME}/webapps/</echo>
- 		<copy todir="${TOMCAT_HOME}/${SAADA_DB_NAME}">
+ 		<copy todir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}">
   		    <fileset dir="${SAADA_DB_HOME}/web/"/>
   		 </copy>
 
   		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
-		<jar destfile="${TOMCAT_HOME}/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
+		<jar destfile="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
   		
 	</target>
 		
