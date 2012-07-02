@@ -361,7 +361,7 @@ public class SaadaServlet extends HttpServlet {
 					else if( buff.matches("saadadbname=" + RegExp.DBNAME)) {
 						String retour =  buff.trim().split("=")[1];
 						Messenger.printMsg(Messenger.TRACE, "read DB name: " + retour);
-						dbname = retour;
+						db_name = retour;
 					}
 					else if( buff.matches("urlroot=.*")) {
 						String retour =  buff.trim().split("=")[1];
