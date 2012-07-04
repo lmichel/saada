@@ -57,7 +57,7 @@ public abstract class JsonUtils {
 //			out.println(s + "\n");
 //
 //		}
-		if( STDOUT ) System.out.println(msg);
+		if( STDOUT ) Messenger.printMsg(Messenger.DEBUG, msg);
 		out.println(msg);
 	}
 	
