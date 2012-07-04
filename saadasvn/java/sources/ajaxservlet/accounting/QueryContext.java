@@ -66,6 +66,9 @@ public class QueryContext implements Serializable {
 		colfmtor.setOId(resultSet.getOId(rank));
 		return colfmtor.getRow(null, rank);		
 	}
+	public long getOid(int rank) throws Exception {
+		return resultSet.getOId(rank);		
+	}
 
 	public boolean endReached(int rank) {
 		if( rank >= this.resultSize) {
