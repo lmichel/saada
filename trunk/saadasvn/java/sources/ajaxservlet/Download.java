@@ -2,6 +2,7 @@ package ajaxservlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.SocketException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -110,8 +111,12 @@ public class Download extends SaadaServlet {
 				getErrorPage(request, response, "Unconsistant parameters");					
 				return;
 			}
-		}
-		catch(Exception e) {
+			// No stack trace when the client interrupt the download
+		} catch( SocketException e) {
+			Messenger.printMsg(Messenger.WARNING, e.getMessage());
+			getErrorPage(request, response, e);					
+			return;				
+		} catch(Exception e) {
 			e.printStackTrace();
 			getErrorPage(request, response, e);					
 			return;
