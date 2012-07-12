@@ -19,7 +19,7 @@ public class DefaultFormats {
 	static private DecimalFormat six = new DecimalFormat("0.000000");
 	static private boolean formatInit = false;
 	
-   static final void initFormat() {
+   public static final void initFormat() {
 	   if( !formatInit ) {
 		deux.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		six.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
@@ -32,7 +32,7 @@ public class DefaultFormats {
 	 * @param res
 	 * @param message
 	 */
-	static void errorPage(HttpServletResponse res, String message) {
+	public static void errorPage(HttpServletResponse res, String message) {
 		try { 
 			PrintWriter out;
 			res.setContentType("text/html");
@@ -108,7 +108,7 @@ public class DefaultFormats {
 	 * @param val
 	 * @return
 	 */
-	static final String getString(double val) {
+	public static final String getString(double val) {
 		 initFormat();
 		if( Double.isInfinite(val) || Double.isNaN(val) ) {
 			return "Not Set";
@@ -193,7 +193,7 @@ public class DefaultFormats {
 	 * @param val
 	 * @return
 	 */
-	static final String getSignedString(double val) {
+	public static final String getSignedString(double val) {
 		 initFormat();
 		String sign;
 		if( val < 0 ) {
