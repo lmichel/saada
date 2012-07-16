@@ -17,6 +17,8 @@ import saadadb.util.SaadaConstant;
  * <p>Company: Observaroire Astronomique Strasbourg</p>
  * @author XXXX
  * @version 00000001
+ * 
+ * 07/2012: Fix bug: was not  loading extended attributes 
  */ 
 public class FlatfileSaada extends SaadaInstance{
     
@@ -55,7 +57,7 @@ public class FlatfileSaada extends SaadaInstance{
 			this.setDateLoad(rs.getLong("date_load"));
 			/** ----------Attention Super Class-------------* */
 			// Class cls = obj.getClass();
-			Class cls = this.getClass().getSuperclass();
+			Class cls = this.getClass();
 			Vector<Class> vt_class = new Vector<Class>();
 			while (!cls.getName().equals("saadadb.collection.SaadaInstance")) {
 				vt_class.add(cls);
