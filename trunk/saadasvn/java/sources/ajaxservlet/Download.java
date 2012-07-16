@@ -1,5 +1,6 @@
 package ajaxservlet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.SocketException;
@@ -44,7 +45,7 @@ public class Download extends SaadaServlet {
 	}
 
 	protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+
 		int category ;
 		String product_path;
 		long oid;
@@ -77,10 +78,23 @@ public class Download extends SaadaServlet {
 				}
 				if( "vignette".equalsIgnoreCase(ext) ) {					
 					if( category != Category.IMAGE) {
-						getErrorPage(request, response, "Vignettes are available for image only.");
-						return;						
+						String fn = si.getRepositoryPath();
+						String lfn = fn.toLowerCase();
+						if( lfn.endsWith(".jpg") || lfn.endsWith(".jpeg") || lfn.endsWith(".png") || lfn.endsWith(".gif") ) {
+							product_path = fn;						
+						} else {
+							fn += ".png";
+							if( !(new File(fn)).exists() ) {
+								if (Messenger.debug_mode)
+									Messenger.printMsg(Messenger.DEBUG, "File " + fn + " not found");
+								product_path = base_dir + File.separator + "images" + File.separator + "nondispo.jpeg";
+							} else {
+								product_path = fn;							
+							}
+						}
+					} else {
+						product_path = Repository.getVignettePath((ImageSaada)si);
 					}
-					product_path = Repository.getVignettePath((ImageSaada)si);
 				}
 				else if( "url".equalsIgnoreCase(ext) ) {		
 					PrintWriter out = response.getWriter();
