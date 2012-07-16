@@ -16,7 +16,8 @@ jQuery.extend({
 		var collection = '';
 		var category = '';
 
-		var path = $(location).attr('href');
+		//var path = $(location).attr('href');
+		var path = '';
 		if (path.endsWith("#")) path = path.substr(0, path.length - 1);
 
 		var speFields = new Array();
