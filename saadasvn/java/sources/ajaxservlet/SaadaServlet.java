@@ -273,11 +273,14 @@ public class SaadaServlet extends HttpServlet {
 		} else  {
 			res.setContentType("application/octet-stream");
 		}
-
-		res.setHeader("Content-Disposition", "attachment; filename=\""+ attachement + "\"");
+		/*
+		 * Type = attachment: force the browser to saveAs
+		 *        inline    : Ask the browser to display 
+		 */
+		//res.setHeader("Content-Disposition", "inline; filename=\""+ attachement + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
-		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);
+		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" );
 
 		BufferedInputStream fl = new BufferedInputStream(new FileInputStream(product_path));
 		byte b[] = new byte[1000000];
