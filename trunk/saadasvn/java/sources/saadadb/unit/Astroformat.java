@@ -14,10 +14,6 @@ package saadadb.unit;
  * @version 1.2 : 30-Oct-2006 added DATE_DIFF
  */
 
-/**
- * @author laurentmichel
- *
- */
 public class Astroformat {
     /** The default way of representing the NULL (unknown) numbers .
      * The first element of the array contains the default_null.
