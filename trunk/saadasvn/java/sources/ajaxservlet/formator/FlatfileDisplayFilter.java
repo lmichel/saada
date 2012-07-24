@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
 import saadadb.collection.FlatfileSaada;
+import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -112,11 +113,12 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 	@Override
 	public JSONArray getCollectionKWTable() throws Exception {
 		JSONArray retour = new JSONArray ();
+		SaadaInstance si = Database.getCache().getObject(oidsaada);
 		for( AttributeHandler ah:  MetaCollection.getAttribute_handlers_flatfile().values() )  {
 			if( this.valid(ah) ) {
 				JSONArray list = new JSONArray();
 				list.add(ah.getNameorg());
-				list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
+				list.add(si.getFieldString(ah.getNameattr()));
 				list.add(ah.getUnit());
 				list.add(ah.getComment());
 				retour.add(list);

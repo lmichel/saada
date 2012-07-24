@@ -118,10 +118,11 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 	public JSONArray getClassKWTable() throws Exception {
 		JSONArray retour = new JSONArray ();
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
+		SaadaInstance si = Database.getCache().getObject(oidsaada);
 		for( AttributeHandler ah: mc.getAttributes_handlers().values()) {
 			JSONArray list = new JSONArray();
 			list.add(ah.getNameorg());
-			list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
+			list.add(si.getFieldString(ah.getNameattr()));
 			list.add(ah.getUnit());
 			list.add(new Boolean(true));
 			list.add(ah.getComment());
