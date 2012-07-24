@@ -96,10 +96,11 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 		JSONArray retour = new JSONArray ();
 		if( SaadaOID.getCategoryNum(oidsaada) != Category.FLATFILE ) {
 			MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
+			SaadaInstance si = Database.getCache().getObject(oidsaada);
 			for( AttributeHandler ah: mc.getAttributes_handlers().values()) {
 				JSONArray list = new JSONArray();
 				list.add(ah.getNameorg());
-				list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
+				list.add(si.getFieldString(ah.getNameattr()));
 				list.add(ah.getUnit());
 				list.add(ah.getComment());
 				retour.add(list);

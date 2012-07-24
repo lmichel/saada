@@ -11,6 +11,7 @@ import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
 import saadadb.collection.MiscSaada;
+import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -112,9 +113,10 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		JSONArray retour = new JSONArray ();
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
 		for( AttributeHandler ah: mc.getAttributes_handlers().values()) {
+			SaadaInstance si = Database.getCache().getObject(oidsaada);
 			JSONArray list = new JSONArray();
 			list.add(ah.getNameorg());
-			list.add(Database.getCache().getObject(oidsaada).getFieldString(ah.getNameattr()));
+			list.add(si.getFieldString(ah.getNameattr()));
 			list.add(ah.getUnit());
 			list.add(new Boolean(true));
 			list.add(ah.getComment());
