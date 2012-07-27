@@ -17,15 +17,11 @@ public class DefaultFormats {
 	static private DecimalFormat exp =  new DecimalFormat("0.00E00");
 	static private DecimalFormat deux = new DecimalFormat("0.0000");
 	static private DecimalFormat six = new DecimalFormat("0.000000");
-	static private boolean formatInit = false;
 	
-   public static final void initFormat() {
-	   if( !formatInit ) {
+    static {
 		deux.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		six.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		exp.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));	
-		formatInit = true;
-	   }
 	}
 	/** * @version $Id$
 
@@ -55,7 +51,6 @@ public class DefaultFormats {
 	 * @return
 	 */
 	public static final String getString(Object obj) {
-		 initFormat();
 		 if( obj == null ) {
 			return "Not Set";
 		}
@@ -69,8 +64,7 @@ public class DefaultFormats {
 			long v = ((Long)obj).longValue();
 			if( v == SaadaConstant.LONG ) {
 				return "Not Set";
-			}
-			else {
+			} else {
 				return obj.toString();
 			}
 		}
@@ -78,8 +72,7 @@ public class DefaultFormats {
 			long v = ((Integer)obj).intValue();
 			if( v == SaadaConstant.INT || v == -2147483648) {
 				return "Not Set";
-			}
-			else {
+			} else {
 				return obj.toString();
 			}
 		}
@@ -91,15 +84,12 @@ public class DefaultFormats {
 					vstr = "http://...." + str.substring(str.length()-10);
 				}
 				return "<A target=\"blank\" title=\"" + str + "\" href=\"" + str + "\">" + vstr + "</A>";
-			}
-			else if( str.matches(RegExp.BIBCODE)  ) {
+			} else if( str.matches(RegExp.BIBCODE)  ) {
 				return "<A target=\"blank\" tilte=\"bibcode\" href=\"http://cdsads.u-strasbg.fr/abs/" + str + "\">" + str + "</A>";
-			}
-			else {
+			} else {
 				return str;
 			}
-		}
-		else {
+		} else {
 			return obj.toString();
 		}
 	}
@@ -109,14 +99,11 @@ public class DefaultFormats {
 	 * @return
 	 */
 	public static final String getString(double val) {
-		 initFormat();
 		if( Double.isInfinite(val) || Double.isNaN(val) ) {
 			return "Not Set";
-		}
-		else if( val == 0 || (val < -1e-2 || val > 1e-2) ) {
+		} else if( val == 0 || (val < -1e-2 || val > 1e-2) ) {
 			return deux.format(val);
-		}
-		else {
+		} else {
 			return exp.format(val);
 		}
 	}
@@ -127,11 +114,9 @@ public class DefaultFormats {
 	 * @return
 	 */
 	public static final String getDecimalCoordString(double val) {
-		 initFormat();
 		if( Double.isInfinite(val) || Double.isNaN(val) ) {
 			return "Not Set";
-		}
-		else {
+		} else {
 			return six.format(val);
 		}
 	}
@@ -177,11 +162,9 @@ public class DefaultFormats {
 	 * @return
 	 */
 	public static final String getHMSCoord(double ra, double dec) {
-		 initFormat();
 		if( Double.isInfinite(ra) || Double.isInfinite(dec)) {
 			return "Not Set";
-		}
-		else {
+		} else {
 			Astrocoo coo =new Astrocoo(Database.getAstroframe(), ra, dec);
 			//Coo.setDecimals(4);
 			coo.setPrecision(6);
@@ -194,7 +177,6 @@ public class DefaultFormats {
 	 * @return
 	 */
 	public static final String getSignedString(double val) {
-		 initFormat();
 		String sign;
 		if( val < 0 ) {
 			sign = "";
@@ -202,11 +184,9 @@ public class DefaultFormats {
 		else sign = "+";
 		if( Double.isInfinite(val) || Double.isNaN(val) ) {
 			return "not set";
-		}
-		else if( val == 0 || (val < -1e-2 || val > 1e-2) ) {
+		} else if( val == 0 || (val < -1e-2 || val > 1e-2) ) {
 			return sign + deux.format(val);
-		}
-		else {
+		} else {
 			return sign + exp.format(val);
 		}
 	}
