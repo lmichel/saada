@@ -175,7 +175,7 @@ public class GetObject extends SaadaServlet {
 					ja.add(list);
 				}
 				jo.put("aaData",ja);					
-				JsonUtils.teePrint(out,jo.toJSONString());		
+				JsonUtils.teePrint(response,jo.toJSONString());		
 				out.close();
 			}
 		} catch(Exception e) {

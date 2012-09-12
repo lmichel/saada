@@ -79,7 +79,7 @@ public class JSDataTree extends SaadaServlet {
 						}
 					}
 				}
-				JsonUtils.teePrint(out, " ] }  " );
+				JsonUtils.teePrint(response, " ] }  " );
 				first = false;
 			}
 			JsonUtils.teePrint(out, " ] }");

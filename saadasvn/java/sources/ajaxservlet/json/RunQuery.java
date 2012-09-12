@@ -74,7 +74,7 @@ public class RunQuery extends SaadaServlet {
 					jsa.add(jo2);
 				}
 				jo.put("attributes",jsa);
-				JsonUtils.teePrint(out,jo.toJSONString());
+				JsonUtils.teePrint(response,jo.toJSONString());
 			}
 			else {
 				reportJsonError(request, response, "Query badly formed");

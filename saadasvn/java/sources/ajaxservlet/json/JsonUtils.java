@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -48,17 +49,18 @@ public abstract class JsonUtils {
 	}
 	
 	public static void teePrint(ServletOutputStream out, String msg) throws IOException {
-//		String[] words = msg.split(",", -1);
-//		for( String s: words) {
-//			if ( s.length() == 3 ) {
-//				System.out.println(((int)(s.charAt(0))) + " " + ((int)(s.charAt(1))) + " " + ((int)(s.charAt(2))));
-//			}
-//			if( STDOUT ) System.out.println(s.length() + " " + s);
-//			out.println(s + "\n");
-//
-//		}
 		if( STDOUT ) Messenger.printMsg(Messenger.DEBUG, msg);
 		out.println(msg);
+	}
+	/**
+	 * Force the MIME type to JSON: avoid FF "badly formed" errors
+	 * @param response
+	 * @param msg
+	 * @throws IOException
+	 */
+	public static void teePrint(HttpServletResponse response, String msg) throws IOException {
+		response.setContentType("application/json");
+		teePrint(response.getOutputStream(),msg);
 	}
 	
 	/**
