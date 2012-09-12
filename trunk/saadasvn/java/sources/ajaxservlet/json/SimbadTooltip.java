@@ -113,7 +113,7 @@ public class SimbadTooltip extends SaadaServlet {
 				retour.put("aaData", dataarray);
 				retour.put("iTotalRecords", datasize);
 				retour.put("iTotalDisplayRecords", datasize);
-				JsonUtils.teePrint(response.getOutputStream(), retour.toJSONString());
+				JsonUtils.teePrint(response, retour.toJSONString());
 			}
 		} catch (QueryException e) {	
 			reportJsonError(request, response, e);

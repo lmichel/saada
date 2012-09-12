@@ -205,7 +205,7 @@ public class GetMeta extends SaadaServlet {
 				/*
 				 * Push the JSon object into the stream
 				 */
-				JsonUtils.teePrint(out,retour.toJSONString());
+				JsonUtils.teePrint(response,retour.toJSONString());
 			}
 			else {
 				reportJsonError(request, response, "request " + query  + " unsupported");

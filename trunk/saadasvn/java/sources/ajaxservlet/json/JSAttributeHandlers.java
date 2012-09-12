@@ -228,7 +228,7 @@ public class JSAttributeHandlers extends SaadaServlet implements Servlet {
 				retour.put("classLevel", jsclass);
 
 			}
-			JsonUtils.teePrint(response.getOutputStream(), retour.toJSONString());
+			JsonUtils.teePrint(response, retour.toJSONString());
 
 		}catch( Exception e ) {
 			reportJsonError(request, response, e);
