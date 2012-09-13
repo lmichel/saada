@@ -627,6 +627,10 @@ public class AttributeHandler implements Serializable{
 	} 
 	
 	
+	/**
+	 * Return a range value (enum if less than 10 values) for the attribute
+	 * @throws Exception
+	 */
 	public void setRange() throws Exception {
 		if( this.classid == -1 ) {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "getRange functionnality cannot be used out of a class context");
