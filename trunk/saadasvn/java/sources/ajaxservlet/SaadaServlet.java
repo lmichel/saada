@@ -172,7 +172,7 @@ public class SaadaServlet extends HttpServlet {
 	 */
 	public void reportJsonError(HttpServletRequest request, HttpServletResponse response, String msg) {
 		try {
-			JsonUtils.teePrint(response.getOutputStream(), JsonUtils.getErrorMsg(accessMessage(request) + " " +msg));
+			JsonUtils.teePrint(response, JsonUtils.getErrorMsg(accessMessage(request) + " " +msg));
 		} catch (Exception e1) {
 			Messenger.printStackTrace(e1);
 		}
