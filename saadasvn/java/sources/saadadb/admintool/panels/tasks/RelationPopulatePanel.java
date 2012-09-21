@@ -61,7 +61,7 @@ public class RelationPopulatePanel extends TaskPanel {
 		super.setDataTreePath(dataTreePath);
 		try {
 			this.relationChooser.setDataTreePath(null);
-			setSelectedResource("", null);
+			this.setSelectedResource("", null);
 
 			if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
 				this.collectionCoverage.reset();
@@ -112,7 +112,7 @@ public class RelationPopulatePanel extends TaskPanel {
 				return;
 			} else {
 				/*
-				 * Copy the meta relation int the configuration ....
+				 * Copy the meta relation into the configuration ....
 				 */
 				RelationConf relationConfiguration = new RelationConf();
 
@@ -148,7 +148,8 @@ public class RelationPopulatePanel extends TaskPanel {
 			Table_Saada_Relation.saveCorrelator(this.relationConf);
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			showSuccess(this.rootFrame, "Relationship <" + this.relationConf.getNameRelation() +"> saved, but the correlatoer has not been applied"); 
+			showSuccess(this.rootFrame, "Relationship <" + this.relationConf.getNameRelation() +"> saved, but the correlator has not been applied"); 
+			this.cancelChanges();
 		} else {
 			showFatalError(rootFrame, "Not selected relationship");
 		}
@@ -193,6 +194,14 @@ public class RelationPopulatePanel extends TaskPanel {
 		this.add(new ToolBarPanel(this, true, true, false));
 	}
 
+	/**
+	 * Programaticaly select a relation. So the panel can be open on the relation just created
+	 * @param relationName
+	 */
+	public void setSelectedResource(String relationName, String comment){
+		super.setSelectedResource(relationName, comment);
+		relationChooser.selectRelation(relationName);
+	}
 
 	@Override
 	protected void setActivePanel() {

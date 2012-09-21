@@ -4,7 +4,9 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.panels.tasks.RelationCreatePanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
@@ -18,9 +20,11 @@ import saadadb.util.Messenger;
 
 public class ThreadRelationCreate extends CmdThread {
 	protected RelationConf config;
-
-	public ThreadRelationCreate(Frame frame, String taskTitle) {
+	RelationCreatePanel panel; 
+	
+	public ThreadRelationCreate(Frame frame, RelationCreatePanel panel, String taskTitle) {
 		super(frame, taskTitle);
+		this.panel = panel;
 	}
 
 	@Override
@@ -55,6 +59,7 @@ public class ThreadRelationCreate extends CmdThread {
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> created");		
+			panel.setSelectedResource(config.getNameRelation(), null);
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 		} catch (Exception ae) {			

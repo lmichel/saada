@@ -37,6 +37,10 @@ public class RelationChooser extends CollapsiblePanel {
 		this.getContentPane().add(AdminComponent.getHelpLabel(HelpDesk.RELATION_SELECTOR), mc);
 	}
 	
+	public void selectRelation(String relationName){
+		configChooser.selectRelation(relationName);
+	}
+
 	/**
 	 * @return
 	 */

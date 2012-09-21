@@ -4,6 +4,8 @@ import javax.swing.JTextField;
 import javax.swing.tree.TreePath;
 
 /**
+ * Abstract Text field component enable to receive data tree path DnD
+ * 
  * @author laurentmichel
  * * @version $Id: TreepathDropableTextField.java 118 2012-01-06 14:33:51Z laurent.mistahl $
  */

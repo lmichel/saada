@@ -27,14 +27,14 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
+import saadadb.database.Database;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.RegExp;
 
+/** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * 
+ */
 public class RelationCreatePanel extends TaskPanel {
-	/** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
-
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	protected JPanel rel_name_panel;
 	protected JPanel coll_panel;
@@ -50,6 +50,7 @@ public class RelationCreatePanel extends TaskPanel {
 	private JButton qualDel;
 	protected NodeNameTextField qualName;
 	protected JComboBox  qualList;		
+	protected JButton populate;
 
 
 	public RelationCreatePanel(AdminTool rootFrame, String ancestor) {
@@ -58,16 +59,36 @@ public class RelationCreatePanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationCreate(rootFrame, CREATE_RELATION);
+		cmdThread = new ThreadRelationCreate(rootFrame, this, CREATE_RELATION);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
+		if( dataTreePath == null || dataTreePath.isCollectionLevel() ){
+			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
+		System.out.println("setTreePath");
 		super.setDataTreePath(dataTreePath);
-		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) )
-			primaryField.setText(dataTreePath.collection + "." + dataTreePath.category.toUpperCase());
+		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
+			String pf = dataTreePath.collection + "." + dataTreePath.category.toUpperCase();
+			if( !pf.equals(this.primaryField.getText())) {
+				this.primaryField.setText(pf);
+				this.secondaryField.setText("");
+				this.nameField.setText("");
+				this.commentField.setText("");
+				this.qualList.removeAll();		
+				this.populate.setEnabled(false);
+			}
+		}
 	}
 
 	@Override
@@ -117,6 +138,13 @@ public class RelationCreatePanel extends TaskPanel {
 		return retour;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setSelectedResource(java.lang.String, java.lang.String)
+	 */
+	public void setSelectedResource(String label, String explanation) {	
+		super.setSelectedResource(label, explanation);
+		populate.setEnabled(true);
+	}
 
 	@Override
 	protected void setActivePanel() {
@@ -158,6 +186,7 @@ public class RelationCreatePanel extends TaskPanel {
 		mc.next(); mc.left(false);
 		secondaryField = new CollectionTextField();
 		tPanel.add(secondaryField, mc);
+		//secondaryField.setEditable(false);
 
 		tPanel = this.addSubPanel("Qualifiers");
 		qualAdd = new JButton("Add");
@@ -177,7 +206,7 @@ public class RelationCreatePanel extends TaskPanel {
 				RelationCreatePanel.this.qualList.addItem(name) ;
 			}
 		});
-		qualAdd.setEnabled(false);
+		//qualAdd.setEnabled(false);
 		qualDel = new JButton("Remove");
 		qualDel.setToolTipText("Remove the selected qualfier from the relationship");
 		qualDel.addActionListener(new ActionListener() {
@@ -185,6 +214,7 @@ public class RelationCreatePanel extends TaskPanel {
 				RelationCreatePanel.this.qualList.removeItem(RelationCreatePanel.this.qualList.getSelectedItem());
 			}
 		});
+		//qualDel.setEnabled(false);
 		qualName = new NodeNameTextField(16, RegExp.EXTATTRIBUTE, qualAdd);
 		qualList = new JComboBox();		
 
@@ -204,6 +234,21 @@ public class RelationCreatePanel extends TaskPanel {
 		mc.next();
 		tPanel.add(qualDel, mc);
 
+		tPanel = this.addSubPanel("Links");
+		populate = new JButton("Create Links");
+		populate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			rootFrame.activePanel(POPULATE_RELATION);
+			rootFrame.setSelectedResource(nameField.getText(), null);
+			}
+		});
+		populate.setEnabled(false);
+		mc.reset(5,5,5,5);
+		mc.right(false);
+		tPanel.add(getPlainLabel("Open The link Editor Tool"), mc);
+		mc.rowEnd();mc.left(true);
+		tPanel.add(populate,mc);
+		
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});

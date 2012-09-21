@@ -5,8 +5,6 @@ import java.awt.Cursor;
 import java.awt.Frame;
 
 import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
@@ -23,7 +21,7 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 	private static  boolean indexAfter = true;
 	
 	public ThreadRelationPopulate(Frame frame, String taskTitle) {
-		super(frame, taskTitle);
+		super(frame, null, taskTitle);
 	}
 
 	/* (non-Javadoc)

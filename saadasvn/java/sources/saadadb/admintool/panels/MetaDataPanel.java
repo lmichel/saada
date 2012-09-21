@@ -54,6 +54,8 @@ import saadadb.util.Messenger;
 
 /**
  * Display the SaadaDB data tree
+ * Handle "manually" double clicks on tree node which are not  implemented 
+ * by DnD listeners
  * @author michel
  *
  */
@@ -67,26 +69,40 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	protected AdminTool frame;
 	protected DefaultTreeModel model;
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Collections");
-	private Timer simplCLickTimer = new Timer(500, new ActionListener() {
+	private int DOUBLE_CLICK_DELAY=500; // filed possibly moved in some property file
+	private Timer simplCLickTimer = new Timer(DOUBLE_CLICK_DELAY, new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 			processSimpleClick();
 		}
 	});
-	private TreePath clickedTreePath ;
+	private TreePath clickedTreePath, previouslyClickedTreePath ;
 	;
+	/**
+	 * Simple click: set the new data tree path on the current task panel
+	 * The new tree path must be accepted before the selection to be validated
+	 */
 	void processSimpleClick(){
 		if( simplCLickTimer.isRunning()) {
 			if( clickedTreePath != null ) {
 				try {
-					MetaDataPanel.this.frame.setDataTreePath(new DataTreePath(clickedTreePath));
+					DataTreePath  dtp = new DataTreePath(clickedTreePath);
+					if( frame.acceptTreePath(dtp)) {
+						MetaDataPanel.this.frame.setDataTreePath(dtp);
+					} else {
+						clickedTreePath = previouslyClickedTreePath;
+					}
+					tree.setSelectionPath(clickedTreePath);
 				} catch (QueryException e1) {
 					Messenger.trapQueryException(e1);
 				}
 			}
-			tree.setSelectionPath(clickedTreePath);
 			simplCLickTimer.stop();
 		}
 	}
+
+	/**
+	 * DOuble click on a node opens a table with the node content
+	 */
 	void processDoubleClick(){
 		if( simplCLickTimer.isRunning()) {
 			simplCLickTimer.stop();
@@ -157,12 +173,12 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
+				previouslyClickedTreePath = clickedTreePath;
 				clickedTreePath = tree.getPathForLocation(e.getX(), e.getY());
 				if( e.getClickCount() == 2) {
 					processDoubleClick();
+					tree.setSelectionPath(clickedTreePath);
 				}
-
-				tree.setSelectionPath(clickedTreePath);
 			}
 		});	
 		/*

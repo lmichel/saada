@@ -5,6 +5,9 @@ package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -66,7 +69,7 @@ public class RelationCommentPanel extends RelationDropPanel {
 			}
 		}
 	}
-	
+
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
 		String r = this.relationChooser.getSelectedRelation();
@@ -99,7 +102,7 @@ public class RelationCommentPanel extends RelationDropPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationComment(rootFrame, COMMENT_RELATION);
+		cmdThread = new ThreadRelationComment(rootFrame, this, COMMENT_RELATION);
 	}
 
 	@Override
@@ -110,18 +113,26 @@ public class RelationCommentPanel extends RelationDropPanel {
 		relationChooser = new RelationshipChooser(this, runButton);
 		MyGBC c = new MyGBC(5,5,5,5);c.gridwidth = 2;
 		tPanel.add(relationChooser, c);
-		
+
 		c.newRow();c.gridwidth = 2;		c.anchor = GridBagConstraints.WEST;
 
 		tPanel.add(getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
-		
+
 		c.newRow();c.gridwidth = 1;
 		c.anchor = GridBagConstraints.EAST;
 		tPanel.add(getPlainLabel("Description"), c);
-		
+
 		c.rowEnd();
 		c.anchor =  GridBagConstraints.WEST;
 		commentField = new FreeTextField(6, 24);
+		commentField.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e) {
+				if( relationChooser.getSelectedRelation()  != null ) {
+					RelationCommentPanel.this.notifyChange();
+				}
+			}
+		});
 		tPanel.add(commentField.getPanel(), c);
 
 		this.setActionBar(new Component[]{runButton

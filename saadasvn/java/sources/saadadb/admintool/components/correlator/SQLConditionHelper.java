@@ -10,14 +10,16 @@ import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 
 public class SQLConditionHelper extends JComboBox{
 	private JTextArea textEditor;
 	private Frame rootFrame;
+	private RelationPopulatePanel taskPanel;
 	public static final Map<String, String> helpItems;
-	
+
 	static {
 		helpItems = new LinkedHashMap<String, String>();
 		helpItems.put("- Join Operator Templates -", "");
@@ -28,24 +30,31 @@ public class SQLConditionHelper extends JComboBox{
 		} catch (FatalException e) {}
 		helpItems.put("Same sky pixel", "p.sky_pixel_csa = s.sky_pixel_csa");
 	}
-	
+
 	/**
 	 * @param rootFrame
 	 * @param textEditor
 	 */
-	public SQLConditionHelper(Frame rootFrame, JTextArea textEditor) {
+	public SQLConditionHelper(RelationPopulatePanel taskPanel, JTextArea textEditor) {
 		super();
 		this.textEditor = textEditor;
-		this.rootFrame = rootFrame;
+		this.taskPanel = taskPanel;
 		for( String k: helpItems.keySet()) {
 			this.addItem(k);
 		}
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( getSelectedItem() != null && !getSelectedItem().toString().startsWith("-")) {
-					SQLConditionHelper.this.textEditor.insert(
-							helpItems.get(getSelectedItem().toString())
-					        , SQLConditionHelper.this.textEditor.getCaretPosition());
+				Object it = getSelectedItem();
+				if( it != null && !it.toString().startsWith("-")) {
+					int caret_pos = SQLConditionHelper.this.textEditor.getCaretPosition();
+					SQLConditionHelper.this.taskPanel.notifyChange();
+					if( caret_pos >= (SQLConditionHelper.this.textEditor.getText().length() -1) ) {
+						SQLConditionHelper.this.textEditor.append("\n AND ");
+						SQLConditionHelper.this.textEditor.append(helpItems.get(it.toString()));
+					} else {
+						SQLConditionHelper.this.textEditor.insert(helpItems.get(it.toString())
+								, SQLConditionHelper.this.textEditor.getCaretPosition());
+					}
 				}
 			}
 		});

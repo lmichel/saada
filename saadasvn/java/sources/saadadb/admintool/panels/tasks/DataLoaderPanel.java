@@ -39,7 +39,7 @@ import saadadb.util.Messenger;
  *
  */
 public class DataLoaderPanel extends TaskPanel {
-
+	private static final long serialVersionUID = 1L;
 	protected  LoaderConfigChooser configChooser;
 	protected JRadioButton repCopy ;
 	protected JRadioButton repMove ;
@@ -77,6 +77,17 @@ public class DataLoaderPanel extends TaskPanel {
 	}
 
 	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
+		if( dataTreePath != null && dataTreePath.isCollectionLevel() ){
+			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
+
+	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
@@ -84,7 +95,6 @@ public class DataLoaderPanel extends TaskPanel {
 			showInputError(rootFrame, "Can not change data treepath in this context");
 		}else if( dataTreePath != null ) {
 			if( dataTreePath.isCollectionLevel() ) {
-				showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
 				runButton.inActivate();
 			}
 			else {

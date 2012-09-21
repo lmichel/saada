@@ -39,7 +39,7 @@ import saadadb.util.Messenger;
 public class LoaderConfigChooser extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JList confList = new JList(new DefaultListModel());
-	private String category;
+	private String category = null;
 	private JTextArea description = new JTextArea(6, 24);
 	private static final String CONF_DIR = SaadaDB.getRoot_dir()  + Database.getSepar() + "config";
 	private AdminPanel taskPanel ;
@@ -53,19 +53,19 @@ public class LoaderConfigChooser extends JPanel {
 		this.confList.setVisibleRowCount(8);
 		this.confList.setFixedCellWidth(15);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		description.setEditable(false);
+		this.description.setEditable(false);
 		this.setLayout(new GridBagLayout());
-		
+
 		MyGBC mgbc = new MyGBC(5,5,5,5);mgbc.gridheight = 2;
 		JScrollPane scrollPane = new JScrollPane(confList);
 		scrollPane.setPreferredSize(new Dimension(150,120));
 		this.add(scrollPane, mgbc);
-		
+
 		mgbc.rowEnd();mgbc.gridheight = 1;mgbc.anchor = GridBagConstraints.SOUTHWEST;
 		this.add(AdminComponent.getPlainLabel("Description of selected filter"), mgbc);
 		mgbc.newRow();mgbc.gridx++;
 		this.add(new JScrollPane(description), mgbc);
-		
+
 		mgbc.newRow();mgbc.gridwidth=2;
 		JPanel jp = new JPanel();
 		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -73,7 +73,7 @@ public class LoaderConfigChooser extends JPanel {
 		jp.add(editConf);
 		jp.add(newConf);
 		this.add(jp, mgbc);
-		
+
 		this.newConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				activeEditorPanel() ;
@@ -103,7 +103,7 @@ public class LoaderConfigChooser extends JPanel {
 			}
 		});
 
-		confList.addListSelectionListener(new ListSelectionListener() {
+		this.confList.addListSelectionListener(new ListSelectionListener() {
 
 			public void valueChanged(ListSelectionEvent arg0) {
 				if( confList.getSelectedValue() != null ) {
@@ -164,25 +164,28 @@ public class LoaderConfigChooser extends JPanel {
 	public void setCategory(String category, String toSelect) throws FatalException {
 		this.category = category;
 		DefaultListModel model = (DefaultListModel) confList.getModel();
+		this.description.setText("");
 		model.removeAllElements();
-		model.addElement("Default");
-		File base_dir = new File( CONF_DIR);
-		boolean nothingSelected = true;
-		if( base_dir.isDirectory()) {
-			ConfFileFilter dff = new ConfFileFilter(category);
-			for( File c: base_dir.listFiles() ) {
-				if( dff.accept(c) ) { 
-					String name = c.getName().split("\\.")[1];
-					model.addElement(name);
-					if( toSelect != null && name.equals(toSelect)) {
-						nothingSelected = false;
-						confList.setSelectedValue(name, true);
+		if( category != null ) {
+			model.addElement("Default");
+			File base_dir = new File( CONF_DIR);
+			boolean nothingSelected = true;
+			if( base_dir.isDirectory()) {
+				ConfFileFilter dff = new ConfFileFilter(category);
+				for( File c: base_dir.listFiles() ) {
+					if( dff.accept(c) ) { 
+						String name = c.getName().split("\\.")[1];
+						model.addElement(name);
+						if( toSelect != null && name.equals(toSelect)) {
+							nothingSelected = false;
+							confList.setSelectedValue(name, true);
+						}
 					}
 				}
 			}
-		}
-		if( nothingSelected) {
-		confList.setSelectedIndex(0);
+			if( nothingSelected) {
+				confList.setSelectedIndex(0);
+			}
 		}
 	}
 
