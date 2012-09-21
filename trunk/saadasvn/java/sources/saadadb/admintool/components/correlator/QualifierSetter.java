@@ -21,6 +21,7 @@ import javax.swing.event.CaretListener;
 
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.components.CollapsiblePanel;
+import saadadb.admintool.components.input.FilteredComboBox;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
@@ -31,12 +32,18 @@ import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.util.Messenger;
 
-
+/**
+ * Set operators setting qualifiers values
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class QualifierSetter extends CollapsiblePanel {
+	private static final long serialVersionUID = 1L;
 	private RelationPopulatePanel taskPanel;
 	private Map<String, QualifierEditor> qual_setter;
-	public JComboBox primary_att = new JComboBox();
-	public JComboBox secondary_att = new JComboBox();
+	public FilteredComboBox primary_att = new FilteredComboBox("- Primary Attr. -");
+	public FilteredComboBox secondary_att = new FilteredComboBox("- Secondary Attr. -");
 	public JTextArea active_att_receiver;
 	private RelationConf relationConf;
 
@@ -48,23 +55,27 @@ public class QualifierSetter extends CollapsiblePanel {
 		this.taskPanel = taskPanel;
 		primary_att.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( active_att_receiver != null && primary_att.getSelectedItem() != null && !primary_att.getSelectedItem().toString().startsWith("-")) {
-					active_att_receiver.insert(primary_att.getSelectedItem().toString().split(" ")[0]
-					                                                                               , active_att_receiver.getCaretPosition());
+				if( primary_att.isItemSelectEvent(e)) {
+					Object it = primary_att.getSelectedItem();
+					if( active_att_receiver != null && it != null && !it.toString().startsWith("-")) {
+						active_att_receiver.insert(it.toString().split(" ")[0], active_att_receiver.getCaretPosition());
+						QualifierSetter.this.taskPanel.notifyChange();
+					}
 				}
 			}
 		});
 		secondary_att.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( active_att_receiver != null && secondary_att.getSelectedItem() != null && !secondary_att.getSelectedItem().toString().startsWith("-")) {
-					active_att_receiver.insert(secondary_att.getSelectedItem().toString().split(" ")[0]
-					                                                                                 , active_att_receiver.getCaretPosition());
+				if( secondary_att.isItemSelectEvent(e)) {
+					Object it = secondary_att.getSelectedItem();
+					if( active_att_receiver != null &&it != null && !it.toString().startsWith("-")) {
+						active_att_receiver.insert(it.toString().split(" ")[0], active_att_receiver.getCaretPosition());
+						QualifierSetter.this.taskPanel.notifyChange();
+					}
 				}
 			}
 		});
-
 	}
-
 
 	/**
 	 * @param relationConf
@@ -150,14 +161,12 @@ public class QualifierSetter extends CollapsiblePanel {
 				text = primaryClass;
 				combo = primary_att;
 				combo.removeAllItems();
-				combo.addItem("- Primary Attributes -");
 				cat = this.relationConf.getColPrimary_type();
 			}
 			else if( prefix.equalsIgnoreCase("s.") ) {
 				text = secondaryClass;
 				combo = secondary_att;
 				combo.removeAllItems();
-				combo.addItem("- Secondary Attributes -");
 				cat = this.relationConf.getColSecondary_type();
 			}
 			else {

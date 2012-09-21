@@ -68,6 +68,20 @@ public class ObscoreMapperPanel extends TaskPanel {
 		this.setSelectedResource("VO Model ObsCore", null);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
+		if( dataTreePath == null || !dataTreePath.isClassLevel() ) {
+			System.out.println("coucu");
+			showInputError(rootFrame, "DM mapping can only be done at class level. Select a class (a tree leaf) on the Database map");
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */

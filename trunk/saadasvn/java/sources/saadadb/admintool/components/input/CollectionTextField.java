@@ -1,6 +1,9 @@
 package saadadb.admintool.components.input;
 
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.components.AdminComponent;
@@ -26,7 +29,7 @@ public class CollectionTextField extends TreepathDropableTextField {
 	public CollectionTextField() {
 		super(24);
 		/*
-		 * Takes the second node, without extension checking
+		 * Takes the second nodeTreepathDropableTextField.java
 		 */
 		this.setTransferHandler(new ProductTreePathTransferHandler(3));		
 	}
@@ -40,8 +43,7 @@ public class CollectionTextField extends TreepathDropableTextField {
 		if( valid() && this.isEditable() ) {
 			this.setText(this.treepath.getPathComponent(1) + "." + this.treepath.getPathComponent(2));
 			return true;
-		}	
-		else {
+		} else {
 			return false;
 		}
 	}

@@ -23,8 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import com.sun.jdi.connect.spi.TransportService.Capabilities;
-
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
@@ -75,7 +73,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.util.Version;
-import saadadb.vo.registry.Capability;
 
 /**
  * Base frame of the administration tool
@@ -106,7 +103,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
 	private TaskPanel commentClassPanel;
-	
+
 	private TaskPanel sqlIndex;
 
 	private TaskPanel dataLoaderPanel;;
@@ -122,7 +119,7 @@ public class AdminTool extends BaseFrame {
 	private EditPanel tableMapperPanel;;
 	private EditPanel imageMapperPanel;;
 	private EditPanel flatfileMapperPanel;
-	
+
 	private EditPanel dbInstallPanel;
 	private EditPanel webInstallPanel;
 
@@ -143,7 +140,7 @@ public class AdminTool extends BaseFrame {
 
 
 	public AdminTool(boolean nolog, Point p) throws SaadaException {
-		super("Saada " + Version.getVersion() + " - Admintool for Database " + Database.getDbname());
+		super("Saada " + Version.getVersion() + " - Admintool for the " + Database.getDbname() + " database");
 		connectMessaging(nolog);
 		/*
 		 * Exit after confirmation when click on the window close button
@@ -206,18 +203,18 @@ public class AdminTool extends BaseFrame {
 				activePanel.setCurrentTask("Au Boulot");
 			}
 		});
-//		c.gridx = 0;
-//		c.gridy = 1;	
-//		c.weightx = 0;
-//		c.weighty = 0;
-//		leftPanel.add(b, c);
-//		b = new JButton("Start Process");
-//		b.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent arg0) {
-//				activePanel(AdminComponent.FILTER_SELECTOR);
-//				//activeProcessPanel(new DummyTask(AdminTool.this));
-//			}
-//		});
+		//		c.gridx = 0;
+		//		c.gridy = 1;	
+		//		c.weightx = 0;
+		//		c.weighty = 0;
+		//		leftPanel.add(b, c);
+		//		b = new JButton("Start Process");
+		//		b.addActionListener(new ActionListener() {
+		//			public void actionPerformed(ActionEvent arg0) {
+		//				activePanel(AdminComponent.FILTER_SELECTOR);
+		//				//activeProcessPanel(new DummyTask(AdminTool.this));
+		//			}
+		//		});
 		c.gridx = 0;
 		c.gridy++;	
 		c.weightx = 0;
@@ -310,6 +307,15 @@ public class AdminTool extends BaseFrame {
 	/**
 	 * @param panelTitle
 	 */
+	/**
+	 * @param panelTitle
+	 */
+	/**
+	 * @param panelTitle
+	 */
+	/**
+	 * @param panelTitle
+	 */
 	public void activePanel(String panelTitle)  {
 		if( activePanel!= null && activePanel.hasChanged() && !panelTitle.equals(AdminComponent.PROCESS_PANEL) )  {
 			if( !AdminComponent.showConfirmDialog(this, "Modifications not saved. Do you want to continue anyway?") ) {
@@ -318,6 +324,7 @@ public class AdminTool extends BaseFrame {
 				activePanel.cancelChanges();
 			}
 		}
+		AdminPanel previousPanel = activePanel;
 		/*
 		 * Choice panels
 		 */
@@ -411,7 +418,7 @@ public class AdminTool extends BaseFrame {
 				commentClassPanel = new ClassCommentPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = commentClassPanel;
-			
+
 			/*
 			 * Data loading task
 			 */
@@ -545,6 +552,13 @@ public class AdminTool extends BaseFrame {
 			System.err.println("Panel " + panelTitle + " not referenced");
 		}
 		/*
+		 * The panel refuses to be open when the datatreepath does not match what it need 
+		 */
+		if( !activePanel.acceptTreePath(this.dataTreePath) ) {
+			activePanel = previousPanel;
+			return;
+		}
+		/*
 		 * Data treepath must be locked later  by the ancestor
 		 */
 		activePanel.unlockDataTreePath();
@@ -563,6 +577,17 @@ public class AdminTool extends BaseFrame {
 				activePanel.updateUI();
 			}
 		});
+	}
+
+	/**
+	 * Allow to programmaticaly connect a resource on a panel
+	 * @param label
+	 * @param explanation
+	 */
+	public void setSelectedResource(String label, String explanation) {	
+		if( activePanel != null ) {
+			activePanel.setSelectedResource(label, explanation);
+		}
 	}
 
 	public AdminPanel getActivePanel() {
@@ -629,6 +654,14 @@ public class AdminTool extends BaseFrame {
 	public void refreshTree(String collection) {
 		for( int i=1 ; i<Category.NB_CAT ; i++) {
 			this.refreshTree(collection, Category.NAMES[i]);
+		}
+	}
+
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
+		if( this.activePanel != null ) {
+			return this.activePanel.acceptTreePath(dataTreePath);
+		} else {
+			return true;
 		}
 	}
 

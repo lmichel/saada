@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -13,6 +15,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -23,7 +26,14 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
 
+/**
+ * Panel with a clickable list of relations
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class RelationshipChooser extends JPanel {
+	private static final long serialVersionUID = 1L;
 	private JList confList = new JList(new DefaultListModel());
 	private JTextArea description = new JTextArea(6, 24);
 	private TaskPanel taskPanel ;
@@ -31,11 +41,21 @@ public class RelationshipChooser extends JPanel {
 	private Component toActivate;
 	private Runnable runnable;
 	private String endPoint;
+	private int lastSelectedIndex=0;
 
+	/**
+	 * @param taskPanel
+	 * @param toActivate
+	 */
 	public RelationshipChooser(TaskPanel taskPanel, Component toActivate) {
 		this(taskPanel, toActivate, null);
 	}
 
+	/**
+	 * @param taskPanel
+	 * @param toActivate
+	 * @param runnable
+	 */
 	public RelationshipChooser(TaskPanel taskPanel, Component toActivate, Runnable runnable) {
 		this.toActivate = toActivate;
 		this.taskPanel = taskPanel;
@@ -59,14 +79,51 @@ public class RelationshipChooser extends JPanel {
 		confList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if( confList.getSelectedValue() != null ) {
-					setDescription();
+					if( acceptChange() ) {
+						RelationshipChooser.this.taskPanel.cancelChanges();
+						setDescription();
+						lastSelectedIndex = confList.getSelectedIndex();
+					}
 				}	
 			}
 		});
 	}
-	
+
 	/**
-	 * 
+	 * @return
+	 */
+	private boolean acceptChange() {
+		if( RelationshipChooser.this.taskPanel.hasChanged() && confList.getSelectedIndex() != lastSelectedIndex 
+				&& !AdminComponent.showConfirmDialog(RelationshipChooser.this.taskPanel
+						, "Modifications not saved. Do you want to continue anyway?") ) {
+			confList.setSelectedIndex(lastSelectedIndex);
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+	/**
+	 * Programmatically selection of one relation
+	 * @param relationName
+	 */
+	public void selectRelation(String relationName){
+		ListModel model = confList.getModel();
+		for( int i=0;  i<model.getSize() ; i++ ) {
+			if( ((String)(model.getElementAt(i))).equals(relationName) ) {
+				if( acceptChange() ) {
+					confList.setSelectedIndex(i);
+					setDescription();
+					lastSelectedIndex = confList.getSelectedIndex();
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Write out the  description of the current relation
 	 */
 	public void setDescription() {
 		selectedRelation = confList.getSelectedValue().toString();
@@ -81,6 +138,11 @@ public class RelationshipChooser extends JPanel {
 		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);		
 	}
 
+	/**
+	 * Update the relation list from the data tree path
+	 * @param dataTreePath
+	 * @throws FatalException
+	 */
 	public void setDataTreePath(DataTreePath dataTreePath) throws FatalException  {
 		selectedRelation = null;
 		description.setText("");
@@ -89,13 +151,18 @@ public class RelationshipChooser extends JPanel {
 		DefaultListModel model = (DefaultListModel) confList.getModel();
 		model.removeAllElements();
 		if(dataTreePath != null ){
+			// Use a set to avoid loopback relationships to be displayed twice in the list
+			Set<String> rls = new LinkedHashSet<String>();
 			this.endPoint = dataTreePath.collection + "." +  dataTreePath.category.toUpperCase();
 			for(String r: Database.getCachemeta().getRelationNamesStartingFromColl(
 					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-				model.addElement(r);			
+				rls.add(r);
 			}
 			for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
 					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
+				rls.add(r);
+			}
+			for( String r: rls ) {
 				model.addElement(r);			
 			}
 		}
@@ -105,7 +172,15 @@ public class RelationshipChooser extends JPanel {
 		return selectedRelation;
 	}
 
+	/**
+	 * Display relation names with some extr infos (target/source, indexed or not)
+	 * @author michel
+	 * @version $Id$
+	 *
+	 */
 	class MyCellRenderer extends DefaultListCellRenderer {
+		private static final long serialVersionUID = 1L;
+
 		public Component getListCellRendererComponent(
 				JList list,
 				Object value,   // value to display
@@ -119,14 +194,14 @@ public class RelationshipChooser extends JPanel {
 				String end   = mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category());
 				String retour  = "";
 				String ep;
-				if( RelationshipChooser.this.endPoint.equals(start)) {
+				if( start.equals(end )) {
+					ep = "(loopback)"; 
+				}
+				else if( RelationshipChooser.this.endPoint.equals(start)) {
 					ep = "(to " + end + ")"; 
 				}
-				else if( RelationshipChooser.this.endPoint.equals(end)) {
-					ep = "(from " + start + ")"; 
-				}
 				else {
-					ep = "(loopback)"; 
+					ep = "(from " + start + ")"; 
 				}
 				retour = "<html><b>" + value + "</b> &gt; <i>" + ep + "</html>";
 				Color col = ( mr.isIndexed() ) ?new Color(0x4F7B60): Color.RED;

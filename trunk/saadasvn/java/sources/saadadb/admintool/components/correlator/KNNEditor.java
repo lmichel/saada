@@ -44,6 +44,7 @@ public class KNNEditor extends CollapsiblePanel {
 		knn_mode.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				KNNEditor.this.taskPanel.notifyChange();
 				if( knn_mode.getSelectedItem().toString().equals("None") ) {
 					knn_k.setEnabled(false);
 					knn_dist.setEnabled(false);
@@ -77,8 +78,10 @@ public class KNNEditor extends CollapsiblePanel {
 						(c == KeyEvent.VK_DELETE)))) {
 					getToolkit().beep();
 					e.consume();
+				} else {
+					KNNEditor.this.taskPanel.notifyChange();
 				}
-			}
+		}
 		});
 		knn_dist.setEnabled(false);
 		knn_dist.addKeyListener(new KeyAdapter() {
@@ -88,15 +91,13 @@ public class KNNEditor extends CollapsiblePanel {
 				 */
 				char c = e.getKeyChar();
 				String txt = knn_k.getText();
-				if( c == '.' && txt.indexOf('.') >= 0 ) {
-					getToolkit().beep();
-					e.consume();				    	
-				}
-				if (!((Character.isDigit(c) || c == '.' ||
+				if( (c == '.' && txt.indexOf('.') >= 0) || (!((Character.isDigit(c) || c == '.' ||
 						(c == KeyEvent.VK_BACK_SPACE) ||
-						(c == KeyEvent.VK_DELETE)))) {
+						(c == KeyEvent.VK_DELETE)))) ){
 					getToolkit().beep();
 					e.consume();
+				} else {
+					KNNEditor.this.taskPanel.notifyChange();
 				}
 			}
 		});	
@@ -206,7 +207,10 @@ public class KNNEditor extends CollapsiblePanel {
 	public void reset() {
 		this.knn_mode.setSelectedIndex(0);
 		this.knn_k.setText("");
-		this.knn_dist.setText("");
+		this.knn_dist.setText("");				
+		// Just to avoid to notify change at opening time
+		KNNEditor.this.taskPanel.cancelChanges();
+
 	}
 
 }

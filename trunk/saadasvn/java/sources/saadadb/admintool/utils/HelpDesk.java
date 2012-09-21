@@ -93,9 +93,9 @@ public class HelpDesk {
 		map.put(RELATION_COLLECTIONS, new String[] {
 				"Primary collection is set by clicking " 
 				,"in the choosen category node on the data tree."
-				, "It can not be edited by hand."
 				, "Secondary collection is set by dropping "
 				, "the choosen category node on the text field."
+				, "Neither filed can be edited by hand"
 				});
 		map.put(RELATION_QUALIFIER, new String[] {
 				"Qualifier names must only contain numbers"

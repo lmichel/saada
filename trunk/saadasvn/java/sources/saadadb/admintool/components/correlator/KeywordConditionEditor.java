@@ -11,8 +11,10 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import saadadb.admintool.components.CollapsiblePanel;
+import saadadb.admintool.components.input.FilteredComboBox;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
@@ -25,8 +27,9 @@ import saadadb.util.Messenger;
 
 
 public class KeywordConditionEditor extends CollapsiblePanel {
-	private JComboBox primary_att = new JComboBox();
-	private JComboBox secondary_att = new JComboBox();
+	private static final long serialVersionUID = 1L;
+	private FilteredComboBox primary_att = new FilteredComboBox("- Primary Attributes -");
+	private FilteredComboBox secondary_att = new FilteredComboBox("- Secondary Attributes -");;
 	private JTextArea condition = new JTextArea(12, 48);
 	private RelationPopulatePanel taskPanel;
 	private RelationConf relationConf;
@@ -41,17 +44,23 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 		this.condition.setToolTipText("Primary and secondary records are linked when the condition (SQL statement) is true.");
 		primary_att.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( primary_att.getSelectedItem() != null && !primary_att.getSelectedItem().toString().startsWith("-")) {
-					condition.insert(primary_att.getSelectedItem().toString().split(" ")[0]
-					                 , condition.getCaretPosition());
+				if(  primary_att.isItemSelectEvent(e) ) {
+					Object it = primary_att.getSelectedItem();
+					if( it != null && !it.toString().startsWith("-")) {
+						condition.insert(it.toString().split(" ")[0] + " ", condition.getCaretPosition());
+						KeywordConditionEditor.this.taskPanel.notifyChange();
+					}
 				}
 			}
 		});
 		secondary_att.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if( secondary_att.getSelectedItem() != null && !secondary_att.getSelectedItem().toString().startsWith("-")) {
-					condition.insert(secondary_att.getSelectedItem().toString().split(" ")[0]
-					                 , condition.getCaretPosition());
+				if(  secondary_att.isItemSelectEvent(e) ) {
+					Object it = secondary_att.getSelectedItem();
+					if( it != null && !it.toString().startsWith("-")) {
+						condition.insert(it.toString().split(" ")[0] + " ", condition.getCaretPosition());
+						KeywordConditionEditor.this.taskPanel.notifyChange();
+					}
 				}
 			}
 		});
@@ -67,7 +76,7 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 		mc.gridx = 2;mc.gridwidth = 2;
 		panel.add(secondary_att, mc);
 		mc.gridx = 4;mc.gridwidth = 2;
-		panel.add(new SQLConditionHelper(taskPanel.rootFrame, condition), mc);
+		panel.add(new SQLConditionHelper(taskPanel, condition), mc);
 	}
 
 	/**
@@ -77,7 +86,7 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 	public void updateAvailableAttributes(String primaryClass, String secondaryClass) {
 		String[] classes=null;;
 		String text=null;
-		JComboBox combo = null;
+		FilteredComboBox combo = null;
 		int cat;
 		if( this.relationConf == null ) {
 			return;
@@ -90,14 +99,12 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 				text = primaryClass;
 				combo = primary_att;
 				combo.removeAllItems();
-				combo.addItem("- Primary Attributes -");
 				cat = this.relationConf.getColPrimary_type();
 			}
 			else if( prefix.equalsIgnoreCase("s.") ) {
 				text = secondaryClass;
 				combo = secondary_att;
 				combo.removeAllItems();
-				combo.addItem("- Secondary Attributes -");
 				cat = this.relationConf.getColSecondary_type();
 			}
 			else {
@@ -109,7 +116,8 @@ public class KeywordConditionEditor extends CollapsiblePanel {
 
 			for( AttributeHandler ah: MetaCollection.getAttribute_handlers(cat).values() ) {
 				combo.addItem(prefix + ah.getNameattr() + " (" + ah.getType() + ")");
-			}
+			}                
+
 			if( text.length() > 0 ) {
 				classes = text.split("\\s*,\\s*", 0);
 				/*

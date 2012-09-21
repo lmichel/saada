@@ -59,6 +59,7 @@ public class CollectionCoverage extends CollapsiblePanel {
 						primary_classes.setText((ct + "," + si).replaceAll(",,", ","));			
 					}
 					CollectionCoverage.this.taskPanel.updateAvailableAttributes();
+					CollectionCoverage.this.taskPanel.notifyChange();
 				}
 			}	
 		});
@@ -84,6 +85,7 @@ public class CollectionCoverage extends CollapsiblePanel {
 						secondary_classes.setText((ct + "," + si).replaceAll(",,", ","));			
 					}
 					CollectionCoverage.this.taskPanel.updateAvailableAttributes();
+					CollectionCoverage.this.taskPanel.notifyChange();
 				}
 			}	
 		});

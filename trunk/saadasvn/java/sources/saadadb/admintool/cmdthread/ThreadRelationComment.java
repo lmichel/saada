@@ -5,7 +5,7 @@ import java.awt.Frame;
 import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.utils.AntDesk;
+import saadadb.admintool.panels.TaskPanel;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
@@ -14,12 +14,20 @@ import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
+/**
+ * Runs the thread saving the comment associated to one relationship
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class ThreadRelationComment extends CmdThread {
 	protected String relation;
 	protected String comment;
+	protected TaskPanel taskPanel;
 
-	public ThreadRelationComment(Frame frame, String taskTitle) {
+	public ThreadRelationComment(Frame frame, TaskPanel taskPanel,String taskTitle) {
 		super(frame, taskTitle);
+		this.taskPanel = taskPanel;
 	}
 	
 	@Override
@@ -55,6 +63,7 @@ public class ThreadRelationComment extends CmdThread {
 			rm.comment(new ArgsParser(new String[]{"-comment=" +comment}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
+			taskPanel.cancelChanges();
 			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> commented");		
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);

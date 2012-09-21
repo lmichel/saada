@@ -125,6 +125,7 @@ public abstract class AdminPanel extends AdminComponent {
 		changed = false;
 	}
 	public void notifyChange() {
+		(new Exception()).printStackTrace();
 		changed = true;
 	}
 
@@ -216,7 +217,16 @@ public abstract class AdminPanel extends AdminComponent {
 			highlightDataTreePath();
 		}
 	}
-
+	/**
+	 * Any treepath is accepted by default.
+	 * Must be overridden by subclasses to set a specific behavior
+	 * @param dataTreePath
+	 * @return
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
+		return true;
+	}
+	
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
 		if( selectResourceLabel != null ) {
