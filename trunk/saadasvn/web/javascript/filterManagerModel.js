@@ -1,6 +1,12 @@
 jQuery.extend({
 
-	FilterManagerModel : function() {
+	FilterManagerModel : /**
+	 * 
+	 */
+		/**
+		 * 
+		 */
+		function() {
 		/**
 		 * keep a reference to ourselves
 		 */
@@ -15,18 +21,21 @@ jQuery.extend({
 		 */
 		var collection = '';
 		var category = '';
+		var classe = '';
 
 		//var path = $(location).attr('href');
 		var path = '';
 		if (path.endsWith("#")) path = path.substr(0, path.length - 1);
 
 		var speFields = new Array();
-		var attributesHandlers = new Array();
+		var collAttributesHandlers = new Array();
+		var classAttributesHandlers = new Array();
 		var queriableUCDs = new Array();
 		var relations = new Array();
 
 		var droppedspefields = new Array();
 		var droppednatives = new Array();
+		var droppedclassnatives = new Array();
 		var droppedrelations = new Array();
 
 
@@ -62,10 +71,15 @@ jQuery.extend({
 
 		this.initNativesList = function(jsondata) {
 
-			attributesHandlers = new Array();
+			collAttributesHandlers = new Array();
+			classAttributesHandlers = new Array();
 
 			for ( var i = 0; i < jsondata.attributes.length; i++) {
-				if (!(jsondata.attributes[i].nameattr).startsWith("_")) attributesHandlers[jsondata.attributes[i].nameattr] = jsondata.attributes[i];
+				if (!(jsondata.attributes[i].nameattr).startsWith("_")) {
+					collAttributesHandlers[jsondata.attributes[i].nameattr] = jsondata.attributes[i];
+				} else {
+					classAttributesHandlers[jsondata.attributes[i].nameattr] = jsondata.attributes[i];					
+				}
 			}
 		};
 
@@ -113,7 +127,8 @@ jQuery.extend({
 		};
 
 		this.processShowFilterManager = function() {
-			attributesHandlers = new Array();
+			collAttributesHandlers = new Array();
+			classAttributesHandlers = new Array();
 			queriableUCDs = new Array();
 			relations = new Array();
 			var params;
@@ -137,18 +152,18 @@ jQuery.extend({
 
 			showProcessingDialog();
 
-			$.getJSON("getmeta", params, function(jsondata) {
+			$.getJSON("getmeta", params, function(jsonmeta) {
 				hideProcessingDialog();
-				if (processJsonError(jsondata, "Can not get data tree node description")) {
+				if (processJsonError(jsonmeta, "Can not get data tree node description")) {
 					hideProcessingDialog();
 					return;
 				}
 
-				that.initNativesList(jsondata);
-				that.initRelationsList(jsondata);
-				that.initQueriablesUCDList(jsondata);
+				that.initNativesList(jsonmeta);
+				that.initRelationsList(jsonmeta);
+				that.initQueriablesUCDList(jsonmeta);
 
-				var param = "cat=" + category + "&coll=" + collection;
+				var param = "cat=" + category + "&coll=" + collection+ "&saadaclass=" + classe;
 
 				var data = null;
 				$.getJSON("getfilter", param, function(jsondata) {
@@ -158,21 +173,24 @@ jQuery.extend({
 					else {
 						data = jsondata;
 					}
+
+					if (data == null) {
+						data = "{\"saadaclass\": \"" + classe 
+						+ "\", \"collection\": [\"" + collection + "\"],\"category\": \"" 
+						+ category + "\",\"relationship\": {\"show\": [\"\"],\"query\": [\"Any-Relation\"]}, \"ucd.show\": " +
+						"\"false\",\"ucd.query\": \"false\",\"specialField\": [\"\"],\"collections\": " +
+						"{\"show\": [\"\"],\"query\": [\"\"]}}";
+					}
+					universal = $('#unifilter').attr('checked'); 
+					that.filterIsReady(data);
 				});
 
-				if (data == null) {
-					data = "{\"collection\": [\"" + collection + "\"],\"category\": \"" + category + "\",\"relationship\": {\"show\": [\"\"],\"query\": [\"Any-Relation\"]}, \"ucd.show\": " +
-					"\"false\",\"ucd.query\": \"false\",\"specialField\": [\"\"],\"collections\": " +
-					"{\"show\": [\"\"],\"query\": [\"\"]}}";
-				}
-				universal = $('#unifilter').attr('checked'); 
-				that.filterIsReady(data, speFields, attributesHandlers, relations);
 			});
 		};
 
 		this.processInitExisting = function() {
 
-			var param = "cat=" + category + "&coll=" + collection;
+			var param = "cat=" + category + "&coll=" + collection + "&saadaclass=" + saadaclass;
 			var sfname, rname, nname;
 
 			droppedspefields = new Array();
@@ -196,8 +214,13 @@ jQuery.extend({
 							nname = jsondata.collections.show[i];
 
 							if (droppednatives[nname] == null) {
-								droppednatives[nname] = attributesHandlers[nname];
-								that.NativesUpdated(nname, droppednatives[nname].nameorg);
+								if( nname.startsWith("_") ) {
+									droppednatives[nname] = classAttributesHandlers[nname];
+									that.ClassNativesUpdated(nname, droppednatives[nname].nameorg);									
+								} else {
+									droppednatives[nname] = collAttributesHandlers[nname];
+									that.CollNativesUpdated(nname, droppednatives[nname].nameorg);
+								}
 							}
 						}
 					}
@@ -237,15 +260,23 @@ jQuery.extend({
 			}
 		};
 
-		this.processNativeEvent = function(uidraggable) {
+		this.processCollNativeEvent = function(uidraggable) {
 			var nname = uidraggable.find(".hidden").text();
 
 			if (droppednatives[nname] == null) {
-				droppednatives[nname] = attributesHandlers[nname];
-				that.NativesUpdated(nname, droppednatives[nname].nameorg);
+				droppednatives[nname] = collAttributesHandlers[nname];
+				that.CollNativesUpdated(nname, droppednatives[nname].nameorg);
 			}
 		};
 
+		this.processClassNativeEvent = function(uidraggable) {
+			var nname = uidraggable.find(".hidden").text();
+
+			if (droppednatives[nname] == null) {
+				droppednatives[nname] = classAttributesHandlers[nname];
+				that.ClassNativesUpdated(nname, droppednatives[nname].nameorg);
+			}
+		};
 		this.processRelationsEvent = function(uidraggable) {
 			var rname = uidraggable.find(".item").text();
 
@@ -271,13 +302,15 @@ jQuery.extend({
 				return value != rname;
 			});
 		};
-
-		this.processSaveFilter = function() {
+		/**
+		 * Build a JSON filter from instance parameters
+		 */
+		this.getNewJSONFilter = function() {
 			var newfilter = '';
 			if (universal) {
-				newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
+				newfilter = "{\n\t \"saadaclass\": \"Any-Class\", \"collection\": [\"Any-Collection\"],";
 			} else {
-				newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
+				newfilter = "{\n\t \"saadaclass\": \"" + classe + "\", \"collection\": [\"" + collection + "\"],";
 			}
 			newfilter += "\"category\": \"" + category + "\",";
 			newfilter += "\"relationship\": {";
@@ -312,24 +345,22 @@ jQuery.extend({
 			newfilter += "\"collections\": {";
 			newfilter += "\"show\": [";
 
-			var length = 0;
+			var dropped = new Array();
 			for (i in droppednatives) {
-				length++; 
+				dropped[dropped.length] = "\"" + i+ "\"";
+			}
+			for (i in droppedclassnatives) {
+				dropped[dropped.length] = "\"" + i+ "\"";
 			}
 
-			var iterator = 0;
-			for (i in droppednatives) { 
-				iterator ++; 
-				newfilter += "\"" + i + "\"";
-				if (iterator < length) {
-					newfilter += ", ";
-				}
-			}
-
+			newfilter += dropped.join(',');
 			newfilter += "],";
 			newfilter += "\"query\": [\"\"]}}";
-			var param = escape(newfilter);
+			return newfilter;
+		};
 
+		this.processSaveFilter = function() {
+			var param = escape(this.getNewJSONFilter());
 			var filename = collection + "_" + category;
 			var tmppath = path + "setfilter?filter=" + param + "&name=" + filename;
 			if (universal) {
@@ -353,61 +384,7 @@ jQuery.extend({
 		};
 
 		this.processShowFilterPreview = function() {
-			var newfilter = '';
-			if (universal) {
-				newfilter = "{\n\t \"collection\": [\"Any-Collection\"],";
-			} else {
-				newfilter = "{\n\t \"collection\": [\"" + collection + "\"],";
-			}
-			newfilter += "\n\t\"category\": \"" + category + "\",";
-			newfilter += "\n\t\"relationship\": {";
-			newfilter += "\n\t\t\"show\": [";
-			if (universal) {
-				newfilter += "\"Any-Relation\"";
-			} else {
-				var iterator = 0;
-				$.each(droppedrelations, function(i){
-					iterator ++;
-					newfilter += "\"" + this + "\"";
-					if (iterator < droppedrelations.length) {
-						newfilter += ", ";
-					}
-				});
-			}
-			newfilter += "],";
-			newfilter += "\n\t\t\"query\": [\"Any-Relation\"]";
-			newfilter += "\n\t},";
-			newfilter += "\n\t\"ucd.show\": \"false\",";
-			newfilter += "\n\t\"ucd.query\": \"false\",";
-			newfilter += "\n\t\"specialField\": [";
-			iterator = 0;
-			$.each(droppedspefields, function(i){
-				iterator ++;
-				newfilter += "\"" + this + "\"";
-				if (iterator < droppedspefields.length) {
-					newfilter += ", ";
-				}
-			});
-			newfilter += "],";
-			newfilter += "\n\t\"collections\": {";
-			newfilter += "\n\t\t\"show\": [";
-
-			var length = 0;
-			for (i in droppednatives) {
-				length++; 
-			}
-
-			var iterator = 0;
-			for (i in droppednatives) { 
-				iterator ++; 
-				newfilter += "\"" + i + "\"";
-				if (iterator < length) {
-					newfilter += ", ";
-				}
-			}
-
-			newfilter += "],";
-			newfilter += "\n\t\t\"query\": [\"\"]\n\t}\n}";
+			var newfilter = this.getNewJSONFilter();
 			that.PreviewIsReady(newfilter, collection, category);
 		};
 
@@ -445,9 +422,9 @@ jQuery.extend({
 			}
 		};
 
-		this.filterIsReady = function(jsdata, speFields, attributesHandlers, relations) {
+		this.filterIsReady = function(jsdata) {
 			$.each(listeners, function(i) {
-				listeners[i].filterManagerIsReady(jsdata, speFields, attributesHandlers, relations);
+				listeners[i].filterManagerIsReady(jsdata, speFields, collAttributesHandlers, classAttributesHandlers, relations);
 			});
 		};
 
@@ -456,9 +433,14 @@ jQuery.extend({
 				listeners[i].notifySpeFieldsUpdate(index, sfname);
 			});
 		};
-		this.NativesUpdated = function(nname, nnameorg) {
+		this.CollNativesUpdated = function(nname, nnameorg) {
 			$.each(listeners, function(i){
-				listeners[i].notifyNativesUpdate(nname, nnameorg);
+				listeners[i].notifyCollNativesUpdate(nname, nnameorg);
+			});
+		};
+		this.ClassNativesUpdated = function(nname, nnameorg) {
+			$.each(listeners, function(i){
+				listeners[i].notifyClassNativesUpdate(nname, nnameorg);
 			});
 		};
 

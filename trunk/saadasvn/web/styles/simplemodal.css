@@ -73,7 +73,7 @@
 	border: none;
 }
 
-#fspefieldsselector, #fnativeselector, #frelselector {
+#fspefieldsselector, #fnativeselector, #classfnativeselector, #frelselector {
 	border: none;
 	display: block;
 	width: auto;
@@ -84,7 +84,7 @@
 }
 
 
-#fspefieldsdrag, #fnativedrag, #frelationsdrag, #fspefieldsdrop, #fnativedrop, #frelationsdrop {
+#fspefieldsdrag, #fnativedrag, #classfnativedrag, #frelationsdrag, #fspefieldsdrop, #fnativedrop, #classfnativedrop, #frelationsdrop {
 	float: left;
 	border-width: 1;
 	border-color: dimgray;

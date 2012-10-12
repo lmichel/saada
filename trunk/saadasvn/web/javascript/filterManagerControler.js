@@ -12,10 +12,13 @@ jQuery.extend({
 				controlSpeFieldEvent: function(uidraggable){
 					model.processSpeFieldEvent(uidraggable);
 				},
-				controlNativeEvent: function(uidraggable){
-					model.processNativeEvent(uidraggable);
+				controlCollNativeEvent: function(uidraggable){
+					model.processCollNativeEvent(uidraggable);
 				},
-				controlRelationsEvent: function(uidraggable){
+				controlClassNativeEvent: function(uidraggable){
+					model.processClassNativeEvent(uidraggable);
+				},
+			    controlRelationsEvent: function(uidraggable){
 					model.processRelationsEvent(uidraggable);
 				},
 				controlSpeFieldRemoval: function(sfname){
@@ -45,25 +48,28 @@ jQuery.extend({
 				controlResetAll: function(){
 					model.processResetAll();
 				}
-		}
+		};
 
 		view.addListener(vlist);
 		
 
 		var mlist = {
 					
-				filterManagerIsReady: function (jsdata, speFields, attributesHandlers, relations) {
-					view.showFilterManager(jsdata, speFields, attributesHandlers, relations);
+				filterManagerIsReady: function (jsdata, speFields, collAttributesHandlers, classAttributeHandlers, relations) {
+					view.showFilterManager(jsdata, speFields, collAttributesHandlers, classAttributeHandlers, relations);
 				},
 					
 				notifySpeFieldsUpdate: function (index, sfname) {
 					view.updateSpeFields(index, sfname);
 				},
 					
-				notifyNativesUpdate: function (nname, nnameorg) {
-					view.updateNatives(nname, nnameorg);
+				notifyCollNativesUpdate: function (nname, nnameorg) {
+					view.updateCollNatives(nname, nnameorg);
 				},
 					
+				notifyClassNativesUpdate: function (nname, nnameorg) {
+					view.updateClassNatives(nname, nnameorg);
+				},
 				notifyRelationsUpdate: function (index, rname) {
 					view.updateRelations(index, rname);
 				},
@@ -71,7 +77,7 @@ jQuery.extend({
 				notifyPreviewIsReady: function (filter, collection, category) {
 					view.showFilterPreview(filter, collection, category);
 				}
-		}
+		};
 
 		model.addListener(mlist);
 	}
