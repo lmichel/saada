@@ -184,7 +184,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		this.setRelations(Category.IMAGE);
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"IMAGE\",";

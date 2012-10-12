@@ -163,7 +163,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.MISC);
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"MISC\",";

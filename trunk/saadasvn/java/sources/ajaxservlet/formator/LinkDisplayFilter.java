@@ -38,7 +38,7 @@ public class LinkDisplayFilter extends DefaultDisplayFilter {
 //		default:
 //		}
 		collformator = DisplayFilterFactory.getFilter(this.relation.getSecondary_coll()
-				, Category.explain(this.relation.getSecondary_category()), request);
+				, Category.explain(this.relation.getSecondary_category()), "*", request);
 		quals = Database.getCachemeta().getRelation(relation).getQualifier_names();
 		datatable_columns.addAll(collformator.getDisplayedColumns());
 		for( String q: quals) {
@@ -85,7 +85,7 @@ public class LinkDisplayFilter extends DefaultDisplayFilter {
 
 	}
 
-	public String getJSONString() {
+	public String getRawJSON() {
 		return null;
 	}
 

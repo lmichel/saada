@@ -92,7 +92,7 @@ public class AttributeHandlerDisplayFilter implements DisplayFilter {
 		
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		return null;
 	}
 

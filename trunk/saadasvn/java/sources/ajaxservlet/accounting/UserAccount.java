@@ -1,16 +1,15 @@
 package ajaxservlet.accounting;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.Serializable;
 import java.util.HashMap;
 
 import saadadb.compat.Files;
-import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.util.Messenger;
 import saadadb.util.WorkDirectory;
 import ajaxservlet.formator.FilterBase;
+import ajaxservlet.formator.FilterKeys;
 import ajaxservlet.formator.StoredFilter;
 
 /**
@@ -53,7 +52,7 @@ public class UserAccount implements Serializable {
 	public String getReportDir() {
 		return reportDir;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -74,15 +73,15 @@ public class UserAccount implements Serializable {
 	public QueryContext getQueryContext() {
 		return queryContext;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public String getSessionID() {
 		return sessionId;
 	}
-	
-	
+
+
 	/**
 	 * add the filter to the userfilters base
 	 * @param sf filter to be added
@@ -90,10 +89,10 @@ public class UserAccount implements Serializable {
 	public void addFilter(StoredFilter sf) throws Exception{
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
-		if (coll.compareTo("Any-Collection") == 0) {
+		if (coll.compareTo(FilterKeys.ANY_COLLECTION) == 0) {
 			this.resetCat(cat);
 		}
-		String kw = coll+"."+cat;
+		String kw = sf.getTreepath();
 
 		userfilters.remove(kw);
 		userfilters.put(kw, sf);
@@ -108,34 +107,57 @@ public class UserAccount implements Serializable {
 		else {
 			Messenger.printMsg(Messenger.WARNING, "Cannot store user filter in " + FilterBase.filterDirectory );
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * get a filter from the user base given the collection and category
 	 * -- if there's no specific filter for the parameter, looks
-	 * for a category filter ("Any-Collection")
+	 * for a category filter (FilterKeys.ANY_COLLECTION)
 	 * -- if no filter is found, returns null
 	 * @param coll
 	 * @param cat
 	 * @return a filter or null
 	 */
-	public StoredFilter getFilter(String coll, String cat)  throws Exception{
-		
+	public StoredFilter getFilter(String coll, String cat, String saadaclass)  throws Exception{
 		StoredFilter result = null;
 		String keys = coll+"."+cat;
-		result = userfilters.get(keys);
-		
-		if (result == null) {
-			String defkeys = "Any-Collection."+cat;
-			result = userfilters.get(defkeys);
+		/*
+		 * returns the class level filter if is exists
+		 */
+		if(saadaclass != null && saadaclass.length() > 0 && !saadaclass.equals(FilterKeys.ANY_CLASS) && !saadaclass.equals("*")) {
+			result = userfilters.get(keys + "." + saadaclass);			
+			if( result != null ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "filter " + keys + " found in user session");
+				return result;
+			}
 		}
-		
+		/*
+		 * Look for the collection level one otherwise
+		 */
+		result = userfilters.get(keys);
+		if( result != null ) {				
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "filter " + keys + " found in user session");
 		return result;
+		}
+		/*
+		 * Take the default one finally
+		 */
+		String defkeys = FilterKeys.ANY_CLASS+cat;
+		result = userfilters.get(defkeys);
+		if( result != null ) {				
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "delault filter " + keys + " found in user session");
+		return result;
+		}
+		return null;
+
 	}
-	
-	
+
+
 	/**
 	 * deletes all the filters applying to the
 	 * given category in the userbase
@@ -160,8 +182,8 @@ public class UserAccount implements Serializable {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * deletes the filter applied to the given
 	 * collection and category
@@ -181,8 +203,8 @@ public class UserAccount implements Serializable {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * resets the userfilter base and cleans
 	 * the userfilters ..config/directory
@@ -191,18 +213,18 @@ public class UserAccount implements Serializable {
 		userfilters = new HashMap<String, StoredFilter>();
 		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
 		File directory = new File(FilterBase.filterDirectory);
-		
+
 		String[] list = directory.list();
-		
+
 		if (list != null) {
-		   for (int i = 0; i < list.length; i++) {
-		      File entry = new File(directory, list[i]);
-		      entry.delete();
-		   }
-		   directory.delete();
+			for (int i = 0; i < list.length; i++) {
+				File entry = new File(directory, list[i]);
+				entry.delete();
+			}
+			directory.delete();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */

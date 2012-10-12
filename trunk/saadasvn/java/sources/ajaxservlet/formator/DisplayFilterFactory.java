@@ -2,12 +2,12 @@ package ajaxservlet.formator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import ajaxservlet.accounting.*;
-import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import ajaxservlet.accounting.UserAccount;
+import ajaxservlet.accounting.UserTrap;
 
 /**
  *  * @version $Id$
@@ -24,33 +24,6 @@ public class DisplayFilterFactory {
 	}
 
 	
-	
-//	public static DisplayFilter getFilter(String coll, String cat) throws Exception {
-//		System.out.println("\n\n1\n\n");
-//		new FilterBase(Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar());
-//		DisplayFilter result = null;
-//		StoredFilter sf = FilterBase.get(coll, cat);
-//		if (sf != null) return new DynamicDisplayFilter(sf, coll);
-//
-//		if ("TABLE".equals(cat)) {
-//			result = new TableDisplayFilter(coll);
-//		} else if ("ENTRY".equals(cat)) {
-//			result = new EntryDisplayFilter(coll);
-//		} else if ("IMAGE".equals(cat)) {
-//			result = new ImageDisplayFilter(coll);
-//		} else if ("SPECTRUM".equals(cat)) {
-//			result = new SpectrumDisplayFilter(coll);
-//		} else if ("MISC".equals(cat)) {
-//			result = new MiscDisplayFilter(coll);
-//		} else if ("FLATFILE".equals(cat)) {
-//			result = new FlatfileDisplayFilter(coll);
-//		} else {
-//			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
-//		}
-//		return result;
-//	}
-
-	
 	/**
 	 * provides the right DisplayFilter given the
 	 * collection, the category and an Http request
@@ -63,36 +36,30 @@ public class DisplayFilterFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static DisplayFilter getFilter(String coll, String cat, HttpServletRequest request) throws Exception {
+	public static DisplayFilter getFilter(String coll, String cat, String saadaclass, HttpServletRequest request) throws Exception {
+		/*
+		 * Look first for a user defined filter
+		 */
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "look for the filter in the user account");
 		UserAccount useracc = UserTrap.getUserAccount(request);
-		StoredFilter sf = useracc.getFilter(coll, cat);
+		StoredFilter sf = useracc.getFilter(coll, cat, saadaclass);
 		if (sf != null) {
-			return new DynamicDisplayFilter(sf, coll);
+			return new DynamicClassDisplayFilter(sf, coll, saadaclass);
 		}
-		
+		/*
+		 * Look then for a global filter
+		 */
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Not found, take the global one");
 		FilterBase.init(false);
-		DisplayFilter result = null;
 		sf = FilterBase.get(coll, cat);
 		if (sf != null) {
-			return new DynamicDisplayFilter(sf, coll);
+			return new DynamicClassDisplayFilter(sf, coll, saadaclass);
 		}
-
-		if ("TABLE".equals(cat)) {
-			result = new TableDisplayFilter(coll);
-		} else if ("ENTRY".equals(cat)) {
-			result = new EntryDisplayFilter(coll);
-		} else if ("IMAGE".equals(cat)) {
-			result = new ImageDisplayFilter(coll);
-		} else if ("SPECTRUM".equals(cat)) {
-			result = new SpectrumDisplayFilter(coll);
-		} else if ("MISC".equals(cat)) {
-			result = new MiscDisplayFilter(coll);
-		} else if ("FLATFILE".equals(cat)) {
-			result = new FlatfileDisplayFilter(coll);
-		} else {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
-		}
-		return result;
+		
+		FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "Filter base not initalized for " + coll + "." + cat );
+		return null;
 	}
 
 	
@@ -108,10 +75,10 @@ public class DisplayFilterFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static StoredFilter getStoredFilter(String coll, String cat, HttpServletRequest request) throws Exception {
+	public static StoredFilter getStoredFilter(String coll, String cat, String saadaclass, HttpServletRequest request) throws Exception {
 		FilterBase.init(false);
 		UserAccount useracc = UserTrap.getUserAccount(request);
-		StoredFilter sf = useracc.getFilter(coll, cat);
+		StoredFilter sf = useracc.getFilter(coll, cat, saadaclass);
 		if (sf != null) {
 			return sf;
 		}
@@ -119,30 +86,13 @@ public class DisplayFilterFactory {
 	}
 	
 	/**
-	 * provides the JSONString of the default
-	 * filter from the given category
-	 * 
+	 * {@link FilterBase} wrapper: similar to FilterBase.getDefaultJSON
 	 * @param cat
 	 * @return
 	 * @throws QueryException
 	 * @throws FatalException
 	 */
 	public static String getDefaultJSON(String cat) throws QueryException, FatalException {
-		if ("TABLE".equals(cat)) {
-			return new TableDisplayFilter(null).getJSONString();
-		} else if ("ENTRY".equals(cat)) {
-			return new EntryDisplayFilter(null).getJSONString();
-		} else if ("IMAGE".equals(cat)) {
-			return new ImageDisplayFilter(null).getJSONString();
-		} else if ("SPECTRUM".equals(cat)) {
-			return new SpectrumDisplayFilter(null).getJSONString();
-		} else if ("MISC".equals(cat)) {
-			return new MiscDisplayFilter(null).getJSONString();
-		} else if ("FLATFILE".equals(cat)) {
-			return new FlatfileDisplayFilter(null).getJSONString();
-		} else {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
-		}
-		return null;
+			return FilterBase.getDefaultJSON(cat);
 	}
 }

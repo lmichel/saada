@@ -61,6 +61,7 @@ public class GetMeta extends SaadaServlet {
 	}
 	@SuppressWarnings("unchecked")
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		printAccess(request, true);
 		String query = request.getParameter("query");
 		String name = request.getParameter("name");
 		RequestDispatcher rd = null;
@@ -205,7 +206,7 @@ public class GetMeta extends SaadaServlet {
 				/*
 				 * Push the JSon object into the stream
 				 */
-				JsonUtils.teePrint(response,retour.toJSONString());
+				JsonUtils.teePrint(response, retour.toJSONString());
 			}
 			else {
 				reportJsonError(request, response, "request " + query  + " unsupported");

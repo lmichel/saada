@@ -40,6 +40,26 @@ Serializable {
 
 	protected MetaClass mc = null;
 	protected MetaCollection metacoll;
+	
+	public String toString() {
+		String retour;
+		retour = this.getClass().getName()  +":  oid " + oidsaada + " \n";
+		retour += "      Class "  + mc + " \n";;
+		retour += "  datatable " ;
+		for( String s :datatable_columns ) retour += s + " " ;
+		retour += "\n";
+		retour += "    Ignored " ;
+		for( String s :ignored_keywords ) retour += s + " " ;
+		retour += "\n";
+		retour += "       Ucds " ;
+		for( AttributeHandler s :ucd_columns ) retour += s.getNameorg() + " " ;
+		retour += "\n";
+		retour += "  Relations " ;
+		for( String s :columns_rel ) retour += s + " " ;
+		retour += "\n";
+		return retour;
+	}
+
 
 	/**
 	 * 
@@ -57,8 +77,8 @@ Serializable {
 		ignored_keywords.add("pos_y_csa");
 		ignored_keywords.add("pos_z_csa");
 		ignored_keywords.add("md5keysaada");
-		ignored_keywords.add("Any-Collection");
-		ignored_keywords.add("Any-Relation");
+		ignored_keywords.add(FilterKeys.ANY_COLLECTION);
+		ignored_keywords.add(FilterKeys.ANY_RELATION);
 		if (coll != null) {
 			metacoll = Database.getCachemeta().getCollection(coll);
 			this.setRelations();
@@ -233,6 +253,9 @@ Serializable {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getLinks()
+	 */
 	public List<String> getLinks() throws Exception {
 		List<String> retour = new ArrayList<String>();
 
@@ -243,6 +266,5 @@ Serializable {
 		return retour;
 	}
 
-	abstract public String getJSONString() ;
 
 }

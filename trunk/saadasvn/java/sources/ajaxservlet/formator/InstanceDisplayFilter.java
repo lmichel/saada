@@ -150,7 +150,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 
 	}
 
-	public String getJSONString() {
+	public String getRawJSON() {
 		return null;
 	}
 }

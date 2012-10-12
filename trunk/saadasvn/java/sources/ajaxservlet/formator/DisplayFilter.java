@@ -113,4 +113,7 @@ public interface DisplayFilter {
 	 * @throws Exception 
 	 */
 	public List<String> getLinks() throws Exception ;
+	
+	public String getRawJSON() ;
+
 }

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.util.WorkDirectory;
 
@@ -79,11 +80,7 @@ public class FilterBase {
 						tmp = new File(path + Database.getSepar() + filename);
 						fr = new FileReader(tmp);
 						sf = new StoredFilter(fr);
-						coll = sf.getFirstCollection();
-						cat = sf.getCategory();
-						String kw = coll+"."+cat;
-
-						FilterBase.filters.put(kw, sf);
+						FilterBase.filters.put(sf.getTreepath(), sf);
 					}
 				}
 			} 
@@ -100,24 +97,49 @@ public class FilterBase {
 	/**
 	 * provides the filter corresponding to the
 	 * given category & collection (or the
-	 * "Any-Collection" one if it doesn't exist)
+	 * FilterKeys.ANY_COLLECTION one if it doesn't exist)
 	 * 
 	 * @param coll
 	 * @param cat
 	 * @return
 	 */
 	public static StoredFilter get(String coll, String cat) {
-
 		StoredFilter result = null;
 		String keys = coll+"."+cat;
 		result = filters.get(keys);
 
 		if (result == null) {
-			String defkeys = "Any-Collection."+cat;
+			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No filter matching key " + keys + " found: take the default " + defkeys);
 			result = filters.get(defkeys);
 		}
 		return result;
 	}
+	
+	/**
+	 * provides the filter corresponding to the
+	 * given category, collection and class (or the
+	 * FilterKeys.ANY_COLLECTION one if it doesn't exist)
+	 * 
+	 * @param coll
+	 * @param cat
+	 * @param saadaclass
+	 * @return
+	 */
+	public static StoredFilter get(String coll, String cat, String saadaclass) {
+
+		StoredFilter result = null;
+		String keys = coll+"."+cat + "." + saadaclass;
+		result = filters.get(keys);
+
+		if (result == null) {
+			String defkeys = FilterKeys.ANY_COLLECTION+cat;
+			result = filters.get(defkeys);
+		}
+		return result;
+	}
+
 
 
 	/**
@@ -128,7 +150,7 @@ public class FilterBase {
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
 		String kw = coll+"."+cat;
-
+System.out.println("add " + kw);
 		FilterBase.filters.put(kw, sf);
 	}
 
@@ -142,13 +164,41 @@ public class FilterBase {
 	 */
 	private static void initDefaultsFilter() throws Exception {
 
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("IMAGE")));
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("ENTRY")));
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("FLATFILE")));
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("MISC")));
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("TABLE")));
-		FilterBase.addFilter(new StoredFilter(DisplayFilterFactory.getDefaultJSON("SPECTRUM")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("IMAGE")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("ENTRY")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("FLATFILE")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("MISC")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("TABLE")));
+		FilterBase.addFilter(new StoredFilter(getDefaultJSON("SPECTRUM")));
 
+	}
+
+	/**
+	 * provides the JSONString of the default
+	 * filter from the given category
+	 * 
+	 * @param cat
+	 * @return
+	 * @throws QueryException
+	 * @throws FatalException
+	 */
+	public static String getDefaultJSON(String cat) throws QueryException, FatalException {
+		if ("TABLE".equals(cat)) {
+			return new TableDisplayFilter(null).getRawJSON();
+		} else if ("ENTRY".equals(cat)) {
+			return new EntryDisplayFilter(null).getRawJSON();
+		} else if ("IMAGE".equals(cat)) {
+			return new ImageDisplayFilter(null).getRawJSON();
+		} else if ("SPECTRUM".equals(cat)) {
+			return new SpectrumDisplayFilter(null).getRawJSON();
+		} else if ("MISC".equals(cat)) {
+			return new MiscDisplayFilter(null).getRawJSON();
+		} else if ("FLATFILE".equals(cat)) {
+			return new FlatfileDisplayFilter(null).getRawJSON();
+		} else {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
+		}
+		return null;
 	}
 
 }

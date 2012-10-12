@@ -154,7 +154,7 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 		setRelations(Category.TABLE);
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"TABLE\",";
