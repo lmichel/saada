@@ -15,9 +15,11 @@ jQuery.extend({
 		var results = '';
 
 		this.init = function(xmlSummary) {
+	        logMsg((new XMLSerializer()).serializeToString(xmlSummary));
 			var xmlRoot = $(xmlSummary).find("[nodeName=uws:job]");
 			that.jobId = xmlRoot.find("[nodeName=uws:jobId]").text();
 			that.phase = xmlRoot.find("[nodeName=uws:phase]").text();
+			alert(that.jobId);
 			that.params = new Array();
 			xmlRoot.find("[nodeName=uws:parameters]").find("[nodeName=uws:parameter]").each(function() {
 				that.params[$(this).attr("id")] = $(this).text();

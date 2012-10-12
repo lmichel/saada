@@ -662,5 +662,4 @@ $().ready(function() {
 	sampView.fireSampInit();
 	//tapView.fireRefreshJobList();
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
-
 });
