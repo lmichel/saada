@@ -49,7 +49,10 @@ public abstract class JsonUtils {
 	}
 	
 	public static void teePrint(ServletOutputStream out, String msg) throws IOException {
-		if( STDOUT ) Messenger.printMsg(Messenger.DEBUG, msg);
+		if( STDOUT ) {
+			if( msg.length() < 1000 )Messenger.printMsg(Messenger.DEBUG, msg);
+			else Messenger.printMsg(Messenger.DEBUG, msg.substring(0, 1000) + ".....");
+		}
 		out.println(msg);
 	}
 	/**

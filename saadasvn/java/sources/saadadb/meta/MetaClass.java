@@ -264,6 +264,6 @@ public class MetaClass extends MetaObject{
 
 	@Override
 	public String toString() {
-		return "class " + this.name + " of collection " + this.getCategory_name() + "." + this.getCollection_name();
+		return "class " + this.name + " of collection " + this.getCollection_name()  + "." + this.getCategory_name();
 	}
 }

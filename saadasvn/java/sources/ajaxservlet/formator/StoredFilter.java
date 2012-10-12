@@ -25,6 +25,7 @@ public class StoredFilter implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String rawjson;
+	private String  saadaclass;
 	private ArrayList<String> collection;
 	private String category;
 	private ArrayList<String> relationship_show;
@@ -84,13 +85,23 @@ public class StoredFilter implements Serializable {
 		JSONArray array;
 		JSONObject obj2;
 
+		String sc = (String) obj1.get("saadaclass");
+		/*
+		 * Backward compatibilty
+		 */
+		if( sc == null ) {
+			saadaclass = FilterKeys.ANY_CLASS;
+
+		} else {
+			saadaclass = sc;
+		}
+
 		array = (JSONArray) obj1.get("collection");
 
 		for (int i = 0; i < array.size(); i++) {
 			String var = (String) array.get(i);
 			collection.add(var);
 		}
-
 		array = (JSONArray) obj1.get("specialField");
 
 		for (int i = 0; i < array.size(); i++) {
@@ -113,7 +124,7 @@ public class StoredFilter implements Serializable {
 			if (var != null) {
 				relationship_query.add(var);
 			} else {
-				relationship_query.add("Any-Relation");
+				relationship_query.add(FilterKeys.ANY_RELATION);
 			}
 		}
 
@@ -136,11 +147,16 @@ public class StoredFilter implements Serializable {
 	}
 
 	public void store(String filename) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Save filtere " + filename);
+		Messenger.printMsg(Messenger.TRACE, "Save filter " + filename);
 		FileWriter fw = new FileWriter(filename);
 		fw.write(this.rawjson);
 		fw.close();
 	}
+
+	public String getSaadaclass() {
+		return saadaclass;
+	}
+
 	public ArrayList<String> getCollection() {
 		return collection;
 	}
@@ -185,8 +201,24 @@ public class StoredFilter implements Serializable {
 		return rawjson;
 	}
 
+	public String getTreepath() {
+		String retour = this.getFirstCollection() + "." + category;
+		if( isCLassSpecific() )  {
+			retour += "." + saadaclass;
+		}
+		return retour;
+	}
+	
+	public boolean isCLassSpecific() {
+		if(saadaclass != null && saadaclass.length() > 0 && !saadaclass.equals(FilterKeys.ANY_CLASS) && !saadaclass.equals("*")) {
+			return  true;
+		} else {
+			return false;
+		}
+	}
+
 	public String toString() {
-		return ("Filtre : [" + this.getCollection()+ "," + this.getCategory() + "]");
+		return ("Filtre : [" + this.getCollection()+ "," + this.getCategory() + "," + this.getSaadaclass() + "]");
 	}
 
 }

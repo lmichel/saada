@@ -190,7 +190,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.SPECTRUM);
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"SPECTRUM\",";

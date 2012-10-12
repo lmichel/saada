@@ -3,7 +3,6 @@ package ajaxservlet.json;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,12 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import saadadb.database.Database;
-
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.accounting.QueryContext;
 import ajaxservlet.accounting.UserTrap;
-import ajaxservlet.formator.*;
+import ajaxservlet.formator.DisplayFilter;
+import ajaxservlet.formator.DisplayFilterFactory;
 
 /** * @version $Id$
 
@@ -59,11 +57,10 @@ public class RunQuery extends SaadaServlet {
 		try {			
 			response.setContentType("application/json");
 			String[] qs = query.split("\\s", -1) ;
-			
-			ServletOutputStream out = response.getOutputStream();
 			if( qs.length >= 6 ) {
-				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5], qs[1], request);
+				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,request);
 				UserTrap.getUserAccount(request).setQueryContext(new QueryContext(query, colfmtor));
+				System.out.println(colfmtor.getRawJSON());
 				JSONObject jo = new JSONObject();
 				jo.put("query", query);
 				jo.put("treepath", treepath);

@@ -25,6 +25,7 @@ import saadadb.util.SaadaConstant;
 
 
 /**
+ * Used to handle to appaly a JSON filter (StoredFilter) to a specific Saada obkect instance
  * 
  * @author Clémentine Frère
  *  * @version $Id$
@@ -42,54 +43,60 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	protected final LinkedHashSet<String> columns_rel = new LinkedHashSet<String>();
 	protected MetaClass mc = null;
 	protected OidsaadaResultSet resultSet;
-
-
 	private StoredFilter sf;
-
+	protected boolean anyCollAtt = false;
 
 	/**
 	 * creates a DisplayFilter from a StoredFilter
 	 * and the collection the filter is applied to
 	 * 
-	 * @param sf
-	 * @param coll
+	 * @param sf  :Stored filter
+	 * @param coll: Collection on which the filter must be applied
+	 * @throws FatalException 
 	 */
-	public DynamicDisplayFilter(StoredFilter sf, String coll) {
-		try {
-			this.sf = sf;
+	public DynamicDisplayFilter(StoredFilter sf, String coll) throws FatalException {
+		this.sf = sf;
 
-			ArrayList<String> tmp_array = sf.getSpecialField();
+		ArrayList<String> tmp_array = sf.getSpecialField();
+		for (String val : tmp_array) {
+			columns_specialf.add(val);
+		}
+
+		tmp_array = sf.getCollection_show();
+
+		if (tmp_array.size() > 0) {
 			for (String val : tmp_array) {
-				columns_specialf.add(val);
+				if( val.equals(FilterKeys.ANY_COLL_Att) ) {
+					anyCollAtt = true;
+				}
 			}
-
-			tmp_array = sf.getCollection_show();
-
-			if (tmp_array.size() > 0) {
+			if( !anyCollAtt ) {
 				for (String val : tmp_array) {
 					if (!val.startsWith("_")) columns_natcol.add(val);
 				}
-			}
-
-			/*
-			 * reste à initialiser UCDs
-			 */
-
-			tmp_array = sf.getRelationship_show();
-			if (tmp_array.size() > 0) {
-				if (tmp_array.get(0).compareTo("Any-Relation") == 0) {
-					String[] tmp_tab = Database.getCachemeta().getRelationNamesStartingFromColl(coll,Category.getCategory(sf.getCategory()));
-					for (String val : tmp_tab) {
-						columns_rel.add("Rel : "+val);
-					}
-				} else if (!(tmp_array.get(0).compareTo("") == 0)) {
-					for (String val : tmp_array) {
-						columns_rel.add("Rel : "+val);
-					}
+			} else {
+				for( String ah: MetaCollection.getAttribute_handlers(Category.getCategory(sf.getCategory())).keySet() ) {
+					columns_natcol.add(ah);
 				}
 			}
-		} catch (FatalException e) {
-			e.printStackTrace();
+		}
+
+		/*
+		 * reste à initialiser UCDs
+		 */
+
+		tmp_array = sf.getRelationship_show();
+		if (tmp_array.size() > 0) {
+			if (tmp_array.get(0).compareTo(FilterKeys.ANY_RELATION) == 0) {
+				String[] tmp_tab = Database.getCachemeta().getRelationNamesStartingFromColl(coll,Category.getCategory(sf.getCategory()));
+				for (String val : tmp_tab) {
+					columns_rel.add("Rel : "+val);
+				}
+			} else if (!(tmp_array.get(0).compareTo("") == 0)) {
+				for (String val : tmp_array) {
+					columns_rel.add("Rel : "+val);
+				}
+			}
 		}
 	}
 
@@ -103,10 +110,10 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		for (String val : columns_specialf) {
 			result.add(val);
 		}
-		for (String val : columns_natcol) {
-			result.add(val);
-		}
 		for (String val : columns_rel) {
+			if( !isDirective(val) ) {
+				continue;
+			}
 			result.add(val);
 		}
 		for (AttributeHandler ah : this.columns_ucds) {
@@ -115,6 +122,12 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				lbl += "(" + ah.getUnit() + ")";
 			}
 			result.add(lbl);
+		}
+		for (String val : columns_natcol) {
+			if( !isDirective(val) ) {
+				continue;
+			}
+			result.add(val);
 		}
 		return result;
 	}
@@ -160,7 +173,6 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		SpecialFieldFormatter sff = new SpecialFieldFormatter(si);
 
 		List<String> retour = new ArrayList<String>();
-
 
 		for (String speField : columns_specialf) {
 			if ("DL Link".equals(speField)) {
@@ -234,19 +246,11 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 		}
 
-		for (String natcol : columns_natcol) {
-			si.loadBusinessAttribute();
-			String res = DefaultFormats.getString(si.getFieldValue(natcol));
-			retour.add(res);
-		}
-
-		for (AttributeHandler ah : columns_ucds) {
-			si.loadBusinessAttribute();
-			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
-					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(?)</a>");
-		}
 
 		for (String rel : columns_rel) {
+			if( !isDirective(rel) ) {
+				continue;
+			}
 			/*
 			 * filter Json string
 			 */
@@ -285,13 +289,27 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				break;
 			}
 		}
+		for (AttributeHandler ah : columns_ucds) {
+			si.loadBusinessAttribute();
+			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
+					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(?)</a>");
+		}
+
+		for (String natcol : columns_natcol) {
+			if( !isDirective(natcol) ) {
+				continue;
+			}
+			si.loadBusinessAttribute();
+			String res = DefaultFormats.getString(si.getFieldValue(natcol));
+			retour.add(res);
+		}
+
 
 		return retour;
 	}
 
 	@SuppressWarnings("unchecked")
 	public JSONArray getClassKWTable() throws Exception {
-		System.out.println("@@@@@@@@@@@ COUCO");
 		JSONArray retour = new JSONArray ();
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassName(oidsaada));
 		SaadaInstance si = Database.getCache().getObject(oidsaada);
@@ -359,7 +377,38 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			this.columns_ucds.add(ah);
 	}
 
-	public String getJSONString() {
-		return null;
+	public String getRawJSON() {
+		return sf.getRawJSON();
+	}
+
+	/**
+	 * return true if the quantity is a filter directive (e.g. Any-...) but not the
+	 * name of a database quantity
+	 * @param quantity
+	 * @return
+	 */
+	public boolean isDirective(String quantity) {
+		return (quantity.indexOf('-') == -1);	
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		String retour;
+		retour = "Filter:  oid " + oidsaada + " \n";
+		retour += "      Class "  + mc + " \n";;
+		retour += "    Special " ;
+		for( String s :columns_specialf ) retour += s + " " ;
+		retour += "\n";
+		retour += "     Native " ;
+		for( String s :columns_natcol ) retour += s + " " ;
+		retour += "\n";
+		retour += "       Ucds " ;
+		for( AttributeHandler s :columns_ucds ) retour += s.getNameorg() + " " ;
+		retour += "\n";
+		retour += "  Relations " ;
+		for( String s :columns_rel ) retour += s + " " ;
+		retour += "\n";
+		return retour;
 	}
 }

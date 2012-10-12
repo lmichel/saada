@@ -61,18 +61,9 @@ public class GetFilter extends SaadaServlet {
 			this.printAccess(request, true);
 			String cat = request.getParameter("cat");
 			String coll = request.getParameter("coll");
-			ServletOutputStream out = response.getOutputStream();  
-
-			StoredFilter filter;
-			filter = DisplayFilterFactory.getStoredFilter(coll, cat, request);
-			String jsonfilter = null;
-			if (filter != null) {
-				jsonfilter = filter.getRawJSON();
-			} else {
-				Messenger.printMsg(Messenger.TRACE, "No stored filter found");
-				jsonfilter = DisplayFilterFactory.getDefaultJSON(cat);
-			}
-			JsonUtils.teePrint(out, jsonfilter);
+			String saadaclass = request.getParameter("saadaclass");
+			DisplayFilter colfmtor = DisplayFilterFactory.getFilter(coll, cat, saadaclass, request);
+			JsonUtils.teePrint(response, colfmtor.getRawJSON());
 		} catch (Exception e) {
 			this.reportJsonError(request, response, e);
 		}

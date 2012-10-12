@@ -87,7 +87,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
-			if( "Acces".equals(s)) {
+			if( "Access".equals(s)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 //			else if( "Aladin".equals(s)) {
@@ -171,7 +171,10 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.ENTRY);
 	}
 	
-	public String getJSONString() {
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DefaultDisplayFilter#getJSONString()
+	 */
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"ENTRY\",";

@@ -148,7 +148,7 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.FLATFILE);
 	}
 	
-	public String getJSONString() {
+	public String getRawJSON() {
 		String result = "";
 		result += "{ \"collection\": [\"Any-Collection\"],";
 		result += "\"category\": \"FLATFILE\",";
