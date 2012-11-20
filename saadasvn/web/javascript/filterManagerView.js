@@ -64,10 +64,26 @@ jQuery.extend({
 				listeners[i].controlNativeRemoval(nname);
 			});
 		};
+		this.fireRemoveAllNative = function() {
+			$.each(listeners, function(i){
+				listeners[i].controlAllNativeRemoval();
+			});
+		};
+		this.fireRemoveAllClassNative = function() {
+			$.each(listeners, function(i){
+				listeners[i].controlAllClassNativeRemoval();
+			});
+		};
 
 		this.fireRemoveRelation = function(rname) {
 			$.each(listeners, function(i){
 				listeners[i].controlRelationRemoval(rname);
+			});
+		};
+
+		this.fireRemoveAllRelation = function() {
+			$.each(listeners, function(i){
+				listeners[i].controlAllRelationRemoval();
 			});
 		};
 
@@ -80,6 +96,22 @@ jQuery.extend({
 		this.fireApplyToAllColl = function() {
 			$.each(listeners, function(i){
 				listeners[i].controlApplyToAllColl();
+			});
+		};
+		
+		this.fireAnyCollAtt = function(any) {
+			$.each(listeners, function(i){
+				listeners[i].controlAnyCollAtt(any);
+			});
+		};
+		this.fireAnyClassAtt = function(any) {
+			$.each(listeners, function(i){
+				listeners[i].controlAnyClassAtt(any);
+			});
+		};
+		this.fireAnyRelation = function(any) {
+			$.each(listeners, function(i){
+				listeners[i].controlAnyRelation(any);
 			});
 		};
 
@@ -113,6 +145,10 @@ jQuery.extend({
 				}
 			}
 
+			content += "<input id=\"fallcollatt\" type=checkbox><span class=help>Display all collection level attributes<br>";
+			content += "<input id=\"fallclassatt\" type=checkbox><span class=help>Display all class level attributes when it is allowed by the scope of the query<br>";
+			content += "<input id=\"fallrelation\" type=checkbox><span class=help>Display all relations";
+
 //			content += "<h4>&nbsp;&bull;&nbsp;&nbsp;Special Fields selector</h4>";
 			content += "<h4 id=\"spefieldstitle\" class='detailhead' onclick=\"$(this).next('.selector').slideToggle(500); switchArrow('spefieldstitle');\"> <img src=\"images/tdown.png\"> Special Fields Selector</h4>";
 
@@ -128,8 +164,8 @@ jQuery.extend({
 			content += "<div id=\"fnativeselector\">";
 			content += "<div id=\"fnativedrag\"></div>";
 			content += "<div id=\"fnativedrop\" class=\"ui-droppable\"></div>";
-			content += "</div><input id=\"fallclassatt\" type=checkbox><span class=help>Display all class level attributes when it is allowed by the scope of the query</div>";
-			
+			content += "</div></div>";
+
 			if( globalTreePath.length == 3) {
 				content += "<h4 id=\"classnativestitle\" class=\"detailhead\" onclick=\"$(this).next('.selector').slideToggle(500); switchArrow('classnativestitle');\"> <img src=\"images/tright.png\"> Class Attributes Selector</h4>";			
 				content += "<div class='selector'>";
@@ -167,7 +203,6 @@ jQuery.extend({
 					$(this).hide();
 				}
 			});
-
 			that.initFieldsList(speFields,  collAttributesHandlers, classAttributeHandlers, relations);
 			that.fireInitExistingFields();
 		};
@@ -219,6 +254,7 @@ jQuery.extend({
 					accept: function() { return true; },
 					drop: function(event, ui){
 						filterManagerView.fireCollNativeEvent(ui.draggable);		
+						$('#fallcollatt').attr('checked', 'false');
 					}
 				});
 				$("#fnativedrag" ).sortable({
@@ -251,6 +287,7 @@ jQuery.extend({
 						accept: function() { return true; },
 						drop: function(event, ui){
 							filterManagerView.fireClassNativeEvent(ui.draggable);		
+							$('#fallclassatt').attr('checked', false);
 						}
 					});
 					$("#classfnativedrag" ).sortable({
@@ -280,6 +317,7 @@ jQuery.extend({
 				$("#frelationsdrop").droppable({
 					drop: function(event, ui){
 						that.fireRelationEvent(ui.draggable);		
+						$('#fallrelation').attr('checked', false);
 					}
 				});
 				$("#frelationsdrag" ).sortable({
@@ -290,6 +328,32 @@ jQuery.extend({
 					helper: "clone", 
 					revert: "invalid"
 				});
+			});
+			$('#fallclassatt').change(function(){
+				var check = $(this).attr('checked');
+				that.fireAnyClassAtt(check);
+				if( check ) {
+					that.fireRemoveAllClassNative();
+					$('#classfnativedrop').html('');
+				}
+			});
+			$('#fallcollatt').change(function(){
+				var check = $(this).attr('checked');
+				that.fireAnyCollAtt(check);
+				if( check ) {
+					that.fireRemoveAllNative();
+					$('#fnativedrop').html('');
+					$('#fnativedrag li').each(function() {that.fireCollNativeEvent($(this));	});
+				}
+			});
+			$('#fallrelation').change(function(){
+				var check = $(this).attr('checked');
+				that.fireAnyRelation(check);
+				if( check ) {
+					that.fireRemoveAllRelation();
+					$('#fnativedrop').html('');
+					$('#frelationsdrop li').each(function() {that.fireRelationEvent($(this));	});
+				}
 			});
 		};
 
@@ -309,35 +373,49 @@ jQuery.extend({
 		};
 
 		this.updateCollNatives = function (nname, nnameorg) {
-			$('#fnativedrop').append("<div id=natf" + nname + "></div>");
-			$('#natf' + nname).html('<span id=nf' + nname + '_name>' + nnameorg + '</span>');
-			$('#natf' + nname).append('<a id=nf' + nname + '_close href="javascript:void(0);" class=closekw></a>');
-			$('#nf' + nname + "_close").click(function() {
-				that.fireRemoveNative(nname);
-				$('#natf' +  nname).remove();
-			});
+			if( nname == 'Any-Coll-Att') {
+				$('#fallclassatt').attr('checked', true); 
+			} else {
+				$('#fnativedrop').append("<div id=natf" + nname + "></div>");
+				$('#natf' + nname).html('<span id=nf' + nname + '_name>' + nnameorg + '</span>');
+				$('#natf' + nname).append('<a id=nf' + nname + '_close href="javascript:void(0);" class=closekw></a>');
+				$('#nf' + nname + "_close").click(function() {
+					that.fireRemoveNative(nname);
+					$('#fallcollatt').attr('checked', false);
+					$('#natf' +  nname).remove();
+				});
+			}
 		};
 
 		this.updateClassNatives = function (nname, nnameorg) {
-			$('#classfnativedrop').append("<div id=classnatf" + nname + "></div>");
-			$('#classnatf' + nname).html('<span id=classnf' + nname + '_name>' + nnameorg + '</span>');
-			$('#classnatf' + nname).append('<a id=classnf' + nname + '_close href="javascript:void(0);" class=closekw></a>');
-			$('#classnf' + nname + "_close").click(function() {
-				that.fireRemoveNative(nname);
-				$('#classnatf' +  nname).remove();
-			});
+			if( nname == 'Any-Class-Att') {
+				$('#fallcollatt').attr('checked', true); 
+			} else {
+				$('#classfnativedrop').append("<div id=classnatf" + nname + "></div>");
+				$('#classnatf' + nname).html('<span id=classnf' + nname + '_name>' + nnameorg + '</span>');
+				$('#classnatf' + nname).append('<a id=classnf' + nname + '_close href="javascript:void(0);" class=closekw></a>');
+				$('#classnf' + nname + "_close").click(function() {
+					that.fireRemoveNative(nname);
+					$('#fallclassatt').attr('checked', false);
+					$('#classnatf' +  nname).remove();
+				});
+			}
 		};
 
 		this.updateRelations = function (index, rname) {
-			$('#frelationsdrop').append("<div id=relf" + index + "></div>");
-			$('#relf' + index).html('<span id=rf' + index + '_name>' + rname + '</span>');
-			$('#relf' + index).append('<a id=rf' + index + '_close href="javascript:void(0);" class=closekw></a>');
-			$('#rf' + index + "_close").click(function() {
-				that.fireRemoveRelation(rname);
-				$('#relf' +  index).remove();
-			});
+			if( rname == 'Any-Relation') {
+				$('#fallrelation').attr('checked', true); 
+			} else {
+				$('#frelationsdrop').append("<div id=relf" + index + "></div>");
+				$('#relf' + index).html('<span id=rf' + index + '_name>' + rname + '</span>');
+				$('#relf' + index).append('<a id=rf' + index + '_close href="javascript:void(0);" class=closekw></a>');
+				$('#rf' + index + "_close").click(function() {
+					that.fireRemoveRelation(rname);
+					$('#relf' +  index).remove();
+					$('#fallrelation').attr('checked', false);
+				});
+			}
 		};
-
 	}
 });
 

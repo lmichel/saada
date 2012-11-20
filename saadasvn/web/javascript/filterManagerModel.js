@@ -40,7 +40,9 @@ jQuery.extend({
 
 
 		var universal = false;
-
+		var anyCollAtt = false;
+		var anyClassAtt = false;
+		var anyRelation = false;
 		this.addListener = function(list) {
 			listeners.push(list);
 		};
@@ -190,11 +192,12 @@ jQuery.extend({
 
 		this.processInitExisting = function() {
 
-			var param = "cat=" + category + "&coll=" + collection + "&saadaclass=" + saadaclass;
+			var param = "cat=" + category + "&coll=" + collection + "&saadaclass=" + classe;
 			var sfname, rname, nname;
 
 			droppedspefields = new Array();
 			droppednatives = new Array();
+			droppedclassnatives = new Array();
 			droppedrelations = new Array();
 
 			$.getJSON("getfilter", param, function(jsondata) {
@@ -210,38 +213,52 @@ jQuery.extend({
 					}
 
 					if (jsondata.collections.show.length > 0) {
+						var anyClass = false;
+						var anyColl = false;
 						for (var i = 0; i < jsondata.collections.show.length; i ++) {
 							nname = jsondata.collections.show[i];
+							if( nname == 'Any-Class-Att') {
+								anyClass = true;
+								that.ClassNativesUpdated(nname, null);									
+							} else  if( nname == 'Any-Coll-Att') {
+								anyColl = true;
+								that.CollNativesUpdated(nname, null);									
+							} 
+						}
+						if( !anyClass || !anyColl ) {
+							for (var i = 0; i < jsondata.collections.show.length; i ++) {
+								nname = jsondata.collections.show[i];
 
-							if (droppednatives[nname] == null) {
-								if( nname.startsWith("_") ) {
-									droppednatives[nname] = classAttributesHandlers[nname];
-									that.ClassNativesUpdated(nname, droppednatives[nname].nameorg);									
-								} else {
-									droppednatives[nname] = collAttributesHandlers[nname];
-									that.CollNativesUpdated(nname, droppednatives[nname].nameorg);
+								if (droppednatives[nname] == null) {
+									if( !anyClass && nname.startsWith("_") ) {
+										droppedclassnatives[nname] = classAttributesHandlers[nname];
+										that.ClassNativesUpdated(nname, droppedclassnatives[nname].nameorg);									
+									} else if( !anyColl ) {
+										droppednatives[nname] = collAttributesHandlers[nname];
+										that.CollNativesUpdated(nname, droppednatives[nname].nameorg);
+									}
 								}
 							}
 						}
 					}
 
-					for (i = 0; i < jsondata.relationship.show.length; i ++) {
-						rname = jsondata.relationship.show[i];
-						if (rname != 'Any-Relation') {
-							var index = jQuery.inArray(rname, droppedrelations);
-							if (index == -1) {
-								droppedrelations.push(rname);
-								that.RelationsUpdated(i, rname);
-							}
-						} else {
-							var ind = 0;
-							for (j in relations) {
-								var index = jQuery.inArray(j, droppedrelations);
-								if (index == -1) {
-									droppedrelations.push(j);
-									that.RelationsUpdated(ind, j);
+					if (jsondata.relationship.show.length > 0) {
+						var anyRel = false;
+						for (var i = 0; i < jsondata.relationship.show.length; i ++) {
+							var rname = jsondata.relationship.show[i];
+							if( rname == 'Any-Relation') { 
+								anyRel = true;
+								that.RelationsUpdated(-1, rname);	
+								break;
+							} 
+						}
+						if( !anyRel ) {
+							for (i = 0; i < jsondata.relationship.show.length; i ++) {
+								var rname = jsondata.relationship.show[i];
+								if (droppedrelations[rname] == null) {
+									droppedrelations[rname] = push(rname);
+									that.RelationsUpdated(i, rname);
 								}
-								ind ++;
 							}
 						}
 					}
@@ -272,9 +289,9 @@ jQuery.extend({
 		this.processClassNativeEvent = function(uidraggable) {
 			var nname = uidraggable.find(".hidden").text();
 
-			if (droppednatives[nname] == null) {
-				droppednatives[nname] = classAttributesHandlers[nname];
-				that.ClassNativesUpdated(nname, droppednatives[nname].nameorg);
+			if (droppedclassnatives[nname] == null) {
+				droppedclassnatives[nname] = classAttributesHandlers[nname];
+				that.ClassNativesUpdated(nname, droppedclassnatives[nname].nameorg);
 			}
 		};
 		this.processRelationsEvent = function(uidraggable) {
@@ -297,10 +314,20 @@ jQuery.extend({
 			delete droppednatives[nname];
 		};
 
+		this.processAllNativeRemove = function() {
+			droppednatives = new Array();
+		};
+		this.processAllClassNativeRemove = function() {
+			droppedclassnatives = new Array();
+		};
+
 		this.processRelationRemove = function(rname) {
 			droppedrelations = jQuery.grep(droppedrelations, function(value) {
 				return value != rname;
 			});
+		};
+		this.processAllRelationRemove = function() {
+			droppedrelations = new Array();
 		};
 		/**
 		 * Build a JSON filter from instance parameters
@@ -315,18 +342,14 @@ jQuery.extend({
 			newfilter += "\"category\": \"" + category + "\",";
 			newfilter += "\"relationship\": {";
 			newfilter += "\"show\": [";
-			if (universal) {
-				newfilter += "\"Any-Relation\"";
-			} else {
-				var iterator = 0;
-				$.each(droppedrelations, function(i){
-					iterator ++;
-					newfilter += "\"" + this + "\"";
-					if (iterator < droppedrelations.length) {
-						newfilter += ", ";
-					}
-				});
+			if ( anyRelation ) {
+				droppedrelations[droppedrelations.length] ="\"Any-Relation\"";
+			} else if( !universal ) {
+				for (i in droppedrelations) {
+					droppedrelations[dropped.length] = "\"" + i+ "\"";
+				}
 			}
+			newfilter += droppedrelations.join(',');
 			newfilter += "],";
 			newfilter += "\"query\": [\"Any-Relation\"]";
 			newfilter += "},";
@@ -346,11 +369,20 @@ jQuery.extend({
 			newfilter += "\"show\": [";
 
 			var dropped = new Array();
-			for (i in droppednatives) {
-				dropped[dropped.length] = "\"" + i+ "\"";
+			if( anyCollAtt ) {
+				dropped[dropped.length] ="\"Any-Coll-Att\"";
+			}else {
+				for (i in droppednatives) {
+					dropped[dropped.length] = "\"" + i+ "\"";
+				}
 			}
-			for (i in droppedclassnatives) {
-				dropped[dropped.length] = "\"" + i+ "\"";
+
+			if( anyCollAtt ) {
+				dropped[dropped.length] ="\"Any-Class-Att\"";
+			}else if( !universal ) {
+				for (i in droppedclassnatives) {
+					dropped[dropped.length] = "\"" + i+ "\"";
+				}
 			}
 
 			newfilter += dropped.join(',');
@@ -364,23 +396,29 @@ jQuery.extend({
 			var filename = collection + "_" + category;
 			var tmppath = path + "setfilter?filter=" + param + "&name=" + filename;
 			if (universal) {
-				var answer = confirm('This filter will be applied to all the collections. If you created any other filter for the category ' + category +' it will be overwritten. \n Are you sure you want to save ?');
-				if (answer) {
-					$.post(tmppath, function(jsondata){
-						if( processJsonError(jsondata, "Can not save filter") ) {
+				filename = "Any-Collection." + category;;
+				droppedclassnatives = new Array();
+				droppedrelations = new Array();
+
+			} 
+			$.post(tmppath, function(jsondata){
+				$.ajax({
+					type: "POST",
+					url: "setfilter",
+					data: { filter: that.getNewJSONFilter(), name: "filename" },
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert('Cannot save filter: ' + jqXHR.status + "\n" + textStatus+ "\n" + errorThrown);
+
+					} ,
+					success: function (jsondata, status)  {
+						if (processJsonError(jsondata, "Cannot save filter")) {
 							return;
 						}
-						else {alert('Filter saved.');}
-					});
-				}
-			} else {
-				$.post(tmppath, function(jsondata){
-					if( processJsonError(jsondata, "Can not save filter") ) {
-						return;
+						alert("Filter " + name + " saved.");
 					}
-					else {alert('Filter saved.');}
 				});
-			}
+
+			});
 		};
 
 		this.processShowFilterPreview = function() {
@@ -391,7 +429,15 @@ jQuery.extend({
 		this.processApplyToAllColl = function () {
 			universal = !universal;
 		};
-
+		this.processAnyCollAtt= function (any) {
+			anyCollAtt = any;
+		};
+		this.processAnyClassAtt= function (any) {
+			anyClassAtt = any;
+		};
+		this.processAnyRelation= function (any) {
+			anyRelation = any;
+		};
 		this.processResetFilter = function () {
 			if (!universal) {
 				var question = 'Delete the custom filter for '+collection+', '+category+'?';

@@ -27,8 +27,17 @@ jQuery.extend({
 				controlNativeRemoval: function(nname){
 					model.processNativeRemove(nname);
 				},
+				controlAllNativeRemoval: function(){
+					model.processAllNativeRemove();
+				},
+				controlAllClassNativeRemoval: function(nnam){
+					model.processAllClassNativeRemove();
+				},
 				controlRelationRemoval: function(rname){
 					model.processRelationRemove(rname);
+				},
+				controlAllRelationRemoval: function(){
+					model.processAllRelationRemove();
 				},
 				controlSaveFilter: function(){
 					model.processSaveFilter();
@@ -38,6 +47,15 @@ jQuery.extend({
 				},
 				controlApplyToAllColl: function(){
 					model.processApplyToAllColl();
+				},
+				controlAnyCollAtt: function(any){
+					model.processAnyCollAtt(any);
+				},
+				controlAnyClassAtt: function(any){
+					model.processAnyClassAtt(any);
+				},
+				controlAnyRelation: function(any){
+					model.processAnyRelation(any);
 				},
 				controlFilterPreview: function(){
 					model.processShowFilterPreview();
