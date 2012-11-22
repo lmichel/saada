@@ -125,6 +125,12 @@ public class ZipEntryRef implements Comparable {
 	/**
 	 * @return
 	 */
+	public int getOptions(){
+		return options;
+	}
+	/**
+	 * @return
+	 */
 	public boolean includeLinkedData() {
 		return (this.options & WITH_REL) != 0;
 	}
@@ -133,13 +139,6 @@ public class ZipEntryRef implements Comparable {
 	 */
 	public boolean supportRelationFiltering() {
 		return ( relationFilter != null && relationFilter[0].equals("any-relation"));
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return this.type + " " + this.name + " " + this.uri;
 	}
 	
 	/**
@@ -189,6 +188,17 @@ public class ZipEntryRef implements Comparable {
 	 */
 	public int compareTo(Object o) {
 		return o.toString().compareTo(this.name);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		String retour =  "ZipEntryRef: " + ((type == SINGLE_FILE)? "SINGLE_FILE" : "QUERY_RESULT") 
+		+ " name=" + name 
+		+ " uri=" + uri 
+		+ " options=" + (((options & WITH_REL) != 0)? "WITH_REL" : Integer.toString(options));
+		return retour;
 	}
 
 }

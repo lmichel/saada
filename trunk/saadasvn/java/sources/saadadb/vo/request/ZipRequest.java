@@ -69,7 +69,7 @@ public class ZipRequest extends VORequest {
 	public Map<String, String> processRequest(Map<String, String> pmap) {
 		Map<String, String> retour;
 		/*
-		 * Ignore mete  data query
+		 * Ignore meta  data query
 		 */
 		try {
 			this.init(pmap);

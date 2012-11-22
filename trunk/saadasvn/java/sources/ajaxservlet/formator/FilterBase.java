@@ -150,7 +150,6 @@ public class FilterBase {
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
 		String kw = coll+"."+cat;
-System.out.println("add " + kw);
 		FilterBase.filters.put(kw, sf);
 	}
 

@@ -23,6 +23,7 @@ public class UserAccount implements Serializable {
 	protected HashMap<String, StoredFilter> userfilters;
 	private String 							reportDir;
 	public static final String              cartDirectory = "cartBuilder";
+	
 	UserAccount(String session_id) throws Exception {
 		this.sessionId = session_id;
 		userfilters = new HashMap<String, StoredFilter>();
@@ -93,7 +94,6 @@ public class UserAccount implements Serializable {
 			this.resetCat(cat);
 		}
 		String kw = sf.getTreepath();
-
 		userfilters.remove(kw);
 		userfilters.put(kw, sf);
 		/*
@@ -144,9 +144,19 @@ public class UserAccount implements Serializable {
 		return result;
 		}
 		/*
+		 * Take the default for classes
+		 */
+		String defkeys = FilterKeys.ANY_CLASS+ "." +cat;
+		result = userfilters.get(defkeys);
+		if( result != null ) {				
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "delault filter " + keys + " found in user session");
+		return result;
+		}
+		/*
 		 * Take the default one finally
 		 */
-		String defkeys = FilterKeys.ANY_CLASS+cat;
+		defkeys = FilterKeys.ANY_COLLECTION+ "." +cat;
 		result = userfilters.get(defkeys);
 		if( result != null ) {				
 			if (Messenger.debug_mode)

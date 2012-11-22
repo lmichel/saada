@@ -96,6 +96,7 @@ public class SecureDownload extends Download implements Servlet {
 				this.downloadProduct(request
 						, response
 						, UserTrap.getUserAccount(request).getCartDir() + File.separator + CartJob.zipName + ".zip"
+						, CartJob.zipName + ".zip"
 						, CartJob.zipName + ".zip");	
 				return ;
 			}

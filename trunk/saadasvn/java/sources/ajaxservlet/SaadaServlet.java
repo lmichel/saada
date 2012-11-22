@@ -217,7 +217,7 @@ public class SaadaServlet extends HttpServlet {
 			getErrorPage(req, res, "File " + f.getAbsolutePath() + " does not exist or cannot be read");
 			return;
 		}
-		downloadProduct(req, res, product_path,f.getName() );
+		downloadProduct(req, res, product_path,f.getName(), null );
 	}
 	
 	/**
@@ -227,7 +227,7 @@ public class SaadaServlet extends HttpServlet {
 	 * @param attachement
 	 * @throws Exception
 	 */
-	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path, String attachement ) throws Exception{
+	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path, String attachement , String proposedFilename) throws Exception{
 		String contentType = getServletContext().getMimeType(product_path);
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Download file " + product_path);
@@ -273,14 +273,20 @@ public class SaadaServlet extends HttpServlet {
 		} else  {
 			res.setContentType("application/octet-stream");
 		}
-		/*
-		 * Type = attachment: force the browser to saveAs
-		 *        inline    : Ask the browser to display 
-		 */
-		//res.setHeader("Content-Disposition", "inline; filename=\""+ attachement + "\"");
+		if( proposedFilename != null && proposedFilename.length() > 0 ) {
+			res.setHeader("Content-Disposition", "attachment; filename=\""+ proposedFilename + "\"");
+		}
+		else {
+			res.setHeader("Content-Disposition", "attachment; filename=\""+ f.getName() + "\"");
+		}
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
-		Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" );
+		res.setHeader("Pragma", "no-cache" );
+		res.setHeader("Cache-Control", "no-cache" );
+		res.setDateHeader( "Expires", 0 );		
+
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "GetProduct file " + product_path + " (type: " + res.getContentType() + ")" + contentType);
 
 		BufferedInputStream fl = new BufferedInputStream(new FileInputStream(product_path));
 		byte b[] = new byte[1000000];
@@ -290,8 +296,7 @@ public class SaadaServlet extends HttpServlet {
 			bos.write(b, 0, len);
 		}				
 		bos.flush();
-		bos.close();
-		fl.close();
+		bos.close();		
 	}
 
 
