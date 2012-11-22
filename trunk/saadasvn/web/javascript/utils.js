@@ -91,36 +91,73 @@ function changeLocation(url){
 
 var stillToBeOpen = false;
 var simbadToBeOpen = false;
-
-function showProcessingDialog() {
+var processIsOpen=false;
+function showProcessingDialog(message) {
+	logMsg("PROCESSSING " + message);
 	stillToBeOpen = true;
-	if( $('#saadaworking').length == 0){		
-		$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
+	if( $('#saadaworking').length == 0){	
+		logMsg("ini");
+		$('#resultpane').append('<div id="saadaworking" style="padding: 5px; text-align: left; display: none;vertical-align:middle;"></div>');
 	}
-	$('#saadaworking').html("Waiting on Saada reply");
+	$('#saadaworking').html("<img style='padding: 5px; vertical-align:middle' src=images/ajax-loader.gif></img><span class=help>" + message + "</span>");
 	/*
 	 * It is better to immediately show the process dialog in order to give a feed back to the user
 	 * It we dopn't, user could click several time on submit a get lost with what happens
 	 *
 	 * setTimeout("if( stillToBeOpen == true ) $('#saadaworking').css('visibility', 'visible');", 500);
 	 */
-	$('#saadaworking').css('visibility', 'visible');
+	//$('#saadaworking').css('visibility', 'visible');
+	$('#saadaworking').modal({close: false});
+	processIsOpen=true;
+	$("#simplemodal-container").css('height', 'auto'); 
+	$("#simplemodal-container").css('width', 'auto'); 
+	$(window).trigger('resize.simplemodal'); 
 }
-function showProcessingDialogImmediately() {
-	stillToBeOpen = true;
-	if( $('#saadaworking').length == 0){		
-		$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-	}
-	$('#saadaworking').html("Waiting on Saada reply");
-	$('#saadaworking').css('visibility', 'visible');
-}
+
 
 function hideProcessingDialog() {
 	stillToBeOpen = false;
 	if( $('#saadaworking').length != 0){
-		$('#saadaworking').css('visibility', 'hidden');	
+		logMsg("CLOSE PROCESSSING " + $("#saadaworking span").text());
+
+		//$('#saadaworking').css('visibility', 'hidden');	html img text align
+		if( processIsOpen ) {
+			$.modal.close();	
+			processIsOpen=false;
+		}
+
 	}
 }
+
+//function showProcessingDialog() {
+//stillToBeOpen = true;
+//if( $('#saadaworking').length == 0){		
+//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
+//}
+//$('#saadaworking').html("Waiting on Saada reply");
+///*
+//* It is better to immediately show the process dialog in order to give a feed back to the user
+//* It we dopn't, user could click several time on submit a get lost with what happens
+//*
+//* setTimeout("if( stillToBeOpen == true ) $('#saadaworking').css('visibility', 'visible');", 500);
+//*/
+//$('#saadaworking').css('visibility', 'visible');
+//}
+//function showProcessingDialogImmediately() {
+//stillToBeOpen = true;
+//if( $('#saadaworking').length == 0){		
+//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
+//}
+//$('#saadaworking').html("Waiting on Saada reply");
+//$('#saadaworking').css('visibility', 'visible');
+//}
+
+//function hideProcessingDialog() {
+//stillToBeOpen = false;
+//if( $('#saadaworking').length != 0){
+//$('#saadaworking').css('visibility', 'hidden');	
+//}
+//}
 
 function showSampMessageSent() {
 	stillToBeOpen = true;

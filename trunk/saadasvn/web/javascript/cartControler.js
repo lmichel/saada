@@ -44,6 +44,9 @@ jQuery.extend({
 				controlDelegateCartDownload: function() {
 					model.delegateCartDownload();				
 				},
+				controlResetZipjob: function() {
+					model.resetZipjob();				
+				}
 		};
 		view.addListener(vlist);
 

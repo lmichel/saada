@@ -152,7 +152,7 @@ jQuery.extend({
 
 			that.initSpeFieldsList(globalTreePath[1]);
 
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 
 			$.getJSON("getmeta", params, function(jsonmeta) {
 				hideProcessingDialog();

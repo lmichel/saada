@@ -24,18 +24,21 @@ jQuery.extend({
 		this.fireAddJobResult = function(element, query) {
 			var elementClass = element.attr('class');
 			if( elementClass == 'dl_cart' ) {
+				showProcessingDialog("Selection " + getTreePathAsKey() + " added to the cart");
 				element.attr('class', 'dl_cart_added');
 				logMsg("add " + getTreePathAsKey() + " <> " + query);
 				$.each(listeners, function(i){
 					listeners[i].controlAddJobResult(getTreePathAsKey(), query);
 				});
-			}
-			else {
+			} else {
+				showProcessingDialog("Selection " + getTreePathAsKey() + " remove from the cart");
 				element.attr('class', 'dl_cart');
 				$.each(listeners, function(i){
 					listeners[i].controlRemoveJobResult(getTreePathAsKey(), query);
 				});
 			}
+			this.resetJobControl();
+			setTimeout('hideProcessingDialog();', 1000);
 //			logMsg(element.attr('class'));
 //			logged_alert("Query result  added to the cart");
 //			$.each(listeners, function(i){
@@ -48,6 +51,7 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveJobResult(nodekey, jobid);
 			});
+			this.resetJobControl();
 		};
 		this.fireAddUrl = function(element, name, oid) {
 			var elementClass = element.attr('class');
@@ -63,6 +67,7 @@ jQuery.extend({
 				$.each(listeners, function(i){
 					listeners[i].controlRemoveUrl(getTreePathAsKey(), oid);
 				});
+				this.resetJobControl();
 			}
 //
 //			logged_alert("File  " + name + " added to the cart");
@@ -76,6 +81,7 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveUrl(nodekey, url);
 			});
+			this.resetJobControl();
 		};
 		this.fireOpenCart = function() {			
 			$.each(listeners, function(i){
@@ -86,6 +92,7 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].controleCleanCart(tokens);
 			});
+			this.resetJobControl();
 		};
 		this.fireStartArchiveBuilding = function() {
 			$.each(listeners, function(i){
@@ -124,6 +131,20 @@ jQuery.extend({
 				listeners[i].controlDelegateCartDownload();
 			});			
 		};
+		
+		this.resetJobControl= function() {
+			logMsg("resetJobControl");
+			$.each(listeners, function(i){
+				listeners[i].controlResetZipjob();
+			});			
+			$('.cart').css("border", "0px");
+			$('#detaildiv_download').attr("disabled", true);
+			$('#detaildiv_submit').removeAttr("disabled");
+			var jobspan = $('#cartjob_phase');
+			jobspan.attr('class', 'nojob');
+			jobspan.text('nojob');
+			};
+
 		this.fireCheckArchiveCompleted = function() {
 			var phase = that.fireGetJobPhase();
 			var queriespan = $('#cartjob_phase');
@@ -138,6 +159,8 @@ jQuery.extend({
 			}
 			else if( phase == 'COMPLETED') {
 				$('.cart').css("border", "2px solid green");
+				$('#detaildiv_submit').attr("disabled", true);
+				$('#detaildiv_download').removeAttr("disabled");
 			}
 			else {
 				$('.cart').css("border", "2px solid red");
@@ -175,7 +198,7 @@ jQuery.extend({
 			if( typeof PeerCartClient != 'undefined' && PeerCartClient != '' ) {
 				table += "<input title='Delegate cart control to " + PeerCartClient + "' type=button value='Delegate' onclick='cartView.fireDelegateCartDownload();'>" ;
 			}
-			table += "<br><span>Get the Result</span> <input type=button id=detaildiv_download value='Download Cart'>";			
+			table += "<br><span>Get the Result</span> <input type=button id=detaildiv_download value='Download Cart' disabled='disabled'>";			
 
 
 			$('#detaildiv').html(table);
@@ -203,6 +226,7 @@ jQuery.extend({
 			} );
 			$('#detaildiv_abort').click( function() {
 				that.fireKillArchiveBuilding();
+				that.fireCheckArchiveCompleted();
 				return false;
 			} );
 

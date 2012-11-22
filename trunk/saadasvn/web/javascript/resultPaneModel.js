@@ -61,7 +61,7 @@ jQuery.extend({
 			}
 			else {
 				$('#data_processing').attr("visiblity", "visible");
-				showProcessingDialog();
+				showProcessingDialog("Run query");
 				$.ajax({
 					url: "runquery",
 					dataType: 'json',
@@ -89,7 +89,7 @@ jQuery.extend({
 
 		this.processShowRecord= function(oid, panelToOpen){
 			var jsdata ="";
-			showProcessingDialog();
+			showProcessingDialog("Get Object description");
 			$.getJSON("getobject", {oid: oid }, function(data) {
 				hideProcessingDialog();
 				if( processJsonError(data, "") ) {
@@ -109,7 +109,7 @@ jQuery.extend({
 
 		this.processShowMeta= function(){
 			var jsdata ="";
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			var tp;
 			if( treePath.length == 3 ) {
 				tp = treePath[2];
@@ -134,7 +134,7 @@ jQuery.extend({
 
 		this.processShowMetaNode= function(treepath){
 			var jsdata ="";
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			var tp;
 			if( treepath.length == 3 ) {
 				tp = treepath[2];
@@ -158,7 +158,7 @@ jQuery.extend({
 		}
 
 		this.processShowSources= function(oid){
-			showProcessingDialog();
+			showProcessingDialog("Get Object detail");
 			$.getJSON("getobject", {target: "sources", oid: oid }, function(data) {
 				hideProcessingDialog();
 				if( processJsonError(data, "get catalogue sources") ) {
@@ -193,7 +193,7 @@ jQuery.extend({
 			histo_ptr --;
 
 			var oid = histo[histo_ptr];
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			if( oid.match(/^meta:\s*/)) {
 				$.getJSON("getmeta", {query: "aharray", name:oid.split(' ')[1] }, function(data) {
 					hideProcessingDialog();
@@ -230,7 +230,7 @@ jQuery.extend({
 			}
 			histo_ptr ++;
 			var oid = histo[histo_ptr];
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			if( oid.match(/^meta:\s*/)) {
 				$.getJSON("getmeta", {query: "aharray", name:oid.split(' ')[1] }, function(data) {
 					hideProcessingDialog();
@@ -264,7 +264,7 @@ jQuery.extend({
 
 			var jsdata ="";
 			var param = {oid: poid, relation: relationname};
-			showProcessingDialog();
+			showProcessingDialog("Get object detail");
 			$.getJSON("getobject", param , function(data) {
 				hideProcessingDialog();
 				if( processJsonError(data, "get object") ) {
