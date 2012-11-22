@@ -38,7 +38,7 @@ jQuery.extend({
 			 * Get the description of the ending collection
 			 */
 			params = {query: "ah", name:  relation.ending_collection + '.' +relation.ending_category };
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
 				hideProcessingDialog();
 				if( processJsonError(jsondata, "Can not get data tree node description") ) {
@@ -65,7 +65,7 @@ jQuery.extend({
 			if( classe != 'any') {
 				params = {query: "ah", name:  classe };
 
-				showProcessingDialog();
+				showProcessingDialog("Fetching meta data");
 				$.getJSON("getmeta", params, function(jsondata) {
 					hideProcessingDialog();
 					if( processJsonError(jsondata, "Can not get data tree node description") ) {

@@ -226,6 +226,12 @@ jQuery.extend({
 			else {
 				that.zipJob.download();
 			}
+		};		
+		
+		this.resetZipjob = function() {
+			logMsg("Reset Zipjob");
+			zipJob = null ;
 		};
+
 	}
 });

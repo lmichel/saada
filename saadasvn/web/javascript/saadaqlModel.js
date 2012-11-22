@@ -52,7 +52,7 @@ jQuery.extend({
 				logged_alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
 				return;
 			}
-			showProcessingDialog();
+			showProcessingDialog("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
 				hideProcessingDialog();
 				if( processJsonError(jsondata, "Can not get data tree node description") ) {

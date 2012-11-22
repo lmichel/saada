@@ -140,7 +140,7 @@ $().ready(function() {
 		minLeft: 100, sizeLeft: 150, minRight: 100,
 		accessKey: 'I'
 	});
-	showProcessingDialog();
+	showProcessingDialog("Loading Data Tree");
 	$.getJSON("getmeta", {query: "datatree" }, function(data) {
 		hideProcessingDialog();
 		if( processJsonError(data, "Cannot make data tree") ) {
@@ -204,10 +204,11 @@ $().ready(function() {
 				alert("Query can only be applied on one data category or one data class");
 			}
 			else {
-				showProcessingDialog();
+				showProcessingDialog("Open node " + getTreePathAsKey());
 				resultPaneView.fireSetTreePath(treepath);	
 				setTitlePath(treepath);
 				resultPaneView.fireTreeNodeEvent(treepath);	
+				hideProcessingDialog();
 			}
 		});
 	}); // end of ajax
@@ -414,7 +415,7 @@ $().ready(function() {
 	 */
 	$(".sesame").click(function() {
 		var inputfield = $(this).parents('div').find(".coordinputvalue");
-		showProcessingDialog();
+		showProcessingDialog("Asking Sesame name resolver");
 		$.getJSON("sesame", {object: inputfield.val() }, function(data) {
 			hideProcessingDialog();
 			if( processJsonError(data, "Sesame failure") ) {
@@ -432,7 +433,7 @@ $().ready(function() {
 	 * Get the base URL of the site. 
 	 * Importatnt to avoid cross access issues
 	 */
-	showProcessingDialog();
+	showProcessingDialog("Get site description");
 	$.getJSON("sitedesc", function(data) {
 		hideProcessingDialog();
 		base_url = data.rooturl;
