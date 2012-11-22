@@ -59,6 +59,7 @@ public class CartBuilder extends SaadaServlet {
 				this.downloadProduct(req
 						, res
 						, UserTrap.getUserAccount(req).getCartDir() + File.separator + CartJob.zipName + ".zip"
+						, CartJob.zipName + ".zip"
 						, CartJob.zipName + ".zip");
 			}
 			else {

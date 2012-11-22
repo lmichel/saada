@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import saadadb.admin.DBInstallPanel;
 import saadadb.admin.SaadaDBAdmin;
@@ -32,6 +33,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 
@@ -72,7 +74,7 @@ public class WebInstallPanel extends EditPanel {
 		modTomcat.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fcd = new JFileChooser();
-				fcd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);			
+				fcd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);	
 				int retour = fcd.showOpenDialog(rootFrame);
 				if (retour == JFileChooser.APPROVE_OPTION) {
 					File selected_file = fcd.getSelectedFile();
@@ -85,6 +87,7 @@ public class WebInstallPanel extends EditPanel {
 					}
 
 					try {
+						Messenger.printMsg(Messenger.TRACE, "Set Tomcat dir to " + td);
 						SQLTable.beginTransaction();
 						Table_SaadaDB.changeTomcatdir(td);
 						SQLTable.commitTransaction();
@@ -118,7 +121,7 @@ public class WebInstallPanel extends EditPanel {
 		MyGBC mgbc = new MyGBC(5,5,5,5);	mgbc.anchor = GridBagConstraints.EAST;	
 		panel.add(getPlainLabel("Tomcat Directory "), mgbc);
 		mgbc.next();mgbc.anchor = GridBagConstraints.WEST;
-		panel.add(getPlainLabel(Database.getConnector().getWebapp_home()), mgbc);
+		panel.add(dirTomcat, mgbc);
 		mgbc.rowEnd();
 		panel.add(modTomcat, mgbc);
 		mgbc.newRow();mgbc.gridwidth = 3;

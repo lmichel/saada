@@ -5,6 +5,7 @@ package saadadb.vo.request.formator.archive;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class CartFormator  extends QueryResultFormator{
 	/**
 	 * Archive map
 	 */
-	private ZipMap dataTree = new ZipMap();
+	private ZipMap zipMap = new ZipMap();
 
 	/**
 	 * @param jobId
@@ -143,9 +144,9 @@ public class CartFormator  extends QueryResultFormator{
 	public void buildDataResponse() throws Exception {		
 		CartDecoder decoder = new CartDecoder();
 		decoder.decode(this.protocolParams.get("cart"));
-		this.dataTree = decoder.getZipMap();
+		this.zipMap = decoder.getZipMap();
 		this.prepareData();
-		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
+		ZIPUtil.buildZipBall(zipMap, this.getResponseFilePath());
 		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
 	}
 
@@ -158,7 +159,13 @@ public class CartFormator  extends QueryResultFormator{
 	 */
 	private void prepareData() throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Start to prepare data files");
-		for( String node: this.dataTree.keySet()) {
+		/*
+		 * Iterate on a copy of the Zipmap key because the content of
+		 * zipMap can be extended by the insertion of linked data
+		 * That avoids a concurrent update exception
+		 */
+		String[] keys = this.zipMap.keySet().toArray(new String[0]);
+		for( String node: keys) {
 			this.prepareZipNodeData(node);
 		}
 	}
@@ -170,8 +177,9 @@ public class CartFormator  extends QueryResultFormator{
 	 */
 	private void prepareZipNodeData(String node) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Prepare data files for node " + node);
-		Set<ZipEntryRef> entrySet = this.dataTree.get(node);
+		Set<ZipEntryRef> entrySet = this.zipMap.get(node);
 		Set<ZipEntryRef> entrySetToAdd = new LinkedHashSet<ZipEntryRef>();
+		Set<ZipEntryRef> entrySetToRemove = new LinkedHashSet<ZipEntryRef>();
 		/*
 		 * Single files and queries are processed separately. 
 		 * Single files are just referenced with their real path in the ZipEntryRef
@@ -179,6 +187,7 @@ public class CartFormator  extends QueryResultFormator{
 		 * which will referenced in the ZipEntryRef too
 		 */
 		for(ZipEntryRef zer:  entrySet) {
+			System.out.println(zer);
 			if( zer.getType() == ZipEntryRef.SINGLE_FILE ) {
 				long oid = Long.parseLong(zer.getUri());
 				SaadaInstance si = Database.getCache().getObject(oid);
@@ -193,8 +202,7 @@ public class CartFormator  extends QueryResultFormator{
 						Messenger.printMsg(Messenger.DEBUG, "Add linked data");
 					this.addAllLinkedData(node, si);
 				}
-			}
-			else {
+			} else {
 				/*
 				 * We use a VOFormator to build the VOTable. 
 				 * No VO request can bee used here because they don't allow to read 
@@ -214,39 +222,88 @@ public class CartFormator  extends QueryResultFormator{
 				}
 				ors.close();
 				ors = null;
+
 				/*
-				 * Stores the query in a text file
+				 * If the query is apply on catalogue entries,a VOTable is generated and set as ZipENtryRef URI
+				 * Otherwise all data files returned by the query are appended to the ZIOP MAP
 				 */
-				String reportName = zer.getName()+ ".query.txt";
-				File f = new File(this.responseDir + File.separator +  reportName);
-				FileWriter fw = new FileWriter(f);
-				fw.write("Query of job " + zer.getName() + "\n");
-				fw.write(zer.getUri() + "\n");
-				fw.close();
-				entrySetToAdd.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, reportName, f.getAbsolutePath()));
-				/*
-				 * Stores the query result
-				 */
-				OidsVotableFormator formator = new OidsVotableFormator();
-				formator.setProtocolParams(this.protocolParams);
-				formator.setResultSet(oids);
-				formator.setResponseFilePath(this.responseDir, zer.getName());
-				formator.buildDataResponse();			
-				String name = zer.getName();
-				if( !name.endsWith(".vot") && !name.endsWith(".xml")) {
-					zer.setName(name + ".xml");
-				}
-				zer.setUri(this.responseDir + File.separator + zer.getName());
-				if( zer.includeLinkedData() ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Add linked data");
-					for( long oid: oids ){
-						this.addAllLinkedData(node, Database.getCache().getObject(oid));					
-					}
+				if( q.getSfiClause().getCatego() == Category.ENTRY ) {
+					prepareZipNodeVOTable(node, zer, entrySetToAdd);
+				} else {
+					extendZipNodeToProductList(node, entrySetToAdd,zer.getOptions());	
+					// The query netry is actually replaced with the set of porducts resulting
+					// from that query
+					entrySetToRemove.add(zer);
 				}
 			}
 		}
 		entrySet.addAll(entrySetToAdd);
+		entrySet.removeAll(entrySetToRemove);
+		for(ZipEntryRef zer:  entrySet) {
+			System.out.println(zer);
+		}
+	}
+	/**
+	 * Build a set of nodes containing data products references by OIDs
+	 * @param node : Current node of the zipmap: used to add linked data
+	 * @param entrySetToAdd : where new nodes are appended 
+	 * @param options : Options of the initiator node
+	 * @throws Exception
+	 */
+	private void extendZipNodeToProductList(String node, Set<ZipEntryRef> entrySetToAdd, int options) throws Exception {
+		for( long oid: oids) {
+			SaadaInstance si = Database.getCache().getObject(oid);
+			
+			ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, Long.toString(oid) + "_" + si.getFileName(), si.getRepositoryPath(), options);
+System.out.println(zer + " " + zer.includeLinkedData());
+			if( zer.includeLinkedData() ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Add linked data");
+				this.addAllLinkedData(node, si);
+			}
+			entrySetToAdd.add(zer);
+		}
+
+	}
+
+	/**
+	 * Build a VOtable with the set of oids
+	 * @param node: Current node of the zipmap: used to add linked data
+	 * @param zipEntryRef
+	 * @param entrySetToAdd
+	 * @throws Exception
+	 */
+	private void prepareZipNodeVOTable(String node, ZipEntryRef zipEntryRef, Set<ZipEntryRef> entrySetToAdd) throws Exception {
+		/*
+		 * Stores the query in a text file
+		 */
+		String reportName = zipEntryRef.getName()+ ".query.txt";
+		File f = new File(this.responseDir + File.separator +  reportName);
+		FileWriter fw = new FileWriter(f);
+		fw.write("Query of job " + zipEntryRef.getName() + "\n");
+		fw.write(zipEntryRef.getUri() + "\n");
+		fw.close();
+		entrySetToAdd.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, reportName, f.getAbsolutePath()));
+		/*
+		 * Stores the query result
+		 */
+		OidsVotableFormator formator = new OidsVotableFormator();
+		formator.setProtocolParams(this.protocolParams);
+		formator.setResultSet(oids);
+		formator.setResponseFilePath(this.responseDir, zipEntryRef.getName());
+		formator.buildDataResponse();			
+		String name = zipEntryRef.getName();
+		if( !name.endsWith(".vot") && !name.endsWith(".xml")) {
+			zipEntryRef.setName(name + ".xml");
+		}
+		zipEntryRef.setUri(this.responseDir + File.separator + zipEntryRef.getName());
+		if( zipEntryRef.includeLinkedData() ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Add linked data");
+			for( long oid: oids ){
+				this.addAllLinkedData(node, Database.getCache().getObject(oid));					
+			}
+		}		
 	}
 
 	/**
@@ -285,7 +342,7 @@ public class CartFormator  extends QueryResultFormator{
 				for( long cpoid: cpoids) {
 					SaadaInstance cpi = Database.getCache().getObject(cpoid);
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + cpi.getFileName(), cpi.getRepositoryPath());
-					this.dataTree.add(root, zer);
+					this.zipMap.add(root, zer);
 				}
 			} else {
 				String resultFilename = si.getOid() + "_LinkedSources.vot";
@@ -304,7 +361,7 @@ public class CartFormator  extends QueryResultFormator{
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
 							+ secondaryFormator.getResponseFilePath()  + "(relation " + relation + ")");
-				this.dataTree.add(root, new ZipEntryRef(ZipEntryRef.QUERY_RESULT,resultFilename, secondaryFormator.getResponseFilePath(), 0));
+				this.zipMap.add(root, new ZipEntryRef(ZipEntryRef.QUERY_RESULT,resultFilename, secondaryFormator.getResponseFilePath(), 0));
 				secondaryFormator.buildDataResponse();			
 			}
 		}

@@ -38,7 +38,6 @@ public class CartJob extends AbstractJob {
 	private String reportDir;
 	public static final String zipName = "CartContent";
 	private String sessionId;
-	private ZipMap zipMap;
 	/*
 	 * Params map stored seems to be filtered, I prefer keep it entire here
 	 * Sorry Gregory :=)
@@ -51,7 +50,7 @@ public class CartJob extends AbstractJob {
 	 */
 	public CartJob(Map<String, String> lstParam) throws UWSException {
 		super(lstParam);
-		System.out.println("@@@@@@@@@@@@@@ JOB");
+		System.out.println("@@@@@@@@@@@@@@ CartJob");
 		this.lstParam = lstParam;
 		globalCounter++;
 		this.sessionId = lstParam.get("owner");
@@ -64,16 +63,14 @@ public class CartJob extends AbstractJob {
 			WorkDirectory.validWorkingDirectory(baseDir);
 			WorkDirectory.emptyDirectory(new File(this.reportDir));
 			WorkDirectory.validWorkingDirectory(this.reportDir);
-			CartDecoder decoder = new CartDecoder();
-			decoder.decode(lstParam.get("cart"));
-			zipMap = decoder.getZipMap();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, e);
 		}
 	}
 
-
+	public void work() throws UWSException, InterruptedException{jobWork();}
+	
 	@Override
 	protected void jobWork() throws UWSException, InterruptedException {
 		try{
