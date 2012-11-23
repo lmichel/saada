@@ -67,7 +67,7 @@ public class CacheMeta {
 	 * Collection attributes not published by TAP
 	 */
 	private static Set<String> ignoreCollAttrs = null;
-	
+
 
 	public CacheMeta() throws FatalException {
 		if( ignoreCollAttrs == null ) {
@@ -224,12 +224,6 @@ public class CacheMeta {
 
 				if( !last_classname.equals(classname) ) {
 					/*
-					 * finalize the previous metaclass
-					 */
-					if( mc != null ) {
-						mc.setAttribute_names();
-					}
-					/*
 					 * create the new metaclass
 					 */
 					if( (mc = this.classes.get(classname)) == null ) {
@@ -240,8 +234,15 @@ public class CacheMeta {
 					last_classname = classname;
 				}
 				mc.update(rs, cat);
+
 			}	
 			squery.close();
+		}
+		/*
+		 * Just kep a direct reference to the keyset of attribute names
+		 */
+		for( MetaClass mc2: this.classes.values() ) {
+			mc2.setAttribute_names();
 		}
 		Iterator it = this.classes.values().iterator();
 		while( it.hasNext()) {
@@ -258,26 +259,26 @@ public class CacheMeta {
 				xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
 					+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
 					+ah.getComment()+"]]></description>"
+					+"\n\t\t\t\t<unit>"
+					+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
+					+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
+					+ah.getUtype()+"</utype>"
+					+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
+					+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
+			}
+		}
+
+		coll = mc.getAttributes_handlers().values();
+		for(AttributeHandler ah : coll)
+			xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
+				+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
+				+ah.getComment()+"]]></description>"
 				+"\n\t\t\t\t<unit>"
 				+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
 				+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
 				+ah.getUtype()+"</utype>"
 				+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
 				+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
-			}
-		}
-	
-		coll = mc.getAttributes_handlers().values();
-		for(AttributeHandler ah : coll)
-			xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
-				+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
-				+ah.getComment()+"]]></description>"
-			+"\n\t\t\t\t<unit>"
-			+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
-			+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
-			+ah.getUtype()+"</utype>"
-			+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
-			+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
 		return xml+"\n\t\t</table>";
 	}
 
@@ -409,7 +410,7 @@ public class CacheMeta {
 			return (retour.toArray(new String[0]));
 		}
 	}
-	
+
 
 	/**
 	 * @param collection
@@ -474,7 +475,7 @@ public class CacheMeta {
 	public String[] getRelationNamesStartingFromClass(String classname) throws FatalException {
 		MetaClass mc = this.getClass(classname);
 		return this.getRelationNamesStartingFromColl(mc.getCollection_name(), mc.getCategory());
-		
+
 	}
 	/**
 	 * @param classname
@@ -1122,13 +1123,13 @@ public class CacheMeta {
 			return null;
 		}
 	}
-	
+
 	public AttributeHandler[] getUCDs(String collection, int category, boolean queriable_only) throws FatalException {
 		ArrayList<AttributeHandler> retour = new ArrayList<AttributeHandler>();
 		// Collection level UCD not supported by the query engine (1.6.0)
-//		for( AttributeHandler ah: this.getCollection(collection).getUCDs(category, queriable_only) ) {
-//			retour.add(ah);
-//		}
+		//		for( AttributeHandler ah: this.getCollection(collection).getUCDs(category, queriable_only) ) {
+		//			retour.add(ah);
+		//		}
 		String[] classes = getClassesOfCollection(collection, category);
 		for( String cl: classes) {
 			for( AttributeHandler ah: this.getClass(cl).getUCDFields(queriable_only) ) {
@@ -1137,5 +1138,5 @@ public class CacheMeta {
 		}
 		return retour.toArray(new AttributeHandler[0]);	
 	}
-	
+
 }
