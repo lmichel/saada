@@ -27,7 +27,7 @@ jQuery.extend({
 				var queries = entry.queries;
 				for( var i=0 ; i<queries.length ; i++ ) {
 					if( queries[i].uri == query ) {
-						logged_alert("Query Result already in the cart", "input Error");
+						loggedAlert("Query Result already in the cart", "input Error");
 						return;
 					}
 				}
@@ -38,7 +38,7 @@ jQuery.extend({
 			var entry;
 			var sjobid = unescape(jobid);
 			if( (entry = cartData[nodekey]) == undefined ) {
-				logged_alert("There is no data associated with node " + nodekey + " in the cart", "input Error");
+				loggedAlert("There is no data associated with node " + nodekey + " in the cart", "input Error");
 			}
 			else {
 				var queries = entry.queries;
@@ -52,7 +52,7 @@ jQuery.extend({
 						return;
 					}
 				}
-				logged_alert("Job " + nodekey + "." + jobid+ " not found in from the cart", "input Error");
+				loggedAlert("Job " + nodekey + "." + jobid+ " not found in from the cart", "input Error");
 			}			
 		};
 		this.addUrl = function(name, oid) {
@@ -66,7 +66,7 @@ jQuery.extend({
 				var files = entry.files;
 				for( var i=0 ; i<files.length ; i++ ) {
 					if( files[i].uri == oid ) {
-						logged_alert("This url of node " + nodekey  + " is already in the cart", "input Error");
+						loggedAlert("This url of node " + nodekey  + " is already in the cart", "input Error");
 						return;
 					}
 				}
@@ -76,7 +76,7 @@ jQuery.extend({
 		this.removeUrl = function(nodekey, url) {
 			var entry;
 			if( (entry = cartData[nodekey]) == undefined ) {
-				logged_alert("There is no data associated with node " + nodekey + " in the cart", "input Error");
+				loggedAlert("There is no data associated with node " + nodekey + " in the cart", "input Error");
 			}
 			else {
 				var files = entry.files;
@@ -90,7 +90,7 @@ jQuery.extend({
 						return;
 					}
 				}
-				logged_alert("URL not found in from the cart", "input Error");
+				loggedAlert("URL not found in from the cart", "input Error");
 			}						
 		};
 
@@ -221,7 +221,7 @@ jQuery.extend({
 
 		this.archiveDownload = function() {
 			if( that.zipJob == null ) {
-				logged_alert("There is no active ZIP builder");
+				loggedAlert("There is no active ZIP builder");
 			}
 			else {
 				that.zipJob.download();

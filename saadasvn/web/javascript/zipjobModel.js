@@ -8,23 +8,27 @@ jQuery.extend({
 		/*
 		 * Job description params
 		 */
-		var xmlRoot = '';
-		var jobId = '';
-		var phase = '';
-		var params = '';
-		var results = '';
+		var xmlRoot='';
+		var jobId='';
+		var phase='';
+		var params='';
+		var results='';
 
 		this.init = function(xmlSummary) {
 	       // logMsg((new XMLSerializer()).serializeToString(xmlSummary));
-			var xmlRoot = $(xmlSummary).find("[nodeName=uws:job]");
-			that.jobId = xmlRoot.find("[nodeName=uws:jobId]").text();
-			that.phase = xmlRoot.find("[nodeName=uws:phase]").text();
-			that.params = new Array();
-			xmlRoot.find("[nodeName=uws:parameters]").find("[nodeName=uws:parameter]").each(function() {
+	        /*
+	         * The pair Chrome 15 and after and Jquery 1.7 do not support NS in XML
+	         * parsing. We must feed the find() function selector including both NS an no NS filed names
+	         */
+			var xmlRoot = $(xmlSummary).find('uws\\:job, job');
+			this.jobId = xmlRoot.find('uws\\:jobId, jobId').text();
+			this.phase = xmlRoot.find('uws\\:phase, phase').text();
+			this.params = new Array();
+			xmlRoot.find("uws\\:parameters, parameters").find("uws\\:parameter, parameter").each(function() {
 				that.params[$(this).attr("id")] = $(this).text();
 			});	
 			that.results = new Array();
-			xmlRoot.find("[nodeName=uws:results]").find("[nodeName=uws:result]").each(function() {
+			xmlRoot.find("uws\\:results, results").find("uws\\:result, result").each(function() {
 				that.results[that.results.length] = $(this).attr("xlink:href");
 			});
 		};
@@ -34,27 +38,38 @@ jQuery.extend({
 		this.kill = function() {
 			$.ajax({
 				type: 'DELETE',
+			    dataType: "xml",
 				url: "cart/zipper/" + that.jobId,
 				success: function(xmljob, status) {
-					alert("Job killed");
+					loggedAlert("Job " +  that.jobId + " killed");
+					//that.refresh();
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					loggedAlert("Zipjob kill failed: Error " +  xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
 				}
 			});
 		};
-
-		this.refresh = function(status) {
-			$.get("cart/zipper/" + that.jobId
-				, function(data) {that.init(data);status = that.phase;}
-			    , "xml") ;
+		this.refresh = function() {
+			$.ajax({
+			    dataType: "xml",
+				type: 'GET',
+				url: "cart/zipper/" + that.jobId,
+				success: function(xmljob, status) {logMsg("refresh cart job success");that.init(xmljob);},
+				error: function(xhr, ajaxOptions, thrownError) {
+					loggedAlert("Zipjob refresh failed: Error " + xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
+				}
+			});
+//			$.get("datapack/zipper/" + that.jobId
+//				, function(data) {that.init(data);}
+//			    , "xml") ;
 		};
 		this.download = function() {
 			if( that.results.length >= 1 ) {
 				var url = that.results[0];
-				changeLocation(url);
-			}
-			else {
-				logged_alert("No ZIP archive available");
+				downloadLocation(url);
+			} else {
+				loggedAlert("No ZIP archive available");
 			}
  		};
-
 	}
 });

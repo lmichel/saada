@@ -35,7 +35,7 @@ function logMsg(message) {
 	}
 }
 
-function logged_alert(message, title) {
+function loggedAlert(message, title) {
 	logMsg("ALERT " + message);
 	jAlert(message, title);
 }

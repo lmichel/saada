@@ -49,7 +49,7 @@ jQuery.extend({
 				params = {query: "ah", name:  collection + '.' +category };
 			}
 			else {
-				logged_alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
+				loggedAlert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
 				return;
 			}
 			showProcessingDialog("Fetching meta data");
