@@ -179,49 +179,11 @@ public class VOResource {
 			Messenger.printMsg(Messenger.DEBUG, "Looking for VOResource <" + name + ">" );
 		String lc_name = name.toLowerCase();
 		/*
-		 * If the resource name looks like "native category", a resource made with native attributes at collection level is returned
-		 */
-		if( lc_name.startsWith("native") ) {
-			LinkedHashMap<String, AttributeHandler> lah = null;
-			if( lc_name.endsWith("entry") ) {
-				lah = MetaCollection.getAttribute_handlers_entry();
-				category = Category.ENTRY;
-			}
-			else if( lc_name.endsWith("table") ) {
-				lah = MetaCollection.getAttribute_handlers_table();
-				category = Category.TABLE;
-			}
-			else if( lc_name.endsWith("spectrum") ) {
-				lah = MetaCollection.getAttribute_handlers_spectrum();
-				category = Category.SPECTRUM;
-			}
-			else if( lc_name.endsWith("image") ) {
-				lah = MetaCollection.getAttribute_handlers_image();
-				category = Category.ENTRY;
-			}
-			else if( lc_name.endsWith("misc") ) {
-				lah = MetaCollection.getAttribute_handlers_misc();
-				category = Category.IMAGE;
-			}
-			else if( lc_name.endsWith("flatfile") ) {
-				lah = MetaCollection.getAttribute_handlers_flatfile();
-				category = Category.FLATFILE;
-			}
-
-			if( lah != null ) {
-				return VOResource.getNativeVOResource(name, filterCollectionColumns(lah));
-			}
-			else{
-				Messenger.printMsg(Messenger.WARNING, "VOResource <" + name + "> not found");
-				return null;
-			}
-		}
-		/*
 		 * If the resource name looks like "native class", a resource made with native attributes at collection + class 
 		 * level is returned
 		 */
-		else if( lc_name.startsWith("native class ") ) {
-			String classname = name.substring(lc_name.indexOf(" ")).trim();
+		if( lc_name.startsWith("native class ") ) {
+			String classname = name.substring(lc_name.lastIndexOf(" ")).trim();
 			MetaClass mc = Database.getCachemeta().getClass(classname);
 			int cat = mc.getCategory();
 
@@ -256,7 +218,46 @@ public class VOResource {
 			LinkedHashMap<String, AttributeHandler> lahc = filterCollectionColumns( lah);
 			lahc.putAll(mc.getAttributes_handlers());
 			return VOResource.getNativeVOResource(name, lahc);
-		}		
+		}			
+			/*
+			 * If the resource name looks like "native category", a resource made with native attributes at collection level is returned
+			 */
+		else if( lc_name.startsWith("native") ) {
+				LinkedHashMap<String, AttributeHandler> lah = null;
+				if( lc_name.endsWith("entry") ) {
+					lah = MetaCollection.getAttribute_handlers_entry();
+					category = Category.ENTRY;
+				}
+				else if( lc_name.endsWith("table") ) {
+					lah = MetaCollection.getAttribute_handlers_table();
+					category = Category.TABLE;
+				}
+				else if( lc_name.endsWith("spectrum") ) {
+					lah = MetaCollection.getAttribute_handlers_spectrum();
+					category = Category.SPECTRUM;
+				}
+				else if( lc_name.endsWith("image") ) {
+					lah = MetaCollection.getAttribute_handlers_image();
+					category = Category.ENTRY;
+				}
+				else if( lc_name.endsWith("misc") ) {
+					lah = MetaCollection.getAttribute_handlers_misc();
+					category = Category.IMAGE;
+				}
+				else if( lc_name.endsWith("flatfile") ) {
+					lah = MetaCollection.getAttribute_handlers_flatfile();
+					category = Category.FLATFILE;
+				}
+
+				if( lah != null ) {
+					return VOResource.getNativeVOResource(name, filterCollectionColumns(lah));
+				}
+				else{
+					Messenger.printMsg(Messenger.WARNING, "VOResource <" + name + "> not found");
+					return null;
+				}
+			}
+	
 		else if( !lc_name.endsWith(" default") ) {
 
 			/*
