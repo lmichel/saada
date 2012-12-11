@@ -53,7 +53,7 @@ jQuery.extend({
 					if( attempt > 7 ) {		
 						$("#sampconnector").css("background", "url(images/disconnected.png)center left no-repeat");
 						$(".ivoa").css('visibility', 'hidden');
-						logged_alert('Connection failed: Make sure you have a SAMP hub running<br>'
+						loggedAlert('Connection failed: Make sure you have a SAMP hub running<br>'
 								+ 'If not, you can start one by clicking on one icon below<br>'
 								+ '<a href="javascript:void(0);" onclick="changeLocation(\'http://aladin.u-strasbg.fr/java/nph-aladin.pl?frame=get&id=AladinBeta.jnlp\');"><img valign=center height=24 src="http://aladin.u-strasbg.fr/aladin_large.gif"></a>'
 						 		+ '<BR><a href="javascript:void(0);" onclick="changeLocation(\'http://www.star.bris.ac.uk/~mbt/topcat/topcat-full.jnlp\');"><img valign=center  height=24 src="http://www.star.bris.ac.uk/~mbt/topcat/tc3.gif"></a>'
@@ -74,7 +74,7 @@ jQuery.extend({
 			} catch(err) {
 				$("#sampconnector").css("background", "url(images/disconnected.png)center left no-repeat");
 				$(".ivoa").css('visibility', 'hidden');
-				logged_alert(err + '\nConnection failed: Make sure the applet WebSampConnector is authorized to run');				
+				loggedAlert(err + '\nConnection failed: Make sure the applet WebSampConnector is authorized to run');				
 			}
 
 		}

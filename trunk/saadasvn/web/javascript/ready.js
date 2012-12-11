@@ -155,7 +155,7 @@ $().ready(function() {
 					var parent = data.r;
 					var treepath = data.o.attr("id").split('.');
 					if( treepath.length < 2 ) {
-						logged_alert("Query can only be applied on one data category or one data class");
+						loggedAlert("Query can only be applied on one data category or one data class");
 					}
 					else {
 						while(parent.length != 0  ) {
@@ -450,7 +450,7 @@ $().ready(function() {
 	 * This callback can be changed changed at everytime: do not use the "onclick" HTML  
 	 * attribute which is not overriden by JQuery "click" callback
 	 */
-	$('#showquerymeta').click(function(){logged_alert("No meta data available yet");});
+	$('#showquerymeta').click(function(){loggedAlert("No meta data available yet");});
 
 	sampView.fireSampInit();
 	//tapView.fireRefreshJobList();

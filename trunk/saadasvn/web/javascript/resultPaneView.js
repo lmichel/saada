@@ -88,7 +88,7 @@ jQuery
 					$.each(jsdata, function(k, v) {
 						retour += k + ": " + v  + "\n";
 					});
-					logged_alert(retour, "Product Info");
+					loggedAlert(retour, "Product Info");
 				}
 			});
 		};		
@@ -105,7 +105,7 @@ jQuery
 					$.each(jsdata, function(k, v) {
 						retour += k + ": " + v  + "\n";
 					});
-					logged_alert(retour, "Relation Info");
+					loggedAlert(retour, "Relation Info");
 				}
 			});
 		};		

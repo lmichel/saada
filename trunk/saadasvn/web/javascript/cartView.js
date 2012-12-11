@@ -40,7 +40,7 @@ jQuery.extend({
 			this.resetJobControl();
 			setTimeout('hideProcessingDialog();', 1000);
 //			logMsg(element.attr('class'));
-//			logged_alert("Query result  added to the cart");
+//			loggedAlert("Query result  added to the cart");
 //			$.each(listeners, function(i){
 //				listeners[i].controlAddJobResult(getTreePathAsKey(), query);
 //			});
@@ -70,7 +70,7 @@ jQuery.extend({
 				this.resetJobControl();
 			}
 //
-//			logged_alert("File  " + name + " added to the cart");
+//			loggedAlert("File  " + name + " added to the cart");
 //			$.each(listeners, function(i){
 //				listeners[i].controlAddUrl(name, oid);
 //			});
@@ -180,7 +180,7 @@ jQuery.extend({
 				break;
 			}			
 			if( empty ) {
-				logged_alert("Empty Shopping Cart");
+				loggedAlert("Empty Shopping Cart");
 				return;
 			}
 
@@ -246,7 +246,7 @@ jQuery.extend({
 				break;
 			}			
 			if( empty ) {
-				logged_alert("Empty Shopping Cart");
+				loggedAlert("Empty Shopping Cart");
 				$.modal.close();
 				return;
 			}
