@@ -139,22 +139,22 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 			else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
 				((String[])data_column)[currentLine] = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
 			}
-			else if( ucd.equals("VOX:Image_AccessReference")) {
+			else if( ucd.equals("meta.ref.url")) {
 				((String[])data_column)[currentLine] = Database.getUrl_root() + "/getinstance?oid=" + obj.getOid();
 			}
 			else if( utype.equals("Access.Format")) {
 				((String[])data_column)[currentLine] = "catalog";
 			}
-			else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
+			else if( ucd.equalsIgnoreCase("meta.title;meta.dataset") ) {
 				((String[])data_column)[currentLine] = obj.getNameSaada().replaceAll("#", "");
 			}
 			else if( name.equals("LinktoPixels")) {
 				((String[])data_column)[currentLine] = obj.getURL(true);
 			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
+			else if( ucd.equalsIgnoreCase("pos.eq.ra;meta.main") ){
 				((double[])data_column)[currentLine] = (double)obj.getPos_ra_csa();
 			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
+			else if( ucd.equalsIgnoreCase("pos.eq.dec;meta.mainN") ){
 				((double[])data_column)[currentLine] = (double)obj.getPos_dec_csa();
 			}
 			else if( ucd.equalsIgnoreCase("ID_MAIN") ){
@@ -164,7 +164,7 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 				((String[])data_column)[currentLine] = String.valueOf(obj.getOid());
 			}
 			else if( ucd.equalsIgnoreCase("meta.title") ){
-				((String[])data_column)[currentLine] = obj.getNameSaada();
+				((String[])data_column)[currentLine] = obj.getNameSaada().replaceAll("#", "");
 			}
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first

@@ -222,7 +222,7 @@ public class Entry extends Product {
 							/*
 							 * Ugly patch for ACDS source unicity in the XCATDB
 							 */
-							if( this.configuration.getCollectionName().equals("ARCH_CAT") &&
+							if( (this.configuration.getCollectionName().equals("ACDS") || this.configuration.getCollectionName().equals("ARCH_CAT")) &&
 									("_cat_num".equals(nameattr) || "_d_epic_cat".equals(nameattr) || "_src_num".equals(nameattr)) ) {
 								index_pos_md5[ba] = false;						
 							}
