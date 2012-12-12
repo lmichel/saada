@@ -119,29 +119,29 @@ public class ConeSearchToVOTableFormator extends VOTableFormator {
 				else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
 					addTD(obj.getPos_ra_csa() + " " + obj.getPos_dec_csa());
 				}
-				else if( ucd.equals("VOX:Image_AccessReference")) {
+				else if( ucd.equals("meta.ref.url")) {
 					addCDataTD(Database.getUrl_root() + "/getinstance?oid=" + obj.getOid());
 				}
 				else if( utype.equals("Access.Format")) {
 					addCDataTD("catalog");
 				}
-				else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
+				else if( ucd.equalsIgnoreCase("meta.title;meta.dataset") ) {
 					addCDataTD(obj.getNameSaada().replaceAll("#", ""));
 				}
 				else if( id.equals("LinktoPixels")) {
 					addCDataTD(obj.getURL(true));
 				}
-				else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
+				else if( ucd.equalsIgnoreCase("pos.eq.ra;meta.main") ){
 					addTD(Double.toString(obj.getPos_ra_csa()));
 				}
-				else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
+				else if( ucd.equalsIgnoreCase("pos.eq.dec;meta.main") ){
 					addTD(Double.toString(obj.getPos_dec_csa()));
 				}
 				else if( ucd.equalsIgnoreCase("ID_MAIN") ){
 					addTD(Long.toString(obj.getOid()));
 				}
 				else if( ucd.equalsIgnoreCase("meta.title") ){
-					addTD(obj.getNameSaada());
+					addTD(obj.getNameSaada().replaceAll("#", ""));
 				}
 				/*
 				 * Utypes have an higher priority than UCDs: there are checked first

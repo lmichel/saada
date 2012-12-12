@@ -289,6 +289,7 @@ public class QueryFileReport {
 //			ArgsParser ap = new ArgsParser(args);
 			//Messenger.debug_mode = false;
 			Database.init("ThreeXMM");
+			Messenger.debug_mode = true;
 			// http://saada:8888/XIDResult/getqueryreport?query=Select+ENTRY+From+*+In+SpectroscopicSample%0AWhereAttributeSaada+%7B%28E_MAG++is+not+null%29%7D&format=zipball&datamodel=XIDSrcModel&limit=100
 				
 				
@@ -318,8 +319,8 @@ public class QueryFileReport {
 //				System.out.println(str.replaceAll("<TD", "\n<TD"));
 //			}
 //			br.close();
-			query = "Select ENTRY From * In CATALOGUE Limit 10";
-			QueryFileReport qfr = new QueryFileReport(QueryFileReport.CS, "CS", query, "votable");
+			//query = "Select ENTRY From * In CATALOGUE Limit 10";
+			QueryFileReport qfr = new QueryFileReport(QueryFileReport.CS, "native class CatalogueEntry", query, "votable");
 			//qfr.getQueryReport("/Users/laurentmichel/Desktop/xcs.vot", 212);
 			qfr.getQueryReport("/home/michel/Desktop/xcs.vot", 212);
 			br = new BufferedReader(new FileReader("/home/michel/Desktop/xcs.vot"));
