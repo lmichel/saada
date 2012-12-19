@@ -34,7 +34,6 @@ jQuery
 			}
 			saadaqlView.fireTreeNodeEvent(treepath, runSaadaQL);
 			sapView.fireTreeNodeEvent(treepath);
-			tapView.fireTreeNodeEvent(treepath, runTAP);
 		};
 
 		this.fireSubmitQueryEvent = function() {
@@ -44,10 +43,8 @@ jQuery
 				that.fireSaadaQLQueryEvent($('#saadaqltext').val());
 			} else if (mode == 'sap') {
 				sapView.fireSubmitQueryEvent();
-			} else if (mode == 'tap') {
-				tapView.fireSubmitQueryEvent();
 			} else {
-				alert('Unknown query mode:' + mode);
+				Modalinfo.info('Unknown query mode:' + mode);
 			}
 		};
 		this.fireSetTreePath = function(treepath) {
@@ -76,28 +73,29 @@ jQuery
 			});
 		};
 		this.fireGetProductInfo = function(url) {
-			showProcessingDialog("Waiting on product info");
+			Processing.show("Waiting on product info");
 
 			$.getJSON("getproductinfo", {url: url}, function(jsdata) {
-				hideProcessingDialog();
-				if( processJsonError(jsdata, "Cannot get product info") ) {
+				Processing.hide();
+				if( Processing.jsonError(jsdata, "Cannot get product info") ) {
 					return;
 				}
 				else {
-					retour = "url: " + url + "\n";
+					retour = "<span><b> Doanload URL</b>: " + url + "</span><ul>";
 					$.each(jsdata, function(k, v) {
-						retour += k + ": " + v  + "\n";
+						retour += "<li><b>" + k + "</b>: " + v  + "</li>";
 					});
-					loggedAlert(retour, "Product Info");
+					retour += "</ul>";
+					Modalinfo.dataPanel("Product Info", retour);
 				}
 			});
 		};		
 		this.fireGetRelationInfo = function(relation) {
-			showProcessingDialog("Waiting on product info");
+			Processing.show("Waiting on product info");
 
 			$.getJSON("getmeta", {query: "relation", name: relation}, function(jsdata) {
-				hideProcessingDialog();
-				if( processJsonError(jsdata, "Cannot get relation info") ) {
+				Processing.hide();
+				if( Processing.jsonError(jsdata, "Cannot get relation info") ) {
 					return;
 				}
 				else {
@@ -105,13 +103,13 @@ jQuery
 					$.each(jsdata, function(k, v) {
 						retour += k + ": " + v  + "\n";
 					});
-					loggedAlert(retour, "Relation Info");
+					Modalinfo.info(retour, "Relation Info");
 				}
 			});
 		};		
 		this.fireDownloadVOTable = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
-				alert("No data selection");
+				Modalinfo.info("No data selection");
 				return;
 			}
 			$.each(listeners, function(i) {
@@ -120,7 +118,7 @@ jQuery
 		};
 		this.fireDownloadFITS = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
-				alert("No data selection");
+				Modalinfo.info("No data selection");
 				return;
 			}
 			$.each(listeners, function(i) {
@@ -129,7 +127,7 @@ jQuery
 		};
 		this.fireDownloadZip = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
-				alert("No data selection");
+				Modalinfo.info("No data selection");
 				return;
 			}			
 			else if( $("input[@name=qlang]:checked").val() == 'saadaql') {
@@ -148,7 +146,7 @@ jQuery
 				}
 			}
 			else {
-				alert("Data zipper facility only available in SaadaQL mode");
+				Modalinfo.info("Data zipper facility only available in SaadaQL mode");
 
 			}
 		};
@@ -220,35 +218,30 @@ jQuery
 			// $('#detaildiv').height()}, 800);
 		};
 		this.fireShowVignette = function(oid, title) {
-			openDialog('Preview of ' + title,
+			Modalinfo.dataPanel('Preview of ' + title,
 					"<img class=vignette src='getvignette?oid=" + oid
 					+ "'>");
 		};
 		this.fireShowPreview = function(preview_url, title) {
-			openDialog('Preview of ' + title,
+			Modalinfo.dataPanel('Preview of ' + title,
 					"<img class=vignette src='" + preview_url + "'>");
 		};
 
 		this.fireExpendForm= function() {
-			var icon = $('#formexpender').css("background-image");
-			var height = 0;
-			if( icon.match("screen_up") != null ) {
-				$('#formexpender').css("background-image", "url(images/screen_down.png)");
-				$('#formexpender').attr("title", "Expend query form");
-				height = $(window).height() - 70 - 50;
-				if( height < 100) {
-					height = 100;
+				var height = $(window).height() ;
+				var icon = $('#formexpender').css("background-image");
+				if( icon.match("screen_up") != null ) {
+					$('#formexpender').css("background-image", "url(images/screen_down.png)");
+					$('#formexpender').attr("title", "Expend query form");
+					height='10%';
 				}
-			}
-			else {
-				$('#formexpender').css("background-image", "url(images/screen_up.png)");
-				$('#formexpender').attr("title", "Minimize query form");
-				height = 200;
-				if( height < 100) {
-					height = 100;
+				else {
+					$('#formexpender').css("background-image", "url(images/screen_up.png)");
+					$('#formexpender').attr("title", "Minimize query form");
+					height='90%';
 				}
-			}
-			$("div#accesspane").trigger("resize",[ height]);		
+				layoutPane.sizePane("south", height);
+				//	$("div#accesspane").trigger("resize",[ height]);		
 		};
 
 		this.fireOpenDescription = function() {
@@ -263,16 +256,14 @@ jQuery
 			$('#detaildiv').modal();
 		};
 		this.showProgressStatus = function() {
-			alert("Job in progress");
+			Modalinfo.info("Job in progress");
 		};
 		this.showFailure = function(textStatus) {
-			alert("view: " + textStatus);
+			Modalinfo.info("view: " + textStatus);
 		};
 		this.showDetail = function(oid, jsdata, limit, panelToOpen) {
 			var numPanelToOpen = 0;
-			if (jsdata.errormsg != null) {
-				alert("FATAL ERROR: Cannot show object detail: "
-						+ jsdata.errormsg);
+			if( Processing.jsonError(jsdata, "") ) {
 				return;
 			}
 
@@ -417,9 +408,7 @@ jQuery
 		};
 
 		this.showMeta = function(jsdata, limit) {
-			if (jsdata.errormsg != null) {
-				alert("FATAL ERROR: Cannot show object detail: "
-						+ jsdata.errormsg);
+			if( Processing.jsonError(data, "FATAL ERROR: Cannot show object detail: ") ) {
 				return;
 			}
 
@@ -575,7 +564,7 @@ jQuery
 		this.displayResult = function(dataJSONObject) {
 		};
 		this.initTable = function(dataJSONObject, query) {
-			if( processJsonError(dataJSONObject, "") ) {
+			if( Processing.jsonError(dataJSONObject, "") ) {
 				return;
 			}
 			else {
@@ -658,8 +647,8 @@ jQuery
 
 		this.overPosition = function(pos) {
 //			simbadToBeOpen = true;
-//			setTimeout("if( simbadToBeOpen == true ) openSimbadDialog(\"" + pos + "\");", 1000);
-			openSimbadDialog(pos );
+//			setTimeout("if( simbadToBeOpen == true ) openSimbadModalinfo.(\"" + pos + "\");", 1000);
+			Modalinfo.openSimbad(pos );
 		};
 		this.outPosition = function() {
 			simbadToBeOpen = false;

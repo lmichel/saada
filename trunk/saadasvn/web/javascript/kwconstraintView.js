@@ -96,7 +96,7 @@ jQuery.extend({
 						resultPaneView.fireSubmitQueryEvent();
 					}
 					else {
-						alert("Current contraint is not valid: can not run the query");
+						Modalinfo.info("Current contraint is not valid: can not run the query");
 					}
 				}
 				else {

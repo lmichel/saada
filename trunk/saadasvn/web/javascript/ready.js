@@ -1,79 +1,11 @@
 
 
-/*
- * Unit array used to setup UCD based queries
- */
-var unitMap = new Array();
-unitMap['Energy']    = ['erg', 'eV', 'keV', 'MeV', 'GeV', 'TeV', 'J', 'ryd'];
-unitMap['Frequency'] = ['Hz', 'KHz', 'MHz', 'GHz', 'THz'];
-unitMap['Time']      = ['y', 'd', 'h', 'mn', 'sec', 'msec', 'nsec'];
-unitMap['Length']    = ['kpc', 'pc', 'AU', 'km', 'm', 'cm', 'mm', 'um', 'nm', 'Angstroem'];
-unitMap['Velocity']  = ['m/s', 'km/s', 'km/h', 'mas/yr'];
-unitMap['Angle']     = ['deg', 'arcmin', 'arcsec'];
-unitMap['Flux']      = ['erg/s/cm2', 'Jy', 'mJy', 'count/s'];
-unitMap['Power']     = ['erg/s', 'W'];
 
-var units =  [
-              {id: 'none', text: "none"}
-
-              , {id: 'Power_erg/s', text: "erg/s"}
-              , {id: 'Power_W', text: "W"}
-
-              , {id: 'Flux_erg/s/cm2', text: "erg/s/cm2"}
-              , {id: 'Flux_Jy', text: "Jy"}
-              , {id: 'Flux_mJy', text: "mJy"}
-              , {id: 'Flux_mJy', text: "mJy"}
-
-              , {id: 'Angle_deg', text: "deg"}
-              , {id: 'Angle_arcmin', text: "arcmin"}
-              , {id: 'Angle_arcsec', text: "arcsec"}
-              , {id: 'Angle_h:m:s', text: "h:m:s"}
-
-              , {id: 'Velocity_m/s', text: "m/s"}
-              , {id: 'Velocity_km/s', text: "km/s"}
-              , {id: 'Velocity_km/h', text: "km/h"}
-              , {id: 'Velocity_mas/yr', text: "mas/yr"}
-
-              , {id: 'Length_kpc', text: "kpc"}
-              , {id: 'Length_pc', text: "pc"}
-              , {id: 'Length_AU', text: "AU"}
-              , {id: 'Length_km', text: "km"}
-              , {id: 'Length_m', text: "m"}
-              , {id: 'Length_cm', text: "cm"}
-              , {id: 'Length_mm', text: "mm"}
-              , {id: 'Length_um', text: "um"}
-              , {id: 'Length_nm', text: "nm"}
-              , {id: 'Length_Angstroem', text: "Angstroem"}
-
-              , {id: 'Energy_erg', text: "erg"}
-              , {id: 'Energy_eV', text: "eV"}
-              , {id: 'Energy_keV', text: "keV"}
-              , {id: 'Energy_MeV', text: "MeV"}
-              , {id: 'Energy_GeV', text: "GeV"}
-              , {id: 'Energy_TeV', text: "TeV"}
-              , {id: 'Energy_J', text: "J"}
-              , {id: 'Energy_ryd', text: "ryd"}
-
-              , {id: 'Frequency_Hz', text: "Hz"}
-              , {id: 'Frequency_KHz', text: "KHz"}
-              , {id: 'Frequency_MHz', text: "MHz"}
-              , {id: 'Frequency_GHz', text: "GHz"}
-              , {id: 'Frequency_THz', text: "THz"}
-
-              , {id: 'Time_y', text: "y"}
-              , {id: 'Time_d', text: "d"}
-              , {id: 'Time_h', text: "h"}
-              , {id: 'Time_mn', text: "mn"}
-              , {id: 'Time_sec', text: "sec"}
-              , {id: 'Time_msec', text: "msec"}
-              , {id: 'Time_nsec', text: "nsec"}
-              ];
 
 var resultPaneView;
 var saadaqlView ;
 var sapView ;
-var sampView ;
-var tapView ;
+var webSampView ;
 var filterManagerView;
 var cartView;
 
@@ -82,8 +14,28 @@ var cartView;
  */
 var base_url = '';
 var booleansupported = false;
+/*
+ * JQuery object managing splitters
+ */
+var layoutPane;
 
 $().ready(function() {
+
+	base_url = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + window.location.pathname;
+	/*
+	 * layout plugin, requires JQuery 1.7 or higher
+	 * Split the bottom div in 3 splitters divs.
+	 */		
+	//$('#container').layout();
+	layoutPane = $('#accesspane').layout();
+	/*
+	 * Connect the URL passed as parameter
+	 */
+	var defaultUrl  =  (RegExp('url=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+	if( defaultUrl != null ) {
+		resultPaneView.fireNewNodeEvent(unescape(defaultUrl));
+	}
+
 	var resultPaneModel      = new $.ResultPaneModel();
 	resultPaneView           = new $.ResultPaneView();
 	new $.ResultPaneControler(resultPaneModel, resultPaneView);
@@ -96,17 +48,14 @@ $().ready(function() {
 	saadaqlView           = new $.SaadaQLView();
 	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
-	var sapModel      = new $.SapModel();
-	sapView           = new $.SapView();
+	webSampView = new $.WebSampView();
+	new WebSampControler(webSampView, new WebSampModel(window.location.pathname.replace(/\//g, '')
+			, (window.location.href + "/images/saadatransp-text-small.gif").replace(/\/#/g, '')
+			, "Saada Database"));
+
+	var sapModel       = new $.SapModel();
+	sapView            = new $.SapView();
 	new $.SapControler(sapModel, sapView);
-
-	var sampModel       = new $.SampModel();
-	sampView            = new $.SampView();
-	new $.SampControler(sampModel, sampView);
-
-	var tapModel       = new $.TapModel();
-	tapView            = new $.TapView();
-	new $.TapControler(tapModel, tapView);
 
 	var filterManagerModel       = new $.FilterManagerModel();
 	filterManagerView            = new $.FilterManagerView();
@@ -116,104 +65,23 @@ $().ready(function() {
 	cartView            = new $.CartView();
 	new $.CartControler(cartModel, cartView);
 
-	/*
-	 * Splitter functions of accesspane, the container of the db tree, 
-	 * the data panel and the query form.
-	 * see http://methvin.com/splitter
+	/*********************************************************************************************
+	 * Query form setup
+	 * Create tabs to switch between SAADAQL and TAP forms
 	 */
-	$("div#accesspane").splitter({
-		splitHorizontal: true,			
-		outline: true,
-		resizeToWidth: true,
-		minTop: 100, 
-		//sizeTop: ($(window).height() - 70 - 50), 
-		sizeBottom: 250, 
-		minBottom: 100,
-		sizeTop: true,	
-		accessKey: 'I'
+	$("#saadaqltab").tabs();
+	$("#saadaqltab").tabs({
+		selected: 4,
+		disabled: [0,1,2,3]
 	});
-	$("div#datapane").splitter({
-		splitVertical: true,
-		sizeLeft: true,
-		outline: true,
-		resizeTo: window,
-		minLeft: 100, sizeLeft: 150, minRight: 100,
-		accessKey: 'I'
+
+	$("#saptab").tabs();
+	$("#saptab").tabs({
+		unselect : true,
+		selected: 0,
+		disabled: [1,2]
 	});
-	showProcessingDialog("Loading Data Tree");
-	$.getJSON("getmeta", {query: "datatree" }, function(data) {
-		hideProcessingDialog();
-		if( processJsonError(data, "Cannot make data tree") ) {
-			return;
-		}
-		dataTree = $("div#treedisp").jstree({
-			"json_data"   : data , 
-			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-
-				"drop_finish" : function (data) {
-					var parent = data.r;
-					var treepath = data.o.attr("id").split('.');
-					if( treepath.length < 2 ) {
-						loggedAlert("Query can only be applied on one data category or one data class");
-					}
-					else {
-						while(parent.length != 0  ) {
-							resultPaneView.fireSetTreePath(treepath);	
-							if(parent.attr('id') == "resultpane" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							else if(parent.attr('id') == "showquerymeta" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireShowMetaNode(treepath);	
-								return;
-							}
-
-//							else if(parent.attr('id') == "displayfilter" ) {
-//							setTitlePath(treepath);
-//							resultPaneView.fireTreeNodeEvent(treepath);	
-//							filterManagerView.fireShowFilterManager(treepath);	
-//							return;
-//							}
-
-							else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-								saadaqlView.fireTreeNodeEvent(treepath);	
-								sapView.fireTreeNodeEvent(treepath);	
-								tapView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							parent = parent.parent();
-						}
-					}
-				}
-			},
-			// Node sorting by DnD blocked
-			"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-			}
-		}); // end of jstree
-//		dataTree.bind("select_node.jstree", function (e, data) {
-//		alert(data);
-//		});
-		dataTree.bind("dblclick.jstree", function (e, data) {
-			var node = $(e.target).closest("li");
-			var id = node[0].id; //id of the selected node					
-			var treepath = id.split('.');
-			if( treepath.length < 2 ) {
-				alert("Query can only be applied on one data category or one data class");
-			}
-			else {
-				showProcessingDialog("Open node " + getTreePathAsKey());
-				resultPaneView.fireSetTreePath(treepath);	
-				setTitlePath(treepath);
-				resultPaneView.fireTreeNodeEvent(treepath);	
-				hideProcessingDialog();
-			}
-		});
-	}); // end of ajax
-
-
+	$("#saptab").hide();
 	/*
 	 * Activate submit buttons
 	 */
@@ -236,40 +104,16 @@ $().ready(function() {
 	$("#qlimit").keyup(function(event) {
 		if( $("#qlimit").val() == '' || $("#qlimit").val().match(/^[0-9]+$/) ) {
 			saadaqlView.fireUpdateQueryEvent();
-			tapView.fireUpdateQueryEvent();			
 		}
 		else {
-			alert('The result limit must be a positive integer value' );
+			Modalinfo.info('The result limit must be a positive integer value' );
 			$("#qlimit").val(100);
 			return false;
 		}
 
 	});
 
-	/*********************************************************************************************
-	 * Query form setup
-	 * Create tabs to switch between SAADAQL and TAP forms
-	 */
-	$("#saadaqltab").tabs();
-	$("#saadaqltab").tabs({
-		selected: 4,
-		disabled: [0,1,2,3]
-	});
 
-	$("#saptab").tabs();
-	$("#saptab").tabs({
-		unselect : true,
-		selected: 0,
-		disabled: [1,2]
-	});
-
-	$("#saptab").hide();
-
-	$("#taptab").tabs();
-	$("#taptab").tabs({
-		unselect : true
-	});
-	$("#taptab").hide();
 	/*
 	 * Drop area for individual constraints on KWs
 	 */
@@ -299,26 +143,6 @@ $().ready(function() {
 	$("#patternatt" ).sortable({
 		revert: "true"
 	});
-	$("#tapconstraintlist").droppable({
-		drop: function(event, ui){
-			tapView.fireAttributeEvent(ui.draggable);		
-		}
-	});
-	$("#tapselectlist").droppable({
-		drop: function(event, ui){
-			tapView.fireSelectEvent(ui.draggable);		
-		}
-	});
-	$("#tapalpha").droppable({
-		drop: function(event, ui){
-			tapView.fireAlphaEvent(ui.draggable);		
-		}
-	});
-	$("#tapdelta").droppable({
-		drop: function(event, ui){
-			tapView.fireDeltaEvent(ui.draggable);		
-		}
-	});
 	$("#fspefieldsdrop").droppable({
 		drop: function(event, ui){
 			filterManagerView.fireSpeFieldEvent(ui.draggable);		
@@ -341,11 +165,6 @@ $().ready(function() {
 	$("#coordform input").keypress(function(event) {
 		if (event.which == '13') {
 			saadaqlView.fireInputCoordEvent();
-		}
-	});
-	$("#tapwhere input").keypress(function(event) {
-		if (event.which == '13') {
-			tapView.fireInputCoordEvent();
 		}
 	});
 	/*
@@ -387,7 +206,6 @@ $().ready(function() {
 	$(".langswitch").click(function() {
 		var mode = $(this).val();
 		if( mode == 'saadaql') {
-			$('#taptab').hide();
 			$('#saptab').hide();
 			$('#saadaqltab').show('slow');
 			$("#qhistocount").css("visibility", "visible");
@@ -395,7 +213,6 @@ $().ready(function() {
 
 		}
 		else if( mode == 'sap') {
-			$('#taptab').hide();
 			$('#saadaqltab').hide();
 			$('#saptab').show('slow');
 			$("#qhistocount").css("visibility", "hidden");
@@ -404,9 +221,7 @@ $().ready(function() {
 		else {
 			$('#saadaqltab').hide();
 			$('#saptab').hide();
-			$('#taptab').show('slow');
 			$("#qhistocount").css("visibility", "hidden");
-			tapView.fireDisplayHisto();							
 
 		}
 	});   
@@ -415,10 +230,10 @@ $().ready(function() {
 	 */
 	$(".sesame").click(function() {
 		var inputfield = $(this).parents('div').find(".coordinputvalue");
-		showProcessingDialog("Asking Sesame name resolver");
+		Processing.show("Asking Sesame name resolver");
 		$.getJSON("sesame", {object: inputfield.val() }, function(data) {
-			hideProcessingDialog();
-			if( processJsonError(data, "Sesame failure") ) {
+			Processing.hide();
+			if( Processing.jsonError(data, "Sesame failure") ) {
 				return;
 			}
 			else {
@@ -433,9 +248,9 @@ $().ready(function() {
 	 * Get the base URL of the site. 
 	 * Importatnt to avoid cross access issues
 	 */
-	showProcessingDialog("Get site description");
+	Processing.show("Get site description");
 	$.getJSON("sitedesc", function(data) {
-		hideProcessingDialog();
+		Processing.hide();
 		base_url = data.rooturl;
 		if( !base_url.match("/$") ) {
 			base_url = base_url +"/";
@@ -450,9 +265,82 @@ $().ready(function() {
 	 * This callback can be changed changed at everytime: do not use the "onclick" HTML  
 	 * attribute which is not overriden by JQuery "click" callback
 	 */
-	$('#showquerymeta').click(function(){loggedAlert("No meta data available yet");});
+	$('#showquerymeta').click(function(){Modalinfo.info("No meta data available yet");});
 
-	sampView.fireSampInit();
-	//tapView.fireRefreshJobList();
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
+	
+	Processing.show("Loading Data Tree");
+	$.getJSON("getmeta", {query: "datatree" }, function(data) {
+		Processing.hide();
+		if( Processing.jsonError(data, "Cannot make data tree") ) {
+			return;
+		}
+		dataTree = $("div#treedisp").jstree({
+			"json_data"   : data , 
+			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
+			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
+
+				"drop_finish" : function (data) {
+					var parent = data.r;
+					var treepath = data.o.attr("id").split('.');
+					if( treepath.length < 2 ) {
+						Modalinfo.info("Query can only be applied on one data category or one data class");
+					}
+					else {
+						while(parent.length != 0  ) {
+							resultPaneView.fireSetTreePath(treepath);	
+							if(parent.attr('id') == "resultpane" ) {
+								setTitlePath(treepath);
+								resultPaneView.fireTreeNodeEvent(treepath);	
+								return;
+							}
+							else if(parent.attr('id') == "showquerymeta" ) {
+								setTitlePath(treepath);
+								resultPaneView.fireShowMetaNode(treepath);	
+								return;
+							}
+
+//							else if(parent.attr('id') == "displayfilter" ) {
+//							setTitlePath(treepath);
+//							resultPaneView.fireTreeNodeEvent(treepath);	
+//							filterManagerView.fireShowFilterManager(treepath);	
+//							return;
+//							}
+
+							else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
+								saadaqlView.fireTreeNodeEvent(treepath);	
+								sapView.fireTreeNodeEvent(treepath);	
+								return;
+							}
+							parent = parent.parent();
+						}
+					}
+				}
+			},
+			// Node sorting by DnD blocked
+			"crrm" : {"move" : {"check_move" : function (m) {return false; }}
+			}
+		}); // end of jstree
+//		dataTree.bind("select_node.jstree", function (e, data) {
+//		Modalinfo.info(data);
+//		});
+		dataTree.bind("dblclick.jstree", function (e, data) {
+			var node = $(e.target).closest("li");
+			var id = node[0].id; //id of the selected node					
+			var treepath = id.split('.');
+			if( treepath.length < 2 ) {
+				Modalinfo.info("Query can only be applied on one data category or one data class");
+			}
+			else {
+				Processing.show("Open node " + getTreePathAsKey());
+				resultPaneView.fireSetTreePath(treepath);	
+				setTitlePath(treepath);
+				resultPaneView.fireTreeNodeEvent(treepath);	
+				Processing.hide();
+			}
+		});
+	}); // end of ajax
+
+	Location.confirmBeforeUnlaod();
+
 });

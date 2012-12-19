@@ -146,18 +146,18 @@ jQuery.extend({
 				classe = '*'; 
 				params = {query: "ah", name:  collection + '.' +category };
 			} else {
-				alert(globalTreePath.length + " Query can only be applied on one data category or one data class (should never happen here: filterManagerModel.js");
+				Modalinfo.info(globalTreePath.length + " Query can only be applied on one data category or one data class (should never happen here: filterManagerModel.js");
 				return;
 			}
 
 			that.initSpeFieldsList(globalTreePath[1]);
 
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 
 			$.getJSON("getmeta", params, function(jsonmeta) {
-				hideProcessingDialog();
-				if (processJsonError(jsonmeta, "Can not get data tree node description")) {
-					hideProcessingDialog();
+				Processing.hide();
+				if (Processing.jsonError(jsonmeta, "Can not get data tree node description")) {
+					Processing.hide();
 					return;
 				}
 
@@ -169,7 +169,7 @@ jQuery.extend({
 
 				var data = null;
 				$.getJSON("getfilter", param, function(jsondata) {
-					if( processJsonError(jsondata, "Can not save filter") ) {
+					if( Processing.jsonError(jsondata, "Can not save filter") ) {
 						return;
 					}
 					else {
@@ -407,14 +407,14 @@ jQuery.extend({
 					url: "setfilter",
 					data: { filter: that.getNewJSONFilter(), name: "filename" },
 					error: function(jqXHR, textStatus, errorThrown) {
-						alert('Cannot save filter: ' + jqXHR.status + "\n" + textStatus+ "\n" + errorThrown);
+						Modalinfo.info('Cannot save filter: ' + jqXHR.status + "\n" + textStatus+ "\n" + errorThrown);
 
 					} ,
 					success: function (jsondata, status)  {
-						if (processJsonError(jsondata, "Cannot save filter")) {
+						if (Processing.jsonError(jsondata, "Cannot save filter")) {
 							return;
 						}
-						alert("Filter " + name + " saved.");
+						Modalinfo.info("Filter " + name + " saved.");
 					}
 				});
 
@@ -445,7 +445,7 @@ jQuery.extend({
 				if (answer) {
 					var tmppath = path + "resetfilter?coll=" + collection + "&cat=" + category;
 					$.post(tmppath);
-					alert('Filter reset complete.');
+					Modalinfo.info('Filter reset complete.');
 				}
 			} else {
 				var question = 'Delete the custom filters for the category '+category+'?';
@@ -453,7 +453,7 @@ jQuery.extend({
 				if (answer) {
 					var tmppath = path + "resetfilter?coll=all&cat=" + category;
 					$.post(tmppath);
-					alert('Filter reset complete.');
+					Modalinfo.info('Filter reset complete.');
 				}
 			}
 		};
@@ -464,7 +464,7 @@ jQuery.extend({
 			if (answer) {
 				var tmppath = path + "resetfilter?coll=all&cat=all";
 				$.post(tmppath);
-				alert('Filter reset complete.');
+				Modalinfo.info('Filter reset complete.');
 			}
 		};
 

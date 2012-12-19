@@ -1,45 +1,72 @@
+
 /*
- * Some utilities
+ * Unit array used to setup UCD based queries
  */
-if(!String.prototype.startsWith){
-	String.prototype.startsWith = function (str) {
-		return !this.indexOf(str);
-	};
-};
-if(!String.prototype.endsWith){
-	String.prototype.endsWith = function(suffix) {
-		return (this.indexOf(suffix, this.length - suffix.length) !== -1);
-	};
-};
+var unitMap = new Array();
+unitMap['Energy']    = ['erg', 'eV', 'keV', 'MeV', 'GeV', 'TeV', 'J', 'ryd'];
+unitMap['Frequency'] = ['Hz', 'KHz', 'MHz', 'GHz', 'THz'];
+unitMap['Time']      = ['y', 'd', 'h', 'mn', 'sec', 'msec', 'nsec'];
+unitMap['Length']    = ['kpc', 'pc', 'AU', 'km', 'm', 'cm', 'mm', 'um', 'nm', 'Angstroem'];
+unitMap['Velocity']  = ['m/s', 'km/s', 'km/h', 'mas/yr'];
+unitMap['Angle']     = ['deg', 'arcmin', 'arcsec'];
+unitMap['Flux']      = ['erg/s/cm2', 'Jy', 'mJy', 'count/s'];
+unitMap['Power']     = ['erg/s', 'W'];
 
-if(!String.prototype.hashCode){
-	String.prototype.hashCode = function(){
-		var hash = 0;
-		if (this.length == 0) return code;
-		for (var i= 0; i < this.length; i++) {
-			var char = this.charCodeAt(i);
-			hash = 31*hash+char;
-			hash = hash & hash; 
-		}
-		return hash;
-	};
-};
-if(!String.prototype.trim){
-	String.prototype.trim = function(){
-	} ;
-};
-var DEBUG = true;
-function logMsg(message) {
-	if( DEBUG && (typeof console != 'undefined') ) {
-		console.log(message);
-	}
-}
+var units =  [
+              {id: 'none', text: "none"}
 
-function loggedAlert(message, title) {
-	logMsg("ALERT " + message);
-	jAlert(message, title);
-}
+              , {id: 'Power_erg/s', text: "erg/s"}
+              , {id: 'Power_W', text: "W"}
 
+              , {id: 'Flux_erg/s/cm2', text: "erg/s/cm2"}
+              , {id: 'Flux_Jy', text: "Jy"}
+              , {id: 'Flux_mJy', text: "mJy"}
+              , {id: 'Flux_mJy', text: "mJy"}
+
+              , {id: 'Angle_deg', text: "deg"}
+              , {id: 'Angle_arcmin', text: "arcmin"}
+              , {id: 'Angle_arcsec', text: "arcsec"}
+              , {id: 'Angle_h:m:s', text: "h:m:s"}
+
+              , {id: 'Velocity_m/s', text: "m/s"}
+              , {id: 'Velocity_km/s', text: "km/s"}
+              , {id: 'Velocity_km/h', text: "km/h"}
+              , {id: 'Velocity_mas/yr', text: "mas/yr"}
+
+              , {id: 'Length_kpc', text: "kpc"}
+              , {id: 'Length_pc', text: "pc"}
+              , {id: 'Length_AU', text: "AU"}
+              , {id: 'Length_km', text: "km"}
+              , {id: 'Length_m', text: "m"}
+              , {id: 'Length_cm', text: "cm"}
+              , {id: 'Length_mm', text: "mm"}
+              , {id: 'Length_um', text: "um"}
+              , {id: 'Length_nm', text: "nm"}
+              , {id: 'Length_Angstroem', text: "Angstroem"}
+
+              , {id: 'Energy_erg', text: "erg"}
+              , {id: 'Energy_eV', text: "eV"}
+              , {id: 'Energy_keV', text: "keV"}
+              , {id: 'Energy_MeV', text: "MeV"}
+              , {id: 'Energy_GeV', text: "GeV"}
+              , {id: 'Energy_TeV', text: "TeV"}
+              , {id: 'Energy_J', text: "J"}
+              , {id: 'Energy_ryd', text: "ryd"}
+
+              , {id: 'Frequency_Hz', text: "Hz"}
+              , {id: 'Frequency_KHz', text: "KHz"}
+              , {id: 'Frequency_MHz', text: "MHz"}
+              , {id: 'Frequency_GHz', text: "GHz"}
+              , {id: 'Frequency_THz', text: "THz"}
+
+              , {id: 'Time_y', text: "y"}
+              , {id: 'Time_d', text: "d"}
+              , {id: 'Time_h', text: "h"}
+              , {id: 'Time_mn', text: "mn"}
+              , {id: 'Time_sec', text: "sec"}
+              , {id: 'Time_msec', text: "msec"}
+              , {id: 'Time_nsec', text: "nsec"}
+              ];
 function setTitlePath(treepath) {
 	globalTreePath = treepath;
 
@@ -70,163 +97,6 @@ function getTreePathAsKey() {
 	return retour;
 }
 
-/*
- * Using a Jquery bind() here has a strange behaviour...
- * http://stackoverflow.com/questions/4458630/unable-to-unbind-the-window-beforeunload-event-in-jquery
- */
-window.onbeforeunload = function() {
-	if( !authOK) {
-		return  'WARNING: Reloading or leaving this page will lost the current session';
-	}
-	else {
-		authOK = false;
-	}
-};
-var authOK = false;
-function changeLocation(url){
-	logMsg("changeLocation " + url);
-	authOK = true;
-	window.open (url, "_blank");
-}
-
-var stillToBeOpen = false;
-var simbadToBeOpen = false;
-var processIsOpen=false;
-function showProcessingDialog(message) {
-	logMsg("PROCESSSING " + message);
-	stillToBeOpen = true;
-	if( $('#saadaworking').length == 0){	
-		logMsg("ini");
-		$('#resultpane').append('<div id="saadaworking" style="padding: 5px; text-align: left; display: none;vertical-align:middle;"></div>');
-	}
-	$('#saadaworking').html("<img style='padding: 5px; vertical-align:middle' src=images/ajax-loader.gif></img><span class=help>" + message + "</span>");
-	/*
-	 * It is better to immediately show the process dialog in order to give a feed back to the user
-	 * It we dopn't, user could click several time on submit a get lost with what happens
-	 *
-	 * setTimeout("if( stillToBeOpen == true ) $('#saadaworking').css('visibility', 'visible');", 500);
-	 */
-	//$('#saadaworking').css('visibility', 'visible');
-	$('#saadaworking').modal({close: false});
-	processIsOpen=true;
-	$("#simplemodal-container").css('height', 'auto'); 
-	$("#simplemodal-container").css('width', 'auto'); 
-	$(window).trigger('resize.simplemodal'); 
-}
-
-
-function hideProcessingDialog() {
-	stillToBeOpen = false;
-	if( $('#saadaworking').length != 0){
-		logMsg("CLOSE PROCESSSING " + $("#saadaworking span").text());
-
-		//$('#saadaworking').css('visibility', 'hidden');	html img text align
-		if( processIsOpen ) {
-			$.modal.close();	
-			processIsOpen=false;
-		}
-
-	}
-}
-
-//function showProcessingDialog() {
-//stillToBeOpen = true;
-//if( $('#saadaworking').length == 0){		
-//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-//}
-//$('#saadaworking').html("Waiting on Saada reply");
-///*
-//* It is better to immediately show the process dialog in order to give a feed back to the user
-//* It we dopn't, user could click several time on submit a get lost with what happens
-//*
-//* setTimeout("if( stillToBeOpen == true ) $('#saadaworking').css('visibility', 'visible');", 500);
-//*/
-//$('#saadaworking').css('visibility', 'visible');
-//}
-//function showProcessingDialogImmediately() {
-//stillToBeOpen = true;
-//if( $('#saadaworking').length == 0){		
-//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-//}
-//$('#saadaworking').html("Waiting on Saada reply");
-//$('#saadaworking').css('visibility', 'visible');
-//}
-
-//function hideProcessingDialog() {
-//stillToBeOpen = false;
-//if( $('#saadaworking').length != 0){
-//$('#saadaworking').css('visibility', 'hidden');	
-//}
-//}
-
-function showSampMessageSent() {
-	stillToBeOpen = true;
-	if( $('#saadaworking').length == 0){		
-		$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-	}
-	$('#saadaworking').html("SAMP message sent");
-	$('#saadaworking').css('visibility', 'visible');
-	setTimeout(" $('#saadaworking').css('visibility', 'hidden');", 2000);
-
-}
-
-//function showQuerySent() {
-//stillToBeOpen = true;
-//if( $('#saadaworking').length == 0){		
-//$('#resultpane').append('<div id="saadaworking" class="dataTables_processing" style="visibility: hidden; "></div>');
-//}
-//$('#saadaworking').html("Query submitted");
-//$('#saadaworking').css('visibility', 'visible');
-//setTimeout(" $('#saadaworking').css('visibility', 'hidden');", 2000);
-//}
-
-
-function openDialog(title, content) {
-	if( $('#diagdiv').length == 0){		
-		$(document.documentElement).append("<div id=diagdiv style='width: 99%; display: none; width: auto; hight: auto;'></div>");
-	}
-	$('#diagdiv').html(content);
-	$('#diagdiv').dialog({  width: 'auto', title: title});
-}
-
-function openSimbadDialog(pos) {
-	if( $('#diagdiv').length == 0){		
-		$(document.documentElement).append("<div id=diagdiv style='display: none; width: auto; hight: auto;'></div>");
-	}
-	var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"simbadtable\" class=\"display\"></table>";
-	$('#diagdiv').html(table);
-
-	$.getJSON("simbadtooltip", {pos: pos}, function(jsdata) {
-		hideProcessingDialog();
-		if( processJsonError(jsdata, "Simbad Tooltip Failure") ) {
-			return;
-		}
-		else {
-			$('#simbadtable').dataTable({
-				"aoColumns" : jsdata.aoColumns,
-				"aaData" : jsdata.aaData,
-				"sDom" : 'rt',
-				"bPaginate" : false,
-				"aaSorting" : [],
-				"bSort" : false,
-				"bFilter" : true,
-				"bAutoWidth" : true,
-				"bDestroy" : true
-			});
-			if( jsdata.aaData.length > 0 ) {
-				logMsg((jsdata.aaData[0])[0]);
-				logMsg(encodeURIComponent((jsdata.aaData[0])[0]));
-				$('#simbadtable').append("<img src='http://alasky.u-strasbg.fr/cgi/simbad-thumbnails/get-thumbnail.py?name=" 
-						+ encodeURIComponent((jsdata.aaData[0])[0]) + "'/>");
-			}
-
-			var simbadpage = "<a class=simbad target=blank href=\"http://simbad.u-strasbg.fr/simbad/sim-coo?Radius=1&Coord=" + encodeURIComponent(pos) + "\"></a>";
-			$('#diagdiv').dialog({  width: 'auto', title: "Simbad Summary for Position " + pos + simbadpage });
-			sampView.firePointatSky(pos);
-		}
-	});
-}
-
 function openModal(title, content) {
 	if( $('#detaildiv').length == 0){		
 		$(document.documentElement).append("<div id=detaildiv style='width: 99%; display: none;'></div>");
@@ -244,15 +114,3 @@ function switchArrow(id) {
 	}
 }
 
-function processJsonError(jsondata, msg) {
-	if( jsondata == undefined || jsondata == null ) {
-		alert("JSON ERROR: " + msg + ": no data returned" );
-		return true;
-	}
-	else if( jsondata.errormsg != null) {
-		alert("JSON ERROR: " + msg + ": "  + jsondata.errormsg);
-		return true;
-	}	
-	return false;
-
-}

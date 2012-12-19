@@ -64,13 +64,13 @@ jQuery.extend({
 				collMode = true;
 			}
 			else {
-				alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js)");
+				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js)");
 				return;
 			}
-			showProcessingDialog();
+			Processing.show();
 			$.getJSON("getmeta", params, function(jsondata) {
-				hideProcessingDialog();
-				if( processJsonError(jsondata, "Cannot get meta data") ) {
+				Processing.hide();
+				if( Processing.jsonError(jsondata, "Cannot get meta data") ) {
 					return;
 				}
 				editors = new Array();
@@ -156,17 +156,17 @@ this.processInputCoord= function(coord, radius, mode){
 	var alphaname = $('#kwalpha_name').html();
 	var deltaname = $('#kwdelta_name').html();
 	if( alphaname == "" || deltaname.length == "" ) {
-		alert('Give one KW for both alpha and delta');
+		Modalinfo.info('Give one KW for both alpha and delta');
 		return;
 	}
 	var coords = $('#tapcoordval').val().split(' ');
 	if( coords.length != 2 || isNaN(coords[0]) || isNaN(coords[1])) {
-		alert('Both coordinates must be given in degrees');
+		Modalinfo.info('Both coordinates must be given in degrees');
 		return;				
 	}
 	var rs = $('#tapradiusval').val();
 	if( isNaN(rs) ){
-		alert('Radius/Size must be given in degrees');
+		Modalinfo.info('Radius/Size must be given in degrees');
 		return;								
 	}
 	var box_summary = coords[0] + "," + coords[1] + "," + rs
@@ -261,7 +261,7 @@ this.updateQuery = function() {
 }
 
 this.submitQuery = function(){
-	showProcessingDialogImmediately();
+	Processing.showImmediately();
 	var limit = 10000;
 	if( $("#qlimit").val().match(/^[0-9]*$/) ) {
 		limit = $("#qlimit").val();
@@ -269,12 +269,12 @@ this.submitQuery = function(){
 	$.post("tap/async"
 			, {REQUEST: "doQuery", LANG: 'ADQL', FORMAT: 'json', PHASE: 'RUN', MAXREC: limit,QUERY: ($('#adqltext').val()) }
 			, function(jsondata, status) {
-				if( processJsonError(jsondata, "Cannot get jobs list") ) {
+				if( Processing.jsonError(jsondata, "Cannot get jobs list") ) {
 					return;
 				}
 				var params = {FORMAT: "json"};
 				$.getJSON("tap/async", params, function(jsondata) {
-					if( processJsonError(jsondata, "Cannot get jobs list") ) {
+					if( Processing.jsonError(jsondata, "Cannot get jobs list") ) {
 						return;
 					}
 					jv  = new $.JobView();
@@ -289,9 +289,9 @@ this.submitQuery = function(){
 
 
 this.checkJobCompleted = function( jid) {
-	hideProcessingDialog();
+	Processing.hide();
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get summary of job " + jid) ) {
+		if( Processing.jsonError(jsondata, "Cannot get summary of job " + jid) ) {
 			return;
 		}
 		if( jsondata.phase == 'COMPLETED') {
@@ -299,14 +299,14 @@ this.checkJobCompleted = function( jid) {
 			tapView.fireRefreshJobList();
 		}
 		else {
-			alert("Job " + jid + " not completed: processed asynchronously");
+			Modalinfo.info("Job " + jid + " not completed: processed asynchronously");
 		}			
 	});					
 }
 this.refreshJobList= function() {
 	$.getJSON("tap/async", {FORMAT: "json"}, function(jsondata) {
-		hideProcessingDialog();
-		if( processJsonError(jsondata, "Cannot get jobs list") ) {
+		Processing.hide();
+		if( Processing.jsonError(jsondata, "Cannot get jobs list") ) {
 			return;
 		}
 		if( jsondata.jobs != undefined) {
@@ -340,22 +340,22 @@ this.processJobAction= function(jid) {
 	 * Down by the Vot button in the banner as for any download actions
 	 */
 	else if( val == 'Download Result') {					
-		alert("Not implemented");	
+		Modalinfo.info("Not implemented");	
 	}
 }
 this.showQuery = function(jid) {
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get summary of job") ) {
+		if( Processing.jsonError(jsondata, "Cannot get summary of job") ) {
 			return;
 		}
 		var report  = "";
 		report = jsondata.parameters.query.replace(/\\n/g,'\n            ')+ "\n";
-		alert(report);
+		Modalinfo.info(report);
 	});					
 }
 this.showSummary = function(jid) {
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get summary of job " + jid) ) {
+		if( Processing.jsonError(jsondata, "Cannot get summary of job " + jid) ) {
 			return;
 		}
 		var report  = "";
@@ -378,37 +378,37 @@ this.showSummary = function(jid) {
 			report += "    type: " + jsondata.results[i].type+ "\n";
 			report += "    href: " + jsondata.results[i].href+ "\n";
 		}
-		alert(report);
+		Modalinfo.info(report);
 	});					
 }
 this.displayResult = function(jid) {
-	showProcessingDialog();
+	Processing.show();
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get result of job " + jid) ) {
-			hideProcessingDialog();
+		if( Processing.jsonError(jsondata, "Cannot get result of job " + jid) ) {
+			Processing.hide();
 			return;
 		}
 		for( var rep=0 ; rep<jsondata.results.length ; rep ++) {
 			if( jsondata.results[rep].href.endsWith(".json") ) {
 				$.getJSON(jsondata.results[rep].href, function(jsdata) {
-					hideProcessingDialog();
-					if( processJsonError(jsdata, "Cannot get data of job " + jid + " Possibly a cross domain issue: check the presence of the domain name in the url)") ) {
+					Processing.hide();
+					if( Processing.jsonError(jsdata, "Cannot get data of job " + jid + " Possibly a cross domain issue: check the presence of the domain name in the url)") ) {
 						return;
 					}
 					$('#showquerymeta').unbind('click');
-					$('#showquerymeta').click(function(){alert("Not meta data available for ADQL queries (TAP)")});
+					$('#showquerymeta').click(function(){Modalinfo.info("Not meta data available for ADQL queries (TAP)")});
 					resultPaneView.showTapResult(jid, jsdata);
 				});	
-				hideProcessingDialog();
+				Processing.hide();
 				return;
 			}
 		}
-		alert("FATAL ERROR; Can only process TAP response in JSON format not found among " + jsondata.results.length);	
+		Modalinfo.info("FATAL ERROR; Can only process TAP response in JSON format not found among " + jsondata.results.length);	
 	});					
 }
 this.editQuery= function(jid) {
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get summary of job " + jid) ) {
+		if( Processing.jsonError(jsondata, "Cannot get summary of job " + jid) ) {
 			return;
 		}
 		/*
@@ -430,7 +430,7 @@ this.editQuery= function(jid) {
 
 this.downloadVotable= function(jid) {
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get result of job " + jid) ) {
+		if( Processing.jsonError(jsondata, "Cannot get result of job " + jid) ) {
 			return;
 		}
 		for( var rep=0 ; rep<jsondata.results.length ; rep ++) {
@@ -440,13 +440,13 @@ this.downloadVotable= function(jid) {
 				return;
 			}
 		}
-		alert("FATAL ERROR: TAP response in VOTable format not found among " + jsondata.results.length);	
+		Modalinfo.info("FATAL ERROR: TAP response in VOTable format not found among " + jsondata.results.length);	
 	});								
 }
 
 this.sampBroadcast= function(jid) {
 	$.getJSON("tap/async/" + jid , function(jsondata) {
-		if( processJsonError(jsondata, "Cannot get summary of job " + jid) ) {
+		if( Processing.jsonError(jsondata, "Cannot get summary of job " + jid) ) {
 			return;
 		}
 		for( var i=0 ; i<jsondata.results.length ; i++ ) {
@@ -456,7 +456,7 @@ this.sampBroadcast= function(jid) {
 				return;
 			}
 		}
-		alert("No result file looking like a VOTable, sorry.")
+		Modalinfo.info("No result file looking like a VOTable, sorry.")
 	});					
 
 }

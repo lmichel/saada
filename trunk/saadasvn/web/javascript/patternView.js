@@ -111,7 +111,7 @@ jQuery.extend({
 				saadaqlView.fireUpdateQueryEvent();
 			});
 			$('#' +  id_root + "_show").click(function() {
-				alert(unescape($('#' +  id_root + ' input').val()));
+				Modalinfo.info(unescape($('#' +  id_root + ' input').val()));
 			});
 
 			$("#patternconst div").remove();

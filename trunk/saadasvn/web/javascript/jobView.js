@@ -37,7 +37,7 @@ jQuery.extend({
 				$.post("tap/async/" + id
 						, {ACTION: "DELETE"}
 						, function(jsondata, status) {
-							if( processJsonError(jsondata, "Cannot delete job: " +id) ) {
+							if( Processing.jsonError(jsondata, "Cannot delete job: " +id) ) {
 								return;
 							}
 							else {

@@ -42,7 +42,7 @@ jQuery.extend({
 				});				
 			}
 			else {
-				alert('#tab protocol out of range ' + selected_prot);
+				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
 		}
 		this.fireSubmitCapabilityEvent = function(){
@@ -66,7 +66,7 @@ jQuery.extend({
 				});
 			}
 			else {
-				alert('#tab protocol out of range ' + selected_prot);
+				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
 		}
 		this.fireSubmitRegistryEvent = function(){
@@ -90,7 +90,7 @@ jQuery.extend({
 				});
 			}
 			else {
-				alert('#tab protocol out of range ' + selected_prot);
+				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
 		}
 		this.fireSubmitGluEvent = function(){
@@ -114,7 +114,7 @@ jQuery.extend({
 				});
 			}
 			else {
-				alert('#tab protocol out of range ' + selected_prot);
+				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
 		}
 		

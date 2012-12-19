@@ -1180,7 +1180,7 @@
 						var s = this._get_settings().themes;
 						this.data.themes.dots = s.dots; 
 						this.data.themes.icons = s.icons; 
-						//alert(s.dots);
+						//Dialog.info(s.dots);
 						this.set_theme(s.theme, s.url);
 					}, this))
 				.bind("loaded.jstree", $.proxy(function () {
