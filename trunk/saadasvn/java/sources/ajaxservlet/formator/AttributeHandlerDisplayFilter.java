@@ -19,6 +19,7 @@ import saadadb.query.result.OidsaadaResultSet;
  */
 public class AttributeHandlerDisplayFilter implements DisplayFilter {
 	private ArrayList<String> datatable_columns;
+	protected long sessionId; // used to lock relationship indexes
 
 	public AttributeHandlerDisplayFilter() {
 		datatable_columns = new ArrayList<String>();
@@ -29,6 +30,13 @@ public class AttributeHandlerDisplayFilter implements DisplayFilter {
 		datatable_columns.add("ucd");
 		datatable_columns.add("queriable");
 		datatable_columns.add("comment");
+	}
+
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
+	 */
+	public void setSessionId(long sessionId) {
+		this.sessionId = sessionId;
 	}
 
 	public void setOId(long oidsaada) throws FatalException {

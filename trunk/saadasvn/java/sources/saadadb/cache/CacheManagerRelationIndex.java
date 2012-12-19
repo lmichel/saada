@@ -107,11 +107,11 @@ public class CacheManagerRelationIndex {
 					return null;
 				}
 			}
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Add index <" + name_index + ">");
 			ri = this.loadIndex(relation, extension);    	
 			//ri.scan();
 
 			ri.take(owner_key);
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Add index <" + name_index + ">");
 			index.put(name_index, ri);
 			return ri;
 		}		

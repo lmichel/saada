@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.accounting.QueryContext;
+import ajaxservlet.accounting.UserAccount;
 import ajaxservlet.accounting.UserTrap;
 import ajaxservlet.formator.DisplayFilter;
 import ajaxservlet.formator.DisplayFilterFactory;
@@ -59,7 +60,8 @@ public class RunQuery extends SaadaServlet {
 			String[] qs = query.split("\\s", -1) ;
 			if( qs.length >= 6 ) {
 				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,request);
-				UserTrap.getUserAccount(request).setQueryContext(new QueryContext(query, colfmtor));
+				UserAccount ac = UserTrap.getUserAccount(request);
+				ac.setQueryContext(new QueryContext(query, colfmtor, ac.getSessionID()));
 				System.out.println(colfmtor.getRawJSON());
 				JSONObject jo = new JSONObject();
 				jo.put("query", query);

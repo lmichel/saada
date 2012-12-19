@@ -8,28 +8,22 @@ package ajaxservlet;
  */
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
-import saadadb.database.Repository;
-import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import ajaxservlet.formator.DefaultPreviews;
@@ -45,68 +39,16 @@ import ajaxservlet.json.JsonUtils;
  *
  */
 public class SaadaServlet extends HttpServlet {
-	private static boolean INIT = false;
-	private static boolean INIT_IN_PROGRESS = false;
 	public static final boolean JSON_FILE_MODE = false;
-	public static String base_dir;
-	public static String app_dir;
 	private static final long serialVersionUID = 1L;
+	public static String base_dir ;
 	public static boolean secureDownlad = false;
 
-
-	public static boolean isInit(){
-		return INIT;
-	}
 	@Override
 	public void init(ServletConfig conf) throws ServletException {
 		Messenger.setServletMode();
 		super.init(conf);
 		base_dir = conf.getServletContext().getRealPath("") + Database.getSepar();
-		ServletContext sc = conf.getServletContext();
-		app_dir = sc.getContextPath().replaceAll("/", "");
-		if( !JSON_FILE_MODE ) {
-			try {
-				int cpt = 0;
-				while( INIT_IN_PROGRESS && cpt < 10) {
-					Thread.sleep(500);
-					Messenger.printMsg(Messenger.TRACE, conf.getServletName() + " is waiting init to be done");
-					cpt ++;
-				}
-				synchronized (this) {
-					if(  !INIT  ) {
-						if( !SaadaServlet.isInit() ) {
-							INIT_IN_PROGRESS = true;					
-							Messenger.printMsg(Messenger.TRACE, "Ajax interface init started by " + conf.getServletName());
-							Messenger.debug_mode = false;
-							LocalConfig lc = new LocalConfig();
-							Database.init(lc.db_name);
-							if( lc.urlroot != null && lc.urlroot.length() > 0 ){
-								Database.getConnector().setUrl_root(lc.urlroot);
-							}
-							if( lc.saadadbroot != null && lc.saadadbroot.length() > 0 ){
-								Database.getConnector().setRoot_dir(lc.saadadbroot);
-							}
-							INIT_IN_PROGRESS = false;
-							INIT = true;
-							Repository.sweepReportDir();
-							Messenger.printMsg(Messenger.TRACE, "Ajax interface init done by "+  conf.getServletName());
-						}
-						else {
-							INIT_IN_PROGRESS = false;
-							INIT = true;
-							Messenger.printMsg(Messenger.TRACE, "Ajax interface done by saadaservlet.SaadaServlet ");
-
-						}
-					}
-					/*
-					 * ComSaadaServletpulsory to restart after a failure
-					 */
-					Database.get_connection().setAutoCommit(true);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/* (non-Javadoc)
@@ -116,10 +58,9 @@ public class SaadaServlet extends HttpServlet {
 	public void destroy() {
 		Messenger.printMsg(Messenger.TRACE, "Close connection");
 		try {
-			Database.getConnector().getJDBCConnection().close();
-		} catch (FatalException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
+			if( Database.getConnector() != null && Database.getConnector().getJDBCConnection() != null )
+					Database.getConnector().getJDBCConnection().close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		super.destroy();
@@ -249,7 +190,13 @@ public class SaadaServlet extends HttpServlet {
 			res.setHeader("Content-Encoding", "zip");
 			s_product = product_path.replaceAll("(?i)(\\.zip$)", "");
 		}
-
+		/*
+		 * Put the default filename to lower case to help tools using filename suffix  to identify
+		 * their types
+		 */
+		String fileName = ( proposedFilename != null && proposedFilename.length() > 0 )? proposedFilename
+				: f.getName().toLowerCase();
+		
 		if( s_product.toLowerCase().endsWith(".htm") || s_product.toLowerCase().endsWith(".html") ) {
 			res.setContentType("text/html;charset=ISO-8859-1");
 		} else if( s_product.toLowerCase().endsWith(".pdf")  ) {
@@ -273,12 +220,7 @@ public class SaadaServlet extends HttpServlet {
 		} else  {
 			res.setContentType("application/octet-stream");
 		}
-		if( proposedFilename != null && proposedFilename.length() > 0 ) {
-			res.setHeader("Content-Disposition", "attachment; filename=\""+ proposedFilename + "\"");
-		}
-		else {
-			res.setHeader("Content-Disposition", "attachment; filename=\""+ f.getName() + "\"");
-		}
+		res.setHeader("Content-Disposition", "inline; filename=\""+ fileName + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
 		res.setHeader("Pragma", "no-cache" );
@@ -342,73 +284,4 @@ public class SaadaServlet extends HttpServlet {
 		return retour;
 	}
 
-
-	/**
-	 * Look at the file dbname.txt located at application root.
-	 * Take the DBname, the url_root and the debug mode from this file.
-	 * That is used to have multiple webapps dealing with the same DB (debig mode e.g.)
-	 * @author laurent
-	 *
-	 */
-	class LocalConfig{
-		private String db_name = null;
-		private String urlroot = null;
-		private String saadadbroot = null;
-		
-		LocalConfig()  throws Exception{
-			File f = new File(base_dir + "dbname.txt");
-			if( f.exists() ) {
-				Messenger.printMsg(Messenger.TRACE, "file dbname.txt found at webapp root");
-				BufferedReader fr = new BufferedReader(new FileReader(f));
-				String buff;
-				while( (buff = fr.readLine()) != null ) {
-					if( buff.trim().startsWith("#") ) {
-						continue;
-					}
-					else if( buff.matches("saadadbname=" + RegExp.DBNAME)) {
-						String retour =  buff.trim().split("=")[1];
-						Messenger.printMsg(Messenger.TRACE, "read DB name: " + retour);
-						db_name = retour;
-					}
-					else if( buff.matches("urlroot=.*")) {
-						String retour =  buff.trim().split("=")[1];
-						Messenger.printMsg(Messenger.TRACE, "readURLRoot: " + retour);
-						this.urlroot = retour;
-						Database.setUrl_root(this.urlroot);
-					}
-					else if( buff.matches("logfile=.*")) {
-						String retour =  buff.trim().split("=")[1];
-						if( "none".equalsIgnoreCase(retour) ) {
-							return;
-						} else if( "default".equals(retour) ) {
-							retour = System.getProperty("catalina.home") + File.separator + "logs" + File.separator + app_dir + ".log";
-						} else if( !retour.startsWith(File.separator) ) {
-							retour = System.getProperty("catalina.home") + File.separator + "logs" + File.separator + retour;
-						}
-						Messenger.printMsg(Messenger.TRACE, "set log file: " + retour);
-						Messenger.init(retour);
-					}
-					else if( buff.matches("saadadbroot=.*")) {
-						String retour =  buff.trim().split("=")[1];
-						Messenger.printMsg(Messenger.TRACE, "saadadbroot: " + retour);
-						this.saadadbroot = retour;
-					}
-					else if( "securedownload=true".equalsIgnoreCase(buff.trim())) {
-						Messenger.printMsg(Messenger.TRACE, "Set download product in secure mode");
-						SaadaServlet.secureDownlad = true;
-					}
-					else if( "debug=on".equalsIgnoreCase(buff.trim())) {
-						Messenger.debug_mode = true;
-					}
-				}
-				if( db_name.length() > 0 ) {
-					return;
-				}
-
-			}
-			Messenger.printMsg(Messenger.TRACE, "Take webapp root name as DB name");
-			db_name = (new File(getServletContext().getRealPath("/"))).getName();
-		}
-
-	}
 }

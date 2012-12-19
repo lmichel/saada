@@ -115,7 +115,8 @@ abstract public class DefaultPreviews {
 					break;
 				}
 			}
-			return "<A border=0 target=blank TITLE='Show real size' href='javascript:void(0);' onclick='changeLocation(\"getproduct?oid=" + oid + extParam + "\");'>" 
+			return "<A border=0 target=blank TITLE='Show real size' href='javascript:void(0);' onclick='Modalinfo.iframePanel(\"getproduct?oid=" 
+			+ oid + extParam + "\");'>" 
 			+ vproduct + "</A>";	
 
 		} catch (SaadaException e) {}
@@ -123,25 +124,29 @@ abstract public class DefaultPreviews {
 	}
 
 	public static String getSpecSAMP(long oid) {
-		return ("<a  title='Send a spectra to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendSpectra(\"" + oid + "\");'></a>");
+		return ("<a  title='Send a spectra to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendOid(\"" 
+				+ oid + "\");'></a>");
 	}
 
 	public static String getTopcatSAMP(long oid) throws FatalException {
 		if( SaadaServlet.secureDownlad ) {
-			return ("<a  title='Send a VOTable to SAMP (restricted)' href='javascript:void(0);' class=dl_securesamp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getSecureDownloadURL(true) + "\");'></a>");
+			return ("<a  title='Send a VOTable to SAMP (restricted)' href='javascript:void(0);' class=dl_securesamp onclick='sampView.fireSendOid(\"" 
+					+  oid + "\");'></a>");
 		} else {
-			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendTapDownload(\"" +  Database.getCache().getObject(oid).getDownloadURL(true) + "\");'></a>");
+			return ("<a  title='Send a VOTable to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendOid(\"" 
+					+  oid + "\");'></a>");
 		}
 	}
 
 	public static String getAladinSAMP(long oid){
-		return ("<a title='Send an image to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.fireSendImage(\"" + oid + "\");'></a>");
+		return ("<a title='Send an image to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendOid(\"" 
+				+ oid + "\");'></a>");
 	}
 	
 	public static String getSkyAtSAMP(long oid) throws FatalException{
 		Position si =  (Position)(Database.getCache().getObject(oid));
-		return ("<a title='Send a position to SAMP' href='javascript:void(0);' class=dl_samp onclick='sampView.firePointatSky(\"" 
-				+ DefaultFormats.getHMSCoord(si.getPos_ra_csa(), si.getPos_dec_csa()) + "\");'></a>");
+		return ("<a title='Send a position to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendSkyat(" 
+				+ si.getPos_ra_csa() + ", " + si.getPos_dec_csa() + ");'></a>");
 	}
 
 	/**
