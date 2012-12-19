@@ -372,22 +372,35 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	/**
+	 * Returns the counterparts of the instance by the relation
+	 * Take the current time in hundreds of ms as lock
 	 * @return
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
 	public long[] getCounterparts(String rel_name) throws FatalException {
-		long owner = (new Date()).getTime();
-		LongCPIndex ind = (LongCPIndex) Database.getCacheindex().getCorrIndex(rel_name, owner);
+		return getCounterparts(rel_name, ((new Date()).getTime())/100);
+	}
+	/**
+	 * Returns the counterparts of the instance by the relation
+	 * @param rel_name   name of the relation
+	 * @param lock       Relationship index lock
+	 * @return
+	 * @throws FatalException
+	 */
+	public long[] getCounterparts(String rel_name, long lock) throws FatalException {
+		LongCPIndex ind = (LongCPIndex) Database.getCacheindex().getCorrIndex(rel_name, lock);
+		if( ind == null ) {
+			FatalException.throwNewException(SaadaException.FILE_ACCESS, "Returned index is null");
+		}
 		long[] ret =  ind.getLongCP(this.oidsaada);
-		Database.getCacheindex().freeIndexes(owner);
+		Database.getCacheindex().freeIndexes(lock);
 		/*
 		 * If there are no CP, the index returns null
 		 */
 		if( ret == null ) {
 			return new long[0];
-		}
-		else {
+		} else {
 			return ret;
 		}
 	}

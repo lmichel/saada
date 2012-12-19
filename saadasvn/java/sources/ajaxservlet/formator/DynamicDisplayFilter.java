@@ -45,6 +45,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	protected OidsaadaResultSet resultSet;
 	private StoredFilter sf;
 	protected boolean anyCollAtt = false;
+	protected long sessionId; // used to lock relationship indexes
 
 	/**
 	 * creates a DisplayFilter from a StoredFilter
@@ -98,6 +99,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				}
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
+	 */
+	public void setSessionId(long sessionId) {
+		this.sessionId = sessionId;
 	}
 
 
@@ -260,14 +268,15 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add("<span>No index!!</span>");
 				continue;
 			}
-			int nbcounter = si.getCounterparts(rel).length;
+			long[] cpts = si.getCounterparts(rel, this.sessionId);
+			int nbcounter = cpts.length;
 			switch (nbcounter) {
 			case 0 : 
 				retour.add("<span>No link</span>");
 				break;
 			case 1 :
 
-				long counterpart = (si.getCounterparts(rel))[0];
+				long counterpart = cpts[0];
 				SaadaInstance instance = Database.getCache().getObject(counterpart);
 
 				int tmpcat = SaadaOID.getCategoryNum(counterpart);

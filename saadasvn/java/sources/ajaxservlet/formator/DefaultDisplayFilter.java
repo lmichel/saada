@@ -40,6 +40,7 @@ Serializable {
 
 	protected MetaClass mc = null;
 	protected MetaCollection metacoll;
+	protected long sessionId; // used to lock relationship indexes
 	
 	public String toString() {
 		String retour;
@@ -85,6 +86,12 @@ Serializable {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
+	 */
+	public void setSessionId(long sessionId) {
+		this.sessionId = sessionId;
+	}
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DisplayFilter#setOId(long)
 	 */
@@ -203,7 +210,7 @@ Serializable {
 					break;
 				case 1:
 
-					long counterpart = (si.getCounterparts(rel))[0];
+					long counterpart = (si.getCounterparts(rel, this.sessionId))[0];
 					int tmpcat = SaadaOID.getCategoryNum(counterpart);
 					switch (tmpcat) {
 					case (Category.IMAGE):

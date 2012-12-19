@@ -1,7 +1,6 @@
 package ajaxservlet.accounting;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -10,7 +9,6 @@ import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
-import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import ajaxservlet.formator.DisplayFilter;
 
@@ -26,7 +24,7 @@ public class QueryContext implements Serializable {
 	transient OidsaadaResultSet resultSet;
 	transient private DisplayFilter colfmtor;
 
-	public QueryContext( String query, DisplayFilter colfmtor) throws Exception {
+	public QueryContext( String query, DisplayFilter colfmtor, String sessionId) throws Exception {
 		this.query = query;
 		this.colfmtor = colfmtor;
 		Pattern p = Pattern.compile(".*Limit\\s+[0-9]+\\s*", Pattern.DOTALL);
@@ -34,6 +32,13 @@ public class QueryContext implements Serializable {
 			Messenger.printMsg(Messenger.WARNING, "Query truncated to 10000");
 			this.query += " Limit 10000";
 		}
+		long session;
+		try {
+			session = Long.parseLong(sessionId);
+		} catch(NumberFormatException e) {
+			session = sessionId.hashCode();
+		}
+		colfmtor.setSessionId(session);
 		this.executeQuery();
 	}
 

@@ -28,6 +28,12 @@ public interface DisplayFilter {
 	public void setOId(long oidsaada) throws FatalException;
 	
 	/**
+	 * The filter could need the session id to lock relationship indexes
+	 * @param sessionId
+	 */
+	public void setSessionId(long sessionId);
+	
+	/**
 	 * Set the metaclass it has to work on. Used when
 	 * there is no specific oid
 	 * @param mc

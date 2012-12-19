@@ -115,12 +115,11 @@ public class SaadaRelation extends SaadaDMBrik {
     		return 0;
     	}
      	long[] cp = ind.getLongCP(oid);
-    	if( cp == null ) {
-    		SaadaDB.getCacheIndex().freeIndexes(owner);
+		SaadaDB.getCacheIndex().freeIndexes(owner);
+   	    if( cp == null ) {
     		return 0;
     	}
     	else {
-    		SaadaDB.getCacheIndex().freeIndexes(owner);
     		return cp.length;
     	}
     }

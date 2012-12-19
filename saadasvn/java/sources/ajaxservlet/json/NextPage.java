@@ -67,8 +67,7 @@ public class NextPage extends SaadaServlet {
 			JsonUtils.teePrint(out,"     ]");
 			JsonUtils.teePrint(out,"}");
 		} catch (Exception e) {
-			reportJsonError(request, response, e);		}
-
-
+			reportJsonError(request, response, e);
+		}
 	}
 }
