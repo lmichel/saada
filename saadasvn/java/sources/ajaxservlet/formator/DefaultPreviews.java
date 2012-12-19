@@ -69,7 +69,7 @@ abstract public class DefaultPreviews {
 			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
 
 		} else {
-			return "<a title='Download the product file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
+			return "<a title='Download the product file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='Modalinfo.iframePanel(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
 		}
 	}
 
