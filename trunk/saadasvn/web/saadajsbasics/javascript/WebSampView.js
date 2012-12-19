@@ -398,7 +398,7 @@ jQuery
 		};		
 		var fireLaunchHub = function(name, url) {
 			setLoadIcon();
-			Location.download(url);
+			Location.changeLocation(url);
 			setIvoaIcon();
 			//setTimeout("webSampView.fireRegisterToHubAttempt();", 1000);
 		};
