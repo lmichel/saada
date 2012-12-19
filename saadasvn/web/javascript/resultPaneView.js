@@ -648,7 +648,7 @@ jQuery
 		this.overPosition = function(pos) {
 //			simbadToBeOpen = true;
 //			setTimeout("if( simbadToBeOpen == true ) openSimbadModalinfo.(\"" + pos + "\");", 1000);
-			Modalinfo.openSimbad(pos );
+			Modalinfo.simbad(pos );
 		};
 		this.outPosition = function() {
 			simbadToBeOpen = false;
