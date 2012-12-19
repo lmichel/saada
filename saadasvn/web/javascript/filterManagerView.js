@@ -358,8 +358,8 @@ jQuery.extend({
 		};
 
 		this.showFilterPreview = function (filter, collection, category) {
-			if (collection == 'Any-Collection') alert('Preview of the filter set for the category ' + category + '\nfrom any collection\n\n' + filter);
-			else alert('Preview of the filter set for the category ' + category + '\nfrom the collection ' + collection + '\n\n' + filter);
+			if (collection == 'Any-Collection') Modalinfo.info('Preview of the filter set for the category ' + category + '\nfrom any collection\n\n' + filter);
+			else Modalinfo.info('Preview of the filter set for the category ' + category + '\nfrom the collection ' + collection + '\n\n' + filter);
 		}
 		;
 		this.updateSpeFields = function (index, sfname) {

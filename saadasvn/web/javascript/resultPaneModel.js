@@ -44,7 +44,7 @@ jQuery.extend({
 				query = "Select " + treepath[1] + ' From * In ' + treepath[0];
 			}
 			else {
-				alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: processTreeNodeEvent.js)");
+				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: processTreeNodeEvent.js)");
 				return;
 			}
 			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
@@ -57,11 +57,11 @@ jQuery.extend({
 		this.processSaadaQLQueryEvent = function(query){
 			current_query = query;
 			if( !query.startsWith('Select') ) {
-				alert( "\"" + query + "\" SaadaQL query does not look very good !");
+				Modalinfo.info( "\"" + query + "\" SaadaQL query does not look very good !");
 			}
 			else {
 				$('#data_processing').attr("visiblity", "visible");
-				showProcessingDialog("Run query");
+				Processing.show("Run query");
 				$.ajax({
 					url: "runquery",
 					dataType: 'json',
@@ -69,13 +69,13 @@ jQuery.extend({
 					data : { query : query },
 					type: 'GET',
 					error: function(XMLHttpRequest, textStatus, errorThrown){
-						hideProcessingDialog();
+						Processing.hide();
 						$('#data_processing').attr("visiblity", "hidden");
 						that.notifyJobFailed(textStatus);
 					},
 					success: function(json){			
-						hideProcessingDialog();
-//						alert(treePath)
+						Processing.hide();
+//						Modalinfo.info(treePath)
 						dataJSONObject = json;
 						$('#data_processing').attr("visiblity", "hidden");
 						$('#showquerymeta').unbind('click');
@@ -89,10 +89,10 @@ jQuery.extend({
 
 		this.processShowRecord= function(oid, panelToOpen){
 			var jsdata ="";
-			showProcessingDialog("Get Object description");
+			Processing.show("Get Object description");
 			$.getJSON("getobject", {oid: oid }, function(data) {
-				hideProcessingDialog();
-				if( processJsonError(data, "") ) {
+				Processing.hide();
+				if( Processing.jsonError(data, "") ) {
 					return;
 				}
 
@@ -109,7 +109,7 @@ jQuery.extend({
 
 		this.processShowMeta= function(){
 			var jsdata ="";
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			var tp;
 			if( treePath.length == 3 ) {
 				tp = treePath[2];
@@ -118,8 +118,8 @@ jQuery.extend({
 				tp = treePath[0] + "." + treePath[1];
 			}
 			$.getJSON("getmeta", {query: "aharray", name:tp }, function(data) {
-				hideProcessingDialog();
-				if( processJsonError(data, "get metadata") ) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get metadata") ) {
 					return;
 				}
 				else {
@@ -134,7 +134,7 @@ jQuery.extend({
 
 		this.processShowMetaNode= function(treepath){
 			var jsdata ="";
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			var tp;
 			if( treepath.length == 3 ) {
 				tp = treepath[2];
@@ -143,8 +143,8 @@ jQuery.extend({
 				tp = treepath[0] + "." + treepath[1];
 			}
 			$.getJSON("getmeta", {query: "aharray", name:tp }, function(data) {
-				hideProcessingDialog();
-				if( processJsonError(data, "get attribute handlers") ) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get attribute handlers") ) {
 					return;
 				}
 				else {
@@ -158,17 +158,16 @@ jQuery.extend({
 		}
 
 		this.processShowSources= function(oid){
-			showProcessingDialog("Get Object detail");
+			Processing.show("Get Object detail");
 			$.getJSON("getobject", {target: "sources", oid: oid }, function(data) {
-				hideProcessingDialog();
-				if( processJsonError(data, "get catalogue sources") ) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get catalogue sources") ) {
 					return;
 				}
 				else {
 					jsdata = data;
 					saadaqlView.fireTreeNodeEvent(jsdata.treepath.split('.'), false, jsdata.query);	
 					sapView.fireTreeNodeEvent(jsdata.treepath.split('.'));	
-					tapView.fireTreeNodeEvent(jsdata.treepath.split('.'));	
 					setTitlePath(jsdata.treepath.split('.'));
 					that.notifyTableInitDone(jsdata);	
 					/*
@@ -178,26 +177,26 @@ jQuery.extend({
 					current_query = jsdata.query;
 				}
 			});
-		}
+		};
 
 		this.processShowSimbad= function(coord){
 			window.open("simbad?coord=" + escape(coord), "Simbad");
-		}
+		};
 
 		this.processPreviousRecord= function(){
 			var jsdata ="";
 			if( histo_ptr <= 0 ) {
-				alert("end of the historic reached");
+				Modalinfo.info("end of the historic reached");
 				return;
 			}
 			histo_ptr --;
 
 			var oid = histo[histo_ptr];
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			if( oid.match(/^meta:\s*/)) {
 				$.getJSON("getmeta", {query: "aharray", name:oid.split(' ')[1] }, function(data) {
-					hideProcessingDialog();
-					if( processJsonError(data, "get attribute handlers") ) {
+					Processing.hide();
+					if( Processing.jsonError(data, "get attribute handlers") ) {
 						return;
 					}
 					else {
@@ -209,8 +208,8 @@ jQuery.extend({
 			}
 			else {
 				$.getJSON("getobject", {oid: oid }, function(data) {
-					hideProcessingDialog();
-					if( processJsonError(data, "get object") ) {
+					Processing.hide();
+					if( Processing.jsonError(data, "get object") ) {
 						return;
 					}
 					else {
@@ -225,16 +224,16 @@ jQuery.extend({
 		this.processNextRecord= function(){
 			var jsdata ="";
 			if( histo_ptr >= (histo.length - 1) ) {
-				alert("end of the historic reached");
+				Modalinfo.info("end of the historic reached");
 				return;
 			}
 			histo_ptr ++;
 			var oid = histo[histo_ptr];
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			if( oid.match(/^meta:\s*/)) {
 				$.getJSON("getmeta", {query: "aharray", name:oid.split(' ')[1] }, function(data) {
-					hideProcessingDialog();
-					if( processJsonError(data, "get attribute handlers") ) {
+					Processing.hide();
+					if( Processing.jsonError(data, "get attribute handlers") ) {
 						return;
 					}
 					else {
@@ -246,8 +245,8 @@ jQuery.extend({
 			}
 			else {
 				$.getJSON("getobject", {oid: oid }, function(data) {
-					hideProcessingDialog();
-					if( processJsonError(data, "get object") ) {
+					Processing.hide();
+					if( Processing.jsonError(data, "get object") ) {
 						return;
 					}
 					else {
@@ -264,10 +263,10 @@ jQuery.extend({
 
 			var jsdata ="";
 			var param = {oid: poid, relation: relationname};
-			showProcessingDialog("Get object detail");
+			Processing.show("Get object detail");
 			$.getJSON("getobject", param , function(data) {
-				hideProcessingDialog();
-				if( processJsonError(data, "get object") ) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get object") ) {
 					return;
 				}
 				else {
@@ -275,24 +274,23 @@ jQuery.extend({
 					that.notifyCounterpartsLoaded(jsdata);
 				}
 			});
-		}
+		};
 		this.downloadVOTable = function() {
 			/*
 			 * The mode (TAP/SaadaQL is detected by anaylsing the title
 			 */
 			var titlepath = $('#titlepath').html().split('&gt;');
 			if( titlepath.length == 3 && titlepath[1] == 'Job' ) {
-				tapView.fireDownloadVotable(titlepath[2]);
 			}
 			else {
 				var url = "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=votable";
 				window.open(url, 'DL VOTable');
 			}
-		}
+		};
 		this.downloadFITS = function() {
 			var url = "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=fits";
 			window.open(url, 'DL FITS');
-		}
+		};
 		this.downloadZip = function() {
 			if( that.zipJob != null ) {
 				that.zipJob.kill();
@@ -301,7 +299,7 @@ jQuery.extend({
 			if( $("#qlimit").val().match(/^[0-9]*$/) ) {
 				limit = $("#qlimit").val();
 			}
-			logMsg("zipasync");
+			Out.info("zipasync");
 
 			$.ajax({
 				type: 'POST',
@@ -314,14 +312,14 @@ jQuery.extend({
 				},
 				dataType: "xml",
 				error: function(xmljob, textStatus, errorThrown) {
-					alert("Error: " + textStatus);
+					Modalinfo.info("Error: " + textStatus);
 				},
 				dataType: "xml"
 			});
 		}
 		this.checkZipCompleted = function(jobid) {
 			if( that.zipJob == null ) {
-				alert("Error: Job seems to get lost ??");			
+				Modalinfo.info("Error: Job seems to get lost ??");			
 				$(".zip").css("background-image", "url(images/zip_32.png)");								
 			}
 			else {
@@ -331,7 +329,7 @@ jQuery.extend({
 					that.zipJob.init(data);
 					var phase = that.zipJob.phase;
 					if( phase == 'COMPLETED') {
-						logMsg(that.zipJob.results);
+						Out.info(that.zipJob.results);
 						var url = that.zipJob.results[0];
 						if( confirm("Do you want to downlad the ZIP ball") ) {
 							location = url;
@@ -342,11 +340,11 @@ jQuery.extend({
 						$(".zip").css("background-image", "url(images/zip_32.png)");					
 					}
 					else if( phase == 'EXECUTING') {
-						logMsg("executing");
+						Out.info("executing");
 						setTimeout("resultPaneView.fireCheckZipCompleted(\"cocu\");", 1000);
 					}
 					else {
-						alert("Zip job is in an unexpected status: " + phase + ": canceled");
+						Modalinfo.info("Zip job is in an unexpected status: " + phase + ": canceled");
 						that.zipJob.kill();
 						$(".zip").css("background-image", "url(images/zip_32.png)");					
 					}
@@ -365,7 +363,6 @@ jQuery.extend({
 			 */
 			var titlepath = $('#titlepath').html().split('&gt;');
 			if( titlepath.length == 3 && titlepath[1] == 'Job' ) {
-				tapView.fireSampBroadcast(titlepath[2]);
 			}
 			else {
 
@@ -379,7 +376,7 @@ jQuery.extend({
 					sampView.fireSendCSQuery(current_query);
 				}
 				else {
-					alert("Samp messages are not  implemented for this data category.")
+					Modalinfo.info("Samp messages are not  implemented for this data category.")
 				}
 			}
 

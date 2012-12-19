@@ -24,29 +24,29 @@ jQuery.extend({
 		this.fireAddJobResult = function(element, query) {
 			var elementClass = element.attr('class');
 			if( elementClass == 'dl_cart' ) {
-				showProcessingDialog("Selection " + getTreePathAsKey() + " added to the cart");
+				Processing.show("Selection " + getTreePathAsKey() + " added to the cart");
 				element.attr('class', 'dl_cart_added');
-				logMsg("add " + getTreePathAsKey() + " <> " + query);
+				Out.info("add " + getTreePathAsKey() + " <> " + query);
 				$.each(listeners, function(i){
 					listeners[i].controlAddJobResult(getTreePathAsKey(), query);
 				});
 			} else {
-				showProcessingDialog("Selection " + getTreePathAsKey() + " remove from the cart");
+				Processing.show("Selection " + getTreePathAsKey() + " remove from the cart");
 				element.attr('class', 'dl_cart');
 				$.each(listeners, function(i){
 					listeners[i].controlRemoveJobResult(getTreePathAsKey(), query);
 				});
 			}
 			this.resetJobControl();
-			setTimeout('hideProcessingDialog();', 1000);
-//			logMsg(element.attr('class'));
-//			loggedAlert("Query result  added to the cart");
+			setTimeout('Processing.hide();', 1000);
+//			Out.info(element.attr('class'));
+//			Modalinfo.info("Query result  added to the cart");
 //			$.each(listeners, function(i){
 //				listeners[i].controlAddJobResult(getTreePathAsKey(), query);
 //			});
 		};
 		this.fireRemoveJobResult = function(nodekey, jobid) {
-			logMsg("remove " + nodekey() + " <> " + jobid);
+			Out.info("remove " + nodekey() + " <> " + jobid);
 			
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveJobResult(nodekey, jobid);
@@ -57,7 +57,7 @@ jQuery.extend({
 			var elementClass = element.attr('class');
 			if( elementClass == 'dl_cart' || elementClass == 'dl_securecart') {
 				element.attr('class', elementClass + '_added');
-				logMsg("add " + name + " <> " + oid);
+				Out.info("add " + name + " <> " + oid);
 				$.each(listeners, function(i){
 					listeners[i].controlAddUrl(name, oid);
 				});
@@ -70,13 +70,13 @@ jQuery.extend({
 				this.resetJobControl();
 			}
 //
-//			loggedAlert("File  " + name + " added to the cart");
+//			Modalinfo.info("File  " + name + " added to the cart");
 //			$.each(listeners, function(i){
 //				listeners[i].controlAddUrl(name, oid);
 //			});
 		};
 		this.fireRemoveUrl = function(nodekey, url) {
-			logMsg("removeURL " + nodekey() + " <> " + jobid);
+			Out.info("removeURL " + nodekey() + " <> " + jobid);
 
 			$.each(listeners, function(i){
 				listeners[i].controlRemoveUrl(nodekey, url);
@@ -133,7 +133,7 @@ jQuery.extend({
 		};
 		
 		this.resetJobControl= function() {
-			logMsg("resetJobControl");
+			Out.info("resetJobControl");
 			$.each(listeners, function(i){
 				listeners[i].controlResetZipjob();
 			});			
@@ -180,7 +180,7 @@ jQuery.extend({
 				break;
 			}			
 			if( empty ) {
-				loggedAlert("Empty Shopping Cart");
+				Modalinfo.info("Empty Shopping Cart");
 				return;
 			}
 
@@ -246,7 +246,7 @@ jQuery.extend({
 				break;
 			}			
 			if( empty ) {
-				loggedAlert("Empty Shopping Cart");
+				Modalinfo.info("Empty Shopping Cart");
 				$.modal.close();
 				return;
 			}

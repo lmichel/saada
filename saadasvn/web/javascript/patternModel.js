@@ -38,10 +38,10 @@ jQuery.extend({
 			 * Get the description of the ending collection
 			 */
 			params = {query: "ah", name:  relation.ending_collection + '.' +relation.ending_category };
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
-				hideProcessingDialog();
-				if( processJsonError(jsondata, "Can not get data tree node description") ) {
+				Processing.hide();
+				if( Processing.jsonError(jsondata, "Can not get data tree node description") ) {
 					return;
 				}
 				for( i=0 ; i<jsondata.attributes.length ; i++ ) {
@@ -65,10 +65,10 @@ jQuery.extend({
 			if( classe != 'any') {
 				params = {query: "ah", name:  classe };
 
-				showProcessingDialog("Fetching meta data");
+				Processing.show("Fetching meta data");
 				$.getJSON("getmeta", params, function(jsondata) {
-					hideProcessingDialog();
-					if( processJsonError(jsondata, "Can not get data tree node description") ) {
+					Processing.hide();
+					if( Processing.jsonError(jsondata, "Can not get data tree node description") ) {
 						return;
 					}
 					for( i in classAttributesHandlers) {
@@ -111,7 +111,7 @@ jQuery.extend({
 				 */
 				var kwname  = uidraggable.find(".item").text();
 				if( cardqualeditors[kwname] ) {
-					alert("Constraint '" + kwname + "'can only be applied once");
+					Modalinfo.info("Constraint '" + kwname + "'can only be applied once");
 					return;
 				}
 				var ah      = {"nameattr": kwname, "type": "double"};

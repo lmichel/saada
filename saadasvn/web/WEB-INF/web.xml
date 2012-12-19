@@ -8,6 +8,12 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 	
+	<listener>
+      <listener-class>
+	  ajaxservlet.InitBaseAtStart
+	  </listener-class>
+    </listener>
+	
 	<security-role>
 		<description>reader</description>
 		<role-name>reader</role-name>

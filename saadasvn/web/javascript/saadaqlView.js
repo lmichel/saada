@@ -43,7 +43,7 @@ jQuery.extend({
 		};
 		this.fireInputCoordEvent = function(){
 			if( $("#coordval").val() == '' || $("#radiusval").val() == '' ) {
-				alert("Both position and radius must be given");
+				Modalinfo.info("Both position and radius must be given");
 				return;
 			}
 			$.each(listeners, function(i){
@@ -79,10 +79,10 @@ jQuery.extend({
 			});
 		};
 		this.showProgressStatus = function(){
-			alert("Job in progress");
+			Modalinfo.info("Job in progress");
 		};
 		this.showFailure = function(textStatus){
-			alert("view: " + textStatus);
+			Modalinfo.info("view: " + textStatus);
 		}	;	
 		this.displayResult= function(dataJSONObject){
 		};

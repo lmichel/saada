@@ -49,14 +49,14 @@ jQuery.extend({
 				params = {query: "ah", name:  collection + '.' +category };
 			}
 			else {
-				loggedAlert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
+				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
 				return;
 			}
-			showProcessingDialog("Fetching meta data");
+			Processing.show("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
-				hideProcessingDialog();
-				if( processJsonError(jsondata, "Can not get data tree node description") ) {
-					hideProcessingDialog();
+				Processing.hide();
+				if( Processing.jsonError(jsondata, "Can not get data tree node description") ) {
+					Processing.hide();
 					return;
 				}
 				editors = new Array();

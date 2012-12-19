@@ -36,7 +36,7 @@ jQuery.extend({
 				category = treepath[1];
 			}
 			else {
-				alert( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js");
+				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js");
 				return;
 			}
 			$("#siapscope").html("Service scope: Not Set");
@@ -77,25 +77,25 @@ jQuery.extend({
 		 */
 		this.processSIAPQueryEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#siapcoordval').val());
 			if( pos == '' ) {
-				alert("No position given");
+				Modalinfo.info("No position given");
 				return;
 			}
 			var rad = jQuery.trim($('#siapradiusdval').val());
 			if( rad == '' ) {
-				alert("No size given");
+				Modalinfo.info("No size given");
 				return;
 			}
 			if( isNaN(rad) ) {
-				alert("Size must be  numeric");
+				Modalinfo.info("Size must be  numeric");
 				return;
 			}
 			if( rad < 0 || rad > 1) {
-				alert("Size must be  between 0 and 1");
+				Modalinfo.info("Size must be  between 0 and 1");
 				return;
 			}
 			var url = base_url + 'siaservice?collection=[' + collection + ']&';
@@ -116,14 +116,14 @@ jQuery.extend({
 					WebSampConnector.sendMsg('table.load.votable','SaadaSIAP','image' ,url,'');
 				}
 				else {
-					alert('No active SAMP connnection');
+					Modalinfo.info('No active SAMP connnection');
 				}
 			}
 		}
 
 		this.processSIAPCapabilityEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#siapcoordval').val());
@@ -156,25 +156,25 @@ jQuery.extend({
 		 */
 		this.processSSAPQueryEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#ssapcoordval').val());
 			if( pos == '' ) {
-				alert("No position given");
+				Modalinfo.info("No position given");
 				return;
 			}
 			var rad = jQuery.trim($('#ssapradiusdval').val());
 			if( rad == '' ) {
-				alert("No size given");
+				Modalinfo.info("No size given");
 				return;
 			}
 			if( isNaN(rad) ) {
-				alert("Size must be  numeric");
+				Modalinfo.info("Size must be  numeric");
 				return;
 			}
 			if( rad < 0 || rad > 1) {
-				alert("Size must be  between 0 and 1");
+				Modalinfo.info("Size must be  between 0 and 1");
 				return;
 			}
 			
@@ -196,14 +196,14 @@ jQuery.extend({
 					WebSampConnector.sendMsg('table.load.votable','SaadaSSA','Spectra' ,url,'');
 				}
 				else {
-					alert('No active SAMP connnection');
+					Modalinfo.info('No active SAMP connnection');
 				}
 			}
 		}
 
 		this.processSSAPCapabilityEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#ssapcoordval').val());
@@ -237,25 +237,25 @@ jQuery.extend({
 		 */
 		this.processCSQueryEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#cscoordval').val());
 			if( pos == '' ) {
-				alert("No position given");
+				Modalinfo.info("No position given");
 				return;
 			}
 			var rad = jQuery.trim($('#csradiusdval').val());
 			if( rad == '' ) {
-				alert("No size given");
+				Modalinfo.info("No size given");
 				return;
 			}
 			if( isNaN(rad) ) {
-				alert("Size must be  numeric");
+				Modalinfo.info("Size must be  numeric");
 				return;
 			}
 			if( rad < 0 || rad > 1) {
-				alert("Size must be  between 0 and 1");
+				Modalinfo.info("Size must be  between 0 and 1");
 				return;
 			}
 			var url = base_url + 'conesearch?collection=[' + collection + ']&';
@@ -270,14 +270,14 @@ jQuery.extend({
 					WebSampConnector.sendMsg('table.load.votable','SaadaCS','Table entries' ,url,'');
 				}
 				else {
-					alert('No active SAMP connnection');
+					Modalinfo.info('No active SAMP connnection');
 				}
 			}
 		}
 
 		this.processCSCapabilityEvent= function(){
 			if( !collection ) {
-				alert("No data collection has been selected");
+				Modalinfo.info("No data collection has been selected");
 				return;				
 			}
 			var pos = jQuery.trim($('#cspcoordval').val());

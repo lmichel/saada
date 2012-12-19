@@ -15,7 +15,7 @@ jQuery.extend({
 		var results='';
 
 		this.init = function(xmlSummary) {
-	       // logMsg((new XMLSerializer()).serializeToString(xmlSummary));
+	       // Out.info((new XMLSerializer()).serializeToString(xmlSummary));
 	        /*
 	         * The pair Chrome 15 and after and Jquery 1.7 do not support NS in XML
 	         * parsing. We must feed the find() function selector including both NS an no NS filed names
@@ -41,11 +41,11 @@ jQuery.extend({
 			    dataType: "xml",
 				url: "cart/zipper/" + that.jobId,
 				success: function(xmljob, status) {
-					loggedAlert("Job " +  that.jobId + " killed");
+					Modalinfo.info("Job " +  that.jobId + " killed");
 					//that.refresh();
 				},
 				error: function(xhr, ajaxOptions, thrownError) {
-					loggedAlert("Zipjob kill failed: Error " +  xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
+					Modalinfo.info("Zipjob kill failed: Error " +  xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
 				}
 			});
 		};
@@ -54,9 +54,9 @@ jQuery.extend({
 			    dataType: "xml",
 				type: 'GET',
 				url: "cart/zipper/" + that.jobId,
-				success: function(xmljob, status) {logMsg("refresh cart job success");that.init(xmljob);},
+				success: function(xmljob, status) {Out.info("refresh cart job success");that.init(xmljob);},
 				error: function(xhr, ajaxOptions, thrownError) {
-					loggedAlert("Zipjob refresh failed: Error " + xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
+					Modalinfo.info("Zipjob refresh failed: Error " + xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
 				}
 			});
 //			$.get("datapack/zipper/" + that.jobId
@@ -68,7 +68,7 @@ jQuery.extend({
 				var url = that.results[0];
 				downloadLocation(url);
 			} else {
-				loggedAlert("No ZIP archive available");
+				Modalinfo.info("No ZIP archive available");
 			}
  		};
 	}

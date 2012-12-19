@@ -110,7 +110,7 @@ var sh = {
 			copyToClipboardConfirmation : 'The code is in your clipboard now',
 			print : 'print',
 			help : '?',
-			alert: 'SyntaxHighlighter\n\n',
+			Dialog.info: 'SyntaxHighlighter\n\n',
 			noBrush : 'Can\'t find brush for: ',
 			brushNotHtmlScript : 'Brush wasn\'t configured for html-script option: ',
 			
@@ -231,7 +231,7 @@ var sh = {
 				}
 				catch(e)
 				{
-					sh.utils.alert(e.message);
+					sh.utils.Dialog.info(e.message);
 				}
 				
 				return false;
@@ -412,11 +412,11 @@ var sh = {
 								return sh.utils.unindent(code);
 							
 						case 'ok':
-							sh.utils.alert(sh.config.strings.copyToClipboardConfirmation);
+							sh.utils.Dialog.info(sh.config.strings.copyToClipboardConfirmation);
 							break;
 							
 						case 'error':
-							sh.utils.alert(args.message);
+							sh.utils.Dialog.info(args.message);
 							break;
 					}
 				};
@@ -605,22 +605,22 @@ var sh = {
 		},
 		
 		/**
-		 * Displays an alert.
+		 * Displays an Dialog.info.
 		 * @param {String} str String to display.
 		 */
-		alert: function(str)
+		Dialog.info: function(str)
 		{
-			alert(sh.config.strings.alert + str)
+			Dialog.info(sh.config.strings.Dialog.info + str)
 		},
 		
 		/**
 		 * Finds a brush by its alias.
 		 *
 		 * @param {String} alias	Brush alias.
-		 * @param {Boolean} alert	Suppresses the alert if false.
+		 * @param {Boolean} Dialog.info	Suppresses the Dialog.info if false.
 		 * @return {Brush}			Returns bursh constructor if found, null otherwise.
 		 */
-		findBrush: function(alias, alert)
+		findBrush: function(alias, Dialog.info)
 		{
 			var brushes = sh.vars.discoveredBrushes,
 				result = null
@@ -650,8 +650,8 @@ var sh = {
 			
 			result = sh.brushes[brushes[alias]];
 
-			if (result == null && alert != false)
-				sh.utils.alert(sh.config.strings.noBrush + alias);
+			if (result == null && Dialog.info != false)
+				sh.utils.Dialog.info(sh.config.strings.noBrush + alias);
 			
 			return result;
 		},
@@ -1266,7 +1266,7 @@ sh.HtmlScript = function(scriptBrushName)
 	
 	if (scriptBrush.htmlScript == null)
 	{
-		sh.utils.alert(sh.config.strings.brushNotHtmlScript + scriptBrushName);
+		sh.utils.Dialog.info(sh.config.strings.brushNotHtmlScript + scriptBrushName);
 		return;
 	}
 	

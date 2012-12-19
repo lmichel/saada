@@ -27,7 +27,7 @@ jQuery.extend({
 				var queries = entry.queries;
 				for( var i=0 ; i<queries.length ; i++ ) {
 					if( queries[i].uri == query ) {
-						loggedAlert("Query Result already in the cart", "input Error");
+						Modalinfo.info("Query Result already in the cart", "input Error");
 						return;
 					}
 				}
@@ -38,12 +38,12 @@ jQuery.extend({
 			var entry;
 			var sjobid = unescape(jobid);
 			if( (entry = cartData[nodekey]) == undefined ) {
-				loggedAlert("There is no data associated with node " + nodekey + " in the cart", "input Error");
+				Modalinfo.info("There is no data associated with node " + nodekey + " in the cart", "input Error");
 			}
 			else {
 				var queries = entry.queries;
 				for( var i=0 ; i<queries.length ; i++ ) {
-					logMsg(queries[i].uri + " " + sjobid );
+					Out.info(queries[i].uri + " " + sjobid );
 					if( queries[i].uri == sjobid ) {
 						queries.splice(i,1);
 						if( queries.length == 0 && entry.files.length == 0 ) {
@@ -52,7 +52,7 @@ jQuery.extend({
 						return;
 					}
 				}
-				loggedAlert("Job " + nodekey + "." + jobid+ " not found in from the cart", "input Error");
+				Modalinfo.info("Job " + nodekey + "." + jobid+ " not found in from the cart", "input Error");
 			}			
 		};
 		this.addUrl = function(name, oid) {
@@ -66,7 +66,7 @@ jQuery.extend({
 				var files = entry.files;
 				for( var i=0 ; i<files.length ; i++ ) {
 					if( files[i].uri == oid ) {
-						loggedAlert("This url of node " + nodekey  + " is already in the cart", "input Error");
+						Modalinfo.info("This url of node " + nodekey  + " is already in the cart", "input Error");
 						return;
 					}
 				}
@@ -76,7 +76,7 @@ jQuery.extend({
 		this.removeUrl = function(nodekey, url) {
 			var entry;
 			if( (entry = cartData[nodekey]) == undefined ) {
-				loggedAlert("There is no data associated with node " + nodekey + " in the cart", "input Error");
+				Modalinfo.info("There is no data associated with node " + nodekey + " in the cart", "input Error");
 			}
 			else {
 				var files = entry.files;
@@ -90,7 +90,7 @@ jQuery.extend({
 						return;
 					}
 				}
-				loggedAlert("URL not found in from the cart", "input Error");
+				Modalinfo.info("URL not found in from the cart", "input Error");
 			}						
 		};
 
@@ -142,7 +142,7 @@ jQuery.extend({
 			for( var i=0 ; i<files.length ; i++ ) {
 				if( files[i].uri == uri ) {
 					files[i].relations = relValue;
-					logMsg("Relations set to "  + checked + " in " + dataType  + "/" + dataType + "/" +  uri);
+					Out.info("Relations set to "  + checked + " in " + dataType  + "/" + dataType + "/" +  uri);
 					return;
 				}
 			}
@@ -170,7 +170,7 @@ jQuery.extend({
 				},
 				dataType: "xml",
 				error: function(xmljob, textStatus, errorThrown) {
-					alert("Error: " + textStatus);
+					Modalinfo.info("Error: " + textStatus);
 				}
 			});
 		};
@@ -221,7 +221,7 @@ jQuery.extend({
 
 		this.archiveDownload = function() {
 			if( that.zipJob == null ) {
-				loggedAlert("There is no active ZIP builder");
+				Modalinfo.info("There is no active ZIP builder");
 			}
 			else {
 				that.zipJob.download();
@@ -229,7 +229,7 @@ jQuery.extend({
 		};		
 		
 		this.resetZipjob = function() {
-			logMsg("Reset Zipjob");
+			Out.info("Reset Zipjob");
 			zipJob = null ;
 		};
 
