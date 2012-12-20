@@ -15,6 +15,7 @@
  * - jquery-ui
  * - jquery.alerts
  * - jquery.datatables
+ * - jquery.prints
  * 
  * Laurent Michel 20/12/2012
  */
@@ -69,7 +70,11 @@ Printer = function() {
 	 * Public functions
 	 */
 	var getPrintButton = function(divToPrint) {
-		var retour =  "<a href='#' onclick='printer.printDiv(\"" + divToPrint + "\");' class='printer'></a>";
+		var retour =  "<a href='#' onclick='Printer.printDiv(\"" + divToPrint + "\");' class='printer'></a>";
+		return retour;
+	};
+	var getSmallPrintButton = function(divToPrint) {
+		var retour =  "<a href='#' onclick='Printer.printDiv(\"" + divToPrint + "\");' class='dlprinter'></a>";
 		return retour;
 	};
 	var insertPrintButton = function(divToPrint, divHost) {
@@ -89,6 +94,7 @@ Printer = function() {
 	 */
 	var pblc = {};
 	pblc.getPrintButton  = getPrintButton;
+	pblc.getSmallPrintButton  = getSmallPrintButton;
 	pblc.insertPrintButton = insertPrintButton;
 	pblc.printDiv = printDiv;
 	return pblc;
@@ -197,12 +203,15 @@ Modalinfo = function() {
 	};			
 
 	var info = function (title, content) {
+		Out.info("Info Popup " + content);
 		buildStandardPopup("infologo", getTitle("INFO", title, content), formatMessage(getTitle(title,content)));
 	};
 	var confirm = function(title, content) {
+		Out.info("Confirm Popup " + content);
 		buildStandardPopup("confirmlogo",getTitle("CONFIRMATION", title, content), formatMessage(getTitle(title,content)));
 	};
 	var error = function (title, content) {
+		Out.info("Error Popup " + content);
 		buildStandardPopup("warninglogo", getTitle("ERROR", title, content), formatMessage(getTitle(title,content)));
 	};
 	var simbad = function (pos) {
@@ -335,7 +344,7 @@ Out = function() {
 		console.log(level + ": " + msg);
 		for( var i=3 ; i<ls.length ; i++ ) {
 			console.log(ls[i]);
-			if( ! withTrace) break;
+			if( i > 3 && ! withTrace) break;
 		}
 	};
 	/*

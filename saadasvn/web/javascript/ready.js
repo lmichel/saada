@@ -172,6 +172,7 @@ $().ready(function() {
 	 */
 	$("#relationselect").change(function() {
 		$("#relationselect option:selected").each(function () {
+			console.log($(this).text());
 			var text = $(this).text();
 			if( !text.startsWith("--") ) {
 				saadaqlView.fireSelectRelationEvent(text);
@@ -342,5 +343,27 @@ $().ready(function() {
 	}); // end of ajax
 
 	Location.confirmBeforeUnlaod();
+	/*
+	 * Set the debug mode from tha parameters
+	 */
+	var debug  =  (RegExp('debug=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+	Out.debugModeOff;
+	Out.traceModeOff;
+	
+	if( debug != null ) {
+		if( debug == "on" ) {
+			Out.debugModeOn;
+			Out.traceModeOff;
+		} else if( debug == "withtrace" ) {
+			Out.debugModeOn;
+			Out.traceModeOn;
+		} else if( debug == "traceonly" ) {
+			Out.debugModeOff;
+			Out.traceModeOn;
+		} 
+		openOnSource = true;
+		resultPaneView.fireOpenOnSource(srcId, obsId);
+	}
+
 
 });
