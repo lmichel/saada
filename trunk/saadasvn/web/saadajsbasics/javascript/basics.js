@@ -287,7 +287,7 @@ Processing  = function() {
 					+ '<div id="saadaworkingContent" style="position:absolute; top:50%;height: 45px; margin-top:-22px;'
 					+ ' width: 300px;  margin-left: -150px; left: 50%; background-color: white; opacity: 1;z-index: ' 
 					+ (zIndexProcessing+1) + ';'
-					+ ' border:5px solid lightBlue; border-radius: 5px"></div>');
+					+ ' border:5px solid #DDD; border-radius: 5px"></div>');
 		}
 		$('#saadaworkingContent').html("<img style='padding: 5px; vertical-align:middle' src=images/ajax-loader.gif></img><span class=help>" 
 				+ message + "</span>");
