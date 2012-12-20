@@ -269,6 +269,7 @@ jQuery
 
 			var table = '';
 			var histo = '';
+			
 
 			if (limit != 'NoHisto') {
 				if (limit != 'MaxLeft') {
@@ -285,9 +286,10 @@ jQuery
 				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
 				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
 			}
-
+			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
 			table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
 			+ '</span></h2>';
+			
 			if (jsdata.links.length > 0) {
 				table += "<div style='overflow: hidden;border-width: 0;'>";
 				for (var i = 0; i < jsdata.links.length; i++) {
@@ -408,7 +410,7 @@ jQuery
 		};
 
 		this.showMeta = function(jsdata, limit) {
-			if( Processing.jsonError(data, "FATAL ERROR: Cannot show object detail: ") ) {
+			if( Processing.jsonError(jsdata, "FATAL ERROR: Cannot show object detail: ") ) {
 				return;
 			}
 
@@ -430,6 +432,7 @@ jQuery
 				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
 				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
 			}
+			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
 
 			var title;
 			if (jsdata.classLevel != null) {
@@ -446,14 +449,12 @@ jQuery
 			table += '<h2> ' + histo + ' DETAIL <span>' + title
 			+ '</span></h2>';
 			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
-//			table += "<p id=nativemeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Mapped Data </p>";
 			table += "<div class='detaildata'>";
 			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
 			table += "</div>";
 
 			if (jsdata.classLevel != null) {
 				table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
-//				table += "<p id=mappedmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Native Data </p>";
 				table += "<div class='detaildata'>";
 				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
 				table += "</div>";
@@ -461,7 +462,6 @@ jQuery
 
 			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
 				table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
-//				table += "<p id=startingmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Relationships starting from it </p>";
 				table += "<div class='detaildata'>";
 				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
 				table += "</div>";
@@ -469,7 +469,6 @@ jQuery
 
 			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
 				table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
-//				table += "<p id=endingmeta class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500);\"><span id=spear>></span> Relationships ending at it </p>";
 				table += "<div class='detaildata'>";
 				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
 				table += "</div>";
@@ -545,22 +544,6 @@ jQuery
 				}
 			});
 		};
-		this.showTapResult = function(jid, jsdata) {
-			setTitlePath([ 'TAP', 'Job', jid ]);
-			var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\"></table>";
-			$("#resultpane").html(table);
-
-			$('#datatable').dataTable({
-				"aoColumns" : jsdata.aoColumns,
-				"aaData" : jsdata.aaData,
-				"sDom" : '<"top">lrt<"bottom">ip',
-				"bPaginate" : true,
-				"aaSorting" : [],
-				"bSort" : false,
-				"bFilter" : true
-			});
-
-		};
 		this.displayResult = function(dataJSONObject) {
 		};
 		this.initTable = function(dataJSONObject, query) {
@@ -604,6 +587,7 @@ jQuery
 			}
 			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
+			$('div#datatable_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
 			that.fireStoreHisto(query);
 		};
 		/*

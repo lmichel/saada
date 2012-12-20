@@ -835,10 +835,10 @@ div#treepane {
 }*/
 
 div#treedisp {
-	height: 80%;
+	height: 100%;
 	overflow: auto;
 	border-width: 0px;
-	width: auto;
+	width: 100%;
 }
 /*
 div#resultpane {

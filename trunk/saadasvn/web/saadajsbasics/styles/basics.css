@@ -108,12 +108,27 @@ a.dlivoalogo  {
 	padding: 8px 0 4px 28px;
 	background:transparent url(../icons/dl_ivoa.png) center left no-repeat;
 }
+a:hover.dlivoalogo {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
 a.dldownload  {	
 	overflow: visible;
 	padding: 8px 0 4px 28px;
 	background:transparent url(../icons/dl_download.png) center left no-repeat;
 }
 a:hover.dldownload  {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+a.dlprinter  {	
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0 9px 23px;
+	background:transparent url(../icons/dl_print.png) center left no-repeat;
+}
+a:hover.dlprinter  {	
 	filter: alpha(opacity = 50);
 	opacity: 0.5;
 }

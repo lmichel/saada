@@ -7,6 +7,7 @@ import java.util.Set;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.relationship.DoubleCPIndex;
 import saadadb.relationship.KeyIndex;
@@ -43,7 +44,15 @@ public class CacheManagerRelationIndex {
 	public KeyIndex getCorrIndex(String relation, long owner_key) throws  FatalException{
 		return getIndex(relation, "corr", owner_key);
 	}
-	
+	/**
+	 * @param relation
+	 * @param owner_key
+	 * @throws FatalException
+	 */
+	public void freeCorrIndex(String relation, long owner_key) throws  FatalException{
+		freeIndex(relation, "corr", owner_key);
+	}
+
 	/**
 	 * @param relation
 	 * @param owner_key
@@ -52,7 +61,14 @@ public class CacheManagerRelationIndex {
 	public KeyIndex getCardIndex(String relation, long owner_key) throws  FatalException{
 		return getIndex(relation, "card", owner_key);
 	}
-	
+	/**
+	 * @param relation
+	 * @param owner_key
+	 * @throws FatalException
+	 */
+	public void freeCardIndex(String relation, long owner_key) throws  FatalException{
+		freeIndex(relation, "card", owner_key);
+	}
 	/**
 	 * @param relation
 	 * @param qualifier
@@ -62,7 +78,14 @@ public class CacheManagerRelationIndex {
 	public KeyIndex getQualIndex(String relation, String qualifier, long owner_key) throws  FatalException{
 		return getIndex(relation, "qual." + qualifier, owner_key);
 	}
-	
+	/**
+	 * @param relation
+	 * @param owner_key
+	 * @throws FatalException
+	 */
+	public void freeQualIndex(String relation, long owner_key) throws  FatalException{
+		freeIndex(relation, "qual", owner_key);
+	}
 	/**
 	 * @param relation
 	 * @param Qualifier
@@ -72,7 +95,15 @@ public class CacheManagerRelationIndex {
 	public KeyIndex getCorrClassIndex(String relation, String classe, long owner_key) throws  FatalException{
 		return getIndex(relation, "corrclass." + classe, owner_key);
 	}
-	
+	/**
+	 * @param relation
+	 * @param classe
+	 * @param owner_key
+	 * @throws FatalException
+	 */
+	public void freeCorrClassIndex(String relation, String classe, long owner_key) throws  FatalException{
+		freeIndex(relation,  "corrclass." + classe, owner_key);
+	}
 	/**
 	 * @param relation
 	 * @param qualifier
@@ -82,6 +113,16 @@ public class CacheManagerRelationIndex {
 	public KeyIndex getCorrClassQualIndex(String relation, String classe, String qualifier, long owner_key) throws  FatalException{
 		return getIndex(relation, "classqual." + classe + "." + qualifier, owner_key);
 	}
+	/**
+	 * @param relation
+	 * @param classe
+	 * @param qualifier
+	 * @param owner_key
+	 * @throws FatalException
+	 */
+	public void freeCorrClassQualIndex(String relation, String classe, String qualifier, long owner_key) throws  FatalException{
+		freeIndex(relation,   "classqual." + classe + "." + qualifier, owner_key);
+	}
 
 	/**
 	 * @param name_index
@@ -90,17 +131,31 @@ public class CacheManagerRelationIndex {
 	synchronized private KeyIndex getIndex(String relation, String extension, long owner_key) throws  FatalException{
 		KeyIndex ri=null;
 		String name_index = relation + "." + extension + "." + ".sri";
+		/*
+		 * The index is already in the cache
+		 */
 		if( (ri = (KeyIndex)(index.get(name_index))) != null){
 			/*
-			 * index busy
+			 * if index busy: waits forever it is freed
 			 */
-			if( ri.take(owner_key) == false ) {
-				return null;
+			boolean noticed = false;
+			while( ri.take(owner_key) == false ) {
+				if( !noticed ) {
+					Messenger.printMsg(Messenger.WARNING, "Index " + name_index + " busy: enter a waiting pool");
+					noticed = true;
+				}
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "While waiting on index " + name_index + " : " + e.getMessage());
+				}
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "return index <" + name_index + ">");
 			return ri;
-		}
-		else {
+			/*
+			 * else load it first
+			 */
+		} else {
 			if( index.size() >= size ) {
 				if( !removeOlderIndex() ) {
 					Messenger.printMsg(Messenger.WARNING, "Cache full and no free index!!");
@@ -109,22 +164,39 @@ public class CacheManagerRelationIndex {
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Add index <" + name_index + ">");
 			ri = this.loadIndex(relation, extension);    	
-			//ri.scan();
-
 			ri.take(owner_key);
 			index.put(name_index, ri);
 			return ri;
 		}		
 	}
-	
+
+	/**
+	 * Free the given index owned by owner_key
+	 * @param relation
+	 * @param extension
+	 * @param owner_key
+	 * @return
+	 * @throws FatalException
+	 */
+	synchronized public void freeIndex(String relation, String extension, long owner_key) throws  FatalException{
+		KeyIndex ri=null;
+		String name_index = relation + "." + extension + "." + ".sri";
+		if( (ri = (KeyIndex)(index.get(name_index))) == null ) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+					, "Owner " + owner_key + " attempt to free index " + name_index + " which is not in the cache");
+		} else if( ri.getOwner_key() == owner_key ){
+			ri.give();
+		} else {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+					, "Owner " + owner_key + " attempt to free index " + name_index + " which has been taken by owner " + ri.getOwner_key());
+		}	
+	}
 	/**
 	 * @param owner_key
 	 */
 	synchronized public int freeIndexes(long owner_key) {
-		Iterator it = this.index.keySet().iterator();
 		int ret = 0 ;
-		while( it.hasNext()) {
-			KeyIndex ki = this.index.get(it.next());
+		for( KeyIndex ki: this.index.values() ) {
 			if( ki.getOwner_key() == owner_key ) {
 				Messenger.printMsg(Messenger.DEBUG, "Free index <" + ki.getName() + ">");
 				ret++;
@@ -166,10 +238,10 @@ public class CacheManagerRelationIndex {
 	 */
 	public void flush() {
 		int cpt = 0;
-	    int cpt_max = this.size;
-	    /*
-	     * Cpt to avoid a forever loop in a faulty situation
-	     */
+		int cpt_max = this.size;
+		/*
+		 * Cpt to avoid a forever loop in a faulty situation
+		 */
 		while( this.removeOlderIndex() && cpt < cpt_max ) cpt++;
 	}
 	/**
@@ -213,7 +285,7 @@ public class CacheManagerRelationIndex {
 	public int getCurrentSize() {
 		return index.size();
 	}
-	
+
 	public void scan() {
 		Iterator it = this.index.keySet().iterator();
 		System.out.println("------------------------");
@@ -228,13 +300,13 @@ public class CacheManagerRelationIndex {
 	public static void main(String[] args) throws  Exception{
 		testCache();
 	}
-	
+
 	public static void testCache() throws  Exception{
 		CacheManagerRelationIndex cm = new CacheManagerRelationIndex(5, 
 				Database.getRoot_dir() + Database.getSepar()+ "indexation" + Database.getSepar()
-				);
+		);
 		String[] relations = Database.getCachemeta().getRelation_names();
-		
+
 		while( true ) {
 			for( int r=0 ; r<relations.length ; r++ ) {
 				MetaRelation mr = Database.getCachemeta().getRelation(relations[r]);
@@ -242,10 +314,10 @@ public class CacheManagerRelationIndex {
 				String[] cs =  Database.getCachemeta().getClassesOfCollection(mr.getSecondary_coll(), mr.getSecondary_category());
 				KeyIndex ki;
 				System.out.println("*** Relation " + relations[r]);
-				
+
 				for(int cpt=0 ; cpt<2 ; cpt++ ) {
 					long owner_key = (new Date()).getTime();
-					
+
 					if( (ki = cm.getCorrIndex(relations[r], owner_key)) == null ) {
 						System.out.println("getCorrIndex failed");
 						System.exit(1);
@@ -262,7 +334,7 @@ public class CacheManagerRelationIndex {
 							System.exit(1);
 						}
 						ki.give();
-						
+
 					}
 					for( int i=0 ; i<cs.length; i++ ) {
 						if( (ki = cm.getCorrClassIndex(relations[r], cs[i], owner_key)) == null ) {
@@ -276,12 +348,12 @@ public class CacheManagerRelationIndex {
 								System.exit(1);
 							}
 							ki.give();
-							
+
 						}
 					}
 				}
 			}
 		}
 	}	
-	
+
 }

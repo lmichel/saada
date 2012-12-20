@@ -140,16 +140,18 @@ jQuery
 			removeAllItems();				
 			
 			var callback = (requete.type == "oid" )? "webSampView.fireSendFileToClient"
-					:(requete.type == "voreport") ? "webSampView.fireSendUrlToClient"
-					: "webSampView.fireSendSkyatToClient";
+					 :(requete.type == "voreport") ? "webSampView.fireSendUrlToClient"
+					 :(requete.type == "skyat") ?"webSampView.fireSendSkyatToClient"
+					 : "";
 			var found = false;
 			for (ident in sampClients) {
 				found = true;
 				if (sampClients[ident].meta && sampClients[ident].subs) {
-					var meta = sampClients[ident].meta;
+					var meta = sampClients[ident].meta;					
+					var onclick = (callback == "")? "Modalinfo.info(&quot;No message to send&quot;);": callback + "(\"" +  ident + "\", \"" + requete.param + "\");";
 					addItem("<img class=clickableicon align=bottom style='height: 32px; border: 0px;' src='"
 							+ meta["samp.icon.url"]
-							+ "' onclick='" + callback + "(\"" +  ident + "\", \"" + requete.param + "\");'>"
+							+ "' onclick='" + onclick + "'>"
 							+ "<span class=help> <b>"
 							+ meta["samp.name"]
 							+ "</b> "

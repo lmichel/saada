@@ -394,7 +394,7 @@ public abstract class SaadaInstance implements DMInterface {
 			FatalException.throwNewException(SaadaException.FILE_ACCESS, "Returned index is null");
 		}
 		long[] ret =  ind.getLongCP(this.oidsaada);
-		Database.getCacheindex().freeIndexes(lock);
+		Database.getCacheindex().freeCorrIndex(rel_name, lock);
 		/*
 		 * If there are no CP, the index returns null
 		 */

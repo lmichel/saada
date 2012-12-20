@@ -29,7 +29,6 @@ jQuery.extend({
 			cardqualeditors = new Array();
 			const_key = 1;
 			that.notifyFormReset();
-
 			/*
 			 * Store the current relation
 			 */
@@ -147,12 +146,11 @@ jQuery.extend({
 		 */
 		this.processRemoveConstRef= function(ahname) {
 			delete cardqualeditors[ahname];
-		}
+		};
 		this.processRemoveAllConstRef= function() {
 			kweditors = new Array();
 			cardqualeditors = new Array();
-		}
-
+		};
 		this.updateQuery = function() {
 			var pattern = "    matchPattern { " + relation.name ;
 			$("#patternconst span").each(function() {
