@@ -245,15 +245,9 @@ jQuery
 		};
 
 		this.fireOpenDescription = function() {
-			if ($('#detaildiv').length == 0) {
-				$(document.documentElement)
-				.append(
-				"<div id=detaildiv style='width: 99%; display: none;'><div style='color: black;' id=description></div></div>");
-			} else {
-				$('#detaildiv').html("<div style='color: black;' id=description></div>");
-			}
+			Modalpanel.open("<div style='color: black;' id=description></div>");
 			$('#description').load("help/description.html");
-			$('#detaildiv').modal();
+			Modalpanel.resize();
 		};
 		this.showProgressStatus = function() {
 			Modalinfo.info("Job in progress");
@@ -325,9 +319,9 @@ jQuery
 				.append(
 				"<div id=detaildiv style='width: 99%; display: none;'></div>");
 			}
-			$('#detaildiv').html(table);
+			Modalpanel.open(table);
 
-			/*
+		    /*
 			 * Click on relation relation title bars: 
 			 * on the bar: open/close the data panel
 			 * on tne Info button: display relation info
@@ -364,8 +358,8 @@ jQuery
 				"aaSorting" : [],
 				"bSort" : false,
 				"bFilter" : true
-			});
-			$('#detaildiv').modal();
+			});			
+			Modalpanel.resize(table);
 			if( numPanelToOpen > 1 ) {
 				jQuery(".detaildata").each(function(i) {
 					$(this).hide();
@@ -479,8 +473,7 @@ jQuery
 				.append(
 				"<div id=detaildiv style='width: 99%; display: none;'></div>");
 			}
-			$('#detaildiv').html(table);
-
+			Modalpanel.open(table);
 			$('#detailtable')
 			.dataTable(
 					{
@@ -536,8 +529,7 @@ jQuery
 						});
 			}
 
-			$('#detaildiv').modal();
-
+			Modalpanel.resize();
 			jQuery(".detaildata").each(function(i) {
 				if (i > 0) {
 					$(this).hide();

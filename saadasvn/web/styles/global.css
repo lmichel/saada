@@ -4,6 +4,7 @@
 @font-face {
 	font-family: Lane;
 	src: url(Lane.ttf) format("truetype");
+	font-size: small;
 }
 
 html{

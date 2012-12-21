@@ -1,7 +1,10 @@
-
-
-
-
+/**
+ * This file function is invoked atfer the DOM tree is built.
+ * It creates all MVC and bind some DOM node with relevant event handlers
+ * 
+ * @author michel
+ * @version $Id$
+ */
 var resultPaneView;
 var saadaqlView ;
 var sapView ;
@@ -9,24 +12,19 @@ var webSampView ;
 var filterManagerView;
 var cartView;
 
-/*
- * To be set from a JSP 
- */
 var base_url = '';
 var booleansupported = false;
 /*
- * JQuery object managing splitters
+ * JQuery object managing splitter panels
  */
 var layoutPane;
 
 $().ready(function() {
-
 	base_url = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + window.location.pathname;
 	/*
 	 * layout plugin, requires JQuery 1.7 or higher
 	 * Split the bottom div in 3 splitters divs.
 	 */		
-	//$('#container').layout();
 	layoutPane = $('#accesspane').layout();
 	/*
 	 * Connect the URL passed as parameter
@@ -112,8 +110,6 @@ $().ready(function() {
 		}
 
 	});
-
-
 	/*
 	 * Drop area for individual constraints on KWs
 	 */
@@ -158,7 +154,6 @@ $().ready(function() {
 			filterManagerView.fireRelationsEvent(ui.draggable);		
 		}
 	});
-
 	/*
 	 * Coordinates input
 	 */
@@ -181,7 +176,6 @@ $().ready(function() {
 		});
 	});
 	$("#cpclassselect").change(function() {
-		var retour = new Array();
 		$("#cpclassselect option:selected").each(function () {
 			var text = $(this).text();
 			if( !text.startsWith("--") ) {
@@ -242,9 +236,6 @@ $().ready(function() {
 			}
 		});
 	});
-
-
-
 	/*
 	 * Get the base URL of the site. 
 	 * Importatnt to avoid cross access issues
@@ -342,28 +333,6 @@ $().ready(function() {
 		});
 	}); // end of ajax
 
-	Location.confirmBeforeUnlaod();
-	/*
-	 * Set the debug mode from tha parameters
-	 */
-	var debug  =  (RegExp('debug=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
-	Out.debugModeOff;
-	Out.traceModeOff;
-	
-	if( debug != null ) {
-		if( debug == "on" ) {
-			Out.debugModeOn;
-			Out.traceModeOff;
-		} else if( debug == "withtrace" ) {
-			Out.debugModeOn;
-			Out.traceModeOn;
-		} else if( debug == "traceonly" ) {
-			Out.debugModeOff;
-			Out.traceModeOn;
-		} 
-		openOnSource = true;
-		resultPaneView.fireOpenOnSource(srcId, obsId);
-	}
-
-
+	//Location.confirmBeforeUnlaod();
+	//Out.setdebugModeFromUrl();
 });
