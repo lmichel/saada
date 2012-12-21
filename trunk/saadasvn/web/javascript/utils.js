@@ -97,14 +97,6 @@ function getTreePathAsKey() {
 	return retour;
 }
 
-function openModal(title, content) {
-	if( $('#detaildiv').length == 0){		
-		$(document.documentElement).append("<div id=detaildiv style='width: 99%; display: none;'></div>");
-	}
-	$('#detaildiv').html(content);
-	$('#detaildiv').modal();
-}
-
 function switchArrow(id) {
 	var image = $('#'+id+'').find('img').attr('src');
 	if (image == 'images/tdown.png') {

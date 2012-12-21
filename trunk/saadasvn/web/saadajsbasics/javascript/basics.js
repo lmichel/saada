@@ -15,6 +15,7 @@
  * - jquery-ui
  * - jquery.alerts
  * - jquery.datatables
+ * - jquery.simplemodal
  * - jquery.prints
  * 
  * Laurent Michel 20/12/2012
@@ -51,18 +52,23 @@ if(!String.prototype.trim){
 	} ;
 };
 
-/**
+/*****************************************************
+ * Some global variables
+ */
+
+/*
  * make sure that Modalinfo are on top of modals
  * and that Processing widows are on top of Modalinfo
  */
 var zIndexModalinfo = 3000;
 var zIndexProcessing = 4000;
-
-/**
+/*
  * Types supported by the previewer based on iframes
  */
 var previewTypes = ['text', 'html', 'votable', 'gif', 'png', 'jpeg', 'pdf', 'xml'];
-/**
+
+
+/*****************************************************************************************************
  * Object managing printer features
  */
 Printer = function() {
@@ -80,10 +86,10 @@ Printer = function() {
 	var insertPrintButton = function(divToPrint, divHost) {
 		$("#" + divHost).append(printer.getPrintButton(divToPrint));
 	};
-	var printDiv = function(divId) {
-		var ele = $('#' + divId);
+	var printDiv = function(divSelect) {
+		var ele = $('#' + divSelect);
 		if( !ele ) {
-			Modalinfo.error("PRINT: the element " + divId +" doesn't exist");
+			Modalinfo.error("PRINT: the element " + divSelect +" doesn't exist");
 		} else {
 			Out.infoMsg(ele);
 			ele.print();
@@ -100,16 +106,91 @@ Printer = function() {
 	return pblc;
 }();
 
-/**
+/*****************************************************************************************************
+ * Object opening a modal window centered on the screen and not draggable.
+ * The content of the box must often be set after the box is open in order to hav it accessible in the DOM.
+ * In this case the real size must be computed again after the content is totally set.
+ * -open: open the modal box
+ * -resize: resize it according its real content.
+ */
+Modalpanel = function() {
+	var divId = 'modalpanediv';
+	var divSelect = '#' + divId;
+	var height = 0;
+	var width = 0;
+	/*
+	 * Private methods
+	 */
+	var initDiv = function() {
+		if( $(divSelect).length != 0){	 
+			$(divSelect).remove();
+		}		
+		$(document.documentElement).append("<div id=" + divId + " style='overflow: auto;display: none; width: auto;height: auto;'></div>");
+	}; 
+	/*
+	 * Public methods
+	 */
+	var open = function(innerDivHtml, modalParams) {
+		Out.debug("Open Modal Box");
+		initDiv();
+		$(divSelect).html(innerDivHtml);
+		/*
+		 * Build the modal
+		 */
+		$(divSelect).modal(modalParams);	
+		resize();
+	};
+	var resize = function(){
+		var heighthMax = $(window).height()*0.9;
+		var widthMax = $(window).width()*0.9;
+		/*
+		 * Take the size of the content
+		 */
+		height =  $(divSelect).height();
+		width = $(divSelect).width();
+		/*
+		 * Limit the size of the container to the maximum size allowed
+		 */
+		if(height > heighthMax) {
+			$(divSelect).css("height", heighthMax);
+			height = heighthMax;
+			console.log("hlimit " + heighthMax+ " " + height);
+		}
+		if(width > widthMax) {
+			$(divSelect).css("width", widthMax);
+			width = widthMax;
+		}			
+		Out.debug("Resize Modal Box to " +  (8+ width) + "px x " + (8+ height) + "px");
+		/*
+		 * Resize it to fits the size constraints
+		 * Add 8px for the borders: avoids double scroll-bars
+		 */
+		var smc = $("#simplemodal-container");
+		smc.css('height', (8+ height)); 
+		smc.css('width', (8+ width)); 
+		$(window).trigger('resize.simplemodal'); 
+	};
+	/*
+	 * exports
+	 */
+	var pblc = {};
+	pblc.open = open;
+	pblc.resize = resize;
+	return pblc;
+
+}();
+/*****************************************************************************************************
  * Object opening any types of dialog boxes
  */
 Modalinfo = function() {
+	var divId     = 'modalinfodiv';
+	var divSelect = '#' + divId;
 	/*
 	 * Privates functions
 	 */
 	var initDiv = function() {
-		if( $('#diagdiv').length == 0){		
-			$(document.documentElement).append("<div id=diagdiv style='display: none; width: auto; hight: auto;'></div>");
+		if( $(divSelect).length == 0){		
+			$(document.documentElement).append("<div id=" + divId + " style='display: none; width: auto; hight: auto;'></div>");
 		}		
 	}; 
 	var formatMessage = function(message) {
@@ -118,10 +199,10 @@ Modalinfo = function() {
 	};
 	var buildStandardPopup = function(logoClass, title, formatedMessage) {
 		initDiv();
-		$('#diagdiv').html("<div class=" + logoClass 
+		$(divSelect).html("<div class=" + logoClass 
 				+ "></div><div style='display: inline;'><span class=help>" 
 				+ formatedMessage+ "</span></div>");
-		$('#diagdiv').dialog({  maxWidth: '50%'
+		$(divSelect).dialog({  maxWidth: '50%'
 			, title: title
 			, resizable: false
 			,  modal: true
@@ -141,8 +222,8 @@ Modalinfo = function() {
 	var dataPanel = function (title, htmlContent, closeHandler) {
 		initDiv();
 		var chdl = ( closeHandler == null )? function(ev, ui)  {}: closeHandler;
-		$('#diagdiv').html(htmlContent);
-		$('#diagdiv').dialog({ modal: true
+		$(divSelect).html(htmlContent);
+		$(divSelect).dialog({ modal: true
 			, resizable: false
 			, width: 'auto'
 				, title: title 			                      
@@ -187,8 +268,8 @@ Modalinfo = function() {
 							+ " <a class=dldownload href='#' onclick='Location.changeLocation(&quot;" 
 							+ url + "&quot;, &quot;" + fileName 
 							+ "&quot;);' title='Open in a new tab or download' style='display: inline-block;'></a></span>";
-						$('#diagdiv').html("<iframe src=" + url + " style='width: 98%; height: 98%;'></iframe>");
-						$('#diagdiv').dialog({ modal: true
+						$(divSelect).html("<iframe src=" + url + " style='width: 98%; height: 98%;'></iframe>");
+						$(divSelect).dialog({ modal: true
 							, resizable: true
 							, width: ($(window).width()*0.9)
 							, height: ($(window).height()*0.9)
@@ -263,7 +344,7 @@ Modalinfo = function() {
 	return pblc;
 }();
 
-/**
+/*****************************************************************************************************
  * Object showing AJAX callback progress
  */
 Processing  = function() {
@@ -327,10 +408,10 @@ Processing  = function() {
 	return pblc;
 }();
 
-/**
+/*****************************************************************************************************
  * Console functions:
- * *Msg(): print out a message with the caller stacl position
- * *Trace(): print out a message with the caller stack trace
+ * -Msg(): print out a message with the caller stacl position
+ * -Trace(): print out a message with the caller stack trace
  */
 Out = function() {
 	var debugMode = false;
@@ -340,11 +421,23 @@ Out = function() {
 	 */
 	var printMsg = function (level, msg, withTrace) {
 		var e = new Error('dummy');	
-		var ls = e.stack.split("\n");
 		console.log(level + ": " + msg);
-		for( var i=3 ; i<ls.length ; i++ ) {
-			console.log(ls[i]);
-			if( i > 3 && ! withTrace) break;
+		var stk;
+		/*
+		 * IE ignore the stack property of the object Error
+		 */
+		if( (stk = e.stack) ) {
+			var ls = stk.split("\n");
+			/*
+			 * Always display the 4th lines of the stack
+			 * The 3rd is the current line : not relevant
+			 * The 4th refers to the caller
+			 */
+			for( var i=3 ; i<ls.length ; i++ ) {
+				if( i == 3) continue;
+				console.log(ls[i]);
+				if( i > 3 && ! withTrace) break;
+			}
 		}
 	};
 	/*
@@ -380,6 +473,33 @@ Out = function() {
 	var info  =function (msg) {
 		printMsg(" INFO", msg, trace);
 	};
+	var setdebugModeFromUrl = function() {
+		/*
+		 * Set the debug mode from the debug parameters
+		 */
+		var debug  =  (RegExp('debug=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+		Out.debugModeOff;
+		Out.traceModeOff;
+
+		if( debug != null ) {
+			if( debug == "on" ) {
+				Out.info("Set debug on and trace off");
+				Out.debugModeOn();
+				Out.traceOff();
+			} else if( debug == "withtrace" ) {
+				Out.info("Set debug on and trace on");
+				Out.debugModeOn();
+				Out.traceOn();
+			} else if( debug == "traceonly" ) {
+				Out.info("Set debug off and trace on");
+				Out.debugModeOff();
+				Out.traceOn();
+			} else {
+				Modalinfo.info("debug parameter must be either on, withtrace or traceonly. It is ignored for this session.");
+			}
+		}
+	};
+
 	/*
 	 * Exports
 	 */
@@ -394,10 +514,11 @@ Out = function() {
 	pblc.debug        = debug;
 	pblc.traceOn      = traceOn;
 	pblc.traceOff     = traceOff;
+	pblc.setdebugModeFromUrl = setdebugModeFromUrl;
 	return pblc;
 }();
 
-/**
+/*****************************************************************************************************
  * Download class
  */
 Location = function () {
@@ -421,8 +542,7 @@ Location = function () {
 					webSampView.fireUnregister();
 				}
 				return  'WARNING: Reloading or leaving this page will lost the current session';
-			}
-			else {
+			} else {
 				that.authOK = false;
 			}
 		};

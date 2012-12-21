@@ -200,10 +200,7 @@ jQuery.extend({
 			}
 			table += "<br><span>Get the Result</span> <input type=button id=detaildiv_download value='Download Cart' disabled='disabled'>";			
 
-
-			$('#detaildiv').html(table);
-
-			var modalbox = $('#detaildiv').modal();
+			Modalpanel.open(table);
 			that.setTableDiv(cartData);
 
 			$('#detaildiv_clean').click( function() {
@@ -235,6 +232,7 @@ jQuery.extend({
 				$('.zip').css("border", "0px");
 				return false;
 			} );
+			Modalpanel.resize();
 		};
 
 		this.setTableDiv= function(cartData) {

@@ -189,14 +189,7 @@ jQuery.extend({
 			content += "<input type=button OnClick=\"filterManagerView.fireSaveFilter(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Save and apply this filter to the current query\" value=\"Save & Apply\"><br/>";
 			content += "<input type=button OnClick=\"filterManagerView.fireResetFilter(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Delete the custom filter existing for this collection/category\" value=\"Restore Default Filter\">&nbsp;&nbsp;";
 			content += "<input type=button OnClick=\"filterManagerView.fireResetAll(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Delete all custom filters\" value=\"Restore all Default Filters\"></div>";
-
-			if ($('#filterdiv').length == 0) {
-				$(document.documentElement).append("<div id=filterdiv style='width: 99%; display: none;'></div>");
-			}
-
-			$('#filterdiv').html(content);
-
-			$('#filterdiv').modal();
+			Modalpanel.open(content);
 
 			jQuery(".selector").each(function(i) {
 				if (i > 0) {
