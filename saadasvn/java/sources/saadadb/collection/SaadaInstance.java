@@ -1162,6 +1162,14 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setDouble(this, SaadaConstant.DOUBLE);					
 			}
 			break;
+		case DefineType.FIELD_SHORT:
+			try {
+				fld.setShort(this, Short.parseShort(value.replaceAll("\\+", "")));
+			} catch(NumberFormatException e) {
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				fld.setShort(this, SaadaConstant.SHORT);					
+			}
+			break;
 		case DefineType.FIELD_INT:
 			try {
 				fld.setInt(this, Integer.parseInt(value.replaceAll("\\+", "")));
@@ -1200,7 +1208,7 @@ public abstract class SaadaInstance implements DMInterface {
 			break;
 		default:
 			Messenger.printMsg(Messenger.ERROR,
-			"SchemaClassSaada : Unknow type");
+			"SaadaInstance.setInField : Unknow type: " + fld.getType().toString());
 			break;
 		}
 	}
