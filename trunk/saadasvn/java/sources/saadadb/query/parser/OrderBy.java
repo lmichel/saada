@@ -115,6 +115,9 @@ public final class OrderBy{
 	public  String getSQL(String alias){
 		return this.strMatch;
 	}
+	public  String getAttr(){
+		return this.attr;
+	}
 
 
 }

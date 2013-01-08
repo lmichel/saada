@@ -194,7 +194,7 @@ public class Merger {
 				break;
 			}	
 		}
-		/**
+		/*
 		 * Store the list of classes really covered by the query
 		 */
 		covered_classes = new ArrayList<String>();

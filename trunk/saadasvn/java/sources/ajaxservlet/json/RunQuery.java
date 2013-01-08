@@ -62,7 +62,6 @@ public class RunQuery extends SaadaServlet {
 				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,request);
 				UserAccount ac = UserTrap.getUserAccount(request);
 				ac.setQueryContext(new QueryContext(query, colfmtor, ac.getSessionID()));
-				System.out.println(colfmtor.getRawJSON());
 				JSONObject jo = new JSONObject();
 				jo.put("query", query);
 				jo.put("treepath", treepath);

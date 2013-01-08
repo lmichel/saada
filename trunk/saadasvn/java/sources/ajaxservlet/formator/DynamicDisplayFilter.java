@@ -102,6 +102,28 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	}
 	
 	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#addConstrainedColumns(java.util.Set)
+	 */
+	public void addConstrainedColumns(Set<AttributeHandler> ahs){
+		boolean alreadyHere = false;
+		for( AttributeHandler ah: ahs){
+			String na = ah.getNameattr();
+			/*
+			 * Avoid duplicate column
+			 */
+			if( na.equals("namesaada") ) {
+				for( String sf: columns_specialf) {
+					if( sf.equals("Name") || sf.equals(na)){
+						alreadyHere = true;
+					}
+				}
+			}
+			if( !alreadyHere)
+			columns_natcol.add(ah.getNameattr());			
+		}
+		
+	}
+	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
 	 */
 	public void setSessionId(long sessionId) {
