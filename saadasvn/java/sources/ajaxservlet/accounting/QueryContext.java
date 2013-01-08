@@ -39,13 +39,13 @@ public class QueryContext implements Serializable {
 			session = sessionId.hashCode();
 		}
 		colfmtor.setSessionId(session);
-		this.executeQuery();
+		this.executeQuery(colfmtor);
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	private void executeQuery () throws Exception {
+	private void executeQuery (DisplayFilter colfmtor) throws Exception {
 		Query q = new Query();
 		resultSet = q.runBasicQuery(query);
 		colfmtor.setResultSet(resultSet);
@@ -53,6 +53,7 @@ public class QueryContext implements Serializable {
 		for( AttributeHandler ah: q.getUCDColumns()) {
 			colfmtor.addUCDColumn(ah); 
 		}
+		colfmtor.addConstrainedColumns(q.buildListAttrHandPrinc());
 	}
 	
 	public String getQuery() {

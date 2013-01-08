@@ -85,7 +85,12 @@ Serializable {
 			this.setRelations();
 		}
 	}
-
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#addConstrainedColumns(java.util.Set)
+	 */
+	public void addConstrainedColumns(Set<AttributeHandler> ahs){
+		
+	}
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
 	 */

@@ -54,6 +54,13 @@ public interface DisplayFilter {
 	public void addUCDColumn(AttributeHandler ah) ;
 
 	/**
+	 * Add a set of attribute constrained.
+	 * The AH set depends on the query. 
+	 * Must be called after the query has been parsed
+	 * @param ahs
+	 */
+	public void addConstrainedColumns(Set<AttributeHandler> ahs);
+	/**
 	 * Return the names of the columns to be displayed in the result table
 	 * Does not need to match any attribute. 
 	 * A column can be a merge of attributes or a URL (DL link e.g.)

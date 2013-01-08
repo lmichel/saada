@@ -58,8 +58,9 @@ public class SQLLargeQuery extends SQLQuery {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
 			return resultset;
+		
+
 		} catch (Exception e) {
-			this.close();
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);

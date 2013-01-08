@@ -194,9 +194,15 @@ public class Query extends Query_Report{
 			for( String c: this.afClause.getGolumns()) {
 				AttributeHandler ah = mAH.get(c);
 				if( ah != null ) {
-					alAH.add(mAH.get(c));
+					alAH.add(ah);
 				}
 			}
+		}
+		if( this.obClause != null ) {
+				AttributeHandler ah = mAH.get(this.obClause.getAttr());
+				if( ah != null ) {
+					alAH.add(ah);
+			}			
 		}
 		for(String colName:this.merger.getCollectionNames()){
 			//** Add collection attribute
@@ -273,7 +279,7 @@ public class Query extends Query_Report{
 			builders.put("coord", this.wpClause.getSaadaQLConstraint());
 		}
 		if( this.obClause != null ) {
-			builders.put("order", this.obClause.getSaadaQLConstraint());
+			builders.put("orderby", this.obClause.getSaadaQLConstraint());
 		}
 		if( this.wuClause != null ) {
 			for( UCDField field: this.wuClause.getSaadaQLConstraints()) {
@@ -524,7 +530,9 @@ public class Query extends Query_Report{
 
 			System.gc();
 			return  result;
-
+		} catch(SaadaException e) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+			return null;
 		} catch(Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "ERROR running the query: "+ str);
 			e.printStackTrace();
