@@ -1,9 +1,13 @@
 -------------------------------------------------
-Saada1.6.5 README
+Version Saada1.7.0.beat
 
 L. MICHEL
-March 2012
+January 2013
 -------------------------------------------------
+
+---- New Admin tool ------------
+Go in SAAADA_DB_HOME
+run ./admintool
 
 ---- SaadaDB Upgrade -----------
 Install the new Saada distrib

@@ -13,4 +13,4 @@ Fran�ois Xavier PINEAU  (OAS Strasbourg)        SaadaQL improvment
 Gregory Mantelet	    (OAS Strasbourg)	TAP/UWS/ADQL
 Paul Bandzaff	        (IUT Nancy)      	AJAX interface
 Clémentine Frère	    (IUT Nancy)	        AJAX interface
-
+Emilie Werner	       (CESE)	        	Admintoool test
