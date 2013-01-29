@@ -1001,8 +1001,7 @@ public class ArgsParser implements Serializable{
 		else {
 			String retour =  arg.substring(pos+1).trim();
 			if( retour.matches("\\$\\{.*\\}")) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "ant para not set: " + retour);
+				Messenger.printMsg(Messenger.WARNING, "ant parameter not set: " + retour + " ignored");
 				return "";
 			}
 			else {
