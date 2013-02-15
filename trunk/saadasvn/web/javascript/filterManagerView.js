@@ -64,6 +64,11 @@ jQuery.extend({
 				listeners[i].controlNativeRemoval(nname);
 			});
 		};
+		this.fireRemoveClassNative = function(nname) {
+			$.each(listeners, function(i){
+				listeners[i].controlClassNativeRemoval(nname);
+			});
+		};
 		this.fireRemoveAllNative = function() {
 			$.each(listeners, function(i){
 				listeners[i].controlAllNativeRemoval();
@@ -388,7 +393,7 @@ jQuery.extend({
 				$('#classnatf' + nname).html('<span id=classnf' + nname + '_name>' + nnameorg + '</span>');
 				$('#classnatf' + nname).append('<a id=classnf' + nname + '_close href="javascript:void(0);" class=closekw></a>');
 				$('#classnf' + nname + "_close").click(function() {
-					that.fireRemoveNative(nname);
+					that.fireRemoveClassNative(nname);
 					$('#fallclassatt').attr('checked', false);
 					$('#classnatf' +  nname).remove();
 				});

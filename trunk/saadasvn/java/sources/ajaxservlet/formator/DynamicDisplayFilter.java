@@ -100,7 +100,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DisplayFilter#addConstrainedColumns(java.util.Set)
 	 */
@@ -108,21 +108,24 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		boolean alreadyHere = false;
 		for( AttributeHandler ah: ahs){
 			String na = ah.getNameattr();
-			/*
-			 * Avoid duplicate column
-			 */
-			if( na.equals("namesaada") ) {
-				for( String sf: columns_specialf) {
-					if( sf.equals("Name") || sf.equals(na)){
-						alreadyHere = true;
+			if( !na.startsWith("_")  ) {
+
+				/*
+				 * Avoid duplicate column
+				 */
+				if( na.equals("namesaada") ) {
+					for( String sf: columns_specialf) {
+						if( sf.equals("Name") || sf.equals(na)){
+							alreadyHere = true;
+						}
 					}
 				}
-			}
-			if( !alreadyHere)
-			columns_natcol.add(ah.getNameattr());			
+				if( !alreadyHere)
+					columns_natcol.add(ah.getNameattr());			
+			}	
 		}
-		
 	}
+
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DisplayFilter#setSessionId(long)
 	 */
@@ -327,6 +330,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		}
 
 		for (String natcol : columns_natcol) {
+			System.out.println("@@@@ DDF natcol " + natcol);
 			if( !isDirective(natcol) ) {
 				continue;
 			}
