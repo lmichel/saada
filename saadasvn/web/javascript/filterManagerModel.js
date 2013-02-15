@@ -313,7 +313,9 @@ jQuery.extend({
 		this.processNativeRemove = function(nname) {
 			delete droppednatives[nname];
 		};
-
+		this.processClassNativeRemove = function(nname) {
+			delete droppedclassnatives[nname];
+		};
 		this.processAllNativeRemove = function() {
 			droppednatives = new Array();
 		};

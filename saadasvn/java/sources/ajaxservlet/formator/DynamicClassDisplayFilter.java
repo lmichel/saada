@@ -19,7 +19,7 @@ import saadadb.meta.AttributeHandler;
 public class DynamicClassDisplayFilter extends DynamicDisplayFilter {
 	protected final LinkedHashSet<String> columns_natcla = new LinkedHashSet<String>();
 	protected boolean anyClassAtt = false;
-	
+
 	public DynamicClassDisplayFilter(StoredFilter sf, String collection, String saadaclass) throws FatalException {
 		super(sf, collection);
 		if(saadaclass != null && saadaclass.length() > 0 && !saadaclass.equals(FilterKeys.ANY_CLASS) && !saadaclass.equals("*")) {
@@ -79,6 +79,19 @@ public class DynamicClassDisplayFilter extends DynamicDisplayFilter {
 
 
 		return retour;
+	}
+
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#addConstrainedColumns(java.util.Set)
+	 */
+	public void addConstrainedColumns(Set<AttributeHandler> ahs){
+		super.addConstrainedColumns(ahs);
+		for( AttributeHandler ah: ahs){
+			String na = ah.getNameattr();
+			if( na.startsWith("_")  ) {
+				columns_natcla.add(ah.getNameattr());			
+			}
+		}		
 	}
 
 	public String toString() {

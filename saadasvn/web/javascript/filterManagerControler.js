@@ -27,6 +27,9 @@ jQuery.extend({
 				controlNativeRemoval: function(nname){
 					model.processNativeRemove(nname);
 				},
+				controlClassNativeRemoval: function(nname){
+					model.processClassNativeRemove(nname);
+				},
 				controlAllNativeRemoval: function(){
 					model.processAllNativeRemove();
 				},
