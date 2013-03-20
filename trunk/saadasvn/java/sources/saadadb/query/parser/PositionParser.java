@@ -40,6 +40,7 @@ public class PositionParser {
 		this.position = position.trim();
 		this.arg = position.trim();
 		this.astroframe = Database.getAstroframe();
+		this.checkPrintable();
 		this.setFormat();
 	}
 	
@@ -50,6 +51,7 @@ public class PositionParser {
 	public PositionParser(String position, Astroframe astroframe) throws QueryException {
 		this.position = position.trim();
 		this.astroframe = astroframe;
+		this.checkPrintable();
 		this.setFormat();
 	}
 	
@@ -61,6 +63,14 @@ public class PositionParser {
 	public static final double[] getRaDec(String str, Astroframe astroframe) throws QueryException{
 		PositionParser pp = new PositionParser(str,astroframe);
 		return new double[]{pp.getRa(),pp.getDec()};
+	}
+	
+	private final void checkPrintable() throws QueryException {
+		for( int i=0 ; i<position.length() ; i++ ){
+			if( position .charAt(i) < 32 ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "'" + position + "' Non printable characters in position.");								
+			}
+		}		
 	}
 	
 	/**

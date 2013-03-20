@@ -1,18 +1,15 @@
 package saadadb.query.constbuilders;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.Coord;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
+import saadadb.util.PositionList;
 import saadadb.util.RegExp;
  
 public class PositionConstraint extends SaadaQLConstraint{
@@ -21,7 +18,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 	private final String size;
 	private String coordEquinox; // J1950 ou J2000
 	private String coordSystem;  // FK4 ou FK5 ou Glactic ou ICRS
-	private Pos_List positions = new Pos_List();
+	private PositionList positions;
 	private double r  ;
 
 	/**
@@ -51,10 +48,12 @@ public class PositionConstraint extends SaadaQLConstraint{
 	protected final String getcoordSystem (){return this.coordSystem ;}
 
 
-	private final void computeRaDecR() throws QueryException {
+	/**
+	 * @throws SaadaException
+	 */
+	private final void computeRaDecR() throws SaadaException {
 		this.r = Double.parseDouble(this.size);
 		Pattern pattern = Pattern.compile("\\s*poslist\\s*:\\s*(" + RegExp.FILEPATH + ")");
-
 		/*
 		 * Size expressed in minute is more conveniant
 		 */
@@ -64,33 +63,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 		 * List of positions
 		 */
 		if(m.find()){
-			int line_num = 0;
-			try {
-				String filename =  m.group(1);
-				if( filename.indexOf(Database.getSepar()) == -1  ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "File " + filename + " searched in voreport dir");
-					filename = Database.getVOreportDir() + Database.getSepar() + filename;
-				}
-				BufferedReader bf = new BufferedReader(new FileReader(filename));
-				String line;
-				while( (line = bf.readLine()) != null ) {
-					line = line.trim();
-					line_num++;
-					if( line.startsWith("#") || line.length() == 0 ) {
-						continue;
-					}
-					PositionParser pp = new PositionParser(line, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
-					this.positions.addPos(pp.getRa(), pp.getDec());
-				}
-			}catch (QueryException e){
-				Messenger.printStackTrace(e);
-				QueryException.throwNewException(SaadaException.FILE_FORMAT, "line " + line_num + " " + e);
-
-			}catch (Exception e){
-				Messenger.printStackTrace(e);
-				QueryException.throwNewException(SaadaException.FILE_FORMAT,e);
-			}
+			positions = new PositionList(m.group(1), Coord.getAstroframe(this.coordSystem,this.coordEquinox));
 		}
 		/*
 		 * Single position
@@ -157,28 +130,5 @@ public class PositionConstraint extends SaadaQLConstraint{
 			}
 		}
 		return retour;  
-	}
-
-	/**
-	 * @author michel
-	 *
-	 */
-	class Pos_List {
-		ArrayList<Double> ras = new ArrayList<Double>();
-		ArrayList<Double> decs= new ArrayList<Double>();
-
-		public void addPos(double ra, double dec){
-			ras.add(ra);
-			decs.add(dec);
-		}
-		public int size() {
-			return ras.size();
-		}		
-		public double getRa(int pos) {
-			return ras.get(pos);
-		}
-		public double getDec(int pos) {
-			return decs.get(pos);
-		}
 	}
 }
