@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.VOResource;
 import saadadb.query.constbuilders.MatchPattern;
@@ -35,6 +37,9 @@ public class PatternSQLBuilder {
 		AssDM          dmClause   = mp.getDmClause();
 		if(aoasClause != null || aocClause != null || aoacClause != null||  auClause != null || autClause!= null ) {
 			MetaRelation   mr = Database.getCachemeta().getRelation(mp.getRelation());
+			if( mr == null ) {
+				QueryException.throwNewException(SaadaException.METADATA_ERROR, "Relation " + mp.getRelation() + " not found");
+			}
 			LinkedHashMap<String, SaadaQLConstraint>builders = new LinkedHashMap<String, SaadaQLConstraint>();
 			SelectFromIn sfiClause = new SelectFromIn("Select " 
 					+ Category.explain(mr.getSecondary_category() ) 

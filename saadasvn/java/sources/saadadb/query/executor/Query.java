@@ -530,12 +530,12 @@ public class Query extends Query_Report{
 
 			System.gc();
 			return  result;
-		} catch(SaadaException e) {
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		} catch(SaadaException e1) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, e1);
 			return null;
 		} catch(Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "ERROR running the query: "+ str);
-			e.printStackTrace();
+			Messenger.printStackTrace(e);
 			this.addError("Run query parsing error: " + SaadaException.getExceptionMessage(e));
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 			return null;
