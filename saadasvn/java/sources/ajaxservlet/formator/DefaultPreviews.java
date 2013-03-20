@@ -139,13 +139,13 @@ abstract public class DefaultPreviews {
 	}
 
 	public static String getAladinSAMP(long oid){
-		return ("<a title='Send an image to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendOid(\"" 
+		return ("<a title='Send an image to SAMP' href='javascript:void(0);' class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 				+ oid + "\");'></a>");
 	}
 	
 	public static String getSkyAtSAMP(long oid) throws FatalException{
 		Position si =  (Position)(Database.getCache().getObject(oid));
-		return ("<a title='Send a position to SAMP' href='javascript:void(0);' class=dl_samp onclick='webSampView.fireSendSkyat(" 
+		return ("<a title='Send a position to SAMP' href='javascript:void(0);' class=dl_samp onclick='WebSamp_mVc.fireSendSkyat(" 
 				+ si.getPos_ra_csa() + ", " + si.getPos_dec_csa() + ");'></a>");
 	}
 
