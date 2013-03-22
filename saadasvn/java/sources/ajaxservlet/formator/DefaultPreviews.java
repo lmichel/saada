@@ -63,13 +63,15 @@ abstract public class DefaultPreviews {
 			return "<a class=dl_cart title=\"Add the product file to the  cart\" href=\"#\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
 		}
 	}
-	public static final String getDLLink(long oid) throws SaadaException {
+	public static final String getDLLink(long oid, boolean dlWithRelations) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
+		String url = si.getDownloadURL(true);
+		if( dlWithRelations ) url += "&withrel=true";
 		if( SaadaServlet.secureDownlad ) {
-			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  href='javascript:void(0);' onclick='window.open(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
+			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  href='javascript:void(0);' onclick='window.open(\"" + url + "\", \"preview\");'></A>";
 
 		} else {
-			return "<a title='Download the product file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='Modalinfo.iframePanel(\"" + si.getDownloadURL(true) + "\", \"preview\");'></A>";
+			return "<a title='Download the product file' target='_blank' class=dl_download  href='javascript:void(0);' onclick='Modalinfo.iframePanel(\"" + url + "\", \"preview\");'></A>";
 		}
 	}
 

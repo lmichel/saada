@@ -1,7 +1,9 @@
 package ajaxservlet.formator;
 
-import saadadb.collection.*;
-import saadadb.exceptions.FatalException;
+import saadadb.collection.Category;
+import saadadb.collection.ImageSaada;
+import saadadb.collection.Position;
+import saadadb.collection.SaadaInstance;
 import saadadb.exceptions.SaadaException;
 
 /**
@@ -22,10 +24,10 @@ public class SpecialFieldFormatter {
 		cat = si.getCategory();
 	}
 
-	public String getDLLink() {
+	public String getDLLink(boolean dlWithRelations) {
 		try {
 			if (cat != Category.ENTRY) {
-				return DefaultPreviews.getDLLink(saadai.getOid());
+				return DefaultPreviews.getDLLink(saadai.getOid(),dlWithRelations);
 			} else {
 				return null;
 			}
@@ -75,24 +77,24 @@ public class SpecialFieldFormatter {
 		return null;
 	}
 
-	public String getAccess() throws SaadaException {
+	public String getAccess(boolean dlWithRelations) throws SaadaException {
 		long oid = saadai.getOid();
 		switch( cat ) {
 		case Category.SPECTRUM:
 			return DefaultPreviews.getDetailLink(oid, null)
 			+ DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getSpecSAMP(oid);
 		case Category.FLATFILE:
 			return  DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid);
 		case Category.TABLE:
 			return DefaultPreviews.getDetailLink(oid, null)
 			+ DefaultPreviews.getSourcesLink(oid)
 			+ DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getTopcatSAMP(oid);
 		case Category.ENTRY:
@@ -102,7 +104,7 @@ public class SpecialFieldFormatter {
 		default: 			
 			return DefaultPreviews.getDetailLink(oid, null)
 			+ DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+  DefaultPreviews.getAladinSAMP(oid);
 
@@ -113,16 +115,16 @@ public class SpecialFieldFormatter {
 		switch( cat ) {
 		case Category.SPECTRUM:
 			return DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, false)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getSpecSAMP(oid);
 		case Category.FLATFILE:
 			return  DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, false)
 			+ DefaultPreviews.getCartLink(oid);
 		case Category.TABLE:
 			return  DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, false)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getTopcatSAMP(oid);
 		case Category.ENTRY:
@@ -130,7 +132,7 @@ public class SpecialFieldFormatter {
 			+ DefaultPreviews.getSkyAtSAMP(oid);
 		default: 			
 			return DefaultPreviews.getInfoLink(oid)
-			+ DefaultPreviews.getDLLink(oid)
+			+ DefaultPreviews.getDLLink(oid, false)
 			+ DefaultPreviews.getCartLink(oid)
 			+  DefaultPreviews.getAladinSAMP(oid);
 

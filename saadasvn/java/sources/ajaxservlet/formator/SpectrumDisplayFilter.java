@@ -93,7 +93,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 			else if( "Access".equals(s)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)
 						+ DefaultPreviews.getInfoLink(oidsaada)
-						+ DefaultPreviews.getDLLink(oidsaada)
+						+ DefaultPreviews.getDLLink(oidsaada, false)
 						+ DefaultPreviews.getCartLink(oidsaada)
 						+ DefaultPreviews.getSpecSAMP(oidsaada));
 			}
@@ -101,7 +101,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
-				retour.add(DefaultPreviews.getDLLink(oidsaada));
+				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Position".equals(s)) {
 				retour.add(sff.getPos());

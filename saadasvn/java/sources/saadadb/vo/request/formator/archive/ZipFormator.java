@@ -102,6 +102,7 @@ public class ZipFormator extends QueryResultFormator {
 		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
 		for( String rel: relationsToInclude ) {
+			System.out.println("@@@@@@@@@@ " + rel);
 			this.addSecondarySelection(rel);
 		}
 		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());

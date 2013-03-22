@@ -209,13 +209,13 @@ public class DynamicDisplayFilter implements DisplayFilter {
 
 		for (String speField : columns_specialf) {
 			if ("DL Link".equals(speField)) {
-				retour.add(sff.getDLLink());
+				retour.add(sff.getDLLink(false));
 
 			} else if ("Position".equals(speField)) {
 				retour.add(sff.getPos());
 
 			} else if ("Access".equals(speField)) {
-				retour.add(sff.getAccess());
+				retour.add(sff.getAccess(false));
 
 			} else if ("Position with error".equals(speField)) {
 				retour.add(sff.getPosWithError());

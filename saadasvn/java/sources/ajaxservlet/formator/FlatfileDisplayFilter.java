@@ -78,7 +78,7 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "DL Link".equals(s)) {
-				retour.add(DefaultPreviews.getDLLink(oidsaada));
+				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Name".equals(s)) {
 				retour.add(instance.namesaada);

@@ -86,7 +86,7 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 				retour.add(DefaultPreviews.getHeaderLink(oidsaada) + " " + instance.getNameSaada());
 			}
 			else if( "DL Link".equals(s)) {
-				retour.add(DefaultPreviews.getDLLink(oidsaada));
+				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Entries".equals(s)) {
 				retour.add(DefaultPreviews.getSourcesLink(oidsaada));
