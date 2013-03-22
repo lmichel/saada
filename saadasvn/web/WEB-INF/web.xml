@@ -435,4 +435,15 @@
 		<servlet-name>SecureDownload</servlet-name>
 		<url-pattern>/securedownload</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>ZipDownload</display-name>
+		<servlet-name>ZipDownload</servlet-name>
+		<servlet-class>ajaxservlet.ZipDownload</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ZipDownload</servlet-name>
+		<url-pattern>/zipdownload</url-pattern>
+	</servlet-mapping>
+	
 </web-app>
