@@ -95,7 +95,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
-				retour.add(DefaultPreviews.getDLLink(oidsaada));
+				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Position".equals(s)) {
 				retour.add(sff.getPos());

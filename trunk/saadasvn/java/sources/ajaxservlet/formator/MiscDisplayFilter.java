@@ -84,7 +84,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 					retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
 			}
 			else if( "DL Link".equals(s)) {
-				retour.add(DefaultPreviews.getDLLink(oidsaada));
+				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Name".equals(s)) {
 				retour.add(instance.namesaada);

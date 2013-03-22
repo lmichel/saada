@@ -230,7 +230,7 @@ public class TapToJsonFormator extends  VOResultFormator {
 						val = DefaultPreviews.getHeaderLink(rs.getLong(col));						
 					}
 					else if( col == (product_url_csa + 1) ) {
-						val = DefaultPreviews.getDLLink(rs.getLong(oidsaada + 1));
+						val = DefaultPreviews.getDLLink(rs.getLong(oidsaada + 1), false);
 					}
 					else {
 						val = rs.getObject(col);					
