@@ -59,7 +59,7 @@ public class SaadaServlet extends HttpServlet {
 		Messenger.printMsg(Messenger.TRACE, "Close connection");
 		try {
 			if( Database.getConnector() != null && Database.getConnector().getJDBCConnection() != null )
-					Database.getConnector().getJDBCConnection().close();
+				Database.getConnector().getJDBCConnection().close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -160,7 +160,7 @@ public class SaadaServlet extends HttpServlet {
 		}
 		downloadProduct(req, res, product_path,f.getName(), null );
 	}
-	
+
 	/**
 	 * @param req
 	 * @param res
@@ -196,7 +196,7 @@ public class SaadaServlet extends HttpServlet {
 		 */
 		String fileName = ( proposedFilename != null && proposedFilename.length() > 0 )? proposedFilename
 				: f.getName().toLowerCase();
-		
+
 		if( s_product.toLowerCase().endsWith(".htm") || s_product.toLowerCase().endsWith(".html") ) {
 			res.setContentType("text/html;charset=ISO-8859-1");
 		} else if( s_product.toLowerCase().endsWith(".pdf")  ) {
@@ -250,24 +250,51 @@ public class SaadaServlet extends HttpServlet {
 	 * @throws IOException
 	 */
 	protected void dumpXmlFile(String urlPath, HttpServletResponse response, String attachName) throws IOException {
+		File f = new File(urlPath);
 		response.setContentType("text/xml");
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + attachName + "\"");
+		if( attachName != null && attachName.length() > 0 ) {
+			response.setHeader("Content-Disposition", "inline; filename=\"" + attachName + "\"");
+		}
+		response.setHeader("Content-Length"     , Long.toString(f.length()));
+		response.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());
+		response.setHeader("Pragma", "no-cache" );
+		response.setHeader("Cache-Control", "no-cache" );
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "dump resource " + urlPath);
-		Scanner s = new Scanner(new FileInputStream(urlPath));
+		Scanner s = new Scanner(new FileInputStream(f));
 		PrintWriter out = response.getWriter();
 		try {
 			while (s.hasNextLine()){
 				String l = s.nextLine();
 				out.println(l);
 			}
-		}
-		finally{
+		} finally{
 			s.close();
 			out.close();
 		}
 	}
 
+	/**
+	 * Write an XML string with a proper http header
+	 * @param buffer
+	 * @param response
+	 * @param attachName
+	 * @throws IOException
+	 */
+	protected void dumpXmlString(StringBuffer buffer, HttpServletResponse response, String attachName) throws IOException {
+		response.setContentType("text/xml");
+		if( attachName != null && attachName.length() > 0 ) {
+			response.setHeader("Content-Disposition", "inline; filename=\"" + attachName + "\"");
+		}
+		response.setHeader("Content-Length"     , Long.toString(buffer.length()));
+		response.setHeader("Last-Modified"      , (new Date()).toString());
+		response.setHeader("Pragma", "no-cache" );
+		response.setHeader("Cache-Control", "no-cache" );
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "dump String resource "+ buffer.length() + " bytes");
+		PrintWriter out = response.getWriter();
+		out.println(buffer.toString());
+	}
 
 	/**
 	 * Returns a <Strin, String> map of the request parameters. Only the first value is taken for each parameter
