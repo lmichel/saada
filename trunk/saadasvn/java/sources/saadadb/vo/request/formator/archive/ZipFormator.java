@@ -102,13 +102,21 @@ public class ZipFormator extends QueryResultFormator {
 		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
 		for( String rel: relationsToInclude ) {
-			System.out.println("@@@@@@@@@@ " + rel);
 			this.addSecondarySelection(rel);
 		}
 		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
 		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
 	}
 
+	/**
+	 * Returns a prefix od filename. If there are more the one entry in the dataset to bestore, all
+	 * files are prefixed with the primary oidsaada in order to let the users restore relation links
+	 * @param oid
+	 * @return
+	 */
+	private String getFileNamePrefix(long oid) {
+		return (this.resultSize <= 1)? "": (oid + "_");
+	}
 	/**
 	 * @throws Exception
 	 */
@@ -142,7 +150,7 @@ public class ZipFormator extends QueryResultFormator {
 				 * Add the oid to the name when there are relations in order to enable users to sort out individual links
 				 */
 				if( this.relationsToInclude.size() > 0 ) {
-					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, oid + "_" + si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));
 				}
 				else {
 					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));					
@@ -196,12 +204,12 @@ public class ZipFormator extends QueryResultFormator {
 				OidsVotableFormator secondaryFormator = new OidsVotableFormator();
 				secondaryFormator.setProtocolParams(this.protocolParams);
 				secondaryFormator.setResultSet(loc_entry_cp_oids);
-				secondaryFormator.setResponseFilePath(this.responseDir, oid + "_" + relationName + ".vot");
+				secondaryFormator.setResponseFilePath(this.responseDir,this.getFileNamePrefix(oid) + relationName + ".vot");
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
 							+ secondaryFormator.getResponseFilePath()  + "(relation " + relationName + ")");
 				System.out.println("@@@@@@@@@@@@@@@ " + secondaryFormator.getResponseFilePath());
-				ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, oid + "_" + relationName + ".vot", secondaryFormator.getResponseFilePath(), 0));
+				ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, this.getFileNamePrefix(oid) + relationName + ".vot", secondaryFormator.getResponseFilePath(), 0));
 				secondaryFormator.buildDataResponse();			
 			}
 			/*
@@ -210,7 +218,7 @@ public class ZipFormator extends QueryResultFormator {
 			else {
 				for(long cp: cps){
 					si = Database.getCache().getObject(cp);
-					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, oid + "_" + si.getFileName(),si.getRepositoryPath(), 0));
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepositoryPath(), 0));
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
 								+ Database.getCache().getObject(cp).getRepositoryPath()  
