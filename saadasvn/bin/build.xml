@@ -78,8 +78,8 @@
 	--> 
 	<target name="saadadb.jar.update">
      	<javac fork="true"  debug="on" 
-		       target="${java.target}" 
-		       source="${java.target}" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
 			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**">
@@ -93,8 +93,8 @@
     
 	<target name="saadadb.compile.mapping">
     	<javac fork="true"  debug="on" 
-		       target="${java.target}" 
-		       source="${java.target}" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/class_mapping" destdir="${SAADA_DB_HOME}/class_mapping">
             <classpath refid="saadadb.classpath"/>
 		</javac>
