@@ -10,8 +10,9 @@
 	  This file must be modified by hand if the SaadaDB is moved or other Java tools are used
 	-->
 	<property file="saadadb.properties"/>
-	<property name="jvm_initial_size" value="-Xms64m" />
-	<property name="jvm_max_size"     value="-Xmx1024m" />
+	<property file="${SAADA_DB_HOME}/resources/javarun.properties"/>
+	<property name="jvm_initial_size" value="-Xms${java.xms}" />
+	<property name="jvm_max_size"     value="-Xmx${java.xmx}" />
 
 	<!--
 	  This classpath is used by all java calls.
@@ -19,6 +20,7 @@
 	-->
   	<path id="saadadb.classpath">
     	<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
+    	<pathelement location="${SAADA_DB_HOME}/resources/"/>
     	<fileset dir="${SAADA_DB_HOME}/lib/">
       		<include name="**/*.jar" />
     	</fileset>
@@ -76,8 +78,8 @@
 	--> 
 	<target name="saadadb.jar.update">
      	<javac fork="true"  debug="on" 
-		       target="1.5" 
-		       source="1.5" 
+		       target="${java.target}" 
+		       source="${java.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
 			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**">
@@ -91,8 +93,8 @@
     
 	<target name="saadadb.compile.mapping">
     	<javac fork="true"  debug="on" 
-		       target="1.5" 
-		       source="1.5" 
+		       target="${java.target}" 
+		       source="${java.target}" 
 		       srcdir="${SAADA_DB_HOME}/class_mapping" destdir="${SAADA_DB_HOME}/class_mapping">
             <classpath refid="saadadb.classpath"/>
 		</javac>
