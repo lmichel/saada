@@ -1,9 +1,13 @@
 -------------------------------------------------
-Version Saada1.7.0.beat
+Version Saada1.7.0.beta2
 
 L. MICHEL
-January 2013
+April 2013
 -------------------------------------------------
+
+---- Java 7 ---------
+Saada is configured to run with Java 1.7 (perfectly supported by JDK1.7)
+For those who want to go back to 1.5 compatibility, just edit SAADA_HOME/dbtemplate/nin/javarun.properties 
 
 ---- New Admin tool ------------
 Go in SAAADA_DB_HOME
