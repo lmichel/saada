@@ -265,7 +265,7 @@ public class DataFileChooser extends JDialog {
 					SaadaDBAdmin.showInputError(DataFileChooser.this, "Select just one file");
 				}
 				else {
-					String filename = current_dir + Database.getSepar() + files.getSelectedValues()[0];
+					String filename = current_dir + Database.getSepar() + files.getSelectedValue() ;
 					JDialog window = new JDialog(DataFileChooser.this, new File(filename).getName(), true);
 					VoDataProductTree vot;					
 					vot = new VoDataProductTree(window

@@ -86,7 +86,6 @@ public abstract class SaadaInstance implements DMInterface {
 	 * Used to generate quickly query reports (VOTables or FITS)
 	 * @param rs
 	 * @throws Exception
-	 * @deprecated
 	 */
 	public void init(SaadaQLResultSet rs) throws Exception {
 		Field[] fs = this.getClass().getFields();

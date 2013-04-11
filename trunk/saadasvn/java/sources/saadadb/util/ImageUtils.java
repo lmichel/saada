@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.LinkedHashMap;
 
+import javax.imageio.ImageIO;
+
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsFactory;
@@ -35,8 +37,8 @@ import saadadb.products.Image2D;
 import saadadb.products.Image2DCoordinate;
 import cds.astro.Coo;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
+//import com.sun.image.codec.jpeg.JPEGCodec;
+//import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public abstract class ImageUtils {
 
@@ -101,23 +103,25 @@ public abstract class ImageUtils {
 			 * which can not be trapped.
 			 * We test the presence of the interface before to encode. If it does not exist no vignette is made but the process can continue
 			 */
-			Class[] infcs = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(new FileOutputStream(nameFileOut))).getClass().getInterfaces();
-			boolean interface_found = false;
-			for( Class i : infcs) {
-				if( i.getName().equals("com.sun.image.codec.jpeg.JPEGImageEncoder") ) {
-					interface_found = true;
-					break;
-				}
-			}
-			if( interface_found ) {
-				JPEGImageEncoder dec = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(
-						new FileOutputStream(nameFileOut)));
-				dec.encode(bi.getRaster());
+//			Class[] infcs = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(new FileOutputStream(nameFileOut))).getClass().getInterfaces();
+//			boolean interface_found = false;
+//			for( Class i : infcs) {
+//				if( i.getName().equals("com.sun.image.codec.jpeg.JPEGImageEncoder") ) {
+//					interface_found = true;
+//					break;
+//				}
+//			}
+//			if( interface_found ) {
+				ImageIO.write(bi, "jpeg", new FileOutputStream(nameFileOut));
+				
+//				JPEGImageEncoder dec = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(
+//						new FileOutputStream(nameFileOut)));
+//				dec.encode(bi.getRaster());
 				Messenger.printMsg(Messenger.TRACE, "Thumbnail (" + i2w + "x" +i2h + ") <" + nameFileOut + "> created");
-			}
-			else {
-				Messenger.printMsg(Messenger.WARNING, "Current JDK has no interface com.sun.image.codec.jpeg.JPEGImageEncoder: Can't create vignette");
-			}
+//			}
+//			else {
+//				Messenger.printMsg(Messenger.WARNING, "Current JDK has no interface com.sun.image.codec.jpeg.JPEGImageEncoder: Can't create vignette");
+//			}
 		}catch(Exception e){
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: " + e.getMessage());

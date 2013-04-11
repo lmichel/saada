@@ -304,7 +304,7 @@ public class VOProduct extends File implements ProductFile {
 			if( (DefineType.getType(type) == DefineType.FIELD_STRING || !tdContent.equals("")) && !tdContent.equalsIgnoreCase("null") ) {
 				switch (DefineType.getType(type)) {
 				case DefineType.FIELD_DATE:
-					obj = new Date(tdContent);
+					obj = tdContent;
 					break;
 				case DefineType.FIELD_STRING:
 					if( tdContent.startsWith("<![CDATA[")) {
