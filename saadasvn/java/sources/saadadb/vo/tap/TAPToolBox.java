@@ -101,8 +101,8 @@ public class TAPToolBox {
 			otherParameters = new HashMap<String,String>();
 
 			// Extract and identify each pair (key,value):
-			for(String key : job.getOtherParameters()){
-				String value = job.getOtherParameterValue(key);
+			for(String key : job.getAdditionalParameters()){
+				String value = job.getAdditionalParameterValue(key);
 				setTAPParameter(key, value);
 			}
 
