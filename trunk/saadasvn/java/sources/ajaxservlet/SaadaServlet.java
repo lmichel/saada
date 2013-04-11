@@ -238,7 +238,6 @@ public class SaadaServlet extends HttpServlet {
 			bos.write(b, 0, len);
 		}				
 		bos.flush();
-		bos.close();		
 	}
 
 
@@ -269,8 +268,8 @@ public class SaadaServlet extends HttpServlet {
 				out.println(l);
 			}
 		} finally{
+			out.flush();
 			s.close();
-			out.close();
 		}
 	}
 
@@ -294,6 +293,7 @@ public class SaadaServlet extends HttpServlet {
 			Messenger.printMsg(Messenger.DEBUG, "dump String resource "+ buffer.length() + " bytes");
 		PrintWriter out = response.getWriter();
 		out.println(buffer.toString());
+		out.flush();
 	}
 
 	/**

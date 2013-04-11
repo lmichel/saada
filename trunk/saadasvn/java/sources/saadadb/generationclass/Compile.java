@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import saadadb.database.Database;
+import saadadb.database.RunProperties;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -45,7 +46,7 @@ public class Compile{
     				}
     			}
      		
-    		int status =  Main.compile(new String[]{classpath, System.getProperty("java.class.path"), "-d", classdir, "-target", "1.5", sourcefile.getAbsolutePath()} ,out);
+    		int status =  Main.compile(new String[]{classpath, System.getProperty("java.class.path"), "-d", classdir, "-target", RunProperties.JVM_TARGET, sourcefile.getAbsolutePath()} ,out);
     		out.close();
     		if( status == 0 ){
     			Messenger.printMsg(Messenger.TRACE, " Compilation of "+classname+".java met no problems"); 
