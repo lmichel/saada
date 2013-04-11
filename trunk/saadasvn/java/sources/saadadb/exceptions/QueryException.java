@@ -1,5 +1,10 @@
 package saadadb.exceptions;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class QueryException extends SaadaException {
 
 	/**
@@ -7,10 +12,6 @@ public class QueryException extends SaadaException {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	/** * @version $Id$
-
-	 * @param msg
-	 */
 	public QueryException(String msg, String context) {
 		super(msg, context);
 	}
