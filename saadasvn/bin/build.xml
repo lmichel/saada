@@ -10,7 +10,7 @@
 	  This file must be modified by hand if the SaadaDB is moved or other Java tools are used
 	-->
 	<property file="saadadb.properties"/>
-	<property file="${SAADA_DB_HOME}/resources/javarun.properties"/>
+	<property file="javarun.properties"/>
 	<property name="jvm_initial_size" value="-Xms${java.xms}" />
 	<property name="jvm_max_size"     value="-Xmx${java.xmx}" />
 
