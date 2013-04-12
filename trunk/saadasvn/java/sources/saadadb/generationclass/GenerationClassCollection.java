@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 
 import saadadb.collection.Category;
 import saadadb.configuration.CollectionAttributeExtend;
+import saadadb.database.Repository;
 import saadadb.database.SaadaDBConnector;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
@@ -57,7 +58,9 @@ public class GenerationClassCollection{
 			writer.write("}");
 			writer.flush();
 			writer.close();
-			Compile.compileIt(name_file);
+		   	Compile.compileItWithAnt(connector.getRoot_dir()
+	    			, name
+	    			, (connector.getRepository() + separ + Repository.TMP).replaceAll("\\\\", "\\\\"+"\\\\"));    
 			Messenger.printMsg(Messenger.TRACE, "Class <"+name+"> created ");
 		}
 	}

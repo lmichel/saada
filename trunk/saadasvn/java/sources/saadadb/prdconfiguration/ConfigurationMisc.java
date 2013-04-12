@@ -9,7 +9,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.util.Messenger;
 
-import com.sun.tools.doclets.internal.toolkit.Configuration;
 /** * @version $Id$
 
  *This class is specification of a misc configuration

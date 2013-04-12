@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Vector;
 
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
@@ -154,8 +155,8 @@ public class DMImplementer {
 		}
 		br.close();
 		fw.close();
-		Compile.compileIt(new File(java_filename));
-	}
+		Compile.compileItWithAnt(Database.getRoot_dir(), classname, (Repository.LOGS_PATH));  	
+		}
 	
 	/**
 	 * @param fw

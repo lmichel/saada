@@ -15,18 +15,13 @@ package saadadb.generationclass;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
-import saadadb.command.ManageCollection;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
-import saadadb.dataloader.SchemaMapper;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;
@@ -171,7 +166,7 @@ public class GenerationClassProduct{
 		writer.flush();
 		writer.close();
 		System.gc();
-		Compile.compileIt(nameFile);
+		Compile.compileItWithAnt(Database.getRoot_dir(), classname);
 	}
 	
 	public static void main(String[] args ) throws Exception{
