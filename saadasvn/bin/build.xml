@@ -30,7 +30,21 @@
       		<include name="**/*.jar" />
     	</fileset>
   	</path>
+	
+	<!--
+	  compile on classmapping class
+	--> 
+	<target name="javaclass.compile">
+     	<javac fork="true"  debug="on" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
+		       srcdir="${SAADA_DB_HOME}/class_mapping" 
+			   destdir="${SAADA_DB_HOME}/class_mapping"
+			   includes="${class.source}">
+            <classpath refid="saadadb.classpath"/>
+		</javac>
 
+	</target>
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  The following tasks are supposed to be used by any operator (even the beginners)
 	  They can be called by script wrapping the ant command
