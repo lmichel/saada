@@ -32,7 +32,7 @@
   	</path>
 	
 	<!--
-	  compile on classmapping class
+	  compile on classmapping class: This task is intended to be called from the admintool
 	--> 
 	<target name="javaclass.compile">
      	<javac fork="true"  debug="on" 
@@ -43,7 +43,6 @@
 			   includes="${class.source}">
             <classpath refid="saadadb.classpath"/>
 		</javac>
-
 	</target>
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  The following tasks are supposed to be used by any operator (even the beginners)
