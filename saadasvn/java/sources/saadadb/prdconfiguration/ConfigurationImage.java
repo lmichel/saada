@@ -6,7 +6,6 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
-import com.sun.tools.doclets.internal.toolkit.Configuration;
 ;
 /** * @version $Id$
 

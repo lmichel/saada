@@ -79,7 +79,9 @@ public class GenerationClassSaadaDB{
   
     	writer.flush();
     	writer.close();
-    	Compile.compileIt(classFile, (connector.getRepository() + separ + Repository.TMP).replaceAll("\\\\", "\\\\"+"\\\\"));    }
+    	Compile.compileItWithAnt(connector.getRoot_dir()
+    			, "SaadaDBStrap"
+    			, (connector.getRepository() + separ + Repository.TMP).replaceAll("\\\\", "\\\\"+"\\\\"));    }
     
 }
   
