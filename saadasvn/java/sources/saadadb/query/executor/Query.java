@@ -570,7 +570,8 @@ public class Query extends Query_Report{
 		if( (epopTab == null || epopTab.length == 0) && limitClause!=null && limitClause.getLimit() != Integer.MAX_VALUE ) {
 			sqlPrinc += " limit " + limitClause.getLimit(); 
 		}
-		SaadaInstanceResultSet retour = new SaadaInstanceResultSet(si, sqlPrinc
+		SaadaInstanceResultSet retour = new SaadaInstanceResultSet(si
+				, sqlPrinc
 				, ki
 				, (limitClause!=null)?limitClause.getLimit():Integer.MAX_VALUE
 						,  SaadaConstant.INT);

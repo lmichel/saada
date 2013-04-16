@@ -78,7 +78,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 				/*
 				 * The position must now be converted in database system
 				 */
-				this.positions.addPos(pp.getRa(), pp.getDec());
+				positions = new PositionList(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox), true);
 			}catch (Exception e){
 				Messenger.printStackTrace(e);
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Can't resolve name \""+this.position+"\" with Astroframe! " + e.getMessage());

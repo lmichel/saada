@@ -75,11 +75,7 @@ public final class WherePosition extends SaadaQLConstraint {
 				 * Position parser normalizes the input coordinate. It returns the input coordinates 
 				 * as values expressed in the input system 
 				 */
-				PositionParser pp = new PositionParser(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
-				/*
-				 * The position must now be converted in database system
-				 */
-				this.positions.addPos(pp.getRa(), pp.getDec());
+				positions = new PositionList(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
 			}catch (Exception e){
 				Messenger.printStackTrace(e);
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Can't resolve name \""+this.position+"\" with Astroframe! " + e.getMessage());

@@ -105,10 +105,10 @@ public class ConeSearchVotableFormator extends VotableFormator{
 			else if( id.equals("LinktoPixels")) {
 				addCDataTD(obj.getURL(true));
 			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
+			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") || ucd.equalsIgnoreCase("pos.eq.ra;meta.main") ){
 				addTD(Double.toString(obj.getPos_ra_csa()));
 			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
+			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") || ucd.equalsIgnoreCase("pos.eq.dec;meta.main")){
 				addTD(Double.toString(obj.getPos_dec_csa()));
 			}
 			else if( ucd.equalsIgnoreCase("ID_MAIN") ){

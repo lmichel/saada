@@ -40,7 +40,7 @@ public class ConeSearchRequestTester {
 		}
 		ConeSearchRequest request = new ConeSearchRequest("NoSession", "/home/michel/Desktop");
 		//request.addFormator("votable");
-		request.addFormator("fits");
+		request.addFormator("votable");
 		request.setResponseFilePath("CS");
 		request.processRequest(pmap);
 	}

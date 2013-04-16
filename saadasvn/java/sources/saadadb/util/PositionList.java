@@ -25,6 +25,24 @@ public class PositionList {
 	private ArrayList<Double> decs= new ArrayList<Double>();
 	public static final int MAX_POSTIONS = 100;
 	
+	/**
+	 * Constructor used by single-position queries
+	 * @param position
+	 * @param astroFrame
+	 * @param single  : dummy paramters used to make a difference between the 2 constructors
+	 * @throws QueryException
+	 */
+	public PositionList(String position, Astroframe astroFrame, boolean single) throws QueryException{
+		PositionParser pp = new PositionParser(position, astroFrame);
+		this.addPos(pp.getRa(), pp.getDec());	
+	}
+	
+	/**
+	 * Constructor used to read a position list
+	 * @param filename
+	 * @param astroFrame
+	 * @throws QueryException
+	 */
 	public PositionList(String filename, Astroframe astroFrame) throws QueryException{
 		int line_num = 0;
 		BufferedReader bf = null;
@@ -66,7 +84,7 @@ public class PositionList {
 			
 		}
 	}
-	public void addPos(double ra, double dec){
+	private void addPos(double ra, double dec){
 		ras.add(ra);
 		decs.add(dec);
 	}
