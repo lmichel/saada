@@ -89,10 +89,14 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public void init(SaadaQLResultSet rs) throws Exception {
 		Field[] fs = this.getClass().getFields();
+		boolean classLevel = false;
 		for( int i=0 ; i< fs.length ; i++ ) {
 			Field f = fs[i];
 			String type = f.getType().toString();
 			String name = f.getName();
+			if( name.startsWith("_") ) {
+				classLevel=true;
+			}
 			if( "short".equals(type)) {
 				f.setShort(this, rs.getShort(name));
 			}
@@ -127,7 +131,7 @@ public abstract class SaadaInstance implements DMInterface {
 				}
 			}
 		}
-		this.loaded = true;
+		if( classLevel ) this.loaded = true;
 	}
 
 	/**
@@ -139,10 +143,14 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public void init(ResultSet rs) throws Exception {
 		Field[] fs = this.getClass().getFields();
+		boolean classLevel = false;
 		for( int i=0 ; i< fs.length ; i++ ) {
 			Field f = fs[i];
 			String type = f.getType().toString();
 			String name = f.getName();
+			if( name.startsWith("_") ) {
+				classLevel=true;
+			}
 			if( "short".equals(type)) {
 				f.setShort(this, rs.getShort(name));
 			}
@@ -177,7 +185,7 @@ public abstract class SaadaInstance implements DMInterface {
 				}
 			}
 		}
-		this.loaded = true;
+		if( classLevel ) this.loaded = true;
 	}
 
 	/**
@@ -766,13 +774,22 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws SecurityException
 	 * @throws SaadaException
 	 */
-	public AttributeHandler getFieldByUCD(String ucd, boolean queriable_only) throws IllegalArgumentException, SecurityException, SaadaException {
+	public AttributeHandler getFieldByUCD(String ucd, boolean queriable_only) throws Exception {
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
-		for( AttributeHandler ah: mc.getAttributes_handlers().values() ) {
-			if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
-				return ah;
+		Field[] fs = this.getClass().getFields();
+		for( Field f: fs) {
+			 AttributeHandler ah;
+			 if( (ah = mc.getAttributes_handlers().get(f.getName())) != null ) {
+				if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
+					return ah;
+				}				
 			}
 		}
+//		for( AttributeHandler ah: mc.getAttributes_handlers().values() ) {
+//			if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
+//				return ah;
+//			}
+//		}
 		return null;
 	}
 

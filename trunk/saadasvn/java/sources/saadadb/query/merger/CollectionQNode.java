@@ -194,11 +194,13 @@ public class CollectionQNode extends QNode {
 				String select_coll = this.getSelect(builders);
 				if( select_coll.indexOf("oidsaada") == -1) {
 				//@@@ parenthesis removed
-
-				return "  SELECT " + saadadb.util.Merger.getMergedArray(new String[]{"oidsaada", select_coll}) 
-				+   "\n   FROM " + this.name + "";	
-				}
-				else {
+					/*
+					 * Avoid having oidsaada twice, SQLite hates that
+					 */
+					String[] sc = ((select_coll.indexOf("oidsaada") == -1)? new String[]{"oidsaada", select_coll}: new String[]{select_coll});
+					return "  SELECT " + saadadb.util.Merger.getMergedArray(sc) 
+					+   "\n   FROM " + this.name + "";	
+				} else {
 					return "  SELECT " + select_coll
 					+   "\n   FROM " + this.name + "";	
 					
@@ -317,7 +319,11 @@ public class CollectionQNode extends QNode {
 					where_coll = "\n   WHERE "  +where_coll;
 				}
 				//@@@ parenthesis removed
-				retour =  "  SELECT " + saadadb.util.Merger.getMergedArray(new String[]{"oidsaada", select_coll}) 
+				/*
+				 * Avoid having oidsaada twice, SQLite hates that
+				 */
+				String[] sc = ((select_coll.indexOf("oidsaada") == -1)? new String[]{"oidsaada", select_coll}: new String[]{select_coll});
+				retour =  "  SELECT " + saadadb.util.Merger.getMergedArray(sc) 
 				+   "\n   FROM " + this.name + " " + where_coll + "";				
 
 			}
