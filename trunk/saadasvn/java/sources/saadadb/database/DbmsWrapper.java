@@ -459,6 +459,7 @@ abstract public class DbmsWrapper {
 	static public String getIsInCircleConstraint(String prefix, double asc, double  dec, double size) {
 		Coo coo = new Coo(asc, dec);
 		Enumeration<Qbox> qenum = Qbox.circle(coo, size);
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
 		Qbox qb;
 		String anystring="";
 		String somestring="";
@@ -495,8 +496,7 @@ abstract public class DbmsWrapper {
 					}
 					if( any_start == any_stop ) {
 						anystring += alias + "sky_pixel_csa = " + any_start;
-					}
-					else {
+					} else {
 						anystring += alias + "sky_pixel_csa >= " + any_start + " AND " + alias + "sky_pixel_csa <= " + any_stop ;
 					}
 					any_start = qbnum;
@@ -519,8 +519,7 @@ abstract public class DbmsWrapper {
 					}
 					if( some_start == some_stop ) {
 						somestring += alias + "sky_pixel_csa = " + some_start;
-					}
-					else {
+					} else {
 						somestring += alias + "sky_pixel_csa >=" + some_start + " AND " + alias + "sky_pixel_csa <= " + some_stop ;
 					}
 					some_start = qbnum;
@@ -553,8 +552,7 @@ abstract public class DbmsWrapper {
 			}
 			if( any_start == last_any_qbnum ) {
 				anystring += alias + "sky_pixel_csa = " + any_start;
-			}
-			else {
+			} else {
 				anystring += alias + "sky_pixel_csa >= " + any_start + " AND " + alias + "sky_pixel_csa <= " + last_any_qbnum ;
 			}
 		}
@@ -564,8 +562,7 @@ abstract public class DbmsWrapper {
 			}
 			if( some_start == last_some_qbnum ) {
 				somestring += alias + "sky_pixel_csa = " + some_start;
-			}
-			else {
+			} else {
 				somestring += alias + "sky_pixel_csa >= " + some_start + " AND " + alias + "sky_pixel_csa <= " + last_some_qbnum ;
 			}
 		}
@@ -596,10 +593,9 @@ abstract public class DbmsWrapper {
 		Q += ")";
 
 		if( nb_qboxes > 100 && B.length() != 0 ){
-			//return B + " AND " + D;
-			return B ;
-		}
-		else {
+			return B + " AND " + D;
+			//return B ;
+		} else {
 			return Q;
 		}
 	}
