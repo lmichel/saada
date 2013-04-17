@@ -459,7 +459,6 @@ abstract public class DbmsWrapper {
 	static public String getIsInCircleConstraint(String prefix, double asc, double  dec, double size) {
 		Coo coo = new Coo(asc, dec);
 		Enumeration<Qbox> qenum = Qbox.circle(coo, size);
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
 		Qbox qb;
 		String anystring="";
 		String somestring="";
