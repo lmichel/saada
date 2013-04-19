@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import saadadb.database.Database;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
@@ -78,7 +79,10 @@ public class FlatfileSaada extends SaadaInstance{
 	 * @see saadadb.collection.SaadaInstance#setProduct_url_csa(java.lang.String)
 	 */
 	@Override
-	public void setProduct_url_csa(String product_url_csa){
+	public void setProduct_url_csa(String product_url_csa) throws AbortException{
+    	if( product_url_csa == null ) {
+    		AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "product_url_csa cannot be set to null");
+    	}
 		this.product_url_csa = product_url_csa;
     }
 
