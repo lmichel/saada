@@ -30,6 +30,7 @@ import saadadb.api.SaadaLink;
 import saadadb.api.SaadaRelation;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -1371,8 +1372,9 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 	/**
 	 * @param name
+	 * @throws AbortException 
 	 */
-	public abstract void setProduct_url_csa(String name) ;
+	public abstract void setProduct_url_csa(String name) throws AbortException ;
 	/**
 	 * @return
 	 */

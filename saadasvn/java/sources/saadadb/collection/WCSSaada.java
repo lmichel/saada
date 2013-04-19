@@ -1,5 +1,8 @@
 package saadadb.collection;
 
+import saadadb.exceptions.AbortException;
+import saadadb.exceptions.SaadaException;
+
 
 /**
  * <p>Title: System d'archivage automatique des donnes astrononique</p>
@@ -177,8 +180,14 @@ public class WCSSaada extends Position {
 		
 	}
 	
-	public  void setProduct_url_csa(String nameProduct)
+	/* (non-Javadoc)
+	 * @see saadadb.collection.Position#setProduct_url_csa(java.lang.String)
+	 */
+	public  void setProduct_url_csa(String nameProduct) throws AbortException
 	{
+    	if( product_url_csa == null ) {
+    		AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "product_url_csa cannot be set to null");
+    	}
 		this.product_url_csa=nameProduct;
 	}
 	

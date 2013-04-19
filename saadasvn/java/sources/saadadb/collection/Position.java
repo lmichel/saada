@@ -2,6 +2,7 @@ package saadadb.collection;
 
 
 import saadadb.database.MysqlWrapper;
+import saadadb.exceptions.AbortException;
 import saadadb.util.SaadaConstant;
 import cds.astro.Coo;
 import cds.astro.Qbox;
@@ -201,7 +202,7 @@ public class Position extends SaadaInstance {
 	}
 
 	@Override
-	public void setProduct_url_csa(String name) {
+	public void setProduct_url_csa(String name) throws AbortException {
 	}
 	
 	@Override
