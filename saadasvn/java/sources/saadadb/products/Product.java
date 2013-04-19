@@ -641,8 +641,9 @@ public class Product /*extends File*/ {
 	/**
 	 * Set instance name mapping rule and with the file name if not set
 	 * Set product url and date of loading
+	 * @throws AbortException 
 	 */
-	protected void setBasicCollectionFields() {
+	protected void setBasicCollectionFields() throws AbortException {
 		this.saadainstance.setNameSaada(this.getInstanceName(null));
 		this.saadainstance.setProduct_url_csa(((File) this.productFile).getName());	
 		this.saadainstance.setDateLoad(new java.util.Date().getTime());
