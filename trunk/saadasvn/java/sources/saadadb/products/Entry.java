@@ -969,9 +969,10 @@ public class Entry extends Product {
 	/**
 	 * Set product url and date of loading
 	 * Name is set on the fly
+	 * @throws AbortException 
 	 */
 	@Override
-	public void setBasicCollectionFields() {
+	public void setBasicCollectionFields() throws AbortException {
 		this.saadainstance.setProduct_url_csa(((File) this.productFile).getName());	
 		this.saadainstance.setDateLoad(new java.util.Date().getTime());
 	}

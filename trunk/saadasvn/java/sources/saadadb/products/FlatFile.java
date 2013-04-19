@@ -83,8 +83,9 @@ public class FlatFile extends Product {
 	/**
 	 * Used by FLatFileMapper to load flafiles by burst using a single instance of the this class
 	 * @param si
+	 * @throws AbortException 
 	 */
-	public void bindInstanceToFile(SaadaInstance si, File file) {
+	public void bindInstanceToFile(SaadaInstance si, File file) throws AbortException {
 		this.saadainstance = si;
 		this.file = file;
 		this.productFile = new AnyFile(this);
