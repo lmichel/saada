@@ -592,7 +592,7 @@ abstract public class DbmsWrapper {
 		Q += ")";
 
 		if( nb_qboxes > 100 && B.length() != 0 ){
-			return B + " AND " + D;
+			return B + "\nAND " + D;
 			//return B ;
 		} else {
 			return Q;
@@ -618,7 +618,7 @@ abstract public class DbmsWrapper {
 		String D = "distancedegree("+circleAsc+", "+circleDec+", "+asc+", "+dec+")";
 		D = "(abs("+D+")< "+radius+")";
 
-		return B + " AND " + D;
+		return B + "\nAND " + D;
 	}
 
 	/**
