@@ -1,4 +1,4 @@
-package saadadb.resourcetest;
+package saadadb.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -26,14 +26,13 @@ import cds.astro.Astrocoo;
  * The grid is built by moving a position by 1arcmin steps. That is not efficient, but this feature was expected to be used 
  * on others contexts.
  */
-public class GridBuilder {
+public class DataGenerator {
 	static final private DecimalFormat un = new DecimalFormat("0.0");
 	static final private DecimalFormat deux = new DecimalFormat("0.0000");
 	private final static double UNEMINUTE = 1./60.;
 	private int grid_halfsize = 0;
-	private final String filename = "/tmp/votable.xml";
+	private final String filename = System.getProperty("java.io.tmpdir") + File.separator + "votable.xml";
 	protected final String collection;
-	protected final String classe;
 	/*
 	 * Current position used to build the grid
 	 */
@@ -49,32 +48,35 @@ public class GridBuilder {
 	 */
 	protected String target;
 	protected int size;
+	protected int counter = 0;
+	private String className;
+	private String category;
+	private String name;
+
 	/**
-	 * @param pos
-	 * @param size
-	 * @throws QueryException
+	 * @param pos: Center position of the surface covered by the product
+	 * @param size: Size in deg of the surface covered by the product
+	 * @param collection: collection of the product
+	 * @param category: category of the product
+	 * @param className: class of product
+	 * @param name: da name of the product
+	 * @throws Exception
 	 */
-	GridBuilder(String pos, int size, String collection) throws Exception {
+	public DataGenerator(String pos, int size, String collection, String category, String className, String name) throws Exception {
 		this.collection = collection;
-		this.classe = collection + "Grid";
+		this.className = className;
+		this.category = category;
+		this.name = name;
 		PositionParser pp = new PositionParser(pos);
 		this.size = size;
 		this.target = pos;
-		grid_halfsize = (30*size)/20;
-		ra = pp.getRa();
-		dec = pp.getDec();
-		ra_target = ra;
-		dec_target = dec;
+		this.grid_halfsize = (category.equals("TABLE"))? (30*size)/20: 0;
+		this.ra = pp.getRa();
+		this.dec = pp.getDec();
+		this.ra_target = ra;
+		this.dec_target = dec;
 		deux.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		un.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));		
-		if( !Database.getCachemeta().collectionExists(collection) ) {
-			this.writeVotable();
-			SQLTable.beginTransaction();
-			this.prepareDBCollection();
-			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
-			this.ingestVOTable();
-		}
 	}
 	/**
 	 * Increase the current as ascension with 1 arcmin
@@ -109,16 +111,13 @@ public class GridBuilder {
 					dec = 180 - dec;
 					ra = 180 + ra;
 				}	
-			}
-			else {
+			} else {
 				dec = dec - UNEMINUTE;
 			}
-		}
-		else  {
+		} else  {
 			if( dec > 0 ) {
 				dec = dec - UNEMINUTE;
-			}
-			else {
+			} else {
 				dec = dec + UNEMINUTE;
 				if( dec < -90) {
 					dec = -dec-180;
@@ -140,16 +139,13 @@ public class GridBuilder {
 					dec = 180 - dec;
 					ra = ra  - 180 ;
 				}	
-			}
-			else {
+			} else {
 				dec = dec - UNEMINUTE;
 			}
-		}
-		else  {
+		} else  {
 			if( dec > 0 ) {
 				dec = dec - UNEMINUTE;
-			}
-			else {
+			} else {
 				dec = dec + UNEMINUTE;
 				if( dec < -90) {
 					dec = -dec-180;
@@ -165,7 +161,7 @@ public class GridBuilder {
 	 * @throws QueryException
 	 */
 	public void writeVotable() throws IOException, QueryException {
-		BufferedWriter bf = new BufferedWriter(new FileWriter(System.getProperty("java.io.tmpdir") + File.separator + "votable.xml"));
+		BufferedWriter bf = new BufferedWriter(new FileWriter(this.filename));
 		bf.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		bf.write("<VOTABLE version=\"1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 		bf.write("  xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"\n");
@@ -179,6 +175,7 @@ public class GridBuilder {
 		bf.write("	<field name=\"ascension\" datatype=\"float\"/>\n");
 		bf.write("	<field name=\"declination\" datatype=\"float\"/>\n");
 		bf.write("	<field name=\"checkpos\" datatype=\"float\"/>\n");
+		bf.write("	<field name=\"name\"  datatype=\"char\" arraysize=\"*\"/>\n");
 		bf.write("<DATA>    \n");  
 		bf.write("<TABLEDATA>\n");
 		for(int i=0 ; i<(this.grid_halfsize) ; i++ ) {
@@ -188,13 +185,11 @@ public class GridBuilder {
 		for(int d=0 ; d<=(2*this.grid_halfsize) ; d++ ) {
 			for(int i=0 ; i<=(2*this.grid_halfsize) ; i++ ) {
 				bf.write("<TR>" + this.toXMLString() + "</TR>\n") ;
-				//				System.out.print(this + "\t");
 				this.incrementeRA();
 			}				
 			for(int j=0 ; j<=(2*this.grid_halfsize) ; j++ ) {
 				this.decrementeRA();
 			}
-			//			System.out.println("");
 			this.incrementeDEC();		 
 		}
 
@@ -230,21 +225,26 @@ public class GridBuilder {
 	 * @return a XML row made with the current position
 	 */
 	public String toXMLString() {
+		this.counter++;
 		Astrocoo coo =new Astrocoo(Database.getAstroframe(), ra, dec);
 		coo.setPrecision(6);
 		Astrocoo coo_target =new Astrocoo(Database.getAstroframe(), ra_target, dec_target);
 		coo_target.setPrecision(6);
-		return "<TD>" + coo.toString("s:") + "</TD><TD>" + deux.format(ra) + "</TD><TD>" + deux.format(dec) + "</TD><TD>" + un.format(coo.distance(coo_target)*60.)+ "</TD>" ;
+		return "<TD>" + coo.toString("s:") 
+		+ "</TD><TD>" + deux.format(ra) 
+		+ "</TD><TD>" + deux.format(dec) 
+		+ "</TD><TD>" + un.format(coo.distance(coo_target)*60.)
+		+ "</TD><TD>" + this.counter
+		+ "</TD>" ;
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	private void prepareDBCollection() throws Exception{
+	private void prepareDBCollection(boolean emptyCollection) throws Exception{
 		if( Database.getCachemeta().collectionExists(collection) ) {
-			(new CollectionManager(collection)).empty(null);				
-		}
-		else {
+			if( emptyCollection ) (new CollectionManager(collection)).empty(null);				
+		} else {
 			(new CollectionManager(collection)).create(new ArgsParser(new String[]{"-comment=Created to store a grid"}));
 		}
 
@@ -253,10 +253,17 @@ public class GridBuilder {
 	/**
 	 * @throws Exception
 	 */
-	private void ingestVOTable() throws Exception {
-		Loader loader = new Loader(new String[]{"-classifier=" + classe
-				, "-collection=" + collection
-				, "-category=table"
+	public void ingestVOTable(boolean emptyCollection) throws Exception {
+		this.writeVotable();
+		SQLTable.beginTransaction();
+		this.prepareDBCollection(emptyCollection);
+		SQLTable.commitTransaction();
+		Database.getCachemeta().reload(true);
+		Loader loader = new Loader(new String[]{
+				  "-collection=" + collection
+				, "-category=" + this.category
+				, "-classfusion=" + this.className
+				, "-name=RADEC,'" + this.name +"'"
 				, "-ename=RADEC,'(',checkpos,')'"
 				, "-posmapping=only"
 				, "-position=RADEC"
@@ -265,24 +272,6 @@ public class GridBuilder {
 				, "-filename=" + this.getFilename()
 				, Database.getDbname()});
 		loader.load();  
-	}
-
-	public static void main(String[] args) {
-		ArgsParser ap;
-		try {
-			ap = new ArgsParser(args);
-			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
-			String target = args[0];
-			int size = Integer.parseInt(args[1]);
-			SQLTable.beginTransaction();
-			new GridBuilder(target, size, ap.getCollection());
-			SQLTable.commitTransaction();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("USAGE java GridBuilder [position] [size (minutes)] -collection=[collection] SAADADB_NAME");
-		}
-
 	}
 
 }

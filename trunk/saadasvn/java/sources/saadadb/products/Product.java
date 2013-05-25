@@ -130,25 +130,6 @@ public class Product /*extends File*/ {
 	}
 	
 	/**
-	 * In case of the product can have table: This method is used for the
-	 * valdation of the product by this configuration. Returns the list which
-	 * maps entry names not formated (keys) to their position number in the
-	 * table (values). Attention: In the case of entries, their header in tables
-	 * product can be different from standards of the other products. If there
-	 * is no table for this product format, this method will return null.
-	 * Cross_reference of the homonymous method defined in the current product
-	 * file.
-	 * 
-	 * @return Hashtable The list which maps entry names to their position
-	 *         number in the table.
-	 * @throws IgnoreException 
-	 * @throws AbortException 
-	 */
-	public LinkedHashMap<String, Integer> getTableEntry() throws AbortException, IgnoreException {
-		return productFile.getTableEntry();
-	}
-	
-	/**
 	 * @return
 	 */
 	public ConfigurationDefaultHandler getConfiguration() {
@@ -186,18 +167,7 @@ public class Product /*extends File*/ {
 		return null;
 	}
 	
-	
-	/**
-	 * In case of the product can have spectrum: Gets the spectrum image in this
-	 * product file, if she exists, else null. Cross_reference of the homonymous
-	 * method defined in the current product file.
-	 * 
-	 * @return Image the spectrum image in this product file.
-	 */
-	public Image getSpectraImage() {
-		return productFile.getSpectraImage();
-	}
-	
+		
 	/**
 	 * @return
 	 */
@@ -722,8 +692,7 @@ public class Product /*extends File*/ {
 		} catch(IgnoreException ei) {
 			if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
-			}
-			else {
+			} else {
 				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
 				//Messenger.printStackTrace(ei);
 				try_votable = true;

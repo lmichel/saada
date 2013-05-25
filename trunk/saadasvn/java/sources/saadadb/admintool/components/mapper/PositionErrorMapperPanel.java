@@ -16,7 +16,6 @@ import javax.swing.JRadioButton;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
-import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;

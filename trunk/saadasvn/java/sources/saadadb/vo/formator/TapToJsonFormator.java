@@ -22,7 +22,6 @@ import adqlParser.parser.ParseException;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLOperand;
 import adqlParser.query.ADQLQuery;
-import ajaxservlet.formator.DefaultFormats;
 import ajaxservlet.formator.DefaultPreviews;
 
 /**

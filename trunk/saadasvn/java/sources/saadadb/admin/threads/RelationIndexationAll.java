@@ -10,7 +10,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.relationship.IndexBuilder;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 /**

@@ -1,7 +1,13 @@
 package ajaxservlet.formator;
 
-import java.util.*;
-import saadadb.collection.*;
+import saadadb.collection.Category;
+import saadadb.collection.EntrySaada;
+import saadadb.collection.ImageSaada;
+import saadadb.collection.Position;
+import saadadb.collection.SaadaInstance;
+import saadadb.collection.SpectrumSaada;
+import saadadb.collection.TableSaada;
+import saadadb.collection.WCSSaada;
 import saadadb.util.Messenger;
 
 /**

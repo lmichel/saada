@@ -1,14 +1,12 @@
 package saadadb.vo.query;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
-import saadadb.vo.formator.VOResultFormator;
 
 /**
  * Implementation of VOQueries build and run the query from parameters

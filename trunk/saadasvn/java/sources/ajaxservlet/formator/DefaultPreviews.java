@@ -2,8 +2,6 @@ package ajaxservlet.formator;
 
 import java.io.File;
 
-import ajaxservlet.SaadaServlet;
-
 import saadadb.collection.EntrySaada;
 import saadadb.collection.FlatfileSaada;
 import saadadb.collection.Position;
@@ -11,6 +9,7 @@ import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import ajaxservlet.SaadaServlet;
 
 abstract public class DefaultPreviews {
 	public static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};

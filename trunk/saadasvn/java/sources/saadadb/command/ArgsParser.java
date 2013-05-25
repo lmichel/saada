@@ -77,6 +77,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-index") &&
 							!args[i].startsWith("-populate") &&
 							!args[i].startsWith("-repository=") &&
+							!args[i].startsWith("-links=") &&
 							!args[i].startsWith("-filter=") &&
 							!args[i].startsWith("-create") &&
 							!args[i].startsWith("-oids") &&
@@ -618,6 +619,22 @@ public class ArgsParser implements Serializable{
 		return null;		
 	}
 
+	
+	/**
+	 * Return the links policy: follow: the action must be extended to attached data,
+	 * ignore; it mustn't 
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getLinks()  throws FatalException {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-links")) {
+				return this.matches(getArgsValue(args[i]), "-links", RegExp.FOLLOWLINKS);							
+			}
+		}
+		return null;		
+	}
+
 	/**
 	 * The filter is used by the dataloader to filter the names of datafile
 	 * @return
@@ -1066,7 +1083,7 @@ public class ArgsParser implements Serializable{
 				}
 				System.out.println();
 				LinkedHashMap<String, String> pmap = ap.getParamsMap();
-				for( Entry e: pmap.entrySet() ) {
+				for( Entry<String, String> e: pmap.entrySet() ) {
 					System.out.println("Entry: " + e);
 				}
 			}

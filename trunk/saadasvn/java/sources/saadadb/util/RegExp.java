@@ -31,6 +31,7 @@ public class RegExp {
 	public static final String CATEGORY = "(?i)" + Category.buildRegExp();
 	public static final String ALLOWED_ERROR_UNITS = "(deg)|(arcmin)|(arcsec)|(mas)|(uas)";
 	public static final String REPOSITORY  = "(?i)((no)|(move))";
+	public static final String FOLLOWLINKS  = "(?i)((follow)|(ignore))";
 	/*
 	 * Regular expression used to filter input datafiles
 	 */

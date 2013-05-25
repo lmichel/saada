@@ -3,7 +3,6 @@ package saadadb.products;
 import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Vector;
@@ -164,7 +163,7 @@ public class VOProduct extends File implements ProductFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWEntry(java.util.LinkedHashMap)
 	 */
-	public void getKWEntry(LinkedHashMap<String, AttributeHandler> tableAttributeHandlerEntry) { 
+	public void setKWEntry(LinkedHashMap<String, AttributeHandler> tableAttributeHandlerEntry) { 
 
 		typeEntry = new LinkedHashMap<Integer, String> ();
 		typeUnit = new LinkedHashMap<Integer, String> ();
@@ -237,19 +236,6 @@ public class VOProduct extends File implements ProductFile {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#getRow(int)
-	 */
-	public Object[] getRow(int index) {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#getRow(int, int)
-	 */
-	public Object[] getRow(int index, int numHDU) {
-		return getRow(index);
-	}
 
 	/* 
 	 * Does nothing because Savot runs in streamng mode: no rewind possible
@@ -705,7 +691,7 @@ public class VOProduct extends File implements ProductFile {
 					LinkedHashMap<String, AttributeHandler>  entr_att = new LinkedHashMap<String, AttributeHandler>();
 					fields = savotTable.getFields();
 					if( fields.getItemCount() > 0 ) {
-						getKWEntry(entr_att) ;
+						setKWEntry(entr_att) ;
 						retour.put("#" + m + " " + savotTable.getId() + " (TABLE COLUMNS)"
 								, new ArrayList<AttributeHandler>(entr_att.values()));  
 					}
@@ -727,7 +713,7 @@ public class VOProduct extends File implements ProductFile {
 	 */
 	public void setSpaceFrameForTable(){
 		LinkedHashMap<String, AttributeHandler> lhm = new LinkedHashMap<String, AttributeHandler>();	
-		this.getKWEntry(lhm);
+		this.setKWEntry(lhm);
 		/*
 		 * Try first to take the resource coosys
 		 */

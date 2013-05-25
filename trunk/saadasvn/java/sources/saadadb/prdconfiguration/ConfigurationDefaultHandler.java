@@ -519,7 +519,9 @@ public abstract class ConfigurationDefaultHandler extends DefaultHandler{
 		
 	}
 
-
+	/**
+	 * @return
+	 */
 	public CoordSystem getCoordSystem() {
 		return this.coordSystem;
 	}

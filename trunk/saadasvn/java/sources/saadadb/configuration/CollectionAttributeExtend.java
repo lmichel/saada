@@ -13,7 +13,6 @@ import org.w3c.dom.NodeList;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 
 /**

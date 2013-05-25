@@ -11,7 +11,6 @@ import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
 import saadadb.collection.EntrySaada;
-import saadadb.collection.Position;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;

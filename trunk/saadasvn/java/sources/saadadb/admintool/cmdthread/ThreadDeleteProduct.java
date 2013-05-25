@@ -97,7 +97,7 @@ public class ThreadDeleteProduct extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return AntDesk.getAntFile(AdminComponent.MANAGE_PRODUCT
+		return AntDesk.getAntFile(AdminComponent.REMOVE_PRODUCT
 				, taskTitle
 				, new String[]{"-remove=" + oids_to_remove });
 	}

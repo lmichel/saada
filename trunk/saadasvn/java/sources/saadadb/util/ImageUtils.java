@@ -78,8 +78,7 @@ public abstract class ImageUtils {
 				if( img3.getHeight(null) == 0 ) {
 					img3 = img2.getScaledInstance(max_size, 1, 0);	
 				}
-			}
-			else {
+			} else {
 				img3 = img2.getScaledInstance(-1, max_size, 0);	
 				/*
 				 * make sure that the image has at last pixel with

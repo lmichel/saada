@@ -2,12 +2,12 @@ package ajaxservlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,10 +16,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.simple.JSONObject;
 
-import ajaxservlet.json.JsonUtils;
-
 import saadadb.database.Database;
 import saadadb.util.PositionList;
+import ajaxservlet.json.JsonUtils;
 
 /**
  * Servlet implementation class UploadPosList

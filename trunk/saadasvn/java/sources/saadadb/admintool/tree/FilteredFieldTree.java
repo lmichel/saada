@@ -3,18 +3,13 @@
  */
 package saadadb.admintool.tree;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import saadadb.admintool.components.HelpedTextField;
 import saadadb.collection.Category;

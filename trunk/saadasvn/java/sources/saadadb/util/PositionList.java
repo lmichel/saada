@@ -8,12 +8,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import cds.astro.Astroframe;
-
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.parser.PositionParser;
+import cds.astro.Astroframe;
 
 /**
  * Manage a list of position for multi-position queries

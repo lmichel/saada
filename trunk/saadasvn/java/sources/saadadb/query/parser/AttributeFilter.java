@@ -1,19 +1,16 @@
 package saadadb.query.parser;
 
+import static saadadb.query.parser.SaadaQLRegex.ATTRIBUTE;
+import static saadadb.query.parser.SaadaQLRegex.ATTR_FILTER;
 import static saadadb.query.parser.SaadaQLRegex.FacWS;
-import static saadadb.query.parser.SaadaQLRegex.WHERE_ATTR_SAADA;
 import static saadadb.query.parser.SaadaQLRegex.WHERE_CLAUSE_LD;
 import static saadadb.query.parser.SaadaQLRegex.WHERE_CLAUSE_RD;
-import static saadadb.query.parser.SaadaQLRegex.ATTR_FILTER;
-import static saadadb.query.parser.SaadaQLRegex.ATTRIBUTE;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.query.constbuilders.OrderByConstraint;
-import saadadb.query.constbuilders.SaadaQLConstraint;
 
 /**
  * @author laurent

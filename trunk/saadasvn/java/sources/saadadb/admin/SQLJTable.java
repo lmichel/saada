@@ -24,7 +24,6 @@ import saadadb.admin.popup.PopupClassEdit;
 import saadadb.admin.popup.PopupCollEdit;
 import saadadb.admin.popup.PopupNode;
 import saadadb.admin.popup.PopupProduct;
-import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLQuery;

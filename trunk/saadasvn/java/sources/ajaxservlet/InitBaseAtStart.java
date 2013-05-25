@@ -3,15 +3,12 @@ package ajaxservlet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-
-import ajaxservlet.SaadaServlet;
 
 import saadadb.database.Database;
 import saadadb.database.Repository;

@@ -2,13 +2,11 @@ package saadadb.admintool.components.input;
 
 
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,8 +81,8 @@ public class FilteredComboBox extends JComboBox {
 		this.addPopupMenuListener(new PopupMenuListener() {			
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 				if( textfield.getText().equals(welcomeLabel) ) {
-					textfield.setForeground(Color.BLACK);
-					textfield.setText("");					
+					//textfield.setForeground(Color.BLACK);
+					//textfield.setText("");					
 					comboFilter();
 				}
 			}			
@@ -136,7 +134,7 @@ public class FilteredComboBox extends JComboBox {
 		List<String> filterArray= new ArrayList<String>();
 		for (int i = 0; i < array.size(); i++) {
 			String s = array.get(i);
-			if (s.length() == 0  || s.toLowerCase().contains(enteredText.toLowerCase())) {
+			if (textfield.getForeground() == Color.GRAY || s.length() == 0  || s.toLowerCase().contains(enteredText.toLowerCase())) {
 				filterArray.add(s);
 			}
 		}

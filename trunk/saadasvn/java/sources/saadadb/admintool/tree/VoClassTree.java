@@ -1,10 +1,6 @@
 package saadadb.admintool.tree;
 
 import java.awt.Container;
-import java.awt.Point;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragSource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,9 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
-import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;

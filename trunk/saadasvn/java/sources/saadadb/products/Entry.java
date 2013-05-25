@@ -52,22 +52,6 @@ public class Entry extends Product {
 		this.table = table;
 	}
 
-	/**
-	 * Returns the list which maps entry names no formated (keys) to their
-	 * position number in the table (values). Cross_reference of the homonymous
-	 * method defined in the current object product (and by relationship in the
-	 * current product file).
-	 * 
-	 * @return Hashtable The list which maps entry names no formated (keys) to
-	 *         their position number in the table (values).
-	 * @throws IgnoreException 
-	 * @throws AbortException 
-	 */
-	@Override
-	public LinkedHashMap<String, Integer> getTableEntry() throws AbortException, IgnoreException {
-		return table.getTableEntry();
-	}
-
 
 
 	/**
@@ -962,7 +946,7 @@ public class Entry extends Product {
 		this.configuration = ((ConfigurationTable)(this.table.getConfiguration())).getConfigurationEntry();
 		this.productFile   = this.table.productFile;
 		this.tableAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		this.productFile.getKWEntry(this.tableAttributeHandler);
+		this.productFile.setKWEntry(this.tableAttributeHandler);
 		this.setFmtsignature();
 	}
 

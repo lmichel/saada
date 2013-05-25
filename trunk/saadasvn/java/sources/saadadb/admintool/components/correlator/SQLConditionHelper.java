@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;

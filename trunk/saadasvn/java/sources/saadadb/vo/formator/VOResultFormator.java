@@ -7,12 +7,9 @@ import java.util.Map.Entry;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
-import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.meta.AttributeHandler;
-import saadadb.meta.MetaClass;
 import saadadb.meta.VOResource;
 import saadadb.query.executor.Query;
 import saadadb.query.parser.SelectFromIn;

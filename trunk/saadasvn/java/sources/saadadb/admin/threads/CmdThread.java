@@ -10,7 +10,6 @@ import saadadb.admin.dialogs.ProgressDialog;
 import saadadb.command.SaadaProcess;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
-import saadadb.util.Messenger;
 
 public abstract class CmdThread extends Thread {
 	protected Frame frame;

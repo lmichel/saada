@@ -6,14 +6,12 @@ import java.util.Map;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDropClass;
-import saadadb.admintool.cmdthread.ThreadDropCollection;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaClass;
-import saadadb.meta.MetaCollection;
 
 public class ClassDropPanel extends CollCreatePanel {
 

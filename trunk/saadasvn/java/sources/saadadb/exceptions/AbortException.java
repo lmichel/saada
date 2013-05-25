@@ -1,7 +1,6 @@
 package saadadb.exceptions;
 
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 /**

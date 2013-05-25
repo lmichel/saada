@@ -5,7 +5,6 @@ import java.io.File;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import ajaxservlet.formator.DynamicClassDisplayFilter;
-import ajaxservlet.formator.DynamicDisplayFilter;
 import ajaxservlet.formator.FilterBase;
 import ajaxservlet.formator.StoredFilter;
 

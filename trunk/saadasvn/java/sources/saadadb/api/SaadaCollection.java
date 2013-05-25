@@ -1,7 +1,6 @@
 package saadadb.api;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import saadadb.collection.Category;
@@ -10,7 +9,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
-import saadadb.query.executor.Query;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 

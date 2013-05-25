@@ -2,7 +2,6 @@ package ajaxservlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -10,12 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
-import saadadb.database.Repository;
-import saadadb.util.Messenger;
 import saadadb.vo.cart.CartJob;
 import ajaxservlet.accounting.UserTrap;
 

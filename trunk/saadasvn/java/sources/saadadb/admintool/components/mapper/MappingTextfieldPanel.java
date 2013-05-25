@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.command.ArgsParser;
 
 /**
  * @author laurentmichel

@@ -15,7 +15,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
-import saadadb.meta.VOResource;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.parser.UnitHandler;
 import saadadb.util.RegExp;

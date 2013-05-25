@@ -15,7 +15,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 public class CmdEmptyCollection extends CmdThread {

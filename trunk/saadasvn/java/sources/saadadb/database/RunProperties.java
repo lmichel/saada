@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
 /**

@@ -11,10 +11,6 @@ import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
 import adqlParser.parser.AdqlParser;
-import adqlParser.parser.DBConsistency;
-import adqlParser.parser.DefaultDBConsistency;
-import adqlParser.parser.ParseException;
-import adqlParser.parser.QueryBuilderTools;
 
 /**
  * As the {@link SaadaQLExecutor} class the ADQLExecutor class executes a query but written in ADQL.

@@ -1,9 +1,17 @@
 package xmleditorkit;
 
-import javax.swing.text.*;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.geom.Area;
+
+import javax.swing.SwingConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.Element;
+import javax.swing.text.Position;
+import javax.swing.text.View;
 
 public class TagView extends BoxView {
     private boolean isExpanded=true;

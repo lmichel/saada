@@ -22,7 +22,6 @@ import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
-import saadadb.util.zip.ZIPUtil;
 import saadadb.vo.QueryFileReport;
 
 /**

@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -779,18 +778,18 @@ public abstract class SaadaInstance implements DMInterface {
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
 		Field[] fs = this.getClass().getFields();
 		for( Field f: fs) {
-			 AttributeHandler ah;
-			 if( (ah = mc.getAttributes_handlers().get(f.getName())) != null ) {
+			AttributeHandler ah;
+			if( (ah = mc.getAttributes_handlers().get(f.getName())) != null ) {
 				if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
 					return ah;
 				}				
 			}
 		}
-//		for( AttributeHandler ah: mc.getAttributes_handlers().values() ) {
-//			if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
-//				return ah;
-//			}
-//		}
+		//		for( AttributeHandler ah: mc.getAttributes_handlers().values() ) {
+		//			if( (!queriable_only || ah.isQueriable() ) && ucd.equals(ah.getUcd()) ) {
+		//				return ah;
+		//			}
+		//		}
 		return null;
 	}
 
@@ -861,10 +860,10 @@ public abstract class SaadaInstance implements DMInterface {
 		String file_bus_sql = "";
 		file_bus_sql = this.oidsaada + "\t" + this.getNameSaada() + "\t"
 		+ this.contentsignature;
-		
+
 		for( int i=0 ; i<fieldlist.length ; i++  ) {
 			Field field = fieldlist[i];
-				file_bus_sql += "\t";
+			file_bus_sql += "\t";
 			String val = field.get(this).toString();
 
 			/*
@@ -874,16 +873,13 @@ public abstract class SaadaInstance implements DMInterface {
 			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") || 
 					val.equals("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
 				file_bus_sql +=Database.getWrapper().getAsciiNull();
-			}
-			else {
+			} else {
 				String type = field.getType().toString();
 				if( type.equals("char") || type.endsWith("String") ) {
 					file_bus_sql += val.replaceAll("'", "");
-				}
-				else if( type.equals("boolean")  ) {
+				} else if( type.equals("boolean")  ) {
 					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
-				}
-				else {
+				} else {
 					file_bus_sql +=  val;
 				}
 			}
@@ -909,8 +905,7 @@ public abstract class SaadaInstance implements DMInterface {
 			Class _cls ;
 			if( this.getCategory() != Category.FLATFILE) {
 				_cls = this.getClass().getSuperclass();
-			}
-			else {
+			} else {
 				_cls = Class.forName("generated." + Database.getDbname() + ".FLATFILEUserColl");
 			}
 			Iterator it=null;
@@ -933,8 +928,7 @@ public abstract class SaadaInstance implements DMInterface {
 				String val = this.getSQL(_cls.getField(ah.getNameattr()));
 				if(!first) {
 					sql += ", ";				
-				}
-				else {
+				} else {
 					first = false;
 				}
 				sql += val;				
@@ -979,14 +973,11 @@ public abstract class SaadaInstance implements DMInterface {
 				String val = "";
 				if( f.get(this) == null ) {
 					val = "null";
-				}
-
-				else {
+				} else {
 					val = f.get(this).toString();
 					if( "true".equals(val)) {
 						val = Database.getWrapper().getBooleanAsString(true);
-					}
-					else if( "false".equals(val)) {
+					} else if( "false".equals(val)) {
 						val = Database.getWrapper().getBooleanAsString(false);
 					}
 				}
@@ -1001,8 +992,7 @@ public abstract class SaadaInstance implements DMInterface {
 
 				if(!first) {
 					sql += "\t";				
-				}
-				else {
+				} else {
 					first = false;
 				}
 				sql += val;				
@@ -1030,8 +1020,7 @@ public abstract class SaadaInstance implements DMInterface {
 		Object obj_val;
 		if( (obj_val = field.get(this)) == null ) {
 			val = "null";
-		}
-		else {
+		} else {
 			val = obj_val.toString();
 		}
 		/*
@@ -1048,11 +1037,9 @@ public abstract class SaadaInstance implements DMInterface {
 		String type = field.getType().toString();
 		if( type.equals("char") || type.endsWith("String") ) {
 			return "'" + val.replaceAll("'", "") + "'";
-		}
-		else if( type.equals("boolean")  ) {
+		} else if( type.equals("boolean")  ) {
 			return Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
-		}
-		else {
+		} else {
 			return val;
 		}
 	}
@@ -1077,32 +1064,28 @@ public abstract class SaadaInstance implements DMInterface {
 		case DefineType.FIELD_LONG:
 			if( is_null) {
 				field.setLong(this, SaadaConstant.LONG);				
-			}
-			else {
+			} else {
 				field.setLong(this, rs.getLong(field.getName()));
 			}
 			break;
 		case DefineType.FIELD_INT:
 			if( is_null) {
 				field.setInt(this, SaadaConstant.INT);				
-			}
-			else {
+			} else {
 				field.setInt(this, rs.getInt(field.getName()));
 			}
 			break;
 		case DefineType.FIELD_DOUBLE:
 			if( is_null) {
 				field.setDouble(this, SaadaConstant.DOUBLE);				
-			}
-			else {
+			} else {
 				field.setDouble(this, rs.getDouble(field.getName()));
 			}
 			break;
 		case DefineType.FIELD_FLOAT:
 			if( is_null) {
 				field.setFloat(this, SaadaConstant.FLOAT);				
-			}
-			else {
+			} else {
 				field.setFloat(this, rs.getFloat(field.getName()));
 			}
 			break;
@@ -1113,16 +1096,14 @@ public abstract class SaadaInstance implements DMInterface {
 			Object o = rs.getObject(field.getName());
 			if( o != null ) {
 				field.set(this, o.toString().trim());
-			}
-			else {
+			} else {
 				field.set(this, null);					
 			}
 			break;
 		case DefineType.FIELD_SHORT:
 			if( is_null) {
 				field.setShort(this, SaadaConstant.SHORT);				
-			}
-			else {
+			} else {
 				field.setShort(this, rs.getShort(field.getName()));
 			}
 			break;
@@ -1132,16 +1113,14 @@ public abstract class SaadaInstance implements DMInterface {
 		case DefineType.FIELD_CHAR:
 			if( is_null) {
 				field.setChar(this, SaadaConstant.CHAR);				
-			}
-			else {
+			} else {
 				/*
 				 * Chars are returned (with PSQL) as character(1)
 				 */
 				String s =  (String) rs.getObject(field.getName());
 				if( s.length() > 0 ) {
 					field.setChar(this, s.charAt(0));
-				}
-				else {
+				} else {
 					field.setChar(this, SaadaConstant.CHAR);
 				}
 			}
@@ -1149,8 +1128,7 @@ public abstract class SaadaInstance implements DMInterface {
 		case DefineType.FIELD_DATE:
 			if( is_null) {
 				field.set(this, null);				
-			}
-			else {
+			} else {
 				field.set(this, rs.getDate(field.getName()));
 			}
 			break;
@@ -1165,7 +1143,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws Exception
 	 */
 	public  void setInField(Field fld, String value) throws Exception {
-
+		String tv = (value == null)?"":value.trim();
 		// Tests the Integer corresponding to this value type, and sets the
 		// value in the field with corresponding method
 		// The value Integer is defined in the class DefineType (package
@@ -1173,7 +1151,8 @@ public abstract class SaadaInstance implements DMInterface {
 		switch (DefineType.getType(ChangeType.getTypeJavaFromTypeClass(fld.getType().toString()))) {
 		case DefineType.FIELD_DOUBLE:
 			try {
-				fld.setDouble(this, Double.parseDouble(value));
+				fld.setDouble(this
+						, (tv.length() == 0)?SaadaConstant.DOUBLE:Double.parseDouble(value));
 			} catch(NumberFormatException e) {
 				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName() + " " + e.getMessage());
 				fld.setDouble(this, SaadaConstant.DOUBLE);					
@@ -1181,7 +1160,8 @@ public abstract class SaadaInstance implements DMInterface {
 			break;
 		case DefineType.FIELD_SHORT:
 			try {
-				fld.setShort(this, Short.parseShort(value.replaceAll("\\+", "")));
+				fld.setShort(this
+						, (tv.length() == 0)?SaadaConstant.SHORT:Short.parseShort(value.replaceAll("\\+", "")));
 			} catch(NumberFormatException e) {
 				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setShort(this, SaadaConstant.SHORT);					
@@ -1189,7 +1169,8 @@ public abstract class SaadaInstance implements DMInterface {
 			break;
 		case DefineType.FIELD_INT:
 			try {
-				fld.setInt(this, Integer.parseInt(value.replaceAll("\\+", "")));
+				fld.setInt(this
+						, (tv.length() == 0)?SaadaConstant.INT:Integer.parseInt(value.replaceAll("\\+", "")));
 			} catch(NumberFormatException e) {
 				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setInt(this, SaadaConstant.INT);					
@@ -1197,51 +1178,57 @@ public abstract class SaadaInstance implements DMInterface {
 			break;
 		case DefineType.FIELD_LONG:
 			try {
-				fld.setLong(this, Long.parseLong(value));
+				fld.setLong(this
+						, (tv.length() == 0)?SaadaConstant.LONG:Long.parseLong(value));
 			} catch(NumberFormatException e) {
 				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setLong(this, SaadaConstant.LONG);
 			}
 			break;
 		case DefineType.FIELD_BYTE:
-			fld.setByte(this, Byte.parseByte(value));
+			try {
+				fld.setByte(this
+						, (tv.length() == 0)?SaadaConstant.BYTE:Byte.parseByte(value));
+			} catch(NumberFormatException e) {
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				fld.setByte(this, SaadaConstant.BYTE);
+			}
 			break;
 		case DefineType.FIELD_STRING:
 			fld.set(this, value);
 			break;
 		case DefineType.FIELD_FLOAT:
 			try {
-				fld.setFloat(this, Float.parseFloat(value));
+				fld.setFloat(this
+						, (tv.length() == 0)?SaadaConstant.FLOAT:Float.parseFloat(value));
 			} catch(NumberFormatException e) {
 				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setFloat(this, SaadaConstant.FLOAT);
 			}
 			break;
 		case DefineType.FIELD_CHAR:
-			fld.setChar(this, value.charAt(0));
+			try {
+				fld.setChar(this
+						, (tv.length() == 0)?SaadaConstant.CHAR:value.charAt(0));
+			} catch(NumberFormatException e) {
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				fld.setChar(this, SaadaConstant.CHAR);
+			}
 			break;
 		case DefineType.FIELD_BOOLEAN:
-			fld.setBoolean(this, Boolean.getBoolean(value));
+			try {
+				fld.setBoolean(this
+						, (tv.length() == 0)?false:Boolean.getBoolean(value));
+			} catch(NumberFormatException e) {
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				fld.setBoolean(this, false);
+			}
 			break;
 		default:
 			Messenger.printMsg(Messenger.ERROR,
-			"SaadaInstance.setInField : Unknow type: " + fld.getType().toString());
+					"SaadaInstance.setInField : Unknow type: " + fld.getType().toString());
 			break;
 		}
-	}
-	// to remove ASAP
-	/**
-	 * @return
-	 */
-	public TreeMap getKeyOrigin() {
-		return null;
-	}
-
-	/**
-	 * @return
-	 */
-	public TreeMap getTypeOrigin() {
-		return null;
 	}
 
 	/**
@@ -1340,7 +1327,7 @@ public abstract class SaadaInstance implements DMInterface {
 			return SaadaConstant.LONG;
 		}
 	}
-	
+
 	/**
 	 *  @return
 	 * @throws SaadaException 

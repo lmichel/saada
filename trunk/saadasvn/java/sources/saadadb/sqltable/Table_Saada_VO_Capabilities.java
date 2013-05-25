@@ -13,11 +13,8 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
-import saadadb.query.executor.Query;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
-import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
 
 

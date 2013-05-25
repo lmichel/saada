@@ -77,6 +77,7 @@ public abstract class AdminComponent extends JPanel {
 
 	public static final String MANAGE_METADATA = "Manage Meta Data";
 	public static final String MANAGE_PRODUCT  = "Manage Products";
+	public static final String REMOVE_PRODUCT  = "Remove Products";
 
 	public static final String VO_CURATOR = "VO Curator";
 	public static final String TAP_PUBLISH = "TAP Service Setup";

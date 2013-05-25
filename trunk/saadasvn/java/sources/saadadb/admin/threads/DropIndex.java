@@ -11,7 +11,6 @@ import saadadb.command.ManageTableIndex;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 /**

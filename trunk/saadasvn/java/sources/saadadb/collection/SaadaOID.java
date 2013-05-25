@@ -66,6 +66,16 @@ public abstract class SaadaOID {
 	public static final String getSQLrowFilter(String col_name) {
 		return "(" + col_name + " & 4294967295)";
 	}
+	
+	/**
+	 * Return a String matching the tree path of the oid
+	 * COLECTION.CAT.CLASS
+	 * @param oid
+	 * @return
+	 */
+	public static String getTreePath(long oid){
+		return getCollectionName(oid) + "." + getCategoryName(oid) + "." + getClassName(oid);
+	}
 	/**
 	 * @param oid
 	 * @return

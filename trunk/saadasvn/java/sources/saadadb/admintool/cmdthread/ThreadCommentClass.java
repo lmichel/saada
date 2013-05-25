@@ -1,7 +1,6 @@
 package saadadb.admintool.cmdthread;
 
 
-import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
@@ -9,9 +8,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ClassManager;
-import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;

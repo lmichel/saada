@@ -14,19 +14,15 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadDmViewPopulate;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.RunTaskButton;
-import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.voresources.ModelFieldMapper;
 import saadadb.admintool.components.voresources.ObsTapComponentList;
-import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.collection.Category;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
-import saadadb.vo.registry.Capability;
 
 
 /**

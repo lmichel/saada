@@ -3,11 +3,10 @@ package saadadb.vo.request.formator;
 import java.util.ArrayList;
 import java.util.Map;
 
-import adqlParser.SaadaADQLQuery;
-
 import saadadb.exceptions.QueryException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
+import adqlParser.SaadaADQLQuery;
 
 /**
  * This is a simple interface with the very common services a formator must support.

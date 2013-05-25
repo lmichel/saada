@@ -3,11 +3,8 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageProducer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
