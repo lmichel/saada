@@ -33,7 +33,7 @@
 .dataTables_wrapper {
 	position: relative;
 	/*min-height: 302px;*/
-	max-height: 500px;
+	/*max-height: 500px;*/
 	overflow: auto;
 	clear: both;
 	_height: 302px;
