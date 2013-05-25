@@ -1,14 +1,23 @@
 package saadadb.collection;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import saadadb.api.SaadaLink;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.query.executor.Query;
+import saadadb.query.result.OidsaadaResultSet;
 import saadadb.relationship.RelationManager;
+import saadadb.sqltable.SQLLargeQuery;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -19,10 +28,20 @@ import saadadb.util.Messenger;
  *
  */
 public class ProductManager extends EntityManager {
-	/**
-	 * Although all method could be static, we need to make an instance to monitor the progress from 
-	 * the GUI
-	 */
+	private  boolean followLinks = false;
+	private boolean noIndex = false;
+	private long[] oids;
+	private Set<String> tablesToIndex = new HashSet<String>();
+	private String coll, ecoll;
+	private String[] start_rel;
+	private String[] estart_rel;
+	private String[] end_rel;
+	private String[] eend_rel;
+	private String coll_table, ecoll_table;		
+	private int category;
+	private String classe, eclasse;
+	private Map<String, ArrayList<Long>>linkTargetsToRemove = new HashMap<String, ArrayList<Long>>();
+
 	public ProductManager() {
 		super();
 	}
@@ -63,13 +82,21 @@ public class ProductManager extends EntityManager {
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
 		try {
-			String[] soids =  ap.getRemove().split("[,;]");
-			long retour[] = new long[soids.length];
-			for( int j=0 ; j<soids.length ; j++ ) {
-				retour[j] = Long.parseLong(soids[j]);
+			noIndex = ap.isNoindex();
+			followLinks = (ap.getLinks() != null && ap.getLinks().equalsIgnoreCase("follows"))? true: false;
+			String query = ap.getRemove().trim();
+			if( query.startsWith("Select")) {
+				removeProducts(query);
+			} else {
+				String[] soids =  ap.getRemove().split("[,;]");
+				long oids[] = new long[soids.length];
+				for( int j=0 ; j<soids.length ; j++ ) {
+					oids[j] = Long.parseLong(soids[j]);
+				}
+				removeProducts();
 			}
-			removeProducts(retour);
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
@@ -77,110 +104,91 @@ public class ProductManager extends EntityManager {
 	/**************************************
 	 * Internal business
 	 */
+
 	/**
-	 * @param product_filename
+	 * Remove all data matching the query
+	 * @param query
 	 * @throws SaadaException
 	 */
-	public final void removeProduct(String product_filename) throws SaadaException{
-		SQLQuery squery = new SQLQuery();
-
+	public final void removeProducts(String query) throws SaadaException {
 		try {
-			ResultSet rs = squery.run("SELECT oidsaada FROM saada_loaded_file WHERE filename = '" + product_filename + "'");
-			boolean found = false;
-			while( rs.next() ) {
-				found = true;
-				long oid = rs.getLong(1);
-				this.processUserRequest();
-				Messenger.printMsg(Messenger.TRACE, "Remove product file <" + product_filename + "> " 
-						+ SaadaOID.getCategoryName(oid) + " instance of class <" 
-						+ SaadaOID.getClassName(oid) + "> in collection " 
-						+ SaadaOID.getCollectionName(oid));
-				removeProducts(new long[]{oid});
+			Query q = new Query();
+			OidsaadaResultSet rs = q.runBasicQuery(query);
+			Messenger.printMsg(Messenger.TRACE, "Remove data matching the query " +query);
+			ArrayList<Long> al = new ArrayList<Long>();
+			while(rs.next()) {
+				al.add(rs.getOId());
 			}
-			if( !found ) {
-				Messenger.printMsg(Messenger.WARNING, "Product file <" + product_filename + "> not found");
+			int cpt = 0;
+			oids = new long[al.size()];
+			for( long l: al) {
+				oids[cpt++] = l;
 			}
-			squery.close();
-		} catch (Exception e) {			
+			removeProducts();			
+		} catch(AbortException e ) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, e);
+		} catch(Exception e ) {
 			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 
 	}
+
+	/**
+	 * @param oids
+	 * @throws SaadaException
+	 */
+	public final void removeProducts(long[] oids) throws SaadaException {
+		this.oids = oids;
+		removeProducts();					
+	}
+
 	/**
 	 * @param oids
 	 * @throws FatalException
 	 */
-	public final void removeProducts(long[] oids) throws SaadaException {
+	private final void removeProducts() throws SaadaException {
 		/*
 		 * Nothing to do: return
 		 */
-		if( oids.length == 0 ) {
+		if( oids == null || oids.length == 0 ) {
+			Messenger.printMsg(Messenger.WARNING, "The list of oids to remove is empty" );
 			return;
 		}
 		/*
 		 * This method can only work if all oids are from the same collection/category/class.
 		 */
-		for( long oid: oids) {
-			try {
-				Database.getCache().getObject(oid);
-			} catch (Exception e) {
-				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");
-			}
-			if( (oid >> 32) != (oids[0] >> 32) ) {
-				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "OIDs to be removed are not all from the same collection/category/class");
-			}
-		}
+		this.checkOidList();
+
+
+		Messenger.printMsg(Messenger.TRACE, "Remove " + oids.length + " data from " + SaadaOID.getTreePath(oids[0]));
 		SQLQuery squery = new SQLQuery();
 		try {
-			/*
-			 * Build some metadata names used afters
-			 */
-			int category            = SaadaOID.getCategoryNum(oids[0]);
-			String classe, eclasse;
-			if( category == Category.FLATFILE ) {
-				classe = "FLATFILE";
-				eclasse = null;
-			}
-			else {
-				classe = Database.getCachemeta().getClass(SaadaOID.getClassNum(oids[0])).getName();
-				eclasse = Database.getCachemeta().getClass(classe).getAssociate_class();
-			}
-			String coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
-			String[] start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
-			String[] end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
-			String coll_table       = Database.getCachemeta().getCollectionTableName(coll, category);		
+			this.setDataTreeLocation();
 			this.processUserRequest();
+			this.storeLinkTargetsToRemove();
+
 			/*
 			 * Build the where statement testing that an oid belongs to the list of oids to remove
 			 */
-			String in_stm = "(" + oids[0];
-			for(int i=1 ; i<oids.length ; i++ ) {
-				in_stm += ", " + oids[i];
-			}
-			in_stm += ")";
+			String in_stm = getInStatement();
 			/*
 			 * If products to remove are tables: process first entries
 			 */
 			this.processUserRequest();
 			if( category == Category.TABLE && eclasse != null && eclasse.length() > 0 ) {
 				this.processUserRequest();
-				String ecoll_table = Database.getCachemeta().getCollectionTableName(coll, Database.getCachemeta().getClass(eclasse).getCategory());
 				String join = "(SELECT e.oidsaada FROM " + ecoll_table + " as e, " + coll_table + " as t WHERE e.oidtable = t.oidsaada AND t.oidsaada IN " + in_stm + ")";
-				String[] entr_start_rel = Database.getCachemeta().getRelationNamesStartingFromColl(Database.getCachemeta().getClass(eclasse).getCollection_name()
-						, Database.getCachemeta().getClass(eclasse).getCategory());
-				String[] entr_end_rel = Database.getCachemeta().getRelationNamesEndingOnColl(Database.getCachemeta().getClass(eclasse).getCollection_name()
-						, Database.getCachemeta().getClass(eclasse).getCategory());			
 				/*
 				 * Remove first entries from relationships. Relationships index must be re-build, that can be long.....
 				 */
 				Messenger.printMsg(Messenger.TRACE, "Update relationships involving table entries");
-				for( String rel: entr_start_rel) {
+				for( String rel: estart_rel) {
 					this.processUserRequest();
 					Messenger.printMsg(Messenger.TRACE, "Relationships <" + rel + ">");
 					(new RelationManager(rel)).removePrimaryKeys(join);
 				}
-				for( String rel: entr_end_rel) {
+				for( String rel: eend_rel) {
 					this.processUserRequest();
 					Messenger.printMsg(Messenger.TRACE, "Relationships <" + rel + ">");
 					(new RelationManager(rel)).removeSecondaryKeys(join);
@@ -192,22 +200,23 @@ public class ProductManager extends EntityManager {
 				/*
 				 * Update the class level first in order to keep the join with table which uses the collection table
 				 */
-//				/*
-//				 * Flatfiles have no class
-//				 */
-//				if( !eclasse.endsWith("UserColl") ) {
-//					this.processUserRequest();
-//					SQLTable.dropTableIndex(eclasse, null);
-//					SQLTable.addQueryToTransaction("DELETE FROM " + eclasse + " WHERE oidsaada IN " + join, coll_table);
-//					SQLTable.indexTable(eclasse, null);
-//				}
+				//				/*
+				//				 * Flatfiles have no class
+				//				 */
+				//				if( !eclasse.endsWith("UserColl") ) {
+				//					this.processUserRequest();
+				//					SQLTable.dropTableIndex(eclasse, null);
+				//					SQLTable.addQueryToTransaction("DELETE FROM " + eclasse + " WHERE oidsaada IN " + join, coll_table);
+				//					SQLTable.indexTable(eclasse, null);
+				//				}
 				/*
 				 * Remove collection level data
 				 */
 				this.processUserRequest();
 				SQLTable.dropTableIndex(ecoll_table, null);
 				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table + " WHERE oidtable IN " + in_stm, coll_table);
-				SQLTable.indexTable(ecoll_table, null);
+				//SQLTable.indexTable(ecoll_table, null);
+				tablesToIndex.add(ecoll_table);
 			}
 
 			Messenger.printMsg(Messenger.TRACE, "Remove data products");
@@ -236,7 +245,9 @@ public class ProductManager extends EntityManager {
 				this.processUserRequest();
 				SQLTable.dropTableIndex(classe, null);
 				SQLTable.addQueryToTransaction("DELETE FROM  " + classe + " WHERE oidsaada IN " +in_stm, classe);
-				SQLTable.indexTable(classe, null);
+				//SQLTable.indexTable(classe, null);
+				tablesToIndex.add(classe);
+
 			}
 			/*
 			 * and the collection level data
@@ -244,7 +255,8 @@ public class ProductManager extends EntityManager {
 			this.processUserRequest();
 			SQLTable.dropTableIndex(coll_table, null);
 			SQLTable.addQueryToTransaction("DELETE FROM " + coll_table + " WHERE oidsaada IN  " + in_stm, coll_table);
-			SQLTable.indexTable(coll_table, null);
+			//SQLTable.indexTable(coll_table, null);
+			tablesToIndex.add(coll_table);
 
 			/*
 			 * Remove data files from the repository
@@ -266,6 +278,7 @@ public class ProductManager extends EntityManager {
 				squery.close();
 				SQLTable.addQueryToTransaction("DELETE FROM saada_loaded_file WHERE oidsaada IN " + in_stm, "saada_loaded_file");
 			}
+			this.reIndexTable();
 		} catch(AbortException e ) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		} catch(Exception e ) {
@@ -275,5 +288,119 @@ public class ProductManager extends EntityManager {
 
 	}
 
+	/**
+	 * Store in a map all oids targeted by the relationships starting from the data
+	 * collection we are working on
+	 * @throws Exception 
+	 * @throws SaadaException 
+	 * @throws FatalException 
+	 */
+	private void storeLinkTargetsToRemove() throws Exception {
+		if( !followLinks ) {
+			return;
+		}
+		for( long oid: oids) {
+			for( String rel: start_rel) {
+				SaadaLink[] sls = Database.getCache().getObject(oid).getStartingLinks(rel);
+				for( SaadaLink sl: sls) {
+					long soid= sl.getEndindOID();
+					String path = SaadaOID.getTreePath(soid);
+					ArrayList<Long> al;
+					if( (al = linkTargetsToRemove.get(path)) == null ){
+						al = new ArrayList<Long>();
+						linkTargetsToRemove.put(path, al);
+					}
+					al.add(soid);
+				}
+			}
+			if( category == Category.TABLE  ) {
+				SQLLargeQuery squery= new SQLLargeQuery();
+				ResultSet rs = squery.run("(SELECT e.oidsaada FROM " + ecoll_table + " as e, " + coll_table + " as t WHERE e.oidtable = t.oidsaada AND t.oidsaada IN " + getInStatement() + ")");
+				while( rs.next() ) {
+					long eoid = rs.getLong(1);
+					for( String rel: start_rel) {
+						SaadaLink[] sls = Database.getCache().getObject(eoid).getStartingLinks(rel);
+						for( SaadaLink sl: sls) {
+							long soid= sl.getEndindOID();
+							String path = SaadaOID.getTreePath(soid);
+							ArrayList<Long> al;
+							if( (al = linkTargetsToRemove.get(path)) == null ){
+								al = new ArrayList<Long>();
+								linkTargetsToRemove.put(path, al);
+							}
+							al.add(soid);
+						}
+					}
+				}
+			}
+		}
+	}
 
+	/**
+	 * Build the where statement testing that an oid belongs to the list of oids to remove
+	 */
+	private String getInStatement(){
+		String in_stm = "(" + oids[0];
+		for(int i=1 ; i<oids.length ; i++ ) {
+			in_stm += ", " + oids[i];
+		}
+		in_stm += ")";
+		return in_stm;
+	}
+
+
+	/**
+	 * Set all attribute locating the oids to remove with the data tree
+	 * @throws FatalException
+	 */
+	private void setDataTreeLocation() throws FatalException{
+		category            = SaadaOID.getCategoryNum(oids[0]);
+		if( category == Category.FLATFILE ) {
+			classe = "FLATFILE";
+			eclasse = null;
+		} else {
+			classe = Database.getCachemeta().getClass(SaadaOID.getClassNum(oids[0])).getName();
+			if(category == Category.ENTRY ) {
+				eclasse = Database.getCachemeta().getClass(classe).getAssociate_class();
+				ecoll   = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
+				estart_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(ecoll, Category.ENTRY);
+				eend_rel = Database.getCachemeta().getRelationNamesEndingOnColl(Database.getCachemeta().getClass(eclasse).getCollection_name()
+						, Database.getCachemeta().getClass(eclasse).getCategory());	
+			}
+		}
+		coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
+		start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
+		end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
+		coll_table       = Database.getCachemeta().getCollectionTableName(coll, category);		
+	}
+
+	/**
+	 * Rebuild dataindex if requested
+	 * @throws AbortException 
+	 */
+	private void reIndexTable() throws AbortException{
+		if( !noIndex) {
+			Messenger.printMsg(Messenger.TRACE, "Start to re-index " + tablesToIndex.size() + "tables.");
+			for( String tbl: tablesToIndex ) {
+				SQLTable.indexTable(tbl, null);
+			}
+		}
+	}
+
+	/**
+	 * Cjack that all oids are from the same collection/category/class.
+	 * @throws AbortException
+	 */
+	private void checkOidList() throws AbortException {
+		for( long oid: oids) {
+			try {
+				Database.getCache().getObject(oid);
+			} catch (Exception e) {
+				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");
+			}
+			if( (oid >> 32) != (oids[0] >> 32) ) {
+				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "OIDs to be removed are not all from the same collection/category/class");
+			}
+		}
+	}
 }

@@ -1,10 +1,36 @@
 package xmleditorkit;
 
-import javax.swing.text.*;
-import javax.swing.*;
-import java.io.*;
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+
+import javax.swing.Action;
+import javax.swing.JEditorPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.Position;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.TextAction;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 
 public class XMLEditorKit extends StyledEditorKit {
     ViewFactory defaultFactory = new XMLViewFactory();

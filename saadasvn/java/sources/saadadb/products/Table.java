@@ -186,7 +186,7 @@ vvvvv * @version $Id$
         tableAttributeHandler_org = this.getEntry().getTableAttributeHandler();
         Entry entry_to_merge = ((Table)(prd_to_merge)).getEntry();
         entry_to_merge.tableAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		prd_to_merge.productFile.getKWEntry(entry_to_merge.getTableAttributeHandler());
+		prd_to_merge.productFile.setKWEntry(entry_to_merge.getTableAttributeHandler());
 
 		it = entry_to_merge.getTableAttributeHandler().values().iterator();
         while( it.hasNext()) {

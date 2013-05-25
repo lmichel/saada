@@ -1,9 +1,7 @@
 package ajaxservlet;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 
-import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

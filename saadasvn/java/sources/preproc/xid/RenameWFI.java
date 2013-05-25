@@ -1,7 +1,5 @@
 package preproc.xid;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.sql.PreparedStatement;
 import java.util.Date;
 

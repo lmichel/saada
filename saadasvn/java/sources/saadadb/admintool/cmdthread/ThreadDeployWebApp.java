@@ -10,11 +10,9 @@ import org.apache.tools.ant.ProjectHelper;
 
 import saadadb.admin.SaadaDBAdmin;
 import saadadb.database.Database;
-import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewWebServer;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 /**

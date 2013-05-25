@@ -7,7 +7,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import org.json.simple.JSONObject;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.query.parser.PositionParser;
-
 import ajaxservlet.SaadaServlet;
 
 /** * @version $Id$

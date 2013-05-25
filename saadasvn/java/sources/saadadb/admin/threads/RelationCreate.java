@@ -12,7 +12,6 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 public class RelationCreate extends RelationIndexation {

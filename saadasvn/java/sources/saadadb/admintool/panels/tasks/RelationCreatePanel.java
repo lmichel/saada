@@ -27,7 +27,6 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
-import saadadb.database.Database;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.RegExp;
 

@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.util.HashSet;
 
-import ajaxservlet.formator.DefaultFormats;
-
 import saadadb.collection.EntrySaada;
 import saadadb.collection.SaadaInstance;
 import saadadb.command.ArgsParser;
@@ -21,6 +19,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
 import saadadb.vo.formator.ConeSearchToVOTableFormator;
+import ajaxservlet.formator.DefaultFormats;
 
 public class MakeAJS {
 	static final String script_dir = "/data/XID_WFIfc/";

@@ -13,9 +13,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 public class CmdCreateCollection extends CmdThread {

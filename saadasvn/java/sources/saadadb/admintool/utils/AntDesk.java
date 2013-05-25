@@ -100,6 +100,11 @@ public class AntDesk {
 		    	,"      <java  classname=\"saadadb.command.ManageTableIndex\" fork=\"true\"  failonerror=\"true\"  >"
 				,"        <classpath refid=\"saadadb.classpath\"/>\n"
 		});
+		map.put(AdminComponent.REMOVE_PRODUCT, new String[] {
+				"  <target name=\"user.task\">"
+		    	,"      <java  classname=\"saadadb.command.ManageProduct\" fork=\"true\"  failonerror=\"true\"  >"
+				,"        <classpath refid=\"saadadb.classpath\"/>\n"
+		});
 	}
 
 	/**

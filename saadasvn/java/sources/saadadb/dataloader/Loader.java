@@ -134,8 +134,7 @@ public class Loader extends SaadaProcess {
 		 */
 		if( configuration.getCategorySaada() == Category.FLATFILE ) {
 			(new FlatFileMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();						
-		}
-		else if (typeMapping.equals("MAPPING_USER_SAADA")) {
+		} else if (typeMapping.equals("MAPPING_USER_SAADA")) {
 			/*
 			 * Load all products in one step
 			 */
@@ -143,8 +142,7 @@ public class Loader extends SaadaProcess {
 					configuration.getCategorySaada() != Category.TABLE	) {
 				(new SchemaFusionMapper(this, file_to_load, this.configuration, build_index)).ingestProductSetByBurst();			
 
-			}
-			else {
+			} else {
 				(new SchemaFusionMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();			
 			}
 		}else if (typeMapping.equals("MAPPING_1_1_SAADA")){

@@ -3,7 +3,6 @@ package saadadb.classmapping;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
-import saadadb.products.Product;
 import saadadb.util.Messenger;
 
 public class MappingEntry extends Mapping {

@@ -1,17 +1,12 @@
 package saadadb.admintool.popups;
 
-import java.awt.Container;
-import java.awt.Frame;
 import java.util.LinkedHashMap;
 
 import javax.swing.JMenuItem;
-import javax.swing.JTable;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.ThreadDeleteProduct;
 import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.SaadaException;
 
 

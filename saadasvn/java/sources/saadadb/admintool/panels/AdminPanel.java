@@ -3,11 +3,7 @@
  */
 package saadadb.admintool.panels;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -17,13 +13,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.DebugButton;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.utils.MyGBC;
-import saadadb.exceptions.SaadaException;
 
 /**
  * @author laurentmichel

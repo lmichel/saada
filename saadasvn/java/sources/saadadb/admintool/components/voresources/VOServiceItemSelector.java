@@ -13,7 +13,6 @@ import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.AdminPanel;
-import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;

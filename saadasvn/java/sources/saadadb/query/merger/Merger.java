@@ -3,9 +3,8 @@ package saadadb.query.merger;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;

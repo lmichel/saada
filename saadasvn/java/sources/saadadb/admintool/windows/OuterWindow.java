@@ -3,15 +3,12 @@
  */
 package saadadb.admintool.windows;
 
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JWindow;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;

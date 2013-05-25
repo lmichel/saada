@@ -10,7 +10,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 
 /** * @version $Id$
 

@@ -1,7 +1,6 @@
 package saadadb.admintool.dialogs;
 
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,7 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;

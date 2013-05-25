@@ -31,7 +31,7 @@ public class AnyFile extends File implements ProductFile {
 		return null;
 	}
 
-	public void getKWEntry(LinkedHashMap<String, AttributeHandler> tah) throws IgnoreException {
+	public void setKWEntry(LinkedHashMap<String, AttributeHandler> tah) throws IgnoreException {
 	}
 
 	public Image getSpectraImage() {

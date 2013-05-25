@@ -5,15 +5,14 @@ package saadadb.vo.request.formator.votable;
 
 import java.util.ArrayList;
 
-import cds.savot.model.SavotTR;
-import cds.savot.model.TDSet;
-
 import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import cds.savot.model.SavotTR;
+import cds.savot.model.TDSet;
 
 /**
  * @author laurent

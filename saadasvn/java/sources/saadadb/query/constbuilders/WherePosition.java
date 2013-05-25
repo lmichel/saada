@@ -7,7 +7,6 @@ import saadadb.database.DbmsWrapper;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.Coord;
-import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
 import saadadb.util.RegExp;

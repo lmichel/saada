@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import saadadb.admin.SaadaDBAdmin;
-import saadadb.exceptions.AbortException;
-import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 

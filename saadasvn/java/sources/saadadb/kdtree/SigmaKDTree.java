@@ -8,9 +8,7 @@ import java.util.TreeMap;
 
 import saadadb.command.ManageRelation;
 import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
-import saadadb.util.Messenger;
 
 public class SigmaKDTree extends KDTree<HasKCoo> {
 	private double err_max = 0;

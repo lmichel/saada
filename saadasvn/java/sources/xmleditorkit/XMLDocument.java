@@ -1,8 +1,12 @@
 package xmleditorkit;
 
-import javax.swing.text.*;
-import java.util.ArrayList;
-import java.awt.*;
+import java.awt.Color;
+
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public class XMLDocument extends DefaultStyledDocument {
     public static String TAG_ELEMENT="tag_element";

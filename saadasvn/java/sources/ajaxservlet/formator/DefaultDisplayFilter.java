@@ -8,13 +8,10 @@ import java.util.Set;
 
 import org.json.simple.JSONArray;
 
-import com.mysql.jdbc.DatabaseMetaData;
-
 import saadadb.collection.Category;
 import saadadb.collection.Position;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
-import saadadb.collection.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;

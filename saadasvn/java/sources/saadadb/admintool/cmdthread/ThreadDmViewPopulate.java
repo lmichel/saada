@@ -1,7 +1,6 @@
 package saadadb.admintool.cmdthread;
 
 import java.awt.Cursor;
-import java.awt.Frame;
 import java.util.Map;
 
 import saadadb.admintool.components.AdminComponent;

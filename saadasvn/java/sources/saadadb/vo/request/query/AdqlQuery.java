@@ -16,7 +16,6 @@ import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
 import adqlParser.parser.AdqlParser;
-import adqlParser.parser.DefaultDBConsistency;
 import adqlParser.parser.QueryBuilderTools;
 
 /**

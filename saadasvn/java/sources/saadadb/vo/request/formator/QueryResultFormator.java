@@ -6,8 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import adqlParser.SaadaADQLQuery;
-
 import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
@@ -17,6 +15,7 @@ import saadadb.meta.VOResource;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import adqlParser.SaadaADQLQuery;
 
 
 

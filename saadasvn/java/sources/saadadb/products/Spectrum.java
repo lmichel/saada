@@ -185,7 +185,7 @@ public class Spectrum extends Product {
 		 */	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + sc_col + "> exists" );
 		LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
-		this.productFile.getKWEntry(tah);
+		this.productFile.setKWEntry(tah);
 		for( AttributeHandler ah :tah.values() ) {
 			String key = ah.getNameorg();
 			if(key.equals(sc_col) ){
@@ -294,7 +294,7 @@ public class Spectrum extends Product {
 		 */	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinate found in header: explore columns names");
 		LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
-		this.productFile.getKWEntry(tah);
+		this.productFile.setKWEntry(tah);
 		for( AttributeHandler ah :tah.values() ) {
 			if(ah.getNameorg().matches(RegExp.SPEC_AXIS) ){
 				Messenger.printMsg(Messenger.TRACE, "Column <" + ah.getNameorg() + "> taken as dispersion value");
@@ -358,7 +358,7 @@ public class Spectrum extends Product {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinate found in header UCDs or UTypes: explore column definitions");
 			findMin = false;
 			LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
-			this.productFile.getKWEntry(tah);
+			this.productFile.setKWEntry(tah);
 			for( AttributeHandler ah :tah.values() ) {
 				if(ah.getUcd().equals("em.wl")){
 					this.sc_attr = ah;

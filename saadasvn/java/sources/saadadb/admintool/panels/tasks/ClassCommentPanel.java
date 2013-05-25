@@ -6,7 +6,6 @@ import java.util.Map;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadCommentClass;
-import saadadb.admintool.cmdthread.ThreadCommentCollection;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.HelpDesk;
 

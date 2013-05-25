@@ -1,8 +1,6 @@
 package saadadb.admintool.popups;
 
 
-import java.awt.Container;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -15,12 +13,7 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadDeleteProduct;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.collection.Category;
-import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.Messenger;
 
 public class PopupNode extends JPopupMenu implements ActionListener{
 	/** * @version $Id: PopupNode.java 118 2012-01-06 14:33:51Z laurent.mistahl $

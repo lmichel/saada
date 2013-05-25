@@ -147,7 +147,7 @@ public class FitsProduct extends File implements ProductFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWEntry(java.util.LinkedHashMap)
 	 */
-	public void getKWEntry(LinkedHashMap<String, AttributeHandler> tableAttributeHandlerEntry) throws IgnoreException {
+	public void setKWEntry(LinkedHashMap<String, AttributeHandler> tableAttributeHandlerEntry) throws IgnoreException {
 		if(  !(this.good_header instanceof  nom.tam.fits.TableHDU) ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Can not get column names for a " + this.good_header.getClass().getName());
 			return ;  		
@@ -1397,7 +1397,7 @@ public class FitsProduct extends File implements ProductFile{
 				retour.put("#" + i + " " + ext_name + " (" + ext_type + ")", attrs);    	
 				if( ext_type.equalsIgnoreCase("BINTABLE") ||  ext_type.equalsIgnoreCase("ASCIITABLE")) {
 					LinkedHashMap<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
-					getKWEntry(tahe);
+					setKWEntry(tahe);
 					attrs = new ArrayList<AttributeHandler>(tahe.values());					
 
 					retour.put("#" + i + " " + ext_name + " (" + ext_type + " COLUMNS)", attrs);    	
@@ -1605,7 +1605,7 @@ public class FitsProduct extends File implements ProductFile{
 	 */
 	public void setSpaceFrameForTable() throws IgnoreException{
 		LinkedHashMap<String, AttributeHandler> lhm = new LinkedHashMap<String, AttributeHandler>();	
-		this.getKWEntry(lhm);
+		this.setKWEntry(lhm);
 		space_frame = new SpaceFrame(this.createTableAttributeHandler(),lhm);
 	}
 

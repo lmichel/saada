@@ -16,6 +16,7 @@ import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -72,7 +73,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			SaadaDBAdmin.showFatalError(frame, "Type of file <" + filename + "> not recognized");
 			return;
 		}
-		LinkedHashMap<String, ArrayList<AttributeHandler>> prd_map=null;
+		Map<String, ArrayList<AttributeHandler>> prd_map=null;
 		prd_map = prd.getMap(null);
 		for( String ext: prd_map.keySet()) {
 			ArrayList<AttributeHandler> alah = prd_map.get(ext);

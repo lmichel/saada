@@ -7,11 +7,9 @@ import java.awt.event.ActionListener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.input.FilteredComboBox;

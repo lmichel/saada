@@ -1,9 +1,6 @@
 package saadadb.admintool.components.input;
 
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.components.AdminComponent;

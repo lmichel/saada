@@ -34,13 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.text.DefaultFormatter;
-import javax.swing.text.MaskFormatter;
-
-import saadadb.util.RegExp;
 
 /**
  * A regular expression based implementation of AbstractFormatter.

@@ -1,13 +1,12 @@
 package saadadb.products;
 
-import java.awt.Image;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import nom.tam.fits.FitsException;
-import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
 /**v * @version $Id$
@@ -30,54 +29,10 @@ public interface ProductFile extends Enumeration{
      *@return String The value corresponding to this key word, if he exists, else null.
      */
     public String getKWValueQuickly(String key);
-     /**In case of the product can have table:
-     * This method is used for the valdation of the product by this configuration.
-     * Returns the list which maps entry names not formated (keys) to their position number in the table (values).
-     * Attention: In the case of entries, their header in tables product can be different from standards of the other products.
-     * This list is maked with the n'th HDU in parameter.
-     * If there is no table for this product format, this method will return null.
-     *@param numHDU The n'th HDU.
-     *@return Hashtable The list which maps entry names to their position number in the table.
-     * @throws AbortException 
-     * @throws IgnoreException 
-     */
-    public LinkedHashMap<String, Integer> getTableEntry() throws IgnoreException;
-    /**In case of the product can have table:
-     * Returns the list which maps entry names formated in the standard of Saada (keys) to their objects modelling entry informations (values).
-     * This list is maked with the first table Header (index 1).
-     * Generally the object modelling entry informations is a AttributeHandler.
-     * If there is no table for this product format, this method will return null.
-     *@param Configuration The configuration of this product file.
-     *@return Hashtable The list which maps entry names to their informations.
-     * @throws FitsException 
-     */
-    public void getKWEntry(LinkedHashMap<String, AttributeHandler> tah) throws IgnoreException;
-    /**Returns the algorithmics value for the product characteristics (attributes without values) with md5.
-     *@return String this algorithmics value with md5.
-     */  
-     public Image getSpectraImage();
-     /**In case of the product can have table:
-     * Returns one objects row for one table row with table index in parameter (one object equals one rows box).
-     * This row is maked with the first table Header (index 1).
-     * If there is no table for this product format, this method will return null.
-     *@param int The row index in the table. 
-     *@return Object[] The objects row in the the table with the index in parameter.
-     * @throws IOException 
-     * @throws FitsException 
-     */
-    public Object[] getRow(int index) throws IgnoreException;
-	public double[] getExtrema(String key) throws Exception ;
-    /**In case of the product can have table:
-     * Returns one objects row for one table row with table index in parameter (one object equals one rows box).
-     * This row is maked with the n'th table Header in parameter.
-     * If there is no row with this table index, returns null.
-     *@param int The row index in the table.
-     *@param numHDU The n'th table Header.
-     *@return Object[] The objects row in the the table with the index in parameter.
-     * @throws IOException 
-     * @throws FitsException 
-     */
-    public Object[] getRow(int index, int numHDU) throws IgnoreException;
+  
+    public void setKWEntry(LinkedHashMap<String, AttributeHandler> tah) throws IgnoreException;
+ 
+ 	public double[] getExtrema(String key) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.
      * If there is no table for this product format, this method will return 0.
@@ -105,10 +60,12 @@ public interface ProductFile extends Enumeration{
      * @throws FitsException 
      */
     public void initEnumeration() throws IgnoreException;
-    /*
+    /**
      * Builds a map of the product attribute 
+     * key = HDU
+     * value = attribute handlers
      */
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException ;
+	public Map<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException ;
 	
 	/**
 	 * @return

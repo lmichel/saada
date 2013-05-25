@@ -22,9 +22,7 @@ import saadadb.meta.MetaCollection;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
-import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.vo.tap.TapServiceManager;
 
 /**
  * @author michel

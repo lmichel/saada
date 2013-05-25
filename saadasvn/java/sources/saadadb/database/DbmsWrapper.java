@@ -991,6 +991,22 @@ abstract public class DbmsWrapper {
 		+ this.getExceptStatement(key) 
 		+ "(" + sec_query + ")";
 	}
+	
+	/**
+	 * return query returning all key1 value of tavle1 which are not in the key2 col
+	 * @param table1
+	 * @param key1
+	 * @param table2
+	 * @param key2
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getNullLeftJoinSelect(String table1, String key1, String table2, String key2) throws FatalException {		
+		return this.getSelectWithExcept("SELECT " + key1 + " FROM "+ table1
+				, table1
+				, "SELECT " + key2 + " FROM "+table2);
+
+	}
 	/**
 	 * Returns tempodbname.tablename for DB system requiring a separate DB for tempo tables
 	 * @param table_name

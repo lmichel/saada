@@ -66,7 +66,7 @@ public class IndexBuilder extends SaadaProcess {
 			Messenger.printMsg(Messenger.TRACE, "relationship  empty");			
 		}
 		rse.close();
-		
+
 		TimeSaada time = new TimeSaada();
 		time.start();
 		LinkedHashMap<Long, ArrayList<Object>> cardI = new LinkedHashMap<Long,ArrayList<Object>>();
@@ -82,29 +82,15 @@ public class IndexBuilder extends SaadaProcess {
 			this.processUserRequest();
 			Messenger.incrementeProgress();
 			cardI.put(0L,al);			
-		}
-		else {
-			/*
-			 * Select NULL cardinality
-			 */
-			ResultSet rs = squery.run(Database.getWrapper().getSelectWithExcept("SELECT oidsaada FROM "+colPrimary
-					, "oidsaada"
-					, "SELECT distinct oidprimary FROM "+relationName));
-			while(rs.next()){
-				al.add(rs.getLong(1));
-			}
-			squery.close();
-			rs = null;
-			squery = null;
-			this.processUserRequest();
-			Messenger.incrementeProgress();
-			cardI.put(0L,al);
+		} else {
+			cardI.put(0L,new ArrayList<Object>());
 			/*
 			 * Add non NULL cardinality
 			 */
 			squery= new SQLLargeQuery();
-			rs = squery.run("SELECT count(oidsecondary),oidprimary FROM "+relationName+" GROUP BY oidprimary ORDER BY count(oidsecondary)");
+			ResultSet rs = squery.run("SELECT count(oidsecondary),oidprimary FROM "+relationName+" GROUP BY oidprimary ORDER BY count(oidsecondary)");
 			long cardprevious = 0;
+			long nbLinks = 0;
 			while(rs.next()){
 				long  card = rs.getLong(1);
 				long oidp = rs.getLong(2);
@@ -114,8 +100,33 @@ public class IndexBuilder extends SaadaProcess {
 				}
 				al.add(oidp);
 				cardprevious = card;
+				nbLinks ++;
 			}
 			squery.close();
+			rs = null;
+			squery = null;
+			squery= new SQLLargeQuery();
+			rs = squery.run("SELECT count(oidsaada) FROM "+colPrimary);
+			boolean noNull = true;
+			while(rs.next()){
+				System.out.println(rs.getLong(1) + " <> " + nbLinks);
+				if( rs.getLong(1) == nbLinks )  {
+					noNull = false;
+				}
+			}
+			squery.close();
+			squery= new SQLLargeQuery();
+			if( noNull ) {
+				rs = squery.run(
+						Database.getWrapper().getNullLeftJoinSelect(colPrimary, "oidsaada"
+								, relationName, "oidprimary"));
+				al = cardI.get(0L);
+				while(rs.next()){
+					al.add(rs.getLong(1));
+				}
+				squery.close();
+			}
+
 			rs = null;
 			squery = null;
 		}

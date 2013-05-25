@@ -1,23 +1,10 @@
 package ajaxservlet.json;
 
-import ajaxservlet.SaadaServlet;
-import ajaxservlet.formator.AttributeHandlerDisplayFilter;
-import ajaxservlet.formator.DisplayFilter;
-import ajaxservlet.formator.EntryDisplayFilter;
-import ajaxservlet.formator.FlatfileDisplayFilter;
-import ajaxservlet.formator.ImageDisplayFilter;
-import ajaxservlet.formator.InstanceDisplayFilter;
-import ajaxservlet.formator.MiscDisplayFilter;
-import ajaxservlet.formator.SpectrumDisplayFilter;
-import ajaxservlet.formator.TableDisplayFilter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +17,16 @@ import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaRelation;
+import ajaxservlet.SaadaServlet;
+import ajaxservlet.formator.AttributeHandlerDisplayFilter;
+import ajaxservlet.formator.DisplayFilter;
+import ajaxservlet.formator.EntryDisplayFilter;
+import ajaxservlet.formator.FlatfileDisplayFilter;
+import ajaxservlet.formator.ImageDisplayFilter;
+import ajaxservlet.formator.InstanceDisplayFilter;
+import ajaxservlet.formator.MiscDisplayFilter;
+import ajaxservlet.formator.SpectrumDisplayFilter;
+import ajaxservlet.formator.TableDisplayFilter;
 
 /** * @version $Id$
 

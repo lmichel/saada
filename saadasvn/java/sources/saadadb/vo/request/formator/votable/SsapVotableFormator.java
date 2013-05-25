@@ -2,9 +2,6 @@ package saadadb.vo.request.formator.votable;
 
 import java.io.File;
 
-import cds.savot.model.ParamSet;
-import cds.savot.model.SavotField;
-import cds.savot.model.SavotParam;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SpectrumSaada;
 import saadadb.database.Database;
@@ -12,6 +9,9 @@ import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.SpectralCoordinate;
 import saadadb.query.result.SaadaInstanceResultSet;
+import cds.savot.model.ParamSet;
+import cds.savot.model.SavotField;
+import cds.savot.model.SavotParam;
 
 /**
  * @author laurent

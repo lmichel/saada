@@ -9,7 +9,6 @@ import saadadb.admin.SaadaDBAdmin;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.TransactionMaker;
 import saadadb.util.Messenger;
 
 /**

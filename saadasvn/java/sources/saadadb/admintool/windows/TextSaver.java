@@ -1,7 +1,6 @@
 package saadadb.admintool.windows;
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;

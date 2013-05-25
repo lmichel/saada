@@ -4,8 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.util.LinkedHashMap;
-import java.util.TreeSet;
 
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
@@ -17,7 +15,6 @@ import saadadb.database.Repository;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
-import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.SaadaQLResultSet;

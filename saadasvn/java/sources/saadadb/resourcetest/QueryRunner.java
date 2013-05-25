@@ -17,8 +17,6 @@ import saadadb.meta.MetaRelation;
 import saadadb.query.executor.Query;
 import saadadb.query.matchpattern.CounterpartSelector;
 import saadadb.query.result.OidsaadaResultSet;
-import saadadb.query.result.SaadaQLResultSet;
-import saadadb.sqltable.SQLLargeQuery;
 import saadadb.util.Messenger;
 
 public class QueryRunner {

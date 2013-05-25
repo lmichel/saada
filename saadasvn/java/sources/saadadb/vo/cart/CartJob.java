@@ -5,25 +5,19 @@ package saadadb.vo.cart;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-
-import ajaxservlet.accounting.UserAccount;
-
 
 import saadadb.database.Repository;
 import saadadb.util.Messenger;
 import saadadb.util.WorkDirectory;
-import saadadb.util.zip.ZIPUtil;
-import saadadb.util.zip.ZipMap;
 import saadadb.vo.request.CartRequest;
 import uws.UWSException;
 import uws.UWSToolBox;
 import uws.job.AbstractJob;
 import uws.job.ErrorType;
 import uws.job.Result;
+import ajaxservlet.accounting.UserAccount;
 
 /**
  * AbstractJob implementation to build ZIP archive in asynchronous mode
