@@ -474,7 +474,7 @@ jQuery
 				"<div id=detaildiv style='width: 99%; display: none;'></div>");
 			}
 			Modalpanel.open(table);
-			$('#detailtable')
+			var ta = $('#detailtable')
 			.dataTable(
 					{
 						"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
@@ -566,7 +566,7 @@ jQuery
 				/*
 				 * Connect the table with the DB
 				 */
-				$('#datatable').dataTable({
+				var  oTable = $('#datatable').dataTable({
 			        "aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
 					"bProcessing" : true,
@@ -575,7 +575,9 @@ jQuery
 					"bFilter" : false,
 			//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
 					"sAjaxSource" : "nextpage"
+				     // , "bPaginate": false
 				});
+			//	new FixedHeader( oTable );
 			}
 			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
