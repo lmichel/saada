@@ -215,6 +215,17 @@ public class ProductManager extends EntityManager {
 				this.processUserRequest();
 				SQLTable.dropTableIndex(ecoll_table, null);
 				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table + " WHERE oidtable IN " + in_stm, coll_table);
+				squery = new SQLQuery();
+				ResultSet rs = squery.run("SELECT count(oidsaada) FROM " + ecoll_table);
+				while( rs.next() ) {
+					if( rs.getInt(1) == 0 ) {
+						SQLTable.addQueryToTransaction("DELETE FROM " + eclasse );						
+					} else {
+						SQLTable.addQueryToTransaction(Database.getWrapper().getNullLeftJoinDelete(eclasse, "oidsaada", ecoll_table, "oidsaada"));						
+					}
+					break;
+				}
+				rs.close();
 				//SQLTable.indexTable(ecoll_table, null);
 				tablesToIndex.add(ecoll_table);
 			}
@@ -360,18 +371,19 @@ public class ProductManager extends EntityManager {
 			eclasse = null;
 		} else {
 			classe = Database.getCachemeta().getClass(SaadaOID.getClassNum(oids[0])).getName();
-			if(category == Category.ENTRY ) {
+			coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
+			start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
+			end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
+			coll_table       = Database.getCachemeta().getCollectionTableName(coll, category);		
+			if( category == Category.TABLE ) {
 				eclasse = Database.getCachemeta().getClass(classe).getAssociate_class();
 				ecoll   = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
+				ecoll_table       = Database.getCachemeta().getCollectionTableName(coll, Category.ENTRY);		
 				estart_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(ecoll, Category.ENTRY);
 				eend_rel = Database.getCachemeta().getRelationNamesEndingOnColl(Database.getCachemeta().getClass(eclasse).getCollection_name()
 						, Database.getCachemeta().getClass(eclasse).getCategory());	
 			}
 		}
-		coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(oids[0])).getName();
-		start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
-		end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
-		coll_table       = Database.getCachemeta().getCollectionTableName(coll, category);		
 	}
 
 	/**

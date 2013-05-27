@@ -453,6 +453,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			resultat.close();
 			return retour;
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 			return null;
 		}
@@ -635,6 +636,26 @@ public class SQLiteWrapper extends DbmsWrapper {
 		/*		UPDATE customer_detail SET customer_id = (SELECT customer_id FROM
 				> customers WHERE customers.customer_name = customer_detail.customer_name); 
 		 */		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinSelect(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public String getNullLeftJoinSelect(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
+		return "SELECT  " + leftTable + "." + leftKey + " FROM " + leftTable 
+		+ " LEFT JOIN " + rightTable  
+		+ " ON " + leftTable + "." + leftKey + " = " + rightTable + "." + rightKey 
+		+ " WHERE " + rightTable + "." + rightKey + " = NULL";
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinDelete(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
+		return "DELETE  FROM " + leftTable 
+				+ " WHERE  " + leftTable + "." + leftKey + " IN ("
+				+ getNullLeftJoinSelect(leftTable, leftKey, rightTable, rightKey)
+				+ ")";
 	}
 
 	@Override

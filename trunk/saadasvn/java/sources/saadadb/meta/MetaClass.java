@@ -10,6 +10,7 @@ import java.util.Set;
 
 import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -260,6 +261,23 @@ public class MetaClass extends MetaObject{
 	public String getDescription() {
 		return description;
 	}
+	
+	/**
+	 * Returns ths size of the class table 
+	 * @return
+	 * @throws Exception
+	 */
+	public int getSize() throws Exception{
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("SELECT count(oidsaada) FROM " + this.name);
+		int retour = 0;
+		while(rs.next()) {
+			retour = rs.getInt(1);
+		}
+		rs.close();
+		return retour;
+	}
+
 
 	@Override
 	public String toString() {

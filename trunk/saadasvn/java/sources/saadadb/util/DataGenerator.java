@@ -70,7 +70,7 @@ public class DataGenerator {
 		PositionParser pp = new PositionParser(pos);
 		this.size = size;
 		this.target = pos;
-		this.grid_halfsize = (category.equals("TABLE"))? (30*size)/20: 0;
+		this.grid_halfsize = (category.equals("TABLE"))? (30*size): 0;
 		this.ra = pp.getRa();
 		this.dec = pp.getDec();
 		this.ra_target = ra;
@@ -264,7 +264,7 @@ public class DataGenerator {
 				, "-category=" + this.category
 				, "-classfusion=" + this.className
 				, "-name=RADEC,'" + this.name +"'"
-				, "-ename=RADEC,'(',checkpos,')'"
+				, "-ename='" + this.name +"',name,RADEC,'(',checkpos,') '"
 				, "-posmapping=only"
 				, "-position=RADEC"
 				, "-poserror=1"
