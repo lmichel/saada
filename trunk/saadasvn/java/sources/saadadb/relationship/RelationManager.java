@@ -80,6 +80,7 @@ public class RelationManager extends  EntityManager {
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
 		try {
+			Messenger.printMsg(Messenger.TRACE, "Index relation <" + name + ">");
 			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), name);
 
 			ib.createIndexRelation();
@@ -93,12 +94,14 @@ public class RelationManager extends  EntityManager {
 		try {
 			String q;			
 			if(this.relation_conf == null  ) {
+				if(ap.getPopulate() == null ) {
+					FatalException.throwNewException(SaadaException.DB_ERROR, "No relation name given (try populate -Dpopulate=RelationName");					
+				}
 				this.relation_conf = new RelationConf(ap.getPopulate());
 			}
 			if( ap != null && (q = ap.getQuery()) != null ) {
 				this.populateWithQuery(q);
-			}
-			else {
+			} else {
 				this.populateWithQuery();
 			}
 		} catch (Exception e) {
@@ -173,10 +176,7 @@ public class RelationManager extends  EntityManager {
 
 	/**
 	 * Create a new relation
-	 * @param name
-	 * @param comment
-	 * @throws AbortException 
-	 * @throws AbortException 
+	 * @throws AbortException
 	 */
 	public void create() throws AbortException {
 		if( Database.getCachemeta().getRelation(this.relation_conf.getNameRelation()) != null ) {

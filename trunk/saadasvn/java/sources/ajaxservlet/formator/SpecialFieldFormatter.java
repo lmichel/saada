@@ -16,8 +16,8 @@ import saadadb.exceptions.SaadaException;
  *
  */
 public class SpecialFieldFormatter {
-	private SaadaInstance saadai;
-	private int cat;
+	protected SaadaInstance saadai;
+	protected int cat;
 
 	public SpecialFieldFormatter (SaadaInstance si) {
 		saadai = si;
