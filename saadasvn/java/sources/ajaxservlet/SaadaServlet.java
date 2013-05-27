@@ -292,7 +292,7 @@ public class SaadaServlet extends HttpServlet {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "dump String resource "+ buffer.length() + " bytes");
 		PrintWriter out = response.getWriter();
-		out.println(buffer.toString());
+		out.print(buffer.toString());
 		out.flush();
 	}
 

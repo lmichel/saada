@@ -109,7 +109,6 @@ public class IndexBuilder extends SaadaProcess {
 			rs = squery.run("SELECT count(oidsaada) FROM "+colPrimary);
 			boolean noNull = true;
 			while(rs.next()){
-				System.out.println(rs.getLong(1) + " <> " + nbLinks);
 				if( rs.getLong(1) == nbLinks )  {
 					noNull = false;
 				}
@@ -389,12 +388,14 @@ public class IndexBuilder extends SaadaProcess {
 	 * @throws Exception
 	 */
 	public void createIndexRelation() throws Exception{
-		if( Database.getCachemeta().getRelation(relationName) == null ) return;
+		if( Database.getCachemeta().getRelation(relationName) == null ) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation <" + relationName + "> does not exist");
+		}
 		Messenger.printMsg(Messenger.TRACE, "Build Saada indexes for relationship " + relationName);
 		indexSecondaryOidColumn();
 		indexPrimaryOidColumn();
 		/*
-		 * Grant access to tables (we can be with a transaction)
+		 * Grant access to tables (we can be within a transaction)
 		 */
 		SQLTable.commitTransaction();
 		createCardinalityIndex();
@@ -467,9 +468,7 @@ public class IndexBuilder extends SaadaProcess {
 					e.printStackTrace();
 				}
 			}
-
-		}
-		else {
+		} else {
 			for( int i=0 ; i<relations.length ; i++ ) {
 				IndexBuilder ib = new IndexBuilder(dir, relations[i]);
 				if( args[0].equals(relations[i])) {
