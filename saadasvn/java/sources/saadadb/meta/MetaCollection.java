@@ -13,6 +13,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.sqltable.SQLQuery;
@@ -358,7 +359,22 @@ public class MetaCollection extends MetaObject {
 		return this.has_flatfiles ;
 	}
 
-
+	/**
+	 * Returns th size of the collection table for the category
+	 * @param category
+	 * @return
+	 * @throws Exception
+	 */
+	public int getSize(int category) throws Exception{
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("SELECT count(oidsaada) FROM " + Database.getCachemeta().getCollectionTableName(this.name, category));
+		int retour = 0;
+		while(rs.next()) {
+			retour = rs.getInt(1);
+		}
+		rs.close();
+		return retour;
+	}
 
 
 }

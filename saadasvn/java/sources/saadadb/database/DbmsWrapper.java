@@ -994,18 +994,34 @@ abstract public class DbmsWrapper {
 	
 	/**
 	 * return query returning all key1 value of tavle1 which are not in the key2 col
-	 * @param table1
-	 * @param key1
-	 * @param table2
-	 * @param key2
+	 * @param leftTable
+	 * @param leftKey
+	 * @param rightTable
+	 * @param rightKey
 	 * @return
 	 * @throws FatalException
 	 */
-	public String getNullLeftJoinSelect(String table1, String key1, String table2, String key2) throws FatalException {		
-		return this.getSelectWithExcept("SELECT " + key1 + " FROM "+ table1
-				, table1
-				, "SELECT " + key2 + " FROM "+table2);
-
+	public String getNullLeftJoinSelect(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
+		return "SELECT  " + leftKey + " FROM " + leftTable + " l "
+		+ "LEFT JOIN " + rightTable + " r "
+		+ "ON t." + leftKey + " = r." + rightKey 
+		+ "WHERE r." + rightKey + " = NULL";
+	}
+	
+	/**
+	 * return query removing all key1 value of tavle1 which are not in the key2 col
+	 * @param leftTable
+	 * @param leftKey
+	 * @param rightTable
+	 * @param rightKey
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
+		return "DELETE  FROM " + leftTable + " as l "
+		+ "LEFT JOIN " + rightTable + " as r  " 
+		+ "ON t." + leftKey + " = r." + rightKey 
+		+ "WHERE r." + rightKey + " = NULL";
 	}
 	/**
 	 * Returns tempodbname.tablename for DB system requiring a separate DB for tempo tables
