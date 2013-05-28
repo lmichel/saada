@@ -7,6 +7,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.Table_Saada_Relation;
 
@@ -19,6 +20,8 @@ public class MetaRelation extends MetaObject {
 	String      correlator;
 	String      description;
 	boolean 	indexed;
+	int size = -1;
+	
 	ArrayList<String> 	qualifier_names = new ArrayList<String>();
 
 	public MetaRelation(ResultSet rs) throws Exception {
@@ -117,6 +120,23 @@ public class MetaRelation extends MetaObject {
 			return this.getName();
 		}
 	}
+	/**
+	 * Returns ythe number of links
+	 * @return
+	 * @throws Exception
+	 */
+	public int getSize() throws Exception {
+		if( this.size == -1 ) {
+			SQLQuery squery = new SQLQuery();
+			ResultSet rs = squery.run("SELECT count(oidprimary) FROM " + this.name);
+			while( rs.next() ) {
+				this.size = rs.getInt(1);
+				break;
+			}
+			squery.close();			
+		}
+		return this.size ;
+	}
 
 	/**
 	 * Returns an HTML formated text describing the relationship
@@ -126,15 +146,8 @@ public class MetaRelation extends MetaObject {
 	 * @throws Exception
 	 */
 	public String getHTMLSummary(String classe) throws Exception {
-		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("SELECT count(*) FROM " + this.name);
-		String content = "<LI><B>Content </B>";
-		while( rs.next() ) {
-			content += rs.getString(1);
-			break;
-		}
-		squery.close();
-		content += " links ";
+
+		String content = "<LI><B>Content </B>" + this.getSize() + " links ";
 		if( classe != null ) {
 			MetaClass mc = Database.getCachemeta().getClass(classe);
 			String starting = "oidsecondary";
@@ -142,7 +155,8 @@ public class MetaRelation extends MetaObject {
 				starting = "oidprimary";
 			}
 			content += " including ";
-			rs = squery.run("SELECT count(*) FROM " + this.name + " WHERE " + SaadaOID.getSQLClassFilter(starting) + " = " + mc.getId());
+			SQLQuery squery = new SQLQuery();
+			ResultSet rs = squery.run("SELECT count(*) FROM " + this.name + " WHERE " + SaadaOID.getSQLClassFilter(starting) + " = " + mc.getId());
 			while( rs.next() ) {
 				content += rs.getString(1);
 				break;
