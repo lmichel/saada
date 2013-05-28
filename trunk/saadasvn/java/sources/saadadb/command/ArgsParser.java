@@ -85,6 +85,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-debug") &&
 							!args[i].startsWith("-silent") &&
 							!args[i].startsWith("-comment") &&
+							!args[i].startsWith("-command") &&
 							!args[i].startsWith("-password") &&
 							!args[i].startsWith("-urlroot")&&
 							!args[i].startsWith("-basedir")&&
@@ -510,7 +511,7 @@ public class ArgsParser implements Serializable{
 	}
 
 	/**
-	 * Returns the spectral coordinate column -spccolumn=....
+	 * Returns the comment -comment=....
 	 * @return
 	 */
 	public String getComment() {
@@ -523,8 +524,20 @@ public class ArgsParser implements Serializable{
 	}
 
 	/**
-	 * Returns the collection specified by the arg -extension=.....
-	 * Extension numbers are considered as strings here
+	 * Returns the command -command=....
+	 * @return
+	 */
+	public String getCommand() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-command")) {
+				return getArgsValue(args[i].replaceAll("[\\\"']", ""));
+			}
+		}
+		return null;		
+	}
+
+	/**
+	 * Returns the password -password=....
 	 * @return
 	 */
 	public String getPassword() {

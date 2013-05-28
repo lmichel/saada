@@ -207,18 +207,28 @@ public class RemoveTester {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		Database.getConnector().setAdminMode(ap.getPassword());
-		String command = ap.getComment();
-		if( command.equals("simplemisc")) {
+		String command = ap.getCommand();
+		boolean all = (command.equals("all"));
+		boolean cmdok = false;
+		if( all || command.endsWith("simplemisc") ) {
+			cmdok = true;
 			basicTestOnMisc();
-		} else if( command.equals("simpletable")) {
+		} 
+		if( all || command.endsWith("simpletable")) {
+			cmdok = true;
 			basicTestOnTable(1);
-		} else if( command.equals("simpleentry")) {
+		}
+		if( all || command.endsWith("simpleentry")) {
+			cmdok = true;
 			basicTestOnEntry(1);
-		} else if( command.equals("relationmisc")) {
+		} 
+		if( all || command.endsWith("relationmisc")) {
+			cmdok = true;
 			relationTestOnMisc();
-		} else {
-			System.out.println("Command " + command + " not undestood");
-			System.exit(1);			
+		} 
+		if( !cmdok ) {
+			System.out.println("USAGE  RemoteTester -command=[all|simplemisc|simpletable|simpleentry|simplemisc]");
+			System.exit(1);
 		}
 	}
 
