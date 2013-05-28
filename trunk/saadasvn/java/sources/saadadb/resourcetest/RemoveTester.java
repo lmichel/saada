@@ -208,7 +208,7 @@ public class RemoveTester {
 		Database.init(ap.getDBName());
 		Database.getConnector().setAdminMode(ap.getPassword());
 		String command = ap.getCommand();
-		boolean all = (command.equals("all"));
+		boolean all = ("all".equals(command));
 		boolean cmdok = false;
 		if( all || command.endsWith("simplemisc") ) {
 			cmdok = true;
