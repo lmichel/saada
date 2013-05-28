@@ -873,14 +873,16 @@ public class LongCPIndex extends KeyIndex {
 				out.writeLong(this.keys[i]);				
 			}
 			int i=0;
+			int cpt = 0;
 			for(i=0 ; i<this.size ; i++ ) {
 				out.writeInt(this.counterparts[i].length);		
 				for(int j=0 ; j<this.counterparts[i].length ; j++ ) {
 					out.writeLong(this.counterparts[i][j]);	
+					cpt++;
 				}
 			}
 			out.close();
-			Messenger.printMsg(Messenger.TRACE, "Index " + name + " saved in "  + ((new Date()).getTime() - t0) + "ms (" + i + " entries)");
+			Messenger.printMsg(Messenger.TRACE, "Index " + name + " saved in "  + ((new Date()).getTime() - t0) + "ms (" + i + " entries, " + cpt + " links)");
 		} catch( Exception e) {
 			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
 		}

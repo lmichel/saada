@@ -315,18 +315,26 @@ public class ProductManager extends EntityManager {
 		}
 		for( long oid: this.oids) {
 			for( String rel: start_rel) {
-				SaadaLink[] sls = Database.getCache().getObject(oid).getStartingLinks(rel);
-				for( SaadaLink sl: sls) {
-					long soid= sl.getEndindOID();
-					String path = SaadaOID.getTreePath(soid);
-					ArrayList<Long> al;
-					if( (al = linkTargetsToRemove.get(path)) == null ){
-						al = new ArrayList<Long>();
-						linkTargetsToRemove.put(path, al);
+				/*
+				 * Link target of type entry mustn't be removed beacuse they are no data porduct
+				 */
+				if( Database.getCachemeta().getRelation(rel).getSecondary_category() != Category.ENTRY) {
+					SaadaLink[] sls = Database.getCache().getObject(oid).getStartingLinks(rel);
+					for( SaadaLink sl: sls) {
+						long soid= sl.getEndindOID();
+						String path = SaadaOID.getTreePath(soid);
+						ArrayList<Long> al;
+						if( (al = linkTargetsToRemove.get(path)) == null ){
+							al = new ArrayList<Long>();
+							linkTargetsToRemove.put(path, al);
+						}
+						al.add(soid);
 					}
-					al.add(soid);
 				}
 			}
+			/*
+			 * IN case of table, we must remove data linked to the entries
+			 */
 			if( category == Category.TABLE  ) {
 				SQLLargeQuery squery= new SQLLargeQuery();
 				ResultSet rs = squery.run("(SELECT e.oidsaada FROM " + ecoll_table + " as e, " + coll_table + " as t WHERE e.oidtable = t.oidsaada AND t.oidsaada IN " + getInStatement() + ")");
@@ -353,12 +361,12 @@ public class ProductManager extends EntityManager {
 				}
 			}
 		}
-//		for( Entry<String, ArrayList<Long>> e: linkTargetsToRemove.entrySet()) {
-//			System.out.println(e.getKey() + " " + e.getValue());
-//			
-//		}
+		//		for( Entry<String, ArrayList<Long>> e: linkTargetsToRemove.entrySet()) {
+		//			System.out.println(e.getKey() + " " + e.getValue());
+		//			
+		//		}
 	}
-	
+
 	private void removeLinkTargets() throws SaadaException {
 		if( !followLinks ) {
 			return;
@@ -369,9 +377,9 @@ public class ProductManager extends EntityManager {
 			this.oids = e.getValue();
 			this.removeProducts();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Build the where statement testing that an oid belongs to the list of oids to remove
 	 */

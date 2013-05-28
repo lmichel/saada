@@ -243,7 +243,7 @@ public class DataGenerator {
 	 */
 	private void prepareDBCollection(boolean emptyCollection) throws Exception{
 		if( Database.getCachemeta().collectionExists(collection) ) {
-			if( emptyCollection ) (new CollectionManager(collection)).empty(null);				
+			if( emptyCollection ) (new CollectionManager(collection)).empty(new ArgsParser(new String[]{ "-category=" + this.category}));				
 		} else {
 			(new CollectionManager(collection)).create(new ArgsParser(new String[]{"-comment=Created to store a grid"}));
 		}
