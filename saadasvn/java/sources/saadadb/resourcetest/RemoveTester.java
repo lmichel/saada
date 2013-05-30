@@ -129,10 +129,10 @@ public class RemoveTester {
 		SQLTable.beginTransaction();
 		Database.getCachemeta().reload(true);
 		rm.create(new ArgsParser(new String[]{
-				"-from=Starting_MISC",
-				"-to=Ending_MISC",
+				"-from=Starting_misc",
+				"-to=Ending_misc",
 				"-query=INSERT INTO MiscToMisc (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_MISC AS p, Ending_MISC AS s WHERE s.namesaada = p.namesaada"
+				+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.namesaada = p.namesaada"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
@@ -151,10 +151,10 @@ public class RemoveTester {
 		SQLTable.beginTransaction();
 		Database.getCachemeta().reload(true);
 		rm.create(new ArgsParser(new String[]{
-				"-from=Starting_MISC",
+				"-from=Starting_misc",
 				"-to=Ending_ENTRY",
 				"-query=INSERT INTO MiscToENtry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_MISC AS p, Ending_ENTRY AS s WHERE s.namesaada " + Database.getWrapper().getRegexpOp() + " (p.namesaada || '.*')"
+				+ "FROM Starting_misc AS p, Ending_ENTRY AS s WHERE s.namesaada " + Database.getWrapper().getRegexpOp() + " (p.namesaada || '.*')"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
