@@ -593,7 +593,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	public String getNullLeftJoinSelect(String table1, String key1, String table2, String key2) throws FatalException {		
 		return "SELECT  " + key1 + " FROM " + table1 + " l"
 		+ " LEFT JOIN " + table2 + " r"
-		+ " ON t." + key1 + " = r." + key2 
+		+ " ON l." + key1 + " = r." + key2 
 		+ " WHERE r." + key2 + " = NULL";
 	}
 

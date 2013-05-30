@@ -1004,7 +1004,7 @@ abstract public class DbmsWrapper {
 	public String getNullLeftJoinSelect(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
 		return "SELECT  " + leftKey + " FROM " + leftTable + " l"
 		+ " LEFT JOIN " + rightTable + " r"
-		+ " ON t." + leftKey + " = r." + rightKey 
+		+ " ON l." + leftKey + " = r." + rightKey 
 		+ " WHERE r." + rightKey + " = NULL";
 	}
 	
