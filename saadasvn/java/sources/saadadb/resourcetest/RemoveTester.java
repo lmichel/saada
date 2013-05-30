@@ -18,10 +18,10 @@ public class RemoveTester {
 	 * @throws Exception
 	 */
 	public static void basicTestOnMisc() throws Exception {
-		DataGenerator dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "Generated", "prd_0");
+		DataGenerator dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "MiscGenerated", "prd_0");
 		dg.ingestVOTable(true);
 		for( int i=1 ; i<3 ; i++ ){
-		    dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "Generated", "prd_" + i);
+		    dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "MiscGenerated", "prd_" + i);
 			dg.ingestVOTable(false);			
 		}
 		int t0 = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);
@@ -41,10 +41,10 @@ public class RemoveTester {
 	 * @throws Exception
 	 */
 	public static void basicTestOnTable(int size) throws Exception {
-		DataGenerator dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "Generated", "prd_0");
+		DataGenerator dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "TableGenerated", "prd_0");
 		dg.ingestVOTable(true);
 		for( int i=1 ; i<3 ; i++ ){
-		    dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "Generated", "prd_" + i);
+		    dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "TableGenerated", "prd_" + i);
 			dg.ingestVOTable(false);			
 		}
 		int t0 = Database.getCachemeta().getCollection("Starting").getSize(Category.TABLE);
@@ -67,10 +67,10 @@ public class RemoveTester {
 	 * @throws Exception
 	 */
 	public static void basicTestOnEntry(int size) throws Exception {
-		DataGenerator dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "Generated", "prd_0");
+		DataGenerator dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "TableGenerated", "prd_0");
 		dg.ingestVOTable(true);
 		for( int i=1 ; i<3 ; i++ ){
-		    dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "Generated", "prd_" + i);
+		    dg = new DataGenerator("0 +0", size, "Starting", "TABLE", "TableGenerated", "prd_" + i);
 			dg.ingestVOTable(false);			
 		}
 		int e0 = Database.getCachemeta().getCollection("Starting").getSize(Category.ENTRY);
