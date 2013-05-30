@@ -154,7 +154,7 @@ public class RemoveTester {
 				"-from=Starting_misc",
 				"-to=Ending_ENTRY",
 				"-query=INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_misc AS p, Ending_ENTRY AS s WHERE s.namesaada " + Database.getWrapper().getRegexpOp() + " (p.namesaada || '.*')"
+				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada " + Database.getWrapper().getRegexpOp() + " (p.namesaada || '.*')"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
