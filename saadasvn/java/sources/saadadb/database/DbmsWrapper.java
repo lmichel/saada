@@ -1018,7 +1018,7 @@ abstract public class DbmsWrapper {
 	 * @throws FatalException
 	 */
 	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
-		return "DELETE  FROM " + leftTable + " as l "
+		return "DELETE " + leftTable + " FROM " + leftTable + " as l "
 		+ "LEFT JOIN " + rightTable + " as r  " 
 		+ "ON t." + leftKey + " = r." + rightKey 
 		+ "WHERE r." + rightKey + " = NULL";
