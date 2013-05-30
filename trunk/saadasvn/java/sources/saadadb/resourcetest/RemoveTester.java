@@ -153,7 +153,7 @@ public class RemoveTester {
 		rm.create(new ArgsParser(new String[]{
 				"-from=Starting_misc",
 				"-to=Ending_ENTRY",
-				"-query=INSERT INTO MiscToENtry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
+				"-query=INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
 				+ "FROM Starting_misc AS p, Ending_ENTRY AS s WHERE s.namesaada " + Database.getWrapper().getRegexpOp() + " (p.namesaada || '.*')"
 				}));
 		rm.populate(null);
