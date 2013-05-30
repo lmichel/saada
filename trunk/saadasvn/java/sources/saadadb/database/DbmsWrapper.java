@@ -1018,10 +1018,10 @@ abstract public class DbmsWrapper {
 	 * @throws FatalException
 	 */
 	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
-		return "DELETE " + leftTable + " FROM " + leftTable + " as l "
-		+ "LEFT JOIN " + rightTable + " as r  " 
-		+ "ON l." + leftKey + " = r." + rightKey 
-		+ " WHERE r." + rightKey + " = NULL";
+		return "DELETE " + leftTable + " FROM " + leftTable 
+		+ " LEFT JOIN " + rightTable 
+		+ " ON " + leftTable + "." + leftKey + " = " + rightTable + "." + rightKey 
+		+ " WHERE " + rightTable + "." + rightKey + " = NULL";
 	}
 	/**
 	 * Returns tempodbname.tablename for DB system requiring a separate DB for tempo tables
