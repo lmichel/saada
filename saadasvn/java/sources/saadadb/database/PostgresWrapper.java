@@ -477,6 +477,18 @@ public class PostgresWrapper extends DbmsWrapper {
 	public  String dropProcedure(String proc_name) {
 		return "DROP FUNCTION " + proc_name;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinDelete(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
+		return "DELETE FROM " + leftTable + " l"
+		+ " WHERE NOT EXISTS ("
+		+ " SELECT r." + rightKey + " FROM " + rightTable + " r " 
+		+ " WHERE r." + rightKey + " = l." + leftKey
+		+ ")";
+	}
+
 
 	/**
 	 * @throws Exception
