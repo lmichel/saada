@@ -445,4 +445,14 @@
     <servlet-name>IsAlive</servlet-name>
     <url-pattern>/isalive</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>updateCache</display-name>
+    <servlet-name>updateCache</servlet-name>
+    <servlet-class>ajaxservlet.updateCache</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>updateCache</servlet-name>
+    <url-pattern>/updateCache</url-pattern>
+  </servlet-mapping>
 </web-app>
