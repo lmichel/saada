@@ -155,7 +155,7 @@ public class RemoveTester {
 				"-to=Ending_ENTRY",
 				"-query=INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
 				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada " 
-				+ Database.getWrapper().getRegexpOp() +  " " + Database.getWrapper().getStrcatOp("p.namesaada","'.*'")
+				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
@@ -196,6 +196,7 @@ public class RemoveTester {
 			QueryException.throwNewException(SaadaException.DB_ERROR, "Misc -> Entry RELATION SIZE should be set from " + miscentrySize 
 					+ " to " + (2*miscentrySize)/3 + " (!=" + fmiscentrySize + ")");
 		}
+		System.out.println("relationTestOnMisc: OK ");
 
 	}
 	
