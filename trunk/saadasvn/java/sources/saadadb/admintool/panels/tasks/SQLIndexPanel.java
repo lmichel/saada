@@ -189,15 +189,13 @@ public class SQLIndexPanel extends TaskPanel {
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath != null ) {
-			if( dataTreePath.isCollectionLevel()) {
-				showInputError(rootFrame, "Selected node must be either at category (IMAGE, ...) or at class level (leaf)");
-				return;
-			} else if( dataTreePath.isClassLevel()) {
-				sqlTable = dataTreePath.classe;
-			} else if( dataTreePath.isCategoryLevel() ) {
-				sqlTable = dataTreePath.toString().replace('.','_');
-			}
 			try {
+				if( dataTreePath.isCollectionLevel()) {
+					showInputError(rootFrame, "Selected node must be either at category (IMAGE, ...) or at class level (leaf)");
+					return;
+				} else {
+					sqlTable = dataTreePath.getSQLTableName();
+				} 
 				super.setDataTreePath(dataTreePath);
 				this.buildColumnTable();
 				this.setDescription();

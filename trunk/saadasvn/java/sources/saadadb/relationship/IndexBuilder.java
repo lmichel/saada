@@ -1,6 +1,11 @@
 package saadadb.relationship;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,10 +13,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
@@ -28,8 +35,10 @@ import saadadb.util.TimeSaada;
  */
 public class IndexBuilder extends SaadaProcess { 
 
-	private String path;
-	private String relationName;
+	private final String path;
+	private final String tmpPath = Repository.getTmpPath();
+	private  ArrayList<String> builtIndex = new ArrayList<String>();
+	private final String relationName;
 	private boolean isEmpty;
 
 
@@ -44,6 +53,15 @@ public class IndexBuilder extends SaadaProcess {
 		this.relationName = relationName;
 	}
 
+	/**
+	 * Save the index and stores its pathname 
+	 * @param lci
+	 * @throws FatalException
+	 */
+	private void saveIndex(KeyIndex lci) throws FatalException{
+		lci.save();
+		this.builtIndex.add(lci.getPathname());
+	}
 
 	/**
 	 * @throws Exception 
@@ -131,9 +149,9 @@ public class IndexBuilder extends SaadaProcess {
 		}
 		this.processUserRequest();
 		Messenger.incrementeProgress();
-		LongCPIndex lci = new LongCPIndex(relationName, this.path, "card");
+		LongCPIndex lci = new LongCPIndex(relationName, this.tmpPath, "card");
 		lci.buildIndex(cardI);
-		lci.save();
+		this.saveIndex(lci);
 
 		this.processUserRequest();
 		Messenger.incrementeProgress();
@@ -182,9 +200,9 @@ public class IndexBuilder extends SaadaProcess {
 			corrI.put(oidprevious,al);
 		}
 
-		LongCPIndex lci = new LongCPIndex(relationName, this.path,"corr");
+		LongCPIndex lci = new LongCPIndex(relationName, this.tmpPath,"corr");
 		lci.buildIndex(corrI);
-		lci.save();
+		this.saveIndex(lci);
 
 		time.stop();
 		this.processUserRequest();
@@ -235,9 +253,9 @@ public class IndexBuilder extends SaadaProcess {
 			qualI.put(oidprevious,al);
 		}
 
-		DoubleCPIndex ri = new DoubleCPIndex(relationName, this.path, "qual." + qualifier);
+		DoubleCPIndex ri = new DoubleCPIndex(relationName, this.tmpPath, "qual." + qualifier);
 		ri.buildIndex(qualI);
-		ri.save();
+		this.saveIndex(ri);
 
 		time.stop();
 		this.processUserRequest();
@@ -289,9 +307,10 @@ public class IndexBuilder extends SaadaProcess {
 			corrI.put(oidprevious,al);
 		}
 
-		LongCPIndex lci = new LongCPIndex(relationName, this.path,"corrclass." + className);
+		LongCPIndex lci = new LongCPIndex(relationName, this.tmpPath,"corrclass." + className);
 		lci.buildIndex(corrI);
-		lci.save();
+		this.saveIndex(lci);
+
 		this.processUserRequest();
 		Messenger.incrementeProgress();
 		time.stop();
@@ -344,9 +363,10 @@ public class IndexBuilder extends SaadaProcess {
 		this.processUserRequest();
 		Messenger.incrementeProgress();
 
-		DoubleCPIndex ri = new DoubleCPIndex(relationName, this.path,"classqual." + className + "." + qualifier);
+		DoubleCPIndex ri = new DoubleCPIndex(relationName, this.tmpPath,"classqual." + className + "." + qualifier);
 		ri.buildIndex(qualI);
-		ri.save();
+		this.saveIndex(ri);
+
 		this.processUserRequest();
 		Messenger.incrementeProgress();
 		time.stop();
@@ -385,6 +405,18 @@ public class IndexBuilder extends SaadaProcess {
 	}
 
 	/**
+	 * Move all indexes built in the tmp dir to the final destination.
+	 * This reduces the time where relation have no indexes because the indexes are being built
+	 * @throws Exception
+	 */
+	private void publishIndexes() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Moving " + this.builtIndex.size() + " indexes to " + this.path);
+		for( String s: this.builtIndex ) {
+			File f = new File(s);
+			f.renameTo((new File(this.path + File.separator + f.getName())));
+		}
+	}
+	/**
 	 * @throws Exception
 	 */
 	public void createIndexRelation() throws Exception{
@@ -402,6 +434,10 @@ public class IndexBuilder extends SaadaProcess {
 		createCollCorrIndex();
 		createCollQualIndexes();
 		createClassQualIndexes();
+		/*
+		 * Move index to their final place
+		 */
+		this.publishIndexes();
 		/*
 		 * Marks the relationship as indexed
 		 */
