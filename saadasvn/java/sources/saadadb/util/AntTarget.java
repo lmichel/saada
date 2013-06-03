@@ -23,6 +23,7 @@ public class AntTarget {
 	private String propSummary =  "";
 	private final Project project;
 	private final ProjectHelper helper;
+	private final String buildFile);
 
 	/**
 	 * @param target : ant targe name
@@ -34,7 +35,8 @@ public class AntTarget {
 		this.project= new Project();
 		this.project.init();
 		this.helper = ProjectHelper.getProjectHelper();		
-		this.helper.parse(this.project, new File(Database.getRoot_dir() + File.separatorChar + "bin" + File.separator + "build.xml"));
+		this.buildFile = Database.getRoot_dir() + File.separatorChar + "bin" + File.separator + "build.xml")
+		this.helper.parse(this.project, new File(this.buildFile));
 		this.initLogger();
 	}
 
@@ -77,6 +79,7 @@ public class AntTarget {
 	 * @throws FatalException 
 	 */
 	public void execute(boolean reloadMeta) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Run ant task " + this.target + " in " + this.buildFile);
 		this.project.executeTarget(this.target);
 		Messenger.printMsg(Messenger.TRACE, "task " + this.description + this.getPropSummary() + ":  done");
 		if( reloadMeta)	Database.getCachemeta().reload(true);
