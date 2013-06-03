@@ -165,7 +165,7 @@
 
 	<!--
 		Create one collection
-		USAGE ant collection.create -Dname={name} -Dcomment={comment}
+		USAGE ant collection.create -Dcreate={name} -Dcomment={comment}
 	-->
 	<target name="collection.create" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
@@ -177,7 +177,7 @@
 	</target>
 	<!--
 		Remove one collection
-		USAGE ant collection.remove -Dname={name}
+		USAGE ant collection.remove -Dremove={name}
 	-->
 	<target name="collection.remove" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
@@ -186,18 +186,78 @@
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
+	
+	<!--
+		Empty one collection
+		USAGE ant collection.emty -Dempty={name}
+	-->
+	<target name="collection.emty" >
+    	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
+			<classpath refid="saadadb.classpath"/>
+			<arg value="-empty=${name}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+
+	<!-- 
+		Class management
+	-->
+
+		<!--
+			Remove one class
+			USAGE ant class.remove -Dremove={name}
+		-->
+		<target name="cclass.remove" >
+	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
+				<classpath refid="saadadb.classpath"/>
+				<arg value="-remove=${name}"/>
+				<arg value="${SAADA_DB_NAME}"/>
+			</java>
+		</target>
+		
+		<!--
+			Empty one class
+			USAGE ant class.emty -Dempty={name}
+		-->
+		<target name="class.emty" >
+	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
+				<classpath refid="saadadb.classpath"/>
+				<arg value="-empty=${name}"/>
+				<arg value="${SAADA_DB_NAME}"/>
+			</java>
+		</target>
 
 
 <!-- 
 	Saada relation management
 -->
-   
+	<!--
+		Create the relation given as parameter
+		USAGE ant relation.create -Drelation={relation name} -Dfrom={starting collection} -Dto={ending collection}  -Dquery={correlator}
+		Both staring and ending collection must have the form: collName_CATEGORY (e.g. MyCollection_ENTRY)
+		Refer to the doc for the query. It can be in SadaQL or in SQL:
+		Example of SQL query:
+		INSERT INTO Relationname (oidprimary, oidsecondary)
+                        SELECT p.oidsaada, s.oidsaada
+                        FROM EPIC_ENTRY AS p, EPIC_FLATFILE AS s
+                        WHERE s.namesaada p.namesaada
+	-->	
+	<target name="relation.create" >
+		<java classname="saadadb.command.ManageRelation" fork="true" failonerror="true">
+			<classpath refid="saadadb.classpath" />
+			<arg value="-create=${relation}" />
+			<arg value="-from=${from}" />
+			<arg value="-to=${to}" />
+			<arg value="-query=${query}" />
+			<arg value="${SAADA_DB_NAME}" />
+		</java>  
+	</target>
+	
 	<!--
 		Emty the relation given as parameter
 		USAGE ant relation.empty -Drelation={relation name}
 		Both join tables and Saada indexes are flushed
-	-->
-	
+	-->	
 	<target name="relation.empty" >
 		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
        		<classpath refid="saadadb.classpath"/>
@@ -210,9 +270,8 @@
 		Delete the relation given as parameter
 		USAGE ant relation.delete -Drelation={relation name} -Daction={empty/delete}
 		Destroy both join tables and Saada indexes 
-	-->
-	
-	<target name="relation.delete" >
+	-->	
+	<target name="relation.remove" >
 		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
        		<classpath refid="saadadb.classpath"/>
 			<arg value="-remove=${relation}"/>
@@ -237,8 +296,7 @@
 		Build the Saada indexes of the relation given as parameter
 		USAGE ant Relation.index -Drelation={relation name}
 		Don't worry about SQL exception related to unicity violation
-	-->
-	
+	-->	
 	<target name="relation.index" >
     	<java fork="true"  classname="saadadb.command.ManageRelation" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
@@ -283,9 +341,9 @@
 
 	<!-- 
 		Creating/deleting SQL index for an SQL table
-		USAGE: ant index.table.create/delete -Dtable={table name} 
-		All columns the table are indexed
-		This flag has no effect for deletion
+		USAGE: ant index.table.create/delete -Dtable={tableName} 
+		If tableName is a simple String, all columns the table are touched by the commmand
+		It tableName is like name(col1, ....) only columns liste in () are concerned
 	-->
 
 	<target name="index.table.create">
@@ -305,6 +363,28 @@
     	</java> 
   	</target> 
 			
+	<!--
+		Remove product from th DB (to be used carefully)
+		Product are specified in by the -remove parameter
+		It ca either be a comma seprated list of OID or a SAADAQL query. In both case, all product 
+		to remove must belong to the same collection and to tyhe same class.
+		if the -links parameter valus is "follow", all product targeted by links of the product to remove will be removed too.
+		If the -noindex is set to true, indexes are not rebuilt after the poduct deletion
+		WARNING: This task can generate huge transactions
+		WARNING: If you want to empty a class or collection use the collection.emty or class.empty tasks preferably.
+		
+		USAGE ant product.remove -remove=oid1,oid2,oid3  -noindex=true -links=follow
+		      ant product.remove "-remove=Select MISC From * In Starting WhereAttributeSaada{namesaada='Pedro'}"  -noindex=true -links=follow
+	-->
+ 	<target name="product.remove">
+    	<java fork="true"  classname="saadadb.command.ManageProduct" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-remove=${remove}"/>
+	  		<arg value="-links=${links}"/>
+	  		<arg value="-noindex=${noindex}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
 
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		VO business
@@ -369,5 +449,15 @@
   			</fileset>
  		</chmod>
 	</target>	
-	
+
+	<!--
+		Simple task displaying the parameter read in the command line
+		Debug purpose
+		USAGE: ant dumy.task -Dparam=YourParameterValue 
+	-->
+	<target name="task.dummy">
+  		<echo>parameter read</echo>
+  		<echo>${param}</echo>
+	</target>
+
 </project>
