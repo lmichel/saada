@@ -17,7 +17,7 @@ import saadadb.util.Messenger;
  */
 public class updateCache extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
-	private static final  long DELAY_MINI = 60;
+	private static final  long DELAY_MINI = 60; //sec
 	private static long LAST_CALL = -1;
 
 	/**

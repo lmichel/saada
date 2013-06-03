@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import javax.swing.tree.TreePath;
 
+import saadadb.collection.Category;
+import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
@@ -88,6 +91,21 @@ public class DataTreePath {
 			}
 		}
 		return retour;
+	}
+	
+	/**
+	 * Return the SQL table name storing data pointed by that tree path
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getSQLTableName() throws FatalException {
+		if( this.isClassLevel()) {
+			return this.classe;
+		} else if( this.isCategoryLevel() ) {
+			return Database.getCachemeta().getCollectionTableName(this.collection, Category.getCategory(this.category));
+		} else {
+			return null;
+		}
 	}
 	/**
 	 * @return

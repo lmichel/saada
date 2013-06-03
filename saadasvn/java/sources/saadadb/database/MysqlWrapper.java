@@ -536,8 +536,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	public Map<String, String> getExistingIndex(String searched_table) throws FatalException {
 		try {
 			if( !tableExist(searched_table)) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
+				Messenger.printMsg(Messenger.WARNING, "Table <" + searched_table + "> does not exist");
 				return null;
 			}
 			DatabaseMetaData dm = Database.get_connection().getMetaData();
@@ -553,13 +552,12 @@ public class MysqlWrapper extends DbmsWrapper {
 					 * With mysql, PRIMARY constraints are stored as index but can not be removed.
 					 * So we prefer hide them
 					 */
-					if( iname != null && col != null && !iname.equals("PRIMARY") ) {
+					if( iname != null && col != null /*&& !iname.equals("PRIMARY")*/ ) {
 						retour.put(iname.toString(), col);
 					}
 				}
 				return retour;
-			}
-			else {
+			} else {
 				resultat = dm.getIndexInfo(sc[0], null, sc[1], false, false);
 				HashMap<String, String> retour = new HashMap<String, String>();
 				while (resultat.next()) {
@@ -569,7 +567,7 @@ public class MysqlWrapper extends DbmsWrapper {
 					 * With mysql, PRIMARY constraints are stored as index but can not be removed.
 					 * So we prefer hide them
 					 */
-					if( iname != null && col != null && !iname.equals("PRIMARY") ) {
+					if( iname != null && col != null /*&& !iname.equals("PRIMARY") */) {
 						retour.put(iname.toString(), col);
 					}
 				}
