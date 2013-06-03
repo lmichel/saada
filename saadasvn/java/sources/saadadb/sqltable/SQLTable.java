@@ -392,13 +392,13 @@ public abstract class SQLTable {
 				int v=0;
 				if( rs.next() && (v = rs.getInt(1)) < 1000 ) {
 					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Table <" + table + "> has " + v + " rows (< 1000): not indexed");
+						Messenger.printMsg(Messenger.DEBUG, "Table <" + table + "> has less than 1000 rows : not indexed");
 					unlockTables();
 					squery.close();
 					return;
 				}
 				else {
-					Messenger.printMsg(Messenger.TRACE, "Table <" + table + "> has  " + v + " rows (>1000) to be indexed");
+					Messenger.printMsg(Messenger.TRACE, "Table <" + table + "> has  more than 1000 rows to be indexed");
 				}
 				squery.close();
 				if( sp != null ) {
