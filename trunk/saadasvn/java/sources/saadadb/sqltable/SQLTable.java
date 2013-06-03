@@ -315,8 +315,7 @@ public abstract class SQLTable {
 					unlockTables();
 					squery.close();
 					return;
-				}
-				else {
+				} else {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Table <" + table + "> has  more than 1000 rows: to be indexed");
 				}
@@ -475,7 +474,7 @@ public abstract class SQLTable {
 					 * Do not remove indexes on primary keys
 					 */
 					if( Database.getWrapper().isIndexDroppable(iname)) {
-						if ( !iname.toString().endsWith("pkoid")&& !iname.toString().endsWith("pksd")) {
+						if ( !iname.toString().endsWith("pkoid") && !iname.toString().endsWith("pksd") && !iname.equalsIgnoreCase("PRIMARY")) {
 							addQueryToTransaction(Database.getWrapper().getDropIndexStatement(table, iname), table);
 						}
 					}
@@ -512,7 +511,7 @@ public abstract class SQLTable {
 						 * Do not remove indexes on primary keys
 						 */
 						if( Database.getWrapper().isIndexDroppable(iname)) {
-							if ( !iname.toString().endsWith("pkoid")&& !iname.toString().endsWith("pksd")) {
+							if ( !iname.toString().endsWith("pkoid")&& !iname.toString().endsWith("pksd") && !iname.equalsIgnoreCase("PRIMARY")) {
 								Messenger.printMsg(Messenger.TRACE, "Drop index <" + iname + "> on table <" + table + ">");
 								addQueryToTransaction(Database.getWrapper().getDropIndexStatement(table, iname), table);
 							}
