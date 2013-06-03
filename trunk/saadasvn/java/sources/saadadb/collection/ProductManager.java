@@ -439,6 +439,7 @@ public class ProductManager extends EntityManager {
 	private void checkOidList() throws AbortException {
 		for( long oid: oids) {
 			try {
+				System.out.println("2222222222222222  " + Database.getCachemeta().getClass("StartData").getId());
 				Database.getCache().getObject(oid);
 			} catch (Exception e) {
 				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");
