@@ -382,6 +382,7 @@
 	  		<arg value="-remove=${remove}"/>
 	  		<arg value="-links=${links}"/>
 	  		<arg value="-noindex=${noindex}"/>
+	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
