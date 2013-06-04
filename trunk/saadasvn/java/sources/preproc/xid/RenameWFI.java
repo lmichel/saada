@@ -15,7 +15,7 @@ public class RenameWFI {
 
 	public static void main(String[] args) throws Exception{
 		Database.init("XIDResult");
-		Database.getConnector().setAdminMode("");
+		Database.setAdminMode("");
 		Messenger.debug_mode= false;
 //		SQLTable.beginTransaction();
 //		SQLTable.addQueryToTransaction("UPDATE AIPWFI_Entry SET namesaada = 'NotSet'");

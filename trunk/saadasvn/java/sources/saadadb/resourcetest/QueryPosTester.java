@@ -52,7 +52,7 @@ public class QueryPosTester extends GridBuilder{
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String target = args[0];
 			int size = Integer.parseInt(args[1]);
 			QueryPosTester qpt = new QueryPosTester(target, size);

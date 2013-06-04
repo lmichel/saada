@@ -131,7 +131,7 @@ public class AdminPassword extends JDialog implements ActionListener, PropertyCh
 			if (btnString1.equals(value)) {
 				typed_name = name_field.getText().trim();
 				try {
-					Database.getConnector().setAdminMode(new String(password_field.getPassword()));
+					Database.setAdminMode(new String(password_field.getPassword()));
 					clearAndHide();
 				} catch(Exception ex) {
 					JOptionPane.showMessageDialog(AdminPassword.this,

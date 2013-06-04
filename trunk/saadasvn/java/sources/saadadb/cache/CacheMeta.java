@@ -22,6 +22,7 @@ import saadadb.meta.MetaCollection;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.Messenger;
 
 /**
@@ -288,7 +289,7 @@ public class CacheMeta {
 			Messenger.printMsg(Messenger.DEBUG, "Load relations");
 		this.relations = new LinkedHashMap<String, MetaRelation>();
 		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("select * from saada_relation");
+		ResultSet rs = squery.run("select * from " + Table_Saada_Relation.tableName);
 		while (rs.next()) {
 			MetaRelation mr = new MetaRelation(rs);
 			this.relations.put(mr.getName(), mr);

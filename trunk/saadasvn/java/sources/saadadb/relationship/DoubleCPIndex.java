@@ -787,11 +787,9 @@ public class DoubleCPIndex extends KeyIndex {
 		}
 	}
 	
-	/**
-	 * @param filename
-	 */
 	@Override
-	public void save() throws  FatalException{
+	public int save() throws  FatalException{
+		int cpt = 0;
 		try {
 			long t0 = (new Date()).getTime();
 			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(pathname)));
@@ -800,7 +798,6 @@ public class DoubleCPIndex extends KeyIndex {
 				out.writeLong(this.keys[i]);				
 			}
 			int i=0;
-			int cpt = 0;
 			for(i=0 ; i<this.size ; i++ ) {
 				out.writeInt(this.counterparts[i].length);		
 				for(int j=0 ; j<this.counterparts[i].length ; j++ ) {
@@ -813,6 +810,7 @@ public class DoubleCPIndex extends KeyIndex {
 		} catch( Exception e) {
 			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
 		}
+		return cpt;
 	}
 
 	/**

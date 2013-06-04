@@ -93,7 +93,7 @@ abstract public class DbmsWrapper {
 				readp = this.reader.getPassword();
 			}
 			Database.setConnector(new SaadaDBStandAloneConnector(this.url + test_base, this.driver, test_base, adm, read, readp));
-			Database.getConnector().setAdminMode(admp);
+			Database.setAdminMode(admp);
 			admin_connection = Database.getConnector().getJDBCConnection();
 			admin_connection.setAutoCommit(true);
 			Statement stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;

@@ -613,7 +613,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			Database.getWrapper().loadSQLProcedures();
 			SQLTable.commitTransaction();
 		} catch (Exception e) {

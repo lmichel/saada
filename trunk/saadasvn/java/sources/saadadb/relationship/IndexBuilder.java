@@ -40,6 +40,7 @@ public class IndexBuilder extends SaadaProcess {
 	private  ArrayList<String> builtIndex = new ArrayList<String>();
 	private final String relationName;
 	private boolean isEmpty;
+	private int stat;
 
 
 	/**
@@ -58,9 +59,10 @@ public class IndexBuilder extends SaadaProcess {
 	 * @param lci
 	 * @throws FatalException
 	 */
-	private void saveIndex(KeyIndex lci) throws FatalException{
-		lci.save();
+	private int saveIndex(KeyIndex lci) throws FatalException{
+		int retour = lci.save();
 		this.builtIndex.add(lci.getPathname());
+		return retour;
 	}
 
 	/**
@@ -202,7 +204,7 @@ public class IndexBuilder extends SaadaProcess {
 
 		LongCPIndex lci = new LongCPIndex(relationName, this.tmpPath,"corr");
 		lci.buildIndex(corrI);
-		this.saveIndex(lci);
+		this.stat = this.saveIndex(lci);
 
 		time.stop();
 		this.processUserRequest();
@@ -442,7 +444,7 @@ public class IndexBuilder extends SaadaProcess {
 		 * Marks the relationship as indexed
 		 */
 		SQLTable.beginTransaction();
-		Table_Saada_Relation.setIndexed(relationName, true);
+		Table_Saada_Relation.setIndexed(relationName, true,  this.stat);
 		/*
 		 * We suppose to be within a transaction
 		 */

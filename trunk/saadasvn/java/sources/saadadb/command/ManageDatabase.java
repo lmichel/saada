@@ -19,7 +19,7 @@ public class ManageDatabase {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String param_value ;
 			if( (param_value = ap.getUrlroot()) != null  ) {
 				Table_SaadaDB.changeURL(param_value);

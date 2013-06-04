@@ -18,7 +18,7 @@ public class RelationTester extends GridBuilder {
 		try {
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String target = "12.345 -12.3456";
 			int size = 10;
 

@@ -475,7 +475,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	 * @throws SQLException 
 	 * @throws ClassNotFoundException 
 	 */
-	public void setAdminMode(String password) throws Exception {
+	public void setAdminAuth(String password) throws Exception {
 		this.admin_mode = true;
 		if( jdbc_connection != null ) {
 			if (Messenger.debug_mode)

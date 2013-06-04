@@ -11,7 +11,7 @@ public class DeleteTableIndex {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		try {
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			if (args.length != 2) {
 				Messenger.printMsg(Messenger.ERROR,
 				"Usage: java command.DeleteTableIndex [table] [DBNAME]");

@@ -90,7 +90,7 @@ public class Loader extends SaadaProcess {
 		this.setTabArg();
 		Database.init(this.tabArg.getDBName());
 		if( !Database.getConnector().isAdmin_mode() ) {
-			Database.getConnector().setAdminMode(this.tabArg.getPassword());
+			Database.setAdminMode(this.tabArg.getPassword());
 		}
 		if( debug ) {
 			this.tabArg.addDebugMode(true);

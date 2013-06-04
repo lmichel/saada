@@ -287,14 +287,5 @@ public class SQLIndexPanel extends JFrame {
 
 	}
 
-	public static void main(String[] args) throws Exception {
-		Messenger.debug_mode = false;
-		Database.init("DEVBENCH1_5_1");
-		Database.getConnector().setAdminMode("");
-		JFrame frame = new JFrame();
-		Messenger.setGraphicMode(frame);
-		//new ProgressDialog(frame, "Progress", null);
-		SQLIndexPanel cd = new SQLIndexPanel("GrosFITSEntry");
-		//	    cd.setVisible(true);
-	}
+
 }

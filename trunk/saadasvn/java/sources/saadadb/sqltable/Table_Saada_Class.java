@@ -125,4 +125,13 @@ public abstract  class Table_Saada_Class extends SQLTable {
 		return retour.toArray(new String[0]);
 
 	}
+	
+	/**
+	 * Add a stat column the the table
+	 * @throws Exception
+	 */
+	public static final void addStatColumn() throws Exception {
+		SQLTable.addStatColumn("saada_class");
+	}
+
 }

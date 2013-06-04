@@ -41,7 +41,7 @@ public class DeleteCollectionIndex {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		try {
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String collection = ap.getCollection();
 			if( collection == null || !Database.getCachemeta().collectionExists(collection) ) {
 				Messenger.printMsg(Messenger.ERROR, "Collection <" + collection + "> does not exist");

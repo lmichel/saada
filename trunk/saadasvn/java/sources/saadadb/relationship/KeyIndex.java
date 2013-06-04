@@ -977,8 +977,9 @@ public class KeyIndex extends KeySet {
 	}
 	/**
 	 * @param filename
+	 * @return : the number of links (0  in the case of the abstract class)
 	 */
-	public void save() throws  FatalException{
+	public int save() throws  FatalException{
 		try {
 			DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(this.pathname)));
 			out.writeInt(this.size);
@@ -988,7 +989,8 @@ public class KeyIndex extends KeySet {
 			out.close();
 		} catch( Exception e) {
 			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
-		}
+		} 
+		return 0;
 	}
 
 	/**

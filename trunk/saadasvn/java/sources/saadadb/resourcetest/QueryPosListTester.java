@@ -56,7 +56,7 @@ public class QueryPosListTester extends GridBuilder{
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			Query q = new Query();
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String target = args[0];
 			int size = Integer.parseInt(args[1]);
 			QueryPosListTester qpt = new QueryPosListTester(target, size);

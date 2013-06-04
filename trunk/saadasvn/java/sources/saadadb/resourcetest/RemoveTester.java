@@ -361,7 +361,7 @@ public class RemoveTester {
 	public static void main(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		Database.getConnector().setAdminMode(ap.getPassword());
+		Database.setAdminMode(ap.getPassword());
 		String command = ap.getCommand();
 		boolean all = ("all".equals(command));
 		boolean cmdok = false;

@@ -211,7 +211,7 @@ public class QueryUCDTester {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			QueryUCDTester qut = new QueryUCDTester();
 			if( ap.getBuild() || ap.getAll() ) {
 				qut.prepareDB();

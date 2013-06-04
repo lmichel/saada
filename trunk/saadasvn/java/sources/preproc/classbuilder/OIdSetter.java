@@ -19,7 +19,7 @@ public class OIdSetter {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			MetaClass mc =Database.getCachemeta().getClass(ap.getClassName());
-			Database.getConnector().setAdminMode("saadadmin");
+			Database.setAdminMode("saadadmin");
 
 			long oid = SaadaOID.newOid(ap.getClassName());
 			if( oid < SaadaOID.getMaskForClass(ap.getClassName()) + 1) {

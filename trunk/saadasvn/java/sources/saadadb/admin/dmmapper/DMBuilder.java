@@ -617,7 +617,7 @@ public class DMBuilder extends JFrame{
 		
 		Messenger.debug_mode = false;
 		Database.init("BENCH1_5_1_MSQL");
-        Database.getConnector().setAdminMode(null);
+        Database.setAdminMode(null);
 		//new ClassToDatamodelMapper("SSA default", "UCDTester1", Category.ENTRY);
 		Messenger.debug_mode = true;
 		DMBuilder ctdm = new DMBuilder();

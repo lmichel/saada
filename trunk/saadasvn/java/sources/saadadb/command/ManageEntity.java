@@ -50,7 +50,7 @@ public abstract class ManageEntity  {
 
 	protected static void init(ArgsParser ap) throws Exception {
 		Database.init(ap.getDBName());
-		Database.getConnector().setAdminMode(ap.getPassword());
+		Database.setAdminMode(ap.getPassword());
 	}
 
 	public static void processCommand(ManageEntity me, String[] args) {
