@@ -22,9 +22,9 @@ public abstract class SaadaOID {
 	 * the transaction is executed at the end if the loading, thus after OIDS are used
 	 * Works only with one single dataloader
 	 */
-	static HashMap<String, Long> last_oid_for_class = new HashMap<String, Long>();
-//	static long last_oid_for_class;
-//	static String last_class = "";
+	static final HashMap<String, Long> last_oid_for_class = new HashMap<String, Long>();
+//	static final long last_oid_for_class;
+//	static final String last_class = "";
 	//32 row_num
 	//16 class
 	//10 collection
@@ -73,14 +73,14 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static String getTreePath(long oid){
+	public static final String getTreePath(long oid){
 		return getCollectionName(oid) + "." + getCategoryName(oid) + "." + getClassName(oid);
 	}
 	/**
 	 * @param oid
 	 * @return
 	 */
-	public static int getClassNum(long oid) {
+	public static final int getClassNum(long oid) {
 		return (int)((oid >> 32) & 0xffffL);
 	}
 
@@ -88,7 +88,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static String getClassName(long oid) {
+	public static final String getClassName(long oid) {
 		try {
 			return Database.getCachemeta().getClass((int)((oid >> 32) & 0xffffL)).getName();
 		} catch (FatalException e) {
@@ -100,7 +100,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static int getCollectionNum(long oid) {
+	public static final int getCollectionNum(long oid) {
 		return (int)((oid >> 48) & 0x3ffL);
 	}
 
@@ -108,7 +108,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static String getCollectionName(long oid) {
+	public static final String getCollectionName(long oid) {
 		try {
 			return Database.getCachemeta().getCollection((int)((oid >> 48) & 0x3ffL)).getName();
 		} catch (FatalException e) {
@@ -120,7 +120,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static int getCategoryNum(long oid) {
+	public static final int getCategoryNum(long oid) {
 		return (int)((oid >> 58) & 0xfL);
 	}
 
@@ -128,7 +128,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static String getCategoryName(long oid) {
+	public static final String getCategoryName(long oid) {
 		try {
 			return Category.explain((int)((oid >> 58) & 0xfL));
 		} catch (FatalException e) {
@@ -140,7 +140,7 @@ public abstract class SaadaOID {
 	 * @param oid
 	 * @return
 	 */
-	public static int getRowNum(long oid) {
+	public static final int getRowNum(long oid) {
 		return (int)(oid  & 0xffffffffL);
 	}
 
@@ -149,7 +149,7 @@ public abstract class SaadaOID {
 	 * @param nameClass
 	 * @exception SaadaException
 	 */
-	public static long newOid(String class_name)throws Exception, SaadaException{
+	public static final long newOid(String class_name)throws Exception, SaadaException{
 		Long current_oid = last_oid_for_class.get(class_name);
 		if( current_oid == null ) {
 			SQLQuery squery = new SQLQuery();
@@ -166,6 +166,15 @@ public abstract class SaadaOID {
 		
 		return current_oid;
 	}
+	
+	/**
+	 * Called when a class is removed: suppress the oid counter for taht class
+	 * @param className
+	 */
+	public static final void  resetCounter(String className) {
+		last_oid_for_class.remove(className);
+	}
+	
 	/**
 	 * Generator Oid
 	 * @param nameClass
@@ -173,7 +182,7 @@ public abstract class SaadaOID {
 	 * @throws SQLException 
 	 * @exception SaadaException
 	 */
-	public static long newFlatFileOid (String coll_name) throws Exception {
+	public static final long newFlatFileOid (String coll_name) throws Exception {
 		SQLQuery squery = new SQLQuery();
 		ResultSet rs = squery.run("select max(oidsaada) from "+ Database.getCachemeta().getCollectionTableName(coll_name, Category.FLATFILE));
 		long val;
@@ -195,7 +204,7 @@ public abstract class SaadaOID {
 	 * @return
 	 * @throws Exception
 	 */
-	public static long getMaskForClass(String class_name) throws Exception {
+	public static final long getMaskForClass(String class_name) throws Exception {
 		MetaClass mc = Database.getCachemeta().getClass(class_name);
 		return ((long)((mc.getId() & 0xffff) | ((mc.getCollection_id() & 0x3f) << 16) | ((mc.getCategory() & 0xf) << 26))) << 32;
 	}

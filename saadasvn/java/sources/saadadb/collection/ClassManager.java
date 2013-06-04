@@ -101,6 +101,7 @@ public class ClassManager extends EntityManager{
 		 */
 		this.processUserRequest();
 		Table_Saada_Class.removeClass(name);
+		SaadaOID.resetCounter(name);
 		try {
 			Table_Saada_Metaclass.removeClass(name);
 		}catch(Exception e ) {

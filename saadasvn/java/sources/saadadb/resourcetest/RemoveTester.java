@@ -207,6 +207,7 @@ public class RemoveTester {
 	 * @throws Exception
 	 */
 	public static void relationAntTestOnMisc() throws Exception {
+		Database.getCachemeta().reload(true);
 		/*
 		 * Load starting collection
 		 */
@@ -241,52 +242,51 @@ public class RemoveTester {
 		}
 		int endindentrysize = Database.getCachemeta().getCollection("Ending").getSize(Category.ENTRY);
 		Database.getCachemeta().reload(true);
-		AntTarget at;
-//		/*
-//		 * Relation MISC -> MISC
-//		 */
-//		AntTarget at = new AntTarget("relation.remove", "Remove relation MiscToMisc");
-//		at.setProperty("relation", "MiscToMisc");
-//		at.execute(true);
-//		
-//		at = new AntTarget("relation.create", "Create relation MiscToMisc");
-//		at.setProperty("relation", "MiscToMisc");
-//		at.setProperty("from", "Starting_misc");
-//		at.setProperty("to", "Ending_misc");
-//		at.setProperty("query", "INSERT INTO MiscToMisc (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-//			                  	+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.namesaada = p.namesaada");
-//		at.execute(true);
-//		at = new AntTarget("relation.populate", "Populate relation MiscToMisc");
-//		at.setProperty("relation", "MiscToMisc");
-//		at.execute(true);
-//		
-//		at = new AntTarget("relation.index", "Index relation MiscToMisc");
-//		at.setProperty("relation", "MiscToMisc");
-//		at.execute(true);		
-//		int miscmiscSize = Database.getCachemeta().getRelation("MiscToMisc").getSize();
-//		/*
-//		 * relation MISC -> ENTRY
-//		 */
-//		at = new AntTarget("relation.remove", "Remove relation MiscToMisc");
-//		at.setProperty("relation", "MiscToEntry");
-//		at.execute(true);
-//		
-//		at = new AntTarget("relation.create", "Create relation MiscToMisc");
-//		at.setProperty("relation", "MiscToEntry");
-//		at.setProperty("from", "Starting_misc");
-//		at.setProperty("to", "Ending_ENTRY");
-//		at.setProperty("query", "INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-//				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada "
-//				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")");
-//		at.execute(true);
-//		at = new AntTarget("relation.populate", "Populate relation MiscToEntry");
-//		at.setProperty("relation", "MiscToEntry");
-//		at.execute(true);
-//		
-//		at = new AntTarget("relation.index", "Index relation MiscToEntry");
-//		at.setProperty("relation", "MiscToEntry");
-//		at.execute(true);
-//		int miscentrySize = Database.getCachemeta().getRelation("MiscToEntry").getSize();
+		/*
+		 * Relation MISC -> MISC
+		 */
+		AntTarget at = new AntTarget("relation.remove", "Remove relation MiscToMisc");
+		at.setProperty("relation", "MiscToMisc");
+		at.execute(true);
+		
+		at = new AntTarget("relation.create", "Create relation MiscToMisc");
+		at.setProperty("relation", "MiscToMisc");
+		at.setProperty("from", "Starting_misc");
+		at.setProperty("to", "Ending_misc");
+		at.setProperty("query", "INSERT INTO MiscToMisc (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
+			                  	+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.namesaada = p.namesaada");
+		at.execute(true);
+		at = new AntTarget("relation.populate", "Populate relation MiscToMisc");
+		at.setProperty("relation", "MiscToMisc");
+		at.execute(true);
+		
+		at = new AntTarget("relation.index", "Index relation MiscToMisc");
+		at.setProperty("relation", "MiscToMisc");
+		at.execute(true);		
+		int miscmiscSize = Database.getCachemeta().getRelation("MiscToMisc").getSize();
+		/*
+		 * relation MISC -> ENTRY
+		 */
+		at = new AntTarget("relation.remove", "Remove relation MiscToMisc");
+		at.setProperty("relation", "MiscToEntry");
+		at.execute(true);
+		
+		at = new AntTarget("relation.create", "Create relation MiscToMisc");
+		at.setProperty("relation", "MiscToEntry");
+		at.setProperty("from", "Starting_misc");
+		at.setProperty("to", "Ending_ENTRY");
+		at.setProperty("query", "INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
+				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada "
+				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")");
+		at.execute(true);
+		at = new AntTarget("relation.populate", "Populate relation MiscToEntry");
+		at.setProperty("relation", "MiscToEntry");
+		at.execute(true);
+		
+		at = new AntTarget("relation.index", "Index relation MiscToEntry");
+		at.setProperty("relation", "MiscToEntry");
+		at.execute(true);
+		int miscentrySize = Database.getCachemeta().getRelation("MiscToEntry").getSize();
 		/*
 		 * remove products
 		 */
@@ -341,14 +341,14 @@ public class RemoveTester {
 			QueryException.throwNewException(SaadaException.DB_ERROR, "Ending entry collection should be set from " + endindentrysize 
 					+ " to " + endindentrysize + " (!=" + fendindentrysize + ")");
 		}
-//		if( (2*miscmiscSize) != (3*fmiscmiscSize) ) {
-//			QueryException.throwNewException(SaadaException.DB_ERROR, "Misc -> Misc RELATION SIZE should be set from " + miscmiscSize 
-//					+ " to " + (2*miscmiscSize)/3 + " (!=" + fmiscmiscSize + ")");
-//		}
-//		if( (2*miscentrySize) != (3*fmiscentrySize) ) {
-//			QueryException.throwNewException(SaadaException.DB_ERROR, "Misc -> Entry RELATION SIZE should be set from " + miscentrySize 
-//					+ " to " + (2*miscentrySize)/3 + " (!=" + fmiscentrySize + ")");
-//		}
+		if( (2*miscmiscSize) != (3*fmiscmiscSize) ) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, "Misc -> Misc RELATION SIZE should be set from " + miscmiscSize 
+					+ " to " + (2*miscmiscSize)/3 + " (!=" + fmiscmiscSize + ")");
+		}
+		if( (2*miscentrySize) != (3*fmiscentrySize) ) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, "Misc -> Entry RELATION SIZE should be set from " + miscentrySize 
+					+ " to " + (2*miscentrySize)/3 + " (!=" + fmiscentrySize + ")");
+		}
 		System.out.println("relationTestOnMisc: OK ");
 
 	}
@@ -365,23 +365,23 @@ public class RemoveTester {
 		String command = ap.getCommand();
 		boolean all = ("all".equals(command));
 		boolean cmdok = false;
-		if( all || command.endsWith("simplemisc") ) {
+		if( all || command.equalsIgnoreCase("simplemisc") ) {
 			cmdok = true;
 			basicTestOnMisc();
 		} 
-		if( all || command.endsWith("simpletable")) {
+		if( all || command.equalsIgnoreCase("simpletable")) {
 			cmdok = true;
 			basicTestOnTable(1);
 		}
-		if( all || command.endsWith("simpleentry")) {
+		if( all || command.equalsIgnoreCase("simpleentry")) {
 			cmdok = true;
 			basicTestOnEntry(1);
 		} 
-		if( all || command.endsWith("relationmisc")) {
+		if( all || command.equalsIgnoreCase("relationmisc")) {
 			cmdok = true;
 			relationTestOnMisc();
 		} 
-		if( all || command.endsWith("antrelationmisc")) {
+		if( all || command.equalsIgnoreCase("antrelationmisc")) {
 			cmdok = true;
 			relationAntTestOnMisc();
 		} 
