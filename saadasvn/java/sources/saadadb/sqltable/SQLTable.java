@@ -708,4 +708,27 @@ public abstract class SQLTable {
 	}
 
 
+	/**
+	 * Add a stat column to the tableName if it does not exist.
+	 * The stat columns contains an integer value relevant for the content of the data referenced by that table
+	 * This method is invoked to update automatically and smoothly the meta data model
+	 * This method must be invoked out of a transaction
+	 * @param tableName
+	 * @throws Exception
+	 */
+	public static final void addStatColumn(String tableName) throws Exception {
+		 ResultSet cols = Database.getWrapper().getTableColumns(tableName);
+		 while( cols.next() ){
+			 if( cols.getString(1).equalsIgnoreCase("stat")) {
+				 return;
+			 }
+		 }
+		 Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
+		 SQLTable.beginTransaction();
+		 for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
+			 SQLTable.addQueryToTransaction(q);
+		 }
+		 SQLTable.commitTransaction();
+	}
+
 }

@@ -543,7 +543,7 @@ public class SIAPQueryTester {
 			 */
 			Database.init(ap.getDBName());
 
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			/*
 			 * Reload SQL procedures
 			 */

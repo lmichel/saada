@@ -22,7 +22,7 @@ public class DMMappingImplementer {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "USAGE: java .... DMMappingImplementer [mappingfile]");
 			}
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			
 			DMImplementer dmi= new DMImplementer(fn);
 			dmi.putDMInJavaClass(Database.getClassLocation());

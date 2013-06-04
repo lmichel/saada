@@ -36,7 +36,7 @@ public class ObjectScaner {
 		try {
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

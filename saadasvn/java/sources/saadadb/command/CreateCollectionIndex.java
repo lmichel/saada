@@ -42,7 +42,7 @@ public class CreateCollectionIndex {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String collection = ap.getCollection();
 			if( collection == null || !Database.getCachemeta().collectionExists(collection) ) {
 				Messenger.printMsg(Messenger.ERROR, "Collection <" + collection + "> does not exist");

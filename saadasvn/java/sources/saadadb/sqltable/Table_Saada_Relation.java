@@ -1,6 +1,7 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
+import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
@@ -11,12 +12,12 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 public abstract class Table_Saada_Relation extends SQLTable{
-	
+	public static final String tableName = "saada_relation";
 	/**
 	 * @throws AbortException
 	 */
 	public static  void createTable() throws SaadaException {
-		SQLTable.createTable("saada_relation", "id " + Database.getWrapper().getSerialToken() + ", name " + Database.getWrapper().getIndexableTextType() + ", primary_coll text, primary_cat text, secondary_coll text, secondary_cat text, correlator text NULL, indexed boolean default false, description text NULL"
+		SQLTable.createTable(tableName, "id " + Database.getWrapper().getSerialToken() + ", name " + Database.getWrapper().getIndexableTextType() + ", primary_coll text, primary_cat text, secondary_coll text, secondary_cat text, correlator text NULL, indexed boolean default false, description text NULL"
 				, "name"
 				, false);
 	}
@@ -26,7 +27,7 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	 * @throws SaadaException 
 	 */
 	public static final void addRelation(RelationConf relation_config) throws SaadaException {
-		SQLTable.addQueryToTransaction("insert into saada_relation (name, primary_coll,primary_cat,secondary_coll,secondary_cat, correlator, indexed, description  )values ("
+		SQLTable.addQueryToTransaction("insert into " + tableName + " (name, primary_coll,primary_cat,secondary_coll,secondary_cat, correlator, indexed, description  )values ("
 				+ "'" + relation_config.getNameRelation() + "'," 
 				+ "'" + relation_config.getColPrimary_name() + "',"
 				+ "'" + Category.explain(relation_config.getColPrimary_type()) + "'," 
@@ -44,11 +45,11 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	 * @throws AbortException
 	 */
 	public static final void saveCorrelator(RelationConf relation_config) throws SaadaException {
-		SQLTable.addQueryToTransaction("update saada_relation set correlator = "
+		SQLTable.addQueryToTransaction("update " + tableName + " set correlator = "
 				+ "'" + Database.getWrapper().getEscapeQuote(relation_config.getQuery()) + "'" 
 				+ " WHERE name = '"
 				+ relation_config.getNameRelation() + "'"
-		        , "saada_relation");
+		        , tableName);
 		
 	}
 
@@ -59,11 +60,11 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	 */
 	public static final void saveDescription(RelationConf relation_config) throws SaadaException {
 		SQLTable.beginTransaction();
-		SQLTable.addQueryToTransaction("update saada_relation set description = "
+		SQLTable.addQueryToTransaction("update " + tableName + " set description = "
 				+ "'" + Database.getWrapper().getEscapeQuote(relation_config.getDescription()) + "'" 
 				+ " WHERE name = '"
 				+ relation_config.getNameRelation() + "'"
-		        , "saada_relation");
+		        , tableName);
 		SQLTable.commitTransaction();
 		
 	}
@@ -79,7 +80,7 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	public static boolean isIndexed(String rel_name) throws FatalException {
 		try {
 			SQLQuery squery = new SQLQuery();
-			ResultSet rs = squery.run("select indexed from saada_relation where name = '" + rel_name + "'");
+			ResultSet rs = squery.run("select indexed from " + tableName + " where name = '" + rel_name + "'");
 			while( rs.next()) {
 				boolean retour = rs.getBoolean(1);
 				squery.close();
@@ -98,10 +99,10 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	 * @param indexed
 	 * @throws AbortException
 	 */
-	public static void setIndexed(String rel_name, boolean indexed) throws Exception {
+	public static void setIndexed(String rel_name, boolean indexed, int stat) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Set relation <" + rel_name + ">  indexed as " + indexed);
-		SQLTable.addQueryToTransaction("UPDATE saada_relation SET indexed = " + Database.getWrapper().getBooleanAsString(indexed) + " WHERE name = '" + rel_name + "'", "saada_relation");
+		SQLTable.addQueryToTransaction("UPDATE " + tableName + " SET indexed = " + Database.getWrapper().getBooleanAsString(indexed) + ", stat = " + stat + " WHERE name = '" + rel_name + "'", "saada_relation");
 	}
 	/**
 	 * @param nameRelation
@@ -109,10 +110,19 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	public static void removeRelation(String nameRelation){
 		Table_Saada_Qualifiers.addRelation(nameRelation);
 		try {
-			SQLTable.addQueryToTransaction("delete from saada_relation where name = '" + nameRelation + "'"
+			SQLTable.addQueryToTransaction("delete from " + tableName + " where name = '" + nameRelation + "'"
 			        , "saada_relation");
 		} catch (AbortException e) {
 			Messenger.printMsg(Messenger.ERROR, "Deleting relation: " + e.getMessage());
 		}
 	}
+	/**
+	 * Add a stat column the the table
+	 * @throws Exception
+	 */
+	public static final void addStatColumn() throws Exception {
+		SQLTable.addStatColumn(tableName);
+	}
+
+	
 }

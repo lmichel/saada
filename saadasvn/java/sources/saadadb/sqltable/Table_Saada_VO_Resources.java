@@ -404,7 +404,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	public static void main_org(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		Database.getConnector().setAdminMode(ap.getPassword());
+		Database.setAdminMode(ap.getPassword());
 		Messenger.printMsg(Messenger.TRACE, "Reload al data models");
 		SQLTable.addQueryToTransaction("delete from saada_vo_resources");
 		saveDefaultSSAResource();
@@ -416,7 +416,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	public static void main(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		Database.getConnector().setAdminMode(ap.getPassword());
+		Database.setAdminMode(ap.getPassword());
 		String filename = ap.getFilename();
 		SQLTable.beginTransaction();
 		loadFromConfigFile(filename);		

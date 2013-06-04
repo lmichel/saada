@@ -1,6 +1,7 @@
 package saadadb.meta;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import saadadb.collection.Category;
@@ -10,6 +11,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.Table_Saada_Relation;
+import saadadb.util.SaadaConstant;
 
 public class MetaRelation extends MetaObject {
 
@@ -20,6 +22,8 @@ public class MetaRelation extends MetaObject {
 	String      correlator;
 	String      description;
 	boolean 	indexed;
+	int         stat;
+	
 	int size = -1;
 	
 	ArrayList<String> 	qualifier_names = new ArrayList<String>();
@@ -32,6 +36,11 @@ public class MetaRelation extends MetaObject {
 		this.secondary_category = Category.getCategory(rs.getString("secondary_cat").trim());
 		this.correlator         = rs.getString("correlator");
 		this.description        = rs.getString("description");
+		try {
+		this.stat               = rs.getInt("stat");
+		} catch (SQLException e) {
+			this.stat = SaadaConstant.INT;
+		}
 		if( this.correlator == null ) {
 			this.correlator = "";
 		}
@@ -47,6 +56,10 @@ public class MetaRelation extends MetaObject {
 
 	public MetaRelation(String name, int id) {
 		super(name, id);
+	}
+
+	public int getStat() {
+		return stat;
 	}
 
 	/**

@@ -6,7 +6,7 @@ import saadadb.sqltable.SQLTable;
 public class SetPgm {
 	public static void main(String[] args) throws Exception {
 		Database.init("Napoli");
-		Database.getConnector().setAdminMode("");
+		Database.setAdminMode("");
 		SQLTable.beginTransaction();
 
 		SQLTable.addQueryToTransaction("UPDATE AIPWFI_Table SET PGM = 'AIP_XMM' WHERE product_url_csa like '/Users/laurentmichel/IVOANaples/data/wfi_iap/catalogues/AIP_XMM/%'");

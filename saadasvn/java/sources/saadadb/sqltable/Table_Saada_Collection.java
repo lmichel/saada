@@ -53,4 +53,12 @@ public abstract  class Table_Saada_Collection extends SQLTable {
 		}
 	}
 		
+	/**
+	 * Add a stat column the the table
+	 * @throws Exception
+	 */
+	public static final void addStatColumn() throws Exception {
+		SQLTable.addStatColumn("saada_collection");
+	}
+
 }

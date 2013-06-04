@@ -366,7 +366,7 @@ public class RelationManager extends  EntityManager {
 				}
 				this.processUserRequest();
 				Messenger.incrementeProgress();
-				Table_Saada_Relation.setIndexed(name, false);
+				Table_Saada_Relation.setIndexed(name, false, 0);
 			}
 			/*
 			 * SQL query
@@ -377,7 +377,7 @@ public class RelationManager extends  EntityManager {
 				Messenger.incrementeProgress();
 				SQLTable.addQueryToTransaction(query, name);
 				Messenger.incrementeProgress();
-				Table_Saada_Relation.setIndexed(name, false);
+				Table_Saada_Relation.setIndexed(name, false, 0);
 				Messenger.incrementeProgress();
 			}		
 			SQLTable.dropTmpTables();
@@ -441,7 +441,7 @@ public class RelationManager extends  EntityManager {
 		Messenger.printMsg(Messenger.TRACE, "Empty Relationship <" + name + ">");
 		SQLTable.dropTableIndex(name, null);
 		SQLTable.addQueryToTransaction("DELETE FROM " + name, name);
-		Table_Saada_Relation.setIndexed(name, false);
+		Table_Saada_Relation.setIndexed(name, false, 0);
 		IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), name);
 		ib.createIndexRelation();		
 	}

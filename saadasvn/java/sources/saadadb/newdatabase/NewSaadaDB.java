@@ -179,7 +179,7 @@ public class NewSaadaDB {
 			/*
 			 * Create SQL tables
 			 */			
-			connector.setAdminMode(this.admin_passwd);
+			connector.setAdminAuth(this.admin_passwd);
 			Database.initConnector(this.connector.getDbname(), false);
 			SQLTable.beginTransaction();
 		    Table_SaadaDB.createTable();   	

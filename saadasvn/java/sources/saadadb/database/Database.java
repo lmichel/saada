@@ -14,6 +14,9 @@ import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.Table_Saada_Class;
+import saadadb.sqltable.Table_Saada_Collection;
+import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.Version;
@@ -97,6 +100,23 @@ public class Database {
 	public static String version() {
 		return Version.getVersion(); 
 	}
+	
+	/**
+	 * This method traps the admin authority authication to do som smooth schema update
+	 * That way, new columns can be added to  meta table each time the admin tool is started
+	 * @param password
+	 * @throws Exception
+	 */
+	public static void setAdminMode(String password) throws Exception {
+		getConnector().setAdminAuth(password);
+		/*
+		 * Do some schema update
+		 */
+		Table_Saada_Relation.addStatColumn();
+		Table_Saada_Class.addStatColumn();
+		Table_Saada_Collection.addStatColumn();
+	}
+	
 	/**
 	 * @return
 	 */

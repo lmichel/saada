@@ -35,7 +35,7 @@ public class ManageTableIndex extends SaadaProcess {
 			ArgsParser ap = new ArgsParser(args);
 			Messenger.printMsg(Messenger.TRACE, "ManageTableIndex " + ap.toString());
 			Database.init(ap.getDBName());
-			Database.getConnector().setAdminMode(ap.getPassword());
+			Database.setAdminMode(ap.getPassword());
 			String table_name ;
 			Collection<String> columns = new TreeSet<String>();
 			if( (table_name = ap.getCreate()) != null && table_name.length() > 0 ) {

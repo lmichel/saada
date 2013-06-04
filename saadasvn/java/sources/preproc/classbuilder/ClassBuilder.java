@@ -21,7 +21,7 @@ public class ClassBuilder {
 			Database.init(ap.getDBName());
 			String collection = ap.getCollection();
 			Database.getCachemeta().getCollection(collection);
-			Database.getConnector().setAdminMode("saadmin");
+			Database.setAdminMode("saadmin");
 
 			VOResource vor = new  VOResource("/home/michel/workspace/XCATDR3/config/vodm.ObsCore.xml");
 			System.out.println(vor);
