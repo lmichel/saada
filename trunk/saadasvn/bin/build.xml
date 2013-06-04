@@ -62,6 +62,7 @@
             <arg value="-collection=${collection}"/>
             <arg value="-filename=${filename}"/>
             <arg value="-config=${config}"/>
+	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
  		</java> 
 	</target>
@@ -165,36 +166,39 @@
 
 	<!--
 		Create one collection
-		USAGE ant collection.create -Dcreate={name} -Dcomment={comment}
+		USAGE ant collection.create -Dcollection={name} -Dcomment={comment}
 	-->
 	<target name="collection.create" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
 			<classpath refid="saadadb.classpath"/>
-			<arg value="-create=${name}"/>
+			<arg value="-create=${collection}"/>
 			<arg value="-comment=${comment}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
 	<!--
 		Remove one collection
-		USAGE ant collection.remove -Dremove={name}
+		USAGE ant collection.remove -Dcollection={name}
 	-->
 	<target name="collection.remove" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
 			<classpath refid="saadadb.classpath"/>
-			<arg value="-remove=${name}"/>
+			<arg value="-remove=${collection}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
 	
 	<!--
 		Empty one collection
-		USAGE ant collection.emty -Dempty={name}
+		USAGE ant collection.emty -Dcollection={name}
 	-->
 	<target name="collection.emty" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
 			<classpath refid="saadadb.classpath"/>
-			<arg value="-empty=${name}"/>
+			<arg value="-empty=${collection}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
@@ -205,24 +209,26 @@
 
 		<!--
 			Remove one class
-			USAGE ant class.remove -Dremove={name}
+			USAGE ant class.remove -Dclass={name}
 		-->
 		<target name="cclass.remove" >
 	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
 				<classpath refid="saadadb.classpath"/>
-				<arg value="-remove=${name}"/>
+				<arg value="-remove=${class}"/>
+		  		<arg value="-debug=${debug}"/>
 				<arg value="${SAADA_DB_NAME}"/>
 			</java>
 		</target>
 		
 		<!--
 			Empty one class
-			USAGE ant class.emty -Dempty={name}
+			USAGE ant class.emty -Dclass={name}
 		-->
 		<target name="class.emty" >
 	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
 				<classpath refid="saadadb.classpath"/>
-				<arg value="-empty=${name}"/>
+				<arg value="-empty=${class}"/>
+		  		<arg value="-debug=${debug}"/>
 				<arg value="${SAADA_DB_NAME}"/>
 			</java>
 		</target>
@@ -249,6 +255,7 @@
 			<arg value="-from=${from}" />
 			<arg value="-to=${to}" />
 			<arg value="-query=${query}" />
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}" />
 		</java>  
 	</target>
@@ -262,6 +269,7 @@
 		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
        		<classpath refid="saadadb.classpath"/>
 			<arg value="-empty=${relation}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
@@ -275,6 +283,7 @@
 		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
        		<classpath refid="saadadb.classpath"/>
 			<arg value="-remove=${relation}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
@@ -288,6 +297,7 @@
 		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
        		<classpath refid="saadadb.classpath"/>
 			<arg value="-populate=${relation}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>
 	</target>
@@ -301,6 +311,7 @@
     	<java fork="true"  classname="saadadb.command.ManageRelation" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 			<arg value="-index=${relation}"/>
+	  		<arg value="-debug=${debug}"/>
 			<arg value="${SAADA_DB_NAME}"/>
     	</java> 		
 	</target>
@@ -313,28 +324,27 @@
 
 	<!-- 
 		Creating/deleting SQL index for a collection
-		USAGE: ant index.collection.create/delete -Dcollection={collection name} -Dcategory={category} [-Doid=-oid]
+		USAGE: ant index.collection.create/delete -Dcollection={collection name} -Dcategory={category} 
 		All columns the collection table are indexed
-		If the flag "-oid" is set, only columns containing Saada oids are indexed
 		This flag has no effect for deletion
 		The category can be Entry | Spectra | Table | Image2D | Plot
 	-->
 	
   	<target name="index.collection.create">
-    	<java fork="true"  classname="saadadb.command.ManageCollectionIndex" failonerror="true" >
+    	<java fork="true"  classname="saadadb.command.CreateCollectionIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
-	  		<arg value="${collection}"/>
-	  		<arg value="${category}"/>
-	  		<arg value="${oid}"/>
-            <arg value="${SAADA_DB_NAME}"/>
+	  		<arg value="-collection=${collection}"/>
+	  		<arg value="-category${category}"/>
+	  		<arg value="-debug=${debug}"/>
+           <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
 	
  	<target name="index.collection.delete">
     	<java fork="true"  classname="saadadb.command.DeleteCollectionIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
-	  		<arg value="${collection}"/>
-	  		<arg value="${category}"/>
+	  		<arg value="-collection=${collection}"/>
+	  		<arg value="-category=${category}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
@@ -350,6 +360,7 @@
     	<java fork="true"  classname="saadadb.command.ManageTableIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-create=${table}"/>
+	  		<arg value="-debug=${debug}"/>
 	  		<arg value="${oid}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
@@ -359,6 +370,7 @@
     	<java fork="true"  classname="saadadb.command.ManageTableIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-remove=${table}"/>
+	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
@@ -405,7 +417,8 @@
       		<classpath refid="saadadb.classpath"/>
    	    	<jvmarg value="${jvm_initial_size}" />
   			<jvmarg value="${jvm_max_size}" />
-            <arg value="${SAADA_DB_NAME}"/>
+	  		<arg value="-debug=${debug}"/>
+           <arg value="${SAADA_DB_NAME}"/>
     	</java> 
  	</target>
 	<!--
@@ -418,6 +431,7 @@
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-filename=${filename}"/>
 	  		<arg value="-password=${password}"/>
+	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
 			
     	</java> 
@@ -431,6 +445,7 @@
     	<java fork="true" classname="saadadb.sqltable.Table_Saada_VO_Resources" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-password=${password}"/>
+	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
 	</target>
