@@ -59,8 +59,9 @@ public abstract  class Table_Saada_Class extends SQLTable {
 				+ TypeMapping.explain(mapping_type) + "','"
 				+ signature + "','"
 				+ "', '"
-				+ Database.getWrapper().getEscapeQuote(description)
-				+ "')");
+				+ Database.getWrapper().getEscapeQuote(description) + "', "
+				+ 0
+				+ ")");
 		return id;
 	}
 
