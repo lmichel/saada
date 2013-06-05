@@ -2,6 +2,8 @@ package saadadb.vo;
 
 import java.io.ByteArrayInputStream;
 
+import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
@@ -26,6 +28,17 @@ public class ADQLExecutor {
 	/** The result of the last executed query. */
 	protected SaadaQLResultSet query_result = null;
 	
+	/** flag used to quotes tapschema table names which are also reserved keywords fo mysql **/
+	public static final boolean MySQLMode ;
+
+	static {
+		boolean msql = false;
+		try {
+			msql= ( Database.getWrapper() instanceof saadadb.database.MysqlWrapper ) ;
+		} catch (FatalException e) {}
+		MySQLMode = msql;
+		System.out.println("----------- " + MySQLMode);
+	}
 	public SaadaADQLQuery getQuery() {
 		return query;
 	}
@@ -57,6 +70,7 @@ public class ADQLExecutor {
 			dbConsistency = new SaadaDBConsistency();
 			parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
 			query = (SaadaADQLQuery)parse.Query();
+			query.setMySQLMode(MySQLMode);
 //		parse.setDebug(true);
 		
 		if (limit > -1)
