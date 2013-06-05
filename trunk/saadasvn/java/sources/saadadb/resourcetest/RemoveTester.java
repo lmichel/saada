@@ -211,14 +211,12 @@ public class RemoveTester {
 		/*
 		 * Load starting collection
 		 */
-		System.out.println("1  " + Database.getCachemeta().getClass("StartData").getId());
 		DataGenerator dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "StartData", "prd_0");
 		dg.ingestVOTable(true);
 		for( int i=1 ; i<3 ; i++ ){
 		    dg = new DataGenerator("0 +0", 0, "Starting", "MISC", "StartData", "prd_" + i);
 			dg.ingestVOTable(false);			
 		}
-		System.out.println("2  " + Database.getCachemeta().getClass("StartData").getId());
 		int startsize = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);
 		/*
 		 * Load ending misc collection
@@ -295,7 +293,6 @@ public class RemoveTester {
 		at.setProperty("debug", "on");
 		at.setProperty("noindex", "true");
 		at.setProperty("links", "follow");
-		System.out.println("3  " + Database.getCachemeta().getClass("StartData").getId());
 		at.execute(true);
 //		RelationManager rm = new RelationManager("MiscToEntry");
 //		SQLTable.beginTransaction();
