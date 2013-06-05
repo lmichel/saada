@@ -21,41 +21,42 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
 	public static final String tableName = "columns";
 	public static final Pattern sqlTypePattern = Pattern.compile("([A-Za-z]+)\\(([0-9]+)\\)");
+	
 	static {
 		attMap = new LinkedHashMap<String, AttributeHandler>();
 		AttributeHandler ah;
 		ah = new AttributeHandler();
-		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("VARCHAR(255)"); ah.setComment("table name from TAP_SCHEMA_tables");
+		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("String"); ah.setComment("table name from TAP_SCHEMA_tables");
 		attMap.put("table_name", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("column_name"); ah.setNameattr("column_name"); ah.setType("VARCHAR"); ah.setComment("column name");
+		ah.setNameattr("column_name"); ah.setNameattr("column_name"); ah.setType("String"); ah.setComment("column name");
 		attMap.put("column_name", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("description"); ah.setNameattr("description"); ah.setType("VARCHAR"); ah.setComment("brief description of column");
+		ah.setNameattr("description"); ah.setNameattr("description"); ah.setType("String"); ah.setComment("brief description of column");
 		attMap.put("description", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("unit"); ah.setNameattr("unit"); ah.setType("VARCHAR"); ah.setComment("unit in VO standard format");
+		ah.setNameattr("unit"); ah.setNameattr("unit"); ah.setType("String"); ah.setComment("unit in VO standard format");
 		attMap.put("unit", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("ucd"); ah.setNameattr("ucd"); ah.setType("VARCHAR"); ah.setComment("UCD of column if any");
+		ah.setNameattr("ucd"); ah.setNameattr("ucd"); ah.setType("String"); ah.setComment("UCD of column if any");
 		attMap.put("ucd", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("utype"); ah.setNameattr("utype"); ah.setType("VARCHAR"); ah.setComment("UTYPE of column if any");
+		ah.setNameattr("utype"); ah.setNameattr("utype"); ah.setType("String"); ah.setComment("UTYPE of column if any");
 		attMap.put("utype", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("datatype"); ah.setNameattr("datatype"); ah.setType("VARCHAR"); ah.setComment("ADQL datatype as in section 2.5");
+		ah.setNameattr("datatype"); ah.setNameattr("datatype"); ah.setType("String"); ah.setComment("ADQL datatype as in section 2.5");
 		attMap.put("datatype", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("size"); ah.setNameattr("size"); ah.setType("VARCHAR"); ah.setComment("length of variable length datatypes");
+		ah.setNameattr("size"); ah.setNameattr("size"); ah.setType("String"); ah.setComment("length of variable length datatypes");
 		attMap.put("size", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("principal"); ah.setNameattr("principal"); ah.setType("INTEGER"); ah.setComment("a principal column; 1 means true, 0 means false");
+		ah.setNameattr("principal"); ah.setNameattr("principal"); ah.setType("int"); ah.setComment("a principal column; 1 means true, 0 means false");
 		attMap.put("principal", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("indexed"); ah.setNameattr("indexed"); ah.setType("INTEGER"); ah.setComment("an indexed column; 1 means true, 0 means false");
+		ah.setNameattr("indexed"); ah.setNameattr("indexed"); ah.setType("int"); ah.setComment("an indexed column; 1 means true, 0 means false");
 		attMap.put("indexed", ah);
 		ah = new AttributeHandler();
-		ah = new AttributeHandler();ah.setNameattr("std"); ah.setNameattr("std"); ah.setType("INTEGER"); ah.setComment("a standard column; 1 means true, 0 means false");
+		ah = new AttributeHandler();ah.setNameattr("std"); ah.setNameattr("std"); ah.setType("int"); ah.setComment("a standard column; 1 means true, 0 means false");
 		attMap.put("std", ah);	
 	}
 	/**
@@ -65,7 +66,7 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 		String sql = "";
 		for (AttributeHandler ah: attMap.values() ) {
 			if( sql.length() > 0 ) sql += ", ";
-			sql += ah.getNameattr() + "  " + ah.getType();
+			sql += ah.getNameattr() + "  " + Database.getWrapper().getSQLTypeFromJava(ah.getType());
 		}
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
 		SQLTable.createTable(tableName, sql, null, false);

@@ -3,6 +3,7 @@ package saadadb.sqltable;
 import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 
+import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -20,19 +21,19 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 		attMap = new LinkedHashMap<String, AttributeHandler>();
 		AttributeHandler ah;
 		ah = new AttributeHandler();
-		ah.setNameattr("schema_name"); ah.setNameattr("schema_name"); ah.setType("VARCHAR"); ah.setComment("the schema name from TAP_SCHEMA.schemas");
+		ah.setNameattr("schema_name"); ah.setNameattr("schema_name"); ah.setType("String"); ah.setComment("the schema name from TAP_SCHEMA.schemas");
 		attMap.put("schema_name", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("VARCHAR"); ah.setComment("table name as it should be used in queries");
+		ah.setNameattr("table_name"); ah.setNameattr("table_name"); ah.setType("String"); ah.setComment("table name as it should be used in queries");
 		attMap.put("table_name", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("table_type"); ah.setNameattr("table_type"); ah.setType("VARCHAR"); ah.setComment("one of: table, view");
+		ah.setNameattr("table_type"); ah.setNameattr("table_type"); ah.setType("String"); ah.setComment("one of: table, view");
 		attMap.put("table_type", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("description"); ah.setNameattr("description"); ah.setType("VARCHAR"); ah.setComment("brief description of table");
+		ah.setNameattr("description"); ah.setNameattr("description"); ah.setType("String"); ah.setComment("brief description of table");
 		attMap.put("description", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("utype"); ah.setNameattr("utype"); ah.setType("VARCHAR"); ah.setComment("UTYPE if table corresponds to a data model");
+		ah.setNameattr("utype"); ah.setNameattr("utype"); ah.setType("String"); ah.setComment("UTYPE if table corresponds to a data model");
 		attMap.put("utype", ah);
 		}
 	/**
@@ -42,7 +43,7 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 		String sql = "";
 		for (AttributeHandler ah: attMap.values() ) {
 			if( sql.length() > 0 ) sql += ", ";
-			sql += ah.getNameattr() + "  " + ah.getType();
+			sql += ah.getNameattr() + "  " + Database.getWrapper().getSQLTypeFromJava(ah.getType());
 		}
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
 		SQLTable.createTable(tableName, sql, "table_name", false);
