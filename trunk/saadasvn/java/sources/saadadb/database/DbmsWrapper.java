@@ -943,13 +943,25 @@ abstract public class DbmsWrapper {
 	public String getEscapeQuote(String val) {
 		if( val != null ) {
 			return val.replaceAll("'", "\\\\'");
-		}
-		else {
+		} else {
 			return "";
 		}
 
 	}
+	
+	/**
+	 * This features is used to save the case or to put reserved keywords in SQL statement
+	 * e.g. create a table named keys with MySQL
+	 * @param entity
+	 * @return
+	 */
+	public String getQuotedEntity(String entity) {
+		return "\"" + entity + "\"";
+	}
 
+	/**
+	 * @return
+	 */
 	public String getAsciiNull() {
 		return "\\N";
 	}

@@ -719,7 +719,7 @@ public abstract class SQLTable {
 	public static final void addStatColumn(String tableName) throws Exception {
 		 ResultSet cols = Database.getWrapper().getTableColumns(tableName);
 		 while( cols.next() ){
-			 if( cols.getString(1).equalsIgnoreCase("stat")) {
+			 if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
 				 return;
 			 }
 		 }
