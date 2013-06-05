@@ -46,6 +46,7 @@ public class ADQLQuery implements ADQLObject {
 	/** A tool to translate this query in the good SQL dialect. */
 	protected SQLTranslator translator = new SQLTranslator();
 	
+	protected static boolean MySQLMode = false;
 	
 	/**
 	 * Creates an empty query (no selected columns, no selected tables, no any kind of constraint, ...).
@@ -68,6 +69,13 @@ public class ADQLQuery implements ADQLObject {
 		translator = trans;
 	}
 	
+	/**
+	 * Set this mode for handling special table names
+	 * @param mode
+	 */
+	public void setMySQLMode(boolean mode) {
+		MySQLMode = mode;
+	}
 	/**
 	 * Clears the query: no selected columns, no selected tables, no any kind of constraint, ...
 	 */
@@ -555,8 +563,13 @@ public class ADQLQuery implements ADQLObject {
 		
 	// FROM part:
 		String tables = null;
-		for(ADQLTable t : lstTables)
-			tables = (tables==null)?t.toSQL(altTranslator):(tables + ", "+t.toSQL(altTranslator));
+		for(ADQLTable t : lstTables) {
+			String tn = t.toSQL(altTranslator);
+			if( MySQLMode && (tn.startsWith("keys ") || tn.startsWith("schemas ")) ) {
+				tn = tn.replaceAll("keys", "`keys`").replaceAll("schemas", "`schemas`");
+			}
+			tables = (tables==null)?tn:(tables + ", "+tn);
+		}
 		
 		sql += "\nFROM "+tables;
 		

@@ -82,11 +82,11 @@ public class TapServiceManager extends EntityManager {
 				FatalException.throwNewException(SaadaException.WRONG_RESOURCE, "TAP service already exists. Please remove it first before to overide");
 			}
 			int detectedTables = 0;
-			if( Database.getWrapper().tableExist(Table_Tap_Schema_Keys.tableName) ) detectedTables++;
+			if( Database.getWrapper().tableExist(Table_Tap_Schema_Keys.qtableName) ) detectedTables++;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Key_Columns.tableName) ) detectedTables++;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Columns.tableName) ) detectedTables++;
 			if( Database.getWrapper().tableExist(Table_Tap_Schema_Tables.tableName) ) detectedTables++;
-			if( Database.getWrapper().tableExist(Table_Tap_Schema_Schemas.tableName) ) detectedTables++;
+			if( Database.getWrapper().tableExist(Table_Tap_Schema_Schemas.qtableName) ) detectedTables++;
 
 			/*
 			 * Create TAP_SCHEMA tables
@@ -330,11 +330,11 @@ public class TapServiceManager extends EntityManager {
 	 */
 	public static int serviceExists() throws FatalException, Exception {
 		int missingTables = 0;
-		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Keys.tableName) ) missingTables++;
+		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Keys.qtableName) ) missingTables++;
 		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Key_Columns.tableName) ) missingTables++;
 		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Columns.tableName) ) missingTables++;
 		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Tables.tableName) ) missingTables++;
-		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Schemas.tableName) ) missingTables++;
+		if( !Database.getWrapper().tableExist(Table_Tap_Schema_Schemas.qtableName) ) missingTables++;
 		if( missingTables == 0 ) {
 			return 1;
 		}
@@ -360,7 +360,7 @@ public class TapServiceManager extends EntityManager {
 		 * Loop on schemas
 		 */
 		SQLQuery qschema = new SQLQuery();
-		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.tableName);
+		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
 		while(rs_schema.next()) {
 			String schema_name = rs_schema.getString(1);
 			String schema_desc = rs_schema.getString(2);
