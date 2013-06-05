@@ -19,16 +19,17 @@ import saadadb.util.Messenger;
  */
 public class Table_Tap_Schema_Keys extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
-	public static final String tableName;
+	public static final String tableName = "keys";
+	public static final String qtableName;
 
 	static {
 		String tn  = null;
 		try {
-			tn = Database.getWrapper().getQuotedEntity("keys");
+			tn = Database.getWrapper().getQuotedEntity(tableName);
 		} catch (FatalException e) {
 			Messenger.printStackTrace(e);
 		}			
-		tableName = tn;
+		qtableName = tn;
 
 		attMap = new LinkedHashMap<String, AttributeHandler>();
 		AttributeHandler ah;
@@ -58,7 +59,7 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 			sql += ah.getNameattr() + "  " + Database.getWrapper().getSQLTypeFromJava(ah.getType());
 		}
 		Messenger.printMsg(Messenger.TRACE, "Create table " + tableName);
-		SQLTable.createTable(tableName, sql, null, false);
+		SQLTable.createTable(qtableName, sql, null, false);
 	}
 
 	/**
@@ -69,9 +70,9 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void addSaadaJoin(String collTable, String classTable) throws AbortException {
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
 				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join", "null"});
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
 				, new Object[]{classTable + "_rev", classTable, collTable,  "Collection to Class Saada join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(classTable);
 	}
@@ -85,7 +86,7 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void addSaadaJoin(String fromTable, String targetTable, String fromKey, String targetKey) throws AbortException {
-		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
+		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
 				, new Object[]{fromTable, fromTable, targetTable , "Standard join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
 	}
@@ -94,7 +95,7 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void dropTable() throws AbortException {
-		Messenger.printMsg(Messenger.TRACE, "Drop table " + tableName);
+		Messenger.printMsg(Messenger.TRACE, "Drop table " + qtableName);
 		SQLTable.dropTable(tableName);
 	}
 
@@ -105,12 +106,12 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	public static void dropPublishedTable(String table) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Drop key of  table " + table);
 		SQLQuery sq = new SQLQuery();
-		ResultSet rs = sq.run("SELECT key_id FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'" );
+		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'" );
 		while( rs.next() ) {
 			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
 		}
 		sq.close();
-		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'");		
+		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'");		
 	}
 
 }

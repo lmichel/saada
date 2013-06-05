@@ -82,7 +82,10 @@ public abstract class SQLTable {
 			dropTable(table_name);
 		}
 		if( unique_key != null && unique_key.length() > 0 ) {
-			constraint = ", CONSTRAINT " + table_name + "_pksd PRIMARY KEY (" + unique_key + ")";
+			/*
+			 * In some cases, te
+			 */
+			constraint = ", CONSTRAINT " + table_name.replaceAll("[\"'`]", "") + "_pksd PRIMARY KEY (" + unique_key + ")";
 		}
 		addQueryToTransaction("CREATE TABLE " + table_name + "(" + format + constraint + ")", (String)null );	
 		lockTables(Database.getWrapper().getUserTables(), null);
