@@ -28,7 +28,7 @@ public abstract  class Table_Saada_Collection extends SQLTable {
 				max_key = rs.getInt(1) +1;
 			}
 			squery.close();
-			SQLTable.addQueryToTransaction("INSERT INTO saada_collection VALUES (" + max_key + ", '" + coll_name + "', '" + comment + "')"
+			SQLTable.addQueryToTransaction("INSERT INTO saada_collection VALUES (" + max_key + ", '" + coll_name + "', '" + comment + "', 0)"
 					, "saada_collection" );
 			Table_Saada_Metacoll.addCollection(coll_name, max_key);			
 		} catch (SaadaException e) {
