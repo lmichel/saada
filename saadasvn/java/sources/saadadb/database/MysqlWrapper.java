@@ -395,6 +395,13 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getQuotedEntity(java.lang.String)
+	 */
+	public String getQuotedEntity(String entity) {
+		return "`" + entity + "`";
+	}
+
+	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getInsertStaement(java.lang.String, java.lang.String)
 	 */
 	@Override
