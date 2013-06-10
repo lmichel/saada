@@ -543,6 +543,18 @@ public class ADQLQuery implements ADQLObject {
 	}
 	
 	/**
+	 * Put black quotes around table name
+	 * @param tn
+	 * @return
+	 */
+	public String quoteTableName(String tn){
+		String retour = tn;
+		if( MySQLMode && (tn.startsWith("keys ") || tn.startsWith("schemas ")) ) {
+			retour = retour.replaceAll("keys", "`keys`").replaceAll("schemas", "`schemas`");
+		}
+		return retour;
+	}
+	/**
 	 * Gets the SQL translation of this ADQL query.
 	 * 
 	 * @param end				<i>true</i> to end the SQL query by a semicolon, <i>false</i> else.
@@ -564,10 +576,7 @@ public class ADQLQuery implements ADQLObject {
 	// FROM part:
 		String tables = null;
 		for(ADQLTable t : lstTables) {
-			String tn = t.toSQL(altTranslator);
-			if( MySQLMode && (tn.startsWith("keys ") || tn.startsWith("schemas ")) ) {
-				tn = tn.replaceAll("keys", "`keys`").replaceAll("schemas", "`schemas`");
-			}
+			String tn = quoteTableName(t.toSQL(altTranslator));
 			tables = (tables==null)?tn:(tables + ", "+tn);
 		}
 		

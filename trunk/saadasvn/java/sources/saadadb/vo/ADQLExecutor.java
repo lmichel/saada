@@ -37,7 +37,6 @@ public class ADQLExecutor {
 			msql= ( Database.getWrapper() instanceof saadadb.database.MysqlWrapper ) ;
 		} catch (FatalException e) {}
 		MySQLMode = msql;
-		System.out.println("----------- " + MySQLMode);
 	}
 	public SaadaADQLQuery getQuery() {
 		return query;

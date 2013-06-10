@@ -82,6 +82,8 @@ public interface ProductFile extends Enumeration{
 	 */
 	public void setSpaceFrame();
 	
+	public String getName();
+	
 
  }
   

@@ -69,8 +69,7 @@ public class GetObject extends SaadaServlet {
 						+ collection + " WhereAttributeSaada{ oidtable = " + oid + "}");
 				request.setAttribute("treepath", collection + ".ENTRY." + classe);
 				rd.forward(request, response); 
-			}
-			else if( relation == null || relation.length() == 0 ) {
+			} else if( relation == null || relation.length() == 0 ) {
 				DisplayFilter colform  = new InstanceDisplayFilter(null);
 				colform.setOId(oid);
 
@@ -165,7 +164,12 @@ public class GetObject extends SaadaServlet {
 					colform.setOId(sl.getEndindOID());
 					JSONArray list = new JSONArray();
 					if( cpt++ > 100 ) {
-						list.add("truncated");
+						List<String> lr = colform.getRow(sl, -1);
+						for( String r: lr) {
+							list.add("trunc to 100");
+						}
+						ja.add(list);
+						break;
 					} else {
 						List<String> lr = colform.getRow(sl, -1);
 						for( String r: lr) {

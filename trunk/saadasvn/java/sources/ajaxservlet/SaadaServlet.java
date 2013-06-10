@@ -207,7 +207,7 @@ public class SaadaServlet extends HttpServlet {
 			res.setContentType("image/jpeg");
 		} else if( s_product.toLowerCase().endsWith(".gif") ) {
 			res.setContentType("image/gif");
-		} else if( s_product.toLowerCase().endsWith(".txt")  ) {
+		} else if( s_product.toLowerCase().endsWith(".txt") || s_product.toLowerCase().endsWith(".text")   || s_product.toLowerCase().endsWith(".ascii")) {
 			res.setContentType("text/plain");
 		} else if( s_product.matches(RegExp.FITS_FILE)) {
 			res.setContentType( "application/fits");                                                
