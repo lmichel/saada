@@ -86,7 +86,7 @@ jQuery
 						retour += "<li><b>" + k + "</b>: " + v  + "</li>";
 					});
 					retour += "</ul>";
-					Modalinfo.dataPanel("Product Info", retour);
+					Modalinfo.info(retour, "Product Info");
 				}
 			});
 		};		
@@ -228,26 +228,24 @@ jQuery
 		};
 
 		this.fireExpendForm= function() {
-				var height = $(window).height() ;
-				var icon = $('#formexpender').css("background-image");
-				if( icon.match("screen_up") != null ) {
-					$('#formexpender').css("background-image", "url(images/screen_down.png)");
-					$('#formexpender').attr("title", "Expend query form");
-					height='10%';
-				}
-				else {
-					$('#formexpender').css("background-image", "url(images/screen_up.png)");
-					$('#formexpender').attr("title", "Minimize query form");
-					height='90%';
-				}
-				layoutPane.sizePane("south", height);
-				//	$("div#accesspane").trigger("resize",[ height]);		
+			var height = $(window).height() ;
+			var icon = $('#formexpender').css("background-image");
+			if( icon.match("screen_up") != null ) {
+				$('#formexpender').css("background-image", "url(images/screen_down.png)");
+				$('#formexpender').attr("title", "Expend query form");
+				height='10%';
+			}
+			else {
+				$('#formexpender').css("background-image", "url(images/screen_up.png)");
+				$('#formexpender').attr("title", "Minimize query form");
+				height='90%';
+			}
+			layoutPane.sizePane("south", height);
+			//	$("div#accesspane").trigger("resize",[ height]);		
 		};
 
 		this.fireOpenDescription = function() {
-			Modalpanel.open("<div style='color: black;' id=description></div>");
-			$('#description').load("help/description.html");
-			Modalpanel.resize();
+			Modalinfo.iframe("help/description.html");
 		};
 		this.showProgressStatus = function() {
 			Modalinfo.info("Job in progress");
@@ -263,7 +261,7 @@ jQuery
 
 			var table = '';
 			var histo = '';
-			
+
 
 			if (limit != 'NoHisto') {
 				if (limit != 'MaxLeft') {
@@ -283,7 +281,7 @@ jQuery
 			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
 			table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
 			+ '</span></h2>';
-			
+
 			if (jsdata.links.length > 0) {
 				table += "<div style='overflow: hidden;border-width: 0;'>";
 				for (var i = 0; i < jsdata.links.length; i++) {
@@ -291,7 +289,7 @@ jQuery
 				}
 				table += "</div>";
 			}
-			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');\"> <img src=\"images/tdown.png\"> Native Data </h4>";
+			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');;\"> <img src=\"images/tdown.png\"> Native Data </h4>";
 			table += "<div class='detaildata'>";
 			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
 			table += "</div>";
@@ -319,9 +317,9 @@ jQuery
 				.append(
 				"<div id=detaildiv style='width: 99%; display: none;'></div>");
 			}
-			Modalpanel.open(table);
-
-		    /*
+			//Modalpanel.open(table);
+			Modalinfo.dataPanel("Source Detail" , table, null, "#E7E7F9");
+			/*
 			 * Click on relation relation title bars: 
 			 * on the bar: open/close the data panel
 			 * on tne Info button: display relation info
@@ -343,7 +341,7 @@ jQuery
 			$('#detailtable').dataTable({
 				"aoColumns" : jsdata.classlevel.aoColumns,
 				"aaData" : jsdata.classlevel.aaData,
-				"sDom" : '<"top"f>rt',
+				"sDom" : '<f"top">rt',
 				"bPaginate" : false,
 				"aaSorting" : [],
 				"bSort" : false,
@@ -359,7 +357,6 @@ jQuery
 				"bSort" : false,
 				"bFilter" : true
 			});			
-			Modalpanel.resize(table);
 			if( numPanelToOpen > 1 ) {
 				jQuery(".detaildata").each(function(i) {
 					$(this).hide();
@@ -385,19 +382,32 @@ jQuery
 		this.showCounterparts = function(jsdata) {
 			var id = "reltable" + jsdata.relation;
 			var div = $('#' + jsdata.relation).next('.detaildata');
-			div
-			.html("<table id="
+			div.html("<table id="
 					+ id
 					+ "  width=600px cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  class=\"display\"></table>");
-			$('#' + id).dataTable({
-				"aoColumns" : jsdata.aoColumns,
-				"aaData" : jsdata.aaData,
-				"sDom" : 'rt',
-				"bPaginate" : false,
-				"aaSorting" : [],
-				"bSort" : false,
-				"bFilter" : true
-			});
+			if( jsdata.aaData.length > 10 ) {
+				$('#' + id).dataTable({
+					"aoColumns" : jsdata.aoColumns,
+					"aaData" : jsdata.aaData,
+					//	"sDom" : 'rt',
+					"sDom": '<"top"i>rt<"bottom"flp><"clear">',
+					//	"bPaginate" : true,
+					"aaSorting" : [],
+					"bSort" : false,
+					"bFilter" : true
+				});
+			} else {
+				$('#' + id).dataTable({
+					"aoColumns" : jsdata.aoColumns,
+					"aaData" : jsdata.aaData,
+					"bPaginate" : false,
+					"aaSorting" : [],
+					"bSort" : false,
+					"bFilter" : true
+				});
+
+			}
+
 			$('#' + jsdata.relation).next('.detaildata').slideToggle(
 					500);
 
@@ -550,7 +560,7 @@ jQuery
 				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\">"
 					+ "<thead>" + "<tr>";
 				for (var i = 0; i < ahs.length; i++) {
-					table += "<th>" + ahs[i].name + "</th>";
+					table += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
 				}
 				/*
 				 * Build empty table
@@ -563,26 +573,70 @@ jQuery
 					+ " class=\"dataTables_empty\">Loading data from server</td></tr>"
 					+ "</tbody>" + "</table>";
 				$("#resultpane").html(table);
+				
+				var orderParams = saadaqlView.fireOrderByParameters();
+				$('#datatable th').each(function() {
+					var att = $(this).text();
+					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link') {
+						var ah;
+						if( att == 'Access' ) {
+							ah = {nameorg: 'Access', nameattr: 'oidsaada'};
+						} else if( att == 'Detail' ) {
+							ah = {nameorg: 'Detail', nameattr: 'oidsaada'};
+						} else if( att == 'Name' ) {
+							ah = {nameorg: 'Name', nameattr: 'namesaada'};
+						} else if( att == 'Position' ) {
+							ah = {nameorg: 'Position', nameattr: 'pos_ra_csa'};
+						} else if( att.startsWith('Error ') ) {
+							ah = {nameorg: att, nameattr: 'error_maj_csa'};
+						} else {
+							ah = {nameorg: att, nameattr: att};
+						}
+						var s = new Sorter_mVc($(this), $(this).parent(), ah, saadaqlView.fireSortColumnEvent);
+						s.draw();
+						if( att == 'Access' && orderParams.nameattr == 'oidsaada') {
+							s.activeArrow(orderParams.asc);
+						} else if( att == 'Detail'  && orderParams.nameattr == 'oidsaada') {
+							s.activeArrow(orderParams.asc);
+						} else if( att == 'Name' && orderParams.nameattr == 'namesaada') {
+							s.activeArrow(orderParams.asc);
+						} else if( att == 'Position' && orderParams.nameattr == 'pos_ra_csa') {
+							s.activeArrow(orderParams.asc);
+						} else if( att.startsWith('Error ') && orderParams.nameattr == 'error_maj_csa') {
+							s.activeArrow(orderParams.asc);
+						} else if( att == orderParams.nameattr) {
+							s.activeArrow(orderParams.asc);
+						}
+						
+					}
+				});
 				/*
 				 * Connect the table with the DB
 				 */
 				var  oTable = $('#datatable').dataTable({
-			        "aLengthMenu": [5, 10, 25, 50, 100],
+					"aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
 					"bProcessing" : true,
 					"aaSorting" : [],
 					"bSort" : false,
 					"bFilter" : false,
-			//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
+					//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
 					"sAjaxSource" : "nextpage"
-				     // , "bPaginate": false
+						// , "bPaginate": false
 				});
-			//	new FixedHeader( oTable );
+				//	new FixedHeader( oTable );
 			}
 			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
 			$('div#datatable_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
 			that.fireStoreHisto(query);
+		};
+		
+		this.sortColumns = function(nameattr, direction) {
+			alert(nameattr + " " +  direction);
+			saadaqlView.fireOrderByEvent(nameattr);
+			fireSubmitQueryEvent();
+
 		};
 		/*
 		 * Returns the arrow commanding the historic on the modal box

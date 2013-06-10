@@ -31,6 +31,19 @@ jQuery.extend({
 				listeners[i].controlOrderByEvent(uidraggable);
 			});
 		};
+		this.fireSortColumnEvent = function(nameattr, sens){
+			$.each(listeners, function(i){
+				listeners[i].controlSortColumnEvent(nameattr, sens);
+			});
+		};
+		this.fireOrderByParameters= function() {
+			var retour = null;
+			$.each(listeners, function(i){
+				retour = listeners[i].controlOrderByParameters();
+			});
+			return retour;
+		};
+
 		this.fireOIDTableEvent = function(oidtable){
 			$.each(listeners, function(i){
 				listeners[i].controlOIDTableEvent(oidtable);

@@ -20,6 +20,8 @@ var booleansupported = false;
 var layoutPane;
 
 $().ready(function() {
+	Out.setdebugModeFromUrl();	
+
 	base_url = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + window.location.pathname;
 	/*
 	 * layout plugin, requires JQuery 1.7 or higher
@@ -46,10 +48,10 @@ $().ready(function() {
 	saadaqlView           = new $.SaadaQLView();
 	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
-	webSampView = new $.WebSampView();
-	new WebSampControler(webSampView, new WebSampModel(window.location.pathname.replace(/\//g, '')
+	WebSamp_mVc.init("TAPHandle"
 			, (window.location.href + "/images/saadatransp-text-small.gif").replace(/\/#/g, '')
-			, "Saada Database"));
+			, "Saada Database");
+
 
 	var sapModel       = new $.SapModel();
 	sapView            = new $.SapView();
