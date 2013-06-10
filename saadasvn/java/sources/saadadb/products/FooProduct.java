@@ -123,4 +123,9 @@ public class FooProduct implements ProductFile {
 		frame = new SpaceFrame(kws);
 	}
 
+	@Override
+	public String getName() {
+		return "Foo";
+	}
+
 }

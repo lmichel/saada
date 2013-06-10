@@ -147,7 +147,7 @@ public class ADQLTable implements ADQLObject {
 	 * @see ADQLObject#toSQL(SQLTranslator)
 	 */
 	public String toSQL(SQLTranslator translator) throws ParseException {
-		return (isSubQuery()?("("+subQuery.toSQL(false, translator)+")"):tableRef)+((alias==null)?"":(" AS "+alias))+((join==null)?"":(" "+join.toSQL(translator)));
+		return  (isSubQuery()?("("+subQuery.toSQL(false, translator)+")"):tableRef)+((alias==null)?"":(" AS "+alias))+((join==null)?"":(" "+join.toSQL(translator)));
 	}
 	
 	/**

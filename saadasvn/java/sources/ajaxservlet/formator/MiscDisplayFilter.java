@@ -142,21 +142,21 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		return retour;
 	}
 	
-	/* (non-Javadoc)
-	 * @see ajaxservlet.formator.DefaultDisplayFilter#getLinks()
-	 */
-	public List<String> getLinks() {
-		MiscSaada instance;
-		List<String> retour = new ArrayList<String>();
-
-		try {
-			if( oidsaada != SaadaConstant.LONG) {
-				instance = (MiscSaada) Database.getCache().getObject(oidsaada);
-				retour.add("<a class=download href='" + instance.getDownloadURL(true) + "'></A>");
-			}
-		} catch (FatalException e) {}
-		return retour;
-	}
+//	/* (non-Javadoc)
+//	 * @see ajaxservlet.formator.DefaultDisplayFilter#getLinks()
+//	 */
+//	public List<String> getLinks() {
+//		MiscSaada instance;
+//		List<String> retour = new ArrayList<String>();
+//
+//		try {
+//			if( oidsaada != SaadaConstant.LONG) {
+//				instance = (MiscSaada) Database.getCache().getObject(oidsaada);
+//				retour.add("<a class='dl_download' href='" + instance.getDownloadURL(true) + "'></A>");
+//			}
+//		} catch (FatalException e) {}
+//		return retour;
+//	}
 
 	@Override
 	protected void setRelations() {

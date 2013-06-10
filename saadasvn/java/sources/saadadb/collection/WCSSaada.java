@@ -185,7 +185,7 @@ public class WCSSaada extends Position {
 	 */
 	public  void setProduct_url_csa(String nameProduct) throws AbortException
 	{
-    	if( product_url_csa == null ) {
+    	if( nameProduct == null ) {
     		AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "product_url_csa cannot be set to null");
     	}
 		this.product_url_csa=nameProduct;

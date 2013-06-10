@@ -330,7 +330,6 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		}
 
 		for (String natcol : columns_natcol) {
-			System.out.println("@@@@ DDF natcol " + natcol);
 			if( !isDirective(natcol) ) {
 				continue;
 			}
