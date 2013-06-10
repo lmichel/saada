@@ -60,7 +60,7 @@
 	width: 40%;
 	float: left;
 	border-width: 0px;
-	
+	font-size: small;
 }
 
 .dataTables_filter {
@@ -68,6 +68,7 @@
 	float: right;
 	text-align: right;
 	border-width: 0px;
+	font-size: small;
 	
 }
 
@@ -85,6 +86,7 @@
 	float: center;
 	text-align: right;
 	border-width: 0px;
+	font-size: small;
 	
 }
 
