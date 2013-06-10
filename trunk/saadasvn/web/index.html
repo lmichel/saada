@@ -6,64 +6,60 @@
 
 
 	
-<link rel="stylesheet" type="text/css" href="saadajsbasics/styles/basics.css" />
 <link rel="stylesheet" type="text/css" href="styles/global.css" />
 <link rel="stylesheet" type="text/css" href="styles/form.css" /> 
 <link rel="stylesheet" type="text/css" href="styleimport/themes/base/jquery.ui.all.css" />
 <link rel="stylesheet" type="text/css" href="styleimport/layout-default-latest.css" />
 <link rel="stylesheet" type="text/css" href="styles/simplemodal.css" />
 <link rel="stylesheet" type="text/css" href="styleimport/datatable.css" />
+<link rel="stylesheet" type="text/css" href="saadajsbasics/styles/basics.css" />
+<link rel="stylesheet" type="text/css" href="http://obs-he-lm:8888/jsStuff/saadajsbasics/styles/basics.css" />
 
-<script type="text/javascript" src="jsimport/jquery.js"></script>
-<script type="text/javascript" src="saadajsbasics/javascript/basics.js"></script>
-<script type="text/javascript" src="jsimport/ui/jquery-ui.js"></script>
-<script type="text/javascript" src="jsimport/jquery.simplemodal.js"></script>
-<script type="text/javascript" src="jsimport/jquery.alerts.js"></script>
-<script type="text/javascript" src="jsimport/jquery.dataTables.js"></script>
-<script type="text/javascript" src="jsimport/jquery.layout-latest.js"></script>
-<script type="text/javascript" src="jsimport/jquery.prints.js"></script>
 
-<script type="text/javascript" language="javascript" src="jsimport/jquery.jstree.js"></script> 
-<script type="text/javascript" language="javascript" src="jsimport/jquery.jsonSuggest-2.js"></script> 
-<script type="text/javascript" language="javascript" src="jsimport/jquery.jeditable.js"></script> 
+<script type="text/javascript" src="jsimports/jquery.js"></script>
+<script type="text/javascript" src="saadajsbasics/loader.js"></script>
 
-<script type="text/javascript" language="javascript" src="userscripts/local.js"></script>
-<script type="text/javascript" language="javascript" src="saadajsbasics/javascript/WebSampView.js"></script>
-<script type="text/javascript" language="javascript" src="saadajsbasics/javascript/WebSampModel.js"></script>
-<script type="text/javascript" language="javascript" src="saadajsbasics/javascript/WebSampControler.js"></script>
+<script >resourceLoader.loadScripts([  
+      "jsimports/jquery.jstree.js"  
+     ,"jsimports/jquery.jsonSuggest-2.js"  
+     ,"jsimports/jquery.jeditable.js"   
+     ,"jsimports/jquery.layout-latest.js"   
+     ,"userscripts/local.js"
+     ,"javascript/utils.js"
+     ,"javascript/resultPaneModel.js"  
+     ,"javascript/resultPaneView.js"  
+     ,"javascript/resultPaneControler.js"  
+     ,"javascript/kwconstraintModel.js"  
+     ,"javascript/kwconstraintView.js"  
+     ,"javascript/kwconstraintControler.js"  
+     ,"javascript/ucdconstraintModel.js"  
+     ,"javascript/ucdconstraintView.js"  
+     ,"javascript/ucdconstraintControler.js"  
+     ,"javascript/saadaqlModel.js"  
+     ,"javascript/saadaqlView.js"  
+     ,"javascript/saadaqlControler.js"  
+     ,"javascript/filterManagerModel.js"
+     ,"javascript/filterManagerView.js"
+     ,"javascript/filterManagerControler.js"
+     ,"javascript/patternModel.js"
+     ,"javascript/patternView.js"
+     ,"javascript/patternControler.js"
+     ,"javascript/jobModel.js"  
+     ,"javascript/jobView.js"  
+     ,"javascript/jobControler.js"  
+     ,"javascript/jobDictionnary.js"  
+     ,"javascript/cartView.js"  
+     ,"javascript/cartControler.js"  
+     ,"javascript/cartModel.js"  
+     ,"javascript/sapView.js"  
+     ,"javascript/sapControler.js"  
+     ,"javascript/sapModel.js"  
+     ,"javascript/zipjobModel.js"  
+     ,"javascript/ready.js"  
+     ,"javascript/resize.js"  
+       ]);</script>
 
-<script type="text/javascript" language="javascript" src="javascript/utils.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/resultPaneModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/resultPaneView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/resultPaneControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/kwconstraintModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/kwconstraintView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/kwconstraintControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/ucdconstraintModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/ucdconstraintView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/ucdconstraintControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/saadaqlModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/saadaqlView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/saadaqlControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/sapModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/sapView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/sapControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/filterManagerModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/filterManagerView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/filterManagerControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/patternModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/patternView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/patternControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/cartModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/cartView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/cartControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/jobModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/jobView.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/jobControler.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/jobDictionnary.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/zipjobModel.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/ready.js"></script>
-<script type="text/javascript" language="javascript" src="javascript/resize.js"></script> 
+
 
 	<style type="text/css">
 
@@ -98,10 +94,8 @@
 				<a href="javascript:void(0);" id=showquerymeta title='Show Metadata'
 					class=question></a> <a href="javascript:void(0);"
 					title='Open the shopping cart' class=cart
-					onclick='cartView.fireOpenCart();' id=zipbutton></a> <a
-					id="sampIndicator" onClick="webSampView.fireJustConnect();"
-					class="sampOff" href="#" title="Status of the Samp connection"></a>
-
+					onclick='cartView.fireOpenCart();' id=zipbutton></a>
+					<a id="sampIndicator" onclick="WebSamp_mVc.fireJustConnect();" class="sampOff" href="#" title="SampStatus"></a>
 				<div style="width: 100%; height: 1px; background: silver"></div>
 			</div>
 		</div>
@@ -247,8 +241,8 @@
 									<div id="orderby" class='SortableConstraintsList'></div>
 									<div style="background: white;">
 										<span class=help>&nbsp;Order By<br />
-										</span> <input type="radio" name=sens value="asc" checked> <span
-											class=help>Asc</span> <input type="radio" name=sens
+										</span> <input  id="orderby_asc" type="radio" name=sens value="asc" checked> <span
+											class=help>Asc</span> <input id="orderby_des" type="radio" name=sens
 											value="des"> <span class=help>Des</span>
 									</div>
 								</div>
