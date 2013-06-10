@@ -78,8 +78,7 @@ jQuery.extend({
 						if( ah.unit != "" ) {
 							(queriableUCDs[ucd])[0] = ah.unit;
 						}
-					}
-					else {
+					} else {
 						if( ah.unit != "" ) {
 							var found = false;
 							for( var u=0 ; u<queriableUCDs[ucd].length ; u++) {
@@ -119,14 +118,22 @@ jQuery.extend({
 				});
 
 				that.notifyInitDone();	
-				var query = "Select " + category + " From " + classe + " In " + collection ;
-				if( $("#qlimit").val().match(/^[0-9]+$/) ) {
-					query += '\nLimit ' + $("#qlimit").val();
-				}
 				if( defaultquery == undefined ) {
-					that.notifyQueryUpdated(query);
-				}
-				else {
+					/*
+					 * Check in UCDS if there a column sorted by default
+					 */
+					for( kw in attributesHandlers ) {
+						ah = attributesHandlers[kw];
+						if( ah.ucd.match(/sort.desc/) ){
+							that.setOrderBy(kw);
+							$('#orderby_des').prop('checked',true);
+						} else if( ah.ucd.match(/sort.asc/) ){
+							that.setOrderBy(kw);
+							$('#orderby_asc').prop('checked',true);
+						}
+					}
+					query = that.updateQuery();
+				} else {
 					that.notifyQueryUpdated(defaultquery);
 					$("#saadaqltab").tabs({
 						selected: 4
@@ -158,23 +165,57 @@ jQuery.extend({
 
 		this.processOrderByEvent= function(uidraggable){
 			var kwname = uidraggable.find(".item").text().split(' ')[0];
-			var ah = attributesHandlers[kwname];
-			var m = new $.KWConstraintModel(true, { 
-				"nameattr" : ah.nameattr 
-				, "nameorg" : ah.nameorg
-				, "type" : "orderby"
-					, "ucd" : ah.ucd
-					, "utype" : ah.utype
-					, "unit" : ah.unit
-					, "comment" : ah.description}
-			, this);
-
-			var div_key = "ob" +  const_key;
-			var v = new $.KWConstraintView(div_key, 'orderby');
-			orderby =  new $.KWConstraintControler(m, v);
-			m.notifyInitDone();
+			this.setOrderBy(kwname);
 		};
-		
+
+		this.setOrderBy= function(kwname){
+			var ah = attributesHandlers[kwname];
+			if( kwname != null || ah == null) {
+				var ah = attributesHandlers[kwname];
+				var m = new $.KWConstraintModel(true, { 
+					"nameattr" : ah.nameattr 
+					, "nameorg" : ah.nameorg
+					, "type" : "orderby"
+						, "ucd" : ah.ucd
+						, "utype" : ah.utype
+						, "unit" : ah.unit
+						, "comment" : ah.description}
+				, this);
+
+				var div_key = "ob" +  const_key;
+				var v = new $.KWConstraintView(div_key, 'orderby');
+				orderby =  new $.KWConstraintControler(m, v);
+				m.notifyInitDone();
+
+			} else {
+				$("#orderby").each(function() {
+					$(this).html('');
+					orderby = null;
+				});
+
+			}
+		};
+		this.sortColumn= function(nameattr, sens) {
+			if( sens != null ) {
+				this.setOrderBy(nameattr);		
+				if( sens == 'asc' ) {
+					$('#orderby_asc').prop('checked',true);
+				} else {			
+					$('#orderby_des').prop('checked',true);
+				}
+			} else {
+				this.setOrderBy(null);		
+			}
+			this.updateQuery();
+			resultPaneView.fireSubmitQueryEvent();
+		};
+		this.getOrderByParameters = function() {
+			var nameattr ='';;
+			$("#orderby span").each(function() {
+				nameattr = $(this).text();
+			});
+			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
+		};
 		this.processOIDTableEvent= function(oidtable){
 			var ah = attributesHandlers["oidtable"];
 			if( ah != undefined) {
@@ -233,8 +274,7 @@ jQuery.extend({
 			$("#CoordList span").each(function() {
 				if( cq.length > 0 ) cq += ",\n";
 				cq +=  '    ' + $(this).text();
-			}
-			); 
+			}); 
 			if( cq.length > 0 ) {
 				query += "\nWherePosition { \n" + cq + "}";
 			}

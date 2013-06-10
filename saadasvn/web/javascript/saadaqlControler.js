@@ -14,6 +14,12 @@ jQuery.extend({
 				controlOrderByEvent: function(uidraggable){
 					model.processOrderByEvent(uidraggable);
 				},
+				controlSortColumnEvent: function(nameattr, sens){
+					model.sortColumn(nameattr, sens);
+				},
+				controlOrderByParameters: function() {
+					return model.getOrderByParameters();
+				},
 				controlOIDTableEvent: function(oidtable){
 					model.processOIDTableEvent(oidtable);
 				},
