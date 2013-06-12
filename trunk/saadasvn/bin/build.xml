@@ -51,7 +51,7 @@
 
 	<!-- 
 	  Load data
-	  USAGE: ant data.load -Dcollection={collection} -Dfilename={filename} -Dconfig={config} 
+	  USAGE: ant data.load -Dcollection={collection} -Dfilename={filename} -Dconfig={config} -Drepository={no|move|copy} -Dindex={true|false}
 	-->
 	
   	<target name="data.load">
@@ -62,6 +62,8 @@
             <arg value="-collection=${collection}"/>
             <arg value="-filename=${filename}"/>
             <arg value="-config=${config}"/>
+            <arg value="-repository=${repository}"/>
+            <arg value="-noindex=${noindex}"/>
 	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
  		</java> 
@@ -475,5 +477,18 @@
   		<echo>parameter read</echo>
   		<echo>${param}</echo>
 	</target>
+	
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		  The following task load a set of dummy data, just to check that everything is working
+	-->
+	<target name="load.dummy.data">
+		<java  classname="saadadb.resourcetest.RemoveTester" fork="true" failonerror="true">
+            <classpath refid="saadadb.classpath"/>
 
+			<arg value="-command=antrelationmisc"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+
+	
 </project>
