@@ -312,13 +312,13 @@ jQuery
 				table += "<div class='detaildata'></div>";
 			}
 
-			if ($('#detaildiv').length == 0) {
-				$(document.documentElement)
-				.append(
-				"<div id=detaildiv style='width: 99%; display: none;'></div>");
-			}
+//			if ($('#detaildiv').length == 0) {
+//				$(document.documentElement)
+//				.append(
+//				"<div id=detaildiv style='width: 99%; display: none;'></div>");
+//			}
 			//Modalpanel.open(table);
-			Modalinfo.dataPanel("Source Detail" , table, null, "#E7E7F9");
+			Modalinfo.dataPanel("Source Detail" , table, null, "white");
 			/*
 			 * Click on relation relation title bars: 
 			 * on the bar: open/close the data panel
@@ -484,8 +484,7 @@ jQuery
 				"<div id=detaildiv style='width: 99%; display: none;'></div>");
 			}
 			Modalpanel.open(table);
-			var ta = $('#detailtable')
-			.dataTable(
+			$('#detailtable').dataTable(
 					{
 						"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
 						"aaData" : jsdata.collectionLevel.attributes.aaData,
@@ -624,7 +623,7 @@ jQuery
 					"sAjaxSource" : "nextpage"
 						// , "bPaginate": false
 				});
-				//	new FixedHeader( oTable );
+				new FixedHeader( oTable );
 			}
 			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');

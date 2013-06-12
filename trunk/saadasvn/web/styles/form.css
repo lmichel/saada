@@ -434,7 +434,7 @@ a.closekw {
 	height: 16x;
 	width: 0px;
 	overflow: visible;
-	padding: 16px 0 2px 16px;
+	padding: 0px 0 2px 16px;
 	background: transparent url(../images/small_trash.png) bottom left
 		no-repeat;
 	vertical-align: middle;

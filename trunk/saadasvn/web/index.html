@@ -6,20 +6,22 @@
 
 
 	
-<link rel="stylesheet" type="text/css" href="styles/global.css" />
+<!-- <link rel="stylesheet" type="text/css" href="styles/global.css" />
 <link rel="stylesheet" type="text/css" href="styles/form.css" /> 
-<link rel="stylesheet" type="text/css" href="styleimport/themes/base/jquery.ui.all.css" />
-<link rel="stylesheet" type="text/css" href="styleimport/layout-default-latest.css" />
+<link rel="stylesheet" type="text/css" href="styleimports/themes/base/jquery.ui.all.css" />
 <link rel="stylesheet" type="text/css" href="styles/simplemodal.css" />
-<link rel="stylesheet" type="text/css" href="styleimport/datatable.css" />
+<link rel="stylesheet" type="text/css" href="styleimports/datatable.css" />
+<link rel="stylesheet" type="text/css" href="styleimports/layout-default-latest.css" />
 <link rel="stylesheet" type="text/css" href="saadajsbasics/styles/basics.css" />
 <link rel="stylesheet" type="text/css" href="http://obs-he-lm:8888/jsStuff/saadajsbasics/styles/basics.css" />
-
+ -->
 
 <script type="text/javascript" src="jsimports/jquery.js"></script>
 <script type="text/javascript" src="saadajsbasics/loader.js"></script>
-
-<script >resourceLoader.loadScripts([  
+<script >resourceLoader.setCss([  
+       "styles/global.css"
+     , "styles/form.css"]);
+     resourceLoader.setScripts([  
       "jsimports/jquery.jstree.js"  
      ,"jsimports/jquery.jsonSuggest-2.js"  
      ,"jsimports/jquery.jeditable.js"   
@@ -57,7 +59,9 @@
      ,"javascript/zipjobModel.js"  
      ,"javascript/ready.js"  
      ,"javascript/resize.js"  
-       ]);</script>
+       ]);
+     resourceLoader.loadAll();
+     </script>
 
 
 

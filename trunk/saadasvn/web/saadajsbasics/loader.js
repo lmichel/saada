@@ -1,11 +1,17 @@
 /**
- * Loads automatically all scripts used by saadahsbasics
+ * Loads automatically all css scripts used by saadahsbasics
+ * Files are loaded one by one keeping that wy the initial order.
+ * That make sure not to  break dependencies or style rules overriding
+ * 
+ * This class is a JS singleton.
  */
 resourceLoader = function() {
-	var css = ["basics.css", "domain.css"];
-	var that = this;
-	var baseBasicUrl = "saadajsbasics/javascript/";
-	var baseUrl = "";
+	/*
+	 * JS directories and files
+	 */
+	var baseScriptDir = "saadajsbasics";
+	var jsimportsDir  = baseScriptDir + "/jsimports/";
+	var javascriptDir = baseScriptDir + "/javascript/";
 	var local_js = ["basics.js"
 	                , "WebSamp"
 	                , "KWConstraint"
@@ -15,22 +21,42 @@ resourceLoader = function() {
 	                , "QueryTextEditor"
 	                , "domain.js"];
 	var local_min_js = ["basics.js"
-	                , "WebSamp"
-	                , "DataLink"
-	                , "domain.js"];
-	var imp_js = [   "jsimports/ui/jquery-ui.js",
-	                 "jsimports/jquery.simplemodal.js",
-	                 "jsimports/jquery.alerts.js",
-	                 "jsimports/jquery.dataTables.js",
-	                 "jsimports/jquery.prints.js",
-	                 "jsimports/jquery.tooltip.js",
-	                 "jsimports/jquery.form.js",
+	                    , "WebSamp"
+	                    , "DataLink"
+	                    , "domain.js"];
+	var imp_js = [   "ui/jquery-ui.js",
+	                 "jquery.simplemodal.js",
+	                 "jquery.alerts.js",
+	                 "jquery.dataTables.js",
+	                 "FixedHeader.js",
+	                 "jquery.prints.js",
+	                 "jquery.tooltip.js",
+	                 "jquery.form.js",
 	                 ];
-	var js = new Array();
+	var js = new Array();  // global list of JS to load
+
+	/*
+	 * CSS directories and files
+	 */
+	var baseCssDir      = "saadajsbasics/";
+	var styleDir        = baseCssDir + "styles/";
+	var styleimportsDir = baseCssDir + "styleimports/";
+	var baseUrl = "";	
+	var local_css  = ["basics.css"
+	                  , "domain.css"
+	                  ];
+	var import_css = ["themes/base/jquery.ui.all.css"
+	                  , "layout-default-latest.css"
+	                  , "datatable.css"
+	                  , "simplemodal.css"
+	                  ];
+
+	var css = new Array();// global list of CSS to load
+	var CssOver = false; // true when all CSS are loaded (can start JS loading)
+	
 	/*
 	 * Check if saadajsbasics resources are installed locally
 	 */
-
 	baseUrl = "http://localhost:8888/jsresources/";
 	$.ajax({
 		url: baseUrl + 'saadajsbasics/loader.js',
@@ -68,13 +94,16 @@ resourceLoader = function() {
 			console.log("Take ./ as jsresource base URL");
 		}
 	});
-	console.log(baseUrl);
+	console.log("jsresources will be taken from " + baseUrl);
 
+	/**
+	 * Recursive function loading the first script of the list
+	 */
 	var loadNextScript = function() {
 		var script = document.createElement("script");
 		var head = document.getElementsByTagName('HEAD').item(0);
 		script.onload = script.onreadystatechange = function() {
-			console.log(baseUrl + js[0] + " loaded" );
+			console.log(js[0] + " loaded " + CssOver);
 			js.shift();
 			if( js.length > 0 ) loadNextScript();
 		};
@@ -82,8 +111,32 @@ resourceLoader = function() {
 		script.type = "text/javascript";
 		head.appendChild( script);
 	};
+	/**
+	 * Recursive function loading the first CSS of the list
+	 */
+	loadNextCss = function() {
+		var  href = css[0];
+		$.ajax({
+			url: href,
+			dataType: 'text',
+			success: function(){        
+				$('<link rel="stylesheet" type="text/css" href="'+href+'" />').appendTo("head");
+				console.log(href + " loaded " + CssOver);
+				css.shift();
+				if( css.length > 0 ) loadNextCss();
+				else {
+					console.log("over");
+					CssOver = true;
+				}
+			},
+			error : function(jqXHR, textStatus,errorThrown) {
+				console.log("Error loading " +  href + " "  + textStatus);
 
-	/*
+			}
+		});
+
+	};
+	/**
 	 * Usng jquery make the log traces pointing on jsquery code instaed on my js code
 	 */
 	var loadNextScriptxxx = function() {
@@ -103,15 +156,51 @@ resourceLoader = function() {
 			}                  
 		});
 	};
-
-
 	/**
+	 * Start to load JS scripts after the CSS loading is completed
+	 */
+	var loadScripts = function() {
+		if( !CssOver) {
+			console.log("wait");
+			setTimeout(function() {loadScripts();}, 100);
+			return;
+		}	else {	
+			loadNextScript();
+		}
+	};
+
+	/***************
 	 * externalscripts: array of scripts to be loaded after jsresources 
 	 */
-	var loadScripts = function(externalscripts) {
-		//	console.log("----------- " + that.baseUrl + " " + baseBasicUrl);
+	/**
+	 * Stores the list of user JS scripts to load
+	 * and build the global list of resource to load
+	 */
+	var setScripts = function(externalscripts) {
+		//	console.log("----------- " + that.baseUrl + " " + baseScriptDir);
 		for( var i=0 ; i<local_js.length ; i++ ) {
-			var jsf =  baseUrl + baseBasicUrl + local_js[i];
+			var jsf =  baseUrl + javascriptDir + local_js[i];
+			if( ! jsf.match(/.*\.js/)  ){
+				js.push(jsf + "_m.js");
+				js.push(jsf + "_v.js");
+				js.push(jsf + "_c.js");
+			} else {
+				js.push(jsf);
+
+			}
+		}
+		for( var i=0 ; i<imp_js.length ; i++ ) {
+			js.push(baseUrl + jsimportsDir + imp_js[i]);
+		}
+		js.push.apply(js, externalscripts);
+	};
+	/**
+	 * Stores the list of user JS scripts to load
+	 * and build the global list (with the local short list) of resource to load
+	 */
+	var setMinScripts = function(externalscripts) {
+		for( var i=0 ; i<local_min_js.length ; i++ ) {
+			var jsf =  baseUrl + baseScriptDir + local_min_js[i];
 			if( ! jsf.match(/.*\.js/)  ){
 				js.push(jsf + "_m.js");
 				js.push(jsf + "_v.js");
@@ -126,35 +215,33 @@ resourceLoader = function() {
 			js.push(baseUrl + imp_js[i]);
 		}
 		js.push.apply(js, externalscripts);
-		console.log(baseUrl);
 		loadNextScript();
 	};
-	var loadMinScripts = function(externalscripts) {
-		//	console.log("----------- " + that.baseUrl + " " + baseBasicUrl);
-		for( var i=0 ; i<local_min_js.length ; i++ ) {
-			var jsf =  baseUrl + baseBasicUrl + local_min_js[i];
-			if( ! jsf.match(/.*\.js/)  ){
-				js.push(jsf + "_m.js");
-				js.push(jsf + "_v.js");
-				js.push(jsf + "_c.js");
-			} else {
-				console.log(jsf);
-				js.push(jsf);
-
-			}
+	/**
+	 * Stores the list of client CSS files to load
+	 * and build the global list of resource to load
+	 */
+	var setCss = function(externalcss) {
+		for( var i=0 ; i<import_css.length ; i++ ) {
+			css.push(baseUrl + styleimportsDir+ import_css[i]);
 		}
-		for( var i=0 ; i<imp_js.length ; i++ ) {
-			js.push(baseUrl + imp_js[i]);
+		for( var i=0 ; i<local_css.length ; i++ ) {
+			css.push(baseUrl  + styleDir + local_css[i]);
 		}
-		js.push.apply(js, externalscripts);
-		console.log(baseUrl);
-		loadNextScript();
+		js.push.apply(css, externalcss);
+	};
+	/**
+	 * Load all resources: must be invoked from the HTML page
+	 */
+	var loadAll = function() {
+		loadNextCss();
+		loadScripts();
 	};
 
 	var jss = {};
-	jss.loadScripts = loadScripts;
-	jss.loadMinScripts = loadMinScripts;
+	jss.loadAll = loadAll;
+	jss.setScripts = setScripts;
+	jss.setMinScripts = setMinScripts;
+	jss.setCss = setCss;
 	return jss;
-
-
 }();
