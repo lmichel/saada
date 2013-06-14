@@ -44,8 +44,11 @@ public abstract class JsonUtils {
 		}
 		return list.toString();
 	}
+	@SuppressWarnings("unchecked")
 	public static String getErrorMsg(String msg) {
-		return "{ \"errormsg\": \"" + msg.replaceAll("\"", "'") + "\"}";
+		JSONObject retour = new JSONObject();
+		retour.put("errormsg", msg);
+		return retour.toJSONString();
 	}
 	
 	public static void teePrint(ServletOutputStream out, String msg) throws IOException {
