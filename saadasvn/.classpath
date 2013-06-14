@@ -178,11 +178,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/jtools/tools.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -200,11 +195,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="class_mapping"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_25"/>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_SQLITE/saadadb/SQLITE/web/WEB-INF/lib/SQLITEgenerated.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_MSQL/saadadb/BENCH2_0_MSQL/class_mapping"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
