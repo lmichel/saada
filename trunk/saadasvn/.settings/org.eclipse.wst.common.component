@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId" project-version="1.5.0">
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="Saada1.7">
         <wb-resource deploy-path="/" source-path="/web"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
         <dependent-module archiveName="ThreeXMMgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//data/3xmm/saadadb/ThreeXMM/web/WEB-INF/lib/ThreeXMMgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="saadasvngenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/AJAX/saadadbs/saadasvn/web/WEB-INF/lib/saadasvngenerated.jar">
+        <dependent-module archiveName="BENCH2_0_MSQLgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/saada/deploy/TestBeds/version2_0/dbms_MSQL/saadadb/BENCH2_0_MSQL/web/WEB-INF/lib/BENCH2_0_MSQLgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="Saada1.7"/>
