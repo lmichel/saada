@@ -74,33 +74,35 @@ public class UCDTableHandler{
 		removeClassFromUCDTable();
 		insertClassIntoUCDTable();
 		/*
-		 * TODO This strange operation  makes sure than SQL columns have the same order as the declared fields.
-		 * That might be done with more efficiency and with keeping the constraint on oidsaada
-		 */
-		/*
-		 * Must unlock table otherwise mySQL ask to lock a non existent table (tmp_ +  classname)!!
-		 * http://bugs.mysql.com/bug.php?id=12472
-		 */
-		SQLTable.unlockTables();	
-		SQLTable.addQueryToTransaction(Database.getWrapper().getCreateTableFromSelectStatement("tmp_" +  classname
-				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;
-		SQLTable.commitTransaction();
-		SQLTable.beginTransaction();
-		/*
-		 * SQLITE cannot drop a table during a transaction containing others db updates.
-		 * The taht is renamed. TIt must be dropped in a further atomic transaction
-		 */
-		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
-//		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
-		SQLTable.commitTransaction();
-		SQLTable.beginTransaction();
-		SQLTable.addQueryToTransaction("ALTER TABLE  tmp_" + classname + " RENAME TO " + classname) ;
-		/*
-		 * Index name in lower case to avoid case issues
-		 */
-		SQLTable.addQueryToTransaction("CREATE UNIQUE INDEX " + classname.toLowerCase() + "_oidsaada ON " + classname + "(oidsaada)") ;
-		SQLTable.lockTables(Database.getWrapper().getUserTables(), null);
-		SQLTable.addQueryToTransaction(Database.getWrapper().grantSelectToPublic(classname));	
+//		 * TODO This strange operation  makes sure than SQL columns have the same order as the declared fields.
+//		 * That might be done with more efficiency and with keeping the constraint on oidsaada
+//		 */
+//		/*
+//		 * Must unlock table otherwise mySQL ask to lock a non existent table (tmp_ +  classname)!!
+//		 * http://bugs.mysql.com/bug.php?id=12472
+//		 */
+//		SQLTable.unlockTables();	
+//		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
+//		
+//		SQLTable.addQueryToTransaction(Database.getWrapper().getCreateTableFromSelectStatement("tmp_" +  classname
+//				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;
+//		SQLTable.commitTransaction();
+//		SQLTable.beginTransaction();
+//		/*
+//		 * SQLITE cannot drop a table during a transaction containing others db updates.
+//		 * The taht is renamed. TIt must be dropped in a further atomic transaction
+//		 */
+//		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
+////		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
+//		SQLTable.commitTransaction();
+//		SQLTable.beginTransaction();
+//		SQLTable.addQueryToTransaction("ALTER TABLE  tmp_" + classname + " RENAME TO " + classname) ;
+//		/*
+//		 * Index name in lower case to avoid case issues
+//		 */
+//		SQLTable.addQueryToTransaction("CREATE UNIQUE INDEX " + classname.toLowerCase() + "_oidsaada ON " + classname + "(oidsaada)") ;
+//		SQLTable.lockTables(Database.getWrapper().getUserTables(), null);
+//		SQLTable.addQueryToTransaction(Database.getWrapper().grantSelectToPublic(classname));	
 	}
 	
 	/**S
@@ -109,7 +111,7 @@ public class UCDTableHandler{
 	 * @throws AbortException
 	 */
 	public  void cleanUp() throws AbortException {
-		SQLTable.addQueryToTransaction("DROP TABLE  " + classname + "_org") ;
+//		SQLTable.addQueryToTransaction("DROP TABLE  " + classname + "_org") ;
 	}
 
 	/**
