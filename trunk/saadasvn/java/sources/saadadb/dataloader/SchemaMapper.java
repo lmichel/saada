@@ -297,7 +297,7 @@ public abstract class SchemaMapper {
 			// Attention the table name in database is different
 			// from the java class name (without package)
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Creation of the SQL table for the class <" + class_name + ">");
-			//Table_Saada_Data.createBusinessTable(class_name, cls);
+			Table_Saada_Data.createBusinessTable(class_name, cls);
 			// Load values and update UCD of valid list of all
 			// products with identical type
 			// Updates the UCD tables in current data base for the products list
