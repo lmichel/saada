@@ -82,7 +82,6 @@ public class UCDTableHandler{
 //		 * http://bugs.mysql.com/bug.php?id=12472
 //		 */
 //		SQLTable.unlockTables();	
-//		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
 //		
 //		SQLTable.addQueryToTransaction(Database.getWrapper().getCreateTableFromSelectStatement("tmp_" +  classname
 //				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;

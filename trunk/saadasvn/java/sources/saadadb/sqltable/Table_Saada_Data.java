@@ -33,7 +33,7 @@ public class Table_Saada_Data extends SQLTable {
 		// @@@@@ lower
 		SQLTable.createTable(tableName, sql, "oidsaada", false);
 	}
-	public static void createBusinessTable(String tableName, Collection<AttributeHandler> att_handler) throws Exception{
+	public static void createBusinessTable(String tableName, ArrayList<AttributeHandler> att_handler) throws Exception{
 		
 	
 		String sql = "oidsaada int8, namesaada " + Database.getWrapper().getIndexableTextType() + " NULL, md5keysaada " + Database.getWrapper().getIndexableTextType() + "  NULL ";
