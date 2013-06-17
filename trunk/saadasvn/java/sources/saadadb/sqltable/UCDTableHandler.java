@@ -86,7 +86,7 @@ public class UCDTableHandler{
 				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;
 		SQLTable.commitTransaction();
 		SQLTable.beginTransaction();
-		SQLTable.addQueryToTransaction("ALTER TABLE TABLE  " + classname + " RENAME TO " + classname + "_org") ;
+		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
 //		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
 		SQLTable.commitTransaction();
 		SQLTable.beginTransaction();
