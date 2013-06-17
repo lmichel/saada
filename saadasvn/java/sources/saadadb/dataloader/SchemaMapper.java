@@ -301,10 +301,18 @@ public abstract class SchemaMapper {
 			// Load values and update UCD of valid list of all
 			// products with identical type
 			// Updates the UCD tables in current data base for the products list
-			(new UCDTableHandler(class_name
+			UCDTableHandler uth = new UCDTableHandler(class_name
 					, configuration.getCollectionName()
 					, configuration.getCategorySaada()
-					, new ArrayList<AttributeHandler>(tableAttribute.values()))).updateUCDTable(class_id);
+					, new ArrayList<AttributeHandler>(tableAttribute.values()));
+			uth.updateUCDTable(class_id);
+			SQLTable.commitTransaction();
+			/*
+			 * SQLITE cannot drop a table during a transaction containing others db updates.
+			 * The original table is renamed. It must be dropped in a further atomic transaction
+			 */
+			SQLTable.beginTransaction();
+			uth.cleanUp();
 			SQLTable.commitTransaction();
 			dontforgettoreopentransaction = true;
 		} catch(Exception e) {
