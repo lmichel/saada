@@ -84,7 +84,11 @@ public class UCDTableHandler{
 		SQLTable.unlockTables();	
 		SQLTable.addQueryToTransaction(Database.getWrapper().getCreateTableFromSelectStatement("tmp_" +  classname
 				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;
-		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
+//		SQLTable.commitTransaction();
+//		SQLTable.beginTransaction();
+//		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
+//		SQLTable.commitTransaction();
+//		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("ALTER TABLE  tmp_" + classname + " RENAME TO " + classname) ;
 		/*
 		 * Index name in lower case to avoid case issues
