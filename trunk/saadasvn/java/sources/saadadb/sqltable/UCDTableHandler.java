@@ -86,6 +86,10 @@ public class UCDTableHandler{
 				, "SELECT oidsaada, namesaada, md5keysaada" + sql + " FROM " + classname)) ;
 		SQLTable.commitTransaction();
 		SQLTable.beginTransaction();
+		/*
+		 * SQLITE cannot drop a table during a transaction containing others db updates.
+		 * The taht is renamed. TIt must be dropped in a further atomic transaction
+		 */
 		SQLTable.addQueryToTransaction("ALTER TABLE  " + classname + " RENAME TO " + classname + "_org") ;
 //		SQLTable.addQueryToTransaction("DROP TABLE  " + classname) ;
 		SQLTable.commitTransaction();
@@ -97,6 +101,15 @@ public class UCDTableHandler{
 		SQLTable.addQueryToTransaction("CREATE UNIQUE INDEX " + classname.toLowerCase() + "_oidsaada ON " + classname + "(oidsaada)") ;
 		SQLTable.lockTables(Database.getWrapper().getUserTables(), null);
 		SQLTable.addQueryToTransaction(Database.getWrapper().grantSelectToPublic(classname));	
+	}
+	
+	/**S
+	 *  QLITE cannot drop a table during a transaction containing others db updates.
+	  * The class table is renamed. TIt must be dropped in a further atomic transaction
+	 * @throws AbortException
+	 */
+	public  void cleanUp() throws AbortException {
+		SQLTable.addQueryToTransaction("DROP TABLE  " + classname + "_org") ;
 	}
 
 	/**
