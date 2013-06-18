@@ -14,6 +14,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -92,6 +93,7 @@ public class Loader extends SaadaProcess {
 		if( !Database.getConnector().isAdmin_mode() ) {
 			Database.setAdminMode(this.tabArg.getPassword());
 		}
+
 		if( debug ) {
 			this.tabArg.addDebugMode(true);
 			Messenger.debug_mode = true;
@@ -153,6 +155,7 @@ public class Loader extends SaadaProcess {
 			/*
 			 * Load products one by one and 
 			 */
+
 			(new SchemaClassifierMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();
 		}
 	}

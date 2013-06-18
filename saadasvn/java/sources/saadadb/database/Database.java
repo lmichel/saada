@@ -14,6 +14,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Relation;
@@ -61,9 +62,14 @@ public class Database {
 			Messenger.printMsg(Messenger.TRACE, "Initialization of SaadaDB <" + db_name + ">");
 			try{
 				initConnector(db_name, false);
+
 				cacheindex = new CacheManagerRelationIndex(20, Repository.getIndexrelationsPath() + Database.getSepar());
 				cachemeta = new CacheMeta();
 				cache = new CacheManager();
+				SQLTable.beginTransaction();
+				SQLTable.addQueryToTransaction("DROP TABLE IF EXISTS   tmp_Aldebaran010 "  ) ;
+				SQLTable.addQueryToTransaction("CREATE TABLE tmp_Aldebaran010  (PersonID int);"  ) ;
+				SQLTable.commitTransaction();
 				Qbox.setLevel(10);
 			}catch(Exception e){
 				Messenger.printStackTrace(e);
