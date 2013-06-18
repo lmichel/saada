@@ -481,9 +481,11 @@ public class SaadaDBConnector extends DefaultHandler {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Close reader connection");
 			jdbc_connection.close();
+		} else {
+			Class.forName(this.jdbc_driver);			
 		}
 		Messenger.printMsg(Messenger.TRACE, "Switch DB connector in Administrator mode");
-		Class.forName(this.jdbc_driver);
+		//Class.forName(this.jdbc_driver);
 		jdbc_connection = getWrapper().getConnection(this.jdbc_url, this.jdbc_administrator, password);
 		jdbc_connection.setAutoCommit(false);
 	}

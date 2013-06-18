@@ -232,12 +232,14 @@ public abstract class SchemaMapper {
 	 */
 	protected MetaClass createClassFromProduct(int mapping_type) throws Exception {
 
+
 		String class_name;
 		/*
 		 * Compute the class name: 
 		 * Here must be used the class prefix given by the future configuration
 		 */
 		class_name = this.getNewcLassName("Cl");
+		//class_name = "Aldebaran010";
 		Messenger.printMsg(Messenger.TRACE,"Creation of the new class <" + class_name + ">");
 
 		// Retrieve   attributeslist in the model
@@ -269,6 +271,10 @@ public abstract class SchemaMapper {
 				dontforgettoreopentransaction = true;
 			}
 			SQLTable.beginTransaction();
+			UCDTableHandler uth = new UCDTableHandler(class_name
+					, configuration.getCollectionName()
+					, configuration.getCategorySaada()
+					, new ArrayList<AttributeHandler>(tableAttribute.values()));
 			int class_id = Table_Saada_Class.addClass(class_name
 					, configuration.getCollectionName()
 					, configuration.getCategorySaada()
@@ -297,22 +303,11 @@ public abstract class SchemaMapper {
 			// Attention the table name in database is different
 			// from the java class name (without package)
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Creation of the SQL table for the class <" + class_name + ">");
-			Table_Saada_Data.createBusinessTable(class_name, tableAttribute.values());
+			Table_Saada_Data.createBusinessTable(class_name, cls);
 			// Load values and update UCD of valid list of all
 			// products with identical type
 			// Updates the UCD tables in current data base for the products list
-			UCDTableHandler uth = new UCDTableHandler(class_name
-					, configuration.getCollectionName()
-					, configuration.getCategorySaada()
-					, new ArrayList<AttributeHandler>(tableAttribute.values()));
 			uth.updateUCDTable(class_id);
-			SQLTable.commitTransaction();
-			/*
-			 * SQLITE cannot drop a table during a transaction containing others db updates.
-			 * The original table is renamed. It must be dropped in a further atomic transaction
-			 */
-			SQLTable.beginTransaction();
-			uth.cleanUp();
 			SQLTable.commitTransaction();
 			dontforgettoreopentransaction = true;
 		} catch(Exception e) {

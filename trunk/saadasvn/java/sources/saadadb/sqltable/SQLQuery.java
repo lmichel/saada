@@ -18,7 +18,7 @@ public class SQLQuery {
 	protected String  query;
 	protected ResultSet resultset;
 	static protected int nb_open = 0;
-	
+
 	public SQLQuery(String query) throws QueryException {
 		this();
 		nb_open++;
@@ -29,7 +29,7 @@ public class SQLQuery {
 		}
 
 	}
-	
+
 	public String getQuery() {
 		return query;
 	}
@@ -38,15 +38,15 @@ public class SQLQuery {
 		try {
 			nb_open++;
 			Connection connector;
-			
+
 			if( Database.get_connection() == null ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Make a new DB connection");
-//				_stmts = SaadaDBConnector.getConnector(null, false).getConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+				//				_stmts = SaadaDBConnector.getConnector(null, false).getConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
 				connector = SaadaDBConnector.getConnector(null, false).getJDBCConnection();
 			}
 			else {
-//				_stmts = Database.get_connection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+				//				_stmts = Database.get_connection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
 				connector = Database.get_connection();
 			}
 			if (Messenger.debug_mode)
@@ -58,12 +58,12 @@ public class SQLQuery {
 		}
 
 	}
-	
+
 	public ResultSet run(String query) throws  QueryException {
 		this.query = query;
 		return this.run();
 	}
-	
+
 	public ResultSet run(String sql, String[] tables_to_lock) throws  QueryException {
 		if( tables_to_lock != null ) {
 			try {
@@ -126,7 +126,7 @@ public class SQLQuery {
 				return -1;
 			}
 			else {
-				
+
 				resultset.last();
 				int retour = resultset.getRow();
 				resultset.beforeFirst();
@@ -143,16 +143,16 @@ public class SQLQuery {
 	public void close() throws QueryException {
 		nb_open--;
 		try {
-		if( resultset != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Close result set");
-			resultset.close();
-		}
-		if( _stmts != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Close statement");
-			_stmts.close();
-		}
+			if( resultset != null ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Close result set");
+				resultset.close();
+			}
+			if( _stmts != null ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Close statement");
+				_stmts.close();
+			}
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
@@ -176,11 +176,11 @@ public class SQLQuery {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "FORCE UPDATE: " + sql);
 			Database.get_connection().setAutoCommit(true);
-			
+
 			Statement stmt = Database.get_connection().createStatement();
 			stmt.executeUpdate(sql);
 			stmt.close();
-	
+
 		} catch(Exception e ) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + sql + ": " + e.toString());
 		}

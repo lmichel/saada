@@ -30,7 +30,7 @@ public class TransactionMaker {
 
 	public TransactionMaker(boolean forced_mode) {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "New transaction manager (forced mode = " + forced_mode + ")" );
+			Messenger.printMsg(Messenger.DEBUG, "New transaction manager (forced mode = " + forced_mode + ")");
 		this.forced_mode   = forced_mode;
 		unlock();
 	}
@@ -128,7 +128,6 @@ public class TransactionMaker {
 					execStatement(pstmt, q);
 				}
 			}
-			stmt.close();
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "JDBC Commit");
 			if( !Database.get_connection().getAutoCommit() ) {
@@ -137,6 +136,7 @@ public class TransactionMaker {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Transaction done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
 			queries = new ArrayList<QueryString>();
+			stmt.close();
 			unlock();
 		} catch (BatchUpdateException be) {
 			Messenger.printStackTrace(be);
@@ -159,7 +159,6 @@ public class TransactionMaker {
 			Messenger.printMsg(Messenger.ERROR, "on query : " + last_q);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
-
 	}
 
 	/**
