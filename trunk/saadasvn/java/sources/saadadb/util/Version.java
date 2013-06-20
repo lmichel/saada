@@ -6,9 +6,6 @@ package saadadb.util;
 
  */
 final public class Version {
-	static final String version = "1.7.0.beta2";
+	public static final String version = "1.7.0.build3";
 	
-	public static String getVersion() {
-		return version;
-	}
 }

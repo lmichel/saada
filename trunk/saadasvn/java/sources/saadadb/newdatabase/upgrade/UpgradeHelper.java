@@ -45,7 +45,7 @@ public class UpgradeHelper extends JFrame {
 
 
 	public UpgradeHelper(String saadaDir) {
-		super("Saada Upgrade to version " + Version.getVersion());
+		super("Saada Upgrade to version " + Version.version);
 		this.saadaDir = saadaDir;
 		Container panel = this.getContentPane();
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
