@@ -722,19 +722,21 @@ public abstract class SQLTable {
 	public static final void addStatColumn(String tableName) throws Exception {
 		if( Database.getWrapper() != null ) { 
 			ResultSet cols = Database.getWrapper().getTableColumns(tableName);
-			while( cols.next() ){
-				if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
-					cols.close();
-					return;
+			if( cols != null ) {
+				while( cols.next() ){
+					if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
+						cols.close();
+						return;
+					}
 				}
+				cols.close();
+				Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
+				SQLTable.beginTransaction();
+				for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
+					SQLTable.addQueryToTransaction(q);
+				}
+				SQLTable.commitTransaction();
 			}
-			cols.close();
-			Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
-			SQLTable.beginTransaction();
-			for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
-				SQLTable.addQueryToTransaction(q);
-			}
-			SQLTable.commitTransaction();
 		}
 	}
 
