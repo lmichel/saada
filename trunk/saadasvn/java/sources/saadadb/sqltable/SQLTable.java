@@ -199,7 +199,7 @@ public abstract class SQLTable {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Start to record a new transaction in forced mode " + forced_mode);
 	}
-	
+
 	public static void abortTransaction() {
 		if( transaction_maker != null ) {
 			transaction_maker.abortTransaction();
@@ -720,20 +720,22 @@ public abstract class SQLTable {
 	 * @throws Exception
 	 */
 	public static final void addStatColumn(String tableName) throws Exception {
-		 ResultSet cols = Database.getWrapper().getTableColumns(tableName);
-		 while( cols.next() ){
-			 if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
-				 cols.close();
-				 return;
-			 }
-		 }
-		 cols.close();
-		 Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
-		 SQLTable.beginTransaction();
-		 for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
-			 SQLTable.addQueryToTransaction(q);
-		 }
-		 SQLTable.commitTransaction();
+		if( Database.getWrapper() != null ) { 
+			ResultSet cols = Database.getWrapper().getTableColumns(tableName);
+			while( cols.next() ){
+				if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
+					cols.close();
+					return;
+				}
+			}
+			cols.close();
+			Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
+			SQLTable.beginTransaction();
+			for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
+				SQLTable.addQueryToTransaction(q);
+			}
+			SQLTable.commitTransaction();
+		}
 	}
 
 }
