@@ -10,7 +10,7 @@ jQuery
 		 * who is listening to us?
 		 */
 		var listeners = new Array();
-
+		var fixedHeader = null;
 		/**
 		 * add a listener to this view
 		 */
@@ -245,7 +245,7 @@ jQuery
 		};
 
 		this.fireOpenDescription = function() {
-			Modalinfo.iframe("help/description.html");
+			Modalinfo.iframePanel("help/description.html");
 		};
 		this.showProgressStatus = function() {
 			Modalinfo.info("Job in progress");
@@ -279,8 +279,9 @@ jQuery
 				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
 			}
 			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
-			table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
-			+ '</span></h2>';
+			//table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
+			table += '<h3> ' + histo  + jsdata.title + '<span>'
+			+ '</span></h3>';
 
 			if (jsdata.links.length > 0) {
 				table += "<div style='overflow: hidden;border-width: 0;'>";
@@ -313,9 +314,9 @@ jQuery
 			}
 
 //			if ($('#detaildiv').length == 0) {
-//				$(document.documentElement)
-//				.append(
-//				"<div id=detaildiv style='width: 99%; display: none;'></div>");
+//			$(document.documentElement)
+//			.append(
+//			"<div id=detaildiv style='width: 99%; display: none;'></div>");
 //			}
 			//Modalpanel.open(table);
 			Modalinfo.dataPanel("Source Detail" , table, null, "white");
@@ -572,11 +573,11 @@ jQuery
 					+ " class=\"dataTables_empty\">Loading data from server</td></tr>"
 					+ "</tbody>" + "</table>";
 				$("#resultpane").html(table);
-				
+
 				var orderParams = saadaqlView.fireOrderByParameters();
 				$('#datatable th').each(function() {
 					var att = $(this).text();
-					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link') {
+					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link'  && att != 'Plot') {
 						var ah;
 						if( att == 'Access' ) {
 							ah = {nameorg: 'Access', nameattr: 'oidsaada'};
@@ -606,12 +607,13 @@ jQuery
 						} else if( att == orderParams.nameattr) {
 							s.activeArrow(orderParams.asc);
 						}
-						
+
 					}
 				});
 				/*
 				 * Connect the table with the DB
 				 */
+				$('.fixedHeader').remove();
 				var  oTable = $('#datatable').dataTable({
 					"aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
@@ -620,17 +622,35 @@ jQuery
 					"bSort" : false,
 					"bFilter" : false,
 					//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
-					"sAjaxSource" : "nextpage"
-						// , "bPaginate": false
+					"sAjaxSource" : "nextpage",
+				    "fnInitComplete": function(oSettings, json) {
+						that.fixedHeader.fnUpdate();
+				    } 
+				// , "bPaginate": false
 				});
-				new FixedHeader( oTable );
+				this.fixedHeader = new FixedHeader( oTable );
+
+
 			}
 			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
 			$('div#datatable_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
 			that.fireStoreHisto(query);
+			this.fixedHeader.fnUpdate();
+	    	/*
+	    	 * Images are loaded asynchronously and they can change the column width.*
+	    	 * There is no way to trigger this kind of event to update FixHeader.
+	    	 * Les do it a couple of seconds later
+	    	 */
+			setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
+
 		};
-		
+		this.updateFixedHeader = function() {
+			alert(this.fixedHeader);
+			if( this.fixedHeader != null ) {
+				this.fixedHeader.fnUpdate();
+			}
+		};
 		this.sortColumns = function(nameattr, direction) {
 			alert(nameattr + " " +  direction);
 			saadaqlView.fireOrderByEvent(nameattr);

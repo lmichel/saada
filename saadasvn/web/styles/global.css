@@ -1,28 +1,26 @@
 /*
  * CSS rules by tags
  */
- 
 @font-face {
 	font-family: Lane;
 	src: url(Lane.ttf) format("truetype");
 	font-size: small;
 }
 
-html{
-	width:		100%;
-	height:		100%;					
-	padding:	0;
-	margin:		0;
-	overflow:	auto; 
-	}
-
+html {
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	overflow: auto;
+}
 
 body {
 	min-width: 700px;
 	min-height: 700px;
-	overflow: auto;		
-	padding:	0;
-	margin:		0;	
+	overflow: auto;
+	padding: 0;
+	margin: 0;
 }
 
 div {
@@ -37,7 +35,7 @@ div {
 	overflow: none;
 }
 
-span, p, option {
+span,p,option {
 	font-size: small;
 	color: black;
 }
@@ -57,7 +55,7 @@ input[disabled] {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: small;
 	color: grey;
-	font-style:italic;
+	font-style: italic;
 }
 
 div.levelonediv {
@@ -109,18 +107,19 @@ a.logo {
 	width: 0px;
 	overflow: visible;
 	padding: 2px 0 2px 116px;
-	background: transparent url(../images/saadatransp-text-small.gif) bottom left no-repeat;
+	background: transparent url(../images/saadatransp-text-small.gif) bottom
+		left no-repeat;
 	vertical-align: middle;
 }
 
 a:hover.logo {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.logo {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -137,13 +136,13 @@ a.preview {
 }
 
 a:hover.preview {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.preview {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -160,13 +159,13 @@ a.readmeta {
 }
 
 a:hover.readmeta {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.readmeta {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -177,23 +176,21 @@ a.accept {
 	width: 0px;
 	overflow: visible;
 	padding: 4px 0 4px 90px;
-	background: transparent url(../images/submit.png) bottom left
-		no-repeat;
+	background: transparent url(../images/submit.png) bottom left no-repeat;
 	vertical-align: middle;
 }
 
 a:hover.accept {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.accept {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
-
 
 a.accept_small {
 	display: inline-block;
@@ -207,16 +204,17 @@ a.accept_small {
 }
 
 a:hover.accept_small {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.accept_small {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
+
 a.refresh {
 	display: inline-block;
 	height: 16px;
@@ -229,13 +227,13 @@ a.refresh {
 }
 
 a:hover.refresh {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.refresh {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -246,18 +244,19 @@ a.add {
 	width: 0px;
 	overflow: visible;
 	padding: 0px 0 0px 24px;
-	background: transparent url(../images/add_record.png) bottom right no-repeat;
+	background: transparent url(../images/add_record.png) bottom right
+		no-repeat;
 	vertical-align: middle;
 }
 
 a:hover.add {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.add {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -273,13 +272,13 @@ a.histoleft {
 }
 
 a:hover.histoleft {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.histoleft {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -295,13 +294,13 @@ a.historight {
 }
 
 a:hover.historight {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.historight {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -318,13 +317,13 @@ a.simbad {
 }
 
 a:hover.simbad {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.simbad {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -341,13 +340,13 @@ a.aladinsmall {
 }
 
 a:hover.aladinsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.aladinsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -361,13 +360,13 @@ a.vosplat {
 }
 
 a:hover.vosplat {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.vosplat {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -384,13 +383,13 @@ a.vosplatsmall {
 }
 
 a:hover.vosplatsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.vosplatsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -407,13 +406,13 @@ a.vospecsmall {
 }
 
 a:hover.vospecsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.vospecsmall {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -427,13 +426,13 @@ a.ivoa {
 }
 
 a:hover.ivoa {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.ivoa {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -449,13 +448,13 @@ a.sesame {
 }
 
 a:hover.sesame {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.sesame {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -481,13 +480,13 @@ a.topcat {
 }
 
 a:hover.topcat {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.topcat {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -502,13 +501,13 @@ a.aladin {
 }
 
 a:hover.aladin {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.aladin {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -522,13 +521,13 @@ a.fits {
 }
 
 a:hover.fits {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.fits {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -543,13 +542,13 @@ a.votable {
 }
 
 a:hover.votable {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.votable {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -563,13 +562,13 @@ a.zip {
 }
 
 a:hover.zip {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.zip {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -584,13 +583,13 @@ a.samp {
 }
 
 a:hover.samp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.samp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -605,15 +604,16 @@ a.formexpender {
 }
 
 a:hover.formexpender {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.formexpender {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
-	opacity: 0.8;auto
+	opacity: 0.8;
+	auto
 }
 
 a.displayfilter {
@@ -621,22 +621,21 @@ a.displayfilter {
 	width: 0px;
 	overflow: visible;
 	padding: 8px 0px 16px 32px;
-	background: transparent url(../images/filter.png) center left
-		no-repeat;
+	background: transparent url(../images/filter.png) center left no-repeat;
 }
 
 a:hover.displayfilter {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.displayfilter {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
-	opacity: 0.8;auto
+	opacity: 0.8;
+	auto
 }
-
 
 a.question {
 	display: inline-block;
@@ -648,15 +647,16 @@ a.question {
 }
 
 a:hover.question {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
 
 a:active.question {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
-	opacity: 0.8;auto
+	opacity: 0.8;
+	auto
 }
 
 a.sources {
@@ -712,6 +712,7 @@ a:hover.download {
 a:visited.download {
 	background: url(../images/download_se.gif) no-repeat center right;
 }
+
 a.download {
 	display: inline-block;
 	height: 12px;
@@ -770,7 +771,6 @@ a:visited.detail {
 /*********************************************************************
  * Page header style
  */
- 
 div#banner {
 	height: 80px;
 	vertical-align: middle;
@@ -800,12 +800,9 @@ div#externaltools {
  * Be careful when modifying sizes: everything could collapse if the splitter JQuery
  * plugin is not happy (see ready.js)
  */
-
-
 div#formpanemenu {
 	height: 267px;
 }
-
 
 div#superwrapper {
 	background-color: #fff;
@@ -835,7 +832,6 @@ div#treepane {
 	border-width: 0px;
 	overflow: auto;
 }*/
-
 div#treedisp {
 	height: 100%;
 	overflow: auto;
@@ -946,8 +942,7 @@ div#formpane {
 	/* No margin or border allowed */
 }
 
-div#formframe {
-/* 	width: auto;
+div#formframe { /* 	width: auto;
 	height: 267px;
 	position: fixed;
 	bottom:5;
@@ -956,7 +951,8 @@ div#formframe {
 	float: right;
 	padding: 0;
 
- */	/* No margin or border allowed */
+ */ /* No margin or border allowed */
+	
 }
 
 div#datapane .vsplitbar {
@@ -1071,16 +1067,20 @@ a#sessionreport {
 }
 
 a:hover#sessionreport {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
-	
+
 .detailhead {
 	background: #CCC
 		url(http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/images/ui-bg_highlight-soft_75_cccccc_1x100.png)
 		repeat-x 50% 50%;
 	border: 1px solid #AAA;
+	margin-top: 5px;
+	margin-bottom: 0px; 
+	margin-left: 0px;
+	margin-right: 0px;
 }
 
 .detaildata {
@@ -1092,7 +1092,8 @@ a.cart {
 	width: 0px;
 	overflow: visible;
 	padding: 16px 0px 16px 38px;
-	background: transparent url(../images/groscaddy.png) center left no-repeat;
+	background: transparent url(../images/groscaddy.png) center left
+		no-repeat;
 }
 
 /**************************
@@ -1103,16 +1104,17 @@ a.dl_stc {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/STC.png) center left
-		no-repeat;
+	background: transparent url(../images/STC.png) center left no-repeat;
 }
+
 a:hover.dl_stc {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_stc {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1122,20 +1124,20 @@ a.dl_samp {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_ivoa.png) center left
-		no-repeat;
+	background: transparent url(../images/dl_ivoa.png) center left no-repeat;
 }
+
 a:hover.dl_samp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_samp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
-
 
 a.dl_securesamp {
 	display: inline-block;
@@ -1145,13 +1147,15 @@ a.dl_securesamp {
 	background: transparent url(../images/dl_key_ivoa.png) center left
 		no-repeat;
 }
+
 a:hover.dl_securesamp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_securesamp {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1164,16 +1168,19 @@ a.dl_download {
 	background: transparent url(../images/dl_download.png) center left
 		no-repeat;
 }
+
 a:hover.dl_download {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_download {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
+
 a.dl_securedownload {
 	display: inline-block;
 	width: 0px;
@@ -1182,13 +1189,15 @@ a.dl_securedownload {
 	background: transparent url(../images/dl_key_download.png) center left
 		no-repeat;
 }
+
 a:hover.dl_securedownload {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_securedownload {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1198,27 +1207,28 @@ a.dl_cart {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_cart.png) center left
-		no-repeat;
+	background: transparent url(../images/dl_cart.png) center left no-repeat;
 }
+
 a.dl_cart_added {
 	display: inline-block;
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
 	background: transparent url(../images/dl_cart.png) center left no-repeat;
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
-		
 }
+
 a:hover.dl_cart {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_cart {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1231,24 +1241,27 @@ a.dl_securecart {
 	background: transparent url(../images/dl_key_cart.png) center left
 		no-repeat;
 }
+
 a.dl_securecart_added {
 	display: inline-block;
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_key_cart.png) center left no-repeat;
-	filter: alpha(opacity = 50);
+	background: transparent url(../images/dl_key_cart.png) center left
+		no-repeat;
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
-		
 }
+
 a:hover.dl_securecart {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_securecart {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1258,16 +1271,17 @@ a.dl_info {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_info.png) center left
-		no-repeat;
+	background: transparent url(../images/dl_info.png) center left no-repeat;
 }
+
 a:hover.dl_info {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_info {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
@@ -1280,16 +1294,19 @@ a.dl_detail {
 	background: transparent url(../images/dl_detail.png) center left
 		no-repeat;
 }
+
 a:hover.dl_detail {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_detail {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
+
 a.dl_header {
 	display: inline-block;
 	width: 0px;
@@ -1298,16 +1315,19 @@ a.dl_header {
 	background: transparent url(../images/dl_header.png) center left
 		no-repeat;
 }
+
 a:hover.dl_header {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_header {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
+
 a.dl_sources {
 	display: inline-block;
 	width: 0px;
@@ -1316,18 +1336,21 @@ a.dl_sources {
 	background: transparent url(../images/dl_sources.png) center left
 		no-repeat;
 }
+
 a:hover.dl_sources {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
 }
+
 a:active.dl_sources {
-	filter: alpha(opacity = 50);
+	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
 }
 
-input.include_relation{	height: auto;
+input.include_relation {
+	height: auto;
 }
 
 /************************
@@ -1336,31 +1359,39 @@ input.include_relation{	height: auto;
 .pending {
 	color: gray;
 }
+
 .queued {
 	color: gray;
 }
+
 .executing {
 	color: orange;
 }
+
 .completed {
 	color: green;
 }
+
 .error {
 	color: red;
 }
-.aborted{
-	color: gray;
-}
-.unkwnown {
-	color: red;
-}
-.held {
-	color: gray;
-}
-.suspended {
-	color: red;
-}	
-.nojob {
+
+.aborted {
 	color: gray;
 }
 
+.unkwnown {
+	color: red;
+}
+
+.held {
+	color: gray;
+}
+
+.suspended {
+	color: red;
+}
+
+.nojob {
+	color: gray;
+}

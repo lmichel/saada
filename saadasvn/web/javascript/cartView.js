@@ -187,7 +187,7 @@ jQuery.extend({
 			var table = '';
 			var phase = that.fireGetJobPhase();
 
-			table += '<h2><img src="images/groscaddy.png"> Shopping Cart</h2>';
+			//table += '<h2><img src="images/groscaddy.png"> Shopping Cart</h2>';
 			table += '<div id=table_div></div>';
 			table += "<h4 id=\"cartjob\" class='detailhead'> <img src=\"images/tdown.png\">Processing status</h4>";
 			table += '<br><span>Current Job Status</span> <span id=cartjob_phase class="' + phase.toLowerCase() + '">' + phase + '</span><BR>';
@@ -200,7 +200,8 @@ jQuery.extend({
 			}
 			table += "<br><span>Get the Result</span> <input type=button id=detaildiv_download value='Download Cart' disabled='disabled'>";			
 
-			Modalpanel.open(table);
+			//Modalpanel.open(table);
+			Modalinfo.dataPanel('<img src="images/groscaddy.png"> Shopping Cart' , table, null, "white");
 			that.setTableDiv(cartData);
 
 			$('#detaildiv_clean').click( function() {
@@ -232,7 +233,7 @@ jQuery.extend({
 				$('.zip').css("border", "0px");
 				return false;
 			} );
-			Modalpanel.resize();
+			//Modalpanel.resize();
 		};
 
 		this.setTableDiv= function(cartData) {
