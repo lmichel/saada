@@ -265,7 +265,7 @@ public class SaadaServlet extends HttpServlet {
 		try {
 			while (s.hasNextLine()){
 				String l = s.nextLine();
-				out.println(l);
+				out.print(l);
 			}
 		} finally{
 			out.flush();
