@@ -19,7 +19,7 @@
 	  Classes or jar files specifiv for an application must be added here
 	-->
   	<path id="saadadb.classpath">
- 		<fileset dir="${SAADA_HOME}/dbtemplate/bin">
+ 		<fileset dir="${SAADA_DB_HOME}/bin">
 			<include name="**/*.properties" />
 		</fileset>   
     	<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
