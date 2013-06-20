@@ -176,8 +176,8 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
 				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
-				retour.add(DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
-				retour.add(DefaultFormats.getString(instance.x_min_csa) + " - " + DefaultFormats.getString(instance.x_max_csa) + " " + Database.getSpect_unit());
+				retour.add("Position " + DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
+				retour.add("Range " + DefaultFormats.getString(instance.x_min_csa) + " - " + DefaultFormats.getString(instance.x_max_csa) + " " + Database.getSpect_unit());
 				retour.addAll(super.getLinks());
 			}
 		} catch (Exception e) {}
