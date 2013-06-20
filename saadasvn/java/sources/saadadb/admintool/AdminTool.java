@@ -140,7 +140,7 @@ public class AdminTool extends BaseFrame {
 
 
 	public AdminTool(boolean nolog, Point p) throws SaadaException {
-		super("Saada " + Version.getVersion() + " - Admintool for the " + Database.getDbname() + " database");
+		super("Saada " + Version.version + " - Admintool for the " + Database.getDbname() + " database");
 		connectMessaging(nolog);
 		/*
 		 * Exit after confirmation when click on the window close button
