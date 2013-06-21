@@ -66,10 +66,6 @@ public class Database {
 				cacheindex = new CacheManagerRelationIndex(20, Repository.getIndexrelationsPath() + Database.getSepar());
 				cachemeta = new CacheMeta();
 				cache = new CacheManager();
-				SQLTable.beginTransaction();
-				SQLTable.addQueryToTransaction("DROP TABLE IF EXISTS   tmp_Aldebaran010 "  ) ;
-				SQLTable.addQueryToTransaction("CREATE TABLE tmp_Aldebaran010  (PersonID int);"  ) ;
-				SQLTable.commitTransaction();
 				Qbox.setLevel(10);
 			}catch(Exception e){
 				Messenger.printStackTrace(e);
