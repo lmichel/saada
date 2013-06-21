@@ -10,4 +10,5 @@ java \
 	 -Dant.library.dir="$BINDIR/../jtools" \
 	 org.apache.tools.ant.launch.Launcher \
 	 -f $BINDIR/build.xml \
+	 $*  \
 	 load.dummy.data
