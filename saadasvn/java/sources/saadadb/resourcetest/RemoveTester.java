@@ -359,6 +359,7 @@ public class RemoveTester {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		Database.setAdminMode(ap.getPassword());
+
 		String command = ap.getCommand();
 		boolean all = ("all".equals(command));
 		boolean cmdok = false;
