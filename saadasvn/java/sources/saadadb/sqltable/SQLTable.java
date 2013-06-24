@@ -720,10 +720,14 @@ public abstract class SQLTable {
 	 * @throws Exception
 	 */
 	public static final void addStatColumn(String tableName) throws Exception {
+		System.out.println("bbbbbbbbbbbbbbbbbbb");
 		if( Database.getWrapper() != null ) { 
+			System.out.println("C");
 			ResultSet cols = Database.getWrapper().getTableColumns(tableName);
 			if( cols != null ) {
+				System.out.println("D");
 				while( cols.next() ){
+					System.out.println(cols.getString("COLUMN_NAME"));
 					if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
 						cols.close();
 						return;

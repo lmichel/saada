@@ -111,14 +111,18 @@ public class Database {
 	 */
 	public static void setAdminMode(String password) throws Exception {
 		getConnector().setAdminAuth(password);
-		/*
-		 * Do some schema update
-		 */
-		Table_Saada_Relation.addStatColumn();
-		Table_Saada_Class.addStatColumn();
-		Table_Saada_Collection.addStatColumn();
+		Database.updatSchema();
 	}
 	
+	/**
+	 * Does some schema update
+	 * @throws Exception
+	 */
+	public static final void updatSchema()  throws Exception {
+		Table_Saada_Relation.addStatColumn();
+		Table_Saada_Class.addStatColumn();
+		Table_Saada_Collection.addStatColumn();		
+	}
 	/**
 	 * @return
 	 */
