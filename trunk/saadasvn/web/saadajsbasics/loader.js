@@ -103,7 +103,7 @@ resourceLoader = function() {
 		var script = document.createElement("script");
 		var head = document.getElementsByTagName('HEAD').item(0);
 		script.onload = script.onreadystatechange = function() {
-			console.log(js[0] + " loaded " + CssOver);
+			console.log(js[0] + " script loaded " + CssOver);
 			js.shift();
 			if( js.length > 0 ) loadNextScript();
 		};
@@ -121,11 +121,10 @@ resourceLoader = function() {
 			dataType: 'text',
 			success: function(){        
 				$('<link rel="stylesheet" type="text/css" href="'+href+'" />').appendTo("head");
-				console.log(href + " loaded " + CssOver);
+				console.log(href + " CSS loaded " + CssOver);
 				css.shift();
 				if( css.length > 0 ) loadNextCss();
 				else {
-					console.log("over");
 					CssOver = true;
 				}
 			},
@@ -161,7 +160,6 @@ resourceLoader = function() {
 	 */
 	var loadScripts = function() {
 		if( !CssOver) {
-			console.log("wait");
 			setTimeout(function() {loadScripts();}, 100);
 			return;
 		}	else {	
