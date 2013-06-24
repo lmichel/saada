@@ -139,7 +139,7 @@ public class AdminTool extends BaseFrame {
 	private  String logFile = null;
 
 
-	public AdminTool(boolean nolog, Point p) throws SaadaException {
+	public AdminTool(boolean nolog, Point p) throws Exception {
 		super("Saada " + Version.version + " - Admintool for the " + Database.getDbname() + " database");
 		connectMessaging(nolog);
 		/*
@@ -270,6 +270,11 @@ public class AdminTool extends BaseFrame {
 			if( ap.getTyped_name() == null ) {
 				System.exit(1);
 			}
+			/*
+			 * If SQLITE is used, there is no need to switch the user but the schema update needs to be run anyway
+			 */
+		} else {
+			Database.updatSchema();
 		}
 	}
 
@@ -730,16 +735,14 @@ public class AdminTool extends BaseFrame {
 			ap.setDebugMode();
 			Database.init(ap.getDBName());
 			SwingUtilities.invokeLater(new Runnable() {
-
 				public void run() {
 					try {
 						new AdminTool(ap.isNolog(), null);
-					} catch (SaadaException e) {
+					} catch (Exception e) {
 						Messenger.printStackTrace(e);
 						System.exit(1);
 					}
 				}
-
 			});
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
