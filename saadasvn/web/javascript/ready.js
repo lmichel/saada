@@ -48,7 +48,7 @@ $().ready(function() {
 	saadaqlView           = new $.SaadaQLView();
 	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
-	WebSamp_mVc.init("TAPHandle"
+	WebSamp_mVc.init("Saada"
 			, (window.location.href + "/images/saadatransp-text-small.gif").replace(/\/#/g, '')
 			, "Saada Database");
 
