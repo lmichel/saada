@@ -484,10 +484,11 @@ public class MysqlWrapper extends DbmsWrapper {
 		 * one field: Should be in the main databae
 		 */
 		if( sc.length == 1 ) {
-			rsTables = dm.getTables(null, null, searched_table, null);
+			rsTables = dm.getTables(null, null, null, null);
 			while (rsTables.next()) {
 				String tableName = rsTables.getString("TABLE_NAME");
-				if (searched_table.equalsIgnoreCase(tableName)) {
+				if (searched_table.equalsIgnoreCase(tableName) 
+						||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName) ) ) {
 					return true;
 				}
 			}
