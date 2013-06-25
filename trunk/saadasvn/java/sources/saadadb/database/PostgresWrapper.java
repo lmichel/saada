@@ -363,10 +363,11 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	public boolean tableExist(String searched_table) throws Exception {
 		DatabaseMetaData dm = Database.get_connection().getMetaData();
-		ResultSet rsTables = dm.getTables(null, "public", searched_table.toLowerCase(), null);
+		ResultSet rsTables = dm.getTables(null, "public", null, null);
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
-			if (searched_table.equalsIgnoreCase(tableName.toLowerCase())) {
+			if (searched_table.equalsIgnoreCase(tableName.toLowerCase()) 
+					||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName.toLowerCase()))) {
 				return true;
 			}
 		}
