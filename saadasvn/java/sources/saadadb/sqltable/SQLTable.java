@@ -730,7 +730,7 @@ public abstract class SQLTable {
 					}
 				}
 				cols.close();
-				Messenger.printMsg(Messenger.TRACE, "Add column to the " + tableName + " table");
+				Messenger.printMsg(Messenger.TRACE, "Add it");
 				SQLTable.beginTransaction();
 				for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
 					SQLTable.addQueryToTransaction(q);
