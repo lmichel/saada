@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import javax.swing.DefaultListModel;
@@ -38,7 +40,11 @@ import saadadb.util.Messenger;
  */
 public class LoaderConfigChooser extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JList confList = new JList(new DefaultListModel());
+	private DefaultListModel listModel = new DefaultListModel();
+	private JList confList = new JList(listModel);
+	private JButton removeConf = new JButton("Remove Selected Filter");
+	private LoaderConfigChooser activeFrame = this;
+	
 	private String category = null;
 	private JTextArea description = new JTextArea(6, 24);
 	private static final String CONF_DIR = SaadaDB.getRoot_dir()  + Database.getSepar() + "config";
@@ -47,11 +53,10 @@ public class LoaderConfigChooser extends JPanel {
 	private JButton editConf = new JButton("Edit Selected Filter");
 	private JButton newConf = new JButton("New Loader Filter");
 
-
 	public LoaderConfigChooser(AdminPanel taskPanel) {
 		this.taskPanel = taskPanel;
-		this.confList.setVisibleRowCount(8);
-		this.confList.setFixedCellWidth(15);
+		this.confList.setVisibleRowCount(15);
+		this.confList.setFixedCellWidth(30);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		this.description.setEditable(false);
 		this.setLayout(new GridBagLayout());
@@ -70,10 +75,12 @@ public class LoaderConfigChooser extends JPanel {
 		JPanel jp = new JPanel();
 		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
 		jp.setBorder(null);
-		jp.add(editConf);
 		jp.add(newConf);
+		jp.add(editConf);
+		jp.add(removeConf);
+		
 		this.add(jp, mgbc);
-
+		
 		this.newConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				activeEditorPanel() ;
@@ -101,6 +108,32 @@ public class LoaderConfigChooser extends JPanel {
 					AdminComponent.showInputError(LoaderConfigChooser.this.taskPanel.rootFrame, "Select a config please");					
 				}
 			}
+		});
+		
+		this.removeConf.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				if( confList.getSelectedValue() != null)
+				{
+					int filterIndex = confList.getSelectedIndex();
+					String filterName = confList.getSelectedValue().toString();
+					String filterPath = CONF_DIR + File.separator + category + "."  + filterName + ".config";
+					File selectedfile = new File(filterPath);
+					if (AdminComponent.showConfirmDialog(activeFrame,"Do you really want to remove the filter " + filterName + " ?"))
+					{
+						selectedfile.delete();
+						listModel.remove(filterIndex);
+						description.setText("");
+					}
+				}
+				else
+				{
+					AdminComponent.showInputError(LoaderConfigChooser.this.taskPanel.rootFrame, "Select a config please");
+				}
+			}
+			
 		});
 
 		this.confList.addListSelectionListener(new ListSelectionListener() {
