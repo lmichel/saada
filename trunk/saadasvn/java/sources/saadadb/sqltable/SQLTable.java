@@ -721,10 +721,12 @@ public abstract class SQLTable {
 	 */
 	public static final void addStatColumn(String tableName) throws Exception {
 		ResultSet cols = Database.getWrapper().getTableColumns(tableName);
+		Messenger.printMsg(Messenger.TRACE, "Check wether table " + tableName + " has a 'stat' column ");
 		if( cols != null ) {
 			while( cols.next() ){
 				if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
 					cols.close();
+					Messenger.printMsg(Messenger.TRACE, "found");
 					return;
 				}
 			}
