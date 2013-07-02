@@ -11,6 +11,7 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.ChoiceItem;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.ToolTipTextDesk;
 import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 
@@ -38,8 +39,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "New Relationship", "icons/CreateRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(CREATE_RELATION);}});
-		newRelationship.setToolTipText("New Relationship", "Create a new relationship from the selected table or category.");
-		
+		newRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.CREATE_RELATION));
+
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -48,8 +49,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "Comment Relationship", "icons/CommentRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_RELATION);}});
-		commentRelationship.setToolTipText("Comment Relationship", "Comment a relationship from the selected table or category.");
-		
+		commentRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.COMMENT_RELATION));
+
 		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -58,8 +59,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "Drop Relationship", "icons/DropRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_RELATION);}});
-		dropRelationship.setToolTipText("Drop Relationship", "Drop a relationship from the selected table or category.");
-
+		dropRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DROP_RELATION));
+		
 		tPanel = this.addSubPanel("Link Management");		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -69,8 +70,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "Populate relationship", "icons/PopulateRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(POPULATE_RELATION);}});
-		populateRelationship.setToolTipText("Populate Relationship", "Populate a relationship from the selected table or category.");
-		
+		populateRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.POPULATE_RELATION));
+
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -79,8 +80,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "Index Relationship", "icons/IndexRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(INDEX_RELATION);}});
-		indexRelationship.setToolTipText("Index Relationship", "Create a new index on a relationship.");
-		
+		indexRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.INDEX_RELATION));
+
 		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -89,8 +90,8 @@ public class RelationChoicePanel extends ChoicePanel {
 				, "Empty Relationship", "icons/EmptyRel.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_RELATION);}});
-		emptyRelationship.setToolTipText("Empty Relationship", "Empty a relationship from the selected table or category.");
-		
+		emptyRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EMPTY_RELATION));
+
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem();
 		
@@ -104,7 +105,6 @@ public class RelationChoicePanel extends ChoicePanel {
 				setActiveChoiceItem();
 			}
 		});
-		
 	}
 	
 	// Procedure that updates the selected ChoiceItem depending on the type of node (root, collection, category or class node)

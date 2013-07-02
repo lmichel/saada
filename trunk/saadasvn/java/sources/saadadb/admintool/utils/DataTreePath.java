@@ -19,6 +19,7 @@ public class DataTreePath {
 	public final String collection;
 	public final String category;
 	public final String classe;
+	private boolean isRoot; // To determine if the node is Root Level
 
 	/**
 	 * @param collection
@@ -29,63 +30,105 @@ public class DataTreePath {
 		this.collection = collection;
 		this.category = category;
 		this.classe = classe;
+		if (this.collection == null && this.category == null && this.classe == null) // Root level
+		{
+			this.isRoot = true;
+		}
+		else
+		{
+			this.isRoot = false;
+		}
 	}
 
 	public DataTreePath(TreePath treePath) throws QueryException {
 		int count = treePath.getPathCount();
 		Object[] pathEle = treePath.getPath();
-		if( count ==2 ) {
-			this.collection = pathEle[1].toString();;
+		if( count == 2 ) {
+			this.collection = pathEle[1].toString();
 			this.category = null;;
 			this.classe = null;		
+			this.isRoot = false;
 		}
-		else if( count ==3 ) {
-			this.collection = pathEle[1].toString();;
-			this.category = pathEle[2].toString();;
-			this.classe = null;		
+		else if( count == 3 ) {
+			this.collection = pathEle[1].toString();
+			this.category = pathEle[2].toString();
+			this.classe = null;	
+			this.isRoot = false;
 		}
 		else if( count == 4 ) {
-			this.collection = pathEle[1].toString();;
-			this.category = pathEle[2].toString();;
-			this.classe = pathEle[3].toString();;		
+			this.collection = pathEle[1].toString();
+			this.category = pathEle[2].toString();
+			this.classe = pathEle[3].toString();
+			this.isRoot = false;
 		}
 		else {
 			this.collection = null;
 			this.category = null;
 			this.classe = null;
+			if ( count == 1 ) // Root level
+			{
+				this.isRoot = true;
+			}
+			else
+			{
+				this.isRoot = false;
+			}
 		}
+	}
+	
+	public boolean isRootLevel()
+	{
+		return (this.isRoot && this.collection == null && this.category == null && this.classe == null);
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isClassLevel() {
-		return (classe != null);
+		return (!this.isRoot && classe != null);
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isCategoryLevel() {
-		return (classe == null && category != null);
+		return (!this.isRoot && classe == null && category != null);
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean isCollectionLevel() {
-		return (classe == null && category == null && collection != null);
+		return (this.isRoot==false && classe == null && category == null && collection != null);
+	}
+	
+	public boolean isRootOrCollectionLevel()
+	{
+		return (this != null && (this.isCollectionLevel() || this.isRootLevel()));
+	}
+	
+	public boolean isCategorieOrClassLevel()
+	{
+		return (this != null && (this.isCategoryLevel() || this.isClassLevel()));
 	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		String retour=collection  ;
-		if( category != null) {
-			retour += "." + category;
-			if( classe != null) {
-				retour += "." + classe;
+		String retour;
+		if (this.isRoot)
+		{
+			retour = "Collections";
+		}
+		else
+		{
+			retour = collection;
+			if (category != null) {
+				retour += "." + category;
+				if( classe != null) {
+					retour += "." + classe;
+				}
 			}
 		}
 		return retour;

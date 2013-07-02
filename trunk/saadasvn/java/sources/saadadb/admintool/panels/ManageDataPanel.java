@@ -14,6 +14,7 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.ChoiceItem;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.ToolTipTextDesk;
 import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 
@@ -54,7 +55,7 @@ public class ManageDataPanel extends ChoicePanel {
 //				, new Runnable(){public void run(){
 //					System.out.println("loaddata");}})).inactive();
 		
-		tPanel = this.addSubPanel("Collection Level");		
+		tPanel = this.addSubPanel("Collection Level");
 		c.gridx = 0;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -63,8 +64,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Comment Collection", "icons/CommentCollection.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_COLLECTION);}});
-		commentCollection.setToolTipText("Comment Collection", "You can add a description of the selected collection.");
-		
+		commentCollection.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.COMMENT_COLLECTION));
+
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -73,8 +74,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Empty Collection", "icons/EmptyCollection.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_COLLECTION);}});
-		emptyCollection.setToolTipText("Empty Collection", "You can empty the selected collection.");
-		
+		emptyCollection.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EMPTY_COLLECTION));
+
 		c.gridx = 2;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -83,8 +84,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Empty Category", "icons/EmptyCategory.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_CATEGORY);}});
-		emptyCategory.setToolTipText("Empty Category", "You can empty the selected category.");
-		
+		emptyCategory.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EMPTY_CATEGORY));
+
 		c.gridx = 3;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -93,8 +94,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Remove Collection", "icons/DropCollection.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_COLLECTION);}});	
-		removeCollection.setToolTipText("Remove Collection", "You can remove the selected collection.");
-		
+		removeCollection.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DROP_COLLECTION));
+
 		tPanel = this.addSubPanel("Class Level");		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -104,8 +105,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Comment Class", "icons/CommentClass.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_CLASS);}});
-		commentClass.setToolTipText("Comment Class", "You can comment the selected class.");
-		
+		commentClass.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.COMMENT_CLASS));
+
 		c.gridx = 1;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -114,8 +115,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Empty Class", "icons/EmptyClass.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_CLASS);}});
-		emptyClass.setToolTipText("Empty Class", "You can empty the selected class.");
-		
+		emptyClass.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EMPTY_CLASS));
+
 		c.gridx = 2;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -124,7 +125,7 @@ public class ManageDataPanel extends ChoicePanel {
 				, "Remove Class", "icons/DropClass.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_CLASS);}});		
-		removeClass.setToolTipText("Remove Class", "You can remove the selected class.");
+		removeClass.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DROP_CLASS));
 		
 		tPanel = this.addSubPanel("Manage SQL Index");		
 		c.gridx = 0;
@@ -135,8 +136,8 @@ public class ManageDataPanel extends ChoicePanel {
 				, "SQL Index", "icons/IndexTable.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(SQL_INDEX);}});
-		SQLIndex.setToolTipText("SQLIndex", "You can add a SQL Index in the selected category or table.");
-		
+		SQLIndex.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.SQL_INDEX));
+
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem();
 		

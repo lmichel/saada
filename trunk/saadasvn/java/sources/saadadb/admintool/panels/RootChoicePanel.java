@@ -11,6 +11,7 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.ChoiceItem;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.ToolTipTextDesk;
 import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 
@@ -44,7 +45,7 @@ public class RootChoicePanel extends ChoicePanel {
 						e.printStackTrace();
 					}
 					}});
-		createCollection.setToolTipText("Create a collection", "A collection contains your data with differents classes and categories.");
+		createCollection.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.CREATE_COLLECTION));
 		
 		c.gridx = 1;
 		c.gridy = 0;	
@@ -53,8 +54,7 @@ public class RootChoicePanel extends ChoicePanel {
 		loadData = new ChoiceItem(rootFrame, tPanel, c
 				, "Load Data", "icons/LoadData.png"
 				, new Runnable(){public void run(){rootFrame.activePanel(DATA_LOADER);}});
-		loadData.setToolTipText("Load Data", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to load data.");
-		
+		loadData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DATA_LOADER));
 		
 		c.gridx = 2;
 		c.gridy = 0;	
@@ -64,7 +64,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Edit Filter", "icons/Filter.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(FILTER_SELECTOR);}});
-		editFilter.setToolTipText("Edit Filter", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to edit filter.");
+		editFilter.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.FILTER_SELECTOR));
 		
 		c.gridx = 0;
 		c.gridy = 1;	
@@ -79,7 +79,7 @@ public class RootChoicePanel extends ChoicePanel {
 						e.printStackTrace();
 					}
 					}});
-		manageData.setToolTipText("Manage Data", "You can manage your collections and your classes.");
+		manageData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.MANAGE_DATA));
 		
 		c.gridx = 1;
 		c.gridy = 1;	
@@ -89,7 +89,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Meta Data", "icons/MetaData.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(MANAGE_METADATA);}});
-		manageMetaData.setToolTipText("Manage Meta Data", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to manage meta data.");
+		manageMetaData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.MANAGE_METADATA));
 
 		c.gridx = 2;
 		c.gridy = 1;	
@@ -99,7 +99,7 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Relationships", "icons/Relation.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(MANAGE_RELATIONS);}});
-		manageRelationships.setToolTipText("Manage Relationships", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to manage relationships");
+		manageRelationships.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.MANAGE_RELATIONS));
 
 		tPanel = this.addSubPanel("Data publication");		
 		c.gridx = 0;
@@ -110,8 +110,8 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Database Installation", "icons/Tool.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DB_INSTALL);}});
-		databaseInstallation.setToolTipText("Database Installation", "You can manage the database installation configuration.");
-		
+		databaseInstallation.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DB_INSTALL));
+
 		c.gridx = 1;
 		c.gridy = 0;	
 		c.weightx = 0.5;
@@ -120,8 +120,8 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Web Publishing", "icons/Web.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(WEB_INSTALL);}});
-		webPublishing.setToolTipText("Web Publishing", "You can manage the web publishing configuration.");
-		
+		webPublishing.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.WEB_INSTALL));
+
 		c.gridx = 2;
 		c.gridy = 0;
 		c.weightx = 0.5;
@@ -130,8 +130,8 @@ public class RootChoicePanel extends ChoicePanel {
 				, "VO Publishing", "icons/ivoa.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(VO_PUBLISH);}});
-		VOPublishing.setToolTipText("VO Publishing", "You can manage your VO and publish data.");
-		
+		VOPublishing.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_PUBLISH));
+
 		// Enable only "CreateCollection" when the application is launched
 		updateStateChoiceItem(true, false, false, false, false, false);
 
