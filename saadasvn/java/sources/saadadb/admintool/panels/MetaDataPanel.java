@@ -211,6 +211,16 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			addCollectionPath(colls[k]);
 		}
 	}
+	
+	public JTree getTree()
+	{
+		return tree;
+	}
+	
+	public TreePath getClickedTreePath()
+	{
+		return clickedTreePath;
+	}
 
 	/**
 	 * Add a collection path to the tree
