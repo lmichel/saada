@@ -64,7 +64,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_COLLECTION);}});
 		commentCollection.setToolTipText("Comment Collection", "You can add a description of the selected collection.");
-		commentCollection.inactive();
 		
 		c.gridx = 1;
 		c.gridy = 0;	
@@ -75,7 +74,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_COLLECTION);}});
 		emptyCollection.setToolTipText("Empty Collection", "You can empty the selected collection.");
-		emptyCollection.inactive();
 		
 		c.gridx = 2;
 		c.gridy = 0;
@@ -86,7 +84,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_CATEGORY);}});
 		emptyCategory.setToolTipText("Empty Category", "You can empty the selected category.");
-		emptyCategory.inactive();
 		
 		c.gridx = 3;
 		c.gridy = 0;
@@ -97,7 +94,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_COLLECTION);}});	
 		removeCollection.setToolTipText("Remove Collection", "You can remove the selected collection.");
-		removeCollection.inactive();
 		
 		tPanel = this.addSubPanel("Class Level");		
 		c.gridx = 0;
@@ -109,7 +105,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(COMMENT_CLASS);}});
 		commentClass.setToolTipText("Comment Class", "You can comment the selected class.");
-		commentClass.inactive();
 		
 		c.gridx = 1;
 		c.gridy = 0;
@@ -120,7 +115,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_CLASS);}});
 		emptyClass.setToolTipText("Empty Class", "You can empty the selected class.");
-		emptyClass.inactive();
 		
 		c.gridx = 2;
 		c.gridy = 0;	
@@ -131,7 +125,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(DROP_CLASS);}});		
 		removeClass.setToolTipText("Remove Class", "You can remove the selected class.");
-		removeClass.inactive();
 		
 		tPanel = this.addSubPanel("Manage SQL Index");		
 		c.gridx = 0;
@@ -143,7 +136,6 @@ public class ManageDataPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(SQL_INDEX);}});
 		SQLIndex.setToolTipText("SQLIndex", "You can add a SQL Index in the selected category or table.");
-		SQLIndex.inactive();
 		
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem();
@@ -174,78 +166,40 @@ public class ManageDataPanel extends ChoicePanel {
 				//Messenger.printMsg(Messenger.DEBUG, "isCollection : " + dataTreePath.isCollectionLevel() + ", isCategory : " + dataTreePath.isCategoryLevel() + ", isClasse : " + dataTreePath.isClassLevel());
 				if (dataTreePath.isCollectionLevel()) // Collection selected
 				{
-					// Collection level
-					commentCollection.active();
-					emptyCollection.active();
-					emptyCategory.inactive();
-					removeCollection.active();
-					// Class level
-					commentClass.inactive();
-					emptyClass.inactive();
-					removeClass.inactive();
-					// SQLIndex
-					SQLIndex.inactive();
+					updateStateChoiceItem(true, true, false, true, false, false, false, false);
 				}
 				else if (dataTreePath.isCategoryLevel()) // Category selected
 				{
-					// Collection level
-					commentCollection.active();
-					emptyCollection.active();
-					emptyCategory.active();
-					removeCollection.active();
-					// Class level
-					commentClass.inactive();
-					emptyClass.inactive();
-					removeClass.inactive();
-					// SQLIndex
-					SQLIndex.active();
+					updateStateChoiceItem(true, true, true, true, false, false, false, true);
 				}
 				else if (dataTreePath.isClassLevel()) // Class selected
 				{
-					// Collection level
-					commentCollection.active();
-					emptyCollection.active();
-					emptyCategory.active();
-					removeCollection.active();
-					// Class level
-					commentClass.active();
-					emptyClass.active();
-					removeClass.active();
-					// SQLIndex
-					SQLIndex.active();
+					updateStateChoiceItem(true, true, true, true, true, true, true, true);
 				}
 				else // Root node is selected
 				{
-					// Collection level
-					commentCollection.inactive();
-					emptyCollection.inactive();
-					emptyCategory.inactive();
-					removeCollection.inactive();
-					// Class level
-					commentClass.inactive();
-					emptyClass.inactive();
-					removeClass.inactive();
-					// SQLIndex
-					SQLIndex.inactive();
+					updateStateChoiceItem(false, false, false, false, false, false, false, false);
 					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 
 			{
-				// Collection level
-				commentCollection.inactive();
-				emptyCollection.inactive();
-				emptyCategory.inactive();
-				removeCollection.inactive();
-				// Class level
-				commentClass.inactive();
-				emptyClass.inactive();
-				removeClass.inactive();
-				// SQLIndex
-				SQLIndex.inactive();
+				updateStateChoiceItem(false, false, false, false, false, false, false, false);
 			}
 		}
 	}
 
-
+	private void updateStateChoiceItem(boolean commentCollectionActive, boolean emptyCollectionActive, 
+			boolean emptyCategoryActive, boolean removeCollectionActive, boolean commentClassActive, 
+			boolean emptyClassActive, boolean removeClassActive, boolean SQLIndexActive)
+	{
+		if (commentCollectionActive) { commentCollection.active(); } else { commentCollection.inactive(); }
+		if (emptyCollectionActive) { emptyCollection.active(); } else { emptyCollection.inactive(); }
+		if (emptyCategoryActive) { emptyCategory.active(); } else { emptyCategory.inactive(); }
+		if (removeCollectionActive) { removeCollection.active(); } else { removeCollection.inactive(); }
+		if (commentClassActive) { commentClass.active(); } else { commentClass.inactive(); }
+		if (emptyClassActive) { emptyClass.active(); } else { emptyClass.inactive(); }
+		if (removeClassActive) { removeClass.active(); } else { removeClass.inactive(); }
+		if (SQLIndexActive) { SQLIndex.active(); } else { SQLIndex.inactive(); }
+	}
 }

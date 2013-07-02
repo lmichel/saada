@@ -53,7 +53,6 @@ public class RootChoicePanel extends ChoicePanel {
 		loadData = new ChoiceItem(rootFrame, tPanel, c
 				, "Load Data", "icons/LoadData.png"
 				, new Runnable(){public void run(){rootFrame.activePanel(DATA_LOADER);}});
-		loadData.inactive();
 		loadData.setToolTipText("Load Data", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to load data.");
 		
 		
@@ -65,7 +64,6 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Edit Filter", "icons/Filter.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(FILTER_SELECTOR);}});
-		editFilter.inactive();
 		editFilter.setToolTipText("Edit Filter", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to edit filter.");
 		
 		c.gridx = 0;
@@ -81,7 +79,6 @@ public class RootChoicePanel extends ChoicePanel {
 						e.printStackTrace();
 					}
 					}});
-		manageData.inactive();
 		manageData.setToolTipText("Manage Data", "You can manage your collections and your classes.");
 		
 		c.gridx = 1;
@@ -92,7 +89,6 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Meta Data", "icons/MetaData.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(MANAGE_METADATA);}});
-		manageMetaData.inactive();
 		manageMetaData.setToolTipText("Manage Meta Data", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to manage meta data.");
 
 		c.gridx = 2;
@@ -103,7 +99,6 @@ public class RootChoicePanel extends ChoicePanel {
 				, "Manage Relationships", "icons/Relation.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(MANAGE_RELATIONS);}});
-		manageRelationships.inactive();
 		manageRelationships.setToolTipText("Manage Relationships", "You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to manage relationships");
 
 		tPanel = this.addSubPanel("Data publication");		
@@ -136,6 +131,9 @@ public class RootChoicePanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(VO_PUBLISH);}});
 		VOPublishing.setToolTipText("VO Publishing", "You can manage your VO and publish data.");
+		
+		// Enable only "CreateCollection" when the application is launched
+		updateStateChoiceItem(true, false, false, false, false, false);
 
 		// Add an event on a left panel tree in order to update the active ChoiceItem depending on the type of node
 		JTree tree = rootFrame.metaDataTree.getTree();
@@ -160,55 +158,40 @@ public class RootChoicePanel extends ChoicePanel {
 			{
 				// Case : When a node is selected, it can be a collection, a category or a class
 				dataTreePath = new DataTreePath(treePath);
-				//Messenger.printMsg(Messenger.DEBUG, "isCollection : " + dataTreePath.isCollectionLevel() + ", isCategory : " + dataTreePath.isCategoryLevel() + ", isClasse : " + dataTreePath.isClassLevel());
 				if (dataTreePath.isCollectionLevel()) // Collection selected
 				{
-					createCollection.active();
-					loadData.inactive();
-					editFilter.inactive();
-					manageData.active();
-					manageMetaData.inactive();
-					manageRelationships.inactive();
+					updateStateChoiceItem(true, false, false, true, false, false);
 				}
 				else if (dataTreePath.isCategoryLevel()) // Category selected
 				{
-					createCollection.active();
-					loadData.active();
-					editFilter.active();
-					manageData.active();
-					manageMetaData.active();
-					manageRelationships.active();
+					updateStateChoiceItem(true, true, true, true, true, true);
 				}
 				else if (dataTreePath.isClassLevel()) // Class selected
 				{
-					createCollection.active();
-					loadData.active();
-					editFilter.active();
-					manageData.active();
-					manageMetaData.active();
-					manageRelationships.active();
+					updateStateChoiceItem(true, true, true, true, true, true);
 				}
 				else // Root node is selected
 				{
-					createCollection.active();
-					loadData.inactive();
-					editFilter.inactive();
-					manageData.inactive();
-					manageMetaData.inactive();
-					manageRelationships.inactive();
+					updateStateChoiceItem(true, false, false, false, false, false);
 					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 
 			{
-				createCollection.active();
-				loadData.inactive();
-				editFilter.inactive();
-				manageData.inactive();
-				manageMetaData.inactive();
-				manageRelationships.inactive();
+				updateStateChoiceItem(true, false, false, false, false, false);
 			}
 		}
+	}
+	
+	private void updateStateChoiceItem(boolean createCollectionActive, boolean loadDataActive, boolean editFilterActive,
+			boolean manageDataActive, boolean manageMetaDataActive, boolean manageRelationshipsActive)
+	{
+		if (createCollectionActive) { createCollection.active(); } else { createCollection.inactive(); }
+		if (loadDataActive) { loadData.active(); } else { loadData.inactive(); }
+		if (editFilterActive) { editFilter.active(); } else { editFilter.inactive(); }
+		if (manageDataActive) { manageData.active(); } else { manageData.inactive(); }
+		if (manageMetaDataActive) { manageMetaData.active(); } else { manageMetaData.inactive(); }
+		if (manageRelationshipsActive) { manageRelationships.active(); } else { manageRelationships.inactive(); }
 	}
 
 }
