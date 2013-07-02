@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.utils.RGBGrayFilter;
+import saadadb.util.Messenger;
 
 /**
  * @author laurent
@@ -74,9 +75,27 @@ public class ChoiceItem extends AdminComponent {
 			}});
 		this.active();
 	}
-
 	
-	private void makeIncativeIcon() {
+	@Override
+	public String getToolTipText()
+	{
+		return this.localPanel.getToolTipText();
+	}
+	
+	@Override
+	public void setToolTipText(String text)
+	{
+		this.localPanel.setToolTipText(text);
+	}
+	
+	public void setToolTipText(String title, String description)
+	{
+		String fullText = "<HTML><B>" + title + "</B><BR />" + description + "</HTML>";
+		this.localPanel.setToolTipText(fullText);
+	}
+	
+	private void makeIncativeIcon() 
+	{
 		inactiveIcon = RGBGrayFilter.getDisabledIcon(iconLabel, this.activeIcon);
 	}
 	/* (non-Javadoc)
@@ -106,7 +125,6 @@ public class ChoiceItem extends AdminComponent {
 		localPanel.setBorder(null);
 		iconLabel.setIcon(inactiveIcon);
 		textLabel.setForeground(Color.LIGHT_GRAY);
-
 	}
 
 }

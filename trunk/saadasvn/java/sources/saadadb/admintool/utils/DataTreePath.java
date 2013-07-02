@@ -52,9 +52,7 @@ public class DataTreePath {
 		else {
 			this.collection = null;
 			this.category = null;
-			this.classe = null;					
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER
-					, "Data tree path must point on a category or a class");
+			this.classe = null;
 		}
 	}
 
