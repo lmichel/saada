@@ -118,46 +118,36 @@ public class RelationChoicePanel extends ChoicePanel {
 			{
 				// Case : When a node is selected, it can be a collection, a category or a class
 				dataTreePath = new DataTreePath(treePath);
-				//Messenger.printMsg(Messenger.DEBUG, "isCollection : " + dataTreePath.isCollectionLevel() + ", isCategory : " + dataTreePath.isCategoryLevel() + ", isClasse : " + dataTreePath.isClassLevel());
 				if (dataTreePath.isCollectionLevel()) // Collection selected
 				{
-					newRelationship.inactive();
-					commentRelationship.inactive();
-					dropRelationship.inactive();
-					populateRelationship.inactive();
-					indexRelationship.inactive();
-					emptyRelationship.inactive();
+					updateStateChoiceItem(false, false, false, false, false, false);
 				}
-				else if (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) // Category or class selected
+				else if (dataTreePath.isCategorieOrClassLevel()) // Category or class selected
 				{
-					newRelationship.active();
-					commentRelationship.active();
-					dropRelationship.active();
-					populateRelationship.active();
-					indexRelationship.active();
-					emptyRelationship.active();
+					updateStateChoiceItem(true, true, true, true, true, true);
 				}
 				else // Root node is selected
 				{
-					newRelationship.inactive();
-					commentRelationship.inactive();
-					dropRelationship.inactive();
-					populateRelationship.inactive();
-					indexRelationship.inactive();
-					emptyRelationship.inactive();
+					updateStateChoiceItem(false, false, false, false, false, false);
 					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 
 			{
-				newRelationship.inactive();
-				commentRelationship.inactive();
-				dropRelationship.inactive();
-				populateRelationship.inactive();
-				indexRelationship.inactive();
-				emptyRelationship.inactive();
+				updateStateChoiceItem(false, false, false, false, false, false);
 			}
 		}
+	}
+	
+	private void updateStateChoiceItem(boolean newRelationshipActive, boolean commentRelationshipActive, boolean dropRelationshipActive,
+			boolean populateRelationshipActive, boolean indexRelationshipActive, boolean emptyRelationshipActive)
+	{
+		if (newRelationshipActive) { newRelationship.active(); } else { newRelationship.inactive(); }
+		if (commentRelationshipActive) { commentRelationship.active(); } else { commentRelationship.inactive(); }
+		if (dropRelationshipActive) { dropRelationship.active(); } else { dropRelationship.inactive(); }
+		if (populateRelationshipActive) { populateRelationship.active(); } else { populateRelationship.inactive(); }
+		if (indexRelationshipActive) { indexRelationship.active(); } else { indexRelationship.inactive(); }
+		if (emptyRelationshipActive) { emptyRelationship.active(); } else { emptyRelationship.inactive(); }
 	}
 
 }
