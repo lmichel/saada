@@ -94,6 +94,12 @@ public class ChoiceItem extends AdminComponent {
 		this.localPanel.setToolTipText(fullText);
 	}
 	
+	public void setToolTipText(String[] tooltiptextdesktext)
+	{
+		String fullText = "<HTML><B>" + tooltiptextdesktext[0] + "</B><BR />" + tooltiptextdesktext[1] + "</HTML>";
+		this.localPanel.setToolTipText(fullText);
+	}
+	
 	private void makeIncativeIcon() 
 	{
 		inactiveIcon = RGBGrayFilter.getDisabledIcon(iconLabel, this.activeIcon);

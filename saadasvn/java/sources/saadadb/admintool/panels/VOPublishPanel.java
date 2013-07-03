@@ -83,6 +83,7 @@ public class VOPublishPanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(OBSCORE_MAPPER);}});
 		publishObscoreTable.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.OBSCORE_MAPPER));
+		publishObscoreTable.inactive();
 		
 		c.gridx = 2;
 		c.gridy = 0;
