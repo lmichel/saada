@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
@@ -108,23 +110,22 @@ public class VOPublishPanel extends ChoicePanel {
 		VOServicesSummary.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_CURATOR));
 		
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
-		setActiveChoiceItem();
+		setActiveChoiceItem(rootFrame.metaDataTree.getClickedTreePath());
 		
 		// Add an event on a left panel tree in order to update the active ChoiceItem depending on the type of node
 		JTree tree = rootFrame.metaDataTree.getTree();
-		tree.addMouseListener(new MouseAdapter() 
+		tree.addTreeSelectionListener(new TreeSelectionListener() 
 		{
 			@Override
-			public void mouseReleased(MouseEvent e) 
-			{
-				setActiveChoiceItem();
-			}
+		    public void valueChanged(TreeSelectionEvent e) 
+		    {
+				setActiveChoiceItem(e.getPath());
+		    }
 		});
 	}
 	
-	private void setActiveChoiceItem() 
+	private void setActiveChoiceItem(TreePath treePath) 
 	{
-		TreePath treePath = rootFrame.metaDataTree.getClickedTreePath();
 		DataTreePath dataTreePath;
 		if (treePath!=null)
 		{

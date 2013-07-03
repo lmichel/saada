@@ -5,7 +5,10 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
@@ -68,9 +71,37 @@ public class ThreadCreateCollection extends CmdThread {
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
+					// When a collection is created, the new collection node is selected and expanded
+					JTree tree = ((AdminTool)(frame)).metaDataTree.getTree();
 					((AdminTool)(frame)).refreshTree();
 					AdminComponent.showSuccess(frame, "Collection <" + name + "> created");		
 					((AdminTool)(frame)).setDataTreePath(new DataTreePath(name, null, null));
+					Object[] tab_path; // Contains the path from the node Root to the new collection node
+					TreeNode rootNode = (TreeNode) tree.getModel().getRoot();
+					TreeNode newCollectionNode = null;
+					// Need to find the index of the new collection to select and expand it
+					int i;
+					for(i=0 ; i<tree.getModel().getChildCount(rootNode) ; i++)
+					{
+						TreeNode tmp = (TreeNode) tree.getModel().getChild(rootNode, i);
+						if (tmp.toString().compareTo(name)==0)
+						{
+							newCollectionNode = tmp;
+						}
+					}
+					if (newCollectionNode != null) // Only if the new collection was found, if not root node is selected
+					{
+						tab_path = new Object[2];
+						tab_path[1] = newCollectionNode;
+					}
+					else
+					{
+						tab_path = new Object[1];
+					}
+					tab_path[0] = rootNode;
+					TreePath path = new TreePath(tab_path);
+					tree.setSelectionPath(path);
+					tree.expandPath(path);
 				}				
 			});
 		} catch (AbortException e) {
