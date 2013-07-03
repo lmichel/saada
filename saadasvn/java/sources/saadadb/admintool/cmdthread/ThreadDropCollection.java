@@ -4,7 +4,10 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
@@ -56,6 +59,9 @@ public class ThreadDropCollection extends CmdThread{
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
+					// When the collection is removed, the tree node selected is root
+					JTree tree = ((AdminTool)(frame)).metaDataTree.getTree();
+					tree.setSelectionPath(new TreePath((TreeNode)tree.getModel().getRoot()));
 					((AdminTool)(frame)).refreshTree();
 					AdminComponent.showSuccess(frame, "Collection <" + name + "> removed");		
 				}				

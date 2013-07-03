@@ -15,9 +15,6 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
@@ -26,8 +23,9 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.Timer;
 import javax.swing.ToolTipManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -65,22 +63,27 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	public static final String ROOT_NAME = "Collections";
 	protected JTree tree;
 	protected AdminTool frame;
 	protected DefaultTreeModel model;
-	private DefaultMutableTreeNode top = new DefaultMutableTreeNode("Collections");
+	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(this.ROOT_NAME);
 	private int DOUBLE_CLICK_DELAY=500; // filed possibly moved in some property file
+	/*
 	private Timer simplCLickTimer = new Timer(DOUBLE_CLICK_DELAY, new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 			processSimpleClick();
 		}
 	});
-	private TreePath clickedTreePath, previouslyClickedTreePath ;
+	*/
+	private TreePath clickedTreePath, previouslyClickedTreePath;
 	;
 	/**
 	 * Simple click: set the new data tree path on the current task panel
 	 * The new tree path must be accepted before the selection to be validated
 	 */
+	
+	/*
 	void processSimpleClick(){
 		if( simplCLickTimer.isRunning()) {
 			if( clickedTreePath != null ) {
@@ -99,10 +102,35 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			simplCLickTimer.stop();
 		}
 	}
+	*/
+	void processNodeChanged()
+	{
+		if (clickedTreePath != null ) 
+		{
+			try 
+			{
+				DataTreePath  dtp = new DataTreePath(clickedTreePath);
+				if( frame.acceptTreePath(dtp)) 
+				{
+					MetaDataPanel.this.frame.setDataTreePath(dtp);
+				}
+				else 
+				{
+					clickedTreePath = previouslyClickedTreePath;
+				}
+				//tree.setSelectionPath(clickedTreePath);
+			} 
+			catch (QueryException e1) 
+			{
+				Messenger.trapQueryException(e1);
+			}
+		}
+	}
 
 	/**
 	 * DOuble click on a node opens a table with the node content
 	 */
+	/*
 	void processDoubleClick(){
 		if( simplCLickTimer.isRunning()) {
 			simplCLickTimer.stop();
@@ -119,6 +147,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 
 		}
 	}
+	*/
 
 	@SuppressWarnings("serial")
 	public MetaDataPanel(AdminTool frame, int largeur, int hauteur) throws SaadaException {
@@ -165,6 +194,19 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		this.createTree();
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
+		// Use for selection of node
+		tree.addTreeSelectionListener(new TreeSelectionListener() 
+		{
+		    public void valueChanged(TreeSelectionEvent e) 
+		    {
+		    	previouslyClickedTreePath = clickedTreePath;
+				clickedTreePath = e.getPath();
+		    	processNodeChanged();
+		    }
+		});
+		
+		// Use for doubleclick
+		/*
 		tree.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -181,6 +223,8 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				}
 			}
 		});	
+		*/
+		
 		/*
 		 * Change the renderer to apply a specific icon on classes with instances
 		 */
@@ -202,7 +246,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		CacheMeta cm = Database.getCachemeta();
 		String[] colls = cm.getCollection_names();
 		model.setRoot(null);
-		top = new DefaultMutableTreeNode("Collections ");
+		top = new DefaultMutableTreeNode(this.ROOT_NAME);
 		model.setRoot(top);
 		/*
 		 * Loop on collections
