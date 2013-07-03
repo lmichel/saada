@@ -80,7 +80,8 @@ public class DataLoaderPanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public boolean acceptTreePath(DataTreePath dataTreePath) {
-		if( dataTreePath != null && dataTreePath.isCollectionLevel() ){
+		if(dataTreePath.isRootOrCollectionLevel())
+		{
 			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
 			return false;
 		}
