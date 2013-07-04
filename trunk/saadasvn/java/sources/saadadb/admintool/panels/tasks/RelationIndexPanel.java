@@ -6,6 +6,7 @@ package saadadb.admintool.panels.tasks;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadRelationIndex;
+import saadadb.admintool.utils.DataTreePath;
 
 
 /**
@@ -36,4 +37,17 @@ public class RelationIndexPanel extends RelationDropPanel {
 		cmdThread = new ThreadRelationIndex(rootFrame, INDEX_RELATION);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a collection, a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
+	
 }

@@ -7,6 +7,7 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadCommentClass;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 
 public class ClassCommentPanel extends ClassDropPanel {
@@ -27,7 +28,19 @@ public class ClassCommentPanel extends ClassDropPanel {
 			CmdThread cmdThread, String ancestor) {
 		super(rootFrame, title, cmdThread, ancestor);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (!dataTreePath.isClassLevel())
+		{
+			showInputError(rootFrame, "You must select a class.");
+			return false;
+		}
+		return true;
+	}
 
 	protected void setToolBar() {
 		this.initTreePathLabel();

@@ -24,7 +24,7 @@ public class RootChoicePanel extends ChoicePanel {
 		super(rootFrame, ROOT_PANEL, null, ancestor);
 	}
 	
-	private ChoiceItem createCollection, loadData, editFilter, 
+	private ChoiceItem createCollection, loadData, exploreData, 
 	manageData, manageMetaData, manageRelationships,
 	databaseInstallation, webPublishing, VOPublishing;
 
@@ -59,14 +59,14 @@ public class RootChoicePanel extends ChoicePanel {
 		loadData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DATA_LOADER));
 		
 		c.gridx = 2;
-		c.gridy = 0;	
+		c.gridy = 0;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
-		editFilter = new ChoiceItem(rootFrame, tPanel, c
-				, "Edit Filter", "icons/Filter.png"
+		exploreData = new ChoiceItem(rootFrame, tPanel, c
+				, "Explore Data", "icons/Filter.png"
 				, new Runnable(){public void run(){
-					rootFrame.activePanel(FILTER_SELECTOR);}});
-		editFilter.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.FILTER_SELECTOR));
+					rootFrame.activePanel(EXPLORE_DATA);}});
+		exploreData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EXPLORE_DATA));
 		
 		c.gridx = 0;
 		c.gridy = 1;	
@@ -174,7 +174,6 @@ public class RootChoicePanel extends ChoicePanel {
 				else // Root node is selected
 				{
 					updateStateChoiceItem(true, false, false, false, false, false);
-					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 
@@ -184,12 +183,12 @@ public class RootChoicePanel extends ChoicePanel {
 		}
 	}
 	
-	private void updateStateChoiceItem(boolean createCollectionActive, boolean loadDataActive, boolean editFilterActive,
+	private void updateStateChoiceItem(boolean createCollectionActive, boolean loadDataActive, boolean exploreDataActive,
 			boolean manageDataActive, boolean manageMetaDataActive, boolean manageRelationshipsActive)
 	{
 		if (createCollectionActive) { createCollection.active(); } else { createCollection.inactive(); }
 		if (loadDataActive) { loadData.active(); } else { loadData.inactive(); }
-		if (editFilterActive) { editFilter.active(); } else { editFilter.inactive(); }
+		if (exploreDataActive) { exploreData.active(); } else { exploreData.inactive(); }
 		if (manageDataActive) { manageData.active(); } else { manageData.inactive(); }
 		if (manageMetaDataActive) { manageMetaData.active(); } else { manageMetaData.inactive(); }
 		if (manageRelationshipsActive) { manageRelationships.active(); } else { manageRelationships.inactive(); }

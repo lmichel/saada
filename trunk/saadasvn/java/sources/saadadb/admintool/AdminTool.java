@@ -40,7 +40,6 @@ import saadadb.admintool.panels.RootChoicePanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.DBInstallPanel;
-import saadadb.admintool.panels.editors.FilterSelectorPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.SAPServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
@@ -55,6 +54,7 @@ import saadadb.admintool.panels.tasks.CollCreatePanel;
 import saadadb.admintool.panels.tasks.CollDropPanel;
 import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
+import saadadb.admintool.panels.tasks.DataTableEditor;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.panels.tasks.RelationCommentPanel;
@@ -99,6 +99,7 @@ public class AdminTool extends BaseFrame {
 
 	private TaskPanel emptyCategoryPanel;
 	private MetaDataEditorPanel metaDataPanel;
+	private DataTableEditor dataTablePanel;
 
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
@@ -128,7 +129,6 @@ public class AdminTool extends BaseFrame {
 	private EditPanel siaService;
 	private EditPanel ssaService;
 	private EditPanel csService;
-	private EditPanel filterSelector;
 
 	private TaskPanel obscoreMapperPanel;
 
@@ -432,11 +432,11 @@ public class AdminTool extends BaseFrame {
 				dataLoaderPanel = new DataLoaderPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = dataLoaderPanel;
-		} else 	if( panelTitle.equals(AdminComponent.FILTER_SELECTOR) ) {
-			if( filterSelector == null ) {
-				filterSelector = new FilterSelectorPanel(this, AdminComponent.ROOT_PANEL);
+		} else 	if( panelTitle.equals(AdminComponent.EXPLORE_DATA) ) {
+			if( dataTablePanel == null ) {
+				dataTablePanel = new DataTableEditor(this, AdminComponent.ROOT_PANEL);
 			}
-			activePanel = filterSelector;
+			activePanel = dataTablePanel;
 			/*
 			 * Data loader configuration
 			 */

@@ -68,6 +68,19 @@ public class CategoryEmptyPanel extends TaskPanel {
 		this.initTreePathLabel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
@@ -77,7 +90,7 @@ public class CategoryEmptyPanel extends TaskPanel {
 			showInputError(rootFrame, "Can not change data treepath in this context");
 		}else if( dataTreePath != null ) {
 			if( dataTreePath.isCollectionLevel() ) {
-				showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
+				//showInputError(rootFrame, "No category (IMAGE,ENTRY....) in the selected data tree node");
 			}
 			else {
 				super.setDataTreePath(dataTreePath);

@@ -34,8 +34,8 @@ import saadadb.util.Messenger;
  *
  */
 public class MetaDataEditorPanel extends TaskPanel {
-	private RunTaskButton runButton ;
-	private SQLJTable productTable ;
+	private RunTaskButton runButton;
+	private SQLJTable productTable;
 	private String sqlQuery;
 	private int tableClass;
 	private JPanel tPanel;
@@ -63,6 +63,19 @@ public class MetaDataEditorPanel extends TaskPanel {
 		tPanel.add(AdminComponent.getHelpLabel(HelpDesk.METADATA_EDITOR));
 		this.setActionBar(new Component[]{runButton
 				, debugButton});
+	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)

@@ -1,64 +1,135 @@
-package saadadb.admintool.windows;
+package saadadb.admintool.panels.tasks;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SQLJTable;
+import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
-@Deprecated
-@SuppressWarnings("serial")
-public class DataTableWindow extends OuterWindow {
+public class DataTableEditor extends TaskPanel
+{
+	private static final long serialVersionUID = 1L;
 	protected String sqlQuery;
-	private DataTreePath dataTreePath;
 	private SQLJTable productTable;
 	protected  JTextArea queryTextArea = new JTextArea(sqlQuery);
-
-	/**
-	 * @param rootFrame
-	 * @param treePath
-	 * @throws QueryException
-	 */
-	public DataTableWindow(AdminTool rootFrame, TreePath treePath) throws QueryException {
-		super(rootFrame);
-		this.dataTreePath = new DataTreePath(treePath);
+	private JPanel tPanel;
+	
+	public DataTableEditor(AdminTool rootFrame, String ancestor) 
+	{
+		super(rootFrame, EXPLORE_DATA, null, ancestor);
 	}
 
-	/**
-	 * @param rootFrame
-	 * @throws QueryException
-	 */
-	protected DataTableWindow(AdminTool rootFrame) throws QueryException {
-		super(rootFrame);
-		this.dataTreePath = null;
+	@Override
+	public void initCmdThread()
+	{
+		//No Thread
 	}
 
-	/**
-	 * 
+	@Override
+	protected Map<String, Object> getParamMap() 
+	{
+		LinkedHashMap<String, Object> retour = new LinkedHashMap<String, Object>();
+		retour.put("datatable", productTable);
+		return retour;
+	}
+
+	@Override
+	protected void setActivePanel() 
+	{
+		tPanel = this.addSubPanel("Explore Data");
+		tPanel.add(AdminComponent.getHelpLabel(HelpDesk.DATATABLE_EDITOR));
+	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
-	protected void buidSQL() {
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public void setDataTreePath(DataTreePath dataTreePath) 
+	{	
+		super.setDataTreePath(dataTreePath);
+		if (dataTreePath != null) 
+		{
+			if( dataTreePath.isCategorieOrClassLevel()) 
+			{
+				GridBagConstraints ccs = new GridBagConstraints();
+				try 
+				{
+					this.buidSQL(dataTreePath);
+					productTable = new SQLJTable(rootFrame, dataTreePath, this,  sqlQuery, SQLJTable.PRODUCT_PANEL);
+				} 
+				catch (QueryException e) 
+				{
+					e.printStackTrace();
+				}
+				tPanel.removeAll();
+				productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
+				productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				JScrollPane jsp = new JScrollPane(productTable);
+				jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
+				ccs.gridx = 0; ccs.gridy = 0;
+				ccs.weightx = 0.0; ccs.weighty = 0.0; 
+				ccs.fill = GridBagConstraints.BOTH;
+				ccs.gridwidth = 2;
+				tPanel.add(jsp, ccs);
+				
+				
+				queryTextArea = new JTextArea(sqlQuery);
+				JScrollPane jtf = new JScrollPane(queryTextArea);
+				ccs.gridy++;
+				tPanel.add(jtf, ccs);
+				
+				Component c;
+				if (( c = this.addCommandComponent()) != null ) 
+				{
+					ccs.weightx = 0; ccs.weighty = 0; 
+					ccs.gridy++;ccs.fill = GridBagConstraints.BOTH;// ccs.gridwidth = 1;
+					tPanel.add(c, ccs);
+				}
+			}
+		}
+
+	}
+		
+	protected void buidSQL(DataTreePath dataTreePath) 
+	{
 		sqlQuery = "SELECT ";
 		title= "??";
 		String[] rejected_coll_clos = null;
-		String coll_table_name = dataTreePath.collection+ "_" + dataTreePath.category.toLowerCase();;
+		String coll_table_name = dataTreePath.collection+ "_" + dataTreePath.category.toLowerCase();
 		try {
 			/*
 			 * Remove hidden columns (not managed yet)
@@ -114,61 +185,28 @@ public class DataTableWindow extends OuterWindow {
 		else {
 			AdminComponent.showFatalError(this, "No datasource selected");
 		}
-		setTitle(title);
-	}
-
-	@Override
-	protected void setContent(int type) throws Exception {
-		this.buidSQL();
-		/*
-		 * Cannot manage product for entries because entries are not products
-		 * => no popup menu on tabel.
-		 */
-		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		productTable = new SQLJTable(rootFrame, dataTreePath, this,  sqlQuery, type);
-		productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
-		productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		JScrollPane jsp = new JScrollPane(productTable);
-		jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
-		
-		JPanel qp = new JPanel();
-		queryTextArea = new JTextArea(sqlQuery);
-		qp.setLayout(new BoxLayout(qp,BoxLayout.PAGE_AXIS));
-		qp.add(new JScrollPane(queryTextArea));
-		
-		JButton jb = new JButton("SUBMIT");
-		jb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				refresh(queryTextArea.getText());
-			}
-		});
-		
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, qp);	
-		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(350);
-		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(splitPane, BorderLayout.CENTER);
-		Component c;
-		if( ( c = this.addCommandComponent()) != null ) {
-			this.getContentPane().add(c, BorderLayout.SOUTH);
-		}
 	}
 	
-	/**
-	 * @return
-	 */
-	protected Component addCommandComponent() {
+	protected Component addCommandComponent() 
+	{
 		JButton jb = new JButton("SUBMIT");
-		jb.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+		jb.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent arg0) 
+			{
 				refresh(queryTextArea.getText());
 			}
 		});
 		return jb;
 	}
-	/**
-	 * @param newQuery
-	 */
+	
+	@Override
+	protected void setToolBar() 
+	{
+		this.initTreePathLabel();
+		this.add(new ToolBarPanel(this, true, false, false));		
+	}
+
 	public void refresh(String newQuery) {
 		if( productTable != null ) {
 			try {
@@ -180,9 +218,6 @@ public class DataTableWindow extends OuterWindow {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void refresh() {
 		if( productTable != null ) {
 			try {
@@ -200,4 +235,5 @@ public class DataTableWindow extends OuterWindow {
 	public DataTreePath getDataTreePath() {
 		return dataTreePath;
 	}
+
 }

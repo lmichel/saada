@@ -36,6 +36,19 @@ public class ClassDropPanel extends CollCreatePanel {
 		this.initTreePathLabel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (!dataTreePath.isClassLevel())
+		{
+			showInputError(rootFrame, "You must select a class.");
+			return false;
+		}
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)

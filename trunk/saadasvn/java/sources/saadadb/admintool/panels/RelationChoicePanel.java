@@ -130,7 +130,6 @@ public class RelationChoicePanel extends ChoicePanel {
 				else // Root node is selected
 				{
 					updateStateChoiceItem(false, false, false, false, false, false);
-					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 

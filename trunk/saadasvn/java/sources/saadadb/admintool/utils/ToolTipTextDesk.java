@@ -9,7 +9,7 @@ public class ToolTipTextDesk
 	
 	public static final int CREATE_COLLECTION = 1;
 	public static final int DATA_LOADER = 2;
-	public static final int FILTER_SELECTOR = 3;
+	public static final int EXPLORE_DATA = 3;
 	public static final int MANAGE_DATA = 4;
 	public static final int MANAGE_METADATA = 5;
 	public static final int MANAGE_RELATIONS = 6;
@@ -49,8 +49,8 @@ public class ToolTipTextDesk
 		"A collection contains your data with differents classes and categories."});	
 		map.put(DATA_LOADER, new String[] {"Load Data", 
 		"You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to load data."});
-		map.put(FILTER_SELECTOR, new String[] {"Edit Filter", 
-		"You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to edit filter."});	
+		map.put(EXPLORE_DATA, new String[] {"Explore Data", 
+		"You must select either a category (IMAGE, SPECTRUM, ...) or a class in order to explore data."});	
 		map.put(MANAGE_DATA, new String[] {"Manage Data", 
 		"You can manage your collections and your classes."});
 		map.put(MANAGE_METADATA, new String[] {"Manage Meta Data", 
