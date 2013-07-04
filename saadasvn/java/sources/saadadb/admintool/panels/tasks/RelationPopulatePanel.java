@@ -53,6 +53,19 @@ public class RelationPopulatePanel extends TaskPanel {
 	public void initCmdThread() {
 		cmdThread = new ThreadRelationPopulate(rootFrame, POPULATE_RELATION);
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a collection, a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)

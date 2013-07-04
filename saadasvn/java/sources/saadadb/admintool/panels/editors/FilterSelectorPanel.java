@@ -18,18 +18,21 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
+// To delete !
 
 /**
  * @author laurentmichel
  *
  */
+
+@Deprecated
 public class FilterSelectorPanel extends EditPanel {
 	private static final long serialVersionUID = 1L;
 	protected  LoaderConfigChooser configChooser;
 	private String collection, category;
 	
 	public FilterSelectorPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, FILTER_SELECTOR, null, ancestor);
+		super(rootFrame, EXPLORE_DATA, null, ancestor);
 	}
 
 	/**

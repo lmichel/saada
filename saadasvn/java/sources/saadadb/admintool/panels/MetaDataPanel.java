@@ -38,9 +38,7 @@ import javax.swing.tree.TreeSelectionModel;
 import saadadb.admin.dnd.TreePathTransferable;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -67,9 +65,8 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	protected JTree tree;
 	protected AdminTool frame;
 	protected DefaultTreeModel model;
-	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(this.ROOT_NAME);
-	private int DOUBLE_CLICK_DELAY=500; // filed possibly moved in some property file
-	/*
+	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(MetaDataPanel.ROOT_NAME);
+	/*private int DOUBLE_CLICK_DELAY=500; // filed possibly moved in some property file
 	private Timer simplCLickTimer = new Timer(DOUBLE_CLICK_DELAY, new ActionListener() {
 		public void actionPerformed(ActionEvent arg0) {
 			processSimpleClick();
@@ -79,30 +76,9 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	private TreePath clickedTreePath, previouslyClickedTreePath;
 	;
 	/**
-	 * Simple click: set the new data tree path on the current task panel
+	 * NodeChanged: set the new data tree path on the current task panel
 	 * The new tree path must be accepted before the selection to be validated
 	 */
-	
-	/*
-	void processSimpleClick(){
-		if( simplCLickTimer.isRunning()) {
-			if( clickedTreePath != null ) {
-				try {
-					DataTreePath  dtp = new DataTreePath(clickedTreePath);
-					if( frame.acceptTreePath(dtp)) {
-						MetaDataPanel.this.frame.setDataTreePath(dtp);
-					} else {
-						clickedTreePath = previouslyClickedTreePath;
-					}
-					tree.setSelectionPath(clickedTreePath);
-				} catch (QueryException e1) {
-					Messenger.trapQueryException(e1);
-				}
-			}
-			simplCLickTimer.stop();
-		}
-	}
-	*/
 	void processNodeChanged()
 	{
 		if (clickedTreePath != null ) 
@@ -118,7 +94,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				{
 					clickedTreePath = previouslyClickedTreePath;
 				}
-				//tree.setSelectionPath(clickedTreePath);
+				tree.setSelectionPath(clickedTreePath);
 			} 
 			catch (QueryException e1) 
 			{
@@ -246,7 +222,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		CacheMeta cm = Database.getCachemeta();
 		String[] colls = cm.getCollection_names();
 		model.setRoot(null);
-		top = new DefaultMutableTreeNode(this.ROOT_NAME);
+		top = new DefaultMutableTreeNode(MetaDataPanel.ROOT_NAME);
 		model.setRoot(top);
 		/*
 		 * Loop on collections
@@ -374,7 +350,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			}
 		}
 		/*
-		 * remove collections being in tree meta but not in the cache meta
+		 * remove collections being in tree meta but not in thimport saadadb.admintool.components.SQLJTable;e cache meta
 		 */
 		for( int n=0 ; n<tree_nb_coll ; n++ ) {
 			boolean found = false;

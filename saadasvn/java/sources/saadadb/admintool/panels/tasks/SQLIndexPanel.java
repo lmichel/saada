@@ -183,6 +183,19 @@ public class SQLIndexPanel extends TaskPanel {
 		this.initTreePathLabel();
 		this.add(new ToolBarPanel(this, true, false, false));		
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootOrCollectionLevel())
+		{
+			showInputError(rootFrame, "You must select either a collection, a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
@@ -190,8 +203,8 @@ public class SQLIndexPanel extends TaskPanel {
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath != null ) {
 			try {
-				if( dataTreePath.isCollectionLevel()) {
-					showInputError(rootFrame, "Selected node must be either at category (IMAGE, ...) or at class level (leaf)");
+				if( dataTreePath.isRootOrCollectionLevel()) {
+					//showInputError(rootFrame, "Selected node must be either at category (IMAGE, ...) or at class level (leaf)");
 					return;
 				} else {
 					sqlTable = dataTreePath.getSQLTableName();

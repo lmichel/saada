@@ -60,7 +60,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String COMMENT_CLASS  = "Comment Class";
 
 	public static final String DATA_LOADER     = "Data Loader";
-	public static final String FILTER_SELECTOR = "Filter Selector";
+	public static final String EXPLORE_DATA = "Explore Data";
 
 	public static final String MISC_MAPPER     = "KW Mapper for MISC";
 	public static final String TABLE_MAPPER    = "KW Mapper for Tables";

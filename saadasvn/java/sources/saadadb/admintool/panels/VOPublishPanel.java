@@ -144,7 +144,6 @@ public class VOPublishPanel extends ChoicePanel {
 				else // Root node is selected
 				{
 					publishObscoreTable.inactive();
-					Messenger.printMsg(Messenger.INFO, "Root node selected");
 				}
 			}
 			catch (QueryException e1) 

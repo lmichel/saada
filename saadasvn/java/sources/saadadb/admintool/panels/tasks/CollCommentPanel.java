@@ -7,6 +7,7 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadCommentCollection;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 
 public class CollCommentPanel extends CollDropPanel {
@@ -36,6 +37,19 @@ public class CollCommentPanel extends CollDropPanel {
 
 	protected void setHelpKey() {
 		help_key = HelpDesk.COLL_COMMENT;
+	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
+	 */
+	public boolean acceptTreePath(DataTreePath dataTreePath) 
+	{
+		if (dataTreePath.isRootLevel())
+		{
+			showInputError(rootFrame, "You must select either a collection, a category (IMAGE, SPECTRUM, ...) or a class.");
+			return false;
+		}
+		return true;
 	}
 
 	protected void setActivePanel() {
