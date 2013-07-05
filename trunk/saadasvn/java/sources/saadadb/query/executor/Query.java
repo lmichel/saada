@@ -215,9 +215,10 @@ public class Query extends Query_Report{
 				}
 			}
 		}
-		for( AttributeHandler ah : getUCDColumns() ) {
-			alAH.add(ah);
-		}
+	// UCD columns arfe processed separately because of their specific formatting
+//		for( AttributeHandler ah : getUCDColumns() ) {
+//			alAH.add(ah);
+//		}
 		if(this.obClause!=null && (this.obClause.getType()==OrderBy.ON_COLL || this.obClause.getType()==OrderBy.BOTH)) {
 			alAH.add(mAH.get(this.obClause.getTheStatement()));
 		}
