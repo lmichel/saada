@@ -51,6 +51,7 @@ public class QueryContext implements Serializable {
 		colfmtor.setResultSet(resultSet);
 		this.resultSize = resultSet.size();
 		for( AttributeHandler ah: q.getUCDColumns()) {
+			System.out.println("UCD " + ah.getUcd() + " " + colfmtor.getClass().getName());
 			colfmtor.addUCDColumn(ah); 
 		}
 		colfmtor.addConstrainedColumns(q.buildListAttrHandPrinc());
