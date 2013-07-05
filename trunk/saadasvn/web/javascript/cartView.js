@@ -304,12 +304,12 @@ jQuery.extend({
 							"numTable": folderTables.length-1 // added by myself
 						}
 				);
-				$('#' + tableId).find('.include_relation').click(
+				$('#' + tableId + ' input.include_relation').click(
 						function(e){
 							cartView.fireSetRelations($(this).parents("table").attr("id").replace("folder_", "")
 									, $(this).parents("tr").find('td:nth-child(2)').text()
 									, $(this).parents("tr").find('td:nth-child(5)').text()
-									, $(this).attr('checked'));
+									, $(this).is(':checked'));
 						});
 			}	
 		}
