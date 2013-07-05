@@ -218,12 +218,15 @@ jQuery
 			// $('#detaildiv').height()}, 800);
 		};
 		this.fireShowVignette = function(oid, title) {
-			Modalinfo.dataPanel('Preview of ' + title,
-					"<img class=vignette src='getvignette?oid=" + oid
-					+ "'>");
+//			Modalinfo.dataPanel('Preview of ' + title,
+//					"<img class=vignette src='getvignette?oid=" + oid
+//					+ "'>");
+			Modalinfo.urlDataPanel('Preview of ' + title
+					, "<img class=vignette src='getvignette?oid=" + oid + "'>"
+					, 'getvignette?oid=' + oid);
 		};
 		this.fireShowPreview = function(preview_url, title) {
-			Modalinfo.dataPanel('Preview of ' + title,
+			Modalinfo.openIframePanel('Preview of ' + title,
 					"<img class=vignette src='" + preview_url + "'>");
 		};
 
@@ -557,21 +560,22 @@ jQuery
 				 * Get table columns
 				 */
 				var ahs = dataJSONObject["attributes"];
-				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\">"
-					+ "<thead>" + "<tr>";
+				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\">";
+				var headCells = "";
 				for (var i = 0; i < ahs.length; i++) {
-					table += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
+					headCells += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
 				}
-				/*
-				 * Build empty table
-				 */
-				table += "</tr>"
-					+ "</thead>"
-					+ "<tbody>"
+				
+				table +=  "<thead><tr>" + headCells + "</tr></thead>";
+				table +=  "<tfoot><tr>" + headCells + "</tr></tfoot>";				
+				table +=
+					 "<tbody>"
 					+ "<tr><td colspan="
 					+ i
 					+ " class=\"dataTables_empty\">Loading data from server</td></tr>"
-					+ "</tbody>" + "</table>";
+					+ "</tbody>";
+				
+				table += "</table>";
 				$("#resultpane").html(table);
 
 				var orderParams = saadaqlView.fireOrderByParameters();
@@ -613,7 +617,8 @@ jQuery
 				/*
 				 * Connect the table with the DB
 				 */
-				$('.fixedHeader').remove();
+				// p: change page
+			//	$('.fixedHeader').remove();
 				var  oTable = $('#datatable').dataTable({
 					"aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
@@ -621,28 +626,28 @@ jQuery
 					"aaSorting" : [],
 					"bSort" : false,
 					"bFilter" : false,
-					//		"sDom": '<"top"iflp<"clear">>rt<"bottom"iflp<"clear">>',
-					"sAjaxSource" : "nextpage",
-				    "fnInitComplete": function(oSettings, json) {
-						that.fixedHeader.fnUpdate();
-				    } 
+					"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
+					"sAjaxSource" : "nextpage"
+//				    "fnInitComplete": function(oSettings, json) {
+//						that.fixedHeader.fnUpdate();
+//				    } 
 				// , "bPaginate": false
 				});
-				this.fixedHeader = new FixedHeader( oTable );
+			//	this.fixedHeader = new FixedHeader( oTable );
 
 
 			}
-			$('div#datatable_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
-			$('div#datatable_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
-			$('div#datatable_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
+			$('#resultpane div.dataTables_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
+			$('#resultpane div.dataTables_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
+			$('#resultpane div.dataTables_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
 			that.fireStoreHisto(query);
-			this.fixedHeader.fnUpdate();
+			//this.fixedHeader.fnUpdate();
 	    	/*
 	    	 * Images are loaded asynchronously and they can change the column width.*
 	    	 * There is no way to trigger this kind of event to update FixHeader.
 	    	 * Les do it a couple of seconds later
 	    	 */
-			setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
+			//setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
 
 		};
 		this.updateFixedHeader = function() {
