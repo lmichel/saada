@@ -199,9 +199,9 @@ public class Query extends Query_Report{
 			}
 		}
 		if( this.obClause != null ) {
-				AttributeHandler ah = mAH.get(this.obClause.getAttr());
-				if( ah != null ) {
-					alAH.add(ah);
+			AttributeHandler ah = mAH.get(this.obClause.getAttr());
+			if( ah != null ) {
+				alAH.add(ah);
 			}			
 		}
 		for(String colName:this.merger.getCollectionNames()){
@@ -215,13 +215,13 @@ public class Query extends Query_Report{
 				}
 			}
 		}
-	// UCD columns arfe processed separately because of their specific formatting
-//		for( AttributeHandler ah : getUCDColumns() ) {
-//			alAH.add(ah);
-//		}
-		if(this.obClause!=null && (this.obClause.getType()==OrderBy.ON_COLL || this.obClause.getType()==OrderBy.BOTH)) {
-			alAH.add(mAH.get(this.obClause.getTheStatement()));
-		}
+		// UCD columns arfe processed separately because of their specific formatting
+		//		for( AttributeHandler ah : getUCDColumns() ) {
+		//			alAH.add(ah);
+		//		}
+		//		if(this.obClause!=null && (this.obClause.getType()==OrderBy.ON_COLL || this.obClause.getType()==OrderBy.BOTH)) {
+		//			alAH.add(mAH.get(this.obClause.getTheStatement()));
+		//		}
 
 		//** Add class attribute
 		for(String className:this.merger.getCoveredClasses()){
@@ -234,10 +234,13 @@ public class Query extends Query_Report{
 					}
 				}
 			}
-			if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH))
-				alAH.add(mAHC.get(this.obClause.getTheStatement()));
+			if(this.obClause!=null && !this.obClause.haveSpecialKey() && (this.obClause.getType()==OrderBy.ON_CLASS || this.obClause.getType()==OrderBy.BOTH)) {
+				AttributeHandler ah = mAHC.get(this.obClause.getAttr());
+				if( ah != null ) {
+					alAH.add(ah);
+				}
+			}
 		}
-
 		return alAH;
 	}
 
@@ -339,6 +342,10 @@ public class Query extends Query_Report{
 		}		
 		if(OrderBy.isIn(strQtemp)){
 			this.obClause = new OrderBy(strQtemp);
+			switch(this.sfiClause.getMode()){
+			case SelectFromIn.ONE_COL_ONE_CLASS: this.obClause.setType(OrderBy.BOTH); break;
+			default: this.obClause.setType(OrderBy.ON_COLL); break;
+			}
 			strQtemp = strQtemp.replace(this.obClause.getStrMatch(), "");
 			//			this.checkOrderBy();
 		}

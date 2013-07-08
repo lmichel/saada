@@ -89,7 +89,7 @@ public class DynamicClassDisplayFilter extends DynamicDisplayFilter {
 		for( AttributeHandler ah: ahs){
 			String na = ah.getNameattr();
 			if( na.startsWith("_")  ) {
-				columns_natcla.add(ah.getNameattr());			
+				columns_constcol.add(ah.getNameattr());			
 			}
 		}		
 	}

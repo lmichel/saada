@@ -69,6 +69,9 @@ public class QueryContext implements Serializable {
 	public Set<String> getColumns() {
 		return colfmtor.getDisplayedColumns();
 	}
+	public Set<String> getConstrainedColumns() {
+		return colfmtor.getConstrainedColumns();
+	}
 	public List<String> getRow(int rank) throws Exception {
 		colfmtor.setOId(resultSet.getOId(rank));
 		return colfmtor.getRow(null, rank);		
