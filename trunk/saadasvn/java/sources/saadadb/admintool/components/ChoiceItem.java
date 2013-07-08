@@ -3,6 +3,7 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -33,6 +34,7 @@ public class ChoiceItem extends AdminComponent {
 	private JLabel iconLabel;
 	private JLabel textLabel;
 	private boolean active;
+	private Point defaultPosition;
 
 	public ChoiceItem(AdminTool rootFrame,  JPanel choicePanel, GridBagConstraints gbc, String label, String activeImage, Runnable runnable) {
 		super(rootFrame);
@@ -51,25 +53,31 @@ public class ChoiceItem extends AdminComponent {
 		textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textLabel.setBorder(new EmptyBorder(1, 10, 5, 10));
 		this.localPanel.add(textLabel);
+		this.localPanel.setBorder(BorderFactory.createLineBorder(LIGHTBACKGROUND,1));
 		
 		choicePanel.add(this.localPanel, gbc);
+		
 		this.localPanel.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent e) {	
 				if( active ) {
 					if( ChoiceItem.this.localPanel.getBorder() != null )   
 						ChoiceItem.this.runnable.run();
-					localPanel.setBorder(null);
+					localPanel.setBorder(BorderFactory.createLineBorder(LIGHTBACKGROUND,1));
 					localPanel.setBackground(LIGHTBACKGROUND);      
 				}
 			}
 			public void mousePressed(MouseEvent e) {if( active ) localPanel.setBackground(Color.ORANGE); }
 			public void mouseReleased(MouseEvent e) {}
 			public void mouseEntered(MouseEvent e) {
-				if( active ) localPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+				if( active ) 
+				{	
+					localPanel.setBorder(BorderFactory.createLineBorder(Color.ORANGE,1));
+				}
 			}
 			public void mouseExited(MouseEvent e) {
-				if(active ) {
-					localPanel.setBorder(null);
+				if(active ) 
+				{
+					localPanel.setBorder(BorderFactory.createLineBorder(LIGHTBACKGROUND,1));
 					localPanel.setBackground(LIGHTBACKGROUND); 
 				}
 			}});

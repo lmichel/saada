@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -44,7 +45,7 @@ public class DataLoaderPanel extends TaskPanel {
 	protected JRadioButton repCopy ;
 	protected JRadioButton repMove ;
 	protected JRadioButton repKeep ;
-	protected JRadioButton noIndex ;
+	protected JCheckBox noIndex ;
 
 
 	protected JTextField directory ;
@@ -178,7 +179,7 @@ public class DataLoaderPanel extends TaskPanel {
 		bg.add(repCopy); 
 		bg.add(repMove); 
 		bg.add(repKeep); 
-		noIndex = new JRadioButton("Do not rebuild indexes after loading");
+		noIndex = new JCheckBox("Do not rebuild indexes after loading");
 		tPanel.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.gridx = 0;c.gridy = 0;

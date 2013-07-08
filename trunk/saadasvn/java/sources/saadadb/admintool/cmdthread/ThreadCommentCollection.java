@@ -59,6 +59,7 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 
 	@Override
 	public String getAntTarget() {
+		Messenger.printMsg(Messenger.DEBUG, "No ANT task in CommentCollection !");
 		return null;
 	}
 	public String toString() {

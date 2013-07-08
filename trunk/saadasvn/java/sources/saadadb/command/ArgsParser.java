@@ -1213,7 +1213,7 @@ public class ArgsParser implements Serializable{
 	public String toXML() {
 		String retour = "";
 		for( String p: this.args) {
-			retour += "        <arg value=\"" + p + "\"/>\n";
+			retour += "<arg value=\"" + p + "\"/>\n";
 		}
 		return retour;
 	}
