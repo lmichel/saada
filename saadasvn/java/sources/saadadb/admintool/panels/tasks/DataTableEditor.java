@@ -1,6 +1,8 @@
 package saadadb.admintool.panels.tasks;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -22,6 +24,7 @@ import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
@@ -85,11 +88,10 @@ public class DataTableEditor extends TaskPanel
 		{
 			if( dataTreePath.isCategorieOrClassLevel()) 
 			{
-				GridBagConstraints ccs = new GridBagConstraints();
 				try 
 				{
 					this.buidSQL(dataTreePath);
-					productTable = new SQLJTable(rootFrame, dataTreePath, this,  sqlQuery, SQLJTable.PRODUCT_PANEL);
+					productTable = new SQLJTable(rootFrame, dataTreePath,  sqlQuery, SQLJTable.PRODUCT_PANEL);
 				} 
 				catch (QueryException e) 
 				{
@@ -100,26 +102,39 @@ public class DataTableEditor extends TaskPanel
 				productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 				JScrollPane jsp = new JScrollPane(productTable);
 				jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
-				ccs.gridx = 0; ccs.gridy = 0;
-				ccs.weightx = 0.0; ccs.weighty = 0.0; 
-				ccs.fill = GridBagConstraints.BOTH;
-				ccs.gridwidth = 2;
-				tPanel.add(jsp, ccs);
 				
-				
+				BorderLayout b = new BorderLayout();
+				JPanel querySubmitPanel = new JPanel();
+
+				// Swing problem is due to the JTextArea because its content is too big
 				queryTextArea = new JTextArea(sqlQuery);
 				JScrollPane jtf = new JScrollPane(queryTextArea);
-				ccs.gridy++;
-				tPanel.add(jtf, ccs);
 				
-				Component c;
-				if (( c = this.addCommandComponent()) != null ) 
-				{
-					ccs.weightx = 0; ccs.weighty = 0; 
-					ccs.gridy++;ccs.fill = GridBagConstraints.BOTH;// ccs.gridwidth = 1;
-					tPanel.add(c, ccs);
-				}
+				Component comp = null;
+				if (this.addCommandComponent() != null)
+					comp = this.addCommandComponent();
+				
+				querySubmitPanel.add(jtf, BorderLayout.CENTER);
+				querySubmitPanel.add(comp, BorderLayout.SOUTH);
+				
+				JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, querySubmitPanel);	
+				splitPane.setOneTouchExpandable(true);
+				splitPane.setDividerLocation(400);
+				
+				GridBagConstraints c = new GridBagConstraints();
+				c.gridx = 0; c.gridy = 0;
+				c.weightx = 1; c.weighty = 1; c.fill = GridBagConstraints.BOTH; c.gridwidth = 2;
+				tPanel.add(splitPane, c);
+				
 			}
+		}
+		try {
+			DataTableWindow t = new DataTableWindow(this.rootFrame, this.rootFrame.metaDataTree.getClickedTreePath());
+			t.open(SQLJTable.PRODUCT_PANEL);
+			
+		} catch (QueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

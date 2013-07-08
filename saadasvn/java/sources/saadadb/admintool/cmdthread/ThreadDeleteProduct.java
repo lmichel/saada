@@ -9,13 +9,15 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.SQLJTable;
+import saadadb.admintool.panels.tasks.DataTableEditor;
 import saadadb.admintool.utils.AntDesk;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.collection.ProductManager;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
+import saadadb.util.Messenger;
 
 /** * @version $Id: CmdDeleteProduct.java 118 2012-01-06 14:33:51Z laurent.mistahl $
 
@@ -23,16 +25,19 @@ import saadadb.sqltable.SQLTable;
  *
  */
 public class ThreadDeleteProduct extends CmdThread {
-	private DataTableWindow dataTable;
+	private Frame frame;
+	private DataTableEditor dataTableEditor;
 	long oids_to_remove[] ;
 
 	public ThreadDeleteProduct(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
+		this.frame = frame;
 	}
 	
 	@Override
-	public void setParams(Map<String, Object> params) throws SaadaException {		
-		dataTable = (DataTableWindow) params.get("datatable");
+	public void setParams(Map<String, Object> params) throws SaadaException 
+	{	
+		dataTableEditor = (DataTableEditor) params.get("datatable");
 	}
 
 	/* (non-Javadoc)
@@ -40,35 +45,34 @@ public class ThreadDeleteProduct extends CmdThread {
 	 */
 	@Override
 	public boolean checkParams(boolean withConfirm) {
-		if( dataTable == null ) {
+		if( dataTableEditor == null ) {
 			AdminComponent.showFatalError(frame, "No JTable where to read oids of products to remove (Inner error)");
 			return  false;
 		}
-		else if( dataTable.getProductTable().getSelectedColumnCount() == 0 ) {
+		else if( dataTableEditor.getProductTable().getSelectedColumnCount() == 0 ) {
 			AdminComponent.showFatalError(frame, "There is no selected rows: no product to remove");
 			return false;
 		}
 		else {
+			int nbSelectedProducts = dataTableEditor.getProductTable().getSelectedRowCount();
 			return (!withConfirm
 					||
-					AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + dataTable.getProductTable().getSelectedColumnCount() + " products"));
+					AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + nbSelectedProducts + " product" + (nbSelectedProducts>1?"s":"") + " ?"));
 		}
 	}
 
-
-	
 	public void runCommand() {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-			System.out.println(dataTable);
-			final int[] rows = dataTable.getProductTable().getSelectedRows();
+			final int[] rows = dataTableEditor.getProductTable().getSelectedRows();
 			long oids_to_remove[] = new long[rows.length];
 			int cpt = 0;
 			for( int i: rows ) {
-				oids_to_remove[cpt] = Long.parseLong(dataTable.getProductTable().getValueAt(i, 0).toString());
+				oids_to_remove[cpt] = Long.parseLong(dataTableEditor.getProductTable().getValueAt(i, 0).toString());
 				cpt++;
 			}
+			Messenger.printMsg(Messenger.DEBUG, "Test : " + oids_to_remove[0]);
 			saada_process = new ProductManager();
 			SQLTable.beginTransaction();
 			((ProductManager)saada_process).removeProducts(oids_to_remove);
@@ -77,7 +81,7 @@ public class ThreadDeleteProduct extends CmdThread {
 			frame.setCursor(cursor_org);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
-					dataTable.refresh();
+					dataTableEditor.refresh();
 					((AdminTool)(frame)).refreshTree();
 					AdminComponent.showSuccess(frame, rows.length + " products removed");		
 				}				

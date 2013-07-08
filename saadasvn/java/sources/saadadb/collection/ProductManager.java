@@ -138,11 +138,12 @@ public class ProductManager extends EntityManager {
 	 */
 	public final void removeProducts(long[] oids) throws SaadaException {
 		this.oids = new ArrayList<Long>();
-		for( long oid: this.oids) {
+		for( long oid: oids) {
 			this.oids.add(oid);
 
 		}
-		removeProducts();					
+		Messenger.printMsg(Messenger.DEBUG, "Test : " + this.oids.get(0));
+		removeProducts();				
 	}
 
 	/**
@@ -439,7 +440,6 @@ public class ProductManager extends EntityManager {
 	private void checkOidList() throws AbortException {
 		for( long oid: oids) {
 			try {
-				System.out.println("2222222222222222  " + Database.getCachemeta().getClass("StartData").getId());
 				Database.getCache().getObject(oid);
 			} catch (Exception e) {
 				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");

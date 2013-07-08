@@ -20,6 +20,7 @@ import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -147,7 +148,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 						description = "<BR>Description<BR><PRE>\n" + description + "</PRE>";
 					}
 					switch(path.getPathCount()) {
-					case 2: tip = "<HTML>Data collection:<B>" 
+					case 2: tip = "<HTML>Data collection : <B>" 
 						+ path.getLastPathComponent() 
 						+ "</B>"+ description  + "<BR>";
 					break;
@@ -164,6 +165,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				return tip ;
 			}
 		};
+		
 		ToolTipManager.sharedInstance().registerComponent(tree);
 		tree.setEditable(false);		
 		tree.setBorder(BorderFactory.createTitledBorder("Database Map"));		
@@ -434,7 +436,11 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		private static Icon filled_icon = new MetalIconFactory.FolderIcon16();
+		private static ImageIcon collectionFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database_small.png"));
+		private static ImageIcon categoryFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Bluecube_small.png"));
+		private static ImageIcon categoryEntryFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Greencube_small.png"));
+		private static ImageIcon classFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/SQLTable_small.png"));
+		private static ImageIcon classEmptyIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/SQLTable_leaf_small.png"));
 
 		/*
 		 * This method is invoked each time a node is redrawn. The query results must be cached in the future
@@ -455,48 +461,38 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					tree, value, sel,
 					expanded, leaf, row,
 					hasFocus);
-			/*
-			 * Leaf refers to the visible leaf not top the tree leaf.
-			 * they differ when a branch is folder. This test is
-			 * not sufficiant to detect that we are on a class node.
-			 * We assume that class nodes are at 4th position in the tree path
-			 */
-			if ( leaf ) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-				try {
-					TreeNode[] path = node.getPath();
-					if( path.length == 3 && node.toString().equals("FLATFILE")) {
-						Query q = new Query();
-						/*
-						 * Can be run while a transaction in another thread: LOCK error with MySQL
-						 */
-						//						if( q.runQuery("Select FLATFILE From * In " + node.getParent().toString()).getSize() > 0) {
-						if( Database.getCachemeta().getCollection(node.getParent().toString()).hasFlatFiles()) {
-							setIcon(filled_icon);
-						}
-					}
-					/*
-					 * We are on class node
-					 */
-					else if( path.length == 4 ) {
-						String ac;
-						/*
-						 * Entries have no products, they are considered as having no instance. We have to
-						 * get the associated class (entry's table) to detect if the class is empty 
-						 */
-						if( "ENTRY".equals(node.getParent().toString()) ) {
-							ac = Database.getCachemeta().getClass(node.toString()).getAssociate_class();
-						}
-						else {
-							ac = node.toString();
-						}
-						if( Database.getCachemeta().getClass(ac).hasInstances() ) {
-							setIcon(filled_icon);
-						}
-					}
-				} catch (SaadaException e) {
-					Messenger.printStackTrace(e);
-					AdminComponent.showFatalError(null, e.toString());
+
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+			TreeNode[] path = node.getPath();
+			if (path.length == 1) // Root node
+				this.setIcon(collectionFilledIcon);
+			if (path.length == 2) // Collection node
+				this.setIcon(collectionFilledIcon);
+			if (path.length == 3) // Category node
+			{
+				if (node.toString().equals("ENTRY"))
+					this.setIcon(categoryEntryFilledIcon);
+				else
+					this.setIcon(categoryFilledIcon);
+			}
+			if (path.length == 4) // Class node
+			{
+				try 
+				{
+					String ac;
+					if( "ENTRY".equals(node.getParent().toString()) ) 
+						ac = Database.getCachemeta().getClass(node.toString()).getAssociate_class();
+					else 
+						ac = node.toString();
+					
+					if( Database.getCachemeta().getClass(ac).hasInstances() ) 
+						this.setIcon(classFilledIcon);
+					else
+						this.setIcon(classEmptyIcon);
+				}
+				catch (Exception e) 
+				{
+					e.printStackTrace();
 				}
 			}
 			return this;

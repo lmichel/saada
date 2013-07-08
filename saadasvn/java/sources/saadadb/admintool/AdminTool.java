@@ -149,9 +149,8 @@ public class AdminTool extends BaseFrame {
 		this.addWindowListener(new WindowAdapter(){
 			@Override
 			public void windowClosing(WindowEvent we){	        	
-				if( AdminComponent.showConfirmDialog(AdminTool.this, "Do you really want to exit?") ==  true ) {
+				if (AdminComponent.showConfirmDialog(AdminTool.this, "Do you really want to exit?")) 
 					System.exit(1);
-				}
 			}
 		});
 
@@ -163,19 +162,6 @@ public class AdminTool extends BaseFrame {
 		Date date = new Date();
 		String sdate = DateFormat.getDateInstance(DateFormat.SHORT,Locale.FRANCE).format(date);
 		sdate += date.toString().substring(10,19);
-
-		/*
-		 * Exit after confirmation when click on the window close button
-		 */
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		this.addWindowListener(new WindowAdapter(){
-			@Override
-			public void windowClosing(WindowEvent we){	        	
-				//if( SaadaDBAdmin.showConfirmDialog(SaadaDBAdmin.this, "Do you really want to exit?") ==  true ) {
-				System.exit(1);
-				//}
-			}
-		});
 		setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("icons/saada_transp_square.png")));
 
 

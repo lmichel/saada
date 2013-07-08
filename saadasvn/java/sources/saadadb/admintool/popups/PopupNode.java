@@ -79,7 +79,7 @@ public class PopupNode extends JPopupMenu implements ActionListener{
 				ThreadDeleteProduct cdp = new ThreadDeleteProduct(rootFrame, DELETE_PRODUCTS);
 				cdp.setParams(params);
 				if (cdp.checkParams(true) ) {
-					rootFrame.activeWindowProcess(cdp, dataTreePath);
+					rootFrame.activeProcessPanel(cdp);
 				}
 			} catch (SaadaException e1) {
 				AdminComponent.showFatalError(rootFrame, e1);
