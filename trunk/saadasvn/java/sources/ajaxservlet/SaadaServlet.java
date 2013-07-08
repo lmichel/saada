@@ -123,12 +123,14 @@ public class SaadaServlet extends HttpServlet {
 	 * @param req
 	 */
 	public void printAccess(HttpServletRequest request, boolean force) {
-		String full_url = request.getRequestURL().toString();
-		String queryString = request.getQueryString();   
-		if (queryString != null) {
-			full_url += "?"+queryString;
-		}		
-		Messenger.printMsg(Messenger.TRACE, accessMessage(request) );
+		if( force || Messenger.debug_mode == true) {
+			String full_url = request.getRequestURL().toString();
+			String queryString = request.getQueryString();   
+			if (queryString != null) {
+				full_url += "?"+queryString;
+			}		
+			Messenger.printMsg(Messenger.TRACE, accessMessage(request) );
+		}
 	}
 
 	/**

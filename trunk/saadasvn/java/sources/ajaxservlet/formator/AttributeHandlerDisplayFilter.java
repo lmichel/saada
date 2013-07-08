@@ -56,7 +56,12 @@ public class AttributeHandlerDisplayFilter implements DisplayFilter {
 		retour.addAll(datatable_columns);
 		return retour;
 	}
-
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getConstrainedColumns()
+	 */
+	public Set<String> getConstrainedColumns() {
+		return null;
+	}
 	public Set<AttributeHandler> getQueriableColumns() throws FatalException {
 		return new LinkedHashSet<AttributeHandler>();
 	}

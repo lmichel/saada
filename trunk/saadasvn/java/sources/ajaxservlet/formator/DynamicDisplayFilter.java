@@ -39,6 +39,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	protected long oidsaada = SaadaConstant.LONG;
 	protected final LinkedHashSet<String> columns_specialf = new LinkedHashSet<String>();
 	protected final LinkedHashSet<String> columns_natcol = new LinkedHashSet<String>();
+	protected final LinkedHashSet<String> columns_constcol = new LinkedHashSet<String>();
 	protected final LinkedHashSet<AttributeHandler> columns_ucds = new LinkedHashSet<AttributeHandler>();
 	protected final LinkedHashSet<String> columns_rel = new LinkedHashSet<String>();
 	protected MetaClass mc = null;
@@ -85,7 +86,6 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		/*
 		 * reste à initialiser UCDs
 		 */
-
 		tmp_array = sf.getRelationship_show();
 		if (tmp_array.size() > 0) {
 			if (tmp_array.get(0).compareTo(FilterKeys.ANY_RELATION) == 0) {
@@ -120,8 +120,9 @@ public class DynamicDisplayFilter implements DisplayFilter {
 						}
 					}
 				}
-				if( !alreadyHere)
-					columns_natcol.add(ah.getNameattr());			
+				if( !alreadyHere) {
+					columns_constcol.add(ah.getNameattr());		
+				}
 			}	
 		}
 	}
@@ -149,6 +150,21 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 			result.add(val);
 		}
+		for (String val : columns_natcol) {
+			if( !isDirective(val) ) {
+				continue;
+			}
+			result.add(val);
+		}
+		result.addAll(this.getConstrainedColumns());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getConstrainedColumns()
+	 */
+	public Set<String> getConstrainedColumns() {
+		LinkedHashSet<String> result = new LinkedHashSet<String>();
 		for (AttributeHandler ah : this.columns_ucds) {
 			String lbl = "UCD " + ah.getUcd();
 			if (ah.getUnit().length() > 0) {
@@ -156,15 +172,14 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 			result.add(lbl);
 		}
-		for (String val : columns_natcol) {
+		for (String val : columns_constcol) {
 			if( !isDirective(val) ) {
 				continue;
 			}
 			result.add(val);
 		}
-		return result;
+		return result;		
 	}
-
 	/**
 	 * returns a set of strings containing the columns
 	 * to be available in the query attributes list
@@ -279,7 +294,6 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			}
 		}
 
-
 		for (String rel : columns_rel) {
 			if( !isDirective(rel) ) {
 				continue;
@@ -300,7 +314,6 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add("<span>No link</span>");
 				break;
 			case 1 :
-
 				long counterpart = cpts[0];
 				SaadaInstance instance = Database.getCache().getObject(counterpart);
 
@@ -323,13 +336,22 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				break;
 			}
 		}
+		for (String natcol : columns_natcol) {
+			if( !isDirective(natcol) ) {
+				continue;
+			}
+			si.loadBusinessAttribute();
+			String res = DefaultFormats.getString(si.getFieldValue(natcol));
+			retour.add(res);
+		}
+
 		for (AttributeHandler ah : columns_ucds) {
 			si.loadBusinessAttribute();
 			retour.add(DefaultFormats.getString(resultSet.getObject(rank, ChangeKey.getUCDNickName(ah.getUcd())))
 					+ " <a title=\"Native Attribute: " + DefaultFormats.getString(si.getFieldDescByUCD(ah.getUcd())) + "\" href='javascript:void(0);'>(?)</a>");
 		}
 
-		for (String natcol : columns_natcol) {
+		for (String natcol : columns_constcol) {
 			if( !isDirective(natcol) ) {
 				continue;
 			}
@@ -363,6 +385,9 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		SaadaInstance si = Database.getCache().getObject(oidsaada);
 		for (String natcol : columns_natcol) {
+			retour.add(si.getFieldString(natcol));
+		}
+		for (String natcol : columns_constcol ){
 			retour.add(si.getFieldString(natcol));
 		}
 		return null;

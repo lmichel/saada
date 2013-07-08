@@ -56,6 +56,12 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		addUCDsToDisplayColumns(retour);
 		return retour;
 	}
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getConstrainedColumns()
+	 */
+	public Set<String> getConstrainedColumns() {
+		return null;
+	}
 
 	@Override
 	public Set<AttributeHandler> getQueriableColumns() throws FatalException {

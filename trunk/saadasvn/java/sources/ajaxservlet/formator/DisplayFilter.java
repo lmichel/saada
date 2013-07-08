@@ -67,6 +67,12 @@ public interface DisplayFilter {
 	 * @return
 	 */
 	public Set<String> getDisplayedColumns() ;
+	/**
+	 * Returns a map of the columns constrained by the query. 
+	 * These columns are appended to the filter after the construction si completed
+	 * @return
+	 */
+	public Set<String> getConstrainedColumns() ;
 	
 	/**
 	 * Return the list of attribute handlers proposed by the query form

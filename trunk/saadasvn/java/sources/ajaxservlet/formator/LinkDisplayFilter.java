@@ -50,6 +50,12 @@ public class LinkDisplayFilter extends DefaultDisplayFilter {
 	public Set<String> getDisplayedColumns() {
 		return datatable_columns;
 	}
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getConstrainedColumns()
+	 */
+	public Set<String> getConstrainedColumns() {
+		return null;
+	}
 
 	@Override
 	public Set<AttributeHandler> getQueriableColumns() throws FatalException {
