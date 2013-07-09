@@ -50,14 +50,6 @@ public class DataTableEditor extends TaskPanel
 	}
 
 	@Override
-	protected Map<String, Object> getParamMap() 
-	{
-		LinkedHashMap<String, Object> retour = new LinkedHashMap<String, Object>();
-		retour.put("datatable", productTable);
-		return retour;
-	}
-
-	@Override
 	protected void setActivePanel() 
 	{
 		tPanel = this.addSubPanel("Explore Data");
@@ -91,7 +83,7 @@ public class DataTableEditor extends TaskPanel
 				try 
 				{
 					this.buidSQL(dataTreePath);
-					productTable = new SQLJTable(rootFrame, dataTreePath,  sqlQuery, SQLJTable.PRODUCT_PANEL);
+					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
 				} 
 				catch (QueryException e) 
 				{
@@ -128,14 +120,14 @@ public class DataTableEditor extends TaskPanel
 				
 			}
 		}
-		try {
+		/*try {
 			DataTableWindow t = new DataTableWindow(this.rootFrame, this.rootFrame.metaDataTree.getClickedTreePath());
 			t.open(SQLJTable.PRODUCT_PANEL);
 			
 		} catch (QueryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 		
@@ -249,6 +241,12 @@ public class DataTableEditor extends TaskPanel
 	
 	public DataTreePath getDataTreePath() {
 		return dataTreePath;
+	}
+
+	@Override
+	protected Map<String, Object> getParamMap() 
+	{
+		return null;
 	}
 
 }
