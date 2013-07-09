@@ -4,10 +4,14 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.panels.MetaDataPanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ClassManager;
 import saadadb.command.ArgsParser;
@@ -56,6 +60,12 @@ public class ThreadDropClass extends CmdThread{
 			Database.getCachemeta().reload(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
+					// Delete the removed class node in the Jtree
+					MetaDataPanel metaDataTree = ((AdminTool)(frame)).metaDataTree;
+					metaDataTree.deleteClassNode(name, metaDataTree.getClickedTreePath());
+					JTree tree = metaDataTree.getTree();
+					// When the collection is removed, the tree node selected is root
+					tree.setSelectionPath(new TreePath((TreeNode)tree.getModel().getRoot()));
 					((AdminTool)(frame)).refreshTree();
 					AdminComponent.showSuccess(frame, "Class <" + name + "> removed");		
 				}				

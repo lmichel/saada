@@ -327,6 +327,19 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			}
 		}
 	}
+	
+	public void deleteClassNode(String name, TreePath path)
+	{
+		// Check if it is the right class to remove
+		if (path.getPathCount()==4)
+		{
+			if (path.getLastPathComponent().toString().compareTo(name)==0)
+			{
+				MutableTreeNode node = (MutableTreeNode) path.getLastPathComponent();
+				model.removeNodeFromParent(node);
+			}
+		}
+	}
 
 	/**
 	 * @throws SaadaException 
@@ -461,6 +474,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					tree, value, sel,
 					expanded, leaf, row,
 					hasFocus);
+		
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
 			TreeNode[] path = node.getPath();
