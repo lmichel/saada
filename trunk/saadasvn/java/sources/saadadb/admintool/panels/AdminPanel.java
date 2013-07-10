@@ -159,8 +159,27 @@ public abstract class AdminPanel extends AdminComponent {
 		jsp.setBorder(BorderFactory.createEmptyBorder());
 		this.add(new JScrollPane(tPanel));
 		return tPanel;
-
 	}
+	
+	/**
+	 * @param title
+	 * @return 
+	 */
+	protected JPanel addSubPanel(String title, boolean withJScrollPane) {
+
+		JPanel tPanel = new JPanel();
+		tPanel.setLayout(new GridBagLayout());
+		tPanel.setBorder(new TitledBorder(title));
+		tPanel.setBackground(LIGHTBACKGROUND); 
+		if (withJScrollPane)
+			this.add(new JScrollPane(tPanel));
+		else
+			this.add(tPanel);
+		return tPanel;
+	}
+	
+	
+	
 //	/**
 //	 * @param title
 //	 * @return 

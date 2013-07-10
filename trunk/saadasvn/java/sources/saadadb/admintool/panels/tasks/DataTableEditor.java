@@ -17,25 +17,33 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
+import org.jdesktop.swingx.JXTable;
+
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.components.input.FreeTextField;
+import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 public class DataTableEditor extends TaskPanel
 {
 	private static final long serialVersionUID = 1L;
 	protected String sqlQuery;
+	protected String sqlWHEREClause, sqlLIMITClause, sqlFROMClause, sqlSELECTClause;
 	private SQLJTable productTable;
-	protected  JTextArea queryTextArea = new JTextArea(sqlQuery);
+	protected FreeTextField queryWhereArea;
+	protected NodeNameTextField queryLimitArea;
 	private JPanel tPanel;
 	
 	public DataTableEditor(AdminTool rootFrame, String ancestor) 
@@ -52,7 +60,7 @@ public class DataTableEditor extends TaskPanel
 	@Override
 	protected void setActivePanel() 
 	{
-		tPanel = this.addSubPanel("Explore Data");
+		tPanel = this.addSubPanel("Explore Data", false);
 		tPanel.add(AdminComponent.getHelpLabel(HelpDesk.DATATABLE_EDITOR));
 	}
 	
@@ -82,7 +90,7 @@ public class DataTableEditor extends TaskPanel
 			{
 				try 
 				{
-					this.buidSQL(dataTreePath);
+					this.buildSQL(dataTreePath);
 					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
 				} 
 				catch (QueryException e) 
@@ -91,47 +99,48 @@ public class DataTableEditor extends TaskPanel
 				}
 				tPanel.removeAll();
 				productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
-				productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
 				JScrollPane jsp = new JScrollPane(productTable);
 				jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
-				
-				BorderLayout b = new BorderLayout();
-				JPanel querySubmitPanel = new JPanel();
-
-				// Swing problem is due to the JTextArea because its content is too big
-				queryTextArea = new JTextArea(sqlQuery);
-				JScrollPane jtf = new JScrollPane(queryTextArea);
 				
 				Component comp = null;
 				if (this.addCommandComponent() != null)
 					comp = this.addCommandComponent();
 				
-				querySubmitPanel.add(jtf, BorderLayout.CENTER);
-				querySubmitPanel.add(comp, BorderLayout.SOUTH);
+				JPanel querySubmitPanel = new JPanel();
+				queryWhereArea = new FreeTextField(4,32);
+				queryWhereArea.setText(sqlWHEREClause);
+				JScrollPane jtf = new JScrollPane(queryWhereArea);
+				
+				queryLimitArea = new NodeNameTextField(8, "^" + RegExp.NUMERIC + "$", comp);
+				queryLimitArea.setText(sqlLIMITClause);
+				
+				MyGBC mgbc = new MyGBC(10,10,10,10);
+				mgbc.anchor = GridBagConstraints.EAST;
+				querySubmitPanel.add(getPlainLabel("WHERE"), mgbc);
+				mgbc.anchor = GridBagConstraints.WEST;
+				querySubmitPanel.add(jtf, mgbc);
+				
+				mgbc.anchor = GridBagConstraints.EAST;
+				querySubmitPanel.add(getPlainLabel("LIMIT"), mgbc);
+				mgbc.anchor = GridBagConstraints.WEST;
+				querySubmitPanel.add(queryLimitArea, mgbc);
+
+				querySubmitPanel.add(comp, mgbc);
 				
 				JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, querySubmitPanel);	
 				splitPane.setOneTouchExpandable(true);
-				splitPane.setDividerLocation(400);
+				splitPane.setDividerLocation(525);
 				
 				GridBagConstraints c = new GridBagConstraints();
 				c.gridx = 0; c.gridy = 0;
-				c.weightx = 1; c.weighty = 1; c.fill = GridBagConstraints.BOTH; c.gridwidth = 2;
+				c.weightx = 0.5; c.weighty = 0.5; c.fill = GridBagConstraints.BOTH; c.gridwidth = 2;
 				tPanel.add(splitPane, c);
-				
 			}
 		}
-		/*try {
-			DataTableWindow t = new DataTableWindow(this.rootFrame, this.rootFrame.metaDataTree.getClickedTreePath());
-			t.open(SQLJTable.PRODUCT_PANEL);
-			
-		} catch (QueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-
 	}
 		
-	protected void buidSQL(DataTreePath dataTreePath) 
+	protected void buildSQL(DataTreePath dataTreePath) 
 	{
 		sqlQuery = "SELECT ";
 		title= "??";
@@ -158,8 +167,12 @@ public class DataTableEditor extends TaskPanel
 				}
 				sqlQuery += rejected_coll_clos[i] ;
 			}
-			sqlQuery += "\nFROM " + coll_table_name + "\nLIMIT 1000";
+			sqlSELECTClause = sqlQuery;
+			sqlLIMITClause = "1000";
+			sqlFROMClause = "FROM " + coll_table_name;
+			sqlQuery += "\n" + sqlFROMClause + "\nLIMIT " + sqlLIMITClause;
 			title = dataTreePath.category + " data of collection <" + dataTreePath.collection + "> (truncated to 1000)";
+			sqlWHEREClause = "";
 		}
 		/*
 		 * metadata tree path = base-coll-cat-class: show all product of a class
@@ -184,9 +197,13 @@ public class DataTableEditor extends TaskPanel
 			for( int i=0 ; i<rejected_class_clos.length ; i++  ) {
 				sqlQuery += ", class." + rejected_class_clos[i] ;
 			}
-			sqlQuery += "\nFROM " + dataTreePath.collection 
+			sqlSELECTClause = sqlQuery;
+			sqlLIMITClause = "1000";
+			sqlFROMClause = "FROM " + dataTreePath.collection 
 				+ "_" + dataTreePath.category.toLowerCase() + " AS coll, " 
-				+  dataTreePath.classe	+ " AS class\nWHERE coll.oidsaada = class.oidsaada\nLIMIT 1000";
+				+  dataTreePath.classe	+ " AS class";
+			sqlWHEREClause = "coll.oidsaada = class.oidsaada";
+			sqlQuery += "\n" + sqlFROMClause + "\nWHERE " + sqlWHEREClause + "\nLIMIT " + sqlLIMITClause;
 			title = "Data (" + dataTreePath.category + ") of class <" + dataTreePath.classe  + ">  of collection <" + dataTreePath.collection + "> (truncated to 1000)";
 		}
 		else {
@@ -201,7 +218,7 @@ public class DataTableEditor extends TaskPanel
 		{
 			public void actionPerformed(ActionEvent arg0) 
 			{
-				refresh(queryTextArea.getText());
+				refresh(true);
 			}
 		});
 		return jb;
@@ -214,13 +231,30 @@ public class DataTableEditor extends TaskPanel
 		this.add(new ToolBarPanel(this, true, false, false));		
 	}
 
-	public void refresh(String newQuery) {
-		if( productTable != null ) {
-			try {
-				this.sqlQuery = newQuery;
+	public void refresh(boolean isNewQuery) 
+	{
+		String newQuery = "";
+		if( productTable != null ) 
+		{
+			sqlWHEREClause = queryWhereArea.getText();
+			sqlLIMITClause = queryLimitArea.getText();
+			
+			// Search the visible columns
+			Messenger.printMsg(Messenger.DEBUG, "Test : " + this.productTable.getModel().getColumnName(5));
+			
+			// Build the rest of the query
+			newQuery +=sqlSELECTClause + "\n" + sqlFROMClause + "\n" + (sqlWHEREClause.compareTo("")==0?"":"WHERE ") + sqlWHEREClause + "\nLIMIT " + sqlLIMITClause;
+			
+			// Set the newQuery in the sqlQuery and the model
+			this.sqlQuery = newQuery;
+			Messenger.printMsg(Messenger.DEBUG, "Résultat :\n" + sqlQuery);
+			try 
+			{
 				this.productTable.setModel(sqlQuery);
-			} catch (QueryException e) {
-				Messenger.trapQueryException(e);
+			} 
+			catch (QueryException e) 
+			{
+				e.printStackTrace();
 			}
 		}
 	}

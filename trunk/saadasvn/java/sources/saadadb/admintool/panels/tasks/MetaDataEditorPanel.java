@@ -59,7 +59,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {		
 		runButton = new RunTaskButton(this);
-		tPanel = this.addSubPanel("Meta Data Display");
+		tPanel = this.addSubPanel("Meta Data Display", false);
 		tPanel.add(AdminComponent.getHelpLabel(HelpDesk.METADATA_EDITOR));
 		this.setActionBar(new Component[]{runButton
 				, debugButton});
