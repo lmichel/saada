@@ -1,15 +1,9 @@
 package saadadb.admintool.panels.tasks;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -17,13 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.SortOrder;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
@@ -35,7 +25,6 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.admintool.windows.DataTableWindow;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
@@ -245,26 +234,28 @@ public class DataTableEditor extends TaskPanel
 			sqlWHEREClause = queryWhereArea.getText();
 			sqlLIMITClause = queryLimitArea.getText();
 			productTable.setSortOrder(8, SortOrder.DESCENDING);
-			Messenger.printMsg(Messenger.DEBUG, "@@@@@TB : " + sqlORDERClause);
 			
-			ArrayList<TableColumnExt> hiddenColumns = new ArrayList<TableColumnExt>();
+			// TODO Refresh the field that are selected only
+			/*ArrayList<TableColumnExt> hiddenColumns = new ArrayList<TableColumnExt>();
 			ArrayList<Integer> indexHiddenColumns = new ArrayList<Integer>();
 			// Search the hidden columns
 			/*for (int i=0 ; i<productTable.getColumnCount() ; i++)
 			{
-				if (!productTable.getColumnControl().isVisible())
+				Messenger.printMsg(Messenger.DEBUG, "@@@@C " + productTable.getColumnCount() + " : Visible? " + productTable.getColumnExt(i).isVisible());
+				if (!productTable.getColumnExt(i).isVisible())
 				{
 					indexHiddenColumns.add(i);
 					hiddenColumns.add(productTable.getColumnExt(i));
 				}
 			}
-			Messenger.printMsg(Messenger.DEBUG, "@@@@ : " + indexHiddenColumns.toString());*/
-			
+			TableColumnExt test = new TableColumnExt(((JXTable)productTable).getColumnExt(2));
+			test.setVisible(false);
+			Messenger.printMsg(Messenger.DEBUG, "@@@@@ " + test.isVisible());*/	
 			
 			// Build the rest of the query
 			newQuery +=sqlSELECTClause + "\n" + 
 					sqlFROMClause + "\n" + 
-					(sqlWHEREClause.compareTo("")==0?"":"WHERE ") + sqlWHEREClause +
+					(sqlWHEREClause.compareTo("")==0?"":"WHERE ") + sqlWHEREClause + 
 					(sqlORDERClause.compareTo("")==0?"":"\nORDER BY ") + sqlORDERClause + 
 					"\nLIMIT " + sqlLIMITClause;
 			
