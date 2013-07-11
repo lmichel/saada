@@ -1,6 +1,7 @@
 package saadadb.admintool.components;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,6 +19,7 @@ public class DebugButton extends JButton{
 		noDebugColor = this.getBackground();
 		debugColor = Color.ORANGE;
 		this.setOpaque(true);
+		this.setPreferredSize(new Dimension(60, 40));
 		this.active();
 
 		this.addActionListener(new ActionListener() {

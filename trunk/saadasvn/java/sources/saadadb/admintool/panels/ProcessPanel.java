@@ -2,6 +2,7 @@ package saadadb.admintool.panels;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -98,6 +99,7 @@ public  class ProcessPanel extends TaskPanel {
 		runPauseButton = new RunPauseButton(this);
 
 		abortButton = new JBlinkingButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Abort.png")));
+		abortButton.setPreferredSize(new Dimension(60,40));
 		abortButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if( cmdThread != null ) {

@@ -99,10 +99,9 @@ public class SQLJTable extends JXTable {
 			this.setRowSelectionAllowed(true);
 			this.makeOrderingEnabled();
 			this.makePopupEnabled();
-			// JXTABLE attribute
-			this.setColumnControlVisible(true);
-			
 		}
+		// JXTABLE attribute
+		this.setColumnControlVisible(true);
 		this.setModel(sql);
 		this.setHighlighters(HighlighterFactory.createSimpleStriping());
 	}

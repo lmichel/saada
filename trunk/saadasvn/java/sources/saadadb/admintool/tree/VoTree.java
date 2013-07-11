@@ -49,7 +49,7 @@ public abstract class VoTree extends JPanel {
 		tree = new GestualTree(top);
 		tree.setEditable(false);	
 
-		//tree.setDragEnabled(true);
+		tree.setDragEnabled(true);
 		DefaultMutableTreeNode last_node=top;
 		for( int i=0 ; i<flat_types.length ; i++ ) {
 			/*
