@@ -29,6 +29,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.panels.tasks.DataTableEditor;
 import saadadb.admintool.popups.PopupNode;
 import saadadb.admintool.popups.PopupProduct;
 import saadadb.admintool.utils.DataTreePath;
@@ -103,7 +104,6 @@ public class SQLJTable extends JXTable {
 			
 		}
 		this.setModel(sql);
-		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		this.setHighlighters(HighlighterFactory.createSimpleStriping());
 	}
 	
@@ -201,7 +201,25 @@ public class SQLJTable extends JXTable {
 					}
 					SQLJTable.this.order_column = col;
 					
-					SQLJTable.this.setModel(SQLJTable.this.sql.replace("LIMIT 1000", "") + "\nORDER BY " + SQLJTable.this.getColumnName(col) + desc + "\n" + "LIMIT 1000");
+					if (SQLJTable.this.getCmdThreadParam() instanceof DataTableEditor)
+					{
+						DataTableEditor dataTableEditor = (DataTableEditor) SQLJTable.this.getCmdThreadParam();
+						String sqlORDERClause = SQLJTable.this.getColumnName(col) + desc;
+						if (SQLJTable.this.dataTreePath.isClassLevel())
+						{
+							if (SQLJTable.this.getColumnName(col).startsWith("_") || SQLJTable.this.getColumnName(col).compareTo("md5keysaada")==0)
+								sqlORDERClause = "class." + sqlORDERClause;
+							else
+								sqlORDERClause = "coll." + sqlORDERClause;
+						}
+						String sqlSortQuery = dataTableEditor.sqlSELECTClause + "\n" + dataTableEditor.sqlFROMClause + "\n" + (dataTableEditor.sqlWHEREClause.compareTo("")==0?"":"WHERE ") + dataTableEditor.sqlWHEREClause + "\nORDER BY " + sqlORDERClause + "\nLIMIT " + dataTableEditor.sqlLIMITClause;
+						dataTableEditor.sqlORDERClause = sqlORDERClause;
+						SQLJTable.this.setModel(sqlSortQuery);
+					}
+					else
+					{
+						SQLJTable.this.setModel(SQLJTable.this.sql.replace("LIMIT 1000", "") + "\nORDER BY " +SQLJTable.this.getColumnName(col) + desc + "\n" + "LIMIT 1000");
+					}
 				} catch (Exception e1) {
 					Messenger.printStackTrace(e1);
 				}

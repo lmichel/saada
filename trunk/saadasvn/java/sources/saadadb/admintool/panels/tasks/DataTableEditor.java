@@ -7,7 +7,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -16,8 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SortOrder;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
@@ -40,7 +46,7 @@ public class DataTableEditor extends TaskPanel
 {
 	private static final long serialVersionUID = 1L;
 	protected String sqlQuery;
-	protected String sqlWHEREClause, sqlLIMITClause, sqlFROMClause, sqlSELECTClause;
+	public String sqlWHEREClause, sqlLIMITClause, sqlFROMClause, sqlSELECTClause, sqlORDERClause = "";
 	private SQLJTable productTable;
 	protected FreeTextField queryWhereArea;
 	protected NodeNameTextField queryLimitArea;
@@ -238,16 +244,32 @@ public class DataTableEditor extends TaskPanel
 		{
 			sqlWHEREClause = queryWhereArea.getText();
 			sqlLIMITClause = queryLimitArea.getText();
+			productTable.setSortOrder(8, SortOrder.DESCENDING);
+			Messenger.printMsg(Messenger.DEBUG, "@@@@@TB : " + sqlORDERClause);
 			
-			// Search the visible columns
-			Messenger.printMsg(Messenger.DEBUG, "Test : " + this.productTable.getModel().getColumnName(5));
+			ArrayList<TableColumnExt> hiddenColumns = new ArrayList<TableColumnExt>();
+			ArrayList<Integer> indexHiddenColumns = new ArrayList<Integer>();
+			// Search the hidden columns
+			/*for (int i=0 ; i<productTable.getColumnCount() ; i++)
+			{
+				if (!productTable.getColumnControl().isVisible())
+				{
+					indexHiddenColumns.add(i);
+					hiddenColumns.add(productTable.getColumnExt(i));
+				}
+			}
+			Messenger.printMsg(Messenger.DEBUG, "@@@@ : " + indexHiddenColumns.toString());*/
+			
 			
 			// Build the rest of the query
-			newQuery +=sqlSELECTClause + "\n" + sqlFROMClause + "\n" + (sqlWHEREClause.compareTo("")==0?"":"WHERE ") + sqlWHEREClause + "\nLIMIT " + sqlLIMITClause;
+			newQuery +=sqlSELECTClause + "\n" + 
+					sqlFROMClause + "\n" + 
+					(sqlWHEREClause.compareTo("")==0?"":"WHERE ") + sqlWHEREClause +
+					(sqlORDERClause.compareTo("")==0?"":"\nORDER BY ") + sqlORDERClause + 
+					"\nLIMIT " + sqlLIMITClause;
 			
 			// Set the newQuery in the sqlQuery and the model
 			this.sqlQuery = newQuery;
-			Messenger.printMsg(Messenger.DEBUG, "Résultat :\n" + sqlQuery);
 			try 
 			{
 				this.productTable.setModel(sqlQuery);
