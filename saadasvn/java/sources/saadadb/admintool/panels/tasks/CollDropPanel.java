@@ -33,7 +33,7 @@ public class CollDropPanel extends CollCreatePanel {
 	}
 
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 	
@@ -58,7 +58,8 @@ public class CollDropPanel extends CollCreatePanel {
 			showInputError(rootFrame, "Can not change data treepath in this context");
 		}else  if( dataTreePath != null ) {
 			super.setDataTreePath(dataTreePath);
-			treePathLabel.setText(dataTreePath.collection);
+			//treePathLabel.setText(dataTreePath.collection);
+			this.setTextTreePathPanel(dataTreePath);
 			MetaCollection mc;
 			try {
 				mc = Database.getCachemeta().getCollection(dataTreePath.collection);

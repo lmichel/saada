@@ -33,7 +33,7 @@ public class ClassDropPanel extends CollCreatePanel {
 	}
 
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 	
@@ -63,9 +63,9 @@ public class ClassDropPanel extends CollCreatePanel {
 			}
 
 			super.setDataTreePath(dataTreePath);
-			treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category + "." + dataTreePath.classe);
-
-			treePathLabel.setText(dataTreePath.collection);
+			/*treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category + "." + dataTreePath.classe);
+			treePathLabel.setText(dataTreePath.collection);*/
+			this.setTextTreePathPanel(dataTreePath);
 			MetaClass mc;
 			try {
 				mc = Database.getCachemeta().getClass(dataTreePath.classe);

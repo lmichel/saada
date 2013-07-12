@@ -66,7 +66,7 @@ public class CollCreatePanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, false, false, false));
 	}
 

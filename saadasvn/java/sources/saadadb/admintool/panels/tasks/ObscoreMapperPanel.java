@@ -58,7 +58,7 @@ public class ObscoreMapperPanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, true, true, false));
 		this.setSelectedResource("VO Model ObsCore", null);

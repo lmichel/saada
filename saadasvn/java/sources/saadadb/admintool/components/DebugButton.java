@@ -17,7 +17,7 @@ public class DebugButton extends JButton{
 	public DebugButton() {
 		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/DebugMode.png")));
 		noDebugColor = this.getBackground();
-		debugColor = Color.ORANGE;
+		debugColor = new Color(255, 233, 181);;
 		this.setOpaque(true);
 		this.setPreferredSize(new Dimension(60, 40));
 		this.active();

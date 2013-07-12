@@ -19,7 +19,7 @@ class ColorCellRenderer extends DefaultTableCellRenderer {
 
 		SQLJTable ct=(SQLJTable)table;
 		if(ct.hasModifiedItem(row) ){
-			this.setBackground(Color.orange);
+			this.setBackground(new Color(255, 233, 181));
 			ct.modified = true;
 		}
 		else {

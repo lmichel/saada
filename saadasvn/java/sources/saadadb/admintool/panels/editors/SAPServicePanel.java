@@ -82,7 +82,7 @@ public class SAPServicePanel extends EditPanel {
 	
 	@Override
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, false, false, false));		
 	}

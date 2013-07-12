@@ -26,7 +26,8 @@ public class ToolBarPanel extends JPanel {
 		JLabel tl = AdminComponent.getTitleLabel(" " + adminPanel.getTitle() + " ");
 		tl.setOpaque(true);
 		tl.setBorder(BorderFactory.createLineBorder(Color.black));
-		tl.setBackground(Color.ORANGE);
+		Color tl_color = new Color(255, 233, 181);
+		tl.setBackground(tl_color);
 		adminPanel.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(1, 7, 1, 1);
@@ -78,7 +79,8 @@ public class ToolBarPanel extends JPanel {
 				c.gridwidth = 2; c.gridheight = 1;
 				c.weightx = 0.8; c.weighty = 1;
 				c.anchor = GridBagConstraints.LINE_START;
-				this.add(adminPanel.getTreePathLabel(), c);
+				this.add(adminPanel.getTreePathPanel(), c);
+				//this.add(adminPanel.getTreePathLabel(), c);
 			}		
 			if( withSelectedResource ) {
 				c.gridx = 2; c.gridy = 1;

@@ -66,7 +66,7 @@ public class ChoiceItem extends AdminComponent {
 					localPanel.setBackground(LIGHTBACKGROUND);      
 				}
 			}
-			public void mousePressed(MouseEvent e) {if( active ) localPanel.setBackground(Color.ORANGE); }
+			public void mousePressed(MouseEvent e) {if( active ) localPanel.setBackground(new Color(255, 233, 181)); }
 			public void mouseReleased(MouseEvent e) {}
 			public void mouseEntered(MouseEvent e) {
 				if( active ) 

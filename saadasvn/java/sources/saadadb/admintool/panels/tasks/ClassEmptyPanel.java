@@ -42,7 +42,7 @@ public class ClassEmptyPanel extends ClassDropPanel {
 	}
 
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 

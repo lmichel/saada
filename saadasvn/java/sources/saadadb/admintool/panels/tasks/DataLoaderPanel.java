@@ -116,7 +116,8 @@ public class DataLoaderPanel extends TaskPanel {
 				}
 				runButton.activate();
 			}
-			treePathLabel.setText(dataTreePath.toString());
+			//treePathLabel.setText(dataTreePath.toString());
+			this.setTextTreePathPanel(dataTreePath);
 		}
 	}
 
@@ -125,7 +126,7 @@ public class DataLoaderPanel extends TaskPanel {
 	 * 
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, true, true, false));
 	}

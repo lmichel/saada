@@ -859,7 +859,7 @@ public class MappingKWPanel extends EditPanel {
 
 	@Override
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, true, true, false));
 	}

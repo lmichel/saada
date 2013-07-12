@@ -64,15 +64,15 @@ public  class ProcessPanel extends TaskPanel {
 	 * Tree path can only be set by the calling panel
 	 * @param dataTreePath
 	 */
-	public void setDataTreePathLabel(String dataTreePathLabel) {
+	/*public void setDataTreePathLabel(String dataTreePathLabel) {
 		treePathLabel.setText(dataTreePathLabel);
-	}
+	}*/
 
 	/**
 	 * 
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.initCurrentTaskLabel();
 		this.add(new ToolBarPanel(this, true, true, true));
