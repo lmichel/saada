@@ -149,7 +149,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 

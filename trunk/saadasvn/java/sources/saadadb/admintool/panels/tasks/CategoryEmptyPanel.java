@@ -65,7 +65,7 @@ public class CategoryEmptyPanel extends TaskPanel {
 	 * 
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));
 	}
 	
@@ -94,7 +94,8 @@ public class CategoryEmptyPanel extends TaskPanel {
 			}
 			else {
 				super.setDataTreePath(dataTreePath);
-				treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category);
+				//treePathLabel.setText(dataTreePath.collection + "." + dataTreePath.category);
+				this.setTextTreePathPanel(dataTreePath);
 				MetaCollection mc;
 				try {
 					mc = Database.getCachemeta().getCollection(dataTreePath.collection);

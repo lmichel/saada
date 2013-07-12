@@ -1,7 +1,9 @@
 package saadadb.admintool.panels;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,7 +17,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ComponentTitledBorder;
+import saadadb.util.Messenger;
 
 /**
  * Super class of all panels showing a set of functions as clickable icons.
@@ -50,7 +54,8 @@ public abstract class ChoicePanel extends AdminPanel {
 		JLabel tl = getTitleLabel(" " + title + " ");
 		tl.setOpaque(true);
 		tl.setBorder(BorderFactory.createLineBorder(Color.black));
-		tl.setBackground(Color.ORANGE);
+		Color tl_color = new Color(255, 233, 181);
+		tl.setBackground(tl_color);
 		this.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		//tPanel.setBackground(Color.RED);
 		GridBagConstraints c = new GridBagConstraints();
@@ -60,17 +65,19 @@ public abstract class ChoicePanel extends AdminPanel {
 		c.gridwidth = 1; c.gridheight = 2;
 		c.weightx = 0; c.weighty = 1;
 		c.anchor = GridBagConstraints.SOUTH;
-		if( ! title.equals(ROOT_PANEL)) {
 
-			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
-			jb.setPreferredSize(new Dimension(60, 40));
-			jb.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					rootFrame.activePanel(ancestor);				
-				}});
-			tPanel.add(jb, c);
-			c.gridx++;
-		}
+		jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
+		jb.setPreferredSize(new Dimension(60, 40));
+		jb.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				rootFrame.activePanel(ancestor);				
+			}});
+		tPanel.add(jb, c);
+		c.gridx++;
+		if(title.equals(ROOT_PANEL))
+			jb.setEnabled(false);
+		else
+			jb.setEnabled(true);
 
 		if( c != null || ! ancestor.equals(ROOT_PANEL)) {
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
@@ -88,8 +95,12 @@ public abstract class ChoicePanel extends AdminPanel {
 		c.gridwidth = 2; c.gridheight = 1;
 		c.weightx = 0.8; c.weighty = 1;
 		c.anchor = GridBagConstraints.LINE_START;
-		if( treePathLabel == null ) treePathLabel = getSubTitleLabel("TreePath");
-		tPanel.add(treePathLabel, c);
+		/*if( treePathLabel == null ) treePathLabel = getSubTitleLabel("");
+		tPanel.add(treePathLabel, c);*/
+		this.initTreePathPanel();
+		treePathPanel = this.getTreePathPanel();
+		treePathPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
+		tPanel.add(treePathPanel, c);
 
 		c.gridx = 2; c.gridy = 1;
 		c.gridwidth = 1; c.gridheight = 1;

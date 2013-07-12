@@ -289,6 +289,13 @@ public abstract class AdminComponent extends JPanel {
 		retour.setFont(titleFont);		
 		return retour;
 	}
+	
+	public final static JLabel setTitleLabelProperties(JLabel lbl) {
+		lbl.setBackground(Color.white);
+		lbl.setFont(titleFont);		
+		return lbl;
+	}
+	
 	/**
 	 * @param txt
 	 * @return
@@ -299,6 +306,13 @@ public abstract class AdminComponent extends JPanel {
 		retour.setFont(subtTitleFont);		
 		return retour;
 	}
+	
+	public final static JLabel setSubTitleLabelProperties(JLabel lbl) {
+		lbl.setBackground(Color.white);
+		lbl.setFont(subtTitleFont);		
+		return lbl;
+	}
+	
 
 	/**
 	 * @param txt

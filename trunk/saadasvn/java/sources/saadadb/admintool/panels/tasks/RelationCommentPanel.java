@@ -94,7 +94,7 @@ public class RelationCommentPanel extends RelationDropPanel {
 	 * @see saadadb.admintool.panels.TaskPanel#setToolBar()
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, true, true, false));
 	}

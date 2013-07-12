@@ -2,6 +2,7 @@ package saadadb.admintool.panels.tasks;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadEmptyCollection;
+import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 
@@ -26,6 +27,11 @@ public class CollEmptyPanel extends CollDropPanel {
 
 	public void initCmdThread() {
 		cmdThread = new ThreadEmptyCollection(rootFrame, EMPTY_COLLECTION);
+	}
+	
+	protected void setToolBar() {
+		this.initTreePathPanel();
+		this.add(new ToolBarPanel(this, true, false, false));
 	}
 
 	protected void setHelpKey() {

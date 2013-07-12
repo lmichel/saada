@@ -180,7 +180,7 @@ public class SQLIndexPanel extends TaskPanel {
 
 	@Override
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.add(new ToolBarPanel(this, true, false, false));		
 	}
 	

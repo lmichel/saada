@@ -83,7 +83,8 @@ public class FilterSelectorPanel extends EditPanel {
 			} catch (FatalException e) {
 				Messenger.trapFatalException(e);
 			}
-			treePathLabel.setText(dataTreePath.toString());
+			//treePathLabel.setText(dataTreePath.toString());
+			this.setTextTreePathPanel(dataTreePath);
 		}
 	}
 
@@ -92,7 +93,7 @@ public class FilterSelectorPanel extends EditPanel {
 	 * 
 	 */
 	protected void setToolBar() {
-		this.initTreePathLabel();
+		this.initTreePathPanel();
 		this.initSelectResourceLabel();
 		this.add(new ToolBarPanel(this, true, true, false));
 	}
