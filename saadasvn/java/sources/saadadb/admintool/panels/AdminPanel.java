@@ -64,6 +64,8 @@ public abstract class AdminPanel extends AdminComponent {
 		treePathPanel.add(classe);
 		classe = AdminComponent.setSubTitleLabelProperties(classe);
 		classe.setVisible(false);
+		
+		setForegroundtreePathPanel(NEW_HEADER);
 		//this.initTreePathLabel();
 	}
 	
@@ -125,6 +127,7 @@ public abstract class AdminPanel extends AdminComponent {
 
 	public void initSelectResourceLabel() {
 		selectResourceLabel = AdminComponent.getSubTitleLabel("");
+		selectResourceLabel.setForeground(NEW_HEADER);
 	}
 
 	public JLabel getCurrentTaskLabel() {
@@ -133,6 +136,7 @@ public abstract class AdminPanel extends AdminComponent {
 
 	public void initCurrentTaskLabel() {
 		currentTaskLabel = AdminComponent.getSubTitleLabel("No task");
+		currentTaskLabel.setForeground(NEW_HEADER);
 	}
 	
 	/**
@@ -313,7 +317,7 @@ public abstract class AdminPanel extends AdminComponent {
 				this.initTreePathPanel();
 			}
 			this.setTextTreePathPanel(dataTreePath);
-			highlightDataTreePath();
+			//highlightDataTreePath();
 		}
 	}
 	/**
@@ -330,16 +334,16 @@ public abstract class AdminPanel extends AdminComponent {
 		super.setSelectedResource(label, explanation);
 		if( selectResourceLabel != null ) {
 			selectResourceLabel.setText(selectedResource);
-			if( selectedResource.length() > 0)
-				highlightSelectResource();
+			//if( selectedResource.length() > 0)
+				//highlightSelectResource();
 		}
 	}
 	public void setCurrentTask(String currentTask) {	
 		super.setCurrentTask(currentTask);
 		if( currentTaskLabel != null ) {
 			currentTaskLabel.setText(currentTask);
-			if( currentTask.length() > 0)
-				highlightCurrentTask();
+			//if( currentTask.length() > 0)
+				//highlightCurrentTask();
 		}
 	}
 
