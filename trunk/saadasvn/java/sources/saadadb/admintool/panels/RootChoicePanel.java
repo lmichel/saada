@@ -63,7 +63,7 @@ public class RootChoicePanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		exploreData = new ChoiceItem(rootFrame, tPanel, c
-				, "Explore Data", "icons/Filter.png"
+				, "Explore Data", "icons/ExploreData.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EXPLORE_DATA);}});
 		exploreData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EXPLORE_DATA));

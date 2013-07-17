@@ -142,7 +142,6 @@ public class ProductManager extends EntityManager {
 			this.oids.add(oid);
 
 		}
-		Messenger.printMsg(Messenger.DEBUG, "Test : " + this.oids.get(0));
 		removeProducts();				
 	}
 

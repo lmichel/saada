@@ -72,7 +72,6 @@ public class ThreadDeleteProduct extends CmdThread {
 				oids_to_remove[cpt] = Long.parseLong(dataTableEditor.getProductTable().getValueAt(i, 0).toString());
 				cpt++;
 			}
-			Messenger.printMsg(Messenger.DEBUG, "Test : " + oids_to_remove[0]);
 			saada_process = new ProductManager();
 			SQLTable.beginTransaction();
 			((ProductManager)saada_process).removeProducts(oids_to_remove);
