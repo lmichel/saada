@@ -15,6 +15,7 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
@@ -172,15 +173,48 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		this.createTree();
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-		// Use for selection of node
+		// Use for selection of node (not used for DragAndDropPanel like Create relation, etc..)
 		tree.addTreeSelectionListener(new TreeSelectionListener() 
 		{
 		    public void valueChanged(TreeSelectionEvent e) 
 		    {
-		    	previouslyClickedTreePath = clickedTreePath;
-				clickedTreePath = e.getPath();
-		    	processNodeChanged();
+		    	String activeTitle = MetaDataPanel.this.frame.getActivePanel().title;
+		    	boolean isNotDragAndDropPanel = (activeTitle.compareTo(AdminComponent.CREATE_RELATION)!=0 
+						&& activeTitle.compareTo(AdminComponent.SIA_PUBLISH)!=0
+						&& activeTitle.compareTo(AdminComponent.SSA_PUBLISH)!=0 
+						&& activeTitle.compareTo(AdminComponent.CONESEARCH_PUBLISH)!=0 
+						&& activeTitle.compareTo(AdminComponent.TAP_PUBLISH)!=0);
+				if (MetaDataPanel.this.frame.getActivePanel()==null || isNotDragAndDropPanel)
+				{
+			    	previouslyClickedTreePath = clickedTreePath;
+					clickedTreePath = e.getPath();
+			    	processNodeChanged();
+				}
 		    }
+		});
+		
+		// This is only use for DragAndDrop Panel to let them drag and drop without TreePathChanged
+		tree.addMouseListener(new MouseAdapter() 
+		{
+			@Override
+			public void mouseReleased(MouseEvent e) 
+			{
+				String activeTitle = MetaDataPanel.this.frame.getActivePanel().title;
+				boolean isDragAndDropPanel = (activeTitle.compareTo(AdminComponent.CREATE_RELATION)==0 
+						|| activeTitle.compareTo(AdminComponent.SIA_PUBLISH)==0
+						|| activeTitle.compareTo(AdminComponent.SSA_PUBLISH)==0 
+						|| activeTitle.compareTo(AdminComponent.CONESEARCH_PUBLISH)==0 
+						|| activeTitle.compareTo(AdminComponent.TAP_PUBLISH)==0);
+				if (MetaDataPanel.this.frame.getActivePanel()!=null && isDragAndDropPanel)
+				{
+			    	if (tree.getPathForLocation(e.getX(), e.getY())!=null)
+			    	{
+				    	previouslyClickedTreePath = clickedTreePath;
+				    	clickedTreePath = tree.getPathForLocation(e.getX(), e.getY());
+				    	processNodeChanged();
+			    	}
+				}
+			}
 		});
 		
 		// Use for doubleclick
@@ -190,7 +224,8 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			public void mousePressed(MouseEvent e) {
 				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
 
-			}
+
+			} 	dragGestureRecognized
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				previouslyClickedTreePath = clickedTreePath;
@@ -281,7 +316,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		 */
 		if( category != Category.FLATFILE ) {    	
 			/*
-			 * Loop on classes
+			 * Loop on classespanelTitle
 			 */    	
 			for( int cl=0 ; cl<classes.length ; cl++ ) {
 				model.insertNodeInto(new DefaultMutableTreeNode(classes[cl]), categoryNode, categoryNode.getChildCount());
@@ -518,14 +553,15 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	 * (non-Javadoc)
 	 * @see java.awt.dnd.DragGestureListener#dragGestureRecognized(java.awt.dnd.DragGestureEvent)
 	 */
+
 	public void dragGestureRecognized(DragGestureEvent dge) {
+
 		Point location = dge.getDragOrigin();
 		TreePath dragPath = tree.getPathForLocation(location.x, location.y);            
 		if (dragPath != null && tree.isPathSelected(dragPath)) {
 			Transferable transferable = new TreePathTransferable(dragPath);
 			dge.startDrag(DragSource.DefaultMoveDrop, transferable, this);
 		}
-
 	}
 
 	public void dragDropEnd(DragSourceDropEvent dsde) {

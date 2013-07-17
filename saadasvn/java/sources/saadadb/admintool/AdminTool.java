@@ -333,7 +333,6 @@ public class AdminTool extends BaseFrame {
 		} else 	if( panelTitle.equals(AdminComponent.LOAD_DATA) ) {
 			if( loadDataPanel == null ) {
 				loadDataPanel = new LoadDataPanel(this, AdminComponent.ROOT_PANEL);
-				Messenger.printMsg(Messenger.DEBUG, "@@@@@ coucou");
 			}
 			activePanel = loadDataPanel;
 		} else 	if( panelTitle.equals(AdminComponent.VO_PUBLISH) ) {
@@ -542,7 +541,6 @@ public class AdminTool extends BaseFrame {
 			if( activePanel.getTreePathPanel() != null )
 				try 
 				{
-					Messenger.printMsg(Messenger.DEBUG, "@@@@@@AdminTool setTextTreePathPanel 1 : " + new DataTreePath(metaDataTree.getClickedTreePath()));
 					processPanel.setTextTreePathPanel(new DataTreePath(metaDataTree.getClickedTreePath()));
 					//processPanel.setDataTreePathPanel(new DataTreePath(this.metaDataTree.getClickedTreePath()));
 				} 
@@ -622,7 +620,6 @@ public class AdminTool extends BaseFrame {
 			//processPanel.setDataTreePathLabel(dataTreePath.toString());
 			try 
 			{
-				Messenger.printMsg(Messenger.DEBUG, "@@@@@@AdminTool setTextTreePathPanel 2 : " + new DataTreePath(metaDataTree.getClickedTreePath()));
 				processPanel.setTextTreePathPanel(new DataTreePath(metaDataTree.getClickedTreePath()));
 				//processPanel.setDataTreePathPanel(new DataTreePath(metaDataTree.getClickedTreePath()));
 			} 
