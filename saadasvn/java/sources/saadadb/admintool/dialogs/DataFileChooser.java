@@ -1,5 +1,6 @@
 package saadadb.admintool.dialogs;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,9 +12,12 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeSet;
+import java.util.Vector;
 
-import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -24,6 +28,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.plaf.metal.MetalIconFactory;
+
+import org.jdesktop.swingx.JXTitledPanel;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;
@@ -50,25 +57,27 @@ public class DataFileChooser extends JDialog {
 	private JList directories = new JList();
 	private JList files = new JList();
 	private JButton accept = new JButton("Load Files");
-	private JButton cancel = new JButton("cancel");
+	private JButton cancel = new JButton("Cancel");
+	
+	private JXTitledPanel titleDirectory, titleFile;
 
 	private static String current_dir = null;;
-	private JLabel currentDirLabel = AdminComponent.getPlainLabel(current_dir);
+	private JDirectoryPathComboBox currentDirComboBox;
 	private boolean full_directory = true;
 
 	public DataFileChooser(TaskPanel taskPanel, ArrayList<String> file_list) {
 		super(((taskPanel != null)?taskPanel.getRootFrame(): null), true);
 		if( current_dir == null ) {
 			current_dir = (new File(Database.getRoot_dir())).getParent();
-			currentDirLabel = AdminComponent.getPlainLabel(current_dir);
 		}
 		this.setResizable(false);
 		this.setLayout(new GridBagLayout());	
 		this.setTitle("Input Data Files Selector");
 		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(5,3,5,3);
+		
 		c.gridx = 0;
 		c.gridy = 0;	
-		c.insets = new Insets(5,3,5,3);
 		c.anchor = GridBagConstraints.LINE_END;
 		this.add(new JLabel("New Filename Mask (Reg Exp) "), c);
 
@@ -116,21 +125,30 @@ public class DataFileChooser extends JDialog {
 		c.gridwidth = 4;	
 		c.gridy = 4;
 		c.anchor = GridBagConstraints.LINE_START;
-		this.add(currentDirLabel, c);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		currentDirComboBox = new JDirectoryPathComboBox(current_dir);
+		currentDirComboBox.setRenderer(new DirectoryPathRenderer());	
+		JScrollPane jcdc = new JScrollPane(currentDirComboBox);
+		this.add(jcdc, c);
+		//this.add(currentDirLabel, c);
 
 		c.gridx = 0;
 		c.gridy = 5;	
 		c.gridwidth = 3;	
 		c.fill  = GridBagConstraints.BOTH;
-		directories.setBorder(BorderFactory.createTitledBorder("Directories"));
-		directories.setVisibleRowCount(10);
+		
+		
+		directories.setVisibleRowCount(12);
 		JScrollPane jsp1 = new JScrollPane(directories);
-		files.setBorder(BorderFactory.createTitledBorder("Data Files"));
-		files.setVisibleRowCount(10);
+		titleDirectory = new JXTitledPanel("Directories", jsp1);
+		
+		files.setVisibleRowCount(12);
 		JScrollPane jsp2 = new JScrollPane(files);
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, jsp1, jsp2);		
+		titleFile = new JXTitledPanel("Data Files", jsp2);
+		
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, titleDirectory, titleFile);		
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(150);
+		splitPane.setDividerLocation(160);
 		this.add(splitPane, c);
 
 		c.fill  = GridBagConstraints.NONE;
@@ -149,7 +167,6 @@ public class DataFileChooser extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(taskPanel);
 		this.setVisible(true);			
-
 	}
 
 	/**
@@ -172,11 +189,12 @@ public class DataFileChooser extends JDialog {
 					 * User filter has priority on pre-set filters
 					 */
 					if( mask.getText().trim().length() > 0 ) {
-						setDirectory(directories.getSelectedValue().toString(), mask.getText());						
+						setDirectory(directories.getSelectedValue().toString(), mask.getText(), false);						
 					}
 					else {
-						setDirectory(directories.getSelectedValue().toString(), combo_mask.getSelectedItem().toString());
+						setDirectory(directories.getSelectedValue().toString(), combo_mask.getSelectedItem().toString(), false);
 					}
+					currentDirComboBox.updateCurrentDir(current_dir);
 				}
 			}
 		});
@@ -187,7 +205,7 @@ public class DataFileChooser extends JDialog {
 		combo_mask.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mask.setText("");
-				setDirectory(".", combo_mask.getSelectedItem().toString());
+				setDirectory(".", combo_mask.getSelectedItem().toString(), false);
 			}			
 		});
 		/*
@@ -213,7 +231,7 @@ public class DataFileChooser extends JDialog {
 					//					dcbm.addElement(mask.getText());
 					//					dcbm.setSelectedItem(mask.getText());
 				}
-				setDirectory(".", mask.getText());
+				setDirectory(".", mask.getText(), false);
 			}
 
 		});		
@@ -238,7 +256,7 @@ public class DataFileChooser extends JDialog {
 					}
 				}
 				files.setModel(new_model);
-				files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
+				titleFile.setTitle(cpt + (cpt>1?" Data Files":" Data File"));
 				full_directory = false;
 			}
 
@@ -264,7 +282,7 @@ public class DataFileChooser extends JDialog {
 					}
 				}
 				files.setModel(new_model);
-				files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
+				titleFile.setTitle(cpt + (cpt>1?" Data Files":" Data File"));
 				full_directory = false;
 			}
 
@@ -312,14 +330,45 @@ public class DataFileChooser extends JDialog {
 				setVisible(false);				
 			}			
 		});
-		setDirectory(".", ".*");
+		
+		currentDirComboBox.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				int selectedIndex = currentDirComboBox.getSelectedIndex();
+				if (selectedIndex != -1)
+				{
+					String hiddenItem = currentDirComboBox.hiddenList.get(selectedIndex);
+					/* The method isReallyChanged is really important and must stay here because it enables not 
+					 * to trigger actionPerformed event triggered by setModel and setSelectedIndex from the 
+					 * updateCurrentDir method. If removed, the behavior of the widget isn't safe.
+					 */
+					if (currentDirComboBox.isReallyChanged()) // only true when the user really really changes the selected value
+					{
+						if( mask.getText().trim().length() > 0 ) 
+						{
+							setDirectory(hiddenItem, mask.getText(), true);						
+						}
+						else {
+							setDirectory(hiddenItem, combo_mask.getSelectedItem().toString(), true);
+						}
+						currentDirComboBox.updateCurrentDir(current_dir);
+					}
+					
+				}
+			}
+		});
+		setDirectory(".", ".*", false);
+
 	}
 
 	/**
 	 * Update both directories and file lists with the new directory;
 	 * @param new_dir
 	 */
-	private void setDirectory(String new_dir, String filter) {
+	private void setDirectory(String new_dir, String filter, boolean isAbsolutePath) {
+		//Messenger.printMsg(Messenger.DEBUG, "setDirectory : " + new_dir + " - Current_dir : " + current_dir);
 		File dir = null;
 		boolean isRoot = false;
 		DefaultListModel ddlm = new DefaultListModel();
@@ -333,16 +382,26 @@ public class DataFileChooser extends JDialog {
 			}
 		}
 		//ddlm.addElement(".");
-		if( !isRoot) {
-			if( new_dir.equals("..")) {
-				dir = (new File(current_dir)).getParentFile();
-			} else if( new_dir.equals(".")) {
-				dir = new File(current_dir + System.getProperty("file.separator"));
-			} else {
-				dir = new File(current_dir + System.getProperty("file.separator") + new_dir);				
+		if (isAbsolutePath)
+		{
+			dir = new File(new_dir);
+		}
+		else
+		{
+			if( !isRoot) 
+			{
+				if( new_dir.equals("..")) {
+					dir = (new File(current_dir)).getParentFile();
+				} else if( new_dir.equals(".")) {
+					dir = new File(current_dir + System.getProperty("file.separator"));
+				} else {
+					dir = new File(current_dir + System.getProperty("file.separator") + new_dir);				
+				}
 			}
 		}
+
 		current_dir = dir.getAbsolutePath();
+		
 		isRoot = false;
 		for( File f: File.listRoots() ) {
 			if( current_dir.equals(f.getAbsolutePath()) ) {
@@ -418,9 +477,8 @@ public class DataFileChooser extends JDialog {
 		 */
 		if( fdlm.getSize() == 0 ) fdlm.addElement("");
 		files.setModel(fdlm);
-		files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
-		//directories.setBorder(BorderFactory.createTitledBorder(current_dir));
-		currentDirLabel.setText(current_dir);
+		titleFile.setTitle(cpt + (cpt>1?" Data Files":" Data File"));
+
 		/*
 		 * All files contained in the directory are considered as selected while the user didn't make its own selection.
 		 */
@@ -436,7 +494,7 @@ public class DataFileChooser extends JDialog {
 				cpt++;
 			}
 			files.setModel(fdlm);
-			files.setBorder(BorderFactory.createTitledBorder( cpt + " Data File(s)"));
+			titleFile.setTitle(cpt + (cpt>1?" Data Files":" Data File"));
 		}
 	}
 	/**
@@ -505,14 +563,110 @@ public class DataFileChooser extends JDialog {
 			return retour;
 		}
 	}
+	
+	public class JDirectoryPathComboBox extends JComboBox
+	{
+		private DefaultComboBoxModel<String> cbm;
+		public Vector<String> displayList, hiddenList;
+		private boolean isReallyChanged = false;
+		
+		private JDirectoryPathComboBox()
+		{
+			super();
+			cbm = new DefaultComboBoxModel<String>();
+			displayList = new Vector<String>();
+			hiddenList = new Vector<String>();
+			this.setModel(cbm);
+		}
+		
+		public boolean isReallyChanged() 
+		{
+			return isReallyChanged;
+		}
+
+		public JDirectoryPathComboBox(String currentDir)
+		{
+			this();
+			this.updateCurrentDir(currentDir);
+		}
+		
+		public void updateCurrentDir(String currentDir)
+		{
+			isReallyChanged = false; // isReallyChanged is false because of setModel
+			displayList = new Vector<String>();
+			hiddenList = new Vector<String>();
+			String tmpDisplay = "", tmpHidden = "", spaceNumber = "";
+			
+			String[] tabDirectories = currentDir.split(Database.getSepar());
+			//Messenger.printMsg(Messenger.DEBUG, "updateCurrentDir : " + currentDir);
+			String test = "                                                                                                              -        ---                    ";
+			if (tabDirectories.length>0)
+			{
+				for (int i=0 ; i<tabDirectories.length ; i++)
+				{
+					tmpHidden += Database.getSepar() + tabDirectories[i];
+					tmpDisplay =  /*test + */spaceNumber + (i==0?"":Database.getSepar()) + tabDirectories[i] + Database.getSepar();
+					spaceNumber += "   ";
+					hiddenList.add(i, tmpHidden);
+					displayList.add(i, tmpDisplay);
+				}
+			}
+			else // Root case (at least for linux)
+			{
+				hiddenList.add(0, Database.getSepar()+"");
+				displayList.add(0, Database.getSepar()+"");
+			}
+			this.removeAllItems();
+			this.setModel(displayList);
+		}
+		
+		private void setModel(Vector<String> vector)
+		{
+			isReallyChanged = false; // isReallyChanged is false because of setSelectedIndex
+			for (String item : vector)
+			{
+				this.cbm.addElement(item);
+			}
+			this.setModel(cbm);
+			if (vector.size()>0)
+			{
+				this.setSelectedIndex(vector.size()-1);
+			}
+			isReallyChanged = true; // Now we can listen to the user action
+		}
+	}
+	
+	private class DirectoryPathRenderer extends DefaultListCellRenderer 
+	{
+		private static final long serialVersionUID = 1L;
+		
+		@Override
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) 
+		{
+           super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+           
+           if (index == -1) // The selected item that appears in the top cell of the component
+           {
+              Icon icon =  new MetalIconFactory.FolderIcon16();
+              this.setIcon(icon);
+        	  this.setText(" " + value.toString().trim());
+              return this;
+           }
+           this.setText(value.toString());
+           return this;
+        }
+	}
 
 	/**
 	 * @param args
 	 * @throws FatalException 
 	 */
-	public static void main(String[] args) throws FatalException {
+	public static void main(String[] args) throws FatalException 
+	{
 		Database.init((new ArgsParser(args)).getDBName());
 		DataFileChooser dfc = new DataFileChooser(null, null);
 		System.out.println(dfc.isFullDirectory() + " " + dfc.getCurrentDir() + " " + dfc.getSelectedDataFiles());
+		System.exit(1);
 	}
 }
