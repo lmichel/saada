@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -208,7 +209,9 @@ public class DataLoaderPanel extends TaskPanel {
 		 * Directory browser
 		 */
 		dirBrowser.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e) {				
+			public void actionPerformed(ActionEvent e) {	
+				JFileChooser test = new JFileChooser();
+				test.showOpenDialog(DataLoaderPanel.this);
 				DataFileChooser filechooser = new DataFileChooser(DataLoaderPanel.this, selectedFiles);										
 				DataLoaderPanel.this.directory.setText(filechooser.getCurrentDir());
 				selectedFiles = filechooser.getSelectedDataFiles();
