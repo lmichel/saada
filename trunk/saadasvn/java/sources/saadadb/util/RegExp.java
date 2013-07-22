@@ -159,7 +159,14 @@ public class RegExp {
 	public static final String GALACTIC_DEC_KW       = "(?i)(_glat)";
 
 	public static final String FIST_COOSYS_KW   = "(?i)(COO.*SYS|RADECSYS|SYSTEM)";
-
+	
+	/**
+	 * DataFileChooser Shortcuts
+	 */
+	public static final String SHORTCUT_DESKTOP = "(?i)^(bureau|desktop)$";
+	public static final String SHORTCUT_DOCUMENTS = "(?i)^documents?$";
+	public static final String SHORTCUT_DOWNLOADS = "(?i)^(downloads?|t.l.chargements?)$";
+	
 	
 	public static void main(String[] args) {
 		String ra = "__raj2000";

@@ -210,8 +210,6 @@ public class DataLoaderPanel extends TaskPanel {
 		 */
 		dirBrowser.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {	
-				JFileChooser test = new JFileChooser();
-				test.showOpenDialog(DataLoaderPanel.this);
 				DataFileChooser filechooser = new DataFileChooser(DataLoaderPanel.this, selectedFiles);										
 				DataLoaderPanel.this.directory.setText(filechooser.getCurrentDir());
 				selectedFiles = filechooser.getSelectedDataFiles();
