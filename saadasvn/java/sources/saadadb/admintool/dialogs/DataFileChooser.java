@@ -1,16 +1,23 @@
 package saadadb.admintool.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -24,10 +31,12 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.plaf.metal.MetalIconFactory;
 
 import org.jdesktop.swingx.JXTitledPanel;
@@ -38,6 +47,7 @@ import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 /**
@@ -75,69 +85,38 @@ public class DataFileChooser extends JDialog {
 		this.setTitle("Input Data Files Selector");
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5,3,5,3);
+	
+		c.gridx = 0;
+		c.gridwidth = 1;	
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.LINE_END;
+		this.add(new JLabel("Current folder : "), c);
 		
-		c.gridx = 0;
-		c.gridy = 0;	
-		c.anchor = GridBagConstraints.LINE_END;
-		this.add(new JLabel("New Filename Mask (Reg Exp) "), c);
-
 		c.gridx = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridwidth = 2;	
-		this.add(mask, c);
-
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 1;	
-		c.anchor = GridBagConstraints.LINE_END;
-		this.add(new JLabel("Filename Masks"),c);
-
-		c.gridx = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridwidth = 2;	
-		this.add(combo_mask, c);
-
-		c.gridx = 0;
-		c.gridy = 2;
-		c.gridwidth = 1;	
-		c.anchor = GridBagConstraints.LINE_END;
-		this.add(new JLabel("Data Files Selected from the List"),c);
-
-		c.gridx = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		this.add(purge, c);
-		c.anchor = GridBagConstraints.LINE_START;
-		c.gridx = 2;
-		this.add(keep, c);
-
-		c.gridx = 0;
-		c.gridy = 3;
-		c.gridwidth = 1;	
-		c.anchor = GridBagConstraints.LINE_END;
-		this.add(new JLabel("Data Files Preview"),c);
-
-		c.gridx = 1;
-		c.gridwidth = 2;	
-		c.anchor = GridBagConstraints.LINE_START;
-		this.add(open, c);
-
-		c.gridx = 0;
-		c.gridwidth = 4;	
-		c.gridy = 4;
+		c.gridwidth = 6;	
+		c.gridy = 0;
 		c.anchor = GridBagConstraints.LINE_START;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		currentDirComboBox = new JDirectoryPathComboBox(current_dir);
 		currentDirComboBox.setRenderer(new DirectoryPathRenderer());	
 		JScrollPane jcdc = new JScrollPane(currentDirComboBox);
 		this.add(jcdc, c);
-		//this.add(currentDirLabel, c);
 
+		// Shortcuts panel ands its components
 		c.gridx = 0;
-		c.gridy = 5;	
-		c.gridwidth = 3;	
+		c.gridy = 1;	
+		c.fill = GridBagConstraints.BOTH;
+		c.gridwidth = 1;
+		JShortcutsPanel shortcutsPanel = new JShortcutsPanel();
+		JScrollPane jscp = new JScrollPane(shortcutsPanel);
+		JXTitledPanel titleShortcuts = new JXTitledPanel("Shortcuts", jscp);
+		this.add(titleShortcuts, c);
+		
+		c.gridx = 1;
+		c.gridy = 1;	
+		c.gridwidth = 6;
+		c.anchor = GridBagConstraints.LINE_END;
 		c.fill  = GridBagConstraints.BOTH;
-		
-		
 		directories.setVisibleRowCount(12);
 		JScrollPane jsp1 = new JScrollPane(directories);
 		titleDirectory = new JXTitledPanel("Directories", jsp1);
@@ -148,18 +127,68 @@ public class DataFileChooser extends JDialog {
 		
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, titleDirectory, titleFile);		
 		splitPane.setOneTouchExpandable(true);
-		splitPane.setDividerLocation(160);
+		splitPane.setDividerLocation(170);
+		splitPane.setPreferredSize(new Dimension(400,220));
 		this.add(splitPane, c);
-
-		c.fill  = GridBagConstraints.NONE;
-		c.gridwidth = 1;	
+		
 		c.gridx = 1;
+		c.gridy = 2;	
+		c.gridwidth = 3;
+		c.anchor = GridBagConstraints.LINE_END;
+		this.add(new JLabel("New Filename Mask (Reg Exp) "), c);
+
+		c.gridx = 4;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.gridwidth = 2;	
+		this.add(mask, c);
+
+		c.gridx = 1;
+		c.gridy = 3;
+		c.gridwidth = 3;	
+		c.anchor = GridBagConstraints.LINE_END;
+		this.add(new JLabel("Filename Masks"),c);
+
+		c.gridx = 4;
+		c.anchor = GridBagConstraints.LINE_START;
+		c.gridwidth = 2;	
+		this.add(combo_mask, c);
+
+		c.gridx = 1;
+		c.gridy = 4;
+		c.gridwidth = 3;	
+		c.anchor = GridBagConstraints.LINE_END;
+		this.add(new JLabel("Data Files Selected from the List"),c);
+
+		c.gridx = 4;
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(purge, c);
+		c.anchor = GridBagConstraints.LINE_START;
+		c.gridx = 5;
+		this.add(keep, c);
+
+		c.gridx = 1;
+		c.gridy = 5;
+		c.gridwidth = 4;	
+		c.anchor = GridBagConstraints.LINE_END;
+		this.add(new JLabel("Data Files Preview"),c);
+
+		c.gridx = 4;
+		c.gridwidth = 2;	
+		c.anchor = GridBagConstraints.LINE_START;
+		this.add(open, c);
+
+		c.ipady = 5;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridwidth = 1;	
+		c.gridx = 6;
 		c.gridy = 6;	
 		c.anchor = GridBagConstraints.LINE_END;
 		this.add(accept, c);
-		c.gridx = 2;
-		c.gridy = 6;	
-		c.anchor = GridBagConstraints.LINE_START;
+		c.ipady = 0;
+		c.gridx = 6;
+		c.gridy = 7;	
+		c.anchor = GridBagConstraints.LINE_END;
 		this.add(cancel, c);
 
 		this.setBehavior();
@@ -598,14 +627,13 @@ public class DataFileChooser extends JDialog {
 			String tmpDisplay = "", tmpHidden = "", spaceNumber = "";
 			
 			String[] tabDirectories = currentDir.split(Database.getSepar());
-			//Messenger.printMsg(Messenger.DEBUG, "updateCurrentDir : " + currentDir);
 			String test = "                                                                                                              -        ---                    ";
 			if (tabDirectories.length>0)
 			{
 				for (int i=0 ; i<tabDirectories.length ; i++)
 				{
 					tmpHidden += Database.getSepar() + tabDirectories[i];
-					tmpDisplay =  /*test + */spaceNumber + (i==0?"":Database.getSepar()) + tabDirectories[i] + Database.getSepar();
+					tmpDisplay =  spaceNumber + (i==0&&tabDirectories[i].compareTo("")==0?"":Database.getSepar()) + tabDirectories[i] + Database.getSepar();
 					spaceNumber += "   ";
 					hiddenList.add(i, tmpHidden);
 					displayList.add(i, tmpDisplay);
@@ -656,6 +684,173 @@ public class DataFileChooser extends JDialog {
            this.setText(value.toString());
            return this;
         }
+	}
+	
+	public class JShortcutsPanel extends JPanel
+	{
+		public JShortcutsPanel()
+		{
+			super(new GridLayout(7,1));
+			this.initShortcuts();
+		}
+		
+		private void initShortcuts()
+		{
+			String installPath, desktopPath, documentsPath, homePath, rootPath, downloadsPath;
+			File currentFiletmp = null;
+			Icon currentIcontmp = null;
+			FileSystemView view = FileSystemView.getFileSystemView();
+			homePath = (String) System.getProperty("user.home");
+			
+			// Desktop path
+			desktopPath = this.getRegexPath(RegExp.SHORTCUT_DESKTOP);
+			currentFiletmp = new File(desktopPath);
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Desktop", currentIcontmp, desktopPath);
+				Messenger.printMsg(Messenger.DEBUG, "Added desktopPath : " + desktopPath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+			
+			// Documents path
+			documentsPath = this.getRegexPath(RegExp.SHORTCUT_DOCUMENTS);
+			currentFiletmp = new File(documentsPath);
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Documents", currentIcontmp, documentsPath);
+				Messenger.printMsg(Messenger.DEBUG, "Added documentsPath : " + documentsPath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+			
+			// Download Path
+			downloadsPath = this.getRegexPath(RegExp.SHORTCUT_DOWNLOADS);
+			currentFiletmp = new File(downloadsPath);
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Downloads", currentIcontmp, downloadsPath);
+				Messenger.printMsg(Messenger.DEBUG, "Added downloadsPath : " + downloadsPath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+			
+			// Home Path
+			currentFiletmp = new File(homePath);
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Home", currentIcontmp, homePath);
+				Messenger.printMsg(Messenger.DEBUG, "Added homePath : " + homePath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+			
+			// Install folder
+			String saadaRepository = Database.getRepository();
+			String saadaDB = Database.getRoot_dir();
+			installPath = this.getCommonFolders(saadaRepository, saadaDB);
+			//Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@\nsaadaRepository : " + saadaRepository + "\nsaadaDB : " + saadaDB + "\nLastCommonFolder : " + installPath);
+			currentFiletmp = new File(installPath);
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Install folder", currentIcontmp, installPath);
+				Messenger.printMsg(Messenger.DEBUG, "Added : saadaPath - " + installPath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+			
+			// Root path
+			currentFiletmp = File.listRoots()[0];
+			rootPath = currentFiletmp.getPath();
+			if (currentFiletmp.exists())
+			{
+				currentIcontmp = view.getSystemIcon(currentFiletmp);
+				this.addJLabelToList("Root", currentIcontmp, rootPath);
+				Messenger.printMsg(Messenger.DEBUG, "Added rootPath : " + rootPath);
+			}
+			currentFiletmp = null; currentIcontmp = null;
+		}
+		
+		private String getCommonFolders(String path1, String path2)
+		{
+			String lastCommonFolder = "";
+			int lastCommonIndex = -1;
+			boolean stop = false;
+			String[] tab1 = path1.split(Database.getSepar());
+			String[] tab2 = path2.split(Database.getSepar());
+			for (int i=0 ; i<tab1.length && !stop; i++)
+			{
+				for (int j=0 ; j<tab2.length && !stop; j++)
+				{
+					if (i==j) // We compare tab1[0] with tab2[0], after tab1[1]==tab2[1]..
+					{
+						if (tab1[i].compareTo(tab2[j])==0)
+							lastCommonIndex++;
+						else
+							stop = true;
+					}
+				}
+			}
+			if (lastCommonIndex==-1) // There is no common folder between path1 and path2
+				return lastCommonFolder;
+			// We create the common folders path
+			for (int i=0 ; i<=lastCommonIndex ; i++)
+				lastCommonFolder += tab1[i] + Database.getSepar();
+			return lastCommonFolder;
+		}
+		
+		private String getRegexPath(String regex)
+		{
+			String desktopPath = "", homePath = (String) System.getProperty("user.home");
+			File[] children = (new File(homePath)).listFiles();
+			boolean stop = false;
+			for (int i=0 ; i<children.length && !stop ; i++)
+			{
+				String[] folders = children[i].toString().split(Database.getSepar());
+				String toMatch = folders[folders.length-1];
+				if (toMatch.matches(regex))
+				{
+					//Messenger.printMsg(Messenger.DEBUG, "Match with : " + toMatch);
+					desktopPath = children[i].toString();
+					stop = true;
+				}
+			}
+			return desktopPath;
+		}
+		
+		private void addJLabelToList(String name, Icon icon, final String path)
+		{
+			JLabel lbl = new JLabel(name + " ");
+			if (icon==null) 
+			{
+				new MetalIconFactory();
+				lbl.setIcon(MetalIconFactory.getTreeFolderIcon());
+			} 
+			else
+				lbl.setIcon(icon);
+			lbl.setToolTipText(path);
+			lbl.addMouseListener(new MouseListener() 
+			{
+				@Override
+				public void mouseReleased(MouseEvent e) {}
+				@Override
+				public void mousePressed(MouseEvent e) {}
+				@Override
+				public void mouseExited(MouseEvent e) {}
+				@Override
+				public void mouseEntered(MouseEvent e) {}
+				@Override
+				public void mouseClicked(MouseEvent e) 
+				{
+					if( mask.getText().trim().length() > 0 ) 
+						setDirectory(path, mask.getText(), true);						
+					else
+						setDirectory(path, combo_mask.getSelectedItem().toString(), true);
+					currentDirComboBox.updateCurrentDir(current_dir);
+				}
+			});
+			this.add(lbl);
+		}
 	}
 
 	/**
