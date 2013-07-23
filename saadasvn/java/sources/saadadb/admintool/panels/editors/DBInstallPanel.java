@@ -66,7 +66,7 @@ public class DBInstallPanel extends EditPanel {
 				if( showConfirmDialog(rootFrame, "<HTML>You are going to move your SaadaDB" 
 						                                + "<BR>This operation must be done very carefully"
 						                                + "<BR>1- Change the installation dir from this panel"
-						                                + "<BR>2- Move the content of the directory" + Database.getRoot_dir() + " into the new directory"
+						                                + "<BR>2- Move the content : <BR>&nbsp&nbsp&nbsp From the directory : " + Database.getRoot_dir() + "<BR>&nbsp&nbsp&nbsp Into the new directory"
 						                                + "<BR>3- Rename NEW_INSTALL_DIR/bin/saadadb.properties.new as saadadb.properties"
 						                                + "<BR>4- Start saadmintool from the new location"
 						                                + "<BR>5- Update Tomcat params and the repository directory"
@@ -82,7 +82,7 @@ public class DBInstallPanel extends EditPanel {
 							String old_dir = Database.getRoot_dir();
 							showInfo(rootFrame, "<HTML>You have changed your SaadaDB installation directory" 
 	                                + "<BR>Dot now by hand the following operations"
-	                                + "<BR>1- Move the content of the directory" + old_dir + " into the directory " + new_name
+	                                + "<BR>1- Move the content : <BR>&nbsp&nbsp&nbsp From the directory : " + old_dir + "<BR>&nbsp&nbsp&nbsp Into the new directory : " + new_name
 	                                + "<BR>2- Rename " + new_name + Database.getSepar() + "bin " + Database.getSepar() + "saadadb.properties.new as saadadb.properties"
 	                                + "<BR>3- Start saadmintool from the new location"
 	                                + "<BR>4- Update Tomcat params and the repository directory"						                                
