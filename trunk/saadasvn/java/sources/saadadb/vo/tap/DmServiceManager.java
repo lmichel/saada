@@ -30,12 +30,16 @@ public class DmServiceManager extends EntityManager {
 
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.TRACE, "Create DM view " + vor.getName());
-		String className = ap.getCreate();
-		if( className == null ) {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"No class name given (param -create)");
-		}
+		Messenger.printMsg(Messenger.TRACE, "Create DM view " + ap.getCreate());
 		try {
+			name = ap.getCreate();
+			if( name == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"No class name given (param -create)");
+			}
+			vor = VOResource.getResource(name);
+			if( vor == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Mode " + name + " not found");
+			}
 			Table_Saada_VO_DMVIew.createTable(vor);		
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
@@ -44,8 +48,16 @@ public class DmServiceManager extends EntityManager {
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.TRACE, "Empty DM view " + vor.getName());
+		Messenger.printMsg(Messenger.TRACE, "Empty DM view " + ap.getCreate());
 		try {
+			name = ap.getEmpty();
+			if( name == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"No model name given (param -empty)");
+			}
+			vor = VOResource.getResource(name);
+			if( vor == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Mode " + name + " not found");
+			}
 			Table_Saada_VO_DMVIew.emptyTable(vor);
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
@@ -54,8 +66,16 @@ public class DmServiceManager extends EntityManager {
 
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.TRACE, "Drop DM view " + vor.getName());
+		Messenger.printMsg(Messenger.TRACE, "Drop DM view " + ap.getCreate());
 		try {
+			name = ap.getRemove();
+			if( name == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"No model name given (param -remove)");
+			}
+			vor = VOResource.getResource(name);
+			if( vor == null ) {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Mode " + name + " not found");
+			}
 			Table_Saada_VO_DMVIew.dropTable(vor);
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
@@ -65,7 +85,7 @@ public class DmServiceManager extends EntityManager {
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
 		String className = ap.getPopulate();
-		Messenger.printMsg(Messenger.TRACE, "Populate DM view " + vor.getName() + " with class " + className);
+		Messenger.printMsg(Messenger.TRACE, "Populate DM view " +ap.getCreate() + " with class " + className);
 		if( className == null ) {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"No class name given (param -populate)");
 		}
