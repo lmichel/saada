@@ -114,7 +114,7 @@
     <TD>Name of the creator of the data</TD>
     <TD>1</TD>
    </TR>
-<!-- Data description -->
+<!-- Curation -->
   <TR>
     <TD>Curation</TD>
     <TD>obs_publisher_did</TD>
@@ -252,9 +252,9 @@
     <TD>s_region</TD>
     <TD></TD>
     <TD>Char.SpatialAxis.Coverage.Support.Area</TD>
-    <TD>double</TD>
-    <TD>1</TD>
-    <TD>deg</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
     <TD>false</TD>
     <TD>null</TD>
     <TD>Region covered in STC or ADQL</TD>
