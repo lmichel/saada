@@ -737,7 +737,7 @@
    </TR>
    <TR>
     <TD>Access</TD>
-    <TD>removed_</TD>
+    <TD>removed</TD>
     <TD></TD>
     <TD>removed</TD>
     <TD>char</TD>
@@ -746,6 +746,19 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Name of telescope</TD>
+    <TD>1</TD>
+   </TR>
+   <TR>
+    <TD>Access</TD>
+    <TD>DataLink</TD>
+    <TD></TD>
+    <TD>DataLink</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>DataLink Anchor</TD>
     <TD>1</TD>
    </TR>
   </TABLEDATA>
