@@ -25,6 +25,8 @@ public class DmServiceManager extends EntityManager {
 		super(vor.getName());
 		this.vor = vor;
 	}
+	public DmServiceManager() {
+	}
 
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {

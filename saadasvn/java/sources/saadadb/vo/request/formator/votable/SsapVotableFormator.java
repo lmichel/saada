@@ -56,7 +56,7 @@ public class SsapVotableFormator extends VotableFormator {
 				/*
 				 * Just to be overridden for XMM
 				 */
-				val = "";
+				//val = "";
 			}
 			else if( utype.endsWith("Char.SpectralAxis.Coverage.Location.Value")) {
 				try {
@@ -95,7 +95,7 @@ public class SsapVotableFormator extends VotableFormator {
 				val = obj.getMimeType();
 				cdata = true;
 			}
-			else if( utype.equals("DataID.Title")) {
+			else if( utype.endsWith("DataID.Title")) {
 				val = obj.getNameSaada();
 				cdata = true;
 			}
@@ -113,6 +113,10 @@ public class SsapVotableFormator extends VotableFormator {
 					val = (v.toString());						
 				}
 			}
+			if( obj.getClass().getName().endsWith("EpicSrcSpect")  ){
+					String vxmm = getXMMData(utype, obj);
+					if( vxmm != null ) val = vxmm;
+				}
 			if( cdata ) {
 				addCDataTD(val);
 			}
@@ -193,71 +197,71 @@ public class SsapVotableFormator extends VotableFormator {
 		if( utype.equals("Target.Name")) {
 			return sp.getNameSaada();
 		}
-		else if( utype.equals("Curation.PublisherDID") || utype.equals("DataID.DatasetID") ) {
+		else if( utype.endsWith("Curation.PublisherDID") || utype.endsWith("DataID.DatasetID") ) {
 			return "ivo://xcatdb/2xmmi/epicssa#" + (new File(sp.getProduct_url_csa())).getName();
 		}
-		else if( utype.equals("CoordSys.SpectralFrame.RefPos") ) {
+		else if( utype.endsWith("CoordSys.SpectralFrame.RefPos") ) {
 			return sp.getFieldValue("_tlmin1").toString();
 		}
-		else if( utype.equals("CoordSys.TimeFrame.Name") ) {
+		else if( utype.endsWith("CoordSys.TimeFrame.Name") ) {
 			return sp.getFieldValue("SSA_TIMESYS").toString();
 		}
-		else if( utype.equals("CoordSys.TimeFrame.RefPos") ) {
+		else if( utype.endsWith("CoordSys.TimeFrame.RefPos") ) {
 			return sp.getFieldValue("SSA_TIMEREF").toString();
 		}
-		else if( utype.equals("CoordSys.TimeFrame.Zero") ) {
+		else if( utype.endsWith("CoordSys.TimeFrame.Zero") ) {
 			return sp.getFieldValue("SSA_MJDREF").toString();
 		}
-		else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value") ) {
+		else if( utype.endsWith("Char.SpatialAxis.Coverage.Location.Value") ) {
 			return sp.getFieldValue("SSA_SPAT_LOC").toString();
 		}
-		else if( utype.equals("Char.SpatialAxis.Coverage.Bounds.Extent") ) {
+		else if( utype.endsWith("Char.SpatialAxis.Coverage.Bounds.Extent") ) {
 			double v1 = 2.0*Double.parseDouble(sp.getFieldValue("SSA_SPAT_EXT").toString());
 			return "" + v1;
 		}
-		else if( utype.equals("Char.SpatialAxis.Coverage.Support.Area") ) {
+		else if( utype.endsWith("Char.SpatialAxis.Coverage.Support.Area") ) {
 			double v1 = Double.parseDouble(sp.getFieldValue("SSA_SPAT_EXT").toString());
 			return "Circle with (center, radius) = ("  + sp.getFieldValue("SSA_SPAT_LOC").toString() + " " + v1 + ")";
 		}
-		else if( utype.equals("Char.SpatialAxis.SamplingPrecision.SampleExtent") ) {
+		else if( utype.endsWith("Char.SpatialAxis.SamplingPrecision.SampleExtent") ) {
 			return sp.getFieldValue("SSA_SPAT_SAMPEXT").toString();
 		}
-		else if( utype.equals("Char.SpectralAxis.Coverage.Location.Value") ) {
+		else if( utype.endsWith("Char.SpectralAxis.Coverage.Location.Value") ) {
 			double v1 = Double.parseDouble(sp.getFieldValueByUtype("Char.SpectralAxis.Coverage.Bounds.Start", true).toString());
 			double v2 = Double.parseDouble(sp.getFieldValueByUtype("Char.SpectralAxis.Coverage.Bounds.Stop", true).toString());
 			return Double.toString((v1 + v2)/2);
 		}
-		else if( utype.equals("Char.SpectralAxis.Coverage.Bounds.Extent") ) {
+		else if( utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Extent") ) {
 			double v1 = Double.parseDouble(sp.getFieldValueByUtype("Char.SpectralAxis.Coverage.Bounds.Start", true).toString());
 			double v2 = Double.parseDouble(sp.getFieldValueByUtype("Char.SpectralAxis.Coverage.Bounds.Stop", true).toString());
 			return Double.toString(v2 - v1 + 1);
 		}
-		else if( utype.equals("Char.TimeAxis.Unit") ) {
+		else if( utype.endsWith("Char.TimeAxis.Unit") ) {
 			return sp.getFieldValue("SSA_TIMEUNIT").toString();
 		}
-		else if( utype.equals("Char.TimeAxis.Coverage.Location.Value") ) {
+		else if( utype.endsWith("Char.TimeAxis.Coverage.Location.Value") ) {
 			double v1 = Double.parseDouble(sp.getFieldValue("SSA_MJDREF").toString());
 			double v2 = Double.parseDouble(sp.getFieldValue("SSA_TIMESTART").toString());
 			double v3 = Double.parseDouble(sp.getFieldValue("SSA_TIMESTOP").toString());
 			return Double.toString(v1 + (0.5*(v2 + v3)/86400));
 		}
-		else if( utype.equals("Char.TimeAxis.Coverage.Bounds.Extent") ) {
+		else if( utype.endsWith("Char.TimeAxis.Coverage.Bounds.Extent") ) {
 			return sp.getFieldValue("SSA_DURATION").toString();
 		}
-		else if( utype.equals("Char.TimeAxis.Coverage.Bounds.Start") ) {
+		else if( utype.endsWith("Char.TimeAxis.Coverage.Bounds.Start") ) {
 			double v1 = Double.parseDouble(sp.getFieldValue("SSA_MJDREF").toString());
 			double v2 = Double.parseDouble(sp.getFieldValue("SSA_TIMESTART").toString());
 			return Double.toString(v1 + ((v2)/86400));
 		}
-		else if( utype.equals("Char.TimeAxis.Coverage.Bounds.Stop") ) {
+		else if( utype.endsWith("Char.TimeAxis.Coverage.Bounds.Stop") ) {
 			double v1 = Double.parseDouble(sp.getFieldValue("SSA_MJDREF").toString());
 			double v2 = Double.parseDouble(sp.getFieldValue("SSA_TIMESTOP").toString());
 			return Double.toString(v1 + ((v2)/86400));
 		}
-		else if( utype.equals("Char.TimeAxis.Coverage.Support.Extent") ) {
+		else if( utype.endsWith("Char.TimeAxis.Coverage.Support.Extent") ) {
 			return sp.getFieldValue("_exposure").toString();
 		}
-		else if( utype.equals("Char.TimeAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor") ) {
+		else if( utype.endsWith("Char.TimeAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor") ) {
 			double v = Double.parseDouble(sp.getFieldValue("_exposure").toString());
 			return Double.toString(v/Double.parseDouble(sp.getFieldValue("SSA_DURATION").toString()));
 		}

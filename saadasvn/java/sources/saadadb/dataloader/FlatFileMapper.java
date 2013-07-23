@@ -68,32 +68,34 @@ public class FlatFileMapper extends SchemaMapper {
 				si.setOid(oid++);
 				ffp.bindInstanceToFile(si, file);
 				ffp.storeCopyFileInRepository();
-
-				String file_sql = "" ;
+				StringBuffer file_sql = new StringBuffer();
 				for( AttributeHandler ah: it) {
 					Field field = cls.getField(ah.getNameattr());
 					String val = si.getSQL(field).replaceAll("'", "");
 					if( file_sql.length() > 0 ) {
-						file_sql += "\t";
+						file_sql.append("\t");
 					}
 					if( val.equals("null") ) {
-						file_sql += Database.getWrapper().getAsciiNull();	
+						file_sql.append(Database.getWrapper().getAsciiNull());	
 					}
-//					else if( field.getType().toString().equals("char") || field.getType().toString().equals("String") ) {
-//						file_sql += val.replaceAll("'", "");
-//					}
 					else {
-						file_sql += val;					
+						file_sql.append(val);					
 					}
 				}
-				file_sql += "\n";
-				bustmpfile.write(file_sql);
+				file_sql.append("\n");
+				
+				bustmpfile.write(file_sql.toString());
 				line++;
 				if( (line%100) == 0 ) {
 					Messenger.printMsg(Messenger.TRACE,
 							" <" + line + "/" + this.products.size()
 							+ "> : Flatfiles loaded ");
-					if( (line % 5000) == 0 ) {
+					if( (line % 15000) == 0 ) {
+						/*
+						 * Commit the storage of loaded files in 'able Saada_Loaded_File
+						 */
+						SQLTable.commitTransaction();
+						SQLTable.beginTransaction();
 						System.gc();
 					}
 				}
@@ -112,5 +114,4 @@ public class FlatFileMapper extends SchemaMapper {
 			SQLTable.commitTransaction();
 		}
 	}
-
 }
