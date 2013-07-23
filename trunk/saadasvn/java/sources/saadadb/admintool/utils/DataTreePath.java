@@ -41,38 +41,48 @@ public class DataTreePath {
 	}
 
 	public DataTreePath(TreePath treePath) throws QueryException {
-		int count = treePath.getPathCount();
-		Object[] pathEle = treePath.getPath();
-		if( count == 2 ) {
-			this.collection = pathEle[1].toString();
-			this.category = null;;
-			this.classe = null;		
-			this.isRoot = false;
+		if (treePath!=null)
+		{
+			int count = treePath.getPathCount();
+			Object[] pathEle = treePath.getPath();
+			if( count == 2 ) {
+				this.collection = pathEle[1].toString();
+				this.category = null;;
+				this.classe = null;		
+				this.isRoot = false;
+			}
+			else if( count == 3 ) {
+				this.collection = pathEle[1].toString();
+				this.category = pathEle[2].toString();
+				this.classe = null;	
+				this.isRoot = false;
+			}
+			else if( count == 4 ) {
+				this.collection = pathEle[1].toString();
+				this.category = pathEle[2].toString();
+				this.classe = pathEle[3].toString();
+				this.isRoot = false;
+			}
+			else {
+				this.collection = null;
+				this.category = null;
+				this.classe = null;
+				if ( count == 1 ) // Root level
+				{
+					this.isRoot = true;
+				}
+				else
+				{
+					this.isRoot = false;
+				}
+			}
 		}
-		else if( count == 3 ) {
-			this.collection = pathEle[1].toString();
-			this.category = pathEle[2].toString();
-			this.classe = null;	
-			this.isRoot = false;
-		}
-		else if( count == 4 ) {
-			this.collection = pathEle[1].toString();
-			this.category = pathEle[2].toString();
-			this.classe = pathEle[3].toString();
-			this.isRoot = false;
-		}
-		else {
+		else
+		{
 			this.collection = null;
 			this.category = null;
 			this.classe = null;
-			if ( count == 1 ) // Root level
-			{
-				this.isRoot = true;
-			}
-			else
-			{
-				this.isRoot = false;
-			}
+			this.isRoot = true;
 		}
 	}
 	

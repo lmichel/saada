@@ -1,6 +1,7 @@
 package saadadb.admintool.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -605,6 +606,7 @@ public class DataFileChooser extends JDialog {
 			cbm = new DefaultComboBoxModel<String>();
 			displayList = new Vector<String>();
 			hiddenList = new Vector<String>();
+			this.setBackground(Color.WHITE);
 			this.setModel(cbm);
 		}
 		

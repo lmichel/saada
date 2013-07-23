@@ -6,6 +6,7 @@ package saadadb.admintool.panels.tasks;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -202,7 +203,7 @@ public class DataLoaderPanel extends TaskPanel {
 
 
 		tPanel = this.addSubPanel("Data Files Selector");
-		datafileSummary = new JLabel("no file selected");
+		datafileSummary = new JLabel("No file selected");
 		directory = new JTextField(32);
 		dirBrowser = new JButton("Browse...");
 		/*
@@ -229,14 +230,16 @@ public class DataLoaderPanel extends TaskPanel {
 		});
 
 		c = new GridBagConstraints();
+		c.insets = new Insets(3, 3, 3, 3);
 		c.gridx = 0;c.gridy = 0;
 		c.weightx = 0;
 
 		c.anchor = GridBagConstraints.WEST; c.gridwidth = 2;
 		tPanel.add(directory, c);
-		c.gridy ++; c.gridwidth = 1;
+		c.gridx = 2; c.gridwidth = 3;
 		tPanel.add(dirBrowser, c);
-		c.gridx = 1;c.weightx = 1;
+		c.gridy++;
+		c.gridx = 0;c.weightx = 1;
 		tPanel.add(datafileSummary, c);
 
 		runButton = new RunTaskButton(this);

@@ -59,13 +59,11 @@ public abstract class Table_Saada_Relation extends SQLTable{
 	 * @throws AbortException
 	 */
 	public static final void saveDescription(RelationConf relation_config) throws SaadaException {
-		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("update " + tableName + " set description = "
 				+ "'" + Database.getWrapper().getEscapeQuote(relation_config.getDescription()) + "'" 
 				+ " WHERE name = '"
 				+ relation_config.getNameRelation() + "'"
 		        , tableName);
-		SQLTable.commitTransaction();
 		
 	}
 
