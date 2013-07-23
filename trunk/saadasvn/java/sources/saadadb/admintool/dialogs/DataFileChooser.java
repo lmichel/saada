@@ -822,7 +822,7 @@ public class DataFileChooser extends JDialog {
 		
 		private void addJLabelToList(String name, Icon icon, final String path)
 		{
-			JLabel lbl = new JLabel(name + " ");
+			final JLabel lbl = new JLabel(name + " ");
 			if (icon==null) 
 			{
 				new MetalIconFactory();
@@ -844,6 +844,7 @@ public class DataFileChooser extends JDialog {
 				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
+					lbl.requestFocus();
 					if( mask.getText().trim().length() > 0 ) 
 						setDirectory(path, mask.getText(), true);						
 					else
