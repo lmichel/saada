@@ -3,7 +3,7 @@
  */
 package saadadb.command;
 
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap.DmServiceManager;
 
 /**
  * @author laurent
@@ -15,7 +15,7 @@ public class ManageVodmService extends ManageEntity {
 	 * 
 	 */
 	public ManageVodmService() {
-		manager = new TapServiceManager(); 
+		manager = new DmServiceManager(); 
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class ManageVodmService extends ManageEntity {
 	 */
 	@Override
 	protected void usage() {
-		System.out.println("USAGE: java ManageVodmService -[empty|remove|create]=coll_name [-category=category] SaadaDB_Name");
+		System.out.println("USAGE: java ManageVodmService -[empty|remove|create]=dm_name  SaadaDB_Name");
 		System.exit(1);						
 	}
 

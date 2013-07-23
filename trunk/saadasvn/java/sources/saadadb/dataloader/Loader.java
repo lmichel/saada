@@ -193,6 +193,8 @@ public class Loader extends SaadaProcess {
 		 */ 
 		else if( requested_file.isDirectory() ) {
 			String[] dir_content = requested_file.list();
+			this.file_to_load = new ArrayList<File>(dir_content.length);
+			File f[] = new File[dir_content.length];
 			if( dir_content.length == 0 ) {
 				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
 				return;
@@ -207,6 +209,9 @@ public class Loader extends SaadaProcess {
 				if( !candidate_file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
 					this.file_to_load.add(candidate_file);
 					cpt++;
+				}
+				if( (cpt% 5000) == 0 ){
+					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.length + " file validated (" + (i+1-cpt) + " rejected)");
 				}
 			}
 			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.getAbsolutePath() + ">");

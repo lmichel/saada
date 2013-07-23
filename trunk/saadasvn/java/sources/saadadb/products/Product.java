@@ -615,7 +615,6 @@ public class Product /*extends File*/ {
 	 */
 	protected void setBasicCollectionFields() throws AbortException {
 		this.saadainstance.setNameSaada(this.getInstanceName(null));
-		System.out.println(this.file);
 		this.saadainstance.setProduct_url_csa(this.file.getName());	
 		this.saadainstance.setDateLoad(new java.util.Date().getTime());
 	}
