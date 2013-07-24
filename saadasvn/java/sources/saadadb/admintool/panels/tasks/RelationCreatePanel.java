@@ -1,13 +1,20 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +35,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.sqltable.SQLTable;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 /** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
@@ -48,9 +56,8 @@ public class RelationCreatePanel extends TaskPanel {
 	private JButton qualAdd;
 	private JButton qualDel;
 	protected NodeNameTextField qualName;
-	protected JComboBox  qualList;		
-	protected JButton populate;
-
+	protected JList qualList;
+	protected DefaultListModel<String> lstModel;
 
 	public RelationCreatePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, CREATE_RELATION, null, ancestor);
@@ -80,15 +87,12 @@ public class RelationCreatePanel extends TaskPanel {
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		System.out.println("setTreePath");
 		super.setDataTreePath(dataTreePath);
-		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) {
+		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) 
+		{
 			String pf = dataTreePath.collection + "." + dataTreePath.category.toUpperCase();
-			if( !pf.equals(this.primaryField.getText())) {
-				this.primaryField.setText(pf);
-				this.secondaryField.setText("");
-				this.nameField.setText("");
-				this.commentField.setText("");
-				this.qualList.removeAll();		
-				this.populate.setEnabled(false);
+			if( !pf.equals(this.primaryField.getText())) 
+			{
+				this.primaryField.setText(pf);	
 			}
 		}
 	}
@@ -127,8 +131,8 @@ public class RelationCreatePanel extends TaskPanel {
 				relationConfiguration.setColSecondary_name(collcat[0]);
 				relationConfiguration.setColSecondary_type(Category.getCategory(collcat[1]));
 				relationConfiguration.setClass_name(name);	
-				for( int i=0 ; i<this.qualList.getItemCount() ; i++ ) {
-					relationConfiguration.setQualifier(qualList.getItemAt(i).toString(), "double");
+				for( int i=0 ; i<this.qualList.getModel().getSize() ; i++ ) {
+					relationConfiguration.setQualifier(qualList.getModel().getElementAt(i).toString(), "double");
 				}
 				retour.put("config", relationConfiguration);
 				relationConfiguration.save();
@@ -145,7 +149,6 @@ public class RelationCreatePanel extends TaskPanel {
 	 */
 	public void setSelectedResource(String label, String explanation) {	
 		super.setSelectedResource(label, explanation);
-		populate.setEnabled(true);
 	}
 
 	@Override
@@ -157,14 +160,16 @@ public class RelationCreatePanel extends TaskPanel {
 
 		tPanel = this.addSubPanel("Relationship");
 		mc.right(false);
-		tPanel.add(getPlainLabel("Relation Name"), mc);
+		JLabel relationNameLabel = getPlainLabel("Relation Name");
+		tPanel.add(relationNameLabel, mc);
 
 		mc.next();mc.left(false);
-		nameField = new NodeNameTextField(16, RegExp.COLLNAME, runButton);
+		nameField = new NodeNameTextField(24, RegExp.COLLNAME, runButton);
 		tPanel.add(nameField, mc);
 		mc.rowEnd();
+		mc.newRow(); mc.left(false); mc.next();
 		tPanel.add(getHelpLabel(HelpDesk.NODE_NAME), mc);
-
+		mc.rowEnd();
 		mc.newRow();mc.right(false);
 		tPanel.add(getPlainLabel("Description"), mc);
 		mc.next();mc.left(true);mc.gridwidth =2;
@@ -174,30 +179,35 @@ public class RelationCreatePanel extends TaskPanel {
 		tPanel = this.addSubPanel("End Points");
 		mc.reset(5,5,5,5);
 		mc.right(false);
-		tPanel.add(getPlainLabel("From"), mc);
+		JLabel fromLabel= getPlainLabel("From");
+		fromLabel.setPreferredSize(new Dimension(relationNameLabel.getPreferredSize().width, fromLabel.getPreferredSize().height));
+		fromLabel.setHorizontalAlignment(JLabel.RIGHT);
+		tPanel.add(fromLabel, mc);
 		mc.next(); mc.left(false);
 		primaryField = new CollectionTextField();
 		tPanel.add(primaryField, mc);
 		primaryField.setEditable(false);
-		mc.rowEnd();mc.gridheight = 2;
+		mc.rowEnd();
+		mc.newRow(); mc.left(false);
+		mc.rowEnd();
 		tPanel.add(getHelpLabel(HelpDesk.RELATION_COLLECTIONS), mc);
-
 		mc.newRow();
 		mc.right(false);
 		tPanel.add(getPlainLabel("To"), mc);
 		mc.next(); mc.left(false);
 		secondaryField = new CollectionTextField();
 		tPanel.add(secondaryField, mc);
-		//secondaryField.setEditable(false);
 
 		tPanel = this.addSubPanel("Qualifiers");
+		lstModel = new DefaultListModel<String>();
 		qualAdd = new JButton("Add");
-		qualAdd.setToolTipText("Add the new qualifier to the relationship.");
+		qualAdd.setEnabled(false);
+		qualAdd.setToolTipText("Add the new qualifier to the relationship");
 		qualAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(@SuppressWarnings("unused") ActionEvent arg0) {
 				String name = qualName.getText().trim();
-				for( int i=0 ; i<RelationCreatePanel.this.qualList.getItemCount() ;  i++ ) {
-					if( RelationCreatePanel.this.qualList.getItemAt(i).toString().equals(name)) {
+				for( int i=0 ; i<RelationCreatePanel.this.qualList.getModel().getSize() ;  i++ ) {
+					if( RelationCreatePanel.this.qualList.getModel().getElementAt(i).toString().equals(name)) {
 						JOptionPane.showMessageDialog(rootFrame,
 								"Duplicate qualifier <" + name + "> ",
 								"Configuration Error",
@@ -205,52 +215,51 @@ public class RelationCreatePanel extends TaskPanel {
 						return ;
 					}
 				}
-				RelationCreatePanel.this.qualList.addItem(name) ;
+				qualDel.setEnabled(true);
+				RelationCreatePanel.this.lstModel.addElement(name) ;
 			}
 		});
-		//qualAdd.setEnabled(false);
 		qualDel = new JButton("Remove");
-		qualDel.setToolTipText("Remove the selected qualfier from the relationship");
+		qualDel.setToolTipText("Remove the selected qualifier from the relationship");
 		qualDel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				RelationCreatePanel.this.qualList.removeItem(RelationCreatePanel.this.qualList.getSelectedItem());
+				if (RelationCreatePanel.this.qualList.getSelectedIndex()!=-1)
+				{
+					RelationCreatePanel.this.lstModel.removeElementAt(RelationCreatePanel.this.qualList.getSelectedIndex());
+					if (RelationCreatePanel.this.qualList.getModel().getSize()==0)
+						qualDel.setEnabled(false);
+				}
 			}
 		});
-		//qualDel.setEnabled(false);
+		qualDel.setEnabled(false);
 		qualName = new NodeNameTextField(16, RegExp.EXTATTRIBUTE, qualAdd);
-		qualList = new JComboBox();		
+		qualList = new JList<String>(lstModel);
+		JScrollPane jsp = new JScrollPane(qualList);
+		jsp.setPreferredSize(new Dimension(170,75));
+		jsp.setBorder(BorderFactory.createTitledBorder("List of qualifiers"));
 
 		mc.reset(5,5,5,5);
-		mc.right(false);
-		tPanel.add(getPlainLabel("Name"), mc);
+		mc.left(false);
+		JLabel qualifierLabel = getPlainLabel("New qualifier");
+		qualifierLabel.setPreferredSize(new Dimension(relationNameLabel.getPreferredSize().width, qualifierLabel.getPreferredSize().height));
+		qualifierLabel.setHorizontalAlignment(JLabel.RIGHT);
+		tPanel.add(qualifierLabel, mc);
 		mc.next();mc.left(false);
 		tPanel.add(qualName, mc);
-		mc.next();
-		tPanel.add(qualAdd, mc);
-		mc.rowEnd();mc.gridheight = 2;
-		tPanel.add(getHelpLabel(HelpDesk.RELATION_QUALIFIER), mc);
-		mc.newRow();mc.right(false);
-		tPanel.add(getPlainLabel("List"), mc);
 		mc.next();mc.left(false);
-		tPanel.add(qualList, mc);
-		mc.next();
+		tPanel.add(qualAdd, mc);
+		mc.rowEnd();
+		mc.gridheight = 1;
+		mc.newRow(); mc.next();mc.gridheight = 2;mc.gridwidth = 2;mc.left(false);
+		tPanel.add(getHelpLabel(HelpDesk.RELATION_QUALIFIER), mc);
+		mc.rowEnd();mc.next();
+		mc.gridheight = 1;mc.gridheight = 1;mc.left(true);
+		mc.insets = new Insets(2, 5, 2, 5);
+		tPanel.add(jsp, mc);
+		mc.newRow();mc.next();mc.next();mc.next();mc.left(false);
+		qualDel.setPreferredSize(new Dimension(jsp.getPreferredSize().width,qualDel.getPreferredSize().height));
 		tPanel.add(qualDel, mc);
-
-		tPanel = this.addSubPanel("Links");
-		populate = new JButton("Create Links");
-		populate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			rootFrame.activePanel(POPULATE_RELATION);
-			rootFrame.setSelectedResource(nameField.getText(), null);
-			}
-		});
-		populate.setEnabled(false);
-		mc.reset(5,5,5,5);
-		mc.right(false);
-		tPanel.add(getPlainLabel("Open The link Editor Tool"), mc);
-		mc.rowEnd();mc.left(true);
-		tPanel.add(populate,mc);
-		
+		mc.rowEnd();
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});

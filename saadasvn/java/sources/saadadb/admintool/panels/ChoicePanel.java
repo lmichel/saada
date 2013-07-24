@@ -59,7 +59,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		this.setBorder(new ComponentTitledBorder(tl, this, BorderFactory.createLineBorder(Color.black)));
 		//tPanel.setBackground(Color.RED);
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(1, 7, 1, 1);
+		c.insets = new Insets(3, 7, 3, 1);
 		JButton jb;
 		c.gridx = 0; c.gridy = 0;
 		c.gridwidth = 1; c.gridheight = 2;
