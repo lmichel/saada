@@ -4,6 +4,9 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
+import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.tasks.RelationCreatePanel;
 import saadadb.admintool.utils.AntDesk;
@@ -57,8 +60,12 @@ public class ThreadRelationCreate extends CmdThread {
 			rm.create();
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> created");		
+			int userChoice = AdminComponent.showSuccessQuestion(frame, "Relationship <" +config.getNameRelation() + "> created", "Do you want to populate this relation now ?");		
 			panel.setSelectedResource(config.getNameRelation(), null);
+			if (userChoice == JOptionPane.YES_OPTION)
+			{
+				((AdminTool)frame).activePanel(AdminComponent.POPULATE_RELATION);
+			}
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 		} catch (Exception ae) {			
