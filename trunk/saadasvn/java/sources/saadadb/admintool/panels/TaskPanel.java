@@ -52,6 +52,7 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		tPanel.setMaximumSize(new Dimension(1000,48));
 		tPanel.setBackground(LIGHTBACKGROUND);
 		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(3, 3, 3, 3);
 		c.gridy = 0; c.gridx = 0;
 		c.anchor = GridBagConstraints.PAGE_END;
 		c.weightx = 0;
@@ -74,6 +75,7 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		tPanel.setMaximumSize(new Dimension(1000,48));
 		tPanel.setBackground(LIGHTBACKGROUND);
 		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(3, 3, 3, 3);
 		c.gridy = 0; c.gridx = 0;
 		c.anchor = GridBagConstraints.PAGE_END;
 		c.weightx = 0;
