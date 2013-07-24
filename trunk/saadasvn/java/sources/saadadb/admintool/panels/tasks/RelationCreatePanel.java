@@ -270,7 +270,7 @@ public class RelationCreatePanel extends TaskPanel {
 		qualName = new NodeNameTextField(16, RegExp.EXTATTRIBUTE, qualAdd);
 		qualList = new JList<String>(lstModel);
 		jsp = new JScrollPane(qualList);
-		jsp.setPreferredSize(new Dimension(170,75));
+		jsp.setPreferredSize(new Dimension(170,90));
 		jsp.setBorder(BorderFactory.createTitledBorder("List of qualifiers"));
 
 		mc.reset(5,5,5,5);

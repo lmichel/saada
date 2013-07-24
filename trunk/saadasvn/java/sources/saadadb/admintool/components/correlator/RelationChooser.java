@@ -33,8 +33,6 @@ public class RelationChooser extends CollapsiblePanel {
 		MyGBC mc = new MyGBC(5,5,5,5); mc.anchor = GridBagConstraints.NORTH;
 		this.getContentPane().setLayout(new GridBagLayout());
 		this.getContentPane().add(configChooser, mc);
-		mc.newRow();
-		this.getContentPane().add(AdminComponent.getHelpLabel(HelpDesk.RELATION_SELECTOR), mc);
 	}
 	
 	public void selectRelation(String relationName){
