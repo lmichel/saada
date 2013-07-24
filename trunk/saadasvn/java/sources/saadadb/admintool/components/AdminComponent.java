@@ -219,6 +219,15 @@ public abstract class AdminComponent extends JPanel {
 				JOptionPane.PLAIN_MESSAGE);		
 	}	
 
+	public static final int showSuccessQuestion(Component frame, String message, String question)
+	{
+		Messenger.printMsg(Messenger.TRACE, "Show Success + Question " + message);
+		int res = JOptionPane.showConfirmDialog(frame,
+				message + "\n\n" + question,
+				"Success",
+				JOptionPane.YES_NO_OPTION);	
+		return res;
+	}
 
 	/**
 	 * @param txt

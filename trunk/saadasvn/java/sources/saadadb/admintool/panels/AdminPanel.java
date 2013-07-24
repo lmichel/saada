@@ -198,7 +198,7 @@ public abstract class AdminPanel extends AdminComponent {
 		changed = false;
 	}
 	public void notifyChange() {
-		(new Exception()).printStackTrace();
+		//(new Exception()).printStackTrace();
 		changed = true;
 	}
 

@@ -3,9 +3,14 @@ package saadadb.admintool.panels.tasks;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,6 +62,7 @@ public class RelationCreatePanel extends TaskPanel {
 	private JButton qualDel;
 	protected NodeNameTextField qualName;
 	protected JList qualList;
+	protected JScrollPane jsp;
 	protected DefaultListModel<String> lstModel;
 
 	public RelationCreatePanel(AdminTool rootFrame, String ancestor) {
@@ -90,7 +96,7 @@ public class RelationCreatePanel extends TaskPanel {
 		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) 
 		{
 			String pf = dataTreePath.collection + "." + dataTreePath.category.toUpperCase();
-			if( !pf.equals(this.primaryField.getText())) 
+			if( !pf.equals(this.primaryField.getText()))
 			{
 				this.primaryField.setText(pf);	
 			}
@@ -155,50 +161,74 @@ public class RelationCreatePanel extends TaskPanel {
 	protected void setActivePanel() {
 		runButton = new RunTaskButton(this);
 
-		JPanel tPanel;
 		MyGBC mc = new MyGBC(5,5,5,5);
 
-		tPanel = this.addSubPanel("Relationship");
+		rel_name_panel = this.addSubPanel("Relationship");
 		mc.right(false);
 		JLabel relationNameLabel = getPlainLabel("Relation Name");
-		tPanel.add(relationNameLabel, mc);
+		rel_name_panel.add(relationNameLabel, mc);
 
-		mc.next();mc.left(false);
+		mc.next(); mc.left(false);
 		nameField = new NodeNameTextField(24, RegExp.COLLNAME, runButton);
-		tPanel.add(nameField, mc);
+		rel_name_panel.add(nameField, mc);
 		mc.rowEnd();
 		mc.newRow(); mc.left(false); mc.next();
-		tPanel.add(getHelpLabel(HelpDesk.NODE_NAME), mc);
+		rel_name_panel.add(getHelpLabel(HelpDesk.NODE_NAME), mc);
 		mc.rowEnd();
 		mc.newRow();mc.right(false);
-		tPanel.add(getPlainLabel("Description"), mc);
+		rel_name_panel.add(getPlainLabel("Description"), mc);
 		mc.next();mc.left(true);mc.gridwidth =2;
-		commentField = new FreeTextField(2, 24);
-		tPanel.add(new JScrollPane(commentField), mc);
+		commentField = new FreeTextField(3, 24);
+		rel_name_panel.add(new JScrollPane(commentField), mc);
+		
+		nameField.addKeyListener(new KeyListener() 
+		{
+			@Override
+			public void keyTyped(KeyEvent e) {}
+			
+			@Override
+			public void keyReleased(KeyEvent e) 
+			{
+				String source = ((NodeNameTextField)e.getSource()).getText();
+				if (source.compareTo("")!=0)
+				{
+					RelationCreatePanel.this.setPanelEnable("endpoints", true);
+					RelationCreatePanel.this.setPanelEnable("qualifier", true);
+				}
+				else
+				{
+					RelationCreatePanel.this.setPanelEnable("endpoints", false);
+					RelationCreatePanel.this.setPanelEnable("qualifier", false);
+				}
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {}
+		});
 
-		tPanel = this.addSubPanel("End Points");
+		coll_panel = this.addSubPanel("End Points");
 		mc.reset(5,5,5,5);
 		mc.right(false);
 		JLabel fromLabel= getPlainLabel("From");
 		fromLabel.setPreferredSize(new Dimension(relationNameLabel.getPreferredSize().width, fromLabel.getPreferredSize().height));
 		fromLabel.setHorizontalAlignment(JLabel.RIGHT);
-		tPanel.add(fromLabel, mc);
+		coll_panel.add(fromLabel, mc);
 		mc.next(); mc.left(false);
 		primaryField = new CollectionTextField();
-		tPanel.add(primaryField, mc);
+		coll_panel.add(primaryField, mc);
 		primaryField.setEditable(false);
 		mc.rowEnd();
 		mc.newRow(); mc.left(false);
 		mc.rowEnd();
-		tPanel.add(getHelpLabel(HelpDesk.RELATION_COLLECTIONS), mc);
+		coll_panel.add(getHelpLabel(HelpDesk.RELATION_COLLECTIONS), mc);
 		mc.newRow();
 		mc.right(false);
-		tPanel.add(getPlainLabel("To"), mc);
+		coll_panel.add(getPlainLabel("To"), mc);
 		mc.next(); mc.left(false);
 		secondaryField = new CollectionTextField();
-		tPanel.add(secondaryField, mc);
+		coll_panel.add(secondaryField, mc);
 
-		tPanel = this.addSubPanel("Qualifiers");
+		qual_panel = this.addSubPanel("Qualifiers");
 		lstModel = new DefaultListModel<String>();
 		qualAdd = new JButton("Add");
 		qualAdd.setEnabled(false);
@@ -211,12 +241,17 @@ public class RelationCreatePanel extends TaskPanel {
 						JOptionPane.showMessageDialog(rootFrame,
 								"Duplicate qualifier <" + name + "> ",
 								"Configuration Error",
-								JOptionPane.ERROR_MESSAGE);					
+								JOptionPane.ERROR_MESSAGE);		
 						return ;
 					}
 				}
 				qualDel.setEnabled(true);
-				RelationCreatePanel.this.lstModel.addElement(name) ;
+				qualName.setText("");
+				RelationCreatePanel.this.lstModel.addElement(name);
+				if (RelationCreatePanel.this.lstModel.getSize()>0)
+				{
+					RelationCreatePanel.this.qualList.setSelectedIndex(RelationCreatePanel.this.lstModel.getSize()-1);
+				}
 			}
 		});
 		qualDel = new JButton("Remove");
@@ -234,7 +269,7 @@ public class RelationCreatePanel extends TaskPanel {
 		qualDel.setEnabled(false);
 		qualName = new NodeNameTextField(16, RegExp.EXTATTRIBUTE, qualAdd);
 		qualList = new JList<String>(lstModel);
-		JScrollPane jsp = new JScrollPane(qualList);
+		jsp = new JScrollPane(qualList);
 		jsp.setPreferredSize(new Dimension(170,75));
 		jsp.setBorder(BorderFactory.createTitledBorder("List of qualifiers"));
 
@@ -243,26 +278,48 @@ public class RelationCreatePanel extends TaskPanel {
 		JLabel qualifierLabel = getPlainLabel("New qualifier");
 		qualifierLabel.setPreferredSize(new Dimension(relationNameLabel.getPreferredSize().width, qualifierLabel.getPreferredSize().height));
 		qualifierLabel.setHorizontalAlignment(JLabel.RIGHT);
-		tPanel.add(qualifierLabel, mc);
+		qual_panel.add(qualifierLabel, mc);
 		mc.next();mc.left(false);
-		tPanel.add(qualName, mc);
+		qual_panel.add(qualName, mc);
 		mc.next();mc.left(false);
-		tPanel.add(qualAdd, mc);
+		qual_panel.add(qualAdd, mc);
 		mc.rowEnd();
 		mc.gridheight = 1;
 		mc.newRow(); mc.next();mc.gridheight = 2;mc.gridwidth = 2;mc.left(false);
-		tPanel.add(getHelpLabel(HelpDesk.RELATION_QUALIFIER), mc);
+		qual_panel.add(getHelpLabel(HelpDesk.RELATION_QUALIFIER), mc);
 		mc.rowEnd();mc.next();
 		mc.gridheight = 1;mc.gridheight = 1;mc.left(true);
 		mc.insets = new Insets(2, 5, 2, 5);
-		tPanel.add(jsp, mc);
+		qual_panel.add(jsp, mc);
 		mc.newRow();mc.next();mc.next();mc.next();mc.left(false);
 		qualDel.setPreferredSize(new Dimension(jsp.getPreferredSize().width,qualDel.getPreferredSize().height));
-		tPanel.add(qualDel, mc);
+		qual_panel.add(qualDel, mc);
 		mc.rowEnd();
+		
+		this.setPanelEnable("endpoints", false);
+		this.setPanelEnable("qualifier", false);
+		
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});
+	}
+	
+	private void setPanelEnable(String panelName, boolean enabled)
+	{
+		if (panelName.compareTo("endpoints")==0)
+		{
+			coll_panel.setEnabled(enabled);
+			primaryField.setEnabled(enabled);
+			secondaryField.setEnabled(enabled);
+		}
+		
+		if (panelName.compareTo("qualifier")==0)
+		{
+			qual_panel.setEnabled(enabled);
+			qualName.setEnabled(enabled);
+			qualList.setEnabled(enabled);
+			jsp.setEnabled(enabled);
+		}
 	}
 
 	/* (non-Javadoc)
