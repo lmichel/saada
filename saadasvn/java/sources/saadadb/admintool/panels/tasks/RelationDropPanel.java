@@ -115,8 +115,6 @@ public class RelationDropPanel extends TaskPanel {
 		relationChooser = new RelationshipChooser(this, runButton);
 		MyGBC c = new MyGBC(5,5,5,5);
 		tPanel.add(relationChooser, c);
-		c.newRow();
-		tPanel.add(getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
 		
 
 		this.setActionBar(new Component[]{runButton

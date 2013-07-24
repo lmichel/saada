@@ -5,9 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -21,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -36,12 +39,12 @@ public class RelationshipChooser extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JList confList = new JList(new DefaultListModel());
 	private JTextArea description = new JTextArea(6, 24);
-	private TaskPanel taskPanel ;
+	private TaskPanel taskPanel;
 	private String selectedRelation = null;
 	private Component toActivate;
 	private Runnable runnable;
 	private String endPoint;
-	private int lastSelectedIndex=0;
+	private int lastSelectedIndex = 0;
 
 	/**
 	 * @param taskPanel
@@ -68,13 +71,21 @@ public class RelationshipChooser extends JPanel {
 		this.description.setEditable(false);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(3, 3, 3, 3);
 		c.gridx = 0; c.gridy = 0;c.weightx = 0;
 		JScrollPane scrollPane = new JScrollPane(confList);
+		scrollPane.setBorder(BorderFactory.createTitledBorder("List of relationships"));
 		scrollPane.setPreferredSize(new Dimension(350,100));
 		this.add(scrollPane, c);
 
-		c.gridx++;c.weightx = 1;
-		this.add(new JScrollPane(description), c);
+		JScrollPane jspDescription = new JScrollPane(description);
+		jspDescription.setBorder(BorderFactory.createTitledBorder("Description of selected relationship"));
+		c.fill = GridBagConstraints.BOTH;
+		c.gridx++; c.weightx = 1; c.gridheight = 2;
+		this.add(jspDescription, c);
+		c.fill = GridBagConstraints.NONE;
+		c.gridx = 0; c.gridy = 1; c.gridheight = 1;
+		this.add(AdminComponent.getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
 
 		confList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
