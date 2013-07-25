@@ -1,6 +1,5 @@
 package saadadb.admintool.components.correlator;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
@@ -13,27 +12,26 @@ import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 
+@SuppressWarnings("rawtypes")
 public class SQLConditionHelper extends JComboBox{
+	private static final long serialVersionUID = -7989548267498721101L;
 	private JTextArea textEditor;
-	private Frame rootFrame;
 	private RelationPopulatePanel taskPanel;
-	public static final Map<String, String> helpItems;
+	private static  Map<String, String> helpItems ;
 
-	static {
-		helpItems = new LinkedHashMap<String, String>();
-		helpItems.put("- Join Operator Templates -", "");
-		helpItems.put("Partial comparison of names", "substr(p.namesaada, 0, 5) = substr(s.namesaada, 0, 5) ");
-		helpItems.put("Row number equality"        , "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
-		try {
-			helpItems.put("Regular expression op", "p.namesaada " + Database.getWrapper().getRegexpOp() + " 'RegExp'");
-		} catch (FatalException e) {}
-		helpItems.put("Same sky pixel", "p.sky_pixel_csa = s.sky_pixel_csa");
+	SQLConditionHelper() {
+		if( helpItems == null)	{
+			try {
+				helpItems = Database.getWrapper().getConditionHelp();
+			} catch (FatalException e) {}
+		}
 	}
 
 	/**
 	 * @param rootFrame
 	 * @param textEditor
 	 */
+	@SuppressWarnings("unchecked")
 	public SQLConditionHelper(RelationPopulatePanel taskPanel, JTextArea textEditor) {
 		super();
 		this.textEditor = textEditor;
