@@ -10,6 +10,8 @@ Saada 1.7.0.build4
 New ADmin tool improvement
 Sort by column in the WEB UI
 Layout improvement in the WEB UI (get ride of the floating table header)
+Create/remove of the TAP service in script mode 
+Create/remove of the ObsCore service in script mode 
 
 Saada 1.7.0.build3
 ----------------
