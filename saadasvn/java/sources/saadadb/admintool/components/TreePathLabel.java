@@ -12,7 +12,7 @@ import saadadb.admintool.utils.DataTreePath;
 
 public class TreePathLabel extends Panel 
 {
-	protected JLabel collection, category, classe;
+	public JLabel collection, category, classe;
 	
 	public TreePathLabel() 
 	{
