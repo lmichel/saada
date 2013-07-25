@@ -41,7 +41,7 @@ public class ThreadRelationEmpty extends ThreadRelationDrop {
 		try {
 			SQLTable.beginTransaction();
 			RelationManager rm = new RelationManager(relation);
-			rm.index(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
+			rm.empty(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> emptied");		
