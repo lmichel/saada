@@ -13,6 +13,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.ClassRemover;
+import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.Messenger;
@@ -203,6 +204,49 @@ public class RelationManager extends  EntityManager {
 		}
 	}
 
+	/**
+	 * This class run the SELECT part of the correlator (with a limit) the check its syntax
+	 * The code below is almost the same as this of populateWithQuery; factorization must be considered
+	 * @throws FatalException 
+	 * @throws AbortException 
+	 */
+	public void checkCorrelator() throws Exception {
+		String query = this.relation_conf.getQuery();
+		Messenger.printMsg(Messenger.TRACE, "Checking the correlator of the relationship <" + name + ">");
+		ArrayList<String> selectQueries = new ArrayList<String>();
+	
+		if( query != null && query.length() != 0 ) {
+			/*
+			 * Query in SaadaQL: must be translated in SQL before to be executed
+			 */
+			if( query.trim().startsWith("PrimaryFrom") )  {
+				CorrQueryTranslator cqt = new CorrQueryTranslator(this, "PopulateRelation " + name + "\n" + query,"tempo_" + name);
+				cqt.parse();
+				String[] queries = cqt.buildQueries();
+
+				if( queries != null ) {
+					for( String q: queries ) {
+						if( q.startsWith("INSERT") ) {
+							selectQueries.add(q.substring(q.indexOf("SEL")));
+						}
+					}
+				}
+			}
+			/*
+			 * SQL query
+			 */
+			else {
+				selectQueries.add(query);
+			}		
+		}
+		SQLQuery sqlQuery = new SQLQuery();
+		for(String sq: selectQueries) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Check Query " + sq);
+			sqlQuery.run(sq + " Limit 10");
+		}
+		Database.getWrapper().setClassColumns(name);	
+	}
 
 	/**
 	 * @throws Exception
