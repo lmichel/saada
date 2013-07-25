@@ -283,7 +283,8 @@ public class Query extends Query_Report{
 			builders.put("coord", this.wpClause.getSaadaQLConstraint());
 		}
 		if( this.obClause != null ) {
-			builders.put("orderby", this.obClause.getSaadaQLConstraint());
+			SaadaQLConstraint sqc = this.obClause.getSaadaQLConstraint();
+			builders.put("orderby", sqc);
 		}
 		if( this.wuClause != null ) {
 			for( UCDField field: this.wuClause.getSaadaQLConstraints()) {
@@ -301,7 +302,7 @@ public class Query extends Query_Report{
 	/**
 	 * @throws SaadaException
 	 */
-	public final void parse() throws SaadaException {
+	public final void parse() throws Exception {
 		String strQtemp = this.query_string;
 		this.addSentence("Query to process: "+ this.query_string);
 		Utils.checkParentheseAccolade(strQtemp);
@@ -341,7 +342,7 @@ public class Query extends Query_Report{
 			strQtemp = strQtemp.replace(this.wdmClause.getStrMatch(), "");
 		}		
 		if(OrderBy.isIn(strQtemp)){
-			this.obClause = new OrderBy(strQtemp);
+			this.obClause = new OrderBy(strQtemp, this.sfiClause);
 			switch(this.sfiClause.getMode()){
 			case SelectFromIn.ONE_COL_ONE_CLASS: this.obClause.setType(OrderBy.BOTH); break;
 			default: this.obClause.setType(OrderBy.ON_COLL); break;
