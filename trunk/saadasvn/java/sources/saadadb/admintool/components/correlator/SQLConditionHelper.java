@@ -17,15 +17,7 @@ public class SQLConditionHelper extends JComboBox{
 	private static final long serialVersionUID = -7989548267498721101L;
 	private JTextArea textEditor;
 	private RelationPopulatePanel taskPanel;
-	private static  Map<String, String> helpItems ;
-
-	SQLConditionHelper() {
-		if( helpItems == null)	{
-			try {
-				helpItems = Database.getWrapper().getConditionHelp();
-			} catch (FatalException e) {}
-		}
-	}
+	private static  Map<String, String> helpItems = null;
 
 	/**
 	 * @param rootFrame
@@ -36,6 +28,11 @@ public class SQLConditionHelper extends JComboBox{
 		super();
 		this.textEditor = textEditor;
 		this.taskPanel = taskPanel;
+		if( helpItems == null)	{
+			try {
+				helpItems = Database.getWrapper().getConditionHelp();
+			} catch (FatalException e) {}
+		}
 		for( String k: helpItems.keySet()) {
 			this.addItem(k);
 		}
