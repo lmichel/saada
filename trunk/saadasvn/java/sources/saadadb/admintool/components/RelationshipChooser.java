@@ -218,8 +218,8 @@ public class RelationshipChooser extends JPanel {
 		MultiLineTableCellRenderer renderer = new MultiLineTableCellRenderer();
 		this.descriptionTable.setModel(dm);	
 		this.descriptionTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
-		//this.descriptionTable.packColumn(0, 60);
-		//this.descriptionTable.packColumn(1, 240);
+		this.descriptionTable.packColumn(0, 60);
+		this.descriptionTable.packColumn(1, 240);
 	}
 
 	/**
