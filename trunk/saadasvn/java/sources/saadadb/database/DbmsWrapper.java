@@ -1178,7 +1178,11 @@ abstract public class DbmsWrapper {
 	public void setFetchSize(Statement stmt, int size) throws SQLException {
 		stmt.setFetchSize(size);
 	}
-
+	/*
+	 * Returns a map of SQL statement helping the setup of the relationships
+	 */
+	public abstract Map<String, String> getConditionHelp();
+	
 	public static void main(String[] args) throws AbortException, FatalException, SQLException, ClassNotFoundException {
 		System.out.println(DbmsWrapper.getIsInCircleConstraint("", 0, 0, 1));
 		//		ArgsParser ap = new ArgsParser(args);
