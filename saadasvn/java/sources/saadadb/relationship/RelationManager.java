@@ -227,6 +227,9 @@ public class RelationManager extends  EntityManager {
 				if( queries != null ) {
 					for( String q: queries ) {
 						if( q.startsWith("INSERT") ) {
+							/* 
+							 * extract the select part of the query
+							 */
 							selectQueries.add(q.substring(q.indexOf("SEL")));
 						}
 					}
