@@ -29,8 +29,11 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -62,6 +65,8 @@ public class RelationshipChooser extends JPanel {
 	private Runnable runnable;
 	private String endPoint;
 	private int lastSelectedIndex = 0;
+	private final static int TABLE_COLUMN_SIZE_0 = 80;
+	private final static int TABLE_COLUMN_SIZE_1 = 240;
 
 	/**
 	 * @param taskPanel
@@ -102,9 +107,22 @@ public class RelationshipChooser extends JPanel {
 		descriptionTable.setShowVerticalLines(false);
 		descriptionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		descriptionTable.setEditable(false);
+		JTableHeader tableHeader = this.descriptionTable.getTableHeader();
+	
+		class IconTableCellRenderer extends DefaultTableCellRenderer {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				label.setPreferredSize(new Dimension(0,0));
+				return label;
+			}
+		}
+		tableHeader.setDefaultRenderer(new IconTableCellRenderer());
+
 		
 		JScrollPane jspDescription = new JScrollPane(descriptionTable);
-		jspDescription.setPreferredSize(new Dimension(300,185));
+		jspDescription.setPreferredSize(new Dimension(320,185));
 		jspDescription.setBorder(BorderFactory.createTitledBorder("Description of selected relationship"));
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx++; c.weightx = 1; c.gridheight = 2;
@@ -166,7 +184,6 @@ public class RelationshipChooser extends JPanel {
 	{
 		selectedRelation = confList.getSelectedValue().toString();
 		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);
-		
 		this.dm = new DefaultTableModel();
 		this.dm.addColumn("Attribute");
 		this.dm.addColumn("Value");
@@ -187,26 +204,21 @@ public class RelationshipChooser extends JPanel {
 			String[] qls = mr.getQualifier_names().toArray(new String[0]);
 			String quals = "";
 			if( qls.length == 0 ) 
-			{
-				quals += "No Qualifier";
-			}
+				quals += "No qualifier";
 			else 
 			{
 				for( String q: qls) 
-				{
 					quals += q + " ";
-				}
 			}
-			
+			String correlator = mr.getCorrelator();
 			this.dm.addRow(new String[] { "Name", mr.getName() });
 			this.dm.addRow(new String[] { "From", mr.getPrimary_coll()+ "." + Category.explain(mr.getPrimary_category()) });
 			this.dm.addRow(new String[] { "To", mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()) });
 			this.dm.addRow(new String[] { "Qualifiers", quals });
-			this.dm.addRow(new String[] { "Correlator", mr.getCorrelator() });
+			this.dm.addRow(new String[] { "Correlator", (correlator.compareTo("")==0?"No correlator":correlator) });
 			this.dm.addRow(new String[] { "Content", content });
 			this.dm.addRow(new String[] { "Description", mr.getDescription().trim() });
 			this.dm.addRow(new String[] { "Indexed", (mr.isIndexed()?"Yes":"No") });
-			
 			if( RelationshipChooser.this.toActivate != null) RelationshipChooser.this.toActivate.setEnabled(true);
 			if( RelationshipChooser.this.runnable != null ) RelationshipChooser.this.runnable.run();
 		} 
@@ -214,12 +226,14 @@ public class RelationshipChooser extends JPanel {
 		{
 			AdminComponent.showFatalError(RelationshipChooser.this.taskPanel.rootFrame, e);
 		}
-		//TODO setSelectedRessource !
+		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);
 		MultiLineTableCellRenderer renderer = new MultiLineTableCellRenderer();
 		this.descriptionTable.setModel(dm);	
-		this.descriptionTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
-		this.descriptionTable.packColumn(0, 60);
-		this.descriptionTable.packColumn(1, 240);
+		TableColumnModel columnModel = this.descriptionTable.getColumnModel();
+		for (int i=0 ; i<columnModel.getColumnCount() ; i++)
+			columnModel.getColumn(i).setCellRenderer(renderer);
+		this.descriptionTable.packColumn(0, TABLE_COLUMN_SIZE_0);
+		this.descriptionTable.packColumn(1, TABLE_COLUMN_SIZE_1);
 	}
 
 	/**
@@ -328,7 +342,6 @@ public class RelationshipChooser extends JPanel {
 			}
 			setFont(table.getFont());
 			if (hasFocus) {
-				setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
 				if (table.isCellEditable(row, column)) {
 					setForeground(UIManager.getColor("Table.focusCellForeground"));
 					setBackground(UIManager.getColor("Table.focusCellBackground"));
@@ -350,7 +363,9 @@ public class RelationshipChooser extends JPanel {
 		 */
 		private void adjustRowHeight(JTable table, int row, int column) 
 		{
-			int cWidth = table.getTableHeader().getColumnModel().getColumn(column).getWidth();
+			int cWidth = (column==1?RelationshipChooser.TABLE_COLUMN_SIZE_1-10:table.getTableHeader().getColumnModel().getColumn(column).getWidth());
+			if (column==1)
+				Messenger.printMsg(Messenger.DEBUG, "Width : " + cWidth);
 			setSize(new Dimension(cWidth, 1000));
 			int prefH = getPreferredSize().height;
 			while (rowColHeight.size() <= row) {
