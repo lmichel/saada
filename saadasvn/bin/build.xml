@@ -490,5 +490,59 @@
 		</java>
 	</target>
 
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	VO Services management
+	-->
 	
+	<!--
+	  Remove the TAP service
+	  sant vo.tap.remove [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.remove">   
+		<java classname="saadadb.command.ManageTapService" failonerror="false" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=service"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>	
+	</target>
+	
+	<!--
+	  Create the TAP service
+	  sant vo.tap.create [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.create">   
+		<java classname="saadadb.command.ManageTapService" failonerror="false" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=service"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>	
+	</target>
+	
+	<!--
+	  Create the Obscore table and publish it into the TAP service
+	  sant vo.tap.obscore.create [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.obscore.create">   
+		<java classname="saadadb.command.ManageVodmService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-create=ObsCore"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="ThreeXMM"/>  
+		</java>
+	</target>
+	<!--
+	  Remove the Obscore table 
+	  sant vo.tap.obscore.remove [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.obscore.remove">   
+		<java classname="saadadb.command.ManageVodmService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=ObsCore"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="ThreeXMM"/>  
+		</java>
+	</target>
+
 </project>
