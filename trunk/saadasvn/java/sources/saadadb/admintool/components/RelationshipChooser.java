@@ -3,10 +3,15 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -16,10 +21,19 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
@@ -28,6 +42,8 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
+import saadadb.sqltable.SQLQuery;
+import saadadb.util.Messenger;
 
 /**
  * Panel with a clickable list of relations
@@ -37,8 +53,9 @@ import saadadb.meta.MetaRelation;
  */
 public class RelationshipChooser extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JList confList = new JList(new DefaultListModel());
-	private JTextArea description = new JTextArea(6, 24);
+	private JList<String> confList = new JList<String>(new DefaultListModel<String>());
+	private JXTable descriptionTable;
+	private DefaultTableModel dm;
 	private TaskPanel taskPanel;
 	private String selectedRelation = null;
 	private Component toActivate;
@@ -68,7 +85,6 @@ public class RelationshipChooser extends JPanel {
 		this.confList.setFont(AdminComponent.plainFont);
 		this.runnable = runnable;
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		this.description.setEditable(false);
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(3, 3, 3, 3);
@@ -78,7 +94,17 @@ public class RelationshipChooser extends JPanel {
 		scrollPane.setPreferredSize(new Dimension(350,100));
 		this.add(scrollPane, c);
 
-		JScrollPane jspDescription = new JScrollPane(description);
+		
+		descriptionTable = new JXTable(dm);
+		descriptionTable.setHighlighters(HighlighterFactory.createSimpleStriping());
+		descriptionTable.setRowSelectionAllowed(false);
+		descriptionTable.setShowHorizontalLines(false);
+		descriptionTable.setShowVerticalLines(false);
+		descriptionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		descriptionTable.setEditable(false);
+		
+		JScrollPane jspDescription = new JScrollPane(descriptionTable);
+		jspDescription.setPreferredSize(new Dimension(300,185));
 		jspDescription.setBorder(BorderFactory.createTitledBorder("Description of selected relationship"));
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx++; c.weightx = 1; c.gridheight = 2;
@@ -136,17 +162,64 @@ public class RelationshipChooser extends JPanel {
 	/**
 	 * Write out the  description of the current relation
 	 */
-	public void setDescription() {
+	public void setDescription() 
+	{
 		selectedRelation = confList.getSelectedValue().toString();
-		//selectedRelation = selectedRelation.split("(</b>)|<b>")[1].trim();;
-		try {
-			description.setText(Database.getCachemeta().getRelation(selectedRelation).toString());
+		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);
+		
+		this.dm = new DefaultTableModel();
+		this.dm.addColumn("Attribute");
+		this.dm.addColumn("Value");
+		try 
+		{
+			MetaRelation mr = Database.getCachemeta().getRelation(selectedRelation);
+			SQLQuery squery = new SQLQuery();
+			ResultSet rs = squery.run("SELECT count(*) FROM " + mr.getName());
+			String content = "";
+			while (rs.next()) 
+			{
+				content += rs.getString(1);
+				break;
+			}
+			squery.close();
+			content += " links ";
+
+			String[] qls = mr.getQualifier_names().toArray(new String[0]);
+			String quals = "";
+			if( qls.length == 0 ) 
+			{
+				quals += "No Qualifier";
+			}
+			else 
+			{
+				for( String q: qls) 
+				{
+					quals += q + " ";
+				}
+			}
+			
+			this.dm.addRow(new String[] { "Name", mr.getName() });
+			this.dm.addRow(new String[] { "From", mr.getPrimary_coll()+ "." + Category.explain(mr.getPrimary_category()) });
+			this.dm.addRow(new String[] { "To", mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category()) });
+			this.dm.addRow(new String[] { "Qualifiers", quals });
+			this.dm.addRow(new String[] { "Correlator", mr.getCorrelator() });
+			this.dm.addRow(new String[] { "Content", content });
+			this.dm.addRow(new String[] { "Description", mr.getDescription().trim() });
+			this.dm.addRow(new String[] { "Indexed", (mr.isIndexed()?"Yes":"No") });
+			
 			if( RelationshipChooser.this.toActivate != null) RelationshipChooser.this.toActivate.setEnabled(true);
 			if( RelationshipChooser.this.runnable != null ) RelationshipChooser.this.runnable.run();
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			AdminComponent.showFatalError(RelationshipChooser.this.taskPanel.rootFrame, e);
 		}
-		RelationshipChooser.this.taskPanel.setSelectedResource("Relation: " + selectedRelation, null);		
+		//TODO setSelectedRessource !
+		MultiLineTableCellRenderer renderer = new MultiLineTableCellRenderer();
+		this.descriptionTable.setModel(dm);	
+		this.descriptionTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
+		//this.descriptionTable.packColumn(0, 60);
+		//this.descriptionTable.packColumn(1, 240);
 	}
 
 	/**
@@ -156,7 +229,8 @@ public class RelationshipChooser extends JPanel {
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) throws FatalException  {
 		selectedRelation = null;
-		description.setText("");
+		this.dm = new DefaultTableModel();
+		this.descriptionTable.setModel(dm);
 		if( this.toActivate != null) this.toActivate.setEnabled(false);
 
 		DefaultListModel model = (DefaultListModel) confList.getModel();
@@ -173,7 +247,8 @@ public class RelationshipChooser extends JPanel {
 					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
 				rls.add(r);
 			}
-			for( String r: rls ) {
+			for( String r: rls ) 
+			{
 				model.addElement(r);			
 			}
 		}
@@ -222,5 +297,79 @@ public class RelationshipChooser extends JPanel {
 			return this;
 		}
 	}
+	
+	/**
+	   * Multiline Table Cell Renderer.
+	   */
 
+	/**
+	 * Multiline Table Cell Renderer.
+	 */
+	public class MultiLineTableCellRenderer extends JTextArea 
+		implements TableCellRenderer {
+		private List<List<Integer>> rowColHeight = new ArrayList<List<Integer>>();
+	 
+		public MultiLineTableCellRenderer() 
+		{
+			setLineWrap(true);
+			setWrapStyleWord(true);
+			setOpaque(true);
+		}
+	 
+		public Component getTableCellRendererComponent(
+				JTable table, Object value, boolean isSelected, boolean hasFocus,
+				int row, int column) {
+			if (isSelected) {
+				setForeground(table.getSelectionForeground());
+				setBackground(table.getSelectionBackground());
+			} else {
+				setForeground(table.getForeground());
+				setBackground(table.getBackground());
+			}
+			setFont(table.getFont());
+			if (hasFocus) {
+				setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
+				if (table.isCellEditable(row, column)) {
+					setForeground(UIManager.getColor("Table.focusCellForeground"));
+					setBackground(UIManager.getColor("Table.focusCellBackground"));
+				}
+			} else {
+				setBorder(new EmptyBorder(1, 2, 1, 2));
+			}
+			if (value != null) {
+				setText(value.toString());
+			} else {
+				setText("");
+			}
+			adjustRowHeight(table, row, column);
+			return this;
+		}
+	 
+		/**
+		 * Calculate the new preferred height for a given row, and sets the height on the table.
+		 */
+		private void adjustRowHeight(JTable table, int row, int column) 
+		{
+			int cWidth = table.getTableHeader().getColumnModel().getColumn(column).getWidth();
+			setSize(new Dimension(cWidth, 1000));
+			int prefH = getPreferredSize().height;
+			while (rowColHeight.size() <= row) {
+				rowColHeight.add(new ArrayList<Integer>(column));
+			}
+			List<Integer> colHeights = rowColHeight.get(row);
+			while (colHeights.size() <= column) {
+				colHeights.add(0);
+			}
+			colHeights.set(column, prefH);
+			int maxH = prefH;
+			for (Integer colHeight : colHeights) {
+				if (colHeight > maxH) {
+					maxH = colHeight;
+				}
+			}
+			if (table.getRowHeight(row) != maxH) {
+				table.setRowHeight(row, maxH);
+			}
+		}
+	}
 }

@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadRelationPopulate;
 import saadadb.admintool.components.RunTaskButton;
-import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.correlator.CollectionCoverage;
 import saadadb.admintool.components.correlator.KNNEditor;
@@ -24,7 +23,9 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
 import saadadb.database.Database;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
@@ -41,7 +42,6 @@ public class RelationPopulatePanel extends TaskPanel {
 	private QualifierSetter qualifierSetter;
 	private RunTaskButton runButton;
 	private RelationConf relationConf;
-	private SaveButton saveButton;
 
 
 	public RelationPopulatePanel(AdminTool rootFrame, String ancestor) {
@@ -51,7 +51,30 @@ public class RelationPopulatePanel extends TaskPanel {
 
 	@Override
 	public void initCmdThread() {
-		cmdThread = new ThreadRelationPopulate(rootFrame, POPULATE_RELATION);
+		if( this.relationConf != null ) 
+		{
+			try 
+			{
+				this.setConfig();
+				SQLTable.beginTransaction();
+				Table_Saada_Relation.saveCorrelator(this.relationConf);
+				SQLTable.commitTransaction();
+				Database.getCachemeta().reload(true);
+				this.cancelChanges();
+				cmdThread = new ThreadRelationPopulate(rootFrame, POPULATE_RELATION);
+			} 
+			catch (AbortException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (SaadaException e) 
+			{
+				e.printStackTrace();
+			}
+
+		} else {
+			showFatalError(rootFrame, "Not selected relationship");
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +111,6 @@ public class RelationPopulatePanel extends TaskPanel {
 				this.knnEditor.setCollapsed(true);
 				this.keywordConditionEditor.setCollapsed(true);
 				this.qualifierSetter.setCollapsed(true);
-				this.saveButton.setEnabled(false);
 			}
 		} catch (FatalException e) {
 			Messenger.trapFatalException(e);
@@ -185,7 +207,6 @@ public class RelationPopulatePanel extends TaskPanel {
 			this.qualifierSetter.setVisible(false);
 		}
 		this.updateAvailableAttributes();
-		this.saveButton.setEnabled(true);
 		this.updateUI();
 	}
 	/**
@@ -219,7 +240,6 @@ public class RelationPopulatePanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {
 		runButton = new RunTaskButton(this);
-		saveButton = new SaveButton(this);
 		JPanel tPanel = this.addSubPanel("Correlator Editor");
 		JPanel editorPanel = new JPanel();
 		editorPanel.setLayout(new GridBagLayout());
@@ -252,7 +272,6 @@ public class RelationPopulatePanel extends TaskPanel {
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 
 
-		this.setActionBar(new Component[]{runButton, saveButton
-				, debugButton});
+		this.setActionBar(new Component[]{runButton, debugButton});
 	}
 }
