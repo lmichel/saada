@@ -46,7 +46,8 @@ public class SQLConditionHelper extends JComboBox{
 					int caret_pos = SQLConditionHelper.this.textEditor.getCaretPosition();
 					SQLConditionHelper.this.taskPanel.notifyChange();
 					if( caret_pos >= (SQLConditionHelper.this.textEditor.getText().length() -1) ) {
-						SQLConditionHelper.this.textEditor.append("\n AND ");
+						if( SQLConditionHelper.this.textEditor.getText().trim().length() > 0 )
+							SQLConditionHelper.this.textEditor.append("\n AND ");
 						SQLConditionHelper.this.textEditor.append(helpItems.get(it.toString()));
 					} else {
 						SQLConditionHelper.this.textEditor.insert(helpItems.get(it.toString())
