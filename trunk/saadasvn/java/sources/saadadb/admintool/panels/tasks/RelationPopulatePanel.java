@@ -3,9 +3,12 @@ package saadadb.admintool.panels.tasks;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -173,23 +176,7 @@ public class RelationPopulatePanel extends TaskPanel {
 		}
 
 	}
-	/**
-	 * @throws Exception
-	 */
-	public void save()  throws Exception {
-		if( this.relationConf != null ) {
-			this.setConfig();
-			SQLTable.beginTransaction();
-			Table_Saada_Relation.saveCorrelator(this.relationConf);
-			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
-			showSuccess(this.rootFrame, "Relationship <" + this.relationConf.getNameRelation() +"> saved, but the correlator has not been applied"); 
-			this.cancelChanges();
-		} else {
-			showFatalError(rootFrame, "Not selected relationship");
-		}
 
-	}
 	/**
 	 * @param relationConf
 	 */
@@ -240,6 +227,26 @@ public class RelationPopulatePanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {
 		runButton = new RunTaskButton(this);
+		/*JButton testRelationButton = new JButton("Test correlator");
+		testRelationButton.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				RelationPopulatePanel.this.setConfig();
+				RelationManager rm = new RelationManager(relationConf);
+				try 
+				{
+					rm.checkCorrelator();
+					Messenger.printMsg(Messenger.DEBUG, "Success");
+				} 
+				catch (Exception e1) 
+				{
+					e1.printStackTrace();
+				}
+			}
+		});*/
+		
 		JPanel tPanel = this.addSubPanel("Correlator Editor");
 		JPanel editorPanel = new JPanel();
 		editorPanel.setLayout(new GridBagLayout());
@@ -272,6 +279,6 @@ public class RelationPopulatePanel extends TaskPanel {
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 
 
-		this.setActionBar(new Component[]{runButton, debugButton});
+		this.setActionBar(new Component[]{runButton, /*testRelationButton,*/ debugButton});
 	}
 }
