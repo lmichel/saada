@@ -157,7 +157,6 @@ public class Merger {
 			SaadaQLConstraint sqc = e.getValue();
 			for( String rcn: sqc.getResultColNames(key) ) {
 				skws.add(rcn);
-
 			}
 		}
 		for( String skw: skws ){

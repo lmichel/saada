@@ -5,6 +5,7 @@ package saadadb.query.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.OrderByConstraint;
@@ -34,11 +35,12 @@ public final class OrderBy{
 	
 	private String theStatement; //= constraint
 	private boolean isDesc = false;
-	
+	private SelectFromIn sfi;
 	private int  type = -1;
 	
-	public OrderBy(String strQuery) throws QueryException {
+	public OrderBy(String strQuery, SelectFromIn sfi) throws QueryException {
 		this.parse(strQuery);
+		this.sfi = sfi;
 	}
 	
 	public static final String   getSyntax (){return syntax       ;}
@@ -100,16 +102,17 @@ public final class OrderBy{
 		case BOTH:
 			return BOTH;
 		}
-		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Order By type code \""+val+"\" unknowed!");
+		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Order By type code \""+val+"\" unknown!");
 		return 0;
 	}
+	
 	/**
 	 * @return
 	 * @throws QueryException
 	 * @throws SaadaException
 	 */
 	public SaadaQLConstraint getSaadaQLConstraint() throws QueryException, SaadaException {
-		return new OrderByConstraint(this.strMatch,new String[]{this.attr});
+		return new OrderByConstraint(new String[]{this.attr}, this.isDesc, this.sfi);
 	}
 	
 	public  String getSQL(String alias){
