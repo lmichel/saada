@@ -67,7 +67,7 @@ public class DataFileChooser extends JDialog {
 
 	private JList directories = new JList();
 	private JList files = new JList();
-	private JButton accept = new JButton("Load Files");
+	private JButton accept = new JButton("Accept");
 	private JButton cancel = new JButton("Cancel");
 	
 	private JXTitledPanel titleDirectory, titleFile;

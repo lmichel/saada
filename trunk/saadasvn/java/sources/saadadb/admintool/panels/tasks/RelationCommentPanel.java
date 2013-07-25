@@ -126,10 +126,6 @@ public class RelationCommentPanel extends RelationDropPanel {
 		MyGBC c = new MyGBC(5,5,5,5);c.gridwidth = 2;
 		tPanel.add(relationChooser, c);
 
-		c.newRow();c.gridwidth = 2;		c.anchor = GridBagConstraints.WEST;
-
-		tPanel.add(getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
-
 		c.newRow();c.gridwidth = 1;
 		c.anchor = GridBagConstraints.EAST;
 		tPanel.add(getPlainLabel("Description"), c);
