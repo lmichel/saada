@@ -298,9 +298,16 @@ public class CacheMeta {
 		this.relation_names = (this.relations.keySet().toArray(new String[0]))	;
 	}
 
-
-
-
+	public boolean isCollectionFilled(String collection_name) throws FatalException
+	{
+		boolean res = this.getClassesOfCollection(collection_name, Category.TABLE).length>0 
+		|| this.getClassesOfCollection(collection_name, Category.ENTRY).length>0 
+		|| this.getClassesOfCollection(collection_name, Category.IMAGE).length>0
+		|| this.getClassesOfCollection(collection_name, Category.SPECTRUM).length>0
+		|| this.getClassesOfCollection(collection_name, Category.MISC).length>0
+		|| this.getCollection(collection_name).hasFlatFiles();
+		return res;
+	}
 
 	/**
 	 * @param collection (null for all collections)
