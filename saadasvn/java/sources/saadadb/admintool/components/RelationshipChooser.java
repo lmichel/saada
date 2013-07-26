@@ -364,7 +364,7 @@ public class RelationshipChooser extends JPanel {
 		private void adjustRowHeight(JTable table, int row, int column) 
 		{
 			// This is a test that has a sense only with the descriptionTable (JXTable) of this class
-			int cWidth = (column==1?RelationshipChooser.TABLE_COLUMN_SIZE_1-10:table.getTableHeader().getColumnModel().getColumn(column).getWidth());
+			int cWidth = (column==1?RelationshipChooser.TABLE_COLUMN_SIZE_1-30:table.getTableHeader().getColumnModel().getColumn(column).getWidth());
 			setSize(new Dimension(cWidth, 1000));
 			int prefH = getPreferredSize().height;
 			while (rowColHeight.size() <= row) {
