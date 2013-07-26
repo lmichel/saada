@@ -40,7 +40,7 @@ public class SpecialFieldFormatter {
 	public String getPos() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
-			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" href='javascript:void(0);' onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
+			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
 		}
 		return null;
 	}
@@ -48,7 +48,7 @@ public class SpecialFieldFormatter {
 	public String getPosWithError() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
-			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" href='javascript:void(0);' onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
+			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
 		}
 		return null;
 	}
@@ -65,7 +65,7 @@ public class SpecialFieldFormatter {
 
 	public String getSimbad() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
-			return ("<a href='javascript:void(0);' class=simbad onclick='resultPaneView.fireShowSimbad(\"" + DefaultFormats.getHMSCoord(((Position)saadai).getPos_ra_csa(), ((Position)saadai).getPos_dec_csa()) + "\");'></a>");
+			return ("<a class=simbad onclick='resultPaneView.fireShowSimbad(\"" + DefaultFormats.getHMSCoord(((Position)saadai).getPos_ra_csa(), ((Position)saadai).getPos_dec_csa()) + "\");'></a>");
 		}
 		return null;
 	}
