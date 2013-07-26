@@ -485,8 +485,12 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		 */
 		private static final long serialVersionUID = 1L;
 		private static ImageIcon collectionFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database_small.png"));
+		private static ImageIcon collectionEmptyIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database_small_empty.png"));
+		
 		private static ImageIcon categoryFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Bluecube_small.png"));
 		private static ImageIcon categoryEntryFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Greencube_small.png"));
+		private static ImageIcon categoryEmptyIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Greycube_small.png"));
+		
 		private static ImageIcon classFilledIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/SQLTable_small.png"));
 		private static ImageIcon classEmptyIcon = new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/SQLTable_leaf_small.png"));
 
@@ -516,13 +520,37 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			if (path.length == 1) // Root node
 				this.setIcon(collectionFilledIcon);
 			if (path.length == 2) // Collection node
-				this.setIcon(collectionFilledIcon);
+			{
+				/*if (node.getChildCount()>0)
+				{*/
+					this.setIcon(collectionFilledIcon);
+				/*}
+				else
+				{
+					this.setIcon(collectionEmptyIcon);
+				}*/
+			}
 			if (path.length == 3) // Category node
 			{
-				if (node.toString().equals("ENTRY"))
-					this.setIcon(categoryEntryFilledIcon);
-				else
-					this.setIcon(categoryFilledIcon);
+				try
+				{
+					if (node.toString().equals("ENTRY"))
+					{
+						this.setIcon(categoryEntryFilledIcon);
+					}
+					else if (node.toString().equals("FLATFILE") && !Database.getCachemeta().getCollection(node.getParent().toString()).hasFlatFiles())
+					{
+						this.setIcon(categoryEmptyIcon);
+					}
+					else
+					{
+						this.setIcon(categoryFilledIcon);
+					}
+				}
+			 	catch (FatalException e) 
+			 	{
+			 		e.printStackTrace();
+				}
 			}
 			if (path.length == 4) // Class node
 			{

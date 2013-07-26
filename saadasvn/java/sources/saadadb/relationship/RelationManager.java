@@ -248,7 +248,6 @@ public class RelationManager extends  EntityManager {
 				Messenger.printMsg(Messenger.DEBUG, "Check Query " + sq);
 			sqlQuery.run(sq + " Limit 10");
 		}
-		Database.getWrapper().setClassColumns(name);	
 	}
 
 	/**

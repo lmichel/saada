@@ -87,6 +87,7 @@ public class DataTableEditor extends TaskPanel
 				{
 					this.buildSQL(dataTreePath);
 					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
+					this.sqlORDERClause = "";
 				} 
 				catch (QueryException e) 
 				{
@@ -233,7 +234,6 @@ public class DataTableEditor extends TaskPanel
 		{
 			sqlWHEREClause = queryWhereArea.getText();
 			sqlLIMITClause = queryLimitArea.getText();
-			productTable.setSortOrder(8, SortOrder.DESCENDING);
 			
 			// TODO Refresh the field that are selected only
 			/*ArrayList<TableColumnExt> hiddenColumns = new ArrayList<TableColumnExt>();
