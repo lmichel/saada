@@ -542,9 +542,12 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 						else
 							this.setIcon(categoryEmptyIcon);
 					}
-					else if (node.toString().equals("FLATFILE") && !Database.getCachemeta().getCollection(node.getParent().toString()).hasFlatFiles())
+					else if (node.toString().equals("FLATFILE"))
 					{
-						this.setIcon(categoryEmptyIcon);
+						if (Database.getCachemeta().getCollection(node.getParent().toString()).hasFlatFiles())
+							this.setIcon(categoryFilledIcon);
+						else
+							this.setIcon(categoryEmptyIcon);
 					}
 					else // TABLE, IMAGE, SPECTRUM, MISC
 					{
