@@ -521,21 +521,23 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			try 
 			{
 				if (path.length == 1) // Root node
-					this.setIcon(collectionFilledIcon);
+				{	
+					if (node.getChildCount()>0)
+						this.setIcon(collectionFilledIcon);
+					else
+						this.setIcon(collectionEmptyIcon);
+				}
 				if (path.length == 2) // Collection node
 				{
-					/*if (node.getChildCount()>0)
-					{*/
+					if (Database.getCachemeta().getCollection(node.toString()).hasFlatFiles() 
+							&& Database.getCachemeta().isCollectionFilledExceptFlatFiles(node.toString()))
 						this.setIcon(collectionFilledIcon);
-					/*}
 					else
-					{
 						this.setIcon(collectionEmptyIcon);
-					}*/
 				}
 				if (path.length == 3) // Category node
 				{
-					if (node.toString().equals("ENTRY") )
+					if (node.toString().equals("ENTRY"))
 					{
 						if (node.getChildCount()>0)
 							this.setIcon(categoryEntryFilledIcon);
@@ -575,8 +577,8 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 					catch (Exception e) 
 					{
 						e.printStackTrace();
+					}
 				}
-			}
 			} 
 			catch (FatalException e1) 
 			{
