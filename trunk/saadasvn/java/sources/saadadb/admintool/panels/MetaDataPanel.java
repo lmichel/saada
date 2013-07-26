@@ -364,6 +364,55 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		}
 	}
 	
+	// Always remove the AssociatedClass before the source Class
+	public void deleteAssociatedClassNode(TreePath clickPath, String associatedClass, String associatedCategory)
+	{
+		if (clickPath.getPathCount()==4)
+		{
+			
+			DefaultMutableTreeNode collectionNode=null, categoryNode=null, classNode=null;
+			
+			// Root level
+			for (int i=0 ; i<top.getChildCount() ; i++)
+			{
+				if (top.getChildAt(i).toString().equals(clickPath.getPathComponent(1).toString()))
+				{
+					collectionNode = (DefaultMutableTreeNode) top.getChildAt(i);
+					break;
+				}
+			}
+			// Collection level
+			if (collectionNode!=null)
+			{
+				for (int i=0 ; i<collectionNode.getChildCount() ; i++)
+				{
+					if (collectionNode.getChildAt(i).toString().equals(associatedCategory))
+					{
+						categoryNode = (DefaultMutableTreeNode) collectionNode.getChildAt(i);
+						break;
+					}
+				}
+			}
+			// Category level
+			if (categoryNode!=null)
+			{
+				for (int i=0 ; i<categoryNode.getChildCount() ; i++)
+				{
+					if (categoryNode.getChildAt(i).toString().equals(associatedClass))
+					{
+						classNode = (DefaultMutableTreeNode) categoryNode.getChildAt(i);
+						break;
+					}
+				}
+			}
+			// Class level
+			if (classNode!=null)
+			{
+				model.removeNodeFromParent(classNode);
+			}
+		}
+	}
+	
 	public void deleteClassNode(String name, TreePath path)
 	{
 		// Check if it is the right class to remove

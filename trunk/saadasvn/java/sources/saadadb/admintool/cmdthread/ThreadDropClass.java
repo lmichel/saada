@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -17,6 +19,7 @@ import saadadb.collection.ClassManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -54,6 +57,11 @@ public class ThreadDropClass extends CmdThread{
 		Cursor cursor_org = frame.getCursor();
 		try {
 			saada_process = new ClassManager(name);
+			
+			// Associated class in the cases of ENTRY or TABLES remove action
+			final String associatedClass = Database.getCachemeta().getClass(name).getAssociate_class();
+			final String associatedCategory = (associatedClass!=null && associatedClass.length()>0?Database.getCachemeta().getClass(associatedClass).getCategory_name():"");
+	
 			SQLTable.beginTransaction();
 			((ClassManager)saada_process).remove(new ArgsParser(new String[]{Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
@@ -62,7 +70,16 @@ public class ThreadDropClass extends CmdThread{
 				public void run() {
 					// Delete the removed class node in the Jtree
 					MetaDataPanel metaDataTree = ((AdminTool)(frame)).metaDataTree;
-					metaDataTree.deleteClassNode(name, metaDataTree.getClickedTreePath());
+					TreePath clickPath = metaDataTree.getClickedTreePath();
+					metaDataTree.deleteClassNode(name, clickPath);
+					
+					// If this is an ENTRY or TABLE class, the associated class is also deleted
+					if (associatedClass!=null && associatedClass.length()>0)
+					{
+						metaDataTree.deleteAssociatedClassNode(clickPath, associatedClass, associatedCategory);
+						Messenger.printMsg(Messenger.DEBUG, "AssociatedClass <" + associatedClass + "> in " + associatedCategory + "." + associatedCategory + " removed");
+					}
+					
 					JTree tree = metaDataTree.getTree();
 					// When the collection is removed, the tree node selected is root
 					tree.setSelectionPath(new TreePath((TreeNode)tree.getModel().getRoot()));
