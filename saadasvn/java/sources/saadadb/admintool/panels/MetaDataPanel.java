@@ -529,8 +529,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				}
 				if (path.length == 2) // Collection node
 				{
-					if (Database.getCachemeta().getCollection(node.toString()).hasFlatFiles() 
-							&& Database.getCachemeta().isCollectionFilledExceptFlatFiles(node.toString()))
+					if (Database.getCachemeta().isCollectionFilled(node.toString()))
 						this.setIcon(collectionFilledIcon);
 					else
 						this.setIcon(collectionEmptyIcon);
