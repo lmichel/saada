@@ -1358,6 +1358,24 @@ public abstract class SaadaInstance implements DMInterface {
 
 	}
 	/**
+	 * @return
+	 */
+	public String getVignetteName() throws SaadaException{
+		String rfn =  Database.getRepository() 
+		+ File.separator + this.getCollection().getName() 
+		+ File.separator + Category.explain(this.getCategory()) 
+		+ File.separator +  new File(this.getRepositoryPath()).getName() 
+		+ File.separator;
+		for( String suffix: RegExp.PICT_FORMAT) {
+			if( (new File(rfn + suffix)).exists() ) {
+				return rfn + suffix;
+			}
+		}
+		return null;
+	}
+
+
+	/**
 	 * @param name
 	 * @throws AbortException 
 	 */

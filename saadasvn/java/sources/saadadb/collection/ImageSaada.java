@@ -2,6 +2,9 @@ package saadadb.collection;
 
 import java.io.File;
 
+import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 
@@ -94,13 +97,20 @@ public class ImageSaada extends WCSSaada {
 	
 	/**
 	 * @return
+	 * @throws SaadaException 
+	 * @throws FatalException 
 	 */
-	public String getVignetteName() {
+	public String getVignetteName() throws SaadaException {
 		if( this.getProduct_url_csa() == null ) {
 			return null;
 		}
- 		return (new File(this.getProduct_url_csa())).getName() + ".jpg";
+		return Database.getRepository() 
+		+ File.separator + this.getCollection().getName() 
+		+ File.separator + "IMAGE" + File.separator + "JPEG"
+		+ File.separator + new File(this.getRepositoryPath()).getName() + ".jpg";
 	}
+
+	
 	public void calculCoordWCS()
 	{
 		
