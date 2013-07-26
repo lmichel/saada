@@ -9,12 +9,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.util.Messenger;
 
-public class TreePathLabel extends Panel 
+public class CustomPathLabel extends Panel 
 {
 	public JLabel collection, category, classe;
 	
-	public TreePathLabel() 
+	public CustomPathLabel() 
 	{
 		super(new FlowLayout());
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -35,11 +36,11 @@ public class TreePathLabel extends Panel
 		classe.setVisible(false);
 		
 		this.setForegroundtreePathPanel(AdminComponent.NEW_HEADER);
-		//this.initTreePathLabel();
 	}
 	
 	public void setTextTreePathPanel(DataTreePath dataTreePath)
 	{
+		//Messenger.printMsg(Messenger.DEBUG, "updateTreePathPanel : " + dataTreePath.toString());
 		if (dataTreePath != null)
 		{	
 			// Collection JLabel

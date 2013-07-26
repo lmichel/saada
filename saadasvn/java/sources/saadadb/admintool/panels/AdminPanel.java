@@ -19,7 +19,7 @@ import javax.swing.border.TitledBorder;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.DebugButton;
-import saadadb.admintool.components.TreePathLabel;
+import saadadb.admintool.components.CustomPathLabel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.util.Messenger;
 
@@ -33,26 +33,85 @@ public abstract class AdminPanel extends AdminComponent {
 	 */
 	private static final long serialVersionUID = 1L;
 	protected String icon,title, ancestor;
-	protected TreePathLabel treePathPanel;
+	// TreePathPanel
+	protected JLabel collection, category, classe;
+	protected JPanel treePathPanel;
 	protected JLabel selectResourceLabel ;
 	protected JLabel currentTaskLabel ;
 	public final DebugButton debugButton = new DebugButton();
 	private boolean lockDataTreePath = false;
 	private boolean changed = false;
 	
-	public TreePathLabel getTreePathPanel()
-	{
+	public JPanel getTreePathPanel() {
 		return treePathPanel;
+	}
+	
+	public void initTreePathPanel() 
+	{
+		treePathPanel = new JPanel(new FlowLayout());
+		treePathPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
+
+		collection = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Database_small.png")));
+		collection.setVisible(false);
+		collection = AdminComponent.setSubTitleLabelProperties(collection);
+		treePathPanel.add(collection);
+		
+		category = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Bluecube_small.png")));
+		category.setVisible(false);
+		category = AdminComponent.setSubTitleLabelProperties(category);
+		treePathPanel.add(category);
+
+		classe = new JLabel(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/SQLTable_small.png")));
+		treePathPanel.add(classe);
+		classe = AdminComponent.setSubTitleLabelProperties(classe);
+		classe.setVisible(false);
+		
+		setForegroundtreePathPanel(NEW_HEADER);
+		//this.initTreePathLabel();
 	}
 	
 	public void setTextTreePathPanel(DataTreePath dataTreePath)
 	{
-		this.treePathPanel.setTextTreePathPanel(dataTreePath);
+		if (dataTreePath != null)
+		{	
+			// Collection JLabel
+			if (dataTreePath.collection!=null)
+			{
+				collection.setText(dataTreePath.collection + " ");
+				collection.setVisible(true);
+			}
+			else
+			{
+				collection.setVisible(false);
+			}
+			// Category JLabel
+			if (dataTreePath.category!=null)
+			{
+				category.setText(dataTreePath.category + " ");
+				category.setVisible(true);
+			}
+			else
+			{
+				category.setVisible(false);
+			}
+			// Classe JLabel
+			if (dataTreePath.classe!=null)
+			{
+				classe.setText(dataTreePath.classe + " ");
+				classe.setVisible(true);
+			}
+			else
+			{
+				classe.setVisible(false);
+			}
+		}
 	}
 	
-	public void initTreePathPanel()
+	public void setForegroundtreePathPanel(Color color)
 	{
-		treePathPanel = new TreePathLabel();
+		collection.setForeground(color);
+		category.setForeground(color);
+		classe.setForeground(color);
 	}
 
 	public JLabel getSelectResourceLabel() {
@@ -211,30 +270,24 @@ public abstract class AdminPanel extends AdminComponent {
 //	}
 	
 	private void highlightDataTreePath() {
-		/*if( treePathLabel != null )
-			treePathLabel.setForeground(NEW_HEADER);*/
 		if (treePathPanel != null)
-			this.treePathPanel.setForegroundtreePathPanel(NEW_HEADER);
+			this.setForegroundtreePathPanel(NEW_HEADER);
 		if( currentTaskLabel != null )
 			currentTaskLabel.setForeground(OLD_HEADER);
 		if( selectResourceLabel != null )
 			selectResourceLabel.setForeground(OLD_HEADER);
 	}
 	private void highlightSelectResource() {
-		/*if( treePathLabel != null )
-			treePathLabel.setForeground(OLD_HEADER);*/
 		if (treePathPanel != null)
-			this.treePathPanel.setForegroundtreePathPanel(OLD_HEADER);
+			this.setForegroundtreePathPanel(OLD_HEADER);
 		if( currentTaskLabel != null )
 			currentTaskLabel.setForeground(OLD_HEADER);
 		if( selectResourceLabel != null )
 			selectResourceLabel.setForeground(NEW_HEADER);
 	}
 	private void highlightCurrentTask() {
-		/*if( treePathLabel != null )
-			treePathLabel.setForeground(OLD_HEADER);*/
 		if (treePathPanel != null)
-			this.treePathPanel.setForegroundtreePathPanel(OLD_HEADER);
+			this.setForegroundtreePathPanel(OLD_HEADER);
 		if( currentTaskLabel != null )
 			currentTaskLabel.setForeground(NEW_HEADER);
 		if( selectResourceLabel != null )
@@ -244,14 +297,11 @@ public abstract class AdminPanel extends AdminComponent {
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath != null && !lockDataTreePath ) {
 			super.setDataTreePath(dataTreePath);
-			/*if( treePathLabel != null )
-				treePathLabel.setText(dataTreePath.toString());*/
 			if ( treePathPanel == null )
 			{
-				this.treePathPanel = new TreePathLabel();
+				this.initTreePathPanel();
 			}
-			this.treePathPanel.setTextTreePathPanel(dataTreePath);
-			//highlightDataTreePath();
+			this.setTextTreePathPanel(dataTreePath);
 		}
 	}
 	/**
@@ -268,16 +318,12 @@ public abstract class AdminPanel extends AdminComponent {
 		super.setSelectedResource(label, explanation);
 		if( selectResourceLabel != null ) {
 			selectResourceLabel.setText(selectedResource);
-			//if( selectedResource.length() > 0)
-				//highlightSelectResource();
 		}
 	}
 	public void setCurrentTask(String currentTask) {	
 		super.setCurrentTask(currentTask);
 		if( currentTaskLabel != null ) {
 			currentTaskLabel.setText(currentTask);
-			//if( currentTask.length() > 0)
-				//highlightCurrentTask();
 		}
 	}
 
