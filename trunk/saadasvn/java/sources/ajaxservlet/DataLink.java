@@ -1,6 +1,8 @@
 package ajaxservlet;
 
 import java.io.IOException;
+import java.io.Writer;
+import java.util.Date;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -54,24 +56,34 @@ public class DataLink extends SaadaServlet implements Servlet {
 	@SuppressWarnings("unchecked")
 	protected void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String soid = request.getParameter("oid");
-		ServletOutputStream out = response.getOutputStream();   
 		printAccess(request, false);
 		try {
 			long oid = Long.parseLong(soid);
-			JSONObject title;
-			JSONObject retour = new JSONObject();
-			JSONArray cols = new JSONArray();
-			retour.put("oid", oid);
-			retour.put("columns", cols);
-			String[] colnames = {"url",  "category", "collection", "relation" };
-			for( String colname: colnames) {
-				title = new JSONObject(); 
-				title.put("sTitle", colname);
-				cols.add(0, title);
-			}
 			SaadaInstance si = Database.getCache().getObject(oid);
+			Writer w = response.getWriter();
+			w.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");			
+			w.write("<VOTABLE xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"1.1\">\n");
+			w.write("  <DESCRIPTION>\n");
+			w.write("  SaadaDB:\n");		
+			w.write("   name : " + Database.getDbname()+ "\n");		
+			w.write("   url  : " + Database.getUrl_root() + "\n");		
+			w.write("   date : " + (new Date()) + "\n");		
+			w.write(  "Query: datalink?oid= " + oid +"\n");
+			w.write("  </DESCRIPTION>\n");
+			w.write("  <COOSYS ID=\"" + Database.getCoord_sys() + "\" system=\"" + Database.getCoord_sys() + "\"/>\n");
+			w.write("  <RESOURCE type=\"results\"><DESCRIPTION>Datalink 0.0</DESCRIPTION>\n");
+			w.write("    <INFO name=\"QUERY_STATUS\" value=\"OK\"/>\n");
+			w.write("    <INFO name=\"LANGUAGE\" value=\"DataLink\"/>\n");
+			w.write("    <INFO name=\"QUERY\">datalink?oid= " + oid +"</INFO>\n");
+			w.write("    <TABLE name=\"Results\">\n");
+			w.write("      <PARAM name=\"oidsaada\" datatype=\"long\"  value=\"" + oid + "\"/>\n");
+			w.write("      <FIELD  name=\"url\" datatype=\"char\"  arraysize=\"*\"/>\n");
+			w.write("      <FIELD  name=\"category\" datatype=\"char\"  arraysize=\"*\"/>\n");
+			w.write("      <FIELD  name=\"collection\" datatype=\"char\"  arraysize=\"*\"/>\n");
+			w.write("      <FIELD  name=\"relation\" datatype=\"char\"  arraysize=\"*\"/>\n");
+			w.write("      <DATA>\n");
+			w.write("        <TABLEDATA>\n");
 			String[] rels = si.getStartingRelationNames();
-			JSONArray data = new JSONArray();
 			for( String rel: rels ) {
 				MetaRelation mr = Database.getCachemeta().getRelation(rel);
 				/*
@@ -87,24 +99,32 @@ public class DataLink extends SaadaServlet implements Servlet {
 				/*
 				 * Links are serialized: one row for each 
 				 */
+				w.write("          <TR>");
 				for(SaadaLink sl: links) {
 					long cpoid = sl.getEndindOID();
 					JSONArray row = new JSONArray();
+					w.write("<TD>" + rel+ "</TD>");
+					w.write("<TD>" + collection+ "</TD>");
+					w.write("<TD>" + category+ "</TD>");
 					row.add(0, rel);
 					row.add(1, collection);
 					row.add(2, category);
+					String lnk;
 					if( SaadaServlet.secureDownlad ) {
-						row.add(3, Database.getCache().getObject(cpoid).getSecureDownloadURL(true));	
+						lnk =  Database.getCache().getObject(cpoid).getSecureDownloadURL(true);	
 					} else {
-						row.add(3, Database.getCache().getObject(cpoid).getDownloadURL(true));	
+						lnk = Database.getCache().getObject(cpoid).getDownloadURL(true);	
 					}
-					data.add(row);
+					w.write("<TD>" + lnk+ "</TD>");
 				}
-			}
-			retour.put("data", data);
-			response.setContentType("application/json");
-			JsonUtils.teePrint(out, retour.toJSONString());
-			
+				w.write("          </TR>\n");
+			}			
+			w.write("        </TABLEDATA>\n");
+			w.write("      </DATA>\n");
+			w.write("    </TABLE>\n");
+			w.write("  </RESOURCE>\n");
+			w.write("</VOTABLE>\n");
+
 			
 		} catch (Exception e) {
 			reportJsonError(request, response,  e);
