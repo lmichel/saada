@@ -47,6 +47,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.MetaCollection;
 import saadadb.query.executor.Query;
 import saadadb.util.Messenger;
 
@@ -88,7 +89,7 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			try 
 			{
 				DataTreePath  dtp = new DataTreePath(clickedTreePath);
-				if( frame.acceptTreePath(dtp)) 
+				if( frame.acceptTreePath(dtp))
 				{
 					MetaDataPanel.this.frame.setDataTreePath(dtp);
 				}
@@ -517,60 +518,66 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
 			TreeNode[] path = node.getPath();
-			if (path.length == 1) // Root node
-				this.setIcon(collectionFilledIcon);
-			if (path.length == 2) // Collection node
+			try 
 			{
-				/*if (node.getChildCount()>0)
-				{*/
+				if (path.length == 1) // Root node
 					this.setIcon(collectionFilledIcon);
-				/*}
-				else
+				if (path.length == 2) // Collection node
 				{
-					this.setIcon(collectionEmptyIcon);
-				}*/
-			}
-			if (path.length == 3) // Category node
-			{
-				try
-				{
-					if (node.toString().equals("ENTRY"))
+					/*if (node.getChildCount()>0)
+					{*/
+						this.setIcon(collectionFilledIcon);
+					/*}
+					else
 					{
-						this.setIcon(categoryEntryFilledIcon);
+						this.setIcon(collectionEmptyIcon);
+					}*/
+				}
+				if (path.length == 3) // Category node
+				{
+					if (node.toString().equals("ENTRY") )
+					{
+						if (node.getChildCount()>0)
+							this.setIcon(categoryEntryFilledIcon);
+						else
+							this.setIcon(categoryEmptyIcon);
 					}
 					else if (node.toString().equals("FLATFILE") && !Database.getCachemeta().getCollection(node.getParent().toString()).hasFlatFiles())
 					{
 						this.setIcon(categoryEmptyIcon);
 					}
-					else
+					else // TABLE, IMAGE, SPECTRUM, MISC
 					{
-						this.setIcon(categoryFilledIcon);
+						if (node.getChildCount()>0)
+							this.setIcon(categoryFilledIcon);
+						else
+							this.setIcon(categoryEmptyIcon);
 					}
 				}
-			 	catch (FatalException e) 
-			 	{
-			 		e.printStackTrace();
+				if (path.length == 4) // Class node
+				{
+					try 
+					{
+						String ac;
+						if( "ENTRY".equals(node.getParent().toString()) ) 
+							ac = Database.getCachemeta().getClass(node.toString()).getAssociate_class();
+						else 
+							ac = node.toString();
+						
+						if( Database.getCachemeta().getClass(ac).hasInstances() ) 
+							this.setIcon(classFilledIcon);
+						else
+							this.setIcon(classEmptyIcon);
+					}
+					catch (Exception e) 
+					{
+						e.printStackTrace();
 				}
 			}
-			if (path.length == 4) // Class node
+			} 
+			catch (FatalException e1) 
 			{
-				try 
-				{
-					String ac;
-					if( "ENTRY".equals(node.getParent().toString()) ) 
-						ac = Database.getCachemeta().getClass(node.toString()).getAssociate_class();
-					else 
-						ac = node.toString();
-					
-					if( Database.getCachemeta().getClass(ac).hasInstances() ) 
-						this.setIcon(classFilledIcon);
-					else
-						this.setIcon(classEmptyIcon);
-				}
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
+				e1.printStackTrace();
 			}
 			return this;
 		}
