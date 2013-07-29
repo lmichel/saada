@@ -1,6 +1,5 @@
 package saadadb.admintool.components.correlator;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -14,28 +13,26 @@ import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
-import saadadb.util.Messenger;
 
 
-public class KNNEditor extends CollapsiblePanel {
+public class KNNEditor extends CollapsiblePanel 
+{
+	private static final long serialVersionUID = 1L;
 	private JPanel knnModePanel, knnUnitPanel;
 	private JTextArea knn_descriptionLabel;
-	private JComboBox knn_mode;
-	private JComboBox knn_unit;
+	private JComboBox<String> knn_mode;
+	private JComboBox<String> knn_unit;
+	private JComboBox<String> knn_dist;
 	private JTextField knn_k;
-	private JTextField knn_dist;
 	private RelationPopulatePanel taskPanel;
 
 	/**
@@ -46,10 +43,12 @@ public class KNNEditor extends CollapsiblePanel {
 		super("Neighborhood Constraint");
 		this.taskPanel = taskPanel;
 
-		knn_mode = new JComboBox(new String[]{"None", "K-NN", "1st-NN"});
-		knn_unit = new JComboBox(new String[]{"degree", "arcmin", "arcsec", "mas", "sigma"});
+		knn_mode = new JComboBox<String>(new String[]{"None", "K-NN", "1st-NN"});
+		knn_unit = new JComboBox<String>(new String[]{"arcmin", "arcsec", "degree", "mas", "sigma"});
 		knn_k = new JTextField(2);
-		knn_dist = new JTextField(5);
+		knn_dist = new JComboBox<String>(new String[]{"5", "1", "0.1", "0.01"});
+		knn_dist.setEditable(true);
+		knn_dist.setPreferredSize(new Dimension(80, knn_dist.getPreferredSize().height));
 		knn_mode.setToolTipText("Select the mode of correlations by position");		
 		knn_mode.addActionListener(new ActionListener() {
 
@@ -105,7 +104,7 @@ public class KNNEditor extends CollapsiblePanel {
 			}
 		});
 		knn_dist.setEnabled(false);
-		knn_dist.addKeyListener(new KeyAdapter() {
+		knn_dist.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				/*
 				 * Distance must be a float and positive value
@@ -126,6 +125,15 @@ public class KNNEditor extends CollapsiblePanel {
 				KNNEditor.this.setDescriptionString();
 			}
 		});	
+		knn_dist.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				KNNEditor.this.setDescriptionString();
+			}
+		});
+		
 		knn_unit.addActionListener(new ActionListener() 
 		{
 			@Override
@@ -158,7 +166,7 @@ public class KNNEditor extends CollapsiblePanel {
 		mc.next();mc.left(false);
 		knnUnitPanel.add(knn_dist);
 		knnUnitPanel.add(knn_unit);
-		knnUnitPanel.setPreferredSize(new Dimension(180,55));
+		knnUnitPanel.setPreferredSize(new Dimension(200,55));
 		knnUnitPanel.setBorder(BorderFactory.createTitledBorder("Distance value"));
 		panel.add(knnUnitPanel, mc);
 		mc.next();mc.center();
@@ -177,7 +185,7 @@ public class KNNEditor extends CollapsiblePanel {
 		 */
 		Pattern p = Pattern.compile("ConditionDist\\s*\\{([^\\{\\}]*)\\}", Pattern.DOTALL);
 		Matcher m = p.matcher(correlator);		
-		knn_dist.setText("");
+		knn_dist.getEditor().setItem("");
 		knn_k.setText("");
 		knn_mode.setSelectedIndex(0);
 		if( m.find() ) {
@@ -192,7 +200,7 @@ public class KNNEditor extends CollapsiblePanel {
 			p = Pattern.compile("([0-9]+\\.?[0-9]*)", Pattern.DOTALL);
 			m = p.matcher(correlator);		
 			if( m.find() ) {
-				knn_dist.setText(m.group(1));
+				knn_dist.getEditor().setItem(m.group(1));
 			}
 		}
 		/*
@@ -217,7 +225,7 @@ public class KNNEditor extends CollapsiblePanel {
 			p = Pattern.compile(",\\s*([0-9]+\\.?[0-9]*)", Pattern.DOTALL);
 			m = p.matcher(correlator);		
 			if( m.find() ) {
-				knn_dist.setText(m.group(1));
+				knn_dist.getEditor().setItem(m.group(1));
 			}
 		}
 	}
@@ -233,21 +241,21 @@ public class KNNEditor extends CollapsiblePanel {
 				AdminComponent.showInputError(this.getParent(), "K value must be given");
 				return "";
 			}
-			else if( knn_dist.getText().length() == 0 ) {
+			else if( knn_dist.getEditor().getItem().toString().length() == 0 ) {
 				AdminComponent.showInputError(this.getParent(), "A distance value must be given");
 				return "";
 			}
 			else {
-				retour += "ConditionKnn{" + knn_k.getText() + ", " + knn_dist.getText() + " [" +  knn_unit.getSelectedItem() + "]}\n";
+				retour += "ConditionKnn{" + knn_k.getText() + ", " + knn_dist.getEditor().getItem().toString() + " [" +  knn_unit.getSelectedItem() + "]}\n";
 			}
 		}
 		else if( knn_mode.getSelectedItem().toString().equals("1st-NN") ) {
-			if( knn_dist.getText().length() == 0 ) {
+			if( knn_dist.getEditor().getItem().toString().length() == 0 ) {
 				AdminComponent.showInputError(this.getParent(), "A distance value must be given");
 				return "";
 			}
 			else {
-				retour += "ConditionDist{" + knn_dist.getText() + " [" +  knn_unit.getSelectedItem() + "]}\n";
+				retour += "ConditionDist{" + knn_dist.getEditor().getItem().toString() + " [" +  knn_unit.getSelectedItem() + "]}\n";
 			}
 		}
 		return retour;
@@ -260,7 +268,7 @@ public class KNNEditor extends CollapsiblePanel {
 		this.knn_mode.setSelectedIndex(0);
 		this.knn_k.setText("0");
 		this.setDescriptionString();
-		this.knn_dist.setText("");				
+		knn_dist.getEditor().setItem("");			
 		// Just to avoid to notify change at opening time
 		KNNEditor.this.taskPanel.cancelChanges();
 
@@ -284,8 +292,8 @@ public class KNNEditor extends CollapsiblePanel {
 			
 			res += " at less than ";
 			
-			if (knn_dist.getText().trim().length()>0)
-				res += knn_dist.getText();
+			if (knn_dist.getEditor().getItem().toString().trim().length()>0)
+				res += knn_dist.getEditor().getItem().toString();
 			else
 				res += "?";
 			
