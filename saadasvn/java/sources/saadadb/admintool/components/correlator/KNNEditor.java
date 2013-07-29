@@ -34,7 +34,9 @@ public class KNNEditor extends CollapsiblePanel
 	private JComboBox<String> knn_dist;
 	private JTextField knn_k;
 	private RelationPopulatePanel taskPanel;
-
+	// Use so as to know if something can be modified and call the notifyChange function of AdminComponent
+	private boolean somethingCanChanged; 
+	
 	/**
 	 * @param taskPanel
 	 * @param toActive
@@ -42,7 +44,7 @@ public class KNNEditor extends CollapsiblePanel
 	public KNNEditor(RelationPopulatePanel taskPanel, Component toActive) {
 		super("Neighborhood Constraint");
 		this.taskPanel = taskPanel;
-
+		somethingCanChanged = true;
 		knn_mode = new JComboBox<String>(new String[]{"None", "K-NN", "1st-NN"});
 		knn_unit = new JComboBox<String>(new String[]{"arcmin", "arcsec", "degree", "mas", "sigma"});
 		knn_k = new JTextField(2);
@@ -53,7 +55,8 @@ public class KNNEditor extends CollapsiblePanel
 		knn_mode.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				KNNEditor.this.taskPanel.notifyChange();
+				if (somethingCanChanged)
+					KNNEditor.this.taskPanel.notifyChange();
 				KNNEditor.this.setDescriptionString();
 				if( knn_mode.getSelectedItem().toString().equals("None") ) {
 					knn_k.setEnabled(false);
@@ -94,7 +97,8 @@ public class KNNEditor extends CollapsiblePanel
 					getToolkit().beep();
 					e.consume();
 				} else {
-					KNNEditor.this.taskPanel.notifyChange();
+					if (somethingCanChanged)
+						KNNEditor.this.taskPanel.notifyChange();
 				}
 			}
 			
@@ -117,7 +121,8 @@ public class KNNEditor extends CollapsiblePanel
 					getToolkit().beep();
 					e.consume();
 				} else {
-					KNNEditor.this.taskPanel.notifyChange();
+					if (somethingCanChanged)
+						KNNEditor.this.taskPanel.notifyChange();
 				}
 			}
 			public void keyReleased(KeyEvent e) 
@@ -131,6 +136,8 @@ public class KNNEditor extends CollapsiblePanel
 			public void actionPerformed(ActionEvent e) 
 			{
 				KNNEditor.this.setDescriptionString();
+				if (somethingCanChanged)
+					KNNEditor.this.taskPanel.notifyChange();
 			}
 		});
 		
@@ -140,6 +147,8 @@ public class KNNEditor extends CollapsiblePanel
 			public void actionPerformed(ActionEvent e) 
 			{
 				KNNEditor.this.setDescriptionString();
+				if (somethingCanChanged)
+					KNNEditor.this.taskPanel.notifyChange();
 			}
 		});
 		
@@ -187,6 +196,7 @@ public class KNNEditor extends CollapsiblePanel
 		Matcher m = p.matcher(correlator);		
 		knn_dist.getEditor().setItem("");
 		knn_k.setText("");
+		somethingCanChanged = false;
 		knn_mode.setSelectedIndex(0);
 		if( m.find() ) {
 			knn_mode.setSelectedIndex(2);
@@ -228,6 +238,8 @@ public class KNNEditor extends CollapsiblePanel
 				knn_dist.getEditor().setItem(m.group(1));
 			}
 		}
+		somethingCanChanged = true;
+		this.setDescriptionString();
 	}
 
 	/**
@@ -265,7 +277,9 @@ public class KNNEditor extends CollapsiblePanel
 	 * 
 	 */
 	public void reset() {
+		somethingCanChanged = false;
 		this.knn_mode.setSelectedIndex(0);
+		somethingCanChanged = true;
 		this.knn_k.setText("0");
 		this.setDescriptionString();
 		knn_dist.getEditor().setItem("");			
