@@ -29,6 +29,8 @@ public class CollectionCoverage extends CollapsiblePanel {
 	public JTextField secondary_classes = new JTextField(20);
 	public JComboBox secondary_combo = new JComboBox();
 	private RelationPopulatePanel taskPanel;
+	// Use so as to know if something can be modified and call the notifyChange function of AdminComponent
+	private boolean somethingCanChanged; 
 	
 	/**
 	 * @param taskPanel
@@ -37,7 +39,7 @@ public class CollectionCoverage extends CollapsiblePanel {
 	public CollectionCoverage(RelationPopulatePanel taskPanel, Component toActive) {
 		super("Limit the join to a subset of the collection end-points ");
 		this.taskPanel = taskPanel;
-		
+		somethingCanChanged = true;
 		primary_classes = new JTextField(20);
 		primary_classes.setToolTipText("Subset of the primary collection covered by the join query");
 
@@ -59,7 +61,8 @@ public class CollectionCoverage extends CollapsiblePanel {
 						primary_classes.setText((ct + "," + si).replaceAll(",,", ","));			
 					}
 					CollectionCoverage.this.taskPanel.updateAvailableAttributes();
-					CollectionCoverage.this.taskPanel.notifyChange();
+					if (somethingCanChanged)
+						CollectionCoverage.this.taskPanel.notifyChange();
 				}
 			}	
 		});
@@ -85,7 +88,8 @@ public class CollectionCoverage extends CollapsiblePanel {
 						secondary_classes.setText((ct + "," + si).replaceAll(",,", ","));			
 					}
 					CollectionCoverage.this.taskPanel.updateAvailableAttributes();
-					CollectionCoverage.this.taskPanel.notifyChange();
+					if (somethingCanChanged)
+						CollectionCoverage.this.taskPanel.notifyChange();
 				}
 			}	
 		});
@@ -117,6 +121,7 @@ public class CollectionCoverage extends CollapsiblePanel {
 	 * @param conf
 	 */
 	public void load(RelationConf conf) {
+		somethingCanChanged = false;
 		initMetaData(conf);
 		String correlator = conf.getQuery();
    		Pattern p = Pattern.compile("PrimaryFrom\\s+(.*)\\s+");
@@ -131,6 +136,7 @@ public class CollectionCoverage extends CollapsiblePanel {
  		if( m.find() ) {
  			secondary_classes.setText(m.group(1));
  		}
+ 		somethingCanChanged = true;
 	}
 	
 	/**
