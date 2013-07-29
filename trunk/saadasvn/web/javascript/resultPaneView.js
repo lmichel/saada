@@ -221,13 +221,12 @@ jQuery
 //			Modalinfo.dataPanel('Preview of ' + title,
 //					"<img class=vignette src='getvignette?oid=" + oid
 //					+ "'>");
-			Modalinfo.urlDataPanel('Preview of ' + title
+			Modalinfo.dataPanel('Vignette of ' + title
 					, "<img class=vignette src='getvignette?oid=" + oid + "'>"
 					, 'getvignette?oid=' + oid);
 		};
 		this.fireShowPreview = function(preview_url, title) {
-			Modalinfo.openIframePanel('Preview of ' + title,
-					"<img class=vignette src='" + preview_url + "'>");
+			Modalinfo.openIframePanel(preview_url);
 		};
 
 		this.fireExpendForm= function() {
