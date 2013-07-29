@@ -96,13 +96,17 @@ public class CollectionCoverage extends CollapsiblePanel {
 		mc.right(false);
 		panel.add(AdminComponent.getPlainLabel("Primary"), mc);
 		mc.next();mc.left(false);
+		mc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(primary_combo, mc);
+		mc.fill = GridBagConstraints.NONE;
 		mc.rowEnd();
 		panel.add(primary_classes, mc);
 		mc.newRow();mc.right(false);
 		panel.add(AdminComponent.getPlainLabel("Secondary"), mc);
 		mc.next();mc.left(false);
+		mc.fill = GridBagConstraints.HORIZONTAL;
 		panel.add(secondary_combo, mc);
+		mc.fill = GridBagConstraints.NONE;
 		mc.rowEnd();
 		panel.add(secondary_classes, mc);
 		mc.newRow();mc.right(false);

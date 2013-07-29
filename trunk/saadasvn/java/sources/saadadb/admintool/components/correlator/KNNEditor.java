@@ -1,6 +1,8 @@
 package saadadb.admintool.components.correlator;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,18 +12,26 @@ import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.configuration.RelationConf;
+import saadadb.util.Messenger;
 
 
 public class KNNEditor extends CollapsiblePanel {
+	private JPanel knnModePanel, knnUnitPanel;
+	private JTextArea knn_descriptionLabel;
 	private JComboBox knn_mode;
 	private JComboBox knn_unit;
 	private JTextField knn_k;
@@ -45,27 +55,33 @@ public class KNNEditor extends CollapsiblePanel {
 
 			public void actionPerformed(ActionEvent e) {
 				KNNEditor.this.taskPanel.notifyChange();
+				KNNEditor.this.setDescriptionString();
 				if( knn_mode.getSelectedItem().toString().equals("None") ) {
 					knn_k.setEnabled(false);
+					knn_k.setText("0");
 					knn_dist.setEnabled(false);
 					knn_unit.setEnabled(false);
 					return;
 				}
 				else if( knn_mode.getSelectedItem().toString().equals("K-NN") ) {
 					knn_k.setEnabled(true);
+					knn_k.setText("");
 					knn_dist.setEnabled(true);
 					knn_unit.setEnabled(true);
+					knn_k.requestFocus();
+					KNNEditor.this.setDescriptionString();
 					return;
 				}
 				else if( knn_mode.getSelectedItem().toString().equals("1st-NN") ) {
 					knn_k.setEnabled(false);
+					knn_k.setText("1");
 					knn_dist.setEnabled(true);
 					knn_unit.setEnabled(true);
 					return;
 				}
 			}
 		});
-		knn_k.setToolTipText("Max number ofcorrelated neighbours");
+		knn_k.setToolTipText("Maximum number of correlated neighbours");
 		knn_k.setEnabled(false);
 		knn_k.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
@@ -81,7 +97,12 @@ public class KNNEditor extends CollapsiblePanel {
 				} else {
 					KNNEditor.this.taskPanel.notifyChange();
 				}
-		}
+			}
+			
+			public void keyReleased(KeyEvent e) 
+			{
+				KNNEditor.this.setDescriptionString();
+			}
 		});
 		knn_dist.setEnabled(false);
 		knn_dist.addKeyListener(new KeyAdapter() {
@@ -100,19 +121,50 @@ public class KNNEditor extends CollapsiblePanel {
 					KNNEditor.this.taskPanel.notifyChange();
 				}
 			}
+			public void keyReleased(KeyEvent e) 
+			{
+				KNNEditor.this.setDescriptionString();
+			}
 		});	
+		knn_unit.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				KNNEditor.this.setDescriptionString();
+			}
+		});
+		
+		knn_descriptionLabel = AdminComponent.getHelpLabel("No neighbourhood constraint");
+		knn_descriptionLabel.setCursor(null);  
+		knn_descriptionLabel.setOpaque(false);  
+		knn_descriptionLabel.setFocusable(false);       
+        knn_descriptionLabel.setWrapStyleWord(true);
+        knn_descriptionLabel.setLineWrap(true);
+		knn_descriptionLabel.setPreferredSize(new Dimension(250, 60));
+		
+		knnModePanel = new JPanel();
+		knnUnitPanel = new JPanel();
 
 		MyGBC mc = new MyGBC(5,5,5,5); mc.anchor = GridBagConstraints.NORTH;
 		JPanel panel = this.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		mc.right(false);
-		panel.add(knn_mode, mc);
+		knnModePanel.add(knn_mode);
+		knnModePanel.add(knn_k);
+		knnModePanel.setPreferredSize(new Dimension(180,55));
+		knnModePanel.setBorder(BorderFactory.createTitledBorder("Maximum neighbours"));
+		panel.add(knnModePanel, mc);
 		mc.next();mc.left(false);
-		panel.add(knn_k, mc);
-		mc.next();mc.left(false);
-		panel.add(knn_dist, mc);
+		knnUnitPanel.add(knn_dist);
+		knnUnitPanel.add(knn_unit);
+		knnUnitPanel.setPreferredSize(new Dimension(180,55));
+		knnUnitPanel.setBorder(BorderFactory.createTitledBorder("Distance value"));
+		panel.add(knnUnitPanel, mc);
+		mc.next();mc.center();
+		mc.fill = GridBagConstraints.BOTH;
+		panel.add(this.knn_descriptionLabel, mc);
 		mc.rowEnd();
-		panel.add(knn_unit, mc);
 	}
 
 	/**
@@ -206,11 +258,39 @@ public class KNNEditor extends CollapsiblePanel {
 	 */
 	public void reset() {
 		this.knn_mode.setSelectedIndex(0);
-		this.knn_k.setText("");
+		this.knn_k.setText("0");
+		this.setDescriptionString();
 		this.knn_dist.setText("");				
 		// Just to avoid to notify change at opening time
 		KNNEditor.this.taskPanel.cancelChanges();
 
 	}
-
+	
+	private void setDescriptionString()
+	{
+		String res = "";
+		if (knn_mode.getSelectedItem().toString().equals("None")) 
+		{
+			res = "No neighbourhood constraint";
+		}
+		else 
+		{
+			res = "Selects ";
+			if (knn_mode.getSelectedItem().toString().equals("K-NN")) 
+				res += "the " + (knn_k.getText().equals("")?"?":knn_k.getText()) + " nearest neighbour"+ ((knn_k.getText().compareTo("")!=0&&Integer.parseInt(knn_k.getText())>1)?"s":"");
+			
+			if (knn_mode.getSelectedItem().toString().equals("1st-NN")) 
+				res += "the nearest neighbour";
+			
+			res += " at less than ";
+			
+			if (knn_dist.getText().trim().length()>0)
+				res += knn_dist.getText();
+			else
+				res += "?";
+			
+			res += " " + knn_unit.getItemAt(knn_unit.getSelectedIndex());
+		}
+		this.knn_descriptionLabel.setText(res);
+	}
 }

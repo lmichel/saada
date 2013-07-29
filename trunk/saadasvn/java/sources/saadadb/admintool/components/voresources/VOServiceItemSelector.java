@@ -45,13 +45,13 @@ public class VOServiceItemSelector extends JPanel {
 		this.protocol = protocol;
 		this.tapServicePanel = tapServicePanel;
 		this.resourceList = new VOServiceList(this, protocol, allowedCategories);
-		this.resourceList.setBorder(BorderFactory.createTitledBorder("Saada resources currently published in " + protocol));
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		
 		MyGBC mgbc = new MyGBC(5,5,5,5);
 		mgbc.gridx = 0; mgbc.gridy = 0;mgbc.weightx = 0.5; mgbc.weighty = 0.5;
 		this.setLayout(new GridBagLayout());
 		JScrollPane jsp = new JScrollPane(this.resourceList);
+		jsp.setBorder(BorderFactory.createTitledBorder("Saada resources currently published in " + protocol));
 		jsp.setPreferredSize(new Dimension(350,200));
 		this.add(jsp, mgbc);
 		
