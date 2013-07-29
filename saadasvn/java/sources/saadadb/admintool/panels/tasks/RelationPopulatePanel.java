@@ -247,7 +247,7 @@ public class RelationPopulatePanel extends TaskPanel {
 			}
 		});*/
 		
-		JPanel tPanel = this.addSubPanel("Correlator Editor");
+		JPanel tPanel = this.addSubPanel("Correlator Editor", false);
 		JPanel editorPanel = new JPanel();
 		editorPanel.setLayout(new GridBagLayout());
 		editorPanel.setBackground(LIGHTBACKGROUND);

@@ -4,6 +4,7 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -115,11 +116,22 @@ public class CollCreatePanel extends TaskPanel {
 		mgbc.gridwidth=2;
 		mgbc.anchor = GridBagConstraints.WEST;
 		tPanel.add(getHelpLabel(help_key), mgbc);
+		
+		/*EventQueue.invokeLater(new Runnable() 
+		{
+			   @Override
+			   public void run() 
+			   {
+			         nameField.grabFocus();
+			         nameField.requestFocus();
+			   }
+		});*/
 
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});
 		}
+	
 
 	@Override
 	protected Map<String, Object> getParamMap() {
