@@ -459,6 +459,7 @@ public class AdminTool extends BaseFrame {
 				createRelationPanel = new RelationCreatePanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = createRelationPanel;
+			((RelationCreatePanel)createRelationPanel).reset();
 		} else 	if( panelTitle.equals(AdminComponent.DROP_RELATION) ) {
 			if( dropRelationPanel == null ) {
 				dropRelationPanel = new RelationDropPanel(this, AdminComponent.MANAGE_RELATIONS);
