@@ -100,7 +100,7 @@ public class Database {
 	 * @return
 	 */
 	public static String version() {
-		return Version.version; 
+		return Version.getVersion(); 
 	}
 	
 	/**
