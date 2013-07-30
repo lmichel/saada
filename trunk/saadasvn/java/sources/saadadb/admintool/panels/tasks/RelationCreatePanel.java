@@ -2,13 +2,9 @@ package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedHashMap;
@@ -17,12 +13,12 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadRelationCreate;
@@ -40,7 +36,6 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.sqltable.SQLTable;
-import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 /** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
@@ -61,7 +56,7 @@ public class RelationCreatePanel extends TaskPanel {
 	private JButton qualAdd;
 	private JButton qualDel;
 	protected NodeNameTextField qualName;
-	protected JList qualList;
+	protected JList<String> qualList;
 	protected JScrollPane jsp;
 	protected DefaultListModel<String> lstModel;
 
@@ -91,7 +86,6 @@ public class RelationCreatePanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
-		System.out.println("setTreePath");
 		super.setDataTreePath(dataTreePath);
 		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) 
 		{
@@ -234,24 +228,10 @@ public class RelationCreatePanel extends TaskPanel {
 		qualAdd.setEnabled(false);
 		qualAdd.setToolTipText("Add the new qualifier to the relationship");
 		qualAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(@SuppressWarnings("unused") ActionEvent arg0) {
-				String name = qualName.getText().trim();
-				for( int i=0 ; i<RelationCreatePanel.this.qualList.getModel().getSize() ;  i++ ) {
-					if( RelationCreatePanel.this.qualList.getModel().getElementAt(i).toString().equals(name)) {
-						JOptionPane.showMessageDialog(rootFrame,
-								"Duplicate qualifier <" + name + "> ",
-								"Configuration Error",
-								JOptionPane.ERROR_MESSAGE);		
-						return ;
-					}
-				}
-				qualDel.setEnabled(true);
-				qualName.setText("");
-				RelationCreatePanel.this.lstModel.addElement(name);
-				if (RelationCreatePanel.this.lstModel.getSize()>0)
-				{
-					RelationCreatePanel.this.qualList.setSelectedIndex(RelationCreatePanel.this.lstModel.getSize()-1);
-				}
+			public void actionPerformed(ActionEvent arg0) 
+			{
+				RelationCreatePanel.this.addQualifier();
+				RelationCreatePanel.this.qualName.requestFocus();
 			}
 		});
 		qualDel = new JButton("Remove");
@@ -260,15 +240,38 @@ public class RelationCreatePanel extends TaskPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if (RelationCreatePanel.this.qualList.getSelectedIndex()!=-1)
 				{
-					RelationCreatePanel.this.lstModel.removeElementAt(RelationCreatePanel.this.qualList.getSelectedIndex());
+					int[] selectedIndices = qualList.getSelectedIndices();
+					for (int i=selectedIndices.length-1 ; i>=0 ; i--)
+					{
+						RelationCreatePanel.this.lstModel.removeElementAt(selectedIndices[i]);
+					}
 					if (RelationCreatePanel.this.qualList.getModel().getSize()==0)
 						qualDel.setEnabled(false);
 				}
 			}
 		});
 		qualDel.setEnabled(false);
+		
 		qualName = new NodeNameTextField(16, RegExp.EXTATTRIBUTE, qualAdd);
+		qualName.addKeyListener(new KeyListener() 
+		{
+			@Override
+			public void keyReleased(KeyEvent e) {}
+
+			@Override
+			public void keyTyped(KeyEvent e) {}
+
+			@Override
+			public void keyPressed(KeyEvent e) 
+			{
+				if (e.getKeyChar()==KeyEvent.VK_ENTER)
+				{
+					RelationCreatePanel.this.addQualifier();
+				}
+			}
+		});
 		qualList = new JList<String>(lstModel);
+		qualList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		jsp = new JScrollPane(qualList);
 		jsp.setPreferredSize(new Dimension(170,90));
 		jsp.setBorder(BorderFactory.createTitledBorder("List of qualifiers"));
@@ -302,6 +305,27 @@ public class RelationCreatePanel extends TaskPanel {
 		this.setActionBar(new Component[]{runButton
 				, debugButton
 				, (new AntButton(this))});
+	}
+	
+	private void addQualifier()
+	{
+		String name = qualName.getText().trim();
+		for( int i=0 ; i<RelationCreatePanel.this.qualList.getModel().getSize() ;  i++ ) {
+			if( RelationCreatePanel.this.qualList.getModel().getElementAt(i).toString().equals(name)) {
+				JOptionPane.showMessageDialog(rootFrame,
+						"Duplicate qualifier <" + name + "> ",
+						"Configuration Error",
+						JOptionPane.ERROR_MESSAGE);		
+				return ;
+			}
+		}
+		qualDel.setEnabled(true);
+		qualName.setText("");
+		RelationCreatePanel.this.lstModel.addElement(name);
+		if (RelationCreatePanel.this.lstModel.getSize()>0)
+		{
+			RelationCreatePanel.this.qualList.setSelectedIndex(RelationCreatePanel.this.lstModel.getSize()-1);
+		}
 	}
 	
 	private void setPanelEnable(String panelName, boolean enabled)
