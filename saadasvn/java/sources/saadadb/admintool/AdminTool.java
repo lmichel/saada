@@ -54,7 +54,7 @@ import saadadb.admintool.panels.tasks.CollCreatePanel;
 import saadadb.admintool.panels.tasks.CollDropPanel;
 import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
-import saadadb.admintool.panels.tasks.DataTableEditor;
+import saadadb.admintool.panels.tasks.DataTableEditorPanel;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.panels.tasks.RelationCommentPanel;
@@ -99,7 +99,7 @@ public class AdminTool extends BaseFrame {
 
 	private TaskPanel emptyCategoryPanel;
 	private MetaDataEditorPanel metaDataPanel;
-	private DataTableEditor dataTablePanel;
+	private DataTableEditorPanel dataTablePanel;
 
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
@@ -420,7 +420,7 @@ public class AdminTool extends BaseFrame {
 			activePanel = dataLoaderPanel;
 		} else 	if( panelTitle.equals(AdminComponent.EXPLORE_DATA) ) {
 			if( dataTablePanel == null ) {
-				dataTablePanel = new DataTableEditor(this, AdminComponent.ROOT_PANEL);
+				dataTablePanel = new DataTableEditorPanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = dataTablePanel;
 			/*
