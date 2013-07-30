@@ -96,7 +96,7 @@ public class ProductManager extends EntityManager {
 				for( int j=0 ; j<soids.length ; j++ ) {
 					oids[j] = Long.parseLong(soids[j]);
 				}
-				removeProducts();
+				removeProducts(oids);
 			}
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
