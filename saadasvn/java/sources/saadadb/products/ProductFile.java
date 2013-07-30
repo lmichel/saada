@@ -84,6 +84,8 @@ public interface ProductFile extends Enumeration{
 	
 	public String getName();
 	
+	public void closeStream();
+	
 
  }
   

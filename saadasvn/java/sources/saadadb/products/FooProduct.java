@@ -48,6 +48,11 @@ public class FooProduct implements ProductFile {
 		
 		this.ra = this.ra0; this.dec = this.dec0;
 	}
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#closeStream()
+	 */
+	public void closeStream() {
+	}
 	
 	/**
 	 * 

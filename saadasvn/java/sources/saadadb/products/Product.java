@@ -1,6 +1,5 @@
 package saadadb.products;
 
-import java.awt.Image;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +97,14 @@ public class Product /*extends File*/ {
 		this.configuration = conf;
 	}
 	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#closeStream()
+	 */
+	public void close() {
+		if( productFile != null) {
+			productFile.closeStream();
+		}
+	}
 	
 	/**
 	 * Returns the value corresponding finded in the product file to the key
@@ -1492,17 +1499,16 @@ public class Product /*extends File*/ {
 		try {
 			prd_to_merge.productFile = new FitsProduct(prd_to_merge);		
 			this.typeFile = "FITS";
-		}
-		catch(Exception ef) {
+		} catch(Exception ef) {
 			try {
 				prd_to_merge.productFile = new VOProduct(prd_to_merge);
 				this.typeFile = "VO";
-			}
-			catch(Exception ev) {
+			} catch(Exception ev) {
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + file_to_merge + "> neither FITS nor VOTable");			
 			}
 		}
 		this.mergeAttributeHandlers(prd_to_merge.getTableAttributeHandler());
+		prd_to_merge.close();
 	}
 	
 	/**

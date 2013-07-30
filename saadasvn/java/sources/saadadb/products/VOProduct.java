@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -69,6 +70,11 @@ public class VOProduct extends File implements ProductFile {
 	private boolean onfirstline = true;
 	protected SpaceFrame space_frame;
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#closeStream()
+	 */
+	public void closeStream() {
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWValueQuickly(java.lang.String)
