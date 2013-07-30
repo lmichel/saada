@@ -455,4 +455,14 @@
     <servlet-name>updateCache</servlet-name>
     <url-pattern>/updateCache</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>GetVersion</display-name>
+    <servlet-name>GetVersion</servlet-name>
+    <servlet-class>ajaxservlet.json.GetVersion</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GetVersion</servlet-name>
+    <url-pattern>/getversion</url-pattern>
+  </servlet-mapping>
 </web-app>

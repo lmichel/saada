@@ -639,6 +639,10 @@ jQuery
 			$('#resultpane div.dataTables_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
 			$('#resultpane div.dataTables_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
 			$('#resultpane div.dataTables_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
+			if( globalTreePath[1] == "ENTRY"){
+				var url = "getqueryreport?query=" + escape(query) + "&protocol=auto&format=votable";
+				$('#resultpane div.dataTables_length').append('<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="WebSamp_mVc.fireSendVoreport(&quot;' + url + '&quot;, &quot;text/xml&quot;, null);"></a>');
+			}
 			that.fireStoreHisto(query);
 			//this.fixedHeader.fnUpdate();
 	    	/*

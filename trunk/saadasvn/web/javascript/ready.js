@@ -255,6 +255,11 @@ $().ready(function() {
 			booleansupported = true;
 		} 
 	});
+	
+	$.getJSON("getversion", function(data) {
+		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + " on " + data.dbms);
+	});
+	
 	/*
 	 * This callback can be changed changed at everytime: do not use the "onclick" HTML  
 	 * attribute which is not overriden by JQuery "click" callback
