@@ -162,10 +162,9 @@ public class Image2D extends Product {
 	}
 
 	/**
-	 * @throws FatalException
-	 * @throws IgnoreException
+	 * @throws SaadaException 
 	 */
-	public void createVignette() throws FatalException, IgnoreException {
+	public void createVignette() throws SaadaException {
 		String basedir = Database.getRepository() 
 		+ separ + this.getConfiguration().getCollectionName() 
 		+ separ + Category.explain(this.getConfiguration().getCategorySaada()) 
