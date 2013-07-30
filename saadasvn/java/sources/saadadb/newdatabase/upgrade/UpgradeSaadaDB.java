@@ -90,7 +90,7 @@ public class UpgradeSaadaDB {
 	 */
 	protected  void upgrade() throws FatalException {
 		try {
-			Messenger.printMsg(Messenger.TRACE, "Upgrade to version " + Version.version);
+			Messenger.printMsg(Messenger.TRACE, "Upgrade to version " + Version.getVersion());
 			this.upgradeDistrib();
 			this.upgradeWebApps() ;
 		} catch (Exception e) {
