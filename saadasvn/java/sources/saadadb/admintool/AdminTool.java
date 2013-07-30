@@ -54,7 +54,7 @@ import saadadb.admintool.panels.tasks.CollCreatePanel;
 import saadadb.admintool.panels.tasks.CollDropPanel;
 import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
-import saadadb.admintool.panels.tasks.DataTableEditorPanel;
+import saadadb.admintool.panels.tasks.DataTableEditor;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.panels.tasks.RelationCommentPanel;
@@ -73,7 +73,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.util.Version;
 
 /**
  * Base frame of the administration tool
@@ -100,7 +99,7 @@ public class AdminTool extends BaseFrame {
 
 	private TaskPanel emptyCategoryPanel;
 	private MetaDataEditorPanel metaDataPanel;
-	private DataTableEditorPanel dataTablePanel;
+	private DataTableEditor dataTablePanel;
 
 	private TaskPanel dropClassPanel;
 	private TaskPanel emptyClassPanel;
@@ -141,7 +140,7 @@ public class AdminTool extends BaseFrame {
 
 
 	public AdminTool(boolean nolog, Point p) throws Exception {
-		super("Saada " + Version.version + " - Admintool for the " + Database.getDbname() + " database");
+		super("Saada " + Database.version() + " - Admintool for the " + Database.getDbname() + " database");
 		connectMessaging(nolog);
 		/*
 		 * Exit after confirmation when click on the window close button
@@ -421,7 +420,7 @@ public class AdminTool extends BaseFrame {
 			activePanel = dataLoaderPanel;
 		} else 	if( panelTitle.equals(AdminComponent.EXPLORE_DATA) ) {
 			if( dataTablePanel == null ) {
-				dataTablePanel = new DataTableEditorPanel(this, AdminComponent.ROOT_PANEL);
+				dataTablePanel = new DataTableEditor(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = dataTablePanel;
 			/*
