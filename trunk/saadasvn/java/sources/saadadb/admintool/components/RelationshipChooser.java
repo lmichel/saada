@@ -207,8 +207,12 @@ public class RelationshipChooser extends JPanel {
 				quals += "No qualifier";
 			else 
 			{
+				int i = 0;
 				for( String q: qls) 
-					quals += q + " ";
+				{
+					quals += (i==0?"":", ") + q;
+					i++;
+				}
 			}
 			String correlator = mr.getCorrelator();
 			this.dm.addRow(new String[] { "Name", mr.getName() });

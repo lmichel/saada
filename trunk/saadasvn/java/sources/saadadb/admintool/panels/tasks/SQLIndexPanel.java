@@ -3,6 +3,7 @@
  */
 package saadadb.admintool.panels.tasks;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -18,8 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadIndexTable;
@@ -42,7 +45,7 @@ public class SQLIndexPanel extends TaskPanel {
 	private String sqlTable;
 	private JRadioButton indexAll ;
 	private JRadioButton indexSel;
-	private JTable jtable;
+	private JXTable jtable;
 	private ButtonGroup actionGroup;
 	private JRadioButton dropAll ;
 	private JRadioButton dropSel;
@@ -121,7 +124,7 @@ public class SQLIndexPanel extends TaskPanel {
 			r++;
 		}
 		rs.close();
-		jtable = new JTable();
+		jtable = new JXTable();
 		jtable.setModel(new AbstractTableModel() {
 			public Object getValueAt(int row, int col) {
 				return table.get(row)[col];
@@ -147,6 +150,8 @@ public class SQLIndexPanel extends TaskPanel {
 		jtable.getColumnModel().getColumn(2).setHeaderValue("Indexed");
 		jtable.setBackground(AdminComponent.IVORY);
 		columnPanel.setViewportView(jtable);
+		jtable.setBackground(AdminComponent.LIGHTBACKGROUND);
+		jtable.setHighlighters(HighlighterFactory.createSimpleStriping());
 		updateUI();
 	}
 
