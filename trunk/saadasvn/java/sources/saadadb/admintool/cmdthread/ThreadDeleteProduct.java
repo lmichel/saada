@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.SQLJTable;
-import saadadb.admintool.panels.tasks.DataTableEditor;
+import saadadb.admintool.panels.tasks.DataTableEditorPanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ProductManager;
 import saadadb.database.Database;
@@ -26,7 +26,7 @@ import saadadb.util.Messenger;
  */
 public class ThreadDeleteProduct extends CmdThread {
 	private Frame frame;
-	private DataTableEditor dataTableEditor;
+	private DataTableEditorPanel dataTableEditor;
 	long oids_to_remove[] ;
 
 	public ThreadDeleteProduct(Frame frame, String taskTitle) {
@@ -37,7 +37,7 @@ public class ThreadDeleteProduct extends CmdThread {
 	@Override
 	public void setParams(Map<String, Object> params) throws SaadaException 
 	{	
-		dataTableEditor = (DataTableEditor) params.get("datatable");
+		dataTableEditor = (DataTableEditorPanel) params.get("datatable");
 	}
 
 	/* (non-Javadoc)

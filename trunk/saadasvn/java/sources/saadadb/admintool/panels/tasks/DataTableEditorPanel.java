@@ -2,6 +2,7 @@ package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
@@ -31,7 +32,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-public class DataTableEditor extends TaskPanel
+public class DataTableEditorPanel extends TaskPanel
 {
 	private static final long serialVersionUID = 1L;
 	protected String sqlQuery;
@@ -41,7 +42,7 @@ public class DataTableEditor extends TaskPanel
 	protected NodeNameTextField queryLimitArea;
 	private JPanel tPanel;
 	
-	public DataTableEditor(AdminTool rootFrame, String ancestor) 
+	public DataTableEditorPanel(AdminTool rootFrame, String ancestor) 
 	{
 		super(rootFrame, EXPLORE_DATA, null, ancestor);
 	}
@@ -87,6 +88,10 @@ public class DataTableEditor extends TaskPanel
 				{
 					this.buildSQL(dataTreePath);
 					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
+					if (this.productTable.getModel().getColumnCount() > 8)
+						productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
+					else
+						productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_ALL_COLUMNS);
 					this.sqlORDERClause = "";
 				} 
 				catch (QueryException e) 
@@ -95,7 +100,6 @@ public class DataTableEditor extends TaskPanel
 				}
 				tPanel.removeAll();
 				productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
-				productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
 				JScrollPane jsp = new JScrollPane(productTable);
 				jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
 				
@@ -123,8 +127,13 @@ public class DataTableEditor extends TaskPanel
 				querySubmitPanel.add(queryLimitArea, mgbc);
 
 				querySubmitPanel.add(comp, mgbc);
+				JPanel jspPanel = new JPanel(new GridBagLayout());
+				GridBagConstraints mc_jsp = new GridBagConstraints();
+				mc_jsp.gridx = 0; mc_jsp.gridy = 0;
+				mc_jsp.weightx = 0.5; mc_jsp.weighty = 0.5; mc_jsp.fill = GridBagConstraints.BOTH; mc_jsp.gridwidth = 2;
+				jspPanel.add(jsp, mc_jsp);
 				
-				JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jsp, querySubmitPanel);	
+				JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jspPanel, querySubmitPanel);
 				splitPane.setOneTouchExpandable(true);
 				splitPane.setDividerLocation(525);
 				
@@ -264,6 +273,10 @@ public class DataTableEditor extends TaskPanel
 			try 
 			{
 				this.productTable.setModel(sqlQuery);
+				if (this.productTable.getModel().getColumnCount() > 8)
+					productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
+				else
+					productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_ALL_COLUMNS);
 			} 
 			catch (QueryException e) 
 			{
@@ -276,6 +289,10 @@ public class DataTableEditor extends TaskPanel
 		if( productTable != null ) {
 			try {
 				productTable.setModel(sqlQuery);
+				if (this.productTable.getModel().getColumnCount() > 8)
+					productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
+				else
+					productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_ALL_COLUMNS);
 			} catch (QueryException e) {
 				Messenger.trapQueryException(e);
 			}
