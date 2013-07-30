@@ -198,6 +198,7 @@ public class KNNEditor extends CollapsiblePanel
 		knn_k.setText("");
 		somethingCanChanged = false;
 		knn_mode.setSelectedIndex(0);
+		knn_unit.setSelectedIndex(0);
 		if( m.find() ) {
 			knn_mode.setSelectedIndex(2);
 			String con = m.group(1);

@@ -3,10 +3,8 @@ package saadadb.admintool.components;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
@@ -138,6 +135,7 @@ public class RelationshipChooser extends JPanel {
 						RelationshipChooser.this.taskPanel.cancelChanges();
 						setDescription();
 						lastSelectedIndex = confList.getSelectedIndex();
+						Messenger.printMsg(Messenger.DEBUG, "Test de passage !");
 					}
 				}	
 			}

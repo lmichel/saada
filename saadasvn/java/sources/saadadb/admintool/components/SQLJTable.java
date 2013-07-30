@@ -29,7 +29,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.panels.tasks.DataTableEditor;
+import saadadb.admintool.panels.tasks.DataTableEditorPanel;
 import saadadb.admintool.popups.PopupNode;
 import saadadb.admintool.popups.PopupProduct;
 import saadadb.admintool.utils.DataTreePath;
@@ -200,9 +200,9 @@ public class SQLJTable extends JXTable {
 					}
 					SQLJTable.this.order_column = col;
 					
-					if (SQLJTable.this.getCmdThreadParam() instanceof DataTableEditor)
+					if (SQLJTable.this.getCmdThreadParam() instanceof DataTableEditorPanel)
 					{
-						DataTableEditor dataTableEditor = (DataTableEditor) SQLJTable.this.getCmdThreadParam();
+						DataTableEditorPanel dataTableEditor = (DataTableEditorPanel) SQLJTable.this.getCmdThreadParam();
 						String sqlORDERClause = SQLJTable.this.getColumnName(col) + desc;
 						if (SQLJTable.this.dataTreePath.isClassLevel())
 						{

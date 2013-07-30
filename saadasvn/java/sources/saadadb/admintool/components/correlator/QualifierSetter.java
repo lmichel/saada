@@ -20,6 +20,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
 import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.input.FilteredComboBox;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
@@ -42,8 +43,8 @@ public class QualifierSetter extends CollapsiblePanel {
 	private static final long serialVersionUID = 1L;
 	private RelationPopulatePanel taskPanel;
 	private Map<String, QualifierEditor> qual_setter;
-	public FilteredComboBox primary_att = new FilteredComboBox("- Primary Attr. -");
-	public FilteredComboBox secondary_att = new FilteredComboBox("- Secondary Attr. -");
+	public FilteredComboBox primary_att = new FilteredComboBox("- Primary Attributes -");
+	public FilteredComboBox secondary_att = new FilteredComboBox("- Secondary Attributes -");
 	public JTextArea active_att_receiver;
 	private RelationConf relationConf;
 
@@ -134,9 +135,13 @@ public class QualifierSetter extends CollapsiblePanel {
 			cpt++;			
 		}
 		JPanel p = new JPanel();
-		p.setLayout(new BoxLayout(p, BoxLayout.LINE_AXIS));
-		p.add(primary_att);
-		p.add(secondary_att);
+		p.setLayout(new GridBagLayout());
+		p.setBackground(AdminComponent.LIGHTBACKGROUND);
+		
+		MyGBC mc2 = new MyGBC(0,5,10,5);
+		p.add(primary_att, mc2);
+		mc2.next();
+		p.add(secondary_att, mc2);
 		mc.gridwidth = 2;
 		panel.add(p, mc);
 	}
@@ -240,7 +245,7 @@ public class QualifierSetter extends CollapsiblePanel {
 		JLabel    label;
 
 		QualifierEditor(String qual_name) {
-			label = SaadaDBAdmin.getPlainLabel(qual_name);
+			label = AdminComponent.getPlainLabel(qual_name);
 			editor = new JTextArea(1, 20);					
 			editor.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));					
 
