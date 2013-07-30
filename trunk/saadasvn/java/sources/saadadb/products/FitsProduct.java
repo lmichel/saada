@@ -75,9 +75,18 @@ public class FitsProduct extends File implements ProductFile{
 		super(name);
 		//Initialzes the current file name
 		this.product = product;
-		this.fits_data = new Fits(getCanonicalPath());
+		this.fits_data = new Fits(getCanonicalPath()); 
 	}
 
+	public void closeStream() {
+		if( this.fits_data != null && this.fits_data.getStream() != null) {
+			try {
+				this.fits_data.getStream().close();
+			} catch (IOException e) {
+				Messenger.printMsg(Messenger.WARNING, "Closing stream of " + this.product.getName() +  " " + e.getMessage());
+			}
+		}
+	}
 
 	/**Returns the value corresponding finded in the product file to the key word in parameter.
 	 *@param String The key word.

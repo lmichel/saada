@@ -23,6 +23,11 @@ public class AnyFile extends File implements ProductFile {
 		super(product.file.getAbsolutePath());
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#closeStream()
+	 */
+	public void closeStream() {
+	}
 	public String getKWValueQuickly(String key) {
 		return null;
 	}
