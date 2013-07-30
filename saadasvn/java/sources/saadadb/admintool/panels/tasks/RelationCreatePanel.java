@@ -36,6 +36,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.sqltable.SQLTable;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 /** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
@@ -60,7 +61,8 @@ public class RelationCreatePanel extends TaskPanel {
 	protected JScrollPane jsp;
 	protected DefaultListModel<String> lstModel;
 
-	public RelationCreatePanel(AdminTool rootFrame, String ancestor) {
+	public RelationCreatePanel(AdminTool rootFrame, String ancestor) 
+	{
 		super(rootFrame, CREATE_RELATION, null, ancestor);
 	}
 
@@ -87,6 +89,7 @@ public class RelationCreatePanel extends TaskPanel {
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		super.setDataTreePath(dataTreePath);
+		
 		if( dataTreePath != null && (dataTreePath.isCategoryLevel() || dataTreePath.isClassLevel()) ) 
 		{
 			String pf = dataTreePath.collection + "." + dataTreePath.category.toUpperCase();
@@ -344,6 +347,23 @@ public class RelationCreatePanel extends TaskPanel {
 			qualList.setEnabled(enabled);
 			jsp.setEnabled(enabled);
 		}
+	}
+	
+	// This method reset all 
+	public void reset()
+	{
+		this.nameField.setText("");
+		this.commentField.setText("");
+		
+		this.setPanelEnable("endpoints", false);
+		this.primaryField.setText("");
+		this.secondaryField.setText("");
+		
+		this.setPanelEnable("qualifier", false);
+		this.qualName.setText("");
+		this.lstModel.removeAllElements();
+		this.qualAdd.setEnabled(false);
+		this.qualDel.setEnabled(false);
 	}
 
 	/* (non-Javadoc)
