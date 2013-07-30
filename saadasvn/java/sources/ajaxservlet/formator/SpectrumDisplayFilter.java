@@ -94,7 +94,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Visu".equals(s)) {
-				retour.add("<a  class=dl_ivoa onclick='webSampView.fireSendVoreport(\"" + instance.getOid() + "\");'></a>");
+				retour.add("<a  class=dl_ivoa onclick=WebSamp_mVc.fireSendVoreport(\"" + instance.getOid() + "\");'></a>");
 			}
 			else if( "Access".equals(s)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)

@@ -125,16 +125,16 @@ abstract public class DefaultPreviews {
 	}
 
 	public static String getSpecSAMP(long oid) {
-		return ("<a  title='Send a spectra to SAMP'  class=dl_samp onclick='webSampView.fireSendOid(\"" 
+		return ("<a  title='Send a spectra to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 				+ oid + "\");'></a>");
 	}
 
 	public static String getTopcatSAMP(long oid) throws FatalException {
 		if( SaadaServlet.secureDownlad ) {
-			return ("<a  title='Send a VOTable to SAMP (restricted)'  class=dl_securesamp onclick='sampView.fireSendOid(\"" 
+			return ("<a  title='Send a VOTable to SAMP (restricted)'  class=dl_securesamp onclick='WebSamp_mVc.fireSendOid(\"" 
 					+  oid + "\");'></a>");
 		} else {
-			return ("<a  title='Send a VOTable to SAMP'  class=dl_samp onclick='webSampView.fireSendOid(\"" 
+			return ("<a  title='Send a VOTable to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 					+  oid + "\");'></a>");
 		}
 	}
