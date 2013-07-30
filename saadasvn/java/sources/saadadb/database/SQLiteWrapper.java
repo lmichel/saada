@@ -62,6 +62,13 @@ public class SQLiteWrapper extends DbmsWrapper {
 		Messenger.printMsg(Messenger.TRACE, "Linked with SQLITE db file " + db_file + " by driver " + this.driver);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getDBMS()
+	 */
+	public String getDBMS(){
+		return "SQLite";
+	}
+
 	/**
 	 * @param server_or_url
 	 * @param port_or_url

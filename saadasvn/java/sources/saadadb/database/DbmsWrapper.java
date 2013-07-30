@@ -53,6 +53,11 @@ abstract public class DbmsWrapper {
 	protected DbmsWrapper(boolean forwardOnly) {
 		this.forwardOnly = forwardOnly;
 	}
+	
+	/**
+	 * @return the generic name of the DBMS
+	 */
+	public abstract String getDBMS();
 	/** 
 	 * @param tmp_dir
 	 * @param clean_after

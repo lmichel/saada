@@ -53,6 +53,12 @@ public class PostgresWrapper extends DbmsWrapper {
 			}
 		}
 	}
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getDBMS()
+	 */
+	public String getDBMS(){
+		return "PostgreSQL";
+	}
 
 	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url) throws ClassNotFoundException {
 		if( wrapper != null ) {
