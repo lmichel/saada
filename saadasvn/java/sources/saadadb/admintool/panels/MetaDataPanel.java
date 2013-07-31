@@ -15,6 +15,8 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
@@ -25,6 +27,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -69,13 +72,6 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 	protected AdminTool frame;
 	protected DefaultTreeModel model;
 	private DefaultMutableTreeNode top = new DefaultMutableTreeNode(MetaDataPanel.ROOT_NAME);
-	/*private int DOUBLE_CLICK_DELAY=500; // filed possibly moved in some property file
-	private Timer simplCLickTimer = new Timer(DOUBLE_CLICK_DELAY, new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			processSimpleClick();
-		}
-	});
-	*/
 	private TreePath clickedTreePath, previouslyClickedTreePath;
 	;
 	/**
@@ -105,29 +101,16 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			}
 		}
 	}
-
-	/**
-	 * DOuble click on a node opens a table with the node content
-	 */
-	/*
-	void processDoubleClick(){
-		if( simplCLickTimer.isRunning()) {
-			simplCLickTimer.stop();
-			if( clickedTreePath.getPathCount() >= 2) {
-				try {
-					DataTableWindow dtw = new DataTableWindow(frame, clickedTreePath);
-					dtw.open(SQLJTable.PRODUCT_PANEL);
-				} catch (QueryException e) {
-					Messenger.trapQueryException(e);
-				}
-			} else {
-				AdminComponent.showInputError(frame, "Only category either class nodes can be displayed");
-			}
-
-		}
+	
+	// DoubleClick
+	void processDoubleClick()
+	{
+		if (clickedTreePath!=null && clickedTreePath.getPathCount() > 2) 
+		{
+			this.frame.activePanel(AdminComponent.EXPLORE_DATA);
+		} 
 	}
-	*/
-
+	
 	@SuppressWarnings("serial")
 	public MetaDataPanel(AdminTool frame, int largeur, int hauteur) throws SaadaException {
 		this.frame = frame;
@@ -219,25 +202,20 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		});
 		
 		// Use for doubleclick
-		/*
-		tree.addMouseListener(new MouseAdapter() {
+		tree.addMouseListener(new MouseAdapter() 
+		{
 			@Override
-			public void mousePressed(MouseEvent e) {
-				if( !simplCLickTimer.isRunning() ) simplCLickTimer.start();
-
-
-			} 	dragGestureRecognized
-			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(MouseEvent e) 
+			{
 				previouslyClickedTreePath = clickedTreePath;
 				clickedTreePath = tree.getPathForLocation(e.getX(), e.getY());
-				if( e.getClickCount() == 2) {
+				if( e.getClickCount() == 2) 
+				{
 					processDoubleClick();
-					tree.setSelectionPath(clickedTreePath);
 				}
 			}
 		});	
-		*/
+		
 		
 		/*
 		 * Change the renderer to apply a specific icon on classes with instances
