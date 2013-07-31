@@ -10,6 +10,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Response;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,6 +61,8 @@ public class DataLink extends SaadaServlet implements Servlet {
 		try {
 			long oid = Long.parseLong(soid);
 			SaadaInstance si = Database.getCache().getObject(oid);
+			if( si.getVignetteName() != null )
+			response.setContentType("text/xml");
 			Writer w = response.getWriter();
 			w.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");			
 			w.write("<VOTABLE xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" version=\"1.1\">\n");

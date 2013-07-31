@@ -1,9 +1,13 @@
 package saadadb.collection;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
@@ -46,10 +50,19 @@ public class EntrySaada extends Position {
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "No repository file  for entries");
 			return null;
 	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.SaadaInstance#getVignetteName()
+	 */
 	public String getVignetteName() throws SaadaException {
 		IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "No repository file  for entries");
 			return null;
 		}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.SaadaInstance#setVignetteFile()
+	 */
+	public void setVignetteFile() throws FatalException, IOException, SaadaException{
+		this.vignetteFile = null;
+	}
 
   public void getHTMLCol(PrintWriter out, HttpServletRequest req)
   {

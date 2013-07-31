@@ -46,7 +46,7 @@ public class GetVignette extends SaadaServlet {
 		try {
 			long oid = Long.parseLong(request.getParameter("oid"));
 			SaadaInstance instance = Database.getCache().getObject(oid);
-			String retour = instance.getVignetteName();
+			String retour = instance.getVignettePath();
 			if( retour == null ) {
 				retour = base_dir + File.separator  + "images" + File.separator + "nondispo.jpeg";
 			}

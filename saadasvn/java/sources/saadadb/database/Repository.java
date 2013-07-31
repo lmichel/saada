@@ -168,24 +168,24 @@ public class Repository {
 	}
 	
 
-	/**
-	 * Return the full path of the vignette file associated with the image si.
-	 * @param si
-	 * @return
-	 * @throws SaadaException 
-	 */
-	public static String getVignettePath(ImageSaada si) throws SaadaException {
-		return Database.getRepository()
-		+ separ
-		+ SaadaOID.getCollectionName(si.getOid())
-		+ separ
-		+ "IMAGE" 
-		+ separ
-		+ "JPEG"
-		+ separ
-		+ si.getVignetteName();
-
-	}			
+//	/**
+//	 * Return the full path of the vignette file associated with the image si.
+//	 * @param si
+//	 * @return
+//	 * @throws SaadaException 
+//	 */
+//	public static String getVignettePath(ImageSaada si) throws SaadaException {
+//		return Database.getRepository()
+//		+ separ
+//		+ SaadaOID.getCollectionName(si.getOid())
+//		+ separ
+//		+ "IMAGE" 
+//		+ separ
+//		+ "JPEG"
+//		+ separ
+//		+ si.getVignetteName();
+//
+//	}			
 
 	/**
 	 * @param org_file : Full path of the origin file
