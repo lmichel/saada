@@ -16,6 +16,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
+import saadadb.util.Messenger;
 
 public class Table_Saada_Metacoll extends SQLTable {
 	/**
@@ -82,7 +83,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 					for (int i = 0; i < fl.length; i++) {
 						String fname = fl[i].getName();
 						String ftype = fl[i].getType().getName().replace("java.lang.", "");
-						if( ftype.equals("saadadb.meta.DMInterface")) {
+						if( ftype.equals("saadadb.meta.DMInterface") || ftype.equals("saadadb.collection.VignetteFile") ) {
 							continue;
 						}
 						//System.out.println(vt_class.get(k).getName() + " FIELD " + fl[i].getName() + " " + ftype);
@@ -193,6 +194,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 			SQLTable.createTable(data_table_name, sql, "oidsaada", false);
 
 		} catch(Exception e) {
+			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
