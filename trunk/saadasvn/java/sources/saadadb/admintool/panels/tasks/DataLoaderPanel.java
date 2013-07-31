@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadLoadData;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.LoaderConfigChooser;
 import saadadb.admintool.components.RunTaskButton;
@@ -175,14 +176,18 @@ public class DataLoaderPanel extends TaskPanel {
 
 		tPanel = this.addSubPanel("Repository parameters");
 		repCopy = new JRadioButton("Copy Input Files into the Repository");
+		repCopy.setBackground(AdminComponent.LIGHTBACKGROUND);
 		repMove = new JRadioButton("Move Input Files to the Repository");
+		repMove.setBackground(AdminComponent.LIGHTBACKGROUND);
 		repKeep = new JRadioButton("Use Input Files as Repository");
+		repKeep.setBackground(AdminComponent.LIGHTBACKGROUND);
 		repKeep.setSelected(true);
 		ButtonGroup bg = new ButtonGroup();
 		bg.add(repCopy); 
 		bg.add(repMove); 
 		bg.add(repKeep); 
 		noIndex = new JCheckBox("Do not rebuild indexes after loading");
+		noIndex.setBackground(AdminComponent.LIGHTBACKGROUND);
 		tPanel.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.gridx = 0;c.gridy = 0;

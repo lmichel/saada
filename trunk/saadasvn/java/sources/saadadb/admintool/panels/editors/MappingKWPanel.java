@@ -206,19 +206,19 @@ public class MappingKWPanel extends EditPanel {
 			entry_panel.add(e_nameMapper.container, globalGridConstraint);
 			globalGridConstraint.gridy++;
 
-			e_positionMapper = new PositionMapperPanel(this, "Position mapping", true);
+			e_positionMapper = new PositionMapperPanel(this, "Entry Position mapping", true);
 			entry_panel.add(e_positionMapper.container, globalGridConstraint);
 			globalGridConstraint.gridy++;
 
-			e_positionErrorMapper = new PositionErrorMapperPanel(this, "Position Error mapping", true);
+			e_positionErrorMapper = new PositionErrorMapperPanel(this, "Entry Position Error mapping", true);
 			entry_panel.add(e_positionErrorMapper.container, globalGridConstraint);
 			globalGridConstraint.gridy++;
 
-			e_extAttMapper = new ExtAttMapperPanel(this, "Extended Attribute Selector", Category.ENTRY);
+			e_extAttMapper = new ExtAttMapperPanel(this, "Entry Extended Attribute Selector", Category.ENTRY);
 			entry_panel.add(e_extAttMapper.container, globalGridConstraint);
 			globalGridConstraint.gridy ++;
 
-			e_ignoredMapper = new MappingTextfieldPanel(this, "Ignored Kws Selector", true);
+			e_ignoredMapper = new MappingTextfieldPanel(this, "Entry Ignored Kws Selector", true);
 			entry_panel.add(e_ignoredMapper.container, globalGridConstraint);
 			globalGridConstraint.gridy ++;
 
