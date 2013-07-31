@@ -139,6 +139,8 @@ public class Entry extends Product {
 		BufferedWriter coltmpfile  = new BufferedWriter(new FileWriter(coldumpfile));
 		long newoid = SaadaOID.newOid(this.metaclass.getName());
 		this.saadainstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.metaclass.getName()).newInstance();
+		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaclass.getCollection_name()
+				, Category.TABLE);
 		EntrySaada entrysaada = (EntrySaada)this.saadainstance;
 		/*
 		 * The astroframe is the same for all entries it must be computed once
@@ -384,8 +386,6 @@ public class Entry extends Product {
 		}
 		bustmpfile.close();
 		coltmpfile.close();
-		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.saadainstance.getCollection().getName()
-				, Category.TABLE);
 		if( line > 0 ) {
 			Messenger.printMsg(Messenger.TRACE,
 					+ line + ((table_size <= 0 )?"":("/" + table_size))
