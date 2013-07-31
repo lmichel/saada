@@ -1,6 +1,7 @@
 package saadadb.collection;
 
 import java.io.File;
+import java.io.IOException;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -94,22 +95,16 @@ public class ImageSaada extends WCSSaada {
 			return "text/html";												
 		}
 	}	
-	
-	/**
-	 * @return
-	 * @throws SaadaException 
-	 * @throws FatalException 
-	 */
-	public String getVignetteName() throws SaadaException {
-		if( this.getProduct_url_csa() == null ) {
-			return null;
-		}
-		return Database.getRepository() 
-		+ File.separator + this.getCollection().getName() 
-		+ File.separator + "IMAGE" + File.separator + "JPEG"
-		+ File.separator + (new File(this.getRepositoryPath())).getName() + ".jpg";
-	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.collection.SaadaInstance#setVignetteFile()
+	 */
+	public void setVignetteFile() throws FatalException, IOException, SaadaException{
+		this.vignetteFile = new VignetteFile(Database.getRepository() 
+				+ File.separator + this.getCollection().getName() 
+				+ File.separator + "IMAGE" + File.separator + "JPEG" 
+				, new File(this.getRepositoryPath()).getName() );
+	}
 	
 	public void calculCoordWCS()
 	{

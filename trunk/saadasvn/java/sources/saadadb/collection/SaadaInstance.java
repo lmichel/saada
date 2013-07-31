@@ -71,7 +71,7 @@ public abstract class SaadaInstance implements DMInterface {
 	public String namesaada = saadadb.util.SaadaConstant.STRING;
 	public long date_load = saadadb.util.SaadaConstant.LONG;
 	public char access_right = 'X';
-
+	public VignetteFile vignetteFile = null;
 	public boolean loaded = false;
 	private DMInterface current_dm_interface;
 	/**
@@ -1342,6 +1342,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	/**
+	 * Returns the full path of the repository file
 	 * @return
 	 * @throws SaadaException
 	 */
@@ -1351,29 +1352,58 @@ public abstract class SaadaInstance implements DMInterface {
 		}
 		else if( this.getProduct_url_csa().indexOf(Database.getSepar()) != -1 ) {
 			return this.getProduct_url_csa();
+		} else {
+			return Database.getRepository() + Database.getSepar() 
+			+ this.getCollection().getName() + Database.getSepar() 
+			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
+			+ this.getProduct_url_csa();
 		}
-		else {
-			return Database.getRepository() + Database.getSepar() + this.getCollection().getName() + Database.getSepar() + Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() +this.getProduct_url_csa();
-		}
-
 	}
+	/***
+	 * returns the name of the repository file
+	 * @return
+	 * @throws SaadaException
+	 */
+	public String getRepositoryName() throws SaadaException {
+		if( this.getProduct_url_csa() == null ) {
+			return null;
+		}
+		else if( this.getProduct_url_csa().indexOf(Database.getSepar()) == -1 ) {
+			return this.getProduct_url_csa();
+		} else {
+			return new File(Database.getRepository() + Database.getSepar() 
+			+ this.getCollection().getName() + Database.getSepar() 
+			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
+			+ this.getProduct_url_csa()).getName();
+		}
+	}
+	
 	/**
 	 * @return
 	 */
-	public String getVignetteName() throws SaadaException{
-		String rfn =  Database.getRepository() 
-		+ File.separator + this.getCollection().getName() 
-		+ File.separator + Category.explain(this.getCategory()) 
-		+ File.separator +  new File(this.getRepositoryPath()).getName() 
-		+ File.separator;
-		for( String suffix: RegExp.PICT_FORMAT) {
-			if( (new File(rfn + suffix)).exists() ) {
-				return rfn + suffix;
-			}
+	public String getVignetteName() throws Exception{
+		if( this.vignetteFile == null ) {
+			this.setVignetteFile();
 		}
-		return null;
+		return this.vignetteFile.getName();
+	}
+	/**
+	 * @return
+	 * @throws IOException 
+	 */
+	public String getVignettePath() throws Exception{
+		if( this.vignetteFile == null ) {
+			this.setVignetteFile();
+		}
+		return this.vignetteFile.getPath();
 	}
 
+	public void setVignetteFile() throws FatalException, IOException, SaadaException{
+		this.vignetteFile = new VignetteFile(Database.getRepository() 
+				+ File.separator + this.getCollection().getName() 
+				+ File.separator + Category.explain(this.getCategory()) 
+				, new File(this.getRepositoryPath()).getName() );
+	}
 
 	/**
 	 * @param name

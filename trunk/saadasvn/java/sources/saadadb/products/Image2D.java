@@ -162,9 +162,10 @@ public class Image2D extends Product {
 	}
 
 	/**
-	 * @throws SaadaException 
+	 * @throws FatalException
+	 * @throws IgnoreException
 	 */
-	public void createVignette() throws SaadaException {
+	public void createVignette() throws Exception {
 		String basedir = Database.getRepository() 
 		+ separ + this.getConfiguration().getCollectionName() 
 		+ separ + Category.explain(this.getConfiguration().getCategorySaada()) 
@@ -177,8 +178,10 @@ public class Image2D extends Product {
 			Messenger.printMsg(Messenger.TRACE, "Create directory " + basedir);
 			bf.mkdir();
 		}
-		String namefilejpeg = this.saadainstance.getVignetteName();
+		String namefilejpeg = basedir
+		+ separ + this.saadainstance.getRepositoryName() + ".jpg";
 		ImageUtils.createImage(namefilejpeg, (FitsProduct) this.productFile, 400);
+		this.saadainstance.setVignetteFile();
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.Product#initProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)

@@ -99,16 +99,14 @@ public class Download extends SaadaServlet {
 								}
 							}
 						} else {
-							product_path = Repository.getVignettePath((ImageSaada)si);
+							product_path = si.getVignettePath();
 						}
-					}
-					else if( "url".equalsIgnoreCase(ext) ) {		
+					} else if( "url".equalsIgnoreCase(ext) ) {		
 						PrintWriter out = response.getWriter();
 						response.setContentType("text/plain");
 						out.print(Database.getUrl_root() + "/getproduct?&oid=" + oid);
 						return;
-					}
-					else {
+					} else {
 						product_path = si.getRepositoryPath();
 						if( report != null ) {
 							product_path +=  separ + report;
@@ -120,8 +118,7 @@ public class Download extends SaadaServlet {
 					}
 					downloadProduct(request, response, product_path);
 					return;
-				}
-				else if( report != null ) { 
+				} else if( report != null ) { 
 					downloadProduct(request, response, UserTrap.getUserAccount(request).getReportDir() +report);
 					Repository.cleanUpReportDir();
 					return;

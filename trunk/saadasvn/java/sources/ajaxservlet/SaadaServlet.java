@@ -155,6 +155,10 @@ public class SaadaServlet extends HttpServlet {
 	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path ) throws Exception{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Download file " + product_path);
+		if( product_path == null ){
+			getErrorPage(req, res, "Can't download NULL file");
+			return;			
+		}
 		File f = new File(product_path);
 		if( !f.exists() || !f.isFile() ) {
 			getErrorPage(req, res, "File " + f.getAbsolutePath() + " does not exist or cannot be read");
