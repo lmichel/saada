@@ -410,7 +410,7 @@ public class Entry extends Product {
 					+ " 0  Entry read");
 
 			SQLTable.addQueryToTransaction("Update " + tcoll_table
-					+ " Set nb_rows_csa=0 Where oidsaada=" + table.getTableOid()
+					+ " Set nb_rows_csa=" + line + " Where oidsaada=" + table.getTableOid()
 					, tcoll_table);			
 		}
 		//		(new File(coldumpfile)).delete();

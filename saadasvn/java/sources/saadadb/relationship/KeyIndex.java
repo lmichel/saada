@@ -103,7 +103,7 @@ public class KeyIndex extends KeySet {
 	public boolean take(long owner_key) {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take index " + this.name + " " + owner_key);
 		if( this.busy  && this.owner_key != owner_key ) {
-			Messenger.printMsg(Messenger.WARNING, "index " + this.name + " already in use by owner " + this.owner_key);
+			Messenger.printMsg(Messenger.DEBUG, "index " + this.name + " already in use by owner " + this.owner_key);
 			return false;
 		}
 		//(new Exception()).printStackTrace();
