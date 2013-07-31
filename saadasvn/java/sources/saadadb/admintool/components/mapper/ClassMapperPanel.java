@@ -32,10 +32,13 @@ public class ClassMapperPanel extends MappingPanel {
 		GridBagConstraints ccs = new GridBagConstraints();
 		
 		classifier_btn = new JRadioButton("Automatic Classifier");
+		classifier_btn.setBackground(AdminComponent.LIGHTBACKGROUND);
 		classifier_btn.setToolTipText("One class (with a name derived from this you give) created for each group of identical product files");
 		fusion_btn     = new JRadioButton("Class Fusion");
+		fusion_btn.setBackground(AdminComponent.LIGHTBACKGROUND);
 		fusion_btn.setToolTipText("One class merging all product files will be created");
 		noclass_btn    = new JRadioButton("Default");
+		noclass_btn.setBackground(AdminComponent.LIGHTBACKGROUND);
 		fusion_btn.setToolTipText("One class (with a default name) created for each group of identical product files");
 		classField    = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
 

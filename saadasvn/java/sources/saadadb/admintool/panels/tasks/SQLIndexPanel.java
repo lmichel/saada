@@ -227,13 +227,16 @@ public class SQLIndexPanel extends TaskPanel {
 	protected void setActivePanel() {
 		runButton   = new RunTaskButton(this);
 		indexAll    = new JRadioButton("All Columns");
+		indexAll.setBackground(AdminComponent.LIGHTBACKGROUND);
 		indexSel    = new JRadioButton("Selected Columns");
-
-		indexAll    = new JRadioButton("All Columns");
-		indexSel    = new JRadioButton("Selected Columns");
+		indexSel.setBackground(AdminComponent.LIGHTBACKGROUND);
 		actionGroup = new ButtonGroup();
+		
 		dropAll     = new JRadioButton("All Columns");
+		dropAll.setBackground(AdminComponent.LIGHTBACKGROUND);
 		dropSel     = new JRadioButton("Selected Columns");
+		dropSel.setBackground(AdminComponent.LIGHTBACKGROUND);
+		
 		columnPanel = new JScrollPane(getPlainLabel("No table selected"));
 		columnPanel.setPreferredSize(new Dimension(500, 400));
 		description = new JPanel();

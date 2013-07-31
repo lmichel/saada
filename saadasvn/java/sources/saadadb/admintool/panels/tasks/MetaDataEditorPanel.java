@@ -115,7 +115,8 @@ public class MetaDataEditorPanel extends TaskPanel {
 						productTable = new SQLJTable(rootFrame, dataTreePath, sqlQuery, tableClass);
 						tPanel.removeAll();
 						productTable.setBackground(AdminComponent.LIGHTBACKGROUND);
-						productTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+						productTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+						productTable.packAll();
 						JScrollPane jsp = new JScrollPane(productTable);
 						jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
 						GridBagConstraints c = new GridBagConstraints();
