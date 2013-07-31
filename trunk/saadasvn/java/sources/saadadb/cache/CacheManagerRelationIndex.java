@@ -7,6 +7,7 @@ import java.util.Set;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.relationship.DoubleCPIndex;
@@ -139,15 +140,19 @@ public class CacheManagerRelationIndex {
 			 * if index busy: waits forever it is freed
 			 */
 			boolean noticed = false;
+			int cpt=0;
 			while( ri.take(owner_key) == false ) {
 				if( !noticed ) {
 					Messenger.printMsg(Messenger.WARNING, "Index " + name_index + " busy: enter a waiting pool");
 					noticed = true;
 				}
 				try {
-					Thread.sleep(100);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "While waiting on index " + name_index + " : " + e.getMessage());
+				}
+				if( (cpt++) > 40 ) {
+					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "The cache of relationship indexes seems to be locked: contact the administator");
 				}
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "return index <" + name_index + ">");
