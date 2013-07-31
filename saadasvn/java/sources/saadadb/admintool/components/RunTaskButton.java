@@ -18,6 +18,7 @@ public class RunTaskButton extends JButton {
 	public RunTaskButton(TaskPanel adminPanel) {
 		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Run.png")));
 		this.adminPanel = adminPanel;
+		this.setToolTipText("Run");
 		this.setEnabled(false);
 		this.setPreferredSize(new Dimension(60, 40));
 		this.addActionListener(new ActionListener() {

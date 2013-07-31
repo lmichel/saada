@@ -21,6 +21,7 @@ public class RunPauseButton extends JBlinkingButton {
 	public RunPauseButton(TaskPanel taskPanel) {
 		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Run.png")));
 		this.taskPanel =taskPanel;
+		this.setToolTipText("Run");
 		this.setPreferredSize(new Dimension(60, 40));
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -75,9 +76,11 @@ public class RunPauseButton extends JBlinkingButton {
 		if( cmdThread != null ) {
 			if( cmdThread.isRunning() && this.getIcon() != pauseIcon	){
 				this.setIcon(pauseIcon);
+				this.setToolTipText("Pause");
 			}
 			else if( cmdThread.isWaiting() && this.getIcon() != runIcon	){
 				this.setIcon(runIcon);
+				this.setToolTipText("Run");
 			}
 		}
 		else {

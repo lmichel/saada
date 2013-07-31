@@ -27,9 +27,11 @@ public class DebugButton extends JButton{
 				Messenger.debug_mode = (Messenger.debug_mode)?false: true;
 				if( Messenger.debug_mode ) {
 					setBackground(debugColor);
+					setToolTipText("Debug activated");
 				}
 				else {
 					setBackground(noDebugColor);
+					setToolTipText("Debug not activated");
 				}
 			}
 		});
@@ -38,9 +40,11 @@ public class DebugButton extends JButton{
 	public void active() {
 		if( Messenger.debug_mode ) {
 			setBackground(debugColor);
+			setToolTipText("Debug activated");
 		}
 		else {
 			setBackground(noDebugColor);
+			setToolTipText("Debug not activated");
 		}
 
 	}

@@ -132,6 +132,12 @@ public class CollCreatePanel extends TaskPanel {
 				, (new AntButton(this))});
 		}
 	
+	public void reset()
+	{
+		this.nameField.setText("");
+		this.commentField.setText("");
+	}
+	
 
 	@Override
 	protected Map<String, Object> getParamMap() {
