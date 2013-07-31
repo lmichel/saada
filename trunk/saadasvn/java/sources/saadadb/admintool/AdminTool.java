@@ -24,6 +24,7 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import saadadb.admintool.cmdthread.CmdThread;
+import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
@@ -189,18 +190,20 @@ public class AdminTool extends BaseFrame {
 				activePanel.setCurrentTask("Au Boulot");
 			}
 		});
-		//		c.gridx = 0;
-		//		c.gridy = 1;	
-		//		c.weightx = 0;
-		//		c.weighty = 0;
-		//		leftPanel.add(b, c);
-		//		b = new JButton("Start Process");
-		//		b.addActionListener(new ActionListener() {
-		//			public void actionPerformed(ActionEvent arg0) {
-		//				activePanel(AdminComponent.FILTER_SELECTOR);
-		//				//activeProcessPanel(new DummyTask(AdminTool.this));
-		//			}
-		//		});
+		/*		
+		  		// Test
+				c.gridx = 0;
+				c.gridy = 1;	
+				c.weightx = 0;
+				c.weighty = 0;
+				leftPanel.add(b, c);
+				b = new JButton("Start Process");
+				b.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						activeProcessPanel(new DummyTask(AdminTool.this, "Bonjour"));
+					}
+				});
+		*/
 		c.gridx = 0;
 		c.gridy++;	
 		c.weightx = 0;
@@ -360,6 +363,7 @@ public class AdminTool extends BaseFrame {
 				createCollPanel = new CollCreatePanel(this, AdminComponent.ROOT_PANEL);
 			}
 			activePanel = createCollPanel;
+			((CollCreatePanel)createCollPanel).reset();
 		} else 	if( panelTitle.equals(AdminComponent.DROP_COLLECTION) ) {
 			if( dropCollPanel == null ) {
 				dropCollPanel = new CollDropPanel(this, AdminComponent.MANAGE_DATA);

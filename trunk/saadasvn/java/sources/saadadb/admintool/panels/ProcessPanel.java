@@ -2,6 +2,7 @@ package saadadb.admintool.panels;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -85,8 +86,8 @@ public  class ProcessPanel extends TaskPanel {
 		outputArea.setBackground(IVORY);
 		JScrollPane jcp = new JScrollPane(outputArea);
 		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0; c.gridy = 0;	
-		c.weightx = 1; c.weighty = 1;	
+		c.gridx = 0; c.gridy = 0;
+		c.weightx = 1; c.weighty = 1;
 		c.fill = GridBagConstraints.BOTH;
 		tPanel.add(jcp, c);	
 
@@ -100,10 +101,12 @@ public  class ProcessPanel extends TaskPanel {
 
 		abortButton = new JBlinkingButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Abort.png")));
 		abortButton.setPreferredSize(new Dimension(60,40));
+		abortButton.setToolTipText("Abort");
 		abortButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if( cmdThread != null ) {
-					if( cmdThread.isRunning() ||cmdThread.isWaiting()	){
+					if( cmdThread.isRunning() ||cmdThread.isWaiting())
+					{
 						Messenger.requestResume();
 						cmdThread.wakeUp();
 						Messenger.requestAbort();
@@ -192,17 +195,23 @@ public  class ProcessPanel extends TaskPanel {
 		if( this.cmdThread  == null || this.cmdThread.isCompleted()) {
 			this.cmdThread = cmdThread;
 			this.noMoreHarwareAccess();
-			Messenger.setGui_area_output(outputArea);
+			Messenger.setGui_area_output(outputArea); //TODO understand !
 			Messenger.resetUserRequests();
 			this.cmdThread.start();
 			this.outputArea.setText("");
 			this.currentTaskLabel.setText(this.cmdThread.taskTitle);
 			this.selectResourceLabel.setText(this.cmdThread.getResourceLabel());
+			
+			ProcessPanel.this.outputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			
 			threadChecker  = new Timer(1000, new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					ProcessPanel.this.runPauseButton.updateIcon();
 					ProcessPanel.this.statusLabel.setText(ProcessPanel.this.cmdThread.getState().toString());
 					if( ProcessPanel.this.cmdThread.isCompleted()) {
+						ProcessPanel.this.setCursor(Cursor.getDefaultCursor());
+						ProcessPanel.this.outputArea.setCursor(Cursor.getDefaultCursor());
 						threadChecker.stop();
 						runPauseButton.stopBlinking(false);
 						abortButton.stopBlinking(false);
