@@ -177,8 +177,7 @@ public class Image2D extends Product {
 			Messenger.printMsg(Messenger.TRACE, "Create directory " + basedir);
 			bf.mkdir();
 		}
-		String namefilejpeg = basedir
-		+ separ + ((ImageSaada)(this.saadainstance)).getVignetteName();
+		String namefilejpeg = this.saadainstance.getVignetteName();
 		ImageUtils.createImage(namefilejpeg, (FitsProduct) this.productFile, 400);
 	}
 	/* (non-Javadoc)

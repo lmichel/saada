@@ -107,7 +107,7 @@ public class ImageSaada extends WCSSaada {
 		return Database.getRepository() 
 		+ File.separator + this.getCollection().getName() 
 		+ File.separator + "IMAGE" + File.separator + "JPEG"
-		+ File.separator + new File(this.getRepositoryPath()).getName() + ".jpg";
+		+ File.separator + (new File(this.getRepositoryPath())).getName() + ".jpg";
 	}
 
 	
