@@ -110,7 +110,7 @@ public class PositionErrorMapperPanel extends PriorityPanel {
 	/**
 	 * @param parser
 	 */
-	public void setParams(ArgsParser parser) {
+	/*public void setParams(ArgsParser parser) {
 		try {
 			setMode(parser.getSpectralMappingPriority());
 		} catch (FatalException e) {
@@ -118,7 +118,19 @@ public class PositionErrorMapperPanel extends PriorityPanel {
 		}
 		setText(parser.getSpectralColumn());	
 		setUnit(parser.getSpectralUnit());	
+	}*/
+	
+	
+	public void setParams(ArgsParser parser) {
+		try {
+			setMode(parser.getPoserrorMappingPriority());
+		} catch (FatalException e) {
+			Messenger.trapFatalException(e);
+		}
+		setText(getMergedComponent(parser.getPositionMapping()));
+		setUnit(parser.getPoserrorUnit());
 	}
+	 
 
 	/**
 	 * @return

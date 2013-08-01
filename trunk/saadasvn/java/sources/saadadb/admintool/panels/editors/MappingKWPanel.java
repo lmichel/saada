@@ -567,6 +567,7 @@ public class MappingKWPanel extends EditPanel {
 				 */
 				if( positionErrorMapper != null ) {
 					positionErrorMapper.setParams(parser);
+					Messenger.printMsg(Messenger.DEBUG, "");
 				}	
 				/*
 				 * Load spectral coordinate parameters
