@@ -46,7 +46,7 @@ public class ThreadCommentClass extends ThreadCreateCollection {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Desciption set for class <" + name  + ">");		
+					AdminComponent.showSuccess(frame, "Description set for class <" + name  + ">");		
 				}				
 			});
 		} catch (SaadaException e) {
