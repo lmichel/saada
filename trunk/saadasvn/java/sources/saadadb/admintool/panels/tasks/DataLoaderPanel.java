@@ -187,6 +187,7 @@ public class DataLoaderPanel extends TaskPanel {
 		bg.add(repMove); 
 		bg.add(repKeep); 
 		noIndex = new JCheckBox("Do not rebuild indexes after loading");
+		noIndex.setSelected(true);
 		noIndex.setBackground(AdminComponent.LIGHTBACKGROUND);
 		tPanel.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
