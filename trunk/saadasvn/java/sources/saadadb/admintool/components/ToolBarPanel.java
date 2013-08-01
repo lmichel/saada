@@ -44,6 +44,7 @@ public class ToolBarPanel extends JPanel {
 		if( ! adminPanel.getTitle().equals(AdminComponent.ROOT_PANEL)) {
 
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
+			jb.setToolTipText("Back to previous panel");
 			jb.setPreferredSize(new Dimension(60, 40));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
@@ -55,6 +56,7 @@ public class ToolBarPanel extends JPanel {
 
 		if( c != null || ! adminPanel.getAncestor().equals(AdminComponent.ROOT_PANEL)) {
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
+			jb.setToolTipText("Go to Root Panel");
 			jb.setPreferredSize(new Dimension(60, 40));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {

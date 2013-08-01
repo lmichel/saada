@@ -40,7 +40,7 @@ import saadadb.vo.registry.Authority;
  *
  */
 @SuppressWarnings("serial")
-public class VOCuratorPanel extends EditPanel {
+public class VORegistryPanel extends EditPanel {
 	private SaveButton saveButton = new SaveButton(this);
 	private JTextField authTitle;
 	private JTextField authIdentifier;
@@ -68,8 +68,8 @@ public class VOCuratorPanel extends EditPanel {
 	 * @param rootFrame
 	 * @param ancestor
 	 */
-	public VOCuratorPanel(AdminTool rootFrame, String ancestor) {
-		super(rootFrame, VO_CURATOR, null, ancestor);
+	public VORegistryPanel(AdminTool rootFrame, String ancestor) {
+		super(rootFrame, VO_REGISTRY, null, ancestor);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class VOCuratorPanel extends EditPanel {
 					Authority.getInstance().create(null);
 					SQLTable.commitTransaction();
 					load();
-					showSuccess(VOCuratorPanel.this.rootFrame, "VO Authority saved");
+					showSuccess(VORegistryPanel.this.rootFrame, "VO Authority saved");
 				} catch (Exception e) {
 					showFatalError(rootFrame, e);
 				}				

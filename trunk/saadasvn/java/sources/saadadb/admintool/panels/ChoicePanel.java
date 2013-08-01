@@ -67,6 +67,7 @@ public abstract class ChoicePanel extends AdminPanel {
 		c.anchor = GridBagConstraints.SOUTH;
 
 		jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/back.png")));
+		jb.setToolTipText("Back to previous panel");
 		jb.setPreferredSize(new Dimension(60, 40));
 		jb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -81,6 +82,7 @@ public abstract class ChoicePanel extends AdminPanel {
 
 		if( c != null || ! ancestor.equals(ROOT_PANEL)) {
 			jb = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/maison.png")));
+			jb.setToolTipText("Go to Root Panel");
 			jb.setPreferredSize(new Dimension(60, 40));
 			jb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {

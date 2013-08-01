@@ -80,6 +80,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String REMOVE_PRODUCT  = "Remove Products";
 
 	public static final String VO_CURATOR = "VO Curator";
+	public static final String VO_REGISTRY = "VO Registry";
 	public static final String TAP_PUBLISH = "TAP Service Setup";
 	public static final String OBSCORE_MAPPER = "ObsCore Mapper";
 	public static final String SIA_PUBLISH = "SIA Service Setup";
