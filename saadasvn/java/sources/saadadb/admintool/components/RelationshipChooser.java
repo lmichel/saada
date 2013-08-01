@@ -135,7 +135,6 @@ public class RelationshipChooser extends JPanel {
 						RelationshipChooser.this.taskPanel.cancelChanges();
 						setDescription();
 						lastSelectedIndex = confList.getSelectedIndex();
-						Messenger.printMsg(Messenger.DEBUG, "Test de passage !");
 					}
 				}	
 			}

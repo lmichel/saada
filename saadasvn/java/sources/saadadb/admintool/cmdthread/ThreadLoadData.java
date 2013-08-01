@@ -5,6 +5,7 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
@@ -68,10 +69,15 @@ public class ThreadLoadData extends CmdThread {
 				public void run() {
 					try {
 						((AdminTool)(frame)).refreshTree(ap.getCollection(), ap.getCategory().toUpperCase());
+						
 					} catch (FatalException e) {
 						Messenger.trapFatalException(e);
 					}
-					AdminComponent.showSuccess(frame, "Data Loading successfull");		
+					int userChoice = AdminComponent.showSuccessQuestion(frame, "Data Loading successfull", "Do you want to index the table of loaded data ?");		
+					if (userChoice == JOptionPane.YES_OPTION)
+					{
+						((AdminTool)frame).activePanel(AdminComponent.SQL_INDEX);
+					}	
 				}				
 			});
 		} catch (AbortException ae) {
