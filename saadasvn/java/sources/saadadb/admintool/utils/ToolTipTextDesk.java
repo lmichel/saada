@@ -40,6 +40,7 @@ public class ToolTipTextDesk
 	public static final int OBSCORE_MAPPER = 28;
 	public static final int USER_DEFINED_DM = 29;
 	public static final int VO_CURATOR = 30;
+	public static final int VO_REGISTRY = 31;
 	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
@@ -111,6 +112,8 @@ public class ToolTipTextDesk
 		"You can publish with user defined DM."});
 		map.put(VO_CURATOR, new String[] {"VO Services Summary", 
 		"Summary of your VO Services"});
+		map.put(VO_REGISTRY, new String[] {"VO Registry",
+		"Summary of your VO Registry"});
 	}
 	
 	/**

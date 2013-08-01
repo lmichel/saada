@@ -44,7 +44,7 @@ import saadadb.admintool.panels.editors.DBInstallPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.SAPServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
-import saadadb.admintool.panels.editors.VOCuratorPanel;
+import saadadb.admintool.panels.editors.VORegistryPanel;
 import saadadb.admintool.panels.editors.WebInstallPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
 import saadadb.admintool.panels.tasks.ClassCommentPanel;
@@ -492,9 +492,9 @@ public class AdminTool extends BaseFrame {
 			/*
 			 * VO publishing
 			 */
-		} else 	if( panelTitle.equals(AdminComponent.VO_CURATOR) ) {
+		} else 	if( panelTitle.equals(AdminComponent.VO_REGISTRY) ) {
 			if( voCurator == null ) {
-				voCurator = new VOCuratorPanel(this, AdminComponent.VO_PUBLISH);
+				voCurator = new VORegistryPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = voCurator;
 		} else 	if( panelTitle.equals(AdminComponent.TAP_PUBLISH) ) {

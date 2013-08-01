@@ -104,10 +104,10 @@ public class VOPublishPanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		VOServicesSummary = new ChoiceItem(rootFrame, tPanel, c
-				, "VO Services Summary", "icons/VOServices.png"
+				, "VO Registry", "icons/VOServices.png"
 				, new Runnable(){public void run(){
-					rootFrame.activePanel(VO_CURATOR);}});
-		VOServicesSummary.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_CURATOR));
+					rootFrame.activePanel(VO_REGISTRY);}});
+		VOServicesSummary.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_REGISTRY));
 		
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem(rootFrame.metaDataTree.getClickedTreePath());
