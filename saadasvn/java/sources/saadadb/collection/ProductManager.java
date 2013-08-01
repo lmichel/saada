@@ -401,7 +401,11 @@ public class ProductManager extends EntityManager {
 		category            = SaadaOID.getCategoryNum(this.oids.get(0));
 		if( category == Category.FLATFILE ) {
 			classe = "FLATFILE";
+			coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(this.oids.get(0))).getName();
+			start_rel      = Database.getCachemeta().getRelationNamesStartingFromColl(coll, category);
+			end_rel        = Database.getCachemeta().getRelationNamesEndingOnColl(coll, category);
 			eclasse = null;
+			coll_table       = Database.getCachemeta().getCollectionTableName(coll, category);		
 		} else {
 			classe = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oids.get(0))).getName();
 			coll             = Database.getCachemeta().getCollection(SaadaOID.getCollectionNum(this.oids.get(0))).getName();
