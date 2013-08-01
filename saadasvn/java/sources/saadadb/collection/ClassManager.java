@@ -5,6 +5,7 @@ import java.io.File;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.relationship.RelationManager;
@@ -29,7 +30,7 @@ public class ClassManager extends EntityManager{
 
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.ERROR, "Not implemented for classes");
+		this.comment(ap.getComment());
 	}
 
 
@@ -112,6 +113,29 @@ public class ClassManager extends EntityManager{
 		(new File(mapping_dir + "generated" 
 				+ Database.getSepar() + Database.getName() 
 				+ Database.getSepar() + name + ".class")).delete();
+	}
+	
+	/**
+	 * @param comment
+	 * @throws FatalException
+	 */
+	protected void comment(String comment) throws FatalException {
+		if( !Database.getCachemeta().classExists(this.name)) 
+		{
+			FatalException.throwNewException(SaadaException.METADATA_ERROR, "this.name " + this.name + " does not exist");
+		}
+		else 
+		{
+			try 
+			{
+				SQLTable.addQueryToTransaction("UPDATE saada_class SET description = '" + comment.replaceAll("'", " ") + "' WHERE name = '" + this.name + "'");
+			} 
+			catch (AbortException e) 
+			{
+				e.printStackTrace();
+				FatalException.throwNewException(SaadaException.DB_ERROR, e);
+			}
+		}
 	}
 
 	/**
