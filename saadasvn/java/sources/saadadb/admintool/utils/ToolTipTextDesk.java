@@ -41,6 +41,8 @@ public class ToolTipTextDesk
 	public static final int USER_DEFINED_DM = 29;
 	public static final int VO_CURATOR = 30;
 	public static final int VO_REGISTRY = 31;
+	public static final int VO_PROTOCOL_FIELDS = 32;
+	public static final int VO_PUBLISHED_RESOURCES = 33;
 	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
@@ -114,6 +116,11 @@ public class ToolTipTextDesk
 		"Summary of your VO Services"});
 		map.put(VO_REGISTRY, new String[] {"VO Registry",
 		"Summary of your VO Registry"});
+		map.put(VO_PROTOCOL_FIELDS, new String[] {"Protocol Fields",
+		"Tables structure of implemented protocols"});
+		map.put(VO_PUBLISHED_RESOURCES, new String[] {"Published VO Resources",
+		"List of published VO Resources"});
+		
 	}
 	
 	/**
