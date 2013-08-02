@@ -1,5 +1,7 @@
 package saadadb.admintool.panels.editors;
 
+import java.awt.GridBagConstraints;
+
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
@@ -14,6 +16,7 @@ import saadadb.admintool.utils.MyGBC;
 public class VOProtocolFieldsPanel extends EditPanel 
 {
 	protected VOResourceChooser resourceChooser;
+	protected JPanel tPanel;
 	
 	public VOProtocolFieldsPanel(AdminTool rootFrame, String ancestor)
 	{
@@ -44,9 +47,11 @@ public class VOProtocolFieldsPanel extends EditPanel
 	@Override
 	protected void setActivePanel() 
 	{
-		JPanel tPanel = this.addSubPanel("List of protocols");
+		tPanel = this.addSubPanel("Protocol fields structure", false);
 		resourceChooser = new VOResourceChooser(this, VOResourceChooser.VO_PROTOCOL_FIELDS);
 		MyGBC c = new MyGBC(5,5,5,5);
+		c.gridx = 0; c.gridy = 0;
+		c.weightx = 1; c.weighty = 1; c.fill = GridBagConstraints.BOTH; c.gridwidth = 2;
 		tPanel.add(resourceChooser, c);
 	}
 

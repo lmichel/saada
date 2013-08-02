@@ -41,6 +41,8 @@ public class HelpDesk {
 	public static final int WEBINSTALL_URL = 33;
 	public static final int OBSTAP_COMPONENT = 34;
 	public static final int DATATABLE_EDITOR = 35;
+	public static final int VO_PROTOCOL_FIELDS = 36;
+	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
 		map.put(EXTATT_MISSING, new String[] {
@@ -212,8 +214,9 @@ public class HelpDesk {
 		});
 		map.put(DATATABLE_EDITOR, new String[] {
 				"Click on a data node (class or category) to display the related data table."
-				, "TODO"
-				, "TODO"
+		});
+		map.put(VO_PROTOCOL_FIELDS, new String[] {
+				"Click on a protocol to display its data table structure."
 		});
 	}
 	
