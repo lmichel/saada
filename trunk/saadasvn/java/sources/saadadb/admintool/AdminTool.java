@@ -44,6 +44,8 @@ import saadadb.admintool.panels.editors.DBInstallPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.SAPServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
+import saadadb.admintool.panels.editors.VOProtocolFieldsPanel;
+import saadadb.admintool.panels.editors.VOPublishedResourcesPanel;
 import saadadb.admintool.panels.editors.VORegistryPanel;
 import saadadb.admintool.panels.editors.WebInstallPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
@@ -132,6 +134,8 @@ public class AdminTool extends BaseFrame {
 	private EditPanel csService;
 
 	private TaskPanel obscoreMapperPanel;
+	private EditPanel protocolFieldsPanel;
+	private EditPanel publishedResourcesPanel;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -525,6 +529,16 @@ public class AdminTool extends BaseFrame {
 			/*
 			 * Installation panels
 			 */
+		} else 	if( panelTitle.equals(AdminComponent.VO_PROTOCOL_FIELDS) ) {
+			if( protocolFieldsPanel== null ) {
+				protocolFieldsPanel = new VOProtocolFieldsPanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = protocolFieldsPanel;
+		} else 	if( panelTitle.equals(AdminComponent.VO_PUBLISHED_RESOURCES) ) {
+			if( publishedResourcesPanel== null ) {
+				publishedResourcesPanel = new VOPublishedResourcesPanel(this, AdminComponent.VO_PUBLISH);
+			}
+			activePanel = publishedResourcesPanel;	
 		} else 	if( panelTitle.equals(AdminComponent.DB_INSTALL) ) {
 			if( dbInstallPanel== null ) {
 				dbInstallPanel = new DBInstallPanel(this, AdminComponent.ROOT_PANEL);

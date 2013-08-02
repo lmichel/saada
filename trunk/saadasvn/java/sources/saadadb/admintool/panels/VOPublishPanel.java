@@ -21,7 +21,7 @@ public class VOPublishPanel extends ChoicePanel {
 	
 	private static final long serialVersionUID = 1L;
 	private ChoiceItem publishSIA, publishSSA, publishSCS, 
-	publishTAPService, publishObscoreTable, publishUserDefinedDM, VOServicesSummary;
+	publishTAPService, publishObscoreTable, publishUserDefinedDM, VORegistry, VOProtocolFields, VOPublishedResources;
 	
 
 	public VOPublishPanel(AdminTool rootFrame, String ancestor) {
@@ -103,11 +103,31 @@ public class VOPublishPanel extends ChoicePanel {
 		c.gridy = 0;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
-		VOServicesSummary = new ChoiceItem(rootFrame, tPanel, c
-				, "VO Registry", "icons/VOServices.png"
+		VOProtocolFields = new ChoiceItem(rootFrame, tPanel, c
+				, "VO Protocol Fields", "icons/ProtocolFields.png"
+				, new Runnable(){public void run(){
+					rootFrame.activePanel(VO_PROTOCOL_FIELDS);}});
+		VOProtocolFields.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_PROTOCOL_FIELDS));
+		
+		c.gridx = 1;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		VOPublishedResources = new ChoiceItem(rootFrame, tPanel, c
+				, "VO Published Resources", "icons/VOServices.png"
+				, new Runnable(){public void run(){
+					rootFrame.activePanel(VO_PUBLISHED_RESOURCES);}});
+		VOPublishedResources.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_PUBLISHED_RESOURCES));
+		
+		c.gridx = 2;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		VORegistry = new ChoiceItem(rootFrame, tPanel, c
+				, "VO Registry", "icons/VORegistry.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(VO_REGISTRY);}});
-		VOServicesSummary.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_REGISTRY));
+		VORegistry.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_REGISTRY));
 		
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem(rootFrame.metaDataTree.getClickedTreePath());

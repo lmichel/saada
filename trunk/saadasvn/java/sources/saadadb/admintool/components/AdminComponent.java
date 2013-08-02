@@ -86,6 +86,8 @@ public abstract class AdminComponent extends JPanel {
 	public static final String SIA_PUBLISH = "SIA Service Setup";
 	public static final String SSA_PUBLISH = "SSA Service Setup";
 	public static final String CONESEARCH_PUBLISH = "Conesearch Service Setup";
+	public static final String VO_PROTOCOL_FIELDS = "Protocol Fields";
+	public static final String VO_PUBLISHED_RESOURCES = "Published VO Resources";
 	
 	public static final String DB_INSTALL = "Database Installation";
 	public static final String WEB_INSTALL = "Web Application Installation";

@@ -268,31 +268,6 @@ public abstract class AdminPanel extends AdminComponent {
 //		this.add(new JScrollPane(tPanel));
 //		return tPanel;
 //	}
-	
-	private void highlightDataTreePath() {
-		if (treePathPanel != null)
-			this.setForegroundtreePathPanel(NEW_HEADER);
-		if( currentTaskLabel != null )
-			currentTaskLabel.setForeground(OLD_HEADER);
-		if( selectResourceLabel != null )
-			selectResourceLabel.setForeground(OLD_HEADER);
-	}
-	private void highlightSelectResource() {
-		if (treePathPanel != null)
-			this.setForegroundtreePathPanel(OLD_HEADER);
-		if( currentTaskLabel != null )
-			currentTaskLabel.setForeground(OLD_HEADER);
-		if( selectResourceLabel != null )
-			selectResourceLabel.setForeground(NEW_HEADER);
-	}
-	private void highlightCurrentTask() {
-		if (treePathPanel != null)
-			this.setForegroundtreePathPanel(OLD_HEADER);
-		if( currentTaskLabel != null )
-			currentTaskLabel.setForeground(NEW_HEADER);
-		if( selectResourceLabel != null )
-			selectResourceLabel.setForeground(OLD_HEADER);
-	}
 
 	public void setDataTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath != null && !lockDataTreePath ) {
