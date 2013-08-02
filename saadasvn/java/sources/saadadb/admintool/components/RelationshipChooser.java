@@ -43,7 +43,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
-import saadadb.util.Messenger;
 
 /**
  * Panel with a clickable list of relations

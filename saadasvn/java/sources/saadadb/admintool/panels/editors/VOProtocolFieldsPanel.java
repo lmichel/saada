@@ -4,12 +4,16 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.components.VOResourceChooser;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.admintool.utils.MyGBC;
 
 public class VOProtocolFieldsPanel extends EditPanel 
 {
+	protected VOResourceChooser resourceChooser;
 	
 	public VOProtocolFieldsPanel(AdminTool rootFrame, String ancestor)
 	{
@@ -41,6 +45,9 @@ public class VOProtocolFieldsPanel extends EditPanel
 	protected void setActivePanel() 
 	{
 		JPanel tPanel = this.addSubPanel("List of protocols");
+		resourceChooser = new VOResourceChooser(this, VOResourceChooser.VO_PROTOCOL_FIELDS);
+		MyGBC c = new MyGBC(5,5,5,5);
+		tPanel.add(resourceChooser, c);
 	}
 
 	@Override
