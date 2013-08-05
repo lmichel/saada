@@ -125,6 +125,7 @@ public class VoSpectrumDMTree extends VoTree {
 	}
 	
 	protected void setDragFeatures() {
+		this.tree.setDragEnabled(true);
 	}
 
 

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -28,7 +29,9 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
+import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
+import saadadb.vo.registry.Capability;
 
 public class VOResourceChooser extends JPanel 
 {
@@ -63,8 +66,9 @@ public class VOResourceChooser extends JPanel
 		scrollPane.setBorder(BorderFactory.createTitledBorder("List of protocols"));
 		scrollPane.setPreferredSize(new Dimension(200,100));
 		this.add(scrollPane, c);
-		c.gridx = 1; c.gridy = 0;;
-		JTextArea lbl = AdminComponent.getHelpLabel(HelpDesk.get(HelpDesk.VO_PROTOCOL_FIELDS));
+		c.gridx = 1; c.gridy = 0;
+		String[] txt_lbl = (this.componentType==VO_PROTOCOL_FIELDS?HelpDesk.get(HelpDesk.VO_PROTOCOL_FIELDS):HelpDesk.get(HelpDesk.VO_PUBLISHED_RESOURCES));
+		JTextArea lbl = AdminComponent.getHelpLabel(txt_lbl);
 		this.add(lbl, c);
 		
 		dm = new DefaultTableModel();
@@ -77,9 +81,9 @@ public class VOResourceChooser extends JPanel
 		descriptionTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		descriptionTable.setEditable(false);
 		JScrollPane jspDescription = new JScrollPane(descriptionTable);
-		selectedBorder = BorderFactory.createTitledBorder("Structure of selected protocol");
+		String titleDescriptionTable = (this.componentType==VO_PROTOCOL_FIELDS?"Structure of selected protocol":"List of published resources in this protocol");
+		selectedBorder = BorderFactory.createTitledBorder(titleDescriptionTable);
 		jspDescription.setBorder(selectedBorder);
-		//jspDescription.setPreferredSize(new Dimension(500,400));
 		c.gridx = 0; c.gridy = 1; c.gridwidth = 2;c.weighty = 0.9;
 		this.add(jspDescription, c);
 		
@@ -120,10 +124,17 @@ public class VOResourceChooser extends JPanel
 	
 	private void loadColumnHeaders()
 	{
-		String[] columnName = new String[]{"name", "ucd", "utype", "type", "asize", "hidden", "unit", "value", "desc", "reqlevel"};
-		for (int i=0 ; i<columnName.length ; i++)
+		if (this.componentType==VO_PROTOCOL_FIELDS)
 		{
-			dm.addColumn(columnName[i]);
+			String[] columnName = new String[]{"name", "ucd", "utype", "type", "asize", "hidden", "unit", "value", "desc", "reqlevel"};
+			for (int i=0 ; i<columnName.length ; i++)
+			{
+				dm.addColumn(columnName[i]);
+			}
+		}
+		else if (this.componentType==VO_PUBLISHED_RESOURCES)
+		{
+			// TODO Later
 		}
 	}
 	
@@ -185,7 +196,21 @@ public class VOResourceChooser extends JPanel
 		}
 		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
-			// TODO Later
+			ArrayList<Capability> lc = new ArrayList<Capability>();
+			String protocol = "";
+			try 
+			{
+				Table_Saada_VO_Capabilities.loadCapabilities(lc, protocol);
+				for( Capability cap: lc) 
+				{
+					Messenger.printMsg(Messenger.DEBUG, "Test : " + cap);
+					//this.descriptionTable.addResource(cap);
+				}
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	
