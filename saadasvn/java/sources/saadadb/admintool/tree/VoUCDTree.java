@@ -487,6 +487,7 @@ public class VoUCDTree extends VoTree {
 	}
 	
 	protected void setDragFeatures() {
+		this.tree.setDragEnabled(true);
 	}
 
 

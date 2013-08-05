@@ -451,5 +451,6 @@ public class VoCharacDMTree extends VoTree {
 	}
 	
 	protected void setDragFeatures() {
+		this.tree.setDragEnabled(true);
 	}
 }
