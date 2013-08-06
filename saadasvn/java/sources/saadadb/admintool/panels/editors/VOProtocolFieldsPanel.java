@@ -21,7 +21,6 @@ public class VOProtocolFieldsPanel extends EditPanel
 	public VOProtocolFieldsPanel(AdminTool rootFrame, String ancestor)
 	{
 		super(rootFrame, AdminComponent.VO_PROTOCOL_FIELDS, null, ancestor);
-		// TODO thread
 	}
 
 	private static final long serialVersionUID = 1L;

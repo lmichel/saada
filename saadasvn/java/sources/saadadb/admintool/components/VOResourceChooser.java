@@ -1,6 +1,5 @@
 package saadadb.admintool.components;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -9,13 +8,11 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.ListModel;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -30,7 +27,6 @@ import saadadb.database.Database;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
 
 public class VOResourceChooser extends JPanel 
@@ -45,36 +41,23 @@ public class VOResourceChooser extends JPanel
 	private DefaultTableModel dm;
 	private String selectedVOResource;
 	private int lastSelectedIndex;
-	private EditPanel editPanel;
 	private int componentType;
 	private Border selectedBorder;
 	
 	public VOResourceChooser(EditPanel editPanel, int componentType)
 	{
-		this.editPanel = editPanel;
 		this.componentType = componentType;
 		this.lastSelectedIndex = -1;
 		this.confList.setFont(AdminComponent.plainFont);
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		this.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(3, 3, 3, 3);
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1; c.weighty = 0.1;
-		c.gridx = 0; c.gridy = 0; c.anchor = GridBagConstraints.LINE_START;
 		JScrollPane scrollPane = new JScrollPane(confList);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("List of protocols"));
-		scrollPane.setPreferredSize(new Dimension(200,100));
-		this.add(scrollPane, c);
-		c.gridx = 1; c.gridy = 0;
 		String[] txt_lbl = (this.componentType==VO_PROTOCOL_FIELDS?HelpDesk.get(HelpDesk.VO_PROTOCOL_FIELDS):HelpDesk.get(HelpDesk.VO_PUBLISHED_RESOURCES));
 		JTextArea lbl = AdminComponent.getHelpLabel(txt_lbl);
-		this.add(lbl, c);
-		
 		dm = new DefaultTableModel();
 		descriptionTable = new JXTable(dm);
-		descriptionTable.setHighlighters(HighlighterFactory.createSimpleStriping());
-		descriptionTable.setRowSelectionAllowed(false);
+		descriptionTable.setRowSelectionAllowed(true);
 		descriptionTable.setShowHorizontalLines(false);
 		descriptionTable.setShowVerticalLines(false);
 		descriptionTable.setColumnControlVisible(true);
@@ -84,6 +67,16 @@ public class VOResourceChooser extends JPanel
 		String titleDescriptionTable = (this.componentType==VO_PROTOCOL_FIELDS?"Structure of selected protocol":"List of published resources in this protocol");
 		selectedBorder = BorderFactory.createTitledBorder(titleDescriptionTable);
 		jspDescription.setBorder(selectedBorder);
+		
+		GridBagConstraints c = new GridBagConstraints();
+		scrollPane.setPreferredSize(new Dimension(200,100));
+		c.insets = new Insets(3, 3, 3, 3);
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1; c.weighty = 0.1;
+		c.gridx = 0; c.gridy = 0; c.anchor = GridBagConstraints.LINE_START;
+		this.add(scrollPane, c);
+		c.gridx = 1; c.gridy = 0;
+		this.add(lbl, c);
 		c.gridx = 0; c.gridy = 1; c.gridwidth = 2;c.weighty = 0.9;
 		this.add(jspDescription, c);
 		
@@ -102,39 +95,52 @@ public class VOResourceChooser extends JPanel
 			}
 		});
 		this.loadColumnHeaders();
+		descriptionTable.setHighlighters(HighlighterFactory.createSimpleStriping());
 		this.loadConfList();
 	}
 	
 	private void loadConfList()
 	{
 		DefaultListModel<String> model = (DefaultListModel<String>) confList.getModel();
-		try 
+		if (this.componentType==VO_PROTOCOL_FIELDS)
 		{
-			VOResourceNames = Database.getCachemeta().getVOResourceNames();
-			for (int i=0 ; i<VOResourceNames.length ; i++)
+			try 
 			{
-				model.addElement(VOResourceNames[i]);
+				VOResourceNames = Database.getCachemeta().getVOResourceNames();
+				for (int i=0 ; i<VOResourceNames.length ; i++)
+				{
+					model.addElement(VOResourceNames[i]);
+				}
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
 			}
-		} 
-		catch (Exception e) 
+		}
+		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
-			e.printStackTrace();
+			model.addElement(Capability.SIA);
+			model.addElement(Capability.SSA);
+			model.addElement(Capability.ConeSearch);
+			model.addElement(Capability.TAP);
 		}
 	}
 	
 	private void loadColumnHeaders()
 	{
+		String[] columnName = null;
 		if (this.componentType==VO_PROTOCOL_FIELDS)
 		{
-			String[] columnName = new String[]{"name", "ucd", "utype", "type", "asize", "hidden", "unit", "value", "desc", "reqlevel"};
-			for (int i=0 ; i<columnName.length ; i++)
-			{
-				dm.addColumn(columnName[i]);
-			}
+			columnName = new String[]{"name", "ucd", "utype", "type", "asize", "hidden", "unit", "value", "desc", "reqlevel"};
+
 		}
 		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
-			// TODO Later
+			columnName = new String[]{"resource name", "accessURL", "description"};
+		}
+		for (int i=0 ; i<columnName.length ; i++)
+		{
+			dm.addColumn(columnName[i]);
 		}
 	}
 	
@@ -149,9 +155,22 @@ public class VOResourceChooser extends JPanel
 			return false;
 	}
 	
+	public JTable getDescriptionTable()
+	{
+		return descriptionTable;
+	}
+	
+	public JList<String> getconfList()
+	{
+		return confList;
+	}
+	
 	public void setDescription()
 	{
 		selectedVOResource = confList.getSelectedValue().toString();
+		if (dm.getRowCount() > 0)
+		    for (int i = dm.getRowCount() - 1; i > -1; i--) 
+		    	dm.removeRow(i);
 		if (this.componentType==VO_PROTOCOL_FIELDS)
 		{
 			VOResource currentVOResource = null;
@@ -161,11 +180,6 @@ public class VOResourceChooser extends JPanel
 				if( currentVOResource.getGroups() != null ) 
 				{
 					String[] groups = currentVOResource.groupNames();
-					
-					if (dm.getRowCount() > 0)
-					    for (int i = dm.getRowCount() - 1; i > -1; i--) 
-					    	dm.removeRow(i);
-					
 					for( String group: groups ) 
 					{
 						String[] new_row = new String[10];
@@ -197,15 +211,20 @@ public class VOResourceChooser extends JPanel
 		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
 			ArrayList<Capability> lc = new ArrayList<Capability>();
-			String protocol = "";
+			String protocol = selectedVOResource;
 			try 
 			{
 				Table_Saada_VO_Capabilities.loadCapabilities(lc, protocol);
 				for( Capability cap: lc) 
 				{
-					Messenger.printMsg(Messenger.DEBUG, "Test : " + cap);
-					//this.descriptionTable.addResource(cap);
+					Object[] new_row = new Object[3];
+					new_row[0] = cap.getDataTreePathString();
+					new_row[1] = cap.getAccessURL();
+					new_row[2] = cap.getDescription();
+					dm.addRow(new_row);
 				}
+				descriptionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+				descriptionTable.packAll();
 			} 
 			catch (Exception e) 
 			{
