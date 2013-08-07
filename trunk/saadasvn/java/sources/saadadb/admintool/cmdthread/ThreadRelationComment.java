@@ -4,6 +4,8 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.command.ArgsParser;
@@ -64,7 +66,13 @@ public class ThreadRelationComment extends CmdThread {
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			taskPanel.cancelChanges();
-			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> commented");		
+			SwingUtilities.invokeLater(new Runnable() 
+			{
+				public void run() 
+				{
+					AdminComponent.showSuccess(frame, "Relationship <" + relation + "> commented");
+				}
+			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 			} catch (Exception ae) {			
