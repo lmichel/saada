@@ -4,12 +4,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -111,13 +115,16 @@ public  class ProcessPanel extends TaskPanel {
 						cmdThread.wakeUp();
 						Messenger.requestAbort();
 						abortButton.startBlinking();
+						ProcessPanel.this.rootFrame.currentProcess.setActiveProcess(false);
 					}
 					else {
 						AdminComponent.showInfo(ProcessPanel.this, "No running command: last command was " + cmdThread.getState());
+						ProcessPanel.this.rootFrame.currentProcess.setActiveProcess(false);
 					}
 				}
 				else {
-					AdminComponent.showInfo(ProcessPanel.this, "No active command");				
+					AdminComponent.showInfo(ProcessPanel.this, "No active command");
+					ProcessPanel.this.rootFrame.currentProcess.setActiveProcess(false);
 				}
 			}
 		});
@@ -203,6 +210,7 @@ public  class ProcessPanel extends TaskPanel {
 			this.selectResourceLabel.setText(this.cmdThread.getResourceLabel());
 			
 			ProcessPanel.this.outputArea.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			ProcessPanel.this.rootFrame.currentProcess.setActiveProcess(true);
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			
 			threadChecker  = new Timer(1000, new ActionListener() {
@@ -211,6 +219,7 @@ public  class ProcessPanel extends TaskPanel {
 					ProcessPanel.this.statusLabel.setText(ProcessPanel.this.cmdThread.getState().toString());
 					if( ProcessPanel.this.cmdThread.isCompleted()) {
 						ProcessPanel.this.setCursor(Cursor.getDefaultCursor());
+						ProcessPanel.this.rootFrame.currentProcess.setActiveProcess(false);
 						ProcessPanel.this.outputArea.setCursor(Cursor.getDefaultCursor());
 						threadChecker.stop();
 						runPauseButton.stopBlinking(false);
@@ -245,5 +254,4 @@ public  class ProcessPanel extends TaskPanel {
 	public void active() {
 		debugButton.active();
 	}
-
 }

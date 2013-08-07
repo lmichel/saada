@@ -28,6 +28,7 @@ import saadadb.admintool.cmdthread.DummyTask;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
+import saadadb.admintool.components.LoadBarButton;
 import saadadb.admintool.dialogs.AdminPassword;
 import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.ChoicePanel;
@@ -139,9 +140,10 @@ public class AdminTool extends BaseFrame {
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
+	public LoadBarButton currentProcess;
 
 
-	private  String logFile = null;
+	private String logFile = null;
 
 
 	public AdminTool(boolean nolog, Point p) throws Exception {
@@ -184,9 +186,9 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 1;
 		c.weighty = 1;
 		leftPanel.add(metaDataTree,c);
-		JButton b = new JButton("Look at Current Process");
-		b.setToolTipText("Display the console panel connected on the current asynchronous process");
-		b.addActionListener(new ActionListener() {
+		currentProcess = new LoadBarButton("Current Process");
+		currentProcess.btn.setToolTipText("Display the console panel connected on the current asynchronous process");
+		currentProcess.btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int x = (int)(Math.random() * 10);
 				activePanel(AdminComponent.PROCESS_PANEL);
@@ -194,27 +196,26 @@ public class AdminTool extends BaseFrame {
 				activePanel.setCurrentTask("Au Boulot");
 			}
 		});
-		/*		
-		  		// Test
-				c.gridx = 0;
-				c.gridy = 1;	
-				c.weightx = 0;
-				c.weighty = 0;
-				leftPanel.add(b, c);
-				b = new JButton("Start Process");
+		c.gridx = 0;
+		c.gridy = 1;	
+		c.weightx = 0;
+		c.weighty = 0;
+		leftPanel.add(currentProcess, c);
+		
+		
+		/*		JButton b = new JButton("Start Process");
 				b.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						activeProcessPanel(new DummyTask(AdminTool.this, "Bonjour"));
 					}
 				});
-		*/
-		c.gridx = 0;
-		c.gridy++;	
-		c.weightx = 0;
-		c.weighty = 0;
-		leftPanel.add(b, c);
-
-		b = new JButton("Deploy Web application");
+				c.gridx = 0;
+				c.gridy++;	
+				c.weightx = 0;
+				c.weighty = 0;
+				leftPanel.add(b, c);
+		 */
+		JButton b = new JButton("Deploy Web application");
 		b.setToolTipText("Deploy the web application in the Tomcat instance");
 		b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
