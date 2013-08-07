@@ -21,7 +21,7 @@ public class RelationChoicePanel extends ChoicePanel {
 	
 	private static final long serialVersionUID = 1L;
 	private ChoiceItem newRelationship, commentRelationship, dropRelationship,
-	populateRelationship, indexRelationship, emptyRelationship;
+	populateRelationship, indexRelationship, emptyRelationship, displayAllRelationships;
 
 	public RelationChoicePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, MANAGE_RELATIONS, null, ancestor);
@@ -93,7 +93,20 @@ public class RelationChoicePanel extends ChoicePanel {
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(EMPTY_RELATION);}});
 		emptyRelationship.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.EMPTY_RELATION));
+		
+		tPanel = this.addSubPanel("Explore Relationships");
+		c.gridx = 0;
+		c.gridy = 0;	
+		c.weightx = 0.5;
+		c.weighty = 0.5;
+		displayAllRelationships = new ChoiceItem(rootFrame, tPanel, c
+				, "Display All Relationships", "icons/DisplayRelations.png"
+				, new Runnable(){public void run(){
+					rootFrame.activePanel(DISPLAY_RELATION);}});
+		displayAllRelationships.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.DISPLAY_RELATION));
 
+		updateStateChoiceItem(false, false, false, false, false, false, true);
+		
 		// Necessary when the panel is first called, you must know what kind of node is it and directly updates the ChoiceItem.
 		setActiveChoiceItem(rootFrame.metaDataTree.getClickedTreePath());
 		
@@ -121,26 +134,26 @@ public class RelationChoicePanel extends ChoicePanel {
 				dataTreePath = new DataTreePath(treePath);
 				if (dataTreePath.isCollectionLevel()) // Collection selected
 				{
-					updateStateChoiceItem(false, false, false, false, false, false);
+					updateStateChoiceItem(false, false, false, false, false, false, true);
 				}
 				else if (dataTreePath.isCategorieOrClassLevel()) // Category or class selected
 				{
-					updateStateChoiceItem(true, true, true, true, true, true);
+					updateStateChoiceItem(true, true, true, true, true, true, true);
 				}
 				else // Root node is selected
 				{
-					updateStateChoiceItem(false, false, false, false, false, false);
+					updateStateChoiceItem(false, false, false, false, false, false, true);
 				}
 			}
 			catch (QueryException e1) 
 			{
-				updateStateChoiceItem(false, false, false, false, false, false);
+				updateStateChoiceItem(false, false, false, false, false, false, true);
 			}
 		}
 	}
 	
 	private void updateStateChoiceItem(boolean newRelationshipActive, boolean commentRelationshipActive, boolean dropRelationshipActive,
-			boolean populateRelationshipActive, boolean indexRelationshipActive, boolean emptyRelationshipActive)
+			boolean populateRelationshipActive, boolean indexRelationshipActive, boolean emptyRelationshipActive, boolean displayAllRelationshipsActive)
 	{
 		if (newRelationshipActive) { newRelationship.active(); } else { newRelationship.inactive(); }
 		if (commentRelationshipActive) { commentRelationship.active(); } else { commentRelationship.inactive(); }
@@ -148,6 +161,7 @@ public class RelationChoicePanel extends ChoicePanel {
 		if (populateRelationshipActive) { populateRelationship.active(); } else { populateRelationship.inactive(); }
 		if (indexRelationshipActive) { indexRelationship.active(); } else { indexRelationship.inactive(); }
 		if (emptyRelationshipActive) { emptyRelationship.active(); } else { emptyRelationship.inactive(); }
+		if (displayAllRelationshipsActive) { displayAllRelationships.active(); } else { displayAllRelationships.inactive(); }
 	}
 
 }

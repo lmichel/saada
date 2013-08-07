@@ -135,7 +135,7 @@ public class RootChoicePanel extends ChoicePanel {
 		VOPublishing.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.VO_PUBLISH));
 
 		// Enable only "CreateCollection" when the application is launched
-		updateStateChoiceItem(true, false, false, false, false, false);
+		updateStateChoiceItem(true, false, false, false, false, true);
 
 		// Add an event on a left panel tree in order to update the active ChoiceItem depending on the type of node
 		JTree tree = rootFrame.metaDataTree.getTree();
@@ -161,7 +161,7 @@ public class RootChoicePanel extends ChoicePanel {
 				dataTreePath = new DataTreePath(treePath);
 				if (dataTreePath.isCollectionLevel()) // Collection selected
 				{
-					updateStateChoiceItem(true, false, false, true, false, false);
+					updateStateChoiceItem(true, false, false, true, false, true);
 				}
 				else if (dataTreePath.isCategoryLevel()) // Category selected
 				{
@@ -173,12 +173,12 @@ public class RootChoicePanel extends ChoicePanel {
 				}
 				else // Root node is selected
 				{
-					updateStateChoiceItem(true, false, false, false, false, false);
+					updateStateChoiceItem(true, false, false, false, false, true);
 				}
 			}
 			catch (QueryException e1) 
 			{
-				updateStateChoiceItem(true, false, false, false, false, false);
+				updateStateChoiceItem(true, false, false, false, false, true);
 			}
 		}
 	}

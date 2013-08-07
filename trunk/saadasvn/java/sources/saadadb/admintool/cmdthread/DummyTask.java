@@ -4,6 +4,8 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import saadadb.admintool.components.AdminComponent;
 import saadadb.command.SaadaProcess;
 import saadadb.exceptions.SaadaException;
@@ -29,7 +31,11 @@ public class DummyTask extends CmdThread {
 			saada_process = new SaadaProcess();
 
 			saada_process.faitTonBoulot();
-			AdminComponent.showSuccess(frame, "Operation successed");		
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					AdminComponent.showSuccess(frame, "Operation successed");		
+				}
+			});
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			frame.setCursor(cursor_org);

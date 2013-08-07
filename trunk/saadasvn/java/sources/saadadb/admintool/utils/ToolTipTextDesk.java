@@ -43,6 +43,7 @@ public class ToolTipTextDesk
 	public static final int VO_REGISTRY = 31;
 	public static final int VO_PROTOCOL_FIELDS = 32;
 	public static final int VO_PUBLISHED_RESOURCES = 33;
+	public static final int DISPLAY_RELATION = 34;
 	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
@@ -98,6 +99,8 @@ public class ToolTipTextDesk
 		"Create a new index on a relationship."});
 		map.put(EMPTY_RELATION, new String[] {"Empty Relationship", 
 		"Empty a relationship from the selected table or category."});
+		map.put(DISPLAY_RELATION, new String[] {"Display All Relationships",
+		"Display all relationships created in the application."});
 		
 		// VOPublishPanel
 		map.put(SIA_PUBLISH, new String[] {"Publish SIA", 

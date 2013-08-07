@@ -74,6 +74,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String EMPTY_RELATION    = "Empty Relationship";
 	public static final String POPULATE_RELATION = "Populate Relationship";
 	public static final String INDEX_RELATION    = "Index Relationship";
+	public static final String DISPLAY_RELATION = "Display Relationships";
 
 	public static final String MANAGE_METADATA = "Manage Meta Data";
 	public static final String MANAGE_PRODUCT  = "Manage Products";

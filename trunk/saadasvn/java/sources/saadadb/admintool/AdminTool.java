@@ -43,6 +43,7 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.DBInstallPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.panels.editors.RelationDisplayAllPanel;
 import saadadb.admintool.panels.editors.SAPServicePanel;
 import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOProtocolFieldsPanel;
@@ -118,6 +119,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel emptyRelationPanel;
 	private TaskPanel populateRelationPanel;
 	private TaskPanel indexRelationPanel;
+	private EditPanel displayAllRelationsPanel;
 
 	private EditPanel miscMapperPanel;;
 	private EditPanel spectrumMapperPanel;;
@@ -201,10 +203,9 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 0;
 		c.weighty = 0;
 		leftPanel.add(currentProcess, c);
-		
-		
-		/*		JButton b = new JButton("Start Process");
-				b.addActionListener(new ActionListener() {
+		/*
+				JButton d = new JButton("Start Process");
+				d.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						activeProcessPanel(new DummyTask(AdminTool.this, "Bonjour"));
 					}
@@ -213,7 +214,7 @@ public class AdminTool extends BaseFrame {
 				c.gridy++;	
 				c.weightx = 0;
 				c.weighty = 0;
-				leftPanel.add(b, c);
+				leftPanel.add(d, c);
 		 */
 		JButton b = new JButton("Deploy Web application");
 		b.setToolTipText("Deploy the web application in the Tomcat instance");
@@ -494,6 +495,11 @@ public class AdminTool extends BaseFrame {
 				commentRelationPanel = new RelationCommentPanel(this, AdminComponent.MANAGE_RELATIONS);
 			}
 			activePanel = commentRelationPanel;
+		} else 	if( panelTitle.equals(AdminComponent.DISPLAY_RELATION) ) {
+			if( displayAllRelationsPanel == null ) {
+				displayAllRelationsPanel = new RelationDisplayAllPanel(this, AdminComponent.MANAGE_RELATIONS);
+			}
+			activePanel = displayAllRelationsPanel;	
 			/*
 			 * VO publishing
 			 */
@@ -527,9 +533,6 @@ public class AdminTool extends BaseFrame {
 				obscoreMapperPanel = new ObscoreMapperPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = obscoreMapperPanel;
-			/*
-			 * Installation panels
-			 */
 		} else 	if( panelTitle.equals(AdminComponent.VO_PROTOCOL_FIELDS) ) {
 			if( protocolFieldsPanel== null ) {
 				protocolFieldsPanel = new VOProtocolFieldsPanel(this, AdminComponent.VO_PUBLISH);
@@ -540,6 +543,9 @@ public class AdminTool extends BaseFrame {
 				publishedResourcesPanel = new VOPublishedResourcesPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = publishedResourcesPanel;	
+			/*
+			 * Installation panels
+			 */
 		} else 	if( panelTitle.equals(AdminComponent.DB_INSTALL) ) {
 			if( dbInstallPanel== null ) {
 				dbInstallPanel = new DBInstallPanel(this, AdminComponent.ROOT_PANEL);

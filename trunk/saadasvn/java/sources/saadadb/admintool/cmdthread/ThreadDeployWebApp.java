@@ -58,7 +58,7 @@ public class ThreadDeployWebApp extends CmdThread {
 		return null;
 	}
 	public String toString() {
-		return "Deply Web App " ;
+		return "Deploy Web App " ;
 	}
 
 }
