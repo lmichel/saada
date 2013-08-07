@@ -28,7 +28,7 @@ public class SaadaProcess {
 	 */
 	public void faitTonBoulot() throws AbortException  {
 		Messenger.setMaxProgress(10);
-		for( int i=0 ; i<10 ; i++ ) {
+		for( int i=0 ; i<15 ; i++ ) {
 			Messenger.printMsg(Messenger.TRACE, " blabla " + i + " " + Thread.currentThread() + " " + Thread.currentThread().getState());
 			if( (i%2) == 0 ) Messenger.diskAccess();
 			else if( (i%3) == 0 ) Messenger.dbAccess();
@@ -41,7 +41,7 @@ public class SaadaProcess {
 			//				return ;
 			//			}
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				Messenger.printStackTrace(e);
 			}
