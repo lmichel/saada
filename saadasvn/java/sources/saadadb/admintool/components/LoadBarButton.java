@@ -49,12 +49,12 @@ public class LoadBarButton extends JPanel
 		if (this.isLoading)
 		{
 			statelbl.setIcon(loadingIcon);
-			statelbl.setToolTipText("Thread is running");
+			statelbl.setToolTipText("Working on selected action");
 		}
 		else
 		{
 			statelbl.setIcon(OKIcon);
-			statelbl.setToolTipText("No active thread");
+			statelbl.setToolTipText("Ready to run a new action");
 		}
 	}
 }

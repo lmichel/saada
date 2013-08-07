@@ -2,6 +2,8 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Frame;
 
+import javax.swing.SwingUtilities;
+
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
@@ -44,7 +46,13 @@ public class ThreadRelationEmpty extends ThreadRelationDrop {
 			rm.empty(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> emptied");		
+			SwingUtilities.invokeLater(new Runnable() 
+			{
+				public void run() 
+				{
+					AdminComponent.showSuccess(frame, "Relationship <" + relation + "> emptied");	
+				}
+			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 		} catch (Exception ae) {			

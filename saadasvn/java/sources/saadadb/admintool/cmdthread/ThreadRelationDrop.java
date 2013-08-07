@@ -4,6 +4,8 @@ import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
@@ -54,7 +56,13 @@ public class ThreadRelationDrop extends CmdThread {
 			rm.remove(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> removed");		
+			SwingUtilities.invokeLater(new Runnable() 
+			{
+				public void run() 
+				{
+					AdminComponent.showSuccess(frame, "Relationship <" + relation + "> removed");
+				}
+			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 			} catch (Exception ae) {			

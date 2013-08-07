@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Frame;
 
 import javax.swing.JCheckBox;
+import javax.swing.SwingUtilities;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
@@ -63,7 +64,13 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			ib.createIndexRelation();
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> populated");		
+			SwingUtilities.invokeLater(new Runnable() 
+			{
+				public void run() 
+				{
+					AdminComponent.showSuccess(frame, "Relationship <" +config.getNameRelation() + "> populated");
+				}
+			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 			} catch (Exception ae) {			

@@ -2,6 +2,8 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Frame;
 
+import javax.swing.SwingUtilities;
+
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
@@ -44,7 +46,13 @@ public class ThreadRelationIndex extends ThreadRelationDrop {
 			rm.index(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
-			AdminComponent.showSuccess(frame, "Relationship <" + relation + "> indexed");		
+			SwingUtilities.invokeLater(new Runnable() 
+			{
+				public void run() 
+				{
+					AdminComponent.showSuccess(frame, "Relationship <" + relation + "> indexed");	
+				}
+			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
 		} catch (Exception ae) {			
