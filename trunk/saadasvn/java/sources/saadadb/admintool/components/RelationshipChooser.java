@@ -39,7 +39,6 @@ import javax.swing.table.TableColumnModel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
-import saadadb.admintool.AdminTool;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.DataTreePath;
@@ -49,7 +48,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
-import saadadb.util.Messenger;
 
 /**
  * Panel with a clickable list of relations
@@ -99,18 +97,21 @@ public class RelationshipChooser extends JPanel {
 		this.setLayout(new GridBagLayout());
 		this.confList.setCellRenderer(new MyCellRenderer());
 		this.confList.setFont(AdminComponent.plainFont);
-		
-		if (this.type == RelationshipChooser.ALL_RELATIONS)
-		{
-			this.fillRelationships();
-		}
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(3, 3, 3, 3);
 		c.gridx = 0; c.gridy = 0;c.weightx = 0;
+		int scrollPaneWidth = 100;
+		if (this.type == RelationshipChooser.ALL_RELATIONS)
+		{
+			this.fillRelationships();
+			c.gridheight = 2;
+			scrollPaneWidth = 185;
+		}
+		
 		JScrollPane scrollPane = new JScrollPane(confList);
 		scrollPane.setBorder(BorderFactory.createTitledBorder("List of relationships"));
-		scrollPane.setPreferredSize(new Dimension(350,100));
+		scrollPane.setPreferredSize(new Dimension(350,scrollPaneWidth));
 		this.add(scrollPane, c);
 
 		
@@ -142,12 +143,20 @@ public class RelationshipChooser extends JPanel {
 		c.gridx++; c.weightx = 1; c.gridheight = 2;
 		this.add(jspDescription, c);
 		c.fill = GridBagConstraints.NONE;
-		c.gridx = 0; c.gridy = 1; c.gridheight = 1;
+		c.gridx = 0; c.gridheight = 1;
+		if (this.type == RelationshipChooser.ALL_RELATIONS)
+		{
+			c.gridy = 2;
+		}
+		else
+		{
+			c.gridy = 1;
+		}
 		this.add(AdminComponent.getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
 		
 		if (this.type == RelationshipChooser.ALL_RELATIONS)
 		{
-			c.gridx = 1; c.gridy = 2; c.gridheight = 1; c.anchor = GridBagConstraints.LINE_START;
+			c.gridx = 1; c.gridy = 2; c.gridheight = 1; c.anchor = GridBagConstraints.FIRST_LINE_END;
 			relationPopluate = new JButton("Populate this relation");
 			relationPopluate.setEnabled(false);
 			relationPopluate.addActionListener(new ActionListener() 
