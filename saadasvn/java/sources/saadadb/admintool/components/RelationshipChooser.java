@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -36,7 +39,9 @@ import javax.swing.table.TableColumnModel;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
+import saadadb.admintool.AdminTool;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
@@ -63,6 +68,7 @@ public class RelationshipChooser extends JPanel {
 	private Runnable runnable;
 	private String endPoint;
 	private int lastSelectedIndex = 0;
+	private JButton relationPopluate;
 	private final static int TABLE_COLUMN_SIZE_0 = 80;
 	private final static int TABLE_COLUMN_SIZE_1 = 240;
 	
@@ -91,8 +97,6 @@ public class RelationshipChooser extends JPanel {
 		this.runnable = runnable;
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		this.setLayout(new GridBagLayout());
-		this.confList.setVisibleRowCount(6);
-		this.confList.setFixedCellWidth(24);
 		this.confList.setCellRenderer(new MyCellRenderer());
 		this.confList.setFont(AdminComponent.plainFont);
 		
@@ -140,11 +144,46 @@ public class RelationshipChooser extends JPanel {
 		c.fill = GridBagConstraints.NONE;
 		c.gridx = 0; c.gridy = 1; c.gridheight = 1;
 		this.add(AdminComponent.getHelpLabel(HelpDesk.RELATION_SELECTOR), c);
+		
+		if (this.type == RelationshipChooser.ALL_RELATIONS)
+		{
+			c.gridx = 1; c.gridy = 2; c.gridheight = 1; c.anchor = GridBagConstraints.LINE_START;
+			relationPopluate = new JButton("Populate this relation");
+			relationPopluate.setEnabled(false);
+			relationPopluate.addActionListener(new ActionListener() 
+			{
+				@Override
+				public void actionPerformed(ActionEvent e) 
+				{
+					if (confList.getSelectedValue()!=null)
+					{
+						MetaRelation mr = Database.getCachemeta().getRelation(confList.getSelectedValue());
+						try 
+						{
+							String relationName = RelationshipChooser.this.confList.getSelectedValue().toString();
+							RelationshipChooser.this.taskPanel.rootFrame.metaDataTree.setCurrentTreeNode(mr.getPrimary_coll(), Category.explain(mr.getPrimary_category()), null);
+							RelationshipChooser.this.taskPanel.rootFrame.activePanel(AdminComponent.POPULATE_RELATION);
+							RelationPopulatePanel panel = (RelationPopulatePanel) RelationshipChooser.this.taskPanel.rootFrame.getActivePanel();
+							panel.selectRelation(relationName);
+						}
+						catch (FatalException e1) 
+						{
+							e1.printStackTrace();
+						}
+					}
+				}
+			});
+			this.add(relationPopluate, c);
+		}
 
 		confList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
 				if( confList.getSelectedValue() != null ) {
 					if( acceptChange() ) {
+						if (RelationshipChooser.this.type == RelationshipChooser.ALL_RELATIONS)
+						{
+							relationPopluate.setEnabled(true);
+						}
 						RelationshipChooser.this.taskPanel.cancelChanges();
 						setDescription();
 						lastSelectedIndex = confList.getSelectedIndex();
@@ -299,6 +338,7 @@ public class RelationshipChooser extends JPanel {
 		else if (this.type == RelationshipChooser.ALL_RELATIONS)
 		{
 			this.fillRelationships();
+			relationPopluate.setEnabled(false);
 		}
 	}
 

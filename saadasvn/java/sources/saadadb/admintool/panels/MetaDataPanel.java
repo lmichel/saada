@@ -342,6 +342,82 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 		}
 	}
 	
+	public void setCurrentTreeNode(String collection, String category, String classe)
+	{
+		Messenger.printMsg(Messenger.DEBUG, "Test : " + collection + "." + category);
+		Object[] path;
+		int tab_size = 1;
+		if (collection!=null)
+		{
+			tab_size++;
+			if (category!=null)
+			{
+				tab_size++;
+				if (classe!=null)
+				{
+					tab_size++;
+				}
+			}
+		}
+		path = new TreeNode[tab_size];
+		path[0] = top;
+		
+		DefaultMutableTreeNode collectionNode=null, categoryNode=null, classNode=null;
+		
+		if (tab_size>=2)
+		{
+			// Collection search
+			for (int i=0 ; i<top.getChildCount() ; i++)
+			{
+				if (top.getChildAt(i).toString().equals(collection))
+				{
+					collectionNode = (DefaultMutableTreeNode) top.getChildAt(i);
+					break;
+				}
+			}
+			path[1] = collectionNode;
+		}
+		
+		if (tab_size>=3)
+		{
+			// Category search
+			if (collectionNode!=null)
+			{
+				for (int i=0 ; i<collectionNode.getChildCount() ; i++)
+				{
+					if (collectionNode.getChildAt(i).toString().equals(category))
+					{
+						categoryNode = (DefaultMutableTreeNode) collectionNode.getChildAt(i);
+						break;
+					}
+				}
+				path[2] = categoryNode;
+			}
+		}
+
+		if (tab_size>=4)
+		{
+			// Class search
+			if (categoryNode!=null)
+			{
+				for (int i=0 ; i<categoryNode.getChildCount() ; i++)
+				{
+					if (categoryNode.getChildAt(i).toString().equals(classe))
+					{
+						classNode = (DefaultMutableTreeNode) categoryNode.getChildAt(i);
+						break;
+					}
+				}
+				path[3] = classNode;
+			}
+		}
+		
+		TreePath newTreePath = new TreePath(path);
+		Messenger.printMsg(Messenger.DEBUG, newTreePath.toString());
+		tree.setSelectionPath(newTreePath);
+		tree.expandPath(newTreePath);
+	}
+	
 	// Always remove the AssociatedClass before the source Class
 	public void deleteAssociatedClassNode(TreePath clickPath, String associatedClass, String associatedCategory)
 	{

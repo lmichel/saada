@@ -9,7 +9,9 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.panels.tasks.RelationCreatePanel;
+import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
@@ -70,6 +72,8 @@ public class ThreadRelationCreate extends CmdThread {
 					if (userChoice == JOptionPane.YES_OPTION)
 					{
 						((AdminTool)frame).activePanel(AdminComponent.POPULATE_RELATION);
+						RelationPopulatePanel panel = (RelationPopulatePanel) (((AdminTool)frame).getActivePanel());
+						panel.selectRelation(config.getNameRelation());
 					}
 				}
 			});
