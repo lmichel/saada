@@ -112,7 +112,7 @@ public class RelationDropPanel extends TaskPanel {
 		runButton = new RunTaskButton(this);
 
 		JPanel tPanel = this.addSubPanel("Relationship Selector");
-		relationChooser = new RelationshipChooser(this, runButton);
+		relationChooser = new RelationshipChooser(this, runButton, RelationshipChooser.TREEPATH_RELATIONS);
 		MyGBC c = new MyGBC(5,5,5,5);
 		tPanel.add(relationChooser, c);
 		

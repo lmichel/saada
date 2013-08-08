@@ -119,7 +119,7 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel emptyRelationPanel;
 	private TaskPanel populateRelationPanel;
 	private TaskPanel indexRelationPanel;
-	private EditPanel displayAllRelationsPanel;
+	private TaskPanel displayAllRelationsPanel;
 
 	private EditPanel miscMapperPanel;;
 	private EditPanel spectrumMapperPanel;;
