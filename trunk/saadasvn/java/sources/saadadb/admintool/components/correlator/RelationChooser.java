@@ -25,7 +25,7 @@ public class RelationChooser extends CollapsiblePanel {
 	public RelationChooser(RelationPopulatePanel taskPanel, Component toActive) {
 		super("Relationship Selector");
 		this.taskPanel = taskPanel;
-		configChooser = new RelationshipChooser(taskPanel, toActive, new Runnable() {
+		configChooser = new RelationshipChooser(taskPanel, toActive, RelationshipChooser.TREEPATH_RELATIONS, new Runnable() {
 			public void run() {
 				RelationChooser.this.taskPanel.load();				
 			}

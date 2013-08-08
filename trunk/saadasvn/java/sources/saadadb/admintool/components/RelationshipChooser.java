@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,6 +44,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
+import saadadb.util.Messenger;
 
 /**
  * Panel with a clickable list of relations
@@ -63,13 +65,18 @@ public class RelationshipChooser extends JPanel {
 	private int lastSelectedIndex = 0;
 	private final static int TABLE_COLUMN_SIZE_0 = 80;
 	private final static int TABLE_COLUMN_SIZE_1 = 240;
+	
+	private int type;
+	public final static int ALL_RELATIONS = 1;
+	public final static int TREEPATH_RELATIONS = 2;
 
 	/**
 	 * @param taskPanel
 	 * @param toActivate
 	 */
-	public RelationshipChooser(TaskPanel taskPanel, Component toActivate) {
-		this(taskPanel, toActivate, null);
+	public RelationshipChooser(TaskPanel taskPanel, Component toActivate, int type) 
+	{
+		this(taskPanel, toActivate, type, null);
 	}
 
 	/**
@@ -77,16 +84,23 @@ public class RelationshipChooser extends JPanel {
 	 * @param toActivate
 	 * @param runnable
 	 */
-	public RelationshipChooser(TaskPanel taskPanel, Component toActivate, Runnable runnable) {
+	public RelationshipChooser(TaskPanel taskPanel, Component toActivate, int type, Runnable runnable) {
 		this.toActivate = toActivate;
+		this.type = type;
 		this.taskPanel = taskPanel;
+		this.runnable = runnable;
+		this.setBackground(AdminComponent.LIGHTBACKGROUND);
+		this.setLayout(new GridBagLayout());
 		this.confList.setVisibleRowCount(6);
 		this.confList.setFixedCellWidth(24);
 		this.confList.setCellRenderer(new MyCellRenderer());
 		this.confList.setFont(AdminComponent.plainFont);
-		this.runnable = runnable;
-		this.setBackground(AdminComponent.LIGHTBACKGROUND);
-		this.setLayout(new GridBagLayout());
+		
+		if (this.type == RelationshipChooser.ALL_RELATIONS)
+		{
+			this.fillRelationships();
+		}
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(3, 3, 3, 3);
 		c.gridx = 0; c.gridy = 0;c.weightx = 0;
@@ -139,6 +153,19 @@ public class RelationshipChooser extends JPanel {
 			}
 		});
 	}
+	
+	private void fillRelationships()
+	{
+		// Fill the confList with all existing relationships
+		DefaultListModel<String> model = (DefaultListModel<String>) confList.getModel();
+		model.removeAllElements();
+		String[] relationNames = Database.getCachemeta().getRelation_names();
+		Arrays.sort(relationNames);
+		for (int i=0 ; i<relationNames.length ; i++)
+		{
+			model.addElement(relationNames[i]);
+		}
+	}
 
 	/**
 	 * @return
@@ -146,7 +173,7 @@ public class RelationshipChooser extends JPanel {
 	private boolean acceptChange() {
 		if( RelationshipChooser.this.taskPanel.hasChanged() && confList.getSelectedIndex() != lastSelectedIndex 
 				&& !AdminComponent.showConfirmDialog(RelationshipChooser.this.taskPanel
-						, "Modifications not saved. Do you want to continue anyway?") ) {
+						, "Modifications not saved. Do you want to continue anyway ?") ) {
 			confList.setSelectedIndex(lastSelectedIndex);
 			return false;
 		} else {
@@ -247,24 +274,31 @@ public class RelationshipChooser extends JPanel {
 		this.descriptionTable.setModel(dm);
 		if( this.toActivate != null) this.toActivate.setEnabled(false);
 
-		DefaultListModel model = (DefaultListModel) confList.getModel();
-		model.removeAllElements();
-		if(dataTreePath != null ){
-			// Use a set to avoid loopback relationships to be displayed twice in the list
-			Set<String> rls = new LinkedHashSet<String>();
-			this.endPoint = dataTreePath.collection + "." +  dataTreePath.category.toUpperCase();
-			for(String r: Database.getCachemeta().getRelationNamesStartingFromColl(
-					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-				rls.add(r);
+		if (this.type == RelationshipChooser.TREEPATH_RELATIONS)
+		{
+			DefaultListModel model = (DefaultListModel) confList.getModel();
+			model.removeAllElements();
+			if(dataTreePath != null ){
+				// Use a set to avoid loopback relationships to be displayed twice in the list
+				Set<String> rls = new LinkedHashSet<String>();
+				this.endPoint = dataTreePath.collection + "." +  dataTreePath.category.toUpperCase();
+				for(String r: Database.getCachemeta().getRelationNamesStartingFromColl(
+						dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
+					rls.add(r);
+				}
+				for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
+						dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
+					rls.add(r);
+				}
+				for( String r: rls ) 
+				{
+					model.addElement(r);			
+				}
 			}
-			for(String r: Database.getCachemeta().getRelationNamesEndingOnColl(
-					dataTreePath.collection, Category.getCategory(dataTreePath.category.toUpperCase()))) {
-				rls.add(r);
-			}
-			for( String r: rls ) 
-			{
-				model.addElement(r);			
-			}
+		}
+		else if (this.type == RelationshipChooser.ALL_RELATIONS)
+		{
+			this.fillRelationships();
 		}
 	}
 
@@ -288,26 +322,46 @@ public class RelationshipChooser extends JPanel {
 				boolean iss,    // is the cell selected
 				boolean chf)    // the list and the cell have the focus
 		{
-			try {
+			try 
+			{
 				MetaRelation mr = Database.getCachemeta().getRelation((String)value);
 				String start = mr.getPrimary_coll() + "." + Category.explain(mr.getPrimary_category());
 				String end   = mr.getSecondary_coll() + "." + Category.explain(mr.getSecondary_category());
 				String retour  = "";
 				String ep;
-				if( start.equals(end )) {
-					ep = "(loopback)"; 
+				if (RelationshipChooser.this.type == RelationshipChooser.TREEPATH_RELATIONS)
+				{
+					if( start.equals(end )) 
+					{
+						ep = "(loopback)"; 
+					}
+					else if( RelationshipChooser.this.endPoint.equals(start)) 
+					{
+						ep = "(to " + end + ")"; 
+					}
+					else 
+					{
+						ep = "(from " + start + ")"; 
+					}
+					retour = "<html><b>" + value + "</b> &gt; <i>" + ep + "</html>";
 				}
-				else if( RelationshipChooser.this.endPoint.equals(start)) {
-					ep = "(to " + end + ")"; 
+				else if (RelationshipChooser.this.type == RelationshipChooser.ALL_RELATIONS)
+				{
+					if (start.equals(end))
+					{
+						retour = "<html><b>" + value + "</b> &gt; <i>(loopback " + start + ")</html>";
+					}
+					else
+					{
+						retour = "<html><b>" + value + "</b> &gt; <i>(from " + start + " to " + end + ")</html>";
+					}
 				}
-				else {
-					ep = "(from " + start + ")"; 
-				}
-				retour = "<html><b>" + value + "</b> &gt; <i>" + ep + "</html>";
 				Color col = ( mr.isIndexed() ) ?new Color(0x4F7B60): Color.RED;
 				JLabel jl = (JLabel) super.getListCellRendererComponent(list, retour, index, iss, chf);
+				jl.setToolTipText(retour);
 				jl.setForeground(col);
-			} catch (FatalException e) {}
+			} 
+			catch (FatalException e) {}
 			return this;
 		}
 	}
