@@ -134,6 +134,11 @@ public class RelationPopulatePanel extends TaskPanel {
 		keywordConditionEditor.getCorrelator() +
 		knnEditor.getCorrelator() ; 
 	}
+	
+	public void selectRelation(String name)
+	{
+		relationChooser.selectRelation(name);
+	}
 
 	/**
 	 * 

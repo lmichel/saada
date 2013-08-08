@@ -32,7 +32,7 @@ public class RelationDisplayAllPanel extends TaskPanel
 	{
 		this.initTreePathPanel();
 		this.initSelectResourceLabel();
-		this.add(new ToolBarPanel(this, false, false, false));
+		this.add(new ToolBarPanel(this, true, true, false));
 	}
 
 	@Override
