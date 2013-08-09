@@ -161,7 +161,8 @@ public class VOServiceListItem extends JPanel {
 			this.label.setForeground(Color.GRAY);
 			this.setBackground(Color.LIGHT_GRAY);	
 		}
-		if( this.selected) {
+		if( this.selected) 
+		{
 			this.capability.setDescription( ((VOServiceList)(this.getParent())).getDescription());
 		}
 		this.selected = false;
@@ -171,6 +172,11 @@ public class VOServiceListItem extends JPanel {
 	}
 	public boolean isRemoved() {
 		return removed;
+	}
+	
+	public void setNewDescriptionOfCapability()
+	{
+		this.capability.setDescription( ((VOServiceList)(this.getParent())).getDescription());
 	}
 
 }

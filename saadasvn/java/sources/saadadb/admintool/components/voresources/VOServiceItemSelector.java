@@ -18,6 +18,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
+import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
 
 
@@ -94,6 +95,11 @@ public class VOServiceItemSelector extends JPanel {
 		resourceList.reset();
 	}
 	public void saveCapabilities() throws Exception {
+		VOServiceListItem selectedItem = null;
+		if ((selectedItem = this.resourceList.getSelectedItem())!=null)
+		{
+			selectedItem.setNewDescriptionOfCapability();
+		}
 		resourceList.saveCapabilities();
 	}
 	public void setDescription(String description){
