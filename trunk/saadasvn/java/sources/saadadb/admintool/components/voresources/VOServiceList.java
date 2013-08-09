@@ -146,7 +146,19 @@ public class VOServiceList extends JPanel {
 		this.displayListItems();
 		return true;
 	}
-
+	
+	public VOServiceListItem getSelectedItem()
+	{
+		VOServiceListItem selectedItem = null;
+		for( VOServiceListItem tsi: items) 
+		{
+			if( tsi.isSelected() ) 
+			{
+				selectedItem = tsi;
+			}
+		}
+		return selectedItem;
+	}
 
 	/**
 	 * @param dataTreePath
