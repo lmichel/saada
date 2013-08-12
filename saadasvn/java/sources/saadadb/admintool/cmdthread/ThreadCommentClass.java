@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ClassManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -57,8 +58,9 @@ public class ThreadCommentClass extends ThreadCreateCollection {
 
 	@Override
 	public String getAntTarget() {
-		Messenger.printMsg(Messenger.DEBUG, "No ANT task in CommentClass !");
-		return null;
+		return AntDesk.getAntFile(AdminComponent.COMMENT_CLASS
+				, taskTitle
+				, new String[]{"-comment="+ comment.replaceAll("\"", "")+""});
 	}
 	public String toString() {
 		return "Comment class " + this.name;

@@ -15,6 +15,7 @@ public class ClassCommentPanel extends ClassDropPanel {
 
 	public ClassCommentPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, COMMENT_CLASS, new ThreadCommentClass(rootFrame, COMMENT_CLASS), ancestor);
+		cmdThread = new ThreadCommentClass(rootFrame, COMMENT_CLASS);
 	}
 
 	/**

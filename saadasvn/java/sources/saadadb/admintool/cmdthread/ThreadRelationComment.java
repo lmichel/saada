@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.TaskPanel;
+import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
@@ -85,7 +86,9 @@ public class ThreadRelationComment extends CmdThread {
 
 	@Override
 	public String getAntTarget() {
-		return null;
+		return AntDesk.getAntFile(AdminComponent.COMMENT_RELATION
+				, taskTitle
+				, new String[]{"-comment="+ comment.replaceAll("\"", "")+""});
 	}
 }
 
