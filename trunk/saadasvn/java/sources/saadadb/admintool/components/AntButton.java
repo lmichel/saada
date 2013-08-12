@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.windows.TextSaver;
+import saadadb.util.Messenger;
 
 /**
  * Opens q windows withe the XML ant task for the current thread
@@ -31,7 +32,7 @@ public class AntButton extends JButton{
 		this.setPreferredSize(new Dimension(60, 40));
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CmdThread ct =  AntButton.this.adminPanel.getCmdThread ();
+				CmdThread ct =  AntButton.this.adminPanel.getCmdThread();
 				if( ct != null ) {
 					try {
 						if( AntButton.this.adminPanel.setCmdParams(false) )  {
