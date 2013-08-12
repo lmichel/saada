@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.DummyTask;
+import saadadb.admintool.cmdthread.LongDummyVerboseTask;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
@@ -207,7 +208,7 @@ public class AdminTool extends BaseFrame {
 				JButton d = new JButton("Start Process");
 				d.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						activeProcessPanel(new DummyTask(AdminTool.this, "Bonjour"));
+						activeProcessPanel(new LongDummyVerboseTask(AdminTool.this, "Bonjour"));
 					}
 				});
 				c.gridx = 0;

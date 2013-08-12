@@ -48,6 +48,35 @@ public class SaadaProcess {
 		}
 		Messenger.noMoreAccess();
 	}
+	
+	/*
+	 * LongDummyVerbose Task for debugging only
+	 */
+	public void faitTonLongBoulotVerbeux() throws AbortException  {
+		Messenger.setMaxProgress(10);
+		Messenger.printMsg(Messenger.TRACE, "Init task !");
+		for( int i=0 ; i<1000 ; i++ ) {
+			Messenger.printMsg(Messenger.TRACE, " blabla " + i + " " + Thread.currentThread() + " " + Thread.currentThread().getState());
+			if( (i%2) == 0 ) Messenger.diskAccess();
+			else if( (i%3) == 0 ) Messenger.dbAccess();
+			else if( (i%5) == 0 ) Messenger.procAccess();
+			this.processUserRequest();
+			try {
+				Thread.sleep(80);
+			} catch (InterruptedException e) {
+				Messenger.printStackTrace(e);
+			}
+			Messenger.printMsg(Messenger.TRACE, "This is a very very very very very long message in this sentence that has no real purpose, just in order to debug the applicant and improve it ! ");
+			try {
+				Thread.sleep(120);
+			} catch (InterruptedException e) {
+				Messenger.printStackTrace(e);
+			}
+			Messenger.printMsg(Messenger.TRACE, "Checkpoints n°" + i);
+		}
+		Messenger.printMsg(Messenger.TRACE, "End of task !");
+		Messenger.noMoreAccess();
+	}
 
 	/**
 	 * Ckeck for a pause or for an obort request

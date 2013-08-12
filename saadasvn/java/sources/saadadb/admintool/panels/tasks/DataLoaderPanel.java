@@ -4,6 +4,7 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -14,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -248,7 +250,20 @@ public class DataLoaderPanel extends TaskPanel {
 		tPanel.add(datafileSummary, c);
 
 		runButton = new RunTaskButton(this);
+		JButton previewDataButton = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/preview.png")));
+		previewDataButton.setToolTipText("Preview");
+		previewDataButton.setEnabled(false);
+		previewDataButton.setPreferredSize(new Dimension(60, 40));
+		previewDataButton.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				//TODO Implement previewData function
+				Messenger.printMsg(Messenger.DEBUG, "Not implemented yet !");
+			}
+		});
 		this.setActionBar(new Component[]{runButton
+				, previewDataButton
 				, debugButton
 				, (new AntButton(this))});
 
