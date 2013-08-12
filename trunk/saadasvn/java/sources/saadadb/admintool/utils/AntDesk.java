@@ -49,6 +49,11 @@ public class AntDesk {
 		    	,"<java  classname=\"saadadb.command.ManageCollection\" fork=\"true\"  failonerror=\"true\"  >"
 				,"<classpath refid=\"saadadb.classpath\"/>\n"
 		});
+		map.put(AdminComponent.COMMENT_COLLECTION, new String[] {
+				"<target name=\"user.task\">"
+		    	,"<java  classname=\"saadadb.command.ManageCollection\" fork=\"true\"  failonerror=\"true\"  >"
+				,"<classpath refid=\"saadadb.classpath\"/>\n"
+		});
 		map.put(AdminComponent.EMPTY_COLLECTION, new String[] {
 				"<target name=\"user.task\">"
 		    	,"<java  classname=\"saadadb.command.ManageCollection\" fork=\"true\"  failonerror=\"true\"  >"
@@ -70,6 +75,11 @@ public class AntDesk {
 				,"<classpath refid=\"saadadb.classpath\"/>\n"
 		});
 		map.put(AdminComponent.CREATE_RELATION, new String[] {
+				"<target name=\"user.task\">"
+		    	,"<java  classname=\"saadadb.command.ManageRelation\" fork=\"true\"  failonerror=\"true\"  >"
+				,"<classpath refid=\"saadadb.classpath\"/>\n"
+		});
+		map.put(AdminComponent.COMMENT_RELATION, new String[] {
 				"<target name=\"user.task\">"
 		    	,"<java  classname=\"saadadb.command.ManageRelation\" fork=\"true\"  failonerror=\"true\"  >"
 				,"<classpath refid=\"saadadb.classpath\"/>\n"

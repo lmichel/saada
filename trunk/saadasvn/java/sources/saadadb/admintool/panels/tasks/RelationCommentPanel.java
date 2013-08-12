@@ -38,6 +38,7 @@ public class RelationCommentPanel extends RelationDropPanel {
 
 	public RelationCommentPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, COMMENT_RELATION, null, ancestor);
+		cmdThread = new ThreadRelationComment(rootFrame, this, COMMENT_RELATION);
 	}
 
 	/**
