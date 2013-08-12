@@ -83,21 +83,21 @@ public class Record {
 		retour.append(header);
 		retour.append(this.authority.getXML());
 
-		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\n");
-		retour.append("   <interface xsi:type=\"vs:ParamHTTP\">\n");
-		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/availability</accessURL>\n");
-		retour.append("   </interface>\n");
-		retour.append("  </capability>\n");
-		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#capabilities\">\n");
-		retour.append("   <interface xsi:type=\"vs:ParamHTTP\">\n");
-		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/capabilities</accessURL>\n");
-		retour.append("   </interface>\n");
-		retour.append("  </capability>\n");
-		retour.append("  <capability standardID=\"ivo://ivoa.net/std/VOSI#tables\">\n");
-		retour.append("    <interface xsi:type=\"vs:ParamHTTP\">\n");
-		retour.append("       <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/tables</accessURL>\n");
-		retour.append("   </interface>\n");
-		retour.append("  </capability>\n");
+		retour.append("<capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\n");
+		retour.append("<interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("<accessURL use=\"full\">" + Database.getUrl_root() + "/tap/availability</accessURL>\n");
+		retour.append("</interface>\n");
+		retour.append("</capability>\n");
+		retour.append("<capability standardID=\"ivo://ivoa.net/std/VOSI#capabilities\">\n");
+		retour.append("<interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("<accessURL use=\"full\">" + Database.getUrl_root() + "/tap/capabilities</accessURL>\n");
+		retour.append("</interface>\n");
+		retour.append("</capability>\n");
+		retour.append("<capability standardID=\"ivo://ivoa.net/std/VOSI#tables\">\n");
+		retour.append("<interface xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("<accessURL use=\"full\">" + Database.getUrl_root() + "/tap/tables</accessURL>\n");
+		retour.append("</interface>\n");
+		retour.append("</capability>\n");
 		retour.append("</ri:Resource>\n"); 
 
 		return retour;
@@ -149,7 +149,7 @@ public class Record {
 					}
 				}
 			}
-			retour.append(boeuf + "\n");
+			retour.append(boeuf.trim() + "\n");
 		}
 		return retour;
 	}
