@@ -1,11 +1,16 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -231,10 +236,12 @@ public class RelationPopulatePanel extends TaskPanel {
 	@Override
 	protected void setActivePanel() {
 		runButton = new RunTaskButton(this);
-		/*JButton testRelationButton = new JButton("Test correlator");
-		testRelationButton.addActionListener(new ActionListener() 
+		JButton previewRelationButton = new JButton(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/preview.png")));
+		previewRelationButton.setToolTipText("Preview");
+		previewRelationButton.setEnabled(false);
+		previewRelationButton.setPreferredSize(new Dimension(60, 40));
+		previewRelationButton.addActionListener(new ActionListener() 
 		{
-			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 				RelationPopulatePanel.this.setConfig();
@@ -242,14 +249,15 @@ public class RelationPopulatePanel extends TaskPanel {
 				try 
 				{
 					rm.checkCorrelator();
-					Messenger.printMsg(Messenger.DEBUG, "Success");
+					//TODO Implement previewRelation function
+					Messenger.printMsg(Messenger.DEBUG, "Not implemented yet !");
 				} 
 				catch (Exception e1) 
 				{
 					e1.printStackTrace();
 				}
 			}
-		});*/
+		});
 		
 		JPanel tPanel = this.addSubPanel("Correlator Editor", false);
 		JPanel editorPanel = new JPanel();
@@ -283,6 +291,6 @@ public class RelationPopulatePanel extends TaskPanel {
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 
 
-		this.setActionBar(new Component[]{runButton, /*testRelationButton,*/ debugButton, (new AntButton(this))});
+		this.setActionBar(new Component[]{runButton, previewRelationButton, debugButton, (new AntButton(this))});
 	}
 }
