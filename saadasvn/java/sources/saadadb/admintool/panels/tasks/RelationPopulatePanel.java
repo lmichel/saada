@@ -11,6 +11,7 @@ import javax.swing.JScrollPane;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadRelationPopulate;
+import saadadb.admintool.components.AntButton;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.correlator.CollectionCoverage;
@@ -46,6 +47,7 @@ public class RelationPopulatePanel extends TaskPanel {
 
 	public RelationPopulatePanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, POPULATE_RELATION, null, ancestor);
+		cmdThread = new ThreadRelationPopulate(rootFrame, POPULATE_RELATION);
 	}
 
 
@@ -281,6 +283,6 @@ public class RelationPopulatePanel extends TaskPanel {
 		tPanel.add(new JScrollPane(editorPanel), imcep);
 
 
-		this.setActionBar(new Component[]{runButton, /*testRelationButton,*/ debugButton});
+		this.setActionBar(new Component[]{runButton, /*testRelationButton,*/ debugButton, (new AntButton(this))});
 	}
 }

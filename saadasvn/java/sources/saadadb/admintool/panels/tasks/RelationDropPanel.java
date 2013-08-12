@@ -38,6 +38,7 @@ public class RelationDropPanel extends TaskPanel {
 
 	public RelationDropPanel(AdminTool rootFrame, String ancestor) {
 		super(rootFrame, DROP_RELATION, null, ancestor);
+		cmdThread = new ThreadRelationDrop(rootFrame, DROP_RELATION);
 	}
 
 	/**

@@ -64,6 +64,7 @@ public class RelationCreatePanel extends TaskPanel {
 	public RelationCreatePanel(AdminTool rootFrame, String ancestor) 
 	{
 		super(rootFrame, CREATE_RELATION, null, ancestor);
+		cmdThread = new ThreadRelationCreate(rootFrame, this, CREATE_RELATION);
 	}
 
 	@Override
