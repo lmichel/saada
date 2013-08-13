@@ -13,6 +13,7 @@ import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.panels.tasks.DataTableEditorPanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ProductManager;
+import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
@@ -74,7 +75,18 @@ public class ThreadDeleteProduct extends CmdThread {
 			}
 			saada_process = new ProductManager();
 			SQLTable.beginTransaction();
-			((ProductManager)saada_process).removeProducts(oids_to_remove);
+			
+			String[] tab_args = new String[3];
+			tab_args[0] = "-remove=";
+			for (int i=0 ; i<oids_to_remove.length ; i++)
+			{
+				tab_args[0] += (i==0?"":",") + oids_to_remove[i] + "";
+			}
+			tab_args[1]= "-noindex=true";
+			tab_args[2]= "-links=follow";
+			ArgsParser args = new ArgsParser(tab_args);
+			((ProductManager)saada_process).remove(args);
+			
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reload(true);
 			frame.setCursor(cursor_org);

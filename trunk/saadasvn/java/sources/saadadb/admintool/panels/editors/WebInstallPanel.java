@@ -3,10 +3,14 @@
  */
 package saadadb.admintool.panels.editors;
 
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -18,10 +22,12 @@ import saadadb.admin.widgets.EditableLabel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.admintool.utils.WebsiteChecker;
 import saadadb.database.Database;
 import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
@@ -43,6 +49,8 @@ public class WebInstallPanel extends EditPanel {
 	private JButton	modTomcat;
 	private EditableLabel  dirUrl ;
 	private JButton	modUrl;
+	private JButton testWebAp;
+	private JButton openWebAp;
 	
 	public WebInstallPanel(AdminTool rootFrame, String title, String icon,
 			String ancestor) {
@@ -111,7 +119,30 @@ public class WebInstallPanel extends EditPanel {
 				Database.init(Database.getName());
 			}
 		});
-
+		testWebAp = new JButton("Test web application");
+		testWebAp.addActionListener(new ActionListener() 
+		{	
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				boolean isWorking = (Boolean) WebsiteChecker.checkIfURLExists(Database.getUrl_root())[0];
+				String errorMessage = (String) WebsiteChecker.checkIfURLExists(Database.getUrl_root())[1];
+				if (isWorking)
+					AdminComponent.showSuccess(rootFrame, "Web application is well deployed and accessible at " + Database.getUrl_root());
+				else
+					AdminComponent.showFatalError(rootFrame, "Web application is not working\nError Message : " + errorMessage);
+			}
+		});
+		openWebAp = new JButton("Open web application");
+		openWebAp.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				String url = Database.getUrl_root();
+				WebsiteChecker.openURL(url);
+			}
+		});
 
 		JPanel panel = this.addSubPanel("Web Deployement");
 		MyGBC mgbc = new MyGBC(5,5,5,5);	mgbc.anchor = GridBagConstraints.EAST;	
@@ -129,7 +160,10 @@ public class WebInstallPanel extends EditPanel {
 		panel.add(dirUrl, mgbc);
 		mgbc.newRow();mgbc.gridwidth = 3;
 		panel.add(getHelpLabel(HelpDesk.WEBINSTALL_URL), mgbc);
-
+		mgbc.newRow();mgbc.gridwidth = 1; mgbc.fill = GridBagConstraints.HORIZONTAL;
+		panel.add(testWebAp, mgbc);
+		mgbc.gridy++;
+		panel.add(openWebAp, mgbc);
 	}
 
 	@Override
