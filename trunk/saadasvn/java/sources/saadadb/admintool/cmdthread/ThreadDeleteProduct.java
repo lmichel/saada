@@ -1,10 +1,13 @@
 package saadadb.admintool.cmdthread;
 
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.util.Map;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
@@ -29,6 +32,7 @@ public class ThreadDeleteProduct extends CmdThread {
 	private Frame frame;
 	private DataTableEditorPanel dataTableEditor;
 	long oids_to_remove[] ;
+	private boolean isLinksFollow;
 
 	public ThreadDeleteProduct(Frame frame, String taskTitle) {
 		super(frame, taskTitle);
@@ -46,6 +50,9 @@ public class ThreadDeleteProduct extends CmdThread {
 	 */
 	@Override
 	public boolean checkParams(boolean withConfirm) {
+		JCheckBox linksFollowCheckBox = new JCheckBox("Also remove all products targeted by links of the product");
+		linksFollowCheckBox.setSelected(false);
+		isLinksFollow = false;
 		if( dataTableEditor == null ) {
 			AdminComponent.showFatalError(frame, "No JTable where to read oids of products to remove (Inner error)");
 			return  false;
@@ -56,9 +63,11 @@ public class ThreadDeleteProduct extends CmdThread {
 		}
 		else {
 			int nbSelectedProducts = dataTableEditor.getProductTable().getSelectedRowCount();
-			return (!withConfirm
+			boolean tmp = (!withConfirm
 					||
-					AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + nbSelectedProducts + " product" + (nbSelectedProducts>1?"s":"") + " ?"));
+					AdminComponent.showConfirmDialog(frame, "Do you really want to remove these " + nbSelectedProducts + " product" + (nbSelectedProducts>1?"s":"") + " ?", new Component[] {new JLabel("Do you really want to remove these " + nbSelectedProducts + " product" + (nbSelectedProducts>1?"s":"") + " ?"),linksFollowCheckBox}));
+			isLinksFollow = linksFollowCheckBox.isSelected();
+			return tmp;
 		}
 	}
 
@@ -76,14 +85,23 @@ public class ThreadDeleteProduct extends CmdThread {
 			saada_process = new ProductManager();
 			SQLTable.beginTransaction();
 			
-			String[] tab_args = new String[3];
+			String[] tab_args;
+			if (isLinksFollow)
+			{
+				tab_args = new String[3];
+				tab_args[2]= "-links=follow";
+			}
+			else
+			{
+				tab_args = new String[2];
+			}
 			tab_args[0] = "-remove=";
 			for (int i=0 ; i<oids_to_remove.length ; i++)
 			{
 				tab_args[0] += (i==0?"":",") + oids_to_remove[i] + "";
 			}
 			tab_args[1]= "-noindex=true";
-			tab_args[2]= "-links=follow";
+			
 			ArgsParser args = new ArgsParser(tab_args);
 			((ProductManager)saada_process).remove(args);
 			
