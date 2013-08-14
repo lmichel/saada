@@ -1,10 +1,14 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -12,7 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
-import javax.swing.SortOrder;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.JXTable;
 
@@ -40,6 +46,7 @@ public class DataTableEditorPanel extends TaskPanel
 	private SQLJTable productTable;
 	protected FreeTextField queryWhereArea;
 	protected NodeNameTextField queryLimitArea;
+	private JTextField jtfQuickSearch;
 	private JPanel tPanel;
 	
 	public DataTableEditorPanel(AdminTool rootFrame, String ancestor) 
@@ -103,6 +110,27 @@ public class DataTableEditorPanel extends TaskPanel
 				JScrollPane jsp = new JScrollPane(productTable);
 				jsp.setBackground(AdminComponent.LIGHTBACKGROUND);
 				
+				jtfQuickSearch = new JTextField();
+				jtfQuickSearch.addKeyListener(new KeyListener() 
+				{
+					@Override
+					public void keyTyped(KeyEvent e) {}
+					
+					@Override
+					public void keyReleased(KeyEvent e) 
+					{
+						if (e.getSource() instanceof JTextField)
+						{
+							String strFilter = ((JTextField) e.getSource()).getText();
+							RowFilter<TableModel, Integer> filter = RowFilter.regexFilter(strFilter);
+							productTable.setRowFilter(filter);
+						}
+					}
+					
+					@Override
+					public void keyPressed(KeyEvent e) {}
+				});
+				
 				Component comp = null;
 				if (this.addCommandComponent() != null)
 					comp = this.addCommandComponent();
@@ -129,7 +157,13 @@ public class DataTableEditorPanel extends TaskPanel
 				querySubmitPanel.add(comp, mgbc);
 				JPanel jspPanel = new JPanel(new GridBagLayout());
 				GridBagConstraints mc_jsp = new GridBagConstraints();
-				mc_jsp.gridx = 0; mc_jsp.gridy = 0;
+				mc_jsp.insets = new Insets(3, 3, 0, 3);
+				mc_jsp.gridx = 0; mc_jsp.gridy = 0; mc_jsp.anchor = GridBagConstraints.FIRST_LINE_END; mc_jsp.weightx = 0;
+				jspPanel.add(getPlainLabel("Quick search (regex) "), mc_jsp);
+				mc_jsp.gridx = 1; mc_jsp.gridy = 0; mc_jsp.anchor = GridBagConstraints.FIRST_LINE_START; mc_jsp.weightx = 0.5;
+				mc_jsp.fill = GridBagConstraints.HORIZONTAL;
+				jspPanel.add(jtfQuickSearch, mc_jsp);
+				mc_jsp.gridx = 0; mc_jsp.gridy = 1;
 				mc_jsp.weightx = 0.5; mc_jsp.weighty = 0.5; mc_jsp.fill = GridBagConstraints.BOTH; mc_jsp.gridwidth = 2;
 				jspPanel.add(jsp, mc_jsp);
 				
