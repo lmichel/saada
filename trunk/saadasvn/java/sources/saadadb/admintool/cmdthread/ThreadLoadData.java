@@ -64,7 +64,7 @@ public class ThreadLoadData extends CmdThread {
 				loader.setFile_to_load(fileList);
 			}
 			loader.load();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {

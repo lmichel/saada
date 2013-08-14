@@ -63,7 +63,7 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
 			ib.createIndexRelation();
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
 				public void run() 

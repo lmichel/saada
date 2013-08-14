@@ -64,7 +64,7 @@ public class ThreadEmptyCategory extends ThreadDropCollection{
 			SQLTable.beginTransaction();
 			((CollectionManager)saada_process).empty(new ArgsParser(new String[]{"-category=" + category, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree(collection, category);

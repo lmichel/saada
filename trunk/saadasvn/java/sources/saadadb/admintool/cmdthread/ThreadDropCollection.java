@@ -56,7 +56,7 @@ public class ThreadDropCollection extends CmdThread{
 			SQLTable.beginTransaction();
 			((CollectionManager)saada_process).remove(new ArgsParser(new String[]{Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					// When the collection is removed, the tree node selected is root

@@ -65,7 +65,7 @@ public class ThreadDropClass extends CmdThread{
 			SQLTable.beginTransaction();
 			((ClassManager)saada_process).remove(new ArgsParser(new String[]{Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					// Delete the removed class node in the Jtree

@@ -42,7 +42,7 @@ public class ThreadCommentClass extends ThreadCreateCollection {
 			SQLTable.beginTransaction();
 			((ClassManager)saada_process).comment(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
