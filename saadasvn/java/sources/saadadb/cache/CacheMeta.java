@@ -1,4 +1,5 @@
 package saadadb.cache;
+import java.awt.Frame;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import saadadb.admintool.popups.PopupReloadCache;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
@@ -110,6 +112,16 @@ public class CacheMeta {
 			}
 		}
 		Messenger.debug_mode = dm;
+	}
+	
+	// Method used in Admintool to display a popup to inform the user that the cache is reloading
+	public void reloadGraphical(Frame frame, boolean force) throws FatalException
+	{
+		Messenger.printMsg(Messenger.DEBUG, "Graphical reload");
+		PopupReloadCache prc = new PopupReloadCache(frame);
+		prc.showPopup();
+		this.reload(force);
+		prc.hipePopup();
 	}
 
 	/**

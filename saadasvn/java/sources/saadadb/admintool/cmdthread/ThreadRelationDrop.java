@@ -55,7 +55,7 @@ public class ThreadRelationDrop extends CmdThread {
 			RelationManager rm = new RelationManager(relation);
 			rm.remove(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
 				public void run() 

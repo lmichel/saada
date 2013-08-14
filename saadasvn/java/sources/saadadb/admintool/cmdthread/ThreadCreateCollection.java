@@ -68,7 +68,7 @@ public class ThreadCreateCollection extends CmdThread {
 			SQLTable.beginTransaction();
 			((CollectionManager)saada_process).create(new ArgsParser(new String[]{"-comment=" +comment, Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					// When a collection is created, the new collection node is selected and expanded

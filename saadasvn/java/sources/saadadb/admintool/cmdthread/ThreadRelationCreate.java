@@ -62,7 +62,7 @@ public class ThreadRelationCreate extends CmdThread {
 			RelationManager rm = new RelationManager(config);
 			rm.create();
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
 				public void run() 

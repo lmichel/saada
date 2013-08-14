@@ -65,7 +65,7 @@ public class ThreadRelationComment extends CmdThread {
 			RelationManager rm = new RelationManager(relation);
 			rm.comment(new ArgsParser(new String[]{"-comment=" +comment}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			taskPanel.cancelChanges();
 			SwingUtilities.invokeLater(new Runnable() 
 			{

@@ -106,7 +106,7 @@ public class ThreadDeleteProduct extends CmdThread {
 			((ProductManager)saada_process).remove(args);
 			
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			frame.setCursor(cursor_org);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {

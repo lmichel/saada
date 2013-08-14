@@ -63,7 +63,7 @@ public class ThreadSaveClassTag extends CmdThread {
 			SQLTable.beginTransaction();
 			sqlTable.saveModifiedRows();
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();

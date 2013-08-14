@@ -45,7 +45,7 @@ public class ThreadRelationEmpty extends ThreadRelationDrop {
 			RelationManager rm = new RelationManager(relation);
 			rm.empty(new ArgsParser(new String[]{ Messenger.getDebugParam()}));
 			SQLTable.commitTransaction();
-			Database.getCachemeta().reload(true);
+			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
 				public void run() 
