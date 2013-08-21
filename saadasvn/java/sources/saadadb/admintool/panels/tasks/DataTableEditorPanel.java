@@ -1,7 +1,6 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -32,6 +31,7 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.collection.Category;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
@@ -94,6 +94,7 @@ public class DataTableEditorPanel extends TaskPanel
 				try 
 				{
 					this.buildSQL(dataTreePath);
+					
 					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
 					if (this.productTable.getModel().getColumnCount() > 8)
 						productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
@@ -189,10 +190,22 @@ public class DataTableEditorPanel extends TaskPanel
 			/*
 			 * Remove hidden columns (not managed yet)
 			 */
-			rejected_coll_clos = SQLTable.getColumnsExceptsThose(coll_table_name
-					, new String[]{"oidproduct", "access_right", "loaded", "group_oid_csa", "nb_rows_csa"
-					, "y_min_csa", "y_max_csa", "y_unit_csa", "y_colname_csa"
-					, "shape_csa"});
+			String[] tab_rejected_coll_clos = null;
+			if (dataTreePath.category == Category.explain(Category.TABLE))
+			{
+				tab_rejected_coll_clos = new String[]{"oidproduct", "access_right", "loaded", "group_oid_csa"
+						, "y_min_csa", "y_max_csa", "y_unit_csa", "y_colname_csa"
+						, "shape_csa"};
+				
+			}
+			else // nb_rows_csa not added
+			{
+				tab_rejected_coll_clos = new String[]{"oidproduct", "access_right", "loaded", "group_oid_csa", "nb_rows_csa"
+						, "y_min_csa", "y_max_csa", "y_unit_csa", "y_colname_csa"
+						, "shape_csa"};
+			}
+			
+			rejected_coll_clos = SQLTable.getColumnsExceptsThose(coll_table_name, tab_rejected_coll_clos);
 		} catch( FatalException e) {
 			Messenger.trapFatalException(e);
 		}
@@ -307,6 +320,7 @@ public class DataTableEditorPanel extends TaskPanel
 			try 
 			{
 				this.productTable.setModel(sqlQuery);
+				
 				if (this.productTable.getModel().getColumnCount() > 8)
 					productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
 				else
@@ -346,5 +360,4 @@ public class DataTableEditorPanel extends TaskPanel
 	{
 		return null;
 	}
-
 }
