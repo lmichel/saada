@@ -94,12 +94,16 @@ public class DataTableEditorPanel extends TaskPanel
 				try 
 				{
 					this.buildSQL(dataTreePath);
-					
 					productTable = new SQLJTable(rootFrame, dataTreePath, this, sqlQuery, SQLJTable.PRODUCT_PANEL);
 					if (this.productTable.getModel().getColumnCount() > 8)
 						productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_OFF);
 					else
 						productTable.setAutoResizeMode(JXTable.AUTO_RESIZE_ALL_COLUMNS);
+					
+					/*RowNumberRenderer rowNumberRenderer = new RowNumberRenderer();
+					productTable.getColumn(0).setCellRenderer(rowNumberRenderer);*/
+					// TODO
+					
 					this.sqlORDERClause = "";
 				} 
 				catch (QueryException e) 
@@ -360,4 +364,14 @@ public class DataTableEditorPanel extends TaskPanel
 	{
 		return null;
 	}
+	
+	/*public class RowNumberRenderer extends DefaultTableCellRenderer
+	{
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) 
+		{
+			return super.getTableCellRendererComponent(table, row+"", isSelected, hasFocus, row, column);
+		}
+	}*/
+	// TODO
 }

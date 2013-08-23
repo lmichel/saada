@@ -49,7 +49,7 @@ public class ThreadCommentCollection extends ThreadCreateCollection {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					((AdminTool)(frame)).refreshTree();
-					AdminComponent.showSuccess(frame, "Desciption set for collection <" + name  + ">");		
+					AdminComponent.showSuccess(frame, "Description set for collection <" + name  + ">");		
 				}				
 			});
 		} catch (SaadaException e) {
