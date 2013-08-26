@@ -674,8 +674,15 @@ public class MappingKWPanel extends EditPanel {
 							out.writeObject(ap);
 							out.close();				
 							if( this.ancestor.equals(DATA_LOADER)) {
+								if (rootFrame.getActivePanel() instanceof DataLoaderPanel)
+								{
+									((DataLoaderPanel)(rootFrame.getActivePanel())).cancelChanges();
+								}
 								rootFrame.activePanel(DATA_LOADER);
-								((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+								if (rootFrame.getActivePanel() instanceof DataLoaderPanel)
+								{
+									((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName);
+								}
 							}
 
 							return;
@@ -716,7 +723,7 @@ public class MappingKWPanel extends EditPanel {
 	 * 
 	 */
 	public void save() {
-		if( "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
+		if( confName==null || "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
 			this.rename();
 		}
 		else if( !this.hasChanged() ){
@@ -756,6 +763,11 @@ public class MappingKWPanel extends EditPanel {
 	 * @return
 	 */
 	public boolean hasChanged() {
+		if (last_saved.equals(""))
+		{
+			return false;
+		}
+		//Messenger.printMsg(Messenger.DEBUG, "last_saved : " + last_saved + " - argsPaser : " + this.getArgsParser().toString());
 		return !last_saved.equals(this.getArgsParser().toString());
 	}
 

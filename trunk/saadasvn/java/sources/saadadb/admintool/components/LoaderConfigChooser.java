@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import javax.swing.DefaultListModel;
@@ -80,17 +78,16 @@ public class LoaderConfigChooser extends JPanel {
 		jp.add(removeConf);
 		
 		this.add(jp, mgbc);
-		
 		this.newConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				activeEditorPanel() ;
+				activeEditorPanel(true) ;
 			}			
 		});
 
 		this.editConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if( confList.getSelectedValue() != null) {
-					activeEditorPanel() ;
+					activeEditorPanel(false) ;
 					if( ! confList.getSelectedValue().toString().equalsIgnoreCase("default") ){
 						String filterName = confList.getSelectedValue().toString();
 						AdminTool at = LoaderConfigChooser.this.taskPanel.rootFrame;
@@ -167,7 +164,7 @@ public class LoaderConfigChooser extends JPanel {
 		});
 	}
 
-	private void activeEditorPanel() {
+	private void activeEditorPanel(boolean reset) {
 		AdminTool at = LoaderConfigChooser.this.taskPanel.rootFrame;
 
 		if( category == null ) {
@@ -186,6 +183,14 @@ public class LoaderConfigChooser extends JPanel {
 		} else {
 			AdminComponent.showFatalError(at, "No valid data category");
 			return;
+		}
+		
+		if (at.getActivePanel() instanceof MappingKWPanel)
+		{
+			if (reset)
+			{
+				((MappingKWPanel) at.getActivePanel()).reset(false);
+			}
 		}
 		at.getActivePanel().lockDataTreePath();
 		at.getActivePanel().setAncestor(taskPanel.getTitle());
