@@ -43,6 +43,7 @@ import saadadb.admintool.panels.RootChoicePanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.panels.VOPublishPanel;
 import saadadb.admintool.panels.editors.DBInstallPanel;
+import saadadb.admintool.panels.editors.LogsDisplayPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.RelationDisplayAllPanel;
 import saadadb.admintool.panels.editors.SAPServicePanel;
@@ -140,6 +141,8 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel obscoreMapperPanel;
 	private EditPanel protocolFieldsPanel;
 	private EditPanel publishedResourcesPanel;
+	
+	private EditPanel logsDisplayPanel;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -544,6 +547,11 @@ public class AdminTool extends BaseFrame {
 				publishedResourcesPanel = new VOPublishedResourcesPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = publishedResourcesPanel;	
+		} else 	if( panelTitle.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL) ) {
+			if( logsDisplayPanel == null ) {
+				logsDisplayPanel = new LogsDisplayPanel(this, AdminComponent.DB_INSTALL);
+			}
+			activePanel = logsDisplayPanel;	
 			/*
 			 * Installation panels
 			 */

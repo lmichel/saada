@@ -82,7 +82,6 @@ public class ToolBarPanel extends JPanel {
 				c.weightx = 0.8; c.weighty = 1;
 				c.anchor = GridBagConstraints.LINE_START;
 				this.add(adminPanel.getTreePathPanel(), c);
-				//this.add(adminPanel.getTreePathLabel(), c);
 			}		
 			if( withSelectedResource ) {
 				c.gridx = 2; c.gridy = 1;
