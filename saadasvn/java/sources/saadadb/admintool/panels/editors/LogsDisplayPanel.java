@@ -1,9 +1,12 @@
 package saadadb.admintool.panels.editors;
 
+import java.awt.GridBagConstraints;
+
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.LogsDisplayer;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.DataTreePath;
@@ -38,7 +41,12 @@ public class LogsDisplayPanel extends EditPanel
 	@Override
 	protected void setActivePanel() 
 	{
-		JPanel tPanel = this.addSubPanel("List of application logs", false);
+		JPanel tPanel = this.addSubPanel("Recorded Application Logs", false);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0; c.gridy = 0;
+		c.weightx = 1; c.weighty = 1;
+		c.fill = GridBagConstraints.BOTH;
+		tPanel.add(new LogsDisplayer(AdminComponent.LOGS_DISPLAY_ADMINTOOL), c);
 	}
 
 	@Override
