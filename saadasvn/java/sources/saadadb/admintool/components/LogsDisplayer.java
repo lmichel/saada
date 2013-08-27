@@ -18,8 +18,12 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import org.jdesktop.swingx.JXTable;
 
 import saadadb.database.Database;
 import saadadb.util.Messenger;
@@ -27,22 +31,31 @@ import saadadb.util.Messenger;
 public class LogsDisplayer extends JPanel 
 {
 	private static final long serialVersionUID = 1L;
-	private JTextArea outputArea;
+	private JXTable outputArea;
+	private DefaultTableModel dm;
 	private JTextField jtfQuickSearch;
-	private String type;
 	
 	public LogsDisplayer(String type)
 	{
 		super(new GridBagLayout());
-		this.type = type;
 		this.createGraphics();
 		this.loadLogsFolder(type);
 	}
 	
 	private void createGraphics()
 	{
-		outputArea = new JTextArea();
+		outputArea = new JXTable(dm);
+		outputArea.setRowSelectionAllowed(false);
+		outputArea.setShowHorizontalLines(false);
+		outputArea.setShowVerticalLines(false);
+		outputArea.setHorizontalScrollEnabled(true);
+		outputArea.setColumnControlVisible(true);
+		
+		this.dm = new DefaultTableModel();
+		this.dm.addColumn("");
+		
 		JScrollPane jcp = new JScrollPane(outputArea);
+		
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 0; c.gridy = 0;
 		c.gridwidth = 3;
@@ -61,7 +74,8 @@ public class LogsDisplayer extends JPanel
 				if (e.getSource() instanceof JTextField)
 				{
 					String strFilter = ((JTextField) e.getSource()).getText();
-					Messenger.printMsg(Messenger.DEBUG, "Filter : " + strFilter);
+					RowFilter<TableModel, Integer> filter = RowFilter.regexFilter(strFilter);
+					outputArea.setRowFilter(filter);
 				}
 			}
 
@@ -84,18 +98,26 @@ public class LogsDisplayer extends JPanel
 	
 	private void loadLogsFolder(String type)
 	{
+		String databaseRep = "";
 		if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
 		{
-			String databaseRep = Database.getRepository() + Database.getSepar() + "logs";
-			Messenger.printMsg(Messenger.DEBUG, "Open logs folder : " + databaseRep);
-			File f = new File(databaseRep);
-			String[] logFiles = f.list();
-			// Load logFiles into application
-			Date[] dateToSort = new Date[logFiles.length];
-			HashMap<Date, String> map = new HashMap<Date, String>();
-			DateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-			
-			for (int i=0 ; i<logFiles.length ; i++)
+			databaseRep = Database.getRepository() + Database.getSepar() + "logs";
+		}
+		else
+		{
+			//TODO
+		}
+		Messenger.printMsg(Messenger.DEBUG, "Open logs folder : " + databaseRep);
+		File f = new File(databaseRep);
+		String[] logFiles = f.list();
+		// Load logFiles into application
+		Date[] dateToSort = new Date[logFiles.length];
+		HashMap<Date, String> map = new HashMap<Date, String>();
+		DateFormat dfm = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		
+		for (int i=0 ; i<logFiles.length ; i++)
+		{
+			if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
 			{
 				String[] nameSplit = logFiles[i].split("[.]");
 				String[] dateSplit = nameSplit[1].split("_");
@@ -111,31 +133,52 @@ public class LogsDisplayer extends JPanel
 					e.printStackTrace();
 				}
 			}
-			// Need to sort logFiles by date
-			Arrays.sort(dateToSort, new Comparator<Date>() 
+			else
 			{
-			    @Override
-			    public int compare(Date lhs, Date rhs) 
-			    {
-			        if (lhs.getTime() > rhs.getTime())
-			            return -1;
-			        else if (lhs.getTime() == rhs.getTime())
-			            return 0;
-			        else
-			            return 1;
-			    }
-			});
-			String toDisplay = "";
-			// Print logFiles in JTextArea
-			for (int j=0; j<dateToSort.length ; j++)
-			{
-				toDisplay += "******************* Log " + dfm.format(dateToSort[j]) + " *******************\n";
-				toDisplay += LogsDisplayer.readFile(databaseRep + Database.getSepar() + map.get(dateToSort[j]));
-				toDisplay += "\n";
+				//TODO
 			}
-			outputArea.setText(toDisplay);
-			outputArea.setEditable(false);
 		}
+		// Need to sort logFiles by date
+		Arrays.sort(dateToSort, new Comparator<Date>() 
+		{
+		    @Override
+		    public int compare(Date lhs, Date rhs) 
+		    {
+		        if (lhs.getTime() > rhs.getTime())
+		            return -1;
+		        else if (lhs.getTime() == rhs.getTime())
+		            return 0;
+		        else
+		            return 1;
+		    }
+		});
+		String toDisplay = "";
+		// Print logFiles in JTextArea
+		for (int j=0; j<dateToSort.length ; j++)
+		{
+			toDisplay += "******************* Log " + dfm.format(dateToSort[j]) + " *******************\n";
+			if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
+			{
+				String logContent = LogsDisplayer.readFile(databaseRep + Database.getSepar() + map.get(dateToSort[j]));
+				if (logContent == null)
+					toDisplay += "No log for this session";
+				else
+					toDisplay += logContent;
+			}
+			else
+			{
+				//TODO
+			}
+			toDisplay += "\n";
+		}
+		String[] lineToDisplay = toDisplay.split("\n");
+		for (int k=0 ; k<lineToDisplay.length ; k++)
+		{
+			String[] tmp = new String[] {lineToDisplay[k].replace("\t", "   ")};
+			this.dm.addRow(tmp);
+		}
+		outputArea.setModel(dm);
+		outputArea.packAll();
 	}
 	
 	private static String readFile (String filename)
