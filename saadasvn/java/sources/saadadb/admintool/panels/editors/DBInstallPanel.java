@@ -14,11 +14,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.input.StringInput;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.admintool.utils.WebsiteChecker;
 import saadadb.database.Database;
 import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
@@ -26,6 +28,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
+import saadadb.util.Messenger;
 
 
 /**
@@ -35,7 +38,8 @@ import saadadb.sqltable.Table_SaadaDB;
  */
 public class DBInstallPanel extends EditPanel {
 	private JButton	modDir,modRep;
-	private JLabel  dirRep;
+	private JLabel dirRep;
+	private JButton openLogs;
 	
 	public DBInstallPanel(AdminTool rootFrame, String title, String icon,
 			String ancestor) {
@@ -122,6 +126,15 @@ public class DBInstallPanel extends EditPanel {
 			}
 		});		
 
+		openLogs = new JButton("Open logs");
+		openLogs.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				rootFrame.activePanel(AdminComponent.LOGS_DISPLAY_ADMINTOOL);
+			}
+		});
 
 		JPanel panel = this.addSubPanel("SaadaDB Installation");
 		MyGBC mgbc = new MyGBC(5,5,5,5);	mgbc.anchor = GridBagConstraints.EAST;	
@@ -164,6 +177,8 @@ public class DBInstallPanel extends EditPanel {
 		panel.add(modRep, mgbc);	
 		mgbc.newRow();mgbc.gridwidth = 3;
 		panel.add(getHelpLabel(HelpDesk.DBINSTALL_REP), mgbc);
+		mgbc.newRow();mgbc.gridwidth = 1; mgbc.fill = GridBagConstraints.HORIZONTAL;
+		panel.add(openLogs, mgbc);
 	}
 
 	@Override

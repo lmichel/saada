@@ -114,7 +114,7 @@ public abstract class AdminPanel extends AdminComponent {
 		classe.setForeground(color);
 	}
 
-	public JLabel getSelectResourceLabel() {
+	public JLabel getSelectResourceLabel() {;
 		return selectResourceLabel;
 	}
 
