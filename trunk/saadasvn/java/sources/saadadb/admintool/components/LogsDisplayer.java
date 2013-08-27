@@ -1,5 +1,7 @@
 package saadadb.admintool.components;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,11 +18,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
 
 import org.jdesktop.swingx.JXTable;
@@ -49,7 +55,18 @@ public class LogsDisplayer extends JPanel
 		outputArea.setShowHorizontalLines(false);
 		outputArea.setShowVerticalLines(false);
 		outputArea.setHorizontalScrollEnabled(true);
-		outputArea.setColumnControlVisible(true);
+		JTableHeader tableHeader = this.outputArea.getTableHeader();
+		
+		class IconTableCellRenderer extends DefaultTableCellRenderer {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+				label.setPreferredSize(new Dimension(0,0));
+				return label;
+			}
+		}
+		tableHeader.setDefaultRenderer(new IconTableCellRenderer());
 		
 		this.dm = new DefaultTableModel();
 		this.dm.addColumn("");
@@ -74,7 +91,7 @@ public class LogsDisplayer extends JPanel
 				if (e.getSource() instanceof JTextField)
 				{
 					String strFilter = ((JTextField) e.getSource()).getText();
-					RowFilter<TableModel, Integer> filter = RowFilter.regexFilter(strFilter);
+					RowFilter<TableModel, Integer> filter = RowFilter.regexFilter("(?i)" + strFilter);
 					outputArea.setRowFilter(filter);
 				}
 			}

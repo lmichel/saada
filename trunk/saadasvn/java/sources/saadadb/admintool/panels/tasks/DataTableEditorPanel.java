@@ -127,7 +127,7 @@ public class DataTableEditorPanel extends TaskPanel
 						if (e.getSource() instanceof JTextField)
 						{
 							String strFilter = ((JTextField) e.getSource()).getText();
-							RowFilter<TableModel, Integer> filter = RowFilter.regexFilter(strFilter);
+							RowFilter<TableModel, Integer> filter = RowFilter.regexFilter("(?i)" + strFilter);
 							productTable.setRowFilter(filter);
 						}
 					}
