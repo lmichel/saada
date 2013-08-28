@@ -116,13 +116,14 @@ public class LogsDisplayer extends JPanel
 	private void loadLogsFolder(String type)
 	{
 		String databaseRep = "";
+		String webLogFile = null;
 		if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
 		{
 			databaseRep = Database.getRepository() + Database.getSepar() + "logs";
 		}
-		else
+		else // Web logs
 		{
-			//TODO
+			databaseRep = Database.getConnector().getWebapp_home() + Database.getSepar() + "logs";
 		}
 		Messenger.printMsg(Messenger.DEBUG, "Open logs folder : " + databaseRep);
 		File f = new File(databaseRep);
@@ -150,44 +151,65 @@ public class LogsDisplayer extends JPanel
 					e.printStackTrace();
 				}
 			}
-			else
+			else // Web logs
 			{
-				//TODO
+				if (logFiles[i].compareTo(Database.getName() + ".log")==0)
+				{
+					webLogFile = logFiles[i];
+				}
 			}
 		}
-		// Need to sort logFiles by date
-		Arrays.sort(dateToSort, new Comparator<Date>() 
-		{
-		    @Override
-		    public int compare(Date lhs, Date rhs) 
-		    {
-		        if (lhs.getTime() > rhs.getTime())
-		            return -1;
-		        else if (lhs.getTime() == rhs.getTime())
-		            return 0;
-		        else
-		            return 1;
-		    }
-		});
+		
 		String toDisplay = "";
-		// Print logFiles in JTextArea
-		for (int j=0; j<dateToSort.length ; j++)
+		if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
 		{
-			toDisplay += "******************* Log " + dfm.format(dateToSort[j]) + " *******************\n";
-			if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
+			// Need to sort logFiles by date
+			Arrays.sort(dateToSort, new Comparator<Date>() 
 			{
-				String logContent = LogsDisplayer.readFile(databaseRep + Database.getSepar() + map.get(dateToSort[j]));
-				if (logContent == null)
-					toDisplay += "No log for this session";
+			    @Override
+			    public int compare(Date lhs, Date rhs) 
+			    {
+			        if (lhs.getTime() > rhs.getTime())
+			            return -1;
+			        else if (lhs.getTime() == rhs.getTime())
+			            return 0;
+			        else
+			            return 1;
+			    }
+			});
+			// Prepare text to display
+			for (int j=0; j<dateToSort.length ; j++)
+			{
+				toDisplay += "******************* Log " + dfm.format(dateToSort[j]) + " *******************\n";
+				if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
+				{
+					String logContent = LogsDisplayer.readFile(databaseRep + Database.getSepar() + map.get(dateToSort[j]));
+					if (logContent == null)
+						toDisplay += "No log for this session";
+					else
+						toDisplay += logContent;
+				}
 				else
-					toDisplay += logContent;
+				{
+					//TODO
+				}
+				toDisplay += "\n";
+			}
+		}
+		else // Web logs
+		{
+			// Prepare text to display
+			if (webLogFile != null)
+			{
+				toDisplay = LogsDisplayer.readFile(databaseRep + Database.getSepar() + webLogFile);
 			}
 			else
 			{
-				//TODO
+				toDisplay = "No log for this session";
 			}
-			toDisplay += "\n";
 		}
+		
+		// Print logFiles in JTextArea
 		String[] lineToDisplay = toDisplay.split("\n");
 		for (int k=0 ; k<lineToDisplay.length ; k++)
 		{

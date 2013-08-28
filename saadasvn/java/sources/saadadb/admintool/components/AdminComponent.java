@@ -91,6 +91,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String VO_PUBLISHED_RESOURCES = "Published VO Resources";
 	
 	public static final String LOGS_DISPLAY_ADMINTOOL = "Display Application Logs";
+	public static final String LOGS_DISPLAY_WEB = "Display Web Logs";
 	
 	public static final String DB_INSTALL = "Database Installation";
 	public static final String WEB_INSTALL = "Web Application Installation";

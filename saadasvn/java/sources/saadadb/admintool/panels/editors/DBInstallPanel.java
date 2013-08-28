@@ -126,7 +126,7 @@ public class DBInstallPanel extends EditPanel {
 			}
 		});		
 
-		openLogs = new JButton("Open logs");
+		openLogs = new JButton("Open Application Logs");
 		openLogs.addActionListener(new ActionListener() 
 		{
 			@Override
