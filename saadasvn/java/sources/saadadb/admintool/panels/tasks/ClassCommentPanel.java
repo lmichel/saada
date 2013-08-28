@@ -1,5 +1,6 @@
 package saadadb.admintool.panels.tasks;
 
+import java.awt.EventQueue;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -56,6 +57,19 @@ public class ClassCommentPanel extends ClassDropPanel {
 		super.setActivePanel();
 		nameField.setEditable(false);
 		commentField.setEditable(true);
+	}
+	
+	public void reset()
+	{
+		EventQueue.invokeLater(new Runnable() 
+		{
+			   @Override
+			   public void run() 
+			   {
+				   commentField.grabFocus();
+			       commentField.requestFocus();
+			   }
+		});
 	}
 
 	@Override

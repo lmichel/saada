@@ -391,6 +391,7 @@ public class AdminTool extends BaseFrame {
 				commentCollPanel = new CollCommentPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = commentCollPanel;
+			((CollCommentPanel)commentCollPanel).reset();
 			/*
 			 * Category management tasks
 			 */
@@ -425,6 +426,7 @@ public class AdminTool extends BaseFrame {
 				commentClassPanel = new ClassCommentPanel(this, AdminComponent.MANAGE_DATA);
 			}
 			activePanel = commentClassPanel;
+			((ClassCommentPanel)commentClassPanel).reset();
 
 			/*
 			 * Data loading task

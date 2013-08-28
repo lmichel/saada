@@ -2,6 +2,7 @@ package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -365,6 +366,16 @@ public class RelationCreatePanel extends TaskPanel {
 		this.lstModel.removeAllElements();
 		this.qualAdd.setEnabled(false);
 		this.qualDel.setEnabled(false);
+		
+		EventQueue.invokeLater(new Runnable() 
+		{
+			   @Override
+			   public void run() 
+			   {
+				   nameField.grabFocus();
+				   nameField.requestFocus();
+			   }
+		});
 	}
 
 	/* (non-Javadoc)
