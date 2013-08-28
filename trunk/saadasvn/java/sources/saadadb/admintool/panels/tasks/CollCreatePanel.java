@@ -24,6 +24,7 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 
@@ -116,16 +117,6 @@ public class CollCreatePanel extends TaskPanel {
 		mgbc.gridwidth=2;
 		mgbc.anchor = GridBagConstraints.WEST;
 		tPanel.add(getHelpLabel(help_key), mgbc);
-		
-		/*EventQueue.invokeLater(new Runnable() 
-		{
-			   @Override
-			   public void run() 
-			   {
-			         nameField.grabFocus();
-			         nameField.requestFocus();
-			   }
-		});*/
 
 		this.setActionBar(new Component[]{runButton
 				, debugButton
@@ -136,6 +127,15 @@ public class CollCreatePanel extends TaskPanel {
 	{
 		this.nameField.setText("");
 		this.commentField.setText("");
+		EventQueue.invokeLater(new Runnable() 
+		{
+			   @Override
+			   public void run() 
+			   {
+			         nameField.grabFocus();
+			         nameField.requestFocus();
+			   }
+		});
 	}
 	
 
@@ -147,5 +147,9 @@ public class CollCreatePanel extends TaskPanel {
 		return map;
 	}
 
+	@Override
+	public void active()
+	{
+	}
 
 }
