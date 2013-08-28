@@ -3,14 +3,10 @@
  */
 package saadadb.admintool.panels.editors;
 
-import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -49,8 +45,7 @@ public class WebInstallPanel extends EditPanel {
 	private JButton	modTomcat;
 	private EditableLabel  dirUrl ;
 	private JButton	modUrl;
-	private JButton testWebAp;
-	private JButton openWebAp;
+	private JButton testWebAp, openWebAp, openLogs;
 	
 	public WebInstallPanel(AdminTool rootFrame, String title, String icon,
 			String ancestor) {
@@ -119,7 +114,7 @@ public class WebInstallPanel extends EditPanel {
 				Database.init(Database.getName());
 			}
 		});
-		testWebAp = new JButton("Test web application");
+		testWebAp = new JButton("Test Web Application");
 		testWebAp.addActionListener(new ActionListener() 
 		{	
 			@Override
@@ -133,7 +128,7 @@ public class WebInstallPanel extends EditPanel {
 					AdminComponent.showFatalError(rootFrame, "Web application is not working\nError Message : " + errorMessage);
 			}
 		});
-		openWebAp = new JButton("Open web application");
+		openWebAp = new JButton("Open Web Application");
 		openWebAp.addActionListener(new ActionListener() 
 		{
 			@Override
@@ -141,6 +136,15 @@ public class WebInstallPanel extends EditPanel {
 			{
 				String url = Database.getUrl_root();
 				WebsiteChecker.openURL(url);
+			}
+		});
+		openLogs = new JButton("Open Apache Logs");
+		openLogs.addActionListener(new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				rootFrame.activePanel(AdminComponent.LOGS_DISPLAY_WEB);
 			}
 		});
 
@@ -164,6 +168,8 @@ public class WebInstallPanel extends EditPanel {
 		panel.add(testWebAp, mgbc);
 		mgbc.gridy++;
 		panel.add(openWebAp, mgbc);
+		mgbc.gridy++;
+		panel.add(openLogs, mgbc);
 	}
 
 	@Override

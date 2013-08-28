@@ -52,6 +52,7 @@ import saadadb.admintool.panels.editors.VOProtocolFieldsPanel;
 import saadadb.admintool.panels.editors.VOPublishedResourcesPanel;
 import saadadb.admintool.panels.editors.VORegistryPanel;
 import saadadb.admintool.panels.editors.WebInstallPanel;
+import saadadb.admintool.panels.editors.WebLogsDisplayPanel;
 import saadadb.admintool.panels.tasks.CategoryEmptyPanel;
 import saadadb.admintool.panels.tasks.ClassCommentPanel;
 import saadadb.admintool.panels.tasks.ClassDropPanel;
@@ -143,6 +144,7 @@ public class AdminTool extends BaseFrame {
 	private EditPanel publishedResourcesPanel;
 	
 	private EditPanel logsDisplayPanel;
+	private EditPanel webLogsDisplayPanel;
 
 	private final ProcessPanel processPanel = new ProcessPanel(this, AdminComponent.ROOT_PANEL);
 	private CmdThread windowThread;		
@@ -547,11 +549,19 @@ public class AdminTool extends BaseFrame {
 				publishedResourcesPanel = new VOPublishedResourcesPanel(this, AdminComponent.VO_PUBLISH);
 			}
 			activePanel = publishedResourcesPanel;	
+			/*
+			 * Logs panels
+			 */
 		} else 	if( panelTitle.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL) ) {
 			if( logsDisplayPanel == null ) {
 				logsDisplayPanel = new LogsDisplayPanel(this, AdminComponent.DB_INSTALL);
 			}
-			activePanel = logsDisplayPanel;	
+			activePanel = logsDisplayPanel;
+		} else 	if( panelTitle.equals(AdminComponent.LOGS_DISPLAY_WEB) ) {
+			if( webLogsDisplayPanel == null ) {
+				webLogsDisplayPanel = new WebLogsDisplayPanel(this, AdminComponent.WEB_INSTALL);
+			}
+			activePanel = webLogsDisplayPanel;	
 			/*
 			 * Installation panels
 			 */
