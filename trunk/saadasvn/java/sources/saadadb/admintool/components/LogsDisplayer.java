@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -169,7 +171,7 @@ public class LogsDisplayer extends JPanel
 			    @Override
 			    public int compare(Date lhs, Date rhs) 
 			    {
-			        if (lhs.getTime() > rhs.getTime())
+			        if (lhs.getTime() < rhs.getTime())
 			            return -1;
 			        else if (lhs.getTime() == rhs.getTime())
 			            return 0;
@@ -177,6 +179,7 @@ public class LogsDisplayer extends JPanel
 			            return 1;
 			    }
 			});
+			
 			// Prepare text to display
 			for (int j=0; j<dateToSort.length ; j++)
 			{
@@ -218,6 +221,13 @@ public class LogsDisplayer extends JPanel
 		}
 		outputArea.setModel(dm);
 		outputArea.packAll();
+		outputArea.addComponentListener(new ComponentAdapter() 
+		{
+		    public void componentResized(ComponentEvent e) 
+		    {
+		    	outputArea.scrollRectToVisible(outputArea.getCellRect(outputArea.getRowCount()-1, 0, true));
+		    }
+		});
 	}
 	
 	private static String readFile (String filename)
