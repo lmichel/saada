@@ -159,7 +159,7 @@ public class AntDesk {
 			retour += s + "\n";
 		}
 
-		for( String s: AntDesk.get(AdminComponent.LOAD_DATA) ) {
+		for( String s: AntDesk.get(key) ) {
 			retour += s + "\n";
 		}
 		retour +=  xmlParams;
@@ -179,7 +179,7 @@ public class AntDesk {
 			retour += s + "\n";
 		}
 
-		for( String s: AntDesk.get(AdminComponent.LOAD_DATA) ) {
+		for( String s: AntDesk.get(key) ) {
 			retour += s + "\n";
 		}
 		for( String p: params ) {
