@@ -221,6 +221,10 @@ public class DataTableEditorPanel extends TaskPanel
 				if( i != 0 ) {
 					sqlQuery += ", ";
 				}
+				else
+				{
+					sqlQuery += "oidsaada >> 32 AS \"row_number\", ";
+				}
 				sqlQuery += rejected_coll_clos[i] ;
 			}
 			sqlSELECTClause = sqlQuery;
@@ -237,6 +241,10 @@ public class DataTableEditorPanel extends TaskPanel
 			for( int i=0 ; i<rejected_coll_clos.length ; i++  ) {
 				if( i != 0 ) {
 					sqlQuery += ", ";
+				}
+				else
+				{
+					sqlQuery += "coll.oidsaada << 32 AS \"row_number\", ";
 				}
 				sqlQuery += "coll." + rejected_coll_clos[i] ;
 			}
