@@ -2,7 +2,12 @@ package ajaxservlet;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -18,8 +23,10 @@ import org.json.simple.JSONObject;
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
+import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.meta.MetaRelation;
+import saadadb.query.result.OidsaadaResultSet;
 import ajaxservlet.json.JsonUtils;
 
 
@@ -61,7 +68,7 @@ public class DataLink extends SaadaServlet implements Servlet {
 		try {
 			long oid = Long.parseLong(soid);
 			SaadaInstance si = Database.getCache().getObject(oid);
-			if( si.getVignetteName() != null )
+			//if( si.getVignetteName() != null )
 			response.setContentType("text/xml");
 			Writer w = response.getWriter();
 			w.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");			
@@ -71,7 +78,7 @@ public class DataLink extends SaadaServlet implements Servlet {
 			w.write("   name : " + Database.getDbname()+ "\n");		
 			w.write("   url  : " + Database.getUrl_root() + "\n");		
 			w.write("   date : " + (new Date()) + "\n");		
-			w.write(  "Query: datalink?oid= " + oid +"\n");
+			w.write("   Query: " + Database.getUrl_root() + "/datalink?oid= " + oid +"\n");
 			w.write("  </DESCRIPTION>\n");
 			w.write("  <COOSYS ID=\"" + Database.getCoord_sys() + "\" system=\"" + Database.getCoord_sys() + "\"/>\n");
 			w.write("  <RESOURCE type=\"results\"><DESCRIPTION>Datalink 0.0</DESCRIPTION>\n");
@@ -79,11 +86,19 @@ public class DataLink extends SaadaServlet implements Servlet {
 			w.write("    <INFO name=\"LANGUAGE\" value=\"DataLink\"/>\n");
 			w.write("    <INFO name=\"QUERY\">datalink?oid= " + oid +"</INFO>\n");
 			w.write("    <TABLE name=\"Results\">\n");
-			w.write("      <PARAM name=\"oidsaada\" datatype=\"long\"  value=\"" + oid + "\"/>\n");
-			w.write("      <FIELD  name=\"url\" datatype=\"char\"  arraysize=\"*\"/>\n");
-			w.write("      <FIELD  name=\"category\" datatype=\"char\"  arraysize=\"*\"/>\n");
-			w.write("      <FIELD  name=\"collection\" datatype=\"char\"  arraysize=\"*\"/>\n");
-			w.write("      <FIELD  name=\"relation\" datatype=\"char\"  arraysize=\"*\"/>\n");
+			w.write("      <FIELD name=\"uri\" datatype=\"char\" ucd=\"meta.id\" utype=\"datalink:Datalink.uri\" xtype=\"w3c:URI\" arraysize=\"*\" />");
+			w.write("      <FIELD name=\"accessURL\" datatype=\"char\" utype=\"datalink:Datalink.accessURL\" xtype=\"w3c:URL\" arraysize=\"*\" />");
+			w.write("      <FIELD name=\"semantics\" datatype=\"char\" utype=\"datalink:Datalink.semantics\" xtype=\"w3c:URI\" arraysize=\"*\" />");
+			w.write("      <FIELD name=\"productType\" datatype=\"char\" utype=\"caom:Artifact.productType\" arraysize=\"*\" />");
+			w.write("      <FIELD name=\"contentType\" datatype=\"char\" utype=\"caom:Artifact.contentType\" arraysize=\"*\" />");
+			w.write("      <FIELD name=\"contentLength\" datatype=\"long\" unit=\"byte\" utype=\"caom:Artifact.contentLength\" />");
+			w.write("      <FIELD name=\"errorMessage\" datatype=\"char\" utype=\"datalink:Datalink.error\" arraysize=\"*\" />");
+
+//			w.write("      <PARAM name=\"oidsaada\" datatype=\"long\"  value=\"" + oid + "\"/>\n");
+//			w.write("      <FIELD  name=\"url\" datatype=\"char\"  arraysize=\"*\"/>\n");
+//			w.write("      <FIELD  name=\"category\" datatype=\"char\"  arraysize=\"*\"/>\n");
+//			w.write("      <FIELD  name=\"collection\" datatype=\"char\"  arraysize=\"*\"/>\n");
+//			w.write("      <FIELD  name=\"relation\" datatype=\"char\"  arraysize=\"*\"/>\n");
 			w.write("      <DATA>\n");
 			w.write("        <TABLEDATA>\n");
 			String[] rels = si.getStartingRelationNames();
@@ -102,25 +117,44 @@ public class DataLink extends SaadaServlet implements Servlet {
 				/*
 				 * Links are serialized: one row for each 
 				 */
-				w.write("          <TR>");
 				for(SaadaLink sl: links) {
+					w.write("          <TR>");
+
 					long cpoid = sl.getEndindOID();
-					JSONArray row = new JSONArray();
-					w.write("<TD>" + rel+ "</TD>");
-					w.write("<TD>" + collection+ "</TD>");
-					w.write("<TD>" + category+ "</TD>");
-					row.add(0, rel);
-					row.add(1, collection);
-					row.add(2, category);
+					SaadaInstance cpsi = Database.getCache().getObject(cpoid);
+					w.write("            <TD>" + cpoid+ "</TD>");
 					String lnk;
 					if( SaadaServlet.secureDownlad ) {
-						lnk =  Database.getCache().getObject(cpoid).getSecureDownloadURL(true);	
+						lnk =  cpsi.getSecureDownloadURL(true);	
 					} else {
-						lnk = Database.getCache().getObject(cpoid).getDownloadURL(true);	
+						lnk =cpsi.getDownloadURL(true);	
 					}
-					w.write("<TD>" + lnk+ "</TD>");
+					w.write("            <TD>" + lnk + "</TD>");
+					w.write("            <TD>Data Linked by the relationship " + rel+ "</TD>");
+					w.write("            <TD>"  + SaadaOID.getCategoryName(cpoid) + "</TD>");
+					String contentLength = "";
+					String contentType = "";
+					try {
+						URLConnection conn = (new URL(cpsi.getDownloadURL(true))).openConnection(); 
+						Map<String, List<String>>  map = conn.getHeaderFields();
+						for( Entry<String, List<String>> s: map.entrySet()) {
+							String k = s.getKey();
+							k = (k != null)?k.replaceAll("-", ""): "nokey";
+							String value = s.getValue().get(0);
+							if( k.equalsIgnoreCase("contentType")) {
+								contentType = value;
+							} else if( k.equalsIgnoreCase("contentLength")) {
+								contentLength = value;
+							}
+						}
+					}
+					catch (Exception e) {}
+
+					w.write("            <TD>" + contentType + "</TD>");
+					w.write("            <TD>" + contentLength + "</TD>");
+					w.write("            <TD>Product name: " + cpsi.getNameSaada() + "</TD>");
+					w.write("          </TR>\n");
 				}
-				w.write("          </TR>\n");
 			}			
 			w.write("        </TABLEDATA>\n");
 			w.write("      </DATA>\n");
