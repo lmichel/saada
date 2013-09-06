@@ -58,9 +58,9 @@ public class RelationCreatePanel extends TaskPanel {
 	private JButton qualAdd;
 	private JButton qualDel;
 	protected NodeNameTextField qualName;
-	protected JList<String> qualList;
+	protected JList qualList;
 	protected JScrollPane jsp;
-	protected DefaultListModel<String> lstModel;
+	protected DefaultListModel lstModel;
 
 	public RelationCreatePanel(AdminTool rootFrame, String ancestor) 
 	{
@@ -228,7 +228,7 @@ public class RelationCreatePanel extends TaskPanel {
 		coll_panel.add(secondaryField, mc);
 
 		qual_panel = this.addSubPanel("Qualifiers");
-		lstModel = new DefaultListModel<String>();
+		lstModel = new DefaultListModel();
 		qualAdd = new JButton("Add");
 		qualAdd.setEnabled(false);
 		qualAdd.setToolTipText("Add the new qualifier to the relationship");
@@ -275,7 +275,7 @@ public class RelationCreatePanel extends TaskPanel {
 				}
 			}
 		});
-		qualList = new JList<String>(lstModel);
+		qualList = new JList(lstModel);
 		qualList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		jsp = new JScrollPane(qualList);
 		jsp.setPreferredSize(new Dimension(170,90));

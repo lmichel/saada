@@ -1,10 +1,8 @@
 package saadadb.admintool.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -15,10 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -596,14 +591,14 @@ public class DataFileChooser extends JDialog {
 	
 	public class JDirectoryPathComboBox extends JComboBox
 	{
-		private DefaultComboBoxModel<String> cbm;
+		private DefaultComboBoxModel cbm;
 		public Vector<String> displayList, hiddenList;
 		private boolean isReallyChanged = false;
 		
 		private JDirectoryPathComboBox()
 		{
 			super();
-			cbm = new DefaultComboBoxModel<String>();
+			cbm = new DefaultComboBoxModel();
 			displayList = new Vector<String>();
 			hiddenList = new Vector<String>();
 			this.setBackground(Color.WHITE);

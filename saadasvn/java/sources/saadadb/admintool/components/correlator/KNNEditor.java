@@ -29,9 +29,9 @@ public class KNNEditor extends CollapsiblePanel
 	private static final long serialVersionUID = 1L;
 	private JPanel knnModePanel, knnUnitPanel;
 	private JTextArea knn_descriptionLabel;
-	private JComboBox<String> knn_mode;
-	private JComboBox<String> knn_unit;
-	private JComboBox<String> knn_dist;
+	private JComboBox knn_mode;
+	private JComboBox knn_unit;
+	private JComboBox knn_dist;
 	private JTextField knn_k;
 	private RelationPopulatePanel taskPanel;
 	// Use so as to know if something can be modified and call the notifyChange function of AdminComponent
@@ -45,10 +45,10 @@ public class KNNEditor extends CollapsiblePanel
 		super("Neighborhood Constraint");
 		this.taskPanel = taskPanel;
 		somethingCanChanged = true;
-		knn_mode = new JComboBox<String>(new String[]{"None", "K-NN", "1st-NN"});
-		knn_unit = new JComboBox<String>(new String[]{"arcmin", "arcsec", "degree", "mas", "sigma"});
+		knn_mode = new JComboBox(new String[]{"None", "K-NN", "1st-NN"});
+		knn_unit = new JComboBox(new String[]{"arcmin", "arcsec", "degree", "mas", "sigma"});
 		knn_k = new JTextField(2);
-		knn_dist = new JComboBox<String>(new String[]{"5", "1", "0.1", "0.01"});
+		knn_dist = new JComboBox(new String[]{"5", "1", "0.1", "0.01"});
 		knn_dist.setEditable(true);
 		knn_dist.setPreferredSize(new Dimension(80, knn_dist.getPreferredSize().height));
 		knn_mode.setToolTipText("Select the mode of correlations by position");		
