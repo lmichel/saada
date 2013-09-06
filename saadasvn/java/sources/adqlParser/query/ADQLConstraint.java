@@ -12,6 +12,8 @@ import adqlParser.parser.SQLTranslator;
  * the {@link ADQLConstraint#addConstraint(ADQLConstraint)} <i>(the concatenation operator is AND)</i> or the
  * {@link ADQLConstraint#addConstraint(ADQLConstraint,boolean)} <i>(the concatenation operator is specified by the 2nd parameter)</i> functions.</p>
  * 
+ * getCopy: add antConcat parmeter to the call to addConstraint
+ * 
  * @author Gr&eacute;gory Mantelet (CDS)
  * @version 06/2010
  */
@@ -63,9 +65,12 @@ public abstract class ADQLConstraint implements ADQLObject {
 	public void addConstraint(ADQLConstraint cons, boolean orConcat){
 		if (nextConstraint == null){
 			nextConstraint = cons;
+			System.out.println("@@@@@@@@@@@@@ orConcat " + orConcat);
 			andConcat = !orConcat;
 		}else
 			nextConstraint.addConstraint(cons, orConcat);
+		System.out.println("@@@@@@@@@@@@@ orConcat " + this);
+		
 	}
 	
 	/**
@@ -169,6 +174,7 @@ public abstract class ADQLConstraint implements ADQLObject {
 	public abstract Vector<ADQLColumn> primaryGetImpliedColumns();
 	
 	public final String toSQL() throws ParseException {
+		System.out.println("@@@@@@@@@@@ toSQL " + (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL())));
 		return (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL()));
 	}
 	
@@ -183,6 +189,7 @@ public abstract class ADQLConstraint implements ADQLObject {
 	 * @see ADQLObject#toSQL(SQLTranslator)
 	 */
 	public final String toSQL(SQLTranslator translator) throws ParseException {
+		System.out.println("@@@@@@@@@@@ toSQL " + (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL())));
 		return (isNot?"NOT ":"")+primaryToSQL(translator)+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL(translator)));
 	}
 	
@@ -218,7 +225,7 @@ public abstract class ADQLConstraint implements ADQLObject {
 			copy.setNot(isNot);
 			copy.setAndConcat(andConcat);
 			if (nextConstraint != null)
-				copy.addConstraint((ADQLConstraint)nextConstraint.getCopy());
+				copy.addConstraint((ADQLConstraint)nextConstraint.getCopy(),!andConcat);
 		}
 		return copy;
 	}
