@@ -36,7 +36,7 @@ public class VOResourceChooser extends JPanel
 	public static final int VO_PUBLISHED_RESOURCES = 2;
 	
 	private String[] VOResourceNames;
-	private JList<String> confList = new JList<String>(new DefaultListModel<String>());
+	private JList confList = new JList(new DefaultListModel());
 	private JXTable descriptionTable;
 	private DefaultTableModel dm;
 	private String selectedVOResource;
@@ -101,7 +101,7 @@ public class VOResourceChooser extends JPanel
 	
 	private void loadConfList()
 	{
-		DefaultListModel<String> model = (DefaultListModel<String>) confList.getModel();
+		DefaultListModel model = (DefaultListModel) confList.getModel();
 		if (this.componentType==VO_PROTOCOL_FIELDS)
 		{
 			try 
@@ -160,7 +160,7 @@ public class VOResourceChooser extends JPanel
 		return descriptionTable;
 	}
 	
-	public JList<String> getconfList()
+	public JList getconfList()
 	{
 		return confList;
 	}
@@ -196,8 +196,8 @@ public class VOResourceChooser extends JPanel
 							new_row[7] = (uth.getValue()!=null?uth.getValue():"");
 							new_row[8] = (uth.getComment()!=null?uth.getComment():"");
 							new_row[9] = uth.getRequ_level()+"";
+							dm.addRow(new_row);
 						}
-						dm.addRow(new_row);
 					}
 					descriptionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 					descriptionTable.packAll();

@@ -130,6 +130,30 @@ public class LogsDisplayer extends JPanel
 		Messenger.printMsg(Messenger.DEBUG, "Open logs folder : " + databaseRep);
 		File f = new File(databaseRep);
 		String[] logFiles = f.list();
+		
+		if (type.equals(AdminComponent.LOGS_DISPLAY_ADMINTOOL))
+		{
+			int size = 0;
+			String[] tmp = (String[]) logFiles.clone();
+			for (int i=0 ; i<tmp.length ; i++)
+			{
+				if (tmp[i].startsWith("SaadaAdmin"))
+				{
+					size++;
+				}
+			}
+			int ind = 0;
+			logFiles = new String[size];
+			for (int i=0 ; i<tmp.length ; i++)
+			{
+				if (tmp[i].startsWith("SaadaAdmin"))
+				{
+					logFiles[ind] = tmp[i];
+					ind++;
+				}
+			}
+		}
+		
 		// Load logFiles into application
 		Date[] dateToSort = new Date[logFiles.length];
 		HashMap<Date, String> map = new HashMap<Date, String>();
@@ -208,7 +232,7 @@ public class LogsDisplayer extends JPanel
 			}
 			else
 			{
-				toDisplay = "No log for this session";
+				toDisplay = "No log found in the default logs folder";
 			}
 		}
 		

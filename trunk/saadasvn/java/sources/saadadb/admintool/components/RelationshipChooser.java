@@ -57,7 +57,7 @@ import saadadb.sqltable.SQLQuery;
  */
 public class RelationshipChooser extends JPanel {
 	private static final long serialVersionUID = 1L;
-	private JList<String> confList = new JList<String>(new DefaultListModel<String>());
+	private JList confList = new JList(new DefaultListModel());
 	private JXTable descriptionTable;
 	private DefaultTableModel dm;
 	private TaskPanel taskPanel;
@@ -166,7 +166,7 @@ public class RelationshipChooser extends JPanel {
 				{
 					if (confList.getSelectedValue()!=null)
 					{
-						MetaRelation mr = Database.getCachemeta().getRelation(confList.getSelectedValue());
+						MetaRelation mr = Database.getCachemeta().getRelation((String) confList.getSelectedValue());
 						try 
 						{
 							String relationName = RelationshipChooser.this.confList.getSelectedValue().toString();
@@ -205,7 +205,7 @@ public class RelationshipChooser extends JPanel {
 	private void fillRelationships()
 	{
 		// Fill the confList with all existing relationships
-		DefaultListModel<String> model = (DefaultListModel<String>) confList.getModel();
+		DefaultListModel model = (DefaultListModel) confList.getModel();
 		model.removeAllElements();
 		String[] relationNames = Database.getCachemeta().getRelation_names();
 		Arrays.sort(relationNames);

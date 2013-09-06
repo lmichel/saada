@@ -103,7 +103,7 @@ public class VOPublishedResourcesPanel extends EditPanel
 		        	jb_test.setEnabled(false);
 		    }
 		});
-		final JList<String> confList = resourceChooser.getconfList();
+		final JList confList = resourceChooser.getconfList();
 		confList.addListSelectionListener(new ListSelectionListener() 
 		{
 			@Override
