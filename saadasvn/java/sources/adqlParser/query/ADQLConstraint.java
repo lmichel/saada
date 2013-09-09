@@ -44,6 +44,7 @@ public abstract class ADQLConstraint implements ADQLObject {
 	 * @param isNot <i>true</i> to force the presence of NOT, <i>false</i> else.
 	 */
 	public void setNot(boolean isNot) {
+		System.out.println("@@@@@ setNOT " + this + " //" + isNot);
 		this.isNot = isNot;
 	}
 	

@@ -86,16 +86,20 @@ public class ADQLComparison extends ADQLConstraint {
 
 	@Override
 	public String primaryToSQL() throws ParseException {
+		System.out.println("@@@@@ primaryToSQL1 " + compOperator.toString());
 		return leftOperand.toSQL()+" "+compOperator.toSQL()+" "+rightOperand.toSQL();
 	}
 
 	@Override
 	public String primaryToSQL(SQLTranslator translator) throws ParseException {
+		System.out.println("@@@@@ primaryToSQL " + compOperator.toString());
 		return leftOperand.toSQL(translator)+" "+compOperator.toSQL()+" "+rightOperand.toSQL(translator);
 	}
 
 	@Override
 	public String primaryToString() {
+		System.out.println("@@@@@ primaryToString " + compOperator.toString());
+
 		return leftOperand.toString()+" "+compOperator.toString()+" "+rightOperand.toString();
 	}
 
@@ -104,6 +108,7 @@ public class ADQLComparison extends ADQLConstraint {
 	}
 
 	public ADQLConstraint primaryGetCopy() throws ParseException {
+		System.out.println("@@@@@ primaryGetCopy " + compOperator.toString());
 		return new ADQLComparison((ADQLOperand)leftOperand.getCopy(), ComparisonOperator.getOperator(compOperator.toString()), (ADQLOperand)rightOperand.getCopy());
 	}
 
