@@ -33,15 +33,39 @@ public class IsNull extends ADQLComparison {
 	 */
 	public IsNull(ADQLColumn column, boolean isNot) throws ParseException {
 		super(column, isNot?ComparisonOperator.ISNOT:ComparisonOperator.IS, new ADQLConstantValue());
+		System.out.println("@@@@@ ceator " + this + " // " + this.isNot);
+		this.setNot(isNot);
+		System.out.println("@@@@@ ceator " + this + " // " + this.isNot);
 	}
 
+	/*
+	 * setNot overloaded: IS NULL supports 2 NOT operator:
+	 * NOT x IS NOT null <=> x IS NULL
+	 * NOT x IS NULL <=> x IS NOT NULL
+	 * x IS NOT null <=> x IS NOT NULL
+	 */
+	/* (non-Javadoc)
+	 * @see adqlParser.query.ADQLConstraint#setNot(boolean)
+	 */
+	public void setNot(boolean isNot) {
+		if( this.isNot ) {
+			if( !isNot ) this.isNot = true;
+			else this.isNot = false;
+		} else {
+			if( !isNot ) this.isNot = false;
+			else this.isNot = true;
+		}
+	}
 	@Override
 	public String getADQLName() {
+		System.out.println("@@@@@@ " + this + " // " + this.isNot);
 		return "IS"+(isNot?" NOT ":" ")+"NULL";
 	}
 
 	@Override
 	public ADQLConstraint primaryGetCopy() throws ParseException {
+		System.out.println("@@@@@ copy " + this + " " + this.isNot);
+
 		return new IsNull((ADQLColumn)leftOperand.getCopy(), isNot);
 	}
 
