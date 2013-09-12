@@ -44,7 +44,6 @@ public abstract class ADQLConstraint implements ADQLObject {
 	 * @param isNot <i>true</i> to force the presence of NOT, <i>false</i> else.
 	 */
 	public void setNot(boolean isNot) {
-		System.out.println("@@@@@ setNOT " + this + " //" + isNot);
 		this.isNot = isNot;
 	}
 	
@@ -66,12 +65,9 @@ public abstract class ADQLConstraint implements ADQLObject {
 	public void addConstraint(ADQLConstraint cons, boolean orConcat){
 		if (nextConstraint == null){
 			nextConstraint = cons;
-			System.out.println("@@@@@@@@@@@@@ orConcat " + orConcat);
 			andConcat = !orConcat;
 		}else
-			nextConstraint.addConstraint(cons, orConcat);
-		System.out.println("@@@@@@@@@@@@@ orConcat " + this);
-		
+			nextConstraint.addConstraint(cons, orConcat);		
 	}
 	
 	/**
@@ -175,7 +171,6 @@ public abstract class ADQLConstraint implements ADQLObject {
 	public abstract Vector<ADQLColumn> primaryGetImpliedColumns();
 	
 	public final String toSQL() throws ParseException {
-		System.out.println("@@@@@@@@@@@ toSQL " + (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL())));
 		return (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL()));
 	}
 	
@@ -190,7 +185,6 @@ public abstract class ADQLConstraint implements ADQLObject {
 	 * @see ADQLObject#toSQL(SQLTranslator)
 	 */
 	public final String toSQL(SQLTranslator translator) throws ParseException {
-		System.out.println("@@@@@@@@@@@ toSQL " + (isNot?"NOT ":"")+primaryToSQL()+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL())));
 		return (isNot?"NOT ":"")+primaryToSQL(translator)+((nextConstraint==null)?"":((andConcat?" AND ":" OR ")+nextConstraint.toSQL(translator)));
 	}
 	

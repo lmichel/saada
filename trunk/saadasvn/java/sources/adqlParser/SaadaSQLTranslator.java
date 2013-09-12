@@ -33,7 +33,6 @@ public class SaadaSQLTranslator extends SQLTranslator {
 	public String getContains(ContainsFunction fct) throws ParseException {
 		if (fct == null)
 			return null;
-System.out.println("@@@@@@@@@ getContains " + fct);		
 		ADQLOperand leftParam=fct.getFirstGeom(), rightParam=fct.getSecondGeom();
 		String sql = fct.getName()+"("+leftParam.toSQL(this)+", "+rightParam.toSQL(this)+")";
 		// POINT, ...
@@ -50,7 +49,6 @@ System.out.println("@@@@@@@@@ getContains " + fct);
 				sql = DbmsWrapper.getADQLIsInCircleConstraint(p.getCoord1().toSQL(null), p.getCoord2().toSQL(null), c.getCoord1().toSQL(null), c.getCoord2().toSQL(null), c.getRadius().toSQL(null));
 			}
 		}
-		System.out.println("@@@@@@@@@ getContains " + sql);		
 		return "(" + sql + ")";
 	}
 	

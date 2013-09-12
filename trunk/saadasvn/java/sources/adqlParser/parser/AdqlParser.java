@@ -203,7 +203,6 @@ public class AdqlParser implements AdqlParserConstants {
 	 */
 	private ADQLColumn createColumn(String colName) throws ParseException {
 		ADQLColumn column = null;
-		System.out.println("@@@@@@@@@@@createColumn " + colName);
 		int ind = colName.lastIndexOf('.');
 
 		// If there is a table precision...
@@ -225,8 +224,6 @@ public class AdqlParser implements AdqlParserConstants {
 			// create the corresponding object representation of this column:
 			column = buildTools.createColumn(colName, null, null);
 		}
-		System.out.println("@@@@@@@@@@@createColumn RETOUR " + colName);
-
 		return column;
 	}
 
@@ -1019,8 +1016,6 @@ public class AdqlParser implements AdqlParserConstants {
 				throw new ParseException();
 			}		
 			
-			System.out.println("@@@@@@@@@@@ IDENT " + id);
-
 			{if (true) return id;}
 			throw new Error("Missing return statement in function");
 		} finally {
@@ -1030,7 +1025,6 @@ public class AdqlParser implements AdqlParserConstants {
 
 	final public String TableName() throws ParseException {
 		trace_call("TableName");
-		System.out.println("@@@@@@@@@@ tableNae start " );
 		try {
 			String table="";
 			table = Identifier();
@@ -1038,8 +1032,6 @@ public class AdqlParser implements AdqlParserConstants {
 			case DOT:
 				jj_consume_token(DOT);
 				table = Identifier();
-				System.out.println("@@@@@@@@@@ tableNae1 " + table);
-
 				break;
 			default:
 				jj_la1[25] = jj_gen;
@@ -1049,13 +1041,11 @@ public class AdqlParser implements AdqlParserConstants {
 			case DOT:
 				jj_consume_token(DOT);
 				table = Identifier();
-				System.out.println("@@@@@@@@@@ tableNae2 " + table);
 				break;
 			default:
 				jj_la1[26] = jj_gen;
 				;
 			}
-			System.out.println("@@@@@@@@@@ tableNae " + table);
 			{if (true) return table;}
 			throw new Error("Missing return statement in function");
 		} finally {
@@ -1065,7 +1055,6 @@ public class AdqlParser implements AdqlParserConstants {
 
 	final public ADQLColumn ColumnReference() throws ParseException {
 		trace_call("ColumnReference");
-		System.out.println("@@@@@@@@@@ ColumnReference");
 		try {
 			String col1="", col2 = null;
 			col1 = Identifier();
@@ -1073,8 +1062,7 @@ public class AdqlParser implements AdqlParserConstants {
 			case DOT:
 				jj_consume_token(DOT);
 				col2 = TableName();
-				System.out.println(col2);
-				if( Database.getCachemeta().collectionExists(col1) ) {
+				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa")) {
 					col1 = col2; 
 				} else {
 					col1 += "."+col2;
@@ -1086,7 +1074,6 @@ public class AdqlParser implements AdqlParserConstants {
 				jj_la1[27] = jj_gen;
 				;
 			}
-			System.out.println("@@@@@@@@@@ ColumnReference " + col1);
 			{if (true) return createColumn(col1);}
 			throw new Error("Missing return statement in function");
 		} finally {
@@ -5157,7 +5144,7 @@ public class AdqlParser implements AdqlParserConstants {
 	}
 
 	private int trace_indent = 0;
-	private boolean trace_enabled = true;
+	private boolean trace_enabled = false;
 
 	/** Enable tracing. */
 	final public void enable_tracing() {
