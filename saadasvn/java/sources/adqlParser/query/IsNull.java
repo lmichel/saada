@@ -33,9 +33,7 @@ public class IsNull extends ADQLComparison {
 	 */
 	public IsNull(ADQLColumn column, boolean isNot) throws ParseException {
 		super(column, isNot?ComparisonOperator.ISNOT:ComparisonOperator.IS, new ADQLConstantValue());
-		System.out.println("@@@@@ ceator " + this + " // " + this.isNot);
 		this.setNot(isNot);
-		System.out.println("@@@@@ ceator " + this + " // " + this.isNot);
 	}
 
 	/*
@@ -58,14 +56,11 @@ public class IsNull extends ADQLComparison {
 	}
 	@Override
 	public String getADQLName() {
-		System.out.println("@@@@@@ " + this + " // " + this.isNot);
 		return "IS"+(isNot?" NOT ":" ")+"NULL";
 	}
 
 	@Override
 	public ADQLConstraint primaryGetCopy() throws ParseException {
-		System.out.println("@@@@@ copy " + this + " " + this.isNot);
-
 		return new IsNull((ADQLColumn)leftOperand.getCopy(), isNot);
 	}
 
