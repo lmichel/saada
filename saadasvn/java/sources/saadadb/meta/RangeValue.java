@@ -54,13 +54,12 @@ public class RangeValue {
 		if( this.isEnum ) {
 			JSONArray jsa = new JSONArray();
 			for( Object o: this.valList ) {
-				jsa.add("(" + o + ") possible value");
+				jsa.add( o );
 			}
 			retour.put("values", jsa);
-		}
-		else {
-			retour.put("min", "(" + this.min + ") Min value in the DB");
-			retour.put("max", "(" + this.max + ") Max value in the DB");
+		} else {
+			retour.put("min", this.min);
+			retour.put("max", this.max );
 		}
 		return retour;
 	}
