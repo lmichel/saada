@@ -189,7 +189,8 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 			if( Database.getCachemeta().getAtt_extend(category).get("DATALINK") != null ) {
 				Messenger.printMsg(Messenger.TRACE, "Set DATALINK columns for " + capability.getDataTreePathString());
 				String tbl = Database.getWrapper().getCollectionTableName(dataTreePath.collection, category);
-				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = oidsaada" );
+				//SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = oidsaada" );
+				SQLTable.dropTableColumnIndex(tbl, "DATALINK", null);
 				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = " + Database.getWrapper().getStrcatOp("'" + Database.getUrl_root() + "/smartdatalink?oid='", "DATALINK" ));
 			}
 		} catch(FatalException e) {

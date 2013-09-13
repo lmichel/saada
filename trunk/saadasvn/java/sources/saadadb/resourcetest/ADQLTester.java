@@ -25,24 +25,24 @@ public class ADQLTester {
 		String queryStr = ap.getQuery();
 		System.out.println(queryStr);
 		AdqlParser parse;
-		SaadaDBConsistency dbConsistency;
-		dbConsistency = new SaadaDBConsistency();
-		parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
-		parse.enable_tracing();
-		SaadaADQLQuery query = (SaadaADQLQuery)parse.Query();
-
-		System.out.println("-----------------------------");
-
-		System.out.println(query.toSQL());
-System.out.println("-----------------------------");
+//		SaadaDBConsistency dbConsistency;
+//		dbConsistency = new SaadaDBConsistency();
+//		parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
+//		parse.enable_tracing();
+//		SaadaADQLQuery query = (SaadaADQLQuery)parse.Query();
+//
+//		System.out.println("-----------------------------");
+//
+//		System.out.println(query.toSQL());
+//System.out.println("-----------------------------");
 		//
 //		AdqlQuery exec = new AdqlQuery();
 //		exec.
 //		exec.
-		ADQLExecutor executor = new ADQLExecutor();		
 		
-		TAPToolBox.executeTAPQuery(queryStr, true, "votable", 10, "/tmp", "reportNameRoot.xml");
+		TAPToolBox.executeTAPQuery(queryStr, true, "votable", -1, "/tmp", "reportNameRoot.xml");
 		System.exit(1);
+		ADQLExecutor executor = new ADQLExecutor();		
 		SaadaQLResultSet result = executor.execute(queryStr, -1);
 		int cpt =0;
 		while( result.next()) {

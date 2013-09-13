@@ -112,13 +112,14 @@ public class AdqlQuery extends VOQuery {
 			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
 			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
 			adqlQuery = (SaadaADQLQuery)parse.Query();
-
-			if (limit > -1)
-				adqlQuery.setLimit(limit);
-			if( limit <= 0 || limit > DEFAULTSIZE) {
+			
+//			if (adqlQuery.getLimit() > -1)
+//				adqlQuery.setLimit(limit);
+			if( adqlQuery.getLimit() <= 0 || limit > DEFAULTSIZE) {
 				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
 				adqlQuery.setLimit(DEFAULTSIZE);
 			}
+			this.limit = adqlQuery.getLimit();
 			resultSet = new ADQLResultSet(adqlQuery.runQuery(), dbConsistency.getColumnsMeta());
 
 			if(resultSet == null) {
