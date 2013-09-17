@@ -69,11 +69,13 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @param classTable
 	 * @throws AbortException
 	 */
-	public static void addSaadaJoin(String collTable, String classTable) throws AbortException {
+	public static void addSaadaJoin(String collName, String collTable, String classTable) throws AbortException {
+		String ccol = collName + "." + collTable;
+		String ccla = collName + "." + classTable;
 		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
-				, new Object[]{classTable, collTable, classTable , "Collection to Class Saada join", "null"});
+				, new Object[]{classTable, ccol, ccla , "Collection to Class Saada join", "null"});
 		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
-				, new Object[]{classTable + "_rev", classTable, collTable,  "Collection to Class Saada join", "null"});
+				, new Object[]{classTable + "_rev", ccla, ccol,  "Collection to Class Saada join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(classTable);
 	}
 
@@ -85,9 +87,11 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @param targetKey
 	 * @throws AbortException
 	 */
-	public static void addSaadaJoin(String fromTable, String targetTable, String fromKey, String targetKey) throws AbortException {
+	public static void addSaadaJoin(String fromSchema,String fromTable, String targetSchema, String targetTable, String fromKey, String targetKey) throws AbortException {
+		String fns = fromSchema + "." + fromTable;
+		String fnt = targetSchema + "." + targetTable;
 		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
-				, new Object[]{fromTable, fromTable, targetTable , "Standard join", "null"});
+				, new Object[]{fromTable, fns, fnt , "Standard join", "null"});
 		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
 	}
 
@@ -103,15 +107,31 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	 * @param schemaName
 	 * @throws AbortException 
 	 */
-	public static void dropPublishedTable(String table) throws Exception {
+	public static void dropPublishedTable(String schemaName, String table) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Drop key of  table " + table);
+		String fn = schemaName + "." + table;
 		SQLQuery sq = new SQLQuery();
-		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'" );
+		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + fn + "' OR target_table = '" + fn + "'" );
 		while( rs.next() ) {
 			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
 		}
 		sq.close();
-		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + table + "' OR target_table = '" + table + "'");		
+		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + fn + "' OR target_table = '" + fn + "'");		
+	}
+
+	/**
+	 * @param stable  schema.table
+	 * @throws Exception
+	 */
+	public static void dropPublishedTable(String stable) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop key of  table " + stable);
+		SQLQuery sq = new SQLQuery();
+		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + stable + "' OR target_table = '" + stable + "'" );
+		while( rs.next() ) {
+			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
+		}
+		sq.close();
+		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + stable + "' OR target_table = '" + stable + "'");		
 	}
 
 }

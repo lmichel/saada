@@ -81,7 +81,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 	 * @throws AbortException 
 	 */
 	public static void dropPublishedSchema(String schemaName) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Drop schema " + schemaName + " to " + qtableName);
+		Messenger.printMsg(Messenger.TRACE, "Drop schema " + schemaName + " from " + qtableName);
 		Table_Tap_Schema_Tables.dropPublishedSchema(schemaName);
 		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE schema_name = '" + schemaName + "'");		
 	}

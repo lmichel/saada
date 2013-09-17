@@ -1031,7 +1031,13 @@ public class AdqlParser implements AdqlParserConstants {
 			switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
 			case DOT:
 				jj_consume_token(DOT);
-				table = Identifier();
+				//table = Identifier();
+				String id = Identifier();
+				if( Database.getCachemeta().collectionExists(table) || table.equalsIgnoreCase("ivoa")|| table.equalsIgnoreCase("tap_schema")) {
+					table = id; 
+				} else {
+					table += "."+id;
+				}
 				break;
 			default:
 				jj_la1[25] = jj_gen;
@@ -1040,7 +1046,13 @@ public class AdqlParser implements AdqlParserConstants {
 			switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
 			case DOT:
 				jj_consume_token(DOT);
-				table = Identifier();
+				//table = Identifier();
+				String id = Identifier();
+				if( Database.getCachemeta().collectionExists(table) || table.equalsIgnoreCase("ivoa")|| table.equalsIgnoreCase("tap_schema")) {
+					table = id; 
+				} else {
+					table += "."+id;
+				}
 				break;
 			default:
 				jj_la1[26] = jj_gen;

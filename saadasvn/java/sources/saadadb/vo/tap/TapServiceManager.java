@@ -116,18 +116,18 @@ public class TapServiceManager extends EntityManager {
 			/*
 			 * Reference TAPS_SCHEMA table columns 
 			 */
-			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Schemas.tableName    , Table_Tap_Schema_Schemas.attMap, true);
-			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Tables.tableName     , Table_Tap_Schema_Tables.attMap, true);
-			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Columns.tableName    , Table_Tap_Schema_Columns.attMap, true);
-			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Keys.tableName       , Table_Tap_Schema_Keys.attMap, true);
-			Table_Tap_Schema_Columns.addTable(Table_Tap_Schema_Key_Columns.tableName, Table_Tap_Schema_Key_Columns.attMap, true);
+			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Schemas.tableName    , Table_Tap_Schema_Schemas.attMap, true);
+			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName     , Table_Tap_Schema_Tables.attMap, true);
+			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Columns.tableName    , Table_Tap_Schema_Columns.attMap, true);
+			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Keys.tableName       , Table_Tap_Schema_Keys.attMap, true);
+			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Key_Columns.tableName, Table_Tap_Schema_Key_Columns.attMap, true);
 
 
-			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Schemas.tableName, Table_Tap_Schema_Tables.tableName, "schema_name", "schema_name");
-			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Tables.tableName , Table_Tap_Schema_Columns.tableName, "table_name", "table_name");
-			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Tables.tableName , Table_Tap_Schema_Keys.tableName, "table_name"   , "source_table");
-			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Tables.tableName , Table_Tap_Schema_Keys.tableName, "table_name"   , "target_table");
-			Table_Tap_Schema_Keys.addSaadaJoin(Table_Tap_Schema_Keys.tableName   , Table_Tap_Schema_Key_Columns.tableName, "key_id", "key_id");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Schemas.tableName, "TAP_SCHEMA", Table_Tap_Schema_Tables.tableName, "schema_name", "schema_name");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Columns.tableName, "table_name", "table_name");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "source_table");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "target_table");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Keys.tableName   , "TAP_SCHEMA", Table_Tap_Schema_Key_Columns.tableName, "key_id", "key_id");
 		} catch (SaadaException e) {
 			e.printStackTrace();
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -233,12 +233,6 @@ public class TapServiceManager extends EntityManager {
 			String table = ap.getPopulate();
 			String description = ap.getComment();
 			String schema = null;
-			/*
-			 * A same table cannot be published twice
-			 */
-			if( Table_Tap_Schema_Tables.knowsTable(table)) {
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
-			}
 
 			LinkedHashMap<String, AttributeHandler> mah = new LinkedHashMap<String, AttributeHandler>();
 			VOResource vor;
@@ -249,6 +243,11 @@ public class TapServiceManager extends EntityManager {
 				Messenger.printMsg(Messenger.TRACE, table + " is a VO model");
 				ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
 				schema = "ivoa";
+
+				if( Table_Tap_Schema_Tables.knowsTable(schema,table)) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
+				}
+
 				for( UTypeHandler uth: uths) {
 					AttributeHandler ah = uth.getAttributeHandler();
 					ah.setNameattr(ah.getNameorg());
@@ -262,11 +261,13 @@ public class TapServiceManager extends EntityManager {
 				Messenger.printMsg(Messenger.TRACE, table + " is a Saada class");
 				MetaClass mc = Database.getCachemeta().getClass(table);
 				schema = mc.getCollection_name();
+				if( Table_Tap_Schema_Tables.knowsTable(schema,table)) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
+				}
 				mah.put("oidsaada", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("oidsaada"));
 				mah.put("namesaada", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("namesaada"));
 				mah.putAll(mc.getAttributes_handlers());
-			}
-			else {
+			} else {
 				int pos = table.lastIndexOf("_");
 				if( pos == -1 ) {
 					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " is neither q class nor a DM, and it can not be a collection table");					
@@ -291,6 +292,10 @@ public class TapServiceManager extends EntityManager {
 					}
 				}
 				schema = coll;
+				if( Table_Tap_Schema_Tables.knowsTable(schema,table)) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
+				}
+
 			}
 			/*
 			 * TAP SCHEMA table update
@@ -299,7 +304,7 @@ public class TapServiceManager extends EntityManager {
 				Table_Tap_Schema_Schemas.addSchema(schema, "Schema matching the Saada collection " + schema, null);
 			}
 			Table_Tap_Schema_Tables.addTable(schema, table, description, null);
-			Table_Tap_Schema_Columns.addTable(table, mah, false);
+			Table_Tap_Schema_Columns.addTable(schema, table, mah, false);
 		} catch (SaadaException e) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}catch (Exception e2) {
@@ -492,9 +497,9 @@ public class TapServiceManager extends EntityManager {
 				 */
 				SQLTable.beginTransaction();
 				for( String sclass: Database.getCachemeta().getClassNames(collName, Category.getCategory(catName))) {	
-					if( Table_Tap_Schema_Tables.knowsTable(sclass)) {
+					if( Table_Tap_Schema_Tables.knowsTable(collName, sclass)) {
 						Messenger.printMsg(Messenger.TRACE, "Add join " + collTable + " [X] " + sclass);
-						Table_Tap_Schema_Keys.addSaadaJoin(collTable, sclass);					
+						Table_Tap_Schema_Keys.addSaadaJoin(collName, collTable, sclass);					
 					}
 				}
 				SQLTable.commitTransaction();
@@ -511,9 +516,9 @@ public class TapServiceManager extends EntityManager {
 				/*
 				 * Add join to collection table if it has been recorded
 				 */
-				if( Table_Tap_Schema_Tables.knowsTable(collTable)) {
+				if( Table_Tap_Schema_Tables.knowsTable(collName, collTable)) {
 					Messenger.printMsg(Messenger.TRACE, "Add join " + collTable + " [X] " + classTable);
-					Table_Tap_Schema_Keys.addSaadaJoin(collTable, classTable);
+					Table_Tap_Schema_Keys.addSaadaJoin(collName, collTable, classTable);
 				}
 				SQLTable.commitTransaction();
 			}

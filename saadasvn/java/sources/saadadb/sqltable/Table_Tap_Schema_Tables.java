@@ -64,9 +64,11 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void addTable(String schema, String table, String description, String utype) throws AbortException {
+		String fn = schema + "." + table;
 		Messenger.printMsg(Messenger.TRACE, "Add table " + table + " to " + tableName);
 		SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?)"
-				, new Object[]{schema, table, "table",description, utype});
+//				, new Object[]{schema, table, "table",description, utype});
+		, new Object[]{schema, fn, "table",description, utype});
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 		SQLQuery sq = new SQLQuery();
 		ResultSet rs = sq.run("SELECT table_name  FROM " + tableName + " WHERE  schema_name = '" + schemaName + "'");
 		while( rs.next() ) {
-			Table_Tap_Schema_Tables.dropPublishedTable(schemaName, rs.getString(1));
+			Table_Tap_Schema_Tables.dropPublishedTable(rs.getString(1));
 		}
 		sq.close();
 
@@ -91,10 +93,24 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	 * @throws AbortException
 	 */
 	public static void dropPublishedTable(String schemaName, String table) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Drop table " + schemaName + "." + table);
-		Table_Tap_Schema_Keys.dropPublishedTable(table);
-		Table_Tap_Schema_Columns.dropPublishedTable(table);
-		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "' AND table_name = '" + table + "'");		
+		String fn = schemaName + "." + table;
+		Messenger.printMsg(Messenger.TRACE, "Drop published table " + schemaName + "." + table);
+		Table_Tap_Schema_Keys.dropPublishedTable(schemaName, table);
+		Table_Tap_Schema_Columns.dropPublishedTable(schemaName, table);
+		//SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "' AND table_name = '" + table + "'");		
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "' AND table_name = '" + fn + "'");		
+	}
+
+	/**
+	 * @param stable: schema.table
+	 * @throws Exception
+	 */
+	public static void dropPublishedTable(String stable) throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop published table " + stable);
+		Table_Tap_Schema_Keys.dropPublishedTable(stable);
+		Table_Tap_Schema_Columns.dropPublishedTable(stable);
+		//SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "' AND table_name = '" + table + "'");		
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE table_name = '" + stable + "'");		
 	}
 
 	/**
@@ -103,10 +119,11 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean knowsTable(String table) throws Exception {
+	public static boolean knowsTable(String schemaName, String table) throws Exception {
+		String fn = schemaName + "." + table;
 		SQLQuery sq = new SQLQuery();
 		boolean retour = false;
-		ResultSet rs = sq.run("SELECT table_name FROM " + tableName + " WHERE table_name = '" + table + "' LIMIT 1");
+		ResultSet rs = sq.run("SELECT table_name FROM " + tableName + " WHERE table_name = '" + fn + "' LIMIT 1");
 		while (rs.next()) {
 			retour = true;
 			break;

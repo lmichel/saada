@@ -111,6 +111,7 @@ public class AdqlQuery extends VOQuery {
 //		try {
 			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
 			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
+			parse.enable_tracing();
 			adqlQuery = (SaadaADQLQuery)parse.Query();
 			
 //			if (adqlQuery.getLimit() > -1)
