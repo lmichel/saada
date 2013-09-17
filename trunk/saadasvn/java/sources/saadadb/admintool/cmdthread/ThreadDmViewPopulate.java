@@ -83,16 +83,12 @@ public class ThreadDmViewPopulate extends CmdThread {
 					return;
 				}
 			}
-			/*
-			 * Make sure the DM is recorded to the TAP service
-			 */
-			if( !Table_Tap_Schema_Tables.knowsTable(vor.getName())) {
-				ArgsParser ap = new ArgsParser(new String[]{"-populate=" + vor.getName(), Messenger.getDebugParam()});
-				SQLTable.beginTransaction();
-				tsm.populate(ap);
-				SQLTable.commitTransaction();
-				jobDone += vor.getName() + " table added to the TAP service\n";				
-			}
+			ArgsParser ap = new ArgsParser(new String[]{"-populate=" + vor.getName(), Messenger.getDebugParam()});
+			SQLTable.beginTransaction();
+			tsm.populate(ap);
+			SQLTable.commitTransaction();
+			jobDone += vor.getName() + " table added to the TAP service\n";				
+
 			/*
 			 * Register the capability
 			 */

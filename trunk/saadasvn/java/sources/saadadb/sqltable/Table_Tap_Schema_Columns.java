@@ -89,8 +89,9 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 	 * @param standard  : Compliant with a DM or not
 	 * @throws Exception
 	 */
-	public static void addTable(String table, Map<String, AttributeHandler> attMap, boolean standard) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Add columns of table " + table + " to " + tableName);
+	public static void addTable(String schemaName, String table, Map<String, AttributeHandler> attMap, boolean standard) throws Exception {
+		String fn = schemaName + "." + table;
+		Messenger.printMsg(Messenger.TRACE, "Add columns of table " + fn + " to " + tableName);
 		Map<String, String> mi = Database.getWrapper().getExistingIndex(table);
 		Collection<String> colIndexed  = null;
 		if( mi != null )colIndexed =  mi.values();
@@ -126,7 +127,7 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 				size = new Integer(m.group(2));
 			}
 			SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-					, new Object[]{table, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()
+					, new Object[]{fn, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()
 					             , type, size, indexed, 1, ((standard)?1: 0)});
 		}
 	}
@@ -135,9 +136,18 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 	 * @param schemaName
 	 * @throws AbortException 
 	 */
-	public static void dropPublishedTable(String table) throws AbortException {
-		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + tableName);
-		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  table_name = '" + table + "'");		
+	public static void dropPublishedTable(String schemaName, String table) throws AbortException {
+		String fn = schemaName + "." + table;
+		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + fn);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  table_name = '" + fn + "'");		
+	}
+	/**
+	 * @param stable schema.table
+	 * @throws AbortException
+	 */
+	public static void dropPublishedTable(String stable) throws AbortException {
+		Messenger.printMsg(Messenger.TRACE, "Drop columns of  table " + stable);
+		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE  table_name = '" + stable + "'");		
 	}
 
 }
