@@ -12,6 +12,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.tap.TAPToolBox;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
@@ -81,28 +82,7 @@ public class AdqlQuery extends VOQuery {
 				QueryException.throwNewException("ERROR", "Limit parameter not valid " + l);
 			}
 		}
-		/*
-		 * As ADQL requires 0 or 1 as value returned by the the CONTAIN operator and SaadaSQL procedures used there return
-		 * true or false with DBMS implementing boolean, the ADQL query is modified to replace 0 or 1 with the good operands.
-		 * Not sure to ever work!
-		 */
-		Pattern p = Pattern.compile("(?i)(?:(?:(CONTAINS\\s*\\([^=]+\\))\\s*([^\\s]+)\\s*([10])))", Pattern.DOTALL);
-		Matcher m = p.matcher(queryString);
-		while(m.find()  ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Replace 1/0 operands for CONTAINS operator with apropriate boolean values");
-			String opd = m.group(3);
-			if( opd.equals("1") ) {
-				opd = Database.getWrapper().getBooleanAsString(true);
-				if( "true".equals(opd )) { opd = "'" + opd + "'";}
-			}
-			else {
-				opd = Database.getWrapper().getBooleanAsString(false);
-				if( "false".equals(opd )) { opd = "'" + opd + "'";}
-			}
-			queryString = queryString.replace(m.group(0), m.group(1) + " " +  m.group(2)+ " " +  opd);
-		}
-		protocolParams.put("query", queryString);
+		protocolParams.put("query", TAPToolBox.setBooleanInContain(queryString));
 		protocolParams.put("limit", Integer.toString(limit));
 	}
 
@@ -110,7 +90,7 @@ public class AdqlQuery extends VOQuery {
 	public void runQuery() throws Exception {		
 //		try {
 			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
-			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
+			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryString).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
 			parse.enable_tracing();
 			adqlQuery = (SaadaADQLQuery)parse.Query();
 			
