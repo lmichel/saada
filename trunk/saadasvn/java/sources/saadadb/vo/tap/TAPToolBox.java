@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Transformer;
@@ -20,9 +22,11 @@ import javax.xml.transform.stream.StreamSource;
 import saadadb.cache.CacheManager;
 import saadadb.collection.SaadaInstance;
 import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaQLResultSet;
+import saadadb.util.Messenger;
 import saadadb.vo.ADQLExecutor;
 import saadadb.vo.SaadaQLExecutor;
 import saadadb.vo.formator.TapToJsonFormator;
@@ -454,5 +458,37 @@ public class TAPToolBox {
 			Transformer transformer = tFactory.newTransformer(new StreamSource(xsltPath));
 			transformer.transform(new StreamSource(xmlSrcPath), new StreamResult(htmlDest));
 		}
+		
+		/**
+		 * @param qString
+		 * @return
+		 * @throws FatalException
+		 */
+		public static final String setBooleanInContain(String qString) throws FatalException{
+			/*
+			 * As ADQL requires 0 or 1 as value returned by the the CONTAIN operator and SaadaSQL procedures used there return
+			 * true or false with DBMS implementing boolean, the ADQL query is modified to replace 0 or 1 with the good operands.
+			 * Not sure to ever work!
+			 */
+			Pattern p = Pattern.compile("(?i)(?:(?:(CONTAINS\\s*\\([^=]+\\))\\s*([^\\s]+)\\s*([10])))", Pattern.DOTALL);
+			Matcher m = p.matcher(qString);
+			while(m.find()  ){
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Replace 1/0 operands for CONTAINS operator with apropriate boolean values");
+				String opd = m.group(3);
+				if( opd.equals("1") ) {
+					opd = Database.getWrapper().getBooleanAsString(true);
+					if( "true".equals(opd )) { opd = "'" + opd + "'";}
+				}
+				else {
+					opd = Database.getWrapper().getBooleanAsString(false);
+					if( "false".equals(opd )) { opd = "'" + opd + "'";}
+				}
+				qString = qString.replace(m.group(0), m.group(1) + " " +  m.group(2)+ " " +  opd);
+			}
+			return qString;
+
+		}
+		
 
 	}

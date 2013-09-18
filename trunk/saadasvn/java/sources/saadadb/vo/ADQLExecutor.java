@@ -1,6 +1,8 @@
 package saadadb.vo;
 
 import java.io.ByteArrayInputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -9,6 +11,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.tap.TAPToolBox;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
@@ -67,7 +70,7 @@ public class ADQLExecutor {
 		AdqlParser parse;
 		SaadaDBConsistency dbConsistency;
 			dbConsistency = new SaadaDBConsistency();
-			parse = new AdqlParser(new ByteArrayInputStream(queryStr.getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
+			parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryStr).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
 			query = (SaadaADQLQuery)parse.Query();
 			query.setMySQLMode(MySQLMode);
 //		parse.setDebug(true);
