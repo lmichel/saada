@@ -191,7 +191,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 				String tbl = Database.getWrapper().getCollectionTableName(dataTreePath.collection, category);
 				//SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = oidsaada" );
 				SQLTable.dropTableColumnIndex(tbl, "DATALINK", null);
-				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = " + Database.getWrapper().getStrcatOp("'" + Database.getUrl_root() + "/smartdatalink?oid='", "DATALINK" ));
+				SQLTable.addQueryToTransaction("UPDATE " + tbl + " SET DATALINK = " + Database.getWrapper().getStrcatOp("'" + Database.getUrl_root() + "/smartdatalink?oid='", "oidsaada" ));
 			}
 		} catch(FatalException e) {
 			//Category not referenced: likely ObsCore
