@@ -631,7 +631,8 @@ public abstract class VOTableFormator extends VOResultFormator {
 		param.setValue("SaadaOID SpatialAxis_covloc SpectralAxiscovloccoorScalVal");
 		paramSet.addItem(param);
 		writer.writeParam(paramSet);
-		writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
+		// Pollute TAP responses
+		//writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
 		writer.writeField(fieldSet_housekeeping);
 	}
 	
@@ -667,17 +668,18 @@ public abstract class VOTableFormator extends VOResultFormator {
 		field.setUtype("utype.not.set");
 		fieldset.addItem(field);
 		
-		SavotLink link = new SavotLink();
-		LinkSet links = new LinkSet();
-		link.setHref(Database.getUrl_root() + "/getinstance?oid=${" + key_field + "}");
-		links.addItem(link);
-		field = new SavotField();
-		field.setName("Saada Anchor");
-		field.setUtype("utype.not.set");
-		field.setDataType("char");
-		field.setArraySize("*");
-		field.setLinks(links);
-		fieldset.addItem(field);
+// Pollute TAP responses
+//		SavotLink link = new SavotLink();
+//		LinkSet links = new LinkSet();
+//		link.setHref(Database.getUrl_root() + "/getinstance?oid=${" + key_field + "}");
+//		links.addItem(link);
+//		field = new SavotField();
+//		field.setName("Saada Anchor");
+//		field.setUtype("utype.not.set");
+//		field.setDataType("char");
+//		field.setArraySize("*");
+//		field.setLinks(links);
+//		fieldset.addItem(field);
 	}
 	
 	/**
