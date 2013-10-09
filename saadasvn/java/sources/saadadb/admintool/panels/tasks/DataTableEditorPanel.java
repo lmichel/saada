@@ -223,7 +223,7 @@ public class DataTableEditorPanel extends TaskPanel
 				}
 				else
 				{
-					sqlQuery += "oidsaada >> 32 AS \"row_number\", ";
+					sqlQuery += "(oidsaada & 4294967295) AS \"row_number\", ";
 				}
 				sqlQuery += rejected_coll_clos[i] ;
 			}
@@ -244,7 +244,7 @@ public class DataTableEditorPanel extends TaskPanel
 				}
 				else
 				{
-					sqlQuery += "coll.oidsaada << 32 AS \"row_number\", ";
+					sqlQuery += "(coll.oidsaada & 4294967295) AS \"row_number\", ";
 				}
 				sqlQuery += "coll." + rejected_coll_clos[i] ;
 			}

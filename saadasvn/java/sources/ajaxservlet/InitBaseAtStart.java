@@ -3,6 +3,9 @@ package ajaxservlet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -59,7 +62,15 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	public void sessionCreated(HttpSessionEvent event) {
 	}
 	public void sessionDestroyed(HttpSessionEvent event) {
-		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");
+		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");   
+		try {
+	        Enumeration<Driver> drivers = DriverManager.getDrivers();
+	        while(drivers.hasMoreElements()) {
+	            DriverManager.deregisterDriver(drivers.nextElement());
+	        }
+	    } catch(Exception e) {
+			Messenger.printMsg(Messenger.ERROR, "Exception caught while deregistering JDBC drivers" + e.getMessage());
+	    }
 	}
 	
 
