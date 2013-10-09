@@ -79,7 +79,7 @@ public class ThreadDeleteProduct extends CmdThread {
 			long oids_to_remove[] = new long[rows.length];
 			int cpt = 0;
 			for( int i: rows ) {
-				oids_to_remove[cpt] = Long.parseLong(dataTableEditor.getProductTable().getValueAt(i, 0).toString());
+				oids_to_remove[cpt] = Long.parseLong(dataTableEditor.getProductTable().getValueAt(i, 1).toString());
 				cpt++;
 			}
 			saada_process = new ProductManager();
