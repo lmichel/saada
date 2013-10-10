@@ -1022,7 +1022,7 @@ abstract public class DbmsWrapper {
 		return "SELECT  " + leftKey + " FROM " + leftTable + " l"
 		+ " LEFT JOIN " + rightTable + " r"
 		+ " ON l." + leftKey + " = r." + rightKey 
-		+ " WHERE r." + rightKey + " = NULL";
+		+ " WHERE r." + rightKey + " IS NULL";
 	}
 	
 	/**
