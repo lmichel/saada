@@ -653,7 +653,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 		return "SELECT  " + leftTable + "." + leftKey + " FROM " + leftTable 
 		+ " LEFT JOIN " + rightTable  
 		+ " ON " + leftTable + "." + leftKey + " = " + rightTable + "." + rightKey 
-		+ " WHERE " + rightTable + "." + rightKey + " = NULL";
+		+ " WHERE " + rightTable + "." + rightKey + " IS NULL";
 	}
 
 	/* (non-Javadoc)
