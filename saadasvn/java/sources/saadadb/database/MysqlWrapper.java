@@ -608,7 +608,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		return "SELECT  " + key1 + " FROM " + table1 + " l"
 		+ " LEFT JOIN " + table2 + " r"
 		+ " ON l." + key1 + " = r." + key2 
-		+ " WHERE r." + key2 + " = NULL";
+		+ " WHERE r." + key2 + " IS NULL";
 	}
 
 	@Override
