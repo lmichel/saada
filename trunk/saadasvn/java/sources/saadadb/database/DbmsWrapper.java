@@ -1038,7 +1038,7 @@ abstract public class DbmsWrapper {
 		return "DELETE " + leftTable + " FROM " + leftTable 
 		+ " LEFT JOIN " + rightTable 
 		+ " ON " + leftTable + "." + leftKey + " = " + rightTable + "." + rightKey 
-		+ " WHERE " + rightTable + "." + rightKey + " = NULL";
+		+ " WHERE " + rightTable + "." + rightKey + " IS NULL";
 	}
 	/**
 	 * Returns tempodbname.tablename for DB system requiring a separate DB for tempo tables
