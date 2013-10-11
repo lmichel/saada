@@ -395,11 +395,17 @@ public class MysqlWrapper extends DbmsWrapper {
 	public String getRegexpOp(){
 		return "REGEXP";
 	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getStrcatoP(java.lang.String, java.lang.String)
 	 */
-	public String getStrcatOp(String arg1, String arg2) {
-		return "CONCAT(" + arg1 + "," + arg2 + ")";
+	public String getStrcatOp(String... args) {
+		String retour = "";
+		for (String arg : args) {
+			if( retour.length() != 0 ) retour += "," ;
+			retour += arg;
+			}
+		return  "CONCAT(" +retour + ")";
 	}
 
 	/* (non-Javadoc)

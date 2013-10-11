@@ -766,7 +766,7 @@ abstract public class DbmsWrapper {
 	 * @param arg2
 	 * @return
 	 */
-	public abstract String getStrcatOp(String arg1, String arg2);
+	public abstract String getStrcatOp(String... args);
 	/**
 	 * @return
 	 */
