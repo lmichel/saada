@@ -712,7 +712,7 @@ public class Product /*extends File*/ {
 		
 		if( try_votable ) {			
 			try {
-				this.productFile = new VOProduct(this);				
+				this.productFile = new VOTableProduct(this);				
 			}
 			catch(SaadaException ev) {
 				Messenger.printStackTrace(ev);
@@ -1501,7 +1501,7 @@ public class Product /*extends File*/ {
 			this.typeFile = "FITS";
 		} catch(Exception ef) {
 			try {
-				prd_to_merge.productFile = new VOProduct(prd_to_merge);
+				prd_to_merge.productFile = new VOTableProduct(prd_to_merge);
 				this.typeFile = "VO";
 			} catch(Exception ev) {
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + file_to_merge + "> neither FITS nor VOTable");			

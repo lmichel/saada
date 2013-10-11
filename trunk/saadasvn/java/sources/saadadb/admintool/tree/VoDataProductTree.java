@@ -26,7 +26,7 @@ import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.FitsProduct;
 import saadadb.products.ProductFile;
-import saadadb.products.VOProduct;
+import saadadb.products.VOTableProduct;
 import saadadb.util.RegExp;
 
 /**
@@ -78,7 +78,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			prd = new FitsProduct(filename, null);
 		}
 		else if( filename.matches(RegExp.VOTABLE_FILE) ) {
-			prd = new VOProduct(filename);				
+			prd = new VOTableProduct(filename);				
 		}
 		else {
 			AdminComponent.showFatalError(frame, "Type of file <" + filename + "> not recognized");

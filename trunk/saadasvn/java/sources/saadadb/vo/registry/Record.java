@@ -82,7 +82,51 @@ public class Record {
 		StringBuffer retour = new StringBuffer();
 		retour.append(header);
 		retour.append(this.authority.getXML());
-
+		
+		retour.append("<capability standardID=\"ivo://ivoa.net/std/TAP\" xsi:type=\"tr:TableAccess\">\n");
+		retour.append("<interface role=\"std\" xsi:type=\"vs:ParamHTTP\">\n");
+		retour.append("<accessURL use=\"base\">\n");
+		retour.append(Database.getUrl_root() + "/tap\n");
+		retour.append("</accessURL>\n");
+		retour.append("</interface>\n");
+		retour.append("<dataModel ivo-id=\"ivo://ivoa.net/std/ObsCore-1.0\">Obscore 1.0</dataModel>\n");
+		retour.append("<dataModel ivo-id=\"ivo://ivoa.net/std/RegTAP/vor\">Registry 1.0</dataModel>\n");
+		retour.append("<language>\n");
+		retour.append("<name>ADQL</name>\n");
+		retour.append("<version ivo-id=\"ivo://ivoa.net/std/ADQL#v2.0\">2.0</version>\n");
+		retour.append("<description>ADQL 2.0</description>\n");
+		retour.append("<languageFeatures type=\"ivo://ivoa.net/std/TAPRegExt#features-adqlgeo\">\n");
+		retour.append("<feature>\n");
+		retour.append("<form>BOX</form>\n");
+		retour.append("</feature>\n");
+		retour.append("<feature>\n");
+		retour.append("<form>POINT</form>\n");
+		retour.append("</feature>\n");
+		retour.append("<feature>\n");
+		retour.append("<form>CIRCLE</form>\n");
+		retour.append("</feature>\n");
+		retour.append("<feature>\n");
+		retour.append("<form>CONTAINS</form>\n");
+		retour.append("</feature>\n");
+		retour.append("</languageFeatures>\n");
+		retour.append("</language>\n");
+		
+		retour.append("<outputFormat ivo-id=\"ivo://ivoa.net/std/TAPRegExt#output-votable-binary\">\n");
+		retour.append("<mime>text/xml</mime>\n");
+		retour.append("</outputFormat>\n");
+		
+		retour.append("<retentionPeriod>\n");
+		retour.append("<default>3600</default>\n");
+		retour.append("</retentionPeriod>\n");
+		retour.append("<executionDuration>\n");
+		retour.append("<default>3600</default>\n");
+		retour.append("</executionDuration>\n");
+		retour.append("<outputLimit>\n");
+		retour.append("<default unit=\"row\">10000</default>\n");
+		retour.append("<hard unit=\"row\">10000</hard>\n");
+		retour.append("</outputLimit>\n");
+		retour.append("</capability>\n");
+		
 		retour.append("<capability standardID=\"ivo://ivoa.net/std/VOSI#availability\">\n");
 		retour.append("<interface xsi:type=\"vs:ParamHTTP\">\n");
 		retour.append("<accessURL use=\"full\">" + Database.getUrl_root() + "/tap/availability</accessURL>\n");
