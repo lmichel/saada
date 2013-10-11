@@ -138,7 +138,7 @@ vvvvv * @version $Id$
 		}
 		catch(Exception ef) {
 			try {
-				prd_to_merge.productFile = new VOProduct(prd_to_merge);
+				prd_to_merge.productFile = new VOTableProduct(prd_to_merge);
 				this.typeFile = "VO";
 			}
 			catch(Exception ev) {

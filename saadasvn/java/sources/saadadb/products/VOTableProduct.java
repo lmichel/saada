@@ -2,7 +2,6 @@ package saadadb.products;
 
 import java.awt.Image;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -37,7 +36,7 @@ import cds.savot.pull.SavotPullParser;
  * @author laurent
  * @version $Id$
  */
-public class VOProduct extends File implements ProductFile {
+public class VOTableProduct extends File implements ProductFile {
 
 	private static final long serialVersionUID = 1L;
 
@@ -530,7 +529,7 @@ public class VOProduct extends File implements ProductFile {
 	 * @param filename
 	 * @throws IgnoreException
 	 */
-	public VOProduct(String filename) throws Exception{
+	public VOTableProduct(String filename) throws Exception{
 		super(filename);
 		this.product = new Product(new File(filename), null);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
@@ -551,7 +550,7 @@ public class VOProduct extends File implements ProductFile {
 	 * @throws AbortException 
 	 * @throws AbortException 
 	 */
-	public VOProduct(Product product) throws Exception{
+	public VOTableProduct(Product product) throws Exception{
 		
 		super(product.file.getAbsolutePath());
 		this.product = product;
@@ -780,7 +779,7 @@ public class VOProduct extends File implements ProductFile {
 	public static void main(String[] args ) {
 		try {
 //			VOProduct fp = new VOProduct("/home/michel/saada/deploy/TestBench1_5/015.load_xml_spec/data/vospectre015.xml");
-			VOProduct fp = new VOProduct("/home/michel/Desktop/vizier_votable.ecl.vot");
+			VOTableProduct fp = new VOTableProduct("/home/michel/Desktop/vizier_votable.ecl.vot");
 			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getMap(null);
 			System.out.println(fp.getName());
 			for( String en: retour.keySet() ) {

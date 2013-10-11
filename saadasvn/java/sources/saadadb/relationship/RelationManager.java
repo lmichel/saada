@@ -81,15 +81,25 @@ public class RelationManager extends  EntityManager {
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
 		try {
-			Messenger.printMsg(Messenger.TRACE, "Index relation <" + name + ">");
-			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), name);
-
-			ib.createIndexRelation();
+			if(name.equals("all-relations") ) {
+				String[] rls = Database.getCachemeta().getRelation_names();
+				for( String r: rls) {
+					this.index(r);
+				}
+				
+			} else {
+				this.index(name);
+			}
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
 
+	private void index(String relation) throws Exception {
+			Messenger.printMsg(Messenger.TRACE, "Index relation <" + relation + ">");
+			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), relation);
+			ib.createIndexRelation();		
+	}
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
 		try {
