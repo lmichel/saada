@@ -203,8 +203,13 @@ public class PostgresWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getStrcatoP(java.lang.String, java.lang.String)
 	 */
-	public String getStrcatOp(String arg1, String arg2) {
-		return arg1 + "||" + arg2;
+	public String getStrcatOp(String... args) {
+		String retour = "";
+		for (String arg : args) {
+			if( retour.length() != 0 ) retour += "||" ;
+			retour += arg;
+			}
+		return retour;
 	}
 
 	/* (non-Javadoc)
