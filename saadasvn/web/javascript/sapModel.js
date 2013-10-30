@@ -75,7 +75,7 @@ jQuery.extend({
 		/*********************
 		 * SIAP Event processing
 		 */
-		this.processSIAPQueryEvent= function(){
+		this.buildSIAPUrl= function(){
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -107,19 +107,15 @@ jQuery.extend({
 				url += 'MODE=CUTOUT&';
 			}
 			url += 'size=' + escape(rad) + '&pos=' + escape(pos) ;
-			
-			if( $('input[name=siapdl]:checked').val() == 'votable' ) {
-				window.open(url, 'SIAP Result');
-			}
-			else {
-				if( sampView.isSampConnect() ) {
-					WebSampConnector.sendMsg('table.load.votable','SaadaSIAP','image' ,url,'');
-				}
-				else {
-					Modalinfo.info('No active SAMP connnection');
-				}
-			}
-		}
+			alert(url);
+			return url;
+		};
+		this.processSIAPQueryEvent= function(){
+			window.open(this.buildSIAPUrl(), 'SIAP Result');
+		};
+		this.processSIAPSampEvent= function(){
+			WebSamp_mVc.fireSendVoreport(this.buildSIAPUrl(), null, null);
+		};
 
 		this.processSIAPCapabilityEvent= function(){
 			if( !collection ) {
@@ -154,7 +150,7 @@ jQuery.extend({
 		/*********************
 		 * SSAP Event processing
 		 */
-		this.processSSAPQueryEvent= function(){
+		this.buildSSAPUrl= function(){
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -187,19 +183,14 @@ jQuery.extend({
 			}
 			var url = base_url + 'ssaservice?collection=[' + collection + ']&';
 			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + band;
-			
-			if( $('input[name=ssapdl]:checked').val() == 'votable' ) {
-				window.open(url, 'SSA Result');
-			}
-			else {
-				if( sampView.isSampConnect() ) {
-					WebSampConnector.sendMsg('table.load.votable','SaadaSSA','Spectra' ,url,'');
-				}
-				else {
-					Modalinfo.info('No active SAMP connnection');
-				}
-			}
-		}
+			return url;
+		};
+		this.processSSAPQueryEvent= function(){
+			window.open(this.buildSSAPUrl, 'SSA Result');
+		};
+		this.processSSAPSampEvent= function(){
+			WebSamp_mVc.fireSendVoreport(this.buildSSAPUrl(), null, null);
+		};
 
 		this.processSSAPCapabilityEvent= function(){
 			if( !collection ) {
@@ -235,7 +226,7 @@ jQuery.extend({
 		/*********************
 		 * CS Event processing
 		 */
-		this.processCSQueryEvent= function(){
+		this.buildCSUrl= function(){
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -261,19 +252,14 @@ jQuery.extend({
 			var url = base_url + 'conesearch?collection=[' + collection + ']&';
 
 			url += 'SR=' + escape(rad) + '&RA=' + escape(pos) ;
-			
-			if( $('input[name=csdl]:checked').val() == 'votable' ) {
-				window.open(url, 'CS Result');
-			}
-			else {
-				if( sampView.isSampConnect() ) {
-					WebSampConnector.sendMsg('table.load.votable','SaadaCS','Table entries' ,url,'');
-				}
-				else {
-					Modalinfo.info('No active SAMP connnection');
-				}
-			}
-		}
+			return url;
+		};
+		this.processCSQueryEvent= function(){
+			window.open(this.buildCSUrl, 'SSA Result');
+		};
+		this.processCSSampEvent= function(){
+			WebSamp_mVc.fireSendVoreport(this.buildCSUrl(), null, null);
+		};
 
 		this.processCSCapabilityEvent= function(){
 			if( !collection ) {
