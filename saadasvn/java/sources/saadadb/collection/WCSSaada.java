@@ -12,10 +12,7 @@ import saadadb.exceptions.SaadaException;
  * @version SAADA 1.0
  * @author: NGUYEN Ngoc Hoan
  * E-Mail: nguyen@saadadb.u-strasbg.fr</p>
- 
  */
-
-
 public class WCSSaada extends Position {
 	public double crpix1_csa;
 	public double crpix2_csa;
@@ -28,15 +25,11 @@ public class WCSSaada extends Position {
 	public double crota_csa;
 	public double crval1_csa;
 	public double crval2_csa;
-	
 	public String product_url_csa;
-	
-	
 	
 	public WCSSaada() {
 		super();
 	}
-	
 	
 	public  void setCrpix1_csa(double value)
 	{

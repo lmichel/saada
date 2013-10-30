@@ -321,10 +321,18 @@ public abstract class AdminPanel extends AdminComponent {
 
 	/**
 	 * called when the panel get the focus
+	 * never used right now
 	 */
 	public abstract void active() ;
 
-	
+	/**
+	 * usually used to force the run button to (dis)enabled
+	 * @param active
+	 */
+	public void activate(boolean active){
+		
+	}
+
 	/**
 	 * @throws Exception 
 	 */

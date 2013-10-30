@@ -676,7 +676,7 @@ public class VOTableProduct extends File implements ProductFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getMap(java.lang.String)
 	 */
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException {
+	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
 		try {
 			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = new LinkedHashMap<String, ArrayList<AttributeHandler>>();	
 			Vector<Object> resources = voTable.getResources().getItems();
@@ -752,8 +752,7 @@ public class VOTableProduct extends File implements ProductFile {
 		CoosysSet css = this.currentResource.getCoosys();
 		SavotCoosys infoCooSys = null;
 		if( css != null && css.getItemCount() > 0) {
-			infoCooSys = (SavotCoosys) css.getItemAt(0);
-			
+			infoCooSys = (SavotCoosys) css.getItemAt(0);			
 		}
 		/*
 		 * Otherwise take this of the 
@@ -780,7 +779,7 @@ public class VOTableProduct extends File implements ProductFile {
 		try {
 //			VOProduct fp = new VOProduct("/home/michel/saada/deploy/TestBench1_5/015.load_xml_spec/data/vospectre015.xml");
 			VOTableProduct fp = new VOTableProduct("/home/michel/Desktop/vizier_votable.ecl.vot");
-			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getMap(null);
+			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
 			System.out.println(fp.getName());
 			for( String en: retour.keySet() ) {
 				System.out.println(en);

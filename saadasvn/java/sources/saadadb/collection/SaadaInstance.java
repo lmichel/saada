@@ -71,7 +71,7 @@ public abstract class SaadaInstance implements DMInterface {
 	public String namesaada = saadadb.util.SaadaConstant.STRING;
 	public long date_load = saadadb.util.SaadaConstant.LONG;
 	public char access_right = 'X';
-	public VignetteFile vignetteFile = null;
+	protected VignetteFile vignetteFile = null;
 	public boolean loaded = false;
 	private DMInterface current_dm_interface;
 	/**
@@ -555,11 +555,7 @@ public abstract class SaadaInstance implements DMInterface {
 	/**
 	 * @param name
 	 * @return
-	 * @throws NoSuchFieldException 
-	 * @throws IllegalAccessException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
-	 * @throws SaadaException 
+	 * @throws Exception 
 	 */
 	public Object getFieldValue(String field) throws Exception {
 		if( field.startsWith("_")) {
@@ -609,10 +605,6 @@ public abstract class SaadaInstance implements DMInterface {
 	/**
 	 * @param name
 	 * @return
-	 * @throws NoSuchFieldException 
-	 * @throws IllegalAccessException 
-	 * @throws SecurityException 
-	 * @throws IllegalArgumentException 
 	 * @throws Exception 
 	 */
 	public Object getFormatedFieldValue(String field) throws Exception {
@@ -1258,6 +1250,7 @@ public abstract class SaadaInstance implements DMInterface {
 			return retour;
 		}
 	}
+	
 
 	/**
 	 * @param full_path
@@ -1359,6 +1352,10 @@ public abstract class SaadaInstance implements DMInterface {
 			+ this.getProduct_url_csa();
 		}
 	}
+	
+	public String getURL() {
+		return SaadaConstant.STRING;
+	}
 	/***
 	 * returns the name of the repository file
 	 * @return
@@ -1415,6 +1412,77 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public abstract String getProduct_url_csa() ;
 
+
+	/**
+	 * Attempt to re-build the loader configuration from the class description stored in saada_class table.
+	 * Can be confusing if multiple configuration have been used to load one class.
+	 * Must be replaced with the storage of some relevant parameters at product level (e.g. extension#))
+	 * @return
+	 * @throws SaadaException
+	 */
+	public ConfigurationDefaultHandler getLoaderConfig() throws SaadaException {
+		if( this.getCategory() == Category.ENTRY ) {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not get loader configuration for entries: try with the table");
+			return null;
+		}
+		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
+		String description = mc.getDescription().trim();
+		Pattern p = Pattern.compile("ArgsParser\\((.*)\\)");
+		Matcher m = p.matcher(description);
+		if( m.find() && m.groupCount() == 1 ) {
+			switch (this.getCategory()) {
+			case Category.MISC: return new ConfigurationMisc("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
+			case Category.IMAGE: return new ConfigurationImage("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
+			case Category.SPECTRUM: return new ConfigurationSpectrum("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
+			case Category.TABLE: return new ConfigurationTable("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
+			case Category.FLATFILE: return new ConfigurationFlatfile("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
+			default: FatalException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown category <" + this.getCategory() + ">");
+			}
+		}
+		else {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not read configuration for class " + mc.getName() + " in SQL table saada_class");			
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		String retour = "";
+		try {
+			this.loadBusinessAttribute();
+			if( this.current_dm_interface != null ) {
+				String dm_name = this.getDMName();
+				this.loadBusinessAttribute();
+				LinkedHashMap<String, String> sf = this.getSQLFields();
+				retour = "View with DM " + dm_name + "\nOID = " + this.oidsaada;
+				for( Entry<String, String> e: sf.entrySet()) {
+					retour += "\n" + e.getKey() + " (" + e.getValue() + ") = " + this.getDMFieldValue(e.getKey());
+				}
+				return retour;
+			}
+			else {
+				retour = "Native Attribute\nCollection: " + this.getCollection().getName() 
+				+ " Category: " + Category.explain(this.getCategory()) 
+				+ " class: " + this.getSaadaClass().getName() + "\n";
+
+				Field[] fs = this.getClass().getFields();
+				for( int i=0 ; i< fs.length ; i++ ) {
+					Field f = fs[i];
+					retour += f.getName() + " (" + f.getType() + "): " + f.get(this) + "\n";
+				}
+				return retour;
+			}
+		} catch (Exception e2) {
+			return e2.getMessage();
+		}
+	}
+	/*************************************************************
+	 * VO ACcess
+	 */
+	
 	/*
 	 * Data model implementation
 	 */
@@ -1531,75 +1599,11 @@ public abstract class SaadaInstance implements DMInterface {
 		}
 	}
 
-
 	/**
-	 * Attempt to re-build the loader configuration from the class description stored in saada_class table.
-	 * Can be confusing if multiple configuration have been used to load one class.
-	 * Must be replaced with the storage of some relevant parameters at product level (e.g. extension#))
-	 * @return
-	 * @throws SaadaException
+	 * Code sample testing the use of a DM
+	 * @param args
+	 * @throws Exception
 	 */
-	public ConfigurationDefaultHandler getLoaderConfig() throws SaadaException {
-		if( this.getCategory() == Category.ENTRY ) {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not get loader configuration for entries: try with the table");
-			return null;
-		}
-		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
-		String description = mc.getDescription().trim();
-		Pattern p = Pattern.compile("ArgsParser\\((.*)\\)");
-		Matcher m = p.matcher(description);
-		if( m.find() && m.groupCount() == 1 ) {
-			switch (this.getCategory()) {
-			case Category.MISC: return new ConfigurationMisc("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
-			case Category.IMAGE: return new ConfigurationImage("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
-			case Category.SPECTRUM: return new ConfigurationSpectrum("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
-			case Category.TABLE: return new ConfigurationTable("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
-			case Category.FLATFILE: return new ConfigurationFlatfile("Read in DB", new ArgsParser( m.group(1).trim().split(" ")));
-			default: FatalException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown category <" + this.getCategory() + ">");
-			}
-		}
-		else {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not read configuration for class " + mc.getName() + " in SQL table saada_class");			
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		String retour = "";
-		try {
-			this.loadBusinessAttribute();
-			if( this.current_dm_interface != null ) {
-				String dm_name = this.getDMName();
-				this.loadBusinessAttribute();
-				LinkedHashMap<String, String> sf = this.getSQLFields();
-				retour = "View with DM " + dm_name + "\nOID = " + this.oidsaada;
-				for( Entry<String, String> e: sf.entrySet()) {
-					retour += "\n" + e.getKey() + " (" + e.getValue() + ") = " + this.getDMFieldValue(e.getKey());
-				}
-				return retour;
-			}
-			else {
-				retour = "Native Attribute\nCollection: " + this.getCollection().getName() 
-				+ " Category: " + Category.explain(this.getCategory()) 
-				+ " class: " + this.getSaadaClass().getName() + "\n";
-
-				Field[] fs = this.getClass().getFields();
-				for( int i=0 ; i< fs.length ; i++ ) {
-					Field f = fs[i];
-					retour += f.getName() + " (" + f.getType() + "): " + f.get(this) + "\n";
-				}
-				return retour;
-			}
-		} catch (Exception e2) {
-			return e2.getMessage();
-		}
-	}
-
-
 	public static void main(String[] args) throws Exception {
 		Database.init("XIDResult");
 		Query q = new Query("Select ENTRY From * In * ");
@@ -1613,4 +1617,5 @@ public abstract class SaadaInstance implements DMInterface {
 			System.out.println(si.getOid() + " " + si.getDMFieldValue("E_Mag"));
 		}
 	}
+	
 }

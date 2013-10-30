@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
+import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
@@ -38,6 +39,7 @@ public class VOServiceList extends JPanel {
 	 * @param toActive
 	 */
 	public VOServiceList(VOServiceItemSelector itemSelector, String protocol, int[] allowedCategories) {
+		System.out.println("@@@@@@@@@@@@@@@ " + protocol);
 		this.allowedCategories = allowedCategories;
 		this.itemSelector = itemSelector;
 		this.protocol = protocol;
@@ -191,6 +193,9 @@ public class VOServiceList extends JPanel {
 	}
 	protected String getDescription() {
 		return this.itemSelector.getDescription();
+	}
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;		
 	}
 	public void saveCapabilities() throws Exception {
 		for( VOServiceListItem tsi: items) {

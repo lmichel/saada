@@ -101,7 +101,7 @@ public class DataLoaderPanel extends TaskPanel {
 			showInputError(rootFrame, "Can not change data treepath in this context");
 		}else if( dataTreePath != null ) {
 			if( dataTreePath.isCollectionLevel() ) {
-				runButton.inActivate();
+				runButton.inactivate();
 			}
 			else {
 				super.setDataTreePath(dataTreePath);

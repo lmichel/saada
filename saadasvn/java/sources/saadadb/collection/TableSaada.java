@@ -1,6 +1,5 @@
 package saadadb.collection;
 
-import saadadb.util.SaadaConstant;
 
 /**
  * <p>Title: SAADA</p>
@@ -14,8 +13,8 @@ import saadadb.util.SaadaConstant;
 
 public class TableSaada extends SaadaInstance {
 	public long group_oid_csa;
-	public String product_url_csa=SaadaConstant.STRING;
 	public int nb_rows_csa;
+	public String product_url_csa;
 	
 	public TableSaada() {
 		super();

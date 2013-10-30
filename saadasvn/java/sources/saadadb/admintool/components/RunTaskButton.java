@@ -17,8 +17,9 @@ public class RunTaskButton extends JButton {
 
 	public RunTaskButton(TaskPanel adminPanel) {
 		super(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icons/Run.png")));
+
 		this.adminPanel = adminPanel;
-		this.setToolTipText("Run");
+		this.setToolTipText("Run task");
 		this.setEnabled(false);
 		this.setPreferredSize(new Dimension(60, 40));
 		this.addActionListener(new ActionListener() {
@@ -48,7 +49,7 @@ public class RunTaskButton extends JButton {
 	public void activate() {
 		this.setEnabled(true);
 	}
-	public void inActivate() {
+	public void inactivate() {
 		this.setEnabled(false);
 	}
 

@@ -243,7 +243,6 @@ public class DBInstallPanel extends JPanel{
 						Table_SaadaDB.changeTomcatdir(td);
 						SQLTable.commitTransaction();
 						Database.init(Database.getName());
-						System.out.println("@@@@ TD " + td);
 						dir_tomcat.setText(td);
 					} catch (SaadaException e) {
 						SaadaDBAdmin.showFatalError(DBInstallPanel.this.frame, e);

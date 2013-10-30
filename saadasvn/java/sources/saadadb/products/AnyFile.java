@@ -75,7 +75,7 @@ public class AnyFile extends File implements ProductFile {
 		return null;
 	}
 
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException {
+	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
 		return null;
 	}
 

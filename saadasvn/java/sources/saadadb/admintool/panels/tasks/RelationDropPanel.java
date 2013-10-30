@@ -18,7 +18,6 @@ import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
@@ -57,8 +56,7 @@ public class RelationDropPanel extends TaskPanel {
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#acceptTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
-	public boolean acceptTreePath(DataTreePath dataTreePath) 
-	{
+	public boolean acceptTreePath(DataTreePath dataTreePath) {
 		if (dataTreePath.isRootOrCollectionLevel())
 		{
 			showInputError(rootFrame, "You must select either a collection, a category (IMAGE, SPECTRUM, ...) or a class.");

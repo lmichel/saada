@@ -70,7 +70,6 @@ public class ObscoreMapperPanel extends TaskPanel {
 	 */
 	public boolean acceptTreePath(DataTreePath dataTreePath) {
 		if( dataTreePath == null || !dataTreePath.isClassLevel() ) {
-			System.out.println("coucu");
 			showInputError(rootFrame, "DM mapping can only be done at class level. Select a class (a tree leaf) on the Database map");
 			return false;
 		} else {

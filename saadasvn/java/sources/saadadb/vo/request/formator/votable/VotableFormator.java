@@ -373,7 +373,6 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
 		addTD(Long.toString(obj.getOid()));
 		addCDataTD(obj.getNameSaada().replaceAll("#", ""));
-
 	}
 
 
@@ -395,8 +394,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 		field.setName(key_field);
 		field.setRef(key_field);
 		field.setType("hidden");
-		field.setDataType("char"); field.setArraySize("*");
-		field.setUtype("utype.not.set");
+		field.setDataType("char"); 
+		field.setArraySize("*");
+		field.setUcd("meta.id");
 		fieldset.addItem(field);
 
 		SavotLink link = new SavotLink();
@@ -405,7 +405,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 		links.addItem(link);
 		field = new SavotField();
 		field.setName("Saada Anchor");
-		field.setUtype("utype.not.set");
+		field.setUcd("meta.ref.url");
 		field.setDataType("char");
 		field.setArraySize("*");
 		field.setLinks(links);

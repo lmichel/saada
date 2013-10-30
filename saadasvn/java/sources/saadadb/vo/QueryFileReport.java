@@ -252,7 +252,7 @@ public class QueryFileReport {
 		formator.setLimit(limit);
 		formator.setResult_filename(Repository.getVoreportsPath() + Database.getSepar() + dl_default_fn);
 		http_response.setContentType(this.mime_type); 	
-		http_response.setHeader("Content-Disposition", "attachment; filename=\"" + dl_default_fn + "\"");
+		http_response.setHeader("Content-Disposition", "inline; filename=\"" + dl_default_fn + "\"");
 
 		if( translator != null ) {
 			//Streaming mode might run joins between class and collection

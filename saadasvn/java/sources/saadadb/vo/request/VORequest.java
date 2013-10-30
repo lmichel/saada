@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;
+import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.query.VOQuery;
@@ -158,6 +159,20 @@ public abstract class VORequest {
 		}
 	}
 	
+	public String[] getResponseFilePath() throws Exception {
+		if( formators.size() == 0 ) {
+			QueryException.throwNewException(SaadaException.MISSING_RESOURCE, "VO request has no response formator");			
+		}
+		else {
+			ArrayList<String> al = new ArrayList<String>();
+			for(Formator formator: formators.values()) {
+				al.add(formator.getResponseFilePath());
+			}
+			return al.toArray(new String[0]);
+		}
+		return null;
+	}
+	
 	/**
 	 * Tell to formators to include relationships in responses. 
 	 * There is no validation at this level
@@ -276,8 +291,7 @@ public abstract class VORequest {
 		try {
 			if( this.voQuery.isMetaQuery(pmap) ) {
 				return this.buildMetaResponses();				
-			}
-			else {
+			} else {
 				this.init(pmap);
 				this.runQuery();
 				retour =  this.buildResponses();
@@ -292,6 +306,7 @@ public abstract class VORequest {
 				Messenger.printStackTrace(e1);
 			}
 		}
+		SQLTable.dropTmpTables();
 		return retour;
 
 	}

@@ -83,7 +83,7 @@ public class FormPanel extends JPanel {
 	protected JRadioButton[] cat_button = { new JRadioButton("Misc")
 	, new JRadioButton("Image")
 	, new JRadioButton("Spectrum")
-	, new JRadioButton("Table")
+	, new JRadioButton("Table") 
 	, new JRadioButton("Entry")
 	, new JRadioButton("Flatfile")};
 	LinkedHashMap[] cat_att = { new LinkedHashMap<String, String>()

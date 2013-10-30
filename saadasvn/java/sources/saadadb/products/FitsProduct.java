@@ -1328,7 +1328,7 @@ public class FitsProduct extends File implements ProductFile{
 			//					System.out.println(buf[i]);
 			//			}
 			//			System.exit(1);
-			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getMap(null);
+			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
 			for( String en: retour.keySet() ) {
 				System.out.println(en);
 				for( AttributeHandler ah: retour.get(en)) {
@@ -1350,7 +1350,7 @@ public class FitsProduct extends File implements ProductFile{
 	 * @throws FitsException
 	 * @throws IOException
 	 */
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException {
+	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
 		try {
 			//int i=0;
 			BasicHDU bHDU = null;
