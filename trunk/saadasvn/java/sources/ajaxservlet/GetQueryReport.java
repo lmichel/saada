@@ -1,6 +1,9 @@
 package ajaxservlet;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -8,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.accounting.UserTrap;
+
 import saadadb.vo.QueryFileReport;
+import saadadb.vo.request.SaadaqlRequest;
 
 /**
  * Servlet implementation class GetQueryReport
@@ -43,48 +49,43 @@ public class GetQueryReport extends SaadaServlet implements Servlet {
 			String query = req.getParameter("query");
 			String format = req.getParameter("format");
 			String slimit = req.getParameter("limit");
-			String sprotoc = req.getParameter("protocol");
-			String datamodel = req.getParameter("datamodel");
+			String model = req.getParameter("model");
 
-			int protoc = QueryFileReport.NO_PROTOCOL;
-			if( sprotoc != null ) {
-				if( "sia".equalsIgnoreCase(sprotoc)) {
-					protoc = QueryFileReport.SIA;
-				}
-				else if( "ssa".equalsIgnoreCase(sprotoc)) {
-					protoc = QueryFileReport.SSA;
-				}
-				else if( "cs".equalsIgnoreCase(sprotoc) || "cone search".equalsIgnoreCase(sprotoc) || "conesearch".equalsIgnoreCase(sprotoc)) {
-					protoc = QueryFileReport.CS;
-				}
-				else if( "auto".equalsIgnoreCase(sprotoc)) {
-					protoc = QueryFileReport.AUTO;
-				}
-				else if( "noprotocol".equalsIgnoreCase(sprotoc)) {
-					protoc = QueryFileReport.NO_PROTOCOL;
-				}
-
-			}
+			int limit  = 10000;
+	
 			if( query == null || query.length() == 0 ) {
 				this.getErrorPage(req, res, " Missing query parameter");
 			}
 			else if( format == null || format.length() == 0 ) {
 				this.getErrorPage(req, res, " Missing format parameter");
-			}
-			else {
-				int limit ;
+			} else {
 				try {
 					limit = Integer.parseInt(slimit);
 				} catch( Exception e) {	
 					limit = 10000;
 				}
-				/*
-				 * QueryFileReport executes the query again. That can be avoided by looking in the user session for 
-				 * the oids matching that query.
-				 */
-				QueryFileReport qfr = new QueryFileReport(protoc, datamodel, query, format);
-				qfr.getQueryReport(res, limit);
 			}
+				
+			Map<String, String> pmap = new LinkedHashMap<String, String>();
+			pmap.put("query", query);
+			pmap.put("limit", Integer.toString(limit));
+			if( model != null ){
+				pmap.put("model", model);
+			}
+//				/*
+//				 * QueryFileReport executes the query again. That can be avoided by looking in the user session for 
+//				 * the oids matching that query.
+//				 */
+//				QueryFileReport qfr = new QueryFileReport(protoc, datamodel, query, format);
+//				qfr.getQueryReport(res, limit);
+				String dir = UserTrap.getUserAccount(req).getReportDir();
+				String fn = "Saadaql";
+				SaadaqlRequest request = new SaadaqlRequest( UserTrap.getUserAccount(req).getSessionID(), dir);
+				request.addFormator((format != null)? format: "votable");
+				request.setResponseFilePath(fn);
+				request.processRequest(pmap);		
+				downloadProduct(req, res, request.getResponseFilePath()[0]);
+
 		} catch (Exception e) {
 			this.getErrorPage(req, res, e);
 		}
