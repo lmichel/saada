@@ -2,6 +2,7 @@ package saadadb.resourcetest;
 
 import java.util.LinkedHashMap;
 
+import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -17,7 +18,8 @@ public class SaadaqlRequestTester {
 	 */
 	public static void main(String[] args) throws Exception {
 		Messenger.debug_mode = false;
-		Database.init(args[args.length - 1]);
+		ArgsParser ap = new ArgsParser(args);
+		Database.init(ap.getDBName());
 		LinkedHashMap<String, String> pmap = new LinkedHashMap<String, String>();
 		Messenger.printMsg(Messenger.TRACE, "Parameters:");
 		for( int i=0 ; i<(args.length - 1) ; i++ ) {
@@ -28,11 +30,8 @@ public class SaadaqlRequestTester {
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
+		pmap.put("model", "sia");
 		SaadaqlRequest request = new SaadaqlRequest("NoSession", "/home/michel/Desktop");
-		request.addFormator("fits");
-		request.setResponseFilePath("Saadaql");
-		request.processRequest(pmap);
-		request = new SaadaqlRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
 		request.setResponseFilePath("Saadaql");
 		request.processRequest(pmap);

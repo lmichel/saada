@@ -108,7 +108,7 @@ public class FooProduct implements ProductFile {
 		this.pointer = 0;
 	}
 
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getMap(
+	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(
 			String category) throws IgnoreException {
 		LinkedHashMap<String, ArrayList<AttributeHandler>> retour = new LinkedHashMap<String, ArrayList<AttributeHandler>>();
 		retour .put("HEADER", new ArrayList<AttributeHandler>(kws.values()));

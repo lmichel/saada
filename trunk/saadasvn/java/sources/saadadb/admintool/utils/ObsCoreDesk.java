@@ -37,6 +37,21 @@ public class ObsCoreDesk {
 			} else {
 				return "";
 			}
+		} else if( "s_region".equalsIgnoreCase(fieldName)  ) {
+			if( category == Category.IMAGE  ) {				
+				return Database.getWrapper().getStrcatOp(
+				  "'POLYGON " + Database.getCooSys() + "' "
+				, " " +  Database.getWrapper().castToString("(pos_ra_csa - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa - size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(pos_ra_csa - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa + size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(pos_ra_csa + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa + size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(pos_ra_csa + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa - size_delta_csa/2)")) ;
+			} else if( category == Category.SPECTRUM ||  category == Category.ENTRY ) {
+				return Database.getWrapper().getStrcatOp(
+						  "'POSITION " + Database.getCooSys() + "' "
+						, " " +  Database.getWrapper().castToString("pos_ra_csa"), " " + Database.getWrapper().castToString("pos_dec_csa"));
+			} else {
+				return "";
+			}
 		} else if( "s_ra_min".equalsIgnoreCase(fieldName)  ) {
 			if(category == Category.IMAGE ) {
 				return "pos_ra_csa - size_alpha_csa/2";

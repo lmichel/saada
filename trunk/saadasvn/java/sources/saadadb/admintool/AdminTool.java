@@ -24,8 +24,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
 import saadadb.admintool.cmdthread.CmdThread;
-import saadadb.admintool.cmdthread.DummyTask;
-import saadadb.admintool.cmdthread.LongDummyVerboseTask;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.BaseFrame;
@@ -46,8 +44,6 @@ import saadadb.admintool.panels.editors.DBInstallPanel;
 import saadadb.admintool.panels.editors.LogsDisplayPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.panels.editors.RelationDisplayAllPanel;
-import saadadb.admintool.panels.editors.SAPServicePanel;
-import saadadb.admintool.panels.editors.TAPServicePanel;
 import saadadb.admintool.panels.editors.VOProtocolFieldsPanel;
 import saadadb.admintool.panels.editors.VOPublishedResourcesPanel;
 import saadadb.admintool.panels.editors.VORegistryPanel;
@@ -71,7 +67,9 @@ import saadadb.admintool.panels.tasks.RelationDropPanel;
 import saadadb.admintool.panels.tasks.RelationEmptyPanel;
 import saadadb.admintool.panels.tasks.RelationIndexPanel;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
+import saadadb.admintool.panels.tasks.SAPServicePanel;
 import saadadb.admintool.panels.tasks.SQLIndexPanel;
+import saadadb.admintool.panels.tasks.TAPServicePanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -134,10 +132,10 @@ public class AdminTool extends BaseFrame {
 	private EditPanel webInstallPanel;
 
 	private EditPanel voCurator;;
-	private EditPanel tapService;
-	private EditPanel siaService;
-	private EditPanel ssaService;
-	private EditPanel csService;
+	private TaskPanel tapService;
+	private TaskPanel siaService;
+	private TaskPanel ssaService;
+	private TaskPanel csService;
 
 	private TaskPanel obscoreMapperPanel;
 	private EditPanel protocolFieldsPanel;

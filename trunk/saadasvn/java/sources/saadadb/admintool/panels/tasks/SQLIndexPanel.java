@@ -81,7 +81,7 @@ public class SQLIndexPanel extends TaskPanel {
 				size = rs.getInt(1);
 				if( size < 1000 ) {
 					limit = "<BR>Table with less than 1000 rows are not indexed";
-					runButton.inActivate();
+					runButton.inactivate();
 					//					indexAll.setEnabled(false);
 					//					indexAll.setEnabled(false);
 				}

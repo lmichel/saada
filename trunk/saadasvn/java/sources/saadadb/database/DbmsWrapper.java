@@ -372,6 +372,13 @@ abstract public class DbmsWrapper {
 	public abstract String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception;
 
 	/**
+	 * Says if a drop table can be achieved within a transaction (false for SQLIte)
+	 * @return
+	 */
+	public boolean supportDropTableInTransaction() {
+		return true;
+	}
+	/**
 	 * Returns true if there is no SQL statement loading data from a file
 	 * In that case, the wrapper does this job out of the current transaction
 	 * @return

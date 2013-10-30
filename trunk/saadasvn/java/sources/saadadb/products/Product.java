@@ -19,6 +19,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
@@ -100,7 +101,7 @@ public class Product /*extends File*/ {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#closeStream()
 	 */
-	public void close() {
+	public void close() throws QueryException {
 		if( productFile != null) {
 			productFile.closeStream();
 		}
@@ -190,6 +191,7 @@ public class Product /*extends File*/ {
 	 * @throws IOException 
 	 * @throws FitsException 
 	 */
+	@SuppressWarnings("rawtypes")
 	public Enumeration elements() throws IgnoreException {
 		// Initializes the enumeration of table rows (essential in stream mode).
 		productFile.initEnumeration();
@@ -732,6 +734,7 @@ public class Product /*extends File*/ {
 	 * Compute the MD key of the format read in the tabel of attribte handler.
 	 * The key is independant fron the attribute order
 	 */
+	@SuppressWarnings("rawtypes")
 	public void setFmtsignature() {
 		/*
 		 * Build an ordered map with name/type of each attribute
@@ -1209,6 +1212,7 @@ public class Product /*extends File*/ {
 		 * Uses UCDs after
 		 */
 		else if( this.tableAttributeHandler != null ) {
+			@SuppressWarnings("rawtypes")
 			Iterator it = this.tableAttributeHandler.keySet().iterator();
 			while( it.hasNext() ) {
 				AttributeHandler ah = this.tableAttributeHandler.get(it.next());
@@ -1294,6 +1298,7 @@ public class Product /*extends File*/ {
 	 * @return
 	 */
 	private boolean mapCollectionPoserrorAttributesAuto() {
+		@SuppressWarnings("rawtypes")
 		Iterator it = this.tableAttributeHandler.keySet().iterator();
 		boolean ra_err_found = false;
 		boolean dec_err_found = false;

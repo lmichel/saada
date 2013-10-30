@@ -82,6 +82,7 @@ public class VOServiceItemSelector extends JPanel {
 			this.resourceList.addResource(cap);
 		}		
 		this.resourceList.displayListItems();
+		this.tapServicePanel.activate(true);
 	}
 	public boolean setDataTreePath(DataTreePath dataTreePath) throws SaadaException {
 		if( dataTreePath.isCollectionLevel() ) {
@@ -110,5 +111,16 @@ public class VOServiceItemSelector extends JPanel {
 	}
 	public boolean isEmpty() {
 		return (this.resourceList.items.size() == 0) ? true: false;
+	}
+	public VOServiceList getResourceList() {
+		return resourceList;
+	}
+	public String getProtocol() {
+		return this.protocol;
+	}
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+		resourceList.setProtocol(protocol);
+		
 	}
 }

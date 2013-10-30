@@ -7,6 +7,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.request.formator.sapmapper.SapFieldMapper;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
@@ -16,8 +17,17 @@ import cds.savot.model.TDSet;
 /**
  * @author laurent
  * @version 07/2011
+ * 10/2013: Support of S*AP model
  */
 public class SaadaqlVotableFormator extends VotableFormator {
+	/**
+	 * True if the current model is not "native"
+	 */
+	private boolean needModel = true;
+	/**
+	 * Object doing a rough mapping from native fields to S*AP fields @see SapFieldMapper
+	 */
+	private SapFieldMapper sapFieldMapper = new SapFieldMapper();
 
 	public SaadaqlVotableFormator() throws QueryException {
 		limit = 100000;
@@ -35,25 +45,53 @@ public class SaadaqlVotableFormator extends VotableFormator {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.VOResultFormator#setProtocolParams(java.util.Map)
 	 */
+	/* (non-Javadoc)
+	 * @see saadadb.vo.request.formator.QueryResultFormator#setProtocolParams(java.util.Map)
+	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
 		this.protocolParams = fmtParams;
-		for( String k: fmtParams.keySet() ) {
-			System.out.println(k + " " + fmtParams.get(k));
+		String model = this.protocolParams.get("model");
+		String category = this.protocolParams.get("category");
+		/*
+		 * Switch on on good S*AP model if a vo/samp model is requested
+		 */
+		if( "samp".equalsIgnoreCase(model) ||  "samp".equalsIgnoreCase(model) ) {
+			if( "ENTRY".equalsIgnoreCase(category)) {
+				model = "cs";
+			} else if( "IMAGE".equalsIgnoreCase(category)) {
+				model = "sia";
+			}  else if( "SPECTRUM".equalsIgnoreCase(category)) {
+				model = "ssa";
+			} else {
+				model = "";
+			}
 		}
-		String str ;
-		if( (str = this.protocolParams.get("class")) != null ) {
-			String[] classes = str.split(",");
-			if( classes.length == 1 && !classes[0].equals("*") ) {
-				setDataModel("native class" + classes[0] ) ;
-				return;
-			}			
+		/*
+		 * Switch on the requested model
+		 */
+		if( "sia".equalsIgnoreCase(model)) {
+			setDataModel("SIA"); 			
+		} else if( "ssa".equalsIgnoreCase(model)) {
+			setDataModel("SSA"); 			
+		}else if( "cs".equalsIgnoreCase(model)) {
+			setDataModel("CS"); 			
+		} else{
+			this.needModel = false;
+			String str;
+			if( (str = this.protocolParams.get("class")) != null ) {
+				String[] classes = str.split(",");
+				if( classes.length == 1 && !classes[0].equals("*") ) {
+					setDataModel("native class " + classes[0] ) ;
+					return;
+				}			
+			}
+			if ((str = this.protocolParams.get("category")) != null) {
+				setDataModel("native " + str) ;
+			} else {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot extract DM from paramters" );
+			}
 		}
-		if ((str = this.protocolParams.get("category")) != null) {
-			setDataModel("native" + str) ;
-		}
-		else {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot extract DM from paramters" );
-		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -69,6 +107,7 @@ public class SaadaqlVotableFormator extends VotableFormator {
 					break;
 				}
 				SaadaInstance saadaInstance = saadaInstanceResultSet.getInstance();
+				if( needModel )sapFieldMapper.setInstance(saadaInstance);
 				i++;
 				SavotTR savotTR = new SavotTR();					
 				tdSet = new TDSet();
@@ -98,31 +137,53 @@ public class SaadaqlVotableFormator extends VotableFormator {
 			if( id.length() == 0 ) {
 				id = sf.getName();
 			}
-			Object val;
+			Object val="";
 			String colname = sf.getName();
+			boolean valSet = false, cdata = false;
 			try {
 				/*
-				 * Columns with names starting with ucd_ denote values returned by UCD based queries
-				 * The real value must then be retrieved in the business object
+				 * Use first the model mapping
 				 */
-				if( colname.startsWith("ucd_")) {
-					val = obj.getFieldValueByUCD(sf.getUcd(), false);
+				if( this.needModel ) {
+					String ucd = sf.getUcd();
+					String utype = sf.getUtype();
+					if( ucd.length() > 0 ) {
+						sapFieldMapper.getFieldValue(sf.getUcd());
+					}
+					if( sapFieldMapper.value.isNotSet && utype.length() > 0 ) {
+						sapFieldMapper.getFieldValue(sf.getUtype());
+					}
+					valSet = !sapFieldMapper.value.isNotSet;
+					val = sapFieldMapper.value.fieldValue.trim();
+					cdata = sapFieldMapper.value.isCdata;
 				}
-				else if( colname.equals("product_url_csa") ) {
-					val = obj.getURL(true);
-				}
-				else {
-					val = obj.getFieldValue(colname);
+				/*
+				 * If the value can not be set within the model of if there is no model mapping
+				 * Let's look at native fields
+				 */
+				if( !valSet) {
+					if( sf.getDataType().equals("char") ) cdata= true;
+					/*
+					 * Columns with names starting with ucd_ denote values returned by UCD based queries
+					 * The real value must then be retrieved in the business object
+					 */
+					if( colname.startsWith("ucd_")) {
+						val = obj.getFieldValueByUCD(sf.getUcd(), false);
+					} else if( colname.equals("product_url_csa") ) {
+						val = obj.getURL(true);
+					} else {
+						val = obj.getFieldValue(colname);
+					}
 				}
 			} catch(Exception e) {
-				e.printStackTrace();
-				val = "";
+				val = obj.getFieldValueByUCD(sf.getUcd(), false);
+				//val = "";
 			}
 			if( val == null ) val = "";
-			if( sf.getDataType().equals("char")) {
+			System.out.println("-" + sf.getUcd() + " " + sf.getName() + " >" + val + "<");
+			if( cdata) {
 				addCDataTD(val.toString());
-			}
-			else {
+			} else {
 				addTD(val.toString());						
 			}
 		}

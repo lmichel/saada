@@ -282,7 +282,11 @@ public abstract class SQLTable {
 	public static void dropTable(String table) throws AbortException {
 		try {
 			if( Database.getWrapper().tableExist(table)) {
-				addQueryToTransaction(Database.getWrapper().dropTable(table));				
+				addQueryToTransaction(Database.getWrapper().dropTable(table));		
+				if( !Database.getWrapper().supportDropTableInTransaction()) {
+					commitTransaction();
+					beginTransaction();
+				}
 			}
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR,e);

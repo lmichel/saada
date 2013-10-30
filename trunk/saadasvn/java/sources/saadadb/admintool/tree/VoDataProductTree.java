@@ -85,7 +85,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			return;
 		}
 		Map<String, ArrayList<AttributeHandler>> prd_map=null;
-		prd_map = prd.getMap(null);
+		prd_map = prd.getProductMap(null);
 		for( String ext: prd_map.keySet()) {
 			ArrayList<AttributeHandler> alah = prd_map.get(ext);
 			for( AttributeHandler ah: alah ) {

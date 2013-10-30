@@ -8,6 +8,7 @@ import java.util.Map;
 
 import nom.tam.fits.FitsException;
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 /**v * @version $Id$
 
@@ -65,7 +66,7 @@ public interface ProductFile extends Enumeration{
      * key = HDU
      * value = attribute handlers
      */
-	public Map<String, ArrayList<AttributeHandler>> getMap(String category) throws IgnoreException ;
+	public Map<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException ;
 	
 	/**
 	 * @return
@@ -84,7 +85,7 @@ public interface ProductFile extends Enumeration{
 	
 	public String getName();
 	
-	public void closeStream();
+	public void closeStream() throws QueryException;
 	
 
  }

@@ -14,9 +14,9 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
-import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import sun.security.pkcs.ParsingException;
 
 /**
  * @author michel
@@ -194,7 +194,6 @@ public class Loader extends SaadaProcess {
 		else if( requested_file.isDirectory() ) {
 			String[] dir_content = requested_file.list();
 			this.file_to_load = new ArrayList<File>(dir_content.length);
-			File f[] = new File[dir_content.length];
 			if( dir_content.length == 0 ) {
 				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
 				return;

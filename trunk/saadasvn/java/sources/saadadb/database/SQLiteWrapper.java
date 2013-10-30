@@ -715,6 +715,14 @@ public class SQLiteWrapper extends DbmsWrapper {
 		return "null";
 	}
 
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#supportDropTableInTransaction()
+	 */
+	public boolean supportDropTableInTransaction() {
+		return false;
+	}
+
 	@Override
 	public void storeTable(String tableName, int ncols, String tableFile) throws Exception {
 		if (Messenger.debug_mode)

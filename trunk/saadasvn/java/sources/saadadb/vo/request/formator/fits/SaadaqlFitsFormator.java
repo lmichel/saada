@@ -4,6 +4,7 @@ import java.util.Map;
 
 import saadadb.collection.SaadaInstance;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
@@ -33,11 +34,27 @@ public class SaadaqlFitsFormator extends FitsFormator {
 	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
 		this.protocolParams = fmtParams;
-		String[] classes = this.protocolParams.get("class").split(",");
-		if( classes.length == 1 && !classes[0].equals("*") ) {
-		}
-		else {
-			setDataModel("native" + this.protocolParams.get("category")) ;
+		String str;
+		String model = this.protocolParams.get("model");
+		if( "sia".equalsIgnoreCase(model)) {
+			setDataModel("SIA"); 			
+		} else if( "ssa".equalsIgnoreCase(model)) {
+			setDataModel("SSA"); 			
+		}else if( "cs".equalsIgnoreCase(model)) {
+			setDataModel("CS"); 			
+		} else{
+			if( (str = this.protocolParams.get("class")) != null ) {
+				String[] classes = str.split(",");
+				if( classes.length == 1 && !classes[0].equals("*") ) {
+					setDataModel("native class " + classes[0] ) ;
+					return;
+				}			
+			}
+			if ((str = this.protocolParams.get("category")) != null) {
+				setDataModel("native " + str) ;
+			} else {
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot extract DM from paramters" );
+			}
 		}
 	}
 
@@ -49,9 +66,7 @@ public class SaadaqlFitsFormator extends FitsFormator {
 	protected void writeData() throws Exception {
 		SaadaInstance si;
 		int i=0 ;
-		System.out.println("couco");
 		while( saadaInstanceResultSet.next() ) {
-			System.out.println("couco");
 			if( i >= this.limit ) {
 				break;
 			}
@@ -76,12 +91,10 @@ public class SaadaqlFitsFormator extends FitsFormator {
 	@Override
 	protected void writeRowData(SaadaInstance obj) throws Exception {
 		int pos = 0;
-		System.out.println("@@@ " );
 		for( UTypeHandler sf: this.column_set) {
 			Object data_column =  this.data[pos];
 			String name  = sf.getNickname();
 			String type  = sf.getType();
-			System.out.println("@@@ " + name);
 			if( name != null && name.length() > 0 ){
 				Object val = null;
 				/*
@@ -94,7 +107,6 @@ public class SaadaqlFitsFormator extends FitsFormator {
 				else {
 					val = obj.getFieldValue(name);
 				}
-				System.out.println(val);
 				if( name.equals("product_url_csa")) { 
 					((Object[])data_column)[currentLine] = obj.getDownloadURL(true);	
 				}
