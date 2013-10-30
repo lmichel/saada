@@ -20,7 +20,6 @@ jQuery
 		this.fireTreeNodeEvent = function(treepath) {
 			var mode = $("input[@name=qlang]:checked").val();
 			var runSaadaQL = false;
-			var runTAP = false;
 			if (mode == 'saadaql') {
 				runSaadaQL = true;
 			} else if (mode == 'sap') {
@@ -553,8 +552,7 @@ jQuery
 		this.initTable = function(dataJSONObject, query) {
 			if( Processing.jsonError(dataJSONObject, "") ) {
 				return;
-			}
-			else {
+			} else {
 				/*
 				 * Get table columns
 				 */
@@ -618,6 +616,15 @@ jQuery
 				 */
 				// p: change page
 			//	$('.fixedHeader').remove();
+				var iconBar = '&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>'	
+				+ '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
+				+ Printer.getSmallPrintButton("resultpane")
+				;
+				if( globalTreePath[1] == "ENTRY"){
+					var url = "getqueryreport?query=" + escape(query) + "&protocol=auto&format=votable";
+					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="WebSamp_mVc.fireSendVoreport(&quot;' + url + '&quot;, &quot;text/xml&quot;, null);"></a>';
+				}
+				
 				var  oTable = $('#datatable').dataTable({
 					"aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
@@ -625,8 +632,18 @@ jQuery
 					"aaSorting" : [],
 					"bSort" : false,
 					"bFilter" : false,
+					//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 					"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 					"sAjaxSource" : "nextpage"
+//					"fnDrawCallback": function() {
+//						var width = $(this).width();
+//						console.log($(this).width());
+//						var wa = new Array();
+//						$(this).find('thead').remove();
+//						$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
+//						$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
+//						$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
+//					}
 //				    "fnInitComplete": function(oSettings, json) {
 //						that.fixedHeader.fnUpdate();
 //				    } 
@@ -636,13 +653,8 @@ jQuery
 
 
 			}
-			$('#resultpane div.dataTables_length').append('&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a> ');		
-			$('#resultpane div.dataTables_length').append('<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');">');
-			$('#resultpane div.dataTables_length').append('&nbsp;' + Printer.getSmallPrintButton("resultpane"));
-			if( globalTreePath[1] == "ENTRY"){
-				var url = "getqueryreport?query=" + escape(query) + "&protocol=auto&format=votable";
-				$('#resultpane div.dataTables_length').append('<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="WebSamp_mVc.fireSendVoreport(&quot;' + url + '&quot;, &quot;text/xml&quot;, null);"></a>');
-			}
+			$('#resultpane div.dataTables_length').append(iconBar);
+			$('div .bottom').appendTo('#pouet1');
 			that.fireStoreHisto(query);
 			//this.fixedHeader.fnUpdate();
 	    	/*

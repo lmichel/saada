@@ -14,13 +14,12 @@ jQuery.extend({
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
-
+		};
 		this.fireTreeNodeEvent = function(treepath){
 			$.each(listeners, function(i){
 				listeners[i].controlTreeNodeEvent(treepath);
 			});
-		}
+		};
 		this.fireSubmitQueryEvent = function(){
 			var selected_prot = $('#saptab').tabs('option', 'selected'); 
 			// SIAP
@@ -44,7 +43,31 @@ jQuery.extend({
 			else {
 				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
-		}
+		};
+		this.fireSubmitSampEvent = function(){
+			var selected_prot = $('#saptab').tabs('option', 'selected'); 
+			// SIAP
+			if( selected_prot ==  0 ) {
+				$.each(listeners, function(i){
+					listeners[i].controlSIAPSampEvent();
+				});
+			}
+			// SSAP
+			else if( selected_prot ==  1 ) {
+				$.each(listeners, function(i){
+					listeners[i].controlSSAPSampEvent();
+				});	
+			}
+			// CS
+			else if( selected_prot ==  2 ) {
+				$.each(listeners, function(i){
+					listeners[i].controlCSSampEvent();
+				});				
+			}
+			else {
+				Modalinfo.info('#tab protocol out of range ' + selected_prot);
+			}
+		};
 		this.fireSubmitCapabilityEvent = function(){
 			var selected_prot = $('#saptab').tabs('option', 'selected'); 
 			// SIAP
@@ -68,7 +91,7 @@ jQuery.extend({
 			else {
 				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
-		}
+		};
 		this.fireSubmitRegistryEvent = function(){
 			var selected_prot = $('#saptab').tabs('option', 'selected'); 
 			// SIAP
@@ -92,7 +115,7 @@ jQuery.extend({
 			else {
 				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
-		}
+		};
 		this.fireSubmitGluEvent = function(){
 			var selected_prot = $('#saptab').tabs('option', 'selected'); 
 			// SIAP
@@ -116,7 +139,7 @@ jQuery.extend({
 			else {
 				Modalinfo.info('#tab protocol out of range ' + selected_prot);
 			}
-		}
+		};
 		
 		this.fireDisplayHisto = function(){
 			var result = '';
@@ -124,6 +147,6 @@ jQuery.extend({
 			result += '<img src="images/historight-grey.png">';	
 			$('#histoarrows').html('');
 			$('#histoarrows').html(result);
-		}
+		};
 	}
 });

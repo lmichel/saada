@@ -11,6 +11,9 @@ jQuery.extend({
 				controlSIAPQueryEvent: function(treepath){
 					model.processSIAPQueryEvent(treepath);
 				},
+				controlSIAPSampEvent: function(treepath){
+					model.processSIAPSampEvent(treepath);
+				},
 				controlSIAPCapabilityEvent: function(treepath){
 					model.processSIAPCapabilityEvent(treepath);
 				},
@@ -24,6 +27,9 @@ jQuery.extend({
 				controlSSAPQueryEvent: function(treepath){
 					model.processSSAPQueryEvent(treepath);
 				},
+				controlSSAPSampEvent: function(treepath){
+					model.processSSAPSampEvent(treepath);
+				},
 				controlSSAPCapabilityEvent: function(treepath){
 					model.processSSAPCapabilityEvent(treepath);
 				},
@@ -36,6 +42,9 @@ jQuery.extend({
 
 				controlCSQueryEvent: function(treepath){
 					model.processCSQueryEvent(treepath);
+				},
+				controlCSSampEvent: function(treepath){
+					model.processCSSampEvent(treepath);
 				},
 				controlCSCapabilityEvent: function(treepath){
 					model.processCSCapabilityEvent(treepath);
