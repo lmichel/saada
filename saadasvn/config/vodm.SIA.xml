@@ -97,7 +97,7 @@
 						<TD>-1</TD>
 						<TD></TD>
 						<TD>false</TD>
-						<TD></TD>
+						<TD>Image name used by Saada</TD>
 						<TD></TD>
 						<TD>3</TD>
 					</TR>
@@ -227,7 +227,7 @@
 						<TD></TD>
 						<TD>double</TD>
 						<TD>-1</TD>
-						<TD></TD>
+						<TD>pixel</TD>
 						<TD>false</TD>
 						<TD></TD>
 						<TD>image pixel coordinates of the WCS reference pixel</TD>
@@ -240,10 +240,10 @@
 						<TD></TD>
 						<TD>double</TD>
 						<TD>-1</TD>
-						<TD></TD>
+						<TD>pixel</TD>
 						<TD>false</TD>
 						<TD></TD>
-						<TD>image pixel coordinates of the WCS reference pixel</TD>
+						<TD>image coordinates of the WCS reference pixel</TD>
 						<TD>3</TD>
 					</TR>
 					<TR>
@@ -257,6 +257,59 @@
 						<TD>false</TD>
 						<TD></TD>
 						<TD>WCS CD matrix</TD>
+						<TD>3</TD>
+					</TR>
+
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_ID</TD>
+						<TD>VOX:BandPass_ID</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Bandpass name</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_Unit</TD>
+						<TD>VOX:BandPass_Unit</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Bandpass unit</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_RefValue</TD>
+						<TD>VOX:BandPass_RefValue</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_RefValue</TD>
+						<TD>VOX:BandPass_RefValue</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
 						<TD>3</TD>
 					</TR>
 
