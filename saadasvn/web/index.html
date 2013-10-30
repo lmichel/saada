@@ -110,8 +110,12 @@
 			<!-- 
 				NORTH data result
 			 -->
-			<div id="resultpane" class="pane ui-layout-center">
-				<h2 class=help>&nbsp;What to do now?</h2>
+			<div id="resultpane" class="pane ui-layout-center" >				
+<!-- 			    <div id='pouet1' style='width: 100%; height: 32px; background-color: red;'></div>
+			    <div id='pouet' style='width: 100%; height: 32px; background-color: red;'></div>
+			    <div id='resultpanedata' style='height: 50%; width: 100%; overflow-y: auto;overflow-x: visible;' >
+			
+ -->				<h2 class=help>&nbsp;What to do now?</h2>
 				<ul>
 					<li class=help style="font-size: large;"><b>Double click </b> on a data node <img src="images/dataNode.png"/> to display its content.</li>
 					<li class=help style="font-size: large;"><b>Drop a data node </b> on the meta icon <a href="javascript:void(0);" id=showquerymeta title='Show Metadata' class=question></a>
@@ -123,7 +127,8 @@
 					<li class=help style="font-size: large;"><b>Click on the cart icon</b> <a href="javascript:void(0);"  class=cart ></a> to manage the content of the shoppping cart</li>
 					<li class=help style="font-size: large;"><b>Drop a data node </b> on the query area below <img src="images/queryForm.png"/> to setup a query on that data collection</li>
 				</ul>
-			
+<!-- 			</div>
+ -->			
 			</div>
 			<!-- 
 				SOUTH panel query form
@@ -373,15 +378,21 @@
 									<input type=checkbox value=siapcorr><span>Include
 										associated data in the result</span><br> <input type=checkbox
 										value=siapcutout><span>Returns image cutouts
-										matching the ROI</span><br> <input type=button
+										matching the ROI</span><br>
+	<!-- 									<br> <input type=button
 										class=sapcapability value=Capability style="font-size: small;">
 									<input type=button class=sapregistry value='Registry Rec.'
 										style="font-size: small;"> <input type=button
-										class=sapglu value='Glu Mark' style="font-size: small;"><br>
+										class=sapglu value='Glu Mark' style="font-size: small;">
+ --><!-- 										<br>
 									<input type="radio" name="siapdl" value="votable" checked><span>Download
 										a VOtable</span> <input type="radio" name="siapdl"
 										value="Samp Client"><span>Display in a samp
-										client</span><br>
+										client</span>
+ -->										<a title="Send the entry selection to SAMP client" 
+										class="dl_samp" onclick="sapView.fireSubmitSampEvent();">
+										</a>
+										<br>
 								</div>
 							</div>
 						</div>
