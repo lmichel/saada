@@ -77,7 +77,7 @@ public class FormPanel extends JPanel {
 	protected JTextField tomcat_home = new JTextField(32);
 	protected JTextField url_root = new JTextField(24);
 
-	protected JComboBox att_type = new JComboBox(new String[]{"String", "int", "double", "boolean"});
+	protected JComboBox att_type = new JComboBox(new String[]{"String", "int", "long", "double", "boolean"});
 	protected JTextField att_name = new JTextField(10);
 	protected JComboBox att_list = new JComboBox();
 	protected JRadioButton[] cat_button = { new JRadioButton("Misc")
