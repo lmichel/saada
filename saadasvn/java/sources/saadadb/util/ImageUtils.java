@@ -9,6 +9,8 @@ package saadadb.util;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.BufferedOutputStream;
@@ -40,10 +42,13 @@ import cds.astro.Coo;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
+/**
+ * @author michel
+ * @version $Id$
+ */
 public abstract class ImageUtils {
 
-	/** * @version $Id$
-
+	/** 
 	 * Creates a JPEG file corresponding to the 2D image product with the
 	 * calibres in parameter.
 	 * @param nameFileOut
@@ -92,9 +97,16 @@ public abstract class ImageUtils {
 			/*
 			 * Buffered image to be encoded
 			 */
-			BufferedImage bi = new BufferedImage(i2w, i2h, BufferedImage.TYPE_BYTE_GRAY);
+			BufferedImage bi = new BufferedImage(i2w, i2h, BufferedImage.TYPE_BYTE_GRAY);		
+			/*
+			 * Flip the image horizontally
+			 */
+			AffineTransform affineTransform = AffineTransform.getScaleInstance(1, -1); 
+			affineTransform.translate(0, -bi.getHeight(null));
+			AffineTransformOp op = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);			
+			bi = op.filter(bi, null);		
 			Graphics2D g2d = bi.createGraphics();
-			g2d.drawImage(img3, null, null);   	       
+			g2d.drawImage(img3, affineTransform, null); 
 			/*
 			 * JPEG encoding
 			 * Some JDK (e.g. OpenJDK) contain JPEGEncoder class instead of inetrface. That makes the an error:
