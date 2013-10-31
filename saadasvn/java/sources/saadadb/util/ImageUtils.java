@@ -105,35 +105,14 @@ public abstract class ImageUtils {
 			affineTransform.translate(0, -bi.getHeight(null));
 			AffineTransformOp op = new AffineTransformOp(affineTransform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);			
 			bi = op.filter(bi, null);		
+			/*
+			 * Build the image
+			 */
 			Graphics2D g2d = bi.createGraphics();
 			g2d.drawImage(img3, affineTransform, null); 
-			/*
-			 * JPEG encoding
-			 * Some JDK (e.g. OpenJDK) contain JPEGEncoder class instead of inetrface. That makes the an error:
-			 * [java] Exception in thread "Thread-6" java.lang.IncompatibleClassChangeError: Found class com.sun.image.codec.jpeg.JPEGImageEncoder, but interface was expected
-			 * which can not be trapped.
-			 * We test the presence of the interface before to encode. If it does not exist no vignette is made but the process can continue
-			 */
-//			Class[] infcs = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(new FileOutputStream(nameFileOut))).getClass().getInterfaces();
-//			boolean interface_found = false;
-//			for( Class i : infcs) {
-//				if( i.getName().equals("com.sun.image.codec.jpeg.JPEGImageEncoder") ) {
-//					interface_found = true;
-//					break;
-//				}
-//			}
-//			if( interface_found ) {
-				ImageIO.write(bi, "jpeg", new FileOutputStream(nameFileOut));
-				
-//				JPEGImageEncoder dec = JPEGCodec.createJPEGEncoder(new BufferedOutputStream(
-//						new FileOutputStream(nameFileOut)));
-//				dec.encode(bi.getRaster());
-				Messenger.printMsg(Messenger.TRACE, "Thumbnail (" + i2w + "x" +i2h + ") <" + nameFileOut + "> created");
-//			}
-//			else {
-//				Messenger.printMsg(Messenger.WARNING, "Current JDK has no interface com.sun.image.codec.jpeg.JPEGImageEncoder: Can't create vignette");
-//			}
-		}catch(Exception e){
+			ImageIO.write(bi, "jpeg", new FileOutputStream(nameFileOut));
+			Messenger.printMsg(Messenger.TRACE, "Thumbnail (" + i2w + "x" +i2h + ") <" + nameFileOut + "> created");
+		} catch(Exception e){
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: " + e.getMessage());
 		}
@@ -331,7 +310,7 @@ public abstract class ImageUtils {
 				if( flagCut ) {
 					if( c<minCut || c>maxCut ) continue;
 				}
-				
+
 				sum += c;
 				nb++;
 
@@ -359,7 +338,7 @@ public abstract class ImageUtils {
 			if( max-max1>max1-min1 && max1!=Double.MIN_VALUE && max1!=min  ) max=max1;
 		}
 		double mediante = (max-min)/2 + min;
-		
+
 		mediante = (sum/nb);
 		boolean methode_bourrin = true;
 		if(methode_bourrin ) {
@@ -371,7 +350,7 @@ public abstract class ImageUtils {
 				c = (double)pIn[i];
 				double val = ( (alpha*c) + beta);
 				if( val >= 255 ) {
-					 pOut[i] = (byte) 255;
+					pOut[i] = (byte) 255;
 				}
 				else {
 					pOut[i] = (byte)val;
@@ -694,7 +673,7 @@ public abstract class ImageUtils {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		Image2D sp ;
-		
+
 		String img = "/rawdata/XIDResult/wfi_iap/images/AIP_XMM/DPLeo_R-BB_Rc_162_ESO844-852-set_6.fits";
 		Coo  c = new Coo(169.082889, 17.9419328);
 		buildTileFile(c.getLon(), c.getLat()
