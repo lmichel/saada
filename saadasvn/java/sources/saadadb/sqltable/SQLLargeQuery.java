@@ -32,6 +32,7 @@ public class SQLLargeQuery extends SQLQuery {
 			_stmts =large_connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			Database.getWrapper().setFetchSize(_stmts,5000);
 		} catch(Exception e) {
+			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}

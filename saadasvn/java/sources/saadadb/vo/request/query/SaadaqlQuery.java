@@ -108,8 +108,7 @@ public class SaadaqlQuery extends VOQuery {
 		String[] classes = saadaqlQuery.getSfiClause().getListClass();
 		if( classes.length == 1 && !"*".equals(classes[0]) ) {
 			instance = (SaadaInstance)  SaadaClassReloader.forGeneratedName(classes[0]).newInstance();
-		}
-		else {
+		} else {
 			instance = (SaadaInstance) Class.forName("generated." + Database.getName() + "." + Category.explain(saadaqlQuery.getSfiClause().getCatego()) + "UserColl").newInstance();			
 		}
 
@@ -120,9 +119,7 @@ public class SaadaqlQuery extends VOQuery {
 	 */
 	@Override
 	public void runQuery() throws Exception {
-
 		resultSet = saadaqlQuery.runAllColumnsQuery(instance, queryString);
-
 		if(resultSet == null) {
 			QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
 		}

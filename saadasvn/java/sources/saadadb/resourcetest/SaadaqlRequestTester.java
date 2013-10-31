@@ -30,7 +30,7 @@ public class SaadaqlRequestTester {
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
-		pmap.put("model", "sia");
+		pmap.put("model", "samp");
 		SaadaqlRequest request = new SaadaqlRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
 		request.setResponseFilePath("Saadaql");

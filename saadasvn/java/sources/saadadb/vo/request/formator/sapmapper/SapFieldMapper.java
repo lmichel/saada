@@ -11,6 +11,7 @@ import saadadb.collection.WCSSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.SpectralCoordinate;
+import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
 /**
@@ -189,10 +190,15 @@ public class SapFieldMapper {
 		value.init(fieldIdentifier);
 		value.isNotSet = false;
 		try {
-			if( fieldIdentifier.equals("Target.Pos") || fieldIdentifier.equals("Char.SpatialAxis.Coverage.Location.Value")) {
+			if( fieldIdentifier.equals("ID_MAIN")) {
+				value.fieldValue = Long.toString(instance.getOid());				
+			} else if( fieldIdentifier.equals("meta.title;meta.dataset")) {
+				value.fieldValue = instance.getCollection().getName() + "_" + Category.explain(instance.getCategory());				
+			} else if( fieldIdentifier.equals("Target.Pos") || fieldIdentifier.equals("Char.SpatialAxis.Coverage.Location.Value")) {
 				if( hasPos ) value.fieldValue = ra + " " + dec;
 				else  setNotSetValue();
-			} else if( fieldIdentifier.equals("Access.Reference") || fieldIdentifier.equalsIgnoreCase("VOX:Image_AccessReference") ) {
+			} else if( fieldIdentifier.equals("Access.Reference") || fieldIdentifier.equalsIgnoreCase("VOX:Image_AccessReference") 
+					|| fieldIdentifier.equalsIgnoreCase("meta.ref.url")) {
 				value.fieldValue = instance.getDownloadURL(true);
 			} else if( fieldIdentifier.equals("VOX:Image_FileSize") ) {
 				if( file != null ) value.fieldValue = Long.toString(file.length());
@@ -203,12 +209,15 @@ public class SapFieldMapper {
 			} else if( fieldIdentifier.equals("Access.Format") || fieldIdentifier.equalsIgnoreCase("VOX:Image_Format") ) {
 				value.isCdata = true;
 				value.fieldValue = instance.getMimeType();
-			} else if( fieldIdentifier.equals("DataID.Title") || fieldIdentifier.equalsIgnoreCase("VOX:Image_Title") ) {
+			} else if( fieldIdentifier.equals("DataID.Title") || fieldIdentifier.equalsIgnoreCase("VOX:Image_Title") 
+					|| fieldIdentifier.equalsIgnoreCase("meta.title")) {
 				value.isCdata = true;
 				value.fieldValue = instance.getNameSaada();
-			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
+			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_RA_MAIN") || fieldIdentifier.equalsIgnoreCase("pos.eq.ra") 
+					|| fieldIdentifier.equalsIgnoreCase("pos.eq.ra;meta.main")){
 				value.fieldValue = ra;
-			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
+			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_DEC_MAIN")|| fieldIdentifier.equalsIgnoreCase("pos.eq.dec")
+					|| fieldIdentifier.equalsIgnoreCase("pos.eq.dec;meta.main") ){
 				value.fieldValue = dec;
 			} else if( fieldIdentifier.equalsIgnoreCase("VOX:Image_Naxes") ){
 				value.fieldValue = "2";
@@ -272,6 +281,10 @@ public class SapFieldMapper {
 					if( v < 0 ) v *= -1.;
 					value.fieldValue = Double.toString(v);
 				}
+			} else {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Unknown identifier " + fieldIdentifier);
+				setNotSetValue();
 			}
 		} catch( Exception e){
 			setNotSetValue();

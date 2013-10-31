@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -139,15 +140,19 @@ public abstract class SaadaInstance implements DMInterface {
 	 * the compliance between both result set and Java class. That must me done at higher level.
 	 * Used to generate quickly query reports (VOTables or FITS)
 	 * @param rs
+	 * @param colNames set of the name of the columns used to avoid  to access field which re not in rs (business vs collection)
 	 * @throws Exception
 	 */
-	public void init(ResultSet rs) throws Exception {
+	public void init(ResultSet rs, Set<String> colNames) throws Exception {
 		Field[] fs = this.getClass().getFields();
 		boolean classLevel = false;
 		for( int i=0 ; i< fs.length ; i++ ) {
 			Field f = fs[i];
 			String type = f.getType().toString();
 			String name = f.getName();
+			if( !colNames.contains(name.toLowerCase()) && !colNames.contains(name.toUpperCase())){
+				continue;
+			}
 			if( name.startsWith("_") ) {
 				classLevel=true;
 			}
@@ -237,7 +242,7 @@ public abstract class SaadaInstance implements DMInterface {
 			for (int k = vt_class.size() - 1; k >= 0; k--) {
 				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
 				for (int i = 0; i < fieldlist.length; i++) {
-					changeField(fieldlist[i], rs);
+					setFieldValue(fieldlist[i], rs);
 				}
 			}
 		}
@@ -557,8 +562,8 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @return
 	 * @throws Exception 
 	 */
-	public Object getFieldValue(String field) throws Exception {
-		if( field.startsWith("_")) {
+	public Object getFieldValue(String fieldName) throws Exception {
+		if( fieldName.startsWith("_")) {
 			this.loadBusinessAttribute();
 		}
 		/*
@@ -566,15 +571,15 @@ public abstract class SaadaInstance implements DMInterface {
 		 * If the field is not found by Java, we look for it manually
 		 */
 		try {
-			return this.getClass().getField(field).get(this);
+			return this.getClass().getField(fieldName).get(this);
 		} catch (Exception e) {
 			Field[] flds = this.getClass().getFields();
 			for( Field f: flds) {
-				if( f.getName().equalsIgnoreCase(field)) {
+				if( f.getName().equalsIgnoreCase(fieldName)) {
 					return f.get(this);
 				}
 			}
-			throw new NoSuchFieldException(field);
+			throw new NoSuchFieldException(fieldName);
 		}
 	}
 
@@ -1045,7 +1050,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws IllegalAccessException
 	 * @throws SQLException
 	 */
-	public  void changeField(Field field, ResultSet rs)
+	public  void setFieldValue(Field field, ResultSet rs)
 	throws SaadaException, IllegalArgumentException, IllegalAccessException, SQLException {
 		int type = DefineType.getType(ChangeType.getTypeJavaFromTypeClass(field.getType().toString()));
 		boolean is_null = false ;
