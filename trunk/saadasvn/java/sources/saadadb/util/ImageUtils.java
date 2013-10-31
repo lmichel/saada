@@ -133,8 +133,7 @@ public abstract class ImageUtils {
 		int step = 1;
 		if( ww >= hh && ww > bin_size ) {
 			step = ww/bin_size;
-		}
-		else if( ww < hh && hh > bin_size ) {
+		} else if( ww < hh && hh > bin_size ) {
 			step = hh/bin_size;
 		}
 		int reste_w  = 1;
@@ -160,8 +159,7 @@ public abstract class ImageUtils {
 					pixel[pos++] = tmp[(h*ww) + w];						
 				}
 			}
-		}
-		else if(nbit==16){
+		} else if(nbit==16){
 			if( img_pixels instanceof short[][] ) {
 				short[][] tmp = (short[][])img_pixels;
 				int pos = 0;
@@ -170,8 +168,7 @@ public abstract class ImageUtils {
 						pixel[pos++] = tmp[w][h];						
 					}
 				}				
-			}
-			else {
+			} else {
 				short[] tmp = (short[])img_pixels;
 				int pos = 0;
 				for( int h=0 ; h<hh ; h+=step ) {
@@ -180,8 +177,7 @@ public abstract class ImageUtils {
 					}
 				}
 			}
-		}
-		else if(nbit==8){
+		} else if(nbit==8){
 			byte[] tmp = (byte[])img_pixels;
 			int pos = 0;
 			for( int h=0 ; h<hh ; h+=step ) {
@@ -189,8 +185,7 @@ public abstract class ImageUtils {
 					pixel[pos++] = tmp[(h*ww) + w];
 				}
 			}
-		}
-		else if(nbit==64){
+		} else if(nbit==64){
 			long[] tmp = (long[])img_pixels;
 			int pos = 0;
 			for( int h=0 ; h<hh ; h+=step ) {
@@ -198,8 +193,7 @@ public abstract class ImageUtils {
 					pixel[pos++] = (int)((long)(0xffffffff*tmp[(h*ww) + w])/0xffffffffffffffffL);
 				}
 			}
-		}
-		else if(nbit==-32){
+		} else if(nbit==-32){
 			float[] tmp = (float[])img_pixels;
 			int pos = 0;
 			/*
@@ -226,8 +220,7 @@ public abstract class ImageUtils {
 					pixel[pos++] = java.lang.Math.round((scale*tmp[(h*ww) + w]));
 				}
 			}
-		}
-		else if(nbit==-64){
+		} else if(nbit==-64){
 			double[] tmp = (double[])img_pixels;
 			/*
 			 * Make sure the range is wide enough to get something after a cast to in
