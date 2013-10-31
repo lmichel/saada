@@ -219,14 +219,14 @@ public class Image2D extends Product {
 	 * @see saadadb.products.Product#main(java.lang.String[])
 	 */
 	public static void main(String[] args)  {
-		Database.init("AJAX");
+		Database.init("ThreeXMM");
 		//Image2D img = new Image2D(new File("/data/MUSE/Scene_fusion_01.fits"), null);
-		Image2D img = new Image2D(new File("/Users/laurentmichel/Desktop/DossierBoston/data/pierre/metals_400_z=21.2723.fits"), null);
+		Image2D img = new Image2D(new File("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz"), null);
 		try {
 			img.initProductFile(new ConfigurationImage("", new ArgsParser(new String[]{"-debug", "-system='Ecliptic'", "-collection=qwerty"})));
 			//			img.setWcsFields();
 
-			ImageUtils.createImage("/Users/laurentmichel/Desktop/ma04979.fit.jpg", (FitsProduct) img.productFile, 200);
+			ImageUtils.createImage("/home/michel/Desktop/ma04979.fit.jpg", (FitsProduct) img.productFile, 200);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

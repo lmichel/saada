@@ -67,7 +67,7 @@ public class FlatfileSaada extends SaadaInstance{
 			for (int k = vt_class.size() - 1; k >= 0; k--) {
 				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
 				for (int i = 0; i < fieldlist.length; i++) {
-					changeField(fieldlist[i], rs);
+					setFieldValue(fieldlist[i], rs);
 				}
 			}
 		}

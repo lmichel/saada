@@ -102,7 +102,7 @@ public class Database {
 	public static String version() {
 		return Version.getVersion(); 
 	}
-	
+
 	/**
 	 * This method traps the admin authority authication to do som smooth schema update
 	 * That way, new columns can be added to  meta table each time the admin tool is started
@@ -113,7 +113,7 @@ public class Database {
 		getConnector().setAdminAuth(password);
 		Database.updatSchema();
 	}
-	
+
 	/**
 	 * Does some schema update
 	 * @throws Exception
@@ -302,15 +302,13 @@ public class Database {
 	 *            of object persistent
 	 * @throws SaadaException 
 	 */
-	// sybase int8 (cast)
 	public static SaadaInstance getObjectBusiness(SaadaInstance obj) throws FatalException {
 		try {
 			long oid = obj.getOid();
 			String _nameclass = Database.cachemeta.getClass(SaadaOID.getClassNum(oid)).getName();
 			Field fieldlist[] = obj.getClass().getDeclaredFields();
 			String sql = "";
-			sql = " Select * from " + _nameclass
-			+ " where  oidsaada = " + oid;
+			sql = " Select * from " + _nameclass + " where  oidsaada = " + oid;
 			SQLQuery squery = new SQLQuery();
 			ResultSet rs = squery.run(sql);
 			if (rs.next()) {
@@ -323,8 +321,10 @@ public class Database {
 				if( sm != null) {
 					obj.setContentsignature(rs.getString("md5keysaada").trim());
 				}
-				for (int i = 0; i < fieldlist.length; i++) {
-					obj.changeField(fieldlist[i], rs);
+				for (int i = 0; i < fieldlist.length; i++) {					
+					if( fieldlist[i].getName().startsWith("_")) {
+						obj.setFieldValue(fieldlist[i], rs);
+					}
 				}
 			} else {
 				squery.close();

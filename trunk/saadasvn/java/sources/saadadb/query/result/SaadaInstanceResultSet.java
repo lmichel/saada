@@ -1,13 +1,17 @@
 package saadadb.query.result;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
+import java.sql.ResultSetMetaData;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import saadadb.collection.SaadaInstance;
+import saadadb.collection.SaadaOID;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.generationclass.SaadaClassReloader;
 import saadadb.relationship.KeyIndex;
 import saadadb.sqltable.SQLLargeQuery;
 import saadadb.util.Messenger;
@@ -33,12 +37,12 @@ public class SaadaInstanceResultSet  {
 	 * Instance modeling one result row. Supposed to have he right class
 	 */
 	private SaadaInstance instance;
-	private ArrayList<SaadaInstance> instances = new ArrayList<SaadaInstance>();
 
 	/**
 	 * SQL result set, set by @see sq 
 	 */
 	protected ResultSet resultSet;
+	protected Set<String> colNames = new TreeSet<String>();
 	/**
 	 * SQL query executor. Store as a field to keep available for closing
 	 */
@@ -79,7 +83,13 @@ public class SaadaInstanceResultSet  {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Execute SQL query: " + this.sqlQuery);
 		this.resultSet = sqlQuery.run();
 		this.initDone = true;
-		this.currentPtr = 0;
+		this.currentPtr = 0;			
+		ResultSetMetaData rsmd = this.resultSet.getMetaData();
+		for( int i=1 ; i<=rsmd.getColumnCount() ; i++ ) {
+			colNames.add(rsmd.getColumnName(i));
+		}
+		
+
 //		if( !Database.getWrapper().forwardOnly) {
 //			this.resultSet.afterLast();
 //			this.size = this.resultSet.getRow();
@@ -105,8 +115,7 @@ public class SaadaInstanceResultSet  {
 			if( patternKeySet == null ) {
 				currentPtr++;
 				return resultSet.next();
-			}
-			else {
+			} else {
 				while( resultSet.next() ) {
 					if( patternKeySet.hasKey(resultSet.getLong("oidsaada"), true) != -1 )  {
 						currentPtr++;
@@ -194,9 +203,19 @@ public class SaadaInstanceResultSet  {
 	 */
 	public SaadaInstance getInstance() throws QueryException {
 		try {
-			this.instance.init(resultSet);
+			long oidsaada = resultSet.getLong("oidsaada");
+			String classOrg = this.instance.getClass().getName();
+			String realClass = SaadaOID.getClassName(oidsaada);
+			if( !classOrg.endsWith("." + realClass)) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Change class in query result " + classOrg + " " + realClass);
+				this.instance = (SaadaInstance)  SaadaClassReloader.forGeneratedName(realClass).newInstance();
+
+			}
+			this.instance.init(resultSet, colNames);
 			return this.instance;
 		} catch(Exception e) {
+			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 			return null;
 		}
