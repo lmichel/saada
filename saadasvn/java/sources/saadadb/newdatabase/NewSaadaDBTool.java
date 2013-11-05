@@ -22,6 +22,13 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
+/**
+ * @author michel
+ * @version $Id$
+ * 
+ * 11/2013: Not override old log files
+ *
+ */
 public class NewSaadaDBTool extends JFrame {
 	/** * @version $Id$
 
@@ -41,13 +48,13 @@ public class NewSaadaDBTool extends JFrame {
 	 */
 	public NewSaadaDBTool(ArgsParser ap, String saada_home) throws FatalException {
 		super("Saada " + Database.version() + ": Database Creation Tool");
-		this.saada_home = saada_home;
+		NewSaadaDBTool.saada_home = saada_home;
 		this.setResizable(true);
 		this.setLayout(new GridBagLayout());	
 		/*
 		 * Make sure to close and rename the log file when exit
 		 */
-		log_file = this.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
+		log_file = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
 		if( !ap.isNolog() ) Messenger.openLog(log_file);
 		Messenger.printMsg(Messenger.TRACE, "Start to build a SaadaDB from Saada instance: " + saada_home);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -55,10 +62,19 @@ public class NewSaadaDBTool extends JFrame {
 				Messenger.closeLog();
 				String new_logfile;
 				if( NewSaadaDBTool.this.form_panel.saadadb_name.getText().length() > 0 ) {
-					new_logfile = NewSaadaDBTool.this.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb." + NewSaadaDBTool.this.form_panel.saadadb_name.getText() + ".log";
+					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb." + NewSaadaDBTool.this.form_panel.saadadb_name.getText() + ".log";
+				} else {
+					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
 				}
-				else {
-					new_logfile = NewSaadaDBTool.this.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
+				String f = new_logfile;
+				int cpt = 1;
+				while( (new File(f)).exists() ) {
+					f = new_logfile.replace(".", cpt + ".");
+					cpt++;
+				}
+				if( cpt > 1) {
+					System.out.println("Rename old log " + new_logfile + " as " + f);
+					new File(new_logfile).renameTo(new File(f));
 				}
 				(new File(NewSaadaDBTool.this.log_file)).renameTo(new File(new_logfile));
 				System.out.println("Log saved in " + new_logfile);
@@ -168,9 +184,9 @@ public class NewSaadaDBTool extends JFrame {
 		NewSaadaDB newdb;
 		try {
 			this.form_panel.dbmswrapper.createDB(this.form_panel.saadadb_name.getText().trim());
-			newdb = new NewSaadaDB(this.saada_home, new String(this.form_panel.dbms_admin_passwd.getPassword()));
+			newdb = new NewSaadaDB(NewSaadaDBTool.saada_home, new String(this.form_panel.dbms_admin_passwd.getPassword()));
 			newdb.buildSaadaDB();
-			NewWebServer.innerMain(new String[]{this.saada_home});
+			NewWebServer.innerMain(new String[]{NewSaadaDBTool.saada_home});
 			JOptionPane.showMessageDialog(this,
 					SaadaDBAdmin.getPlainLabel("<HTML><B>Your SaadaDB <I>" + form_panel.saadadb_name.getText() + "</I> has been created</B><BR>"
 							+ "You can now exit this tool and work with the new database<BR>"
