@@ -243,7 +243,7 @@ public class SapFieldMapper {
 				value.fieldValue = wcs_val1 + " " + wcs_val2;
 			} else if( fieldIdentifier.equals("VOX:WCS_CDMatrix") ) {
 				value.fieldValue = wcs_cd11 + " " + wcs_cd12 + " " + wcs_cd21 + " " + wcs_cd22;
-			} else if( fieldIdentifier.equals("Char.SpectralAxis.Coverage.Location.Value") ) {
+			} else if( fieldIdentifier.equals("ssa:Char.SpectralAxis.Coverage.Location.Value") ) {
 				/*
 				 * Conversion must be first done because it could be non linear (e.g. Kev -> m)
 				 * Hence converting the mean is no equivalent to the mean of converted values
@@ -255,7 +255,7 @@ public class SapFieldMapper {
 					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", x_max);
 					value.fieldValue = (Double.toString((v1  + v2)/2));
 				}
-			} else if( fieldIdentifier.equals("Char.SpectralAxis.Coverage.Location.Value") ) {
+			} else if( fieldIdentifier.equals("ssa:Char.SpectralAxis.Coverage.Location.Value") ) {
 				/*
 				 * Conversion must be first done because it could be non linear (e.g. Kev -> m)
 				 * Hence converting the mean is no equivalent to the mean of converted values
@@ -267,7 +267,7 @@ public class SapFieldMapper {
 					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", x_max);
 					value.fieldValue = (Double.toString((v1  + v2)/2));
 				}
-			} else if( fieldIdentifier.equals("Char.SpectralAxis.Coverage.Bounds.Extent") ) {
+			} else if( fieldIdentifier.equals("ssa:Char.SpectralAxis.Coverage.Bounds.Extent") ) {
 				/*
 				 * Conversion must be first done because it could be non linear (e.g. Kev -> m)
 				 * Hence converting the mean is no equivalent to the mean of converted values
