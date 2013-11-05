@@ -26,6 +26,12 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ * 11/2013 : creatDB: grant access to reader@localhost no to reader
+ */
 public class MysqlWrapper extends DbmsWrapper {
 	private final TreeSet<String> recorded_tmptbl = new TreeSet<String>();
 
@@ -82,7 +88,8 @@ public class MysqlWrapper extends DbmsWrapper {
 		try {
 			stmt.executeUpdate("CREATE DATABASE " + dbname );
 			if( reader != null && !reader.getName().equals(admin.getName()))  {
-				stmt.executeUpdate("grant select on " +  dbname + ".* to " + reader.getName() );
+				Messenger.printMsg(Messenger.TRACE, "Grant select for " +  reader.getName() + "@localhost" );
+				stmt.executeUpdate("grant select on " +  dbname + ".* to " + reader.getName() + "@localhost" );
 			}
 			/*
 			 * A second DB must be created in order to allow the reader to use temporary table without
@@ -91,7 +98,7 @@ public class MysqlWrapper extends DbmsWrapper {
 			 */
 			stmt.executeUpdate("CREATE DATABASE " + getTempodbName(dbname) );
 			if( reader != null && !reader.getName().equals(admin.getName()))  {
-				stmt.executeUpdate("grant SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, LOCK TABLES on " +  getTempodbName(dbname) + ".* to " + reader.getName() );
+				stmt.executeUpdate("grant SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, LOCK TABLES on " +  getTempodbName(dbname) + ".* to " + reader.getName()+ "@localhost" );
 			}
 			admin_connection.close();
 		} catch(SQLException e) {
