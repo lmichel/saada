@@ -18,24 +18,23 @@ public abstract class HardwareDescriptor {
 		String suffixe;
 		if( arch.indexOf("mac") != -1 ) {
 			suffixe = ".dylib";
-		}
-		else if( arch.indexOf("linux") != -1 ) {
+		} else if( arch.indexOf("linux") != -1 ) {
 			suffixe = ".so";
-		}
-		else {
+		} else {
 			suffixe = ".dll";
 		}
 		String osarch = System.getProperty("os.arch");
 		if( "i386".equalsIgnoreCase(osarch)) {
 			osarch = "x86";
 		}
-		return prefix + "_" + arch
+		String carch = (arch.matches("(?i:windows).*"))? "windows": arch;
+		return prefix + "_" + carch
 		+ "_" 
 		+ osarch.toLowerCase() 
 		+ suffixe;
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(HardwareDescriptor.getArchDependentLibName("libSQLITEProc"));
+		System.out.println(HardwareDescriptor.getArchDependentLibName("Windows7"));
 	}
 }
