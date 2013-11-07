@@ -180,11 +180,12 @@ public class SQLiteWrapper extends DbmsWrapper {
 		if( !EXT_LOADED ) { 
 			String efp = getExtensionFilePath();
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp);
+				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp + " " + (new File(efp)).length());
 
 			Statement stat = conn.createStatement();	
 			try {
-				stat.executeUpdate( "select load_extension('" + efp + "')");
+				int res = stat.executeUpdate( "select load_extension('" + efp + "')");
+				Messenger.printMsg(Messenger.TRACE, "load_extension returns " + res);
 			} catch (Exception e) {
 				e.printStackTrace();
 				if( !EXT_LOADED ) {
@@ -880,7 +881,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 //			dbmswrapper.checkAdminPrivileges("/tmp", true);
 
 //			
-//			SQLiteWrapper w = SQLiteWrapper.get\
+//			SQLiteWrapper w = SQLiteWrapper.get\loading
 			Database.init("Napoli");
 			SQLQuery sq = new SQLQuery();
 			//sq.run("SELECT count(*) FROM saada_class WHERE name REGEXP 'CCDImages(_[0-9]+)? *$'");
