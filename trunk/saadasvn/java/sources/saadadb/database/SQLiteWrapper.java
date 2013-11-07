@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.sqlite.SQLiteConfig;
 
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
+
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
@@ -120,7 +122,6 @@ public class SQLiteWrapper extends DbmsWrapper {
 			}
 			File otmplib = File.createTempFile("sqliteprocjdbc-", ".lib");
 			otmplib.deleteOnExit();
-//			File itmplib = File.createTempFile("sqliteextension-", ".lib");
 			OutputStream out = new FileOutputStream(otmplib);
 			byte[] buf = new byte[1024];
 			for (int len; (len = in.read(buf)) != -1;) {
@@ -128,7 +129,8 @@ public class SQLiteWrapper extends DbmsWrapper {
 			}
 			in.close();
 			out.close();
-
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "UDF file extacted " + otmplib.length() + "b");
 			return  otmplib.getAbsolutePath() ;
 
 		}
