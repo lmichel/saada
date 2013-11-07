@@ -180,12 +180,18 @@ public class SQLiteWrapper extends DbmsWrapper {
 		if( !EXT_LOADED ) { 
 			String efp = getExtensionFilePath();
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp + " " + (new File(efp)).length());
+				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp );
 
 			Statement stat = conn.createStatement();	
 			try {
-				int res = stat.executeUpdate( "select load_extension('" + efp + "')");
-				Messenger.printMsg(Messenger.TRACE, "load_extension returns " + res);
+				//int res = stat.executeUpdate( "select load_extension('" + efp + "')");
+				ResultSet rs = stat.executeQuery("select load_extension('" + efp + "')");
+				while( rs.next() ){
+					for( int i=0 ; i<rs.getMetaData().getColumnCount() ; i++ ){
+						System.out.println(rs.getObject(i+1) + " " );
+					}
+					System.out.println("----------------");
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				if( !EXT_LOADED ) {
