@@ -19,8 +19,6 @@ import java.util.Map;
 
 import org.sqlite.SQLiteConfig;
 
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
-
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
