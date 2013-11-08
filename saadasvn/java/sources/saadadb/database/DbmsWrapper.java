@@ -1125,6 +1125,7 @@ abstract public class DbmsWrapper {
 	 * @throws Exception
 	 */
 	public void loadSQLProcedures() throws Exception {
+		SQLTable.beginTransaction();
 		this.installLanguage();
 		String[] rp = this.removeProc();
 		for( String p: rp) {
@@ -1149,10 +1150,11 @@ abstract public class DbmsWrapper {
 				}
 			}
 		}
-
+		SQLTable.commitTransaction();
 	}
 	
 	public void loadSQLProcedures(Statement stmt) throws Exception {
+		SQLTable.beginTransaction();
 		this.installLanguage(stmt);
 		String[] rp = this.removeProc();
 		for( String p: rp) {
@@ -1179,7 +1181,7 @@ abstract public class DbmsWrapper {
 				}
 			}
 		}
-
+		SQLTable.commitTransaction();
 	}
 
 	/**

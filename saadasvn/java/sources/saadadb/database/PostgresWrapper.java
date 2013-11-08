@@ -557,11 +557,11 @@ public class PostgresWrapper extends DbmsWrapper {
 	 */
 	@Override
 	protected void installLanguage() throws Exception {
-		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
 				+ " RETURNS VOID \n"
 				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
 		SQLTable.commitTransaction();
+		SQLTable.beginTransaction();
 		/*
 		 * Cannot make a SELECT in an update statement
 		 */
@@ -576,7 +576,6 @@ public class PostgresWrapper extends DbmsWrapper {
 				+ " ELSE make_plpgsql() END; \n");
 		sq.run();
 		sq.close();
-		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("DROP FUNCTION make_plpgsql();");
 	}
 
