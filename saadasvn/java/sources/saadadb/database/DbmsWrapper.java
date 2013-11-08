@@ -31,8 +31,9 @@ import cds.astro.Qbox;
  * @author michel
  * * @version $Id$
 
- * 07/2009:getInCircle uses QBOX for small cones and BOX + distance for larger ones 
+ * 07/2009: getInCircle uses QBOX for small cones and BOX + distance for larger ones 
  * 04/2012: Use qbox  i ADQL if columns are pos_ra/dec_csa
+ * 11/2013: method setLocalBehavior invoked before to return a connection
  */
 abstract public class DbmsWrapper {
 	protected static DbmsWrapper wrapper;
@@ -313,7 +314,9 @@ abstract public class DbmsWrapper {
 	public Connection getConnection(String url, String user, String password) throws SQLException, Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "User " + user + " Connecting to " + url);
-		return  DriverManager.getConnection(url , user, password);
+		Connection retour = DriverManager.getConnection(url , user, password);
+		setLocalBehavior(retour);
+		return retour;		
 	}
 	
 	/**
@@ -328,9 +331,15 @@ abstract public class DbmsWrapper {
 				,Database.getConnector().getJdbc_reader()
 				, Database.getConnector().getJdbc_reader_password());
 		retour.setAutoCommit(false);
+		setLocalBehavior(retour);
 		return retour;
 	}
 
+	/**
+	 * @param conn
+	 */
+	public static void setLocalBehavior(Connection conn) throws Exception {}
+	
 	/**
 	 * Close the connection open for large queries
 	 * @param largeConnection
@@ -930,13 +939,13 @@ abstract public class DbmsWrapper {
 	 * @param token
 	 * @return
 	 */
-	public  abstract String castToString(String token);
+	public abstract String castToString(String token);
 
 	/**
 	 * This statement ask INSERT statement to use default values for columns not set (not supported by SQLITE)
 	 * @return
 	 */
-	public String getInsertAutoincrementStatement() {
+	public static String getInsertAutoincrementStatement() {
 		return "DEFAULT";
 	}
 	
@@ -944,7 +953,7 @@ abstract public class DbmsWrapper {
 	 * Return serial token for primary keys
 	 * @return
 	 */
-	public String getSerialToken() {
+	public static String getSerialToken() {
 		return "SERIAL";
 	}
 
@@ -952,7 +961,7 @@ abstract public class DbmsWrapper {
 	 * Statement setting a ' into an insert
 	 * @return
 	 */
-	public String getEscapeQuote(String val) {
+	public static String getEscapeQuote(String val) {
 		if( val != null ) {
 			return val.replaceAll("'", "\\\\'");
 		} else {
@@ -967,14 +976,14 @@ abstract public class DbmsWrapper {
 	 * @param entity
 	 * @return
 	 */
-	public String getQuotedEntity(String entity) {
+	public static String getQuotedEntity(String entity) {
 		return "\"" + entity + "\"";
 	}
 
 	/**
 	 * @return
 	 */
-	public String getAsciiNull() {
+	public static String getAsciiNull() {
 		return "\\N";
 	}
 	/**

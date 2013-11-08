@@ -76,26 +76,6 @@ public class PostgresWrapper extends DbmsWrapper {
 		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
 		try {
 			stmt.executeUpdate("CREATE DATABASE \"" + dbname + "\"");
-			/*
-			 * Set the escape sequence for quotes
-			 */
-			try {
-				QUOTE_SEQUENCE = NEW_QUOTE_SEQUENCE;
-				stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
-				stmt.close();
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
-			} catch(Exception e) {
-				stmt.executeUpdate("CREATE DATABASE \"" + dbname + "\"");
-				try {
-					QUOTE_SEQUENCE = OLD_QUOTE_SEQUENCE;
-					stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
-					stmt.close();
-					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
-				} catch(Exception e2) {
-					FatalException.throwNewException(SaadaException.DB_ERROR, "Ca't find a working escape sequence for quotes in PSQL");
-				}				
-			}
 			admin_connection.close();
 		} catch(SQLException e) {
 			Messenger.printStackTrace(e);
@@ -130,6 +110,35 @@ public class PostgresWrapper extends DbmsWrapper {
 		}
 	}
 
+
+	/**
+	 * @param conn
+	 * @throws Exception
+	 */
+	public static void setLocalBehavior(Connection connection) throws Exception {
+		if( QUOTE_SEQUENCE == null ){
+			/*
+			 * Set the escape sequence for quotes
+			 */
+			Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+			try {
+				QUOTE_SEQUENCE = NEW_QUOTE_SEQUENCE;
+				stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
+				stmt.close();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
+			} catch(Exception e) {
+				try {
+					QUOTE_SEQUENCE = OLD_QUOTE_SEQUENCE;
+					stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
+					stmt.close();
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
+				} catch(Exception e2) {
+					FatalException.throwNewException(SaadaException.DB_ERROR, "Ca't find a working escape sequence for quotes in PSQL");
+				}				
+			}
+		}
+	}
 
 	@Override
 	public void cleanUp() throws SQLException {
@@ -209,7 +218,7 @@ public class PostgresWrapper extends DbmsWrapper {
 			return "false";
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getBooleanValue(java.lang.Object)
 	 */
@@ -221,7 +230,7 @@ public class PostgresWrapper extends DbmsWrapper {
 			return false;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getStrcatoP(java.lang.String, java.lang.String)
 	 */
@@ -230,7 +239,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		for (String arg : args) {
 			if( retour.length() != 0 ) retour += "||" ;
 			retour += arg;
-			}
+		}
 		return retour;
 	}
 
@@ -476,7 +485,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getEscapeQuote(java.lang.String)
 	 */
-	public String getEscapeQuote(String val) {
+	public static String getEscapeQuote(String val) {
 		if( val != null ) {
 			return val.replaceAll("'", QUOTE_SEQUENCE);
 		} else {
@@ -524,7 +533,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	public  String dropProcedure(String proc_name) {
 		return "DROP FUNCTION " + proc_name;
 	}	
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinDelete(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
