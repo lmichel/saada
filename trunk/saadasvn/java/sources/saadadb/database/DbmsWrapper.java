@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
-
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
