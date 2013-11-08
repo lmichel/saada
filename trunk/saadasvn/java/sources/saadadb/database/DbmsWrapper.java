@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
+
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -167,9 +169,14 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
-			rs = stmt.executeQuery("select corner00_dec(0, 1) , boxoverlaps(1,2,3,4,5,6,7)");
+			String qt = "select corner00_dec(0, 1) , boxoverlaps(1.0,2.0,3.0,4.0,5.0,6.0,7.0)";
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+			rs = stmt.executeQuery(qt);
 			while( rs.next()) {
 				double result =  rs.getDouble(1);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Returns " + rs.getDouble(1) + " " + rs.getDouble(2));
 				if( result != -0.5 ) {
 					rs.close();
 					admin_connection.close();

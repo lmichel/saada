@@ -885,10 +885,11 @@ public class SQLiteWrapper extends DbmsWrapper {
 
 	public static void main(String[] args) {
 		try {
-//			DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 
-//			dbmswrapper.setAdminAuth("", "");
-//			dbmswrapper.checkAdminPrivileges("/tmp", true);
-
+			Messenger.debug_mode = true;
+			DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 
+			dbmswrapper.setAdminAuth("", "");
+			dbmswrapper.checkAdminPrivileges("/tmp", true);
+System.exit(0);
 //			
 //			SQLiteWrapper w = SQLiteWrapper.get\loading
 			Database.init("Napoli");

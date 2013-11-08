@@ -65,7 +65,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("corner00_ra requires 4 double parameters in degrees");
 				}				
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner00_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -86,7 +86,7 @@ public class SQLiteUDF {
 				if( nba != 2 ) {
 					throw new SQLException("corner00_dec requires 2 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT && value_type(i) != SQLITE_INT) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner00_dec(value_double(0), value_double(1)));
 				} catch(Exception e){
@@ -107,7 +107,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("corner01_ra requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner01_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -128,7 +128,7 @@ public class SQLiteUDF {
 				if( nba != 2 ) {
 					throw new SQLException("corner01_dec requires 2 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner01_dec(value_double(0), value_double(1)));
 				} catch(Exception e){
@@ -149,7 +149,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("corner10_ra requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner10_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -170,7 +170,7 @@ public class SQLiteUDF {
 				if( nba != 2 ) {
 					throw new SQLException("corner10_dec requires 2 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner10_dec(value_double(0), value_double(1)));
 				} catch(Exception e){
@@ -191,7 +191,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("corner11_ra requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner11_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -212,7 +212,7 @@ public class SQLiteUDF {
 				if( nba != 2 ) {
 					throw new SQLException("corner11_dec requires 2 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.corner11_dec(value_double(0), value_double(1)));
 				} catch(Exception e){
@@ -233,7 +233,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("distancedegree requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.distancedegree(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -254,7 +254,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("tileleftborder requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.tileleftborder(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -275,7 +275,7 @@ public class SQLiteUDF {
 				if( nba != 4 ) {
 					throw new SQLException("tilerightborder requires 4 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.DOUBLE); return;}}
 				try {
 					result(Procedures.tilerightborder(value_double(0), value_double(1), value_double(2), value_double(3)));
 				} catch(Exception e){
@@ -296,7 +296,7 @@ public class SQLiteUDF {
 				if( nba != 6 ) {
 					throw new SQLException("isinbox requires 6 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(0); return;}}
 				try {
 					result(Procedures.isinbox(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5)));
 				} catch(Exception e){
@@ -317,7 +317,7 @@ public class SQLiteUDF {
 				if( nba != 1 ) {
 					throw new SQLException("getmjd requires 1 double parameters");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.STRING); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(SaadaConstant.STRING); return;}}
 				result(Procedures.getmjd(value_double(0)));
 			}       
 		});
@@ -333,7 +333,7 @@ public class SQLiteUDF {
 				if( nba != 7 ) {
 					throw new SQLException("boxcenter requires 7 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(0); return;}}
 				try {
 					result(Procedures.boxcenter(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
 				} catch(Exception e){
@@ -354,7 +354,7 @@ public class SQLiteUDF {
 				if( nba != 7 ) {
 					throw new SQLException("boxcovers requires 7 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(0); return;}}
 				try {
 					result(Procedures.boxcovers(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
 				} catch(Exception e){
@@ -375,7 +375,7 @@ public class SQLiteUDF {
 				if( nba != 7 ) {
 					throw new SQLException("boxenclosed requires 7 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(0); return;}}
 				try {
 					result(Procedures.boxenclosed(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
 				} catch(Exception e){
@@ -396,7 +396,7 @@ public class SQLiteUDF {
 				if( nba != 7 ) {
 					throw new SQLException("boxoverlaps requires 7 double parameters in degrees");
 				}
-				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT   &&  value_type(i) != SQLITE_INT ) {result(0); return;}}
 				try {
 					result(Procedures.boxoverlaps(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
 				} catch(Exception e){
