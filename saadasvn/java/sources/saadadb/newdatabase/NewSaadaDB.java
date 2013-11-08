@@ -181,6 +181,7 @@ public class NewSaadaDB {
 			 */			
 			connector.setAdminAuth(this.admin_passwd);
 			Database.initConnector(this.connector.getDbname(), false);
+			Database.getWrapper().loadSQLProcedures();
 			SQLTable.beginTransaction();
 		    Table_SaadaDB.createTable();   	
 			Table_Saada_Class.createTable();
@@ -195,7 +196,6 @@ public class NewSaadaDB {
 			/*
 			 * Reload SQL procedures
 			 */
-			Database.getWrapper().loadSQLProcedures();
 			SQLTable.commitTransaction();
 			/*
 			 * From now we are connected to the new SaadaDB
