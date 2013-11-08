@@ -115,7 +115,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @param conn
 	 * @throws Exception
 	 */
-	public static void setLocalBehavior(Connection connection) throws Exception {
+	public void setLocalBehavior(Connection connection) throws Exception {
 		if( QUOTE_SEQUENCE == null ){
 			/*
 			 * Set the escape sequence for quotes
@@ -485,7 +485,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getEscapeQuote(java.lang.String)
 	 */
-	public static String getEscapeQuote(String val) {
+	public String getEscapeQuote(String val) {
 		if( val != null ) {
 			return val.replaceAll("'", QUOTE_SEQUENCE);
 		} else {
@@ -551,13 +551,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	 */
 	@Override
 	protected void installLanguage() throws Exception {
-		boolean dontforgettoopentransaction = false;
-		if( SQLTable.isTransactionOpen()) {
-			dontforgettoopentransaction = true;
-		}
-		else {
-			SQLTable.beginTransaction();
-		}
+		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
 				+ " RETURNS VOID \n"
 				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");

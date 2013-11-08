@@ -338,7 +338,7 @@ abstract public class DbmsWrapper {
 	/**
 	 * @param conn
 	 */
-	public static void setLocalBehavior(Connection conn) throws Exception {}
+	public void setLocalBehavior(Connection conn) throws Exception {}
 	
 	/**
 	 * Close the connection open for large queries
@@ -945,7 +945,7 @@ abstract public class DbmsWrapper {
 	 * This statement ask INSERT statement to use default values for columns not set (not supported by SQLITE)
 	 * @return
 	 */
-	public static String getInsertAutoincrementStatement() {
+	public String getInsertAutoincrementStatement() {
 		return "DEFAULT";
 	}
 	
@@ -953,7 +953,7 @@ abstract public class DbmsWrapper {
 	 * Return serial token for primary keys
 	 * @return
 	 */
-	public static String getSerialToken() {
+	public  String getSerialToken() {
 		return "SERIAL";
 	}
 
@@ -961,7 +961,7 @@ abstract public class DbmsWrapper {
 	 * Statement setting a ' into an insert
 	 * @return
 	 */
-	public static String getEscapeQuote(String val) {
+	public  String getEscapeQuote(String val) {
 		if( val != null ) {
 			return val.replaceAll("'", "\\\\'");
 		} else {
@@ -976,14 +976,14 @@ abstract public class DbmsWrapper {
 	 * @param entity
 	 * @return
 	 */
-	public static String getQuotedEntity(String entity) {
+	public  String getQuotedEntity(String entity) {
 		return "\"" + entity + "\"";
 	}
 
 	/**
 	 * @return
 	 */
-	public static String getAsciiNull() {
+	public  String getAsciiNull() {
 		return "\\N";
 	}
 	/**

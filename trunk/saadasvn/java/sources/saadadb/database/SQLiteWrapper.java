@@ -695,34 +695,33 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	/* (non-Javadoc)
-	 * @see saadadb.database.DbmsWrapper#getInsertDefaultStatement()
+	 * @see saadadb.database.DbmsWrapper#getInsertAutoincrementStatement()
 	 */
-	public static String getInsertAutoincrementStatement() {
+	public  String getInsertAutoincrementStatement() {
 		return "null ";
 	}
 	
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getSerialToken()
 	 */
-	public static String getSerialToken() {
+	public  String getSerialToken() {
 		return "INTEGER";
 	}
 
-	/**
-	 * @param val
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getEscapeQuote(java.lang.String)
 	 */
-	public  static String getEscapeQuote(String val) {
+	public   String getEscapeQuote(String val) {
 		if( val == null ) {
 			return null;
 		}
 		return val.replaceAll("'", "''");	
 	}
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getAsciiNull()
 	 */
-	public static String getAsciiNull() {
+	public String getAsciiNull() {
 		return "null";
 	}
 
