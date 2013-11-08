@@ -123,13 +123,19 @@ public class PostgresWrapper extends DbmsWrapper {
 			Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
 			try {
 				QUOTE_SEQUENCE = NEW_QUOTE_SEQUENCE;
-				stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
+				String q = "SELECT " + getEscapeQuote("aaa'bbb");
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Try " + q);
+				stmt.execute(q);
 				stmt.close();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
 			} catch(Exception e) {
 				try {
 					QUOTE_SEQUENCE = OLD_QUOTE_SEQUENCE;
+					String q = "SELECT " + getEscapeQuote("aaa'bbb");
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Try " + q);
 					stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
 					stmt.close();
 					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
