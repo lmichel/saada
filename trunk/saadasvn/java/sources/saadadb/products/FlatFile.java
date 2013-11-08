@@ -15,19 +15,16 @@ import saadadb.meta.AttributeHandler;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
 
+/** 
+ * @version $Id$
+ * 
+ */
 public class FlatFile extends Product {
 
 	public FlatFile(File file, ConfigurationDefaultHandler conf) {
 		super(file, conf);
 	}
 
-	/** * @version $Id$
-
-	 * This method builds a SaadaInstance and stores it into the DB
-	 * It is used for all data categories except for entries where the SaadaInstance step is skipped
-	 * @param saada_class
-	 * @throws Exception
-	 */
 	public void loadValue() throws Exception  {
 		this.saadainstance = (SaadaInstance) SaadaClassReloader.forGeneratedName("FLATFILEUserColl").newInstance();
 	    /*
