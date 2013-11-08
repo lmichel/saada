@@ -1,10 +1,8 @@
 package saadadb.dataloader;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -13,7 +11,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
-import sun.security.pkcs.ParsingException;
 
 
 public class SQLImporter extends SaadaProcess {
