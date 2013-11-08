@@ -180,7 +180,6 @@ public class SaadaqlVotableFormator extends VotableFormator {
 				//val = "";
 			}
 			if( val == null ) val = "";
-			System.out.println("-" + sf.getUcd() + " " + sf.getName() + " >" + val + "<");
 			if( cdata) {
 				addCDataTD(val.toString());
 			} else {

@@ -418,7 +418,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getQuotedEntity(java.lang.String)
 	 */
-	public String getQuotedEntity(String entity) {
+	public static String getQuotedEntity(String entity) {
 		return "`" + entity + "`";
 	}
 
