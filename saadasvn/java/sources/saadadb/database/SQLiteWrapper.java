@@ -178,36 +178,37 @@ public class SQLiteWrapper extends DbmsWrapper {
 		 * Extension must be loaded once: Tomcat fails at context change otherwise
 		 */
 		if( !EXT_LOADED ) { 
-			String efp = getExtensionFilePath();
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp );
-
-			Statement stat = conn.createStatement();	
-			try {
-				//int res = stat.executeUpdate( "select load_extension('" + efp + "')");
-				ResultSet rs = stat.executeQuery("select load_extension('" + efp + "')");
-				while( rs.next() ){
-					for( int i=0 ; i<rs.getMetaData().getColumnCount() ; i++ ){
-						System.out.println(rs.getObject(i+1) + " " );
-					}
-					System.out.println("----------------");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				if( !EXT_LOADED ) {
-					//FatalException.throwNewException(SaadaException.DB_ERROR, e);
-				}
-				else {
-					Messenger.printMsg(Messenger.WARNING, "Can not load SQLITE extension, but they seem to be already here");
-				}
-			}
-			/*
-			 * SQLIt setup attempting to improve the performance with multicriteria queries
-			 */
-			stat.executeUpdate("pragma cache_size=200000");
-			stat.executeUpdate("pragma temp_store=FILE");
-
-			stat.close();
+			SQLiteUDF.LoadProcedures(conn);
+//			String efp = getExtensionFilePath();
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Loading extensions from " + efp );
+//
+//			Statement stat = conn.createStatement();	
+//			try {
+//				//int res = stat.executeUpdate( "select load_extension('" + efp + "')");
+//				ResultSet rs = stat.executeQuery("select load_extension('" + efp + "')");
+//				while( rs.next() ){
+//					for( int i=0 ; i<rs.getMetaData().getColumnCount() ; i++ ){
+//						System.out.println(rs.getObject(i+1) + " " );
+//					}
+//					System.out.println("----------------");
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				if( !EXT_LOADED ) {
+//					//FatalException.throwNewException(SaadaException.DB_ERROR, e);
+//				}
+//				else {
+//					Messenger.printMsg(Messenger.WARNING, "Can not load SQLITE extension, but they seem to be already here");
+//				}
+//			}
+//			/*
+//			 * SQLIt setup attempting to improve the performance with multicriteria queries
+//			 */
+//			stat.executeUpdate("pragma cache_size=200000");
+//			stat.executeUpdate("pragma temp_store=FILE");
+//
+//			stat.close();
 			EXT_LOADED = false;
 		}
 		return conn;
