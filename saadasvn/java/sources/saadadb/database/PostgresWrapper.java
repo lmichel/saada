@@ -136,7 +136,7 @@ public class PostgresWrapper extends DbmsWrapper {
 					String q = "SELECT '" + getEscapeQuote("aaa'bbb")+ "'";
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Try " + q);
-					stmt.execute("SELECT " + getEscapeQuote("'aaa'bbb'"));
+					stmt.execute(q);
 					stmt.close();
 					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
 				} catch(Exception e2) {
