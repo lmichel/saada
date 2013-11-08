@@ -9,16 +9,25 @@ import org.sqlite.Function;
 
 import saadadb.query.timespace.Procedures;
 import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
 
 /**
  * Static class added to the current SQLite DB the time space procedures.
  * These procedures are currently used by the query engine.
  * They are embededd as SQL procedures with PSQL or MySQL
+ * Parameter types are: INT FLOAT TEXT BLOB NULL
+ *    That must be checked before to get the value because the transtypage could rise an exception 
+ * 
  * @author michel
  * @version $Id$
  *
  */
 public class SQLiteUDF {
+	public static final int SQLITE_INT   = 1;
+	public static final int SQLITE_FLOAT = 2;
+	public static final int SQLITE_TEXT  = 3;
+	public static final int SQLITE_BLOB  = 4;
+	public static final int SQLITE_NULL  = 5;
 
 	/**
 	 * Load all procedures in one step
@@ -34,9 +43,11 @@ public class SQLiteUDF {
 		Function.create(conn, "REGEXP", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 2 ) {
+				int nba = args();
+				if( nba != 2 ) {
 					throw new SQLException("REGEXP requires 2 String parameters");
 				}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_TEXT ) {result(0); return;}}
 				String exp = value_text(0);
 				String str = value_text(1);
 				result((str.matches(exp))? 1: 0);
@@ -50,10 +61,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner00_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("corner00_ra requires 4 double parameters in degrees");
+				}				
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner00_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner00_ra: " + e.getMessage());
+					result(0);
 				}
-				result(Procedures.corner00_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
 			}
 		});		
 		/*
@@ -64,10 +82,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner00_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 2 ) {
+				int nba = args();
+				if( nba != 2 ) {
 					throw new SQLException("corner00_dec requires 2 double parameters in degrees");
 				}
-				result(Procedures.corner00_dec(value_double(0), value_double(1)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner00_dec(value_double(0), value_double(1)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner00_dec: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -78,10 +103,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner01_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("corner01_ra requires 4 double parameters in degrees");
 				}
-				result(Procedures.corner01_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner01_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner01_ra: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -92,10 +124,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner01_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 2 ) {
+				int nba = args();
+				if( nba != 2 ) {
 					throw new SQLException("corner01_dec requires 2 double parameters in degrees");
 				}
-				result(Procedures.corner01_dec(value_double(0), value_double(1)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner01_dec(value_double(0), value_double(1)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner01_dec: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -106,10 +145,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner10_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("corner10_ra requires 4 double parameters in degrees");
 				}
-				result(Procedures.corner10_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner10_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner10_ra: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -120,10 +166,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner10_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 2 ) {
+				int nba = args();
+				if( nba != 2 ) {
 					throw new SQLException("corner10_dec requires 2 double parameters in degrees");
 				}
-				result(Procedures.corner10_dec(value_double(0), value_double(1)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner10_dec(value_double(0), value_double(1)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner10_dec: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -134,10 +187,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner11_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("corner11_ra requires 4 double parameters in degrees");
 				}
-				result(Procedures.corner11_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner11_ra(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner11_ra: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -148,10 +208,17 @@ public class SQLiteUDF {
 		Function.create(conn, "corner11_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 2 ) {
+				int nba = args();
+				if( nba != 2 ) {
 					throw new SQLException("corner11_dec requires 2 double parameters in degrees");
 				}
-				result(Procedures.corner11_dec(value_double(0), value_double(1)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.corner11_dec(value_double(0), value_double(1)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "corner11_dec: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -162,10 +229,17 @@ public class SQLiteUDF {
 		Function.create(conn, "distancedegree", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("distancedegree requires 4 double parameters in degrees");
 				}
-				result(Procedures.distancedegree(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.distancedegree(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "distancedegree: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -176,10 +250,17 @@ public class SQLiteUDF {
 		Function.create(conn, "tileleftborder", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("tileleftborder requires 4 double parameters in degrees");
 				}
-				result(Procedures.tileleftborder(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.tileleftborder(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "tileleftborder: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -190,10 +271,17 @@ public class SQLiteUDF {
 		Function.create(conn, "tilerightborder", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 4 ) {
+				int nba = args();
+				if( nba != 4 ) {
 					throw new SQLException("tilerightborder requires 4 double parameters in degrees");
 				}
-				result(Procedures.tilerightborder(value_double(0), value_double(1), value_double(2), value_double(3)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.DOUBLE); return;}}
+				try {
+					result(Procedures.tilerightborder(value_double(0), value_double(1), value_double(2), value_double(3)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "tilerightborder: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -204,10 +292,17 @@ public class SQLiteUDF {
 		Function.create(conn, "isinbox", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 6 ) {
-					throw new SQLException("isinbox requires 4 double parameters in degrees");
+				int nba = args();
+				if( nba != 6 ) {
+					throw new SQLException("isinbox requires 6 double parameters in degrees");
 				}
-				result(Procedures.isinbox(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				try {
+					result(Procedures.isinbox(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "isinbox: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -218,9 +313,11 @@ public class SQLiteUDF {
 		Function.create(conn, "getmjd", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 1 ) {
+				int nba = args();
+				if( nba != 1 ) {
 					throw new SQLException("getmjd requires 1 double parameters");
 				}
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(SaadaConstant.STRING); return;}}
 				result(Procedures.getmjd(value_double(0)));
 			}       
 		});
@@ -232,10 +329,17 @@ public class SQLiteUDF {
 		Function.create(conn, "boxcenter", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 7 ) {
+				int nba = args();
+				if( nba != 7 ) {
 					throw new SQLException("boxcenter requires 7 double parameters in degrees");
 				}
-				result(Procedures.boxcenter(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				try {
+					result(Procedures.boxcenter(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "boxcenter: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -246,10 +350,17 @@ public class SQLiteUDF {
 		Function.create(conn, "boxcovers", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 7 ) {
+				int nba = args();
+				if( nba != 7 ) {
 					throw new SQLException("boxcovers requires 7 double parameters in degrees");
 				}
-				result(Procedures.boxcovers(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				try {
+					result(Procedures.boxcovers(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "boxcovers: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -260,10 +371,17 @@ public class SQLiteUDF {
 		Function.create(conn, "boxenclosed", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 7 ) {
+				int nba = args();
+				if( nba != 7 ) {
 					throw new SQLException("boxenclosed requires 7 double parameters in degrees");
 				}
-				result(Procedures.boxenclosed(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				try {
+					result(Procedures.boxenclosed(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "boxenclosed: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 		/*
@@ -274,10 +392,17 @@ public class SQLiteUDF {
 		Function.create(conn, "boxoverlaps", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
-				if( args() != 7 ) {
+				int nba = args();
+				if( nba != 7 ) {
 					throw new SQLException("boxoverlaps requires 7 double parameters in degrees");
 				}
-				result(Procedures.boxoverlaps(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				for( int i=0 ; i<nba ; i++ ) { if( value_type(i) != SQLITE_FLOAT ) {result(0); return;}}
+				try {
+					result(Procedures.boxoverlaps(value_double(0), value_double(1), value_double(2), value_double(3), value_double(4), value_double(5), value_double(6)));
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.ERROR, "boxoverlaps: " + e.getMessage());
+					result(0);
+				}
 			}       
 		});
 	}
