@@ -30,6 +30,9 @@ import saadadb.util.Messenger;
 
  */
 public class PostgresWrapper extends DbmsWrapper {
+	public static final String OLD_QUOTE_SEQUENCE = "\\\\'"; // -> PSQL 8.xx
+	public static final String NEW_QUOTE_SEQUENCE = "''"; // PSQL 9.xx ->
+	public static  String QUOTE_SEQUENCE = null; // -> PSQL 8.xx
 
 	private PostgresWrapper(String server_or_driver, String port_or_url) throws ClassNotFoundException {
 		super(false);
@@ -39,8 +42,7 @@ public class PostgresWrapper extends DbmsWrapper {
 			this.driver = server_or_driver;
 			this.url = port_or_url;
 
-		}
-		else {
+		} else {
 			driver = "org.postgresql.Driver";
 			url = "jdbc:postgresql:";
 			Class.forName(driver);
@@ -74,6 +76,26 @@ public class PostgresWrapper extends DbmsWrapper {
 		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
 		try {
 			stmt.executeUpdate("CREATE DATABASE \"" + dbname + "\"");
+			/*
+			 * Set the escape sequence for quotes
+			 */
+			try {
+				QUOTE_SEQUENCE = NEW_QUOTE_SEQUENCE;
+				stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
+				stmt.close();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
+			} catch(Exception e) {
+				stmt.executeUpdate("CREATE DATABASE \"" + dbname + "\"");
+				try {
+					QUOTE_SEQUENCE = OLD_QUOTE_SEQUENCE;
+					stmt.execute("SELECT " + getEscapeQuote("aaa'bbb"));
+					stmt.close();
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
+				} catch(Exception e2) {
+					FatalException.throwNewException(SaadaException.DB_ERROR, "Ca't find a working escape sequence for quotes in PSQL");
+				}				
+			}
 			admin_connection.close();
 		} catch(SQLException e) {
 			Messenger.printStackTrace(e);
@@ -449,6 +471,18 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	public  String getGlobalAlias(String alias) {
 		return "AS " + alias;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getEscapeQuote(java.lang.String)
+	 */
+	public String getEscapeQuote(String val) {
+		if( val != null ) {
+			return val.replaceAll("'", QUOTE_SEQUENCE);
+		} else {
+			return "";
+		}
+
 	}
 
 	@Override
