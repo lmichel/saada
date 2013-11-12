@@ -43,8 +43,10 @@ import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.newdatabase.NewSaadaDBTool;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.util.WorkDirectory;
 
 /**
  * @author michel
@@ -623,8 +625,8 @@ public class DataFileChooser extends JDialog {
 			hiddenList = new Vector<String>();
 			String tmpDisplay = "", tmpHidden = "", spaceNumber = "";
 			
-			String[] tabDirectories = currentDir.split(Database.getSepar());
-			String test = "                                                                                                              -        ---                    ";
+			String[] tabDirectories = WorkDirectory.splitPath(currentDir);
+
 			if (tabDirectories.length>0)
 			{
 				for (int i=0 ; i<tabDirectories.length ; i++)
@@ -773,8 +775,8 @@ public class DataFileChooser extends JDialog {
 			String lastCommonFolder = "";
 			int lastCommonIndex = -1;
 			boolean stop = false;
-			String[] tab1 = path1.split(Database.getSepar());
-			String[] tab2 = path2.split(Database.getSepar());
+			String[] tab1 = WorkDirectory.splitPath(path1);
+			String[] tab2 = WorkDirectory.splitPath(path2);
 			for (int i=0 ; i<tab1.length && !stop; i++)
 			{
 				for (int j=0 ; j<tab2.length && !stop; j++)
@@ -803,7 +805,7 @@ public class DataFileChooser extends JDialog {
 			boolean stop = false;
 			for (int i=0 ; i<children.length && !stop ; i++)
 			{
-				String[] folders = children[i].toString().split(Database.getSepar());
+				String[] folders =  WorkDirectory.splitPath(children[i].toString());
 				String toMatch = folders[folders.length-1];
 				if (toMatch.matches(regex))
 				{

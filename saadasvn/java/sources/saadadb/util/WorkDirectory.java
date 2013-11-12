@@ -112,5 +112,19 @@ public class WorkDirectory {
 			}
 		}		
 	}
+	
+	/**
+	 * Split a posible file path into element separated by the file separator
+	 * @param path
+	 * @return
+	 */
+	public static final String [] splitPath(String path){
+		if( File.separator.equals("\\")) {
+			return path.split("\\\\");
+		} else {
+			return path.split(File.separator);
+		}
+
+	}
 
 }
