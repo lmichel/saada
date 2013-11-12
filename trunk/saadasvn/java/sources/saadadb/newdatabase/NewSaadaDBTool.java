@@ -48,13 +48,14 @@ public class NewSaadaDBTool extends JFrame {
 	 */
 	public NewSaadaDBTool(ArgsParser ap, String saada_home) throws FatalException {
 		super("Saada " + Database.version() + ": Database Creation Tool");
-		NewSaadaDBTool.saada_home = saada_home;
+		NewSaadaDBTool.saada_home = saada_home.replaceAll("/", Database.getSepar());
 		this.setResizable(true);
 		this.setLayout(new GridBagLayout());	
 		/*
 		 * Make sure to close and rename the log file when exit
 		 */
 		log_file = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
+		Messenger.printMsg(Messenger.TRACE, "Process logged in " + log_file);
 		if( !ap.isNolog() ) Messenger.openLog(log_file);
 		Messenger.printMsg(Messenger.TRACE, "Start to build a SaadaDB from Saada instance: " + saada_home);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -66,7 +67,7 @@ public class NewSaadaDBTool extends JFrame {
 				} else {
 					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
 				}
-				new_logfile = new_logfile.replaceAll("\\\\", "\\\\\\\\");
+				//new_logfile = new_logfile.replaceAll("\\\\", "\\\\\\\\");
 				String f = new_logfile;
 				int cpt = 1;
 				while( (new File(f)).exists() ) {
