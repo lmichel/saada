@@ -65,8 +65,10 @@ public class WorkDirectory {
 	 */
 	public static void delete(File f) throws IOException {
 		if (f.isDirectory()) {
-			for (File c : f.listFiles())
+			for (File c : f.listFiles()) {
+				System.out.println("2 " + c.getAbsolutePath());
 				delete(c);
+			}
 		}
 		if (!f.delete())
 			throw new FileNotFoundException("Failed to delete file: " + f);
@@ -81,8 +83,10 @@ public class WorkDirectory {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "empty directory " + f.getAbsolutePath());
 		if (f.isDirectory()) {
-			for (File c : f.listFiles())
+			for (File c : f.listFiles()) {
+				System.out.println("1 " + c.getAbsolutePath());
 				delete(c);
+			}
 		}		
 	}
 	/**
