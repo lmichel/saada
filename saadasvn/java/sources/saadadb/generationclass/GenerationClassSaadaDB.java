@@ -10,6 +10,7 @@ import saadadb.database.SaadaDBConnector;
  * @author michel
  *
  *07/2009: setAutocommit false
+ *11/2013: escape \ in jdb_url (SQLIte on Windows)
  */
 public class GenerationClassSaadaDB{
     
