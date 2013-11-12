@@ -76,7 +76,7 @@ public class NewSaadaDBTool extends JFrame {
 				String f = new_logfile;
 				int cpt = 1;
 				while( (new File(f)).exists() ) {
-					f = new_logfile.replace(".", cpt + ".");
+					f = new_logfile.replace(".log", cpt + ".log");
 					cpt++;
 				}
 				if( cpt > 1) {
