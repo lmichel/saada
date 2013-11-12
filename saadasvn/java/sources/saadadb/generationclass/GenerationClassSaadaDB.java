@@ -66,7 +66,7 @@ public class GenerationClassSaadaDB{
     	/*
     	 * Escape \ for windows
     	 */
-    	writer.write("      jdbc_url             = \"" + connector.getJdbc_url().replaceAll("\\", "\\\\") + "\";	\n");
+    	writer.write("      jdbc_url             = \"" + connector.getJdbc_url().replaceAll("\\\\", "\\\\\\\\") + "\";	\n");
     	writer.write("      jdbc_driver          = \"" + connector.getJdbc_driver() + "\";	\n");
     	writer.write("      jdbc_reader          = \"" + connector.getJdbc_reader() + "\";	\n");
     	if( connector.getJdbc_reader_password() == null ) {

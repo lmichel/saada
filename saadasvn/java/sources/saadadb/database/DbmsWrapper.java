@@ -74,12 +74,10 @@ abstract public class DbmsWrapper {
 			 * Drop the test DB if it exists
 			 */
 			dropTestDB(tmp_dir);
-			System.out.println(this.test_base);
 			/*
 			 * Create the test DB
 			 */
 			createTestDB(tmp_dir);
-			System.out.println(this.test_base);
 			/*
 			 * Connect the test DB
 			 */
@@ -133,7 +131,6 @@ abstract public class DbmsWrapper {
 			tmpfile.close();
 
 			if( this.tsvLoadNotSupported() ) {
-				System.out.println(test_base + " 11 " + (new File(test_base)).length());
 				this.storeTable(test_table, -1, tmp_filename) ;			
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
