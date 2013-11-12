@@ -51,7 +51,7 @@ public class NewSaadaDBTool extends JFrame {
 		System.out.println(saada_home);
 		NewSaadaDBTool.saada_home = saada_home;
 		if( File.separator.equals("\\")) {
-			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\");
+			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
 		System.out.println(NewSaadaDBTool.saada_home);
 	this.setResizable(true);
