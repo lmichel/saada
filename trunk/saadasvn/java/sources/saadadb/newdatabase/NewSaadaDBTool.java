@@ -48,8 +48,10 @@ public class NewSaadaDBTool extends JFrame {
 	 */
 	public NewSaadaDBTool(ArgsParser ap, String saada_home) throws FatalException {
 		super("Saada " + Database.version() + ": Database Creation Tool");
-		NewSaadaDBTool.saada_home = saada_home.replaceAll("/", Database.getSepar());
-		this.setResizable(true);
+		System.out.println(saada_home);
+		NewSaadaDBTool.saada_home = saada_home.replaceAll("/", File.separator);
+		System.out.println(NewSaadaDBTool.saada_home);
+	this.setResizable(true);
 		this.setLayout(new GridBagLayout());	
 		/*
 		 * Make sure to close and rename the log file when exit
