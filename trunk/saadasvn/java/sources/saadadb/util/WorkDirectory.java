@@ -66,7 +66,7 @@ public class WorkDirectory {
 	public static void delete(File f) throws IOException {
 		if (f.isDirectory()) {
 			for (File c : f.listFiles()) {
-				System.out.println("2 " + c.getAbsolutePath());
+				System.out.println("2 " + c.getName());
 				delete(c);
 			}
 		}
@@ -84,7 +84,7 @@ public class WorkDirectory {
 			Messenger.printMsg(Messenger.DEBUG, "empty directory " + f.getAbsolutePath());
 		if (f.isDirectory()) {
 			for (File c : f.listFiles()) {
-				System.out.println("1 " + c.getAbsolutePath());
+				System.out.println("1 " + c.getName());
 				delete(c);
 			}
 		}		
