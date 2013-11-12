@@ -66,7 +66,7 @@ abstract public class DbmsWrapper {
 	 * @throws Exception
 	 */
 	public boolean checkAdminPrivileges(String tmp_dir, boolean clean_after) throws Exception {
-		Messenger.printMsg(Messenger.TRACE, "Check privilege for admin role");
+		Messenger.printMsg(Messenger.TRACE, "Check privilege for admin role in "  + this.url + test_base);
 		Connection admin_connection = null;
 
 		try {
@@ -74,10 +74,12 @@ abstract public class DbmsWrapper {
 			 * Drop the test DB if it exists
 			 */
 			dropTestDB(tmp_dir);
+			System.out.println(this.test_base);
 			/*
 			 * Create the test DB
 			 */
 			createTestDB(tmp_dir);
+			System.out.println(this.test_base);
 			/*
 			 * Connect the test DB
 			 */
@@ -85,27 +87,31 @@ abstract public class DbmsWrapper {
 			if( this.admin == null ) {
 				adm = "";
 				admp = null;
-			}
-			else {
+			} else {
 				adm = this.admin.getName();
 				admp = this.admin.getPassword();
-			}
-			if( this.reader == null ) {
+			} if( this.reader == null ) {
 				read = "";
 				readp = null;
-			}
-			else {
+			} else {
 				read = this.reader.getName();
 				readp = this.reader.getPassword();
 			}
+			/*
+			 * Connect the Test db
+			 */
 			Database.setConnector(new SaadaDBStandAloneConnector(this.url + test_base, this.driver, test_base, adm, read, readp));
 			Database.setAdminMode(admp);
 			admin_connection = Database.getConnector().getJDBCConnection();
 			admin_connection.setAutoCommit(true);
-			Statement stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-			loadSQLProcedures(stmt);		
+			/*
+			 * Populate the Test db
+			 */
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
+			Statement stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
+			loadSQLProcedures(stmt);		
+			admin_connection.setAutoCommit(true);
 			/*
 			 * Create a table
 			 */
@@ -113,47 +119,34 @@ abstract public class DbmsWrapper {
 				Messenger.printMsg(Messenger.DEBUG, "UPDATE " + "CREATE TABLE " + test_table + " ( name text)");
 			stmt.executeUpdate("CREATE TABLE " + test_table + " ( name text)" );
 			String q = grantSelectToPublic(test_table);
-			if( q!= null && q.length() > 0 )
+			if( q != null && q.length() > 0 )
 				stmt.executeUpdate(q);
+			stmt.close();
 			/*
 			 * Populate the table from a file
 			 */
 			String tmp_filename = tmp_dir + Database.getSepar() + test_base.substring(test_base.lastIndexOf(Database.getSepar()) + 1)  + ".psqldump";
 			BufferedWriter tmpfile = new BufferedWriter(new FileWriter(tmp_filename));
-
 			tmpfile.write("'Pierre'\n");
-			tmpfile.write("'Paul'\n");			/*
-			 * Give 5 sec to the server to close th connection 
-			 */
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-			}
-
+			tmpfile.write("'Paul'\n");			
 			tmpfile.write("'et les autres'\n");
-
 			tmpfile.close();
-			if( Database.getWrapper().tsvLoadNotSupported() ) {
-				Database.getWrapper().storeTable(test_table, -1, tmp_filename) ;			
-			}
-			else {
-				for(String str: Database.getWrapper().getStoreTable(test_table, -1, tmp_filename) ) {
+
+			if( this.tsvLoadNotSupported() ) {
+				System.out.println(test_base + " 11 " + (new File(test_base)).length());
+				this.storeTable(test_table, -1, tmp_filename) ;			
+			} else {
+				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
 					stmt.executeUpdate(str);					
 				}
 			}
 			stmt.close();
-
-			//storeTable(test_table, -1, tmp_filename);
-//			if( clean_after ) {
-//				/*
-//				 * Drop the table
-//				 */
-//				stmt.executeUpdate("DROP TABLE " + test_table );	
-//			}
-			stmt.close();
+			
 			stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-
-			ResultSet rs = stmt.executeQuery("select count(*) from " + test_table);
+			String qt = "select count(*) from " + test_table;
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+			ResultSet rs = stmt.executeQuery(qt);
 			while( rs.next()) {
 				int rc;
 				if( (rc = rs.getInt(1)) != 3 ) {
@@ -167,7 +160,7 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
-			String qt = "select corner00_dec(0, 1) , boxoverlaps(1.0,2.0,3.0,4.0,5.0,6.0,7.0)";
+			qt = "select corner00_dec(0, 1) , boxoverlaps(1.0,2.0,3.0,4.0,5.0,6.0,7.0)";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
 			rs = stmt.executeQuery(qt);
@@ -226,13 +219,16 @@ abstract public class DbmsWrapper {
 	 * @throws IgnoreException
 	 */
 	public boolean checkReaderPrivileges() throws SQLException, IgnoreException {
-		Messenger.printMsg(Messenger.TRACE, "Check privilege for reader role");
+		Messenger.printMsg(Messenger.TRACE, "Check privilege for reader role in " + url + test_base);
 		if( reader == null ) {
 			IgnoreException.throwNewException(SaadaException.WRONG_DB_ROLE, "No Reader Role");			
 		}
 		Connection reader_connection = DriverManager.getConnection(url + test_base , reader.getName(), reader.getPassword());
 		Statement stmt = reader_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-		ResultSet rs = stmt.executeQuery("select count(*) from " + test_table);
+		String qt = "select count(*) from " + test_table;
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+		ResultSet rs = stmt.executeQuery(qt);
 		while( rs.next()) {
 			if( rs.getInt(1) != 3 ) {
 				reader_connection.close();

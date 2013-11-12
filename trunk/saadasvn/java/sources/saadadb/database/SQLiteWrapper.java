@@ -155,7 +155,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	protected void createTestDB(String tmp_dir) throws Exception {
 		test_base = tmp_dir + Database.getSepar() +test_base;
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Create test DB " +  test_base);
+			Messenger.printMsg(Messenger.DEBUG, "Create SQLITE test DB " +  test_base);
 		createDB(test_base);
 	}
 
@@ -170,14 +170,15 @@ public class SQLiteWrapper extends DbmsWrapper {
 		 * provided by http://www.xerial.org/trac/Xerial/wiki/SQLiteJDBC
 		 */
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "User " + user + " Connecting to " + url); 
+			Messenger.printMsg(Messenger.DEBUG, "No-User connecting " + url); 
 		SQLiteConfig config = new SQLiteConfig();
 		config.enableLoadExtension(true);	
 		Connection conn =  DriverManager.getConnection(url, config.toProperties() );
-		/*
-		 * Extension must be loaded once: Tomcat fails at context change otherwise
-		 */
-		if( !EXT_LOADED ) { 
+//		/*
+//		 * Extension must be loaded once: Tomcat fails at context change otherwise
+//		 */
+//		EXT_LOADED = false;
+//		if( !EXT_LOADED ) { 
 			SQLiteUDF.LoadProcedures(conn);
 //			String efp = getExtensionFilePath();
 //			if (Messenger.debug_mode)
@@ -209,8 +210,8 @@ public class SQLiteWrapper extends DbmsWrapper {
 //			stat.executeUpdate("pragma temp_store=FILE");
 //
 //			stat.close();
-			EXT_LOADED = false;
-		}
+//			EXT_LOADED = false;
+//		}
 		return conn;
 	}
 
@@ -760,7 +761,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 		int nb_col=0;
 		if( ncols == -1 ) {
 			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet rsColumns = meta.getColumns(null, null, tableName.toLowerCase(), null);
+			ResultSet rsColumns = meta.getColumns(null, null, tableName, null);
 			/*
 			 * Only TYPE_FORWARD supported: must read all columns to get the size
 			 */
@@ -887,19 +888,12 @@ public class SQLiteWrapper extends DbmsWrapper {
 		try {
 			Messenger.debug_mode = true;
 			DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 
+			System.out.println(dbmswrapper.test_base);
 			dbmswrapper.setAdminAuth("", "");
-			dbmswrapper.checkAdminPrivileges("/tmp", true);
-System.exit(0);
-//			
-//			SQLiteWrapper w = SQLiteWrapper.get\loading
-			Database.init("Napoli");
-			SQLQuery sq = new SQLQuery();
-			//sq.run("SELECT count(*) FROM saada_class WHERE name REGEXP 'CCDImages(_[0-9]+)? *$'");
-			sq.run("SELECT oidsaada FROM AIPWFI_IMAGE WHERE (isinbox(15.927, -72.016417, 0.5, 0.5, AIPWFI_IMAGE.pos_ra_csa, AIPWFI_IMAGE.pos_dec_csa) ) limit 100");
-
-//			Database.init("MUSE");
-//			sq = new SQLQuery();
-//			sq.run("SELECT count(*) FROM saada_class WHERE name REGEXP 'CCDImages(_[0-9]+)? *$'");
+			System.out.println(dbmswrapper.test_base);
+			dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.setReaderAuth("", "");
+			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			System.err.println(e.getMessage());
