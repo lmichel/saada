@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
+
 /**
  * Contains some methods managing working directories
  * @author laurent
@@ -85,9 +87,11 @@ public class WorkDirectory {
 			Messenger.printMsg(Messenger.DEBUG, "empty directory " + f.getAbsolutePath());
 		if (f.isDirectory()) {
 			for (File c : f.listFiles()) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Delete (1)" + c.getName());
-				delete(c);
+				if (c.isDirectory()) {
+					FileUtils.deleteDirectory(c);
+				} else {
+					c.delete();
+				}
 			}
 		}		
 	}
