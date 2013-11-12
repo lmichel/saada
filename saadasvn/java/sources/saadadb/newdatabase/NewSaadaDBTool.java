@@ -66,6 +66,7 @@ public class NewSaadaDBTool extends JFrame {
 				} else {
 					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
 				}
+				new_logfile = new_logfile.replaceAll("\\", "\\\\");
 				String f = new_logfile;
 				int cpt = 1;
 				while( (new File(f)).exists() ) {
