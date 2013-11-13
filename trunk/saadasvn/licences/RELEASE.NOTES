@@ -1,9 +1,15 @@
 -------------------------------------------------
-Version Saada1.7.0.build5
+Version Saada1.7.0.build7
 
 L. MICHEL
 June 2013
 -------------------------------------------------
+Saada 1.7.0.build7
+----------------
+Works on MS Windows 64 bits
+New version of the SQLite JDBC driver using Java procedures instead of native code
+New version of the MYSQL JDBC Driver supporting the last MySQL releases
+Support of PostgreSQL 9 (escape char in queries)
 
 Saada 1.7.0.build5
 ----------------
