@@ -281,7 +281,14 @@ public abstract class SQLTable {
 	 */
 	public static void dropTable(String table) throws AbortException {
 		try {
-			if( Database.getWrapper().tableExist(table)) {
+			if( Database.getWrapper().tableExist(table) ) {
+				/*
+				 * SQLIte ne suporte pas de Drop table dans une transaction
+				 */
+				if( Database.getWrapper().supportTableDropInTransaction() ){
+					commitTransaction();
+					beginTransaction();
+				}
 				addQueryToTransaction(Database.getWrapper().dropTable(table));		
 				if( !Database.getWrapper().supportDropTableInTransaction()) {
 					commitTransaction();
