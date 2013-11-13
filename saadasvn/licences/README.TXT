@@ -1,9 +1,22 @@
 -------------------------------------------------
-Version Saada1.7.0.build5
+Version Saada1.7.0.build7
 
 L. MICHEL
-June 2013
+November 2013
 -------------------------------------------------
+
+---- Jars ----------------
+upgrade of apache.io from 1 to 2.4
+
+---- SQLIte --------------
+Procedure in native C replaced with Java code
+
+---- PostgresQL -----------
+Version 9 dos not support old style escape sequence: \'
+Uses '' instead
+
+---- MySQL -----------
+Support last version (5.7) which requires user name to be suffixed by @localhost
 
 ---- Java 7 ---------
 Saada is configured to run with Java 1.7 (perfectly supported by JDK1.7)
