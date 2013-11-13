@@ -33,6 +33,9 @@ jQuery.extend({
 				controlShowCounterparts: function(oid, relation){
 					model.processShowCounterparts(oid, relation);				
 				},
+				controlSampVOTable: function(){
+					model.sampVOTable();				
+				},
 				controlDownloadVOTable: function(){
 					model.downloadVOTable();				
 				},
