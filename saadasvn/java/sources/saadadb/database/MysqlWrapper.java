@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import saadadb.collection.Category;
+import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -686,7 +687,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		+ Database.getSepar() 
 		+ "workspace" 
 		+ Database.getSepar() 
-		+ Database.getName()
+		+ "Saada1.7"
 		+ Database.getSepar() 
 		+ "sqlprocs" 
 		+ Database.getSepar() 
@@ -768,10 +769,13 @@ public class MysqlWrapper extends DbmsWrapper {
 
 	public static void main(String[] args) {
 		try {
-			Database.init("BENCH2_0_MSQL");
-			SQLTable.beginTransaction();
-			SQLTable.addQueryToTransaction("CREATE TABLE BENCH2_0_MSQL_tempo.x AS SELECT * from saadadb");
-			SQLTable.commitTransaction();
+			ArgsParser ap = new ArgsParser(args);
+			Messenger.debug_mode = true;
+			DbmsWrapper dbmswrapper = MysqlWrapper.getWrapper("localhost", ""); 
+			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
+			dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.setReaderAuth("reader", "");
+			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			System.err.println(e.getMessage());
