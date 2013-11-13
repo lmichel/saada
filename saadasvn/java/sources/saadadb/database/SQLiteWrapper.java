@@ -864,6 +864,12 @@ public class SQLiteWrapper extends DbmsWrapper {
 	public boolean supportAccount() {
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#supportTableDropInTransaction()
+	 */
+	public boolean supportTableDropInTransaction() {
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#setFetchSize(java.sql.Statement, int)
