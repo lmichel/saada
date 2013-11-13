@@ -128,16 +128,16 @@ public class FormPanel extends JPanel {
 		switch( screen_number ) {
 		case 0: this.setSaadaDirPanel(); break;
 		case 1: this.setDatabaseConnectPanel(); 
-		try {
-			SQLiteWrapper.getExtensionFilePath();
-		} catch(Exception e) {
-			dbms_combo.removeItemAt(0);
-			JOptionPane.showMessageDialog(this,
-					"SQLite can not be used because the native SQL procedure libraries is not available for your platform\n" + e.getMessage(),
-					"Missing resource",
-					JOptionPane.WARNING_MESSAGE);
-
-		}
+//		try {
+//			SQLiteWrapper.getExtensionFilePath();
+//		} catch(Exception e) {
+//			dbms_combo.removeItemAt(0);
+//			JOptionPane.showMessageDialog(this,
+//					"SQLite can not be used because the native SQL procedure libraries is not available for your platform\n" + e.getMessage(),
+//					"Missing resource",
+//					JOptionPane.WARNING_MESSAGE);
+//
+//		}
 		break;
 		case 2: if( dbms_combo.getSelectedItem().toString().equalsIgnoreCase("sqlite") ) {
 			this.setWebRootPanel();
