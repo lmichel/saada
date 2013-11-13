@@ -982,6 +982,8 @@ abstract public class DbmsWrapper {
 	public  String getAsciiNull() {
 		return "\\N";
 	}
+	
+
 	/**
 	 * Return a string to be added to the DB name to get the name of the temporary area.
 	 * @param dbname
