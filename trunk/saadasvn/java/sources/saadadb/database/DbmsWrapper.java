@@ -119,7 +119,6 @@ abstract public class DbmsWrapper {
 			String q = grantSelectToPublic(test_table);
 			if( q != null && q.length() > 0 )
 				stmt.executeUpdate(q);
-			stmt.close();
 			/*
 			 * Populate the table from a file
 			 */
@@ -150,9 +149,8 @@ abstract public class DbmsWrapper {
 					rs.close();
 					admin_connection.close();
 					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + rc + "> return by SQL select.");
-				}
-				else {
-					Messenger.printMsg(Messenger.TRACE, "test table readout: 3 rows found: OK");
+				} else {
+					Messenger.printMsg(Messenger.TRACE, "procedure returns 0.5: OK");
 				}
 				break;
 			}
@@ -164,11 +162,11 @@ abstract public class DbmsWrapper {
 			while( rs.next()) {
 				double result =  rs.getDouble(1);
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Returns " + rs.getDouble(1) + " " + rs.getDouble(2));
+					Messenger.printMsg(Messenger.DEBUG, "Returns " + rs.getDouble(1) + " " + rs.getObject(2));
 				if( result != -0.5 ) {
 					rs.close();
 					admin_connection.close();
-					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + result + "> return by SQL select.");					
+					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong result: <" + result + "> return by SQL select, should be 0.5");					
 				}
 				Messenger.printMsg(Messenger.TRACE, "SQL procedures seem to be OK");
 				break;
@@ -1190,9 +1188,6 @@ abstract public class DbmsWrapper {
 		return true;
 	}
 	
-	public boolean supportTableDropInTransaction() {
-		return true;
-	}
 	/**
 	 * Does it for DBMS supporting this feature, not for SQLITE which consider the fetch size as a result limit
 	 * @param stmt

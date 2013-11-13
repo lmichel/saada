@@ -610,7 +610,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		+ Database.getSepar() 
 		+ "workspace" 
 		+ Database.getSepar() 
-		+ Database.getName()
+		+ "Saada1.7"
 		+ Database.getSepar() 
 		+ "sqlprocs" 
 		+ Database.getSepar() 
@@ -655,7 +655,7 @@ public class PostgresWrapper extends DbmsWrapper {
 					Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir " + base_dir);
 					bf = new File(base_dir) ;
 					if( !(bf.exists() && bf.isDirectory()) ) {		
-						FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can not access SQL procedure directory");
+						FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can not access SQL procedure directory " + bf.getAbsolutePath());
 					}
 				}
 			}
@@ -676,16 +676,18 @@ public class PostgresWrapper extends DbmsWrapper {
 		return helpItems;
 	}
 
-	public static void main(String[] args){ 
+	public static void main(String[] args) {
 		try {
 			ArgsParser ap = new ArgsParser(args);
-			Database.init(ap.getDBName());
-			Database.setAdminMode(ap.getPassword());
-			Database.getWrapper().loadSQLProcedures();
-			SQLTable.commitTransaction();
+			Messenger.debug_mode = true;
+			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("obs-he-lm", "5432"); 
+			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
+			dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.setReaderAuth("reader", "");
+			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Messenger.printStackTrace(e);
+			System.err.println(e.getMessage());
 		}
-
 	}
 }
