@@ -105,7 +105,16 @@ jQuery
 					Modalinfo.info(retour, "Relation Info");
 				}
 			});
-		};		
+		};	
+		this.fireSampVOTable = function(query) {
+			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
+				Modalinfo.info("No data selection");
+				return;
+			}
+			$.each(listeners, function(i) {
+				listeners[i].controlSampVOTable();
+			});
+		};	
 		this.fireDownloadVOTable = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
 				Modalinfo.info("No data selection");
@@ -617,12 +626,11 @@ jQuery
 				// p: change page
 			//	$('.fixedHeader').remove();
 				var iconBar = '&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>'	
-				+ '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
-				+ Printer.getSmallPrintButton("resultpane")
+				            + '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
+				            + Printer.getSmallPrintButton("resultpane")
 				;
-				if( globalTreePath[1] == "ENTRY"){
-					var url = "getqueryreport?query=" + escape(query) + "&protocol=auto&format=votable";
-					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="WebSamp_mVc.fireSendVoreport(&quot;' + url + '&quot;, &quot;text/xml&quot;, null);"></a>';
+				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
+					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>';
 				}
 				
 				var  oTable = $('#datatable').dataTable({

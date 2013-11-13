@@ -12,21 +12,19 @@ jQuery.extend({
 		/*
 		 * What we have to store and play with
 		 */		
-		var collection ;
-		var category ;
+		var collection = null;
+		var category  = null;
 
 		/**
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
 			listeners.push(list);
-		}
+		};
 		/*
 		 * Event processing
 		 */
 		this.processTreeNodeEvent = function(treepath){
-			var jsondata;
-			var params;
 			if( treepath.length == 3 ){
 				collection = treepath[0];
 				category = treepath[1];
@@ -70,8 +68,8 @@ jQuery.extend({
 				$("#ssapscope").html("Service scope: Not Set");
 				$("#cspscope").html("Service scope: Not Set");
 			}
-		}
-		
+		};
+
 		/*********************
 		 * SIAP Event processing
 		 */
@@ -111,10 +109,13 @@ jQuery.extend({
 			return url;
 		};
 		this.processSIAPQueryEvent= function(){
-			window.open(this.buildSIAPUrl(), 'SIAP Result');
+			Modalinfo.iframePanel(this.buildSIAPUrl(), 'SIAP Result');
 		};
 		this.processSIAPSampEvent= function(){
-			WebSamp_mVc.fireSendVoreport(this.buildSIAPUrl(), null, null);
+			var url = this.buildSIAPUrl();
+			if( url){
+				WebSamp_mVc.fireSendVoreport(url, null, null);
+			}
 		};
 
 		this.processSIAPCapabilityEvent= function(){
@@ -135,17 +136,17 @@ jQuery.extend({
 			}
 			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
 			window.open(url, 'SIAP Capability');
-		}
-		
-		
+		};
+
+
 		this.processSIAPRegistryEvent= function(){
 			var url = 'getregistry?type=registry&get=SIA&coll=[' + collection + ']&';
 			window.open(url, 'SIAP Registry');
-		}
+		};
 		this.processSIAPGluEvent= function(){
 			var url = 'getregistry?type=glu&get=SIA&coll=[' + collection + ']&';
 			window.open(url, 'SIAP Glu');
-		}
+		};
 
 		/*********************
 		 * SSAP Event processing
@@ -173,7 +174,7 @@ jQuery.extend({
 				Modalinfo.info("Size must be  between 0 and 1");
 				return;
 			}
-			
+
 			var band1 = jQuery.trim($('#ssapbandmin').val());
 			var band2 = jQuery.trim($('#ssapbandmax').val());
 			var unit  = $('#ssapunit option:selected').val();
@@ -186,10 +187,13 @@ jQuery.extend({
 			return url;
 		};
 		this.processSSAPQueryEvent= function(){
-			window.open(this.buildSSAPUrl, 'SSA Result');
+			Modalinfo.iframePanel(this.buildSSAPUrl(), 'SSA Result');
 		};
 		this.processSSAPSampEvent= function(){
-			WebSamp_mVc.fireSendVoreport(this.buildSSAPUrl(), null, null);
+			var url = this.buildSSAPUrl();
+			if( url){
+				WebSamp_mVc.fireSendVoreport(url, null, null);
+			}
 		};
 
 		this.processSSAPCapabilityEvent= function(){
@@ -210,17 +214,17 @@ jQuery.extend({
 			}
 			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
 			window.open(url, 'SSA Capability');
-		}
-		
-		
+		};
+
+
 		this.processSSAPRegistryEvent= function(){
 			var url = 'getregistry?type=registry&get=SIA&coll=[' + collection + ']&';
 			window.open(url, 'SSA Registry');
-		}
+		};
 		this.processSSAPGluEvent= function(){
 			var url = 'getregistry?type=glu&get=SIA&coll=[' + collection + ']&';
 			window.open(url, 'SSA Glu');
-		}
+		};
 
 
 		/*********************
@@ -255,10 +259,13 @@ jQuery.extend({
 			return url;
 		};
 		this.processCSQueryEvent= function(){
-			window.open(this.buildCSUrl, 'SSA Result');
+			Modalinfo.iframePanel(this.buildCSUrl(), 'SCS Result');
 		};
 		this.processCSSampEvent= function(){
-			WebSamp_mVc.fireSendVoreport(this.buildCSUrl(), null, null);
+			var url = this.buildCSUrl();
+			if( url){
+				WebSamp_mVc.fireSendVoreport(url, null, null);
+			}
 		};
 
 		this.processCSCapabilityEvent= function(){
@@ -272,17 +279,17 @@ jQuery.extend({
 			var url = base_url + 'conesearch?collection=[' + collection + ']&';
 			url += 'size=' + escape(rad) + '&pos=' + escape(pos) + '&format=METADATA';
 			window.open(url, 'CS Capability');
-		}
-		
-		
+		};
+
+
 		this.processCSRegistryEvent= function(){
 			var url = 'getregistry?type=registry&get=CS&coll=[' + collection + ']&';
 			window.open(url, 'CS Registry');
-		}
+		};
 		this.processCSGluEvent= function(){
 			var url = 'getregistry?type=glu&get=CS&coll=[' + collection + ']&';
 			window.open(url, 'CS Glu');
-		}
+		};
 
 		/*
 		 * Listener notifications
@@ -291,6 +298,6 @@ jQuery.extend({
 			$.each(listeners, function(i){
 				listeners[i].isInit(attributesHandlers, relations);
 			});
-		}
+		};
 	}
 });

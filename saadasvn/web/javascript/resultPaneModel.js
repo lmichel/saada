@@ -275,6 +275,19 @@ jQuery.extend({
 				}
 			});
 		};
+		
+		this.sampVOTable = function() {
+			/*
+			 * The mode (TAP/SaadaQL is detected by anaylsing the title
+			 */
+			var titlepath = $('#titlepath').html().split('&gt;');
+			if( titlepath.length == 3 && titlepath[1] == 'Job' ) {
+			}
+			else {
+				var url = "getqueryreport?query=" + escape(current_query) + "&model=samp&format=votable";
+				WebSamp_mVc.fireSendVoreport(url, null, null);
+			}
+		};
 		this.downloadVOTable = function() {
 			/*
 			 * The mode (TAP/SaadaQL is detected by anaylsing the title
@@ -284,12 +297,12 @@ jQuery.extend({
 			}
 			else {
 				var url = "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=votable";
-				window.open(url, 'DL VOTable');
+				Modalinfo.iframePanel(url, 'DL VOTable');
 			}
 		};
 		this.downloadFITS = function() {
 			var url = "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=fits";
-			window.open(url, 'DL FITS');
+			Modalinfo.iframePanel(url, 'DL FITS');
 		};
 		this.downloadZip = function() {
 			if( that.zipJob != null ) {
