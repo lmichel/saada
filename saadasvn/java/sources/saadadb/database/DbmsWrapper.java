@@ -1190,6 +1190,9 @@ abstract public class DbmsWrapper {
 		return true;
 	}
 	
+	public boolean supportTableDropInTransaction() {
+		return true;
+	}
 	/**
 	 * Does it for DBMS supporting this feature, not for SQLITE which consider the fetch size as a result limit
 	 * @param stmt
