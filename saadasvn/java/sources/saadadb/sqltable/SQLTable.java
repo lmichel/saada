@@ -285,7 +285,7 @@ public abstract class SQLTable {
 				/*
 				 * SQLIte ne suporte pas de Drop table dans une transaction
 				 */
-				if( Database.getWrapper().supportTableDropInTransaction() ){
+				if( Database.getWrapper().supportDropTableInTransaction() ){
 					commitTransaction();
 					beginTransaction();
 				}
