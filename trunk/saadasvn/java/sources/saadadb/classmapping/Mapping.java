@@ -20,6 +20,7 @@ import saadadb.util.Messenger;
 /**
  * @author laurentmichel
  * * @version $Id$
+ * 11/2013: Position keywords ALPHA,DELTA were taken as an object name (Object 'ALPHA DELTA' really exist)
 
  */
 public class Mapping {
@@ -474,11 +475,17 @@ public class Mapping {
 		else if( tabRa_dec.length == 2 ) {
 			PositionParser pp = null;
 			try {
-				pp = new PositionParser(tabRa_dec[0] + " " + tabRa_dec[1]);
-				this.setPosRaValue(pp.getRa());
-				this.setPosDecValue(pp.getDec());				
-				this.setPosRa("Numeric");
-				this.setPosDec("Numeric");				
+				pp = new PositionParser(tabRa_dec[0] + " " + tabRa_dec[1]);		
+				// Position keywords ALPHA,DELTA were taken as an object name, make a test to keep nulerical value only
+				if( pp.getFormat() == PositionParser.HMS ||  pp.getFormat() == PositionParser.DECIMAL ) {
+					this.setPosRaValue(pp.getRa());
+					this.setPosDecValue(pp.getDec());				
+					this.setPosRa("Numeric");
+					this.setPosDec("Numeric");	
+				} else {
+					this.setPosRa(tabRa_dec[0]);
+					this.setPosDec(tabRa_dec[1]);									
+				}
 			} catch(QueryException e) {
 				this.setPosRa(tabRa_dec[0]);
 				this.setPosDec(tabRa_dec[1]);				
