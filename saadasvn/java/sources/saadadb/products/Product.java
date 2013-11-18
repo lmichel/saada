@@ -45,6 +45,7 @@ import cds.astro.FK5;
  */
 /**
  * @author michel
+ * @version $Id$
  *
  */
 public class Product /*extends File*/ {
