@@ -529,7 +529,7 @@
 			<classpath refid="saadadb.classpath"/>      
 			<arg value="-create=ObsCore"/>      
 			<arg value="-debug={debug}"/>      
-			<arg value="ThreeXMM"/>  
+			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
 	<!--
@@ -541,7 +541,52 @@
 			<classpath refid="saadadb.classpath"/>      
 			<arg value="-remove=ObsCore"/>      
 			<arg value="-debug={debug}"/>      
-			<arg value="ThreeXMM"/>  
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  Manage extended attributes
+	-->
+	<!--
+	  Add a new extended attribute to a category of data 
+	  sant extended.attribute.add -Dname=name -Dcategory=name -Dtype=type [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.add">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-create={name}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-type={type}"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	<!--
+	  Remove an extended attribute from a category of data 
+	  sant extended.attribute.remove -Dname=name -Dcategory=name [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.remove">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove={name}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	<!--
+	  Rename an extended attribute of a category of data 
+	  sant extended.attribute.remove -Dname=name -Dnewname=newname -Dcategory=name [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.rename">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-rename={name}"/>      
+			<arg value="-newname={newname}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
 
