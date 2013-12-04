@@ -2,6 +2,7 @@ package saadadb.admintool.components.input;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.tree.TreePath;
 
@@ -24,7 +25,7 @@ import saadadb.unit.Unit;
  */
 public class DMAttributeTextField extends TreepathDropableTextField {
 	private String dm_unit;
-	private HashMap<String, AttributeHandler> attributeHandlers;
+	private Map<String, AttributeHandler> attributeHandlers;
 	private AttributeHandler ah;
 	private String conv_fct;
 	
@@ -94,18 +95,15 @@ public class DMAttributeTextField extends TreepathDropableTextField {
 					AdminComponent.showInputError(this.getParent(), e.toString());
 					return false;
 				}
-			}
-			else {
+			} else {
 				this.conv_fct = ah.getNameattr();
 				return AdminComponent.showConfirmDialog(this.getParent(), "Attribute <" + ah.getNameattr() + "> has no unit: It will be taken as " + this.dm_unit + ". Do you keep it?");
 			}
-		}
-		else {
+		} else {
 			if( source_unit == null || source_unit.length() == 0 ) {
 				this.conv_fct = ah.getNameattr();
 				return true;
-			}
-			else {
+			} else {
 				this.conv_fct = ah.getNameattr();
 				return AdminComponent.showConfirmDialog(this.getParent(), "Data model attribute has no unit.Attribute <" 
 						+ ah.getNameattr() + "> will be considered as unitless although it is declared as " + source_unit + ". Do you keep it?");

@@ -16,8 +16,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -35,24 +40,31 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import saadadb.admin.SaadaDBAdmin;
+import saadadb.collection.Category;
+import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 import saadadb.database.InstallParamValidator;
 import saadadb.database.MysqlWrapper;
 import saadadb.database.PostgresWrapper;
 import saadadb.database.SQLiteWrapper;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.util.HostAddress;
+import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ * 12/2013: new managment of the extended attributes
+ */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class FormPanel extends JPanel {
-	/**
-	 *  @version $Id$
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	protected JFrame frame;
 	protected JTextField saadadb_name = new JTextField(10);
@@ -77,21 +89,17 @@ public class FormPanel extends JPanel {
 	protected JTextField tomcat_home = new JTextField(32);
 	protected JTextField url_root = new JTextField(24);
 
-	protected JComboBox att_type = new JComboBox(new String[]{"String", "int", "long", "double", "boolean"});
+	protected JComboBox att_type = new JComboBox(JavaTypeUtility.ATTREXTENDTYPES);
 	protected JTextField att_name = new JTextField(10);
 	protected JComboBox att_list = new JComboBox();
-	protected JRadioButton[] cat_button = { new JRadioButton("Misc")
-	, new JRadioButton("Image")
-	, new JRadioButton("Spectrum")
-	, new JRadioButton("Table") 
-	, new JRadioButton("Entry")
-	, new JRadioButton("Flatfile")};
-	LinkedHashMap[] cat_att = { new LinkedHashMap<String, String>()
-			, new LinkedHashMap<String, String>()
-			, new LinkedHashMap<String, String>()
-			, new LinkedHashMap<String, String>()
-			, new LinkedHashMap<String, String>()
-			, new LinkedHashMap<String, String>()};
+	protected Map<String, JRadioButton>cat_button  = new LinkedHashMap<String, JRadioButton>();
+	Map<String, LinkedHashMap<String, String>> cat_att = new LinkedHashMap<String, LinkedHashMap<String,String>>();
+	//	LinkedHashMap[] cat_att = { new LinkedHashMap<String, String>()
+	//			, new LinkedHashMap<String, String>()
+	//			, new LinkedHashMap<String, String>()
+	//			, new LinkedHashMap<String, String>()
+	//			, new LinkedHashMap<String, String>()
+	//			, new LinkedHashMap<String, String>()};
 	protected JComboBox coord_syst = new JComboBox(new String[]{"ICRS", "FK5,J2000", "FK4,1950", "Galactic", "Ecliptic"});
 
 	protected JRadioButton[] channel_button = { new JRadioButton("Channel")
@@ -108,15 +116,22 @@ public class FormPanel extends JPanel {
 	/**
 	 * Build the frame with the first panel open
 	 * @param frame
+	 * @throws FatalException 
 	 */
-	FormPanel(JFrame frame) {
+	FormPanel(JFrame frame) throws FatalException {
 		super();
 		this.setBackground(SaadaDBAdmin.beige_color);
 		this.setPreferredSize(new Dimension(550, 350));
 		this.frame = frame;
 		this.setLayout(new GridBagLayout());		
-		this.setSaadaDirPanel();		        
-
+		this.setSaadaDirPanel();	
+		for( int ci=1 ; ci<Category.NB_CAT ; ci++){
+			if( ci != Category.CUBE ) {
+				String cat = Category.explain(ci);
+				cat_button.put(cat, new JRadioButton(cat));
+				cat_att.put(cat, new LinkedHashMap<String,String>());
+			}
+		}
 	}
 
 	/**
@@ -128,16 +143,16 @@ public class FormPanel extends JPanel {
 		switch( screen_number ) {
 		case 0: this.setSaadaDirPanel(); break;
 		case 1: this.setDatabaseConnectPanel(); 
-//		try {
-//			SQLiteWrapper.getExtensionFilePath();
-//		} catch(Exception e) {
-//			dbms_combo.removeItemAt(0);
-//			JOptionPane.showMessageDialog(this,
-//					"SQLite can not be used because the native SQL procedure libraries is not available for your platform\n" + e.getMessage(),
-//					"Missing resource",
-//					JOptionPane.WARNING_MESSAGE);
-//
-//		}
+		//		try {
+		//			SQLiteWrapper.getExtensionFilePath();
+		//		} catch(Exception e) {
+		//			dbms_combo.removeItemAt(0);
+		//			JOptionPane.showMessageDialog(this,
+		//					"SQLite can not be used because the native SQL procedure libraries is not available for your platform\n" + e.getMessage(),
+		//					"Missing resource",
+		//					JOptionPane.WARNING_MESSAGE);
+		//
+		//		}
 		break;
 		case 2: if( dbms_combo.getSelectedItem().toString().equalsIgnoreCase("sqlite") ) {
 			this.setWebRootPanel();
@@ -702,10 +717,10 @@ public class FormPanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			FormPanel.this.att_list.removeAllItems();
 			FormPanel.this.att_name.setText("");
-			LinkedHashMap<String, String> lhm=null;		
-			for( int i=0 ; i<cat_att.length ; i++ ) {
-				if( cat_button[i].isSelected() ) {
-					lhm = cat_att[i];
+			for( Entry <String, LinkedHashMap<String, String>>entr: cat_att.entrySet() ) {
+				String cat = entr.getKey();
+				if( cat_button.get(cat).isSelected() ) {
+					LinkedHashMap<String, String> lhm= entr.getValue();
 					for(Entry<String, String> entry: lhm.entrySet()) {
 						FormPanel.this.att_list.addItem(entry.getKey() + " (" + entry.getValue() + ")");
 					}					
@@ -730,14 +745,17 @@ public class FormPanel extends JPanel {
 
 		ButtonGroup bg = new ButtonGroup();
 		ActionListener al = new CategoryActionListener();
-		for( int i=0 ; i<cat_att.length ; i++ ) {
+		int i=0;
+		for( Entry<String, JRadioButton> entr: cat_button.entrySet()) {
+			JRadioButton jrb = entr.getValue();
 			c.gridx = i; c.gridy = 0;	
-			jp.add(cat_button[i]);
-			cat_button[i].addActionListener(al);
-			cat_button[i].setBackground(SaadaDBAdmin.beige_color);
-			bg.add(cat_button[i]);
+			jp.add(jrb);
+			jrb.addActionListener(al);
+			jrb.setBackground(SaadaDBAdmin.beige_color);
+			bg.add(jrb);
+			if( i == 0 ) jrb.setSelected(true);	
+			i++;
 		}
-		cat_button[0].setSelected(true);		
 		this.add(jp, c);
 		c0.gridx = 0 ; c0.gridy = 0; this.add(jp, c0);
 		/*
@@ -771,11 +789,10 @@ public class FormPanel extends JPanel {
 				String name = att_name.getText().trim();
 				if( name.matches(RegExp.EXTATTRIBUTE) ) {
 					FormPanel.this.att_list.addItem(name + " (" + att_type.getSelectedItem() + ")") ;
-					LinkedHashMap<String, String> lhm=null;				
-					for( int i=0 ; i<cat_att.length ; i++ ) {
-						if( cat_button[i].isSelected() ) {
-							lhm = cat_att[i];
-							lhm.put(name, att_type.getSelectedItem().toString());
+					for( Entry<String, LinkedHashMap<String, String>> entr:  cat_att.entrySet() ) {
+						String att = entr.getKey();
+						if( cat_button.get(att).isSelected() ) {
+							entr.getValue().put(name, att_type.getSelectedItem().toString());
 						}
 					}
 				}
@@ -798,11 +815,10 @@ public class FormPanel extends JPanel {
 			public void actionPerformed(@SuppressWarnings("unused") ActionEvent arg0) {
 				String name = FormPanel.this.att_list.getSelectedItem().toString().split(" ")[0];
 				FormPanel.this.att_list.removeItem(FormPanel.this.att_list.getSelectedItem());
-				LinkedHashMap<String, String> lhm=null;				
-				for( int i=0 ; i<cat_att.length ; i++ ) {
-					if( cat_button[i].isSelected() ) {
-						lhm = cat_att[i];
-						lhm.remove(name);
+				for( Entry<String, LinkedHashMap<String, String>> entr:  cat_att.entrySet() ) {
+					String att = entr.getKey();
+					if( cat_button.get(att).isSelected() ) {
+						entr.getValue().remove(name);
 					}
 				}
 			}
@@ -813,7 +829,6 @@ public class FormPanel extends JPanel {
 		jp.add(button, c);
 		this.add(jp, c);
 		c0.gridx = 0 ; c0.gridy = 1 ; this.add(jp, c0);
-
 		this.updateUI();
 	}
 
@@ -823,22 +838,8 @@ public class FormPanel extends JPanel {
 	 */
 	protected boolean validNewAttPanel() {
 		try{
-			String filename = ((NewSaadaDBTool)(frame)).saada_home + Database.getSepar() + "config" + Database.getSepar() + "collection_attr.xml";
-			BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
-			bw.write("<?xml version=\"1.0\" encoding=\"iso-8859-1\" standalone=\"no\"?>\n");
-			bw.write("<!DOCTYPE collection_attr SYSTEM \"collection_attr.dtd\">\n");
-			bw.write("<collection_attr>\n");
-			for( int i=0 ; i<cat_button.length ; i++ ) {
-				bw.write("    <list name=\"" + cat_button[i].getText().toUpperCase() + "\">\n");
-				LinkedHashMap<String, String> lhm=cat_att[i];		
-				for( Entry<String, String> entry : lhm.entrySet() ) {
-					bw.write("        <attr name=\"" + entry.getKey().trim() + "\" type=\"" + entry.getValue().trim() + "\"/>\n");					
-				}			
-				bw.write("    </list>\n");
-			}
-			bw.write("</collection_attr>\n");
-			bw.close();
-
+			CollectionAttributeExtend cae = new CollectionAttributeExtend(((NewSaadaDBTool)(frame)).saada_home, cat_att);
+			cae.save();
 		}catch(Exception ex){
 			Messenger.printStackTrace(ex);
 			JOptionPane.showMessageDialog(frame,

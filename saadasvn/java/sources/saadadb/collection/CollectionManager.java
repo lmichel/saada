@@ -216,7 +216,10 @@ public class CollectionManager extends EntityManager {
 		}
 	}
 
-
+	@Override
+	public void rename(ArgsParser ap)  {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for collections");
+	}
 	/**
 	 * @throws Exception
 	 */

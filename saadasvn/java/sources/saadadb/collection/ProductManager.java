@@ -52,31 +52,32 @@ public class ProductManager extends EntityManager {
 	 */
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
-
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
 	}
-
 
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
-
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
 	}
-
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
-
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
 	}
-
 
 	@Override
 	public void index(ArgsParser ap) throws SaadaException {
-
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
 	}
-
 
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
-
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
+	}
+	
+	@Override
+	public void rename(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
 	}
 
 

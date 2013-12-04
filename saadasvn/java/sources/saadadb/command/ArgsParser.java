@@ -18,6 +18,7 @@ import saadadb.prdconfiguration.ConfigurationMisc;
 import saadadb.prdconfiguration.ConfigurationSpectrum;
 import saadadb.prdconfiguration.ConfigurationTable;
 import saadadb.util.DefineType;
+import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -31,7 +32,7 @@ public class ArgsParser implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private String name; // used to name the file where the parameters could be saved
 	private String[] args;
 
 	/**
@@ -91,6 +92,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-basedir")&&
 							!args[i].startsWith("-repdir")&&
 							!args[i].startsWith("-rename")&&
+							!args[i].startsWith("-newname")&&
 							!args[i].startsWith("-nolog") &&
 							!args[i].startsWith("-noindex") &&
 							!args[i].startsWith("-novignette") &&
@@ -104,6 +106,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-if=") &&
 							!args[i].startsWith("-of=") &&
 							!args[i].startsWith("-protocol=") &&
+							!args[i].startsWith("-type=") &&
 							!args[i].startsWith("-vomodel=") 
 					) {
 						msg += " <" + args[i] + ">";
@@ -226,6 +229,20 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-relation")) {
 				return this.matches(getArgsValue(args[i]), "-relation", RegExp.COLLNAME);
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the type specified by the arg -type=.....
+	 * used for adding extened attribues
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getType() throws FatalException {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-type")) {
+				return this.matches(getArgsValue(args[i]), "-type", JavaTypeUtility.ATTREXTENDTYPES);
 			}
 		}
 		return null;
@@ -766,6 +783,24 @@ public class ArgsParser implements Serializable{
 		}
 		return null;		
 	}
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getNewname() throws FatalException   {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-newname=")) {
+				String param = getArgsValue(args[i]);
+				if( param.matches(RegExp.DBNAME)) {
+					return param;
+				}
+				else {
+					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "SaadaDB name <" + param + "> badly formed");
+				}
+			}
+		}
+		return null;		
+	}
 
 	/**
 	 * @return
@@ -1056,6 +1091,27 @@ public class ArgsParser implements Serializable{
 		else {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, val + ": Wrong value for parameter <" + param + ">");
 			return "";
+		}
+	}
+	/**
+	 * Return val if it matches one of the string of authorizedValues
+	 * @param val
+	 * @param param
+	 * @param authorizedValues
+	 * @return
+	 * @throws FatalException
+	 */
+	private String matches(String val, String param, String[] authorizedValues) throws FatalException {
+		if( authorizedValues != null ){
+			for( String v: authorizedValues ){
+				if( v.equals(val) ) {
+					return val;
+				}
+			}
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, val + ": Value not allowed for parameter <" + param + ">");
+			return null;
+		} else {
+			return val;
 		}
 	}
 

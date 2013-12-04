@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewSaadaDB;
 import saadadb.newdatabase.NewSaadaDBTool;
@@ -64,7 +66,7 @@ public class MysqlWrapper extends DbmsWrapper {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getDBMS()
 	 */
@@ -215,18 +217,18 @@ public class MysqlWrapper extends DbmsWrapper {
 				rt += tn + " READ";
 			}
 		}
-//		if( wt.length() > 0 && rt.length() > 0) {
-//			return "LOCK TABLES " + wt + ",  " + rt ;
-//		}
-//		else if( wt.length() > 0 && rt.length() == 0) {
-//			return "LOCK TABLES " + wt;
-//		}
-//		else if( wt.length() == 0 && rt.length() > 0) {
-//			return "LOCK TABLES " + rt;
-//		}
-//		else {
-//			return "";
-//		}
+		//		if( wt.length() > 0 && rt.length() > 0) {
+		//			return "LOCK TABLES " + wt + ",  " + rt ;
+		//		}
+		//		else if( wt.length() > 0 && rt.length() == 0) {
+		//			return "LOCK TABLES " + wt;
+		//		}
+		//		else if( wt.length() == 0 && rt.length() > 0) {
+		//			return "LOCK TABLES " + rt;
+		//		}
+		//		else {
+		//			return "";
+		//		}
 		return "";
 	}
 
@@ -412,7 +414,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		for (String arg : args) {
 			if( retour.length() != 0 ) retour += "," ;
 			retour += arg;
-			}
+		}
 		return  "CONCAT(" +retour + ")";
 	}
 
@@ -672,6 +674,23 @@ public class MysqlWrapper extends DbmsWrapper {
 	public  String[] addColumn(String table, String column, String type) {
 		return new String[] {"ALTER TABLE " + table + " ADD  COLUMN " + column + " " + type};
 	}
+	@Override
+	public  String renameColumn(String table, String column, String newName) throws Exception {
+		/*
+		 * MySQL requires to give the type of the column even if it is the same.
+		 */
+		SQLQuery q = new SQLQuery("select * from " + table + " limit 1");
+		ResultSetMetaData rsmd = q.run().getMetaData();		
+		String type = "";
+		int NumOfCol = rsmd.getColumnCount();
+		for(int i=1;i<=NumOfCol;i++) {
+			if( rsmd.getColumnName(i).equalsIgnoreCase(column)) {
+				type = rsmd.getColumnTypeName(i);
+			}
+		}
+		q.close();
+		return "ALTER TABLE " + table + " CHANGE  " + column + " " + newName + " " + type;
+	}
 
 	@Override
 	public Set<String> getReferencedTempTable() {
@@ -740,7 +759,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		return bf;
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#removeProc()
 	 */
@@ -753,7 +772,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 		return retour.toArray(new String[0]);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getConditionHelp()
 	 */

@@ -16,6 +16,7 @@ import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewSaadaDB;
 import saadadb.newdatabase.NewSaadaDBTool;
@@ -526,7 +527,10 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	public  String[] addColumn(String table, String column, String type) {
 		return new String[]{"ALTER TABLE " + table + " ADD COLUMN  " + column + "  " + type};
-
+	}
+	@Override
+	public  String renameColumn(String table, String column, String newName) throws QueryException {
+		return "ALTER TABLE " + table + " RENAME COLUMN  " + column + " TO " + newName;
 	}
 	@Override
 	public String getDropTempoTable(String table_name) throws FatalException{

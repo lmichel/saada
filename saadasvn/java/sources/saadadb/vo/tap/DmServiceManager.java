@@ -45,7 +45,12 @@ public class DmServiceManager extends EntityManager {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
-
+	
+	@Override
+	public void rename(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for DM service manager");
+	}
+	
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.TRACE, "Empty DM view " + ap.getCreate());

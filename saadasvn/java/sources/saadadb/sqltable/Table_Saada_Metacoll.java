@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import saadadb.collection.Category;
@@ -46,159 +47,282 @@ public class Table_Saada_Metacoll extends SQLTable {
 	}
 
 	/**
+	 * Create the datatable category level for that collection.
+	 * Populate the metacoll table if needed
 	 * @param coll_name
 	 * @param str_cat
 	 * @throws FatalException 
 	 */
 	private static void addCollectionForCategory(String coll_name, int num_coll,  int cat) throws FatalException {
 		try {
-			LinkedHashMap<String, AttributeHandler> ahs = (new CollectionAttributeExtend()).getAttrSaada(Category.explain(cat));
 			String str_cat = Category.NAMES[cat].toLowerCase();
+			//  data table for that collection/category
 			String data_table_name = Database.getWrapper().getCollectionTableName(coll_name, cat);;
+			// Meta datatable for that category
 			String meta_table_name = "saada_metacoll_" + str_cat;
+			String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
+			String sql = buildCollectionDump(cat, dumpfile);
 			/*
-			 * Mysql requires all table accessed during a transaction to be locked
+			 * Populate the metacoll table if it is empty
 			 */
-			SQLTable.lockTable("saada_metacoll_" + str_cat);
-			SQLQuery squery = new SQLQuery();
-			ResultSet rs = squery.run("SELECT max(pk) from saada_metacoll_" + str_cat);
-			int max_key=0;
-			while( rs.next() ) {
-				max_key = rs.getInt(1) + 1;
-			}
-			squery.close();
-			Class cls = Class.forName("generated." + Database.getDbname() + "." + Category.NAMES[cat] + DefineType.TYPE_EXTEND_COLL);
-			String sql = "";
-			Class _class = cls;
-			Vector<Class> vt_class = new Vector<Class>();
-			while ( !_class.getName().equals("java.lang.Object")  ) {
-				vt_class.add(_class);
-				_class = _class.getSuperclass();
-			}
-			String dumpfile = Repository.getTmpPath() + Database.getSepar()  + data_table_name + ".psql";
-			BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
-			for (int k = vt_class.size() - 1; k >= 0; k--) {
-				Field fl[] = (vt_class.get(k)).getDeclaredFields();
-				if (fl.length > 0) {
-					for (int i = 0; i < fl.length; i++) {
-						String fname = fl[i].getName();
-						String ftype = fl[i].getType().getName().replace("java.lang.", "");
-						if( ftype.equals("saadadb.meta.DMInterface") || ftype.equals("saadadb.collection.VignetteFile") ) {
-							continue;
-						}
-						//System.out.println(vt_class.get(k).getName() + " FIELD " + fl[i].getName() + " " + ftype);
-						AttributeHandler  ah;
-						if( (ah = ahs.get(fname)) != null ){
-							ah.setLevel('E');							
-						} else {
-							ah = new AttributeHandler();
-							ah.setNameorg(DefineType.getCollection_name_org().get(fname));
-							if( ah.getNameorg().length() == 0 ) {
-								ah.setNameorg(fname);
-							}
-							ah.setNameattr(fname);
-							ah.setType(ftype);
-							ah.setQueriable(true);
-							ah.setCollname(coll_name);
-							ah.setUcd(DefineType.getCollection_ucds().get(fname));
-							ah.setUnit(DefineType.getCollection_units().get(fname));
-							ah.setComment("Attribute managed by Saada");
-							ah.setLevel('N');						
-						} 
-						if( cat == Category.SPECTRUM ) {
-							ah.setVo_dm(DefineType.VO_SDM);
-							ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
-						}
-	
-						String dumpline = max_key + "\t"
-						+ ah.getLevel() + "\t"
-						+ Database.getWrapper().getAsciiNull() + "\t"
-						///						+ "\\N\t" 
-						+ str_cat + "UserColl" + "\t"
-						+ ah.getNameattr() + "\t"
-						+ ah.getType() + "\t" 
-						+ ah.getNameorg() + "\t"
-						+ ah.getUcd() + "\t"
-						+ ah.getUtype() + "\t"
-						+ ah.getVo_dm() + "\t"
-						+ Database.getWrapper().getAsciiNull() + "\t"
-						///						+ "\\N\t"
-						+ Database.getWrapper().getBooleanAsString(true) + "\t"
-						+ ah.getUnit()+ "\t"
-						+ ah.getComment() + " \t"
-						//						+ coll_name + "\t"
-						//						+ num_coll + "\t"
-						+ "Generic\t"
-						+ "-1\t"
-						+Database.getWrapper().getAsciiNull();
-						///						+ "\\N";
-						bustmpfile.write(dumpline + "\n");
-						max_key++;
-						if( sql.length() > 0  ) {
-							sql += ", ";
-						}
-						sql += ah.getNameattr() + " " + Database.getWrapper().getSQLTypeFromJava(ftype);
-					}
-				}
-			}
-			bustmpfile.close();
+			storeCollectionDump(meta_table_name, dumpfile);
 			/*
-			 * Collection meta data are the same for all collections and are defined in the Saada DM
-			 * or by user collection attr set at creation time. So they must be stored once for all collections
+			 * Create the data table. done here because we got the format here
 			 */
-			squery = new SQLQuery();
-			rs = squery.run("select count(*) from " + meta_table_name.toLowerCase() );
-			while( rs.next()) {
-				if( rs.getInt(1) == 0) {
-					SQLTable.addQueryToTransaction(Database.getWrapper().lockTables(new String[]{meta_table_name}, new String[]{meta_table_name + " as a"}));
-					SQLTable.addQueryToTransaction("LOADTSVTABLE " + meta_table_name + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
-					//"copy " + meta_table_name  + " from '"+ dumpfile.replaceAll("\\\\", "\\\\\\\\") + "'", false, meta_table_name);
-					/*
-					 * Associate errors on position with position
-					 * These queries change the row order in the table, then the attribute order must
-					 * be restored with an order by pk
-					 */
-					SQLTable.lockTables(new String[]{meta_table_name}, new String[]{meta_table_name + " as a"});
-					SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
-							, meta_table_name + " as a"
-							, "a.name_coll = " + meta_table_name  + ".name_coll" 
-							, meta_table_name
-							, new String[]{"ass_error"}
-					, new String[]{meta_table_name + ".pk"}
-					, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_ra_csa'") );
-					SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
-							, meta_table_name + " as a"
-							, "a.name_coll = " + meta_table_name  + ".name_coll" 
-							, meta_table_name
-							, new String[]{"ass_error"}
-					, new String[]{meta_table_name + ".pk"}
-					, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_dec_csa'") );
-					//					SQLTable.runQueryUpdateSQL("UPDATE " + meta_table_name  
-					//							+ "   SET ass_error = pk "
-					//							+ "  FROM " + meta_table_name + " a "
-					//							+ " WHERE a.name_coll = " + meta_table_name  + ".name_coll AND a.name_attr = 'error_ra_csa' "
-					//							+ "   AND " + meta_table_name + ".name_attr = 'pos_ra_csa'"
-					//							, false
-					//							, null );
-					//					SQLTable.runQueryUpdateSQL(" UPDATE " + meta_table_name  
-					//							+ "   SET ass_error = a.pk "
-					//							+ "  FROM " + meta_table_name + " a "
-					//							+ " WHERE a.name_coll =" + meta_table_name  + ".name_coll AND a.name_attr = 'error_dec_csa' "
-					//							+ "   AND " + meta_table_name + ".name_attr = 'pos_dec_csa'"
-					//							, false
-					//							, null);
-				}
-				break;
-			}
-			squery.close();
 			SQLTable.createTable(data_table_name, sql, "oidsaada", false);
-
-		} catch(Exception e) {
+		} catch(SaadaException e) {
+			FatalException.throwNewException(SaadaException.DB_ERROR, e);
+		}  catch(Exception e) {
 			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
 
+	public static void addAttributeForCategory(int cat, AttributeHandler attributeHandler) throws Exception {
+		/*
+		 * Populate the metacoll table if needed; That can occurs if the new extended attribute is 
+		 * added before the first collection is created
+		 */
+		String str_cat = Category.explain(cat).toLowerCase();
+		String meta_table_name = "saada_metacoll_" + str_cat;
+		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
+		buildCollectionDump(cat, dumpfile);
+		/*
+		 * Compute the key (likely no longer useful)
+		 */
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("SELECT max(pk) from saada_metacoll_" + str_cat);
+		int max_key=0;
+		while( rs.next() ) {
+			max_key = rs.getInt(1) + 1;
+		}
+		/*
+		 * Add the new attribute to the metacoll table
+		 */
+		squery.close();
+		attributeHandler.setLevel('E');		
+		SQLTable.addQueryToTransaction(
+				"INSERT INTO saada_metacoll_" + str_cat + " VALUES ("
+				+ max_key + ", '"
+				+ attributeHandler.getLevel() + "', "
+				+ "null , '"
+				+ str_cat + "UserColl" + "', '"
+				+ attributeHandler.getNameattr() + "', '"
+				+ attributeHandler.getType() + "', '" 
+				+ attributeHandler.getNameorg() + "', '"
+				+ attributeHandler.getUcd() + "', '"
+				+ attributeHandler.getUtype() + "', '"
+				+ attributeHandler.getVo_dm() + "', "
+				+ "null,"
+				+ Database.getWrapper().getBooleanAsString(true) + ", '"
+				+ attributeHandler.getUnit()+ "', '"
+				+ attributeHandler.getComment() + " ', '"
+				+ "Generic', "
+				+ "-1,"
+				+ "null)");
+	}
+
+	/**
+	 * remove the attribute from the metacoll table
+	 * @param cat
+	 * @param attributeHandler
+	 * @throws Exception
+	 */
+	public static void removeAttributeForCategory(int cat, AttributeHandler attributeHandler) throws Exception {
+		/*
+		 * Populate the metacoll table if needed; That can occurs if the new extended attribute is 
+		 * added before the first collection is created
+		 */
+		String str_cat = Category.explain(cat).toLowerCase();
+		String meta_table_name = "saada_metacoll_" + str_cat;
+		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
+		buildCollectionDump(cat, dumpfile);
+		/*
+		 * Remove the  attribute from the metacoll table
+		 */
+		attributeHandler.setLevel('E');		
+		SQLTable.addQueryToTransaction(
+				"DELETE FROM saada_metacoll_" + str_cat 
+				+ " WHERE name_attr = '" + attributeHandler.getNameattr() + "'");
+	}
+	/**
+	 * remove the attribute from the metacoll table
+	 * @param cat
+	 * @param attributeHandler
+	 * @throws Exception
+	 */
+	public static void renameAttributeForCategory(int cat, AttributeHandler oldAattributeHandler, AttributeHandler newAattributeHandler) throws Exception {
+		/*
+		 * Populate the metacoll table if needed; That can occurs if the new extended attribute is 
+		 * added before the first collection is created
+		 */
+		String str_cat = Category.explain(cat).toLowerCase();
+		String meta_table_name = "saada_metacoll_" + str_cat;
+		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
+		buildCollectionDump(cat, dumpfile);
+		/*
+		 * Remove the  attribute from the metacoll table
+		 */
+		SQLTable.addQueryToTransaction(
+				"UPDATE saada_metacoll_" + str_cat 
+				+ " SET name_attr='" + newAattributeHandler.getNameattr() + "',"
+				+ " name_origin='" + newAattributeHandler.getNameattr() + "'"
+				+ " WHERE name_attr = '" + oldAattributeHandler.getNameattr() + "'");
+	}
+
+	/**
+	 * @param coll_name
+	 * @param str_cat
+	 * @throws FatalException 
+	 */
+	private static void storeCollectionDump(String meta_table_name, String dumpfile) throws Exception {
+		/*
+		 * Collection meta data are the same for all collections and are defined in the Saada DM
+		 * or by user collection attr set at creation time. So they must be stored once for all collections
+		 */
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("select count(*) from " + meta_table_name.toLowerCase() );
+		while( rs.next()) {
+			if( rs.getInt(1) == 0) {
+				SQLTable.addQueryToTransaction(Database.getWrapper().lockTables(new String[]{meta_table_name}, new String[]{meta_table_name + " as a"}));
+				SQLTable.addQueryToTransaction("LOADTSVTABLE " + meta_table_name + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
+				//"copy " + meta_table_name  + " from '"+ dumpfile.replaceAll("\\\\", "\\\\\\\\") + "'", false, meta_table_name);
+				/*
+				 * Associate errors on position with position
+				 * These queries change the row order in the table, then the attribute order must
+				 * be restored with an order by pk
+				 * Does nothing with SQLITE
+				 */
+				SQLTable.lockTables(new String[]{meta_table_name}, new String[]{meta_table_name + " as a"});
+				SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
+						, meta_table_name + " as a"
+						, "a.name_coll = " + meta_table_name  + ".name_coll" 
+						, meta_table_name
+						, new String[]{"ass_error"}
+				, new String[]{meta_table_name + ".pk"}
+				, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_ra_csa'") );
+				SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
+						, meta_table_name + " as a"
+						, "a.name_coll = " + meta_table_name  + ".name_coll" 
+						, meta_table_name
+						, new String[]{"ass_error"}
+				, new String[]{meta_table_name + ".pk"}
+				, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_dec_csa'") );
+			}
+			break;
+		}
+		squery.close();
+	}
+
+	/**
+	 * @param cat number of the category
+	 * @param dumpfile full path of the file where the content of the dump of the metacoll table is stored
+	 * @return an SQL description for the colunms of the data table for that category
+	 * @throws FatalException
+	 */
+	@SuppressWarnings("rawtypes")
+	private static String buildCollectionDump(int cat, String dumpfile) throws Exception {
+		Map<String, AttributeHandler> ahs = (new CollectionAttributeExtend(Database.getRoot_dir())).getAttrSaada(Category.explain(cat));
+		String str_cat = Category.explain(cat).toLowerCase();
+		/*
+		 * Mysql requires all table accessed during a transaction to be locked
+		 */
+		SQLTable.lockTable("saada_metacoll_" + str_cat);
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("SELECT max(pk) from saada_metacoll_" + str_cat);
+		int max_key=0;
+		while( rs.next() ) {
+			max_key = rs.getInt(1) + 1;
+		}
+		squery.close();
+		Class cls = Class.forName("generated." + Database.getDbname() + "." + Category.NAMES[cat] + DefineType.TYPE_EXTEND_COLL);
+		String sql = "";
+		Class _class = cls;
+		Vector<Class> vt_class = new Vector<Class>();
+		while ( !_class.getName().equals("java.lang.Object")  ) {
+			vt_class.add(_class);
+			_class = _class.getSuperclass();
+		}
+		BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
+		for (int k = vt_class.size() - 1; k >= 0; k--) {
+			Field fl[] = (vt_class.get(k)).getDeclaredFields();
+			if (fl.length > 0) {
+				for (int i = 0; i < fl.length; i++) {
+					String fname = fl[i].getName();
+					String ftype = fl[i].getType().getName().replace("java.lang.", "");
+					if( ftype.equals("saadadb.meta.DMInterface") || ftype.equals("saadadb.collection.VignetteFile") ) {
+						continue;
+					}
+					/*
+					 * Create one attribute handler per row
+					 */
+					AttributeHandler  ah;
+					/*
+					 * Extended attributes are tagged E
+					 */
+					if( (ah = ahs.get(fname)) != null ){
+						ah.setLevel('E');							
+						/*
+						 * Build-in attributes are tagged N
+						 */
+					} else {
+						ah = new AttributeHandler();
+						ah.setNameorg(DefineType.getCollection_name_org().get(fname));
+						if( ah.getNameorg().length() == 0 ) {
+							ah.setNameorg(fname);
+						}
+						ah.setNameattr(fname);
+						ah.setType(ftype);
+						ah.setQueriable(true);
+						ah.setCollname("Generic");
+						ah.setUcd(DefineType.getCollection_ucds().get(fname));
+						ah.setUnit(DefineType.getCollection_units().get(fname));
+						ah.setComment("Attribute managed by Saada");
+						ah.setLevel('N');						
+					} 
+					/*
+					 * Add specific utype for spectra, the only category supporting a model yet.
+					 */
+					//TODO must be extend to other categories
+					if( cat == Category.SPECTRUM ) {
+						ah.setVo_dm(DefineType.VO_SDM);
+						ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
+					}
+
+					String dumpline = max_key + "\t"
+					+ ah.getLevel() + "\t"
+					+ Database.getWrapper().getAsciiNull() + "\t"
+					///						+ "\\N\t" 
+					+ str_cat + "UserColl" + "\t"
+					+ ah.getNameattr() + "\t"
+					+ ah.getType() + "\t" 
+					+ ah.getNameorg() + "\t"
+					+ ah.getUcd() + "\t"
+					+ ah.getUtype() + "\t"
+					+ ah.getVo_dm() + "\t"
+					+ Database.getWrapper().getAsciiNull() + "\t"
+					///						+ "\\N\t"
+					+ Database.getWrapper().getBooleanAsString(true) + "\t"
+					+ ah.getUnit()+ "\t"
+					+ ah.getComment() + " \t"
+					//						+ coll_name + "\t"
+					//						+ num_coll + "\t"
+					+ "Generic\t"
+					+ "-1\t"
+					+Database.getWrapper().getAsciiNull();
+					///						+ "\\N";
+					bustmpfile.write(dumpline + "\n");
+					max_key++;
+					if( sql.length() > 0  ) {
+						sql += ", ";
+					}
+					sql += ah.getNameattr() + " " + Database.getWrapper().getSQLTypeFromJava(ftype);
+				}
+			}
+		}
+		bustmpfile.close();
+		return sql;
+	}
 
 	/**
 	 * Drop collection attribute from the saada_metacoll_* table and drop collection tables

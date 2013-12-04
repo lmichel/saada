@@ -144,6 +144,12 @@ public class TapServiceManager extends EntityManager {
 	 */
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
+	}
+	
+	@Override
+	public void rename(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
 	}
 
 	/**
