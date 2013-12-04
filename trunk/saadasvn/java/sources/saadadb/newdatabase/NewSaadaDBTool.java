@@ -54,7 +54,7 @@ public class NewSaadaDBTool extends JFrame {
 			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
 		System.out.println(NewSaadaDBTool.saada_home);
-	this.setResizable(true);
+		this.setResizable(true);
 		this.setLayout(new GridBagLayout());	
 		/*
 		 * Make sure to close and rename the log file when exit
@@ -87,24 +87,24 @@ public class NewSaadaDBTool extends JFrame {
 				System.out.println("Log saved in " + new_logfile);
 			}
 		});
-		
+
 		/*
 		 * Exit after confirmation when click on window close button
 		 */
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter(){
-	        public void windowClosing(WindowEvent we){
-	        	
+			public void windowClosing(WindowEvent we){
+
 				if( JOptionPane.showConfirmDialog(NewSaadaDBTool.this,
 						"Are you sure?",
 						"Configuration Question",
 						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION ) {
 					System.exit(1);
 				}
-	        }
-	      });
-	    
-	    GridBagConstraints c = new GridBagConstraints();
+			}
+		});
+
+		GridBagConstraints c = new GridBagConstraints();
 		/*
 		 * meta_data tree is always visible on the left pbutton_panelart of the panel
 		 */
@@ -115,15 +115,15 @@ public class NewSaadaDBTool extends JFrame {
 		c.fill  = GridBagConstraints.BOTH;
 		c.weightx = 0.5;
 		c.weighty = 0.5;
- 		this.getContentPane().add(progress_panel, c);
- 		
- 		form_panel = new FormPanel(this);
+		this.getContentPane().add(progress_panel, c);
+
+		form_panel = new FormPanel(this);
 		c.gridx = 1;
 		c.gridy = 0;		
 		this.add(form_panel, c);
- 		/*
- 		 * Button Panel
- 		 */
+		/*
+		 * Button Panel
+		 */
 		button_panel = new JPanel();
 		prev_btn.addActionListener(new ActionListener() {
 
@@ -138,7 +138,7 @@ public class NewSaadaDBTool extends JFrame {
 					screen_number = 0;
 				}
 			}
-			
+
 		});
 		button_panel.setLayout(new FlowLayout());
 		button_panel.add(prev_btn);
@@ -164,7 +164,7 @@ public class NewSaadaDBTool extends JFrame {
 					next_btn.setText("EXIT");
 				}
 			}
-			
+
 		});
 		button_panel.setLayout(new FlowLayout());
 		button_panel.add(next_btn);
@@ -181,7 +181,7 @@ public class NewSaadaDBTool extends JFrame {
 		this.pack();
 		this.setVisible(true);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -199,8 +199,8 @@ public class NewSaadaDBTool extends JFrame {
 							+ "You can now exit this tool and work with the new database<BR>"
 							+ "<UL><LI>Go to <I>" + form_panel.saadadb_home.getText() + "/" + form_panel.saadadb_name.getText() + "/bin</I></LI>"
 							+ "<LI>Run <I>saadadmintool</I></LI>"),
-					"Database Created",
-					JOptionPane.INFORMATION_MESSAGE);
+							"Database Created",
+							JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			this.setCursor(cursor_org);
@@ -211,7 +211,7 @@ public class NewSaadaDBTool extends JFrame {
 		}
 		this.setCursor(cursor_org);
 	}
-	
+
 	/**
 	 * @param args
 	 */

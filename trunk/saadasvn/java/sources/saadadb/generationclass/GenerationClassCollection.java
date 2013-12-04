@@ -10,6 +10,7 @@ package saadadb.generationclass;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.configuration.CollectionAttributeExtend;
@@ -19,52 +20,68 @@ import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 
+/** 
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class GenerationClassCollection{
 
 
-	/** * @version $Id$
-
+	/**
 	 * @param connector 
 	 * @throws Exception
 	 */
 	public static void Generation(SaadaDBConnector connector) throws Exception{
 		for( int cat=1 ; cat<Category.NB_CAT ; cat++ ) {
-			String name = Category.explain(cat) + DefineType.TYPE_EXTEND_COLL;
-			String separ = System.getProperty("file.separator");
-			LinkedHashMap<String, AttributeHandler> keys = (new CollectionAttributeExtend()).getAttrSaada(Category.explain(cat));
-			File name_file = new File(connector.getRoot_dir() 
-			+ separ + "class_mapping"  
-			+ separ + name + ".java");
-			FileWriter writer = new FileWriter(name_file, false);
-			writer.write("package generated." + connector.getDbname() + ";\n"
-			           + "/** Generated Code **/\n"
-			           + "import saadadb.collection.*;\n");
-			writer.write("public class " + name + " extends "+ Category.getCollectionExtension(cat)+" {  \n");
-			if(keys!=null){
-				if(!keys.isEmpty()){
-					for( String element: keys.keySet() ) {
-						GenerationClassProduct.createType(writer, keys.get(element).getType(), element);
-					}
-				}
-			}
-			GenerationClassProduct.createConstructor(writer, name);
-			if(keys!=null){
-				if(!keys.isEmpty()){
-					for( String element: keys.keySet() ) {
-						createSetAndGet(writer, (String)keys.get(element).getType(), element);
-					}
-				}
-			}
-			writer.write("}");
-			writer.flush();
-			writer.close();
-		   	Compile.compileItWithAnt(connector.getRoot_dir()
-	    			, name
-	    			, (connector.getRepository() + separ + Repository.TMP).replaceAll("\\\\", "\\\\"+"\\\\"));    
-			Messenger.printMsg(Messenger.TRACE, "Class <"+name+"> created ");
+			Generation(connector, cat);
 		}
 	}
     
+
+	/**
+	 * @param connector
+	 * @param category
+	 * @return the name of the generated class
+	 * @throws Exception
+	 */
+	public static String Generation(SaadaDBConnector connector, int category) throws Exception{
+		String name = Category.explain(category) + DefineType.TYPE_EXTEND_COLL;
+		String separ = System.getProperty("file.separator");
+		Map<String, AttributeHandler> keys = (new CollectionAttributeExtend(connector.getRoot_dir())).getAttrSaada(Category.explain(category));
+		File name_file = new File(connector.getRoot_dir() 
+		+ separ + "class_mapping"  
+		+ separ + name + ".java");
+		FileWriter writer = new FileWriter(name_file, false);
+		writer.write("package generated." + connector.getDbname() + ";\n"
+		           + "/** Generated Code **/\n"
+		           + "import saadadb.collection.*;\n");
+		writer.write("public class " + name + " extends "+ Category.getCollectionExtension(category)+" {  \n");
+		if(keys!=null){
+			if(!keys.isEmpty()){
+				for( String element: keys.keySet() ) {
+					GenerationClassProduct.createType(writer, keys.get(element).getType(), element);
+				}
+			}
+		}
+		GenerationClassProduct.createConstructor(writer, name);
+		if(keys!=null){
+			if(!keys.isEmpty()){
+				for( String element: keys.keySet() ) {
+					createSetAndGet(writer, (String)keys.get(element).getType(), element);
+				}
+			}
+		}
+		writer.write("}");
+		writer.flush();
+		writer.close();
+	   	Compile.compileItWithAnt(connector.getRoot_dir()
+    			, name
+    			, (connector.getRepository() + separ + Repository.TMP).replaceAll("\\\\", "\\\\"+"\\\\"));    
+		Messenger.printMsg(Messenger.TRACE, "Class <"+name+"> created ");	
+		return name;
+	}
+	
     /**
      * @param writer
      * @param type

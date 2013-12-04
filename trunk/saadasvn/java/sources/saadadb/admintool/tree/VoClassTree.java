@@ -2,7 +2,7 @@ package saadadb.admintool.tree;
 
 import java.awt.Container;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -15,7 +15,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 
 public class VoClassTree extends VoDataProductTree {
-	private HashMap<String, AttributeHandler> attributeHandlers;
+	private Map<String, AttributeHandler> attributeHandlers;
 	
 	public VoClassTree(Container frame) throws Exception {
 		super(frame);
@@ -31,7 +31,7 @@ public class VoClassTree extends VoDataProductTree {
 	 * @param attributeHandlers
 	 * @throws FatalException
 	 */
-	public  void buildTree(HashMap<String, AttributeHandler> attributeHandlers) throws FatalException {
+	public  void buildTree(Map<String, AttributeHandler> attributeHandlers) throws FatalException {
 		this.attributeHandlers = attributeHandlers;
 		ArrayList<String> flat_array = new ArrayList<String>();
 		for( String attname: this.attributeHandlers.keySet()) {

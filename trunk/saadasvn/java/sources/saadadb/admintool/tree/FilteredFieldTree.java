@@ -5,6 +5,7 @@ package saadadb.admintool.tree;
 
 import java.awt.Dimension;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,7 +28,7 @@ import saadadb.util.Messenger;
 public class FilteredFieldTree extends JPanel {
 	private VoClassTree classTree;
 	private HelpedTextField maskField;
-	private HashMap<String, AttributeHandler> attributeHandlers;
+	private Map<String, AttributeHandler> attributeHandlers;
 
 	public FilteredFieldTree(String title,int width, int height) throws Exception{
 		super();

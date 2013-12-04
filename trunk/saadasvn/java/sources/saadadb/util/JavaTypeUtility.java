@@ -15,6 +15,7 @@ import saadadb.exceptions.SaadaException;
 
  * @author laurent
  *
+ * 12/2013: gestion des types supportes pour les attributs etendus
  */
 public class JavaTypeUtility {
 	/*
@@ -31,6 +32,8 @@ public class JavaTypeUtility {
 	public static final int STRING  = 8; 
 	public static final int CHARARRAY  = 9; // fully-qualified-class (take String)
 	public static final int UNSUPPORTED  = 10; // fully-qualified-class (take String)
+	
+	public static final String ATTREXTENDTYPES[] = new String[]{"String", "int", "long", "double", "boolean"};
 	/*
 	 * Sort of Java type by ascendant strength (more specific to more general)
 	 */
@@ -48,6 +51,19 @@ public class JavaTypeUtility {
 		strengthRank.put("String", 9);
 	}
 
+	/**
+	 * return true if type is one of the supported types for the exteded attributes
+	 * @param type
+	 * @return
+	 */
+	public static boolean isSupportedForExtAtt(String type){
+		for( int i=0 ; i<ATTREXTENDTYPES.length ; i++){
+			if( type.equals(ATTREXTENDTYPES[i]) ){
+				return true;
+			}
+		}
+		return false;		
+	}
 	/**
 	 * Returns true if the java type current_type can express any value (and more) of type new_type
 	 * @param current_type

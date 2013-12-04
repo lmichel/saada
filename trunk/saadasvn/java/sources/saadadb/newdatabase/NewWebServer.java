@@ -63,8 +63,7 @@ public class NewWebServer extends NewSaadaDB {
 		helper.parse(p, new File(rootDir + separ + "bin" + separ + "build.xml"));
 		Messenger.printMsg(Messenger.TRACE, "Set X mode for executables");
 		p.executeTarget("xmode.set");
-
-		Messenger.printMsg(Messenger.TRACE, "New web application ready to be deployed");
+		Messenger.printMsg(Messenger.TRACE, "New web application is packed");
 	}
 	
 	/**

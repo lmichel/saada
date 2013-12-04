@@ -19,6 +19,10 @@ public abstract class ManageEntity  {
 				manager.setName(name);
 				manager.create(ap);				
 			}
+			else if( (name = ap.getRename()) != null && name.length() > 0 ) {
+				manager.setName(name);
+				manager.rename(ap);				
+			}
 			else if( (name = ap.getEmpty()) != null && name.length() > 0  ) {
 				manager.setName(name);
 				manager.empty(ap);	

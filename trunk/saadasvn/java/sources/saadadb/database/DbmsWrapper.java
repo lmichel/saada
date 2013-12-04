@@ -54,7 +54,7 @@ abstract public class DbmsWrapper {
 	protected DbmsWrapper(boolean forwardOnly) {
 		this.forwardOnly = forwardOnly;
 	}
-	
+
 	/**
 	 * @return the generic name of the DBMS
 	 */
@@ -137,7 +137,7 @@ abstract public class DbmsWrapper {
 				}
 			}
 			stmt.close();
-			
+
 			stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
 			String qt = "select count(*) from " + test_table;
 			if (Messenger.debug_mode)
@@ -314,7 +314,7 @@ abstract public class DbmsWrapper {
 		setLocalBehavior(retour);
 		return retour;		
 	}
-	
+
 	/**
 	 * Return a new connection used for large queries. Connection must be transient to avoid memory
 	 * to explode as it is used
@@ -335,7 +335,7 @@ abstract public class DbmsWrapper {
 	 * @param conn
 	 */
 	public void setLocalBehavior(Connection conn) throws Exception {}
-	
+
 	/**
 	 * Close the connection open for large queries
 	 * @param largeConnection
@@ -344,7 +344,7 @@ abstract public class DbmsWrapper {
 	public void closeLargeQueryConnection(Connection largeConnection) throws SQLException{
 		largeConnection.close();
 	}
-	
+
 	/**() 
 	 * @return
 	 */
@@ -627,7 +627,7 @@ abstract public class DbmsWrapper {
 		if( asc.equalsIgnoreCase("pos_ra_csa") && asc.equalsIgnoreCase("pos_dec_csa") ) {
 			return getIsInCircleConstraint("", Double.parseDouble(circleAsc), Double.parseDouble(circleDec), Double.parseDouble(radius));
 		}	
-		
+
 		// Compute a constraint delimiting a square surrounding the cone:
 		String B = getIsInBoxConstraint(asc, dec, circleAsc, circleDec, "("+radius+")*2", "("+radius+")*2");
 
@@ -718,7 +718,7 @@ abstract public class DbmsWrapper {
 	 * @return
 	 */
 	public abstract String getBooleanAsString(boolean val);
-	
+
 	public abstract boolean getBooleanValue(Object rsval);
 
 
@@ -736,12 +736,15 @@ abstract public class DbmsWrapper {
 	 */
 	public abstract String getJavaTypeFromSQL( String type) throws FatalException ;
 
+
 	/**
 	 * @param table_to_update
 	 * @param table_to_join
-	 * @param join_criteria
-	 * @param set_to_update
-	 * @param select_criteria
+	 * @param join_criteria  statement used to filter the join between table_to_update and table_to_join
+	 * @param key_alias
+	 * @param keys   names f the columns to be updated
+	 * @param values values to be affected to the keys (columns names or constants)
+	 * @param select_criteria statement used to filter rows of table_to_update
 	 * @return
 	 */
 	public abstract String getUpdateWithJoin(String table_to_update, String table_to_join, String join_criteria, String key_alias, String[] keys, String[] values, String select_criteria) ;
@@ -822,7 +825,7 @@ abstract public class DbmsWrapper {
 	public String getJdbcURL(String repository, String dbname) {
 		return this.getUrl() + dbname + this.getOptions() ;
 	}
-	
+
 	/**
 	 * @param relation_conf
 	 * @throws SaadaException 
@@ -944,7 +947,7 @@ abstract public class DbmsWrapper {
 	public String getInsertAutoincrementStatement() {
 		return "DEFAULT";
 	}
-	
+
 	/**
 	 * Return serial token for primary keys
 	 * @return
@@ -965,7 +968,7 @@ abstract public class DbmsWrapper {
 		}
 
 	}
-	
+
 	/**
 	 * This features is used to save the case or to put reserved keywords in SQL statement
 	 * e.g. create a table named keys with MySQL
@@ -982,7 +985,7 @@ abstract public class DbmsWrapper {
 	public  String getAsciiNull() {
 		return "\\N";
 	}
-	
+
 	/**
 	 * Return a string to be added to the DB name to get the name of the temporary area.
 	 * @param dbname
@@ -1021,7 +1024,7 @@ abstract public class DbmsWrapper {
 		+ this.getExceptStatement(key) 
 		+ "(" + sec_query + ")";
 	}
-	
+
 	/**
 	 * return query returning all key1 value of tavle1 which are not in the key2 col
 	 * @param leftTable
@@ -1037,7 +1040,7 @@ abstract public class DbmsWrapper {
 		+ " ON l." + leftKey + " = r." + rightKey 
 		+ " WHERE r." + rightKey + " IS NULL";
 	}
-	
+
 	/**
 	 * return query removing all key1 value of tavle1 which are not in the key2 col
 	 * @param leftTable
@@ -1081,6 +1084,27 @@ abstract public class DbmsWrapper {
 	 * @throws Exception
 	 */
 	public abstract String[] addColumn(String table, String column, String type) throws QueryException, Exception;
+
+	/**
+	 * @param table
+	 * @param column
+	 * @return
+	 * @throws QueryException
+	 */
+	public String dropColumn(String table, String column)throws QueryException {
+		return "ALTER TABLE " + table + " DROP COLUMN  " + column;
+	}
+
+	/**
+	 * 	operation not supported by SQLite
+	 * @param table
+	 * @param column
+	 * @param newName
+	 * @return
+	 * @throws QueryException
+	 * @throws Exception 
+	 */
+	public abstract String renameColumn(String table, String column, String newName) throws  Exception ;
 
 	/**
 	 * Thank to MySQL we have to manage our own temporary tables. Their names must be recorded and available to
@@ -1149,7 +1173,7 @@ abstract public class DbmsWrapper {
 		}
 		SQLTable.commitTransaction();
 	}
-	
+
 	public void loadSQLProcedures(Statement stmt) throws Exception {
 		SQLTable.beginTransaction();
 		this.installLanguage(stmt);
@@ -1188,7 +1212,7 @@ abstract public class DbmsWrapper {
 	public boolean supportAccount() {
 		return true;
 	}
-	
+
 	/**
 	 * Does it for DBMS supporting this feature, not for SQLITE which consider the fetch size as a result limit
 	 * @param stmt
@@ -1202,7 +1226,7 @@ abstract public class DbmsWrapper {
 	 * Returns a map of SQL statement helping the setup of the relationships
 	 */
 	public abstract Map<String, String> getConditionHelp();
-	
+
 	public static void main(String[] args) throws AbortException, FatalException, SQLException, ClassNotFoundException {
 		System.out.println(DbmsWrapper.getIsInCircleConstraint("", 0, 0, 1));
 		//		ArgsParser ap = new ArgsParser(args);

@@ -284,6 +284,19 @@ public class SQLiteWrapper extends DbmsWrapper {
 		return new String[]{"ALTER TABLE " + table + " ADD  COLUMN " + column + " " + type};
 	}
 
+
+	@Override
+	public String dropColumn(String table, String column)throws QueryException {
+		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "SQLite can't drop a colmun table");
+		return null;
+	}
+
+	@Override
+	public  String renameColumn(String table, String column, String newName) throws QueryException {
+		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "CSQLite can't drop a colmun table");
+		return null;
+	}
+
 	@Override
 	public void cleanUp() throws SQLException {
 

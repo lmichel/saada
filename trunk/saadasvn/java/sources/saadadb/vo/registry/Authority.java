@@ -277,9 +277,18 @@ public class Authority extends EntityManager{
 		create(ap);		
 	}
 	@Override
-	public void index(ArgsParser ap) throws SaadaException {}
+	public void index(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for VO authority");
+	}
+	
 	@Override
-	public void comment(ArgsParser ap) throws SaadaException {}
+	public void comment(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for VO authority");
+	}
+	@Override
+	public void rename(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for VO authority");
+	}
 	
 	public static void main(String[] args) throws SaadaException {
 		Database.init("ThreeXMM");

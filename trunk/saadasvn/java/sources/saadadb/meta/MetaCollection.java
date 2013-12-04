@@ -214,9 +214,10 @@ public class MetaCollection extends MetaObject {
 	 * @param category
 	 * @return
 	 */
-	public static  final HashMap<String,AttributeHandler> getAttribute_handlers(int category){
+	@SuppressWarnings("unchecked")
+	public static  final Map<String,AttributeHandler> getAttribute_handlers(int category){
 		switch(category){
-		case Category.CUBE:    return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_cube().clone();
+		case Category.CUBE:    return (LinkedHashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_cube().clone();
 		case Category.ENTRY :  return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_entry().clone();
 		case Category.FLATFILE:return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_flatfile().clone();
 		case Category.IMAGE:   return (HashMap<String, AttributeHandler>) MetaCollection.getAttribute_handlers_image().clone();

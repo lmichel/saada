@@ -332,8 +332,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 					+ "> already exist (" + mc.getName() + "), but associed with another collection ("  
 					+ mc.getCollection_name() + ") or category(" 
 					+ mc.getCategory() + ")");
-		}
-		else {			
+		} else {			
 			LinkedHashMap<String, AttributeHandler> org_ah = new  LinkedHashMap<String, AttributeHandler>();
 			AttributeHandler[] ahs = mc.getClassAttributes();
 			for( int i=0 ; i<ahs.length ; i++ ) {

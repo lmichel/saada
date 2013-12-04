@@ -17,6 +17,7 @@ public abstract class  EntityManager extends SaadaProcess {
 		super(1);
 	}
 	public abstract void create(ArgsParser ap) throws SaadaException ;
+	public abstract void rename(ArgsParser ap) throws SaadaException ;
 	public abstract void empty(ArgsParser ap)  throws SaadaException ;
 	public abstract void remove(ArgsParser ap) throws SaadaException ;
 	public abstract void populate(ArgsParser ap) throws SaadaException ;

@@ -38,7 +38,11 @@ public class ClassManager extends EntityManager{
 	public void create(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for classes");
 	}
-
+	
+	@Override
+	public void rename(ArgsParser ap) throws SaadaException {
+		Messenger.printMsg(Messenger.ERROR, "Not implemented for classes");
+	}
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {	
