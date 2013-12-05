@@ -6,6 +6,7 @@ import saadadb.command.EntityManager;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.GenerationClassCollection;
 import saadadb.generationclass.SaadaClassReloader;
@@ -91,6 +92,9 @@ public class ExtendAttributeManager extends EntityManager {
 	
 	@Override
 	public void rename(ArgsParser ap) throws SaadaException {
+		if( !Database.getWrapper().supportAlterColumn() ){
+			QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, Database.getWrapper().getDBMS() + " does not support to alter table columns");
+		}
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
 		String oldName = ap.getRename();
@@ -164,6 +168,9 @@ public class ExtendAttributeManager extends EntityManager {
 
 	@Override
 	public void remove(ArgsParser ap) throws SaadaException {
+		if( !Database.getWrapper().supportAlterColumn() ){
+			QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, Database.getWrapper().getDBMS() + " does not support to alter table columns");
+		}
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
 		String name = ap.getRemove();
