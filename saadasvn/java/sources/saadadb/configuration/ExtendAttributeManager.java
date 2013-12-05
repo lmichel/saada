@@ -92,6 +92,7 @@ public class ExtendAttributeManager extends EntityManager {
 	
 	@Override
 	public void rename(ArgsParser ap) throws SaadaException {
+		//TODO change also the type
 		if( !Database.getWrapper().supportAlterColumn() ){
 			QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, Database.getWrapper().getDBMS() + " does not support to alter table columns");
 		}
