@@ -743,8 +743,17 @@ public class SQLiteWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#supportDropTableInTransaction()
 	 */
+	@Override
 	public boolean supportDropTableInTransaction() {
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#supportAlterColumn()
+	 */
+	@Override
+	public boolean supportAlterColumn() {
+		return true;
 	}
 
 	@Override

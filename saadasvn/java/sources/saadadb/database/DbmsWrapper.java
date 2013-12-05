@@ -384,6 +384,13 @@ abstract public class DbmsWrapper {
 		return true;
 	}
 	/**
+	 * Says whether the DBMS can alter a column of an existing table 
+	 * @return
+	 */
+	public boolean supportAlterColumn() {
+		return true;
+	}
+	/**
 	 * Returns true if there is no SQL statement loading data from a file
 	 * In that case, the wrapper does this job out of the current transaction
 	 * @return
