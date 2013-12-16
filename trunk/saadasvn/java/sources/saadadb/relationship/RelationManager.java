@@ -49,7 +49,7 @@ public class RelationManager extends  EntityManager {
 	 * 
 	 */
 	public RelationManager() {
-		super();
+		super("");
 	}
 
 	/**

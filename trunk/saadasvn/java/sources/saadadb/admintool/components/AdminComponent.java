@@ -60,7 +60,7 @@ public abstract class AdminComponent extends JPanel {
 	public static final String COMMENT_CLASS  = "Comment Class";
 
 	public static final String DATA_LOADER     = "Data Loader";
-	public static final String EXPLORE_DATA = "Explore Data";
+	public static final String EXPLORE_DATA    = "Explore Data";
 
 	public static final String MISC_MAPPER     = "KW Mapper for MISC";
 	public static final String TABLE_MAPPER    = "KW Mapper for Tables";
@@ -74,9 +74,11 @@ public abstract class AdminComponent extends JPanel {
 	public static final String EMPTY_RELATION    = "Empty Relationship";
 	public static final String POPULATE_RELATION = "Populate Relationship";
 	public static final String INDEX_RELATION    = "Index Relationship";
-	public static final String DISPLAY_RELATION = "Display Relationships";
+	public static final String DISPLAY_RELATION  = "Display Relationships";
 
 	public static final String MANAGE_METADATA = "Manage Meta Data";
+	public static final String TAG_METADATA    = "Tag Columns";
+	public static final String MANAGE_EXTATTR  = "Manage Extended Attributes";
 	public static final String MANAGE_PRODUCT  = "Manage Products";
 	public static final String REMOVE_PRODUCT  = "Remove Products";
 

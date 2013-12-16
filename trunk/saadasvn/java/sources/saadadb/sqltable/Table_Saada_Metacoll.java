@@ -116,7 +116,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 				+ "null,"
 				+ Database.getWrapper().getBooleanAsString(true) + ", '"
 				+ attributeHandler.getUnit()+ "', '"
-				+ attributeHandler.getComment() + " ', '"
+				+  Database.getWrapper().getEscapeQuote(attributeHandler.getComment()) + " ', '"
 				+ "Generic', "
 				+ "-1,"
 				+ "null)");
@@ -161,15 +161,47 @@ public class Table_Saada_Metacoll extends SQLTable {
 		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
 		buildCollectionDump(cat, dumpfile);
 		/*
-		 * Remove the  attribute from the metacoll table
+		 * Rename the  attribute from the metacoll table
 		 */
 		SQLTable.addQueryToTransaction(
 				"UPDATE saada_metacoll_" + str_cat 
 				+ " SET name_attr='" + newAattributeHandler.getNameattr() + "',"
-				+ " name_origin='" + newAattributeHandler.getNameattr() + "'"
+				+ " name_origin='" + newAattributeHandler.getNameattr() + "',"
+				+ " comment='" + Database.getWrapper().getEscapeQuote(newAattributeHandler.getComment()) + "',"
+					+ " ucd='" + newAattributeHandler.getUcd() + "',"
+					+ " utype='" + newAattributeHandler.getType() + "',"
+					+ " unit='" + newAattributeHandler.getUnit() + "'"
 				+ " WHERE name_attr = '" + oldAattributeHandler.getNameattr() + "'");
 	}
 
+	/**
+	 * just change comment, unit, ucd and utype on the metacoll table
+	 * @param cat
+	 * @param oldAattributeHandler
+	 * @throws Exception
+	 */
+	public static void modifyAttributeForCategory(int cat, AttributeHandler attributeHandler) throws Exception {
+		/*
+		 * Populate the metacoll table if needed; That can occurs if the new extended attribute is 
+		 * added before the first collection is created
+		 */
+		String str_cat = Category.explain(cat).toLowerCase();
+		String meta_table_name = "saada_metacoll_" + str_cat;
+		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
+		buildCollectionDump(cat, dumpfile);
+		/*
+		 * modify the  attribute from the metacoll table
+		 */
+		SQLTable.addQueryToTransaction(
+				"UPDATE saada_metacoll_" + str_cat 
+				+ " SET comment='" + Database.getWrapper().getEscapeQuote(attributeHandler.getComment()) + "',"
+				+ " ucd='" + attributeHandler.getUcd() + "',"
+				+ " utype='" + attributeHandler.getUtype() + "',"
+				+ " unit='" + attributeHandler.getUnit() + "'"
+				+ " WHERE name_attr = '" + attributeHandler.getNameattr() + "'");
+	}
+
+	
 	/**
 	 * @param coll_name
 	 * @param str_cat

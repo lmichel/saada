@@ -83,7 +83,7 @@ public class IndexBuilder extends SaadaProcess {
 			break;
 		}
 		if( isEmpty ) {
-			Messenger.printMsg(Messenger.TRACE, "relationship  empty");			
+			Messenger.printMsg(Messenger.TRACE, "relationship not empty");			
 		}
 		rse.close();
 
@@ -136,6 +136,12 @@ public class IndexBuilder extends SaadaProcess {
 			squery.close();
 			squery= new SQLLargeQuery();
 			if( noNull ) {
+				/*
+				 * Left JOIN takes ages without indexes
+				 */
+				SQLTable.beginTransaction();
+				this.indexPrimaryoid();
+				SQLTable.commitTransaction();
 				rs = squery.run(
 						Database.getWrapper().getNullLeftJoinSelect(colPrimary, "oidsaada"
 								, relationName, "oidprimary"));
@@ -426,8 +432,8 @@ public class IndexBuilder extends SaadaProcess {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation <" + relationName + "> does not exist");
 		}
 		Messenger.printMsg(Messenger.TRACE, "Build Saada indexes for relationship " + relationName);
-		indexSecondaryOidColumn();
-		indexPrimaryOidColumn();
+		indexSecondaryClass();
+		indexPrimaryClass();
 		/*
 		 * Grant access to tables (we can be within a transaction)
 		 */
@@ -458,12 +464,12 @@ public class IndexBuilder extends SaadaProcess {
 	 * @throws AbortException 
 	 * 
 	 */
-	public void indexSecondaryOidColumn() throws Exception {
+	public void indexSecondaryClass() throws Exception {
 		String index_name = relationName + "_secoid_class";
-		Messenger.printMsg(Messenger.TRACE, "Index Secondary Classids " + index_name);
 		Map<String, String> existing_index = Database.getWrapper().getExistingIndex(relationName);
 		if( existing_index != null && existing_index.get(index_name.toLowerCase()) == null && existing_index.get(index_name) == null) {
-			SQLTable.addQueryToTransaction(Database.getWrapper().getSecondaryRelationshipIndex(relationName), relationName);	
+			Messenger.printMsg(Messenger.TRACE, "Index Secondary Classids " + index_name);
+			SQLTable.addQueryToTransaction(Database.getWrapper().getSecondaryClassRelationshipIndex(relationName), relationName);	
 			return;
 		}
 		return;
@@ -475,12 +481,28 @@ public class IndexBuilder extends SaadaProcess {
 	 * @throws AbortException 
 	 * 
 	 */
-	public void indexPrimaryOidColumn() throws Exception {
+	public void indexPrimaryClass() throws Exception {
 		String index_name = relationName + "_primoid_class";
-		Messenger.printMsg(Messenger.TRACE, "Index Primary Classids " + index_name);
 		Map<String, String> existing_index = Database.getWrapper().getExistingIndex(relationName);
 		if( existing_index != null && existing_index.get(index_name.toLowerCase()) == null&& existing_index.get(index_name) == null ) {
+			Messenger.printMsg(Messenger.TRACE, "Index Primary Classids " + index_name);
 			SQLTable.addQueryToTransaction(Database.getWrapper().getPrimaryRelationshipIndex(relationName), relationName);	
+			return;
+		}
+		return;
+	}
+	/**
+	 * Index the join  table on the class field of the secondary oid
+	 * @throws SQLException 
+	 * @throws AbortException 
+	 * 
+	 */
+	public void indexPrimaryoid() throws Exception {
+		String index_name = relationName + "_oidprimary";
+		Map<String, String> existing_index = Database.getWrapper().getExistingIndex(relationName);
+		if( existing_index != null && existing_index.get(index_name.toLowerCase()) == null&& existing_index.get(index_name) == null ) {
+			Messenger.printMsg(Messenger.TRACE, "Index Primary OIds in " + index_name);			
+			SQLTable.addQueryToTransaction( Database.getWrapper().getPrimaryRelationshipIndex(relationName));	
 			return;
 		}
 		return;

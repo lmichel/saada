@@ -26,11 +26,16 @@ import saadadb.util.RegExp;
  */
 public class ExtendAttributeManager extends EntityManager {
 
+	public ExtendAttributeManager(String name ){
+		super(name);
+	}
+	public ExtendAttributeManager(){
+		super("");
+	}
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
-		String name = ap.getCreate();
 		String type = ap.getType();
 		String description = ap.getComment();
 		if ( name == null || !name.matches( RegExp.EXTATTRIBUTE)) {
@@ -49,9 +54,12 @@ public class ExtendAttributeManager extends EntityManager {
 		ah.setNameattr(name);
 		ah.setNameorg(name);
 		ah.setType(type);
-		ah.setComment(description);
+		String b ;
+		if( (b=ap.getComment()) != null ) ah.setComment(b);
+		if( (b=ap.getUnit()) != null ) ah.setUnit(b);
+		if( (b=ap.getUcd()) != null ) ah.setUcd(b);
+		if( (b=ap.getUtype()) != null ) ah.setUtype(b);
 		Messenger.printMsg(Messenger.TRACE, "Add extended attribute " + ah + " to category " + category);
-
 		/*
 		 * Start to update the category schema:
 		 */
@@ -98,28 +106,30 @@ public class ExtendAttributeManager extends EntityManager {
 		}
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
-		String oldName = ap.getRename();
+		//String oldName = ap.getRename();
 		String newName = ap.getNewname();
-		if ( oldName == null || !oldName.matches( RegExp.EXTATTRIBUTE)) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, oldName + ": Value not allowed for attribute name, must match " + RegExp.EXTATTRIBUTE );			
+		if ( name == null || !name.matches( RegExp.EXTATTRIBUTE)) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, name + ": Value not allowed for attribute name, must match " + RegExp.EXTATTRIBUTE );			
 		}
 		if ( newName == null || !newName.matches( RegExp.EXTATTRIBUTE)) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, newName + ": Value not allowed for attribute name, must match " + RegExp.EXTATTRIBUTE );			
 		}
-		if( !MetaCollection.attributeExistIn(oldName, catnum) ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Attribute " + oldName + " does not exists in category " + category);			
+		if( !MetaCollection.attributeExistIn(name, catnum) ) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Attribute " + name + " does not exists in category " + category);			
 		}
 		
 		/*
 		 * Attribute handler of the old/new column
 		 */
-		AttributeHandler oldah = new AttributeHandler();
-		oldah.setNameattr(oldName);
-		oldah.setNameorg(oldName);
-		AttributeHandler newah = new AttributeHandler();
+		AttributeHandler oldah = MetaCollection.getAttribute_handlers_flatfile().get(name);
+		AttributeHandler newah = (AttributeHandler) oldah.clone();
 		newah.setNameattr(newName);
 		newah.setNameorg(newName);
-		newah.setType(MetaCollection.getAttribute_handlers_flatfile().get(oldName).getType());
+		String b ;
+		if( (b=ap.getComment()) != null ) newah.setComment(b);
+		if( (b=ap.getUnit()) != null ) newah.setUnit(b);
+		if( (b=ap.getUcd()) != null ) newah.setUcd(b);
+		if( (b=ap.getUtype()) != null ) newah.setUtype(b);
 		
 		Messenger.printMsg(Messenger.TRACE, "Rename extended attribute " + oldah + " of category " + category + " to " + newah);
 
@@ -152,7 +162,7 @@ public class ExtendAttributeManager extends EntityManager {
 		for( String cn: Database.getCachemeta().getCollection_names()) {
 			String ct = Database.getWrapper().getCollectionTableName(cn, catnum);
 			try {
-				SQLTable.addQueryToTransaction(Database.getWrapper().renameColumn(ct, oldName, newName), ct);
+				SQLTable.addQueryToTransaction(Database.getWrapper().renameColumn(ct, name, newName), ct);
 			} catch (Exception e) {
 				Messenger.printStackTrace(e);
 				SQLTable.abortTransaction();
@@ -174,7 +184,6 @@ public class ExtendAttributeManager extends EntityManager {
 		}
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
-		String name = ap.getRemove();
 		if( !MetaCollection.attributeExistIn(name, catnum) ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Attribute " + name + " does not exists in category " + category);			
 		}
@@ -233,6 +242,39 @@ public class ExtendAttributeManager extends EntityManager {
 
 	@Override
 	public void comment(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.ERROR, "Not implemented for extended attributes");
-	}
+		String description = ap.getComment();
+		//TODO change also the type
+		String category = ap.getCategory();
+		int catnum = Category.getCategory(category);
+		if ( name == null || !name.matches( RegExp.EXTATTRIBUTE)) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, name + ": Value not allowed for attribute name, must match " + RegExp.EXTATTRIBUTE );			
+		}
+		if( !MetaCollection.attributeExistIn(name, catnum) ) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Attribute " + name + " does not exists in category " + category);			
+		}
+		
+		/*
+		 * Attribute handler of the old/new column
+		 */
+		AttributeHandler oldah = new AttributeHandler();
+		oldah.setNameattr(name);
+		oldah.setNameorg(name);
+		oldah.setComment(description);
+		oldah.setUnit(ap.getUnit());
+		oldah.setUcd(ap.getUcd());
+		oldah.setUtype(ap.getUtype());
+		Messenger.printMsg(Messenger.TRACE, "Modify extended attribute " + oldah + " of category " + category );
+
+		/*
+		 * Start to update the category schema:
+		 */
+		try {
+			Table_Saada_Metacoll.modifyAttributeForCategory(catnum, oldah);			
+		} catch(SaadaException ce) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, ce);
+		} catch(Exception ce) {
+			Messenger.printStackTrace(ce);
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, ce);
+		}
+		Messenger.printMsg(Messenger.TRACE, "Attribute " + oldah + " from category " + category + " modifyed");	}
 }

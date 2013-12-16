@@ -480,16 +480,25 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String getSecondaryRelationshipIndex(String relationName) {
+	public String getSecondaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase()+ "_secoid_class ON "
 		+ relationName + " ( secondaryclass )";
 	}
 
 	@Override
-	public String getPrimaryRelationshipIndex(String relationName) {
+	public String getPrimaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase()+ "_primoid_class ON "
 		+ relationName + " ( primaryclass )";
 	}
+	
+	@Override
+	public String [] getPrimaryRelationshipIndex(String relationName) {
+		return new String[]{
+				"ALTER TABLE " + relationName + " ROW_FORMAT=FIXED", 
+				"CREATE INDEX " + relationName + "_oidprimary ON " + relationName + "(oidprimary)"
+				};
+	}
+
 	@Override
 	public String getPrimaryClassColumn(){
 		return "primaryclass";

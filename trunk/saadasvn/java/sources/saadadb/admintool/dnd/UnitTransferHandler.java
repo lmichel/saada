@@ -5,14 +5,16 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import saadadb.admintool.components.ResultSetTableModel;
+import saadadb.admintool.components.input.UnitTextField;
 
 
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class UnitTransferHandler extends SaadaTransferHandler {
-	/**
-	 *  * @version $Id: UnitTransferHandler.java 118 2012-01-06 14:33:51Z laurent.mistahl $
-
-	 */
 	private static final long serialVersionUID = 1L;
 	private int[] rows = null;
 	private int addIndex = -1; //Location where items were added
@@ -47,14 +49,16 @@ public class UnitTransferHandler extends SaadaTransferHandler {
 	protected void importString(JComponent c, String str) {
 		int index=0;ResultSetTableModel model=null;JTable target=null;
 		try {
-			target = (JTable)c;
-			model = (ResultSetTableModel)target.getModel();
-			index = target.getSelectedRow();
-			model.setUnit(str, index);
-			target.updateUI();
-		} catch(Exception e) {
-
-		}
+			if( c instanceof JTable ) {
+				target = (JTable)c;
+				model = (ResultSetTableModel)target.getModel();
+				index = target.getSelectedRow();
+				model.setUnit(str, index);
+				target.updateUI();
+			} else if( c instanceof UnitTextField ) {
+				((UnitTextField) c).setText(str);
+			}
+		} catch(Exception e) {}
 	}
 
 	protected void cleanup(JComponent c, boolean remove) {

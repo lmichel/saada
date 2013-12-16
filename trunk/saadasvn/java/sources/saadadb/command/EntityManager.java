@@ -11,7 +11,7 @@ public abstract class  EntityManager extends SaadaProcess {
 	 */	
 	public EntityManager(String name) {
 		super(1);
-		this.name = name;
+		this.setName(name);
 	}
 	public EntityManager() {
 		super(1);

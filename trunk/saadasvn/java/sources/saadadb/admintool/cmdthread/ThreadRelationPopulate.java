@@ -60,7 +60,9 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			RelationManager rm = new RelationManager(config);
 			SQLTable.beginTransaction();
 			rm.populateWithQuery();
+			SQLTable.commitTransaction();
 			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
+			SQLTable.beginTransaction();
 			ib.createIndexRelation();
 			SQLTable.commitTransaction();
 			Database.getCachemeta().reloadGraphical(frame, true);
