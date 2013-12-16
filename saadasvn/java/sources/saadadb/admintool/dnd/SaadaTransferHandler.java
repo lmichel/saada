@@ -27,7 +27,7 @@ public abstract class SaadaTransferHandler extends TransferHandler {
     protected abstract void cleanup(JComponent c, boolean remove);
     
     protected Transferable createTransferable(JComponent c) {
-         return new StringSelection(exportString(c));
+        return new StringSelection(exportString(c));
     }
     
     public int getSourceActions(JComponent c) {

@@ -28,8 +28,9 @@ import cds.savot.model.SavotParam;
 
  * @author michel
  * 01/2010 method toString
+ * 12/2013 class made cloneable
  */
-public class AttributeHandler implements Serializable{
+public class AttributeHandler implements Serializable , Cloneable{
 	static final DecimalFormat exp =  new DecimalFormat("0.00E00");
 	static final  DecimalFormat deux = new DecimalFormat("0.000");
 
@@ -238,6 +239,17 @@ public class AttributeHandler implements Serializable{
 		this.setType(Database.getWrapper().getJavaTypeFromSQL(md.getColumnTypeName(i)));
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone(){  
+		try{  
+			return super.clone();  
+		}catch(Exception e){ 
+			return null; 
+		}
+	}	 
+
 	/**
 	 * Build a name acceptable as Java field name or SQL column name from UCD
 	 * @param ucd
@@ -419,23 +431,23 @@ public class AttributeHandler implements Serializable{
 
 	public String getInsertValues(int subkey) throws FatalException {
 		return  "( " + Database.getWrapper().getInsertAutoincrementStatement()
-				+ ", '"  + this.level
-				+ "', "  + this.classid
-				+ ", '"  + this.classname
-				+ "', '" + this.nameattr
-				+ "', '" + this.type
-				+ "', '" + Database.getWrapper().getEscapeQuote(this.nameorg)
-				+ "', '" + this.ucd
-				+ "', '" + this.utype
-				+ "', '" + this.vo_dm
-				+ "', "  + "null"
-				+ ", "   + Database.getWrapper().getBooleanAsString(this.queriable)
-				+ ", '"  + this.unit
-				+ "', '" + this.comment.replaceAll("'", "")
-				+ "', '" + this.collname 
-				+ "',"   + this.collid 
-				+ ", '"  + this.format 
-				+ "')";
+		+ ", '"  + this.level
+		+ "', "  + this.classid
+		+ ", '"  + this.classname
+		+ "', '" + this.nameattr
+		+ "', '" + this.type
+		+ "', '" + Database.getWrapper().getEscapeQuote(this.nameorg)
+		+ "', '" + this.ucd
+		+ "', '" + this.utype
+		+ "', '" + this.vo_dm
+		+ "', "  + "null"
+		+ ", "   + Database.getWrapper().getBooleanAsString(this.queriable)
+		+ ", '"  + this.unit
+		+ "', '" + this.comment.replaceAll("'", "")
+		+ "', '" + this.collname 
+		+ "',"   + this.collid 
+		+ ", '"  + this.format 
+		+ "')";
 	}
 
 	public static String getInsertStatement() {
@@ -598,7 +610,7 @@ public class AttributeHandler implements Serializable{
 	 */
 	public boolean typeStrongerThan(String new_type) throws FatalException  {
 		return JavaTypeUtility.strongerThan(this.type, new_type);
-	
+
 	}
 	/**
 	 * @param new_att
@@ -624,8 +636,8 @@ public class AttributeHandler implements Serializable{
 			}
 		}
 	} 
-	
-	
+
+
 	/**
 	 * Return a range value (enum if less than 10 values) for the attribute
 	 * @throws Exception

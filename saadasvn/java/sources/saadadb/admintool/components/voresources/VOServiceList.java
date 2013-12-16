@@ -39,7 +39,6 @@ public class VOServiceList extends JPanel {
 	 * @param toActive
 	 */
 	public VOServiceList(VOServiceItemSelector itemSelector, String protocol, int[] allowedCategories) {
-		System.out.println("@@@@@@@@@@@@@@@ " + protocol);
 		this.allowedCategories = allowedCategories;
 		this.itemSelector = itemSelector;
 		this.protocol = protocol;

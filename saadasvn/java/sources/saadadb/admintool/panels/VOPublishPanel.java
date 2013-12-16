@@ -1,8 +1,6 @@
 package saadadb.admintool.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JPanel;
 import javax.swing.JTree;
@@ -15,7 +13,6 @@ import saadadb.admintool.components.ChoiceItem;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.ToolTipTextDesk;
 import saadadb.exceptions.QueryException;
-import saadadb.util.Messenger;
 
 public class VOPublishPanel extends ChoicePanel {
 	

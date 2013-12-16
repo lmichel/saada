@@ -19,6 +19,7 @@ import saadadb.util.Messenger;
  * 07/2009: SQL queries limited at 5000000 rows by JDBC
  *          Creation of method runLargeQuerySQL for very large resultSet
  * 03/2010: Method forceQueryUpdateSQL(String[]/...) ignore exception 
+ * 12/1013: add method addQueryToTransaction(String[])
  *
  */
 public abstract class SQLTable {
@@ -43,12 +44,24 @@ public abstract class SQLTable {
 	public static  void addQueryToTransaction(String query) throws AbortException {
 		if( transaction_maker == null ) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which has not been initiated");
-		}
-		else if( !transaction_maker.isFree()) {
+		} else if( !transaction_maker.isFree()) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which is busy");
-		}
-		else {
+		} else {
 			transaction_maker.addQuery(query);
+		}
+	}
+	/**
+	 * Add the queries to the current transactionmaker if it exist:
+	 * @param queries
+	 * @throws AbortException when no transaction maker does exist
+	 */
+	public static  void addQueryToTransaction(String[] queries) throws AbortException {
+		if( transaction_maker == null ) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which has not been initiated");
+		} else if( !transaction_maker.isFree()) {
+			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt add a query to a transaction which is busy");
+		} else {
+			for( String q: queries )  transaction_maker.addQuery(q);
 		}
 	}
 	/**
@@ -215,6 +228,7 @@ public abstract class SQLTable {
 			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt to commit a transaction which has not been initiated");
 		}
 		else {
+			Messenger.printMsg(Messenger.TRACE, "Valid transaction (can take time)");
 			transaction_maker.makeTransaction();
 		}
 		transaction_maker = null;			

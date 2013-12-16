@@ -553,7 +553,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String getPrimaryRelationshipIndex(String relationName) {
+	public String getPrimaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase()+ "_primoid_class ON "
 		+ relationName + " ( primaryclass )";
 	}
@@ -624,7 +624,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String getSecondaryRelationshipIndex(String relationName) {
+	public String getSecondaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase()+ "_secoid_class ON "
 		+ relationName + " ( secondaryclass )";
 	}

@@ -109,6 +109,9 @@ public abstract class TaskPanel extends AdminPanel implements PropertyChangeList
 		return cmdThread;
 	}
 	
+	/**
+	 * invoked by @link RunTaskButton when the run button is created
+	 */
 	public abstract void initCmdThread();
 	
 	/**

@@ -44,6 +44,9 @@ public class ToolTipTextDesk
 	public static final int VO_PROTOCOL_FIELDS = 32;
 	public static final int VO_PUBLISHED_RESOURCES = 33;
 	public static final int DISPLAY_RELATION = 34;
+	public static final int TAG_METADATA = 35;
+	public static final int MANAGE_EXTATTR = 36;
+
 	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
@@ -67,6 +70,12 @@ public class ToolTipTextDesk
 		"You can manage the web publishing configuration."});
 		map.put(VO_PUBLISH, new String[] {"VO Publishing", 
 		"You can manage your VO and publish data."});
+		
+		// ManageMetaDataPanel
+		map.put(TAG_METADATA, new String[] {"Tag Columns", 
+		"Set UCD/Unit/Description to data columns."});
+		map.put(MANAGE_EXTATTR, new String[] {"Manage extened attribute", 
+		"Add, remove or rename extended attributes of collections"});
 		
 		// ManageDataPanel
 		map.put(COMMENT_COLLECTION, new String[] {"Comment Collection", 

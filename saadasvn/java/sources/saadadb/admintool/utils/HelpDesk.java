@@ -43,6 +43,7 @@ public class HelpDesk {
 	public static final int DATATABLE_EDITOR = 35;
 	public static final int VO_PROTOCOL_FIELDS = 36;
 	public static final int VO_PUBLISHED_RESOURCES = 37;
+	public static final int EXTATT_EDIT = 38;
 	
 	static{
 		map = new LinkedHashMap<Integer, String[]>();
@@ -221,6 +222,10 @@ public class HelpDesk {
 		});
 		map.put(VO_PUBLISHED_RESOURCES, new String[] {
 				"Click on a protocol to display its published resources."
+		});
+		map.put(EXTATT_EDIT, new String[] {
+				"The name of the new attribute must match /[a-zA-Z][_a-zA-Z0-9]*/"
+				,"Type a description (optional) and run."
 		});
 	}
 	

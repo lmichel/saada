@@ -31,6 +31,7 @@ import saadadb.admintool.components.LoadBarButton;
 import saadadb.admintool.dialogs.AdminPassword;
 import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.panels.ChoicePanel;
+import saadadb.admintool.panels.EditMetaDataPanel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.panels.LoadDataPanel;
 import saadadb.admintool.panels.ManageDataPanel;
@@ -59,6 +60,7 @@ import saadadb.admintool.panels.tasks.CollDropPanel;
 import saadadb.admintool.panels.tasks.CollEmptyPanel;
 import saadadb.admintool.panels.tasks.DataLoaderPanel;
 import saadadb.admintool.panels.tasks.DataTableEditorPanel;
+import saadadb.admintool.panels.tasks.ExtendedAttPanel;
 import saadadb.admintool.panels.tasks.MetaDataEditorPanel;
 import saadadb.admintool.panels.tasks.ObscoreMapperPanel;
 import saadadb.admintool.panels.tasks.RelationCommentPanel;
@@ -104,7 +106,9 @@ public class AdminTool extends BaseFrame {
 	private TaskPanel commentCollPanel;
 
 	private TaskPanel emptyCategoryPanel;
-	private MetaDataEditorPanel metaDataPanel;
+	private EditMetaDataPanel metaDataPanel;
+	private MetaDataEditorPanel tagMetaDataPanel;
+	private ExtendedAttPanel attExtendPanel;
 	private DataTableEditorPanel dataTablePanel;
 
 	private TaskPanel dropClassPanel;
@@ -275,6 +279,7 @@ public class AdminTool extends BaseFrame {
 		} else {
 			Database.updatSchema();
 		}
+		this.activePanel(AdminComponent.MANAGE_EXTATTR);
 	}
 
 	public ProcessPanel getProcessPanel() {
@@ -308,15 +313,6 @@ public class AdminTool extends BaseFrame {
 
 	}
 
-	/**
-	 * @param panelTitle
-	 */
-	/**
-	 * @param panelTitle
-	 */
-	/**
-	 * @param panelTitle
-	 */
 	/**
 	 * @param panelTitle
 	 */
@@ -362,9 +358,19 @@ public class AdminTool extends BaseFrame {
 			 */
 		} else 	if( panelTitle.equals(AdminComponent.MANAGE_METADATA) ) {
 			if( metaDataPanel == null ) {
-				metaDataPanel = new MetaDataEditorPanel(this,  AdminComponent.ROOT_PANEL);
+				metaDataPanel = new EditMetaDataPanel(this,  AdminComponent.ROOT_PANEL);
 			}
 			activePanel = metaDataPanel;
+		} else 	if( panelTitle.equals(AdminComponent.TAG_METADATA) ) {
+			if( tagMetaDataPanel == null ) {
+				tagMetaDataPanel = new MetaDataEditorPanel(this,  AdminComponent.MANAGE_METADATA);
+			}
+			activePanel = tagMetaDataPanel;
+		} else 	if( panelTitle.equals(AdminComponent.MANAGE_EXTATTR) ) {
+			if( attExtendPanel == null ) {
+				attExtendPanel = new ExtendedAttPanel(this,  AdminComponent.MANAGE_METADATA);
+			}
+			activePanel = attExtendPanel;
 			/*
 			 * Collection mqnagement tasks
 			 */

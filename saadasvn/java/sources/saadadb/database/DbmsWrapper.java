@@ -855,16 +855,30 @@ abstract public class DbmsWrapper {
 	 */
 	public abstract void setClassColumns(String relationName) throws AbortException;
 	/**
+	 * Return the statement indexing the secondary class ids  of the relationship behavior specific for MySQL 
+	 * {@link MysqlWrapper#getSecondaryClassRelationshipIndex(String)}  
 	 * @param relationName
 	 * @return
 	 */
-	public  abstract String getSecondaryRelationshipIndex(String relationName);	
+	public  abstract String getSecondaryClassRelationshipIndex(String relationName);	
 
 	/**
+	 * Return the statement indexing the primary class ids  of the relationship behavior specific for MySQL 
+	 * {@link MysqlWrapper#getPrimaryClassRelationshipIndex(String)}  
 	 * @param relationName
 	 * @return
 	 */
-	public abstract String getPrimaryRelationshipIndex(String relationName);
+	public abstract String getPrimaryClassRelationshipIndex(String relationName);
+	
+	/**
+	 * Return the statement indexing the primary oid of the relationship behavior specific for MySQL 
+	 * {@link MysqlWrapper#getPrimaryRelationshipIndex(String)}  
+	 * @param relationName
+	 * @return
+	 */
+	public String [] getPrimaryRelationshipIndex(String relationName) {
+		return new String[]{"CREATE INDEX " + relationName + "_oidprimary ON " + relationName + "(oidprimary)"};
+	}
 
 	/**
 	 * Return the column (native or computed) used to select primary class in a relationship table

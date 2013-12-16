@@ -11,6 +11,7 @@ import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 
+@SuppressWarnings("serial")
 public class ClassCommentPanel extends ClassDropPanel {
 
 

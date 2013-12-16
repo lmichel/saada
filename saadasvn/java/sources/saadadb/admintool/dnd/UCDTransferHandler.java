@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import saadadb.admintool.components.ResultSetTableModel;
+import saadadb.admintool.components.input.UcdTextField;
 
 public class UCDTransferHandler extends SaadaTransferHandler {
     /**
@@ -23,10 +24,8 @@ public class UCDTransferHandler extends SaadaTransferHandler {
     protected String exportString(JComponent c) {
         JTable table = (JTable)c;
         rows = table.getSelectedRows();
-        int colCount = table.getColumnCount();
-        
-        StringBuffer buff = new StringBuffer();
-        
+        int colCount = table.getColumnCount();        
+        StringBuffer buff = new StringBuffer();        
         for (int i = 0; i < rows.length; i++) {
             for (int j = 0; j < colCount; j++) {
                 Object val = table.getValueAt(rows[i], j);
@@ -49,11 +48,16 @@ public class UCDTransferHandler extends SaadaTransferHandler {
     protected void importString(JComponent c, String str) {
      	int index=0;ResultSetTableModel model=null;JTable target=null;
     	try {
-        target = (JTable)c;
-        model = (ResultSetTableModel)target.getModel();
-        index = target.getSelectedRow();
-        model.setUCD(str, index);
-        target.updateUI();
+			if( c instanceof JTable ) {
+		        target = (JTable)c;
+		        model = (ResultSetTableModel)target.getModel();
+		        index = target.getSelectedRow();
+		        model.setUCD(str, index);
+		        target.updateUI();
+			} else if( c instanceof UcdTextField ) {
+				((UcdTextField) c).setText(str);
+			}
+
     	} catch(Exception e) {
     		
     	}

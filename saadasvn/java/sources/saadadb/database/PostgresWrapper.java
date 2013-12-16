@@ -391,13 +391,13 @@ public class PostgresWrapper extends DbmsWrapper {
 	public void suspendRelationTriggger(String relationName) throws AbortException{}
 
 	@Override
-	public String getSecondaryRelationshipIndex(String relationName) {
+	public String getSecondaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase() + "_secoid_class ON "
 		+ relationName + " ( ((oidsecondary>>32) & 65535::bigint) )";
 	}
 
 	@Override
-	public String getPrimaryRelationshipIndex(String relationName) {
+	public String getPrimaryClassRelationshipIndex(String relationName) {
 		return "CREATE INDEX " + relationName.toLowerCase()+ "_primoid_class ON "
 		+ relationName + " ( ((oidprimary>>32) & 65535::bigint) )";
 	}

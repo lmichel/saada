@@ -13,6 +13,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaClass;
 
+@SuppressWarnings("serial")
 public class ClassDropPanel extends CollCreatePanel {
 
 

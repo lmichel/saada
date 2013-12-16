@@ -114,6 +114,11 @@ public class AntDesk {
 		    	,"<java  classname=\"saadadb.command.ManageProduct\" fork=\"true\"  failonerror=\"true\"  >"
 				,"<classpath refid=\"saadadb.classpath\"/>\n"
 		});
+		map.put(AdminComponent.MANAGE_EXTATTR, new String[] {
+				"<target name=\"user.task\">"
+		    	,"<java  classname=\"saadadb.command.ManageExtendedAttributes\" fork=\"true\"  failonerror=\"true\"  >"
+				,"<classpath refid=\"saadadb.classpath\"/>\n"
+		});
 	}
 
 	/**

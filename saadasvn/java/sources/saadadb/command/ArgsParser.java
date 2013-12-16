@@ -107,7 +107,11 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-of=") &&
 							!args[i].startsWith("-protocol=") &&
 							!args[i].startsWith("-type=") &&
-							!args[i].startsWith("-vomodel=") 
+							!args[i].startsWith("-unit=") &&
+							!args[i].startsWith("-ucd=") &&
+							!args[i].startsWith("-utype=") &&
+							!args[i].startsWith("-vomodel="
+								) 
 					) {
 						msg += " <" + args[i] + ">";
 					}
@@ -243,6 +247,44 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-type")) {
 				return this.matches(getArgsValue(args[i]), "-type", JavaTypeUtility.ATTREXTENDTYPES);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getUnit() throws FatalException {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-unit")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getUcd() throws FatalException {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-ucd")) {
+				return this.matches(getArgsValue(args[i]), "-ucd", RegExp.UCD);
+			}
+		}
+		return null;
+	}
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getUtype() throws FatalException {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-utype")) {
+				return this.matches(getArgsValue(args[i]), "-utype", RegExp.UTYPE);
 			}
 		}
 		return null;
@@ -1087,8 +1129,7 @@ public class ArgsParser implements Serializable{
 	private String matches(String val, String param, String regexp) throws FatalException {
 		if( val.matches(regexp) ) {
 			return val;
-		}
-		else {
+		} else {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, val + ": Wrong value for parameter <" + param + ">");
 			return "";
 		}

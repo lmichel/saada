@@ -10,6 +10,7 @@ import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 
+@SuppressWarnings("serial")
 public class ClassEmptyPanel extends ClassDropPanel {
 	
 	public ClassEmptyPanel(AdminTool rootFrame, String ancestor) {

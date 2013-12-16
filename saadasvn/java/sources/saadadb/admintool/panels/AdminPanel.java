@@ -4,7 +4,6 @@
 package saadadb.admintool.panels;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 
@@ -19,9 +18,7 @@ import javax.swing.border.TitledBorder;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.DebugButton;
-import saadadb.admintool.components.CustomPathLabel;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
