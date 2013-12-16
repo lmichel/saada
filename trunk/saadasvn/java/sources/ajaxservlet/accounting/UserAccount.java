@@ -18,7 +18,8 @@ import ajaxservlet.formator.StoredFilter;
  */
 public class UserAccount implements Serializable {
 	private static final long serialVersionUID = 1L;
-	protected String                        sessionId;
+	protected final String                  sessionId;
+	protected final String                  filterDirectory;
 	protected QueryContext                  queryContext;
 	protected HashMap<String, StoredFilter> userfilters;
 	private String 							reportDir;
@@ -26,39 +27,40 @@ public class UserAccount implements Serializable {
 	
 	UserAccount(String session_id) throws Exception {
 		this.sessionId = session_id;
-		userfilters = new HashMap<String, StoredFilter>();
+		this.filterDirectory = FilterBase.filterDirectory + File.separator + this.sessionId + File.separator ;
+		this.userfilters = new HashMap<String, StoredFilter>();
 		/*
 		 * Init UWS quue of ZIP archives
 		 */
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Create UWS ZIP archive queue for session " + session_id);
-		reportDir = Repository.getUserReportsPath(sessionId);;
+		this.reportDir = Repository.getUserReportsPath(sessionId);;
 		/*
 		 * User report directory must not be deleted because it can be populated out of any session context
 		 * e.g. a TAP request will put query report on the behalf of a session ID (sent by cookie) but the 
 		 * TAP servlet does not create HTTP sessions.
 		 */
-		File f = new File(reportDir);
+		File f = new File(this.reportDir);
 		if( !f.exists()) {
-			(new File(reportDir)).mkdir();			
+			(new File(this.reportDir)).mkdir();			
 		}
 		else if( !f.isDirectory() || ! f.canWrite() ) {
-			Files.deleteFile(reportDir);
-			(new File(reportDir)).mkdir();
+			Files.deleteFile(this.reportDir);
+			(new File(this.reportDir)).mkdir();
 		}
 	}
 	/**
 	 * @return
 	 */
 	public String getReportDir() {
-		return reportDir;
+		return this.reportDir;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getCartDir() {
-		return reportDir + File.separator + cartDirectory + File.separator;
+		return this.reportDir + File.separator + cartDirectory + File.separator;
 	}
 
 	/**
@@ -102,9 +104,8 @@ public class UserAccount implements Serializable {
 		if( FilterBase.filterDirectory != null ) {
 			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
 			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory + File.separator + this.sessionId);
-			sf.store(FilterBase.filterDirectory + File.separator + this.sessionId + File.separator + "df." + kw + ".json");
-		}
-		else {
+			sf.store(this.filterDirectory + "df." + kw + ".json");
+		} else {
 			Messenger.printMsg(Messenger.WARNING, "Cannot store user filter in " + FilterBase.filterDirectory );
 		}
 
@@ -182,8 +183,8 @@ public class UserAccount implements Serializable {
 		}
 		userfilters = result;
 
-		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
-		File directory = new File (FilterBase.filterDirectory);
+		WorkDirectory.validWorkingDirectory(this.filterDirectory);
+		File directory = new File (this.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].endsWith(cat+".json")) {
@@ -203,8 +204,8 @@ public class UserAccount implements Serializable {
 	public void resetFilter(String coll, String cat)  throws Exception{
 		String key = coll+"."+cat;
 		userfilters.remove(key);
-		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
-		File directory = new File (FilterBase.filterDirectory);
+		WorkDirectory.validWorkingDirectory(this.filterDirectory);
+		File directory = new File (this.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].endsWith(coll+"_"+cat+".json")) {
@@ -221,8 +222,8 @@ public class UserAccount implements Serializable {
 	 */
 	public void resetAll()  throws Exception{
 		userfilters = new HashMap<String, StoredFilter>();
-		WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
-		File directory = new File(FilterBase.filterDirectory);
+		WorkDirectory.validWorkingDirectory(this.filterDirectory);
+		File directory = new File(this.filterDirectory);
 
 		String[] list = directory.list();
 
