@@ -40,6 +40,9 @@ public class ResetFilter extends SaadaServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 		process(request, response);
 	}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+		process(request, response);
+	}
 
 
 	/**
@@ -66,7 +69,9 @@ public class ResetFilter extends SaadaServlet {
 				ua.resetAll();			
 			} else if (coll.compareTo("all") == 0) {
 				ua.resetCat(cat);
-			} else ua.resetFilter(coll, cat);
+			} else {
+				ua.resetFilter(coll, cat);
+			}
 		} catch (Exception e) {
 			this.reportJsonError(request, response, e);
 		}

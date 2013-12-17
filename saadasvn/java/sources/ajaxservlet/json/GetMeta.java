@@ -61,7 +61,6 @@ public class GetMeta extends SaadaServlet {
 	}
 	@SuppressWarnings("unchecked")
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		printAccess(request, true);
 		String query = request.getParameter("query");
 		String name = request.getParameter("name");
 		RequestDispatcher rd = null;
