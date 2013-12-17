@@ -85,7 +85,7 @@ jQuery.extend({
 					}
 				});
 			}
-		}
+		};
 
 		this.processShowRecord= function(oid, panelToOpen){
 			var jsdata ="";
@@ -105,7 +105,7 @@ jQuery.extend({
 					that.notifyDetailLoaded(oid, jsdata, limit, panelToOpen);
 				}
 			});
-		}
+		};
 
 		this.processShowMeta= function(){
 			var jsdata ="";

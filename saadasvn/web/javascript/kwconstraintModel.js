@@ -32,11 +32,11 @@ jQuery.extend({
 
 		}
 		else if( ah.type != 'String' ) {
-			operators = ["=", "!=", ">", "<", "between", 'IS NULL'];
+			operators = ["=", "!=", ">", "<", "BETWEEN", 'IS NULL'];
 			andors = ['AND', 'OR'];
 		}
 		else {
-			operators = ["=", "!=", "LIKE", "NOT LIKE", 'IS NULL'];
+			operators = ["=", "!=", "LIKE", "NOT LIKE", 'IS NULL', "BETWEEN"];
 			andors = ['AND', 'OR'];
 		}
 
@@ -96,7 +96,7 @@ jQuery.extend({
 					return 1;
 				}
 			}
-			else if( op == 'between' || op == '][' || op == ']=[' || op == '[]' || op == '[=]') {
+			else if( op == 'BETWEEN' || op == '][' || op == ']=[' || op == '[]' || op == '[=]') {
 				var words = opd.split(' ') ;
 				if( words.length != 3 || !/and/i.test(words[1]) ||
 						words[0].length == 00 || words[2].length == 00 ||
@@ -104,7 +104,7 @@ jQuery.extend({
 					that.notifyTypomsg(1, 'Operand must have the form "num1 and num2" with operator "' + op + '"');
 					return 0 ;
 				}
-				if( op == 'between' ) {
+				if( op == 'BETWEEN' ) {
 					operator = op;
 					operand = words[0] + ' AND ' + words[2];						
 				}
@@ -153,6 +153,31 @@ jQuery.extend({
 				operand = '';
 				return 1;				
 			}
+			else if( op == 'BETWEEN' || op == '][' || op == ']=[' || op == '[]' || op == '[=]') {
+				var words = opd.split(' ') ;
+				if( words.length != 3 || !/and/i.test(words[1]) ||
+						words[0].length == 00 || words[2].length == 00  ) {
+					that.notifyTypomsg(1, 'Operand must have the form "num1 and num2" with operator "' + op + '"');
+					return 0 ;
+				}
+				if( op == 'BETWEEN' ) {
+					operator = op;
+					if ( ! /^\s*'.*'\s*$/.test(words[0])  ) {
+						 words[0] = "'" +  words[0] + "'";
+					}
+					if ( ! /^\s*'.*'\s*$/.test(words[2])  ) {
+						 words[2] = "'" +  words[2] + "'";
+					}
+
+					operand = words[0] + ' AND ' + words[2];						
+				}
+				else {
+					operator = op;
+					operand = '(' + words[0] + ' , ' + words[2] + ')';												
+				}
+				return 1 ;
+			}
+
 			else {
 				if ( /^\s*'.*'\s*$/.test(opd)  ) {
 					operand = opd;
