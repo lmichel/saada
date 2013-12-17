@@ -340,6 +340,6 @@ $().ready(function() {
 		});
 	}); // end of ajax
 
-	//Location.confirmBeforeUnlaod();
-	//Out.setdebugModeFromUrl();
+	Location.confirmBeforeUnlaod();
+	Out.setdebugModeFromUrl();
 });

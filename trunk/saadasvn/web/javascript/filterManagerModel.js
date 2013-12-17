@@ -134,7 +134,7 @@ jQuery.extend({
 			queriableUCDs = new Array();
 			relations = new Array();
 			var params;
-
+console.log("processShowFilterManager");
 			if (globalTreePath.length == 3) {
 				collection = globalTreePath[0];
 				category = globalTreePath[1];
@@ -160,7 +160,6 @@ jQuery.extend({
 					Processing.hide();
 					return;
 				}
-
 				that.initNativesList(jsonmeta);
 				that.initRelationsList(jsonmeta);
 				that.initQueriablesUCDList(jsonmeta);
@@ -191,9 +190,10 @@ jQuery.extend({
 		};
 
 		this.processInitExisting = function() {
+			console.log("processInitExisting");
 
 			var param = "cat=" + category + "&coll=" + collection + "&saadaclass=" + classe;
-			var sfname, rname, nname;
+			var sfname, nname;
 
 			droppedspefields = new Array();
 			droppednatives = new Array();
@@ -394,32 +394,26 @@ jQuery.extend({
 		};
 
 		this.processSaveFilter = function() {
-			var param = escape(this.getNewJSONFilter());
 			var filename = collection + "_" + category;
-			var tmppath = path + "setfilter?filter=" + param + "&name=" + filename;
 			if (universal) {
 				filename = "Any-Collection." + category;;
 				droppedclassnatives = new Array();
 				droppedrelations = new Array();
-
 			} 
-			$.post(tmppath, function(jsondata){
-				$.ajax({
-					type: "POST",
-					url: "setfilter",
-					data: { filter: that.getNewJSONFilter(), name: "filename" },
-					error: function(jqXHR, textStatus, errorThrown) {
-						Modalinfo.info('Cannot save filter: ' + jqXHR.status + "\n" + textStatus+ "\n" + errorThrown);
+			$.ajax({
+				type: "POST",
+				url: "setfilter",
+				data: { filter: that.getNewJSONFilter(), name: filename },
+				error: function(jqXHR, textStatus, errorThrown) {
+					Modalinfo.info('Cannot save filter: ' + jqXHR.status + "\n" + textStatus+ "\n" + errorThrown);
 
-					} ,
-					success: function (jsondata, status)  {
-						if (Processing.jsonError(jsondata, "Cannot save filter")) {
-							return;
-						}
-						Modalinfo.info("Filter " + name + " saved.");
+				} ,
+				success: function (jsondata, status)  {
+					if (Processing.jsonError(jsondata, "Cannot save filter")) {
+						return;
 					}
-				});
-
+					Modalinfo.info("Filter " + name + " saved.");
+				}
 			});
 		};
 
@@ -442,31 +436,40 @@ jQuery.extend({
 		};
 		this.processResetFilter = function () {
 			if (!universal) {
-				var question = 'Delete the custom filter for '+collection+', '+category+'?';
-				var answer = confirm(question);
+				var answer = confirm('Delete the custom filter for '+collection+', '+category+'?');
 				if (answer) {
-					var tmppath = path + "resetfilter?coll=" + collection + "&cat=" + category;
-					$.post(tmppath);
-					Modalinfo.info('Filter reset complete.');
+					$.get("resetfilter", {coll: collection, cat : category } ).done(function( data ) {
+							if( Processing.jsonError(data, "") ) {
+								return;
+							} else {
+								resultPaneView.fireSubmitQueryEvent();
+							}
+						  });
 				}
 			} else {
-				var question = 'Delete the custom filters for the category '+category+'?';
-				var answer = confirm(question);
+				var answer = confirm('Delete the custom filters for the category '+category+'?');
 				if (answer) {
-					var tmppath = path + "resetfilter?coll=all&cat=" + category;
-					$.post(tmppath);
-					Modalinfo.info('Filter reset complete.');
+					$.get("resetfilter", {coll: "all", cat : category } ).done(function( data ) {
+						if( Processing.jsonError(data, "") ) {
+							return;
+						} else {
+							resultPaneView.fireSubmitQueryEvent();
+						}
+					  });
 				}
 			}
 		};
 
 		this.processResetAll = function () {
-			var question = 'Delete all the custom filters?';
-			var answer = confirm(question);
+			var answer = confirm('Delete all the custom filters?');
 			if (answer) {
-				var tmppath = path + "resetfilter?coll=all&cat=all";
-				$.post(tmppath);
-				Modalinfo.info('Filter reset complete.');
+				$.get("resetfilter", {coll: "all", cat : "all" } ).done(function( data ) {
+					if( Processing.jsonError(data, "") ) {
+						return;
+					} else {
+						resultPaneView.fireSubmitQueryEvent();
+					}
+				  });
 			}
 		};
 

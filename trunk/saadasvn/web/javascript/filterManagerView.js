@@ -191,10 +191,12 @@ jQuery.extend({
 			content += "<div id=bonusoptions><input type=checkbox id=unifilter OnClick=\"filterManagerView.fireApplyToAllColl();\" title=\"Apply this Filter to this Category regardless of the Collection\" value=\"Apply this filter to any collection\"> <span>Apply to Any Collection</span><br/>";
 			content += "<input type=button OnClick=\"filterManagerView.fireFilterPreview();\" title=\"See the JSON file\" value=\"Preview\">&nbsp;&nbsp;";
 //			content += "<input type=button OnClick=\"filterManagerView.fireSaveFilter();\" title=\"Save this display filter for the current collection/category\" value=\"Save Filter\">&nbsp;&nbsp;";
-			content += "<input type=button OnClick=\"filterManagerView.fireSaveFilter(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Save and apply this filter to the current query\" value=\"Save & Apply\"><br/>";
-			content += "<input type=button OnClick=\"filterManagerView.fireResetFilter(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Delete the custom filter existing for this collection/category\" value=\"Restore Default Filter\">&nbsp;&nbsp;";
-			content += "<input type=button OnClick=\"filterManagerView.fireResetAll(); resultPaneView.fireSubmitQueryEvent(); $.modal.close();\" title=\"Delete all custom filters\" value=\"Restore all Default Filters\"></div>";
-			Modalpanel.open(content);
+			content += "<input type=button OnClick=\"filterManagerView.fireSaveFilter(); Modalinfo.close();\" title=\"Save and apply this filter to the current query\" value=\"Save & Apply\"><br/>";
+			content += "<input type=button OnClick=\"filterManagerView.fireResetFilter(); Modalinfo.close();\" title=\"Delete the custom filter existing for this collection/category\" value=\"Restore Default Filter\">&nbsp;&nbsp;";
+			content += "<input type=button OnClick=\"filterManagerView.fireResetAll();  Modalinfo.close();\" title=\"Delete all custom filters\" value=\"Restore all Default Filters\"><br/>";
+			content += "<input type=button OnClick=\"Modalinfo.close();\" title=\"Cancel\" value=\"Cancel\">";
+		    content += "</div>";
+			Modalinfo.dataPanel("Filter Editor" , content, null, "white");
 
 			jQuery(".selector").each(function(i) {
 				if (i > 0) {
