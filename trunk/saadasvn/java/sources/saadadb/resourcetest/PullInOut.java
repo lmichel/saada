@@ -85,7 +85,6 @@ public class PullInOut {
 	
 	
 	public void showSomeMeta(SavotVOTable sv) {
-		
 		ResourceSet rs = sv.getResources();
 		TableSet ts = ( (SavotResource) rs.getItemAt(0)).getTables();
 		
