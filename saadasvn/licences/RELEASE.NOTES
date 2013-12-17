@@ -4,6 +4,14 @@ Version Saada1.7.0.build7
 L. MICHEL
 June 2013
 -------------------------------------------------
+Saada 1.7.0.build9
+-------------------
+Possibility of adding, removing and renaming extended attributes after the DB has been created
+Optimisation of the relationship index creation for MySQL
+Between operator for Strings
+Some fixes in the filter management
+
+
 Saada 1.7.0.build7
 ----------------
 Works on MS Windows 64 bits
