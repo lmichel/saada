@@ -2,8 +2,15 @@
 Version Saada1.7.0.build7
 
 L. MICHEL
-November 2013
+December 2013
 -------------------------------------------------
+
+---- Meta data editing --------------
+Extended attributes can be dited from the Meta panel of te admin tool
+
+---- MySQL -----------
+Make te relationship tabec in mode ROW_WIDTH=FIXED.
+Indexes are built much more faster
 
 ---- Jars ----------------
 upgrade of apache.io from 1 to 2.4
