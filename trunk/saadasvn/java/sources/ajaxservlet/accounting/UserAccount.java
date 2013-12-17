@@ -86,7 +86,7 @@ public class UserAccount implements Serializable {
 
 
 	/**
-	 * add the filter to the userfilters base
+	 * add the filter to the user filters base
 	 * @param sf filter to be added
 	 */
 	public void addFilter(StoredFilter sf) throws Exception{
@@ -102,11 +102,10 @@ public class UserAccount implements Serializable {
 		 * Save the filter in the user base
 		 */
 		if( FilterBase.filterDirectory != null ) {
-			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory);
-			WorkDirectory.validWorkingDirectory(FilterBase.filterDirectory + File.separator + this.sessionId);
+			WorkDirectory.validWorkingDirectory(this.filterDirectory );
 			sf.store(this.filterDirectory + "df." + kw + ".json");
 		} else {
-			Messenger.printMsg(Messenger.WARNING, "Cannot store user filter in " + FilterBase.filterDirectory );
+			Messenger.printMsg(Messenger.WARNING, "Cannot store user filter in " + this.filterDirectory );
 		}
 
 	}
@@ -172,13 +171,16 @@ public class UserAccount implements Serializable {
 	/**
 	 * deletes all the filters applying to the
 	 * given category in the userbase
-	 * @param cat
+	 * @param category
 	 */
-	public void resetCat(String cat) throws Exception {
+	public void resetCat(String category) throws Exception {
 		HashMap<String, StoredFilter> result = new HashMap<String, StoredFilter>();
 		for (String key : userfilters.keySet()) {
-			if (!key.endsWith(cat)) {
+			if (!key.endsWith(category)) {
 				result.put(key, userfilters.get(key));
+			} else {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Reset filter " + key);
 			}
 		}
 		userfilters = result;
@@ -187,8 +189,11 @@ public class UserAccount implements Serializable {
 		File directory = new File (this.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
-			if (list[i].endsWith(cat+".json")) {
+			System.out.println(list[i]);
+			if (list[i].endsWith(category+".json")) {
 				File entry = new File(directory, list[i]);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Delet filter " + entry.getAbsolutePath());
 				entry.delete();
 			}
 		}
@@ -198,18 +203,20 @@ public class UserAccount implements Serializable {
 	/**
 	 * deletes the filter applied to the given
 	 * collection and category
-	 * @param coll
-	 * @param cat
+	 * @param collection
+	 * @param category
 	 */
-	public void resetFilter(String coll, String cat)  throws Exception{
-		String key = coll+"."+cat;
+	public void resetFilter(String collection, String category)  throws Exception{
+		String key = collection+"."+category;
 		userfilters.remove(key);
 		WorkDirectory.validWorkingDirectory(this.filterDirectory);
 		File directory = new File (this.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
-			if (list[i].endsWith(coll+"_"+cat+".json")) {
+			if (list[i].endsWith(key + ".json")) {
 				File entry = new File(directory, list[i]);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Delete filter " + entry.getAbsolutePath());
 				entry.delete();
 			}
 		}
@@ -230,8 +237,12 @@ public class UserAccount implements Serializable {
 		if (list != null) {
 			for (int i = 0; i < list.length; i++) {
 				File entry = new File(directory, list[i]);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Delete filter " + entry.getAbsolutePath());
 				entry.delete();
 			}
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Delete filter directory " + directory.getAbsolutePath());
 			directory.delete();
 		}
 	}
@@ -243,6 +254,5 @@ public class UserAccount implements Serializable {
 		Messenger.printMsg(Messenger.TRACE, "Remove resources of session" + sessionId);
 		resetAll();		
 		Files.deleteFile(reportDir);
-
 	}
 }
