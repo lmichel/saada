@@ -300,8 +300,7 @@ public class ExtendedAttPanel extends TaskPanel {
 				this.commentField.setText("");
 			} else if( Database.getWrapper().supportAlterColumn() ) {
 				if( source == dropBtn){
-					if( Database.getWrapper().supportAlterColumn())
-						this.nameField.setEnabled(false);
+					this.nameField.setEnabled(false);
 					this.commentField.setEnabled(false);
 					this.existingAttList.setEnabled(true);
 					this.typeList.setEnabled(false);
