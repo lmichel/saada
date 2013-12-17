@@ -34,7 +34,7 @@ public class EditMetaDataPanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		tagMetaData = new ChoiceItem(rootFrame, tPanel, c
-				, "Manage Meta Data", "icons/MetaData.png"
+				, "Manage Meta Data", "icons/tagmeta.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(TAG_METADATA);}});
 		tagMetaData.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.TAG_METADATA));
@@ -44,7 +44,7 @@ public class EditMetaDataPanel extends ChoicePanel {
 		c.weightx = 0.5;
 		c.weighty = 0.5;
 		manageExtendedAttributes = new ChoiceItem(rootFrame, tPanel, c
-				, "Manage Extended Attributes", "icons/MetaData.png"
+				, "Manage Extended Attributes", "icons/extenedAtt.png"
 				, new Runnable(){public void run(){
 					rootFrame.activePanel(MANAGE_EXTATTR);}});
 		manageExtendedAttributes.setToolTipText(ToolTipTextDesk.get(ToolTipTextDesk.MANAGE_EXTATTR));
