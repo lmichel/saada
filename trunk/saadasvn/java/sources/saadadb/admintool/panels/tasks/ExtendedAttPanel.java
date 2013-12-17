@@ -38,6 +38,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.JavaTypeUtility;
+import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
 
@@ -194,7 +195,7 @@ public class ExtendedAttPanel extends TaskPanel {
 		mgbc.anchor =  GridBagConstraints.WEST;
 		tPanel.add(commentField.getPanel(), mgbc);
 
-		
+
 		mgbc.newRow();
 		JLabel ds = AdminComponent.getPlainLabel("<HTML><A HREF=>Open Meta Data panel</A> ");
 		ds.setToolTipText("Show dataloader parameters matching the current configuration.");
@@ -206,7 +207,7 @@ public class ExtendedAttPanel extends TaskPanel {
 		});
 		mgbc.anchor = GridBagConstraints.EAST;
 		tPanel.add(ds, mgbc);
-		
+
 		mgbc.newRow();
 		mgbc.anchor = GridBagConstraints.EAST;
 		tPanel.add(getPlainLabel("Unit"), mgbc);
@@ -220,14 +221,14 @@ public class ExtendedAttPanel extends TaskPanel {
 		mgbc.rowEnd();
 		mgbc.anchor =  GridBagConstraints.WEST;
 		tPanel.add(ucdField, mgbc);
-		
+
 		mgbc.newRow();
 		mgbc.anchor = GridBagConstraints.EAST;
 		tPanel.add(getPlainLabel("UType"), mgbc);
 		mgbc.rowEnd();
 		mgbc.anchor =  GridBagConstraints.WEST;
 		tPanel.add(utypeField, mgbc);
-		
+
 		mgbc.newRow();
 		mgbc.anchor = GridBagConstraints.EAST;
 		tPanel.add(getPlainLabel("Action"), mgbc);
@@ -289,26 +290,35 @@ public class ExtendedAttPanel extends TaskPanel {
 	 * @param source
 	 */
 	private void configureForm(Object source) {
-		if( source == newBtn){
-			this.nameField.setEnabled(true);
-			this.commentField.setEnabled(true);
-			this.existingAttList.setEnabled(false);
-			this.typeList.setEnabled(true);
-			this.nameField.setText("");
-			this.commentField.setText("");
-		} else if( source == dropBtn){
-			this.nameField.setEnabled(false);
-			this.commentField.setEnabled(false);
-			this.existingAttList.setEnabled(true);
-			this.typeList.setEnabled(false);
-			this.readAH();
-		} else {
-			this.nameField.setEnabled(true);
-			this.commentField.setEnabled(true);
-			this.existingAttList.setEnabled(true);
-			this.typeList.setEnabled(false);
-			this.readAH();
-		}
-	}
-
+		try {
+			if( source == newBtn){
+				this.nameField.setEnabled(true);
+				this.commentField.setEnabled(true);
+				this.existingAttList.setEnabled(false);
+				this.typeList.setEnabled(true);
+				this.nameField.setText("");
+				this.commentField.setText("");
+			} else if( Database.getWrapper().supportAlterColumn() ) {
+				if( source == dropBtn){
+					if( Database.getWrapper().supportAlterColumn())
+						this.nameField.setEnabled(false);
+					this.commentField.setEnabled(false);
+					this.existingAttList.setEnabled(true);
+					this.typeList.setEnabled(false);
+					this.readAH();
+				} else {
+					this.nameField.setEnabled(true);
+					this.commentField.setEnabled(true);
+					this.existingAttList.setEnabled(true);
+					this.typeList.setEnabled(false);
+					this.readAH();
+				}
+			} else {
+				AdminComponent.getHelpLabel(new String[]{"Operation Forbidden "
+						, Database.getWrapper().getDBMS() + " does not support to alter table columns"});
+				newBtn.setSelected(true);
+				configureForm(newBtn);
+			}
+		} catch(Exception e) {Messenger.printStackTrace(e);}
+	} 
 }
