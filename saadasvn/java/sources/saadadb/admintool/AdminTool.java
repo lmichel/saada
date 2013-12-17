@@ -279,7 +279,7 @@ public class AdminTool extends BaseFrame {
 		} else {
 			Database.updatSchema();
 		}
-		this.activePanel(AdminComponent.MANAGE_EXTATTR);
+		//this.activePanel(AdminComponent.MANAGE_EXTATTR);
 	}
 
 	public ProcessPanel getProcessPanel() {
