@@ -486,7 +486,7 @@ public class IndexBuilder extends SaadaProcess {
 		Map<String, String> existing_index = Database.getWrapper().getExistingIndex(relationName);
 		if( existing_index != null && existing_index.get(index_name.toLowerCase()) == null&& existing_index.get(index_name) == null ) {
 			Messenger.printMsg(Messenger.TRACE, "Index Primary Classids " + index_name);
-			SQLTable.addQueryToTransaction(Database.getWrapper().getPrimaryRelationshipIndex(relationName), relationName);	
+			SQLTable.addQueryToTransaction(Database.getWrapper().getPrimaryClassRelationshipIndex(relationName), relationName);	
 			return;
 		}
 		return;
