@@ -157,16 +157,23 @@ jQuery.extend({
 				var words = opd.split(' ') ;
 				if( words.length != 3 || !/and/i.test(words[1]) ||
 						words[0].length == 00 || words[2].length == 00  ) {
-					that.notifyTypomsg(1, 'Operand must have the form "num1 and num2" with operator "' + op + '"');
-					return 0 ;
-				}
+					words = opd.match(/('.*')\s+(and)\s+('.*')/i);
+					if( words == null  ||  words.length != 4 ) {
+						that.notifyTypomsg(1, 'Operand must have the form "val1 AND val2" with operator "' + op + '"');
+						return 0 ;
+					} else {
+						words[0] = words[1];
+						words[1] = words[2];
+						words[2] = words[3];
+					}
+				} 
 				if( op == 'BETWEEN' ) {
 					operator = op;
 					if ( ! /^\s*'.*'\s*$/.test(words[0])  ) {
-						 words[0] = "'" +  words[0] + "'";
+						words[0] = "'" +  words[0] + "'";
 					}
 					if ( ! /^\s*'.*'\s*$/.test(words[2])  ) {
-						 words[2] = "'" +  words[2] + "'";
+						words[2] = "'" +  words[2] + "'";
 					}
 
 					operand = words[0] + ' AND ' + words[2];						
