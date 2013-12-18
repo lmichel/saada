@@ -550,13 +550,17 @@
 	-->
 	<!--
 	  Add a new extended attribute to a category of data 
-	  sant extended.attribute.add -Dname=name -Dcategory=name -Dtype=type [-Ddebug=on|off] DBNAME
+	  sant extended.attribute.add -Dname=name -Dcategory=name -Dtype=type [-Dcomment=comment] [-Ducd=ucd] [-Dutype=utype] [-Dunit=unit] [-Ddebug=on|off] DBNAME
 	-->
 	<target name="extended.attribute.add">   
 		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
 			<classpath refid="saadadb.classpath"/>      
 			<arg value="-create={name}"/>      
 			<arg value="-category={category}"/>      
+ 			<arg value="-comment={comment}"/>   
+ 			<arg value="-unit={unit}"/>      
+ 	 		<arg value="-ucd={ucd}"/>      
+ 	 		<arg value="-utype={utype}"/>      
 			<arg value="-type={type}"/>      
 			<arg value="-debug={debug}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
@@ -577,7 +581,7 @@
 	</target>
 	<!--
 	  Rename an extended attribute of a category of data 
-	  sant extended.attribute.remove -Dname=name -Dnewname=newname -Dcategory=name [-Ddebug=on|off] DBNAME
+	  sant extended.attribute.remove -Dname=name -Dnewname=newname -Dcategory=name  [-Dcomment=comment] [-Ducd=ucd] [-Dutype=utype] [-Dunit=unit] [-Ddebug=on|off] DBNAME
 	-->
 	<target name="extended.attribute.rename">   
 		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
@@ -585,6 +589,10 @@
 			<arg value="-rename={name}"/>      
 			<arg value="-newname={newname}"/>      
 			<arg value="-category={category}"/>      
+ 			<arg value="-comment={comment}"/>      
+ 			<arg value="-unit={unit}"/>      
+ 	 		<arg value="-ucd={ucd}"/>      
+ 	 		<arg value="-utype={utype}"/>      
 			<arg value="-debug={debug}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
