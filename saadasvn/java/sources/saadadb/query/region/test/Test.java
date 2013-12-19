@@ -3,7 +3,6 @@ package saadadb.query.region.test;
 
 
 import saadadb.query.region.request.Cone;
-import saadadb.query.region.request.RequeteCreator;
 import saadadb.query.region.request.Zone;
 import saadadb.query.region.test.gridcreator.SaadaQLRequest;
 import saadadb.util.Messenger;
