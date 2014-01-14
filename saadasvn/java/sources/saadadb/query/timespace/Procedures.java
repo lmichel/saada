@@ -4,7 +4,7 @@
 package saadadb.query.timespace;
 
 /**
- * A set of geometric procedures which are the counterpart of the SQL embedded procedures (ised bu PSAQL and MySQL)
+ * A set of geometric procedures which are the counterpart of the SQL embedded procedures (ised by PSQL and MySQL)
  * These procedures are used by the JAVA UDP of SQLite
  * The PSQL code is reported on the comment block of each procedure
  * @author michel
