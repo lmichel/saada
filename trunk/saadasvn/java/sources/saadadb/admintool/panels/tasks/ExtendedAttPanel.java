@@ -55,8 +55,8 @@ public class ExtendedAttPanel extends TaskPanel {
 	protected JRadioButton dropBtn ;
 	protected JRadioButton renameBtn;
 	protected ButtonGroup buttonGroup;
-	protected JComboBox<String> existingAttList ;
-	protected JComboBox<String> typeList ;
+	protected JComboBox existingAttList ;
+	protected JComboBox typeList ;
 	protected JLabel nodeLabel;
 	protected Map<String, AttributeHandler> ahMap;
 	private int categoryNum;
@@ -159,11 +159,11 @@ public class ExtendedAttPanel extends TaskPanel {
 		buttonGroup.add(newBtn);
 		buttonGroup.add(dropBtn);
 		buttonGroup.add(renameBtn);	
-		existingAttList = new JComboBox<String>();
+		existingAttList = new JComboBox();
 		existingAttList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {readAH();}
 		});
-		typeList = new JComboBox<String>(JavaTypeUtility.ATTREXTENDTYPES);
+		typeList = new JComboBox(JavaTypeUtility.ATTREXTENDTYPES);
 
 		MyGBC mgbc = new MyGBC(5,5,5,5);		
 		JPanel tPanel = this.addSubPanel("Input Parameters");
