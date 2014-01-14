@@ -382,7 +382,7 @@ public class Entry extends Product {
 						+ " <" + line + ((table_size <= 0 )?"":("/" + table_size))
 						+ "> : Entries  read ");
 				if( (line % 5000) == 0 ) {
-					System.gc();
+					Database.gc();
 				}
 			}
 			newoid = SaadaOID.newOid(this.metaclass.getName());

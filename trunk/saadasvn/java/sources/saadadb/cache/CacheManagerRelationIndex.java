@@ -233,7 +233,7 @@ public class CacheManagerRelationIndex {
 		else {
 			Messenger.printMsg(Messenger.DEBUG, "remove index <" + key + ">");
 			this.index.remove(key);
-			System.gc();
+			Database.gc();
 			return true;
 		}
 	}	

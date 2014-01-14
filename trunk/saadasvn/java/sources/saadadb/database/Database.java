@@ -423,6 +423,12 @@ public class Database {
 		}
 	}
 
+	/**
+	 *  Wrapper for the garbage collector: can enable/disable any explicit callback to the gc
+	 */
+	public static void gc() {
+		//@@@ System.gc();
+	}
 	/*
 	 * Must never be invoked: Exist just to make Servlet code passing the compilation in Saada
 	 * (out of a SaadaDB). At database creation Database.init(), is replaced with Database.init("DBNAME")

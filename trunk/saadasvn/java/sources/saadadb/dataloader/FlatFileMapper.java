@@ -96,7 +96,7 @@ public class FlatFileMapper extends SchemaMapper {
 						 */
 						SQLTable.commitTransaction();
 						SQLTable.beginTransaction();
-						System.gc();
+						Database.gc();
 					}
 				}
 			}

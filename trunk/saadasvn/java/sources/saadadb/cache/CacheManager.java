@@ -185,7 +185,7 @@ public class CacheManager {
     		for( int i=0 ; i<to_be_removed ; i++ ) {
     			hook_table.remove();
     		}
-    		System.gc();
+    		Database.gc();
      		int queued = 0;
     		SoftValue sr;
     		while( (sr = (SoftValue)queue.poll()) != null ) {
