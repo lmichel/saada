@@ -3,7 +3,7 @@ package saadadb.query.region.triangule;
 import java.util.ArrayList;
 
 import saadadb.query.region.triangule.convertCoord.radecToXY;
-import cds.aladin.Aladin;
+//import cds.aladin.Aladin;
 
 /**
  * Class calling the converter to triangule the polygon
@@ -68,21 +68,21 @@ public class Triangleur {
 		return ret;
 	}
 
-	/**
-	 * This method allows to launch Aladin, set the sky and draw the polygon and the triangles
-	 * @param onlyPolygon : boolean at true if you only need the draw of the polygon
-	 * @throws Exception
-	 */
-	public void startAladin(boolean onlyPolygon) throws Exception{
-		Aladin aladin = Aladin.launch("-trace");
-		aladin.execCommand("get allsky(\"DSS colored\")");
-		aladin.execCommand(this.getPolygonAladin());
-		if (!onlyPolygon) {
-			for (String s : this.getTriangleAladin()) {
-				aladin.execCommand(s);
-			}
-		}
-	}
+//	/**
+//	 * This method allows to launch Aladin, set the sky and draw the polygon and the triangles
+//	 * @param onlyPolygon : boolean at true if you only need the draw of the polygon
+//	 * @throws Exception
+//	 */
+//	public void startAladin(boolean onlyPolygon) throws Exception{
+//		Aladin aladin = Aladin.launch("-trace");
+//		aladin.execCommand("get allsky(\"DSS colored\")");
+//		aladin.execCommand(this.getPolygonAladin());
+//		if (!onlyPolygon) {
+//			for (String s : this.getTriangleAladin()) {
+//				aladin.execCommand(s);
+//			}
+//		}
+//	}
 	
 	/**
 	 * This method allows to impress the gnuplot commands for the polygon and the triangles
