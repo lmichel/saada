@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.relationship.KeyIndex;
@@ -77,7 +78,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 					+ ((patternKeySet == null)?"no matchPattern": (patternKeySet.selectedKeysSize() + " oids selected by matchPatterns")));
 			int cpt = 1;
 			int cpt2 = 1;
-			System.gc();
+			Database.gc();
 
 			Set<Long> hs = patternKeySet.getSELECTEDKeySet();
 			patternKeySet = null;

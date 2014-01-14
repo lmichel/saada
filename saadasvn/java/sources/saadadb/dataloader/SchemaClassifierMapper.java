@@ -87,7 +87,7 @@ SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(configurati
 			
 			if( i > 0 && (i%100) == 0 ) {
 				SQLTable.commitTransaction();	
-				System.gc();
+				Database.gc();
 				SQLTable.beginTransaction();
 			}
 			this.loader.processUserRequest();

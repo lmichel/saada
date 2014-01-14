@@ -537,7 +537,7 @@ public class Query extends Query_Report{
 			 */
 			epopTab = null;
 
-			System.gc();
+			Database.gc();
 			return  result;
 		} catch(SaadaException e1) {
 			e1.printStackTrace();
@@ -670,7 +670,7 @@ public class Query extends Query_Report{
 			Database.getCacheindex().freeIndexes(this.index_owner_key);
 			time.stop();
 			this.addSentence( "Final result: + " + size +" oids found in "+time.check()+" ms");
-			System.gc();
+			Database.gc();
 			return  result;
 
 		} catch(Exception e) {
@@ -768,7 +768,7 @@ public class Query extends Query_Report{
 			Database.getCacheindex().freeIndexes(this.index_owner_key);
 			time.stop();
 			this.addSentence( "Final result: + " + result.getSize() +" oids found in "+time.check()+" ms");
-			System.gc();
+			Database.gc();
 			return  result;
 
 		} catch(Exception e) {

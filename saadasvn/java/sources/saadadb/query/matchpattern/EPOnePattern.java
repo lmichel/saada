@@ -747,7 +747,7 @@ public class EPOnePattern extends Query_Report {
 		 * Save memory (400Mb measured on the XCATDb!!)
 		 */
 		index_correlation = null;
-		System.gc();
+		Database.gc();
 		/*
 		 * Check if the cadinality includes implicit null constraint e.g. card != 1
 		 */

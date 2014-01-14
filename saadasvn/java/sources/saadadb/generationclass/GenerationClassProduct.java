@@ -165,7 +165,7 @@ public class GenerationClassProduct{
 		writer.write("}\n");
 		writer.flush();
 		writer.close();
-		System.gc();
+		Database.gc();
 		Compile.compileItWithAnt(Database.getRoot_dir(), classname);
 	}
 	

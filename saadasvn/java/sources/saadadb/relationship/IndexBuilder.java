@@ -169,7 +169,7 @@ public class IndexBuilder extends SaadaProcess {
 		al = null;
 		cardI = null;
 		lci = null;
-		System.gc();
+		Database.gc();
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class IndexBuilder extends SaadaProcess {
 		al = null;
 		corrI = null;
 		lci = null;
-		System.gc();
+		Database.gc();
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class IndexBuilder extends SaadaProcess {
 		al = null;
 		qualI = null;
 		ri = null;
-		System.gc();
+		Database.gc();
 	}
 
 
@@ -327,7 +327,7 @@ public class IndexBuilder extends SaadaProcess {
 		al = null;
 		corrI = null;
 		lci = null;
-		System.gc();
+		Database.gc();
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class IndexBuilder extends SaadaProcess {
 		al = null;
 		ri = null;
 		qualI = null;
-		System.gc();
+		Database.gc();
 	}
 
 	/**

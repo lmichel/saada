@@ -194,7 +194,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			if( (i%commit_frequency) == 0 ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "COMMIT at product #" + i);
 				SQLTable.commitTransaction();
-				System.gc();
+				Database.gc();
 				SQLTable.beginTransaction();				
 			}
 			this.loader.processUserRequest();
