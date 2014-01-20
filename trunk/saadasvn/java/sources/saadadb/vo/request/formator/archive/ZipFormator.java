@@ -28,10 +28,10 @@ import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.request.formator.votable.OidsVotableFormator;
 import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
 
-
 /**
  * @author laurent
  * @version $Id$
+ * 01/2014: add method zipInstance
  */
 public class ZipFormator extends QueryResultFormator {
 	private String responseDir;
@@ -47,6 +47,31 @@ public class ZipFormator extends QueryResultFormator {
 		this.jobId = jobId;
 		this.defaultSuffix  = QueryResultFormator.getFormatExtension("zip");
 		this.limit = 100;
+	}
+	
+	/**
+	 * Build a zip ball  with instance and all the data linked through the "relations" list
+	 * @param oid: saadaoid of the object
+	 * @param dir: report directory
+	 * @param relations: "any-relations" or cs list
+	 * @throws Exception
+	 */
+	public void zipInstance(long oid, String dir, String relations) throws Exception {
+		ArrayList<Long> oids = new ArrayList<Long>();
+		SaadaInstance si = Database.getCache().getObject(oid);			
+		oids.add(oid);
+		this.setResultSet(oids);
+		Map<String, String> params = new LinkedHashMap<String, String>();
+		params.put("collection", si.getCollection().getName());
+		params.put("category", Category.explain(si.getCategory()));
+		params.put("relations", relations);
+		this.setProtocolParams(params);
+		String name = si.getFileName().split("\\.")[0];
+		if( name == null ) {
+			name = si.getNameSaada().replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
+		}
+		this.setResponseFilePath(dir, name);
+		this.buildDataResponse();
 	}
 
 	/* (non-Javadoc)
@@ -208,7 +233,6 @@ public class ZipFormator extends QueryResultFormator {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
 							+ secondaryFormator.getResponseFilePath()  + "(relation " + relationName + ")");
-				System.out.println("@@@@@@@@@@@@@@@ " + secondaryFormator.getResponseFilePath());
 				ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, this.getFileNamePrefix(oid) + relationName + ".vot", secondaryFormator.getResponseFilePath(), 0));
 				secondaryFormator.buildDataResponse();			
 			}

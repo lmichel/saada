@@ -65,6 +65,8 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
  * This formator has the same API as all VOI formators {@link saadadb.vo.request.VORequest VORequest}
  * @author laurent
  * @version $Id$
+ * 
+ * 01/2014: addLinkzedData: linked spectra are replaced with a zip ball containing their linked data too
  */
 public class CartFormator  extends QueryResultFormator{
 	/**
@@ -252,9 +254,9 @@ public class CartFormator  extends QueryResultFormator{
 	private void extendZipNodeToProductList(String node, Set<ZipEntryRef> entrySetToAdd, int options) throws Exception {
 		for( long oid: oids) {
 			SaadaInstance si = Database.getCache().getObject(oid);
-			
+
 			ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, Long.toString(oid) + "_" + si.getFileName(), si.getRepositoryPath(), options);
-System.out.println(zer + " " + zer.includeLinkedData());
+			System.out.println(zer + " " + zer.includeLinkedData());
 			if( zer.includeLinkedData() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add linked data");
@@ -337,7 +339,18 @@ System.out.println(zer + " " + zer.includeLinkedData());
 		if( cpoids.length > 0 ) {
 			String root = node + "/" + relation;
 			MetaRelation mr = Database.getCachemeta().getRelation(relation);
-			if( mr.getSecondary_category() != Category.ENTRY ) {
+			/*
+			 * Linked spectra are packed with their attached data which are usually calibration data
+			 */
+			if( mr.getSecondary_category() == Category.SPECTRUM ) {
+				ZipFormator formator = new ZipFormator(null);
+				for( long cpoid: cpoids) {
+					formator.zipInstance(cpoid, this.responseDir, "any-relations");
+					String zpn = formator.getResponseFilePath();
+					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + (new File(zpn)).getName(), zpn);
+					this.zipMap.add(root, zer);
+				}
+			} else if( mr.getSecondary_category() != Category.ENTRY ) {
 				for( long cpoid: cpoids) {
 					SaadaInstance cpi = Database.getCache().getObject(cpoid);
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + cpi.getFileName(), cpi.getRepositoryPath());
