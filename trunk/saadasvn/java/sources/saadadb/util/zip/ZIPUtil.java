@@ -59,8 +59,8 @@ public class ZIPUtil {
 					Messenger.printMsg(Messenger.ERROR, "File <" + fileitem + "> or <" + fileitem + ".gz> not found");
 					continue;
 				}
-				Messenger.printMsg(Messenger.TRACE, "Compress " + fileitem);
 				String str = dir + "/" + zer.getName();
+				Messenger.printMsg(Messenger.TRACE, "Compress " + fileitem + " and put it in " + str);
 				ZipEntry ze = new ZipEntry(str);
 				if( !storedRef.contains(str)) {
 					out.putNextEntry(ze);

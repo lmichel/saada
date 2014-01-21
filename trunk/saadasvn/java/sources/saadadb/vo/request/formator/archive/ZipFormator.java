@@ -54,9 +54,10 @@ public class ZipFormator extends QueryResultFormator {
 	 * @param oid: saadaoid of the object
 	 * @param dir: report directory
 	 * @param relations: "any-relations" or cs list
+	 * @param flatMode
 	 * @throws Exception
 	 */
-	public void zipInstance(long oid, String dir, String relations) throws Exception {
+	public void zipInstance(long oid, String dir, String relations, boolean flatMode) throws Exception {
 		ArrayList<Long> oids = new ArrayList<Long>();
 		SaadaInstance si = Database.getCache().getObject(oid);			
 		oids.add(oid);
@@ -71,7 +72,7 @@ public class ZipFormator extends QueryResultFormator {
 			name = si.getNameSaada().replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
 		}
 		this.setResponseFilePath(dir, name);
-		this.buildDataResponse();
+		this.buildDataResponse(flatMode);
 	}
 
 	/* (non-Javadoc)
@@ -127,7 +128,17 @@ public class ZipFormator extends QueryResultFormator {
 		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
 		for( String rel: relationsToInclude ) {
-			this.addSecondarySelection(rel);
+			this.addSecondarySelection(rel, false);
+		}
+		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
+		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
+	}
+	
+	public void buildDataResponse(boolean flatMode) throws Exception {
+		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
+		this.addPrimarySelection();
+		for( String rel: relationsToInclude ) {
+			this.addSecondarySelection(rel, flatMode);
 		}
 		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
 		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
@@ -193,8 +204,10 @@ public class ZipFormator extends QueryResultFormator {
 
 	/**
 	 * @param relationName
+	 * @param flatMode
+	 * @throws Exception
 	 */
-	private void addSecondarySelection(String relationName) throws Exception {
+	private void addSecondarySelection(String relationName, boolean flatMode) throws Exception {
 		Set<ZipEntryRef> ts = new TreeSet<ZipEntryRef>();
 		MetaRelation mr = Database.getCachemeta().getRelation(relationName);
 		String cp_class = "";
@@ -269,7 +282,11 @@ public class ZipFormator extends QueryResultFormator {
 			ts.add(new ZipEntryRef(ZipEntryRef.QUERY_RESULT, relationName + "_merged.vot", secondaryFormator.getResponseFilePath(), 0));
 			secondaryFormator.buildDataResponse();			
 		}
-		dataTree.put(this.rootDir + "/" + relationName , ts);
+		if( flatMode ) {
+			dataTree.get(this.rootDir).addAll(ts);
+		} else {
+			dataTree.put(this.rootDir + "/" + relationName , ts);
+		}
 	}
 	@Override
 	protected void writeHouskeepingData(SaadaInstance obj)
