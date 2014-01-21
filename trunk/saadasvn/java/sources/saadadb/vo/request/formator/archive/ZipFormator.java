@@ -54,7 +54,7 @@ public class ZipFormator extends QueryResultFormator {
 	 * @param oid: saadaoid of the object
 	 * @param dir: report directory
 	 * @param relations: "any-relations" or cs list
-	 * @param flatMode
+	 * @param flatMode: put all data at the same level in the Zip ball
 	 * @throws Exception
 	 */
 	public void zipInstance(long oid, String dir, String relations, boolean flatMode) throws Exception {
@@ -134,6 +134,10 @@ public class ZipFormator extends QueryResultFormator {
 		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
 	}
 	
+	/**
+	 * @param flatMode: put all data at the same level in the Zip ball
+	 * @throws Exception
+	 */
 	public void buildDataResponse(boolean flatMode) throws Exception {
 		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
@@ -204,7 +208,7 @@ public class ZipFormator extends QueryResultFormator {
 
 	/**
 	 * @param relationName
-	 * @param flatMode
+	 * @param flatMode: put all data at the same level in the Zip ball
 	 * @throws Exception
 	 */
 	private void addSecondarySelection(String relationName, boolean flatMode) throws Exception {
