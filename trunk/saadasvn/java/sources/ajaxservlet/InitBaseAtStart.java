@@ -23,7 +23,7 @@ import saadadb.util.RegExp;
  * Listener invoked by Tomcat at starting time and at shutdown time.
  * It is declared in web.xml
  * @author michel
- *
+ * 01/2014: close JDBC connection when the context is destroyed
  */
 public class InitBaseAtStart  implements ServletContextListener , HttpSessionListener{
 	private String base_dir, app_dir;
@@ -31,6 +31,11 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	
 	public void contextDestroyed(ServletContextEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
+		try {
+			Database.getConnector().getJDBCConnection().close();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+		}
 	}
 
 	public void contextInitialized(ServletContextEvent event) {
