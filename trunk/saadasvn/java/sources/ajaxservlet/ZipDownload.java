@@ -45,7 +45,7 @@ public class ZipDownload extends SaadaServlet {
 			long oid = Long.parseLong(soid);
 			String sessionid = request.getSession().getId();
 			ZipFormator formator = new ZipFormator(sessionid);
-			formator.zipInstance(oid, Database.getVOreportDir() + File.separatorChar + sessionid, "any-relations", true);
+			formator.zipInstance(oid, Database.getVOreportDir() + File.separatorChar + sessionid, "any-relations", true, true);
 			downloadProduct(request, response, formator.getResponseFilePath());
 			// No stack trace when the client interrupt the download
 		} catch( SocketException e) {

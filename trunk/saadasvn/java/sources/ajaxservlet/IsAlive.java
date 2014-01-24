@@ -36,6 +36,7 @@ public class IsAlive extends SaadaServlet {
 			for( String c: Database.getCachemeta().getCollection_names() );
 			SQLQuery q = new SQLQuery();
 			q.run("SELECT * FROM saadadb");
+			q.close();
 			response.getWriter().print("OK");
 		} catch(Exception e) {
 			response.getWriter().print(e.getMessage());
