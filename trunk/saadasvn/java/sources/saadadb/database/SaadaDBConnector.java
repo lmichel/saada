@@ -94,9 +94,19 @@ public class SaadaDBConnector extends DefaultHandler {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
+	
+	/**
+	 * Provisoire pour tester le spooler
+	 * @return
+	 * @throws SQLException
+	 */
+	public Connection getNewConnection() throws SQLException {
+		return  DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
+		
+	}
 
 	/**
-	 * OPen a new DN connection. Can be used when the DB server has been restarted
+	 * OPen a new DB connection. Can be used when the DB server has been restarted
 	 * @throws FatalException
 	 */
 	public void reconnect() throws FatalException {

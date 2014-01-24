@@ -25,16 +25,6 @@ import saadadb.util.Messenger;
 public abstract class SQLTable {
 	static TransactionMaker transaction_maker=null;
 
-	/**
-	 * @throws FatalException
-	 * @throws SQLException
-	 */
-	public static void disconnect() throws FatalException, SQLException {
-		if( Database.get_connection() != null ) {
-			Database.get_connection().close();
-		}
-
-	}
 
 	/**
 	 * Add query to the current transactionmaker if it exist:
