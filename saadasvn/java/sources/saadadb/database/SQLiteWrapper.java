@@ -69,6 +69,17 @@ public class SQLiteWrapper extends DbmsWrapper {
 		return "SQLite";
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getHardReaderConnectionLimit()
+	 */
+	public int getHardReaderConnectionLimit() {
+		/*
+		 * TODO  Checking if a multiple connection makes sense for SQLITE
+		 */
+		return 1;
+	}
+
 	/**
 	 * @param server_or_url
 	 * @param port_or_url

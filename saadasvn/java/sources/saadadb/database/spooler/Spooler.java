@@ -3,124 +3,333 @@
  */
 package saadadb.database.spooler;
 
-import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
+import saadadb.resourcetest.SpoolerTester;
+import saadadb.util.Messenger;
 
 /**
- * Singleton pattern
- * @author laurentmichel
+ * Connection Spooler. 
+ * Manage a list of connections {@link DatabaseConnection}.
+ * The list s managed by a forever thread
+ * The list grows gradually on demand until it reaches the max size. 
+ * Closed connections are removed from the list and are replaced with fresh connections
+ * The max size can be set by the constructor.
+ * USAGE:
+ 				Spooler spooler = Spooler.getSpooler();
+				DatabaseConnection connectionReference = spooler.getConnection();
+				Statement stmt = connectionReference.getLargeStatement();
+				stmt.execute(getQuery());
+				.. some processing ............
+				spooler.give(connectionReference);
+					
+ *
+ * Tested by the class {@link SpoolerTest}
+ * @author michel
+ * @version $Id$
  *
  */
-public class Spooler {
-	private ArrayList<ConnectionReference> connctionsReferences = new ArrayList<ConnectionReference>();
-	private int maxConnections = 2;
+public class Spooler { 
+	/**
+	 * Default max number of connection: can be overridden by a constructor
+	 */
+	public static final int MAX_CONNEXION = 20;
+	/**
+	 * delay applied to loop waiting one connection to be free (ms)
+	 */
+	public static final int WAIT_DELAY = 100;
+	/**
+	 * Period of the main loop of the thread  controlling the consistency of the connection list (ms)
+	 */
+	public static final int CHECK_PERIOD = 50;
+	/**
+	 * Period of the spooler reporting (active in debug mode) (ms)
+	 */
+	public static final int REPORT_PERIOD = 60*1000;
+	private ArrayList<DatabaseConnection> connectionsReferences = new ArrayList<DatabaseConnection>();
+	/**
+	 * Reference to the singleton instance
+	 */
 	private static Spooler instance;
+	/**
+	 * Incremental numer giev to the Database Connections (debug purpose)
+	 */
 	private int numConnection = 0;
-	public static final int DELAY = 100;
+	/**
+	 * Actual max number of connections. Can be constrained by the server setup
+	 */
+	private int maxConnections;
+	private boolean spoolerIsRunning=false;
+	private boolean checkerIsRunning=false;
 
-	private Spooler(){
-		for( int i=0 ; i<maxConnections ; i++ ){
-			this.addConnectionReference();
-		}
-	}
-
-	public static Spooler getSpooler() {
+	/*************************************************************************
+	 * Singleton pattern:
+	 */
+	/**
+	 * Return the unique instance and build it at the first call
+	 * The max number of connection is limited by {@link Spooler#MAX_CONNEXION}
+	 * @return returns the instance
+	 * @throws FatalException 
+	 */
+	synchronized public static Spooler getSpooler() throws Exception {
 		if( instance == null ) {
 			instance = new Spooler();
 		}
 		return instance;
 	}
 
-	synchronized public ConnectionReference getConnection() throws InterruptedException {
-		ConnectionReference retour;
-		while( (retour = this.getFirstFreeConnection()) == null ) {
-			this.completeConnectionsReferences();
-			Thread.sleep(DELAY);
+	/**
+	 * Return the unique instance and build it at the first call
+	 * The max number of connection is limited by maxConnections
+	 * @param maxConnections max number of connections (wished)
+	 * @return returns the instance
+	 * @throws Exception
+	 */
+	synchronized public static Spooler getSpooler(int maxConnections) throws Exception {
+		if( instance == null ) {
+			instance = new Spooler(maxConnections);
 		}
-		this.completeConnectionsReferences();
-		return retour;					
+		return instance;
+	}
+	/**
+	 * Destroy the instance.
+	 * For test purpose {@link SpoolerTester}
+	 */
+	synchronized public static void reset()  {
+		instance = null;
 	}
 
-	private void addConnectionReference(){
-		connctionsReferences.add(new ConnectionReference(this.numConnection++));
+	/*************************************************************************
+	 * Spooler intialisation
+	 */
+	/**
+	 * Constructor
+	 * @throws FatalException 
+	 */
+	private Spooler() throws Exception{
+		int m = Database.getWrapper().getHardReaderConnectionLimit();
+		this.maxConnections = ( m != -1 )? m: MAX_CONNEXION;
+		this.checkAvailableConnections();
+		this.spoolerIsRunning = true;
+		(new Thread(new ListChecker())).start();
+		Messenger.printMsg(Messenger.TRACE, "Spooler ready");
 	}
-	
-	public ConnectionReference getFirstFreeConnection() {
-		for(ConnectionReference connectionReference: connctionsReferences){
-			if(connectionReference.isFree()){
-				System.out.println("Return connection " + connectionReference);
-				return connectionReference;
+	/**
+	 * Constructor
+	 * @param maxConnections max number of connections (wished)
+	 * @throws Exception
+	 */
+	private Spooler(int maxConnections) throws Exception{
+		int m = Database.getWrapper().getHardReaderConnectionLimit();
+		this.maxConnections = ( m != -1 )? m: maxConnections;
+		this.checkAvailableConnections();
+		this.spoolerIsRunning = true;
+		(new Thread(new ListChecker())).start();
+		Messenger.printMsg(Messenger.TRACE, "Spooler ready");
+	}
+
+	/**
+	 * Check the max number of connections which can be open, and take this n umber to limit the buffer size.
+	 * All connections are closed after
+	 * @throws FatalException 
+	 * 
+	 */
+	private void checkAvailableConnections() throws Exception {
+		ArrayList<DatabaseConnection> crs = new ArrayList<DatabaseConnection>();
+		int i;
+		for( i=0 ; i<this.maxConnections ; i++) {
+			DatabaseConnection cr = new DatabaseConnection(i);
+			if( !cr.isFree() ) {
+				break;
+			} else {
+				crs.add(cr);
 			}
 		}
-		return null;
+		this.maxConnections = i;
+		for( DatabaseConnection cr : crs){
+			cr.close();
+		}
+		if( this.maxConnections < 1 ) {
+			FatalException.throwNewException(SaadaException.DB_ERROR, "No available reader connections ");
+		}
+		Messenger.printMsg(Messenger.TRACE, "Spooler currently supports up to " + this.maxConnections + " connections");
 	}
-	
-	synchronized private void completeConnectionsReferences() {
+
+	/*************************************************************************
+	 * Public interface
+	 */
+
+	/**
+	 * Close all connections referenced by the Spool with a grace delay (3") for the running queries.
+	 * Do not destroy the Spooler
+	 * @throws SQLException
+	 */
+	public void close() throws Exception {
+		this.spoolerIsRunning = false;
+		int cpt = 0;
+		while( this.checkerIsRunning && cpt < 15) {
+			Thread.sleep(200);
+			cpt++;
+		}
+		synchronized (this) {
+			for( DatabaseConnection cr : this.connectionsReferences){
+				cr.close();
+			}	
+			this.connectionsReferences = null;		
+		}
+		Messenger.printMsg(Messenger.TRACE, "Spooler stopped");
+	}
+
+	/**
+	 * Do not return while a free connection has not been found out
+	 * @return the first free connection.
+	 * @throws Exception
+	 */
+	public DatabaseConnection getConnection() throws Exception {
+		if( !this.spoolerIsRunning ) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
+		}
+		DatabaseConnection retour;
+		while( (retour = this.getFirstFreeConnection()) == null ) {
+			Thread.sleep(WAIT_DELAY);
+		}
+		return retour;		
+	}
+	/**
+	 * Must be invoked after the connection has been used.
+	 * @param connectionReference
+	 * @throws SQLException
+	 */
+	public void give(DatabaseConnection connectionReference) throws SQLException{
+		if(connectionReference != null ) {
+			connectionReference.give();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		String s="Spooler: " +connectionsReferences.size() + "/" + this.maxConnections + " ";
+		for( DatabaseConnection cr: connectionsReferences) s += cr.toShortString();
+		return s;
+
+	}
+
+	/****************************************************************************
+	 * Internal management methods
+	 */
+	/**
+	 * Appends a new connection to the list
+	 * @throws SQLException
+	 */
+	private void addConnectionReference() throws SQLException{
+		connectionsReferences.add(new DatabaseConnection(this.numConnection++));
+	}
+	/**
+	 * Returns the first free connection if there is, returns null otherwise
+	 * @throws Exception
+	 * @return
+	 */
+	private DatabaseConnection getFirstFreeConnection() throws Exception{
+		synchronized (this) {
+			for(DatabaseConnection connectionReference: connectionsReferences){
+				if(connectionReference.isFree()){
+					/*
+					 * Working flag must be set within the synchronized code to make sure another thread won't take it to
+					 */
+					connectionReference.startWorking();
+					return connectionReference;
+				}
+			}
+			return null;
+		}
+	}
+
+	/**
+	 * Check the connection list. remove the closed connection and complete the list in order to make sure 
+	 * there at least one available connection while the max size is not reached
+	 * 
+	 * @throws SQLException
+	 */
+	synchronized private void completeConnectionsReferences() throws SQLException {
 		/*
 		 * Remove the obsolete connections
 		 */
-		ArrayList<ConnectionReference> toRemove = new ArrayList<ConnectionReference>();
-		for( ConnectionReference cr: connctionsReferences){
+		ArrayList<DatabaseConnection> toRemove = new ArrayList<DatabaseConnection>();
+		for( DatabaseConnection cr: connectionsReferences){
 			if( cr.isObsolete() ){
 				toRemove.add(cr);
 			}
 		}
 		int nbToRemove = toRemove.size();
-		for( ConnectionReference cr: toRemove){
-			connctionsReferences.remove(cr);
-		}
-		/*
-		 * Replace the obsolete connection with new ones + one while the max is not reached
-		 */
-		for( int i=0 ; i<=nbToRemove ; i++ ){
-			if( connctionsReferences.size() < maxConnections) {
-				this.addConnectionReference();
+		if (nbToRemove > 0 ) {
+			for( DatabaseConnection cr: toRemove){
+				connectionsReferences.remove(cr);
+			}
+			/*
+			 * Replace the obsolete connection with new ones + one while the max is not reached
+			 */
+			for( int i=0 ; i<nbToRemove ; i++ ){
+				if( connectionsReferences.size() < maxConnections) {
+					this.addConnectionReference();
+					break;
+				}
 			}
 		}
-	}
-
-	public void give(ConnectionReference connectionReference){
-		if(connectionReference != null ) {
-			connectionReference.give();
-		}
-	}
-
-	class ClientEmulator implements Runnable {
-		@Override
-		public void run() {
-			try {
-				System.out.println("Start Thread");
-				Spooler spooler = Spooler.getSpooler();
-				ConnectionReference connectionReference = spooler.getConnection();
-				if( connectionReference == null ) {
-					System.out.println("No connection");
-				} else {
-					connectionReference.getConnection();
-					Thread.sleep(1000);
-					spooler.give(connectionReference);
-				}	
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		boolean hasFree = false;
+		for( DatabaseConnection cr: connectionsReferences){
+			if( cr.isFree() ){
+				hasFree = true;
+				break;
 			}
-		}	
-	}
-
-	public void emulate() {
-		ClientEmulator clientEmulator = new ClientEmulator();
-		(new Thread(clientEmulator)).start();
+		}
+		if( !hasFree && connectionsReferences.size() < maxConnections) {
+			this.addConnectionReference();
+		}
 	}
 
 	/**
-	 * @param args
+	 * Inner class checking in background the availability of connections in background
+	 * @author michel
+	 * @version $Id$
+	 *
 	 */
-	public static void main(String[] args) {
-		Spooler spooler = Spooler.getSpooler();
-		spooler.emulate();
-		spooler.emulate();
-		spooler.emulate();
-		spooler.emulate();
-		spooler.emulate();
+	class ListChecker implements Runnable {
+
+		@Override
+		public void run() {
+			checkerIsRunning = true;
+			if (Messenger.debug_mode) {
+				Messenger.printMsg(Messenger.DEBUG, "ListChecker starting");
+			}
+			int p = 10000/CHECK_PERIOD;
+			int cpt = 0;
+
+			while( spoolerIsRunning ) {
+				//System.out.println(numConnection);
+				try {
+					Thread.sleep(CHECK_PERIOD);	
+					completeConnectionsReferences();
+					if (Messenger.debug_mode) {
+						if ( ( cpt%p) == 0 ) {
+							Messenger.printMsg(Messenger.DEBUG, Spooler.this.toString());
+						}
+						cpt++;
+					}
+				} catch (Exception e) {
+					checkerIsRunning = false;	
+					spoolerIsRunning = false;
+					Messenger.printStackTrace(e);
+					break;
+				}
+			}
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "ListChecker stopping");
+			checkerIsRunning = false;			
+		}
 	}
 }

@@ -59,6 +59,14 @@ abstract public class DbmsWrapper {
 	 * @return the generic name of the DBMS
 	 */
 	public abstract String getDBMS();
+	
+	/**
+	 * Return the max number obh reader connection saada supports for the current DBMS
+	 * @return -1=nolimit
+	 */
+	public int getHardReaderConnectionLimit() {
+		return -1;
+	}
 	/** 
 	 * @param tmp_dir
 	 * @param clean_after
@@ -327,7 +335,7 @@ abstract public class DbmsWrapper {
 				,Database.getConnector().getJdbc_reader()
 				, Database.getConnector().getJdbc_reader_password());
 		retour.setAutoCommit(false);
-		setLocalBehavior(retour);
+		this.setLocalBehavior(retour);
 		return retour;
 	}
 
