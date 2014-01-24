@@ -34,6 +34,12 @@ public class CartRequestTester {
 		+ "]"
 		+ "}"
 		+ "}";
+		
+		 jsonRequest = "{\"CATALOGUE_ENTRY\":{"
+		 + "\"queries\":[{\"name\":\"query_0\","
+		 + "\"uri\":\"Select ENTRY From CatalogueEntry In CATALOGUE\nWhereAttributeSaada {\n    "
+		 +"_iauname = '3XMM J000441.2+000711'\n}\n\",\"relations\":[\"any-relations\"]}],\"files\":[]}}";
+
 		pmap.put("cart", jsonRequest);
 		
 		CartRequest request = new CartRequest("NoSession", "/home/michel/Desktop/CART");

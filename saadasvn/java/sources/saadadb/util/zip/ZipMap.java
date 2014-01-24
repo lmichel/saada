@@ -40,8 +40,10 @@ public class ZipMap  {
 		Set<ZipEntryRef> es = zipMap.get(folder);
 		if( es == null ) {
 			es = new LinkedHashSet<ZipEntryRef>();
+			System.out.println("Pouuut NEW "+ folder );
 			this.zipMap.put(folder, es);
 		}
+		System.out.println("Pouuut " + folder + " " + es.size() + " " + entry);
 		es.add(entry);
 		
 	}

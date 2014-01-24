@@ -55,9 +55,10 @@ public class ZipFormator extends QueryResultFormator {
 	 * @param dir: report directory
 	 * @param relations: "any-relations" or cs list
 	 * @param flatMode: put all data at the same level in the Zip ball
+	 * @param cleanAfter: Remove all files from the output dir except the ZIPBALL itself
 	 * @throws Exception
 	 */
-	public void zipInstance(long oid, String dir, String relations, boolean flatMode) throws Exception {
+	public void zipInstance(long oid, String dir, String relations, boolean flatMode, boolean cleanAfter) throws Exception {
 		ArrayList<Long> oids = new ArrayList<Long>();
 		SaadaInstance si = Database.getCache().getObject(oid);			
 		oids.add(oid);
@@ -72,7 +73,7 @@ public class ZipFormator extends QueryResultFormator {
 			name = si.getNameSaada().replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
 		}
 		this.setResponseFilePath(dir, name);
-		this.buildDataResponse(flatMode);
+		this.buildDataResponse(flatMode, cleanAfter);
 	}
 
 	/* (non-Javadoc)
@@ -136,16 +137,18 @@ public class ZipFormator extends QueryResultFormator {
 	
 	/**
 	 * @param flatMode: put all data at the same level in the Zip ball
+	 * @param cleanAfter: Remove all files from the output dir except the ZIPBALL itself
 	 * @throws Exception
 	 */
-	public void buildDataResponse(boolean flatMode) throws Exception {
+	public void buildDataResponse(boolean flatMode, boolean cleanAfter) throws Exception {
 		this.rootDir = this.protocolParams.get("collection") + "." +this.protocolParams.get("category");
 		this.addPrimarySelection();
 		for( String rel: relationsToInclude ) {
 			this.addSecondarySelection(rel, flatMode);
 		}
 		ZIPUtil.buildZipBall(dataTree, this.getResponseFilePath());
-		WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
+		if( cleanAfter )
+			WorkDirectory.emptyDirectory(new File(this.responseDir), (new File(this.getResponseFilePath()).getName()));
 	}
 
 	/**
