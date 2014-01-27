@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import javax.xml.parsers.SAXParserFactory;
 
+import org.postgresql.util.PSQLException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -16,6 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;
@@ -43,7 +45,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	protected String spect_unit;
 	protected String spect_type;
 	protected String flux_unit;
-
+	protected int healpix_level;
 	protected  String jdbc_url = null;	
 	protected  String jdbc_driver = null;	
 	protected  String jdbc_dbname;
@@ -160,6 +162,12 @@ public class SaadaDBConnector extends DefaultHandler {
 				spect_unit = rs.getString("spect_coord_unit");
 				spect_type = rs.getString("spect_coord_type");
 				flux_unit  = rs.getString("spect_flux_unit");
+				try {
+					healpix_level = rs.getInt("healpix_level");
+				} catch(PSQLException e){
+					Messenger.printMsg(Messenger.WARNING, "Column healpix_level not in saadadb table: looks like an old version. Run the upgrade tool please!!");
+					healpix_level = SaadaConstant.INT;
+				}
 				rs.close();
 				_stmt.close();
 				if( this.coord_sys.equals("FK4") ) {
@@ -277,7 +285,6 @@ public class SaadaDBConnector extends DefaultHandler {
 	public String getRoot_dir() {
 		return root_dir;
 	}
-
 	/**
 	 * @param root_dir
 	 */
@@ -290,7 +297,12 @@ public class SaadaDBConnector extends DefaultHandler {
 	public String getSpect_unit() {
 		return spect_unit;
 	}
-
+	/**
+	 * @return
+	 */
+	public int getHealpix_level() {
+		return healpix_level;
+	}
 	/**
 	 * @return
 	 * @throws FatalException 
@@ -301,29 +313,24 @@ public class SaadaDBConnector extends DefaultHandler {
 		}
 		return jdbc_connection;
 	}
-
 	/**
 	 * @return
 	 */
 	public String getSpect_type() {
 		return spect_type;
 	}
-
-
 	/**
 	 * @return Returns the separ.
 	 */
 	public static String getSepar() {
 		return separ;
 	}
-
 	/**
 	 * @return Returns the jdbc_administrator.
 	 */
 	public String getJdbc_administrator() {
 		return jdbc_administrator;
 	}
-
 	/**
 	 * @return Returns the jdbc_dbname.
 	 */
@@ -337,14 +344,12 @@ public class SaadaDBConnector extends DefaultHandler {
 	public String getJdbc_reader() {
 		return jdbc_reader;
 	}
-
 	/**
 	 * @return Returns the url_root.
 	 */
 	public String getUrl_root() {
 		return url_root;
 	}
-
 	/**
 	 * Should be private byut used any way be the web interface to run on a debug system
 	 * @param url_root
@@ -552,4 +557,5 @@ public class SaadaDBConnector extends DefaultHandler {
 	public Statement getStatement() throws SQLException {
 		return jdbc_connection.createStatement(wrapper.getDefaultScrollMode(), wrapper.getDefaultConcurentMode());
 	}
+
 }

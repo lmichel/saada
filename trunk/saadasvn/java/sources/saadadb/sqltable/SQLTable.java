@@ -731,26 +731,44 @@ public abstract class SQLTable {
 	 * The stat columns contains an integer value relevant for the content of the data referenced by that table
 	 * This method is invoked to update automatically and smoothly the meta data model
 	 * This method must be invoked out of a transaction
+	 * Do not use it out of the {@link upgrade#Upgrade} scope
 	 * @param tableName
 	 * @throws Exception
 	 */
 	public static final void addStatColumn(String tableName) throws Exception {
+		addColumn(tableName, "stat", "int");
+	}
+	/**
+	 * 	Add the column to the tableName if it does not exist.
+	 * The stat columns contains an integer value relevant for the content of the data referenced by that table
+	 * This method is invoked to update automatically and smoothly the meta data model
+	 * This method must be invoked out of a transaction
+	 * Do not use it out of the {@link upgrade#Upgrade} scope
+	 * @param tableName
+	 * @param columnName
+	 * @return  gtru if the columns has been added
+	 * @throws Exception
+	 */
+	public static final boolean addColumn(String tableName, String columnName, String javaType) throws Exception {
 		ResultSet cols = Database.getWrapper().getTableColumns(tableName);
 		if( cols != null ) {
 			while( cols.next() ){
-				if( cols.getString("COLUMN_NAME").equalsIgnoreCase("stat")) {
+				if( cols.getString("COLUMN_NAME").equalsIgnoreCase(columnName)) {
 					cols.close();
-					return;
+					return false;
 				}
 			}
 			cols.close();
-			Messenger.printMsg(Messenger.TRACE, "Table " + tableName + " has no 'stat' column: add it ");
+			Messenger.printMsg(Messenger.TRACE, "Table " + tableName + " has no '" + columnName + "' column: add it (javaType = " + javaType + ")");
 			SQLTable.beginTransaction();
-			for( String q : Database.getWrapper().addColumn(tableName, "stat", Database.getWrapper().getSQLTypeFromJava("int"))){
+			for( String q : Database.getWrapper().addColumn(tableName, columnName, Database.getWrapper().getSQLTypeFromJava(javaType))){
 				SQLTable.addQueryToTransaction(q);
 			}
 			SQLTable.commitTransaction();
-		}
+			return true;
+		}					
+		return false;
+
 	}
 
 }
