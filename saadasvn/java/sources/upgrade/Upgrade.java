@@ -8,7 +8,7 @@ public class Upgrade {
 
 
 	public static void upgrade() throws Exception {
-		upgrade.table.Upgrade.upgrade();
+		upgrade.collection.Upgrade.upgrade();
 		upgrade.schema.Upgrade.upgrade();
 	}
 

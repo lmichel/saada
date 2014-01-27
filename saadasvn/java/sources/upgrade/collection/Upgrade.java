@@ -1,7 +1,7 @@
 /**
  * 
  */
-package upgrade.table;
+package upgrade.collection;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Relation;
