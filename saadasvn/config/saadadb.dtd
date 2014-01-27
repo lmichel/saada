@@ -19,9 +19,10 @@
    <!ELEMENT webapp_home (#PCDATA)>
    <!ELEMENT url_root (#PCDATA)>
    
-   <!ELEMENT spectral_coordinate (abscisse)>
+   <!ELEMENT spectral_coordinate (abscisse, healpix_level)>
    <!ELEMENT abscisse (#PCDATA)>
    <!ATTLIST abscisse type CDATA #IMPLIED unit CDATA #IMPLIED>
+   <!ELEMENT healpix_level (#PCDATA)>
    
    <!ELEMENT coordinate_system (system, equinox) >
    <!ELEMENT system  (#PCDATA)>
