@@ -31,6 +31,7 @@ public class Table_SaadaDB extends SQLTable {
 				+ "spect_coord_unit text , "
 				+ "spect_coord_type text , "
 				+ "spect_flux_unit text , "
+				+ "healpix_level int , "
 		        + "description text "
 				, null
 				, false);
@@ -54,6 +55,7 @@ public class Table_SaadaDB extends SQLTable {
 						, Merger.quoteString(Database.getConnector().getSpect_unit())
 						, Merger.quoteString(Database.getConnector().getSpect_type())
 						, Merger.quoteString(Database.getConnector().getFlux_unit())
+						, Integer.toString(Database.getConnector().getHealpix_level())
 						, Merger.quoteString(Database.getConnector().getDescription() )}
 
 				)
@@ -149,6 +151,20 @@ public class Table_SaadaDB extends SQLTable {
 		}
 	}	
 	
+	/**
+	 * Add the Healpix level
+	 * @throws Exception
+	 */
+	public static final void addHealpixColumn() throws Exception {
+		if( SQLTable.addColumn("saadadb", "healpix_level", "int") ) {
+			SQLTable.beginTransaction();
+			SQLTable.addQueryToTransaction("UPDATE saadadb SET healpix_level = 15");
+			SQLTable.commitTransaction();
+		} else {
+			Messenger.printMsg(Messenger.TRACE, "Column healpix_level already exists in table saadadb");
+		}
+	}
+
 
 }
 

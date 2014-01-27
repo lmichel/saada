@@ -168,6 +168,9 @@ public class Database {
 	public static String getCoord_sys() {
 		return connector.getCoord_sys();
 	}
+	public static int getHeapix_level() {
+		return  connector.getHealpix_level();
+	}
 	public static String getCooSys() {
 		if( connector.getCoord_equi() != 0.0 ) {
 			return "J" + connector.getCoord_equi();
