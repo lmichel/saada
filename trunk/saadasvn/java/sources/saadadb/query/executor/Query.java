@@ -270,7 +270,7 @@ public class Query extends Query_Report{
 	/**
 	 * @throws SaadaException 
 	 */
-	private void buildMerger(boolean all_columns) throws SaadaException {
+	private void buildMerger(boolean all_columns) throws Exception {
 		LinkedHashMap<String, SaadaQLConstraint>builders = new LinkedHashMap<String, SaadaQLConstraint>();
 		this.merger = new Merger(this.sfiClause, all_columns);
 		if( this.vor != null ) {

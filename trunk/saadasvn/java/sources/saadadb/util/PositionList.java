@@ -17,7 +17,7 @@ import cds.astro.Astroframe;
 /**
  * Manage a list of position for multi-position queries
  * @author michel
- * 
+ * 01/2014: New constructor with an array of position: used for regions
  */
 public class PositionList {
 	private ArrayList<Double> ras = new ArrayList<Double>();
@@ -34,6 +34,18 @@ public class PositionList {
 	public PositionList(String position, Astroframe astroFrame, boolean single) throws QueryException{
 		PositionParser pp = new PositionParser(position, astroFrame);
 		this.addPos(pp.getRa(), pp.getDec());	
+	}
+	public PositionList(String[] positions, Astroframe astroFrame) throws QueryException{
+		if( positions.length < 2 ) {
+			QueryException.throwNewException(SaadaException.FILE_FORMAT, "Less the 2 coordinates");
+		} else if( (positions.length % 2) != 0 ) {
+			QueryException.throwNewException(SaadaException.FILE_FORMAT, "Odd list of position");
+		}
+		for( int i=0 ; i<(positions.length)/2 ; i++ ) {
+			PositionParser pp = new PositionParser(positions[2*i] + " " + positions[(2*i) + 1], astroFrame);
+			this.addPos(pp.getRa(), pp.getDec());	
+		}
+
 	}
 	
 	/**

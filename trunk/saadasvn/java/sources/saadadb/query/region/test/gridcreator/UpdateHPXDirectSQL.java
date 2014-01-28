@@ -43,7 +43,7 @@ public class UpdateHPXDirectSQL {
 			long pix12=hi12.vec2pix_nest(sv);
 
 			
-			String querypix = "UPDATE "+tableName+" SET healpix8 ="+pix8+", healpix10 ="+pix10+", healpix12 ="+pix12+" WHERE rowid="+ligne+";";
+			String querypix = "UPDATE "+tableName+" SET healpix8 ="+pix8+", healpix10 ="+pix10+", healpix_csa ="+pix12+" WHERE rowid="+ligne+";";
 
 			
 			SQLTable.addQueryToTransaction(querypix);

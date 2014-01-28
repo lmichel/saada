@@ -42,7 +42,7 @@ public class UpdateHPXTMPSQL {
 		SQLTable.addQueryToTransaction(query);
 		query="UPDATE "+tableName+" SET healpix10 = ( SELECT hpx10 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid) WHERE healpix10 IS NULL;";
 		SQLTable.addQueryToTransaction(query);
-		query="UPDATE "+tableName+" SET healpix12 = ( SELECT hpx12 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid) WHERE healpix12 IS NULL;";
+		query="UPDATE "+tableName+" SET healpix_csa = ( SELECT hpx12 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid) WHERE healpix_csa IS NULL;";
 		SQLTable.addQueryToTransaction(query);
 
 		SQLTable.commitTransaction();
@@ -61,7 +61,7 @@ public class UpdateHPXTMPSQL {
 		SQLTable.addQueryToTransaction(query);
 		query="UPDATE "+tableName+" SET healpix10 = ( SELECT hpx10 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid);";
 		SQLTable.addQueryToTransaction(query);
-		query="UPDATE "+tableName+" SET healpix12 = ( SELECT hpx12 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid);";
+		query="UPDATE "+tableName+" SET healpix_csa = ( SELECT hpx12 FROM "+tableTMP +" WHERE "+tableName+".rowid = "+tableTMP+".rowid);";
 		SQLTable.addQueryToTransaction(query);
 
 		SQLTable.commitTransaction();

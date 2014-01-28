@@ -80,7 +80,7 @@ public class VerifHPX {
 			double dec=rs.getDouble("pos_dec_csa");
 			long hpx8 = rs.getLong("healpix8");
 			long hpx10 = rs.getLong("healpix10");
-			long hpx12 = rs.getLong("healpix12");
+			long hpx12 = rs.getLong("healpix_csa");
 			SpatialVector sv = new SpatialVector(ra,dec);
 			HealpixIndex hi8 = new HealpixIndex(256);
 			HealpixIndex hi10 = new HealpixIndex(1024);

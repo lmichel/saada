@@ -36,9 +36,9 @@ public class Test {
 		String nomPolygone = "minicara";
 
 		//Region r = new Region(listPolygone.getPoly(nomPolygone),new ICRS());
-		Zone c= new Cone(0,0,0.0000001,new ICRS());
+		Zone c= new Cone(110.057 , -31.52586111111111, 0.001,new ICRS());
 		String where = c.getSQL();
-
+System.out.println(where);
 		//Test.getFich(where, database, collection, nomPolygone);
 		
 		

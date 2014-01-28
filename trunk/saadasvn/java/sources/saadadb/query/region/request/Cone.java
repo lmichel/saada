@@ -40,6 +40,16 @@ public class Cone extends Zone{
 		super.poleVerification(currentFrame);
 	}
 
+	public Cone (double ra, double dec, double rayon, Astroframe currentFrame, String alias) throws Exception{
+		super(ra,dec);
+		this.alias = alias;
+		//Converting the rayon from degree => radian
+		this.rayon = (Math.toRadians(rayon));
+		//Check if the cone is at the pole
+		super.poleVerification(currentFrame);
+
+	}
+
 	/**
 	 * Constructor of a Cone with String parameters
 	 * @param ra : right ascension
@@ -63,12 +73,13 @@ public class Cone extends Zone{
 	 * @return long[] : tab of pixels
 	 */
 	public long[] getPixels(int resolution, boolean inclus) throws Exception{
-		int nside = (int) Math.pow(2,resolution);
+		int nside = 1 << resolution;
 		long [] array = null;
-			HealpixIndex hpx = new HealpixIndex(nside);
-			//Method from Healpix which returns the array of pixels corresponding to the Cone
-			LongRangeSet lrs= hpx.queryDisc(this.getSv(),this.rayon,inclus);
-			array = lrs.toArray();
+		HealpixIndex hpx = new HealpixIndex(nside);
+
+		//Method from Healpix which returns the array of pixels corresponding to the Cone
+		LongRangeSet lrs= hpx.queryDisc(this.getSv(),this.rayon,inclus);
+		array = lrs.toArray();
 		return array;
 	}
 
@@ -90,6 +101,9 @@ public class Cone extends Zone{
 	 */
 	public String getSQL(int segmentLimit) throws Exception {
 		RequeteCreator rc = new RequeteCreator(this,segmentLimit);
+		if( this.alias != null && this.alias.length() > 0 ){
+			rc.setColmunName(this.alias + ".healpix_csa" );
+		} 
 		return rc.getWhere();
 	}
 
@@ -100,14 +114,17 @@ public class Cone extends Zone{
 	public boolean checkForPole() {
 		boolean ret = false;
 		double rayonDeg = Math.toDegrees(this.rayon);
-		Point p = new Point(super.ra+rayonDeg,super.dec);
-		Point pmin = new Point(super.ra+rayonDeg,super.dec);
-		Point pmax = new Point(super.ra+rayonDeg,super.dec);
-		if (p.getRa()>85 || p.getRa()<-85 || pmin.getRa()>85 || pmin.getRa()<-85 || pmax.getRa()>85 || pmax.getRa()<-85) {
-			ret=true;
-		}
-		
-		return ret;
+
+		return( (this.dec + rayonDeg ) > 85 || (this.dec - rayonDeg ) < -85)? true: false;
+		//		double rayonDeg = Math.toDegrees(this.rayon);
+		//		Point p = new Point(this.ra+rayonDeg,this.dec);
+		//		Point pmin = new Point(super.ra+rayonDeg,this.dec);
+		//		Point pmax = new Point(this.ra+rayonDeg,this.dec);
+		//		if (p.getRa()>85 || p.getRa()<-85 || pmin.getRa()>85 || pmin.getRa()<-85 || pmax.getRa()>85 || pmax.getRa()<-85) {
+		//			ret=true;
+		//		}
+		//		
+		//		return ret;
 	}
 
 	/**

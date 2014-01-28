@@ -21,9 +21,12 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.query.region.request.Cone;
+import saadadb.query.region.request.Zone;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import cds.astro.Coo;
+import cds.astro.ICRS;
 import cds.astro.Qbox;
 
 
@@ -487,8 +490,32 @@ abstract public class DbmsWrapper {
 	 * @param dec
 	 * @param size
 	 * @return
+	 * @throws Exception 
 	 */
-	static public String getIsInCircleConstraint(String prefix, double asc, double  dec, double size) {
+	static public String getIsInCircleConstraint(String prefix, double asc, double  dec, double size) throws Exception {
+		Zone c= new Cone(asc, dec, size, Database.getAstroframe(), prefix);
+		String alias = "";
+		if( prefix != null && prefix.length() > 0 ) {
+			alias = prefix + ".";
+		}
+		double x1 = Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(asc));
+		double y1 = Math.cos(Math.toRadians(dec))*Math.sin(Math.toRadians(asc));
+		double z1 = Math.sin(Math.toRadians(dec));
+		String D = " degrees((2*asin( sqrt("
+			+   " ("+x1+"-"+alias+"pos_x_csa)*("+x1+"-"+alias+"pos_x_csa)"
+			+   "+("+y1+"-"+alias+"pos_y_csa)*("+y1+"-"+alias+"pos_y_csa)"
+			+   "+("+z1+"-"+alias+"pos_z_csa)*("+z1+"-"+alias+"pos_z_csa) )/2)))" ;
+		D = "(abs("+D+")< "+size+")";
+		return "(" + c.getSQL() + ") AND " + D; 
+	}
+	/**
+	 * @param prefix
+	 * @param asc
+	 * @param dec
+	 * @param size
+	 * @return
+	 */
+	static public String getIsInCircleConstraintOrg(String prefix, double asc, double  dec, double size) {
 		Coo coo = new Coo(asc, dec);
 		Enumeration<Qbox> qenum = Qbox.circle(coo, size);
 		Qbox qb;
@@ -637,8 +664,10 @@ abstract public class DbmsWrapper {
 	 * @param dec
 	 * @param size
 	 * @return
+	 * @throws Exception 
+	 * @throws NumberFormatException 
 	 */
-	static public String getADQLIsInCircleConstraint(String asc, String dec, String circleAsc, String circleDec, String radius) {
+	static public String getADQLIsInCircleConstraint(String asc, String dec, String circleAsc, String circleDec, String radius) throws Exception {
 		if( asc.equalsIgnoreCase("pos_ra_csa") && asc.equalsIgnoreCase("pos_dec_csa") ) {
 			return getIsInCircleConstraint("", Double.parseDouble(circleAsc), Double.parseDouble(circleDec), Double.parseDouble(radius));
 		}	
@@ -753,11 +782,17 @@ abstract public class DbmsWrapper {
 
 
 	/**
+	 * Query example PSQL
+	 * UPDATE table_to_update 
+	 * SET keys[i] = values[i] 
+	 * FROM table_to_join 
+	 * WHERE join_criteria AND select_criteria
+
 	 * @param table_to_update
 	 * @param table_to_join
 	 * @param join_criteria  statement used to filter the join between table_to_update and table_to_join
 	 * @param key_alias
-	 * @param keys   names f the columns to be updated
+	 * @param keys   names of the columns to be updated
 	 * @param values values to be affected to the keys (columns names or constants)
 	 * @param select_criteria statement used to filter rows of table_to_update
 	 * @return
@@ -1256,7 +1291,7 @@ abstract public class DbmsWrapper {
 	 */
 	public abstract Map<String, String> getConditionHelp();
 
-	public static void main(String[] args) throws AbortException, FatalException, SQLException, ClassNotFoundException {
+	public static void main(String[] args) throws Exception {
 		System.out.println(DbmsWrapper.getIsInCircleConstraint("", 0, 0, 1));
 		//		ArgsParser ap = new ArgsParser(args);
 		//		Database.init(ap.getDBName());
