@@ -1,17 +1,27 @@
 package saadadb.query.constbuilders;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.Coord;
 import saadadb.query.parser.PositionParser;
+import saadadb.query.region.request.Region;
+import saadadb.query.region.triangule.Point;
+import saadadb.query.region.triangule.Polygone;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
 import saadadb.util.RegExp;
- 
+
+/**
+ * @author michel
+ * 01/2014: Region processing.
+ */
 public class PositionConstraint extends SaadaQLConstraint{
 	private final String operator;     // isInCirle , isInBox , Autre...
 	private String position;
@@ -29,8 +39,8 @@ public class PositionConstraint extends SaadaQLConstraint{
 	 * @param cS
 	 * @throws SaadaException 
 	 */
- 	public PositionConstraint(String op, String pos, String si, String cE, String cS) throws SaadaException{
- 		super(SaadaQLConstraint.POSITION);
+	public PositionConstraint(String op, String pos, String si, String cE, String cS) throws Exception{
+		super(SaadaQLConstraint.POSITION);
 		this.operator     = op ;
 		this.position     = pos; // radec
 		this.size         = si ;
@@ -52,36 +62,41 @@ public class PositionConstraint extends SaadaQLConstraint{
 	 * @throws SaadaException
 	 */
 	private final void computeRaDecR() throws SaadaException {
-		this.r = Double.parseDouble(this.size);
-		Pattern pattern = Pattern.compile("\\s*poslist\\s*:\\s*(" + RegExp.FILEPATH + ")");
-		/*
-		 * Size expressed in minute is more conveniant
-		 */
-		this.r /= 60;
-		Matcher m = pattern.matcher(this.position);
-		/*
-		 * List of positions
-		 */
-		if(m.find()){
-			positions = new PositionList(m.group(1), Coord.getAstroframe(this.coordSystem,this.coordEquinox));
-		}
-		/*
-		 * Single position
-		 */
-		else {
-			try{
-				/*
-				 * Position parser normalizes the input coordinate. It returns the input coordinates 
-				 * as values expressed in the input system 
-				 */
-				PositionParser pp = new PositionParser(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
-				/*
-				 * The position must now be converted in database system
-				 */
-				positions = new PositionList(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox), true);
-			}catch (Exception e){
-				Messenger.printStackTrace(e);
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Can't resolve name \""+this.position+"\" with Astroframe! " + e.getMessage());
+		if( this.operator.equals("isInRegion") ){
+			String [] coos = this.position.split("[\\s,;]+");
+			this.positions = new PositionList(coos, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
+		} else {
+			this.r = Double.parseDouble(this.size);
+			Pattern pattern = Pattern.compile("\\s*poslist\\s*:\\s*(" + RegExp.FILEPATH + ")");
+			/*
+			 * Size expressed in minute is more conveniant
+			 */
+			this.r /= 60;
+			Matcher m = pattern.matcher(this.position);
+			/*
+			 * List of positions
+			 */
+			if(m.find()){
+				positions = new PositionList(m.group(1), Coord.getAstroframe(this.coordSystem,this.coordEquinox));
+			}
+			/*
+			 * Single position
+			 */
+			else {
+				try{
+					/*
+					 * Position parser normalizes the input coordinate. It returns the input coordinates 
+					 * as values expressed in the input system 
+					 */
+					PositionParser pp = new PositionParser(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
+					/*
+					 * The position must now be converted in database system
+					 */
+					positions = new PositionList(this.position, Coord.getAstroframe(this.coordSystem,this.coordEquinox), true);
+				}catch (Exception e){
+					Messenger.printStackTrace(e);
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER,"Can't resolve name \""+this.position+"\" with Astroframe! " + e.getMessage());
+				}
 			}
 		}
 
@@ -91,7 +106,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint() throws SaadaException{
+	public final String getSqlConstraint() throws Exception{
 		return computeSqlConstraint("");
 	}
 	/**
@@ -99,34 +114,44 @@ public class PositionConstraint extends SaadaQLConstraint{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint(String str) throws SaadaException{
+	public final String getSqlConstraint(String str) throws Exception{
 		//str+=".pos";
 		return computeSqlConstraint(str);
 	}
 
 	// Effectue le calcul pour transformer en contrainte SQL
 	// le string passe en argument doit etre un non de collection
-	public final String computeSqlConstraint(String pos) throws SaadaException{
+	public final String computeSqlConstraint(String pos) throws Exception{
 		String retour = "";
-		if(this.operator.equals("isInBox")) {
-			r/= 2.0;
-		}
-		int s = this.positions.size();
-		if( s == 0 ) {
-			QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"No position given");   			
-		}
-		for( int i=0 ; i<s ; i++ ) {
-			if( retour.length() > 0 ) {
-				retour += "\nOR\n";
+		if( this.operator.equals("isInRegion")) {
+			Collection<Point> pts = new ArrayList<Point>();
+			for( int i=0 ; i<this.positions.size() ; i++ ) {
+				pts.add(new Point(this.positions.getRa(i), this.positions.getDec(i)));
 			}
-			if(this.operator.equals("isInBox")){ 
-				QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION,"IsInBox operation not supported");   			
+			Region r = new Region(new Polygone(pts), Database.getAstroframe());
+			retour = r.getSQL();
+		} else {
+			if(this.operator.equals("isInBox")) {
+				r/= 2.0;
 			}
-			else if(this.operator.equals("isInCircle")){
-				retour += DbmsWrapper.getIsInCircleConstraint(pos, this.positions.getRa(i), this.positions.getDec(i), r);
+
+			int s = this.positions.size();
+			if( s == 0 ) {
+				QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"No position given");   			
 			}
-			else {
-				QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"Operator keyWord \""+this.operator+"\" not supported!");   
+			for( int i=0 ; i<s ; i++ ) {
+				if( retour.length() > 0 ) {
+					retour += "\nOR\n";
+				}
+				if(this.operator.equals("isInBox")){ 
+					QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION,"IsInBox operation not supported");   			
+				}
+				else if(this.operator.equals("isInCircle")){
+					retour += DbmsWrapper.getIsInCircleConstraint(pos, this.positions.getRa(i), this.positions.getDec(i), r);
+				}
+				else {
+					QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"Operator keyWord \""+this.operator+"\" not supported!");   
+				}
 			}
 		}
 		return retour;  

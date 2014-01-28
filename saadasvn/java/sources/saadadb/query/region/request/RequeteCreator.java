@@ -1,5 +1,6 @@
 package saadadb.query.region.request;
 
+import saadadb.database.Database;
 import saadadb.util.Messenger;
 
 /**
@@ -23,9 +24,9 @@ public class RequeteCreator {
 	 * Attribut int representing the max resolution for Healpix research in the Database
 	 * Default value : 12
 	 */
-	private int maxResolution=12;
+	private int maxResolution = Database.getHeapix_level();
 
-
+	private String columnName = "healpix_csa";
 	/**
 	 * Attribute int representing the current resolution of the segment's list  
 	 */
@@ -124,6 +125,9 @@ public class RequeteCreator {
 		this.segmentList=new ListeSegment(this.searchZone.getPixels(this.maxResolution,inclus));
 	}
 
+	public void setColmunName(String columnName){
+		this.columnName = columnName;
+	}
 	/**
 	 * This method returns the request corresponding to the zone
 	 * The resolution decreases if the request is too big
@@ -131,11 +135,14 @@ public class RequeteCreator {
 	 * @throws Exception
 	 */
 	public String getWhere() throws Exception{
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Current Healpix resolution: " + this.currentResolution);
 		while (this.limitReached()) {
 			this.degradeResolution();
 		}
-		Messenger.printMsg(Messenger.TRACE, "Request Size : "+this.segmentList.getListSize());
-		return this.segmentList.sqlString("healpix"+this.maxResolution);	
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Request Size : "+this.segmentList.getListSize());
+		return this.segmentList.sqlString(this.columnName);	
 	}
 
 	/**
@@ -144,7 +151,8 @@ public class RequeteCreator {
 	 */
 	public void degradeResolution() throws Exception{
 		this.currentResolution --;
-		Messenger.printMsg(Messenger.DEBUG, "Current Resolution : "+this.currentResolution);
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Current Resolution : "+this.currentResolution);
 		this.segmentList.setListeDeg(maxResolution-this.currentResolution);
 	}
 

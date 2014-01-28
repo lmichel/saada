@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.NativeSQLConstraint;
@@ -22,6 +23,7 @@ import saadadb.query.constbuilders.SaadaQLConstraint;
 
 /**
  * @author F.X. Pineau
+ * 01/2014: Region processing.
  */
 public final class WherePosition{
 	private static final String syntax = "WherePosition { isInBox | isInCircle ( \" coord \" , size_arcmin , J1950 | J2000 | -, FK4 | FK5 | ICRS | GALACTIC | ECLPITIC) [, ...] }";
@@ -45,7 +47,7 @@ public final class WherePosition{
 	 * @param strQuery
 	 * @throws SaadaException 
 	 */
-	public WherePosition(String strQuery) throws SaadaException{
+	public WherePosition(String strQuery) throws Exception{
 		this.parse(strQuery);
 	}
 
@@ -57,7 +59,7 @@ public final class WherePosition{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint(String strColl) throws SaadaException{
+	public final String getSqlConstraint(String strColl) throws Exception{
 		String str = "";
 		for(int i=0;i<posConstraintTab.length-1;i++){
 			str += posConstraintTab[i].getSqlConstraint(strColl) + "\n      OR ";
@@ -69,7 +71,7 @@ public final class WherePosition{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint() throws SaadaException{
+	public final String getSqlConstraint() throws Exception{
 		String str = "";
 		for(int i=0;i<posConstraintTab.length-1;i++){
 			str += posConstraintTab[i].getSqlConstraint() + "\n      OR ";
@@ -80,7 +82,7 @@ public final class WherePosition{
 
 	public static final boolean isIn(String strQ){return pattern.matcher(strQ).find();}
 
-	private final void parse(String strQ) throws SaadaException{
+	private final void parse(String strQ) throws Exception{
 		Matcher m = pattern.matcher(strQ);
 		if(m.find()){
 			this.strMatch = new String(m.group(0));
@@ -95,8 +97,7 @@ public final class WherePosition{
 				}else{QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"In WherePosition... Humm... I don't understand! This is an regex error not supposed to happen!");}
 			}
 			this.posConstraintTab = al.toArray(new PositionConstraint[0]);
-		}
-		else{
+		} else{
 			QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"Error parsing the WherePosition clause!\nCheck the syntax \""+syntax+"\"");
 		}
 	}
@@ -106,8 +107,15 @@ public final class WherePosition{
 	 * @throws QueryException
 	 * @throws SaadaException
 	 */
-	public SaadaQLConstraint getSaadaQLConstraint() throws QueryException, SaadaException {
+	public SaadaQLConstraint getSaadaQLConstraint() throws QueryException, Exception {
 		return new NativeSQLConstraint(this.getSqlConstraint(),new String[]{"pos_ra_csa", "pos_dec_csa"});
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Database.init("ThreeXMM");
+		//WherePosition wp = new WherePosition("WherePosition {isInCircle(\"M33\", 0.001, -, ICRS) }");
+		WherePosition wp = new WherePosition("WherePosition {isInRegion(\"110.24626,-31.49999, 110.17749,-31.33732, 110.00159,-31.33322, 110.00153,-31.49389, 110.09447,-31.40207, 110.22423,-31.49794, 110.22423,-31.49794\", 0 , -, ICRS) }");
+		System.out.println(wp.getSqlConstraint());
 	}
 
 }

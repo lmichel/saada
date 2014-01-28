@@ -1,6 +1,8 @@
 package saadadb.collection;
 
 
+import healpix.tools.SpatialVector;
+import saadadb.database.Database;
 import saadadb.database.MysqlWrapper;
 import saadadb.exceptions.AbortException;
 import saadadb.util.SaadaConstant;
@@ -13,12 +15,14 @@ import cds.astro.Qbox;
  * <p>Company: </p>
  * @author not attributable
  * @version 1.0
+ * 01/2014: Set healpix pixel as sky pixel
  */
 
 public class Position extends SaadaInstance {
 	public double pos_ra_csa=SaadaConstant.DOUBLE;
 	public double pos_dec_csa=SaadaConstant.DOUBLE;
 	public long   sky_pixel_csa=SaadaConstant.LONG;
+	public long   healpix_csa=SaadaConstant.LONG;
 	public double pos_x_csa=SaadaConstant.DOUBLE ;
 	public double pos_y_csa=SaadaConstant.DOUBLE ;
 	public double pos_z_csa=SaadaConstant.DOUBLE ;
@@ -79,6 +83,10 @@ public class Position extends SaadaInstance {
 	{
 		return this.sky_pixel_csa;
 	}
+	public long getHealpix_csa()
+	{
+		return this.healpix_csa;
+	}
 	
 	
 	/**
@@ -91,9 +99,13 @@ public class Position extends SaadaInstance {
 	{
 		if( Double.isNaN(this.pos_ra_csa) || Double.isNaN(this.pos_dec_csa ) ) {
 			this.sky_pixel_csa = SaadaConstant.LONG;
+			this.healpix_csa = SaadaConstant.LONG;
 		}
 		else {
 			this.sky_pixel_csa = (new Qbox(new Coo(this.pos_ra_csa,this.pos_dec_csa))).box();
+			try {
+				this.healpix_csa = Database.getHealpixIndex().vec2pix_nest(new SpatialVector(this.pos_ra_csa ,  this.pos_dec_csa));
+			} catch (Exception e) {this.healpix_csa = SaadaConstant.LONG;}
 		}
 	}
 	
@@ -209,7 +221,7 @@ public class Position extends SaadaInstance {
 	public String getProduct_url_csa() {
 		return null;
 	}
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		Qbox.setLevel(10);
 	System.out.println((new Qbox(new Coo(40.55 ,42.77))).box());
 	System.out.println(MysqlWrapper.getIsInCircleConstraint("a", 40.55 ,42.77,  1));

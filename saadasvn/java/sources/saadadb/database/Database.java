@@ -1,5 +1,7 @@
 package saadadb.database;
 
+import healpix.core.HealpixIndex;
+
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +16,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.MetaRelation;
 import saadadb.sqltable.SQLQuery;
-import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Relation;
@@ -27,8 +28,7 @@ import cds.astro.Qbox;
 /**
  * @author michel
  * @version $Id$
- * * @version $Id$
-
+ * 01/2014: Add healpixIndex filed with its getter
  */
 public class Database {
 
@@ -52,7 +52,7 @@ public class Database {
 	 * stored in the DB (Multiple WEB apps on one DB)
 	 */
 	private static String localUrl_root = "";
-
+	private static HealpixIndex healpixIndex;
 
 	/**
 	 * @param db_name
@@ -143,6 +143,17 @@ public class Database {
 			return null;
 		}
 	}
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public static HealpixIndex getHealpixIndex() throws Exception {
+		if( healpixIndex == null ) {
+			healpixIndex = new HealpixIndex(1 << Database.getHeapix_level());
+		}
+		return healpixIndex;
+	}
 	/**
 	 * @return
 	 */
@@ -169,7 +180,7 @@ public class Database {
 		return connector.getCoord_sys();
 	}
 	public static int getHeapix_level() {
-		return  connector.getHealpix_level();
+		return  (connector == null)? 14: connector.getHealpix_level();
 	}
 	public static String getCooSys() {
 		if( connector.getCoord_equi() != 0.0 ) {

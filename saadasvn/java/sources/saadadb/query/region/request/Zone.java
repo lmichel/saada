@@ -48,7 +48,7 @@ public abstract class Zone {
 	 * Representing the processing Astroframe of the Zone
 	 */
 	protected Astroframe processingFrame;
-	
+	protected String alias = "";
 	/**
 	 * Constructor with the center of the Zone
 	 * @param ra : double

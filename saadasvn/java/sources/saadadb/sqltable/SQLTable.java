@@ -750,15 +750,7 @@ public abstract class SQLTable {
 	 * @throws Exception
 	 */
 	public static final boolean addColumn(String tableName, String columnName, String javaType) throws Exception {
-		ResultSet cols = Database.getWrapper().getTableColumns(tableName);
-		if( cols != null ) {
-			while( cols.next() ){
-				if( cols.getString("COLUMN_NAME").equalsIgnoreCase(columnName)) {
-					cols.close();
-					return false;
-				}
-			}
-			cols.close();
+		if( !SQLTable.hasColumn(tableName, columnName)) {
 			Messenger.printMsg(Messenger.TRACE, "Table " + tableName + " has no '" + columnName + "' column: add it (javaType = " + javaType + ")");
 			SQLTable.beginTransaction();
 			for( String q : Database.getWrapper().addColumn(tableName, columnName, Database.getWrapper().getSQLTypeFromJava(javaType))){
@@ -768,7 +760,26 @@ public abstract class SQLTable {
 			return true;
 		}					
 		return false;
+	}
 
+	/**
+	 * Return true if the table tableName has a column named columnName
+	 * @param tableName
+	 * @param columnName
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean hasColumn(String tableName, String columnName) throws Exception {
+		ResultSet cols = Database.getWrapper().getTableColumns(tableName);
+		if( cols != null ) {
+			while( cols.next() ){
+				if( cols.getString("COLUMN_NAME").equalsIgnoreCase(columnName)) {
+					cols.close();
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

@@ -5,7 +5,13 @@ import healpix.tools.SpatialVector;
 
 import java.sql.ResultSet;
 
+import ajaxservlet.IsAlive;
+
+import cds.astro.Astroframe;
+import cds.astro.Coo;
+
 import saadadb.database.Database;
+import saadadb.products.Coord;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 
@@ -70,8 +76,7 @@ public class FillTablePix {
 			long oid=rs.getRow();
 			double ra=rs.getDouble("pos_ra_csa");
 			double dec=rs.getDouble("pos_dec_csa");
-
-			SpatialVector sv = new SpatialVector(ra,dec);
+			SpatialVector sv = new SpatialVector(ra, dec);
 			long pix8=hi8.vec2pix_nest(sv);
 			long pix10=hi10.vec2pix_nest(sv);
 			long pix12=hi12.vec2pix_nest(sv);

@@ -14,6 +14,7 @@ import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.DefineType;
@@ -87,11 +88,17 @@ public class Table_Saada_Metacoll extends SQLTable {
 		String meta_table_name = "saada_metacoll_" + str_cat;
 		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + meta_table_name + ".psql";
 		buildCollectionDump(cat, dumpfile);
+		SQLQuery squery = new SQLQuery();
+		ResultSet rs = squery.run("SELECT name_attr from saada_metacoll_" + str_cat + " where name_attr = '" + attributeHandler.getNameattr() + "'");
+		while( rs.next() ) {
+			squery.close();
+			QueryException.throwNewException(SaadaException.DB_ERROR, "Attribute " + attributeHandler.getNameattr() + " is already referenced in table " + meta_table_name );
+		}
+		squery.close();
 		/*
 		 * Compute the key (likely no longer useful)
 		 */
-		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("SELECT max(pk) from saada_metacoll_" + str_cat);
+		rs = squery.run("SELECT max(pk) from " + meta_table_name);
 		int max_key=0;
 		while( rs.next() ) {
 			max_key = rs.getInt(1) + 1;
@@ -102,7 +109,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 		squery.close();
 		attributeHandler.setLevel('E');		
 		SQLTable.addQueryToTransaction(
-				"INSERT INTO saada_metacoll_" + str_cat + " VALUES ("
+				"INSERT INTO " + meta_table_name + " VALUES ("
 				+ max_key + ", '"
 				+ attributeHandler.getLevel() + "', "
 				+ "null , '"

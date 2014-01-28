@@ -31,7 +31,7 @@ public final class WherePosition extends SaadaQLConstraint {
 	 * @param cS
 	 * @throws SaadaException 
 	 */
- 	public WherePosition(String op, String pos, String si, String cE, String cS) throws SaadaException{
+ 	public WherePosition(String op, String pos, String si, String cE, String cS) throws Exception{
  		super(SaadaQLConstraint.POSITION);
 		this.operator     = op ;
 		this.position     = pos; // radec
@@ -87,7 +87,7 @@ public final class WherePosition extends SaadaQLConstraint {
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint() throws SaadaException{
+	public final String getSqlConstraint() throws Exception{
 		return computeSqlConstraint("");
 	}
 	/**
@@ -95,14 +95,14 @@ public final class WherePosition extends SaadaQLConstraint {
 	 * @return
 	 * @throws SaadaException
 	 */
-	public final String getSqlConstraint(String str) throws SaadaException{
+	public final String getSqlConstraint(String str) throws Exception{
 		//str+=".pos";
 		return computeSqlConstraint(str);
 	}
 
 	// Effectue le calcul pour transformer en contrainte SQL
 	// le string passe en argument doit etre un non de collection
-	public final String computeSqlConstraint(String pos) throws SaadaException{
+	public final String computeSqlConstraint(String pos) throws Exception{
 		String retour = "";
 		if(this.operator.equals("isInBox")) {
 			r/= 2.0;

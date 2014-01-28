@@ -46,7 +46,12 @@ public class SaadaSQLTranslator extends SQLTranslator {
 			// CIRCLE
 			} else if (rightParam instanceof ADQLFunction && ((ADQLFunction)rightParam).getName().equalsIgnoreCase("CIRCLE")){
 				CircleFunction c = (CircleFunction)rightParam;
-				sql = DbmsWrapper.getADQLIsInCircleConstraint(p.getCoord1().toSQL(null), p.getCoord2().toSQL(null), c.getCoord1().toSQL(null), c.getCoord2().toSQL(null), c.getRadius().toSQL(null));
+				try {
+					sql = DbmsWrapper.getADQLIsInCircleConstraint(p.getCoord1().toSQL(null), p.getCoord2().toSQL(null), c.getCoord1().toSQL(null), c.getCoord2().toSQL(null), c.getRadius().toSQL(null));
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new ParseException(e.getMessage());
+				}
 			}
 		}
 		return "(" + sql + ")";

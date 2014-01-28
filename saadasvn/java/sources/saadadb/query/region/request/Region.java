@@ -80,7 +80,8 @@ public class Region extends Zone{
 				this.triangles.remove(tri);
 			}
 		}
-		Messenger.printMsg(Messenger.TRACE, "Triangle number : "+this.triangles.size());
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Triangle number : "+this.triangles.size());
 	}
 
 /**

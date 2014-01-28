@@ -61,7 +61,7 @@ public final class SaadaQLRegex {
 	
 	public static final String LIMIT   = "(?i)(?:LIMIT)";
 
-	public static final String[] POS_QUERY_KEY_TAB  = {"isInBox","isInCircle"};
+	public static final String[] POS_QUERY_KEY_TAB  = {"isInBox","isInCircle","isInRegion"};
 	public static        String  POS_QUERY_KEYS;
 	
 	public static final String COORD_EQU = "(?i)(?:(?:J1950)|(?:J2000)|(?:null)|(?:-))";
