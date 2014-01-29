@@ -395,7 +395,7 @@ public class ModelFieldList extends JPanel implements ActionListener{
 			sit.setFailed();	
 			try {
 				if( squery != null ) squery.close();
-			} catch (QueryException e1) {}
+			} catch (Exception e1) {}
 			if( with_dialog)  AdminComponent.showInputError(this.getParent(), e.toString());
 		}
 		return false;

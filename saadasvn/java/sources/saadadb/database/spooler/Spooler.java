@@ -5,6 +5,7 @@ package saadadb.database.spooler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -45,11 +46,11 @@ public class Spooler {
 	/**
 	 * Period of the main loop of the thread  controlling the consistency of the connection list (ms)
 	 */
-	public static final int CHECK_PERIOD = 50;
+	public static final int CHECK_PERIOD = 60;
 	/**
-	 * Period of the spooler reporting (active in debug mode) (ms)
+	 * Period of the spooler reporting (active in debug mode) (multiple of CHECK_PERIOD)
 	 */
-	public static final int REPORT_PERIOD = 60*1000;
+	public static final int REPORT_PERIOD = 10000;
 	private ArrayList<DatabaseConnection> connectionsReferences = new ArrayList<DatabaseConnection>();
 	/**
 	 * Reference to the singleton instance
@@ -306,17 +307,16 @@ public class Spooler {
 			if (Messenger.debug_mode) {
 				Messenger.printMsg(Messenger.DEBUG, "ListChecker starting");
 			}
-			int p = 10000/CHECK_PERIOD;
 			int cpt = 0;
-
 			while( spoolerIsRunning ) {
 				//System.out.println(numConnection);
 				try {
 					Thread.sleep(CHECK_PERIOD);	
 					completeConnectionsReferences();
 					if (Messenger.debug_mode) {
-						if ( ( cpt%p) == 0 ) {
+						if( cpt > REPORT_PERIOD ){
 							Messenger.printMsg(Messenger.DEBUG, Spooler.this.toString());
+							cpt = 0;
 						}
 						cpt++;
 					}

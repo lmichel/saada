@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.database.spooler.Spooler;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -36,6 +37,12 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 		}
+		try {
+			Spooler.getSpooler().close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void contextInitialized(ServletContextEvent event) {

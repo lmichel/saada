@@ -26,6 +26,7 @@ import saadadb.admin.popup.PopupNode;
 import saadadb.admin.popup.PopupProduct;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -228,7 +229,11 @@ public class SQLJTable extends JTable {
 				columnModel.getColumn(i).setCellRenderer(new ColorCellRenderer());
 			}
 		} 
-		squery.close();
+		try {
+			squery.close();
+		} catch (Exception e) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 	}
 	
 	/**
