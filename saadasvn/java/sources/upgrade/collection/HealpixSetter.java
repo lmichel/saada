@@ -62,12 +62,6 @@ public class HealpixSetter {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
 		SQLQuery sqlq = new SQLQuery();
 		String nf =  (force)? "": "AND healpix_csa IS NULL";
-		if( force ) {
-			Messenger.printMsg(Messenger.TRACE, "Clear old pixel values");
-			SQLTable.beginTransaction();
-			SQLTable.addQueryToTransaction("UPDATE " + tableName + " SET healpix_csa = NULL");
-			SQLTable.commitTransaction();
-		}
 		ResultSet rs = sqlq.run("SELECT oidsaada, pos_ra_csa, pos_dec_csa FROM " 
 				+ tableName 
 				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
