@@ -1,6 +1,7 @@
 package saadadb.sqltable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -159,7 +160,7 @@ public class Table_SaadaDB extends SQLTable {
 		if( SQLTable.addColumn("saadadb", "healpix_level", "int") ) {
 			SQLTable.beginTransaction();
 			SQLTable.addQueryToTransaction("UPDATE saadadb SET healpix_level = 15");
-			SQLTable.commitTransaction();
+			SQLTable.commitTransaction();			
 		} else {
 			Messenger.printMsg(Messenger.TRACE, "Column healpix_level already exists in table saadadb");
 		}

@@ -25,6 +25,7 @@
     </web_interface>
     <spectral_coordinate>
         <abscisse type="CHANNEL" unit="channel"/>
+        <healpix_level>14</healpix_level>
     </spectral_coordinate>
     <coordinate_system>
         <system>ICRS</system>

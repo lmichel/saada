@@ -7,9 +7,11 @@ import saadadb.exceptions.FatalException;
 public class Upgrade {
 
 
-	public static void upgrade() throws Exception {
-		upgrade.collection.Upgrade.upgrade();
+	public static void upgrade(ArgsParser ap) throws Exception {
 		upgrade.schema.Upgrade.upgrade();
+		Database.init(ap.getDBName());
+		Database.setAdminMode(ap.getPassword());
+		upgrade.collection.Upgrade.upgrade();
 	}
 
 	/**
@@ -21,7 +23,7 @@ public class Upgrade {
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			Database.setAdminMode(ap.getPassword());
-			upgrade();
+			upgrade(ap);
 		} catch (FatalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

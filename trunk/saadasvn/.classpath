@@ -58,11 +58,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-io-1.4.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-logging-1.0.4.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -123,21 +118,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqliteimporter.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqlite-jdbc-3.6.20.1.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqliteprocs.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/uws3.1.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -183,19 +163,38 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_PSQL/saadadb/XIDResult/class_mapping/generate.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/data/3xmm/saadadb/ThreeXMM/web/WEB-INF/lib/ThreeXMMgenerated.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="resources"/>
-	<classpathentry kind="lib" path="/data/3xmm/saadadb/ThreeXMM/class_mapping">
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/swingx-all-1.6.4.jar">
 		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="class_mapping"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_MSQL/saadadb/BENCH2_0_MSQL/class_mapping"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/icons.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="graphics"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqlite-jdbc-3.7.2.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-io-2.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/mysql_build7/class_mapping"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/healpix.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
