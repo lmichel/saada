@@ -62,12 +62,15 @@ public abstract class ManageEntity  {
 			ArgsParser ap = new ArgsParser(args);
 			init(ap);
 			me.processCommand(ap);
+			Database.close();
 		} catch (AbortException e) {
 			me.usage();
+			Database.close();
 			System.exit(1);
 		}
 		catch (Exception e2) {
 			Messenger.printStackTrace(e2);
+			Database.close();
 			AbortException.abort();
 			System.exit(1);
 		}

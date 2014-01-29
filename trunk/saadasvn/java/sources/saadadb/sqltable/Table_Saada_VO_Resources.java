@@ -421,6 +421,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 		SQLTable.beginTransaction();
 		loadFromConfigFile(filename);		
 		SQLTable.commitTransaction();
+		Database.close();
 
 	}
 }

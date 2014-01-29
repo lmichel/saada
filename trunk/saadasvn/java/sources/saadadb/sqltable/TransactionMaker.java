@@ -312,6 +312,7 @@ public class TransactionMaker {
 		SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE s AS SELECT PSF_IMAGE.oidsaada as oidsaada, product_url_csa FROM PSF_IMAGE");
 		SQLTable.addQueryToTransaction("INSERT INTO tempo_LocalPSF(oidprimary, oidsecondary, dec, lambda, ra) SELECT p.oidsaada, s.oidsaada, p.pos_dec_csa, p.wl_max, p.pos_ra_csa  FROM p CROSS JOIN s WHERE substr(p.product_url_csa, 3) = substr(s.product_url_csa, 3)");
 		SQLTable.commitTransaction();
+		Database.close();
 
 	}
 

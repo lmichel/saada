@@ -43,6 +43,7 @@ public class QueryFileReportTester {
 		while( (str = bfr.readLine() ) != null ) {
 			System.out.println(str);
 		}
+		Database.close();
 	}
 
 }

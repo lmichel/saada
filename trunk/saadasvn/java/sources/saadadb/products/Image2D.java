@@ -230,6 +230,7 @@ public class Image2D extends Product {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}
 
 }

@@ -43,5 +43,6 @@ public class ConeSearchRequestTester {
 		request.addFormator("votable");
 		request.setResponseFilePath("CS");
 		request.processRequest(pmap);
+		Database.close();
 	}
 }

@@ -46,7 +46,8 @@ public class CartRequestTester {
 		request.addFormator("zip");
 		request.setResponseFilePath("ZippedSaadaql");
 		request.processRequest(pmap);
-		
+		Database.close();
+	
 	}
 
 }

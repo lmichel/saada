@@ -32,6 +32,7 @@ public class ZipRequestTester {
 		request.addFormator("zip");
 		request.setResponseFilePath("ZippedSaadaql");
 		request.processRequest(pmap);
-		
+		Database.close();
+	
 	}
 }

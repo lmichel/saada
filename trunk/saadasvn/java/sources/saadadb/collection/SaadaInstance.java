@@ -1621,6 +1621,8 @@ public abstract class SaadaInstance implements DMInterface {
 			//System.out.println(si);
 			System.out.println(si.getOid() + " " + si.getDMFieldValue("E_Mag"));
 		}
+		Database.close();
 	}
+
 	
 }

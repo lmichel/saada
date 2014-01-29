@@ -226,6 +226,8 @@ public class CacheManager {
         		}
     		}
     	}
+		Database.close();
+
      }
 
     public static void testWeakHashMap() {

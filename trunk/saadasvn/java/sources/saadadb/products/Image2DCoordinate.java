@@ -1134,6 +1134,7 @@ public class Image2DCoordinate{
 
 		}
 		srs.close();
+		Database.close();
 		//ImageUtils.buildTileFile(68.90239, 16.54804, 1/120.0, 1/60.0, is.getRepositoryPath(), cdh, "/home/michel/Desktop/tile.fits");
 	}
 		

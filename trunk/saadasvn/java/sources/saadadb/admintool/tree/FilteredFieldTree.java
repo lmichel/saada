@@ -110,5 +110,6 @@ public class FilteredFieldTree extends JPanel {
 		f.getContentPane().add(fft);
 		f.pack();
 		f.setVisible(true);
+		Database.close();
 	}
 }

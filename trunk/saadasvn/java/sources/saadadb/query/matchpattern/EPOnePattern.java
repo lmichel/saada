@@ -1172,5 +1172,6 @@ public class EPOnePattern extends Query_Report {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}
 }

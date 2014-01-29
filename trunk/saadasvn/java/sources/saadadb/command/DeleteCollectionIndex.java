@@ -53,7 +53,9 @@ public class DeleteCollectionIndex {
 				usage();
 			}
 			dropIndexCollectionCategory(collection, category);
+			Database.close();
 		} catch (Exception e1) {
+			Database.close();
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e1);
 		}
 		

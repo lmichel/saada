@@ -387,6 +387,7 @@ public class RemoveTester {
 			System.out.println("USAGE  RemoteTester -command=[all|simplemisc|simpletable|simpleentry|simplemisc]");
 			System.exit(1);
 		}
+		Database.close();
 	}
 
 }

@@ -951,6 +951,7 @@ public class Query extends Query_Report{
 			System.out.println(ah);
 		}
 		//System.out.println(q.runAllDMColumnsQuery("Select ENTRY From * In SpectroscopicSample WhereAttributeSaada {(SOURCE_CLASS = 'AC' or SOURCE_CLASS = 'ACe')} Limit 10").getSize() + " objets effectivement retournes");
+		Database.close();
 	}
 
 }

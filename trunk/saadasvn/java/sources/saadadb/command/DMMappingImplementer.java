@@ -26,8 +26,10 @@ public class DMMappingImplementer {
 			
 			DMImplementer dmi= new DMImplementer(fn);
 			dmi.putDMInJavaClass(Database.getClassLocation());
+			Database.close();
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
+			Database.close();
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);			
 		}
 	}

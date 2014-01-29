@@ -41,6 +41,7 @@ public class ADQLTester {
 //		exec.
 		
 		TAPToolBox.executeTAPQuery(queryStr, true, "votable", -1, "/tmp", "reportNameRoot.xml");
+		Database.close();
 		System.exit(1);
 		ADQLExecutor executor = new ADQLExecutor();		
 		SaadaQLResultSet result = executor.execute(queryStr, -1);

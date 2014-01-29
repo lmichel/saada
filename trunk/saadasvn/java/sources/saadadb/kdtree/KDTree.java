@@ -658,7 +658,7 @@ public class KDTree<E extends HasKCoo> {
 				System.out.println(" "+voisin.getValue().toString()+" at  "+voisin.getKey() + " (" + voisin.getValue().getDistance() + ")");
 			}
 		}
-
+		Database.close();
 	}
 
 	/**

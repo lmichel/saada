@@ -11,6 +11,7 @@ import saadadb.cache.CacheManagerRelationIndex;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
@@ -449,6 +450,15 @@ public class Database {
 	 */
 	public static void init() {
 
+	}
+	
+	public static void close() {
+		Messenger.printMsg(Messenger.TRACE, "Closing database");
+		try {
+			Spooler.getSpooler().close();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+		}
 	}
 
 }

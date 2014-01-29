@@ -116,6 +116,7 @@ public final class WherePosition{
 		//WherePosition wp = new WherePosition("WherePosition {isInCircle(\"M33\", 0.001, -, ICRS) }");
 		WherePosition wp = new WherePosition("WherePosition {isInRegion(\"110.24626,-31.49999, 110.17749,-31.33732, 110.00159,-31.33322, 110.00153,-31.49389, 110.09447,-31.40207, 110.22423,-31.49794, 110.22423,-31.49794\", 0 , -, ICRS) }");
 		System.out.println(wp.getSqlConstraint());
+		Database.close();
 	}
 
 }

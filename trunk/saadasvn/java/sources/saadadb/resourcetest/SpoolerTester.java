@@ -257,6 +257,7 @@ public class SpoolerTester {
 			System.out.println("");
 
 		}
+		Database.close();
 	}
 
 }

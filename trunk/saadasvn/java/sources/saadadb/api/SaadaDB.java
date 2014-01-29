@@ -121,14 +121,4 @@ public class SaadaDB {
 		}
 	}
 
-
-
-	/**
-	 * @param args
-	 */
-
-	public static void main(String[] args) {
-		
-	}
-
 }

@@ -34,5 +34,6 @@ public class AdqlRequestTester {
 		request.addFormator("json");
 		request.setResponseFilePath(Capability.TAP);
 		request.processRequest(pmap);
+		Database.close();
 	}
 }

@@ -60,10 +60,12 @@ public class Loader extends SaadaProcess {
 				new Loader(read_ap.completeArgs(ap.getCollection(), ap.getFilename(), ap.getRepository(), ap.isNoindex(), ap.getDebugMode())).load();				
 			}
 		} catch (Exception e) {
+			Database.close();
 			Messenger.printStackTrace(e);
 			usage();
 			System.exit(1);
 		} 
+		Database.close();
 	}
 	
 	/**

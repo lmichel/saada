@@ -717,6 +717,7 @@ public abstract class ImageUtils {
 		//		i2c.GetXY(coord);
 		//
 		//		System.out.println(coord.getX() + " " + coord.getY());		
+		Database.close();
 
 	}
 }

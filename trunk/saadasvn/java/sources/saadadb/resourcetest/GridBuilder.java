@@ -282,6 +282,7 @@ public class GridBuilder {
 			e.printStackTrace();
 			System.out.println("USAGE java GridBuilder [position] [size (minutes)] -collection=[collection] SAADADB_NAME");
 		}
+		Database.close();
 
 	}
 

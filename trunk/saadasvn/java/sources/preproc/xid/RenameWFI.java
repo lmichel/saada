@@ -57,6 +57,8 @@ public class RenameWFI {
     		cpt++;
 		}
 		SQLTable.commitTransaction();
+		Database.close();
+
 //		SQLTable.commitTransaction();
 	}
 }

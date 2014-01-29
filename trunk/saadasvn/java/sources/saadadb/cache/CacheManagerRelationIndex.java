@@ -304,6 +304,7 @@ public class CacheManagerRelationIndex {
 	 */
 	public static void main(String[] args) throws  Exception{
 		testCache();
+		Database.close();
 	}
 
 	public static void testCache() throws  Exception{

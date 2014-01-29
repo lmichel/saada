@@ -211,6 +211,7 @@ public class GenerationClassProduct{
 		dl.load();
 //		[07/05/11 15:51:33]   TRACE: Start to load data with these parameters ArgsParser(-collection=AIPWFI -filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/AIP_XMM -repository=no -classfusion=WFIImage -category=image -ukw PGM=AIPWFI Napoli )
 //		[07/05/11 15:52:55]   TRACE: Start to load data with these parameters ArgsParser(-collection=AIPWFI -filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/BLOX -repository=no -classfusion=WFIImage -category=image -ukw PGM=BOX Napoli )
+		Database.close();
 
 	}
 	

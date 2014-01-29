@@ -36,7 +36,9 @@ public class ManageDatabase {
 			else {
 				usage();				
 			}
+			Database.close();
 		} catch (Exception e) {
+			Database.close();
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 		}
 	}

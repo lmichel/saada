@@ -39,6 +39,7 @@ public class CartJobTester {
 		lstParam.put("phase", "RUN");
 		CartJob cartJob = new CartJob(lstParam);
 		cartJob.work();
+		Database.close();
 	}
 
 }

@@ -1041,6 +1041,8 @@ public class CacheMeta {
 		//		} catch (Exception e) {
 		//		Messenger.printStackTrace(e);
 		//		}
+		Database.close();
+
 	}
 
 	/**

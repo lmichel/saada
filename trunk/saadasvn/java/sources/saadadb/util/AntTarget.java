@@ -93,6 +93,7 @@ public class AntTarget {
 		AntTarget at = new AntTarget("task.dummy", "Remove relation MiscToMisc");
 		at.setProperty("param", "MiscToMisc");
 		at.execute(true);
+		Database.close();
 	}
 
 }

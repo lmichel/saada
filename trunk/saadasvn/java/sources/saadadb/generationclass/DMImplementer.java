@@ -185,5 +185,6 @@ public class DMImplementer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}
 }

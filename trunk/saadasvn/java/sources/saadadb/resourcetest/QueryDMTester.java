@@ -39,5 +39,6 @@ public class QueryDMTester {
 				}
 			}
 		}
+		Database.close();
 	}
 }

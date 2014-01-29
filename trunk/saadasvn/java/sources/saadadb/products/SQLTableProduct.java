@@ -169,6 +169,7 @@ public class SQLTableProduct implements ProductFile {
 			System.out.println((cpt++) + " " + stp.nextElement());
 			System.out.println(stp.getKWValueQuickly("oidsaada"));
 		}
+		Database.close();
 	}
 
 }

@@ -1,6 +1,7 @@
 package saadadb.command;
 
 import saadadb.configuration.ExtendAttributeManager;
+import saadadb.database.Database;
 
 /**
  * @author michel

@@ -188,5 +188,7 @@ public class SimbadTooltip extends SaadaServlet {
 		retour.put("iTotalDisplayRecords", datasize);
 
 		in.close();
+		Database.close();
+
 	}
 }
