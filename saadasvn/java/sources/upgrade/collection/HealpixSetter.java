@@ -99,25 +99,38 @@ public class HealpixSetter {
 		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
 		SQLTable.commitTransaction();
 	}
-
 	public void set() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
+		while( setBurst() > 0 ) ;
+		SQLTable.beginTransaction();
+		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
+		SQLTable.commitTransaction();
+	}
+
+	public int setBurst() throws Exception {
 		Statement stmt =  Database.get_connection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
 		String nf =  (force)? "": "AND healpix_csa IS NULL";
+		nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " 
 				+ tableName 
 				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
-
+		int cpt = 0, sum=0;
 		while (rs.next()){
 			double ra     = rs.getDouble("pos_ra_csa");
 			double dec    = rs.getDouble("pos_dec_csa");
 			rs.updateLong("healpix_csa", healpixIndex.vec2pix_nest(new SpatialVector(ra,dec)));
+			rs.updateRow();
+			cpt++;
+			if( cpt > COMMIT_FREQUENCY) {
+				sum += cpt;
+				Messenger.printMsg(Messenger.TRACE, sum + " rows updated");
+				break;
+			}
 		}
 		stmt.close();
-		SQLTable.beginTransaction();
-		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
-		SQLTable.commitTransaction();
+		Messenger.printMsg(Messenger.TRACE, sum + " rows updated");
+		return cpt;
 	}
 
 	public static void main(String[] args) throws Exception{
