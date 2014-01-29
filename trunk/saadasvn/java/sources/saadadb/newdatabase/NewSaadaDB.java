@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import saadadb.command.ArgsParser;
 import saadadb.compat.Files;
-import saadadb.configuration.SaadaDBXML;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.SaadaDBConnector;
@@ -205,8 +204,6 @@ public class NewSaadaDB {
 			 * Create class for collection level
 			 */
 			GenerationClassCollection.Generation(this.connector);
-			SaadaDBXML.add_list_saadadb(nameDB, rootDir + separ + nameDB,
-					SAADA_HOME);
 			Messenger.printMsg(Messenger.TRACE, "Database : " + nameDB
 					+ " successfully created ");
 			Runtime.getRuntime().gc();
