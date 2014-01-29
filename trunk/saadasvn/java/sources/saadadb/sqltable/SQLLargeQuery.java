@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -18,40 +19,23 @@ import saadadb.util.Messenger;
  * If we put query, PSQL complains about cursor out transaction blocks. 
  */
 public class SQLLargeQuery extends SQLQuery {
-	Connection large_connection;
 	/**
 	 * @throws QueryException
 	 */
 	public SQLLargeQuery() throws QueryException {
-		try {
-			nb_open++;
-			large_connection = Database.getWrapper().openLargeQueryConnection();
-			//			large_connection = DriverManager.getConnection(Database.getConnector().getJdbc_url(),Database.getConnector().getJdbc_reader(), Database.getConnector().getJdbc_reader_password());
-			//			large_connection.setAutoCommit(false);
-			//			large_connection = Database.getConnector().getJDBCConnection();
-			_stmts =large_connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-			Database.getWrapper().setFetchSize(_stmts,5000);
-		} catch(Exception e) {
-			Messenger.printStackTrace(e);
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
-		}
+		super();
 	}
 	/**
 	 * @param query
 	 * @throws QueryException
 	 */
 	public SQLLargeQuery(String query) throws QueryException {
-		this();
-		nb_open++;
-		try {
-			this.query = query;
-		} catch(Exception e) {
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
-		}
+		super(query);
 	}	
 
 	public ResultSet run() throws  QueryException {
 		try {
+			_stmts = databaseConnection.getLargeStatement();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select large query: " + this.query);
 			long start = System.currentTimeMillis();
 			resultset = _stmts.executeQuery(query); 
@@ -67,23 +51,4 @@ public class SQLLargeQuery extends SQLQuery {
 		}
 		return null;
 	}
-
-
-	/**
-	 * @throws QueryException
-	 */
-	@Override
-	public void close() throws QueryException {
-		super.close();
-		try {
-			_stmts.close();
-			Database.getWrapper().closeLargeQueryConnection(large_connection);
-		} catch (SaadaException e) {
-			Messenger.printStackTrace(e);
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
-		} catch (SQLException e) {
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
-		}
-	}
-
 }

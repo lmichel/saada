@@ -260,7 +260,11 @@ public class SQLJTable extends JXTable {
 			}
 			columnModel.getColumn(i).setCellRenderer(new ColorCellRenderer());
 		} 
-		squery.close();
+		try {
+			squery.close();
+		} catch (Exception e) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		}
 		this.modified = false;
 	}
 

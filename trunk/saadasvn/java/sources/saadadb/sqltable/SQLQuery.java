@@ -7,21 +7,24 @@ import java.sql.Statement;
 
 import saadadb.database.Database;
 import saadadb.database.SaadaDBConnector;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import sun.net.ConnectionResetException;
 
 public class SQLQuery {
 	protected Statement _stmts;
 	protected String  query;
 	protected ResultSet resultset;
 	static protected int nb_open = 0;
+	protected DatabaseConnection databaseConnection;
 
 	public SQLQuery(String query) throws QueryException {
 		this();
-		nb_open++;
 		try {
 			this.query = query;
 		} catch(Exception e) {
@@ -34,25 +37,37 @@ public class SQLQuery {
 		return query;
 	}
 
+//	public SQLQuery() throws QueryException {
+//		try {
+//			nb_open++;
+//			Connection connector;
+//
+//			if( Database.get_connection() == null ) {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Make a new DB connection");
+//				//				_stmts = SaadaDBConnector.getConnector(null, false).getConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+//				connector = SaadaDBConnector.getConnector(null, false).getJDBCConnection();
+//			}
+//			else {
+//				//				_stmts = Database.get_connection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+//				connector = Database.get_connection();
+//			}
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "autocommit switched on " + connector.isReadOnly());
+//			connector.setAutoCommit(true);
+//			_stmts = connector.createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+//		} catch(Exception e) {
+//			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+//		}
+//
+//	}
 	public SQLQuery() throws QueryException {
 		try {
 			nb_open++;
-			Connection connector;
-
-			if( Database.get_connection() == null ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Make a new DB connection");
-				//				_stmts = SaadaDBConnector.getConnector(null, false).getConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
-				connector = SaadaDBConnector.getConnector(null, false).getJDBCConnection();
-			}
-			else {
-				//				_stmts = Database.get_connection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
-				connector = Database.get_connection();
-			}
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "autocommit switched on " + connector.isReadOnly());
-			connector.setAutoCommit(true);
-			_stmts = connector.createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+//			StackTraceElement [] se = (new Exception()).getStackTrace();
+//			for( int i=0 ; i<3 ; i++ ) System.out.println(se[i]);
+//			System.out.println("============= OPEN " +  Spooler.getSpooler());
+			databaseConnection = Spooler.getSpooler().getConnection();
 		} catch(Exception e) {
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
@@ -86,18 +101,24 @@ public class SQLQuery {
 		try {
 			Messenger.dbAccess();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select query: " + this.query);
+			_stmts = databaseConnection.getStatement();
 			_stmts.setMaxRows(5000000);
 			long start = System.currentTimeMillis();
 			try {
 				resultset = _stmts.executeQuery(query); 
 			} catch(Exception e) {
+				Messenger.printMsg(Messenger.WARNING, "Take a new connection  due to " + e);
 				_stmts.close();
-				Messenger.printMsg(Messenger.ERROR, "Query: " + query);
-				Messenger.printMsg(Messenger.WARNING, "Reopen DB connection due to " + e);
-				Database.get_connection().close();
-				SaadaDBConnector sc = SaadaDBConnector.getConnector(null, false);
-				sc.reconnect();
-				_stmts = sc.getJDBCConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+				Spooler.getSpooler().give(databaseConnection);
+				databaseConnection = Spooler.getSpooler().getConnection();
+				_stmts = databaseConnection.getStatement();
+//
+//				Messenger.printMsg(Messenger.ERROR, "Query: " + query);
+//				Messenger.printMsg(Messenger.WARNING, "Reopen DB connection due to " + e);
+//				Database.get_connection().close();
+//				SaadaDBConnector sc = SaadaDBConnector.getConnector(null, false);
+//				sc.reconnect();
+//				_stmts = sc.getJDBCConnection().createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
 				resultset = _stmts.executeQuery(query); 
 			} 
 			if (Messenger.debug_mode)
@@ -105,7 +126,9 @@ public class SQLQuery {
 			Messenger.procAccess();
 			return resultset;
 		} catch (Exception e) {
-			this.close();
+			try {
+				this.close();
+			} catch (Exception e1) {}
 			Messenger.procAccess();
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			//Messenger.printStackTrace(e);
@@ -140,6 +163,25 @@ public class SQLQuery {
 	/**
 	 * @throws QueryException
 	 */
+//	public void close() throws QueryException {
+//		nb_open--;
+//		try {
+//			if( resultset != null ) {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Close result set");
+//				resultset.close();
+//			}
+//			if( _stmts != null ) {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Close statement");
+//				_stmts.close();
+//			}
+//		} catch (Exception e) {
+//			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
+//			Messenger.printStackTrace(e);
+//			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+//		}
+//	}
 	public void close() throws QueryException {
 		nb_open--;
 		try {
@@ -148,11 +190,9 @@ public class SQLQuery {
 					Messenger.printMsg(Messenger.DEBUG, "Close result set");
 				resultset.close();
 			}
-			if( _stmts != null ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Close statement");
-				_stmts.close();
-			}
+			//System.out.println("============= CLOSE1 " +  Spooler.getSpooler());
+			Spooler.getSpooler().give(databaseConnection);
+			//System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
