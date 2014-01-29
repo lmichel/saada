@@ -609,8 +609,8 @@
 	<target name="database.upgrade">   
 		<java classname="upgrade.Upgrade" failonerror="true" fork="true">       
 			<classpath refid="saadadb.classpath"/>      
- 	 		<arg value="-password={password}"/>      
-			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password=${password}"/>      
+			<arg value="-debug=${debug}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
