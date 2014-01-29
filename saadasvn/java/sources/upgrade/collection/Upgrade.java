@@ -11,6 +11,7 @@ import saadadb.generationclass.GenerationClassCollection;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_SaadaDB;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Metacoll;

@@ -986,6 +986,7 @@ public class FormPanel extends JPanel {
 			else {
 				bw.write("        <equinox></equinox>\n");
 			}
+			bw.write("        <healpix_level>15</healpix_level>\n");
 			bw.write("    </coordinate_system>\n");
 			bw.write("</saadadb>\n");
 			bw.close();
