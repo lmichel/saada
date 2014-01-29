@@ -22,6 +22,7 @@ public class ReadLinkedData {
 				 , "XCatDR3"
 				 });
 		 ld.load();
+			Database.close();
 	}
 }
  

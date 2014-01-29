@@ -154,5 +154,6 @@ public class SigmaKDTree extends KDTree<HasKCoo> {
 	
 	public static void main(String[] args ) {
 		ManageRelation.main(new String[]{"-populate=WFICounterparts",  "-debug",  "BENCH2_0_PSQL"});
+		Database.close();
 	}
 }

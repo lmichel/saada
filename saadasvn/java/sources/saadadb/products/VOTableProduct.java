@@ -790,7 +790,6 @@ public class VOTableProduct extends File implements ProductFile {
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 		}
-		
-		
+			
 	}
 }

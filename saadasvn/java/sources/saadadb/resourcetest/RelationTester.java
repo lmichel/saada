@@ -53,10 +53,12 @@ public class RelationTester extends GridBuilder {
 			
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
+			Database.close();
 			System.exit(1);
 			
 			System.out.println("USAGE java RelationTester -create=relationname -from=startingcoll/cat -to=endingcoll/cat -query=[correlator] -qualifires=[q1,q2...] -comment=[description] SAADADB_NAME");
 		}
+		Database.close();
 		System.exit(0);
 
 	}

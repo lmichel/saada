@@ -49,10 +49,12 @@ public class SQLImporter extends SaadaProcess {
 				new SQLImporter(read_ap.completeArgs(ap.getCollection(), ap.getFilename(), null, ap.isNoindex(), ap.getDebugMode())).importTable();				
 			}
 		} catch (Exception e) {
+			Database.close();
 			Messenger.printStackTrace(e);
 			usage();
 			System.exit(1);
 		} 
+		Database.close();
 	}
 	
 	/**

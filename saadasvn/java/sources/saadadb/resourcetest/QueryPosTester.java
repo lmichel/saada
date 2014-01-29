@@ -62,8 +62,10 @@ public class QueryPosTester extends GridBuilder{
 			System.out.println("USAGE: java PosQueryTester position size [-password=dbpassword] DBName");
 			System.out.println("  - position: target center (numerical or object name)");
 			System.out.println("  - size    : search radius in arcminutes");
+			Database.close();
 			System.exit(1);
 		}
+		Database.close();
 
 	}
 }

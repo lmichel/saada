@@ -803,8 +803,10 @@ public class AdminTool extends BaseFrame {
 			});
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
+			Database.close();
 			System.exit(1);
 		}
+		Database.close();
 	}
 
 

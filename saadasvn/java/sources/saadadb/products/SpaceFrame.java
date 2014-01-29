@@ -498,6 +498,7 @@ public class SpaceFrame {
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 		}
+		Database.close();
 		//		Astroframe ecf_af = new Ecliptic(2010);
 		//		Astroframe icrs_af = new FK5();
 		//		icrs_af.setFrameEpoch(2000);

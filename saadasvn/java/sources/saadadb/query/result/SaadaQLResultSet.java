@@ -760,6 +760,7 @@ public class SaadaQLResultSet extends OidResultSet {
 		System.out.println(Runtime.getRuntime().freeMemory());
 		System.gc();
 		System.out.println(Runtime.getRuntime().freeMemory());
+		Database.close();
 	}
 
 

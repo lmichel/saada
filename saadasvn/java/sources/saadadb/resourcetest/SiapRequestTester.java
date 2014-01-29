@@ -45,5 +45,7 @@ public class SiapRequestTester {
 		request.addFormator("votable");
 		request.setResponseFilePath("SIAP");
 		request.processRequest(pmap);
+		Database.close();
+
 	}
 }

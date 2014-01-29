@@ -26,6 +26,7 @@ public class TempoTableTester {
 		SQLTable.commitTransaction();
 		System.out.println(Database.getWrapper().tableExist(tname));
 
+		Database.close();
 	}
 
 }

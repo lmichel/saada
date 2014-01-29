@@ -54,7 +54,9 @@ public class CreateCollectionIndex {
 				usage();
 			}
 			indexCollectionCategory(collection, category);
+			Database.close();
 		} catch (Exception e1) {
+			Database.close();
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e1);
 		}
 		

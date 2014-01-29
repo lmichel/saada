@@ -216,11 +216,13 @@ public class QueryPatternTester {
 					} catch (Exception e) {
 						System.out.println("-------- ERROR ----------\n" + qn.explain());
 						Messenger.printStackTrace(e);
+						Database.close();
 						System.exit(1);
 					}
 				}
 			}
 		}
+		Database.close();
 
 	}
 

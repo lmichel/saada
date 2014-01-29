@@ -295,5 +295,6 @@ public class Authority extends EntityManager{
 		SQLTable.beginTransaction();
 		Authority.getInstance().remove(null);
 		SQLTable.commitTransaction();
+		Database.close();
 	}
 }

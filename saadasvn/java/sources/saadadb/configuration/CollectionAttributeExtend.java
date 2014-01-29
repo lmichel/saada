@@ -250,6 +250,7 @@ public class CollectionAttributeExtend {
 	public static void main(String[] args) throws Exception {
 		 Database.init("ThreeXMM");
 		 new CollectionAttributeExtend(Database.getRoot_dir());
+		Database.close();
 	 }
 }
 

@@ -38,6 +38,7 @@ public class SsapRequestTester {
 		request.addFormator("votable");
 		request.setResponseFilePath("SSAP");
 		request.processRequest(pmap);
+		Database.close();
 	}
 
 }

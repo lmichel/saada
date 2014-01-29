@@ -225,7 +225,9 @@ public class QueryUCDTester {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			Database.close();
 			System.exit(1);
 		}
+		Database.close();
 	}
 }

@@ -35,5 +35,6 @@ public class QueryMetaTester {
 			System.out.println("USAGE: java QueryMetaRelation -relation=relation_name SAADADB_NAME");
 			System.exit(1);
 		}
+		Database.close();
 	}
 }

@@ -114,7 +114,7 @@ public class HealpixSetter {
 		nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " 
 				+ tableName 
-				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
+				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf + " limit " + COMMIT_FREQUENCY);
 		int cpt = 0, sum=0;
 		while (rs.next()){
 			double ra     = rs.getDouble("pos_ra_csa");
@@ -131,11 +131,5 @@ public class HealpixSetter {
 		stmt.close();
 		Messenger.printMsg(Messenger.TRACE, sum + " rows updated");
 		return cpt;
-	}
-
-	public static void main(String[] args) throws Exception{
-		HealpixIndex healpixIndex = new HealpixIndex(1 << 14);
-		System.out.println(healpixIndex.vec2pix_nest(new SpatialVector(110.057 , -31.52586111111111)));
-
 	}
 }

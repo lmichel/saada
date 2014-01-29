@@ -162,6 +162,7 @@ public class ConeSearchToFITSFormator extends FITSFormator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}   
   
 }

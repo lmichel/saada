@@ -40,5 +40,6 @@ public class DisplayFilterTest {
 		System.out.println(sf);
 		sf = FilterBase.get("ACDS", "ENTRY", "arch_0011AEntry");
 		System.out.println(sf);
+		Database.close();
 	}
 }

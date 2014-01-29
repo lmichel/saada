@@ -266,6 +266,7 @@ public class PositionParser {
 			}
 		}
 
+		Database.close();
 	}
 
 	/**

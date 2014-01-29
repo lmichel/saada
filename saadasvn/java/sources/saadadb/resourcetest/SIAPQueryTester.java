@@ -571,5 +571,6 @@ public class SIAPQueryTester {
 			e.printStackTrace();
 			if( fw != null ) fw.close();
 		}
+		Database.close();
 	}
 }

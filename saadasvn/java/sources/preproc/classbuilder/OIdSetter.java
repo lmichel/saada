@@ -57,7 +57,7 @@ public class OIdSetter {
 		}
 		catch(Exception e) {
 			Messenger.printStackTrace(e);
-			System.exit(1);
 		}
+		Database.close();
 	}
 }

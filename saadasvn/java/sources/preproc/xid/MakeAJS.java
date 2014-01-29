@@ -155,5 +155,6 @@ public class MakeAJS {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}
 }

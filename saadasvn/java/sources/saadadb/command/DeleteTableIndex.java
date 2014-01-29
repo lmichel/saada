@@ -19,8 +19,10 @@ public class DeleteTableIndex {
 			} else {
 				SQLTable.dropTableIndex(args[0].toLowerCase(), null);
 			}
+			Database.close();
 			
 		} catch (Exception e1) {
+			Database.close();
 			e1.printStackTrace();
 			System.exit(1);
 		}

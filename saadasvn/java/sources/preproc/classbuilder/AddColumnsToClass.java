@@ -92,8 +92,8 @@ public class AddColumnsToClass {
 		} catch (Exception e) {
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(e);
-			System.exit(1);
 		}
+		Database.close();
 
 	}
 

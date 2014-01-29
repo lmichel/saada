@@ -189,6 +189,7 @@ public class SaadaADQLQuery extends ADQLQuery {
 			else
 				System.out.println("\t- "+table+" ["+(table.isClass()?("class="+table.getMetaClass().getName()+" & collection="+table.getMetaCollection().getName()+"_"+table.getMetaClass().getCategory_name()):("collection="+table.getMetaCollection().getName()))+"]");
 		}
+		Database.close();
 	}
 	
 

@@ -27,5 +27,6 @@ public class SqliteProcTester {
 		request.addFormator("votable");
 		request.setResponseFilePath("Saadaql");
 		request.processRequest(pmap);
+		Database.close();
 	}
 }

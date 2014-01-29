@@ -418,16 +418,6 @@ public class Product /*extends File*/ {
 	}
 	protected void setWcsFields() throws Exception {
 	}
-	public static void main(String[] args) {
-//		Astroframe coord = new Astroframe();
-//		try {
-//		coord.set("10.83322030301133 -1.929124546734670");
-//		coord.set("10.83322030301133 -1.9291245467346706E+1");
-//		coord.set("10.83322030301133 -1.9291245467346706E-4");
-//		} catch (Exception e) {
-//		Messenger.printStackTrace(e);
-//		}
-	}
 
 	protected void setAstrofFrame()throws Exception {
 		/*

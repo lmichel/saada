@@ -180,11 +180,5 @@ public class ConeSearchToVOTableFormator extends VOTableFormator {
 		}
 	}
 
-	public  static void main(String[] args ) throws SaadaException, Exception {
-		Database.init("BENCH2_0_PSQL");				
-		(new ConeSearchToVOTableFormator("native entry")).processVOQuery(new long[]{577586729519677441L}, System.out);
-
-		
-	}
 }
 

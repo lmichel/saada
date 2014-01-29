@@ -31,6 +31,7 @@ public class ADQLFormatorTester {
 		stm.close();
 		String query = ap.getQuery();
 		TAPToolBox.executeTAPQuery(query, false, "json", 10000, System.out);
+		Database.close();
 	}
 
 }

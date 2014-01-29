@@ -34,5 +34,6 @@ public class QueryAllColumnRunner {
 			System.out.println(cpt + ": " + sri.getOid() + " " + sri.getNameSaada());
 			cpt++;
 		}
+		Database.close();
 	}
 }

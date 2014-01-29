@@ -221,10 +221,5 @@ public class Position extends SaadaInstance {
 	public String getProduct_url_csa() {
 		return null;
 	}
-	public static void main(String[] args) throws Exception {
-		Qbox.setLevel(10);
-	System.out.println((new Qbox(new Coo(40.55 ,42.77))).box());
-	System.out.println(MysqlWrapper.getIsInCircleConstraint("a", 40.55 ,42.77,  1));
-	}
 }
 

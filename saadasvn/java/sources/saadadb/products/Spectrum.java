@@ -414,5 +414,6 @@ public class Spectrum extends Product {
 		} catch ( Exception e) {
 			e.printStackTrace();
 		}
+		Database.close();
 	}
 }

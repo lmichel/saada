@@ -17,6 +17,8 @@ public class SetPgm {
 		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("UPDATE AIPWFI_Entry SET PGM =  (SELECT t.pgm FROM AIPWFI_Table as t where t.oidsaada = AIPWFI_Entry.oidtable)");
 		SQLTable.commitTransaction();
+		Database.close();
+
 	}
 
 }

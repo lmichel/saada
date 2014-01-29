@@ -119,10 +119,6 @@ public final class SaadaQLRegex {
 		}
 		return strBuf.substring(0,strBuf.length()-1)+")";
 	} 
-
-	public static void main(String[] args){
-		System.out.println(SAADA_OPs);
-	}
 	
 }
 

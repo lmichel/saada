@@ -774,6 +774,7 @@ public class VOResource {
 		//		 vor = VOResource.getResource("SSA EPIC Spectra");
 		//		 vor.saveInFile(Database.getConnector().getRoot_dir() + Database.getSepar() + "config" 
 		//					+ Database.getSepar() + "vodm.EPIC_SSA.xml" );
+		Database.close();
 	}
 
 

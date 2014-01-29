@@ -671,6 +671,7 @@ public class QueryTester {
 				}
 			}
 		}
+		Database.close();
 		
 	}
 

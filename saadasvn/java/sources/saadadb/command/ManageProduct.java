@@ -1,6 +1,7 @@
 package saadadb.command;
 
 import saadadb.collection.ProductManager;
+import saadadb.database.Database;
 
 
 public class ManageProduct extends ManageEntity{
@@ -16,6 +17,7 @@ public class ManageProduct extends ManageEntity{
 	 */
 	public static void main(String[] args)  {
 		processCommand(new ManageProduct(), args);
+		Database.close();
 	}
 
 	@Override
