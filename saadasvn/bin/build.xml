@@ -100,12 +100,12 @@
 		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
-			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**">
+			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
             <classpath refid="saadadb.classpath"/>
 		</javac>
 	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
 		     basedir="${SAADA_DB_HOME}/java/classes"
-			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**"/>
+			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
 	</target>
 
     
@@ -606,7 +606,7 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  DB upgrade
 	-->
-	<target name="databas.upgrade">   
+	<target name="database.upgrade">   
 		<java classname="upgrade.Upgrade" failonerror="true" fork="true">       
 			<classpath refid="saadadb.classpath"/>      
  	 		<arg value="-password={password}"/>      
