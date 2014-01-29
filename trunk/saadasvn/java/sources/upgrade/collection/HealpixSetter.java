@@ -47,10 +47,11 @@ public class HealpixSetter {
 //				, new String[]{"healpix_csa"}
 //		        , new String[]{this.tmpTableName + ".healpix_csa"}
 //				, this.tmpTableName + ".healpix_csa IS NOT NULL"));	
+		String nf =  (force)? "": "AND "+tableName+".healpix_csa IS NULL";
 		SQLTable.addQueryToTransaction(
 				  "UPDATE " +tableName
 				+ " SET healpix_csa = ( SELECT healpix_csa FROM " + tmpTableName 
-				                    + " WHERE "+tableName+".oidsaada = "+tmpTableName+".oidsaada AND "+tableName+".healpix_csa IS NULL) WHERE healpix_csa IS NULL;");
+				                    + " WHERE "+tableName+".oidsaada = "+tmpTableName+".oidsaada  "+ nf + ") WHERE healpix_csa IS NULL;");
 
 	}
 		
