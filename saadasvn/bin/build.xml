@@ -140,11 +140,12 @@
 		<echo>Remove the previous WebApp from ${TOMCAT_HOME}/webapps/</echo>
 		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
   		
-  		<echo>Copy web directory tree in ${TOMCAT_HOME}/webapps/</echo>
+  		<!--
+   		<echo>Copy web directory tree in ${TOMCAT_HOME}/webapps/</echo>
  		<copy todir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}">
   		    <fileset dir="${SAADA_DB_HOME}/web/"/>
   		 </copy>
-
+	--> 
   		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
 		<jar destfile="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
   		
@@ -541,6 +542,7 @@
 			<classpath refid="saadadb.classpath"/>      
 			<arg value="-remove=ObsCore"/>      
 			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
@@ -563,6 +565,7 @@
  	 		<arg value="-utype={utype}"/>      
 			<arg value="-type={type}"/>      
 			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
@@ -576,6 +579,7 @@
 			<arg value="-remove={name}"/>      
 			<arg value="-category={category}"/>      
 			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
@@ -593,6 +597,19 @@
  			<arg value="-unit={unit}"/>      
  	 		<arg value="-ucd={ucd}"/>      
  	 		<arg value="-utype={utype}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  DB upgrade
+	-->
+	<target name="databas.upgrade">   
+		<java classname="upgrade.Upgrade" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+ 	 		<arg value="-password={password}"/>      
 			<arg value="-debug={debug}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
