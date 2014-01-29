@@ -910,7 +910,7 @@ public class ArgsParser implements Serializable{
 			if( args[i] .startsWith("-debug")) {
 				String param = getArgsValue(args[i]);
 				if( "off".equalsIgnoreCase(param) || "false".equalsIgnoreCase(param)
-						|| "no".equalsIgnoreCase(param) ) {
+						|| "no".equalsIgnoreCase(param) || param == null || param.length() == 0) {
 					Messenger.switchDebugOff();
 				}
 				else {

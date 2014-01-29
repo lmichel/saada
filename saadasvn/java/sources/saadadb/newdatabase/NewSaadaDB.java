@@ -33,7 +33,7 @@ import saadadb.util.WorkDirectory;
  * @author michel
  * * @version $Id$
 
- * 03/2010: Ignore exception when load SQL procedure (exception rose by PSQL when proc does not exists
+ * 03/2010: Ignore exception when load SQL procedure (exception rose by PSQL when proc does not exists)
  */
 public class NewSaadaDB {
 	protected static String separ = System.getProperty("file.separator");
