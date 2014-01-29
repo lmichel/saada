@@ -10,6 +10,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
+import saadadb.util.Messenger;
 
 /**
  * @author michel
@@ -39,21 +40,33 @@ public class HealpixSetter {
 	 * @throws FatalException
 	 */
 	private void join() throws AbortException, FatalException {
-		SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(this.tableName
-				, this.tmpTableName
-				, this.tableName + ".oidsaada = " + this.tmpTableName + ".oidsaada"
-				, this.tableName
-				, new String[]{"healpix_csa"}
-		        , new String[]{this.tmpTableName + ".healpix_csa"}
-				, this.tmpTableName + ".healpix_csa IS NOT NULL"));	
+//		SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(this.tableName
+//				, this.tmpTableName
+//				, this.tableName + ".oidsaada = " + this.tmpTableName + ".oidsaada"
+//				, this.tableName
+//				, new String[]{"healpix_csa"}
+//		        , new String[]{this.tmpTableName + ".healpix_csa"}
+//				, this.tmpTableName + ".healpix_csa IS NOT NULL"));	
+		SQLTable.addQueryToTransaction(
+				  "UPDATE " +tableName
+				+ " SET healpix_csa = ( SELECT healpix_csa FROM " + tmpTableName 
+				                    + " WHERE "+tableName+".oidsaada = "+tmpTableName+".oidsaada) WHERE healpix_csa IS NULL;");
+
 	}
 		
 	/**
 	 * @throws Exception
 	 */
 	public void set() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
 		SQLQuery sqlq = new SQLQuery();
 		String nf =  (force)? "": "AND healpix_csa IS NULL";
+		if( force ) {
+			Messenger.printMsg(Messenger.TRACE, "Clear old pixel values");
+			SQLTable.beginTransaction();
+			SQLTable.addQueryToTransaction("UPDATE " + tableName + " SET healpix_csa = NULL");
+			SQLTable.commitTransaction();
+		}
 		ResultSet rs = sqlq.run("SELECT oidsaada, pos_ra_csa, pos_dec_csa FROM " 
 				+ tableName 
 				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
@@ -73,7 +86,6 @@ public class HealpixSetter {
 					+ " (oidsaada,healpix_csa) VALUES (" + oidsaada 
 					+ "," + healpixIndex.vec2pix_nest(new SpatialVector(ra,dec)) +");");
 			if( cpt > 0 && (cpt%COMMIT_FREQUENCY) == 0 ) {
-				System.out.println("locl " + cpt);
 				join();
 				SQLTable.commitTransaction();
 				SQLTable.beginTransaction();
@@ -84,11 +96,12 @@ public class HealpixSetter {
 			cpt++;			
 		}
 		if( tOpen ) {
-			System.out.println("end " + cpt);
 			join();
 			SQLTable.commitTransaction();
 		}
-		
+		SQLTable.beginTransaction();
+		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
+		SQLTable.commitTransaction();
 	}
 
 	public static void main(String[] args) throws Exception{
