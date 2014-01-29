@@ -50,7 +50,7 @@ public class HealpixSetter {
 		SQLTable.addQueryToTransaction(
 				  "UPDATE " +tableName
 				+ " SET healpix_csa = ( SELECT healpix_csa FROM " + tmpTableName 
-				                    + " WHERE "+tableName+".oidsaada = "+tmpTableName+".oidsaada) WHERE healpix_csa IS NULL;");
+				                    + " WHERE "+tableName+".oidsaada = "+tmpTableName+".oidsaada AND "+tableName+".healpix_csa IS NULL) WHERE healpix_csa IS NULL;");
 
 	}
 		
