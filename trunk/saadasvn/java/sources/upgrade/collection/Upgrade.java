@@ -4,6 +4,7 @@
 package upgrade.collection;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -78,7 +79,8 @@ public class Upgrade {
 				healpixSetter.set();
 			}
 		}
-
+		Spooler.getSpooler().close();
+		Messenger.printMsg(Messenger.TRACE, "Update complete");
 	}
 
 }
