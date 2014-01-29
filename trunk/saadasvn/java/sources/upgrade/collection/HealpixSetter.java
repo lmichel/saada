@@ -58,7 +58,7 @@ public class HealpixSetter {
 	/**
 	 * @throws Exception
 	 */
-	public void set() throws Exception {
+	public void setOld() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
 		SQLQuery sqlq = new SQLQuery();
 		String nf =  (force)? "": "AND healpix_csa IS NULL";
@@ -94,6 +94,26 @@ public class HealpixSetter {
 			join();
 			SQLTable.commitTransaction();
 		}
+		SQLTable.beginTransaction();
+		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
+		SQLTable.commitTransaction();
+	}
+
+	public void set() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
+		SQLQuery sqlq = new SQLQuery();
+		String nf =  (force)? "": "AND healpix_csa IS NULL";
+		ResultSet rs = sqlq.run("SELECTpos_ra_csa, pos_dec_csa , healpix_csa FROM " 
+				+ tableName 
+				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
+		int cpt = 0;
+		boolean tOpen = false;
+		while (rs.next()){
+			double ra     = rs.getDouble("pos_ra_csa");
+			double dec    = rs.getDouble("pos_dec_csa");
+			rs.updateLong("healpix_csa", healpixIndex.vec2pix_nest(new SpatialVector(ra,dec)));
+		}
+		sqlq.close();
 		SQLTable.beginTransaction();
 		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
 		SQLTable.commitTransaction();
