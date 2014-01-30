@@ -1,7 +1,7 @@
 package saadadb.query.constbuilders;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +107,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 	 * @throws SaadaException
 	 */
 	public final String getSqlConstraint() throws Exception{
-		return computeSqlConstraint("");
+		return getWhere();
 	}
 	/**
 	 * @param str
@@ -124,11 +124,12 @@ public class PositionConstraint extends SaadaQLConstraint{
 	public final String computeSqlConstraint(String pos) throws Exception{
 		String retour = "";
 		if( this.operator.equals("isInRegion")) {
-			Collection<Point> pts = new ArrayList<Point>();
+			List<Point> pts = new ArrayList<Point>();
 			for( int i=0 ; i<this.positions.size() ; i++ ) {
 				pts.add(new Point(this.positions.getRa(i), this.positions.getDec(i)));
 			}
-			Region r = new Region(new Polygone(pts), Database.getAstroframe());
+			Polygone p = new Polygone(pts);
+			Region r = new Region(p, Database.getAstroframe());
 			retour = r.getSQL();
 		} else {
 			if(this.operator.equals("isInBox")) {

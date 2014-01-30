@@ -156,6 +156,7 @@ public class Triangulator {
 				}
 				//Adding the triangle to the list of triangles
 				triangles.add(t);
+				System.out.println("add " + t);
 				p1.setOut();
 				//Creating a polygon with the new points
 				this.polygone=new Polygone(this.polygone.newPolygone());
@@ -172,6 +173,8 @@ public class Triangulator {
 		}
 		if (polygone.isTriangle()) {
 			Triangle t = polygone.getTriangle();
+			System.out.println("coucou " + t);
+
 			triangles.add(t);
 		}
 		return triangles;

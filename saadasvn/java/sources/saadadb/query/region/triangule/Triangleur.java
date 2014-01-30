@@ -68,37 +68,34 @@ public class Triangleur {
 		return ret;
 	}
 
-//	/**
-//	 * This method allows to launch Aladin, set the sky and draw the polygon and the triangles
-//	 * @param onlyPolygon : boolean at true if you only need the draw of the polygon
-//	 * @throws Exception
-//	 */
-//	public void startAladin(boolean onlyPolygon) throws Exception{
-//		Aladin aladin = Aladin.launch("-trace");
-//		aladin.execCommand("get allsky(\"DSS colored\")");
-//		aladin.execCommand(this.getPolygonAladin());
-//		if (!onlyPolygon) {
-//			for (String s : this.getTriangleAladin()) {
-//				aladin.execCommand(s);
-//			}
-//		}
-//	}
-	
+	//	/**
+	//	 * This method allows to launch Aladin, set the sky and draw the polygon and the triangles
+	//	 * @param onlyPolygon : boolean at true if you only need the draw of the polygon
+	//	 * @throws Exception
+	//	 */
+	//	public void startAladin(boolean onlyPolygon) throws Exception{
+	//		Aladin aladin = Aladin.launch("-trace");
+	//		aladin.execCommand("get allsky(\"DSS colored\")");
+	//		aladin.execCommand(this.getPolygonAladin());
+	//		if (!onlyPolygon) {
+	//			for (String s : this.getTriangleAladin()) {
+	//				aladin.execCommand(s);
+	//			}
+	//		}
+	//	}
+
 	/**
 	 * This method allows to impress the gnuplot commands for the polygon and the triangles
 	 * @param onlyPolygon : boolean at true if you only need the draw of the polygon
 	 * @throws Exception
 	 */
-	public void getGnuplot(boolean onlyPolygon) throws Exception {
-		Polygone p = new Polygone (points);
-		System.out.println(p.getPolyGnuplot());
-		if (!onlyPolygon) {
-			int iterator=2;
-			for (Triangle t : this.triangles) {
-				System.out.println("set object "+iterator+t.getTriangleGnuplot());
-				iterator++;
-			}
+	public String getGnuplot() {
+		String retour = "";
+		int iterator=2;
+		for (Triangle t : this.triangles) {
+			retour += "set object "+iterator+t.getTriangleGnuplot() + "\n";
 		}
+		return retour;
 	}
 
 	/**
@@ -110,5 +107,5 @@ public class Triangleur {
 		radecToXY convert = new radecToXY(this.points);		
 		return convert.process();		
 	}
-	
+
 }

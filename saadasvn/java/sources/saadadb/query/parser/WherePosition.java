@@ -20,13 +20,14 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.NativeSQLConstraint;
 import saadadb.query.constbuilders.PositionConstraint;
 import saadadb.query.constbuilders.SaadaQLConstraint;
+import saadadb.util.Messenger;
 
 /**
  * @author F.X. Pineau
  * 01/2014: Region processing.
  */
 public final class WherePosition{
-	private static final String syntax = "WherePosition { isInBox | isInCircle ( \" coord \" , size_arcmin , J1950 | J2000 | -, FK4 | FK5 | ICRS | GALACTIC | ECLPITIC) [, ...] }";
+	private static final String syntax = "WherePosition { isInBox | isInCircle| isInRegion ( \" coord \" , size_arcmin , J1950 | J2000 | -, FK4 | FK5 | ICRS | GALACTIC | ECLPITIC) [, ...] }";
 
 	private static final String coord      = "[/\\s\\w\\-\\+\\.:,;]+";         // A AFFINER!!
 	private static final String inSecKey   = "\"" + coord + "\"" + FacWS + ArgSep + FacWS +NumericValue + FacWS + ArgSep + FacWS +COORD_EQU + FacWS + ArgSep + FacWS +COORD_SYS;
@@ -113,8 +114,18 @@ public final class WherePosition{
 	
 	public static void main(String[] args) throws Exception {
 		Database.init("ThreeXMM");
+		Messenger.debug_mode = true;
 		//WherePosition wp = new WherePosition("WherePosition {isInCircle(\"M33\", 0.001, -, ICRS) }");
-		WherePosition wp = new WherePosition("WherePosition {isInRegion(\"110.24626,-31.49999, 110.17749,-31.33732, 110.00159,-31.33322, 110.00153,-31.49389, 110.09447,-31.40207, 110.22423,-31.49794, 110.22423,-31.49794\", 0 , -, ICRS) }");
+		WherePosition wp = new WherePosition("WherePosition {isInRegion(\"202.45837,+47.29028, " +
+				"202.52390,+47.28777, 202.55595,+47.19132, 202.53863,+47.13598, " +
+				"202.43629,+47.15609, 202.38558,+47.22314, 202.41519,+47.23658, " +
+				"202.44488,+47.18796, 202.46833,+47.18378, 202.49177,+47.19301, " +
+				"202.49177,+47.21481, 202.46336,+47.22738, 202.45590,+47.28860, " +
+				"202.45590,+47.28860" +
+				"\", 0 , -, ICRS) } "); 
+					
+		
+		
 		System.out.println(wp.getSqlConstraint());
 		Database.close();
 	}
