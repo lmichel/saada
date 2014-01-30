@@ -1,8 +1,8 @@
 package saadadb.query.region.triangule;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import saadadb.query.region.triangule.utils.Util;
 import saadadb.util.Messenger;
@@ -10,6 +10,7 @@ import saadadb.util.Messenger;
  * Class Polygone representing the polygon to process with the list of points and segments
  * @author jremy
  * @version $Id$
+ * 01/2014: Detection if 2 adjacent points have the same position
  */
 public class Polygone {
 
@@ -36,10 +37,19 @@ public class Polygone {
 	 * @throws Exception 
 	 */
 
-	public Polygone (Collection<Point> pts) throws Exception {
+	public Polygone (List<Point> pts) throws Exception {
 		points=new ArrayList<Point>();
-		for (Point p : pts) {
-			points.add(p);
+		/*
+		 * Remove duplicate points because they generate flat triangles which are removed 
+		 * That make the triangulator failing
+		 */
+		for( int p=0 ; p<(pts.size()-1) ; p++){
+			Point pi = pts.get(p);
+			if( pi.equals(pts.get(p+1)) ) {
+				Messenger.printMsg(Messenger.DEBUG, "Point " + pi + " duplicated: ignored ");
+			} else {
+				points.add(pi);
+			}
 		}
 		if (!this.getDirection()) {
 			Collections.reverse(points);
@@ -249,17 +259,33 @@ public class Polygone {
 	 * @return Gnuplot Command
 	 */
 	public String getPolyGnuplot() {
+		String retour;
+		double xmin = this.points.get(0).getRa();
+		double xmax = xmin;
+		double ymin = this.points.get(0).getDec();
+		double ymax = ymin;
+		for( Point p: this.points ){
+			double ra = p.getRa();
+			double dec = p.getDec();
+			if( ra < xmin ) xmin = ra;
+			if( ra > xmax ) xmax = ra;
+			if( dec < ymin ) ymin = dec;
+			if( dec > ymax ) ymax = dec;
+		}
+		retour = "set xrange[" + ((int)(xmin-1.)) + ":" + ((int)(xmax+2.)) + "]\n";
+		retour = "set xyrange[" + ((int)(ymin-1.)) + ":" + ((int)(ymax+2.)) + "]\n";
+		
 		int i=1;
-		String ret = "set object 1 polygon";
-		ret+=" from "+points.get(0);
+		retour += "set object 1 polygon";
+		retour+=" from "+points.get(0);
 		while (i<points.size()) {
 			String pointeur = " to "+points.get(i);
-			ret+=pointeur;
+			retour+=pointeur;
 			i++;
 		}
-		ret+=" to " + points.get(0);
-		ret+=" behind fillcolor rgbcolor \"green\" fs solid";
-		return ret;
+		retour+=" to " + points.get(0);
+		retour+=" behind fillcolor rgbcolor \"green\" fs solid";
+		return retour;
 	}
 	/**
 	 * This method allows to know if the current polygon is a triangle or not
