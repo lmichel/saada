@@ -568,8 +568,11 @@ public class PostgresWrapper extends DbmsWrapper {
 		SQLTable.beginTransaction();
 		/*
 		 * Cannot make a SELECT in an update statement
+		 * Must use the database connector instead of the spooler because this query requires 
+		 * the admin privilege
 		 */
-		SQLQuery sq = new SQLQuery("SELECT \n"
+		Statement _stmts = Database.get_connection().createStatement();
+		_stmts.executeQuery("SELECT \n"
 				+ " CASE \n"
 				+ " WHEN EXISTS( \n"
 				+ "     SELECT 1 \n"
@@ -578,8 +581,7 @@ public class PostgresWrapper extends DbmsWrapper {
 				+ " ) \n"
 				+ " THEN NULL \n"
 				+ " ELSE make_plpgsql() END; \n");
-		sq.run();
-		sq.close();
+		_stmts.close();
 		SQLTable.addQueryToTransaction("DROP FUNCTION make_plpgsql();");
 	}
 
