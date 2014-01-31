@@ -178,7 +178,6 @@ public class NewSaadaDB {
 			/*
 			 * Create SQL tables
 			 */	
-			Messenger.debug_mode = true;
 			Database.initConnector(this.connector.getDbname(), false);
 			connector.setAdminAuth(this.admin_passwd);
 			Database.getWrapper().loadSQLProcedures();
@@ -260,8 +259,11 @@ public class NewSaadaDB {
 			NewSaadaDB newdb = new NewSaadaDB(args[args.length-1], ap.getPassword());
 			newdb.buildSaadaDB();
 			NewWebServer.main(args);
+			Database.close();
 		} catch (Exception e3) {
 			Messenger.printStackTrace(e3);
+		} finally {
+			Database.close();
 			System.exit(1);			
 		}
 	}
