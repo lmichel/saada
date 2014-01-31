@@ -467,7 +467,9 @@ public class SaadaDBConnector extends DefaultHandler {
 		}else if(str.equals("system")){
 			this.coord_sys = s.trim();
 		}else if(str.equals("equinox")){
-			this.coord_equi = java.lang.Double.parseDouble(s.trim().replaceAll("J", ""));
+			this.coord_equi = Double.parseDouble(s.trim().replaceAll("J", ""));
+		}else if(str.equals("healpix_level")){
+			this.healpix_level = Integer.parseInt(s.trim());
 		}
 	}
 
