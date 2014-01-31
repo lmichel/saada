@@ -254,16 +254,18 @@ public class NewSaadaDB {
 	 * @throws FatalException 
 	 */
 	public static void main(String args[])   {
+		int retour = 1;
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			NewSaadaDB newdb = new NewSaadaDB(args[args.length-1], ap.getPassword());
 			newdb.buildSaadaDB();
 			NewWebServer.main(args);
+			retour = 0;
 		} catch (Exception e3) {
 			Messenger.printStackTrace(e3);
 		} finally {
 			Database.close();
-			System.exit(1);			
+			System.exit(retour);			
 		}
 	}
 
