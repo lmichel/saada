@@ -177,7 +177,8 @@ public class NewSaadaDB {
 			GenerationClassSaadaDB.Generation(connector);
 			/*
 			 * Create SQL tables
-			 */			
+			 */	
+			Messenger.debug_mode = true;
 			Database.initConnector(this.connector.getDbname(), false);
 			connector.setAdminAuth(this.admin_passwd);
 			Database.getWrapper().loadSQLProcedures();
