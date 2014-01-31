@@ -1,11 +1,15 @@
 package saadadb.util;
 
+import java.io.File;
+import java.util.Collection;
+
 
 /**
  * @author michel
  * * @version $Id$
 
  * 12/2009: ignore empty items in arrays to merge
+ * 01/2014: Add merger on cCollections
  */
 public class Merger {
 	
@@ -27,6 +31,27 @@ public class Merger {
 					retour += ", ";
 				}
 				retour += array[i];
+			}
+			return retour;
+		}
+	}
+	/**
+	 * @param array
+	 * @return
+	 */
+	public final static String getMergedCollection(Collection<?> array) {
+		if( array == null ) {
+			return "";
+		} else {
+			String retour ="";
+			for( Object o : array) {
+				if( o == null || o.toString().trim().length() == 0 ) {
+					continue;
+				}
+				if( retour.length() > 0 ) {
+					retour += ", ";
+				}
+				retour += o.toString();
 			}
 			return retour;
 		}
@@ -53,6 +78,33 @@ public class Merger {
 					retour += ", ";
 				}
 				retour += array[i] + suffix;
+			}
+			return retour;
+		}
+	}
+	/**
+	 * @param singleEntries
+	 * @param suffix
+	 * @return
+	 */
+	public final static String getMergedCollection(Collection<?> singleEntries,  String prefix, String separator) {
+		if( singleEntries == null ) {
+			return "";
+		} else if( separator == null ) {
+			return getMergedCollection(singleEntries, prefix, ",");
+		} else {
+			String retour ="";
+			if( prefix == null ) prefix = "";
+			int i=0;
+			for( Object o : singleEntries) {
+				if( o.toString().trim().length() == 0 ) {
+					continue;
+				}
+				if( i > 0 ) {
+					retour += separator;
+				}
+				retour += prefix + " " + o.toString();
+				i++;
 			}
 			return retour;
 		}

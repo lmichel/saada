@@ -69,6 +69,7 @@ public class SQLQuery {
 //			System.out.println("============= OPEN " +  Spooler.getSpooler());
 			databaseConnection = Spooler.getSpooler().getConnection();
 		} catch(Exception e) {
+			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 
@@ -107,7 +108,8 @@ public class SQLQuery {
 			try {
 				resultset = _stmts.executeQuery(query); 
 			} catch(Exception e) {
-				Messenger.printMsg(Messenger.WARNING, "Take a new connection  due to " + e);
+				Messenger.printMsg(Messenger.WARNING, "Takea new connection  due to the following error " + e);
+				Messenger.printStackTrace(e);
 				_stmts.close();
 				Spooler.getSpooler().give(databaseConnection);
 				databaseConnection = Spooler.getSpooler().getConnection();

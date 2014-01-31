@@ -188,7 +188,6 @@ public class CartFormator  extends QueryResultFormator{
 		 * which will referenced in the ZipEntryRef too
 		 */
 		for(ZipEntryRef zer:  entrySet) {
-			System.out.println(zer);
 			if( zer.getType() == ZipEntryRef.SINGLE_FILE ) {
 				long oid = Long.parseLong(zer.getUri());
 				SaadaInstance si = Database.getCache().getObject(oid);
@@ -240,8 +239,10 @@ public class CartFormator  extends QueryResultFormator{
 		}
 		entrySet.addAll(entrySetToAdd);
 		entrySet.removeAll(entrySetToRemove);
-		for(ZipEntryRef zer:  entrySet) {
-			System.out.println(zer);
+		if( Messenger.debug_mode ) {
+			for(ZipEntryRef zer:  entrySet) {
+				Messenger.printMsg(Messenger.DEBUG, zer.toString());
+			}
 		}
 	}
 	/**
@@ -256,7 +257,6 @@ public class CartFormator  extends QueryResultFormator{
 			SaadaInstance si = Database.getCache().getObject(oid);
 
 			ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, Long.toString(oid) + "_" + si.getFileName(), si.getRepositoryPath(), options);
-			System.out.println(zer + " " + zer.includeLinkedData());
 			if( zer.includeLinkedData() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add linked data");
@@ -345,16 +345,9 @@ public class CartFormator  extends QueryResultFormator{
 			if( mr.getSecondary_category() == Category.SPECTRUM ) {
 				ZipFormator formator = new ZipFormator(null);
 				for( long cpoid: cpoids) {
-					for( String s: ((new File(this.responseDir)).list()) ){
-						System.out.println("111111111 " + s);
-					}
 					formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
 					String zpn = formator.getResponseFilePath();
-					for( String s: ((new File(this.responseDir)).list()) ){
-						System.out.println("2222222 " + s);
-					}
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + (new File(zpn)).getName(), zpn);
-					System.out.println("Add " + root + " " + zpn);
 					this.zipMap.add(root, zer);
 				}
 			} else if( mr.getSecondary_category() != Category.ENTRY ) {

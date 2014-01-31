@@ -70,6 +70,8 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void close() throws SQLException{
+//		System.out.println(this + " CLOSE3");
+//		(new Exception()).printStackTrace();
 		this.connection.close();
 		this.connection = null;
 		this.status = OBSOLETE;	

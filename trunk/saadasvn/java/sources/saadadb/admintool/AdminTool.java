@@ -166,8 +166,10 @@ public class AdminTool extends BaseFrame {
 		this.addWindowListener(new WindowAdapter(){
 			@Override
 			public void windowClosing(WindowEvent we){	        	
-				if (AdminComponent.showConfirmDialog(AdminTool.this, "Do you really want to exit?")) 
+				if (AdminComponent.showConfirmDialog(AdminTool.this, "Do you really want to exit?")) {
+					Database.close();
 					System.exit(1);
+				}
 			}
 		});
 
@@ -797,6 +799,7 @@ public class AdminTool extends BaseFrame {
 						new AdminTool(ap.isNolog(), null);
 					} catch (Exception e) {
 						Messenger.printStackTrace(e);
+						Database.close();
 						System.exit(1);
 					}
 				}
@@ -806,7 +809,6 @@ public class AdminTool extends BaseFrame {
 			Database.close();
 			System.exit(1);
 		}
-		Database.close();
 	}
 
 
