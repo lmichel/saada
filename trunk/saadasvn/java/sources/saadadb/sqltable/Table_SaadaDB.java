@@ -40,7 +40,7 @@ public class Table_SaadaDB extends SQLTable {
 				Database.getWrapper().getInsertStatement("saadadb",
 						new String[] {"name", "root_dir" , "repository", "webapp_home", "url_root" , "jdbc_driver",
 						"jdbc_url", "jdbc_reader", "jdbc_reader_password", "jdbc_administrator", "coord_sys",
-						"coord_equi", "spect_coord_unit", "spect_coord_type", "spect_flux_unit", "description"},
+						"coord_equi", "spect_coord_unit", "spect_coord_type", "spect_flux_unit", "healpix_level", "description"},
 						new String[] {Merger.quoteString(Database.getConnector().getDbname())
 						, Merger.quoteString(Database.getConnector().getRoot_dir().replaceAll("\\\\", "\\\\\\\\").replaceAll(" ", "\\ "))
 						, Merger.quoteString(Database.getConnector().getRepository().replaceAll("\\\\", "\\\\\\\\").replaceAll(" ", "\\ ")  )
