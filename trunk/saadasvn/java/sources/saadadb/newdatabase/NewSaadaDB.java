@@ -259,7 +259,6 @@ public class NewSaadaDB {
 			NewSaadaDB newdb = new NewSaadaDB(args[args.length-1], ap.getPassword());
 			newdb.buildSaadaDB();
 			NewWebServer.main(args);
-			Database.close();
 		} catch (Exception e3) {
 			Messenger.printStackTrace(e3);
 		} finally {
