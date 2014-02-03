@@ -136,7 +136,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 		+ "((?:"  + RegExp.FITS_COMMENT + ")?)";
 		/*
 		 * Preliminary test to discard trivial bad cards
-		 * save time and avoid unrelevant smessages
+		 * save time and avoid un-relevant messages
 		 */
 		if( strcard.length() == 0 || strcard.indexOf("=") == -1 ||strcard.startsWith("HISTORY ") ||strcard.startsWith("COMMENT ")) {
 			return;
@@ -678,7 +678,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 	 */
 	@Override
 	public String toString() {
-		return this.nameorg + "(" + this.nameattr + "," + this.type + "," + this.unit + ","+ this.ucd + ","+ this.utype+ "," + this.comment + ")";
+		return this.nameorg + "(" + this.nameattr + "," + this.type + "," + this.unit + ","+ this.ucd + ","+ this.utype+ "," + this.value+ "," + this.comment + ")";
 	}
 }
 
