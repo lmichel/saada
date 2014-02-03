@@ -42,7 +42,10 @@ import saadadb.util.TileRiceDecompressor;
 
  * 06/2011: Returns table rows a an array with the right type taken from the TFORM 
  *          keyword instead of using the reflexion of on data itself (fails on NULL value)
+ * 02/2014  Make it working with a {@link Product} without configuaration, so that the code 
+ *          can be used out of a DB context
  */
+
 public class FitsProduct extends File implements ProductFile{
 
 	private static final long serialVersionUID = 1L;
@@ -751,9 +754,11 @@ public class FitsProduct extends File implements ProductFile{
 		else {										//else, the extension name is undefined
 			this.setFirstGoodHeader(product);
 			Messenger.printMsg(Messenger.TRACE, "The first extension possibly a(n) "
-					+  Category.explain(product.getConfiguration().getCategorySaada())
+					//+  Category.explain(product.getConfiguration().getCategorySaada())
+					+ this.product.getClass().getName()
 					+ " is #"+this.getGood_header_number());
 		}
+		if( this.product.configuration != null )
 		this.product.configuration.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
 		this.product.tableAttributeHandler = this.createTableAttributeHandler();
@@ -805,7 +810,7 @@ public class FitsProduct extends File implements ProductFile{
 		 * Extension containing ENTRIES are handled by the table product, not by the ENTRY product
 		 * Should never occur
 		 */
-		if( product.getConfiguration().getCategorySaada() == Category.ENTRY ) {
+		if( product.getConfiguration() != null && product.getConfiguration().getCategorySaada() == Category.ENTRY ) {
 			return;
 		}
 		String category = this.getFITSExtensionCategory();
@@ -848,7 +853,8 @@ public class FitsProduct extends File implements ProductFile{
 		/*
 		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
 		 */
-		if( product.getConfiguration().getCategorySaada() == Category.SPECTRUM ) {
+		//if( product.getConfiguration().getCategorySaada() == Category.SPECTRUM ) {
+		if( category.equals(Category.explain(Category.SPECTRUM)) ) {
 			i=0;
 			bHDU = null;
 			while( (bHDU = fits_data.getHDU(i))  != null) {
@@ -872,9 +878,23 @@ public class FitsProduct extends File implements ProductFile{
 	 * @return
 	 * @throws FatalException 
 	 */
-	private String getFITSExtensionCategory() throws FatalException {
-		int  prd_cat = product.getConfiguration().getCategorySaada();
-		return Category.explain(prd_cat);
+	private String getFITSExtensionCategory() {
+		try {
+		if( product.getConfiguration() != null) {
+			return Category.explain(product.getConfiguration().getCategorySaada());
+		} else if( product instanceof Image2D) {
+			return Category.explain(Category.IMAGE);
+		} else if( product instanceof Spectrum) {
+			return Category.explain(Category.SPECTRUM);
+		}  else if( product instanceof Table) {
+			return Category.explain(Category.TABLE);
+		} else {
+			return Category.explain(Category.MISC);
+		}
+		} catch(FatalException e){
+			return null;
+		}
+
 	}
 
 	/**
@@ -911,15 +931,21 @@ public class FitsProduct extends File implements ProductFile{
 	 * @param fileName
 	 * @param headerNumber
 	 * @param configuration
+	 * @throws FatalException 
 	 */
-	public LinkedHashMap<String, AttributeHandler> createTableAttributeHandler(){
+	public LinkedHashMap<String, AttributeHandler> createTableAttributeHandler() {
 
 		/*boolean findRA = false;
 		 boolean findDEC = false;*/
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		this.addFirstHDU(retour);
-		int cat_prd = product.getConfiguration().getCategorySaada()		;
-		ArrayList<String> kWIgnored = this.product.configuration.getMapping().getIgnoredAtt();
+		int cat_prd = -1;
+		try {
+			cat_prd = Category.getCategory(getFITSExtensionCategory());
+		} catch (FatalException e) {}
+		
+		ArrayList<String> kWIgnored = (this.product.configuration != null)? this.product.configuration.getMapping().getIgnoredAtt()
+				: new ArrayList<String>();
 
 		if( this.good_header != null && this.good_header != this.first_header) {
 			Cursor it = this.good_header.getHeader().iterator();
@@ -949,8 +975,7 @@ public class FitsProduct extends File implements ProductFile{
 				else if( cat_prd == Category.TABLE 
 						&& (name_org.startsWith("TFORM") || name_org.startsWith("TUNIT") || name_org.startsWith("TDISP") || name_org.startsWith("TRUEN")) ) {
 					continue;
-				}
-				else {
+				} else {
 					/*
 					 * attribute read from the Xtension must squash former attribute with the same name
 					 * They are not considered as duplicated. (EXTENSION, BITPIX...)
@@ -971,7 +996,8 @@ public class FitsProduct extends File implements ProductFile{
 
 		Header header = this.first_header.getHeader();
 		Cursor it = header.iterator();
-		ArrayList<String> kWIgnored = this.product.configuration.getMapping().getIgnoredAtt();
+		ArrayList<String> kWIgnored = (this.product.configuration != null)?this.product.configuration.getMapping().getIgnoredAtt()
+				: new ArrayList<String>();
 
 		while(it.hasNext()){
 			HeaderCard hcard = null;
@@ -1006,7 +1032,8 @@ public class FitsProduct extends File implements ProductFile{
 					attribute.setNameattr(keyChanged);
 				}
 				retour.put(keyChanged, attribute);
-				attribute.setCollname(this.product.configuration.getCollectionName());				
+				if( this.product.configuration != null )
+					attribute.setCollname(this.product.configuration.getCollectionName());				
 				this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
 			}
 			//this.attMd5Tree.put(md5Key, md5Type);
@@ -1622,7 +1649,7 @@ public class FitsProduct extends File implements ProductFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrame()
 	 */
-	public void setSpaceFrame(){
+	public void setSpaceFrame() {
 
 		space_frame = new SpaceFrame(this.createTableAttributeHandler());
 	}	
