@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nom.tam.fits.FitsException;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
@@ -80,8 +81,9 @@ public interface ProductFile extends Enumeration{
 	
 	/**
 	 * Look for position frame and KW in column names
+	 * @throws FatalException 
 	 */
-	public void setSpaceFrame();
+	public void setSpaceFrame() ;
 	
 	public String getName();
 	
