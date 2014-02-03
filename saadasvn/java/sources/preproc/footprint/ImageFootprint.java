@@ -78,14 +78,11 @@ public class ImageFootprint {
 		for( int l=yMin ; l<=yMax ; l++) {
 			for( int c=xMin ; c<=xMax ; c++) {
 				int v = this.outPixels[l][c];
-				//System.out.println(v);
 				if( v != 0 && v != -1 ){
-					//System.out.println("false"); System.exit(1);
 					return false;
 				}
 			}
 		}
-		//System.out.println("true " + line + " " + col + " " + xMin + " " + yMin + " " + yMax); 
 		return true;
 	}
 
@@ -116,8 +113,7 @@ public class ImageFootprint {
 						this.outPixels[l][col] = tmp[(l * this.naxis1) + col];
 					}
 				}
-				
-				buildTileFile();
+				this.buildTileFile();
 			} else {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "bitpix " + bitpix + " not supported");
 			}
@@ -165,20 +161,15 @@ public class ImageFootprint {
 			if( key.equals("XTENSION") || key.equals("BITPIX")) continue;
 			else if( type == "boolean" ) {
 				hdrn.addValue(key, new Boolean(value) , ah.getComment());
-			}
-			else if( type == "int" ) {
+			} else if( type == "int" ) {
 				hdrn.addValue(key, new Integer(value) , ah.getComment());
-			}
-			else if( type == "long" ) {
+			} else if( type == "long" ) {
 				hdrn.addValue(key, new Long(value) , ah.getComment());
-			}
-			else if( type == "float" ) {
+			} else if( type == "float" ) {
 				hdrn.addValue(key, new Float(value) , ah.getComment());
-			}
-			else if( type == "double" ) {
+			} else if( type == "double" ) {
 				hdrn.addValue(key, new Double(value) , ah.getComment());
-			}
-			else  {
+			} else  {
 				hdrn.addValue(key, value , ah.getComment());
 			}			
 			hdrn.addValue("BLANK", new Integer(-1) , "Out of Footprint pixels");
