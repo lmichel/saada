@@ -75,7 +75,7 @@ public class Upgrade {
 
 		for( int cat: new int[]{Category.ENTRY, Category.SPECTRUM, Category.IMAGE}){
 			for( String cn: Database.getCachemeta().getCollection_names()) {
-				HealpixSetter healpixSetter = new HealpixSetter(Database.getWrapper().getCollectionTableName(cn, cat), true);
+				HealpixSetter healpixSetter = new HealpixSetter(Database.getWrapper().getCollectionTableName(cn, cat));
 				healpixSetter.set();
 			}
 		}

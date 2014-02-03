@@ -21,7 +21,6 @@ import saadadb.util.Messenger;
 public class HealpixSetter {
 	private final String tableName;
 	private final String tmpTableName = "Healpixstore";
-	private final boolean force;
 	private HealpixIndex healpixIndex ;
 	public static final int COMMIT_FREQUENCY = 100000;
 
@@ -29,11 +28,10 @@ public class HealpixSetter {
 	 * @param tableName :name of the table where the column healpix_csa must be set. No check about the presence of columns pos_ra/dev_csa and oidsaada
 	 * @throws Exception
 	 */
-	public HealpixSetter(String tableName, boolean force) throws Exception {
+	public HealpixSetter(String tableName) throws Exception {
 		super();
 		this.tableName = tableName;
 		this.healpixIndex = new HealpixIndex(1 << Database.getHeapix_level());
-		this.force = force;
 	}
 	
 	/**
@@ -48,7 +46,7 @@ public class HealpixSetter {
 //				, new String[]{"healpix_csa"}
 //		        , new String[]{this.tmpTableName + ".healpix_csa"}
 //				, this.tmpTableName + ".healpix_csa IS NOT NULL"));	
-		String nf =  (force)? "": "AND "+tableName+".healpix_csa IS NULL";
+		String nf = "AND "+tableName+".healpix_csa IS NULL";
 		SQLTable.addQueryToTransaction(
 				  "UPDATE " +tableName
 				+ " SET healpix_csa = ( SELECT healpix_csa FROM " + tmpTableName 
@@ -62,7 +60,7 @@ public class HealpixSetter {
 	public void setOld() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
 		SQLQuery sqlq = new SQLQuery();
-		String nf =  (force)? "": "AND healpix_csa IS NULL";
+		String nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = sqlq.run("SELECT oidsaada, pos_ra_csa, pos_dec_csa FROM " 
 				+ tableName 
 				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
@@ -101,7 +99,12 @@ public class HealpixSetter {
 	}
 	public void set() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
-		while( setBurst() > 0 ) ;
+		int sum = 0;
+		int v;
+		while( (v = setBurst()) > 0 ){ 
+			sum += v;
+			Messenger.printMsg(Messenger.TRACE, sum + " rows updated");			
+		}
 		SQLTable.beginTransaction();
 		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
 		SQLTable.commitTransaction();
@@ -110,12 +113,11 @@ public class HealpixSetter {
 	public int setBurst() throws Exception {
 		Statement stmt =  Database.get_connection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
-		String nf =  (force)? "": "AND healpix_csa IS NULL";
-		nf =  "AND healpix_csa IS NULL";
+		String nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " 
 				+ tableName 
 				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf + " limit " + COMMIT_FREQUENCY);
-		int cpt = 0, sum=0;
+		int cpt = 0;
 		while (rs.next()){
 			double ra     = rs.getDouble("pos_ra_csa");
 			double dec    = rs.getDouble("pos_dec_csa");
@@ -123,13 +125,10 @@ public class HealpixSetter {
 			rs.updateRow();
 			cpt++;
 			if( cpt > COMMIT_FREQUENCY) {
-				sum += cpt;
-				Messenger.printMsg(Messenger.TRACE, sum + " rows updated");
 				break;
 			}
 		}
 		stmt.close();
-		Messenger.printMsg(Messenger.TRACE, sum + " rows updated");
 		return cpt;
 	}
 }
