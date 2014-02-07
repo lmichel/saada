@@ -11,6 +11,8 @@ import cds.astro.Astroframe;
 import cds.astro.Coo;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.products.Coord;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
@@ -47,12 +49,14 @@ public class FillTablePix {
 	 * @throws Exception
 	 */
 	public static void prepareTable() throws Exception{
-
-		if(Database.getWrapper().tableExist(tableTMP)) {
+		DatabaseConnection connection = Spooler.getSpooler().getConnection();
+		
+		if(Database.getWrapper().tableExist(connection, tableTMP)) {
 			SQLTable.beginTransaction();
 			SQLTable.dropTable(tableTMP);
 			SQLTable.commitTransaction();
 		}	
+		Spooler.getSpooler().give(connection);
 		SQLTable.beginTransaction();
 		SQLTable.createTable(tableTMP,"idpoint LONG, hpx8 LONG, hpx10 LONG, hpx12 LONG","idpoint",false);
 		SQLTable.commitTransaction();

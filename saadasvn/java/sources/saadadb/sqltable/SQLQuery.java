@@ -67,7 +67,7 @@ public class SQLQuery {
 //			StackTraceElement [] se = (new Exception()).getStackTrace();
 //			for( int i=0 ; i<3 ; i++ ) System.out.println(se[i]);
 //			System.out.println("============= OPEN " +  Spooler.getSpooler());
-			databaseConnection = Spooler.getSpooler().getConnection();
+			databaseConnection = Database.getConnection();
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -111,8 +111,8 @@ public class SQLQuery {
 				Messenger.printMsg(Messenger.WARNING, "Takea new connection  due to the following error " + e);
 				Messenger.printStackTrace(e);
 				_stmts.close();
-				Spooler.getSpooler().give(databaseConnection);
-				databaseConnection = Spooler.getSpooler().getConnection();
+				Database.giveConnection(databaseConnection);
+				databaseConnection = Database.getConnection();
 				_stmts = databaseConnection.getStatement();
 //
 //				Messenger.printMsg(Messenger.ERROR, "Query: " + query);
@@ -189,42 +189,16 @@ public class SQLQuery {
 		try {
 			if( resultset != null ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Close result set");
+					Messenger.printMsg(Messenger.DEBUG, "Close result set " + nb_open);
 				resultset.close();
 			}
 			//System.out.println("============= CLOSE1 " +  Spooler.getSpooler());
-			Spooler.getSpooler().give(databaseConnection);
+			Database.giveConnection(databaseConnection);
 			//System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
-		}
-	}
-
-	/*
-	 * TODO The following must be removed because they are always executed before the normal transaction.
-	 * That can alter the JDBC meta cache if a resource is removed thus make some queries generating sputious errors
-	 */
-	/**
-	 * Execute query and ignore errors
-	 * @param sql
-	 */
-	public static void forceUpdateQueryXX(String sql)  {
-		if( sql == null || sql.length() == 0 ) {
-			return;
-		}
-		try {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "FORCE UPDATE: " + sql);
-			Database.get_connection().setAutoCommit(true);
-
-			Statement stmt = Database.get_connection().createStatement();
-			stmt.executeUpdate(sql);
-			stmt.close();
-
-		} catch(Exception e ) {
-			Messenger.printMsg(Messenger.ERROR, "Query: " + sql + ": " + e.toString());
 		}
 	}
 

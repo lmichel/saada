@@ -5,7 +5,6 @@ package saadadb.database.spooler;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -27,12 +26,13 @@ import saadadb.util.Messenger;
 				stmt.execute(getQuery());
 				.. some processing ............
 				spooler.give(connectionReference);
-					
+
  *
  * Tested by the class {@link SpoolerTest}
  * @author michel
  * @version $Id$
  *
+ * 02/2014: Add the admin connection, with a lot of impact
  */
 public class Spooler { 
 	/**
@@ -52,6 +52,10 @@ public class Spooler {
 	 */
 	public static final int REPORT_PERIOD = 10000;
 	private ArrayList<DatabaseConnection> connectionsReferences = new ArrayList<DatabaseConnection>();
+	/**
+	 * DB connection the the admin privilege
+	 */
+	private DatabaseConnection adminConnection;
 	/**
 	 * Reference to the singleton instance
 	 */
@@ -116,6 +120,10 @@ public class Spooler {
 		this.maxConnections = ( m != -1 )? m: MAX_CONNEXION;
 		this.checkAvailableConnections();
 		this.spoolerIsRunning = true;
+		/*
+		 * Make sure to start with at least one connection
+		 */
+		this.addConnectionReference();
 		(new Thread(new ListChecker())).start();
 		Messenger.printMsg(Messenger.TRACE, "Spooler ready");
 	}
@@ -201,6 +209,31 @@ public class Spooler {
 		return retour;		
 	}
 	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public DatabaseConnection getAdminConnection() throws Exception {
+		if( !this.spoolerIsRunning ) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
+		} else if( this.adminConnection == null) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode han=sn't been set.");
+		} else {
+			while( !this.adminConnection.isFree()  ) {
+				Thread.sleep(WAIT_DELAY);
+			}
+			/*
+			 * With SQLITE it is always better to close and reopen the connection in order to allow it to get the "write_lock" locking level, 
+			 * which is necessary to modify the DB schema.
+			 */
+			if( !Database.getWrapper().supportDropTableInTransaction() ) {
+				this.adminConnection.reconnect();
+			}
+			return this.adminConnection;		
+		}
+		return null;	
+	}
+
+	/**
 	 * Must be invoked after the connection has been used.
 	 * @param connectionReference
 	 * @throws SQLException
@@ -210,12 +243,41 @@ public class Spooler {
 			connectionReference.give();
 		}
 	}
+	/**
+	 * Give back the admin connection
+	 * @throws SQLException
+	 */
+	public void giveAdmin() throws SQLException{
+		this.adminConnection.give();
+	}
+
+	/**
+	 * @param password
+	 * @throws Exception
+	 */
+	public void openAdminConnection(String password) throws Exception{
+		if( this.adminConnection == null ) {
+			if( Database.getWrapper().supportConcurrentAccess() ) {
+				this.adminConnection = new DatabaseAdminConnection(-1, password);
+			} else {
+				this.adminConnection = this.connectionsReferences.get(0);
+			}
+		}		
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isRunning() {
+		return this.spoolerIsRunning;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		String s="Spooler: " +connectionsReferences.size() + "/" + this.maxConnections + " ";
 		for( DatabaseConnection cr: connectionsReferences) s += cr.toShortString();
+		s += " [" + ((adminConnection == null)? "-": adminConnection.toShortString()) + "]";
 		return s;
 
 	}
@@ -309,7 +371,6 @@ public class Spooler {
 			}
 			int cpt = 0;
 			while( spoolerIsRunning ) {
-				//System.out.println(numConnection);
 				try {
 					Thread.sleep(CHECK_PERIOD);	
 					completeConnectionsReferences();

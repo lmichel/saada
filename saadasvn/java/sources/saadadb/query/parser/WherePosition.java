@@ -121,12 +121,11 @@ public final class WherePosition{
 				"202.43629,+47.15609, 202.38558,+47.22314, 202.41519,+47.23658, " +
 				"202.44488,+47.18796, 202.46833,+47.18378, 202.49177,+47.19301, " +
 				"202.49177,+47.21481, 202.46336,+47.22738, 202.45590,+47.28860, " +
-				"202.45590,+47.28860" +
 				"\", 0 , -, ICRS) } "); 
 					
 		
 		
-		System.out.println(wp.getSqlConstraint());
+		System.out.println(wp.getSqlConstraint().replaceAll("OR", "\nOR"));
 		Database.close();
 	}
 

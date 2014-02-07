@@ -142,13 +142,12 @@ public class Triangulator {
 			boolean intersectTriangle = t.intersect(triangleSegments);
 			boolean intersectPerimetre = t.intersect(polygone.segments);
 			boolean intersectPoint = t.intersectPointPerimetre(polygone.points);
-			/*System.out.println(t);
-			System.out.println("conc : "+concave);
-			System.out.println("intertri : "+intersectTriangle);
-			System.out.println("interp : "+intersectPoint);
-			System.out.println("interperi : "+intersectPerimetre);
-			System.out.println("cont : "+containsPoint );
-			System.out.println("");*/
+			if( Messenger.debug_mode ) {
+				Messenger.printMsg(Messenger.DEBUG, "triangle: " + t);
+				Messenger.printMsg(Messenger.DEBUG, "status  : concave:" +concave
+						+ " inter(tr):"+intersectTriangle+ " inter(p):"
+						+intersectPoint+ " inter(peri):"+intersectPerimetre+ " cont(p):"+containsPoint );
+			}
 			if (!concave && !intersectTriangle && !intersectPerimetre && !intersectPoint && !containsPoint) {
 				if (polygone.is3SegmentPerimetre(t)) {
 					p0.setOut();
@@ -156,7 +155,9 @@ public class Triangulator {
 				}
 				//Adding the triangle to the list of triangles
 				triangles.add(t);
-				System.out.println("add " + t);
+				if( Messenger.debug_mode ) {
+					Messenger.printMsg(Messenger.DEBUG, "Added");
+				}
 				p1.setOut();
 				//Creating a polygon with the new points
 				this.polygone=new Polygone(this.polygone.newPolygone());
@@ -165,6 +166,11 @@ public class Triangulator {
 				triangleSegments.add(new Segment(p0,p1));
 				triangleSegments.add(new Segment(p1,p2));
 				triangleSegments.add(new Segment(p2,p0));	
+			} else {
+				if( Messenger.debug_mode ) {
+					Messenger.printMsg(Messenger.DEBUG, "Skipped");
+				}
+
 			}
 			currentEar++;
 			if (currentEar>=polygone.points.size()-1) {
@@ -173,7 +179,9 @@ public class Triangulator {
 		}
 		if (polygone.isTriangle()) {
 			Triangle t = polygone.getTriangle();
-			System.out.println("coucou " + t);
+			if( Messenger.debug_mode ) {
+				Messenger.printMsg(Messenger.DEBUG, "Finally add " + t);
+			}
 
 			triangles.add(t);
 		}

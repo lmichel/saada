@@ -2,8 +2,8 @@ package saadadb.database;
 
 import healpix.core.HealpixIndex;
 
+import java.io.File;
 import java.lang.reflect.Field;
-import java.sql.Connection;
 import java.sql.ResultSet;
 
 import saadadb.cache.CacheManager;
@@ -11,6 +11,7 @@ import saadadb.cache.CacheManagerRelationIndex;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -30,21 +31,15 @@ import cds.astro.Qbox;
  * @author michel
  * @version $Id$
  * 01/2014: Add healpixIndex filed with its getter
+ * 02/2014: Use of the spooler for the admin connections
  */
 public class Database {
 
-	private static String separ = System.getProperty("file.separator");
+	private static String separ = File.separator;
 	private static SaadaDBConnector connector;
-	public static String max_int = Integer.toString(Integer.MAX_VALUE);
-
-	public static String max_long = Long.toString(Long.MAX_VALUE);
-
-	public static String max_short = Short.toString(Short.MAX_VALUE);
 
 	public static CacheManager cache ;
-
 	public static CacheManagerRelationIndex cacheindex = null;
-
 	public static CacheMeta cachemeta;
 
 	private static boolean init_done = false;
@@ -63,7 +58,7 @@ public class Database {
 			Messenger.printMsg(Messenger.TRACE, "Initialization of SaadaDB <" + db_name + ">");
 			try{
 				initConnector(db_name, false);
-
+				Spooler.getSpooler();
 				cacheindex = new CacheManagerRelationIndex(20, Repository.getIndexrelationsPath() + Database.getSepar());
 				cachemeta = new CacheMeta();
 				cache = new CacheManager();
@@ -111,12 +106,12 @@ public class Database {
 	 * @throws Exception
 	 */
 	public static void setAdminMode(String password) throws Exception {
-		getConnector().setAdminAuth(password);
+		Spooler.getSpooler().openAdminConnection(password);
 		Database.updatSchema();
 	}
 
 	/**
-	 * Does some schema update
+	 * Do some light weight schema update
 	 * @throws Exception
 	 */
 	public static final void updatSchema()  throws Exception {
@@ -124,6 +119,10 @@ public class Database {
 		Table_Saada_Class.addStatColumn();
 		Table_Saada_Collection.addStatColumn();		
 	}
+	
+	/******************************
+	 * Data ase access methods
+	 *****************************/
 	/**
 	 * @return
 	 */
@@ -144,7 +143,39 @@ public class Database {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Get a free reader connection
+	 * @return
+	 * @throws Exception
+	 */
+	public static DatabaseConnection getConnection() throws Exception {
+		return Spooler.getSpooler().getConnection();
+	}
+	/**
+	 * Give back the reader connection to the spooler
+	 * @param connection
+	 * @throws Exception
+	 */
+	public static void giveConnection(DatabaseConnection connection) throws Exception {
+		Spooler.getSpooler().give(connection);
+	}
+	/**
+	 * Get the admin connection
+	 * @return
+	 * @throws Exception
+	 */
+	public static DatabaseConnection getAdminConnection() throws Exception {
+		return Spooler.getSpooler().getAdminConnection();
+	}
+	/**
+	 * Give back the admon connection to the spooler
+	 * @param connection
+	 * @throws Exception
+	 */
+	public static void giveAdminConnection() throws Exception {
+		Spooler.getSpooler().giveAdmin();
+	}
 	/**
 	 * @return
 	 * @throws Exception
@@ -156,8 +187,21 @@ public class Database {
 		return healpixIndex;
 	}
 	/**
-	 * @return
+	 * Close the spooler: otherwise a thread continue to run 
 	 */
+	public static void close() {
+		Messenger.printMsg(Messenger.TRACE, "Closing database");
+		try {
+			Spooler.getSpooler().close();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+		}
+	}
+
+	
+	/******************************
+	 * Getters
+	 *****************************/
 	public static String getUrl_root() {
 		if( localUrl_root.length() > 0 ) {
 			return localUrl_root;
@@ -168,15 +212,9 @@ public class Database {
 	public static void setUrl_root(String url_root) {
 		localUrl_root = url_root;
 	}
-	/**
-	 * @return
-	 */
 	public static double getCoord_equi() {
 		return connector.getCoord_equi();
 	}
-	/**
-	 * @return
-	 */
 	public static String getCoord_sys() {
 		return connector.getCoord_sys();
 	}
@@ -191,15 +229,9 @@ public class Database {
 			return connector.getCoord_sys();
 		}
 	}
-	/**
-	 * @return
-	 */
 	public static Astroframe getAstroframe() {
 		return connector.getAstroframe();
 	}
-	/**
-	 * @return
-	 */
 	public static String getDbname() {
 		return connector.getDbname();
 	}
@@ -211,51 +243,27 @@ public class Database {
 	public static String getTempodbName() throws FatalException {
 		return getWrapper().getTempodbName(connector.getDbname());
 	}
-	/**
-	 * @return
-	 */
 	public static String getDescription() {
 		return connector.getDescription();
 	}
-	/**
-	 * @return
-	 */
 	public static String getFlux_unit() {
 		return connector.getFlux_unit();
 	}
-	/**
-	 * @return
-	 */
 	public static String getJdbc_driver() {
 		return connector.getJdbc_driver();
 	}
-	/**
-	 * @return
-	 */
 	public static String getJdbc_reader_password() {
 		return connector.getJdbc_reader_password();
 	}
-	/**
-	 * @return
-	 */
 	public String getJdbc_url() {
 		return connector.getJdbc_url();
 	}
-	/**
-	 * @return
-	 */
 	public static String getJdbc_reader() {
 		return connector.getJdbc_reader();
 	}
-	/**
-	 * @return
-	 */
 	public static String getJdbc_administrator() {
 		return connector.getJdbc_administrator();
 	}
-	/**
-	 * @return
-	 */
 	public static String getRepository() {
 		return connector.getRepository();
 	}
@@ -271,45 +279,22 @@ public class Database {
 	public static String getSpect_unit() {
 		return connector.getSpect_unit();
 	}
-	/**
-	 * @return
-	 */
 	public static String getClassLocation() {
 		return Database.getRoot_dir() + Database.getSepar() + "class_mapping";
 	}
-	/**
-	 * @return
-	 */
 	public static String getLogDir() {
 		return Repository.getLogsPath();
 	}
-	/**
-	 * @return
-	 */
 	public static String getVOreportDir() {
 		return Repository.getVoreportsPath();
 	}
-
-	/**
-	 * @return
-	 * @throws FatalException 
-	 */
-	public static Connection get_connection() throws FatalException {
-		if( connector == null ) {
-			return null;
-		}
-		else {
-			return connector.getJDBCConnection();
-		}
-	}
-
-	/**
-	 * @return
-	 */
 	public static String getSpect_type() {
 		return connector.getSpect_type();
 	}
 
+	/******************************
+	 * Data acces methods
+	 *****************************/
 
 	/**
 	 * @return object persistence of this OID
@@ -427,18 +412,6 @@ public class Database {
 	}
 
 	/**
-	 * @return Returns the path separator usable in Regexp (\ -> \\).
-	 */
-	public static String getRegexpSepar() {
-		if( separ.equals("\\")) {
-			return "\\\\";
-		}
-		else {
-			return separ;	
-		}
-	}
-
-	/**
 	 *  Wrapper for the garbage collector: can enable/disable any explicit callback to the gc
 	 */
 	public static void gc() {
@@ -451,14 +424,6 @@ public class Database {
 	public static void init() {
 
 	}
-	
-	public static void close() {
-		Messenger.printMsg(Messenger.TRACE, "Closing database");
-		try {
-			Spooler.getSpooler().close();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-		}
-	}
+
 
 }

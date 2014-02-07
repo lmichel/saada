@@ -13,13 +13,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import saadadb.admin.SaadaDBAdmin;
-import saadadb.admin.widgets.EditableLabel;
+
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ToolBarPanel;
+import saadadb.admintool.components.input.EditableLabel;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
@@ -81,7 +81,7 @@ public class WebInstallPanel extends EditPanel {
 					try {						
 						td = InstallParamValidator.getTomcatDir(selected_file.getAbsolutePath());
 					} catch(QueryException e) {
-						SaadaDBAdmin.showFatalError(rootFrame, e);
+						AdminComponent.showFatalError(rootFrame, e);
 						return;
 					}
 
@@ -95,7 +95,7 @@ public class WebInstallPanel extends EditPanel {
 						CmdThread ct = new ThreadDeployWebApp(WebInstallPanel.this.rootFrame, "Deploy Webapp");
 						ct.run();
 					} catch (SaadaException e) {
-						SaadaDBAdmin.showFatalError(rootFrame, e);
+						AdminComponent.showFatalError(rootFrame, e);
 					}
 				}
 			}

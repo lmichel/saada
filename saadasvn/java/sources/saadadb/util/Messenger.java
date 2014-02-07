@@ -18,12 +18,13 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-import saadadb.admin.dialogs.AbortExceptionDialog;
-import saadadb.admin.dialogs.FatalExceptionDialog;
-import saadadb.admin.dialogs.IgnoreExceptionDialog;
-import saadadb.admin.dialogs.QueryExceptionDialog;
-import saadadb.admin.dialogs.StartDialog;
+
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.dialogs.AbortExceptionDialog;
+import saadadb.admintool.dialogs.FatalExceptionDialog;
+import saadadb.admintool.dialogs.IgnoreExceptionDialog;
+import saadadb.admintool.dialogs.QueryExceptionDialog;
+import saadadb.admintool.dialogs.StartDialog;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;

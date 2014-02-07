@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import saadadb.configuration.RelationConf;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -26,7 +28,6 @@ import saadadb.query.region.request.Zone;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import cds.astro.Coo;
-import cds.astro.ICRS;
 import cds.astro.Qbox;
 
 
@@ -109,10 +110,9 @@ abstract public class DbmsWrapper {
 			/*
 			 * Connect the Test db
 			 */
-			Database.setConnector(new SaadaDBStandAloneConnector(this.url + test_base, this.driver, test_base, adm, read, readp));
 			Database.setAdminMode(admp);
-			admin_connection = Database.getConnector().getJDBCConnection();
-			admin_connection.setAutoCommit(true);
+			DatabaseConnection connection = Spooler.getSpooler().getAdminConnection();
+			connection.setAutoCommit(true);
 			/*
 			 * Populate the Test db
 			 */
@@ -141,7 +141,7 @@ abstract public class DbmsWrapper {
 			tmpfile.close();
 
 			if( this.tsvLoadNotSupported() ) {
-				this.storeTable(test_table, -1, tmp_filename) ;			
+				this.storeTable(connection, test_table, -1, tmp_filename) ;			
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
 					stmt.executeUpdate(str);					
@@ -327,22 +327,6 @@ abstract public class DbmsWrapper {
 	}
 
 	/**
-	 * Return a new connection used for large queries. Connection must be transient to avoid memory
-	 * to explode as it is used
-	 * That cannot work with sqlite because we would have to load again SQL procs which is quite difficult
-	 * @return
-	 * @throws SQLException
-	 */
-	public Connection openLargeQueryConnection() throws Exception{
-		Connection retour = DriverManager.getConnection(Database.getConnector().getJdbc_url()
-				,Database.getConnector().getJdbc_reader()
-				, Database.getConnector().getJdbc_reader_password());
-		retour.setAutoCommit(false);
-		this.setLocalBehavior(retour);
-		return retour;
-	}
-
-	/**
 	 * @param conn
 	 */
 	public void setLocalBehavior(Connection conn) throws Exception {}
@@ -402,6 +386,21 @@ abstract public class DbmsWrapper {
 		return true;
 	}
 	/**
+	 * Says whether JDBC statement support updates
+	 * @return
+	 */
+	public boolean supportJDBCUpdate() {
+		return true;
+	}
+	/**
+	 * Say whether the DBMS support multiple connections 
+	 * @return
+	 */
+	public boolean supportConcurrentAccess(){
+		return true;
+	}
+
+	/**
 	 * Returns true if there is no SQL statement loading data from a file
 	 * In that case, the wrapper does this job out of the current transaction
 	 * @return
@@ -410,7 +409,14 @@ abstract public class DbmsWrapper {
 		return false;
 	}
 
-	public  void storeTable(String tableName, int ncols, String tableFile) throws Exception {
+	/**
+	 * @param connection must be admin
+	 * @param tableName
+	 * @param ncols
+	 * @param tableFile
+	 * @throws Exception
+	 */
+	public  void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
 	}
 
 	/**
@@ -939,7 +945,18 @@ abstract public class DbmsWrapper {
 	 * @param searched_table
 	 * @return
 	 */
-	public abstract boolean tableExist(String searched_table)throws Exception;
+	public abstract boolean tableExist(DatabaseConnection connection, String searched_table)throws Exception;
+	/**
+	 * @param searched_table
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean tableExist(String searched_table)throws Exception {
+		DatabaseConnection connection = Database.getConnection();
+		boolean retour = tableExist(connection, searched_table);
+		Database.giveConnection(connection);
+		return retour;
+	}
 
 	/**
 	 * Return the (COLUMN_NAME, TYPE_NAME) tuples for all columns of the searched_table
@@ -948,7 +965,7 @@ abstract public class DbmsWrapper {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract ResultSet getTableColumns(String searched_table)throws Exception;
+	public abstract ResultSet getTableColumns(DatabaseConnection connection, String searched_table)throws Exception;
 
 	/**
 	 * Return a map <index_name, column_name> of all ndexes of table searched_table if it exists
@@ -957,7 +974,13 @@ abstract public class DbmsWrapper {
 	 * @return
 	 * @throws FatalException
 	 */
-	public abstract Map<String, String> getExistingIndex(String table) throws FatalException;
+	public abstract Map<String, String> getExistingIndex(DatabaseConnection connection, String table) throws FatalException;
+	public Map<String, String> getExistingIndex(String table)throws Exception {
+		DatabaseConnection connection =  Database.getConnection();
+		Map<String, String> retour = getExistingIndex(connection, table);
+		Database.giveConnection(connection);
+		return retour;
+	}
 
 	/**
 	 * Used by queries looking like
@@ -1137,7 +1160,7 @@ abstract public class DbmsWrapper {
 	 * @throws QueryException 
 	 * @throws Exception 
 	 */
-	public abstract String[] changeColumnType(String table, String column, String type) throws QueryException, Exception;
+	public abstract String[] changeColumnType(DatabaseConnection connection, String table, String column, String type) throws QueryException, Exception;
 
 	/**
 	 * @param table
@@ -1290,15 +1313,5 @@ abstract public class DbmsWrapper {
 	 * Returns a map of SQL statement helping the setup of the relationships
 	 */
 	public abstract Map<String, String> getConditionHelp();
-
-	public static void main(String[] args) throws Exception {
-		System.out.println(DbmsWrapper.getIsInCircleConstraint("", 0, 0, 1));
-		//		ArgsParser ap = new ArgsParser(args);
-		//		Database.init(ap.getDBName());
-		//		Database.getConnector().setAdminMode("password");
-		//		SQLTable.runQueryUpdateSQL(Database.getWrapper().loadSQLProcedures(), false, null);
-
-	}
-
 
 }

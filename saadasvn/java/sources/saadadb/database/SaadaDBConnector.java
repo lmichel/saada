@@ -87,9 +87,9 @@ public class SaadaDBConnector extends DefaultHandler {
 			if( this.jdbc_url != null ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Open new DB connection");
-				Class.forName(this.jdbc_driver);
-				jdbc_connection = DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
-				jdbc_connection.setAutoCommit(true);
+//				Class.forName(this.jdbc_driver);
+//				jdbc_connection = DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
+//				jdbc_connection.setAutoCommit(true);
 			}
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -103,7 +103,19 @@ public class SaadaDBConnector extends DefaultHandler {
 	 * @throws SQLException
 	 */
 	public Connection getNewConnection() throws SQLException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Create a new reader connection on " + this.jdbc_url);
 		return  DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
+		
+	}
+	/**
+	 * @param password
+	 * @return
+	 * @throws SQLException
+	 */
+	public Connection getNewAdminConnection(String password) throws SQLException {
+		Messenger.printMsg(Messenger.DEBUG, "Create a new admin connection on " + this.jdbc_url);
+		return  DriverManager.getConnection(this.jdbc_url, this.jdbc_administrator, password);
 		
 	}
 
@@ -164,9 +176,9 @@ public class SaadaDBConnector extends DefaultHandler {
 				flux_unit  = rs.getString("spect_flux_unit");
 				try {
 					healpix_level = rs.getInt("healpix_level");
-				} catch(PSQLException e){
-					Messenger.printMsg(Messenger.WARNING, "Column healpix_level not in saadadb table: looks like an old version. Run the upgrade tool please!!");
-					healpix_level = SaadaConstant.INT;
+				} catch(Exception e){
+					Messenger.printMsg(Messenger.WARNING, "Column healpix_level not in saadadb table (take level=15): looks like an old version. Run the upgrade tool please!!");
+					healpix_level = 15;
 				}
 				rs.close();
 				_stmt.close();

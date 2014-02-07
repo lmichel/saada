@@ -14,13 +14,14 @@ import java.util.Map;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewSaadaDB;
 import saadadb.newdatabase.NewSaadaDBTool;
-import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
@@ -411,27 +412,29 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public boolean tableExist(String searched_table) throws Exception {
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+	public boolean tableExist(DatabaseConnection connection, String searched_table) throws Exception {
+		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables = dm.getTables(null, "public", null, null);
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
 			if (searched_table.equalsIgnoreCase(tableName.toLowerCase()) 
 					||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName.toLowerCase()))) {
+				rsTables.close();
 				return true;
 			}
 		}
+		rsTables.close();
 		return false;
 	}
 
 	@Override
-	public ResultSet getTableColumns(String searched_table) throws Exception{
-		if( !tableExist(searched_table)) {
+	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table) throws Exception{
+		if( !tableExist(connection, searched_table)) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 			return null;
 		}
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables = dm.getTables(null, null, searched_table.toLowerCase(), null);
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
@@ -439,20 +442,21 @@ public class PostgresWrapper extends DbmsWrapper {
 				return dm.getColumns(null, null, tableName,null);
 			}
 		}
+		rsTables.close();
 		return null;
 
 
 	}
 
 	@Override
-	public Map<String, String> getExistingIndex(String searched_table) throws FatalException {
+	public Map<String, String> getExistingIndex(DatabaseConnection connection, String searched_table) throws FatalException {
 		try {
-			if( !tableExist(searched_table)) {
+			if( !tableExist(connection, searched_table)) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 				return null;
 			}
-			DatabaseMetaData dm = Database.get_connection().getMetaData();
+			DatabaseMetaData dm = connection.getMetaData();
 			ResultSet resultat = dm.getIndexInfo(null, null, searched_table.toLowerCase(), false, false);
 			HashMap<String, String> retour = new HashMap<String, String>();
 			while (resultat.next()) {
@@ -462,6 +466,7 @@ public class PostgresWrapper extends DbmsWrapper {
 					retour.put(iname, col);
 				}
 			}
+			resultat.close();
 			return retour;
 		} catch (Exception e) {
 			AbortException.throwNewException(SaadaException.INTERNAL_ERROR, e);
@@ -520,7 +525,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public  String[] changeColumnType(String table, String column, String type) {
+	public  String[] changeColumnType(DatabaseConnection connection, String table, String column, String type) {
 		return new String[]{"ALTER TABLE " + table + " ALTER COLUMN  " + column + " TYPE " + type};
 
 	}
@@ -571,7 +576,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		 * Must use the database connector instead of the spooler because this query requires 
 		 * the admin privilege
 		 */
-		Statement _stmts = Database.get_connection().createStatement();
+		Statement _stmts = Database.getAdminConnection().getStatement();
 		_stmts.executeQuery("SELECT \n"
 				+ " CASE \n"
 				+ " WHEN EXISTS( \n"
@@ -581,7 +586,7 @@ public class PostgresWrapper extends DbmsWrapper {
 				+ " ) \n"
 				+ " THEN NULL \n"
 				+ " ELSE make_plpgsql() END; \n");
-		_stmts.close();
+		Database.giveAdminConnection();
 		SQLTable.addQueryToTransaction("DROP FUNCTION make_plpgsql();");
 	}
 

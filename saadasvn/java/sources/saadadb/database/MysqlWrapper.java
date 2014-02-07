@@ -19,9 +19,9 @@ import java.util.TreeSet;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
+import saadadb.database.spooler.DatabaseConnection;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewSaadaDB;
 import saadadb.newdatabase.NewSaadaDBTool;
@@ -509,9 +509,9 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public boolean tableExist(String searched_table) throws Exception {
+	public boolean tableExist(DatabaseConnection connection, String searched_table) throws Exception {
 		String[] sc = searched_table.split("\\.");
-		DatabaseMetaData dm= Database.get_connection().getMetaData();;
+		DatabaseMetaData dm= connection.getMetaData();;
 		ResultSet rsTables;
 		/*
 		 * one field: Should be in the main databae
@@ -522,6 +522,7 @@ public class MysqlWrapper extends DbmsWrapper {
 				String tableName = rsTables.getString("TABLE_NAME");
 				if (searched_table.equalsIgnoreCase(tableName) 
 						||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName) ) ) {
+					rsTables.close();
 					return true;
 				}
 			}
@@ -534,21 +535,23 @@ public class MysqlWrapper extends DbmsWrapper {
 			while (rsTables.next()) {
 				String tableName = rsTables.getString("TABLE_NAME");
 				if (sc[1].equalsIgnoreCase(tableName)) {
+					rsTables.close();
 					return true;
 				}
 			}
 		}
+		rsTables.close();
 		return false;
 	}
 
 	@Override
-	public ResultSet getTableColumns(String searched_table) throws Exception{
-		if( !tableExist(searched_table)) {
+	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table) throws Exception{
+		if( !tableExist(connection, searched_table)) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 			return null;
 		}
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables;
 		String[] sc = searched_table.split("\\.");
 		if( sc.length == 1 ) {
@@ -574,13 +577,13 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public Map<String, String> getExistingIndex(String searched_table) throws FatalException {
+	public Map<String, String> getExistingIndex(DatabaseConnection connection, String searched_table) throws FatalException {
 		try {
-			if( !tableExist(searched_table)) {
+			if( !tableExist(connection, searched_table)) {
 				Messenger.printMsg(Messenger.WARNING, "Table <" + searched_table + "> does not exist");
 				return null;
 			}
-			DatabaseMetaData dm = Database.get_connection().getMetaData();
+			DatabaseMetaData dm = connection.getMetaData();
 			ResultSet resultat;
 			String[] sc = searched_table.split("\\.");
 			if( sc.length == 1 ) {
@@ -597,6 +600,7 @@ public class MysqlWrapper extends DbmsWrapper {
 						retour.put(iname.toString(), col);
 					}
 				}
+				resultat.close();
 				return retour;
 			} else {
 				resultat = dm.getIndexInfo(sc[0], null, sc[1], false, false);
@@ -612,6 +616,7 @@ public class MysqlWrapper extends DbmsWrapper {
 						retour.put(iname.toString(), col);
 					}
 				}
+				resultat.close();
 				return retour;				
 			}
 		} catch (Exception e) {
@@ -675,7 +680,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		return "DROP TABLE IF EXISTS " + Database.getTempodbName() + "." + table_name ;
 	}
 	@Override
-	public  String[] changeColumnType(String table, String column, String type) {
+	public  String[] changeColumnType(DatabaseConnection connection, String table, String column, String type) {
 		return new String[] {"ALTER TABLE " + table + " MODIFY  " + column + " " + type};
 
 	}

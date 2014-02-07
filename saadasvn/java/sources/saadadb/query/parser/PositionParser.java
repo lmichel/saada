@@ -20,6 +20,11 @@ import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 import cds.astro.FK5;
 
+/**
+ * @author michel
+ * @version $Id$
+ * 02/2014: Do the conversion only if the given frame differs from the this of the DB
+ */
 public class PositionParser {
 	private String position;
 	private int format=0 ;
@@ -159,9 +164,14 @@ public class PositionParser {
 				 * Convert the result in the Database coord system
 				 */
 				if( this.astroframe != null ) {
-					double converted_coord[] = Coord.convert(this.astroframe, new double[]{this.ra, this.dec}, Database.getAstroframe());
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Convert " + this.ra + " " + this.dec + " " + this.astroframe + " to " + converted_coord[0]+ " " + converted_coord[1] + " " + Database.getAstroframe());
+					double converted_coord[];
+					if( !this.astroframe.getClass().getName().equals( Database.getAstroframe().getClass().getName()) ) {
+						converted_coord = Coord.convert(this.astroframe, new double[]{this.ra, this.dec}, Database.getAstroframe());
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Convert " + this.ra + " " + this.dec + " " + this.astroframe + " to " + converted_coord[0]+ " " + converted_coord[1] + " " + Database.getAstroframe());
+					} else {
+						converted_coord = new double[]{this.ra, this.dec};
+					}
 					this.ra=converted_coord[0];
 					this.dec=converted_coord[1];
 				}

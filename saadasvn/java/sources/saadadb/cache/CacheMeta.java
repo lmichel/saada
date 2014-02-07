@@ -15,6 +15,7 @@ import saadadb.admintool.popups.PopupReloadCache;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -76,6 +77,7 @@ public class CacheMeta {
 			ignoreCollAttrs.add("date_load");
 			ignoreCollAttrs.add("product_url_csa");
 			ignoreCollAttrs.add("sky_pixel_csa");
+			ignoreCollAttrs.add("healpix_csa");
 			ignoreCollAttrs.add("oidtable");
 			ignoreCollAttrs.add("shape_csa");
 			ignoreCollAttrs.add("date_load");
@@ -96,7 +98,7 @@ public class CacheMeta {
 	 */
 	public void reload(boolean force) throws FatalException  {
 		boolean dm = Messenger.debug_mode;
-		Messenger.debug_mode = false;
+		Messenger.debug_mode = true;
 		if (this.loaded == false || force == true) {
 			Messenger.printMsg(Messenger.TRACE, "Reload cache meta");
 			try {
@@ -222,6 +224,7 @@ public class CacheMeta {
 		this.classes = new LinkedHashMap<String, MetaClass>(); 
 		for( int cat=1 ; cat<Category.NB_CAT ; cat++ ) {
 			String str_cat = Category.NAMES[cat].toLowerCase();
+
 			SQLQuery squery = new SQLQuery();
 			ResultSet rs = squery.run("SELECT c.class_id as cclass_id, c.mapping_type, c.signature, c.associate_class, c.description, mc.* "
 					+ "  FROM saada_class c, saada_metaclass_" + str_cat + " mc "
@@ -232,22 +235,25 @@ public class CacheMeta {
 			MetaClass mc = null;
 			while ( rs.next() ) {
 				classname = rs.getString("name_class");
-
 				if( !last_classname.equals(classname) ) {
 					/*
 					 * create the new metaclass
 					 */
 					if( (mc = this.classes.get(classname)) == null ) {
 						mc = new MetaClass(classname);						
-						mc.checkForInstances();
 						this.classes.put(mc.getName(), mc);
 					}
 					last_classname = classname;
 				}
 				mc.update(rs, cat);
-
 			}	
 			squery.close();
+			/*
+			 * SQLIte cannot make nested queries since the spooler supports once connection at the time
+			 */
+			for( MetaClass mcl: this.classes.values()) {
+				mcl.checkForInstances();
+			}
 		}
 		/*
 		 * Just kep a direct reference to the keyset of attribute names
