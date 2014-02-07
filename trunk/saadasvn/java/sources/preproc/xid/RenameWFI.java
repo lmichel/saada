@@ -22,10 +22,10 @@ public class RenameWFI {
 //		SQLTable.commitTransaction();
 		SaadaQLResultSet srs = (new Query()).runQuery("Select ENTRY From * In WideFieldData", false);
 		int cpt = 0;
-		PreparedStatement updatColl = Database.get_connection().prepareStatement(
-				"update WideFieldData_Entry set namesaada = ? where oidsaada = ? ");
-		PreparedStatement updatClass = Database.get_connection().prepareStatement(
-		"update AIP_WFIEntry set namesaada = ? where oidsaada = ? ");
+//		PreparedStatement updatColl = Database.get_connection().prepareStatement(
+//				"update WideFieldData_Entry set namesaada = ? where oidsaada = ? ");
+//		PreparedStatement updatClass = Database.get_connection().prepareStatement(
+//		"update AIP_WFIEntry set namesaada = ? where oidsaada = ? ");
 
 		SQLTable.beginTransaction();
 		int majs = 0;
@@ -34,13 +34,13 @@ public class RenameWFI {
 			EntrySaada es = (EntrySaada) Database.getCache().getObject(oid);
     		Astrocoo coo =new Astrocoo(Database.getAstroframe(), es.getPos_ra_csa(), es.getPos_dec_csa());
     		coo.setPrecision(5);
-			updatColl.setLong(2, oid); 
-			updatClass.setLong(2, oid); 
+//			updatColl.setLong(2, oid); 
+//			updatClass.setLong(2, oid); 
 			String n = es.getFieldString("XIDPGM")  + coo.toString("s").replaceAll(" ", "");
-			updatColl.setString(1, n); 
-			updatClass.setString(1, n); 
-			majs += updatColl.executeUpdate();
-			majs += updatClass.executeUpdate();
+//			updatColl.setString(1, n); 
+//			updatClass.setString(1, n); 
+//			majs += updatColl.executeUpdate();
+//			majs += updatClass.executeUpdate();
 
 			if( (cpt%50000) == 0 ) {
 //    			SQLTable.commitTransaction();

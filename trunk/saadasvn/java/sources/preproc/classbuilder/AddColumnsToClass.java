@@ -58,8 +58,8 @@ public class AddColumnsToClass {
 				SQLTable.beginTransaction();
 				modified = true;
 				Messenger.printMsg(Messenger.TRACE, "Column <" + nah.getNameattr() + "> of type \"" + nah.getType() + "\" added to table/class <" + mc.getName() + "> ");
-				SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
-						, mc.getName());
+//				SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
+//						, mc.getName());
 			}
 			/*
 			 * Attribute exist but type has been changed
@@ -68,8 +68,8 @@ public class AddColumnsToClass {
 				SQLTable.beginTransaction();
 				modified = true;
 				Messenger.printMsg(Messenger.TRACE, "Column <" + nah.getNameattr() + "> of table/class <" + mc.getName() + "> converted from \"" + oah.getType() + "\" to \"" + nah.getType() + "\"");
-				SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
-						, mc.getName());
+//				SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
+//						, mc.getName());
 
 			}
 			if( modified ) {
