@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 
 /**
  * @author laurent
@@ -29,7 +30,7 @@ public class TAPAvailability extends SaadaServlet {
 		pw.println("<vosi:availability xmlns:vosi=\"http://www.ivoa.net/xml/Availability/v0.4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">");
         try {
         	if (Database.getDbname() != null && Database.getDbname().trim().length() > 0)
-        		if (!Database.get_connection().isClosed())
+        		if (!Spooler.getSpooler().isRunning())
         			pw.println("\t<vosi:available>true</vosi:available>\n\t<vosi:note>Service is accepting queries</vosi:note>\n");
         		else
         			pw.println("\t<vosi:available>false</vosi:available>\n\t<vosi:note>The database \""+Database.getDbname()+"\" is not accessible</vosi:note>\n");
