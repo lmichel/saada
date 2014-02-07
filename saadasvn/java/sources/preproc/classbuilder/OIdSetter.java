@@ -34,17 +34,17 @@ public class OIdSetter {
 			
 			int cpt = 0;
 			SQLTable.beginTransaction();
-			PreparedStatement updateSales = Database.get_connection().prepareStatement(
-					"update " + mc.getName() + " set oidsaada = ? where _access_url = ?");
+//			PreparedStatement updateSales = Database.get_connection().prepareStatement(
+//					"update " + mc.getName() + " set oidsaada = ? where _access_url = ?");
 
 			for( String url: al) {
 				cpt++;
 				//String url = rs.getString(1);
 				//				SQLTable.runQueryUpdateSQL("update " + mc.getName() + " set oidsaada = " + oid + " where _access_url = '" + url + "'", false);
 
-				updateSales.setLong(1, oid); 
-				updateSales.setString(2, url); 
-				updateSales.executeUpdate();
+//				updateSales.setLong(1, oid); 
+//				updateSales.setString(2, url); 
+//				updateSales.executeUpdate();
 				if( (cpt%100) == 0 ) {
 					Messenger.printMsg(Messenger.TRACE, cpt + " oid set (current = 0xSRSPEC" + Long.toHexString(oid) + ")");
 					SQLTable.commitTransaction();

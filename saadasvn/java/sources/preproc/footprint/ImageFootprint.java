@@ -45,7 +45,9 @@ public class ImageFootprint {
 			if( !o.isDirectory() ){
 				System.out.println("Both in and out must be directories");
 			}
+			Messenger.printMsg(Messenger.TRACE, "Reading " + inputFile);
 			File[] content = f.listFiles();
+			Messenger.printMsg(Messenger.TRACE, content.length + " files found ");
 			for(File c: content) {
 				try {
 					this.inputFiles.add(c.getAbsolutePath());
@@ -90,8 +92,9 @@ public class ImageFootprint {
 		for(int num=0 ; num<this.inputFiles.size() ; num ++) {
 			this.inputFile = this.inputFiles.get(num);
 			this.outFile = this.outFiles.get(num);
+			Messenger.printMsg(Messenger.TRACE, "Process " + this.inputFile);
 
-			File input = new File(inputFile);
+			File input = new File(this.inputFile);
 			Image2D img  = new Image2D(input,null);
 			FitsProduct inputFits = new FitsProduct(img);
 			this.ahs = img.getTableAttributeHandler();
@@ -190,8 +193,8 @@ public class ImageFootprint {
 	public static void main(String[] args) throws Exception {
 		ImageFootprint imageFootprint;
 		imageFootprint = new ImageFootprint(
-				"/Users/laurentmichel/Desktop/in"
-			   ,"/Users/laurentmichel/Desktop/out");
+				"/data/Boule/build/out/ROOT/PN/EB2/"
+			   ,"/data/Boule/build/out/ROOT/PN/EB2/");
 		imageFootprint.process();
 	}
 
