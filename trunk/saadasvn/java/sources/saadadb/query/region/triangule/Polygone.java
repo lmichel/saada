@@ -43,9 +43,10 @@ public class Polygone {
 		 * Remove duplicate points because they generate flat triangles which are removed 
 		 * That make the triangulator failing
 		 */
-		for( int p=0 ; p<(pts.size()-1) ; p++){
+		for( int p=0 ; p<pts.size() ; p++){
 			Point pi = pts.get(p);
-			if( pi.equals(pts.get(p+1)) ) {
+			int next = (p == (pts.size()-1))? 0: p+1;
+			if( pi.equals(pts.get(next)) ) {
 				Messenger.printMsg(Messenger.DEBUG, "Point " + pi + " duplicated: ignored ");
 			} else {
 				points.add(pi);

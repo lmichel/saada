@@ -28,28 +28,28 @@ public class SQLTableProduct implements ProductFile {
 	 * @throws Exception
 	 */
 	SQLTableProduct(String name) throws Exception{
-		ResultSet rs = Database.getWrapper().getTableColumns(name);
-		this.nbCols = rs.getMetaData().getColumnCount();
-		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
-		this.productMap = new LinkedHashMap<String, ArrayList<AttributeHandler>>();
-		ArrayList<AttributeHandler> ahl = new ArrayList<AttributeHandler>();
-
-		while( rs.next()) {
-			AttributeHandler ah = new AttributeHandler();
-			ah.setNameorg(rs.getString("COLUMN_NAME"));
-			if( ah.getNameorg().matches(".*saada.*")) {
-				//IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "Thae table " + name + " seems to be a Saada table, ti cannot be imported");
-			}
-			ah.setNameattr(rs.getString("COLUMN_NAME").toLowerCase());
-			ah.setType(Database.getWrapper().getJavaTypeFromSQL(rs.getString("TYPE_NAME") ));
-			ah.setComment("Read from SQL table");
-			this.attributeHandlers.put(ah.getNameattr(), ah);
-			ahl.add(ah);
-		}
-		this.productMap.put("SQL table " + name, ahl);
-		this.name = name;
-		this.query = new SQLQuery("SELECT * FROM " + name);
-		this.resultSet = this.query.run();
+//		ResultSet rs = Database.getWrapper().getTableColumns(name);
+//		this.nbCols = rs.getMetaData().getColumnCount();
+//		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
+//		this.productMap = new LinkedHashMap<String, ArrayList<AttributeHandler>>();
+//		ArrayList<AttributeHandler> ahl = new ArrayList<AttributeHandler>();
+//
+//		while( rs.next()) {
+//			AttributeHandler ah = new AttributeHandler();
+//			ah.setNameorg(rs.getString("COLUMN_NAME"));
+//			if( ah.getNameorg().matches(".*saada.*")) {
+//				//IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "Thae table " + name + " seems to be a Saada table, ti cannot be imported");
+//			}
+//			ah.setNameattr(rs.getString("COLUMN_NAME").toLowerCase());
+//			ah.setType(Database.getWrapper().getJavaTypeFromSQL(rs.getString("TYPE_NAME") ));
+//			ah.setComment("Read from SQL table");
+//			this.attributeHandlers.put(ah.getNameattr(), ah);
+//			ahl.add(ah);
+//		}
+//		this.productMap.put("SQL table " + name, ahl);
+//		this.name = name;
+//		this.query = new SQLQuery("SELECT * FROM " + name);
+//		this.resultSet = this.query.run();
 	}
 
 	@Override

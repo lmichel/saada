@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -39,10 +39,11 @@ public class NewSaadaDBTool extends JFrame {
 	private FormPanel form_panel;
 	private JPanel button_panel;
 	private int screen_number=0;
-	static public String saada_home;
 	private JButton next_btn = new JButton("Next >>");
 	private JButton prev_btn = new JButton("<< Previous");
 	private String log_file ;
+	protected static String currentDir;
+	static public String saada_home;
 	/**
 	 * @throws FatalException 
 	 */
@@ -50,6 +51,7 @@ public class NewSaadaDBTool extends JFrame {
 		super("Saada " + Database.version() + ": Database Creation Tool");
 		System.out.println(saada_home);
 		NewSaadaDBTool.saada_home = saada_home;
+		NewSaadaDBTool.saada_home = currentDir;
 		if( File.separator.equals("\\")) {
 			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
@@ -195,7 +197,7 @@ public class NewSaadaDBTool extends JFrame {
 			newdb.buildSaadaDB();
 			NewWebServer.innerMain(new String[]{NewSaadaDBTool.saada_home});
 			JOptionPane.showMessageDialog(this,
-					SaadaDBAdmin.getPlainLabel("<HTML><B>Your SaadaDB <I>" + form_panel.saadadb_name.getText() + "</I> has been created</B><BR>"
+					AdminComponent.getPlainLabel("<HTML><B>Your SaadaDB <I>" + form_panel.saadadb_name.getText() + "</I> has been created</B><BR>"
 							+ "You can now exit this tool and work with the new database<BR>"
 							+ "<UL><LI>Go to <I>" + form_panel.saadadb_home.getText() + "/" + form_panel.saadadb_name.getText() + "/bin</I></LI>"
 							+ "<LI>Run <I>saadadmintool</I></LI>"),

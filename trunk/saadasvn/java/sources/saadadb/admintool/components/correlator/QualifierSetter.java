@@ -19,7 +19,6 @@ import javax.swing.JTextArea;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.input.FilteredComboBox;

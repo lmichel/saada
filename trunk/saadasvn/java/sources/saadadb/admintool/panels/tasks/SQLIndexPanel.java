@@ -3,7 +3,6 @@
  */
 package saadadb.admintool.panels.tasks;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -34,6 +33,8 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.sqltable.SQLQuery;
 
 
@@ -105,8 +106,9 @@ public class SQLIndexPanel extends TaskPanel {
 	 * @throws Exception
 	 */
 	public void buildColumnTable() throws Exception {		
-		ResultSet rs = Database.getWrapper().getTableColumns(sqlTable);
-		Collection<String> ci = Database.getWrapper().getExistingIndex(sqlTable).values();
+		DatabaseConnection connection = Database.getConnection();
+		ResultSet rs = Database.getWrapper().getTableColumns(connection, sqlTable);
+		Collection<String> ci = Database.getWrapper().getExistingIndex(connection, sqlTable).values();
 		table = new ArrayList<Object[]>();
 		int r=0 ;
 		while(rs.next() ) {
@@ -123,7 +125,7 @@ public class SQLIndexPanel extends TaskPanel {
 			}
 			r++;
 		}
-		rs.close();
+		Database.giveConnection(connection);
 		jtable = new JXTable();
 		jtable.setModel(new AbstractTableModel() {
 			public Object getValueAt(int row, int col) {

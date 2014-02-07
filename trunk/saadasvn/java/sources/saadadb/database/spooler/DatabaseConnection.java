@@ -4,6 +4,8 @@
 package saadadb.database.spooler;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -12,19 +14,20 @@ import saadadb.database.Database;
 
 /**
  * Wrapper for JDBC connection {@link Spooler}
- * @author laurentmichel
- *
+ * @author michel
+ * @version $Id$
+ * 02/2014: Add methods to handle update transactions: Due to the use of the spooler in admin mode
  */
 public class DatabaseConnection {
 	/**
 	 * Identification number (debug purpose)
 	 */
-	private final int number;
-	private int status;
+	protected final int number;
+	protected int status;
 	/**
 	 * Normal or large query
 	 */
-	private int mode;
+	protected int mode;
 	/*
 	 * Status states
 	 */
@@ -37,7 +40,7 @@ public class DatabaseConnection {
 	/**
 	 * JDBC connection
 	 */
-	private Connection connection = null;	
+	protected Connection connection = null;	
 	/**
 	 * JDBC statement
 	 */
@@ -70,11 +73,18 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void close() throws SQLException{
-//		System.out.println(this + " CLOSE3");
-//		(new Exception()).printStackTrace();
 		this.connection.close();
 		this.connection = null;
 		this.status = OBSOLETE;	
+	}
+	/**
+	 * Close and reopen the connection: used by SQLITE which can alter the schema with a connection
+	 * which has not the write_lock locking level
+	 * @throws SQLException
+	 */
+	protected void reconnect() throws SQLException{
+		this.close();
+		this.connect();
 	}
 	/**
 	 * Make the connection ready again.
@@ -82,7 +92,9 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void give() throws SQLException {
-		this.statement.close();
+		if( statement != null ) {
+			this.statement.close();
+		}
 		if( this.mode == LARGE_QUERY)  {
 			this.close();
 		} else {
@@ -97,9 +109,46 @@ public class DatabaseConnection {
 	public  Statement getStatement() throws Exception{
 		this.status = WORKING;
 		this.connection.setAutoCommit(true);
-		this.statement = connection.createStatement(Database.getWrapper().getDefaultScrollMode(),Database.getWrapper().getDefaultConcurentMode());
+		this.statement = connection.createStatement(Database.getWrapper().getDefaultScrollMode()
+				,Database.getWrapper().getDefaultConcurentMode());
 		return this.statement;
 	}
+	public  Statement getUpdatableStatement() throws Exception{
+		this.status = WORKING;
+		this.connection.setAutoCommit(true);
+		this.statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+		return this.statement;
+	}
+	
+	/**
+	 * Returns a prepared statement
+	 * Set autocommit to false since the prepared statement 
+	 * is supposed to executed within a transaction
+	 * @param query
+	 * @return
+	 * @throws SQLException
+	 */
+	public PreparedStatement getPreparedStatement(String query) throws SQLException {
+		this.status = WORKING;
+		this.connection.setAutoCommit(false);
+		this.statement =  connection.prepareStatement(query);
+		return (PreparedStatement) this.statement;
+	}
+
+	/**
+	 * Returns a pointer to the DB metadata attached to the connection
+	 * @return
+	 * @throws SQLException
+	 */
+	public DatabaseMetaData getMetaData() throws SQLException{
+		if( this.connection != null ){
+			return this.connection.getMetaData();
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * @return Return an SQL statement (readonly) ready to be executed by the client.
 	 * The statement is setup for queries with a large result set: mode FORWARDONLY => no bufferisation but 
@@ -113,7 +162,27 @@ public class DatabaseConnection {
 		Database.getWrapper().setFetchSize(this.statement,5000);
 		return this.statement;
 	}
+	/**
+	 * AutoCommit is managed internally
+	 * @param autoCommit
+	 * @throws SQLException
+	 */
+	public void setAutoCommit(boolean autoCommit) throws SQLException{}
 	
+	/**
+	 * Commit the current transaction
+	 * @throws SQLException
+	 */
+	public void commit() throws SQLException {
+		if( !this.connection.getAutoCommit() ) this.connection.commit();
+	}
+	/**
+	 * Rollback the current transaction
+	 * @throws SQLException
+	 */
+	public void rollBack() throws SQLException {
+		if( !this.connection.getAutoCommit() ) this.connection.rollback();
+	}
 	/*
 	 * Status setter/getter
 	 */

@@ -39,7 +39,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.collection.Category;
 import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
@@ -120,7 +120,7 @@ public class FormPanel extends JPanel {
 	 */
 	FormPanel(JFrame frame) throws FatalException {
 		super();
-		this.setBackground(SaadaDBAdmin.beige_color);
+		this.setBackground(AdminComponent.IVORY);
 		this.setPreferredSize(new Dimension(550, 350));
 		this.frame = frame;
 		this.setLayout(new GridBagLayout());		
@@ -196,7 +196,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		JPanel jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("SaadaDB Name"));
 		GridBagConstraints c = new GridBagConstraints();
@@ -218,7 +218,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("SaadaDB Installation Directory"));			
 		c.gridwidth = 1;
@@ -230,12 +230,12 @@ public class FormPanel extends JPanel {
 		JButton browse1 = new JButton("Browse");
 		browse1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fcd = new JFileChooser(SaadaDBAdmin.current_dir);
+				JFileChooser fcd = new JFileChooser(NewSaadaDBTool.currentDir);
 				fcd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);			
 				int retour = fcd.showOpenDialog(FormPanel.this.frame);
 				if (retour == JFileChooser.APPROVE_OPTION) {
 					File selected_file = fcd.getSelectedFile();
-					SaadaDBAdmin.current_dir = selected_file.getParent();
+					NewSaadaDBTool.currentDir = selected_file.getParent();
 					FormPanel.this.saadadb_home.setText(selected_file.getAbsolutePath());
 				}
 			}
@@ -250,7 +250,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("SaadaDB Repository"));
 		c.gridwidth = 1;
@@ -262,7 +262,7 @@ public class FormPanel extends JPanel {
 		JButton browse2 = new JButton("Browse");
 		browse2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fcd = new JFileChooser(SaadaDBAdmin.current_dir);
+				JFileChooser fcd = new JFileChooser(NewSaadaDBTool.currentDir);
 				fcd.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);			
 				int retour = fcd.showOpenDialog(FormPanel.this.frame);
 				if (retour == JFileChooser.APPROVE_OPTION) {
@@ -320,7 +320,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		dbms_panel = new JPanel();
-		dbms_panel.setBackground(SaadaDBAdmin.beige_color);
+		dbms_panel.setBackground(AdminComponent.IVORY);
 		dbms_panel.setLayout(new GridBagLayout());
 		dbms_panel.setBorder(BorderFactory.createTitledBorder("Database Management System"));
 		GridBagConstraints c = new GridBagConstraints();
@@ -382,7 +382,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		dbms_admin_panel = new JPanel();
-		dbms_admin_panel.setBackground(SaadaDBAdmin.beige_color);
+		dbms_admin_panel.setBackground(AdminComponent.IVORY);
 		dbms_admin_panel.setLayout(new GridBagLayout());
 		dbms_admin_panel.setBorder(BorderFactory.createTitledBorder("Administrator Role"));
 		c.gridx = 0; c.gridy = 0;	
@@ -519,7 +519,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		JPanel jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("Database Management System"));
 		GridBagConstraints c = new GridBagConstraints();
@@ -634,7 +634,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		JPanel jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("Tomcat Deployment"));
 		GridBagConstraints c = new GridBagConstraints();
@@ -667,7 +667,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("SaadaDB Base URL"));
 
@@ -737,7 +737,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		JPanel jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("Product Category"));
 		GridBagConstraints c = new GridBagConstraints();
@@ -751,7 +751,7 @@ public class FormPanel extends JPanel {
 			c.gridx = i; c.gridy = 0;	
 			jp.add(jrb);
 			jrb.addActionListener(al);
-			jrb.setBackground(SaadaDBAdmin.beige_color);
+			jrb.setBackground(AdminComponent.IVORY);
 			bg.add(jrb);
 			if( i == 0 ) jrb.setSelected(true);	
 			i++;
@@ -762,7 +762,7 @@ public class FormPanel extends JPanel {
 		 * 
 		 */
 		jp = new JPanel();
-		jp.setBackground(SaadaDBAdmin.beige_color);
+		jp.setBackground(AdminComponent.IVORY);
 		jp.setLayout(new GridBagLayout());
 		jp.setBorder(BorderFactory.createTitledBorder("User Attribute Definition"));
 		c.insets = new Insets(5,5,5,5);
@@ -888,7 +888,7 @@ public class FormPanel extends JPanel {
 
 		JPanel cat_panel = new JPanel();
 		cat_panel.setPreferredSize(new Dimension(450, 100));
-		cat_panel.setBackground(SaadaDBAdmin.beige_color);
+		cat_panel.setBackground(AdminComponent.IVORY);
 		cat_panel.setBorder(BorderFactory.createTitledBorder("GLobal Coordinate System"));
 		cat_panel.setLayout(new BorderLayout());
 		cat_panel.add(getFixedText("Select the coordinate system used at collection level\nAll ingested data will be expressed with this system in addition with their native coordinates"), BorderLayout.PAGE_START);
@@ -897,18 +897,18 @@ public class FormPanel extends JPanel {
 
 		cat_panel = new JPanel();
 		cat_panel.setPreferredSize(new Dimension(450, 130));
-		cat_panel.setBackground(SaadaDBAdmin.beige_color);
+		cat_panel.setBackground(AdminComponent.IVORY);
 		cat_panel.setBorder(BorderFactory.createTitledBorder("GLobal Spectral Unit"));
 		cat_panel.setLayout(new BorderLayout());
 		cat_panel.add(getFixedText("Select the spectal units used at collection level\nAll ingested spectra will be expressed with this units in addition with their native units"), BorderLayout.PAGE_START);
 		JPanel btpn = new JPanel();
-		btpn.setBackground(SaadaDBAdmin.beige_color);
+		btpn.setBackground(AdminComponent.IVORY);
 		ButtonGroup bg = new ButtonGroup();
 		ActionListener al = new SpectCoordActionListener();
 		for( int i=0 ; i<channel_button.length ; i++ ) {
 			btpn.add(channel_button[i]);
 			channel_button[i].addActionListener(al);
-			channel_button[i].setBackground(SaadaDBAdmin.beige_color);
+			channel_button[i].setBackground(AdminComponent.IVORY);
 			bg.add(channel_button[i]);
 		}
 		channel_button[0].setSelected(true);		
@@ -1007,7 +1007,7 @@ public class FormPanel extends JPanel {
 	 */
 	private static JLabel getPlainLabel(String txt) {
 		JLabel retour = new JLabel(txt);
-		retour.setFont(SaadaDBAdmin.plain_font);		
+		retour.setFont(AdminComponent.plainFont);		
 		return retour;
 	}
 

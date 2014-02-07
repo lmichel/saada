@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -27,6 +29,7 @@ public class TransactionMaker {
 	ArrayList<QueryString> queries = new ArrayList<QueryString>();
 	private  boolean locked = false;
 	private  boolean forced_mode = false;
+	private DatabaseConnection connection;
 
 	public TransactionMaker(boolean forced_mode) {
 		if (Messenger.debug_mode)
@@ -92,8 +95,8 @@ public class TransactionMaker {
 			 * Require explicit locks everywhere even in SELECT
 			 */
 			queries.add( new QueryString(Database.getWrapper().unlockTables(), null));
-			Database.get_connection().setAutoCommit(false);
-			stmt = Database.get_connection().createStatement(); 
+			connection = Spooler.getSpooler().getAdminConnection();
+			stmt = connection.getStatement(); 
 			int cpt = 0;
 			for(QueryString qs: queries) {
 				String q = qs.query;
@@ -104,9 +107,8 @@ public class TransactionMaker {
 					String[] fs = q.split(" ");
 					last_q  = q; 
 					if( Database.getWrapper().tsvLoadNotSupported() ) {
-						Database.getWrapper().storeTable(fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;			
-					}
-					else {
+						Database.getWrapper().storeTable(connection, fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;			
+					} else {
 						String[] stqs = Database.getWrapper().getStoreTable(fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim());
 						for(String stq: stqs ) {
 							if (Messenger.debug_mode)
@@ -115,35 +117,33 @@ public class TransactionMaker {
 							execStatement(stmt, stq);
 						}
 					}
-				}
-				else if( qs.params == null ){
+				} else if( qs.params == null ){
 					last_q = q;
 					execStatement(stmt, q);
-				}
-				else {
-					PreparedStatement pstmt =  Database.get_connection().prepareStatement(q);
+				} else {
+					PreparedStatement pstmt =  connection.getPreparedStatement(q);
 					for( int i=0 ; i<qs.params.length ; i++ ) {
 						pstmt.setObject(i+1,qs.params[i] );
 					}
 					execStatement(pstmt, q);
 				}
 			}
+			Database.giveAdminConnection();
+
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "JDBC Commit");
-			if( !Database.get_connection().getAutoCommit() ) {
-				Database.get_connection().commit();
-			}
+			connection.commit();
+			
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Transaction done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
 			queries = new ArrayList<QueryString>();
-			stmt.close();
 			unlock();
 		} catch (BatchUpdateException be) {
 			Messenger.printStackTrace(be);
 			try {
 				stmt.close();
 				Messenger.printMsg(Messenger.TRACE, "Rollback");
-				Database.get_connection().rollback();
+				connection.rollBack();
 			} catch (Exception e) { }
 			unlock();
 			checkBatchError(be);
@@ -153,7 +153,7 @@ public class TransactionMaker {
 			try {
 				stmt.close();
 				Messenger.printMsg(Messenger.TRACE, "Rollback");
-				Database.get_connection().rollback();
+				connection.rollBack();
 			} catch (Exception e2) { }
 			unlock();
 			Messenger.printMsg(Messenger.ERROR, "on query : " + last_q);
@@ -174,7 +174,7 @@ public class TransactionMaker {
 			stmt.executeUpdate(query);
 		}
 		else {
-			Database.get_connection().setAutoCommit(true);
+			connection.setAutoCommit(true);
 			try {
 				stmt.executeUpdate(query);	
 			}
@@ -199,7 +199,7 @@ public class TransactionMaker {
 			pstmt.executeUpdate();
 		}
 		else {
-			Database.get_connection().setAutoCommit(true);
+			connection.setAutoCommit(true);
 			try {
 				pstmt.executeUpdate();	
 				Messenger.procAccess();
@@ -207,7 +207,7 @@ public class TransactionMaker {
 			catch (Exception e) {
 				Messenger.procAccess();
 				Messenger.printMsg(Messenger.WARNING, "SQL error (ignored in transaction in forced mode) "  + e.getMessage());
-			}
+			} 
 		}
 		Messenger.procAccess();
 
@@ -266,13 +266,7 @@ public class TransactionMaker {
 			Messenger.dbAccess();
 			unlock();	
 			queries = new ArrayList<QueryString>();
-
-			Database.get_connection().rollback();
-			
-//			Messenger.printMsg(Messenger.TRACE, "ABORT CURRENT TRANSACTION!!");
-//			Statement stmt = Database.get_connection().createStatement(); 
-//			stmt.executeUpdate(Database.getWrapper().abortTransaction());
-//			stmt.close();
+			connection.rollBack();
 		} catch (Exception e) {
 		}	
 	}

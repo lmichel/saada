@@ -131,6 +131,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 			Polygone p = new Polygone(pts);
 			Region r = new Region(p, Database.getAstroframe());
 			retour = r.getSQL();
+			//System.out.println(r.getGnuplotScript());
 		} else {
 			if(this.operator.equals("isInBox")) {
 				r/= 2.0;

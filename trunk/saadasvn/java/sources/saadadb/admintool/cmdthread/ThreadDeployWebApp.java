@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
-import saadadb.admin.SaadaDBAdmin;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 import saadadb.newdatabase.NewWebServer;
@@ -40,12 +40,12 @@ public class ThreadDeployWebApp extends CmdThread {
 			p.executeTarget("tomcat.deploy");
 			frame.setCursor(cursor_org);
 	
-			SaadaDBAdmin.showSuccess(frame, "Web interface successfully deployed");		
+			AdminComponent.showSuccess(frame, "Web interface successfully deployed");		
 		} catch (Exception e) {
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(e);
 			frame.setCursor(cursor_org);
-			SaadaDBAdmin.showFatalError(frame, "Web Deployment failed (see console).");
+			AdminComponent.showFatalError(frame, "Web Deployment failed (see console).");
 		}
 	}
 

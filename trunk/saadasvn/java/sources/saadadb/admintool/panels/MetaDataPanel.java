@@ -40,9 +40,9 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import saadadb.admin.dnd.TreePathTransferable;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.Category;

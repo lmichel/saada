@@ -11,8 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import saadadb.admin.SaadaDBAdmin;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -77,11 +75,11 @@ public class EditableLabel extends JPanel{
 						//SQLTable.commitTransaction();
 					} catch (Exception e1) {
 						Messenger.printStackTrace(e1);
-						SaadaDBAdmin.showInputError(EditableLabel.this.getParent(), e1.getMessage());
+						AdminComponent.showInputError(EditableLabel.this.getParent(), e1.getMessage());
 					}
 				}
 				else {
-					SaadaDBAdmin.showInputError(EditableLabel.this.getParent(), newstr + ": " + EditableLabel.this.error_msg);
+					AdminComponent.showInputError(EditableLabel.this.getParent(), newstr + ": " + EditableLabel.this.error_msg);
 				}
 			}
 		

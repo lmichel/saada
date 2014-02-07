@@ -8,6 +8,8 @@ import java.util.Map;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -287,9 +289,9 @@ public abstract class SQLTable {
 		try {
 			if( Database.getWrapper().tableExist(table) ) {
 				/*
-				 * SQLIte ne suporte pas de Drop table dans une transaction
+				 * SQLIte ne supporte pas de Drop table dans une transaction
 				 */
-				if( Database.getWrapper().supportDropTableInTransaction() ){
+				if( !Database.getWrapper().supportDropTableInTransaction() ){
 					commitTransaction();
 					beginTransaction();
 				}
@@ -300,6 +302,7 @@ public abstract class SQLTable {
 				}
 			}
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.DB_ERROR,e);
 		}
 	}
@@ -342,7 +345,8 @@ public abstract class SQLTable {
 					sp.processUserRequest();
 					Messenger.incrementeProgress();
 				}
-				ResultSet rsColumns = Database.getWrapper().getTableColumns(table);
+				DatabaseConnection connection = Spooler.getSpooler().getConnection();
+				ResultSet rsColumns = Database.getWrapper().getTableColumns(connection, table);
 				Map<String, String> existing_index = Database.getWrapper().getExistingIndex(table);
 				while (rsColumns.next()) {
 					String columnName = rsColumns.getString("COLUMN_NAME");
@@ -380,7 +384,7 @@ public abstract class SQLTable {
 						}
 					}
 				}	
-				rsColumns.close();		
+				Database.giveConnection(connection);	
 				unlockTables();
 			}
 			else  {
@@ -423,7 +427,8 @@ public abstract class SQLTable {
 					sp.processUserRequest();
 					Messenger.incrementeProgress();
 				}
-				ResultSet rsColumns = Database.getWrapper().getTableColumns(table);
+				DatabaseConnection connection = Spooler.getSpooler().getConnection();
+				ResultSet rsColumns = Database.getWrapper().getTableColumns(connection, table);
 				Map<String, String> existing_index = Database.getWrapper().getExistingIndex(table);
 				while (rsColumns.next()) {
 					String columnName = rsColumns.getString("COLUMN_NAME");
@@ -455,15 +460,13 @@ public abstract class SQLTable {
 							lockTable(table);
 							addQueryToTransaction(sql1);
 						}
-					}
-					else {
+					} else {
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "Index <" + index_name + "> already exists");
 					}
 				}	
-				rsColumns.close();			
-			}
-			else  {
+				Database.giveConnection(connection);	
+			} else  {
 				Messenger.printMsg(Messenger.WARNING, "Index creation: table <" + table + "> not found");
 			}
 		} catch (Exception e) {
@@ -570,9 +573,10 @@ public abstract class SQLTable {
 	 */
 	static public String[] getColumnsExceptsThose(String table, String [] rejected_columns) throws FatalException {
 		try {
+			DatabaseConnection connection = Spooler.getSpooler().getConnection();
 			ResultSet rsColumns = null;
 
-			rsColumns = Database.getWrapper().getTableColumns(table); 
+			rsColumns = Database.getWrapper().getTableColumns(connection, table); 
 			ArrayList<String> al = new ArrayList<String>();
 			while (rsColumns.next()) {
 				boolean found = false;
@@ -589,7 +593,7 @@ public abstract class SQLTable {
 					al.add(cn);
 				}
 			}
-			rsColumns.close();
+			Database.giveConnection(connection);
 			return al.toArray(new String[0]);
 		} catch(Exception e) {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
@@ -675,15 +679,18 @@ public abstract class SQLTable {
 	 * @throws Exception
 	 */
 	public static boolean hasColumn(String tableName, String columnName) throws Exception {
-		ResultSet cols = Database.getWrapper().getTableColumns(tableName);
+		DatabaseConnection connection = Database.getConnection();
+
+		ResultSet cols = Database.getWrapper().getTableColumns(connection, tableName);
 		if( cols != null ) {
 			while( cols.next() ){
 				if( cols.getString("COLUMN_NAME").equalsIgnoreCase(columnName)) {
-					cols.close();
+					Database.giveConnection(connection);
 					return true;
 				}
 			}
 		}
+		Database.giveConnection(connection);
 		return false;
 	}
 

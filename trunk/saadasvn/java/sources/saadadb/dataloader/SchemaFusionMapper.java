@@ -11,6 +11,8 @@ import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -366,11 +368,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 				 */
 				else if( oah.getType().equals(nah.getType()) == false ) {
 					modified = true;
+					DatabaseConnection connection = Database.getConnection();
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Column <" + nah.getNameattr() + "> of table/class <" + mc.getName() + "> converted from \"" + oah.getType() + "\" to \"" + nah.getType() + "\"");
-					SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
+					SQLTable.addQueryToTransaction(Database.getWrapper().changeColumnType(connection, mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
 							, mc.getName());
-
+					Database.giveConnection(connection);
 				}
 			}
 			if( modified ) {

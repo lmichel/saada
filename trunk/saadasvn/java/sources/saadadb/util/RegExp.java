@@ -1,5 +1,7 @@
 package saadadb.util;
 
+import java.io.File;
+
 import saadadb.collection.Category;
 import saadadb.database.Database;
 
@@ -13,10 +15,11 @@ public class RegExp {
 	/*
 	 * Regular expresssion used to filter Saada entities
 	 */
+	public static final String FILE_SEPARATOR = (File.separator.equals("\\"))?"\\\\":File.separator;
 	public static final String CLASSNAME    = "[_a-zA-Z][_a-zA-Z0-9]*";
 	public static final String COLLNAME     = "[_a-zA-Z][_a-zA-Z0-9]*";
 	public static final String FILENAME     = "\\w+(?:\\.\\w*)?";
-	public static final String FILEPATH     = "(?:[A-Za-z]:)?" + Database.getRegexpSepar() + "?(?:" + FILENAME + Database.getRegexpSepar() + ")*" + "\\w+(?:\\.\\w*)?";
+	public static final String FILEPATH     = "(?:[A-Za-z]:)?" + FILE_SEPARATOR + "?(?:" + FILENAME + FILE_SEPARATOR + ")*" + "\\w+(?:\\.\\w*)?";
 	public static final String DBNAME       = "[_a-zA-Z][_a-zA-Z0-9]*";
 	public static final String EXTATTRIBUTE = "[a-zA-Z][_a-zA-Z0-9]*";
 

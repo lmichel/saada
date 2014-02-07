@@ -21,11 +21,11 @@ import org.sqlite.SQLiteConfig;
 
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
+import saadadb.database.spooler.DatabaseConnection;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.HardwareDescriptor;
 import saadadb.util.Merger;
@@ -235,13 +235,6 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 	
 	/* (non-Javadoc)
-	 * @see saadadb.database.DbmsWrapper#openLargeQueryConnection()
-	 */
-	public Connection openLargeQueryConnection() throws Exception{
-		return Database.get_connection();
-	}
-
-	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#closeLargeQueryConnection(java.sql.Connection)
 	 */
 	public void closeLargeQueryConnection(Connection largeConnection) throws SQLException{
@@ -267,9 +260,9 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String[] changeColumnType(String table, String column, String type) throws Exception {
+	public String[] changeColumnType(DatabaseConnection connection,String table, String column, String type) throws Exception {
 		Messenger.printMsg(Messenger.WARNING, "Changing column type may be long with SQLITE");
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet resultat = dm.getColumns(null, null, table, null);
 		String select = "";
 		while( resultat.next() ) {
@@ -478,15 +471,15 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public Map<String, String> getExistingIndex(String searched_table)
+	public Map<String, String> getExistingIndex(DatabaseConnection connection, String searched_table)
 	throws FatalException {
 		try {
-			if( !tableExist(searched_table)) {
+			if( !tableExist(connection, searched_table)) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 				return null;
 			}
-			DatabaseMetaData dm = Database.get_connection().getMetaData();
+			DatabaseMetaData dm = connection.getMetaData();
 			ResultSet resultat = dm.getIndexInfo(null, null, searched_table.toLowerCase(), false, false);
 			HashMap<String, String> retour = new HashMap<String, String>();
 			while (resultat.next()) {
@@ -641,13 +634,13 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public ResultSet getTableColumns(String searched_table) throws Exception {
-		if( !tableExist(searched_table)) {
+	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table) throws Exception {
+		if( !tableExist(connection,searched_table)) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 			return null;
 		}
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables = dm.getTables(null, null, searched_table.toLowerCase(), null);
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
@@ -758,6 +751,19 @@ public class SQLiteWrapper extends DbmsWrapper {
 	public boolean supportDropTableInTransaction() {
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#supportJDBCUpdate()
+	 */
+	public boolean supportJDBCUpdate() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#supportConcurrentAccess()
+	 */
+	public boolean supportConcurrentAccess(){
+		return false;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#supportAlterColumn()
@@ -768,29 +774,9 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public void storeTable(String tableName, int ncols, String tableFile) throws Exception {
+	public void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Loading ASCII  file " + tableFile + " in table " + tableName);
-		storeTable(Database.get_connection(), tableName, ncols,tableFile);
-	}
-
-	@Override
-	public  String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
-		return null;
-	}
-
-	@Override
-	public boolean tsvLoadNotSupported() {
-		return true;
-	}
-
-	/**
-	 * @param connection
-	 * @param tableName
-	 * @param tableFile
-	 * @throws Exception
-	 */
-	public void storeTable(Connection connection, String tableName, int ncols, String tableFile) throws Exception {
 		int nb_col=0;
 		if( ncols == -1 ) {
 			DatabaseMetaData meta = connection.getMetaData();
@@ -816,7 +802,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			ps += "?";
 		}
 		ps += ")";
-		PreparedStatement prep = connection.prepareStatement(ps);
+		PreparedStatement prep = connection.getPreparedStatement(ps);
 		/*
 		 * Maps file row in the prepared segment
 		 */
@@ -842,19 +828,30 @@ public class SQLiteWrapper extends DbmsWrapper {
 				prep.executeBatch();
 			}
 		}
+		prep.close();
 		/*
 		 * Load data
 		 */
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, line + " lines stored");
 		prep.executeBatch();
-		prep.close();
 		(new File(tableFile)).delete();
+		}
+
+	@Override
+	public  String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
+		return null;
 	}
 
 	@Override
-	public boolean tableExist(String searched_table) throws Exception {
-		DatabaseMetaData dm = Database.get_connection().getMetaData();
+	public boolean tsvLoadNotSupported() {
+		return true;
+	}
+
+
+	@Override
+	public boolean tableExist(DatabaseConnection connexion, String searched_table) throws Exception {
+		DatabaseMetaData dm = connexion.getMetaData();
 		//ResultSet rsTables = dm.getTables(null, null, searched_table.toLowerCase(), null);
 		ResultSet rsTables = dm.getTables(null, null, null, null);
 		while (rsTables.next()) {
