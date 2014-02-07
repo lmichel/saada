@@ -10,6 +10,7 @@ import java.util.Vector;
 import saadadb.cache.CacheMeta;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
@@ -249,6 +250,7 @@ public class SmartJoin {
 				 */
 				VOResource vor;
 				ResultSet rs;
+				DatabaseConnection connection = Database.getConnection();
 				if( (vor = VOResource.getResource(table.getTable())) != null) {
 					Messenger.printMsg(Messenger.TRACE, table.getTable() + " is a VO model");
 					ArrayList<UTypeHandler> uths = vor.getUTypeHandlers();
@@ -267,7 +269,7 @@ public class SmartJoin {
 					/*
 					 * Look at a SQL table
 					 */
-				} else if( (rs = Database.getWrapper().getTableColumns(table.getTable())) != null ) {
+				} else if( (rs = Database.getWrapper().getTableColumns(connection, table.getTable())) != null ) {
 					while( rs.next()) {
 						AttributeHandler ah = new AttributeHandler() ;
 						ah.setNameattr(rs.getString("COLUMN_NAME"));
@@ -281,7 +283,6 @@ public class SmartJoin {
 						vTables.add(tableAlias);
 						if (debug) System.out.println("### ADDED: "+ah.getNameattr()+" [in "+table.getAlias()+"]");
 					}
-					rs.close();
 				}
 				/*
 				 * Access to a Saada resource
@@ -323,6 +324,7 @@ public class SmartJoin {
 							}
 						}
 					}
+					Database.giveConnection(connection);
 				}
 			} catch (Exception e) {/* The table doesn't exist. */;}
 		}
