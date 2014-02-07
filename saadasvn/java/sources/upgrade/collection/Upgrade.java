@@ -4,7 +4,6 @@
 package upgrade.collection;
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -12,7 +11,6 @@ import saadadb.generationclass.GenerationClassCollection;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.Table_SaadaDB;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Metacoll;
@@ -60,7 +58,6 @@ public class Upgrade {
 		Table_Saada_Relation.addStatColumn();
 		Table_Saada_Class.addStatColumn();
 		Table_Saada_Collection.addStatColumn();		
-
 		AttributeHandler ah = new AttributeHandler();
 		ah.setNameattr("healpix_csa");
 		ah.setNameorg("healpix_csa");
@@ -72,14 +69,12 @@ public class Upgrade {
 			addColumnToCollection(cat, ah);
 			SQLTable.commitTransaction();
 		}
-
 		for( int cat: new int[]{Category.ENTRY, Category.SPECTRUM, Category.IMAGE}){
 			for( String cn: Database.getCachemeta().getCollection_names()) {
 				HealpixSetter healpixSetter = new HealpixSetter(Database.getWrapper().getCollectionTableName(cn, cat));
 				healpixSetter.set();
 			}
 		}
-		Spooler.getSpooler().close();
 		Messenger.printMsg(Messenger.TRACE, "Update complete");
 	}
 

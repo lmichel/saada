@@ -2,7 +2,6 @@ package upgrade;
 
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 
 public class Upgrade {
 
@@ -22,14 +21,11 @@ public class Upgrade {
 		try {
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
-			Database.setAdminMode(ap.getPassword());
 			upgrade(ap);
-		} catch (FatalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			Database.close();
 		}
 
 

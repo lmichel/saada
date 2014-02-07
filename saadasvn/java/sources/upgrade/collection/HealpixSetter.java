@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.sqltable.SQLQuery;
@@ -39,13 +41,6 @@ public class HealpixSetter {
 	 * @throws FatalException
 	 */
 	private void join() throws AbortException, FatalException {
-//		SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(this.tableName
-//				, this.tmpTableName
-//				, this.tableName + ".oidsaada = " + this.tmpTableName + ".oidsaada"
-//				, this.tableName
-//				, new String[]{"healpix_csa"}
-//		        , new String[]{this.tmpTableName + ".healpix_csa"}
-//				, this.tmpTableName + ".healpix_csa IS NOT NULL"));	
 		String nf = "AND "+tableName+".healpix_csa IS NULL";
 		SQLTable.addQueryToTransaction(
 				  "UPDATE " +tableName
@@ -57,8 +52,12 @@ public class HealpixSetter {
 	/**
 	 * @throws Exception
 	 */
-	public void setOld() throws Exception {
+	public void setWithTmpTable() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
+		SQLTable.beginTransaction();
+		SQLTable.createTable(this.tmpTableName, " oidsaada int8, healpix_csa int8", "oidsaada", true);
+		SQLTable.commitTransaction();
+
 		SQLQuery sqlq = new SQLQuery();
 		String nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = sqlq.run("SELECT oidsaada, pos_ra_csa, pos_dec_csa FROM " 
@@ -70,10 +69,8 @@ public class HealpixSetter {
 			double ra     = rs.getDouble("pos_ra_csa");
 			double dec    = rs.getDouble("pos_dec_csa");
 			long oidsaada = rs.getLong("oidsaada");
-			
 			if( cpt == 0 ) {
 				SQLTable.beginTransaction();
-				SQLTable.addQueryToTransaction(Database.getWrapper().getCreateTempoTable(this.tmpTableName, "(oidsaada int8, healpix_csa int8)"));	
 				tOpen = true;
 			}
 			SQLTable.addQueryToTransaction("INSERT INTO " + this.tmpTableName 
@@ -89,15 +86,19 @@ public class HealpixSetter {
 			}
 			cpt++;			
 		}
+		sqlq.close();
+		System.out.println(Spooler.getSpooler());			
 		if( tOpen ) {
 			join();
 			SQLTable.commitTransaction();
 		}
+		System.out.println("@@@@@@@@@@@@ F");			
 		SQLTable.beginTransaction();
 		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
+		SQLTable.dropTable(this.tmpTableName);
 		SQLTable.commitTransaction();
 	}
-	public void set() throws Exception {
+	public void setWithUpdate() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Set Healpix value in table " + tableName);
 		int sum = 0;
 		int v;
@@ -109,10 +110,17 @@ public class HealpixSetter {
 		SQLTable.indexColumnOfTable(tableName, "healpix_csa", null);	
 		SQLTable.commitTransaction();
 	}
+	public void set() throws Exception {
+		if( Database.getWrapper().supportJDBCUpdate() ) {
+			this.setWithUpdate();
+		} else {
+			this.setWithTmpTable();
+		}
+	}
 
 	public int setBurst() throws Exception {
-		Statement stmt =  Database.get_connection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
-                ResultSet.CONCUR_UPDATABLE);
+		DatabaseConnection connection = Database.getAdminConnection();
+		Statement stmt =  connection.getUpdatableStatement();
 		String nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " 
 				+ tableName 
@@ -128,7 +136,7 @@ public class HealpixSetter {
 				break;
 			}
 		}
-		stmt.close();
+		Database.giveAdminConnection();
 		return cpt;
 	}
 }
