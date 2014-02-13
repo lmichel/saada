@@ -128,7 +128,7 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 			retour = true;
 			break;
 		}
-		rs.close();
+		sq.close();
 		return  retour;
 	}
 

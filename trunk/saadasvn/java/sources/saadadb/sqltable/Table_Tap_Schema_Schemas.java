@@ -98,7 +98,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		while (rs.next()) {
 			return true;
 		}
-		rs.close();
+		sq.close();
 		return  false;
 	}
 	
@@ -114,7 +114,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		while (rs.next()) {
 			retour.add(rs.getString(1));
 		}
-		rs.close();
+		sq.close();
 		return  retour.toArray(new String[0]);
 	}
 

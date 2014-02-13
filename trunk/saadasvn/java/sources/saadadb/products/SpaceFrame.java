@@ -283,7 +283,7 @@ public class SpaceFrame {
 	/**
 	 * 
 	 */
-	public void lookForFK5Keywords() {
+	private void lookForFK5Keywords() {
 		/*
 		 * Search by UCD first
 		 */
@@ -310,7 +310,7 @@ public class SpaceFrame {
 	/**
 	 * 
 	 */
-	public void lookForFK4Keywords() {
+	private void lookForFK4Keywords() {
 		/*
 		 * Search by UCD first
 		 */
@@ -336,7 +336,7 @@ public class SpaceFrame {
 	/**
 	 * 
 	 */
-	public void lookForICRSKeywords() {
+	private void lookForICRSKeywords() {
 		/*
 		 * Search by UCD first
 		 */
@@ -362,7 +362,7 @@ public class SpaceFrame {
 	/**
 	 * 
 	 */
-	public void lookForEclpiticKeywords() {
+	private void lookForEclpiticKeywords() {
 		/*
 		 * Search by UCD first
 		 */
@@ -388,7 +388,7 @@ public class SpaceFrame {
 	/**
 	 * 
 	 */
-	public void lookForGalacticKeywords() {
+	private void lookForGalacticKeywords() {
 		/*
 		 * Search by UCD first
 		 */

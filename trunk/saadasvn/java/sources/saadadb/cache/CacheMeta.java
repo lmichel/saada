@@ -98,7 +98,7 @@ public class CacheMeta {
 	 */
 	public void reload(boolean force) throws FatalException  {
 		boolean dm = Messenger.debug_mode;
-		Messenger.debug_mode = true;
+		Messenger.debug_mode = false;
 		if (this.loaded == false || force == true) {
 			Messenger.printMsg(Messenger.TRACE, "Reload cache meta");
 			try {
