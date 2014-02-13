@@ -391,7 +391,7 @@ public class TapServiceManager extends EntityManager {
 				String table_type = rs_tables.getString(3);
 				retour .append(getXMLTable(table_name, table_desc, table_type));
 			}
-			rs_tables.close();
+			qtables.close();
 			retour.append("</schema>\n");
 		}
 		retour.append("</vosi:tableset>\n");
@@ -450,7 +450,7 @@ public class TapServiceManager extends EntityManager {
 			}
 			retour.append("        </column>\n");				
 		}
-		rs_columns.close();
+		qcolumns.close();
 		retour.append("    </table>\n");
 		return retour;
 	}
