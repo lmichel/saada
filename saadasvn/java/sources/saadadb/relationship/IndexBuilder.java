@@ -85,13 +85,14 @@ public class IndexBuilder extends SaadaProcess {
 		if( isEmpty ) {
 			Messenger.printMsg(Messenger.TRACE, "relationship not empty");			
 		}
-		rse.close();
+		squery.close();
 
 		TimeSaada time = new TimeSaada();
 		time.start();
 		LinkedHashMap<Long, ArrayList<Object>> cardI = new LinkedHashMap<Long,ArrayList<Object>>();
 		ArrayList<Object> al = new ArrayList<Object>();
 		if( isEmpty) {
+			squery= new SQLLargeQuery();
 			ResultSet rs = squery.run("SELECT oidsaada FROM "+colPrimary);
 			while(rs.next()){
 				al.add(rs.getLong(1));
@@ -149,9 +150,8 @@ public class IndexBuilder extends SaadaProcess {
 				while(rs.next()){
 					al.add(rs.getLong(1));
 				}
-				squery.close();
 			}
-
+			squery.close();
 			rs = null;
 			squery = null;
 		}

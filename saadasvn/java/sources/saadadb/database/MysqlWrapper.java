@@ -784,6 +784,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		while( rs.next() ) {
 			retour.add("DROP FUNCTION " + rs.getString("Name"));
 		}
+		sq.close();
 		return retour.toArray(new String[0]);
 	}
 

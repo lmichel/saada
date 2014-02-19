@@ -84,7 +84,7 @@ public class KeyIndex extends KeySet {
 	 * @throws FatalException 
 	 * @throws SQLException 
 	 */
-	public KeyIndex(SaadaQLResultSet srs) throws FatalException  {
+	public KeyIndex(SaadaQLResultSet srs) throws SaadaException  {
 		super(srs);
 		this.key_tag   = new int[size];
 	}

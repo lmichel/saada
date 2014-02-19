@@ -61,8 +61,8 @@ public class AdqlQuery extends VOQuery {
 
 	@Override
 	public void close() throws QueryException {
-		this.resultSet.close();
-		this.resultSet = null;		
+		this.adqlQuery.close();
+		this.adqlQuery = null;		
 	}
 
 	@Override
