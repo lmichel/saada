@@ -19,18 +19,19 @@ import ajaxservlet.formator.DisplayFilter;
  */
 public class QueryContext implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private String query;
+	private String queryString;
+	private Query query;
 	private int resultSize;
 	transient OidsaadaResultSet resultSet;
 	transient private DisplayFilter colfmtor;
 
-	public QueryContext( String query, DisplayFilter colfmtor, String sessionId) throws Exception {
-		this.query = query;
+	public QueryContext( String queryString, DisplayFilter colfmtor, String sessionId) throws Exception {
+		this.queryString = queryString;
 		this.colfmtor = colfmtor;
 		Pattern p = Pattern.compile(".*Limit\\s+[0-9]+\\s*", Pattern.DOTALL);
-		if(! p.matcher(query).matches() ) {
+		if(! p.matcher(this.queryString).matches() ) {
 			Messenger.printMsg(Messenger.WARNING, "Query truncated to 10000");
-			this.query += " Limit 10000";
+			this.queryString += " Limit 10000";
 		}
 		long session;
 		try {
@@ -46,19 +47,18 @@ public class QueryContext implements Serializable {
 	 * @throws Exception
 	 */
 	private void executeQuery (DisplayFilter colfmtor) throws Exception {
-		Query q = new Query();
-		resultSet = q.runBasicQuery(query);
+		query = new Query();
+		resultSet = query.runBasicQuery(queryString);
 		colfmtor.setResultSet(resultSet);
 		this.resultSize = resultSet.size();
-		for( AttributeHandler ah: q.getUCDColumns()) {
-			System.out.println("UCD " + ah.getUcd() + " " + colfmtor.getClass().getName());
+		for( AttributeHandler ah: query.getUCDColumns()) {
 			colfmtor.addUCDColumn(ah); 
 		}
-		colfmtor.addConstrainedColumns(q.buildListAttrHandPrinc());
+		colfmtor.addConstrainedColumns(query.buildListAttrHandPrinc());
 	}
 	
 	public String getQuery() {
-		return query;
+		return queryString;
 	}
 	public int getResultSize() throws QueryException {
 		return resultSize;
@@ -86,5 +86,4 @@ public class QueryContext implements Serializable {
 		}
 		return false;
 	}
-
 }

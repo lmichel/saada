@@ -12,6 +12,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.products.Coord;
 import saadadb.query.parser.PositionParser;
 import saadadb.query.region.request.Region;
+import saadadb.query.region.request.Zone;
 import saadadb.query.region.triangule.Point;
 import saadadb.query.region.triangule.Polygone;
 import saadadb.util.Messenger;
@@ -129,7 +130,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 				pts.add(new Point(this.positions.getRa(i), this.positions.getDec(i)));
 			}
 			Polygone p = new Polygone(pts);
-			Region r = new Region(p, Database.getAstroframe());
+			Zone r = new Region(p, Database.getAstroframe());
 			retour = r.getSQL();
 			//System.out.println(r.getGnuplotScript());
 		} else {

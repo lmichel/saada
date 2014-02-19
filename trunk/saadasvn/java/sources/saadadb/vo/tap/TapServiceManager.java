@@ -395,7 +395,7 @@ public class TapServiceManager extends EntityManager {
 			retour.append("</schema>\n");
 		}
 		retour.append("</vosi:tableset>\n");
-		rs_schema.close();
+		qschema.close();
 		return retour;
 	}
 

@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
@@ -79,9 +80,10 @@ public class KeySet implements Serializable {
 	/**
 	 * @param keys2
 	 * @throws FatalException 
+	 * @throws Exception 
 	 * @throws SQLException 
 	 */
-	public KeySet(SaadaQLResultSet srs) throws FatalException  {
+	public KeySet(SaadaQLResultSet srs) throws SaadaException  {
 		if( Database.getWrapper().forwardOnly ) {
 			/*
 			 * Must make a copy because SQLITE does not support SCROLLABLE resultset
@@ -120,6 +122,7 @@ public class KeySet implements Serializable {
 		}
 		this.name = "noName";
 		this.pathname = "noName.sri";
+		srs.close();
 	}
 
 	/**

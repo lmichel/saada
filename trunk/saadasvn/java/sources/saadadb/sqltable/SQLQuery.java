@@ -1,20 +1,16 @@
 package saadadb.sqltable;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import saadadb.database.Database;
-import saadadb.database.SaadaDBConnector;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import sun.net.ConnectionResetException;
 
 public class SQLQuery {
 	protected Statement _stmts;

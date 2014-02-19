@@ -88,7 +88,6 @@ public class SaadaInstanceResultSet  {
 		for( int i=1 ; i<=rsmd.getColumnCount() ; i++ ) {
 			colNames.add(rsmd.getColumnName(i));
 		}
-		
 
 //		if( !Database.getWrapper().forwardOnly) {
 //			this.resultSet.afterLast();

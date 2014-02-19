@@ -52,8 +52,10 @@ public class RunQuery extends SaadaServlet {
 			response.setContentType("application/json");
 			String[] qs = query.split("\\s", -1) ;
 			if( qs.length >= 6 ) {
-				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,request);
 				UserAccount ac = UserTrap.getUserAccount(request);
+//			    QueryContext qc = ac.getQueryContext();
+//			    if( qc != null ) qc.closeQuery();;
+				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,ac);
 				ac.setQueryContext(new QueryContext(query, colfmtor, ac.getSessionID()));
 				JSONObject jo = new JSONObject();
 				jo.put("query", query);

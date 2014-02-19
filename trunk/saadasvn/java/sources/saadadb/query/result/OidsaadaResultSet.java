@@ -162,7 +162,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 				}
 				cpt++;
 			}
-			//sqlQuery.close();
+			sqlQuery.close();
 		}
 
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, oids.size() + "oids selected");

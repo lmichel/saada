@@ -105,6 +105,7 @@ public abstract  class Table_Saada_Class extends SQLTable {
 		while( rs.next() ) {
 			retour.add(rs.getString(1)); 
 		}
+		sq.close();
 		return retour.toArray(new String[0]);
 
 	}

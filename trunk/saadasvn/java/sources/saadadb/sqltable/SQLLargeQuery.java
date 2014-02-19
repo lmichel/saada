@@ -1,11 +1,7 @@
 package saadadb.sqltable;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
-import saadadb.database.Database;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;

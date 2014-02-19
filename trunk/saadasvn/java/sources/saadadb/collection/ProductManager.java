@@ -360,6 +360,7 @@ public class ProductManager extends EntityManager {
 						}
 					}
 				}
+				squery.close();
 			}
 		}
 		//		for( Entry<String, ArrayList<Long>> e: linkTargetsToRemove.entrySet()) {
