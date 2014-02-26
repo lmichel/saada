@@ -1,0 +1,22 @@
+Laurent MICHEL          (OAS Strasbourg)        Project Manager
+Hoan NGUYEN NGOC        (OAS Strasbourg)        Design and Development
+Damien CAVAROC          (Nancy ESIAL 2003-2006) VO interface
+Carine HESS             (ULP Strasbourg)        SPIP Web Site
+S�verine MENDIBOURE     (ULP Strasbourg)              "
+Fr�d�ric LEBRAS         (ULP Strasbourg)              "
+Jean-Baptiste CHEVALIER (Nancy ESIAL 2004-2007) Windows + IzPAck
+Christophe PETITJEAN    (Nancy ESIAL 2004-2007)       "
+Fran�ois PRUNIER        (Nancy ESIAL 2004-2007)       "
+Patrick MILLAN          (OAS Strasbourg)        Loader optimization
+Marc ABOUCHACRA         (OAS Strasbourg)        Loader optimization
+Fran�ois Xavier PINEAU  (OAS Strasbourg)        SaadaQL improvment
+Gregory Mantelet	    (OAS Strasbourg)	TAP/UWS/ADQL
+Paul Bandzaff	        (IUT Nancy)      	AJAX interface
+Clémentine Frère	    (IUT Nancy)	        AJAX interface
+Emilie Werner	        (CESE)	        	Admintoool test
+G. Di Nicola		    (LPATC/Unistra 2013) 	Web site design
+J-P. Mauhin		        (LPATC/Unistra 2013) 	Web site design
+N. Nussbaum		        (LPATC/Unistra 2013) 	Web site design
+F. Valence 		        (LPATC/Unistra 2013) 	Web site design
+J-B. Potier 		    (CESE Strasbourg 2013) 	Web page edition and testing
+J. Rybak 		        (ENSEIIE Strasbourg 2013) Admintool improvement, VO Interface
