@@ -79,8 +79,7 @@ abstract public class DbmsWrapper {
 	 */
 	public boolean checkAdminPrivileges(String tmp_dir, boolean clean_after) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Check privilege for admin role in "  + this.url + test_base);
-		Connection admin_connection = null;
-
+		Connection connection = null;
 		try {
 			/*
 			 * Drop the test DB if it exists
@@ -110,17 +109,17 @@ abstract public class DbmsWrapper {
 			/*
 			 * Connect the Test db
 			 */
-			Database.setAdminMode(admp);
-			DatabaseConnection connection = Spooler.getSpooler().getAdminConnection();
+			Database.setConnector(new SaadaDBStandAloneConnector(this.url + test_base, this.driver, test_base, adm, read, readp));
+			Spooler.getSpooler().openAdminConnection(admp);
+			connection = Database.getConnector().getNewAdminConnection(admp);
 			connection.setAutoCommit(true);
 			/*
 			 * Populate the Test db
 			 */
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
-			Statement stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
+			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
 			loadSQLProcedures(stmt);		
-			admin_connection.setAutoCommit(true);
 			/*
 			 * Create a table
 			 */
@@ -141,15 +140,14 @@ abstract public class DbmsWrapper {
 			tmpfile.close();
 
 			if( this.tsvLoadNotSupported() ) {
-				this.storeTable(connection, test_table, -1, tmp_filename) ;			
+				//this.storeTable(connection, test_table, -1, tmp_filename) ;			
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
 					stmt.executeUpdate(str);					
 				}
 			}
-			stmt.close();
 
-			stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
+			stmt = connection.createStatement()	;
 			String qt = "select count(*) from " + test_table;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
@@ -158,7 +156,6 @@ abstract public class DbmsWrapper {
 				int rc;
 				if( (rc = rs.getInt(1)) != 3 ) {
 					rs.close();
-					admin_connection.close();
 					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + rc + "> return by SQL select.");
 				} else {
 					Messenger.printMsg(Messenger.TRACE, "procedure returns 0.5: OK");
@@ -176,14 +173,12 @@ abstract public class DbmsWrapper {
 					Messenger.printMsg(Messenger.DEBUG, "Returns " + rs.getDouble(1) + " " + rs.getObject(2));
 				if( result != -0.5 ) {
 					rs.close();
-					admin_connection.close();
 					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong result: <" + result + "> return by SQL select, should be 0.5");					
 				}
 				Messenger.printMsg(Messenger.TRACE, "SQL procedures seem to be OK");
 				break;
 			}
 			rs.close();
-			admin_connection.close();
 			if( clean_after) {
 				/*
 				 * Drop the base
@@ -202,15 +197,13 @@ abstract public class DbmsWrapper {
 			 */
 		} catch (SaadaException e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
-				admin_connection.close();
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
 
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
-				admin_connection.close();
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
+		} finally {
+			Spooler.getSpooler().close();
 		}
 		/*
 		 * If something goes wrong an exception is risen
