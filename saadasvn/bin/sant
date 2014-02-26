@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-# Shell script calling the embedded ant
-#
-BINDIR=`dirname $0`
-
-java -Dant.home="$BINDIR/../jtools" -classpath "$BINDIR/../jtools/ant-launcher.jar" -Dant.library.dir="$BINDIR/../jtools" org.apache.tools.ant.launch.Launcher $*
