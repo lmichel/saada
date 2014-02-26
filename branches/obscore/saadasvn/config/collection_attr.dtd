@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+
+<!ELEMENT collection_attr (list*)>
+<!ELEMENT list (attr*)>
+<!ATTLIST list name  (ENTRY|TABLE|IMAGE|CUBE|SPECTRUM|MISC|FLATFILE) #IMPLIED>
+<!ELEMENT attr (#PCDATA)>
+<!ATTLIST attr  name  CDATA #IMPLIED
+                     type (double|float|long|int|String|short|byte|char) #IMPLIED>

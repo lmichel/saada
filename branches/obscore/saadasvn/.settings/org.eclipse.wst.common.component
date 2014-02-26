@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="Saada1.7">
+        <wb-resource deploy-path="/" source-path="/web"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
+        <dependent-module archiveName="SQLITEgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/saada/deploy/TestBeds/version2_0/dbms_SQLITE/saadadb/SQLITE/web/WEB-INF/lib/SQLITEgenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="Saada1.7"/>
+        <property name="java-output-path" value="/Saada1.7/build/classes"/>
+    </wb-module>
+</project-modules>

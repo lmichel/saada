@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- la structure des donnée DTD/XML d'une fichier de configuration du chargement des donnees spectre -->
+
+   <!ELEMENT relation (N_M*)>
+   <!ELEMENT N_M (relation_name,description,primary_coll,secondary_coll,algorithm,qualifier*)>
+   <!ELEMENT relation_name (#PCDATA)>
+   <!ELEMENT description   (#PCDATA)>
+   <!ELEMENT primary_coll  (#PCDATA)>
+   <!ATTLIST primary_coll  name CDATA #IMPLIED
+                           type (ENTRY|IMAGE|SPECTRUM|MISC|TABLE|FLATFILE) #IMPLIED>
+
+   <!ELEMENT secondary_coll (#PCDATA)>
+   <!ATTLIST secondary_coll  name CDATA #IMPLIED
+                             type (ENTRY|IMAGE|SPECTRUM|MISC|TABLE|FLATFILE) #IMPLIED>
+
+   <!ELEMENT algorithm (class_name, qualifier*, para_value*, query)>
+   <!ELEMENT class_name (#PCDATA)>
+
+
+   <!ELEMENT qualifier (#PCDATA)>
+   <!ATTLIST qualifier  name  CDATA #IMPLIED
+                        type (double) #IMPLIED>
+
+   <!ELEMENT para_value (#PCDATA)>
+   <!ELEMENT query (#PCDATA)>
+
+
+
+
+
+
+
