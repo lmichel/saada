@@ -1,0 +1,1143 @@
+/*
+*  This JavaCC file implements the BNF definition of ADQL v2.0 (IVOA Recommendation 30 Oct 2008 - http://www.ivoa.net/Documents/cover/ADQL-20081030.html).
+*  To generate the parser with this file use JavaCC. This .jj file has been successfully tested with JavaCC 5.0.
+*  
+*  The generated parser checks the syntax of the given ADQL query and generates an object representation but no coherence with any database is done.
+*  If the syntax is not conform to the ADQL definition an error message is printed else it will be the message "Correct syntax".
+*
+*  Author:  Gregory Mantelet (CDS) - gregory.mantelet@astro.unistra.fr
+*  Version: June 2010
+*/
+
+							/* ########### */
+							/* # OPTIONS # */
+							/* ########### */
+options {
+	STATIC = false;
+	IGNORE_CASE = true;
+	DEBUG_PARSER = true;
+}
+
+							/* ########## */
+							/* # PARSER # */
+							/* ########## */
+PARSER_BEGIN(AdqlParser)
+
+package adqlParser.parser;
+
+import java.util.Iterator;
+import java.util.ArrayList;
+
+import java.io.FileReader;
+
+import adqlParser.query.*;
+import adqlParser.query.function.*;
+import adqlParser.query.function.geometry.*;
+
+/**
+* <p>Parses an ADQL query thanks to the {@link AdqlParser#Query()} function. </p>
+* 
+* <p>This parser is able, thanks to a {@link DBConsistency} object, to check the consistency between the ADQL query to parse and the "database" on which the query must be executed.
+* However the default {@link DBConsistency} object is an instance of {@link DefaultDBConsistency} which does no verification. Thus you must
+* extend {@link DBConsistency} to ensure the consistency with the "database" on which the query must be executed.</p>
+* 
+* <p>To create an object representation of the given ADQL query, this parser uses a {@link QueryBuilderTools} object. So if you want customize some object (ie. CONTAINS) of this representation
+* you just have to extend the corresponding default object (ie. ContainsFunction) and to extend the corresponding function of {@link QueryBuilderTools} (ie. createContains(...)).</p>
+* 
+* <p><b><u>WARNING:</u> To modify this class it's strongly encouraged to modify the .jj file in the section between <i>PARSER_BEGIN</i> and <i>PARSER_END</i> and to re-compile it with JavaCC.</b></p>
+*
+* @see DBConsistency
+* @see QueryBuilderTools
+*
+* @author Gregory Mantelet (CDS) - gregory.mantelet@astro.unistra.fr
+* @version June 2010
+*/
+public class AdqlParser {
+	
+	/** Tools to build the object representation of the ADQL query. */
+	private QueryBuilderTools buildTools = new QueryBuilderTools();
+	
+	/** Used to ensure the consistency between the ADQL query and the database. */
+	private DBConsistency dbCheck = new DefaultDBConsistency();
+	
+	/** The object representation of the ADQL query to parse. (ONLY USED DURING THE PARSING, else it is always <i>null</i>). */
+	private ADQLQuery query = null;
+	
+	/** Indicates whether some debugging messages must be printed or not. */
+	private boolean debug = false;
+	
+	/**
+	* Builds an ADQL parser without a query to parse.
+	*/
+	public AdqlParser(){
+		this(new java.io.ByteArrayInputStream("".getBytes()));
+	}
+	
+	/**
+	* Builds a parser with a stream containing the query to parse.
+	*
+	* @param stream	The stream in which the ADQL query to parse is given.
+	* @param dbcons	The object to use to ensure the consistency with the database.
+	* @param tools	The object to use to build an object representation of the given ADQL query.
+	*/
+	public AdqlParser(java.io.InputStream stream, DBConsistency dbcons, QueryBuilderTools tools) {
+		this(stream);
+		dbCheck = dbcons;
+		buildTools = tools;
+		setDebug(false);
+	}
+	
+	/**
+	* Builds a parser with a stream containing the query to parse.
+	*
+	* @param stream		The stream in which the ADQL query to parse is given.
+	* @param encoding	The supplied encoding.
+	* @param dbcons		The object to use to ensure the consistency with the database.
+	* @param tools		The object to use to build an object representation of the given ADQL query.
+	*/
+	public AdqlParser(java.io.InputStream stream, String encoding, DBConsistency dbcons, QueryBuilderTools tools) {
+		this(stream, encoding);
+		dbCheck = dbcons;
+		buildTools = tools;
+		setDebug(false);
+	}
+	
+	/**
+	* Builds a parser with a reader containing the query to parse.
+	*
+	* @param reader		The reader in which the ADQL query to parse is given.
+	* @param dbcons		The object to use to ensure the consistency with the database.
+	* @param tools		The object to use to build an object representation of the given ADQL query.
+	*/
+	public AdqlParser(java.io.Reader reader, DBConsistency dbcons, QueryBuilderTools tools) {
+		this(reader);
+		dbCheck = dbcons;
+		buildTools = tools;
+		setDebug(false);
+	}
+	
+	/**
+	* Builds a parser with another token manager.
+	*
+	* @param tm			The manager which associates a token to a numeric code.
+	* @param dbcons		The object to use to ensure the consistency with the database.
+	* @param tools		The object to use to build an object representation of the given ADQL query.
+	*/
+	public AdqlParser(AdqlParserTokenManager tm, DBConsistency dbcons, QueryBuilderTools tools) {
+		this(tm);
+		dbCheck = dbcons;
+		buildTools = tools;
+		setDebug(false);
+	}
+		
+	public final boolean isDebugging(){
+		return debug;
+	}
+	
+	public final void setDebug(boolean on){
+		debug = on;
+		dbCheck.setDebug(debug);
+		if (on) enable_tracing();
+		else disable_tracing();
+	}
+	
+	/**
+	* Parses the query given at the creation of this parser or in the <i>ReInit</i> functions.
+	*
+	* @return 					The object representation of the given ADQL query.
+	* @throws ParseException	If there is at least one syntactic error.
+	*
+	* @see AdqlParser#Query()
+	*/
+	public final ADQLQuery parseQuery() throws ParseException {
+		return Query();
+	}
+	
+	/**
+	* Parses the query given in parameter.
+	*
+	* @param q					The ADQL query to parse.
+	* @return 					The object representation of the given ADQL query.
+	* @throws ParseException	If there is at least one syntactic error.
+	*
+	* @see AdqlParser#ReInit(java.io.InputStream)
+	* @see AdqlParser#setDebug(boolean)
+	* @see AdqlParser#Query()
+	*/
+	public final ADQLQuery parseQuery(String q) throws ParseException {
+		boolean debugging = debug;
+		
+		ReInit(new java.io.ByteArrayInputStream(q.getBytes()));
+		setDebug(debugging);
+		
+		return Query();
+	}
+	
+	/**
+	* Parses the query contained in the stream given in parameter.
+	*
+	* @param stream				The stream which contains the ADQL query to parse.
+	* @return 					The object representation of the given ADQL query.
+	* @throws ParseException	If there is at least one syntactic error.
+	*
+	* @see AdqlParser#ReInit(java.io.InputStream)
+	* @see AdqlParser#setDebug(boolean)
+	* @see AdqlParser#Query()
+	*/
+	public final ADQLQuery parseQuery(java.io.InputStream stream) throws ParseException {
+		boolean debugging = debug;
+		
+		ReInit(stream);
+		setDebug(debugging);
+		
+		return Query();
+	}
+	
+	/**
+	* Creates the object representation of a column reference: {@link ADQLColumn}.
+	* Before the creation this method checks whether the column exists in the specified table (if any) or in all selected table.
+	*
+	* @param colName			The name of the column to transform in ADQLColumn. <i>Note: if there is a table precision, it must be put as prefix of the columnName.</i>
+	* @return 					The corresponding object representation.
+	* @throws ParseException	If the given column name doesn't correspond to an existing column or if the table prefix doesn't correspond to a selected table.
+	*
+	* @see DBConsistency#getNbAliasedTables()
+	* @see DBConsistency#columnExists(String, String)
+	*
+	* @see QueryBuilderTools#createColumn(String, String, String)
+	*/
+	private ADQLColumn createColumn(String colName) throws ParseException {
+		ADQLColumn column = null;
+		int ind = colName.lastIndexOf('.');
+		
+		// If there is a table precision...
+		if (ind > 0){
+			// extract the table name/alias:
+			String tableRef = colName.substring(0, ind);
+			colName = colName.substring(ind+1);
+			// check whether the column exists or not (ONLY IF the clause FROM has already been evaluated):
+			if (dbCheck.getNbAliasedTables() > 0 && !dbCheck.columnExists(colName, tableRef))
+					throw new ParseException("The column \""+colName+"\" doesn't exist in the selected table \""+tableRef+"\" !");
+			// create the corresponding object representation of this column:
+			column = buildTools.createColumn(colName, tableRef, null);
+		
+		// Else...
+		}else{
+			// check whether the column exists or not (ONLY IF the clause FROM has already been evaluated):
+			if (dbCheck.getNbAliasedTables() > 0 && !dbCheck.columnExists(colName))
+				throw new ParseException("The column \""+colName+"\" doesn't exist in any selected table !");
+			// create the corresponding object representation of this column:
+			column = buildTools.createColumn(colName, null, null);
+		}
+		
+		return column;
+	}
+	
+	/**
+	* <p>Create the object representation of a table reference in function of all given parameters.</p>
+	*
+	* <p>If there is no subquery, the table name must corresponds to an existing table of the "database".</p>
+	*
+	* @param table				The table name or <i>null</i> if the table is a subquery.
+	* @param alias				The alias of the table (!= <i>null</i> if the table is a subquery).
+	* @param q					The subquery or <i>null</i> if the table is only a reference to an existing table.
+	* @return					The object representation of the table described by the given parameters.
+	* @throws ParseException	If the table name doesn't correspond to an existing table or if there is no alias for the subquery.
+	*
+	* @see DBConsistency#tableExists(String)
+	* @see DBConsistency#addTableAlias(String, String)
+	* @see DBConsistency#addColumns(String)
+	* @see DBConsistency#addColumn(String, String)
+	*
+	* @see QueryBuilderTools#createTable(String, String)
+	* @see QueryBuilderTools#createTable(ADQLQuery, String)
+	*/
+	private final ADQLTable createTable(String table, String alias, ADQLQuery q) throws ParseException {
+		ADQLTable t = null;
+		
+		// TABLE REFERENCE case:
+		if (q == null){
+			// Check whether the table exists:
+			if (dbCheck.tableExists(table)){
+				// create its object representation:
+				t = buildTools.createTable(table, alias);
+				
+				// add an alias mapping for this table:
+				alias = dbCheck.addTableAlias(alias, table);
+				// list all columns of this table:
+				dbCheck.addColumns(alias);
+			}else
+				throw new ParseException("The table \""+table+"\" doesn't exist !");
+				
+		// SUBQUERY case:
+		}else{
+			if (alias == null || alias.trim().length() == 0)
+				throw new ParseException("A subquery item of the FROM clause must have an alias !");
+			
+			// create its object representation:
+			t = buildTools.createTable(q, alias);
+			
+			// add an alias mapping for this table:
+			alias = dbCheck.addTableAlias(alias, t.toString());
+			// list all columns of this table:
+			Iterator<ADQLOperand> it = q.getColumns();
+			while(it.hasNext()){
+				ADQLOperand op = it.next();
+				if (op.getAlias() != null)
+					dbCheck.addColumn(op.getAlias(), alias);
+				else if (op instanceof ADQLColumn)
+					dbCheck.addColumn(((ADQLColumn)op).getColumn(), alias);
+			}
+		}
+		
+		return t;
+	}
+	
+	/**
+	* Checks whether the non-null parameter is correct and creates the corresponding object representation: {@link ColumnReference}.
+	* <b>ONLY one parameter must be non-null.</b>
+	*
+	* @param colName			The name/alias of the column.
+	* @param colIndice			The indice of the column.
+	* @return					The corresponding object representation.
+	* @throws ParseException	If the given column name/alias doesn't correspond to a selected or an existing column
+	*							or if the given column indice is out of limit.
+	*
+	* @see DBConsistency#columnExists(String)
+	*
+	* @see ADQLQuery#getNbColumns()
+	*
+	* @see QueryBuilderTools#createColRef(String)
+	* @see QueryBuilderTools#createColRef(int)
+	*/
+	private final ColumnReference createGroupBy(String colName, Token colIndice) throws ParseException {
+		ColumnReference colRef = null;
+		
+		// COLUMN NAME case:
+		if (colName != null){
+			// Check whether the column exists:
+			if (!dbCheck.columnExists(colName))
+	 			throw new ParseException("The column \""+colName+"\" doesn't exist in any selected table !");
+	 		// Create the corresponding object representation:
+	 		colRef = buildTools.createColRef(colName);
+	 	
+	 	// COLUMN INDICE case:
+		}else if (colIndice != null){
+			try{
+		 		// Check whether the indice is correct:
+		 		int ind = Integer.parseInt(colIndice.image);
+		 		if (ind <= 0 || ind > query.getNbColumns())
+		 			throw new ParseException("The column indice \""+ind+"\" in the GROUP BY clause is incorrect: it must be contain between 1 and "+query.getNbColumns()+" (both included)");
+		 		// Create the corresponding object representation:
+		 		colRef = buildTools.createColRef(ind);
+		 	}catch(NumberFormatException nfe){
+		 		throw new ParseException("CRITICAL ERROR: A column indice (\""+colIndice.image+"\" in the GROUP BY clause) isn't a regular unsigned integer !");
+		 	}
+		 	
+		// ELSE:
+		}else
+			throw new ParseException("A GROUP BY can only be put on column names or on column indices !");
+		
+		return colRef;
+	}
+	
+	/**
+	* Checks whether the non-null parameter of the two first one is correct and creates the corresponding object representation: {@link ADQLOrder}.
+	* <b>ONLY one of the two first parameters must be non-null.</b>
+	*
+	* @param colName			The name/alias of the column.
+	* @param colIndice			The indice of the column.
+	* @param descSorting		The sort order (can be <i>null</i>).
+	* @return					The corresponding object representation.
+	* @throws ParseException	If the given column name/alias doesn't correspond to a selected or an existing column
+	*							or if the given column indice is out of limit.
+	*
+	* @see DBConsistency#columnExists(String, String)
+	*
+	* @see ADQLQuery#getNbColumns()
+	*
+	* @see QueryBuilderTools#createColRef(String)
+	* @see QueryBuilderTools#createColRef(int)
+	*/
+	private final ADQLOrder createOrder(String colName, Token colIndice, Token descSorting) throws ParseException {
+		ADQLOrder order = null;
+		boolean desc = (descSorting != null);
+		
+		// COLUMN INDICE case:
+		if (colIndice != null){
+			try{
+		 		// Check whether the indice is correct:
+				int ind = Integer.parseInt(colIndice.image);
+				if (ind < 0 || ind > query.getNbColumns())
+					throw new ParseException("The column indice \""+ind+"\" in the ORDER BY clause is incorrect: it must be contain between 1 and "+query.getNbColumns()+" (both included)");
+		 		// Create the corresponding object representation:
+				order = buildTools.createOrder(ind, desc);
+			}catch(NumberFormatException nfe){
+				throw new ParseException("CRITICAL ERROR: A column indice (\""+colIndice.image+"\" in the GROUP BY clause) isn't a regular unsigned integer !");
+			}
+			
+		// COLUMN NAME case:
+		}else if (colName != null){
+			// Extract the table name if specified:
+			int ind = colName.lastIndexOf('.');
+			String column = colName, prefix = null;
+			if (ind > 0){
+				prefix = colName.substring(0, ind);
+				column = colName.substring(ind+1);
+			}
+			// Check whether the column exists:
+			if (!dbCheck.columnExists(column, prefix)){
+				if (prefix == null)
+					throw new ParseException("The column \""+colName+"\" doesn't exist in any selected table !");
+				else
+					throw new ParseException("The column \""+colName+"\" doesn't exist in the selected table \""+prefix+"\" !");
+			}
+			order = buildTools.createOrder(colName, desc);
+				
+		// ELSE:
+		}else
+			throw new ParseException("An ORDER can only be put on column names or on column indices !");
+			
+		return order;
+	}
+	
+	/**
+	* Checks whether each selected column corresponds to a column of the selected tables.
+	* If they exists they are mapped with their alias (if existing).  
+	*
+	* @throws ParseException If a column reference doesn't correspond to an existing column.
+	* 
+	* @see ADQLQuery#getColumns()
+	*
+	* @see DBConsistency#selectedColumnExists(ADQLColumn)
+	* @see DBConsistency#addColumnAlias(String, String)
+	*/
+	private final void checkSelectedColumnsExistence() throws ParseException {
+		// For each selected column:
+		Iterator<ADQLOperand> it = query.getColumns();
+		while(it.hasNext()){
+			ADQLOperand col = it.next();
+			
+			// if it is a column reference...
+			if (col instanceof ADQLColumn){
+				ADQLColumn column = (ADQLColumn)col;
+				// check whether the column exists (if yes, the corresponding alias mapping is automatically added by {@link DBConsistency#selectedColumnExists(ADQLColumn)}):
+				if (!dbCheck.selectedColumnExists(column)){
+					if (column.getPrefix() != null)
+						throw new ParseException("The column \""+column.getColumn()+"\" doesn't exist in the table \""+column.getPrefix()+"\" !");
+					else
+						throw new ParseException("The column \""+column.getColumn()+"\" doesn't exist in any selected table !");
+				}
+				
+			// else add an alias mapping if there is an alias for this operand:
+			}else if (col.getAlias() != null)
+				dbCheck.addColumnAlias(col.getAlias(), col.toString());
+		}
+	}
+
+	/**
+	* <p>Gets the specified ADQL query and parses the given ADQL query. The SQL translation is then printed if the syntax is correct.</p>
+	* <p><b>ONLY the syntax is checked: the query is NOT EXECUTED !</b></p>
+	* <p>Supplied parameters are: <ul><li>[-debug] -url http://...</li><li>[-debug] -file ...</li><li>[-debug] -query SELECT...</li></ul></p>
+	*
+	* @param args
+	* @throws Exception
+	*/
+	public static final void main(String[] args) throws Exception {
+		final String USAGE = "Usage:\n\tAdqlParser [-debug] -url http://...\n\tAdqlParser [-debug] -file /home/...\n\tAdqlParser [-debug] -query\nIMPORTANT: the query must be finished by a ; !";
+		
+        AdqlParser parser;
+		int indParam = 0;
+		boolean debug = false;
+		 
+		// debug ?
+		if (args.length > 0 && args[indParam].equalsIgnoreCase("-debug")){
+			debug = true;
+			indParam++;
+		}
+		
+		// Parameters reading:
+		if (args.length == indParam+1 && args[indParam].equalsIgnoreCase("-query"))
+			parser = new AdqlParser(System.in);
+		else if (args.length < indParam+2){
+    		System.err.println("Parameters missing !\n"+USAGE);
+    		return;
+		}else{
+    		if (args[indParam].equalsIgnoreCase("-url"))
+				parser = new AdqlParser((new java.net.URL(args[indParam+1])).openStream());
+    		else if (args[indParam].equalsIgnoreCase("-file"))
+    			parser = new AdqlParser(new FileReader(args[indParam+1]));
+    		else{
+    			System.err.println("Wrong parameters !\n"+USAGE);
+    			return;
+    		}
+    	}
+    	
+    	// Query parsing:
+    	try{
+    		parser.setDebug(debug);
+	    	ADQLQuery q = parser.parseQuery();
+	    	System.out.println("\n### CORRECT SYNTAX ###\n");
+	    	System.out.println("### SQL translation ###\n"+q.toSQL()+"\n#######################");
+	    }catch(ParseException pe){
+	    	System.err.println("### BAD SYNTAX ###\n"+pe.getMessage());
+	    }
+    }
+}
+
+PARSER_END(AdqlParser)
+
+
+							/* ########### */
+							/* # GRAMMAR # */
+							/* ########### */
+/* ******************** */
+/* Characters to ignore */
+/* ******************** */
+SKIP : { < " " | "\t" | "\n" | "\r" | "\r\n" > }
+
+/* *********** */
+/* Punctuation */
+/* *********** */
+TOKEN : {
+	< LEFT_PAR: "(" >
+|	< RIGHT_PAR: ")" > 
+|	< DOT: "." >
+|	< COMMA: "," >
+|	< EOQ: ";">
+|	< CONCAT: "||" >
+}
+
+/* ******************** */
+/* Arithmetic operators */
+/* ******************** */
+TOKEN : {
+	< PLUS: "+" >
+|	< MINUS: "-" >
+|	< ASTERISK: "*" >
+|	< DIVIDE: "/" >
+}
+
+/* ******************** */
+/* Comparison operators */
+/* ******************** */
+TOKEN : {
+	< EQUAL: "=" >
+|	< NOT_EQUAL: "<>" | "!=" >
+|	< LESS_THAN: "<" >
+|	< LESS_EQUAL_THAN: "<=" >
+|	< GREATER_THAN: ">" >
+|	< GREATER_EQUAL_THAN: ">=" >
+}
+
+/* *************** */
+/* SELECT's tokens */
+/* *************** */
+TOKEN : {
+	< SELECT: "SELECT" >
+|	< QUANTIFIER: "DISTINCT" | "ALL" >
+|	< TOP: "TOP" >
+}
+
+/* ************* */
+/* FROM's tokens */
+/* ************* */
+TOKEN : {
+	< FROM: "FROM" >
+|	< AS: "AS" >
+|	< NATURAL: "NATURAL" >
+|	< INNER: "INNER" >
+|	< OUTER: "OUTER" >
+|	< RIGHT: "RIGHT" >
+|	< LEFT: "LEFT" >
+|	< FULL: "FULL" >
+|	< JOIN: "JOIN" >
+|	< ON: "ON" >
+|	< USING: "USING" >
+}
+
+/* ************** */
+/* WHERE's tokens */
+/* ************** */
+TOKEN : {
+	< WHERE: "WHERE" >
+|	< AND: "AND" >
+|	< OR: "OR" >
+|	< NOT: "NOT" >
+|	< IS: "IS" >
+|	< NULL: "NULL" >
+|	< BETWEEN: "BETWEEN" >
+|	< LIKE: "LIKE" >
+|	< IN: "IN" >
+|	< EXISTS: "EXISTS" >
+}
+
+/* ********************* */
+/* Other clauses' tokens */
+/* ********************* */
+TOKEN : {
+	< GROUP_BY: "GROUP BY" >
+|	< HAVING: "HAVING" >
+|	< ORDER_BY: "ORDER BY" >
+|	< ASC: "ASC" >
+|	< DESC: "DESC" >
+}
+
+/* ************* */
+/* SQL functions */
+/* ************* */
+TOKEN : {
+	< AVG: "AVG" >
+|	< MAX: "MAX" >
+|	< MIN: "MIN" >
+|	< SUM: "SUM" >
+|	< COUNT: "COUNT" >
+}
+
+/* ************** */
+/* ADQL functions */
+/* ************** */
+TOKEN : {
+	< BOX: "BOX" >
+|	< CENTROID: "CENTROID" >
+|	< CIRCLE: "CIRCLE" >
+|	< POINT: "POINT" >
+|	< POLYGON: "POLYGON" >
+|	< REGION: "REGION" >
+
+|	< CONTAINS: "CONTAINS" >
+|	< INTERSECTS: "INTERSECTS" >
+|	< AREA: "AREA" >
+|	< COORD1: "COORD1" >
+|	< COORD2: "COORD2" >
+|	< COORDSYS: "COORDSYS" >
+|	< DISTANCE: "DISTANCE" >
+}
+
+/* ********************** */
+/* Mathematical functions */
+/* ********************** */
+TOKEN : {
+	< ABS: "ABS" >
+|	< CEILING: "CEILING" >
+|	< DEGREES: "DEGREES" >
+|	< EXP: "EXP" >
+|	< FLOOR: "FLOOR" >
+|	< LOG: "LOG" >
+|	< LOG10: "LOG10" >
+|	< MOD: "MOD" >
+|	< PI: "PI" >
+|	< POWER: "POWER" >
+|	< RADIANS: "RADIANS" >
+|	< RAND: "RAND" >
+|	< ROUND: "ROUND" >
+|	< SQRT: "SQRT" >
+|	< TRUNCATE: "TRUNCATE" >
+}
+
+/* ************************* */
+/* Trigonometrical functions */
+/* ************************* */
+TOKEN : {
+	< ACOS: "ACOS" >
+|	< ASIN: "ASIN" >
+|	< ATAN: "ATAN" >
+|	< ATAN2: "ATAN2" >
+|	< COS: "COS" >
+|	< COT: "COT" >
+|	< SIN: "SIN" >
+|	< TAN: "TAN" >
+}
+
+/* ******* */
+/* Comment */
+/* ******* */
+<DEFAULT> MORE : { < <MINUS>(<MINUS>)+ >: WithinComment }
+<WithinComment> SKIP : { < "\n" | "\r" | "\r\n" >: DEFAULT }
+<WithinComment> MORE : { < ~[] > }
+
+/* ****** */
+/* String */
+/* ****** */
+<DEFAULT> MORE : { "'" : WithinString }
+<WithinString> MORE : { < ~["'"] | ("''") > }
+<WithinString> TOKEN : { < STRING_LITERAL: "'" >: DEFAULT }
+
+/* ************************************************* */
+/* Identifier (column, tables, ...) */
+/* ************************************************* */
+<DEFAULT> MORE : { "\"" : WithinDelimitedId }
+<WithinDelimitedId> MORE : { < ~["\""] | ("\"\"") > }
+<WithinDelimitedId> TOKEN : { < DELIMITED_IDENTIFIER: "\"" >: DEFAULT }
+
+TOKEN : {
+	< REGULAR_IDENTIFIER: (<Letter>)+ (<DIGIT> | <Letter> | "_")* >
+|	< #Letter: ["a"-"z","A"-"Z"] >
+}
+
+/* *************** */
+/* Primary numbers */
+/* *************** */
+TOKEN : {
+	< SCIENTIFIC_NUMBER: (<UNSIGNED_FLOAT>|<UNSIGNED_INTEGER>) "E" (<PLUS>|<MINUS>)? <UNSIGNED_INTEGER> >
+|	< UNSIGNED_FLOAT: (<UNSIGNED_INTEGER> <DOT> <UNSIGNED_INTEGER>) | (<DOT> <UNSIGNED_INTEGER>) >
+|	< UNSIGNED_INTEGER: (<DIGIT>)+ >
+|	< #DIGIT: ["0"-"9"] >
+}
+
+							/* ########## */
+							/* # SYNTAX # */
+							/* ########## */
+							
+/* ******************* */
+/* GENERAL ADQL SYNTAX */
+/* ******************* */
+/**
+* Parses the ADQL query given at the parser creation or in the {@link AdqlParser#ReInit(java.io.InputStream)}
+* or in the <i>parseQuery</i> functions.
+*
+* @return	The object representation of the query.
+* @throws ParseException	If the query syntax is incorrect.
+*/
+ADQLQuery Query(): {ADQLQuery q = null;}{
+	{if (debug) System.out.println("### START PARSING...");}
+	q=QueryExpression() (<EOF> | <EOQ>)
+	{if (debug) System.out.println("### END PARSING !"); return q;}
+}
+
+ADQLQuery QueryExpression(): {} {
+	{query = buildTools.createQuery(); dbCheck.addContext(query);}
+	Select()
+	From()
+	[Where()]
+	[GroupBy()]
+	[Having()]
+	[OrderBy()]
+	{
+	if (!dbCheck.queryVerif(query))
+		throw new ParseException("ERROR: The query doesn't satisfy the last verifications !");
+	else {
+		ADQLQuery newQuery = dbCheck.removeContext();
+		query = dbCheck.getCurrentQuery();
+		return newQuery;
+	}
+	}
+}
+
+ADQLQuery SubQueryExpression(): {ADQLQuery q = null;} {
+	<LEFT_PAR> q=QueryExpression() <RIGHT_PAR>
+	{return q;}
+}
+
+void Select(): {ADQLOperand item=null; Token t = null;} {
+	<SELECT>
+	[t=<QUANTIFIER> {query.setDistinct(t.image.equalsIgnoreCase("DISTINCT"));}]
+	[<TOP> t=<UNSIGNED_INTEGER>
+	 {
+	  try{
+	  	query.setLimit(Integer.parseInt(t.image));
+	  }catch(NumberFormatException nfe){
+	  	throw new ParseException("CRITICAL ERROR: The TOP limit (\""+t.image+"\") isn't a regular unsigned integer !");
+	  }
+	 }
+	]
+	( <ASTERISK> | (item=SelectItem() {query.addSelectColumn(item);}(<COMMA> item=SelectItem() {query.addSelectColumn(item);})*) )
+}
+
+ADQLOperand SelectItem(): {String expr="", tmp, label; ADQLOperand op = null; } {
+	(LOOKAHEAD(7)
+	(expr=Identifier() {expr+=".";} <DOT> (tmp=Identifier() {expr+=tmp+".";} <DOT> (tmp=Identifier() {expr+=tmp+".";} <DOT>)?)? <ASTERISK> {expr+="*"; op = buildTools.createColumn(expr, null, null);})
+	| (op=ValueExpression() (<AS> label=Identifier() {op.setAlias(label);})? ))
+	{return op;}
+}
+
+void From():{ADQLTable t = null;}{
+	(<FROM> t=TableRef() { query.addTable(t); }
+	(<COMMA> t=TableRef() { query.addTable(t); })*)
+	{ checkSelectedColumnsExistence(); }
+}
+
+void Where(): {ADQLConstraint condition;} {
+	<WHERE> condition=SearchCondition()
+	{ query.addConstraint(condition); }
+}
+
+void GroupBy(): {String colName = null; Token ind = null;} {	<GROUP_BY>
+	(colName=Identifier() { query.addGroupBy(createGroupBy(colName, null)); } 
+	| ind=<UNSIGNED_INTEGER> { query.addGroupBy(createGroupBy(null, ind)); } ) 
+	(<COMMA>
+	 (colName=Identifier() { query.addGroupBy(createGroupBy(colName, null)); }
+	 | ind=<UNSIGNED_INTEGER> {query.addGroupBy(createGroupBy(null, ind)); } )
+	)*}void Having(): {ADQLConstraint condition = null;} {	<HAVING> condition=SearchCondition()
+	{ query.addHaving(condition); }}void OrderBy(): {String colName = null; Token ind = null; Token desc = null;} {	<ORDER_BY> 
+	((colName=Identifier() | ind=<UNSIGNED_INTEGER>) (<ASC> | desc=<DESC>)? 
+	{query.addOrder(createOrder(colName, ind, desc)); colName = null; ind = null; desc = null;})
+	(<COMMA> 
+	 (colName=Identifier() | ind=<UNSIGNED_INTEGER>) (<ASC> | desc=<DESC>)? 
+	 {query.addOrder(createOrder(colName, ind, desc)); colName = null; ind = null; desc = null;}
+	)*}
+
+/* *************************** */
+/* COLUMN AND TABLE REFERENCES */
+/* *************************** */
+String Identifier(): {Token t; String id;} {
+	(t=<REGULAR_IDENTIFIER> {id=t.image;} | t=<DELIMITED_IDENTIFIER> {id=t.image.substring(1, t.image.length()-1);})
+	{return id;}
+}
+
+String TableName(): {String table="";} {
+	(table=Identifier() (LOOKAHEAD(1) <DOT> table=Identifier())? (LOOKAHEAD(1) <DOT> table=Identifier())?)
+	{return table;}
+}
+
+ADQLColumn ColumnReference(): {String col1="", col2 = null;} {
+	(col1=Identifier() (<DOT> col2=TableName() {col1 += "."+col2;})?)
+	{ return createColumn(col1); }
+}
+
+ADQLTable SimpleTableRef():{String table=null, alias=null; ADQLQuery q = null;}{
+	(LOOKAHEAD(2)
+	(LOOKAHEAD(2)(table=TableName() [[<AS>] alias=Identifier()]) | (q=SubQueryExpression() [<AS>] alias=Identifier()))
+	|
+	(<LEFT_PAR> (LOOKAHEAD(2)(table=TableName() [[<AS>] alias=Identifier()]) | (q=SubQueryExpression() [<AS>] alias=Identifier())) <RIGHT_PAR>))
+	{return createTable(table, alias, q);}
+}
+
+ADQLTable TableRef(): {String table = null, alias = null; ADQLQuery q = null; ADQLTable t = null; ADQLJoin join = null;} {
+	(LOOKAHEAD(2)
+	((LOOKAHEAD(2)(table=TableName() [[<AS>] alias=Identifier()] {t = createTable(table, alias, null);} [join=Join() {t.setJoin(join);}]) | (q=SubQueryExpression() [<AS>] alias=Identifier() {t = createTable(table, alias, q);} [join=Join() {t.setJoin(join);}])))
+	|
+	(<LEFT_PAR> (LOOKAHEAD(2)(table=TableName() [[<AS>] alias=Identifier()] {t = createTable(table, alias, null);}) | (q=SubQueryExpression() [<AS>] alias=Identifier()) {t = createTable(table, alias, q);}) [join=Join() {t.setJoin(join);}] <RIGHT_PAR>))
+	{return t;}
+}
+
+ADQLJoin Join(): {boolean natural = false; JoinType type = JoinType.INNER; ADQLTable table; ADQLJoin join = null;} {	[<NATURAL> {natural=true;}] [<INNER> | ((<LEFT> {type = JoinType.OUTER_LEFT;}|<RIGHT> {type = JoinType.OUTER_RIGHT;}|<FULL> {type = JoinType.OUTER_FULL;}) [<OUTER>])] <JOIN> table=SimpleTableRef()
+	[join = JoinSpecification(natural, type, table)]
+	{
+	if (join == null){
+		if (!natural)
+			throw new ParseException("JOIN syntax incorrect: you must either use the keywork NATURAL or put a condition (keyword ON) or a list of columns (keyword USING) !");
+		else
+			return buildTools.createJoin(type, table);
+	}else
+		return join;
+	}}
+
+ADQLJoin JoinSpecification(boolean natural, JoinType type, ADQLTable table): {ADQLConstraint condition = null; ADQLJoin join = null; ArrayList<String> lstColumns = new ArrayList<String>(); String ident;} {
+	{
+	if (natural)
+		throw new ParseException("JOIN syntax incorrect: you must either use the keywork NATURAL or put a condition (keyword ON) or a list of columns (keyword USING) !");
+	}
+	((<ON> condition=SearchCondition() {join = buildTools.createJoin(type, table, condition);})
+	| (<USING> <LEFT_PAR> ident=Identifier() {lstColumns.add(ident);} (<COMMA> ident=Identifier() {lstColumns.add(ident);})* <RIGHT_PAR> {join = buildTools.createJoin(type, table, lstColumns);}))
+	{return join;}
+}
+
+/* ****** */
+/* STRING */
+/* ****** */
+String String(): {Token t; String str="";} {
+	(t=<STRING_LITERAL> {str += t.image;})+
+	{return (str!=null)?str.substring(1,str.length()-1):str;}
+}
+
+/* ************* */
+/* NUMERIC TYPES */
+/* ************* */
+String UnsignedNumeric(): {Token t;} {
+	(t=<SCIENTIFIC_NUMBER>
+	| t=<UNSIGNED_FLOAT>
+	| t=<UNSIGNED_INTEGER>)
+	{return t.image;}
+}
+
+String UnsignedFloat(): {Token t;} {
+	(t=<UNSIGNED_INTEGER>
+	| t=<UNSIGNED_FLOAT>)
+	{return t.image;}
+}
+
+String SignedInteger(): {Token sign=null, number;} {
+	((sign=<PLUS>|sign=<MINUS>)? number=<UNSIGNED_INTEGER>)
+	{return ((sign==null)?"":sign.image)+number.image;}
+}
+
+/* *********** */
+/* EXPRESSIONS */
+/* *********** */
+ADQLOperand ValueExpressionPrimary(): {String expr; ADQLColumn column; ADQLOperand op;} {
+	// unsigned_value_specification
+	(expr=UnsignedNumeric() {return buildTools.createConstant(expr, ADQLType.INTEGER);} | expr=String() {return buildTools.createConstant(expr, ADQLType.STRING);}
+	// column_reference
+	| column=ColumnReference() {return column;}
+	// set_function_specification
+	| op=SqlFunction() {return op;}
+	// LEFT_PAR value_expression RIGHT_PAR
+	| (<LEFT_PAR> op=ValueExpression() <RIGHT_PAR>) {return op;})
+}
+
+ADQLOperand ValueExpression(): {ADQLOperand valueExpr = null; } {	(valueExpr=GeometryValueFunction()	| LOOKAHEAD(<PLUS> | <MINUS>) valueExpr=NumericExpression()
+	| LOOKAHEAD(<COORDSYS>) valueExpr=StringExpression()
+	| LOOKAHEAD(StringFactor() <CONCAT>) valueExpr=StringExpression()
+	| valueExpr=NumericExpression())
+	{return valueExpr;}}
+
+ADQLOperand NumericExpression(): {Token sign=null; ADQLOperand leftOp, rightOp=null;} {
+	(leftOp=NumericTerm() ((sign=<PLUS> | sign=<MINUS>) rightOp=NumericExpression())?)
+	{
+	if (sign == null)
+		return leftOp;
+	else
+		return buildTools.createOperation(leftOp, OperationType.getOperator(sign.image), rightOp);
+	}
+}
+
+ADQLOperand NumericTerm(): {Token sign=null; ADQLOperand leftOp, rightOp=null;} {
+	(leftOp=Factor() ((sign=<ASTERISK> | sign=<DIVIDE>) rightOp=NumericTerm())?)
+	{
+	if (sign == null)
+		return leftOp;
+	else
+		return buildTools.createOperation(leftOp, OperationType.getOperator(sign.image), rightOp);
+	}
+}
+
+ADQLOperand Factor(): {Token sign=null; ADQLOperand op;} {
+	((sign=<PLUS> | sign=<MINUS>)?
+	(LOOKAHEAD(2) op=NumericFunction() | op=ValueExpressionPrimary()))
+	{
+	op.negativate(sign != null && sign.image.equalsIgnoreCase("-"));
+	return op;
+	}
+}
+
+ADQLOperand StringExpression(): {ADQLOperand leftOp; ADQLOperand rightOp = null;} {	(leftOp=StringFactor() (<CONCAT> rightOp=StringExpression())?)
+	{
+	if (rightOp == null)
+		return leftOp;
+	else
+		return buildTools.createConcatenation(leftOp, rightOp);
+	}}
+
+ADQLOperand StringFactor(): {ADQLOperand op;} {
+	(op=ExtractCoordSys()
+	| LOOKAHEAD(2) op=UserDefinedFunction()
+	| op=ValueExpressionPrimary())
+	{return op;}
+}
+
+ADQLOperand GeometryExpression(): {ADQLOperand op;} {
+	(op=ValueExpressionPrimary() | op=GeometryValueFunction())
+	{return op;}
+}
+
+/* ********************************** */
+/* BOOLEAN EXPRESSIONS (WHERE clause) */
+/* ********************************** */
+ADQLConstraint SearchCondition(): {ADQLConstraint const1 = null, const2 = null;} {
+	(const1=BooleanTerm() (<OR> const2=SearchCondition() {const1.addConstraint(const2, true);})?)
+	{return const1;}
+}
+
+ADQLConstraint BooleanTerm(): {ADQLConstraint const1=null, const2=null;} {
+	(const1=BooleanFactor() (<AND> const2=BooleanTerm() {const1.addConstraint(const2);})?)
+	{return const1;}
+}
+
+ADQLConstraint BooleanFactor(): {boolean not = false; ADQLConstraint constraint = null;} {
+	([<NOT> {not = true;}] (LOOKAHEAD(Predicate()) (constraint=Predicate()) | (<LEFT_PAR> constraint=SearchCondition() <RIGHT_PAR> {constraint = buildTools.createGroup(constraint);})))
+	{
+	constraint.setNot(not);
+	return constraint;
+	}
+}
+
+ADQLConstraint Predicate(): {ADQLQuery q=null; ADQLColumn column=null; ADQLOperand strExpr1=null, strExpr2=null; ADQLOperand op; Token notToken = null; ADQLConstraint constraint = null;} {
+	// exists_predicate
+	((<EXISTS> q=SubQueryExpression()) {return buildTools.createExists(q);}
+	// null_predicate
+	| LOOKAHEAD(ColumnReference() <IS>)(column=ColumnReference() <IS> [notToken=<NOT>] <NULL> {return buildTools.createIsNull(column,  (notToken!=null));})
+	// like_predicate
+	| LOOKAHEAD(StringExpression() [<NOT>] <LIKE>) (strExpr1=StringExpression() [notToken=<NOT>] <LIKE> strExpr2=StringExpression() {return buildTools.createComparison(strExpr1, (notToken==null)?ComparisonOperator.LIKE:ComparisonOperator.NOTLIKE, strExpr2);})
+	| (op=ValueExpression()
+		(// comparison_predicate
+		(constraint=ComparisonEnd(op))
+		// between predicate
+		| LOOKAHEAD(2) constraint=BetweenEnd(op)
+		// in_predicate
+		| constraint=InEnd(op)
+		)
+	))
+	{return constraint;}
+}
+
+ADQLComparison ComparisonEnd(ADQLOperand leftOp): {Token comp; ADQLOperand rightOp;} {
+	((comp=<EQUAL> | comp=<NOT_EQUAL> | comp=<LESS_THAN> | comp=<LESS_EQUAL_THAN> | comp=<GREATER_THAN> | comp=<GREATER_EQUAL_THAN>) rightOp=ValueExpression())
+	{return buildTools.createComparison(leftOp, ComparisonOperator.getOperator(comp.image), rightOp);}
+}
+
+ADQLComparison BetweenEnd(ADQLOperand leftOp): {Token notToken=null; ADQLOperand min, max; ADQLComparison constraint;} {
+	[notToken=<NOT>] <BETWEEN> min=ValueExpression() <AND> max=ValueExpression()
+	{
+	if (notToken == null){
+		constraint = buildTools.createComparison(leftOp, ComparisonOperator.GREATER_OR_EQUAL, min);
+		constraint.addConstraint(buildTools.createComparison(leftOp, ComparisonOperator.LESS_OR_EQUAL, max));
+	}else{
+		constraint = buildTools.createComparison(leftOp, ComparisonOperator.LESS_THAN, min);
+		constraint.addConstraint(buildTools.createComparison(leftOp, ComparisonOperator.GREATER_THAN, max));
+	}
+	return constraint;
+	}
+}
+
+InFunction InEnd(ADQLOperand leftOp): {Token not=null; ADQLQuery q = null; ADQLOperand item; ArrayList<ADQLOperand> items = new ArrayList<ADQLOperand>();} {
+	[not=<NOT>] <IN>
+	(LOOKAHEAD(2) q=SubQueryExpression()
+	| (<LEFT_PAR> item=ValueExpression() {items.add(item);} (<COMMA> item=ValueExpression() {items.add(item);})* <RIGHT_PAR>))
+	{
+	if (q != null)
+		return buildTools.createIn(leftOp, q, not!=null);
+	else{
+		ADQLOperand[] list = new ADQLOperand[items.size()];
+		int i=0;
+		for(ADQLOperand op : items)
+			list[i++] = op;
+		return buildTools.createIn(leftOp, list, not!=null);
+	}
+	}
+}
+
+
+/* ************* */
+/* SQL FUNCTIONS */
+/* ************* */
+SQLFunction SqlFunction(): {Token fct, all=null, distinct=null; ADQLOperand op=null; SQLFunction funct = null;}{	(
+	 (<COUNT> <LEFT_PAR> [distinct=<QUANTIFIER>] (all=<ASTERISK> | op=ValueExpression()) <RIGHT_PAR>
+	 {funct = buildTools.createSQLFunction(SQLFunctionType.COUNT, op, distinct != null && distinct.image.equalsIgnoreCase("distinct"), all!=null);})
+	|
+	 ((fct=<AVG> | fct=<MAX> | fct=<MIN> | fct=<SUM>) <LEFT_PAR> [distinct=<QUANTIFIER>] op=ValueExpression() <RIGHT_PAR> 
+	 {funct = buildTools.createSQLFunction(SQLFunctionType.valueOf(fct.image.toUpperCase()), op, distinct != null && distinct.image.equalsIgnoreCase("distinct"), false);})
+	)
+	{return funct;}}
+
+
+/* ************** */
+/* ADQL FUNCTIONS */
+/* ************** */
+ADQLOperand[] Coordinates(): {ADQLOperand[] ops = new ADQLOperand[2];} {
+	ops[0]=NumericExpression() <COMMA> ops[1]=NumericExpression()
+	{return ops;}
+}
+
+GeometryFunction GeometryFunction(): {Token t=null; ADQLOperand op1, op2; GeometryFunction gf = null; PointFunction p1=null, p2=null; ADQLColumn col=null; int indCoord = 1;} {
+	// predicate_geometry_function
+	(((t=<CONTAINS> | t=<INTERSECTS>) <LEFT_PAR> op1=GeometryExpression() <COMMA> op2=GeometryExpression() <RIGHT_PAR>)
+	{
+	if (t.image.equalsIgnoreCase("contains"))
+		gf = buildTools.createContains(op1, op2);
+	else
+		gf = buildTools.createIntersects(op1, op2);
+	}
+	// non_predicate_geometry_function
+	| (<AREA> <LEFT_PAR> op1=GeometryExpression() <RIGHT_PAR>) {gf = buildTools.createArea(op1);}
+	| ((<COORD1> | <COORD2> {indCoord = 2;}) <LEFT_PAR> (p1=Point() {gf = buildTools.createExtractCoord(indCoord, p1);} | col=ColumnReference() {gf = buildTools.createExtractCoord(indCoord, col);}) <RIGHT_PAR>)
+	| (<DISTANCE> <LEFT_PAR> p1=Point() <COMMA> p2=Point() <RIGHT_PAR>){gf = buildTools.createDistance(p1, p2);})
+	{return gf;}
+}
+
+GeometryFunction GeometryValueFunction(): {ADQLOperand coordSys; ADQLOperand width, height; ADQLOperand[] coords, tmp; ADQLOperand op=null; GeometryFunction gf = null;} {
+	((<BOX> <LEFT_PAR> coordSys=StringExpression() // coord_sys
+			<COMMA> coords=Coordinates() // coordinates
+			<COMMA> width=NumericExpression() <COMMA> height=NumericExpression() <RIGHT_PAR>)
+	 {gf = buildTools.createBox(coordSys, coords[0], coords[1], width, height);}
+	| (<CENTROID> <LEFT_PAR> op=GeometryExpression() <RIGHT_PAR>) {gf = buildTools.createCentroid(op);} // centroid
+	| (<CIRCLE> <LEFT_PAR> coordSys=StringExpression() // coord_sys
+			<COMMA> coords=Coordinates() // coordinates
+			<COMMA> width=NumericExpression() <RIGHT_PAR>) // radius
+	 {gf = buildTools.createCircle(coordSys, coords[0], coords[1], width);}
+	| gf=Point()
+	| (<POLYGON> <LEFT_PAR> coordSys=StringExpression() {coords = new ADQLOperand[4];} // coord_sys
+			<COMMA> tmp=Coordinates() {coords[0] = tmp[0]; coords[1] = tmp[1];} // coordinates
+			<COMMA> tmp=Coordinates() {coords[2] = tmp[0]; coords[3] = tmp[1]; tmp = new ADQLOperand[0];} // coordinates
+			(<COMMA> tmp=Coordinates())? <RIGHT_PAR>)
+	  {if (tmp.length == 0) gf = buildTools.createPolygon(coordSys, coords[0], coords[1], coords[2], coords[3]);
+	  else gf = buildTools.createPolygon(coordSys, coords[0], coords[1], coords[2], coords[3], tmp[0], tmp[1]);}
+	| (<REGION> <LEFT_PAR> op=StringExpression() <RIGHT_PAR>) {gf = buildTools.createRegion(op);})
+	{return gf;}
+}
+
+PointFunction Point(): {ADQLOperand coordSys; ADQLOperand[] coords;} {
+	<POINT> <LEFT_PAR> coordSys=StringExpression() // coord_sys
+			<COMMA> coords=Coordinates() <RIGHT_PAR> // coordinates
+	{return buildTools.createPoint(coordSys, coords[0], coords[1]);}
+}
+
+GeometryFunction ExtractCoordSys(): {ADQLOperand param;} {
+	<COORDSYS> <LEFT_PAR> param=GeometryExpression() <RIGHT_PAR>
+	{return buildTools.createExtractCoordSys(param);}
+}
+
+/* ***************** */
+/* NUMERIC FUNCTIONS */
+/* ***************** */
+ADQLFunction NumericFunction(): {ADQLFunction fct;} {
+	(fct=MathFunction()
+	| fct=TrigFunction()
+	| fct=GeometryFunction()
+	| fct=UserDefinedFunction())
+	{return fct;}
+}
+
+MathFunction MathFunction(): {Token fct=null; ADQLOperand param1=null, param2=null; String integerValue = null;} {
+	((fct=<ABS> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<CEILING> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<DEGREES> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<EXP> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<FLOOR> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<LOG> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<LOG10> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<MOD> <LEFT_PAR> param1=NumericExpression() <COMMA> param2=NumericExpression() <RIGHT_PAR>)
+	| (fct=<PI> <LEFT_PAR><RIGHT_PAR>)
+	| (fct=<POWER> <LEFT_PAR> param1=NumericExpression() <COMMA> param2=NumericExpression() <RIGHT_PAR>)
+	| (fct=<RADIANS> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<RAND> <LEFT_PAR> (param1=NumericExpression())? <RIGHT_PAR>)
+	| (fct=<ROUND> <LEFT_PAR> param1=NumericExpression() (<COMMA> integerValue=SignedInteger() {param2 = buildTools.createOperation(buildTools.createConstant(integerValue, ADQLType.INTEGER), null, null);})? <RIGHT_PAR>)
+	| (fct=<SQRT> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<TRUNCATE> <LEFT_PAR> param1=NumericExpression() (<COMMA> integerValue=SignedInteger() {param2 = buildTools.createOperation(buildTools.createConstant(integerValue, ADQLType.INTEGER), null, null);})? <RIGHT_PAR>))
+	{
+	if (param1 != null)
+		return buildTools.createMathFunction(MathFunctionType.valueOf(fct.image.toUpperCase()), param1, param2);
+	else
+		return null;
+	}
+}
+
+MathFunction TrigFunction(): {Token fct=null; ADQLOperand param1=null, param2=null;} {
+	((fct=<ACOS> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<ASIN> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<ATAN> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<ATAN2> <LEFT_PAR> param1=NumericExpression() <COMMA> param2=NumericExpression() <RIGHT_PAR>)
+	| (fct=<COS> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<COT> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<SIN> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>)
+	| (fct=<TAN> <LEFT_PAR> param1=NumericExpression() <RIGHT_PAR>))
+	{
+	if (param1 != null)
+		return buildTools.createMathFunction(MathFunctionType.valueOf(fct.image.toUpperCase()), param1, param2);
+	else
+		return null;
+	}
+}
+
+/* /!\ WARNING: The function name may be prefixed by "udf_" but there is no way to check it here ! */
+UserFunction UserDefinedFunction(): {Token fct; ArrayList<ADQLOperand> params = new ArrayList<ADQLOperand>(); ADQLOperand op;} {
+	fct=<REGULAR_IDENTIFIER> <LEFT_PAR> (op=ValueExpression() {params.add(op);} (<COMMA> op=ValueExpression() {params.add(op);})*)? <RIGHT_PAR>
+	{
+	if (debug) System.out.println("\""+fct.image+"\" is an user defined function !");
+	ADQLOperand[] parameters = new ADQLOperand[params.size()];
+	for(int i=0; i<params.size(); i++)
+		parameters[i] = params.get(i);
+	return buildTools.createUserFunction(fct.image, parameters);
+	}
+}
+
