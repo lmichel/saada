@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- Definition la structures des paramètres du configuration du SAADA_DB -->
+
+   <!ELEMENT saada_db (database, relational_database, web_interface, coordinate_system, spectral_coordinate?) >
+   <!ELEMENT database (name, description,  root_dir, repository_dir)>
+   <!ELEMENT name (#PCDATA)>
+   <!ELEMENT description (#PCDATA)>
+   <!ELEMENT root_dir (#PCDATA)>
+   <!ELEMENT repository_dir (#PCDATA)>
+   
+   <!ELEMENT relational_database (name, administrator,  reader, jdbc_driver, jdbc_url) >
+   <!ELEMENT administrator (name,password?)>
+   <!ELEMENT reader (name,password?)>
+   <!ELEMENT password (#PCDATA)>
+   <!ELEMENT jdbc_driver (#PCDATA)>
+   <!ELEMENT jdbc_url (#PCDATA)>
+ 
+   <!ELEMENT web_interface (webapp_home, url_root) >
+   <!ELEMENT webapp_home (#PCDATA)>
+   <!ELEMENT url_root (#PCDATA)>
+   
+   <!ELEMENT spectral_coordinate (abscisse, healpix_level)>
+   <!ELEMENT abscisse (#PCDATA)>
+   <!ATTLIST abscisse type CDATA #IMPLIED unit CDATA #IMPLIED>
+   <!ELEMENT healpix_level (#PCDATA)>
+   
+   <!ELEMENT coordinate_system (system, equinox) >
+   <!ELEMENT system  (#PCDATA)>
+   <!ELEMENT equinox (#PCDATA)>
+
