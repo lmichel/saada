@@ -1,0 +1,19 @@
+{"collection": "collection1",
+						"category"  : "IMAGE",
+						"class"     : "c1imclasse2",
+						"attributes": [ {"name": "ATT1", "type": "String", "ucd": "a.b.c"},
+						                {"name": "ATT2", "type": "int"   , "ucd": "a.b.c"},
+						                {"name": "ATT3", "type": "int"   , "ucd": "a.b.c"},
+						                {"name": "_ATT1", "type": "double", "ucd": "a.b.c"},
+						                {"name": "_ATT2", "type": "int"   , "ucd": "a.b.c"},
+						                {"name": "_ATT3", "type": "int"   , "ucd": "a.b.c"}],
+						                "relations" : [{"name" : "relation1", 
+						                	"ending_collection": "ending_collection1",
+						                	"ending_category"  : "ending_category1",
+						                	"qualifiers"       : ["rel1_qual1", "rel1_qual2"]},
+						                	           {"name" : "relation2", 
+						                    "ending_collection": "ending_collection2",
+						                	"ending_category"  : "ending_category2",
+						                	"qualifiers"       : ["rel2_qual1", "rel2_qual2"]}
+						                 ]
+				}
