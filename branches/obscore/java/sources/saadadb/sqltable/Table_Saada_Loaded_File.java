@@ -11,7 +11,6 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.products.Product;
 import saadadb.util.Messenger;
 

@@ -1,7 +1,6 @@
 package saadadb.projections;
 
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.command.ArgsParser;
@@ -9,7 +8,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.prdconfiguration.ConfigurationSpectrum;
 import saadadb.products.Spectrum;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;

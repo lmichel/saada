@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -231,7 +232,7 @@ public abstract class SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	protected MetaClass createClassFromProduct(int mapping_type) throws Exception {
+	protected MetaClass createClassFromProduct(ClassifierMode mode) throws Exception {
 
 
 		String class_name;
@@ -246,7 +247,7 @@ public abstract class SchemaMapper {
 		// Retrieve   attributeslist in the model
 		Map<String, AttributeHandler> tableAttribute = this.current_prd.getProductAttributeHandler();
 		// Create and load of  java class
-		return createClassFromProduct(mapping_type, class_name, tableAttribute);
+		return createClassFromProduct(mode, class_name, tableAttribute);
 	}
 
 	/**
@@ -256,7 +257,7 @@ public abstract class SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	public MetaClass createClassFromProduct(int mapping_type, String class_name,  Map<String, AttributeHandler> tableAttribute) throws Exception {
+	public MetaClass createClassFromProduct(ClassifierMode mode, String class_name,  Map<String, AttributeHandler> tableAttribute) throws Exception {
 		boolean dontforgettoreopentransaction = false;
 		GenerationClassProduct.buildJavaClass(tableAttribute
 				, SchemaMapper.getClass_location()
@@ -280,7 +281,7 @@ public abstract class SchemaMapper {
 					, mapping.getCollection()
 					, mapping.getCategory()
 					, mapping.name
-					, mapping_type
+					, mode
 					, MD5Key.getFmtsignature(tableAttribute)
 					, mapping.loaderParams);
 			/*

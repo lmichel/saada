@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -31,7 +31,7 @@ public class MetaClass extends MetaObject{
 	private int  category;
 	private String collection_name;
 	private int collection_id;
-	private int mapping_type;
+	private ClassifierMode mapping_type;
 	private String signature;
 	private String associate_class;
 	private String description;
@@ -56,13 +56,15 @@ public class MetaClass extends MetaObject{
 	 */
 	public void update(ResultSet rs, int cat) throws FatalException  {
 		try {
+			String t = rs.getString("mapping_type");
+			if( t.equals(ClassifierMode.CLASSIFIER)) this.mapping_type = ClassifierMode.CLASSIFIER;
+			else  this.mapping_type = ClassifierMode.CLASS_FUSION;
 			this.id = rs.getInt("class_id");
 			AttributeHandler ah = new AttributeHandler(rs);
 			attribute_handlers.put(ah.getNameattr()  , ah);
 			this.category = cat;
 			this.collection_name = rs.getString("name_coll");
 			this.collection_id = rs.getInt("id_collection");
-			this.mapping_type= TypeMapping.getMapping(rs.getString("mapping_type"));
 			this.signature = rs.getString("signature");
 			this.associate_class = rs.getString("associate_class");
 			this.description = rs.getString("description");
@@ -209,7 +211,7 @@ public class MetaClass extends MetaObject{
 	/**
 	 * @return
 	 */
-	public int getMapping_type() {
+	public ClassifierMode getMapping_type() {
 		return this.mapping_type ;
 	}
 	/**

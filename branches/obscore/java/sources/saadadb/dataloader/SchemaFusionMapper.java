@@ -8,11 +8,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.DatabaseConnection;
+import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
@@ -115,12 +115,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * If not a new class is created
 		 */
 		if( ! Database.getCachemeta().classExists(this.mapping.getClassName()) ) {
-			this.createClassFromProduct(TypeMapping.MAPPING_USER);		
+			this.createClassFromProduct(ClassifierMode.CLASS_FUSION);		
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
 				Entry entr = ((Table) current_prd).getEntry();
 				this.entry_mapper = new SchemaFusionMapper(this.loader, entr);
-				this.entry_mapper.current_class = this.entry_mapper.createClassFromProduct(TypeMapping.MAPPING_USER);	
+				this.entry_mapper.current_class = this.entry_mapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
 			}
 			this.loader.processUserRequest();

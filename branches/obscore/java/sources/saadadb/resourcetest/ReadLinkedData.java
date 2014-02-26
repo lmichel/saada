@@ -3,7 +3,7 @@ package saadadb.resourcetest;
 import java.io.File;
 
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.util.Messenger;
 
 public class ReadLinkedData {

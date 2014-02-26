@@ -8,7 +8,6 @@ import saadadb.collection.ImageSaada;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;

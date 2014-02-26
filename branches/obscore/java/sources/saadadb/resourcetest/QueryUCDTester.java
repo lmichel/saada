@@ -10,7 +10,7 @@ import saadadb.collection.CollectionManager;
 import saadadb.collection.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.exceptions.AbortException;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLMetaSet;

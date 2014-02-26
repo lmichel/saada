@@ -10,7 +10,6 @@ import saadadb.database.Repository;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.ImageUtils;
 import cds.savot.model.OptionSet;

@@ -12,7 +12,6 @@ import saadadb.collection.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.prdconfiguration.ConfigurationImage;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.sqltable.SQLQuery;

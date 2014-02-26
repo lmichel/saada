@@ -4,7 +4,6 @@ import java.io.File;
 
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.SaadaException;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 
 /**This class redefines method specific in miscs during their collection load.
  *@author Millan Patrick

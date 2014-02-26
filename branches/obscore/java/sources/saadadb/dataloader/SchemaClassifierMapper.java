@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import nom.tam.fits.FitsException;
-import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
+import saadadb.dataloader.mapping.MappingMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
@@ -174,7 +175,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		if( !Database.getCachemeta().classWithSignatureExists(fmt_signature) ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No class found with signature <" + fmt_signature + ">");
-			mc = this.createClassFromProduct(TypeMapping.MAPPING_CLASSIFIER);
+			mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Class <" + mc.getName() + "> created");
 			this.class_to_index.add(mc.getName());
@@ -207,7 +208,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			if( !class_found ) {
 				Messenger.printMsg(Messenger.TRACE, "One class with signature <" + fmt_signature 
 						+ "> found (" + mc.getName() + "), but associed with another collection, category or name");
-				mc = this.createClassFromProduct(TypeMapping.MAPPING_CLASSIFIER);
+				mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Class <" + mc.getName() + "> created");
 				this.class_to_index.add(mc.getName());

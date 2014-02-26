@@ -22,7 +22,7 @@ import java.util.Map;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;

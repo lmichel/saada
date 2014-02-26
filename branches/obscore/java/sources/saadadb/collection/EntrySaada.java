@@ -1,17 +1,14 @@
 package saadadb.collection;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 
 /**
  * <p>Title: SAADA</p>

@@ -8,8 +8,9 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.SaadaException;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
 
 
@@ -17,7 +18,7 @@ public class SQLImporter extends SaadaProcess {
 	/*
 	 * COnfiguration used by  the current loading session
 	 */
-	private ConfigurationDefaultHandler configuration;
+	private ProductMapping configuration;
 	private String tableToImport = null;	
 	private ArgsParser tabArg;
 
@@ -102,7 +103,7 @@ public class SQLImporter extends SaadaProcess {
 		 */
 		this.setConfiguration();
 
-		String typeMapping = configuration.getTypeMapping().getTypeMapping();
+		ClassifierMode typeMapping = configuration.getClassifier();
 		/*
 		 * Process vectors of product one by one
 		 */
@@ -114,8 +115,8 @@ public class SQLImporter extends SaadaProcess {
 			/*
 			 * Load all products in one step
 			 */
-			if( configuration.getCategorySaada() != Category.FLATFILE &&
-					configuration.getCategorySaada() != Category.TABLE	) {
+			if( configuration.getCategory() != Category.FLATFILE &&
+					configuration.getCategory() != Category.TABLE	) {
 	//ERROR			(new SchemaFusionMapper(this, file_to_load, this.configuration, build_index)).ingestProductSetByBurst();			
 
 			} else {
@@ -139,7 +140,7 @@ public class SQLImporter extends SaadaProcess {
 			 * Just to rise an excpetion if the collection doesn't exist
 			 */
 			Database.getCachemeta().getCollection(this.tabArg.getCollection());
-			this.configuration = tabArg.getConfiguration();
+			this.configuration = tabArg.getProductMapping();
 		}
 
 }
