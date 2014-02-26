@@ -13,7 +13,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;

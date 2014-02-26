@@ -15,12 +15,6 @@ import saadadb.dataloader.mapping.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
-import saadadb.prdconfiguration.ConfigurationFlatfile;
-import saadadb.prdconfiguration.ConfigurationImage;
-import saadadb.prdconfiguration.ConfigurationMisc;
-import saadadb.prdconfiguration.ConfigurationSpectrum;
-import saadadb.prdconfiguration.ConfigurationTable;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -1317,33 +1311,7 @@ public class ArgsParser implements Serializable{
 	public  void setName(String name) {
 		this.name = name;
 	}
-	/**
-	 * @return
-	 * @throws Exception
-	 * @obsolete
-	 */
-	public ConfigurationDefaultHandler getConfiguration() throws SaadaException {
-		switch( Category.getCategory(this.getCategory()) ) {
-		case Category.TABLE: 
-			Messenger.printMsg(Messenger.TRACE, "Build the TABLE configuration");
-			return new ConfigurationTable("ConfigTable", this);
-		case Category.IMAGE: 
-			Messenger.printMsg(Messenger.TRACE, "Build the IMAGE configuration");
-			return new ConfigurationImage("ConfigImage", this);
-		case Category.SPECTRUM: 
-			Messenger.printMsg(Messenger.TRACE, "Build the SPECTRUM configuration");
-			return new ConfigurationSpectrum("ConfigSpectrum", this);
-		case Category.MISC: 
-			Messenger.printMsg(Messenger.TRACE, "Build the SPECTRUM configuration");
-			return new ConfigurationMisc("ConfigMisc", this);
-		case Category.FLATFILE: 
-			Messenger.printMsg(Messenger.TRACE, "Build the FLATFILE configuration");
-			return new ConfigurationFlatfile("ConfigFlatfile", this);
-		default: IgnoreException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Category <" + this.getCategory() + "> not supported yet");
-		}
-		return null;
-	}
-
+	
 	/**
 	 * @return
 	 * @throws SaadaException

@@ -13,7 +13,6 @@ import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.dataloader.mapping.ClassifierMode;

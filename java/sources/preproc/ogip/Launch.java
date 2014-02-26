@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;

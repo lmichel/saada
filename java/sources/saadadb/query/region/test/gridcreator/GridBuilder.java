@@ -39,7 +39,7 @@ import java.util.Locale;
 import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.old.Loader;
+import saadadb.dataloader.Loader;
 import saadadb.exceptions.QueryException;
 import saadadb.query.parser.PositionParser;
 import saadadb.sqltable.SQLTable;

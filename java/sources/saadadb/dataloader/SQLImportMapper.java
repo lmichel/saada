@@ -3,9 +3,9 @@ package saadadb.dataloader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -48,7 +48,7 @@ public class SQLImportMapper extends SchemaMapper {
 		 * If not a new class is created
 		 */
 		if( ! Database.getCachemeta().classExists(this.mapping.getClassName()) ) {
-			this.createClassFromProduct(TypeMapping.MAPPING_USER);		
+			this.createClassFromProduct(ClassifierMode.CLASS_FUSION);		
 			SQLTable.beginTransaction();
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
@@ -73,7 +73,7 @@ public class SQLImportMapper extends SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	public MetaClass createClassFromProduct(int mapping_type, String class_name,  LinkedHashMap<String, AttributeHandler> tableAttribute) throws Exception {
+	public MetaClass createClassFromProduct(ClassifierMode mapping_type, String class_name,  LinkedHashMap<String, AttributeHandler> tableAttribute) throws Exception {
 		boolean dontforgettoreopentransaction = false;
 		GenerationClassProduct.buildJavaClass(tableAttribute
 				, SchemaMapper.getClass_location()

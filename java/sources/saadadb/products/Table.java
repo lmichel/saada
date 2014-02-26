@@ -11,7 +11,6 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.Messenger;
 
 /**

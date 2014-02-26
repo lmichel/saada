@@ -11,7 +11,6 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.util.ImageUtils;
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;

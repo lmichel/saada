@@ -3,9 +3,9 @@ package saadadb.sqltable;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
-import saadadb.classmapping.TypeMapping;
 import saadadb.collection.Category;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -25,7 +25,7 @@ public abstract  class Table_Saada_Class extends SQLTable {
 	 * @throws AbortException 
 	 */
 	public static int  addClass(String name_class, String name_collection,
-			int category, String configurationName, int mapping_type, String signature, String description) throws Exception {
+			int category, String configurationName, ClassifierMode classifierMode, String signature, String description) throws Exception {
 
 		if( Database.getCachemeta().classExists(name_class) ) {
 			AbortException.throwNewException(SaadaException.METADATA_ERROR,"Class <" + name_class + "> already exist");
@@ -56,7 +56,7 @@ public abstract  class Table_Saada_Class extends SQLTable {
 				+ Category.explain(category) + "','"
 				+ configurationName + "'," 
 				+ collection_id + ",'"
-				+ TypeMapping.explain(mapping_type) + "','"
+				+ classifierMode + "','"
 				+ signature + "','"
 				+ "', '"
 				+ Database.getWrapper().getEscapeQuote(description) + "', "
