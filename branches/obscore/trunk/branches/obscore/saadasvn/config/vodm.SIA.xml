@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="xmlns:http://www.ivoa..net/xml/VOTable-1.1.xsd"
+	version="1.1">
+	<RESOURCE type="VO Protocol Result Description">
+		<DESCRIPTION>Saada VO service mapping</DESCRIPTION>
+		<INFO name="SIA default" value="OK" />
+		<TABLE name="Results">
+			<PARAM name="dm" value="SIA default" datatype="char" arraysize="*" />
+			<FIELD name="group" datatype="char" arraysize="*" />
+			<FIELD name="name" datatype="char" arraysize="*" />
+			<FIELD name="ucd" datatype="char" arraysize="*" />
+			<FIELD name="utype" datatype="char" arraysize="*" />
+			<FIELD name="type" datatype="char" arraysize="*" />
+			<FIELD name="arraysize" datatype="int" />
+			<FIELD name="unit" datatype="char" arraysize="*" />
+			<FIELD name="hidden" datatype="boolean" />
+			<FIELD name="default_value" datatype="char" arraysize="*" />
+			<FIELD name="desciption" datatype="char" arraysize="*" />
+			<FIELD name="requ_level" datatype="char" arraysize="*">
+				<DESCRIPTION>MAN=1 REC=2 OPT=3</DESCRIPTION>
+			</FIELD>
+			<DATA>
+				<TABLEDATA>
+					<TR>
+						<TD>Access</TD>
+						<TD>Format</TD>
+						<TD>VOX:Image_Format</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>mimetype of the data file(s)</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Access</TD>
+						<TD>DataLink</TD>
+						<TD>VOX:Image_AccessReference</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>access URL for the complete image</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Access</TD>
+						<TD>FileSize</TD>
+						<TD>VOX:Image_FileSize</TD>
+						<TD></TD>
+						<TD>int</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>estimated size of the encoded image in bytes</TD>
+						<TD>3</TD>
+					</TR>
+
+					<TR>
+						<TD>Dataset</TD>
+						<TD>Dataset_Dat</TD>
+						<TD></TD>
+						<TD>Dataset.DataModel</TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD>SIAP 1.0</TD>
+						<TD></TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Dataset</TD>
+						<TD>Dataset_Len</TD>
+						<TD>meta.number</TD>
+						<TD>Dataset.Length</TD>
+						<TD>long</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD>x</TD>
+						<TD></TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>DataID</TD>
+						<TD>SaadaName</TD>
+						<TD>meta.id</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD>Image name used by Saada</TD>
+						<TD></TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Curation</TD>
+						<TD>Curation_Pub</TD>
+						<TD>meta.curation</TD>
+						<TD>Curation.Publisher</TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD>SaadaDB Instance</TD>
+						<TD></TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>RA</TD>
+						<TD>POS_EQ_RA_MAIN</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD>deg</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>RA of central coordinates</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>DEC</TD>
+						<TD>POS_EQ_DEC_MAIN</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD>deg</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>DEC of central coordinates</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>Naxes</TD>
+						<TD>VOX:Image_Naxes</TD>
+						<TD></TD>
+						<TD>int</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>number of axes</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>Naxis</TD>
+						<TD>VOX:Image_Naxis</TD>
+						<TD></TD>
+						<TD>int</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>dimensions (number of pixels) along spatial axes</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>Scale</TD>
+						<TD>VOX:Image_Scale</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>-1</TD>
+						<TD>deg</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>scale in degrees per pixel of each image axis</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Char.Image</TD>
+						<TD>SaadaName</TD>
+						<TD>VOX:Image_Title</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>pixel size along spatial axes</TD>
+						<TD>3</TD>
+					</TR>
+
+					<TR>
+						<TD>Char.STC</TD>
+						<TD>CoordRefFrame</TD>
+						<TD>VOX:STC_CoordRefFrame</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>coordinate system reference frame</TD>
+						<TD>3</TD>
+					</TR>
+
+					<TR>
+						<TD>WCS</TD>
+						<TD>CoordProjection</TD>
+						<TD>VOX:WCS_CoordProjection</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>3</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>celestial projection, as for FITS WCS</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>WCS</TD>
+						<TD>CoordRefPixel</TD>
+						<TD>VOX:WCS_CoordRefPixel</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>-1</TD>
+						<TD>pixel</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>image pixel coordinates of the WCS reference pixel</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>WCS</TD>
+						<TD>CoordRefValue</TD>
+						<TD>VOX:WCS_CoordRefValue</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>-1</TD>
+						<TD>pixel</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>image coordinates of the WCS reference pixel</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>WCS</TD>
+						<TD>CDMatrix</TD>
+						<TD>VOX:WCS_CDMatrix</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>-1</TD>
+						<TD>deg</TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>WCS CD matrix</TD>
+						<TD>3</TD>
+					</TR>
+
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_ID</TD>
+						<TD>VOX:BandPass_ID</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Bandpass name</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_Unit</TD>
+						<TD>VOX:BandPass_Unit</TD>
+						<TD></TD>
+						<TD>char</TD>
+						<TD>-1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Bandpass unit</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_RefValue</TD>
+						<TD>VOX:BandPass_RefValue</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
+						<TD>3</TD>
+					</TR>
+					<TR>
+						<TD>Bandpass</TD>
+						<TD>BandPass_RefValue</TD>
+						<TD>VOX:BandPass_RefValue</TD>
+						<TD></TD>
+						<TD>double</TD>
+						<TD>1</TD>
+						<TD></TD>
+						<TD>false</TD>
+						<TD></TD>
+						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
+						<TD>3</TD>
+					</TR>
+
+				</TABLEDATA>
+			</DATA>
+		</TABLE>
+	</RESOURCE>
+</VOTABLE>

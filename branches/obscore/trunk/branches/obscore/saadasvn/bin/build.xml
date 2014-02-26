@@ -1,0 +1,618 @@
+<project name="assign" default="admin.gui">
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  Definition of resources commn for all tasks
+-->
+	 
+	<!--
+	  saadadb.properties file is setup at SaadaDB creation time with pathes matching
+	  the installation location
+	  This file must be modified by hand if the SaadaDB is moved or other Java tools are used
+	-->
+	<property file="saadadb.properties"/>
+	<property file="javarun.properties"/>
+	<property name="jvm_initial_size" value="-Xms${java.xms}" />
+	<property name="jvm_max_size"     value="-Xmx${java.xmx}" />
+
+	<!--
+	  This classpath is used by all java calls.
+	  Classes or jar files specifiv for an application must be added here
+	-->
+  	<path id="saadadb.classpath">
+ 		<fileset dir="${SAADA_DB_HOME}/bin">
+			<include name="**/*.properties" />
+		</fileset>   
+    	<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
+   		<fileset dir="${SAADA_DB_HOME}/lib/">
+      		<include name="**/*.jar" />
+    	</fileset>
+    	<fileset dir="${SAADA_DB_HOME}/jtools/">
+      		<include name="**/*.jar" />
+    	</fileset>
+  	</path>
+	
+	<!--
+	  compile on classmapping class: This task is intended to be called from the admintool
+	--> 
+	<target name="javaclass.compile">
+     	<javac fork="true"  debug="on" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
+		       srcdir="${SAADA_DB_HOME}/class_mapping" 
+			   destdir="${SAADA_DB_HOME}/class_mapping"
+			   includes="${class.source}">
+            <classpath refid="saadadb.classpath"/>
+		</javac>
+	</target>
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  The following tasks are supposed to be used by any operator (even the beginners)
+	  They can be called by script wrapping the ant command
+-->
+
+	<!-- 
+	  Load data
+	  USAGE: ant data.load -Dcollection={collection} -Dfilename={filename} -Dconfig={config} -Drepository={no|move|copy} -Dindex={true|false}
+	-->
+	
+  	<target name="data.load">
+		<java  classname="saadadb.dataloader.Loader" fork="true" failonerror="true">
+            <classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="-collection=${collection}"/>
+            <arg value="-filename=${filename}"/>
+            <arg value="-config=${config}"/>
+            <arg value="-repository=${repository}"/>
+            <arg value="-noindex=${noindex}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+ 		</java> 
+	</target>
+		
+
+	
+	<!--
+	  Launch the administration graphical interface
+	--> 
+  	<target name="admin.gui">
+    	<java fork="true"  classname="saadadb.admin.SaadaDBAdmin">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
+  	<target name="admintool">
+    	<java fork="true"  classname="saadadb.admintool.AdminTool">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
+	
+	<!--
+	  compile saadadb.jar
+	--> 
+	<target name="saadadb.jar.update">
+     	<javac fork="true"  debug="on" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
+		       srcdir="${SAADA_DB_HOME}/java/sources" 
+			   destdir="${SAADA_DB_HOME}/java/classes"
+			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
+            <classpath refid="saadadb.classpath"/>
+		</javac>
+	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
+		     basedir="${SAADA_DB_HOME}/java/classes"
+			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
+	</target>
+
+    
+	<target name="saadadb.compile.mapping">
+    	<javac fork="true"  debug="on" 
+		       target="${javac.target}" 
+		       source="${javac.target}" 
+		       srcdir="${SAADA_DB_HOME}/class_mapping" destdir="${SAADA_DB_HOME}/class_mapping">
+            <classpath refid="saadadb.classpath"/>
+		</javac>
+		<delete file="${SAADA_DB_HOME}/class_mapping/${SAADA_DB_NAME}generated.jar" failonerror="false" />
+		<jar destfile="${SAADA_DB_HOME}/class_mapping${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
+	</target>
+		
+
+	<!--
+	  Deploy the application on the Tomcat server declared at creation time. 
+	  This task both deploy a WAR file and copy the directory tree. That allows
+	  Tomcat to automatically reload the application (default behaviour).
+	--> 
+  	<target name="tomcat.deploy">
+		<echo>Make an archive with generated classes</echo>
+		<jar destfile="${SAADA_DB_HOME}/web/WEB-INF/lib/${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
+			
+		<echo>Copy libraries specific to that application</echo>
+		<copy todir="${SAADA_DB_HOME}/web/WEB-INF/lib" overwrite="true" failonerror="true" verbose="true">
+    		<fileset dir="${SAADA_DB_HOME}/lib">
+      			<include name="**/*.jar"/>	
+			</fileset>		
+    	</copy>
+  		
+		<echo>Remove the previous WebApp from ${TOMCAT_HOME}/webapps/</echo>
+		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
+  		
+  		<!--
+   		<echo>Copy web directory tree in ${TOMCAT_HOME}/webapps/</echo>
+ 		<copy todir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}">
+  		    <fileset dir="${SAADA_DB_HOME}/web/"/>
+  		 </copy>
+	--> 
+  		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
+		<jar destfile="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
+  		
+	</target>
+		
+	<!--
+	  Remove the application from Tomcat. Musn't be used when Tomcat is running
+	--> 
+  	<target name="tomcat.remove">
+		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
+  	</target>
+	
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  The following tasks are normally run by the GUI 
+	  They can be called by script wrapping the ant command
+-->
+
+<!-- 
+	Collection management
+-->
+
+	<!--
+		Create one collection
+		USAGE ant collection.create -Dname={name} -Dcomment={comment}
+	-->
+	<target name="collection.create" >
+    	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
+			<classpath refid="saadadb.classpath"/>
+			<arg value="-create=${name}"/>
+			<arg value="-comment=${comment}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+	<!--
+		Remove one collection
+		USAGE ant collection.remove -Dname={name}
+	-->
+	<target name="collection.remove" >
+    	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
+			<classpath refid="saadadb.classpath"/>
+			<arg value="-remove=${name}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+	
+	<!--
+		Empty one collection
+		USAGE ant collection.emty -Dname={name} -Dcategory={category}
+	-->
+	<target name="collection.emty" >
+    	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
+			<classpath refid="saadadb.classpath"/>
+			<arg value="-empty=${name}"/>
+			<arg value="-category=${category}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+
+	<!-- 
+		Class management
+	-->
+
+		<!--
+			Remove one class
+			USAGE ant class.remove -Dname={name}
+		-->
+		<target name="class.remove" >
+	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
+				<classpath refid="saadadb.classpath"/>
+				<arg value="-remove=${name}"/>
+		  		<arg value="-debug=${debug}"/>
+				<arg value="${SAADA_DB_NAME}"/>
+			</java>
+		</target>
+		
+		<!--
+			Empty one class
+			USAGE ant class.emty -Dname={name}
+		-->
+		<target name="class.emty" >
+	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
+				<classpath refid="saadadb.classpath"/>
+				<arg value="-empty=${name}"/>
+		  		<arg value="-debug=${debug}"/>
+				<arg value="${SAADA_DB_NAME}"/>
+			</java>
+		</target>
+
+
+<!-- 
+	Saada relation management
+-->
+	<!--
+		Create the relation given as parameter
+		USAGE ant relation.create -Drelation={relation name} -Dfrom={starting collection} -Dto={ending collection}  -Dquery={correlator}
+		Both staring and ending collection must have the form: collName_CATEGORY (e.g. MyCollection_ENTRY)
+		Refer to the doc for the query. It can be in SadaQL or in SQL:
+		Example of SQL query:
+		INSERT INTO Relationname (oidprimary, oidsecondary)
+                        SELECT p.oidsaada, s.oidsaada
+                        FROM EPIC_ENTRY AS p, EPIC_FLATFILE AS s
+                        WHERE s.namesaada = p.namesaada
+	-->	
+	<target name="relation.create" >
+		<java classname="saadadb.command.ManageRelation" fork="true" failonerror="true">
+			<classpath refid="saadadb.classpath" />
+			<arg value="-create=${name}" />
+			<arg value="-from=${from}" />
+			<arg value="-to=${to}" />
+			<arg value="-query=${query}" />
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}" />
+		</java>  
+	</target>
+	
+	<!--
+		Emty the relation given as parameter
+		USAGE ant relation.empty -Dname={relation name}
+		Both join tables and Saada indexes are flushed
+	-->	
+	<target name="relation.empty" >
+		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
+       		<classpath refid="saadadb.classpath"/>
+			<arg value="-empty=${name}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+   
+	<!--
+		Delete the relation given as parameter
+		USAGE ant relation.delete -Dname={relation name} -Daction={empty/delete}
+		Destroy both join tables and Saada indexes 
+	-->	
+	<target name="relation.remove" >
+		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
+       		<classpath refid="saadadb.classpath"/>
+			<arg value="-remove=${name}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+	
+	<!--
+		Populate the relation given as parameter by running the class of algo_correlation
+		USAGE ant relation.populate -Dname={relation name}
+		Destroy both join tables and Saada indexes 
+	-->
+	<target name="relation.populate" >
+		<java  classname="saadadb.command.ManageRelation" fork="true" failonerror="true" >
+       		<classpath refid="saadadb.classpath"/>
+			<arg value="-populate=${name}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+   
+	<!--
+		Build the Saada indexes of the relation given as parameter
+		USAGE ant Relation.index -Dname={relation name}
+		Don't worry about SQL exception related to unicity violation
+	-->	
+	<target name="relation.index" >
+    	<java fork="true"  classname="saadadb.command.ManageRelation" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+			<arg value="-index=${name}"/>
+	  		<arg value="-debug=${debug}"/>
+			<arg value="${SAADA_DB_NAME}"/>
+    	</java> 		
+	</target>
+
+
+<!-- 
+	SQL index management
+-->
+
+
+	<!-- 
+		Creating/deleting SQL index for a collection
+		USAGE: ant index.collection.create/remove -Dname={collection name} -Dcategory={category} 
+		All columns the collection table are indexed
+		This flag has no effect for deletion
+		The category can be table | spectrum | Table | image | misc | flatfile
+	-->
+	
+  	<target name="index.collection.create">
+    	<java fork="true"  classname="saadadb.command.CreateCollectionIndex" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-collection=${name}"/>
+	  		<arg value="-category${category}"/>
+	  		<arg value="-debug=${debug}"/>
+           <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+	
+ 	<target name="index.collection.remove">
+    	<java fork="true"  classname="saadadb.command.DeleteCollectionIndex" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-collection=${name}"/>
+	  		<arg value="-category=${category}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+
+	<!-- 
+		Creating/deleting SQL index for an SQL table
+		USAGE: ant index.table.create/remove -Dtable={tableName} 
+		If tableName is a simple String, all columns the table are touched by the commmand
+		It tableName is like name(col1, ....) only columns liste in () are concerned
+	-->
+
+	<target name="index.table.create">
+    	<java fork="true"  classname="saadadb.command.ManageTableIndex" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-create=${table}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+	</target> 
+	
+ 	<target name="index.table.remove">
+    	<java fork="true"  classname="saadadb.command.ManageTableIndex" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-remove=${table}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+			
+	<!--
+		Remove product from th DB (to be used carefully)
+		Product are specified in by the -remove parameter
+		It ca either be a comma seprated list of OID or a SAADAQL query. In both case, all product 
+		to remove must belong to the same collection and to tyhe same class.
+		if the -links parameter valus is "follow", all product targeted by links of the product to remove will be removed too.
+		If the -noindex is set to true, indexes are not rebuilt after the poduct deletion
+		WARNING: This task can generate huge transactions
+		WARNING: If you want to empty a class or collection use the collection.emty or class.empty tasks preferably.
+		
+		USAGE ant product.remove -Dremove=oid1,oid2,oid3  -Dnoindex=true -Dlinks=follow
+		      ant product.remove "-Dremove=Select MISC From * In Starting WhereAttributeSaada{namesaada='Pedro'}"  -Dnoindex=true -Dlinks=follow
+	-->
+ 	<target name="product.remove">
+    	<java fork="true"  classname="saadadb.command.ManageProduct" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-remove=${remove}"/>
+	  		<arg value="-links=${links}"/>
+	  		<arg value="-noindex=${noindex}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		VO business
+-->	
+
+  	<target name="dm.gui">
+    	<java fork="true"  classname="saadadb.admin.dmmapper.MapperDemo">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
+	
+  	<target name="dm.builder">
+    	<java fork="true"  classname="saadadb.admin.dmmapper.DMBuilder">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+	  		<arg value="-debug=${debug}"/>
+           <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
+	<!--
+	  Apply the mapping file {filename} which must be in SAADA_DB_HOME/config if no fullpath given.
+	  That will apply the DM referenced in that file to the class also referenced into it
+	  sant dm.mapping.implement -filename={filename} -passwrd=[admin password} DBNAME
+	--> 
+	<target name="dm.mapping.implement">
+    	<java fork="true" classname="saadadb.command.DMMappingImplementer" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-filename=${filename}"/>
+	  		<arg value="-password=${password}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+			
+    	</java> 
+	</target>
+	
+	<!--
+	  Reload all datamodels (default and saved in files
+	  sant dm.reload -passwrd=[admin password} DBNAME
+	--> 
+	<target name="dm.reload">
+    	<java fork="true" classname="saadadb.sqltable.Table_Saada_VO_Resources" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-password=${password}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+	</target>
+
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  The following tasks are called at saadadb creation time.
+	  They should not be invoked by 
+-->
+	<!--
+	  Set executable mode for executable files
+	--> 
+	<target name="xmode.set">
+		<chmod perm="a+x">
+  			<fileset dir="${SAADA_DB_HOME}/bin">
+    			<exclude name="**/*.xml"/>
+    			<exclude name="**/*.properties"/>
+  			</fileset>
+ 		</chmod>
+	</target>	
+
+	<!--
+		Simple task displaying the parameter read in the command line
+		Debug purpose
+		USAGE: ant dumy.task -Dparam=YourParameterValue 
+	-->
+	<target name="task.dummy">
+  		<echo>parameter read</echo>
+  		<echo>${param}</echo>
+	</target>
+	
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		  The following task load a set of dummy data, just to check that everything is working
+	-->
+	<target name="load.dummy.data">
+		<java  classname="saadadb.resourcetest.RemoveTester" fork="true" failonerror="true">
+            <classpath refid="saadadb.classpath"/>
+
+			<arg value="-command=antrelationmisc"/>
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>
+	</target>
+
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	VO Services management
+	-->
+	
+	<!--
+	  Remove the TAP service
+	  sant vo.tap.remove [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.remove">   
+		<java classname="saadadb.command.ManageTapService" failonerror="false" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=service"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>	
+	</target>
+	
+	<!--
+	  Create the TAP service
+	  sant vo.tap.create [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.create">   
+		<java classname="saadadb.command.ManageTapService" failonerror="false" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=service"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>
+		</java>	
+	</target>
+	
+	<!--
+	  Create the Obscore table and publish it into the TAP service
+	  sant vo.tap.obscore.create [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.obscore.create">   
+		<java classname="saadadb.command.ManageVodmService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-create=ObsCore"/>      
+			<arg value="-debug={debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	<!--
+	  Remove the Obscore table 
+	  sant vo.tap.obscore.remove [-Ddebug=on|off] DBNAME
+	-->
+	<target name="vo.tap.obscore.remove">   
+		<java classname="saadadb.command.ManageVodmService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=ObsCore"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  Manage extended attributes
+	-->
+	<!--
+	  Add a new extended attribute to a category of data 
+	  sant extended.attribute.add -Dname=name -Dcategory=name -Dtype=type [-Dcomment=comment] [-Ducd=ucd] [-Dutype=utype] [-Dunit=unit] [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.add">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-create={name}"/>      
+			<arg value="-category={category}"/>      
+ 			<arg value="-comment={comment}"/>   
+ 			<arg value="-unit={unit}"/>      
+ 	 		<arg value="-ucd={ucd}"/>      
+ 	 		<arg value="-utype={utype}"/>      
+			<arg value="-type={type}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	<!--
+	  Remove an extended attribute from a category of data 
+	  sant extended.attribute.remove -Dname=name -Dcategory=name [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.remove">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove={name}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	<!--
+	  Rename an extended attribute of a category of data 
+	  sant extended.attribute.remove -Dname=name -Dnewname=newname -Dcategory=name  [-Dcomment=comment] [-Ducd=ucd] [-Dutype=utype] [-Dunit=unit] [-Ddebug=on|off] DBNAME
+	-->
+	<target name="extended.attribute.rename">   
+		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-rename={name}"/>      
+			<arg value="-newname={newname}"/>      
+			<arg value="-category={category}"/>      
+ 			<arg value="-comment={comment}"/>      
+ 			<arg value="-unit={unit}"/>      
+ 	 		<arg value="-ucd={ucd}"/>      
+ 	 		<arg value="-utype={utype}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	  DB upgrade
+	-->
+	<target name="database.upgrade">   
+		<java classname="upgrade.Upgrade" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+ 	 		<arg value="-password=${password}"/>      
+			<arg value="-debug=${debug}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+
+</project>

@@ -1,0 +1,28 @@
+-- TRUE if  the box(ra_roi, dec_roi, roi_size)  enclsosed  the box (ra_box, dec_box, box_size_ra, box_size_dec)
+-- circle approximation near the poles
+-- angles are in degrees
+CREATE OR REPLACE  FUNCTION boxenclosed(ra_roi DOUBLE , dec_roi DOUBLE , roi_size DOUBLE ,ra_box DOUBLE , dec_box DOUBLE , box_size_ra DOUBLE , box_size_dec DOUBLE ) RETURNS BOOLEAN DETERMINISTIC
+BEGIN
+DECLARE combinated_box_size DOUBLE  DEFAULT 0;
+	-- ROI mut be larger than the image
+	IF dec_roi < box_size_ra OR dec_roi < box_size_dec THEN
+		RETURN FALSE;
+	-- Circle approximation near the poles
+	ELSEIF (dec_roi + roi_size).0 > 88 OR (dec_roi - roi_size) < -88.0 THEN
+		IF box_size_dec < box_size_ra THEN
+			combinated_box_size = box_size_dec
+		ELSE
+			combinated_box_size = box_size_ra;
+		END IF;
+		combinated_box_size = roi_size - combinated_box_size;
+		IF distancedegree(ra_roi, dec_roi,ra_box, dec_box) < combinated_box_size THEN
+			RETURN TRUE
+		ELSE
+			RETURN FALSE;		
+		END IF;
+	-- IVOA/SIAP like enclosed condition
+	ELSE 
+		RETURN isinbox(ra_box, dec_box, (roi_size - box_size_ra), (roi_size - box_size_dec), ra_roi, dec_roi);
+	END IF;
+
+END;
