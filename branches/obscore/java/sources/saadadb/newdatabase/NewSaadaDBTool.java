@@ -51,7 +51,7 @@ public class NewSaadaDBTool extends JFrame {
 		super("Saada " + Database.version() + ": Database Creation Tool");
 		System.out.println(saada_home);
 		NewSaadaDBTool.saada_home = saada_home;
-		NewSaadaDBTool.saada_home = currentDir;
+		//NewSaadaDBTool.saada_home = currentDir;
 		if( File.separator.equals("\\")) {
 			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
@@ -61,9 +61,11 @@ public class NewSaadaDBTool extends JFrame {
 		/*
 		 * Make sure to close and rename the log file when exit
 		 */
-		log_file = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
-		Messenger.printMsg(Messenger.TRACE, "Process logged in " + log_file);
-		if( !ap.isNolog() ) Messenger.openLog(log_file);
+		if( !ap.isNolog() ) {
+			log_file = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
+			Messenger.printMsg(Messenger.TRACE, "Process logged in " + log_file);
+			Messenger.openLog(log_file);
+		}
 		Messenger.printMsg(Messenger.TRACE, "Start to build a SaadaDB from Saada instance: " + saada_home);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
