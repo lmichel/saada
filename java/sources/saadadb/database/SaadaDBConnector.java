@@ -160,6 +160,7 @@ public class SaadaDBConnector extends DefaultHandler {
 			ResultSet rs    = _stmt.executeQuery("Select * from saadadb"); 
 			while( rs.next() ) {
 				dbname     = rs.getString("name");
+
 				root_dir   = rs.getString("root_dir");
 				repository = rs.getString("repository");
 				description= rs.getString("description");

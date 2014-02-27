@@ -137,6 +137,10 @@ public class Spooler {
 		this.maxConnections = ( m != -1 )? m: maxConnections;
 		this.checkAvailableConnections();
 		this.spoolerIsRunning = true;
+		/*
+		 * Make sure to start with at least one connection
+		 */
+		this.addConnectionReference();
 		(new Thread(new ListChecker())).start();
 		Messenger.printMsg(Messenger.TRACE, "Spooler ready");
 	}

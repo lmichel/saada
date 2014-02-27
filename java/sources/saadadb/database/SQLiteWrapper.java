@@ -773,8 +773,76 @@ public class SQLiteWrapper extends DbmsWrapper {
 		return true;
 	}
 
+//	@Override
+//	public void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "Loading ASCII  file " + tableFile + " in table " + tableName);
+//		int nb_col=0;
+//		if( ncols == -1 ) {
+//			DatabaseMetaData meta = connection.getMetaData();
+//			ResultSet rsColumns = meta.getColumns(null, null, tableName, null);
+//			/*
+//			 * Only TYPE_FORWARD supported: must read all columns to get the size
+//			 */
+//			while( rsColumns.next() ) nb_col++;
+//			rsColumns.close();
+//		}
+//		/*
+//		 * If the table is temporary, we must use the given column number (JDBC XERIAL weakness?)
+//		 */
+//		else {
+//			nb_col = ncols;
+//		}
+//		String ps = "insert into " + tableName.toLowerCase() + "  values (";
+//		/*
+//		 * Build the prepared statement
+//		 */
+//		for( int i=0 ; i< nb_col ; i++ ) {
+//			if( i > 0 )  ps += ",";
+//			ps += "?";
+//		}
+//		ps += ")";
+//		PreparedStatement prep = connection.getPreparedStatement(ps);
+//		/*
+//		 * Maps file row in the prepared segment
+//		 */
+//		BufferedReader br = new BufferedReader(new FileReader(tableFile));
+//		String str = "";
+//		int line = 0;
+//		while( (str = br.readLine()) != null ) {
+//			line++;
+//			String fs[] = str.split("\\t");
+//			if( fs.length != nb_col ) {
+//				QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line + " number of values (" + fs.length + ") does not match the number of columns (" +  nb_col + ")");
+//			}
+//			for( int i=0 ; i< nb_col; i++ ) {
+//				if( "null".equals(fs[i]) )
+//					prep.setObject(i+1, null);
+//				else
+//					prep.setObject(i+1, fs[i]);
+//			}
+//			prep.addBatch();
+//			if( (line%5000) == 0  )  {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Store 5000 lines into the DB");
+//				prep.executeBatch();
+//			}
+//		}
+//		prep.close();
+//		/*
+//		 * Load data
+//		 */
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, line + " lines stored");
+//		prep.executeBatch();
+//		(new File(tableFile)).delete();
+//		}
+
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#storeTable(java.sql.Connection, java.lang.String, int, java.lang.String)
+	 */
 	@Override
-	public void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+	protected void storeTable(Connection connection, String tableName, int ncols, String tableFile) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Loading ASCII  file " + tableFile + " in table " + tableName);
 		int nb_col=0;
@@ -802,7 +870,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			ps += "?";
 		}
 		ps += ")";
-		PreparedStatement prep = connection.getPreparedStatement(ps);
+		PreparedStatement prep = connection.prepareStatement(ps);
 		/*
 		 * Maps file row in the prepared segment
 		 */
@@ -828,6 +896,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 				prep.executeBatch();
 			}
 		}
+		prep.executeBatch();
 		prep.close();
 		/*
 		 * Load data

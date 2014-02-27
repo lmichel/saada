@@ -619,9 +619,11 @@ public class PostgresWrapper extends DbmsWrapper {
 	protected File getProcBaseRef() throws Exception {
 		String base_dir = System.getProperty("user.home") 
 		+ Database.getSepar() 
+		+ "Documents" 
+		+ Database.getSepar() 
 		+ "workspace" 
 		+ Database.getSepar() 
-		+ "Saada1.7"
+		+ "SaadaObscore"
 		+ Database.getSepar() 
 		+ "sqlprocs" 
 		+ Database.getSepar() 
@@ -651,7 +653,6 @@ public class PostgresWrapper extends DbmsWrapper {
 				+ "postgresql" ;
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-				Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir " + base_dir);
 				bf = new File(base_dir) ;
 				if( !(bf.exists() && bf.isDirectory()) ) {		
 					base_dir = NewSaadaDBTool.saada_home
@@ -663,7 +664,6 @@ public class PostgresWrapper extends DbmsWrapper {
 					+ "postgresql" ;
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-					Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir " + base_dir);
 					bf = new File(base_dir) ;
 					if( !(bf.exists() && bf.isDirectory()) ) {		
 						FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can not access SQL procedure directory " + bf.getAbsolutePath());
@@ -671,6 +671,9 @@ public class PostgresWrapper extends DbmsWrapper {
 				}
 			}
 		}
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
+		Messenger.printMsg(Messenger.TRACE, "SQL procedures found in " + base_dir);
 		return bf;
 	}
 
@@ -691,9 +694,10 @@ public class PostgresWrapper extends DbmsWrapper {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Messenger.debug_mode = true;
-			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("obs-he-lm", "5432"); 
+			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("localhost", "5432"); 
 			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
-			dbmswrapper.checkAdminPrivileges("/tmp", false);
+		//	dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.checkAdminPrivileges(false);
 			dbmswrapper.setReaderAuth("reader", "");
 			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
