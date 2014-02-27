@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import saadadb.database.Database;
+import saadadb.database.DbmsWrapper;
 
 /**
  * Wrapper for JDBC connection {@link Spooler}
@@ -161,6 +162,14 @@ public class DatabaseConnection {
 		this.statement = this.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 		Database.getWrapper().setFetchSize(this.statement,5000);
 		return this.statement;
+	}
+	/**
+	 * connection should be encaplusated, but we need it at DB creation time when we work without the spooler
+	 * used by {@link DbmsWrapper#checkAdminPrivileges(String, boolean)} to load a small TSV with SQLLIte
+	 * @return
+	 */
+	public Connection getConnection() {
+		return this.connection;
 	}
 	/**
 	 * AutoCommit is managed internally

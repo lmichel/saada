@@ -71,6 +71,15 @@ abstract public class DbmsWrapper {
 	public int getHardReaderConnectionLimit() {
 		return -1;
 	}
+	
+	public boolean checkAdminPrivileges( boolean clean_after) throws Exception {
+	//	[27/02/14 12:40:24]   DEBUG: UPDATE COPY TableTest FROM '/var/folders/sz/_6r8n_2s6b98q14v89t28z5m0000gn/T//testbasededonnees.psqldump'
+
+		String tempPath = System.getProperty("java.io.tmpdir");
+	      // a fix to handle the crazy path the Mac JVM returns
+	      if (tempPath.startsWith("/var/folders/")) tempPath = "/tmp/";
+		return checkAdminPrivileges(tempPath, clean_after);
+	}
 	/** 
 	 * @param tmp_dir
 	 * @param clean_after
@@ -80,6 +89,7 @@ abstract public class DbmsWrapper {
 	public boolean checkAdminPrivileges(String tmp_dir, boolean clean_after) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Check privilege for admin role in "  + this.url + test_base);
 		Connection connection = null;
+		String tmp_filename = tmp_dir + Database.getSepar() + test_base.substring(test_base.lastIndexOf(Database.getSepar()) + 1)  + ".psqldump";
 		try {
 			/*
 			 * Drop the test DB if it exists
@@ -109,17 +119,15 @@ abstract public class DbmsWrapper {
 			/*
 			 * Connect the Test db
 			 */
-			Database.setConnector(new SaadaDBStandAloneConnector(this.url + test_base, this.driver, test_base, adm, read, readp));
-			Spooler.getSpooler().openAdminConnection(admp);
-			connection = Database.getConnector().getNewAdminConnection(admp);
-			connection.setAutoCommit(true);
+			connection = this.getConnection(this.url + test_base, adm, admp);
+			connection.setAutoCommit(true);			
 			/*
 			 * Populate the Test db
 			 */
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
 			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-			loadSQLProcedures(stmt);		
+			loadSQLProcedures(stmt);	
 			/*
 			 * Create a table
 			 */
@@ -127,12 +135,14 @@ abstract public class DbmsWrapper {
 				Messenger.printMsg(Messenger.DEBUG, "UPDATE " + "CREATE TABLE " + test_table + " ( name text)");
 			stmt.executeUpdate("CREATE TABLE " + test_table + " ( name text)" );
 			String q = grantSelectToPublic(test_table);
-			if( q != null && q.length() > 0 )
+			if( q != null && q.length() > 0 ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "UPDATE " +q);
 				stmt.executeUpdate(q);
+			}
 			/*
 			 * Populate the table from a file
 			 */
-			String tmp_filename = tmp_dir + Database.getSepar() + test_base.substring(test_base.lastIndexOf(Database.getSepar()) + 1)  + ".psqldump";
 			BufferedWriter tmpfile = new BufferedWriter(new FileWriter(tmp_filename));
 			tmpfile.write("'Pierre'\n");
 			tmpfile.write("'Paul'\n");			
@@ -140,9 +150,11 @@ abstract public class DbmsWrapper {
 			tmpfile.close();
 
 			if( this.tsvLoadNotSupported() ) {
-				//this.storeTable(connection, test_table, -1, tmp_filename) ;			
+				this.storeTable(connection, test_table, -1, tmp_filename) ;			
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "UPDATE " +str);				
 					stmt.executeUpdate(str);					
 				}
 			}
@@ -179,31 +191,33 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
+			connection.close();
 			if( clean_after) {
 				/*
 				 * Drop the base
 				 */
 				/*
-				 * Give 5 sec to the server to close th connection 
+				 * Give 0,5 sec to the server to close th connection 
 				 */
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 				}
 				dropDB(null, test_base);
 			}
+			new File(tmp_filename).delete();
 			/*
 			 * Make sure the db is closed in order to allow the user to make a second attempt
 			 */
 		} catch (SaadaException e) {
 			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
-
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
 		} finally {
-			Spooler.getSpooler().close();
+			new File(tmp_filename).delete();
+			if( connection != null ) connection.close();
 		}
 		/*
 		 * If something goes wrong an exception is risen
@@ -409,7 +423,18 @@ abstract public class DbmsWrapper {
 	 * @param tableFile
 	 * @throws Exception
 	 */
-	public  void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+	public final void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+		storeTable(connection.getConnection(), tableName, ncols, tableFile);
+	}
+	/**
+	 * 
+	 * @param connection
+	 * @param tableName
+	 * @param ncols
+	 * @param tableFile
+	 * @throws Exception
+	 */
+	protected  void storeTable(Connection connection, String tableName, int ncols, String tableFile) throws Exception {
 	}
 
 	/**
@@ -1255,15 +1280,14 @@ abstract public class DbmsWrapper {
 	}
 
 	public void loadSQLProcedures(Statement stmt) throws Exception {
-		SQLTable.beginTransaction();
-		this.installLanguage(stmt);
-		String[] rp = this.removeProc();
-		for( String p: rp) {
-			stmt.executeUpdate(p);
-			//SQLTable.addQueryToTransaction(p);
-		}
 		File bf = this.getProcBaseRef();
 		if( bf != null ) {
+			this.installLanguage(stmt);
+			String[] rp = this.removeProc();
+			for( String p: rp) {
+				stmt.executeUpdate(p);
+				//SQLTable.addQueryToTransaction(p);
+			}
 			String[] fs = bf.list();
 			Messenger.printMsg(Messenger.TRACE, "Reading SQL proc files from " + bf.getAbsolutePath());
 			for( String f: fs ) {
@@ -1278,11 +1302,9 @@ abstract public class DbmsWrapper {
 					}
 					br.close();
 					stmt.executeUpdate(sb.toString());
-					//SQLTable.addQueryToTransaction(sb.toString());
 				}
 			}
 		}
-		SQLTable.commitTransaction();
 	}
 
 	/**

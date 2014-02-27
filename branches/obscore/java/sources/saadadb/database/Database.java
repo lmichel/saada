@@ -278,7 +278,7 @@ public class Database {
 	 * @return
 	 */
 	public static String getRoot_dir() {
-		return connector.getRoot_dir();
+		return (connector == null)?null : connector.getRoot_dir();
 	}
 	/**
 	 * @return
