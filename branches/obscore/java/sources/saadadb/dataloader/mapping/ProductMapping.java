@@ -27,7 +27,7 @@ public class ProductMapping {
 	private boolean noVignette = false;
 	private boolean noIndex = false;
     private STEOMapping stoeMapping;
-    private Signature  signature = new Signature();
+    protected Signature  signature = new Signature();
     private HeaderRef headerRef = new HeaderRef(0);
 	private ClassMapping classMapping;
 	private EntryMapping entryMapping;
@@ -54,10 +54,10 @@ public class ProductMapping {
 		signature.addElement(this.collection, true);
 		signature.addElement(this.extension, false);
 		signature.addElement(this.classMapping.toString(), false);
-		signature.addElement(this.stoeMapping.getSignature(), false);
 		if( this.category == Category.TABLE ) {
 			this.entryMapping = new EntryMapping(name, ap); 
 		}
+		signature.addElement(this.stoeMapping.getSignature(), false);
     } 
     /**
      * @param name

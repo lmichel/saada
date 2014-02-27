@@ -36,11 +36,7 @@ public class STEOMapping {
 		this.axeMapping.put(Axe.ENERGY     , new EnergyMapping(ap, entryMode));
 		this.axeMapping.put(Axe.OBSERVATION, new ObservationMapping(ap, entryMode));
 		this.category = Category.getCategory(ap.getCategory());
-		if( Database.getCachemeta().getAtt_extend(this.category).size() > 0 ){
-			this.axeMapping.put(Axe.EXTENDEDATT, new ExtendedAttMapping(ap, entryMode));
-		} else {
-			this.axeMapping = null;
-		}
+		this.axeMapping.put(Axe.EXTENDEDATT, new ExtendedAttMapping(ap, entryMode));
 		this.collection = ap.getCollection();
 		this.setIgnoredAttributes(ap,entryMode);
 	}
