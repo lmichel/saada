@@ -30,10 +30,6 @@ import saadadb.util.Messenger;
  *
  */
 public class NewSaadaDBTool extends JFrame {
-	/** * @version $Id: NewSaadaDBTool.java 936 2014-02-07 13:56:44Z laurent.mistahl $
-
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private ProgressPanel progress_panel;
 	private FormPanel form_panel;
@@ -44,6 +40,7 @@ public class NewSaadaDBTool extends JFrame {
 	private String log_file ;
 	protected static String currentDir;
 	static public String saada_home;
+	private boolean noLog = false;
 	/**
 	 * @throws FatalException 
 	 */
@@ -61,7 +58,8 @@ public class NewSaadaDBTool extends JFrame {
 		/*
 		 * Make sure to close and rename the log file when exit
 		 */
-		if( !ap.isNolog() ) {
+		this.noLog = ap.isNolog();
+		if( !this.noLog ) {
 			log_file = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.log";
 			Messenger.printMsg(Messenger.TRACE, "Process logged in " + log_file);
 			Messenger.openLog(log_file);
@@ -69,26 +67,29 @@ public class NewSaadaDBTool extends JFrame {
 		Messenger.printMsg(Messenger.TRACE, "Start to build a SaadaDB from Saada instance: " + saada_home);
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				Messenger.closeLog();
-				String new_logfile;
-				if( NewSaadaDBTool.this.form_panel.saadadb_name.getText().length() > 0 ) {
-					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb." + NewSaadaDBTool.this.form_panel.saadadb_name.getText() + ".log";
-				} else {
-					new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
+				if( !noLog ) {
+
+					Messenger.closeLog();
+					String new_logfile;
+					if( NewSaadaDBTool.this.form_panel.saadadb_name.getText().length() > 0 ) {
+						new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb." + NewSaadaDBTool.this.form_panel.saadadb_name.getText() + ".log";
+					} else {
+						new_logfile = NewSaadaDBTool.saada_home + Database.getSepar() + "logs" + Database.getSepar() + "newdb.aborted.log";			
+					}
+					//new_logfile = new_logfile.replaceAll("\\\\", "\\\\\\\\");
+					String f = new_logfile;
+					int cpt = 1;
+					while( (new File(f)).exists() ) {
+						f = new_logfile.replace(".log", cpt + ".log");
+						cpt++;
+					}
+					if( cpt > 1) {
+						System.out.println("Rename old log " + new_logfile + " as " + f);
+						new File(new_logfile).renameTo(new File(f));
+					}
+					(new File(NewSaadaDBTool.this.log_file)).renameTo(new File(new_logfile));
+					System.out.println("Log saved in " + new_logfile);
 				}
-				//new_logfile = new_logfile.replaceAll("\\\\", "\\\\\\\\");
-				String f = new_logfile;
-				int cpt = 1;
-				while( (new File(f)).exists() ) {
-					f = new_logfile.replace(".log", cpt + ".log");
-					cpt++;
-				}
-				if( cpt > 1) {
-					System.out.println("Rename old log " + new_logfile + " as " + f);
-					new File(new_logfile).renameTo(new File(f));
-				}
-				(new File(NewSaadaDBTool.this.log_file)).renameTo(new File(new_logfile));
-				System.out.println("Log saved in " + new_logfile);
 			}
 		});
 
