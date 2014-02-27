@@ -11,6 +11,7 @@ import saadadb.compat.Files;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.SaadaDBConnector;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.GenerationClassCollection;
@@ -179,7 +180,7 @@ public class NewSaadaDB {
 			 * Create SQL tables
 			 */	
 			Database.initConnector(this.connector.getDbname(), false);
-			connector.setAdminAuth(this.admin_passwd);
+			Spooler.getSpooler(1).openAdminConnection(this.admin_passwd);
 			Database.getWrapper().loadSQLProcedures();
 			SQLTable.beginTransaction();
 		    Table_SaadaDB.createTable();   	
@@ -207,6 +208,7 @@ public class NewSaadaDB {
 			Messenger.printMsg(Messenger.TRACE, "Database : " + nameDB
 					+ " successfully created ");
 			Runtime.getRuntime().gc();
+			Spooler.getSpooler().close();
 			return true;
 	}
 
