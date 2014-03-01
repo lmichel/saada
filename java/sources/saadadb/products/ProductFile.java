@@ -11,6 +11,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpaceFrame;
 /**v * @version $Id: ProductFile.java 928 2014-02-03 19:42:06Z laurent.mistahl $
 
  * Interface for the specification of a product file.

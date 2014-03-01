@@ -13,6 +13,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpaceFrame;
 import saadadb.util.ChangeKey;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;

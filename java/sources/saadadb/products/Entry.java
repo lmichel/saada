@@ -49,6 +49,7 @@ public class Entry extends Product {
 	 */
 	public Entry(Table table) {
 		super(table.file, table.mapping.getEntryMapping());
+		System.out.println(this.mapping);
 		this.table = table;
 	}
 
@@ -141,6 +142,7 @@ public class Entry extends Product {
 		this.saadainstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.metaclass.getName()).newInstance();
 		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaclass.getCollection_name()
 				, Category.TABLE);
+		System.out.println("@@@@@@@@@@ " + this.mapping);
 		EntrySaada entrysaada = (EntrySaada)this.saadainstance;
 		/*
 		 * The astroframe is the same for all entries it must be computed once
