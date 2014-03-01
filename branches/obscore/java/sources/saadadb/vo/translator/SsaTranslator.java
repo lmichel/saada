@@ -16,7 +16,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.SpectralCoordinate;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 import saadadb.vo.formator.SsaToVOTableFormator;
