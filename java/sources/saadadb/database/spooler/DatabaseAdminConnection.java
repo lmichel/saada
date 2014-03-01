@@ -1,6 +1,8 @@
 package saadadb.database.spooler;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import saadadb.database.Database;
 
@@ -51,4 +53,26 @@ public class DatabaseAdminConnection extends DatabaseConnection {
 	public void setAutoCommit(boolean autoCommit) throws SQLException{
 		this.connection.setAutoCommit(autoCommit);
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.spooler.DatabaseConnection#getStatement()
+	 */
+	public  Statement getStatement() throws Exception{
+		this.status = WORKING;
+		this.connection.setAutoCommit(false);
+		this.statement = connection.createStatement(Database.getWrapper().getDefaultScrollMode()
+				,Database.getWrapper().getDefaultConcurentMode());
+		return this.statement;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.database.spooler.DatabaseConnection#getUpdatableStatement()
+	 */
+	public  Statement getUpdatableStatement() throws Exception{
+		this.status = WORKING;
+		this.connection.setAutoCommit(false);
+		this.statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+		return this.statement;
+	}
+
 }
