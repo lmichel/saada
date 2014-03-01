@@ -9,12 +9,12 @@ public class ClassMapping {
 	private String className;
 	
 	ClassMapping(ArgsParser ap) throws SaadaException {
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Setting the mapping type...");
 		this.className = ap.getClassName();
 
 		if( this.className == null ) {
 			this.className = "";
 		}
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Setting the mapping type for class " + this.className);
 		this.classifier = (ap.getMappingType() == ClassifierMode.NOCLASSIFICATION)? ClassifierMode.CLASSIFIER: ap.getMappingType();
 	}
 
