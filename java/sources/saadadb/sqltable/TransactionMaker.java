@@ -96,6 +96,7 @@ public class TransactionMaker {
 			 */
 			queries.add( new QueryString(Database.getWrapper().unlockTables(), null));
 			connection = Spooler.getSpooler().getAdminConnection();
+			connection.getConnection().setAutoCommit(false);
 			stmt = connection.getStatement(); 
 			int cpt = 0;
 			for(QueryString qs: queries) {
@@ -127,7 +128,7 @@ public class TransactionMaker {
 					}
 					execStatement(pstmt, q);
 				}
-			}
+ 			}
 			Database.giveAdminConnection();
 
 			if (Messenger.debug_mode)
@@ -172,8 +173,7 @@ public class TransactionMaker {
 		Messenger.dbAccess();
 		if( !forced_mode ) {
 			stmt.executeUpdate(query);
-		}
-		else {
+		} else {
 			connection.setAutoCommit(true);
 			try {
 				stmt.executeUpdate(query);	
@@ -197,8 +197,7 @@ public class TransactionMaker {
 		Messenger.dbAccess();
 		if( !forced_mode ) {
 			pstmt.executeUpdate();
-		}
-		else {
+		} else {
 			connection.setAutoCommit(true);
 			try {
 				pstmt.executeUpdate();	

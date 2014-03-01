@@ -10,7 +10,7 @@ import saadadb.collection.SpectrumSaada;
 import saadadb.collection.WCSSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.SpectralCoordinate;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 

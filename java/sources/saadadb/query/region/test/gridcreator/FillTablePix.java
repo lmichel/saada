@@ -13,7 +13,7 @@ import cds.astro.Coo;
 import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;
-import saadadb.products.Coord;
+import saadadb.products.inference.Coord;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 

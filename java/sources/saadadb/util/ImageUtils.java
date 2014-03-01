@@ -32,10 +32,10 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.Coord;
 import saadadb.products.FitsProduct;
 import saadadb.products.Image2D;
-import saadadb.products.Image2DCoordinate;
+import saadadb.products.inference.Coord;
+import saadadb.products.inference.Image2DCoordinate;
 import cds.astro.Coo;
 
 //import com.sun.image.codec.jpeg.JPEGCodec;

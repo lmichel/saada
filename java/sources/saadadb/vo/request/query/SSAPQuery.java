@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.SpectralCoordinate;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.executor.Query;
 import saadadb.query.parser.PositionParser;
 import saadadb.query.result.OidsaadaResultSet;

@@ -82,7 +82,7 @@ public class RegExp {
     + FITS_FLOAT_NDN    + "|" 
     + FITS_FLOAT_DN     + "|" 
     + FITS_FLOAT_ND     + "|"
-    + "[0-9]+)";
+    + "(?:[0-9]+))";
 	/*
 	 * Query parsing et autres cochonneries
 	 */

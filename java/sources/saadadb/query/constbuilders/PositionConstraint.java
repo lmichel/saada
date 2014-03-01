@@ -9,7 +9,7 @@ import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.Coord;
+import saadadb.products.inference.Coord;
 import saadadb.query.parser.PositionParser;
 import saadadb.query.region.request.Region;
 import saadadb.query.region.request.Zone;

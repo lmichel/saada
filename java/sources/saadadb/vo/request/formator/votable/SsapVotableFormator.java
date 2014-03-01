@@ -7,7 +7,7 @@ import saadadb.collection.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.SpectralCoordinate;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.result.SaadaInstanceResultSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
