@@ -6,7 +6,7 @@ package saadadb.admintool.utils;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.meta.MetaClass;
-import saadadb.products.SpectralCoordinate;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.parser.UnitHandler;
 import saadadb.vo.registry.Authority;
 
