@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.Coord;
+import saadadb.products.inference.Coord;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astrocoo;
