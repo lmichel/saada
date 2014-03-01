@@ -22,11 +22,11 @@ public class ProductMapping {
 	public final String loaderParams;
 	private RepositoryMode repositoryMode;
 	private String collection;
-	private int category;
+	protected int category;
 	private String extension;
 	private boolean noVignette = false;
 	private boolean noIndex = false;
-    private STEOMapping stoeMapping;
+    protected STEOMapping stoeMapping;
     protected Signature  signature = new Signature();
     private HeaderRef headerRef = new HeaderRef(0);
 	private ClassMapping classMapping;
@@ -222,6 +222,9 @@ public class ProductMapping {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.name);
+		try {
+			sb.append(" " + this.getClass().getName() +" " + this.collection + " " + Category.explain(this.category) );
+		} catch (FatalException e) {}
 		sb.append("\n");
 		sb.append(this.loaderParams);
 		sb.append("\n");
