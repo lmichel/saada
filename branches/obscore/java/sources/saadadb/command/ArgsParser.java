@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -31,7 +33,74 @@ public class ArgsParser implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String name; // used to name the file where the parameters could be saved
 	private String[] args;
-
+	public static final Set<String> allowedArgs;
+	static {
+		allowedArgs = new TreeSet<String>();
+		allowedArgs.add("-debug=") ;
+		allowedArgs.add("-classifier=") ;
+		allowedArgs.add("-coldef=") ;
+		allowedArgs.add("-classfusion=") ;
+		allowedArgs.add("-category=") ;
+		allowedArgs.add("-collection=") ;
+		allowedArgs.add("-relation=") ;
+		allowedArgs.add("-config=") ;
+		allowedArgs.add("-filename=") ;
+		allowedArgs.add("-extension=") ;
+		allowedArgs.add("-name=") ;
+		allowedArgs.add("-ename=") ;
+		allowedArgs.add("-ignore=") ;
+		allowedArgs.add("-eignore=") ;
+		allowedArgs.add("-ukw") ;
+		allowedArgs.add("-eukw") ;
+		allowedArgs.add("-sysmapping=") ;
+		allowedArgs.add("-system=") ;
+		allowedArgs.add("-posmapping=") ;
+		allowedArgs.add("-position=") ;
+		allowedArgs.add("-poserrormapping=") ;
+		allowedArgs.add("-poserror=") ;
+		allowedArgs.add("-poserrorunit=") ;
+		allowedArgs.add("-spcmapping=") ;
+		allowedArgs.add("-spcunit=") ;
+		allowedArgs.add("-spccolumn=") ;
+		allowedArgs.add("-empty") ;
+		allowedArgs.add("-remove") ;
+		allowedArgs.add("-index") ;
+		allowedArgs.add("-populate") ;
+		allowedArgs.add("-repository=") ;
+		allowedArgs.add("-links=") ;
+		allowedArgs.add("-filter=") ;
+		allowedArgs.add("-create") ;
+		allowedArgs.add("-oids") ;
+		allowedArgs.add("-force") ;
+		allowedArgs.add("-debug") ;
+		allowedArgs.add("-silent") ;
+		allowedArgs.add("-comment") ;
+		allowedArgs.add("-command") ;
+		allowedArgs.add("-password") ;
+		allowedArgs.add("-urlroot");
+		allowedArgs.add("-basedir");
+		allowedArgs.add("-repdir");
+		allowedArgs.add("-rename");
+		allowedArgs.add("-newname");
+		allowedArgs.add("-nolog") ;
+		allowedArgs.add("-noindex") ;
+		allowedArgs.add("-novignette") ;
+		allowedArgs.add("-query") ;
+		allowedArgs.add("-build") ;
+		allowedArgs.add("-all");
+		allowedArgs.add("-continue");
+		allowedArgs.add("-from");
+		allowedArgs.add("-to");
+		allowedArgs.add("-qualifiers");
+		allowedArgs.add("-if=") ;
+		allowedArgs.add("-of=") ;
+		allowedArgs.add("-protocol=") ;
+		allowedArgs.add("-type=") ;
+		allowedArgs.add("-unit=") ;
+		allowedArgs.add("-ucd=") ;
+		allowedArgs.add("-utype=") ;
+		allowedArgs.add("-vomodel=") ;
+	}
 	/**
 	 * @param args
 	 * @throws FatalException
@@ -44,73 +113,13 @@ public class ArgsParser implements Serializable{
 			this.args = args;
 			String msg="";
 			for( int i=0 ; i<args.length ; i++ ) {
-				if( args[i].startsWith("-") ) {
-					if( !args[i].startsWith("-classifier=") &&
-							!args[i].startsWith("-coldef=") &&
-							!args[i].startsWith("-classfusion=") &&
-							!args[i].startsWith("-category=") &&
-							!args[i].startsWith("-collection=") &&
-							!args[i].startsWith("-relation=") &&
-							!args[i].startsWith("-config=") &&
-							!args[i].startsWith("-filename=") &&
-							!args[i].startsWith("-extension=") &&
-							!args[i].startsWith("-name=") &&
-							!args[i].startsWith("-ename=") &&
-							!args[i].startsWith("-ignore=") &&
-							!args[i].startsWith("-eignore=") &&
-							!args[i].startsWith("-ukw") &&
-							!args[i].startsWith("-eukw") &&
-							!args[i].startsWith("-sysmapping=") &&
-							!args[i].startsWith("-system=") &&
-							!args[i].startsWith("-posmapping=") &&
-							!args[i].startsWith("-position=") &&
-							!args[i].startsWith("-poserrormapping=") &&
-							!args[i].startsWith("-poserror=") &&
-							!args[i].startsWith("-poserrorunit=") &&
-							!args[i].startsWith("-spcmapping=") &&
-							!args[i].startsWith("-spcunit=") &&
-							!args[i].startsWith("-spccolumn=") &&
-							!args[i].startsWith("-empty") &&
-							!args[i].startsWith("-remove") &&
-							!args[i].startsWith("-index") &&
-							!args[i].startsWith("-populate") &&
-							!args[i].startsWith("-repository=") &&
-							!args[i].startsWith("-links=") &&
-							!args[i].startsWith("-filter=") &&
-							!args[i].startsWith("-create") &&
-							!args[i].startsWith("-oids") &&
-							!args[i].startsWith("-force") &&
-							!args[i].startsWith("-debug") &&
-							!args[i].startsWith("-silent") &&
-							!args[i].startsWith("-comment") &&
-							!args[i].startsWith("-command") &&
-							!args[i].startsWith("-password") &&
-							!args[i].startsWith("-urlroot")&&
-							!args[i].startsWith("-basedir")&&
-							!args[i].startsWith("-repdir")&&
-							!args[i].startsWith("-rename")&&
-							!args[i].startsWith("-newname")&&
-							!args[i].startsWith("-nolog") &&
-							!args[i].startsWith("-noindex") &&
-							!args[i].startsWith("-novignette") &&
-							!args[i].startsWith("-query") &&
-							!args[i].startsWith("-build") &&
-							!args[i].startsWith("-all")&&
-							!args[i].startsWith("-continue")&&
-							!args[i].startsWith("-from")&&
-							!args[i].startsWith("-to")&&
-							!args[i].startsWith("-qualifiers")&&
-							!args[i].startsWith("-if=") &&
-							!args[i].startsWith("-of=") &&
-							!args[i].startsWith("-protocol=") &&
-							!args[i].startsWith("-type=") &&
-							!args[i].startsWith("-unit=") &&
-							!args[i].startsWith("-ucd=") &&
-							!args[i].startsWith("-utype=") &&
-							!args[i].startsWith("-vomodel="
-							) 
-					) {
-						msg += " <" + args[i] + ">";
+				String arg = args[i];
+				if( arg.startsWith("-") ) {
+					int pos = arg.indexOf('=');
+					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
+					    (pos >= 0 && (pos == (arg.length() - 1)    || // param with =
+					                 !allowedArgs.contains(arg.substring(0, pos+1)))) ) {
+						msg += " <" + arg + ">";
 					}
 				}
 			}			
