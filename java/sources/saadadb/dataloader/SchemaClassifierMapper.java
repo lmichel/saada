@@ -21,7 +21,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 /**
  * @author michel
- * * @version $Id: SchemaClassifierMapper.java 887 2014-01-14 09:33:09Z laurent.mistahl $
+ * @version $Id: SchemaClassifierMapper.java 887 2014-01-14 09:33:09Z laurent.mistahl $
 
  */
 public class SchemaClassifierMapper extends SchemaMapper {
@@ -167,7 +167,11 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	 */
 	@Override
 	protected void updateSchemaForProduct() throws Exception {
-		requested_classname = this.getRequestedClassName("Cl");
+		String className = this.mapping.getClassName();
+		if( className == null || className.length() == 0){
+			className = this.current_prd.possibleClassName();
+		}
+		requested_classname = this.getRequestedClassName(className);
 
 		String fmt_signature = this.current_prd.getFmtsignature();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"product " + this.current_prd.getClass().getName() + " " + fmt_signature);
