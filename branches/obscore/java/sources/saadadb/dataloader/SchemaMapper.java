@@ -102,10 +102,7 @@ public abstract class SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	protected String getRequestedClassName(String standardSybase) throws Exception {
-
-		String classname = this.mapping.getClassName();
-
+	protected String getRequestedClassName(String classname) throws Exception {
 		String prefixe = "";
 		String suffixe = "";
 		int  categorySaada = this.mapping.getCategory();
@@ -133,7 +130,7 @@ public abstract class SchemaMapper {
 		}
 		if( classname == null || classname.length() == 0 ) {
 			classname = prefixe 
-			+ standardSybase + "_"
+			+ "Cl_"
 			+ this.mapping.name ;
 		}
 
@@ -151,9 +148,7 @@ public abstract class SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	protected String getNewcLassName(String standardSybase) throws Exception {
-
-		String classname = this.mapping.getClassName();
+	protected String getNewcLassName(String classname) throws Exception {
 
 		String prefixe = "";
 		String suffixe = "";
@@ -182,7 +177,7 @@ public abstract class SchemaMapper {
 		}
 		if( classname == null || classname.length() == 0 ) {
 			classname = prefixe 
-			+ standardSybase + "_"
+			+ "Cl_"
 			+ this.mapping.name ;
 		}
 		SQLTable.lockTable("saada_class");
@@ -240,7 +235,11 @@ public abstract class SchemaMapper {
 		 * Compute the class name: 
 		 * Here must be used the class prefix given by the future configuration
 		 */
-		class_name = this.getNewcLassName("Cl");
+		String className = this.mapping.getClassName();
+		if( className == null || className.length() == 0){
+			className = this.current_prd.possibleClassName();
+		}
+		class_name = this.getNewcLassName(className);
 		//class_name = "Aldebaran010";
 		Messenger.printMsg(Messenger.TRACE,"Creation of the new class <" + class_name + ">");
 
