@@ -32,7 +32,10 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.CoordSystem;
+import saadadb.products.inference.Coord;
+import saadadb.products.inference.SpaceFrame;
 import saadadb.sqltable.Table_Saada_Loaded_File;
+import saadadb.util.ChangeKey;
 import saadadb.util.CopyFile;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -802,13 +805,13 @@ public class Product /*extends File*/ {
 			 * or from read values
 			 */
 			if( columnMapping.byValue() ) {
-				this.extended_attributes.put(att_ext_name , columnMapping.getValue());
+				this.extended_attributes.put(att_ext_name , columnMapping.getHandler());
 			}
 			/*
 			 * Flatfile have not tableAttributeHandler
 			 */
 			else if (this.productAttributeHandler != null ) {
-				String cm = (columnMapping.getValue() != null)?columnMapping.getValue().getNameattr(): null;
+				String cm = (columnMapping.getHandler() != null)?columnMapping.getHandler().getNameattr(): null;
 				for( AttributeHandler ah : this.productAttributeHandler.values() ) {
 					if( ah.getNameorg().equals(cm)) {
 						this.extended_attributes.put(att_ext_name, ah);
@@ -1124,7 +1127,7 @@ public class Product /*extends File*/ {
 		ColumnMapping cm = this.mapping.getObservationAxeMapping().getColumnMapping("namesaada");
 		this.name_components = new ArrayList<AttributeHandler>();
 		if(  !cm.notMapped()) {
-			for( AttributeHandler ah: cm.getValues()) {
+			for( AttributeHandler ah: cm.getHandlers()) {
 				/*
 				 * If name component is a constant (enclosed in " or '),
 				 * an attribute hndler is created. Otherwise the product
@@ -1251,7 +1254,8 @@ public class Product /*extends File*/ {
 		}
 		if( this.angle_err_attribute == null ) {
 			this.angle_err_attribute = new AttributeHandler();
-			this.angle_err_attribute.setNameattr("Numeric");
+			this.angle_err_attribute.setNameattr(ColumnMapping.NUMERIC
+);
 			this.angle_err_attribute.setValue("0");
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set angle=0 for orror ellipses");
 		}
@@ -1271,19 +1275,19 @@ public class Product /*extends File*/ {
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( raMapping.byValue() ) {
-			this.ra_attribute = raMapping.getValue();
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getValue().getValue() + ">");
+			this.ra_attribute = raMapping.getHandler();
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getHandler().getValue() + ">");
 		}
 		if( decMapping.byValue() ) {
-			this.dec_attribute = raMapping.getValue();	
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getValue().getValue() + ">");
+			this.dec_attribute = raMapping.getHandler();	
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getHandler().getValue() + ">");
 		}
 
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String raCol =  (raMapping.getValue() != null)? raMapping.getValue().getNameattr() : null;
-		String decCol =  (decMapping.getValue() != null)? decMapping.getValue().getNameattr() : null;
+		String raCol =  (raMapping.getHandler() != null)? raMapping.getHandler().getNameattr() : null;
+		String decCol =  (decMapping.getHandler() != null)? decMapping.getHandler().getNameattr() : null;
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
@@ -1340,26 +1344,26 @@ public class Product /*extends File*/ {
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( errMajMapping.byValue() ) {
-			this.maj_err_attribute = errMajMapping.getValue();	
+			this.maj_err_attribute = errMajMapping.getHandler();	
 			ra_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getValue().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getHandler().getValue() + ">");
 		}
 		if( errMinMapping.byValue() ) {
-			this.min_err_attribute = errMinMapping.getValue();	
+			this.min_err_attribute = errMinMapping.getHandler();	
 			dec_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getValue().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getHandler().getValue() + ">");
 		}
 		if( errAngleMapping.byValue() ) {
-			this.angle_err_attribute = errAngleMapping.getValue();	
+			this.angle_err_attribute = errAngleMapping.getHandler();	
 			angle_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getValue().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getHandler().getValue() + ">");
 		}
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String minCol   =  (errMajMapping.getValue() != null)?errMajMapping.getValue().getNameattr(): null;
-		String maxCol   =  (errMinMapping.getValue() != null)?errMinMapping.getValue().getNameattr(): null;
-		String angleCol =  (errAngleMapping.getValue() != null)?errAngleMapping.getValue().getNameattr(): null;
+		String minCol   =  (errMajMapping.getHandler() != null)?errMajMapping.getHandler().getNameattr(): null;
+		String maxCol   =  (errMinMapping.getHandler() != null)?errMinMapping.getHandler().getNameattr(): null;
+		String angleCol =  (errAngleMapping.getHandler() != null)?errAngleMapping.getHandler().getNameattr(): null;
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
@@ -1491,7 +1495,17 @@ public class Product /*extends File*/ {
 	public String toString() {
 		return this.file.getAbsolutePath();
 	}
-	
+	/**
+	 * Returns a possible classname derived from the data file product name
+	 * @return
+	 */
+	public String  possibleClassName() {
+    	String ret = new File(this.productFile.getName()).getName().split("\\.")[0].replaceAll("[^\\w]+", "_").toLowerCase();
+    	if( !ret.matches(RegExp.CLASSNAME) ) {
+    		ret = "C_" + ret;
+    	}
+		return ret;
+	}
 	/**
 	 * @param ap
 	 * @param attributes

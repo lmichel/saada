@@ -11,6 +11,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpaceFrame;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;

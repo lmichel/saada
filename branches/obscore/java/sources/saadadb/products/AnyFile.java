@@ -7,6 +7,7 @@ import java.util.Map;
 
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpaceFrame;
 
 /**
  * @author laurentmichel

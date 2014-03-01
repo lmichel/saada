@@ -6,6 +6,7 @@ import java.util.Map;
 
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpaceFrame;
 
 public class FooProduct implements ProductFile {
 	private int pointer = 0;

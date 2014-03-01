@@ -9,6 +9,7 @@ import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
@@ -16,6 +17,8 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.Coord;
+import saadadb.products.inference.Image2DCoordinate;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
 
@@ -93,12 +96,12 @@ public class Image2D extends Product {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No position mapping found: Use WCS keyword");
 			this.ra_attribute = new AttributeHandler();
-			this.ra_attribute.setNameorg("Numeric");
-			this.ra_attribute.setNameattr("Numeric");
+			this.ra_attribute.setNameorg(ColumnMapping.NUMERIC);
+			this.ra_attribute.setNameattr(ColumnMapping.NUMERIC);
 			this.ra_attribute.setValue(Double.toString(coo_c.getPOS_RA()));
 			this.dec_attribute = new AttributeHandler();
-			this.dec_attribute.setNameorg("Numeric");
-			this.dec_attribute.setNameattr("Numeric");
+			this.dec_attribute.setNameorg(ColumnMapping.NUMERIC);
+			this.dec_attribute.setNameattr(ColumnMapping.NUMERIC);
 			this.dec_attribute.setValue(Double.toString(coo_c.getPOS_DEC()));
 			Messenger.printMsg(Messenger.TRACE, "Position extracted from WCS <value="+this.ra_attribute.getValue() 
 					+" value="+this.dec_attribute.getValue() + ">");

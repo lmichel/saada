@@ -78,7 +78,7 @@ vvvvv * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
 	public void loadProductFile(ProductMapping mapping) throws SaadaException{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "load TABLE instance without mapping");
 		super.loadProductFile(mapping);
-		this.entry.loadProductFile(mapping);
+		this.entry.loadProductFile(mapping.getEntryMapping());
 		this.productFile.setSpaceFrameForTable();
 	}
 	

@@ -15,6 +15,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
@@ -44,6 +45,7 @@ public class Spectrum extends Product {
 	 */
 	public Spectrum(File file, ProductMapping mapping) throws SaadaException{		
 		super(file, mapping);
+		System.out.println("@@@@@@@@@@@@@@");
 		spectralCoordinate = new SpectralCoordinate();
 		if(!spectralCoordinate.isConfigurationValid(1
 				                                  , 1
@@ -104,9 +106,7 @@ public class Spectrum extends Product {
 	 * @throws Exception 
 	 * 
 	 */
-	protected void mapCollectionSpectralCoordinate() throws Exception {
-		PriorityMode priority = this.mapping.getEnergyAxeMapping().getPriority();
-		
+	protected void mapCollectionSpectralCoordinate() throws Exception {		
 		boolean mapping_ok = true;
 		switch(this.mapping.getEnergyAxeMapping().getPriority()) {
 		case ONLY: 
@@ -123,7 +123,7 @@ public class Spectrum extends Product {
 			}	
 			break;
 		case LAST: 
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Spectral Coordinate mapping priority: LAST: Spectral KWs will be infered and then apped keyword will be searched");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Spectral Coordinate mapping priority: LAST: Spectral KWs will be infered and then mapped keyword will be searched");
 			if( !this.mapCollectionSpectralCoordinateAuto()) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for Spectral Coordinate keywords defined into the mapping");
 				mapping_ok = this.mapCollectionSpectralCoordinateFromMapping();
@@ -152,36 +152,38 @@ public class Spectrum extends Product {
 	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
 		ColumnMapping sc_col  = this.mapping.getEnergyAxeMapping().getColumnMapping("dispertion_column");
 		ColumnMapping sc_unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa");
-
 		spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
 		/*
 		 * The mapping gives numeric values for the spectral range
 		 */
 		if( sc_col.byValue() ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values.");
-			List<AttributeHandler> vals = sc_col.getValues();
+			List<String> vals = sc_col.getValues();
 			if( vals.size() == 2 ) {
-				this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0).getValue()));
-				this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1).getValue()));	
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
+				this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
+				this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
 				
 				if( sc_unit.equals("AutoDetect") ) {
 					spectralCoordinate.setOrgUnit("channel");
+				} else {
+					spectralCoordinate.setOrgUnit(sc_unit.getValue());					
 				}
-				else {
-					spectralCoordinate.setOrgUnit(sc_unit.getValue().getValue());					
-				}
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getOrgUnit());
 				return spectralCoordinate.convert() ;
 			}
 			else {
-				Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col + "> ca not be interptreted");						
+				Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col.getValue() + "> ca not be interptreted");						
 				return false;
 			}
 		}
+		System.out.println(sc_col);
+		System.exit(1);
 		/*
 		 * If no range set in params, try to find it out from fields
 		 */	
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + sc_col + "> exists" );
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + sc_col.getValue() + "> exists" );
 		LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
 		this.productFile.setKWEntry(tah);
 		for( AttributeHandler ah :tah.values() ) {
@@ -207,7 +209,7 @@ public class Spectrum extends Product {
 				 * else take mapped unit 
 				 */
 				else {
-					spectralCoordinate.setOrgUnit(sc_unit.getValue().getValue());
+					spectralCoordinate.setOrgUnit(sc_unit.getHandler().getValue());
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + sc_unit + "> taken from mapping");
 				}
 				return spectralCoordinate.convert() ;
@@ -258,7 +260,7 @@ public class Spectrum extends Product {
 			 * Units cannot (yet) a
 			 * be detected automatically in case of pixel.
 			 */
-			String unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue().getValue();
+			String unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue();
 			if( !"AutoDetect".equals(unit) ) {
 				spectralCoordinate.setOrgUnit(unit);
 			}
@@ -275,7 +277,8 @@ public class Spectrum extends Product {
 	 */
 	public boolean findSpectralCoordinateByWCS() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in WCS keywords <" +this.file.getName()+">");
-		return  spectralCoordinate.convertWCS(this.productAttributeHandler, this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue().getValue());
+System.out.println(this.mapping);
+		return  spectralCoordinate.convertWCS(this.productAttributeHandler, this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue());
 	}
 	
 	/**
