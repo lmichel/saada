@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.RegExp;
 
 /**
  * @author michel
@@ -15,10 +16,15 @@ import saadadb.meta.AttributeHandler;
  *
  */
 public class ColumnMapping {
-
+	public static final String NUMERIC = "Numeric";
 	private MappingMode mappingMode = MappingMode.NOMAPPING;
 	private List<AttributeHandler> attributeHandlers =new ArrayList<AttributeHandler>();
 	private static final Pattern constPattern = Pattern.compile("^'(.*)'$");
+	private static final Pattern numPattern = Pattern.compile("^(?:(" + RegExp.NUMERIC + "))$");
+
+	//private static final Pattern constPattern = Pattern.compile("(?:^(?:(?:'(.*)')|(?:(" + RegExp.NUMERIC + ")))$)");
+	//private static final Pattern constPattern = Pattern.compile("(?:^(?:(" + RegExp.NUMERIC + "))$)");
+	//private static final Pattern constPattern = Pattern.compile("^([0-9]+)$");
 
 	/**
 	 * @param mappingMode
@@ -30,8 +36,8 @@ public class ColumnMapping {
 		this.mappingMode = mappingMode;
 		AttributeHandler ah = new AttributeHandler();
 		if( this.mappingMode == MappingMode.VALUE) {
-			ah.setNameattr("Numeric");
-			ah.setNameorg("Numeric");
+			ah.setNameattr(ColumnMapping.NUMERIC);
+			ah.setNameorg(ColumnMapping.NUMERIC);
 			ah.setUnit(unit);
 			ah.setValue(value);
 			this.attributeHandlers.add(ah);
@@ -55,8 +61,8 @@ public class ColumnMapping {
 		ah.setUnit(unit);			
 		Matcher m = constPattern.matcher(value);
 		if( m.find() && m.groupCount() == 1 ) {
-			ah.setNameattr("Numeric");
-			ah.setNameorg("Numeric");
+			ah.setNameattr(ColumnMapping.NUMERIC);
+			ah.setNameorg(ColumnMapping.NUMERIC);
 			ah.setValue(m.group(1).trim());					
 			this.mappingMode = MappingMode.VALUE;
 		} else {
@@ -80,11 +86,18 @@ public class ColumnMapping {
 		this.mappingMode = (values == null)? MappingMode.NOMAPPING:  MappingMode.VALUE;
 		for( String s: values ) {
 			AttributeHandler ah = new AttributeHandler();
-			ah.setUnit(unit);			
-			Matcher m = constPattern.matcher(s);
-			if( m.find() && m.groupCount() == 1 ) {
+			ah.setUnit(unit);	
+			String v;
+			if( (v = this.isConstant(s)) != null ) {
+//			Matcher m = constPattern.matcher(s.trim());
+//			boolean f = m.find();
+//			System.out.println(f + " " + constPattern + " " + s + " "  + " " + m.groupCount());
+//			for ( int i=1 ; i<=m.groupCount() ; i++) System.out.println(m.group(i));
+//			if( f && m.groupCount() == 2 ) {
+				ah.setNameattr(ColumnMapping.NUMERIC);
+				ah.setNameorg(ColumnMapping.NUMERIC);
 				ah.setAsConstant();
-				ah.setValue(m.group(1).trim());					
+				ah.setValue(v);					
 			} else {
 				if( s.matches(".*['\"]+.*" )) {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + s);					
@@ -94,10 +107,21 @@ public class ColumnMapping {
 				ah.setNameorg(s);
 			}
 			this.attributeHandlers.add(ah);
+			System.out.println(this);
 		}
 	}
 
-
+	private String isConstant(String val){
+		Matcher m = constPattern.matcher(val.trim());
+		if( m.find() && m.groupCount() == 1 ) {
+			return m.group(1).trim();	
+		} 
+		m = numPattern.matcher(val.trim());
+		if( m.find() && m.groupCount() == 1 ) {
+			return m.group(1).trim();	
+		} 
+		return null;
+	}
 	public boolean byValue() {
 		return(mappingMode == MappingMode.VALUE );
 	}
@@ -114,7 +138,7 @@ public class ColumnMapping {
 	/**
 	 * @return
 	 */
-	public AttributeHandler getValue() {
+	public AttributeHandler getHandler() {
 		if (mappingMode == MappingMode.NOMAPPING) {
 			return null;
 		} else {
@@ -122,13 +146,39 @@ public class ColumnMapping {
 		}
 	}
 	/**
+	 * This method avoid the caller to check first that te AH is not null before to get its value
 	 * @return
 	 */
-	public List<AttributeHandler> getValues() {
+	public String getValue() {
+		AttributeHandler ah = this.getHandler();
+		return ((ah == null)? "": (ah.getValue() == null)? "": ah.getValue());
+	}
+
+	/**
+	 * @return
+	 */
+	public List<AttributeHandler> getHandlers() {
 		if (mappingMode == MappingMode.NOMAPPING) {
 			return null;
 		} else {
 			return attributeHandlers;
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public List<String> getValues() {
+		List<AttributeHandler> ahs = this.getHandlers();
+		if( ahs == null ){
+			return null;
+		} else {
+			List<String> retour = new ArrayList<String>();
+			for( AttributeHandler ah: ahs ){
+				retour.add( ((ah == null)? "": (ah.getValue() == null)? "": ah.getValue()));
+			}
+			return retour;
 		}
 	}
 
