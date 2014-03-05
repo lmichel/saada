@@ -7,8 +7,8 @@ import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.util.HashSet;
 
-import saadadb.collection.EntrySaada;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -17,7 +17,7 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
-import saadadb.vo.formator.ConeSearchToVOTableFormator;
+import saadadb.vo.request.formator.votable.ConeSearchVotableFormator;
 import ajaxservlet.formator.DefaultFormats;
 
 public class MakeAJS {
@@ -32,15 +32,15 @@ public class MakeAJS {
 	private static String getCPImageScript(EntrySaada si) throws Exception {
 		SQLQuery sq = new SQLQuery("SELECT oidsaada\n"
 				+ " FROM WideFieldData_IMAGE \n"
-				+ " WHERE boxoverlaps(" + si.getPos_ra_csa() + "," + si.getPos_dec_csa() + ", " + si.getError_maj_csa() 
+				+ " WHERE boxoverlaps(" + si.s_ra + "," + si.s_dec + ", " + si.error_maj_csa 
 				+ ", WideFieldData_IMAGE.pos_ra_csa, WideFieldData_IMAGE.pos_dec_csa, WideFieldData_IMAGE.size_alpha_csa, WideFieldData_IMAGE.size_delta_csa) limit 1000\n");
 		ResultSet rs = sq.run();
 		String retour = "";		
 		while( rs.next() ) {
 			long cpoid = rs.getLong(1);
 			SaadaInstance cpsi =  Database.getCache().getObject(cpoid);
-			String vignette_file = "vignette" + si.getOid()  + ".fits";
-			ImageUtils.buildTileFile(si.getPos_ra_csa(), si.getPos_dec_csa(), 1/60.0, 1/60.0
+			String vignette_file = "vignette" + si.oidsaada  + ".fits";
+			ImageUtils.buildTileFile(si.s_ra, si.s_dec, 1/60.0, 1/60.0
 					, cpsi.getRepositoryPath()
 					,(new ArgsParser(new String[]{"-collection=WideFieldData"}).getProductMapping())
 			, Database.getVOreportDir() + Database.getSepar() + vignette_file);
@@ -62,18 +62,18 @@ public class MakeAJS {
 		String retour = "";
 		long[] cpoids = si.getCounterparts("WideFieldCounterpart");
 		if( si.getCounterparts("WideFieldCounterpart").length > 0 ) {
-			String primary_file = "WideFieldCounterpart" + si.getOid() + "_"  + ".vot";
+			String primary_file = "WideFieldCounterpart" + si.oidsaada + "_"  + ".vot";
 			FileOutputStream os = new FileOutputStream(new File(Database.getVOreportDir() + Database.getSepar() + primary_file));
-			(new ConeSearchToVOTableFormator("collection")).processVOQuery(si.getCounterparts("WideFieldCounterpart"), os);
+			//(new ConeSearchToVOTableFormator("collection")).processVOQuery(si.getCounterparts("WideFieldCounterpart"), os);
 			retour += "WFISources" + "=get file(" + root  + "/getproduct?report="  + primary_file + ");\n";
 			retour += "set " + "WFISources" + " color=green;\n";
 			int angle = 315;
 			HashSet<String> already_drawn = new HashSet<String>();
 			for( Long cpoid: cpoids) {
 				EntrySaada es = (EntrySaada) Database.getCache().getObject(cpoid);
-				String name = es.getNameSaada();
+				String name = es.obs_id;
 				if( !already_drawn.contains(name)) {
-					retour += "draw tag(" + es.getPos_ra_csa() + ", " +  es.getPos_dec_csa() 
+					retour += "draw tag(" + es.s_ra + ", " +  es.s_dec 
 					+ ", \"" + name + "\", 50, " + angle + ", arrow, 10);\n";
 					angle -= 15;
 					already_drawn.add(name);
@@ -107,13 +107,13 @@ public class MakeAJS {
 			while( srs.next() ) {
 				long oid = srs.getOid();
 				EntrySaada es = (EntrySaada) Database.getCache().getObject(oid);
-				String fc_path = fc_dir + "/" + es.getNameSaada() + ".png";
+				String fc_path = fc_dir + "/" + es.obs_id+ ".png";
 				cpt++;
 				if( (new File(fc_path)).exists()  ) {
 					Messenger.printMsg(Messenger.TRACE, fc_path + " already drawn (" + cpt + "/" + max + ")");
 					continue;
 				}
-				Messenger.printMsg(Messenger.TRACE, cpt + "/" + max  + ": " + es.getNameSaada());
+				Messenger.printMsg(Messenger.TRACE, cpt + "/" + max  + ": " + es.obs_id);
 				bw.write("rm -all;\n");
 				bw.write("grid on;\n");
 				bw.write("reticle off;\n");
@@ -121,16 +121,16 @@ public class MakeAJS {
 				bw.write(getCPImageScript(es) +";\n");
 				bw.write("draw mode(RADEC);\n");
 
-				bw.write("draw circle( " + es.getPos_ra_csa() + ", " +  es.getPos_dec_csa() + ", "+ 3600*es.getError_maj_csa()/10  +"arcsec); \n");
-				bw.write("draw circle( " + es.getPos_ra_csa() + ", " +  es.getPos_dec_csa() + ", "+ 3600*es.getError_maj_csa()*1.65  +"arcsec); \n");
-				bw.write("draw tag(" + es.getPos_ra_csa() + ", " +  es.getPos_dec_csa() + ", \"" + es.getNameSaada() + "\", 50, 135" +
+				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.error_maj_csa/10  +"arcsec); \n");
+				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.error_maj_csa*1.65  +"arcsec); \n");
+				bw.write("draw tag(" + es.s_ra + ", " +  es.s_dec + ", \"" + es.obs_id+ "\", 50, 135" +
 				", arrow, 10);\n");
 				bw.write(getCPSourceScript(es) + ";\n"); 		
 
 				bw.write("draw mode(XY);\n");
 				bw.write("set \"Drawing\" color=red;\n");
-				bw.write("Title=draw string( \"13\", \"60\", \"" + es.getNameSaada() + "\")\n");   
-				bw.write("Title=draw string( \"13\", \"52\", \"" + DefaultFormats.getHMSCoord(es.getPos_ra_csa(), es.getPos_dec_csa()) + "\")\n");   
+				bw.write("Title=draw string( \"13\", \"60\", \"" + es.obs_id+ "\")\n");   
+				bw.write("Title=draw string( \"13\", \"52\", \"" + DefaultFormats.getHMSCoord(es.s_ra, es.s_dec) + "\")\n");   
 				bw.write("sync;\n");		
 				bw.write("save " + fc_path + ";\n");		
 				if( (cpt % burst) == 0  ) {

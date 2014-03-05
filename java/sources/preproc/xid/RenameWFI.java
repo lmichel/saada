@@ -3,7 +3,7 @@ package preproc.xid;
 import java.sql.PreparedStatement;
 import java.util.Date;
 
-import saadadb.collection.EntrySaada;
+import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.database.Database;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
@@ -32,7 +32,7 @@ public class RenameWFI {
 		while( srs.next() ) {
 			long oid = srs.getOid();
 			EntrySaada es = (EntrySaada) Database.getCache().getObject(oid);
-    		Astrocoo coo =new Astrocoo(Database.getAstroframe(), es.getPos_ra_csa(), es.getPos_dec_csa());
+    		Astrocoo coo =new Astrocoo(Database.getAstroframe(), es.s_ra, es.s_dec);
     		coo.setPrecision(5);
 //			updatColl.setLong(2, oid); 
 //			updatClass.setLong(2, oid); 
