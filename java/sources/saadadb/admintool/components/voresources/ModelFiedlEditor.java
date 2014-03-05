@@ -17,7 +17,7 @@ import javax.swing.border.TitledBorder;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.DMAttributeTextField;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaClass;
