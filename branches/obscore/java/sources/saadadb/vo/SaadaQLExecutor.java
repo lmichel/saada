@@ -5,7 +5,7 @@ package saadadb.vo;
  */
 import java.util.ArrayList;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
