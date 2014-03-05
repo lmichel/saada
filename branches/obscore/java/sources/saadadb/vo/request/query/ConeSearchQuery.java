@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.query.executor.Query;

@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -70,7 +70,7 @@ public class ZipFormator extends QueryResultFormator {
 		this.setProtocolParams(params);
 		String name = si.getFileName().split("\\.")[0];
 		if( name == null ) {
-			name = si.getNameSaada().replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
+			name = si.obs_id.replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
 		}
 		this.setResponseFilePath(dir, name);
 		this.buildDataResponse(flatMode, cleanAfter);

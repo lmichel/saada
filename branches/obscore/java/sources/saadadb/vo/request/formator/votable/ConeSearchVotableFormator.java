@@ -1,7 +1,7 @@
 package saadadb.vo.request.formator.votable;
 
-import saadadb.collection.EntrySaada;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
@@ -88,34 +88,34 @@ public class ConeSearchVotableFormator extends VotableFormator{
 			String utype = sf.getUtype();
 			String id = sf.getId();
 			if( ucd.equals("Target.Pos")) {
-				addTD(obj.getPos_ra_csa() + " " + obj.getPos_dec_csa());
+				addTD(obj.s_ra + " " + obj.s_dec);
 			}
 			else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
-				addTD(obj.getPos_ra_csa() + " " + obj.getPos_dec_csa());
+				addTD(obj.s_ra + " " + obj.s_dec);
 			}
 			else if( ucd.equals("VOX:Image_AccessReference")) {
-				addCDataTD(Database.getUrl_root() + "/getinstance?oid=" + obj.getOid());
+				addCDataTD(Database.getUrl_root() + "/getinstance?oid=" + obj.oidsaada);
 			}
 			else if( utype.equals("Access.Format")) {
 				addCDataTD("catalog");
 			}
 			else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
-				addCDataTD(obj.getNameSaada().replaceAll("#", ""));
+				addCDataTD(obj.obs_id.replaceAll("#", ""));
 			}
 			else if( id.equals("LinktoPixels")) {
 				addCDataTD(obj.getURL(true));
 			}
 			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") || ucd.equalsIgnoreCase("pos.eq.ra;meta.main") ){
-				addTD(Double.toString(obj.getPos_ra_csa()));
+				addTD(Double.toString(obj.s_ra));
 			}
 			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") || ucd.equalsIgnoreCase("pos.eq.dec;meta.main")){
-				addTD(Double.toString(obj.getPos_dec_csa()));
+				addTD(Double.toString(obj.s_dec));
 			}
 			else if( ucd.equalsIgnoreCase("ID_MAIN") ){
-				addTD(Long.toString(obj.getOid()));
+				addTD(Long.toString(obj.oidsaada));
 			}
 			else if( ucd.equalsIgnoreCase("meta.title") ){
-				addTD(obj.getNameSaada());
+				addTD(obj.obs_id);
 			}
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first

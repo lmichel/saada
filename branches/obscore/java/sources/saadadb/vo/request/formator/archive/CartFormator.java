@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -315,7 +315,7 @@ public class CartFormator  extends QueryResultFormator{
 	 */
 	private void addAllLinkedData(String node, SaadaInstance si)  throws Exception{
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Add linked data for oid " + si.getNameSaada());
+			Messenger.printMsg(Messenger.DEBUG, "Add linked data for oid " + si.obs_id);
 		String[] relations = si.getSaadaClass().getStartingRelationNames();
 		for( String  rel: relations) {
 			this.addLinkedData(node, si, rel);
@@ -347,17 +347,17 @@ public class CartFormator  extends QueryResultFormator{
 				for( long cpoid: cpoids) {
 					formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
 					String zpn = formator.getResponseFilePath();
-					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + (new File(zpn)).getName(), zpn);
+					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.oidsaada + "_" + (new File(zpn)).getName(), zpn);
 					this.zipMap.add(root, zer);
 				}
 			} else if( mr.getSecondary_category() != Category.ENTRY ) {
 				for( long cpoid: cpoids) {
 					SaadaInstance cpi = Database.getCache().getObject(cpoid);
-					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + cpi.getFileName(), cpi.getRepositoryPath());
+					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.oidsaada + "_" + cpi.getFileName(), cpi.getRepositoryPath());
 					this.zipMap.add(root, zer);
 				}
 			} else {
-				String resultFilename = si.getOid() + "_LinkedSources.vot";
+				String resultFilename = si.oidsaada + "_LinkedSources.vot";
 				ArrayList<Long> loc_entry_cp_oids = new ArrayList<Long>();
 				for( long entry_cp_oid: cpoids ){
 					loc_entry_cp_oids.add(entry_cp_oid);

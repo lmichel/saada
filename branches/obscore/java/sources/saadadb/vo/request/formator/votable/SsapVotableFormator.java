@@ -2,8 +2,8 @@ package saadadb.vo.request.formator.votable;
 
 import java.io.File;
 
-import saadadb.collection.SaadaInstance;
-import saadadb.collection.SpectrumSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
@@ -49,10 +49,10 @@ public class SsapVotableFormator extends VotableFormator {
 			boolean cdata = false;
 			//			System.out.println("Utype " + utype );
 			if( utype.equals("Target.Pos")) {
-				val = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				val = obj.s_ra + " " + obj.s_dec;
 			}
 			else if( utype.endsWith("Char.SpatialAxis.Coverage.Location.Value")) {
-				val = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				val = obj.s_ra + " " + obj.s_dec;
 				/*
 				 * Just to be overridden for XMM
 				 */
@@ -64,8 +64,8 @@ public class SsapVotableFormator extends VotableFormator {
 					 * Conversion must be first done because it could be non linear (e.g. Kev -> m)
 					 * Hence converting the mean is no equivalent to the mean of converted values
 					 */
-					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.getX_min_csa());
-					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.getX_max_csa());
+					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_min);
+					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_max);
 					val = (Double.toString((v1  + v2)/2));
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -74,8 +74,8 @@ public class SsapVotableFormator extends VotableFormator {
 			}
 			else if( utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Extent")) {
 				try {
-					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.getX_min_csa());
-					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.getX_max_csa());
+					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_min);
+					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_max);
 					double v = v2 - v1;	
 					if( v < 0 ) v *= -1.;
 					val = (Double.toString(v));
@@ -96,7 +96,7 @@ public class SsapVotableFormator extends VotableFormator {
 				cdata = true;
 			}
 			else if( utype.endsWith("DataID.Title")) {
-				val = obj.getNameSaada();
+				val = obj.obs_id;
 				cdata = true;
 			}
 			else if( id.equals("LinktoPixels")) {
@@ -195,10 +195,10 @@ public class SsapVotableFormator extends VotableFormator {
 	@SuppressWarnings("unused")
 	private String getXMMData(String utype, SpectrumSaada sp) throws Exception {
 		if( utype.equals("Target.Name")) {
-			return sp.getNameSaada();
+			return sp.obs_id;
 		}
 		else if( utype.endsWith("Curation.PublisherDID") || utype.endsWith("DataID.DatasetID") ) {
-			return "ivo://xcatdb/2xmmi/epicssa#" + (new File(sp.getProduct_url_csa())).getName();
+			return "ivo://xcatdb/2xmmi/epicssa#" + (new File(sp.getAccess_url())).getName();
 		}
 		else if( utype.endsWith("CoordSys.SpectralFrame.RefPos") ) {
 			return sp.getFieldValue("_tlmin1").toString();
@@ -281,7 +281,7 @@ public class SsapVotableFormator extends VotableFormator {
 		 * Return a ZIP ball with the calibration files
 		 */
 		else if( utype.equals("Allfiles.Zipball") ){
-			return "<![CDATA[ " + Database.getUrl_root() + "/getproduct?reports=" + sp.getProduct_url_csa().replace(".gz", "").replace(".FIT", ".zip")  + "]]>";
+			return "<![CDATA[ " + Database.getUrl_root() + "/getproduct?reports=" + sp.getAccess_url().replace(".gz", "").replace(".FIT", ".zip")  + "]]>";
 		}
 		else {
 			return null;

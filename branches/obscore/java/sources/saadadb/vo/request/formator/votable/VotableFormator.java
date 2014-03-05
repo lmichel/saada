@@ -5,8 +5,7 @@ import java.util.Map.Entry;
 
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -371,8 +370,8 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 * @throws SaadaException
 	 */
 	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
-		addTD(Long.toString(obj.getOid()));
-		addCDataTD(obj.getNameSaada().replaceAll("#", ""));
+		addTD(Long.toString(obj.oidsaada));
+		addCDataTD(obj.obs_id.replaceAll("#", ""));
 	}
 
 
@@ -489,7 +488,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	protected void writeExtReferences(SaadaInstance si) {
 		if (this.hasExtensions == true) {
 			for (int i=0 ; i<this.relationsToInclude.size() ; i++ ) {
-				addTD(Long.toString(si.getOid()));
+				addTD(Long.toString(si.oidsaada));
 			}
 		}
 	}
@@ -727,7 +726,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 					break;
 				}
 				// Saada name (Savot doesn't support # in dataset, even in a CDATA)
-				addCDataTD(counterpart.getNameSaada().replace("#", "_").trim());
+				addCDataTD(counterpart.obs_id.replace("#", "_").trim());
 				// Links to pixels
 				addCDataTD(obj.getURL(true) );
 				// OID used as key for the Aladin link
@@ -736,7 +735,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 				addTD("SaadaDB Anchor");
 				// qualifiers
 				if( mr.getSecondary_category() == Category.ENTRY || mr.getSecondary_category() == Category.SPECTRUM || mr.getSecondary_category() == Category.IMAGE) {
-					addTD(((Position)obj).getPos_ra_csa() + " " + ((Position)obj).getPos_dec_csa());						
+					addTD(obj.s_ra + " " + obj.s_dec);						
 				}
 				for (int j = 0; j < qn.length; j++) {
 					addTD(Double.toString(links[k].getQualifierValue(qn[j])));
@@ -804,7 +803,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 					break;
 				}
 				// Saada name (Savot doesn't support # in dataset, even in a CDATA)
-				addCDataTD(counterpart.getNameSaada().replace("#", "_").trim());
+				addCDataTD(counterpart.obs_id.replace("#", "_").trim());
 				// Links to pixels
 				addCDataTD(obj.getURL(true) );
 				// OID used as key for the Aladin link
@@ -813,7 +812,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 				addTD("SaadaDB Anchor");
 				// qualifiers
 				if( mr.getSecondary_category() == Category.ENTRY || mr.getSecondary_category() == Category.SPECTRUM || mr.getSecondary_category() == Category.IMAGE) {
-					addTD(((Position)obj).getPos_ra_csa() + " " + ((Position)obj).getPos_dec_csa());						
+					addTD(obj.s_ra + " " + obj.s_dec);						
 				}
 				for (int j = 0; j < qn.length; j++) {
 					addTD(Double.toString(links[k].getQualifierValue(qn[j])));

@@ -3,8 +3,8 @@ package saadadb.vo.request.formator.votable;
 import java.io.File;
 import java.util.Date;
 
-import saadadb.collection.ImageSaada;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.dataloader.mapping.ProductMapping;
@@ -60,7 +60,7 @@ public class SiapVotableFormator extends VotableFormator {
 			ProductMapping cdh = obj.getLoaderConfig();
 			targetfile = "tile_" + ((new Date()).getTime()) + ".fits";
 			String targetpath = Repository.getVoreportsPath() + Database.getSepar() + targetfile ;
-			ImageUtils.buildTileFile(obj.getPos_ra_csa(), obj.getPos_dec_csa()
+			ImageUtils.buildTileFile(obj.s_ra, obj.s_dec
 					, Double.parseDouble(this.getProtocolParam("size_ra"))
 					, Double.parseDouble(this.getProtocolParam("size_dec"))
 					, obj.getRepositoryPath(), cdh, targetpath);
@@ -79,10 +79,10 @@ public class SiapVotableFormator extends VotableFormator {
 			String id = sf.getId();
 			cdata = false;
 			if( ucd.equals("Target.Pos")) {
-				val = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				val = obj.s_ra + " " + obj.s_dec;
 			}
 			else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
-				val = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				val = obj.s_ra + " " + obj.s_dec;
 			}
 			else if( utype.equals("Access.Reference") || ucd.equalsIgnoreCase("VOX:Image_AccessReference") ) {
 				String format = this.getProtocolParam("format");
@@ -109,40 +109,40 @@ public class SiapVotableFormator extends VotableFormator {
 			}
 			else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
 				cdata = true;
-				val = obj.getNameSaada();
+				val = obj.obs_id;
 			}
 			else if( id.equals("LinktoPixels")) {
 				cdata = true;
 				val = obj.getURL(true);
 			}
 			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
-				val = Double.toString(obj.getPos_ra_csa());
+				val = Double.toString(obj.s_ra);
 			}
 			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
-				val = Double.toString(obj.getPos_dec_csa());
+				val = Double.toString(obj.s_dec);
 			}
 			else if( ucd.equalsIgnoreCase("VOX:Image_Naxes") ){
 				val = "2";
 			}
 			else if( ucd.equalsIgnoreCase("VOX:Image_Naxis") ){
-				val = obj.getNaxis1() + " " + obj.getNaxis2();
+				val = obj.naxis1 + " " + obj.naxis2;
 			}
 			else if( ucd.equalsIgnoreCase("VOX:Image_Scale") ){
-				val = (obj.getSize_alpha_csa() / obj.getNaxis1()) + " "
-				+ (obj.getSize_delta_csa() / obj.getNaxis2());
+				val = (obj.s_fov / obj.naxis1) + " "
+				+ (obj.s_fov / obj.naxis2);
 			}
 			else if( ucd.equals("VOX:WCS_CoordProjection") ) {
-				val = obj.getCtype1_csa();
+				val = obj.ctype1_csa;
 				// RA---TAN -> TAN e.g.
 				if( val != null && val.length() > 3 ) {
 					val = val.substring(val.length() - 3);
 				}
 			}
 			else if( ucd.equals("VOX:WCS_CoordRefValue") ) {
-				val = obj.getCrval1_csa() + " " + obj.getCrval2_csa();
+				val = obj.crval1_csa + " " + obj.crval2_csa;
 			}
 			else if( ucd.equals("VOX:WCS_CDMatrix") ) {
-				val = obj.getCd1_1_csa() + " " + obj.getCd1_2_csa() + " " + obj.getCd2_1_csa() + " " + obj.getCd2_2_csa();
+				val = obj.cd1_1_csa + " " + obj.cd1_2_csa + " " + obj.cd2_1_csa + " " + obj.cd2_2_csa;
 			}
 
 			/*
@@ -193,16 +193,16 @@ public class SiapVotableFormator extends VotableFormator {
 	private String getXMMData(String utype, ImageSaada sp) throws Exception {
 
 		if( utype.equals("CharacterisationAxis.coverage.location.coord.ScalarCoordinate.Value") ) {
-			return sp.getCrval1_csa()  + " " + sp.getCrval2_csa();
+			return sp.crval1_csa  + " " + sp.crval2_csa;
 		}
 		else if( utype.equals("CharacterisationAxis.coverage.bounds.limits.charBox.size2") ) {
-			return (sp.getCd1_1_csa()*sp.getNaxis1()) + " " + (sp.getCd2_2_csa()*sp.getNaxis2());
+			return (sp.cd1_1_csa*sp.naxis1) + " " + (sp.cd2_2_csa*sp.naxis2);
 		}
 		else if( utype.equals("CharacterisationAxis.coverage.bounds.limits.charBox.value") ) {
-			return sp.getCrval1_csa() + " " + sp.getCrval2_csa();
+			return sp.crval1_csa + " " + sp.crval2_csa;
 		}
 		else if( utype.equals("SpatialAxis.samplingPrecision.samplingPeriod.PixSize") ) {
-			return ((Math.abs(sp.getCd1_1_csa()) + Math.abs(sp.getCd2_2_csa()))/2.0) + "";
+			return ((Math.abs(sp.cd1_1_csa) + Math.abs(sp.cd2_2_csa))/2.0) + "";
 		}
 		else if( utype.equals("TimeAxis.coveraTime.Axis.coverage.location.coord.Time.TimeInstant.ISOTime") ) {
 			return sp.getFieldValue("_date_obs").toString();
