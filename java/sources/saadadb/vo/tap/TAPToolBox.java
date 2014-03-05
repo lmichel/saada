@@ -20,7 +20,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import saadadb.cache.CacheManager;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -29,8 +29,8 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.ADQLExecutor;
 import saadadb.vo.SaadaQLExecutor;
-import saadadb.vo.formator.TapToJsonFormator;
-import saadadb.vo.formator.TapToVOTableFormator;
+import saadadb.vo.request.formator.json.TapAdqlJsonFormator;
+import saadadb.vo.request.formator.votable.TapAdqlVotableFormator;
 import saadadb.vo.request.TapAdqlRequest;
 import uws.job.AbstractJob;
 
@@ -257,12 +257,12 @@ public class TAPToolBox {
 		public static void executeTAPQuery(String query, boolean saadaQL, String format, int limit, OutputStream output) throws IOException, Exception{
 			// VOTABLE case:
 			if (format.equalsIgnoreCase("votable") || format.equalsIgnoreCase("text/xml") || format.equalsIgnoreCase("application/x-votable+xml")){
-				TapToVOTableFormator formator = new TapToVOTableFormator();	
-				formator.processVOQuery(query, output, limit, saadaQL);
+				TapAdqlVotableFormator formator = new TapAdqlVotableFormator();	
+			//	formator.processVOQuery(query, output, limit, saadaQL);
 
 			} else if (format.equalsIgnoreCase("json") || format.equalsIgnoreCase("application/json")){
-				TapToJsonFormator formator = new TapToJsonFormator();	
-				formator.processVOQuery(query, output, limit, saadaQL);
+				TapAdqlJsonFormator formator = new TapAdqlJsonFormator();	
+				//formator.processVOQuery(query, output, limit, saadaQL);
 
 				// HTML case:
 			}else if (format.equalsIgnoreCase("html") || format.equalsIgnoreCase("text/html")){
@@ -270,8 +270,8 @@ public class TAPToolBox {
 				File tempFile = new File(Database.getVOreportDir(), "saada_temp_transform_xml_html.xml");
 				FileOutputStream xmlOutput = new FileOutputStream(tempFile);
 				// execute the query and format the result in XML:
-				TapToVOTableFormator formator = new TapToVOTableFormator();	
-				formator.processVOQuery(query, xmlOutput, limit, saadaQL);
+				TapAdqlVotableFormator formator = new TapAdqlVotableFormator();	
+			//	formator.processVOQuery(query, xmlOutput, limit, saadaQL);
 				// transform the XML result in HTML:
 				transformXMLToHTML(tempFile.getAbsolutePath(), output, Database.getUrl_root()+"/styles/votable.xsl");
 				// delete the temporary file:
