@@ -7,7 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;

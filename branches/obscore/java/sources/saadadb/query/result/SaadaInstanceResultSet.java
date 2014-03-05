@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
