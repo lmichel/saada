@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.WeakHashMap;
 
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -73,13 +73,13 @@ public class CacheManager {
         }
       }
     /**
-     * @param obj
+     * @param saadaInstance
      * @throws SaadaException 
      */
-    public void getObjectBusiness(SaadaInstance obj) throws FatalException{
-     		obj = Database.getObjectBusiness(obj);
-    		if (obj != null) {
-    			this.add(obj);
+    public void getObjectBusiness(SaadaInstance saadaInstance) throws FatalException{
+     		saadaInstance = Database.getObjectBusiness(saadaInstance);
+    		if (saadaInstance != null) {
+    			this.add(saadaInstance);
     		}
      }
 
@@ -158,7 +158,7 @@ public class CacheManager {
 			/*
 			 * New soft reference on the Saada Instance
 			 */
-			soft_ref_map.put((new Long(obj.getOid())), new SoftValue(new Long(obj.oidsaada), obj, queue));
+			soft_ref_map.put((new Long(obj.oidsaada)), new SoftValue(new Long(obj.oidsaada), obj, queue));
 			/*
 			 * Bind the Saada Instance with the cache
 			 */
