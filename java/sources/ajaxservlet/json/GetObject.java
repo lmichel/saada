@@ -14,8 +14,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import saadadb.api.SaadaLink;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import ajaxservlet.SaadaServlet;
 import ajaxservlet.formator.DisplayFilter;
@@ -144,7 +144,7 @@ public class GetObject extends SaadaServlet {
 				DisplayFilter colform = new LinkDisplayFilter(relation, request);
 				colform.setOId(oid);
 				SaadaInstance  si = Database.getCache().getObject(oid);
-				SaadaLink[] sls   = si.getStartingRelation(relation).getCounterparts(si.getOid(), true);
+				SaadaLink[] sls   = si.getStartingRelation(relation).getCounterparts(si.oidsaada, true);
 
 				JSONObject jo = new JSONObject();
 				jo.put("relation", relation);
