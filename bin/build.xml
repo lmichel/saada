@@ -100,12 +100,12 @@
 		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
-			   includes="saadadb/**, ajaxservlet/**,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
+			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
             <classpath refid="saadadb.classpath"/>
 		</javac>
 	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
 		     basedir="${SAADA_DB_HOME}/java/classes"
-			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,Sesame_pkg/**,UCD_pkg/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
+			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
 	</target>
 
     
