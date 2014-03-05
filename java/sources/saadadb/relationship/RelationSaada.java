@@ -1,5 +1,7 @@
 package saadadb.relationship;
 
+import saadadb.collection.obscoremin.SaadaInstance;
+
 /**
  * <p>Title: System d'archivage automatique des donnes astrononique</p>
  * <p>Description: </p>
@@ -8,7 +10,6 @@ package saadadb.relationship;
  * @author XXXX
  * @version 00000001
  */
-import saadadb.collection.SaadaInstance;
 /**
  * @author laurentmichel
  * * @version $Id: RelationSaada.java 118 2012-01-06 14:33:51Z laurent.mistahl $
