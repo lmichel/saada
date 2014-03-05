@@ -87,7 +87,7 @@ public abstract class SchemaMapper {
 				this.entry_mapper.current_prd.setMetaclass(this.entry_mapper.current_class);
 			}
 			this.current_prd.loadValue();
-			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getSaadainstance().getOid() + ">");
+			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getSaadainstance().oidsaada + ">");
 
 		} catch (Exception ex) {
 			Messenger.printStackTrace(ex);

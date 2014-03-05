@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.dataloader.mapping.ProductMapping;
@@ -64,7 +64,7 @@ public class FlatFileMapper extends SchemaMapper {
 			long oid = SaadaOID.newFlatFileOid(this.mapping.getCollection());
 			int line=0;
 			for( File file: this.products) {
-				si.setOid(oid++);
+				si.oidsaada = oid++;
 				ffp.bindInstanceToFile(si, file);
 				ffp.storeCopyFileInRepository();
 				StringBuffer file_sql = new StringBuffer();
