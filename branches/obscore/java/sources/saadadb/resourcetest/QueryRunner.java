@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import saadadb.api.SaadaLink;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
@@ -42,7 +42,7 @@ public class QueryRunner {
 //			Messenger.printMsg(Messenger.TRACE, "Declared size " + srs.getSize() );
 //			int cpt = 0;
 //			while( srs.next()) {
-//				//System.out.println(srs.getOid());
+//				//System.out.println(srs.oidsaada);
 //				cpt++;
 //			}
 //			Messenger.printMsg(Messenger.TRACE, cpt  + " oids found");
@@ -57,7 +57,7 @@ public class QueryRunner {
 				//System.out.println(ors.getOId());
 				cpt++;
 				SaadaInstance si = Database.getCache().getObject(ors.getOId());		
-				System.out.println(si.getNameSaada());
+				System.out.println(si.obs_id);
 				for(AttributeHandler ah: constrained_attr) {
 					System.out.println(" ATT " + ah.getNameorg() + " " + si.getFieldValue(ah.getNameattr()));
 				}

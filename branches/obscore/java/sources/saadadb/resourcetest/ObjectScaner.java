@@ -3,7 +3,7 @@ package saadadb.resourcetest;
 import java.sql.ResultSet;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -66,7 +66,7 @@ public class ObjectScaner {
 							long oid = ors.getLong(1);
 							nb_obj++;
 							SaadaInstance si = Database.getCache().getObject(oid);
-							printout("        " + oid + "<" + si.getNameSaada() + ">");
+							printout("        " + oid + "<" + si.obs_id+ ">");
 						}
 						
 					}
@@ -82,7 +82,7 @@ public class ObjectScaner {
 								long oid = ors.getLong(1);
 								nb_obj++;
 								SaadaInstance si = Database.getCache().getObject(oid);
-								printout("        " + oid + "<" + si.getNameSaada() + ">");
+								printout("        " + oid + "<" + si.obs_id+ ">");
 							}
 						}
 					}

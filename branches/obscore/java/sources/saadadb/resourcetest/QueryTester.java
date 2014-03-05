@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
@@ -646,7 +646,7 @@ public class QueryTester {
 					while( qn_res.next() ) {
 						long oid= qn_res.getOid();
 						SaadaInstance si = Database.getCache().getObject(oid);
-						System.out.println("#" + cpt +  " Name <" + si.getNameSaada() + ">");
+						System.out.println("#" + cpt +  " Name <" + si.obs_id+ ">");
 						
 						for( Entry<String, CounterpartSelector> e: qn.getMatchingCounterpartQueries().entrySet()) {
 							String rel_name = e.getKey();
@@ -656,7 +656,7 @@ public class QueryTester {
 //							Set<SaadaLink> mcp = si.getCounterpartsMatchingQuery(rel_name, e.getValue());
 //							for( SaadaLink sl:mcp ) {
 //								long cpoid = sl.getEndindOID();
-//								System.out.print("      <" + Database.getCache().getObject(cpoid).getNameSaada() + "> ");
+//								System.out.print("      <" + Database.getCache().getObject(cpoid).namesaada+ "> ");
 //								for( String q: mr.getQualifier_names()) {
 //									System.out.print(" " + q + "=" + sl.getQualifierValue(q) );
 //								}
