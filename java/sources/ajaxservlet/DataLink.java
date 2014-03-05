@@ -11,23 +11,16 @@ import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Response;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.meta.MetaRelation;
-import saadadb.query.result.OidsaadaResultSet;
-import ajaxservlet.json.JsonUtils;
 
 
 /**
@@ -152,7 +145,7 @@ public class DataLink extends SaadaServlet implements Servlet {
 
 					w.write("            <TD>" + contentType + "</TD>");
 					w.write("            <TD>" + contentLength + "</TD>");
-					w.write("            <TD>Product name: " + cpsi.getNameSaada() + "</TD>");
+					w.write("            <TD>Product name: " + cpsi.obs_id+ "</TD>");
 					w.write("          </TR>\n");
 				}
 			}			
