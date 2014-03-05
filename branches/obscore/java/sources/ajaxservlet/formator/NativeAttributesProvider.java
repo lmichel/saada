@@ -1,13 +1,12 @@
 package ajaxservlet.formator;
 
 import saadadb.collection.Category;
-import saadadb.collection.EntrySaada;
-import saadadb.collection.ImageSaada;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
-import saadadb.collection.SpectrumSaada;
-import saadadb.collection.TableSaada;
-import saadadb.collection.WCSSaada;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
+import saadadb.collection.obscoremin.TableSaada;
+import saadadb.collection.obscoremin.WCSSaada;
 import saadadb.util.Messenger;
 
 /**
@@ -45,20 +44,22 @@ public class NativeAttributesProvider {
 	}
 	
 	public String getPosNative(String attr_name) {
-		if (attr_name.compareTo("pos_ra_csa") == 0) {
-			return DefaultFormats.getString(((Position)saadai).getPos_ra_csa());
+		if (attr_name.compareTo("s_ra") == 0) {
+			return DefaultFormats.getString(saadai.s_ra);
+		} else if (attr_name.compareTo("s_ra") == 0) {
+			return DefaultFormats.getString(saadai.s_ra);
 		
-		} else if (attr_name.compareTo("sky_pixel_csa") == 0) {
-			return DefaultFormats.getString(((Position)saadai).getSky_pixel_csa());
+		} else if (attr_name.compareTo("healpix_csa") == 0) {
+			return DefaultFormats.getString(saadai.healpix_csa);
 		
 		} else if (attr_name.compareTo("error_maj_csa") == 0) {
-			return DefaultFormats.getString(((Position)saadai).getError_maj_csa());
+			return DefaultFormats.getString(saadai.error_maj_csa);
 		
 		} else if (attr_name.compareTo("error_min_csa") == 0) {
-			return DefaultFormats.getString(((Position)saadai).getError_min_csa());
+			return DefaultFormats.getString(saadai.error_min_csa);
 		
 		} else if (attr_name.compareTo("error_angle_csa") == 0) {
-			return DefaultFormats.getString(((Position)saadai).getError_angle_csa());
+			return DefaultFormats.getString(saadai.error_angle_csa);
 		}
 		
 		return null;
@@ -66,22 +67,19 @@ public class NativeAttributesProvider {
 	
 	public String getSINative(String attr_name) {
 		if (attr_name.compareTo("oidsaada") == 0) {
-			return DefaultFormats.getString(saadai.getOid());
-		
-		} else if (attr_name.compareTo("oidproduct") == 0) {
-			return DefaultFormats.getString(saadai.getOidproduct());
-		
+			return DefaultFormats.getString(saadai.oidsaada);
+				
 		} else if (attr_name.compareTo("contentsignature") == 0) {
-			return DefaultFormats.getString(saadai.getContentsignature());
+			return DefaultFormats.getString(saadai.contentsignature);
 		
 		} else if (attr_name.compareTo("namesaada") == 0) {
-			return DefaultFormats.getString(saadai.getNameSaada());
+			return DefaultFormats.getString(saadai.obs_id);
 		
 		} else if (attr_name.compareTo("date_load") == 0) {
-			return DefaultFormats.getString(saadai.getDateLoad());
+			return DefaultFormats.getString(saadai.getDate_load());
 		
 		} else if (attr_name.compareTo("access_right") == 0) {
-			return DefaultFormats.getString(saadai.getAccessRight());
+			return DefaultFormats.getString(saadai.access_right);
 		}
 		
 		return null;
@@ -89,40 +87,40 @@ public class NativeAttributesProvider {
 	
 	public String getWCSNative(String attr_name) {
 		if (attr_name.compareTo("crpix1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCrpix1_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).crpix1_csa);
 			
 		} else if (attr_name.compareTo("crpix2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCrpix2_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).crpix2_csa);
 		
 		} else if (attr_name.compareTo("ctype1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCtype1_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).ctype1_csa);
 		
 		} else if (attr_name.compareTo("ctype2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCtype2_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).ctype2_csa);
 		
 		} else if (attr_name.compareTo("cd1_1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCd1_1_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).cd1_1_csa);
 		
 		} else if (attr_name.compareTo("cd1_2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCd1_2_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).cd1_2_csa);
 		
 		} else if (attr_name.compareTo("cd2_1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCd2_1_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).cd2_1_csa);
 		
 		} else if (attr_name.compareTo("cd2_2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCd2_2_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).cd2_2_csa);
 		
 		} else if (attr_name.compareTo("crota_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCrota_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).crota_csa);
 		
 		} else if (attr_name.compareTo("crval1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCrval1_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).crval1_csa);
 		
 		} else if (attr_name.compareTo("crval2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getCrval2_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).crval2_csa);
 		
 		} else if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getProduct_url_csa());
+			return DefaultFormats.getString(((WCSSaada)saadai).getAccess_url());
 		}
 		
 		return null;
@@ -132,7 +130,7 @@ public class NativeAttributesProvider {
 		String result = this.getPosNative(attr_name);
 		if (result != null) return result;
 		if (attr_name.compareTo("oidtable") == 0) {
-			return DefaultFormats.getString(((EntrySaada)saadai).getOidtable());
+			return DefaultFormats.getString(((EntrySaada)saadai).oidtable);
 		}
 		return null;
 	}
@@ -140,8 +138,8 @@ public class NativeAttributesProvider {
 	public String getFlatfileNative(String attr_name) {
 		String result = this.getSINative(attr_name);
 		if (result != null) return result;
-		if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString((saadai).getProduct_url_csa());
+		if (attr_name.compareTo("access_url") == 0) {
+			return DefaultFormats.getString((saadai).getAccess_url());
 		}
 		return null;
 	}
@@ -149,14 +147,12 @@ public class NativeAttributesProvider {
 	public String getImageNative(String attr_name) {
 		String result = this.getWCSNative(attr_name);
 		if (result != null) return result;
-		if (attr_name.compareTo("size_alpha_csa") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).getSize_alpha_csa());
+		if (attr_name.compareTo("s_fov") == 0) {
+			return DefaultFormats.getString(((ImageSaada)saadai).s_fov);
 		} else if (attr_name.compareTo("size_delta_csa") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).getSize_delta_csa());
-		} else if (attr_name.compareTo("shape_csa") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).getShape_csa());
+			return DefaultFormats.getString(((ImageSaada)saadai).s_fov);
 		} else if (attr_name.compareTo("naxis1") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).getNaxis1());
+			return DefaultFormats.getString(((ImageSaada)saadai).naxis1);
 		}
 		return null;
 	}
@@ -164,8 +160,8 @@ public class NativeAttributesProvider {
 	public String getMiscNative(String attr_name) {
 		String result = this.getSINative(attr_name);
 		if (result != null) return result;
-		if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getProduct_url_csa());
+		if (attr_name.compareTo("access_url") == 0) {
+			return DefaultFormats.getString(saadai.getAccess_url());
 		}
 		return null;
 	}
@@ -173,46 +169,30 @@ public class NativeAttributesProvider {
 	public String getSpectrumNative(String attr_name) {
 		String result = this.getWCSNative(attr_name);
 		if (result != null) return result;
-		if (attr_name.compareTo("x_min_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_min_csa());
+		if (attr_name.compareTo("e_min") == 0) {
+			return DefaultFormats.getString(((SpectrumSaada)saadai).e_min);
 		
-		} else if (attr_name.compareTo("x_max_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_max_csa());
+		} else if (attr_name.compareTo("e_max") == 0) {
+			return DefaultFormats.getString(((SpectrumSaada)saadai).e_max);
 		
 		} else if (attr_name.compareTo("x_type_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_type_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_type_csa);
 		
 		} else if (attr_name.compareTo("x_unit_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_unit_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_csa);
 		
 		} else if (attr_name.compareTo("x_naxis_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_naxis_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_naxis_csa);
 		
 		} else if (attr_name.compareTo("x_colname_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_colname_csa());
-		
-		} else if (attr_name.compareTo("x_min_org_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_min_org_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_colname_csa);
 		
 		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_max_org_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);
 		
 		} else if (attr_name.compareTo("x_unit_org_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getX_unit_org_csa());
-		
-		} else if (attr_name.compareTo("y_min_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getY_max_csa());
-		
-		} else if (attr_name.compareTo("y_max_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getY_min_csa());
-		
-		} else if (attr_name.compareTo("y_unit_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getY_unit_csa());
-		
-		} else if (attr_name.compareTo("y_colname_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).getY_colname_csa());
+			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_org_csa);
 		}
-		
 		return null;
 	}
 	
@@ -220,9 +200,9 @@ public class NativeAttributesProvider {
 		String result = this.getSINative(attr_name);
 		if (result != null) return result;
 		if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString(((TableSaada)saadai).getProduct_url_csa());
+			return DefaultFormats.getString(saadai.getAccess_url());
 		} else if (attr_name.compareTo("nb_rows_csa") == 0) {
-			return DefaultFormats.getString(((TableSaada)saadai).getNumberRows());
+			return DefaultFormats.getString(((TableSaada)saadai).nb_rows_csa);
 		}
 		return null;
 	}

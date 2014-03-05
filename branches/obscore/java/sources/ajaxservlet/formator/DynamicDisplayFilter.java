@@ -9,11 +9,10 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.EntrySaada;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
-import saadadb.collection.SpectrumSaada;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
@@ -254,7 +253,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(sff.getVizier());
 
 			} else if ("Name".equals(speField)) {
-				retour.add(si.namesaada);
+				retour.add(si.obs_id);
 
 			} else if ("Detail".equals(speField)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
@@ -263,7 +262,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
 
 			} else if ("Table".equals(speField)) {
-				retour.add(si.namesaada);
+				retour.add(si.obs_id);
 
 			} else if ("Header".equals(speField)) {
 				retour.add(DefaultPreviews.getHeaderLink(oidsaada));
@@ -273,10 +272,10 @@ public class DynamicDisplayFilter implements DisplayFilter {
 
 			} else if ("Table Header".equals(speField)) {
 				retour.add(DefaultPreviews.getHeaderLink(((EntrySaada) si)
-						.getOidtable()));
+						.oidtable));
 
 			} else if ("Error (arcsec)".equals(speField)) {
-				double e = ((EntrySaada) si).getError_maj_csa();
+				double e = ((EntrySaada) si).error_maj_csa;
 				if (e == SaadaConstant.DOUBLE) {
 					retour.add(DefaultFormats.getString(e));
 				} else {
@@ -287,7 +286,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(DefaultPreviews.getFlatfilePreview(oidsaada, 64));
 
 			} else if ( speField.startsWith("Range") ) {
-				retour.add(DefaultFormats.getString(((SpectrumSaada)si).x_min_csa) + " - " + DefaultFormats.getString(((SpectrumSaada)si).x_max_csa) );
+				retour.add(DefaultFormats.getString(si.em_min) + " - " + DefaultFormats.getString(si.em_max) );
 			}
 			else if ( speField.startsWith("Gallery") ) {
 				retour.add(Long.toString(oidsaada) );
@@ -326,7 +325,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 					retour.add(DefaultPreviews.getFlatfilePreview(counterpart, 64));
 				break;
 				default :
-					//retour.add("<span>"+ instance.getNameSaada() + " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
+					//retour.add("<span>"+ instance.namesaada+ " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
 					retour.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
 				}
 				break;
@@ -406,13 +405,10 @@ public class DynamicDisplayFilter implements DisplayFilter {
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
 				SaadaInstance si = Database.getCache().getObject(oidsaada);
-				String pos = "";
-				if( si instanceof Position ) {
-					Position p = (Position)si;
-					pos = DefaultFormats.getHMSCoord(p.getPos_ra_csa(), p.getPos_dec_csa());
-				}
+				String pos = DefaultFormats.getHMSCoord(si.s_ra, si.s_dec);
+				
 				return SaadaOID.getCategoryName(oidsaada) + "  "
-				+ Database.getCache().getObject(oidsaada) .getNameSaada()
+				+ Database.getCache().getObject(oidsaada) .obs_id
 				+ " " 
 				+ pos;
 			} catch (FatalException e) {

@@ -11,8 +11,8 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -86,10 +86,10 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Table".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 			else if( "Header".equals(s)) {
-				retour.add(DefaultPreviews.getHeaderLink(oidsaada) + " " + instance.getNameSaada());
+				retour.add(DefaultPreviews.getHeaderLink(oidsaada) + " " + instance.obs_id);
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
