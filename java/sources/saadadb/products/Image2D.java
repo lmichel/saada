@@ -4,9 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -65,24 +65,24 @@ public class Image2D extends Product {
 		}
 
 		Coord coo_c = wcs.getImgCenter();
-		image.setCtype1_csa(wcs.getType1());
-		image.setCtype2_csa(wcs.getType2());
+		image.ctype1_csa = wcs.getType1() ;
+		image.ctype2_csa = wcs.getType2();
 		double[][] cd_ij = wcs.getCD();
-		image.setCd1_1_csa(cd_ij[0][0]);
-		image.setCd1_2_csa(cd_ij[0][1]);
-		image.setCd2_1_csa(cd_ij[1][0]);
-		image.setCd2_2_csa(cd_ij[1][1]);
-		image.setCrpix1_csa(wcs.getXcen());
-		image.setCrpix2_csa(wcs.getXcen());
-		image.setCrval1_csa(wcs.getAlphai());
-		image.setCrval2_csa(wcs.getDeltai());
-		image.setCrota_csa(wcs.getRota());	
+		image.cd1_1_csa = cd_ij[0][0];
+		image.cd1_2_csa = cd_ij[0][1];
+		image.cd2_1_csa = cd_ij[1][0];
+		image.cd2_2_csa = cd_ij[1][1];
+		image.crpix1_csa = wcs.getXcen();
+		image.crpix2_csa = wcs.getXcen();
+		image.crval1_csa = wcs.getAlphai();
+		image.crval2_csa = wcs.getDeltai();
+		image.crota_csa = wcs.getRota();	
 
-		image.setNaxis1(wcs.getXnpix());
-		image.setNaxis2(wcs.getYnpix());
+		image.naxis1 = wcs.getXnpix();
+		image.naxis2  = wcs.getYnpix();
 
-		image.setSize_alpha_csa(wcs.getWidtha());
-		image.setSize_delta_csa(wcs.getWidthd());
+		image.s_fov = wcs.getWidtha();
+		if( wcs.getWidthd() < image.s_fov ) image.s_fov = wcs.getWidthd() ;
 
 		/*
 		 * Here we can mapp position attributes
@@ -121,7 +121,7 @@ public class Image2D extends Product {
 		 */
 		this.saadainstance = (SaadaInstance)  SaadaClassReloader.forGeneratedName( this.metaclass.getName()).newInstance();
 		long newoid = SaadaOID.newOid(this.metaclass.getName());
-		this.saadainstance.setOid(newoid);
+		this.saadainstance.oidsaada = newoid;
 		this.setAstrofFrame();
 		this.setBusinessFields();
 		this.setWcsFields();

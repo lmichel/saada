@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import saadadb.collection.SpectrumSaada;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -67,14 +67,14 @@ public class Spectrum extends Product {
 	 */
 	public void setSpecCoordinateFields() {
 		SpectrumSaada obj = (SpectrumSaada)this.saadainstance;
-		obj.setX_min_org_csa(spectralCoordinate.getOrgMin());
-		obj.setX_max_org_csa(spectralCoordinate.getOrgMax());
-		obj.setX_unit_org_csa(spectralCoordinate.getOrgUnit());
-		obj.setX_min_csa(spectralCoordinate.getConvertedMin());
-		obj.setX_max_csa(spectralCoordinate.getConvertedMax());
-		obj.setX_unit_csa(spectralCoordinate.getConvertedUnit());
-		obj.setX_type_csa(spectralCoordinate.getConvertedType());
-		obj.setX_naxis_csa(spectralCoordinate.getConvertedNaxis());
+		obj.x_min_org_csa = spectralCoordinate.getOrgMin();
+		obj.x_max_org_csa = spectralCoordinate.getOrgMax();
+		obj.x_unit_org_csa = spectralCoordinate.getOrgUnit();
+		obj.e_min = spectralCoordinate.getConvertedMin();
+		obj.e_max = spectralCoordinate.getConvertedMax();
+		obj.x_unit_csa = spectralCoordinate.getConvertedUnit();
+		obj.x_type_csa = spectralCoordinate.getConvertedType();
+		obj.x_naxis_csa = spectralCoordinate.getConvertedNaxis();
 	}
 	
 	/**

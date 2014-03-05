@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 import nom.tam.fits.FitsException;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -32,7 +32,7 @@ public class FlatFile extends Product {
 		 * Build the Saada instance
 		 */
 		long newoid = SaadaOID.newFlatFileOid(this.mapping.getCollection());
-		this.saadainstance.setOid(newoid);
+		this.saadainstance.oidsaada = newoid;
 		this.setBasicCollectionFields();
 		this.loadAttrExtends();
 		/*

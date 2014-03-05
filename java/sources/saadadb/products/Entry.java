@@ -9,9 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.collection.Category;
-import saadadb.collection.EntrySaada;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.dataloader.mapping.ProductMapping;
@@ -110,7 +111,7 @@ public class Entry extends Product {
 		String nameField;
 		String file_bus_sql;
 		// Initialzes an enumeration of entries (table rows)
-		long oidtable = table.getSaadainstance().getOid();
+		long oidtable = table.getSaadainstance().oidsaada;
 		Enumeration enumerateRow = table.elements();
 		int num_col_ra      = -1;
 		int num_col_dec     = -1;
@@ -333,10 +334,10 @@ public class Entry extends Product {
 			}
 
 			this.setPositionFields(line);
-			entrysaada.setOid(newoid);
-			entrysaada.setOidtable(oidtable);
+			entrysaada.oidsaada = newoid;
+			entrysaada.oidtable = oidtable;
 			instanceName = this.getInstanceName("#" + line);
-			entrysaada.setNameSaada(instanceName);
+			entrysaada.obs_id = instanceName;
 			this.setBasicCollectionFields();
 			this.loadAttrExtends();
 			/*
@@ -488,8 +489,8 @@ public class Entry extends Product {
 	 */
 	@Override
 	public void setBasicCollectionFields() throws AbortException {
-		this.saadainstance.setProduct_url_csa(((File) this.productFile).getName());	
-		this.saadainstance.setDateLoad(new java.util.Date().getTime());
+		this.saadainstance.setAccess_url(((File) this.productFile).getName());	
+		this.saadainstance.setDate_load(new java.util.Date().getTime());
 	}
 
 	/**
@@ -522,11 +523,11 @@ public class Entry extends Product {
 		if( name == null || name.length() == 0 ) {
 			name = this.file.getName();
 			EntrySaada es= (EntrySaada) this.saadainstance;
-			name = SaadaOID.getCollectionName(es.getOid()) + "-" + SaadaOID.getClassName(es.getOid());
-			double ra =  es.getPos_ra_csa();
-			double dec = es.getPos_dec_csa();
+			name = SaadaOID.getCollectionName(es.oidsaada) + "-" + SaadaOID.getClassName(es.oidsaada);
+			double ra =  es.s_ra;
+			double dec = es.s_dec;
 			if( ra != SaadaConstant.DOUBLE && dec != SaadaConstant.DOUBLE ) {
-				Astrocoo coo =new Astrocoo(Database.getAstroframe(), es.getPos_ra_csa(), es.getPos_dec_csa());
+				Astrocoo coo =new Astrocoo(Database.getAstroframe(), es.s_ra, es.s_dec);
 				coo.setPrecision(5);
 				name += coo.toString("s");
 			}
