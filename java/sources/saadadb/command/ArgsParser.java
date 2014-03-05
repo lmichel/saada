@@ -82,7 +82,7 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-repdir");
 		allowedArgs.add("-rename");
 		allowedArgs.add("-newname");
-		allowedArgs.add("-nolog") ;
+		allowedArgs.add("-nolog") ; allowedArgs.add("-nolog=") ;
 		allowedArgs.add("-noindex") ;
 		allowedArgs.add("-novignette") ;
 		allowedArgs.add("-query") ;
