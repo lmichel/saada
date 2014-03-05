@@ -9,8 +9,8 @@ import java.sql.ResultSet;
 import saadadb.cache.CacheManager;
 import saadadb.cache.CacheManagerRelationIndex;
 import saadadb.cache.CacheMeta;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
@@ -311,7 +311,7 @@ public class Database {
 	 */
 	public static SaadaInstance getObjectBusiness(SaadaInstance obj) throws FatalException {
 		try {
-			long oid = obj.getOid();
+			long oid = obj.oidsaada;
 			String _nameclass = Database.cachemeta.getClass(SaadaOID.getClassNum(oid)).getName();
 			Field fieldlist[] = obj.getClass().getDeclaredFields();
 			String sql = "";
@@ -319,14 +319,14 @@ public class Database {
 			SQLQuery squery = new SQLQuery();
 			ResultSet rs = squery.run(sql);
 			if (rs.next()) {
-				obj.setOid(rs.getLong("oidsaada"));
-				obj.setNameSaada(rs.getString("namesaada").trim());
+				obj.oidsaada = rs.getLong("oidsaada");
+				obj.obs_id = rs.getString("namesaada").trim();
 				String sm = rs.getString("md5keysaada");
 				/*
 				 * ObsCOre obj have no MD5
 				 */
 				if( sm != null) {
-					obj.setContentsignature(rs.getString("md5keysaada").trim());
+					obj.contentsignature = rs.getString("md5keysaada").trim();
 				}
 				for (int i = 0; i < fieldlist.length; i++) {					
 					if( fieldlist[i].getName().startsWith("_")) {
@@ -338,7 +338,7 @@ public class Database {
 				return null;
 			}
 			squery.close();
-			obj.loaded = true;
+			obj.markAsLoaded();
 			return obj;
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -362,7 +362,7 @@ public class Database {
 		}
 		SaadaInstance obj = (SaadaInstance)  SaadaClassReloader.forGeneratedName( _nameclass.trim())
 		.newInstance();
-		obj.setOid(oid);
+		obj.oidsaada = oid;
 		return obj;
 	}
 
