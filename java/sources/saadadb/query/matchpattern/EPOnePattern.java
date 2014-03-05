@@ -12,8 +12,8 @@ import java.util.TreeSet;
 
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -1019,7 +1019,7 @@ public class EPOnePattern extends Query_Report {
 		while( srs.next()) {
 			long oid = srs.getOid();
 			if( !api_result.contains(oid)) {
-				System.out.println("erreur on " + Database.getCache().getObject(oid).getNameSaada());
+				System.out.println("erreur on " + Database.getCache().getObject(oid).obs_id);
 			}
 		}	
 		srs.close();
@@ -1145,7 +1145,7 @@ public class EPOnePattern extends Query_Report {
 			 */
 			long oid = srs.getOid();
 			if( !api_result.contains(oid)) {
-				System.out.println("erreur on " + Database.getCache().getObject(oid).getNameSaada() +  " (" + Long.toHexString(oid) + ")");
+				System.out.println("erreur on " + Database.getCache().getObject(oid).obs_id+  " (" + Long.toHexString(oid) + ")");
 			}
 		}	
 		srs.close();
