@@ -15,9 +15,8 @@ import java.util.TreeMap;
 
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -295,7 +294,7 @@ public class Product /*extends File*/ {
 		 * Build the Saada instance
 		 */
 		long newoid = SaadaOID.newOid(this.metaclass.getName());
-		this.saadainstance.setOid(newoid);
+		this.saadainstance.oidsaada = newoid;
 		this.setAstrofFrame();
 		this.setBusinessFields();
 		this.setBasicCollectionFields();
@@ -304,9 +303,9 @@ public class Product /*extends File*/ {
 		this.setSpecCoordinateFields();
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
-					+ this.saadainstance.getNameSaada() + "> in Collection <"
+					+ this.saadainstance.obs_id+ "> in Collection <"
 					+ this.saadainstance.getCollection().getName() + "> with md5 <"
-					+ this.saadainstance.getContentsignature() + "> exists in the data base <"
+					+ this.saadainstance.contentsignature + "> exists in the data base <"
 					+ Database.getName() + ">");	
 		}
 		/*
@@ -331,7 +330,7 @@ public class Product /*extends File*/ {
 		 * Build the Saada instance
 		 */
 		long newoid = SaadaOID.newOid(this.metaclass.getName());
-		this.saadainstance.setOid(newoid);
+		this.saadainstance.oidsaada = newoid;
 		this.setAstrofFrame();
 		this.setBusinessFields();
 		this.setBasicCollectionFields();
@@ -341,9 +340,9 @@ public class Product /*extends File*/ {
 		this.setSpecCoordinateFields();
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
-					+ this.saadainstance.getNameSaada() + "> in Collection <"
+					+ this.saadainstance.obs_id+ "> in Collection <"
 					+ this.saadainstance.getCollection().getName() + "> with md5 <"
-					+ this.saadainstance.getContentsignature() + "> exists in the data base <"
+					+ this.saadainstance.contentsignature  + "> exists in the data base <"
 					+ Database.getName() + ">");	
 		}
 		/*
@@ -387,7 +386,7 @@ public class Product /*extends File*/ {
 			repname = this.file.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this, repname);
 		}
-		this.saadainstance.setProduct_url_csa(repname);
+		this.saadainstance.setAccess_url(repname);
 	}
 
 	/**
@@ -423,7 +422,7 @@ public class Product /*extends File*/ {
 			repname = this.file.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this, repname, loadedfilewriter);
 		}
-		this.saadainstance.setProduct_url_csa(repname);
+		this.saadainstance.setAccess_url(repname);
 	}
 
 	/**
@@ -457,7 +456,6 @@ public class Product /*extends File*/ {
 		
 		
 		if( this.astroframe != null && this.ra_attribute != null && this.dec_attribute != null ) {
-			Position objColl = (Position)(this.saadainstance);
 			String ra_val;
 			/*
 			 * Position values can either be read in keyword or be constants values
@@ -513,36 +511,36 @@ public class Product /*extends File*/ {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);
 				if(Double.isNaN(ra))
-					objColl.setPos_ra_csa(Double.POSITIVE_INFINITY);
+					this.saadainstance.s_ra = Double.POSITIVE_INFINITY;
 				else
-					objColl.setPos_ra_csa(ra);
+					this.saadainstance.s_ra = ra;
 				if(Double.isNaN(dec))
-					objColl.setPos_dec_csa(Double.POSITIVE_INFINITY);
+					this.saadainstance.s_dec = Double.POSITIVE_INFINITY;
 				else
-					objColl.setPos_dec_csa(dec);
+					this.saadainstance.s_dec = dec;
 				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
-					objColl.setPos_x(Math.cos(Math.toRadians(objColl.getPos_dec_csa())) * Math.cos(Math.toRadians(objColl.getPos_ra_csa())));
-					objColl.setPos_y(Math.cos(Math.toRadians(objColl.getPos_dec_csa())) * Math.sin(Math.toRadians(objColl.getPos_ra_csa())));
-					objColl.setPos_z(Math.sin(Math.toRadians(objColl.getPos_dec_csa())));
-					objColl.calculSky_pixel_csa();
+					this.saadainstance.pos_x_csa = Math.cos(Math.toRadians(this.saadainstance.s_dec)) * Math.cos(Math.toRadians(this.saadainstance.s_ra));
+					this.saadainstance.pos_y_csa = Math.cos(Math.toRadians(this.saadainstance.s_dec)) * Math.sin(Math.toRadians(this.saadainstance.s_ra));
+					this.saadainstance.pos_z_csa = Math.sin(Math.toRadians(this.saadainstance.s_dec));
+					this.saadainstance.calculSky_pixel_csa();
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
-							+ "> set to <" + objColl.getPos_ra_csa() + "," + objColl.getPos_dec_csa() + ">" );
+							+ "> set to <" + this.saadainstance.s_ra + "," + this.saadainstance.s_dec + ">" );
 				}
 				else {
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
-				this.setPosErrorFields(objColl, number);
+				this.setPosErrorFields(number);
 			} // if position really found
 		} //if position mapped
 	}
 		
 	/**
 	 * Set all fields related to the position error at collection level
-	 * @param objColl Saadainstance to be populated
+	 * @param this.saadainstance Saadainstance to be populated
 	 * @param number
 	 * @throws Exception
 	 */
-	protected void setPosErrorFields(Position objColl, int number) throws Exception {
+	protected void setPosErrorFields(int number) throws Exception {
 		String error_unit = this.mapping.getSpaceAxeMapping().getErrorUnit();
 		if( this.maj_err_attribute != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
@@ -572,17 +570,17 @@ public class Product /*extends File*/ {
 			if( this.maj_err_attribute == null && this.min_err_attribute != null ) {
 				maj_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
 				min_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
-				objColl.setError(maj_err, min_err, angle);
+				this.saadainstance.setError(maj_err, min_err, angle);
 			}
 			else if( this.maj_err_attribute != null && this.min_err_attribute == null ) {
 				maj_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
 				min_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
-				objColl.setError(maj_err, min_err, angle);
+				this.saadainstance.setError(maj_err, min_err, angle);
 			}
 			else if( this.maj_err_attribute != null && this.min_err_attribute != null ) {
 				maj_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
 				min_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
-				objColl.setError(maj_err, min_err, angle);
+				this.saadainstance.setError(maj_err, min_err, angle);
 			}
 		}
 		else {
@@ -629,9 +627,9 @@ public class Product /*extends File*/ {
 	 * @throws AbortException 
 	 */
 	protected void setBasicCollectionFields() throws SaadaException {
-		this.saadainstance.setNameSaada(this.getInstanceName(null));
-		this.saadainstance.setProduct_url_csa(this.file.getName());	
-		this.saadainstance.setDateLoad(new java.util.Date().getTime());
+		this.saadainstance.obs_id = this.getInstanceName(null);
+		this.saadainstance.setAccess_url(this.file.getName());	
+		this.saadainstance.setDate_load(new java.util.Date().getTime());
 	}
 	
 	/**

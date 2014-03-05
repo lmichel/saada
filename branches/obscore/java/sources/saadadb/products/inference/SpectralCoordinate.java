@@ -238,6 +238,7 @@ public class SpectralCoordinate{
 	 * @return
 	 */
 	public boolean convert(){
+		new Exception().printStackTrace();
 		return this.convert(this.getOrgUnit(), this.orgMin, this.orgMax);
 
 	}

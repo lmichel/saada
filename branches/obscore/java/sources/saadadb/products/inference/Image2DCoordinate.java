@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import saadadb.collection.ImageSaada;
+import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
@@ -1125,7 +1125,7 @@ public class Image2DCoordinate{
 		ProductMapping cdh = null;
 		ImageSaada is=null;
 		while( srs.next()) {
-//			is = (ImageSaada) Database.getCache().getObject(srs.getOid());
+//			is = (ImageSaada) Database.getCache().getObject(srs.oidsaada);
 //			cdh = is.getLoaderConfig();		
 //			Image2D img  = new Image2D(new File("/data/repository/MUSE/VariabilityCube/IMAGE/inst1.little_var.fits"),null);
 //			img.loadProductFile(cdh);
