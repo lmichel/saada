@@ -10,9 +10,9 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -107,10 +107,10 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(sff.getPos());
 			}
 			else if( "Size (deg)".equals(s)) {
-				retour.add(DefaultFormats.getString(instance.size_alpha_csa) + " x " + DefaultFormats.getString(instance.size_delta_csa) );
+				retour.add(DefaultFormats.getString(instance.s_fov) + " x " + DefaultFormats.getString(instance.s_fov) );
 			}
 			else if( "Name".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 		}
 		for( String s: extatt_columns.keySet()) {
@@ -175,8 +175,8 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (ImageSaada) Database.getCache().getObject(oidsaada);
-				retour.add(DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
-				retour.add(DefaultFormats.getString(instance.size_alpha_csa) + " x " + DefaultFormats.getString(instance.size_delta_csa) + "Deg");
+				retour.add(DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
+				retour.add(DefaultFormats.getString(instance.s_fov) + " x " + DefaultFormats.getString(instance.s_fov) + "Deg");
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
 				retour.addAll(super.getLinks());
 			}

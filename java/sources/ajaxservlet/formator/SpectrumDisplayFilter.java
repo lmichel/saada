@@ -10,9 +10,9 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
-import saadadb.collection.SpectrumSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -94,7 +94,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Visu".equals(s)) {
-				retour.add("<a  class=dl_ivoa onclick=WebSamp_mVc.fireSendVoreport(\"" + instance.getOid() + "\");'></a>");
+				retour.add("<a  class=dl_ivoa onclick=WebSamp_mVc.fireSendVoreport(\"" + instance.oidsaada + "\");'></a>");
 			}
 			else if( "Access".equals(s)) {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)
@@ -113,10 +113,10 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				retour.add(sff.getPos());
 			}
 			else if( s.startsWith("Range") ) {
-				retour.add(DefaultFormats.getString(instance.x_min_csa) + " - " + DefaultFormats.getString(instance.x_max_csa) );
+				retour.add(DefaultFormats.getString(instance.e_min) + " - " + DefaultFormats.getString(instance.e_max) );
 			}
 			else if( "Name".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 		}
 		for( String s: extatt_columns.keySet()) {
@@ -182,8 +182,8 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
 				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
-				retour.add("Position " + DefaultFormats.getHMSCoord(instance.getPos_ra_csa(), instance.getPos_dec_csa()) );
-				retour.add("Range " + DefaultFormats.getString(instance.x_min_csa) + " - " + DefaultFormats.getString(instance.x_max_csa) + " " + Database.getSpect_unit());
+				retour.add("Position " + DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
+				retour.add("Range " + DefaultFormats.getString(instance.e_min) + " - " + DefaultFormats.getString(instance.e_max) + " " + Database.getSpect_unit());
 				retour.addAll(super.getLinks());
 			}
 		} catch (Exception e) {}

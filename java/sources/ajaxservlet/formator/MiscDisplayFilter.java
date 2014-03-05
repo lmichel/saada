@@ -10,9 +10,9 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.MiscSaada;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.MiscSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -21,7 +21,6 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.util.ChangeKey;
-import saadadb.util.SaadaConstant;
 
 /**
  * @author laurentmichel
@@ -93,7 +92,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Name".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 		}
 		for( String s: extatt_columns.keySet()) {

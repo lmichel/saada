@@ -10,8 +10,8 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.FlatfileSaada;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.FlatfileSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -87,7 +87,7 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
 			}
 			else if( "Name".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 			else if( "Preview".equals(s)) {
 				retour.add(DefaultPreviews.getFlatfilePreview(oidsaada, 64));

@@ -9,9 +9,8 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
@@ -224,7 +223,7 @@ Serializable {
 								counterpart, 64));
 					break;
 					default:
-						result.add("<span>"+ Database.getCache().getObject(counterpart).getNameSaada()+ " " + (DefaultPreviews.getDetailLink(counterpart, null))+ "</span>");
+						result.add("<span>"+ Database.getCache().getObject(counterpart).obs_id+ " " + (DefaultPreviews.getDetailLink(counterpart, null))+ "</span>");
 					}
 					break;
 				default:
@@ -243,15 +242,11 @@ Serializable {
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
 				SaadaInstance si = Database.getCache().getObject(oidsaada);
-				String pos = "";
-				if( si instanceof Position ) {
-					Position p = (Position)si;
-					pos = DefaultFormats.getHMSCoord(p.getPos_ra_csa(), p.getPos_dec_csa());
-				}
+				String pos =  DefaultFormats.getHMSCoord(si.s_ra, si.s_dec);
 				String cat =  SaadaOID.getCategoryName(oidsaada);
 				if( cat.equals("ENTRY")) cat = "TABLE ENTRY"; 
 				return cat + "  <i>"
-						+ Database.getCache().getObject(oidsaada) .getNameSaada()
+						+ Database.getCache().getObject(oidsaada) .obs_id
 						+ "</i> - " 
 						+ pos;
 			} catch (FatalException e) {

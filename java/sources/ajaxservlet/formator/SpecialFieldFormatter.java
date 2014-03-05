@@ -1,9 +1,8 @@
 package ajaxservlet.formator;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.exceptions.SaadaException;
 
 /**
@@ -27,7 +26,7 @@ public class SpecialFieldFormatter {
 	public String getDLLink(boolean dlWithRelations) {
 		try {
 			if (cat != Category.ENTRY) {
-				return DefaultPreviews.getDLLink(saadai.getOid(),dlWithRelations);
+				return DefaultPreviews.getDLLink(saadai.oidsaada,dlWithRelations);
 			} else {
 				return null;
 			}
@@ -39,7 +38,7 @@ public class SpecialFieldFormatter {
 
 	public String getPos() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
-			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
+			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
 			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
 		}
 		return null;
@@ -47,15 +46,15 @@ public class SpecialFieldFormatter {
 
 	public String getPosWithError() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
-			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
-			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
+			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
+			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(saadai.error_maj_csa) +"]</span>");
 		}
 		return null;
 	}
 
 	public String getSize() {
 		if (cat == Category.IMAGE) {
-			return (DefaultFormats.getString(((ImageSaada) saadai).size_alpha_csa) + " x " + DefaultFormats.getString(((ImageSaada) saadai).size_delta_csa));
+			return (DefaultFormats.getString(((ImageSaada) saadai).s_fov) + " x " + DefaultFormats.getString(((ImageSaada) saadai).s_fov));
 		}
 		return null;
 	}
@@ -65,7 +64,7 @@ public class SpecialFieldFormatter {
 
 	public String getSimbad() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
-			return ("<a class=simbad onclick='resultPaneView.fireShowSimbad(\"" + DefaultFormats.getHMSCoord(((Position)saadai).getPos_ra_csa(), ((Position)saadai).getPos_dec_csa()) + "\");'></a>");
+			return ("<a class=simbad onclick='resultPaneView.fireShowSimbad(\"" + DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec) + "\");'></a>");
 		}
 		return null;
 	}
@@ -78,7 +77,7 @@ public class SpecialFieldFormatter {
 	}
 
 	public String getAccess(boolean dlWithRelations) throws SaadaException {
-		long oid = saadai.getOid();
+		long oid = saadai.oidsaada;
 		switch( cat ) {
 		case Category.SPECTRUM:
 			return DefaultPreviews.getDetailLink(oid, null)
@@ -111,7 +110,7 @@ public class SpecialFieldFormatter {
 		}
 	}
 	public String getAccessForDetail() throws SaadaException {
-		long oid = saadai.getOid();
+		long oid = saadai.oidsaada;
 		switch( cat ) {
 		case Category.SPECTRUM:
 			return DefaultPreviews.getInfoLink(oid)

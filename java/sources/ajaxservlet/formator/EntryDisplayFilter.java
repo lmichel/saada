@@ -10,9 +10,9 @@ import java.util.Set;
 import org.json.simple.JSONArray;
 
 import saadadb.collection.Category;
-import saadadb.collection.EntrySaada;
-import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -99,13 +99,13 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 //				retour.add("<a href='javascript:void(0);' title='Marks this source on Aladin view' class=aladinsmall onclick='sampView.firePointatSky(" + instance.getPos_ra_csa() + "," + instance.getPos_dec_csa() + ");'></a>");
 //			}
 			else if( "Table Header".equals(s)) {
-				retour.add(DefaultPreviews.getHeaderLink(instance.getOidtable()));
+				retour.add(DefaultPreviews.getHeaderLink(instance.oidtable));
 			}
 			else if( "Position".equals(s)) {
 				retour.add(sff.getPos());
 			}
 			else if( "Error (arcsec)".equals(s)) {
-				double e = instance.getError_maj_csa();
+				double e = instance.error_maj_csa;
 				if( e == SaadaConstant.DOUBLE ) {
 					retour.add(DefaultFormats.getString(e));
 				}
@@ -114,7 +114,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 				}
 			}
 			else if( "Name".equals(s)) {
-				retour.add(instance.namesaada);
+				retour.add(instance.obs_id);
 			}
 		}
 		for( String s: extatt_columns.keySet()) {
