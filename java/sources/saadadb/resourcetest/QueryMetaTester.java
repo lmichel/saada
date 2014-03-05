@@ -1,6 +1,6 @@
 package saadadb.resourcetest;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.query.executor.Query;

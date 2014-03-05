@@ -3,7 +3,8 @@ package saadadb.resourcetest;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.DMInterface;
@@ -13,12 +14,12 @@ import saadadb.query.result.SaadaQLResultSet;
 public class ClassDMTester extends SaadaInstance {
 
 	@Override
-	public String getProduct_url_csa() {
+	public String getAccess_url() {
 		return null;
 	}
 
 	@Override
-	public void setProduct_url_csa(String name) {
+	public void setAccess_url(String name) {
 		
 	}
 
@@ -108,4 +109,16 @@ public class ClassDMTester extends SaadaInstance {
 			e.printStackTrace();
 		}
     }
+
+	@Override
+	public void setDate_load(long time) throws AbortException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public long getDate_load() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

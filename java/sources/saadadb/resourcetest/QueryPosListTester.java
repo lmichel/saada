@@ -39,7 +39,7 @@ public class QueryPosListTester extends GridBuilder{
 		SaadaQLResultSet srs = q.runQuery("Select ENTRY From " + classe + "Entry In " + collection + "\nWhereAttributeClass{_checkpos >= 0} \n WherePosition{isInCircle(\"poslist:/home/michel/Desktop/list.pos\"," + size + ",J2000,FK5)}\nOrder By _checkpos");
 		int cpt = 0;
 		while( srs.next()) {
-			System.out.print(Database.getCache().getObject(srs.getOid()).getNameSaada() + " ");
+			System.out.print(Database.getCache().getObject(srs.getOid()).obs_id+ " ");
 			if( (cpt%4) == 0 ) {
 				System.out.println("");
 			}

@@ -1,7 +1,7 @@
 package saadadb.resourcetest;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.query.executor.Query;
@@ -31,7 +31,7 @@ public class QueryAllColumnRunner {
 		int cpt=0;
 		while(sirs.next()) {
 			SaadaInstance sri = sirs.getInstance();
-			System.out.println(cpt + ": " + sri.getOid() + " " + sri.getNameSaada());
+			System.out.println(cpt + ": " + sri.oidsaada + " " + sri.obs_id);
 			cpt++;
 		}
 		Database.close();

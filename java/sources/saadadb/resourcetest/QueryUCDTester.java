@@ -7,7 +7,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import saadadb.collection.CollectionManager;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
@@ -189,7 +189,7 @@ public class QueryUCDTester {
 			while( srs.next() ){
 				SaadaInstance si = Database.getCache().getObject(srs.getOid());
 				String sic = si.getSaadaClass().getName();
-				System.out.print(si.getNameSaada() + ":\t");
+				System.out.print(si.obs_id+ ":\t");
 				for(String s: rs_cols.keySet() ) {
 					if( rs_cols.getClassColumnHandler(s, sic) == null ) {
 						continue;

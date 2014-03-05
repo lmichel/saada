@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import saadadb.api.SaadaLink;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
@@ -197,7 +197,7 @@ public class QueryPatternTester {
 						while( qn_res.next() ) {
 							long oid= qn_res.getOid();
 							SaadaInstance si = Database.getCache().getObject(oid);
-							System.out.println("#" + cpt + " Name <" + si.getNameSaada() + ">");
+							System.out.println("#" + cpt + " Name <" + si.obs_id+ ">");
 							for( Entry<String, CounterpartSelector> e: qn.getMatchingCounterpartQueries().entrySet()) {
 								String rel_name = e.getKey();
 								MetaRelation mr = Database.getCachemeta().getRelation(rel_name);
