@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Date;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
 import saadadb.collection.SaadaOID;
 import saadadb.compat.Files;
 import saadadb.exceptions.FatalException;
@@ -177,7 +176,7 @@ public class Repository {
 //	public static String getVignettePath(ImageSaada si) throws SaadaException {
 //		return Database.getRepository()
 //		+ separ
-//		+ SaadaOID.getCollectionName(si.getOid())
+//		+ SaadaOID.getCollectionName(si.oidsaada)
 //		+ separ
 //		+ "IMAGE" 
 //		+ separ
