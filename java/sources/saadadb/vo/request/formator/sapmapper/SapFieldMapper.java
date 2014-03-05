@@ -3,11 +3,10 @@ package saadadb.vo.request.formator.sapmapper;
 import java.io.File;
 
 import saadadb.collection.Category;
-import saadadb.collection.ImageSaada;
-import saadadb.collection.Position;
-import saadadb.collection.SaadaInstance;
-import saadadb.collection.SpectrumSaada;
-import saadadb.collection.WCSSaada;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
+import saadadb.collection.obscoremin.WCSSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.inference.SpectralCoordinate;
@@ -39,7 +38,7 @@ public class SapFieldMapper {
 	 * Down casted reference the current instance @see SapFieldMapper#instance
 	 * (internal use)
 	 */
-	private Position pos_instance;
+	private SaadaInstance pos_instance;
 	private WCSSaada wcs_instance;
 	private SpectrumSaada spec_instance;
 	private ImageSaada img_instance;
@@ -115,9 +114,9 @@ public class SapFieldMapper {
 	 * Extract fields for a Saada instance with a sky position
 	 */
 	private void setPos() {
-		this.pos_instance = (Position) this.instance;
-		ra =  this.valToString(this.pos_instance.getPos_ra_csa());
-		dec = this.valToString(this.pos_instance.getPos_dec_csa());
+		this.pos_instance =  this.instance;
+		ra =  this.valToString(this.pos_instance.s_ra);
+		dec = this.valToString(this.pos_instance.s_dec);
 		this.hasPos=true;
 	}
 	/**
@@ -125,17 +124,17 @@ public class SapFieldMapper {
 	 */
 	private void setWcs() {
 		this.wcs_instance = (WCSSaada) this.instance;
-		wcs_rota =  valToString(this.wcs_instance.getCrota_csa());
-		wcs_cd11 =  valToString(this.wcs_instance.getCd1_1_csa());
-		wcs_cd12 =  valToString(this.wcs_instance.getCd1_2_csa());
-		wcs_cd21 =  valToString(this.wcs_instance.getCd2_1_csa());
-		wcs_cd22 =  valToString(this.wcs_instance.getCd2_2_csa());
-		wcs_val1 =  valToString(this.wcs_instance.getCrval1_csa());
-		wcs_val2 =  valToString(this.wcs_instance.getCrval2_csa());
-		wcs_pix1 =  valToString(this.wcs_instance.getCrpix1_csa());
-		wcs_pix2 =  valToString(this.wcs_instance.getCrpix2_csa());
-		wcs_type1 =  valToString(this.wcs_instance.getCtype1_csa());
-		wcs_type2 =  valToString(this.wcs_instance.getCtype2_csa());
+		wcs_rota =  valToString(this.wcs_instance.crota_csa);
+		wcs_cd11 =  valToString(this.wcs_instance.cd1_1_csa);
+		wcs_cd12 =  valToString(this.wcs_instance.cd1_2_csa);
+		wcs_cd21 =  valToString(this.wcs_instance.cd2_1_csa);
+		wcs_cd22 =  valToString(this.wcs_instance.cd2_2_csa);
+		wcs_val1 =  valToString(this.wcs_instance.crval1_csa);
+		wcs_val2 =  valToString(this.wcs_instance.crval2_csa);
+		wcs_pix1 =  valToString(this.wcs_instance.crpix1_csa);
+		wcs_pix2 =  valToString(this.wcs_instance.crpix2_csa);
+		wcs_type1 =  valToString(this.wcs_instance.ctype1_csa);
+		wcs_type2 =  valToString(this.wcs_instance.ctype2_csa);
 		this.hasWcs=true;
 	}
 	/**
@@ -143,9 +142,9 @@ public class SapFieldMapper {
 	 */
 	private void setSpec() {
 		this.spec_instance = (SpectrumSaada) this.instance;
-		x_min = this.spec_instance.getX_min_csa();
-		x_max = this.spec_instance.getX_max_csa();
-		x_unit = valToString(this.spec_instance.getX_unit_csa());
+		x_min = this.spec_instance.e_min;
+		x_max = this.spec_instance.e_max;
+		x_unit = valToString(this.spec_instance.x_unit_csa);
 		this.hasSpRange=true;
 	}
 	/**
@@ -153,10 +152,10 @@ public class SapFieldMapper {
 	 */
 	private void setImg() {
 		this.img_instance = (ImageSaada) this.instance;
-		naxis1 =this.img_instance.getNaxis1();
-		naxis2 = this.img_instance.getNaxis2();
-		size_alpha = this.img_instance.getSize_alpha_csa();
-		size_delta = this.img_instance.getSize_delta_csa();
+		naxis1 =this.img_instance.naxis1;
+		naxis2 = this.img_instance.naxis2;
+		size_alpha = this.img_instance.s_fov;
+		size_delta = size_alpha;
 		this.hasSpRange=true;
 	}
 	/**
@@ -191,7 +190,7 @@ public class SapFieldMapper {
 		value.isNotSet = false;
 		try {
 			if( fieldIdentifier.equals("ID_MAIN")) {
-				value.fieldValue = Long.toString(instance.getOid());				
+				value.fieldValue = Long.toString(instance.oidsaada);				
 			} else if( fieldIdentifier.equals("meta.title;meta.dataset")) {
 				value.fieldValue = instance.getCollection().getName() + "_" + Category.explain(instance.getCategory());				
 			} else if( fieldIdentifier.equals("Target.Pos") || fieldIdentifier.equals("Char.SpatialAxis.Coverage.Location.Value")) {
@@ -212,7 +211,7 @@ public class SapFieldMapper {
 			} else if( fieldIdentifier.equals("DataID.Title") || fieldIdentifier.equalsIgnoreCase("VOX:Image_Title") 
 					|| fieldIdentifier.equalsIgnoreCase("meta.title")) {
 				value.isCdata = true;
-				value.fieldValue = instance.getNameSaada();
+				value.fieldValue = instance.obs_id;
 			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_RA_MAIN") || fieldIdentifier.equalsIgnoreCase("pos.eq.ra") 
 					|| fieldIdentifier.equalsIgnoreCase("pos.eq.ra;meta.main")){
 				value.fieldValue = ra;

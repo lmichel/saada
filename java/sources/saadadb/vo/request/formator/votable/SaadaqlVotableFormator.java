@@ -2,7 +2,7 @@ package saadadb.vo.request.formator.votable;
 
 import java.util.Map;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaInstanceResultSet;

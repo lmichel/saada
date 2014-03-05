@@ -2,7 +2,7 @@ package saadadb.vo.request.formator.fits;
 
 import java.util.Map;
 
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.UTypeHandler;

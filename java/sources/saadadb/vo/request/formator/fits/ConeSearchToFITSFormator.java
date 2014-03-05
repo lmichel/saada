@@ -3,8 +3,8 @@ package saadadb.vo.request.formator.fits;
 import java.util.Map;
 
 import saadadb.collection.Category;
-import saadadb.collection.EntrySaada;
-import saadadb.collection.SaadaInstance;
+import saadadb.collection.obscoremin.EntrySaada;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -134,37 +134,37 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 			String name  = sf.getNickname(); 
 
 			if( ucd.equals("Target.Pos")) {
-				((String[])data_column)[currentLine] = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				((String[])data_column)[currentLine] = obj.s_ra + " " + obj.s_dec;
 			}
 			else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
-				((String[])data_column)[currentLine] = obj.getPos_ra_csa() + " " + obj.getPos_dec_csa();
+				((String[])data_column)[currentLine] = obj.s_ra + " " + obj.s_dec;
 			}
 			else if( ucd.equals("meta.ref.url")) {
-				((String[])data_column)[currentLine] = Database.getUrl_root() + "/getinstance?oid=" + obj.getOid();
+				((String[])data_column)[currentLine] = Database.getUrl_root() + "/getinstance?oid=" + obj.oidsaada;
 			}
 			else if( utype.equals("Access.Format")) {
 				((String[])data_column)[currentLine] = "catalog";
 			}
 			else if( ucd.equalsIgnoreCase("meta.title;meta.dataset") ) {
-				((String[])data_column)[currentLine] = obj.getNameSaada().replaceAll("#", "");
+				((String[])data_column)[currentLine] = obj.obs_id.replaceAll("#", "");
 			}
 			else if( name.equals("LinktoPixels")) {
 				((String[])data_column)[currentLine] = obj.getURL(true);
 			}
 			else if( ucd.equalsIgnoreCase("pos.eq.ra;meta.main") ){
-				((double[])data_column)[currentLine] = (double)obj.getPos_ra_csa();
+				((double[])data_column)[currentLine] = (double)obj.s_ra;
 			}
 			else if( ucd.equalsIgnoreCase("pos.eq.dec;meta.mainN") ){
-				((double[])data_column)[currentLine] = (double)obj.getPos_dec_csa();
+				((double[])data_column)[currentLine] = (double)obj.s_dec;
 			}
 			else if( ucd.equalsIgnoreCase("ID_MAIN") ){
 				/*
 				 * ID_MAIN is declared as String in the DM file
 				 */
-				((String[])data_column)[currentLine] = String.valueOf(obj.getOid());
+				((String[])data_column)[currentLine] = String.valueOf(obj.oidsaada);
 			}
 			else if( ucd.equalsIgnoreCase("meta.title") ){
-				((String[])data_column)[currentLine] = obj.getNameSaada().replaceAll("#", "");
+				((String[])data_column)[currentLine] = obj.obs_id.replaceAll("#", "");
 			}
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first
