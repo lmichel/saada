@@ -6,12 +6,26 @@ import saadadb.exceptions.FatalException;
 public class ObservationMapping extends AxeMapping {
 
 	ObservationMapping(ArgsParser ap, boolean entryMode) throws FatalException {
-		super(ap, new String[]{"namesaada"}, entryMode);
+		super(ap, new String[]{"obs_id", "obs_collection", "facility_name", "instrument_name", "target_name"}, entryMode);
 		this.priority = PriorityMode.ONLY;
-		String[] s;
-		if( (s = ap.getNameComponents(entryMode)) != null  ){
-			this.columnMapping.put("namesaada", new ColumnMapping(null, s));
+		String[] ss;
+		if( (ss = ap.getNameComponents(entryMode)) != null  ){
+			this.columnMapping.put("obs_id", new ColumnMapping(null, ss));
 		}
+		String s;
+		if( (s = ap.getObscollection(entryMode)) != null  ){
+			this.columnMapping.put("obs_collection", new ColumnMapping(null, s));
+		}
+		if( (s = ap.getFacility(entryMode)) != null  ){
+			this.columnMapping.put("facility_name", new ColumnMapping(null, s));
+		}
+		if( (s = ap.getInstrument(entryMode)) != null  ){
+			this.columnMapping.put("instrument_name", new ColumnMapping(null, s));
+		}
+		if( (s = ap.getTarget(entryMode)) != null  ){
+			this.columnMapping.put("target_name", new ColumnMapping(null, s));
+		}
+		this.priority = ap.getObsMappingPriority();
 		this.completeColumns();
 	}
 

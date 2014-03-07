@@ -77,7 +77,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 					i--;
 				}
 				try {
-					this.current_prd.loadProductFile(this.mapping);
+					this.current_prd.readProductFile(this.mapping);
 				} catch(Exception e){
 					Messenger.printMsg(Messenger.ERROR, e.toString());
 					this.products.remove(i);
