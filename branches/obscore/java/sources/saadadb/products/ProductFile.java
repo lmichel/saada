@@ -3,15 +3,17 @@ package saadadb.products;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nom.tam.fits.FitsException;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 /**v * @version $Id: ProductFile.java 928 2014-02-03 19:42:06Z laurent.mistahl $
 
  * Interface for the specification of a product file.
@@ -26,15 +28,14 @@ import saadadb.products.inference.SpaceFrame;
  *@since 2.0
  *@see Enumeration
  */
+@SuppressWarnings("rawtypes")
 public interface ProductFile extends Enumeration{
     /**Returns the value corresponding finded in the product file to the key word in parameter.
      *@param String The key word.
      *@return String The value corresponding to this key word, if he exists, else null.
      */
     public String getKWValueQuickly(String key);
-  
-    public void setKWEntry(Map<String, AttributeHandler> tah) throws IgnoreException;
- 
+   
  	public double[] getExtrema(String key) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.
@@ -63,33 +64,43 @@ public interface ProductFile extends Enumeration{
      * @throws FitsException 
      */
     public void initEnumeration() throws IgnoreException;
+	public void closeStream() throws QueryException;
     /**
      * Builds a map of the product attribute 
      * key = HDU
      * value = attribute handlers
      */
 	public Map<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException ;
-	
 	/**
+	 * Returns the map of the attribute handlers modeling the columns of te data tables
 	 * @return
 	 */
-	public SpaceFrame getSpaceFrame();
+	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException ;
 	/**
-	 * Look for position frame and KW in column names
-	 * @throws IgnoreException 
+	 * Returns the map of the attribute handlers modeling the KW of all headers loaded
+	 * @return
 	 */
-	public void setSpaceFrameForTable() throws IgnoreException;
-	
+	public Map<String, AttributeHandler> getAttributeHandler() throws SaadaException ;
 	/**
-	 * Look for position frame and KW in column names
-	 * @throws FatalException 
+	 * Returns an instance of the detector of keywords covering the observation axe
+	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
 	 */
-	public void setSpaceFrame() ;
-	
+	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException;
+	/**
+	 * Returns an instance of the detector of keywords covering the observation axe
+	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+	 */
+	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException;
+	/**
+	 * Returns an instance of the detector of keywords covering the observation axe
+	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+	 */
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode) throws SaadaException;
+	/**
+	 * Returns an instance of the detector of keywords covering the observation axe
+	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+	 */
+	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException;
 	public String getName();
-	
-	public void closeStream() throws QueryException;
-	
-
  }
   
