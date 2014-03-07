@@ -114,7 +114,17 @@ public class RegExp {
 	 * Used to detect not set field. Only the most current notset values are set here
 	 */
 	public static final String NOT_SET_VALUE = "(NULL)|(NaN)|(Infinity)|(" + Integer.MAX_VALUE + ")";
-	
+	/**
+	 * Observation keywords
+	 */
+	public static final String COLLNAME_KW      = "(?i)collection";
+	public static final String COLLNAME_UCD     = "(?i).*obs\\.param;obs.*";
+	public static final String TARGET_KW        = "(?i)(object|target)";
+	public static final String TARGET_UCD       = "(?i)(meta\\.id)";
+	public static final String INSTRUMENT_UCD   = "(?i)meta\\.id;instr.*";
+	public static final String INSTRUMENT_KW    = "(?i)intrume.*";
+	public static final String FACILITY_UCD     = "(?i).*instr\\.tel.*";
+	public static final String FACILITY_KW      = "(?i)(facility|telescop)";
 	/**
 	 * Coordinate system
 	 */
@@ -123,6 +133,20 @@ public class RegExp {
 	public static final String FK5_SYSTEM = "(?i)(eq_FK5|FK5)";
 	public static final String GALACTIC   = "(?i)(galactic)";		
 	public static final String ICRS       = "(?i)(icrs)";		
+	/**
+	 * Position error
+	 */
+	public static final String ERROR_MIN_KW     = "(?i)((radecerr.*)|(errmin)|(minaxis))";
+	public static final String ERROR_MIN_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*))";
+	public static final String ERROR_MAJ_KW     = "(?i)((radecerr.*)|(errmaj)|(majaxis))";
+	public static final String ERROR_MAJ_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*))";
+	public static final String ERROR_ANGLE_KW   = "(?i)((theta)|(PosAng))";
+	public static final String ERROR_ANGLE_UCD  = "(?i)(pos\\.posAng)";
+	/**
+	 * Fov
+	 */
+	public static final String FOV_KW  = "(?i)(fov.*)";
+	public static final String FOV_UCD = "(?i)(instr\\.fov)";
 
 	/**
 	 * Position kw
