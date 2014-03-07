@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,15 +18,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import cds.astro.Coo;
-import cds.astro.Qbox;
 
 import saadadb.api.SaadaClass;
 import saadadb.api.SaadaCollection;
@@ -46,7 +44,6 @@ import saadadb.meta.DMInterface;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.meta.VOResource;
-import saadadb.query.executor.Query;
 import saadadb.query.matchpattern.CounterpartSelector;
 import saadadb.query.matchpattern.Qualif;
 import saadadb.query.result.SaadaQLResultSet;
@@ -119,7 +116,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public double em_min = saadadb.util.SaadaConstant.DOUBLE;
 	public double em_max = saadadb.util.SaadaConstant.DOUBLE;
-	
+
 	/**
 	 * SaadaInstance Constructor
 	 */
@@ -129,10 +126,62 @@ public abstract class SaadaInstance implements DMInterface {
 	public void markAsLoaded() {
 		this.loaded = true;
 	}
-	
+
 	public boolean isLoaded(){
 		return loaded;
 	}
+	/**
+	 * Returns a list of all public fields of the hierarchy: those which are persistent in Saada
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<Field> getAllPersisentFields() {
+		Class cls = this.getClass();
+		ArrayList<Field> retour = new ArrayList<Field>();
+		Field fl[] = cls.getFields();
+		for (int i = 0; i < fl.length; i++) {
+			Field field = fl[i];
+			if(Modifier.PUBLIC == field.getModifiers() ) {
+				retour.add(field);
+			}
+		}
+		return retour;
+	}
+	/**
+	 * Returns a list of all public fields of the hierarchy under the generated class: those which are persistent in Saada
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<Field> getCollLevelPersisentFields() {
+		Class cls = this.getClass();
+		ArrayList<Field> retour = new ArrayList<Field>();
+		Field fl[] = cls.getFields();
+		for (int i = 0; i < fl.length; i++) {
+			Field field = fl[i];
+			if(Modifier.PUBLIC == field.getModifiers() && !field.getName().startsWith("_")) {
+				retour.add(field);
+			}
+		}
+		return retour;
+	}
+	/**
+	 * Returns a list of all public fields of the leaf class: those which are persistent in Saada
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<Field> getClassLevelPersisentFields() {
+		Class _class = this.getClass();
+		Field fl[] = _class.getDeclaredFields();
+		ArrayList<Field> retour = new ArrayList<Field>();
+		for (int i = 0; i < fl.length; i++) {
+			Field field = fl[i];
+			if(Modifier.PUBLIC == field.getModifiers() && field.getName().startsWith("_")) {
+				retour.add(field);
+			}
+		}
+		return retour;
+	}
+
 	/**
 	 * Set all instance field from result set. There is no control of 
 	 * the compliance between both result set and Java class. That must me done at higher level.
@@ -141,10 +190,9 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws Exception
 	 */
 	public void init(SaadaQLResultSet rs) throws Exception {
-		Field[] fs = this.getClass().getFields();
+		List<Field> fs = this.getAllPersisentFields();
 		boolean classLevel = false;
-		for( int i=0 ; i< fs.length ; i++ ) {
-			Field f = fs[i];
+		for( Field f: fs ) {
 			String type = f.getType().toString();
 			String name = f.getName();
 			if( name.startsWith("_") ) {
@@ -196,10 +244,9 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws Exception
 	 */
 	public void init(ResultSet rs, Set<String> colNames) throws Exception {
-		Field[] fs = this.getClass().getFields();
+		List<Field> fs = this.getAllPersisentFields();
 		boolean classLevel = false;
-		for( int i=0 ; i< fs.length ; i++ ) {
-			Field f = fs[i];
+		for( Field f: fs ) {
 			String type = f.getType().toString();
 			String name = f.getName();
 			if( !colNames.contains(name.toLowerCase()) && !colNames.contains(name.toUpperCase())){
@@ -275,28 +322,31 @@ public abstract class SaadaInstance implements DMInterface {
 		int cpt=1;
 		while( rs.next() ) {
 			if( cpt > 1 ) {
-				Messenger.printMsg(Messenger.ERROR, "FATAL: Multiple instances with oid " + oid);
-				System.exit(1);
+				FatalException.throwNewException(SaadaException.CORRUPTED_DB, "Multiple instances with oid " + oid);
 			}
 			cpt++;
 
 			this.oidsaada = rs.getLong("oidsaada");
 			this.obs_id = rs.getString("namesaada");
 			this.setDate_load(rs.getLong("date_load"));
-			/** ----------Attention Super Class-------------* */
-			// Class cls = obj.getClass();
-			Class cls = this.getClass().getSuperclass();
-			Vector<Class> vt_class = new Vector<Class>();
-			while (!cls.getName().equals("saadadb.collection.SaadaInstance")) {
-				vt_class.add(cls);
-				cls = cls.getSuperclass();
+			List<Field> lf = this.getCollLevelPersisentFields();
+			for( Field f: lf){
+				setFieldValue(f, rs);
 			}
-			for (int k = vt_class.size() - 1; k >= 0; k--) {
-				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
-				for (int i = 0; i < fieldlist.length; i++) {
-					setFieldValue(fieldlist[i], rs);
-				}
-			}
+//			/** ----------Attention Super Class-------------* */
+//			// Class cls = obj.getClass();
+//			Class cls = this.getClass().getSuperclass();
+//			Vector<Class> vt_class = new Vector<Class>();
+//			while (!cls.getName().equals("saadadb.collection.SaadaInstance")) {
+//				vt_class.add(cls);
+//				cls = cls.getSuperclass();
+//			}
+//			for (int k = vt_class.size() - 1; k >= 0; k--) {
+//				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
+//				for (int i = 0; i < fieldlist.length; i++) {
+//					setFieldValue(fieldlist[i], rs);
+//				}
+//			}
 		}
 		squery.close();;
 	}
@@ -553,7 +603,7 @@ public abstract class SaadaInstance implements DMInterface {
 		try {
 			return this.getClass().getField(fieldName).get(this);
 		} catch (Exception e) {
-			Field[] flds = this.getClass().getFields();
+			List<Field> flds = this.getAllPersisentFields();
 			for( Field f: flds) {
 				if( f.getName().equalsIgnoreCase(fieldName)) {
 					return f.get(this);
@@ -753,7 +803,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public AttributeHandler getFieldByUCD(String ucd, boolean queriable_only) throws Exception {
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
-		Field[] fs = this.getClass().getFields();
+		List<Field> fs = this.getAllPersisentFields();
 		for( Field f: fs) {
 			AttributeHandler ah;
 			if( (ah = mc.getAttributes_handlers().get(f.getName())) != null ) {
@@ -1218,7 +1268,7 @@ public abstract class SaadaInstance implements DMInterface {
 			} catch (Exception e) {this.healpix_csa = SaadaConstant.LONG;}
 		}
 	}
-	
+
 	/**
 	 * Conventions used:
 	 *  a = major axis  
@@ -1249,7 +1299,7 @@ public abstract class SaadaInstance implements DMInterface {
 			this.error_angle_csa = (angle>0.0)?angle-90.0:angle+90.0;
 		}
 	}
-	
+
 
 	/**
 	 * @param full_path
@@ -1264,7 +1314,7 @@ public abstract class SaadaInstance implements DMInterface {
 			return retour;
 		}
 	}
-	
+
 
 	/**
 	 * @param full_path
@@ -1366,7 +1416,7 @@ public abstract class SaadaInstance implements DMInterface {
 			+ this.getAccess_url();
 		}
 	}
-	
+
 	public String getURL() {
 		return SaadaConstant.STRING;
 	}
@@ -1383,12 +1433,12 @@ public abstract class SaadaInstance implements DMInterface {
 			return this.getAccess_url();
 		} else {
 			return new File(Database.getRepository() + Database.getSepar() 
-			+ this.getCollection().getName() + Database.getSepar() 
-			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
-			+ this.getAccess_url()).getName();
+					+ this.getCollection().getName() + Database.getSepar() 
+					+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
+					+ this.getAccess_url()).getName();
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -1502,7 +1552,7 @@ public abstract class SaadaInstance implements DMInterface {
 	/*************************************************************
 	 * VO ACcess
 	 */
-	
+
 	/*
 	 * Data model implementation
 	 */
@@ -1511,6 +1561,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @param dm_name
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public void activateDataModel(String dm_name) throws FatalException {
 		/*
 		 * http://mail-archives.apache.org/mod_mbox/commons-user/200512.mbox/%3C200512281543.jBSFh6J3015001@fidel.intranet.ef.pt%3E
@@ -1547,8 +1598,7 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null;
-		}
-		else {
+		} else {
 			return this.current_dm_interface.getDMName();
 		}
 	}
@@ -1560,8 +1610,7 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null; 
-		}
-		else {
+		} else {
 			return this.current_dm_interface.getSQLField(utype_or_nickname);
 		}
 	}
@@ -1573,8 +1622,7 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null;
-		}
-		else {
+		} else {
 			return this.current_dm_interface.getSQLAlias(utype);
 		}
 	}
@@ -1586,8 +1634,7 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null;
-		}
-		else {
+		} else {
 			return this.current_dm_interface.getSQLFields();
 		}
 	}
@@ -1599,8 +1646,7 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null;
-		}
-		else {
+		} else {
 			this.loadBusinessAttribute();
 			return this.current_dm_interface.getDMFieldValue(utype_or_nickname);
 		}
@@ -1613,10 +1659,9 @@ public abstract class SaadaInstance implements DMInterface {
 		if( this.current_dm_interface == null ) {
 			FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No active DM for objects of class " + this.getClass().getName());
 			return null;
-		}
-		else {
+		} else {
 			return this.current_dm_interface.getFieldValue(utype_or_nickname, srs);
 		}
 	}
-	
+
 }
