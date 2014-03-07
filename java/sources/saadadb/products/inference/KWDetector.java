@@ -32,18 +32,19 @@ public abstract class KWDetector {
 	 * @return
 	 */
 	protected AttributeHandler searchByUcd(String ucd_regexp) {
+		String msg = "";
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search by UCD (" + ucd_regexp + ")");
+			msg =  "Search by UCD /" + ucd_regexp + "/";
 
 		for( AttributeHandler ah: tableAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd_regexp)){
 				if( Messenger.debug_mode ) 
-					Messenger.printMsg(Messenger.DEBUG, "Found " + ah);
+					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				return ah;
 			}
 		}
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Not found");
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return null;
 	}
 	/**
@@ -51,18 +52,18 @@ public abstract class KWDetector {
 	 * @return
 	 */
 	protected AttributeHandler searchByName(String colname_regexp) {
-
+		String msg = "";
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search by NAME (" + colname_regexp + ")");
+			msg = "Search by NAME /" + colname_regexp + "/";
 		for( AttributeHandler ah: tableAttributeHandler.values()) {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
-					Messenger.printMsg(Messenger.DEBUG, "Found " + ah);
+					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				return ah;
 			}
 		}
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Not found");
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return null;
 	}
 
