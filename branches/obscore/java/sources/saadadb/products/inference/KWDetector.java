@@ -3,6 +3,7 @@ package saadadb.products.inference;
 import java.util.Map;
 
 import saadadb.meta.AttributeHandler;
+import saadadb.util.Messenger;
 
 public abstract class KWDetector {
 	protected Map<String, AttributeHandler> tableAttributeHandler;
@@ -31,11 +32,18 @@ public abstract class KWDetector {
 	 * @return
 	 */
 	protected AttributeHandler searchByUcd(String ucd_regexp) {
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search by UCD (" + ucd_regexp + ")");
 
 		for( AttributeHandler ah: tableAttributeHandler.values()) {
-			if( ah.getUcd().matches(ucd_regexp))
+			if( ah.getUcd().matches(ucd_regexp)){
+				if( Messenger.debug_mode ) 
+					Messenger.printMsg(Messenger.DEBUG, "Found " + ah);
 				return ah;
+			}
 		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Not found");
 		return null;
 	}
 	/**
@@ -44,10 +52,17 @@ public abstract class KWDetector {
 	 */
 	protected AttributeHandler searchByName(String colname_regexp) {
 
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search by NAME (" + colname_regexp + ")");
 		for( AttributeHandler ah: tableAttributeHandler.values()) {
-			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp))
+			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
+				if( Messenger.debug_mode ) 
+					Messenger.printMsg(Messenger.DEBUG, "Found " + ah);
 				return ah;
+			}
 		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Not found");
 		return null;
 	}
 
