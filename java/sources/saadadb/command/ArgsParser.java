@@ -36,39 +36,61 @@ public class ArgsParser implements Serializable{
 	public static final Set<String> allowedArgs;
 	static {
 		allowedArgs = new TreeSet<String>();
-		allowedArgs.add("-debug=") ;
-		allowedArgs.add("-classifier=") ;
-		allowedArgs.add("-coldef=") ;
-		allowedArgs.add("-classfusion=") ;
-		allowedArgs.add("-category=") ;
-		allowedArgs.add("-collection=") ;
-		allowedArgs.add("-relation=") ;
-		allowedArgs.add("-config=") ;
-		allowedArgs.add("-filename=") ;
-		allowedArgs.add("-extension=") ;
-		allowedArgs.add("-name=") ;
-		allowedArgs.add("-ename=") ;
-		allowedArgs.add("-ignore=") ;
-		allowedArgs.add("-eignore=") ;
+		allowedArgs.add("-debug") ;
+		allowedArgs.add("-classifier") ;
+		allowedArgs.add("-coldef") ;
+		allowedArgs.add("-classfusion") ;
+		allowedArgs.add("-category") ;
+		allowedArgs.add("-collection") ;
+		allowedArgs.add("-relation") ;
+		allowedArgs.add("-config") ;
+		allowedArgs.add("-filename") ;
+		allowedArgs.add("-extension") ;
+		/*
+		 * Observation Axe
+		 */
+		allowedArgs.add("-obsmaping") ; 
+		allowedArgs.add("-name")    ; allowedArgs.add("-obsid") ;
+		allowedArgs.add("-ename")   ; allowedArgs.add("-entry.obsid") ;
+		allowedArgs.add("-obscollection") ; allowedArgs.add("-entry.obscollection") ;
+		allowedArgs.add("-facility") ; allowedArgs.add("-entry.facility") ;
+		allowedArgs.add("-instrument") ; allowedArgs.add("-entry.instrument") ;
+		allowedArgs.add("-target")  ; allowedArgs.add("-entry.target") ;
+		/*
+		 * Space Axe
+		 */
+		allowedArgs.add("-posmapping") ;
+		allowedArgs.add("-system") ;
+		allowedArgs.add("-position")     ;allowedArgs.add("-entry.position") ;
+		allowedArgs.add("-poserror")     ;allowedArgs.add("-entry.poserror") ;
+		allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
+		/*
+		 * Energy Axe
+		 */
+		allowedArgs.add("-spcmapping") ;
+		allowedArgs.add("-spcunit")   ;allowedArgs.add("-entry.spcunit") ;
+		allowedArgs.add("-spccolumn") ;allowedArgs.add("-entry.spccolumn") ;
+		/*
+		 * Time Axe
+		 */
+		allowedArgs.add("-timemapping") ;
+		allowedArgs.add("-tmin")      ;allowedArgs.add("-entry.tmin") ;
+		allowedArgs.add("-tmax")      ;allowedArgs.add("-entry.tmax") ;
+		/*
+		 * Other Axe
+		 */
+		allowedArgs.add("-ignore") ;
+		allowedArgs.add("-eignore") ;
 		allowedArgs.add("-ukw") ;
 		allowedArgs.add("-eukw") ;
-		allowedArgs.add("-sysmapping=") ;
-		allowedArgs.add("-system=") ;
-		allowedArgs.add("-posmapping=") ;
-		allowedArgs.add("-position=") ;
-		allowedArgs.add("-poserrormapping=") ;
-		allowedArgs.add("-poserror=") ;
-		allowedArgs.add("-poserrorunit=") ;
-		allowedArgs.add("-spcmapping=") ;
-		allowedArgs.add("-spcunit=") ;
-		allowedArgs.add("-spccolumn=") ;
+		
 		allowedArgs.add("-empty") ;
 		allowedArgs.add("-remove") ;
 		allowedArgs.add("-index") ;
 		allowedArgs.add("-populate") ;
-		allowedArgs.add("-repository=") ;
-		allowedArgs.add("-links=") ;
-		allowedArgs.add("-filter=") ;
+		allowedArgs.add("-repository") ;
+		allowedArgs.add("-links") ;
+		allowedArgs.add("-filter") ;
 		allowedArgs.add("-create") ;
 		allowedArgs.add("-oids") ;
 		allowedArgs.add("-force") ;
@@ -82,7 +104,7 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-repdir");
 		allowedArgs.add("-rename");
 		allowedArgs.add("-newname");
-		allowedArgs.add("-nolog") ; allowedArgs.add("-nolog=") ;
+		allowedArgs.add("-nolog") ;
 		allowedArgs.add("-noindex") ;
 		allowedArgs.add("-novignette") ;
 		allowedArgs.add("-query") ;
@@ -92,14 +114,13 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-from");
 		allowedArgs.add("-to");
 		allowedArgs.add("-qualifiers");
-		allowedArgs.add("-if=") ;
-		allowedArgs.add("-of=") ;
-		allowedArgs.add("-protocol=") ;
-		allowedArgs.add("-type=") ;
-		allowedArgs.add("-unit=") ;
-		allowedArgs.add("-ucd=") ;
-		allowedArgs.add("-utype=") ;
-		allowedArgs.add("-vomodel=") ;
+		allowedArgs.add("-if") ;
+		allowedArgs.add("-of") ;
+		allowedArgs.add("-protocol") ;
+		allowedArgs.add("-type") ;
+		allowedArgs.add("-unit") ;
+		allowedArgs.add("-ucd") ;
+		allowedArgs.add("-utype") ;
 	}
 	/**
 	 * @param args
@@ -117,9 +138,9 @@ public class ArgsParser implements Serializable{
 				if( arg.startsWith("-") ) {
 					int pos = arg.indexOf('=');
 					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
-					    (pos >= 0 && (pos == (arg.length() - 1)    || // param with =
-					                 !allowedArgs.contains(arg.substring(0, pos+1)))) ) {
+					    (pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
 						msg += " <" + arg + ">";
+						if( pos >=0 ) System.out.println(arg.substring(0, pos));
 					}
 				}
 			}			
@@ -335,38 +356,104 @@ public class ArgsParser implements Serializable{
 		return null;
 	}
 
-	/**
-	 * returns a table with all instance name components -name=comp1,comp2,.....
-	 * @return
+	/*
+	 * OBSERVATION parameters
 	 */
-	public String[] getNameComponents() {
+	public PriorityMode getObsMappingPriority() {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-name")) {
+			if( args[i] .startsWith("-obsmapping")) {
+				return  getPriority(args[i]);
+			}
+		}
+		return null;		
+	}
+	public String[] getNameComponents(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && (args[i].startsWith("-name") || args[i].startsWith("-obsid")) ){
+				return getArgsValue(args[i]).split(",");
+			}
+			if( entry && (args[i].startsWith("-ename") || args[i].startsWith("-entry.obsid")) ){
 				return getArgsValue(args[i]).split(",");
 			}
 		}
 		return new String[0];
 	}	
-
-	/**
-	 * returns a table with all instance entry name components -name=comp1,comp2,.....
-	 * @return
-	 */
-	public String[] getEntryNameComponents() {
+	public String getObscollection(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-ename")) {
-				return getArgsValue(args[i]).split(",");
+			if( !entry && args[i].startsWith("-obscollection")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.obscollection") ){
+				return getArgsValue(args[i]);
 			}
 		}
-		return new String[0];
-	}
-	/**
-	 * Switch between entry and product parameters
-	 * @param entry
-	 * @return
+		return null;
+	}	
+	public String getFacility(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-facility")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.facility") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	public String getInstrument(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-instrument")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.instrument") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	public String getTarget(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-target")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.target") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	/*
+	 * TIME
 	 */
-	public String[] getNameComponents(boolean entry) {
-		return (entry)?this.getEntryNameComponents(): this.getNameComponents();
+	public PriorityMode getTimeMappingPriority() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-timemapping")) {
+				return  getPriority(args[i]);
+			}
+		}
+		return null;		
+	}
+	public String getTmin(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-tmin")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.tmin") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	public String getTmax(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-tmax")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.tmax") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
 	}	
 
 	/**
@@ -1116,17 +1203,6 @@ public class ArgsParser implements Serializable{
 		return new String[0];
 	}
 
-	/**
-	 * @return
-	 */
-	public String getVomodel()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-vomodel=")) {
-				return getArgsValue(args[i]);							
-			}
-		}
-		return null;		
-	}
 
 	/**
 	 * Extract a priority from the parametee
