@@ -55,7 +55,7 @@ public class GenerationClassCollection{
 		FileWriter writer = new FileWriter(name_file, false);
 		writer.write("package generated." + connector.getDbname() + ";\n"
 		           + "/** Generated Code **/\n"
-		           + "import saadadb.collection.*;\n");
+		           + "import saadadb.collection.obscoremin.*;\n");
 		writer.write("public class " + name + " extends "+ Category.getCollectionExtension(category)+" {  \n");
 		if(keys!=null){
 			if(!keys.isEmpty()){
