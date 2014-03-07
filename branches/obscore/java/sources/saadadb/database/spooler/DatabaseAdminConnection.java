@@ -23,7 +23,7 @@ public class DatabaseAdminConnection extends DatabaseConnection {
 	 * @param password
 	 * @throws SQLException
 	 */
-	DatabaseAdminConnection(int number, String password) throws SQLException {
+	DatabaseAdminConnection(int number, String password) throws Exception {
 		super(number);
 		this.password = password;
 		this.connect();
@@ -34,7 +34,7 @@ public class DatabaseAdminConnection extends DatabaseConnection {
 	 * Connect the DB with the admin account
 	 * @throws SQLException
 	 */
-	private void connect() throws SQLException{
+	private void connect() throws Exception{
 		this.connection = Database.getConnector().getNewAdminConnection(password);
 		this.status = FREE;
 	}
