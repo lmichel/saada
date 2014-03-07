@@ -530,13 +530,13 @@ public class MappingKWPanel extends EditPanel {
 				 * Load name components
 				 */
 				if( nameMapper != null ) {
-					nameMapper.setParams(parser.getNameComponents());			
+					nameMapper.setParams(parser.getNameComponents(false));			
 				}
 				/*
 				 * Load name components for entries
 				 */
 				if( e_nameMapper != null ) {
-					e_nameMapper.setParams(parser.getEntryNameComponents());			
+					e_nameMapper.setParams(parser.getNameComponents(true));			
 				}
 				/*
 				 * load extended attributes
