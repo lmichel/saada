@@ -178,21 +178,20 @@ public class SpaceMapping extends AxeMapping {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "You didn't specify a coordinate system. The loader'll try to detect them in the file.");
 			this.coordSystem.setAutodedect();
 		}
-		PriorityMode priority= tabArg.getSysMappingPriority();
 		
 		if( priority == null ) {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken.");
 			this.coordSystem.setPriority(PriorityMode.FIRST);
-		} else if( priority.equals("only") ){			
+		} else if( priority == PriorityMode.ONLY ){			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : only. The values you've specified'll be taken.");
 			this.coordSystem.setPriority(PriorityMode.ONLY);
 			if( this.coordSystem.getAutodedect() ) {
 				Messenger.printMsg(Messenger.WARNING, "Coord system won't be set because it is required to be computed from mapping parameters, but mapping is not set.");
 			}
-		} else if( priority.equals("first") ){			
+		} else if(  priority == PriorityMode.FIRST ){			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken first.");
 			this.coordSystem.setPriority(PriorityMode.FIRST);
-		} else if( priority.equals("last") ){			
+		} else if( priority == PriorityMode.LAST){			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : last. The values you've specified'll be taken if there are not already defined in the file.");
 			this.coordSystem.setPriority(PriorityMode.LAST);
 		} else {			
