@@ -66,6 +66,7 @@ public class Table_Saada_VO_Authority extends SQLTable {
 	public static boolean tableExists() {
 		return SQLTable.tableExist(tableName);
 	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static  void loadTable(Authority authority) throws Exception {
 		if( !SQLTable.tableExist(tableName)) {
 			SQLTable.beginTransaction();
