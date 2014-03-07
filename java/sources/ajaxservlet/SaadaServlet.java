@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import ajaxservlet.formator.DefaultPreviews;
@@ -58,8 +59,7 @@ public class SaadaServlet extends HttpServlet {
 	public void destroy() {
 		Messenger.printMsg(Messenger.TRACE, "Close connection");
 		try {
-			if( Database.getConnector() != null && Database.getConnector().getJDBCConnection() != null )
-				Database.getConnector().getJDBCConnection().close();
+			Spooler.getSpooler().close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
