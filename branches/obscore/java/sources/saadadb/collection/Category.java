@@ -108,7 +108,7 @@ public abstract class Category {
 				return "SpectrumSaada";
 			}
 			else if( category == CUBE ) {
-				return "CubeSaada";
+				return "DataCubeSaada";
 			}
 			else if( category == MISC ) {
 				return "MiscSaada";
