@@ -572,7 +572,7 @@ public class SpectralCoordinate{
 		this.attributesList = tableAttributeHandler;
 		String unitOrg = (config_unit == null)? "": config_unit;
 		WCSModel wm = new WCSModel(tableAttributeHandler);
-		wm.dropAllAxesToRealWord();
+		wm.projectAllAxesToRealWord();
 		/*
 		 * A dispersion axe is found but unit can be not set or not valid
 		 * In this case, we take unit given by the configuration

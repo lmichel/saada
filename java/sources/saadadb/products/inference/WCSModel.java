@@ -371,7 +371,7 @@ public class WCSModel {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean isAxeDropedToRealWord(int axe) throws Exception {
+	public boolean isAxeProjectedToRealWord(int axe) throws Exception {
 		if( this.CRPIX[axe] != SaadaConstant.DOUBLE && this.CRVAL[axe] != SaadaConstant.DOUBLE && this.getMatrix(axe, axe) != SaadaConstant.DOUBLE) {
 			return true;
 		}
@@ -387,7 +387,7 @@ public class WCSModel {
 	 * @param axe
 	 * @throws Exception
 	 */
-	public void dropAxeToRealWord(int axe) throws Exception {
+	public void projectAxeToRealWord(int axe) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Set default projection parameters to axe #" + (axe+1));
 		this.CRPIX[axe] = 0;
@@ -405,10 +405,10 @@ public class WCSModel {
 	 * Set the default porjection on all axes not droped to real word
 	 * @throws Exception
 	 */
-	public void dropAllAxesToRealWord() throws Exception {
+	public void projectAllAxesToRealWord() throws Exception {
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( !this.isAxeDropedToRealWord(axe) ) {
-				this.dropAxeToRealWord(axe);
+			if( !this.isAxeProjectedToRealWord(axe) ) {
+				this.projectAxeToRealWord(axe);
 			}
 		}	
 	}
@@ -536,10 +536,10 @@ public class WCSModel {
 			Spectrum sp ;
 			sp = new Spectrum(new File("/home/michel/Desktop/MGC29864B.fit")
 			, (new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})).getProductMapping());
-			sp.loadProductFile((new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})).getProductMapping());
+			sp.readProductFile((new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})).getProductMapping());
 			Messenger.debug_mode = true;
 			WCSModel wm = new WCSModel(sp.getProductAttributeHandler());
-			wm.dropAllAxesToRealWord();
+			wm.projectAllAxesToRealWord();
 			double[] retour = wm.getXYValue(new int[] {0, 0});
 			for( double v: retour) {
 				System.out.print(v + " " );
