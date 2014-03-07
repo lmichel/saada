@@ -2,11 +2,11 @@ package saadadb.sqltable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
-
+import saadadb.collection.obscoremin.SaadaInstance;
 public class Table_Saada_Data extends SQLTable {
 
 	/**
@@ -18,10 +18,10 @@ public class Table_Saada_Data extends SQLTable {
 	public static void createBusinessTable(String tableName, Class cls) throws Exception{
 		
 		String sql = "oidsaada int8, namesaada " + Database.getWrapper().getIndexableTextType() + " NULL, md5keysaada " + Database.getWrapper().getIndexableTextType() + "  NULL ";
-		Field fld[] = cls.getDeclaredFields();
-		for (int i = 0; i < fld.length; i++) {
-			String s = Database.getWrapper().getSQLTypeFromJava(fld[i].getType().toString());
-			sql += ",  " + fld[i].getName() + "  ";
+		List<Field> fld = ((SaadaInstance) cls.newInstance()).getClassLevelPersisentFields();
+		for (Field f: fld) {
+			String s = Database.getWrapper().getSQLTypeFromJava(f.getType().toString());
+			sql += ",  " + f.getName() + "  ";
 			if (!s.equals("")) {
 				if (!s.equals("bit") || s.indexOf("char") >= 0) {
 					sql += s + " NULL ";

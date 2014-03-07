@@ -4,11 +4,11 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import saadadb.collection.Category;
+import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.Repository;
@@ -175,9 +175,9 @@ public class Table_Saada_Metacoll extends SQLTable {
 				+ " SET name_attr='" + newAattributeHandler.getNameattr() + "',"
 				+ " name_origin='" + newAattributeHandler.getNameattr() + "',"
 				+ " comment='" + Database.getWrapper().getEscapeQuote(newAattributeHandler.getComment()) + "',"
-					+ " ucd='" + newAattributeHandler.getUcd() + "',"
-					+ " utype='" + newAattributeHandler.getType() + "',"
-					+ " unit='" + newAattributeHandler.getUnit() + "'"
+				+ " ucd='" + newAattributeHandler.getUcd() + "',"
+				+ " utype='" + newAattributeHandler.getType() + "',"
+				+ " unit='" + newAattributeHandler.getUnit() + "'"
 				+ " WHERE name_attr = '" + oldAattributeHandler.getNameattr() + "'");
 	}
 
@@ -208,7 +208,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 				+ " WHERE name_attr = '" + attributeHandler.getNameattr() + "'");
 	}
 
-	
+
 	/**
 	 * @param coll_name
 	 * @param str_cat
@@ -274,90 +274,80 @@ public class Table_Saada_Metacoll extends SQLTable {
 			max_key = rs.getInt(1) + 1;
 		}
 		squery.close();
-		Class cls = Class.forName("generated." + Database.getDbname() + "." + Category.NAMES[cat] + DefineType.TYPE_EXTEND_COLL);
-		String sql = "";
-		Class _class = cls;
-		Vector<Class> vt_class = new Vector<Class>();
-		while ( !_class.getName().equals("java.lang.Object")  ) {
-			vt_class.add(_class);
-			_class = _class.getSuperclass();
-		}
 		BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
-		for (int k = vt_class.size() - 1; k >= 0; k--) {
-			Field fl[] = (vt_class.get(k)).getDeclaredFields();
-			if (fl.length > 0) {
-				for (int i = 0; i < fl.length; i++) {
-					String fname = fl[i].getName();
-					String ftype = fl[i].getType().getName().replace("java.lang.", "");
-					if( ftype.equals("saadadb.meta.DMInterface") || ftype.equals("saadadb.collection.VignetteFile") ) {
-						continue;
-					}
-					/*
-					 * Create one attribute handler per row
-					 */
-					AttributeHandler  ah;
-					/*
-					 * Extended attributes are tagged E
-					 */
-					if( (ah = ahs.get(fname)) != null ){
-						ah.setLevel('E');							
-						/*
-						 * Build-in attributes are tagged N
-						 */
-					} else {
-						ah = new AttributeHandler();
-						ah.setNameorg(DefineType.getCollection_name_org().get(fname));
-						if( ah.getNameorg().length() == 0 ) {
-							ah.setNameorg(fname);
-						}
-						ah.setNameattr(fname);
-						ah.setType(ftype);
-						ah.setQueriable(true);
-						ah.setCollname("Generic");
-						ah.setUcd(DefineType.getCollection_ucds().get(fname));
-						ah.setUnit(DefineType.getCollection_units().get(fname));
-						ah.setComment("Attribute managed by Saada");
-						ah.setLevel('N');						
-					} 
-					/*
-					 * Add specific utype for spectra, the only category supporting a model yet.
-					 */
-					//TODO must be extend to other categories
-					if( cat == Category.SPECTRUM ) {
-						ah.setVo_dm(DefineType.VO_SDM);
-						ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
-					}
-
-					String dumpline = max_key + "\t"
-					+ ah.getLevel() + "\t"
-					+ Database.getWrapper().getAsciiNull() + "\t"
-					///						+ "\\N\t" 
-					+ str_cat + "UserColl" + "\t"
-					+ ah.getNameattr() + "\t"
-					+ ah.getType() + "\t" 
-					+ ah.getNameorg() + "\t"
-					+ ah.getUcd() + "\t"
-					+ ah.getUtype() + "\t"
-					+ ah.getVo_dm() + "\t"
-					+ Database.getWrapper().getAsciiNull() + "\t"
-					///						+ "\\N\t"
-					+ Database.getWrapper().getBooleanAsString(true) + "\t"
-					+ ah.getUnit()+ "\t"
-					+ ah.getComment() + " \t"
-					//						+ coll_name + "\t"
-					//						+ num_coll + "\t"
-					+ "Generic\t"
-					+ "-1\t"
-					+Database.getWrapper().getAsciiNull();
-					///						+ "\\N";
-					bustmpfile.write(dumpline + "\n");
-					max_key++;
-					if( sql.length() > 0  ) {
-						sql += ", ";
-					}
-					sql += ah.getNameattr() + " " + Database.getWrapper().getSQLTypeFromJava(ftype);
-				}
+		String sql = "";
+		Class cls = Class.forName("generated." + Database.getDbname() + "." + Category.NAMES[cat] + DefineType.TYPE_EXTEND_COLL);
+		List<Field> lf = ((SaadaInstance) cls.newInstance()).getAllPersisentFields();
+		for( Field f: lf) {
+			String fname = f.getName();
+			String ftype = f.getType().getName().replace("java.lang.", "");
+			if( ftype.equals("saadadb.meta.DMInterface") || ftype.equals("saadadb.collection.obscoremin.VignetteFile") ) {
+				continue;
 			}
+			/*
+			 * Create one attribute handler per row
+			 */
+			AttributeHandler  ah;
+			/*
+			 * Extended attributes are tagged E
+			 */
+			if( (ah = ahs.get(fname)) != null ){
+				ah.setLevel('E');							
+				/*
+				 * Build-in attributes are tagged N
+				 */
+			} else {
+				ah = new AttributeHandler();
+				ah.setNameorg(DefineType.getCollection_name_org().get(fname));
+				if( ah.getNameorg().length() == 0 ) {
+					ah.setNameorg(fname);
+				}
+				ah.setNameattr(fname);
+				ah.setType(ftype);
+				ah.setQueriable(true);
+				ah.setCollname("Generic");
+				ah.setUcd(DefineType.getCollection_ucds().get(fname));
+				ah.setUnit(DefineType.getCollection_units().get(fname));
+				ah.setComment("Attribute managed by Saada");
+				ah.setLevel('N');						
+			} 
+			/*
+			 * Add specific utype for spectra, the only category supporting a model yet.
+			 */
+			//TODO must be extend to other categories
+			if( cat == Category.SPECTRUM ) {
+				ah.setVo_dm(DefineType.VO_SDM);
+				ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
+			}
+
+			String dumpline = max_key + "\t"
+			+ ah.getLevel() + "\t"
+			+ Database.getWrapper().getAsciiNull() + "\t"
+			///						+ "\\N\t" 
+			+ str_cat + "UserColl" + "\t"
+			+ ah.getNameattr() + "\t"
+			+ ah.getType() + "\t" 
+			+ ah.getNameorg() + "\t"
+			+ ah.getUcd() + "\t"
+			+ ah.getUtype() + "\t"
+			+ ah.getVo_dm() + "\t"
+			+ Database.getWrapper().getAsciiNull() + "\t"
+			///						+ "\\N\t"
+			+ Database.getWrapper().getBooleanAsString(true) + "\t"
+			+ ah.getUnit()+ "\t"
+			+ ah.getComment() + " \t"
+			//						+ coll_name + "\t"
+			//						+ num_coll + "\t"
+			+ "Generic\t"
+			+ "-1\t"
+			+Database.getWrapper().getAsciiNull();
+			///						+ "\\N";
+			bustmpfile.write(dumpline + "\n");
+			max_key++;
+			if( sql.length() > 0  ) {
+				sql += ", ";
+			}
+			sql += ah.getNameattr() + " " + Database.getWrapper().getSQLTypeFromJava(ftype);
 		}
 		bustmpfile.close();
 		return sql;
@@ -378,5 +368,11 @@ public class Table_Saada_Metacoll extends SQLTable {
 		} catch(Exception e) {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
+	}
+
+	public static void main(String[] args ) throws Exception{
+		Database.init("Obscore");
+		SQLTable.beginTransaction();
+		buildCollectionDump(Category.TABLE, "/dev/null");
 	}
 }
