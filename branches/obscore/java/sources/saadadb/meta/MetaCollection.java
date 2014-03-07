@@ -13,7 +13,6 @@ import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.sqltable.SQLQuery;
@@ -22,7 +21,7 @@ import saadadb.util.Messenger;
 /** * @version $Id: MetaCollection.java 865 2013-12-04 15:25:26Z laurent.mistahl $
 
  * @author michel
- * 05/2001: add methods getUCDs
+ * 05/2011: add methods getUCDs
  */
 public class MetaCollection extends MetaObject {
 	private static final LinkedHashMap<String, AttributeHandler> attribute_handlers_table = new LinkedHashMap<String, AttributeHandler>();
