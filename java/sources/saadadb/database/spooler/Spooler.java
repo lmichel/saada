@@ -293,7 +293,7 @@ public class Spooler {
 	 * Appends a new connection to the list
 	 * @throws SQLException
 	 */
-	private void addConnectionReference() throws SQLException{
+	private void addConnectionReference() throws Exception{
 		connectionsReferences.add(new DatabaseConnection(this.numConnection++));
 	}
 	/**
@@ -322,7 +322,7 @@ public class Spooler {
 	 * 
 	 * @throws SQLException
 	 */
-	synchronized private void completeConnectionsReferences() throws SQLException {
+	synchronized private void completeConnectionsReferences() throws Exception {
 		/*
 		 * Remove the obsolete connections
 		 */

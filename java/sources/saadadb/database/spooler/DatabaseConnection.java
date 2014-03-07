@@ -52,7 +52,7 @@ public class DatabaseConnection {
 	 * @param number ID number (debug purose)
 	 * @throws SQLException
 	 */
-	DatabaseConnection(int number) throws SQLException{
+	DatabaseConnection(int number) throws Exception{
 		this.number = number;
 		this.status = NOTREADY;
 		this.connect();
@@ -61,7 +61,7 @@ public class DatabaseConnection {
 	 * Connect to the database
 	 * @throws SQLException
 	 */
-	private void connect() throws SQLException{
+	private void connect() throws Exception{
 		this.connection = Database.getConnector().getNewConnection();
 		this.status = FREE;
 	}
@@ -83,7 +83,7 @@ public class DatabaseConnection {
 	 * which has not the write_lock locking level
 	 * @throws SQLException
 	 */
-	protected void reconnect() throws SQLException{
+	protected void reconnect() throws Exception{
 		this.close();
 		this.connect();
 	}

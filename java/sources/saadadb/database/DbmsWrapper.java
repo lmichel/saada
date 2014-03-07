@@ -175,6 +175,17 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
+			
+			qt = "select * from " + test_table + " WHERE name " + this.getRegexpOp() + " '.*'";
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+			rs = stmt.executeQuery(qt);
+			while( rs.next()) {
+				Messenger.printMsg(Messenger.TRACE, "REGEXP  procedure seems to be OK");
+				break;
+			}
+			rs.close();
+
 			qt = "select corner00_dec(0, 1) , boxoverlaps(1.0,2.0,3.0,4.0,5.0,6.0,7.0)";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
@@ -191,6 +202,8 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
+			
+			
 			connection.close();
 			if( clean_after) {
 				/*
@@ -231,12 +244,12 @@ abstract public class DbmsWrapper {
 	 * @throws SQLException
 	 * @throws IgnoreException
 	 */
-	public boolean checkReaderPrivileges() throws SQLException, IgnoreException {
+	public boolean checkReaderPrivileges() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Check privilege for reader role in " + url + test_base);
 		if( reader == null ) {
 			IgnoreException.throwNewException(SaadaException.WRONG_DB_ROLE, "No Reader Role");			
 		}
-		Connection reader_connection = DriverManager.getConnection(url + test_base , reader.getName(), reader.getPassword());
+		Connection reader_connection = this.getConnection(this.url + test_base, reader.getName(), reader.getPassword());
 		Statement stmt = reader_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
 		String qt = "select count(*) from " + test_table;
 		if (Messenger.debug_mode)
@@ -251,6 +264,15 @@ abstract public class DbmsWrapper {
 				Messenger.printMsg(Messenger.TRACE, "test table readout: 3 rows found: OK");
 			}
 		}
+		qt = "select * from " + test_table + " WHERE name " + this.getRegexpOp() + " '.*'";
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+		rs = stmt.executeQuery(qt);
+		while( rs.next()) {
+			Messenger.printMsg(Messenger.TRACE, "REGEXP  procedure seems to be OK");
+			break;
+		}
+		rs.close();
 
 		/*
 		 * If something goes wrong an axception is risen

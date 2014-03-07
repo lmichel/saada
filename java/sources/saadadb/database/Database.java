@@ -5,6 +5,7 @@ import healpix.core.HealpixIndex;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.util.List;
 
 import saadadb.cache.CacheManager;
 import saadadb.cache.CacheManagerRelationIndex;
@@ -121,7 +122,7 @@ public class Database {
 		Table_Saada_Class.addStatColumn();
 		Table_Saada_Collection.addStatColumn();		
 	}
-	
+
 	/******************************
 	 * Data ase access methods
 	 *****************************/
@@ -200,7 +201,7 @@ public class Database {
 		}
 	}
 
-	
+
 	/******************************
 	 * Getters
 	 *****************************/
@@ -313,7 +314,7 @@ public class Database {
 		try {
 			long oid = obj.oidsaada;
 			String _nameclass = Database.cachemeta.getClass(SaadaOID.getClassNum(oid)).getName();
-			Field fieldlist[] = obj.getClass().getDeclaredFields();
+			List<Field> fieldlist = obj.getClassLevelPersisentFields();
 			String sql = "";
 			sql = " Select * from " + _nameclass + " where  oidsaada = " + oid;
 			SQLQuery squery = new SQLQuery();
@@ -328,10 +329,8 @@ public class Database {
 				if( sm != null) {
 					obj.contentsignature = rs.getString("md5keysaada").trim();
 				}
-				for (int i = 0; i < fieldlist.length; i++) {					
-					if( fieldlist[i].getName().startsWith("_")) {
-						obj.setFieldValue(fieldlist[i], rs);
-					}
+				for( Field f: fieldlist){
+					obj.setFieldValue(f, rs);
 				}
 			} else {
 				squery.close();
