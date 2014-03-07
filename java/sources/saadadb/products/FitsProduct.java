@@ -31,7 +31,11 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.KWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
@@ -65,8 +69,10 @@ public class FitsProduct extends File implements ProductFile{
 
 	private String fmtsignature;
 	private Product product;
-	protected SpaceFrame space_frame;
-	
+	protected SpaceKWDetector space_frame;
+	private Map<String, AttributeHandler> attributeHandlers = null;
+	private Map<String, AttributeHandler> entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
+
 	private int[] colform ;
 	
 	/**Constructor (constructor of the super class "File").
@@ -93,38 +99,6 @@ public class FitsProduct extends File implements ProductFile{
 		}
 	}
 
-	/**Returns the value corresponding finded in the product file to the key word in parameter.
-	 *@param String The key word.
-	 *@return String The value corresponding to this key word, if he exists, else null.
-	 */
-	public String getKWValueQuickly(String key){
-		HeaderCard card;
-		if( (card = this.first_header.getHeader().findCard(key)) != null ) {
-			return card.getValue();			
-		}
-		else  if( this.good_header != null && (card = this.good_header.getHeader().findCard(key)) != null ) {
-			return card.getValue();
-		}
-		/*
-		 * Takes FK5 by default
-		 */
-		else if( key.equals("SYSTEM") ) {
-			return "FK5";
-		}
-		/*
-		 * Attemp to guest the equinox from RA/DEC keywords
-		 * and takes J2000 by default
-		 */
-		else if ( key.equals("EQUINOX") ){
-			if( ra.matches("RA.?(2000)?") )
-				return "J2000";
-			else if( ra.matches("RA.?(1950)?") )
-				return "J1950";
-			else
-				return "J2000";
-		}
-		return null;
-	}
 
 	/**In case of the product can have table:
 	 * This method is used for the valdation of the product by this configuration.
@@ -161,7 +135,8 @@ public class FitsProduct extends File implements ProductFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWEntry(java.util.LinkedHashMap)
 	 */
-	public void setKWEntry(Map<String, AttributeHandler> tableAttributeHandlerEntry) throws IgnoreException {
+	public void mapEntryAttributeHandler() throws IgnoreException {
+		this.entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		if(  !(this.good_header instanceof  nom.tam.fits.TableHDU) ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Can not get column names for a " + this.good_header.getClass().getName());
 			return ;  		
@@ -234,87 +209,26 @@ public class FitsProduct extends File implements ProductFile{
 						continue;
 					}
 				}
-
 				//Transforms this original name according to the Saada standard
 				keyChanged = ChangeKey.changeKey(typeValue);
-				keyChanged = ChangeKey.renameDuplicateKey(tableAttributeHandlerEntry, keyChanged);
+				keyChanged = ChangeKey.renameDuplicateKey(this.entryAttributeHandlers, keyChanged);
 				//Sets this standardized name of this entry to this field in the attribute object
 				attribute.setNameattr(keyChanged);
 				//Puts the current attribute object to the current list of product attributes
-				tableAttributeHandlerEntry.put(keyChanged, attribute);
+				this.entryAttributeHandlers.put(keyChanged, attribute);
 				//Sets the collection name of this entry (of this product)
 				if( this.product != null)
 					attribute.setCollname(this.product.mapping.getCollection());
 				//Sets the unit of this entry to this field in the attribute object
 				attribute.setUnit(unitValue);
-				//if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, typeValue+", Unit: "+attribute.getUnit());
-				//If there is a unit comment, sets this to this field in the attribute object
-				//if(unitComment.matches("")){
 				if(!unitComment.equals("no Comment")){
 					attribute.setComment(unitComment);
 				}
 				//Initialzes the reality format of this entry
 				format = table.getColumnFormat(j);
-				//System.out.println("@@ AH: " + keyChanged + " "+ format);
-				//Converts, the Fits format to the Java format, the values format in a line.
-				//Attention: This format is a global format defined in a line, but this format corresponds necessarily not at the box format in this line.
-				//This make necessary a new formatting in the entry class (See the "Entry" class in package saadadb.products).
-				//By default, the format equals "String".
-				//In Fits file, the definition of the type format is coupled with a notion of "Multidimensional arrays in binary tables".
-				//It is for that we look only the presence of an format identifier in the format field, and not the equality of this field with a format.
-				//(indexOf('char') and not equals('char'))
-				//Initializes the md5 value for this type
-				//See in the official documentation for Fits files:
-				//Multidimensional arrays in binary tables.
-				//The origynal binary table proposal, the A3Dtable extension, introducted the concept of a table entry or field of more than one element, a vector.
-				//It provided this structure through the use of a repeat count. However, since an array of more than one dimension can be reduced to one-dimensional
-				//vector, as occurs when arrays are stored in a computer, the repeat count can be used to define multidimensional arrays as well.
-				//To do so, conventions are needed to specify how such an array is organized in the table field.
 				int javatypecode = JavaTypeUtility.convertFitsFormatToJavaType(format, isascii);
-//				System.out.println(j + " " + format + " " + javatypecode);
-//				/*
-//				 * Cast short type as long in order to avoid overflow (short > 32564)
-//				 */
-//				if( javatypecode == FitsFormToJavaType.SHORT ) {
-//					javatypecode = FitsFormToJavaType.INT;
-//				}
 				attribute.setType(JavaTypeUtility.convertJavaTypeCodeToName(javatypecode));
 
-//				format.indexOf('L') >= 0){
-//					attribute.setType("boolean");
-//					}else if(format.indexOf('D') >= 0){
-//						attribute.setType("double");
-//					}else if(format.indexOf('J') >= 0){
-//						attribute.setType("int");
-//					}else if(format.indexOf('E') >= 0 || format.indexOf('F') >= 0){
-//						attribute.setType("float");
-//					}else if(format.indexOf('B') >= 0  || format.indexOf('X') >= 0){
-//						attribute.setType("byte");
-//					}else if(format.indexOf('I') >= 0){
-//						/*
-//						 * Cast short type as long in order to avoid overflow (short > 32564)
-//						 */
-//						attribute.setType("int");
-//					}else {
-//						
-//				if(format.indexOf('L') >= 0){
-//					attribute.setType("boolean");
-//				}else if(format.indexOf('D') >= 0){
-//					attribute.setType("double");
-//				}else if(format.indexOf('J') >= 0){
-//					attribute.setType("int");
-//				}else if(format.indexOf('E') >= 0 || format.indexOf('F') >= 0){
-//					attribute.setType("float");
-//				}else if(format.indexOf('B') >= 0  || format.indexOf('X') >= 0){
-//					attribute.setType("byte");
-//				}else if(format.indexOf('I') >= 0){
-//					/*
-//					 * Cast short type as long in order to avoid overflow (short > 32564)
-//					 */
-//					attribute.setType("int");
-//				}else {
-//					attribute.setType("String");
-//				}
 			}
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
@@ -361,57 +275,7 @@ public class FitsProduct extends File implements ProductFile{
 		}
 	}
 
-	/**In case of the product can have table:
-	 * Initializes the enumeration of table rows (essential in stream mode).
-	 * This method is necessary in the class Product (package saadadb.products) for return a initialized enumeration:
-	 * See method elements() in class Product (she returns a Enumeration).
-	 * This method models the TableHDU in memory (the first HDU (in the current Fits file) corresponding to the first Table HDU).
-	 */
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#initEnumeration()
-	 */
-	public void initEnumeration() throws IgnoreException{
-		try {
-			//Initializes the current index of the table
-			nextIndex = 0;
-			//Initializes the TableHDU for the enumeration:
-			//The first HDU (in the current Fits file) corresponding to the first Table HDU
-			tableEnumeration = (TableHDU)this.fits_data.getHDU(this.good_header_number);
-			nb_rows = ((TableHDU)this.fits_data.getHDU(this.good_header_number)).getNRows();
-			/*
-			 * Format of all columns are stored to do correct casting when reading lines
-			 * 		Binary		ASCII
-			 * A	String		String
-			 * L	Boolean
-			 * X	Bit
-			 * B 	Byte
-			 * I 	Short		Integer
-			 * J	Int
-			 * K	Long
-			 * E	FLoat		Float
-			 * F				Float
-			 * D	Double		Double
-			 * C	Complex
-			 * M	Comp Double
-			 */
-			TableHDU table = (TableHDU)(this.good_header);
-			colform = new int[table.getNCols()];
-			boolean isascii = isASCIITable(table);
-			for(int j = 0; j < table.getNCols(); j++){
-				String format = table.getColumnFormat(j);
-				colform[j] = JavaTypeUtility.convertFitsFormatToJavaType(format, isascii);
 
-				if(  colform[j] == JavaTypeUtility.UNSUPPORTED ) {
-					Messenger.printMsg(Messenger.WARNING, "FITS Type <" + format + "> unsupported by Saada: set values as NULL");
-				}	
-				//System.out.println("@@@@ " + j + " " + format + " " + colform[j]);
-			}
-
-		} catch(Exception e) {
-			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
-		}
-
-	}
 	/**In case of the product can have table:
 	 * Tests if this enumeration contains more elements (more table rows).
 	 *@return boolean true if and only if this enumeration object contains at least one more element (table row) to provide; false otherwise.
@@ -559,36 +423,7 @@ public class FitsProduct extends File implements ProductFile{
 			return null;
 		}
 	}
-	/**In case of the product can have table:
-	 * Returns the row number in the table.
-	 *@return int The row number in the table.
-	 * @throws IOException 
-	 * @throws FitsException 
-	 */
-	public int getNRows() throws IgnoreException{
-		try {
-			return nb_rows;
-		} catch(Exception e) {
-			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
-			return SaadaConstant.INT;
-		}
-	}
-	/**In case of the product can have table:
-	 * Returns the column number in the table.
-	 *@return int The column number in the table.
-	 * @throws IOException 
-	 * @throws FitsException 
-	 */
-	public int getNCols() throws IgnoreException{
-		try {
-			//The initilization in this method allows not to overload the computer memory and to provoke an memory exception
-			//by modelling wrongly these data (as in the global header).
-			return ((TableHDU)this.fits_data.getHDU(1)).getNCols();
-		} catch(Exception e) {
-			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
-			return SaadaConstant.INT;
-		}
-	}
+
 	/**In case of the product can have table:
 	 * Returns the column number in the table.
 	 *@param numHDU The n'th table Header.
@@ -758,7 +593,7 @@ public class FitsProduct extends File implements ProductFile{
 		if( this.product.mapping != null )
 		this.product.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
-		this.product.productAttributeHandler = this.createTableAttributeHandler();
+		this.product.productAttributeHandler = this.getAttributeHandler();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
 	}
 
@@ -930,12 +765,11 @@ public class FitsProduct extends File implements ProductFile{
 	 * @param mapping
 	 * @throws FatalException 
 	 */
-	public LinkedHashMap<String, AttributeHandler> createTableAttributeHandler() {
-
+	private void mapAttributeHandler() {
+		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		/*boolean findRA = false;
 		 boolean findDEC = false;*/
-		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
-		this.addFirstHDU(retour);
+		this.addFirstHDU();
 		int cat_prd = -1;
 		try {
 			cat_prd = Category.getCategory(getFITSExtensionCategory());
@@ -977,19 +811,18 @@ public class FitsProduct extends File implements ProductFile{
 					 * attribute read from the Xtension must squash former attribute with the same name
 					 * They are not considered as duplicated. (EXTENSION, BITPIX...)
 					 */
-					retour.put(attribute.getNameattr(), attribute);
+					this.attributeHandlers.put(attribute.getNameattr(), attribute);
 					attribute.setCollname(this.product.mapping.getCollection());				
 					this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
 				}
 			}
 		}
-		return retour;
 	}
 
 	/**
 	 * @return
 	 */
-	public void addFirstHDU(LinkedHashMap<String, AttributeHandler>retour) {
+	public void addFirstHDU() {
 
 		Header header = this.first_header.getHeader();
 		Cursor it = header.iterator();
@@ -1024,11 +857,11 @@ public class FitsProduct extends File implements ProductFile{
 				String value = hcard.getValue();
 				attribute.setValue(value);
 
-				String keyChanged = ChangeKey.renameDuplicateKey(retour, attribute.getNameattr());
+				String keyChanged = ChangeKey.renameDuplicateKey(this.attributeHandlers, attribute.getNameattr());
 				if( !keyChanged.equals(attribute.getNameattr())) {
 					attribute.setNameattr(keyChanged);
 				}
-				retour.put(keyChanged, attribute);
+				this.attributeHandlers.put(keyChanged, attribute);
 				if( this.product.mapping != null )
 					attribute.setCollname(this.product.mapping.getCollection());				
 				this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
@@ -1036,8 +869,6 @@ public class FitsProduct extends File implements ProductFile{
 			//this.attMd5Tree.put(md5Key, md5Type);
 		}
 	}
-
-
 
 	/**
 	 * @return Returns the good_header.
@@ -1053,6 +884,196 @@ public class FitsProduct extends File implements ProductFile{
 		return good_header_number;
 	}
 
+
+	/**
+	 * @param hdu
+	 * @return
+	 */
+	static public final boolean isImage(BasicHDU hdu) {
+		if( hdu.getClass().getName().equals("nom.tam.fits.ImageHDU") ) {
+			int[] size;
+			try {
+				size = ((ImageHDU)(hdu)).getAxes();
+				if( size != null &&  size.length >= 1 && size[0] > 0  ) {
+					return true;
+				}
+			} catch (FitsException e) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param hdu
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	static public final boolean isTileCompressedImage(BasicHDU hdu) {
+		if( hdu.getClass().getName().equals("nom.tam.fits.BinaryTableHDU") ) {
+			Iterator it = hdu.getHeader().iterator();
+			while( it.hasNext()) {
+				HeaderCard hcard = null;
+				hcard = (HeaderCard) it.next();
+				AttributeHandler attribute = new AttributeHandler(hcard);
+				if( attribute.getNameorg().equals("ZIMAGE") && attribute.getValue().toString().equals("true"))
+					return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * @param hdu
+	 * @return
+	 */
+	static public final boolean isTable(BasicHDU hdu) {
+		return (isASCIITable(hdu) | isBinTable(hdu));
+	}
+	/**
+	 * @param hdu
+	 * @return
+	 */
+	static public final boolean isASCIITable(BasicHDU hdu) {
+		return hdu.getClass().getName().equals("nom.tam.fits.AsciiTableHDU");
+	}
+	/**
+	 * @param hdu
+	 * @return
+	 */
+	static public final boolean isBinTable(BasicHDU hdu) {
+		return hdu.getClass().getName().equals("nom.tam.fits.BinaryTableHDU");
+	}	
+
+	/**
+	 * @return
+	 * @throws IgnoreException 
+	 * @throws FitsException 
+	 */
+	public int[] getImageSize() throws IgnoreException, FitsException {
+		int[] retour = new int[2];
+		if( FitsProduct.isImage(this.good_header)) {
+			int[] size=  ((ImageHDU)this.good_header).getAxes();				
+			retour[0] = size[size.length - 1];
+			retour[1] = size[size.length - 2];
+			return retour;
+		}
+		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
+			BasicHDU imghdu = (BasicHDU)this.good_header;
+			retour[0] = imghdu.getHeader().getIntValue("ZNAXIS1");
+			retour[1] = imghdu.getHeader().getIntValue("ZNAXIS2");
+			return retour;
+		}
+		else {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown image format");
+			return null;
+		}
+	}
+
+	public int getBitPIx() throws FitsException, IgnoreException {
+		if( FitsProduct.isImage(this.good_header)) {
+			ImageHDU himage = ((ImageHDU)this.good_header);
+			return  himage.getBitPix() ;
+		}
+		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
+			return  ((BasicHDU)this.good_header).getHeader().getIntValue("ZBITPIX");
+		}
+		else {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown image format" );
+			return SaadaConstant.INT;
+		}
+
+	}
+
+	/**
+	 * @param corner
+	 * @param size
+	 * @return
+	 * @throws Exception
+	 */
+	public Object getImagePixels(int[] corner, int[] size) throws Exception{
+		if( FitsProduct.isImage(this.good_header)) {
+			ImageHDU himage = ((ImageHDU)this.good_header);
+			return   himage.getTiler().getTile(corner, size);
+		}
+		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette fo tile compressed images" );
+		}
+		else {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: HEADER type not recognized" );			
+		}
+		return null;
+	}
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public Object getImagePixels() throws Exception {
+		int size[] ;
+		int ww, hh;
+		if( FitsProduct.isImage(this.good_header)) {
+			ImageHDU himage = ((ImageHDU)this.good_header);
+			size = himage.getAxes();
+			ww = size[size.length - 1];
+			hh = size[size.length - 2];
+			return himage.getTiler().getTile(new int[size.length], size);
+		}
+		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
+			BasicHDU imghdu = (BasicHDU)this.good_header;
+			int tile = imghdu.getHeader().getIntValue("ZTILE1");
+			size = this.getImageSize();
+			ww = size[0];
+			hh = size[1];
+			int nbit = this.getBitPIx();
+			int npix  = Math.abs(nbit)/8;    // Nombre d'octets par valeur
+			int nnaxis2 = imghdu.getHeader().getIntValue("NAXIS2");
+			int pcount=imghdu.getHeader().getIntValue("PCOUNT");    // nombres d'octets a lire en tout
+
+			int taille=ww*hh*npix;    // Nombre d'octets
+			byte[] byte_pixels = new byte[taille];
+			byte [] table = new byte[nnaxis2*4*2];
+			byte [] buf = new byte[pcount];
+			int offset=0;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			this.good_header.getData().write(new BufferedDataOutputStream(baos));
+			table = baos.toByteArray();
+
+			for( int i=0 ; i<pcount ; i++ ) {
+				buf[i] = table[nnaxis2*8 + i];
+			}
+			offset = 0;
+			for( int row=0; row<nnaxis2; row++ ) {
+				int pos = TileRiceDecompressor.getInt(table,row*8+4);
+				TileRiceDecompressor.decomp(buf,pos,(byte[]) byte_pixels,offset,tile,32,nbit);
+				offset+=tile;
+			}
+
+			/*
+			 * Convert the byte array to a int array (works with bitpix=32)
+			 */
+			nbit=8;
+			int[] img_pixel = new int[ww*hh];
+			byte[] tmp = (byte[])byte_pixels;
+			int pos = 0;
+			int p=0;
+			for( int h=0 ; h<hh ; h ++ ) {
+				for( int w=0 ; w<ww ; w ++ ) {
+					img_pixel[pos] = TileRiceDecompressor.getInt(tmp, p);
+					p += 4;
+					pos++;
+				}
+			}
+			return img_pixel;
+		}
+		else {
+			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: HEADER type not recognized" );
+			return null;
+		}
+
+	}
+	
+	/****************************
+	 * Interface Implementation
+	 ****************************/
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getColumnValues(java.lang.String)
@@ -1321,51 +1342,164 @@ public class FitsProduct extends File implements ProductFile{
 			return null;
 		}
 	}
-
-	/**
-	 * @param args
+	/**In case of the product can have table:
+	 * Returns the row number in the table.
+	 *@return int The row number in the table.
+	 * @throws IOException 
+	 * @throws FitsException 
 	 */
-	public static void main(String[] args ) {
+	public int getNRows() throws IgnoreException{
 		try {
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/pop_1_9_kroupa_1e3_Z0.02.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/fuse.fits", null);
-			FitsProduct fp = new FitsProduct("/home/michel/Desktop/xe001.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/SSA.xml", null);
-			//			ImageHDU himage = (ImageHDU)fp.fits_data.getHDU(0);
-			//			int[] size = himage.getAxes();
-			//			System.out.println(size.length + " " + size[0]);
-			//System.exit(1);
-			//			ImageHDU bHDU = (ImageHDU) fp.fits_data.getHDU(0);
-			//			System.out.println(bHDU.getAxes()[0] + " " + bHDU.isData());
-			//		
-			//			ImageHDU.
-			//			System.out.println(bHDU.getClass().getName());
-			//			System.exit(1);
-			//			Fits f = new Fits("/home/michel/Desktop/tile_eso.fit");
-			//			BinaryTableHDU t = (BinaryTableHDU) f.getHDU(1);
-			//			byte[] buf = new byte[4300000];
-			//			ArrayDataInput arg0 = new BufferedDataInputStream(new ByteArrayInputStream(buf));
-			//			t.readData(arg0);
-			//			arg0.close();
-			//			for( int i=0 ; i<buf.length ; i++ ) {
-			//				if( buf[i] != 0 )
-			//					System.out.println(buf[i]);
-			//			}
-			//			System.exit(1);
-			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
-			for( String en: retour.keySet() ) {
-				System.out.println(en);
-				for( AttributeHandler ah: retour.get(en)) {
-					System.out.println("   -" + ah.getNameorg() + " = " + ah.getValue());
-				}
+			return nb_rows;
+		} catch(Exception e) {
+			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
+			return SaadaConstant.INT;
+		}
+	}
+	/**In case of the product can have table:
+	 * Returns the column number in the table.
+	 *@return int The column number in the table.
+	 * @throws IOException 
+	 * @throws FitsException 
+	 */
+	public int getNCols() throws IgnoreException{
+		try {
+			//The initilization in this method allows not to overload the computer memory and to provoke an memory exception
+			//by modelling wrongly these data (as in the global header).
+			return ((TableHDU)this.fits_data.getHDU(1)).getNCols();
+		} catch(Exception e) {
+			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
+			return SaadaConstant.INT;
+		}
+	}
+	/**In case of the product can have table:
+	 * Initializes the enumeration of table rows (essential in stream mode).
+	 * This method is necessary in the class Product (package saadadb.products) for return a initialized enumeration:
+	 * See method elements() in class Product (she returns a Enumeration).
+	 * This method models the TableHDU in memory (the first HDU (in the current Fits file) corresponding to the first Table HDU).
+	 */
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#initEnumeration()
+	 */
+	public void initEnumeration() throws IgnoreException{
+		try {
+			//Initializes the current index of the table
+			nextIndex = 0;
+			//Initializes the TableHDU for the enumeration:
+			//The first HDU (in the current Fits file) corresponding to the first Table HDU
+			tableEnumeration = (TableHDU)this.fits_data.getHDU(this.good_header_number);
+			nb_rows = ((TableHDU)this.fits_data.getHDU(this.good_header_number)).getNRows();
+			/*
+			 * Format of all columns are stored to do correct casting when reading lines
+			 * 		Binary		ASCII
+			 * A	String		String
+			 * L	Boolean
+			 * X	Bit
+			 * B 	Byte
+			 * I 	Short		Integer
+			 * J	Int
+			 * K	Long
+			 * E	FLoat		Float
+			 * F				Float
+			 * D	Double		Double
+			 * C	Complex
+			 * M	Comp Double
+			 */
+			TableHDU table = (TableHDU)(this.good_header);
+			colform = new int[table.getNCols()];
+			boolean isascii = isASCIITable(table);
+			for(int j = 0; j < table.getNCols(); j++){
+				String format = table.getColumnFormat(j);
+				colform[j] = JavaTypeUtility.convertFitsFormatToJavaType(format, isascii);
+
+				if(  colform[j] == JavaTypeUtility.UNSUPPORTED ) {
+					Messenger.printMsg(Messenger.WARNING, "FITS Type <" + format + "> unsupported by Saada: set values as NULL");
+				}	
+				//System.out.println("@@@@ " + j + " " + format + " " + colform[j]);
 			}
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
+
+		} catch(Exception e) {
+			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
 		}
 
-
+	}
+	/**Returns the value corresponding finded in the product file to the key word in parameter.
+	 *@param String The key word.
+	 *@return String The value corresponding to this key word, if he exists, else null.
+	 */
+	public String getKWValueQuickly(String key){
+		HeaderCard card;
+		if( (card = this.first_header.getHeader().findCard(key)) != null ) {
+			return card.getValue();			
+		}
+		else  if( this.good_header != null && (card = this.good_header.getHeader().findCard(key)) != null ) {
+			return card.getValue();
+		}
+		/*
+		 * Takes FK5 by default
+		 */
+		else if( key.equals("SYSTEM") ) {
+			return "FK5";
+		}
+		/*
+		 * Attemp to guest the equinox from RA/DEC keywords
+		 * and takes J2000 by default
+		 */
+		else if ( key.equals("EQUINOX") ){
+			if( ra.matches("RA.?(2000)?") )
+				return "J2000";
+			else if( ra.matches("RA.?(1950)?") )
+				return "J1950";
+			else
+				return "J2000";
+		}
+		return null;
 	}
 
+	
+	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException {
+		if( this.entryAttributeHandlers == null ){
+			this.mapEntryAttributeHandler();
+		}
+		return this.entryAttributeHandlers;
+	}
+
+	public Map<String, AttributeHandler> getAttributeHandler() {
+		if( this.attributeHandlers == null ){
+			this.mapAttributeHandler();
+		}
+		return this.attributeHandlers;
+	}
+
+
+	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException{
+		if( entryMode ){
+			return  new ObservationKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+		} else {
+			return new ObservationKWDetector(this.getAttributeHandler());
+		}		
+	}
+	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException{
+		if( entryMode ){
+			return  new SpaceKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+		} else {
+			return new SpaceKWDetector(this.getAttributeHandler());
+		}		
+	}
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode) throws SaadaException{
+		if( entryMode ){
+			return  new EnergyKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+		} else {
+			return new EnergyKWDetector(this.getAttributeHandler());
+		}		
+	}
+	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
+		if( entryMode ){
+			return  new TimeKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+		} else {
+			return new TimeKWDetector(this.getAttributeHandler());
+		}		
+	}
 
 	/**
 	 * Returns a map of the current product
@@ -1374,6 +1508,7 @@ public class FitsProduct extends File implements ProductFile{
 	 * @throws FitsException
 	 * @throws IOException
 	 */
+	@SuppressWarnings("rawtypes")
 	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
 		try {
 			//int i=0;
@@ -1429,8 +1564,8 @@ public class FitsProduct extends File implements ProductFile{
 				}
 				retour.put("#" + i + " " + ext_name + " (" + ext_type + ")", attrs);    	
 				if( ext_type.equalsIgnoreCase("BINTABLE") ||  ext_type.equalsIgnoreCase("ASCIITABLE")) {
-					LinkedHashMap<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
-					setKWEntry(tahe);
+					Map<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
+					tahe = this.getEntryAttributeHandler();
 					attrs = new ArrayList<AttributeHandler>(tahe.values());					
 
 					retour.put("#" + i + " " + ext_name + " (" + ext_type + " COLUMNS)", attrs);    	
@@ -1445,218 +1580,53 @@ public class FitsProduct extends File implements ProductFile{
 			return null;
 		}
 	}
-	/**
-	 * @param hdu
-	 * @return
-	 */
-	static public final boolean isImage(BasicHDU hdu) {
-		if( hdu.getClass().getName().equals("nom.tam.fits.ImageHDU") ) {
-			int[] size;
-			try {
-				size = ((ImageHDU)(hdu)).getAxes();
-				if( size != null &&  size.length >= 1 && size[0] > 0  ) {
-					return true;
-				}
-			} catch (FitsException e) {
-				return false;
-			}
-		}
-		return false;
-	}
+	
+
 
 	/**
-	 * @param hdu
-	 * @return
+	 * @param args
 	 */
-	static public final boolean isTileCompressedImage(BasicHDU hdu) {
-		if( hdu.getClass().getName().equals("nom.tam.fits.BinaryTableHDU") ) {
-			Iterator it = hdu.getHeader().iterator();
-			while( it.hasNext()) {
-				HeaderCard hcard = null;
-				hcard = (HeaderCard) it.next();
-				AttributeHandler attribute = new AttributeHandler(hcard);
-				if( attribute.getNameorg().equals("ZIMAGE") && attribute.getValue().toString().equals("true"))
-					return true;
-			}
-		}
-		return false;
-	}
-	/**
-	 * @param hdu
-	 * @return
-	 */
-	static public final boolean isTable(BasicHDU hdu) {
-		return (isASCIITable(hdu) | isBinTable(hdu));
-	}
-	/**
-	 * @param hdu
-	 * @return
-	 */
-	static public final boolean isASCIITable(BasicHDU hdu) {
-		return hdu.getClass().getName().equals("nom.tam.fits.AsciiTableHDU");
-	}
-	/**
-	 * @param hdu
-	 * @return
-	 */
-	static public final boolean isBinTable(BasicHDU hdu) {
-		return hdu.getClass().getName().equals("nom.tam.fits.BinaryTableHDU");
-	}	
-
-	/**
-	 * @return
-	 * @throws IgnoreException 
-	 * @throws FitsException 
-	 */
-	public int[] getImageSize() throws IgnoreException, FitsException {
-		int[] retour = new int[2];
-		if( FitsProduct.isImage(this.good_header)) {
-			int[] size=  ((ImageHDU)this.good_header).getAxes();				
-			retour[0] = size[size.length - 1];
-			retour[1] = size[size.length - 2];
-			return retour;
-		}
-		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
-			BasicHDU imghdu = (BasicHDU)this.good_header;
-			retour[0] = imghdu.getHeader().getIntValue("ZNAXIS1");
-			retour[1] = imghdu.getHeader().getIntValue("ZNAXIS2");
-			return retour;
-		}
-		else {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown image format");
-			return null;
-		}
-	}
-
-	public int getBitPIx() throws FitsException, IgnoreException {
-		if( FitsProduct.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
-			return  himage.getBitPix() ;
-		}
-		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
-			return  ((BasicHDU)this.good_header).getHeader().getIntValue("ZBITPIX");
-		}
-		else {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown image format" );
-			return SaadaConstant.INT;
-		}
-
-	}
-
-	/**
-	 * @param corner
-	 * @param size
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getImagePixels(int[] corner, int[] size) throws Exception{
-		if( FitsProduct.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
-			return   himage.getTiler().getTile(corner, size);
-		}
-		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette fo tile compressed images" );
-		}
-		else {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: HEADER type not recognized" );			
-		}
-		return null;
-	}
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	public Object getImagePixels() throws Exception {
-		int size[] ;
-		int ww, hh;
-		if( FitsProduct.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
-			size = himage.getAxes();
-			ww = size[size.length - 1];
-			hh = size[size.length - 2];
-			return himage.getTiler().getTile(new int[size.length], size);
-		}
-		else if( FitsProduct.isTileCompressedImage(this.good_header) ) {
-			BasicHDU imghdu = (BasicHDU)this.good_header;
-			int tile = imghdu.getHeader().getIntValue("ZTILE1");
-			size = this.getImageSize();
-			ww = size[0];
-			hh = size[1];
-			int nbit = this.getBitPIx();
-			int npix  = Math.abs(nbit)/8;    // Nombre d'octets par valeur
-			int nnaxis1 = imghdu.getHeader().getIntValue("NAXIS1");
-			int nnaxis2 = imghdu.getHeader().getIntValue("NAXIS2");
-			int theap=nnaxis1*nnaxis2;
-			int pcount=imghdu.getHeader().getIntValue("PCOUNT");    // nombres d'octets a lire en tout
-
-			int taille=ww*hh*npix;    // Nombre d'octets
-			byte[] byte_pixels = new byte[taille];
-			byte [] table = new byte[nnaxis2*4*2];
-			byte [] buf = new byte[pcount];
-			int offset=0;
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			this.good_header.getData().write(new BufferedDataOutputStream(baos));
-			table = baos.toByteArray();
-
-			for( int i=0 ; i<pcount ; i++ ) {
-				buf[i] = table[nnaxis2*8 + i];
-			}
-			offset = 0;
-			for( int row=0; row<nnaxis2; row++ ) {
-				int len = TileRiceDecompressor.getInt(table,row*8);
-				int pos = TileRiceDecompressor.getInt(table,row*8+4);
-				TileRiceDecompressor.decomp(buf,pos,(byte[]) byte_pixels,offset,tile,32,nbit);
-				offset+=tile;
-			}
-
-			/*
-			 * Convert the byte array to a int array (works with bitpix=32)
-			 */
-			nbit=8;
-			int[] img_pixel = new int[ww*hh];
-			byte[] tmp = (byte[])byte_pixels;
-			int pos = 0;
-			int p=0;
-			for( int h=0 ; h<hh ; h ++ ) {
-				for( int w=0 ; w<ww ; w ++ ) {
-					img_pixel[pos] = TileRiceDecompressor.getInt(tmp, p);
-					p += 4;
-					pos++;
+	public static void main(String[] args ) {
+		try {
+			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/pop_1_9_kroupa_1e3_Z0.02.fits", null);
+			//			FitsProduct fp = new FitsProduct("/home/michel/fuse.fits", null);
+			FitsProduct fp = new FitsProduct("/home/michel/Desktop/xe001.fits", null);
+			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/SSA.xml", null);
+			//			ImageHDU himage = (ImageHDU)fp.fits_data.getHDU(0);
+			//			int[] size = himage.getAxes();
+			//			System.out.println(size.length + " " + size[0]);
+			//System.exit(1);
+			//			ImageHDU bHDU = (ImageHDU) fp.fits_data.getHDU(0);
+			//			System.out.println(bHDU.getAxes()[0] + " " + bHDU.isData());
+			//		
+			//			ImageHDU.
+			//			System.out.println(bHDU.getClass().getName());
+			//			System.exit(1);
+			//			Fits f = new Fits("/home/michel/Desktop/tile_eso.fit");
+			//			BinaryTableHDU t = (BinaryTableHDU) f.getHDU(1);
+			//			byte[] buf = new byte[4300000];
+			//			ArrayDataInput arg0 = new BufferedDataInputStream(new ByteArrayInputStream(buf));
+			//			t.readData(arg0);
+			//			arg0.close();
+			//			for( int i=0 ; i<buf.length ; i++ ) {
+			//				if( buf[i] != 0 )
+			//					System.out.println(buf[i]);
+			//			}
+			//			System.exit(1);
+			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
+			for( String en: retour.keySet() ) {
+				System.out.println(en);
+				for( AttributeHandler ah: retour.get(en)) {
+					System.out.println("   -" + ah.getNameorg() + " = " + ah.getValue());
 				}
 			}
-			return img_pixel;
-		}
-		else {
-			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette: HEADER type not recognized" );
-			return null;
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 		}
 
+
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#setSpaceFrameForTable()
-	 */
-	public void setSpaceFrameForTable() throws IgnoreException{
-		LinkedHashMap<String, AttributeHandler> lhm = new LinkedHashMap<String, AttributeHandler>();	
-		this.setKWEntry(lhm);
-		space_frame = new SpaceFrame(this.createTableAttributeHandler(),lhm);
-	}
-
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#setSpaceFrame()
-	 */
-	public void setSpaceFrame() {
-
-		space_frame = new SpaceFrame(this.createTableAttributeHandler());
-	}	
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#getSpaceFrame()
-	 */
-	public SpaceFrame getSpaceFrame() {
-		return space_frame;
-	}
 
 }
 

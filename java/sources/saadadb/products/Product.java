@@ -19,7 +19,10 @@ import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.AxeMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
+import saadadb.dataloader.mapping.ObservationMapping;
+import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.dataloader.mapping.RepositoryMode;
 import saadadb.exceptions.AbortException;
@@ -32,16 +35,17 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.CoordSystem;
 import saadadb.products.inference.Coord;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 import saadadb.sqltable.Table_Saada_Loaded_File;
-import saadadb.util.ChangeKey;
 import saadadb.util.CopyFile;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
-import cds.astro.FK5;
 import cds.astro.ICRS;
 
 /**
@@ -57,10 +61,6 @@ import cds.astro.ICRS;
  *
  */
 public class Product /*extends File*/ {
-	/** * @version $Id: Product.java 915 2014-01-29 16:59:00Z laurent.mistahl $
-
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	protected static String separ = System.getProperty("file.separator");
 	/*
@@ -77,42 +77,81 @@ public class Product /*extends File*/ {
 	 * loader mapping
 	 */
 	protected  ProductMapping mapping;
-	
+
 	/**The list which maps attribute names formated in the standard of Saada (keys) to their objects modelling attribute informations (values)**/
 	protected Map<String, AttributeHandler> productAttributeHandler;
 	protected String fmtsignature;
 	/*
 	 * references of attributes handlers used to map the collection level
 	 */
-	protected AttributeHandler min_err_attribute=null;
-	protected AttributeHandler maj_err_attribute=null;
-	protected AttributeHandler angle_err_attribute=null;
-	protected AttributeHandler ra_attribute=null;
-	protected AttributeHandler dec_attribute=null;
+	/*
+	 * Observation Axe
+	 */
 	protected List<AttributeHandler> name_components;
+	protected AttributeHandler obs_collection_ref=null;
+	protected AttributeHandler target_name_ref=null;
+	protected AttributeHandler facility_name_ref=null;
+	protected AttributeHandler instrument_name_ref=null;
+	protected PriorityMode observationMappingPriority = PriorityMode.LAST;
+	protected ObservationKWDetector observationKWDetector = null;
+	/*
+	 * Space Axe
+	 */
+	protected AttributeHandler error_maj_ref=null;
+	protected AttributeHandler error_min_ref=null;
+	protected AttributeHandler error_angle_ref=null;
+	protected AttributeHandler s_ra_ref=null;
+	protected AttributeHandler s_dec_ref=null;
+	protected PriorityMode spaceMappingPriority = PriorityMode.LAST;
+	protected SpaceKWDetector spaceKWDetector = null;
+
+	/*
+	 * Energy Axe
+	 */
+	protected AttributeHandler em_min_ref=null;
+	protected AttributeHandler em_max_ref=null;
+	protected AttributeHandler x_unit_org_ref=null;
+	protected PriorityMode energyMappingPriority = PriorityMode.LAST;
+	protected EnergyKWDetector energyKWDetector = null;
+	/*
+	 * Time Axe
+	 */
+	protected AttributeHandler t_min_ref=null;
+	protected AttributeHandler t_max_ref=null;
+	protected PriorityMode timeMappingPriority = PriorityMode.LAST;
+	protected TimeKWDetector timeKWDetector = null;
+
 	/* map: name of the collection attribute => attribute handler of the current product*/
 	protected Map<String,AttributeHandler> extended_attributes;
 	protected List<AttributeHandler> ignored_attributes;
-	
+
 	protected AttributeHandler system_attribute;
 	protected AttributeHandler equinox_attribute;
 	protected Astroframe astroframe;
-	
+
 	/** The file type ("FITS" or "VO") * */
 	protected String typeFile;
 	protected MetaClass metaclass;
 	public SaadaInstance saadainstance;
-	
+
 	/**
 	 * Constructor. This is a product constructor for the new loader.
 	 * @param file
 	 * @param conf
+	 * @throws FatalException 
 	 */
-	public Product(File file, ProductMapping conf){		
+	public Product(File file, ProductMapping conf) throws FatalException{		
 		this.file = file;
 		this.mapping = conf;
+		/*
+		 * priority aef copied for conveniance
+		 */
+		this.observationMappingPriority = conf.getObservationAxeMapping().getPriority();
+		this.spaceMappingPriority = conf.getSpaceAxeMapping().getPriority();
+		this.energyMappingPriority = conf.getEnergyAxeMapping().getPriority();
+		this.timeMappingPriority = conf.getTimeAxeMapping().getPriority();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#closeStream()
 	 */
@@ -121,44 +160,55 @@ public class Product /*extends File*/ {
 			productFile.closeStream();
 		}
 	}
-	
-	/**
-	 * Returns the value corresponding finded in the product file to the key
-	 * word in parameter. Cross_reference of the homonymous method defined in
-	 * the current product file.
-	 * 
-	 * @param String
-	 *            The key word.
-	 * @return String The value corresponding to this key word, if he exists,
-	 *         else null.
-	 */
-	public String getKWValueQuickly(String key) {
-		return productFile.getKWValueQuickly(key);
-	}
-	
-	
-	/**
-	 * @param key
-	 * @return
-	 */
-	public boolean hasValuedKW(String key) {
-		if( productAttributeHandler != null ) {
-		for( AttributeHandler ah: productAttributeHandler.values()  )  {
-			if( ah.getNameattr().equals(key) || ah.getNameorg().equals(key)) {
-				return true;
+
+	private void setObservationKWDetector() throws SaadaException {
+		if( this.observationKWDetector == null) {
+			// unit tst purpose
+			if(this.productFile == null ) {
+				this.observationKWDetector = new ObservationKWDetector(this.productAttributeHandler);
+			} else {
+				this.observationKWDetector = this.productFile.getObservationKWDetector(false);
 			}
 		}
-		}
-		return false;
 	}
-	
+	private void setSpaceKWDetector() throws SaadaException {
+		if( this.spaceKWDetector == null) {
+			// unit tst purpose
+			if(this.productFile == null ) {
+				this.spaceKWDetector = new SpaceKWDetector(this.productAttributeHandler);
+			} else {
+				this.spaceKWDetector = this.productFile.getSpaceKWDetector(false);
+			}
+		}
+	}
+	private void setEnergyKWDetector() throws SaadaException {
+		if( this.energyKWDetector == null) {
+			// unit tst purpose
+			if(this.productFile == null ) {
+				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler);
+			} else {
+				this.energyKWDetector = this.productFile.getEnergyKWDetector(false);
+			}
+		}
+	}
+	private void setTimeKWDetector() throws SaadaException {
+		if( this.timeKWDetector == null) {
+			// unit tst purpose
+			if(this.productFile == null ) {
+				this.timeKWDetector = new TimeKWDetector(this.productAttributeHandler);
+			} else {
+				this.timeKWDetector = this.productFile.getTimeKWDetector(false);
+			}
+		}
+	}
+
 	/**
 	 * @return
 	 */
 	public ProductMapping getMapping() {
 		return this.mapping;
 	}
-	
+
 	/**
 	 * Returns the list which maps attribute names formated in the standard of
 	 * Saada (keys) to their objects modelling attribute informations (values).
@@ -174,7 +224,7 @@ public class Product /*extends File*/ {
 	public Map<String, AttributeHandler> getProductAttributeHandler() {
 		return this.productAttributeHandler;
 	}
-	
+
 	/**
 	 * Returns the algorithmics value for the product characteristics
 	 * (attributes without values) with md5. Cross_reference of the homonymous
@@ -185,19 +235,14 @@ public class Product /*extends File*/ {
 	public String getFmtsignature() {
 		return fmtsignature;
 	}
-	
-	public String getTableMd5() {
-		return null;
-	}
-	
-		
+
 	/**
 	 * @return
 	 */
 	public ProductFile getProducFile() {
 		return productFile;
 	}
-	
+
 	/**
 	 * In case of the product can have table: Returns an enumeration of the
 	 * entries in this table. Initializes the enumeration in the product file.
@@ -212,7 +257,7 @@ public class Product /*extends File*/ {
 		productFile.initEnumeration();
 		return productFile;
 	}
-	
+
 	/**
 	 * In case of the product can have table: Returns the row number in the
 	 * table. If there is no table for this product format, this method will
@@ -226,8 +271,8 @@ public class Product /*extends File*/ {
 	public int getNRows() throws SaadaException {
 		return productFile.getNRows();
 	}
-	
-	
+
+
 	/**
 	 * This default method load the extended attributes in the parametered
 	 * product.
@@ -252,7 +297,7 @@ public class Product /*extends File*/ {
 							"Extended attribute " + ext_att_name 
 							+ " set with the KW  <" + ah.getNameorg()
 							+ "=" + value + ">");
-					
+
 				} catch (Exception e) {
 					Messenger.printMsg(Messenger.WARNING,
 							"Extended attribute " + ext_att_name 
@@ -262,7 +307,7 @@ public class Product /*extends File*/ {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method converts the equinox String into the corresponding double
 	 * value, and returns this double value. By default, the equinox value is
@@ -279,8 +324,11 @@ public class Product /*extends File*/ {
 		}
 		return value;
 	}
-	
-	
+
+	/********************************************
+	 * Code loading data within the DB
+	 *********************************************/
+
 	/**
 	 * This method builds a SaadaInstance and stores it into the DB
 	 * It is used for all data categories except for entries where the SaadaInstance step is skipped
@@ -288,7 +336,7 @@ public class Product /*extends File*/ {
 	 * @throws Exception
 	 */
 	public void loadValue() throws Exception  {
-		
+
 		this.saadainstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.metaclass.getName()).newInstance();
 		/*
 		 * Build the Saada instance
@@ -324,7 +372,7 @@ public class Product /*extends File*/ {
 	 * @throws Exception
 	 */
 	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
-		
+
 		this.saadainstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.metaclass.getName()).newInstance();
 		/*
 		 * Build the Saada instance
@@ -352,7 +400,7 @@ public class Product /*extends File*/ {
 		this.saadainstance.store(colwriter, buswriter);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.file.getName() + "> complete");
 	}
-	
+
 	/**
 	 * Copy the product file into the repository with the name given as parameter
 	 * @param rep_name
@@ -365,12 +413,12 @@ public class Product /*extends File*/ {
 		 * product_url_csa is set with the file name
 		 */
 		if( this.mapping.getRepositoryMode() == RepositoryMode.COPY || 
-			this.mapping.getRepositoryMode() == RepositoryMode.MOVE) {
+				this.mapping.getRepositoryMode() == RepositoryMode.MOVE) {
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this, null);
 			String reportFile = Database.getRepository() 
-						+ separ + this.mapping.getCollection() 
-						+ separ + Category.explain(this.mapping.getCategory()) 
-						+ separ;
+			+ separ + this.mapping.getCollection() 
+			+ separ + Category.explain(this.mapping.getCategory()) 
+			+ separ;
 			CopyFile.copy(this.file.getAbsolutePath(), reportFile + repname);
 			if( this.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
 				if (Messenger.debug_mode)
@@ -401,12 +449,12 @@ public class Product /*extends File*/ {
 		 * product_url_csa is set with the file name
 		 */
 		if( this.mapping.getRepositoryMode() == RepositoryMode.COPY || 
-			this.mapping.getRepositoryMode() == RepositoryMode.MOVE) {
+				this.mapping.getRepositoryMode() == RepositoryMode.MOVE) {
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this, null, loadedfilewriter);
 			String reportFile = Database.getRepository() 
-						+ separ + this.mapping.getCollection() 
-						+ separ + Category.explain(this.mapping.getCategory()) 
-						+ separ;
+			+ separ + this.mapping.getCollection() 
+			+ separ + Category.explain(this.mapping.getCategory()) 
+			+ separ;
 			CopyFile.copy(this.file.getAbsolutePath(), reportFile + repname);
 			if( this.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
 				if (Messenger.debug_mode)
@@ -453,34 +501,34 @@ public class Product /*extends File*/ {
 	 * @throws Exception
 	 */
 	protected void setPositionFields(int number) throws Exception {
-		
-		
-		if( this.astroframe != null && this.ra_attribute != null && this.dec_attribute != null ) {
+
+
+		if( this.astroframe != null && this.s_ra_ref != null && this.s_dec_ref != null ) {
 			String ra_val;
 			/*
 			 * Position values can either be read in keyword or be constants values
 			 */
-			if( this.ra_attribute.isConstantValue() ) {
-				ra_val = this.ra_attribute.getValue();
+			if( this.s_ra_ref.isConstantValue() ) {
+				ra_val = this.s_ra_ref.getValue();
 			}
 			else {
-				ra_val = this.ra_attribute.getValue().replaceAll("'", "");
+				ra_val = this.s_ra_ref.getValue().replaceAll("'", "");
 			}
 			String dec_val;
-			if( this.dec_attribute.isConstantValue() ) {
-				dec_val = this.dec_attribute.getValue();
+			if( this.s_dec_ref.isConstantValue() ) {
+				dec_val = this.s_dec_ref.getValue();
 			}
 			else {
-				dec_val = this.dec_attribute.getValue().replaceAll("'", "");
+				dec_val = this.s_dec_ref.getValue().replaceAll("'", "");
 			}
-			
+
 			/*
 			 * Errors are not set when positions are not set
 			 */
 			if( ra_val == null || ra_val.equals("") || dec_val == null || dec_val.equals("") ||
-				ra_val.equals("Infinity") ||dec_val.equals("Infinity") ||
-				ra_val.equals("NaN") ||dec_val.equals("NaN") 
-				) {
+					ra_val.equals("Infinity") ||dec_val.equals("Infinity") ||
+					ra_val.equals("NaN") ||dec_val.equals("NaN") 
+			) {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set: keywords not set");
 				return;
 			}
@@ -494,7 +542,7 @@ public class Product /*extends File*/ {
 
 				 * Both coordinates in one fields
 				 */
-				if( this.ra_attribute == this.dec_attribute) {
+				if( this.s_ra_ref == this.s_dec_ref) {
 					acoo= new Astrocoo(this.astroframe, ra_val ) ;
 				}
 				/*
@@ -503,7 +551,7 @@ public class Product /*extends File*/ {
 				else {
 					acoo= new Astrocoo(this.astroframe, ra_val + " " + dec_val) ;
 				}
-				
+
 				double converted_coord[] = Coord.convert(this.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
 				if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + this.astroframe + "> to <" + Database.getAstroframe() + ">");				
 				double ra = converted_coord[0];
@@ -533,7 +581,7 @@ public class Product /*extends File*/ {
 			} // if position really found
 		} //if position mapped
 	}
-		
+
 	/**
 	 * Set all fields related to the position error at collection level
 	 * @param this.saadainstance Saadainstance to be populated
@@ -542,7 +590,7 @@ public class Product /*extends File*/ {
 	 */
 	protected void setPosErrorFields(int number) throws Exception {
 		String error_unit = this.mapping.getSpaceAxeMapping().getErrorUnit();
-		if( this.maj_err_attribute != null &&  error_unit != null ){
+		if( this.error_min_ref != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
 			/*
 			 * Errors are always stored in degrees in Saada
@@ -558,28 +606,28 @@ public class Product /*extends File*/ {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;
 			}
-			if( this.angle_err_attribute == null ) {
+			if( this.error_angle_ref == null ) {
 				angle = 90.0;
 			}
 			else {
-				angle = Double.parseDouble(this.angle_err_attribute.getValue());				
+				angle = Double.parseDouble(this.error_angle_ref.getValue());				
 			}
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( this.maj_err_attribute == null && this.min_err_attribute != null ) {
-				maj_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
-				min_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
+			if( this.error_min_ref == null && this.error_maj_ref != null ) {
+				maj_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
+				min_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
 			}
-			else if( this.maj_err_attribute != null && this.min_err_attribute == null ) {
-				maj_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
-				min_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
+			else if( this.error_min_ref != null && this.error_maj_ref == null ) {
+				maj_err = convert*Double.parseDouble(this.error_min_ref.getValue());
+				min_err = convert*Double.parseDouble(this.error_min_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
 			}
-			else if( this.maj_err_attribute != null && this.min_err_attribute != null ) {
-				maj_err = convert*Double.parseDouble(this.maj_err_attribute.getValue());
-				min_err = convert*Double.parseDouble(this.min_err_attribute.getValue());
+			else if( this.error_min_ref != null && this.error_maj_ref != null ) {
+				maj_err = convert*Double.parseDouble(this.error_min_ref.getValue());
+				min_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
 			}
 		}
@@ -588,7 +636,7 @@ public class Product /*extends File*/ {
 		}// if error mapped 	
 	}
 
-	
+
 	/* ######################################################
 	 * 
 	 * ATTRIBUTES, CONSTRUCTOR AND METHODE FOR THE NEW LOADER
@@ -600,19 +648,19 @@ public class Product /*extends File*/ {
 	 * @throws Exception
 	 */
 	protected void setBusinessFields() throws Exception {
-		Field fld[] = this.saadainstance.getClass().getDeclaredFields();
+		List<Field> fld = this.saadainstance.getClassLevelPersisentFields();
 		Map<String, AttributeHandler> tableAttributeHandler  = getProductAttributeHandler();
-		
+
 		String md5Value = "";
-		
-		for (int i = 0; i < fld.length; i++) {
-			String keyObj = fld[i].getName();
+
+		for (Field f: fld ) {
+			String keyObj = f.getName();
 			if (tableAttributeHandler.containsKey(keyObj)) {
 				AttributeHandler attr = tableAttributeHandler.get(keyObj);
 				String value = attr.getValue();
 				if (value != null) {
 					md5Value += value;
-					this.saadainstance.setInField(fld[i], value);
+					this.saadainstance.setInField(f, value);
 				}
 			} else
 				if (Messenger.debug_mode)
@@ -620,7 +668,7 @@ public class Product /*extends File*/ {
 		}
 		this.saadainstance.computeContentSignature(md5Value);
 	}
-	
+
 	/**
 	 * Set instance name mapping rule and with the file name if not set
 	 * Set product url and date of loading
@@ -631,7 +679,7 @@ public class Product /*extends File*/ {
 		this.saadainstance.setAccess_url(this.file.getName());	
 		this.saadainstance.setDate_load(new java.util.Date().getTime());
 	}
-	
+
 	/**
 	 * Build the instance name fom the configuration or take the filename
 	 * if the configuration can not be used, tge name is made withthe 
@@ -646,8 +694,7 @@ public class Product /*extends File*/ {
 			for( AttributeHandler ah: this.name_components ) {
 				if( cpt > 0 ) {
 					name += " " + ah.getValue();
-				}
-				else {
+				} else {
 					name += ah.getValue();					
 				}
 				cpt++;
@@ -661,18 +708,20 @@ public class Product /*extends File*/ {
 		if( name == null || name.length() == 0 ) {
 			name = this.file.getName();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
-			
+
 			if( suffix == null ) {
 				name =  name.trim().replaceAll("'", "");
-			}
-			else {
+			} else {
 				name = name.trim().replaceAll("'", "") + "_" + suffix;			
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
 		}
 		return name;
 	}
-	
+
+	/************************************************************************************************
+	 * Code doing the mapping between the collection KW, the mapping rule and the KW of the data file
+	 *************************************************************************************************/
 	/**
 	 * @param configuration
 	 * @throws SaadaException 
@@ -680,8 +729,8 @@ public class Product /*extends File*/ {
 	 * @throws IOException
 	 */
 	public void initProductFile(ProductMapping mapping) throws SaadaException{
-		
-		this.loadProductFile(mapping);
+
+		this.readProductFile(mapping);
 		try {
 			this.mapCollectionAttributes();
 		} catch (Exception e) {
@@ -689,15 +738,15 @@ public class Product /*extends File*/ {
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		}	
 	}
-	
-	
+
+
 	/**
 	 * @param configuration
 	 * @throws FitsException
 	 * @throws SaadaException
 	 * @throws AbortException
 	 */
-	public void loadProductFile(ProductMapping mapping) throws SaadaException{
+	public void readProductFile(ProductMapping mapping) throws SaadaException{
 		this.mapping = mapping;
 		String filename = this.file.getName();
 		boolean try_votable = false;
@@ -713,10 +762,9 @@ public class Product /*extends File*/ {
 			}
 		} catch(Exception ef) {
 			Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
-			//Messenger.printStackTrace(ef);
 			try_votable = true;
 		}
-		
+
 		if( try_votable ) {			
 			try {
 				this.productFile = new VOTableProduct(this);				
@@ -731,13 +779,12 @@ public class Product /*extends File*/ {
 			}
 		}
 		this.setFmtsignature();
-		this.productFile.setSpaceFrame();
 	}
-	
-	
+
+
 	/**
 	 * Compute the MD key of the format read in the tabel of attribte handler.
-	 * The key is independant fron the attribute order
+	 * The key is independent from the attribute order
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setFmtsignature() {
@@ -761,13 +808,190 @@ public class Product /*extends File*/ {
 		this.fmtsignature =  MD5Key.calculMD5Key(md5Key+md5Type);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "fmtsignature " + this + " " + this.getName() + " " +  this.fmtsignature );
 	}
-	
+
+	/************************************************************************
+	 * Mapping of the axe field references
+	 */
+	/**
+	 * 
+	 */
+	protected AttributeHandler getMappedAttributeHander(ColumnMapping columnMapping) {
+		AttributeHandler cmah = columnMapping.getHandler();
+
+		if( columnMapping.byValue() ){
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take constant value <" + columnMapping.getValue()+ ">");
+			return cmah;
+		} else {
+			for( AttributeHandler ah: this.productAttributeHandler.values()) {
+				String keyorg  = ah.getNameorg();
+				String keyattr = ah.getNameattr();
+				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take key word <" + ah.getNameorg() + ">");
+					return ah;
+				}
+			}
+		}
+		return null;
+	}
 	/**
 	 * @throws Exception 
 	 * 
 	 */
 	protected void mapCollectionAttributes() throws Exception {
+		this.mapObservationAxe();
+		this.mapSpaceAxe();
+		this.mapEnergyAxe();
+		this.mapTimeAxe();
+		this.mapIgnoredAndExtendedAttributes();
+	}
+
+	protected void mapObservationAxe() throws Exception {
 		this.mapInstanceName();
+		AxeMapping mapping = this.mapping.getObservationAxeMapping();
+		setObservationKWDetector();
+
+		switch(this.observationMappingPriority){
+		case ONLY:			
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: ONLY: only mapped keyword will be used");
+		this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
+		this.target_name_ref = getMappedAttributeHander(mapping.getColumnMapping("target_name"));
+		this.facility_name_ref = getMappedAttributeHander(mapping.getColumnMapping("facility_name"));
+		this.instrument_name_ref = getMappedAttributeHander(mapping.getColumnMapping("instrument_name"));
+		break;
+
+		case FIRST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+		this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
+		if( this.obs_collection_ref == null) {
+			this.obs_collection_ref = this.observationKWDetector.getCollNameAttribute();
+		}
+		this.target_name_ref = getMappedAttributeHander(mapping.getColumnMapping("target_name"));
+		if( this.target_name_ref == null) {
+			this.target_name_ref = this.observationKWDetector.getTargetAttribute();
+		}
+		this.facility_name_ref = getMappedAttributeHander(mapping.getColumnMapping("facility_name"));
+		if( this.facility_name_ref == null) {
+			this.facility_name_ref = this.observationKWDetector.getFacilityAttribute();
+		}
+		this.instrument_name_ref = getMappedAttributeHander(mapping.getColumnMapping("instrument_name"));
+		if( this.instrument_name_ref == null) {
+			this.instrument_name_ref = this.observationKWDetector.getInstrumentAttribute();
+		}
+		break;
+		case LAST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
+		this.obs_collection_ref = this.observationKWDetector.getCollNameAttribute();
+		if( this.obs_collection_ref == null) {
+			this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
+		}
+		this.target_name_ref = this.observationKWDetector.getTargetAttribute();
+		if( this.target_name_ref == null) {
+			this.target_name_ref = getMappedAttributeHander(mapping.getColumnMapping("target_name"));
+		}
+		this.facility_name_ref = this.observationKWDetector.getFacilityAttribute();
+		if( this.facility_name_ref == null) {
+			this.facility_name_ref = getMappedAttributeHander(mapping.getColumnMapping("facility_name"));
+		}
+		this.instrument_name_ref = this.observationKWDetector.getInstrumentAttribute();
+		if( this.instrument_name_ref == null) {
+			this.instrument_name_ref = getMappedAttributeHander(mapping.getColumnMapping("instrument_name"));
+		}
+		break;
+		}
+	}
+	
+	protected void mapEnergyAxe() throws Exception {
+		AxeMapping mapping = this.mapping.getEnergyAxeMapping();
+		setEnergyKWDetector();
+
+		switch(this.energyMappingPriority){
+		case ONLY:			
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keyword will be used");
+		this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		break;
+
+		case FIRST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+		this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		if( this.em_max_ref == null) {
+			this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+		}
+		this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		if( this.em_min_ref == null) {
+			this.em_min_ref = this.energyKWDetector.getEminAttribute();
+		}
+		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		if( this.x_unit_org_ref == null) {
+			this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+		}
+
+		break;
+		case LAST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
+		this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+		if( this.em_max_ref == null) {
+			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		}
+		this.em_min_ref = this.energyKWDetector.getEminAttribute();
+		if( this.em_min_ref == null) {
+			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		}
+		this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+		if( this.x_unit_org_ref == null) {
+			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		}
+		break;
+		}
+	}
+	protected void mapTimeAxe() throws Exception {
+		AxeMapping mapping = this.mapping.getTimeAxeMapping();
+		setEnergyKWDetector();
+
+		switch(this.energyMappingPriority){
+		case ONLY:			
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keyword will be used");
+		this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		break;
+
+		case FIRST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+		this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		if( this.em_max_ref == null) {
+			this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+		}
+		this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		if( this.em_min_ref == null) {
+			this.em_min_ref = this.energyKWDetector.getEminAttribute();
+		}
+		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		if( this.x_unit_org_ref == null) {
+			this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+		}
+
+		break;
+		case LAST:
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
+		this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+		if( this.em_max_ref == null) {
+			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+		}
+		this.em_min_ref = this.energyKWDetector.getEminAttribute();
+		if( this.em_min_ref == null) {
+			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
+		}
+		this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+		if( this.x_unit_org_ref == null) {
+			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		}
+		break;
+		}
+	}
+
+	protected void mapSpaceAxe() throws Exception {
 		/*
 		 * Coo sys done in 2nd: can use position mapping to detect the coord system
 		 */
@@ -779,9 +1003,8 @@ public class Product /*extends File*/ {
 			this.mapCollectionPosAttributes();
 			this.mapCollectionPoserrorAttributes();
 		}
-		this.mapIgnoredAndExtendedAttributes();
 	}
-	
+
 	/**
 	 * @throws FatalException 
 	 * 
@@ -819,15 +1042,15 @@ public class Product /*extends File*/ {
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * @throws FatalException 
 	 * 
 	 */
 	protected void mapCollectionCooSysAttributes() throws SaadaException {
 		String msg = "";
-		switch(this.mapping.getSpaceAxeMapping().getPriority()) {
+		switch(this.spaceMappingPriority) {
 		case ONLY :
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: ONLY: only mapped keyword will be used");
 			this.mapCollectionCooSysAttributesFromMapping();
@@ -860,8 +1083,8 @@ public class Product /*extends File*/ {
 		 */
 		if( this.astroframe == null && this.system_attribute == null ) {
 			if( this.mapping.getSpaceAxeMapping().mappingOnly() ) {
-				this.ra_attribute = null;
-				this.dec_attribute = null;
+				this.s_ra_ref = null;
+				this.s_dec_ref = null;
 				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
 			}
 			else {
@@ -887,26 +1110,21 @@ public class Product /*extends File*/ {
 					+ "> ");
 		} 		
 	}
-	
+
 	/**
 	 * @return
+	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionCooSysAttributesAuto() {
-		SpaceFrame sf;
-		// unit tst purpose
-		if(this.productFile == null ) {
-			sf = new SpaceFrame(this.productAttributeHandler);
-		} else {
-			sf = this.productFile.getSpaceFrame();
-		}
-		if( (this.astroframe = sf.getFrame()) != null ) {
+	private boolean mapCollectionCooSysAttributesAuto() throws SaadaException {
+		this.setSpaceKWDetector();
+		if( (this.astroframe = this.spaceKWDetector.getFrame()) != null ) {
 			return true;
 		} else {
 			return false;
 		}
 
 	}
-	
+
 	/**
 	 * Attemps to apply the Coord system mappping rules to the current product
 	 * @return
@@ -983,14 +1201,14 @@ public class Product /*extends File*/ {
 			}
 		}
 	}
-	
+
 	/**
 	 * @throws FatalException 
 	 * 
 	 */
 	protected void mapCollectionPosAttributes() throws SaadaException {
 		String msg = "";
-		switch( this.mapping.getSpaceAxeMapping().getPriority()) {
+		switch( this.spaceMappingPriority) {
 		case ONLY:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: ONLY: only mapped keyword will be used");
 			this.mapCollectionPosAttributesFromMapping() ;
@@ -1021,22 +1239,21 @@ public class Product /*extends File*/ {
 		/*
 		 * Printout the position status
 		 */
-		if( this.ra_attribute == null || this.dec_attribute == null ) {
+		if( this.s_ra_ref == null || this.s_dec_ref == null ) {
 			/*
 			 * For image, position can still be set from WCS keywords
 			 */
 			if(  this.mapping.getSpaceAxeMapping().mappingOnly() || this.mapping.getCategory() != Category.IMAGE ) {
 				Messenger.printMsg(Messenger.WARNING, "Position neither found " + msg + " in keywords nor by value");
 			} 
-		}
-		else {
+		} else {
 			Messenger.printMsg(Messenger.TRACE, "Position found " + msg + "<" 
-					+ ((this.ra_attribute.isConstantValue())? ("value="+this.ra_attribute.getValue()): ("keyword="+this.ra_attribute.getNameorg()))
-					+ ((this.dec_attribute.isConstantValue())? (" value="+this.dec_attribute.getValue()): (" keyword="+this.dec_attribute.getNameorg()))
+					+ ((this.s_ra_ref.isConstantValue())? ("value="+this.s_ra_ref.getValue()): ("keyword="+this.s_ra_ref.getNameorg()))
+					+ ((this.s_dec_ref.isConstantValue())? (" value="+this.s_dec_ref.getValue()): (" keyword="+this.s_dec_ref.getNameorg()))
 					+ ">");
 		} 
 	}
-	
+
 	/**
 	 * @throws FatalException 
 	 * 
@@ -1071,32 +1288,32 @@ public class Product /*extends File*/ {
 			this.mapCollectionPoserrorAttributesAuto();
 			msg = " (auto. detection) ";
 		}
-		
+
 		/*
 		 * Mapp errors on positions
 		 */
-		if( this.min_err_attribute == null || this.maj_err_attribute == null ) {
+		if( this.error_maj_ref == null || this.error_min_ref == null ) {
 			Messenger.printMsg(Messenger.WARNING, "Error ellipse neither found " + msg + " in keywords nor by value");
 		} 
 		else {
 			this.setError_unit();
 			Messenger.printMsg(Messenger.TRACE, "Error ellipse mapped " + msg + "<" 
-					+ ((this.maj_err_attribute.isConstantValue())? ("maj value="+this.maj_err_attribute.getValue()): ("maj keyword="+this.maj_err_attribute.getNameorg()))
-					+ ((this.min_err_attribute.isConstantValue())? (" min value="+this.min_err_attribute.getValue()): (" min keyword="+this.min_err_attribute.getNameorg()))
-					+ ((this.angle_err_attribute.isConstantValue())? (" angle value="+this.angle_err_attribute.getValue()): (" angle keyword="+this.angle_err_attribute.getNameorg()))
+					+ ((this.error_min_ref.isConstantValue())? ("maj value="+this.error_min_ref.getValue()): ("maj keyword="+this.error_min_ref.getNameorg()))
+					+ ((this.error_maj_ref.isConstantValue())? (" min value="+this.error_maj_ref.getValue()): (" min keyword="+this.error_maj_ref.getNameorg()))
+					+ ((this.error_angle_ref.isConstantValue())? (" angle value="+this.error_angle_ref.getValue()): (" angle keyword="+this.error_angle_ref.getNameorg()))
 					+ "> unit: " + this.mapping.getSpaceAxeMapping().getErrorUnit());
 		} 
 	}
-	
+
 	/**
 	 * Set the error unit according to the error mapping priority
 	 * @throws FatalException 
 	 * 
 	 */
 	private void setError_unit() throws SaadaException {
-		String unit_read = this.maj_err_attribute.getUnit();
+		String unit_read = this.error_min_ref.getUnit();
 		if( unit_read == null ) {
-			unit_read = this.min_err_attribute.getUnit();			
+			unit_read = this.error_maj_ref.getUnit();			
 		}
 		switch( this.mapping.getSpaceAxeMapping().getPriority()) {
 		case FIRST: 
@@ -1110,7 +1327,7 @@ public class Product /*extends File*/ {
 			}
 			break;
 		}
-		
+
 	}
 	/**
 	 * Set attributes used to build nstance names.
@@ -1181,83 +1398,46 @@ public class Product /*extends File*/ {
 					return;
 				}
 			}
-			
+
 		}
 	}
 	/**
 	 * Look first for fields with good UCDs. 
 	 * Parse field names if not
 	 * @return
+	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionPosAttributesAuto() {
-		SpaceFrame sp;
-		// unit tst purpose
-		if(this.productFile == null ) {
-			sp = new SpaceFrame(this.productAttributeHandler);
-		} else {
-			sp = this.productFile.getSpaceFrame();
-		}
-		if( sp.arePosColFound() ) {
-			this.ra_attribute = sp.getAscension_kw();
-			this.dec_attribute = sp.getDeclination_kw();				
+	private boolean mapCollectionPosAttributesAuto() throws SaadaException {
+		this.setSpaceKWDetector();
+		if( this.spaceKWDetector.arePosColFound() ) {
+			this.s_ra_ref = this.spaceKWDetector.getAscension_kw();
+			this.s_dec_ref = this.spaceKWDetector.getDeclination_kw();				
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Look first for fields with good UCDs. 
 	 * Parse field names if not
 	 * @return
+	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionPoserrorAttributesAuto() {
-		boolean ra_err_found = false;
-		boolean dec_err_found = false;
-		boolean angle_err_found = false;
-		for( String ahkey: this.productAttributeHandler.keySet() ){
-			AttributeHandler ah = this.productAttributeHandler.get(ahkey);
-			String ucd = ah.getUcd();
-			/*
-			 * Select ERROR keywords by UCDs
-			 */
-			if( !ra_err_found && (ucd.equals("pos.eq.ra;meta.main;stat.error") 
-					|| ucd.equals("pos.eq.ra;stat.error")) ) {
-				this.maj_err_attribute = ah;
-				ra_err_found = true;
-			}
-			else if( !dec_err_found && (ucd.equals("pos.eq.dec;meta.main;stat.error") 
-					|| ucd.equals("pos.eq.dec;stat.error")) ){
-				this.min_err_attribute = ah;
-				dec_err_found = true;
-			}
-			else if( !ra_err_found && !dec_err_found && ucd.equals("pos.eq;stat.error") || ucd.equals("pos.eq;meta.main;stat.error")  ) {
-				this.maj_err_attribute = ah;
-				this.min_err_attribute = ah;				
-				ra_err_found = true;
-				dec_err_found = true;
-			}
-			else if( !angle_err_found && ucd.equals("phys.angSize;pos.errorEllipse")  ){
-				this.angle_err_attribute = ah;
-				angle_err_found = true;
-			}
-			else if( !ra_err_found && !dec_err_found && ucd.equals("pos.eq;stat.error") || ucd.equals("pos.eq;meta.main;stat.error")  ) {
-				this.maj_err_attribute = ah;
-				this.min_err_attribute = ah;				
-				ra_err_found = true;
-				dec_err_found = true;
-			}
-			
-		}
-		if( this.angle_err_attribute == null ) {
-			this.angle_err_attribute = new AttributeHandler();
-			this.angle_err_attribute.setNameattr(ColumnMapping.NUMERIC
-);
-			this.angle_err_attribute.setValue("0");
+	private boolean mapCollectionPoserrorAttributesAuto() throws SaadaException {
+		this.setSpaceKWDetector();
+		this.error_min_ref = this.spaceKWDetector.getErrorMin();
+		this.error_maj_ref = this.spaceKWDetector.getErrorMaj();
+		this.error_angle_ref = this.spaceKWDetector.getErrorAngle();
+
+		if( this.error_angle_ref == null ) {
+			this.error_angle_ref = new AttributeHandler();
+			this.error_angle_ref.setNameattr(ColumnMapping.NUMERIC);
+			this.error_angle_ref.setValue("0");
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set angle=0 for orror ellipses");
 		}
-		return ra_err_found & dec_err_found & angle_err_found;
+		return (this.error_min_ref != null) & (this.error_maj_ref != null);
 	}
 
 	/**
@@ -1273,11 +1453,11 @@ public class Product /*extends File*/ {
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( raMapping.byValue() ) {
-			this.ra_attribute = raMapping.getHandler();
+			this.s_ra_ref = raMapping.getHandler();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getHandler().getValue() + ">");
 		}
 		if( decMapping.byValue() ) {
-			this.dec_attribute = raMapping.getHandler();	
+			this.s_dec_ref = raMapping.getHandler();	
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getHandler().getValue() + ">");
 		}
 
@@ -1289,45 +1469,21 @@ public class Product /*extends File*/ {
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
-			if( this.ra_attribute == null && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
-				this.ra_attribute = ah;
+			if( this.s_ra_ref == null && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
+				this.s_ra_ref = ah;
 				ra_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as right ascension");
 			}
-			if( this.dec_attribute == null && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
-				this.dec_attribute = ah;
+			if( this.s_dec_ref == null && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
+				this.s_dec_ref = ah;
 				dec_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as declination");
 			}
 		}
 		return (ra_found && dec_found);		
 	}
-	
-	/**
-	 * Simple heuristic trying to find out position keywords
-	 */
-	protected boolean  findRAandDEC() {
-		
-		boolean ra_found = false;
-		boolean dec_found = false;
-		for( AttributeHandler ah: this.productAttributeHandler.values() ) {
-			if( ah.getNameattr().matches(RegExp.RA_KW)) {				
-				this.ra_attribute = ah;
-				ra_found = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as right ascension");
-			}
-			else if( ah.getNameattr().matches(RegExp.DEC_KW)) {				
-				this.dec_attribute = ah;
-				dec_found = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as declination");
-			}
-			if( ra_found && dec_found ){
-				break;
-			}
-		}
-		return (ra_found && dec_found);		
-	}
-	
+
+
 	/**
 	 * @throws FatalException 
 	 * 
@@ -1336,23 +1492,23 @@ public class Product /*extends File*/ {
 		ColumnMapping errMajMapping  =  this.mapping.getSpaceAxeMapping().getColumnMapping("error_maj_csa");
 		ColumnMapping errMinMapping =  this.mapping.getSpaceAxeMapping().getColumnMapping("error_min_csa");
 		ColumnMapping errAngleMapping =  this.mapping.getSpaceAxeMapping().getColumnMapping("error_angle_csa");
-		
+
 		boolean ra_found=false, dec_found=false, angle_found=false;
 		/*
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( errMajMapping.byValue() ) {
-			this.maj_err_attribute = errMajMapping.getHandler();	
+			this.error_min_ref = errMajMapping.getHandler();	
 			ra_found = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getHandler().getValue() + ">");
 		}
 		if( errMinMapping.byValue() ) {
-			this.min_err_attribute = errMinMapping.getHandler();	
+			this.error_maj_ref = errMinMapping.getHandler();	
 			dec_found = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getHandler().getValue() + ">");
 		}
 		if( errAngleMapping.byValue() ) {
-			this.angle_err_attribute = errAngleMapping.getHandler();	
+			this.error_angle_ref = errAngleMapping.getHandler();	
 			angle_found = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getHandler().getValue() + ">");
 		}
@@ -1365,18 +1521,18 @@ public class Product /*extends File*/ {
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
-			if( this.maj_err_attribute == null && (keyorg.equals(minCol) || keyattr.equals(minCol)) ) {
-				this.maj_err_attribute = ah;
+			if( this.error_min_ref == null && (keyorg.equals(minCol) || keyattr.equals(minCol)) ) {
+				this.error_min_ref = ah;
 				ra_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error Maj axis");
 			}
-			if( this.min_err_attribute == null && (keyorg.equals(maxCol) || keyattr.equals(maxCol)) ) {
-				this.min_err_attribute = ah;
+			if( this.error_maj_ref == null && (keyorg.equals(maxCol) || keyattr.equals(maxCol)) ) {
+				this.error_maj_ref = ah;
 				dec_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error mn axis");
 			}
-			if( this.angle_err_attribute == null && (keyorg.equals(angleCol) || keyattr.equals(angleCol)) ) {
-				this.angle_err_attribute = ah;
+			if( this.error_angle_ref == null && (keyorg.equals(angleCol) || keyattr.equals(angleCol)) ) {
+				this.error_angle_ref = ah;
 				angle_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error ellipse orientation");
 			}
@@ -1386,14 +1542,14 @@ public class Product /*extends File*/ {
 		 */
 		return (ra_found & dec_found & angle_found);		
 	}
-	
+
 	/**
 	 * @return Returns the metaclass.
 	 */
 	public MetaClass getMetaclass() {
 		return metaclass;
 	}
-	
+
 	/**
 	 * @param file_to_merge
 	 * @throws FitsException
@@ -1403,13 +1559,13 @@ public class Product /*extends File*/ {
 	public void mergeProductFormat(File file_to_merge) throws FitsException, IOException, SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Merge format with file <" + file_to_merge.getName() + ">");
-		
+
 		/*
 		 * Build a new set of attribute handlers from the product given as a parameter
 		 */
 		Product prd_to_merge = this.mapping.getNewProductInstance(file_to_merge);
 		prd_to_merge.mapping = this.mapping;
-		
+
 		try {
 			prd_to_merge.productFile = new FitsProduct(prd_to_merge);		
 			this.typeFile = "FITS";
@@ -1424,7 +1580,7 @@ public class Product /*extends File*/ {
 		this.mergeAttributeHandlers(prd_to_merge.getProductAttributeHandler());
 		prd_to_merge.close();
 	}
-	
+
 	/**
 	 * @param ah_to_merge
 	 * @throws FatalException 
@@ -1448,14 +1604,14 @@ public class Product /*extends File*/ {
 		}
 		this.setFmtsignature();
 	}
-	
+
 	/**
 	 * @return Returns the metaclass.
 	 */
 	public void setMetaclass(MetaClass mc) {
 		metaclass = mc;
 	}
-	
+
 	public void printKW() {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Keyword list of " + this.getClass().getName());
 		String[] keys = this.productAttributeHandler.keySet().toArray(new String[0]);
@@ -1463,33 +1619,33 @@ public class Product /*extends File*/ {
 			System.out.println("- " + (i+1) + ": " + keys[i]);
 		}
 	}
-	
-	
+
+
 	/**
 	 * @return Returns the saadainstance.
 	 */
 	public SaadaInstance getSaadainstance() {
 		return saadainstance;
 	}
-	
-	
+
+
 	/**
 	 * @return
 	 */
 	public String getName() {
 		return this.file.getName();
 	}
-	
-	
+
+
 	public CharSequence getCanonicalPath() throws IOException {
 		return this.file.getCanonicalPath();
 	}
-	
-	
+
+
 	public String getParent() {
 		return this.file.getParent();
 	}
-	
+
 	public String toString() {
 		return this.file.getAbsolutePath();
 	}
@@ -1498,10 +1654,10 @@ public class Product /*extends File*/ {
 	 * @return
 	 */
 	public String  possibleClassName() {
-    	String ret = new File(this.productFile.getName()).getName().split("\\.")[0].replaceAll("[^\\w]+", "_").toLowerCase();
-    	if( !ret.matches(RegExp.CLASSNAME) ) {
-    		ret = "C_" + ret;
-    	}
+		String ret = new File(this.productFile.getName()).getName().split("\\.")[0].replaceAll("[^\\w]+", "_").toLowerCase();
+		if( !ret.matches(RegExp.CLASSNAME) ) {
+			ret = "C_" + ret;
+		}
 		return ret;
 	}
 	/**
@@ -1526,11 +1682,11 @@ public class Product /*extends File*/ {
 		for(AttributeHandler ah:  productAttributeHandler.values()) {
 			System.out.println("  " + ah);
 		}
-		System.out.println("min_err_attribute  : " + min_err_attribute);
-		System.out.println("maj_err_attribute  : " + maj_err_attribute);
-		System.out.println("angle_err_attribute: " + angle_err_attribute);
-		System.out.println("ra_attribute       : " + ra_attribute);
-		System.out.println("dec_attribute      : " + dec_attribute);
+		System.out.println("min_err_attribute  : " + error_maj_ref);
+		System.out.println("maj_err_attribute  : " + error_min_ref);
+		System.out.println("angle_err_attribute: " + error_angle_ref);
+		System.out.println("ra_attribute       : " + s_ra_ref);
+		System.out.println("dec_attribute      : " + s_dec_ref);
 		System.out.println("name_components    : ");
 		for(AttributeHandler ah:  name_components) {
 			System.out.println("  " + ah);
@@ -1546,6 +1702,6 @@ public class Product /*extends File*/ {
 		System.out.println("system_attribute   : " + system_attribute);
 		System.out.println("equinox_attribute  : " + equinox_attribute);
 		System.out.println("Astroframe         : " + astroframe);
-		
+
 	}
 }
