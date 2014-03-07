@@ -190,7 +190,6 @@ public abstract class SchemaMapper {
 		while( rs.next()) {
 			num = rs.getInt(1);
 		}
-		rs.close();
 		squery.close();
 		if( num > 0 ) {
 			Messenger.printMsg(Messenger.TRACE, num + " classes with a name starting with " + classname + " found: take " + classname + "_" + num + " as class name");

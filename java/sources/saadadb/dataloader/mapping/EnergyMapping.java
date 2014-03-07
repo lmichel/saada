@@ -15,7 +15,7 @@ public class EnergyMapping extends AxeMapping {
 	 * @throws SaadaException
 	 */
 	EnergyMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		super(ap, new String[]{"dispertion_column", "x_unit_org_csa"}, entryMode);
+		super(ap, new String[]{"dispertion_column", "x_unit_org_csa", "em_min", "em_max"}, entryMode);
 		if( ap.getSpectralUnit() != null )  {
 			this.columnMapping.put("x_unit_org_csa", new ColumnMapping(MappingMode.VALUE, null,ap.getSpectralUnit()));
 		}
@@ -44,6 +44,8 @@ public class EnergyMapping extends AxeMapping {
 				if( m.find() && m.groupCount() == 2 ) {
 					this.columnMapping.put("dispertion_column"
 							, new ColumnMapping(null, new String[]{m.group(1),m.group(2)})) ;
+					this.columnMapping.put("em_min", new ColumnMapping(null, m.group(1)));
+					this.columnMapping.put("em_max", new ColumnMapping(null, m.group(2)));
 				} else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The spectral range <" + sc_col + "> requires 2 values");
 				}
