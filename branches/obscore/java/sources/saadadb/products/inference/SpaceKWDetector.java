@@ -1,15 +1,9 @@
 package saadadb.products.inference;
 
-import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import saadadb.command.ArgsParser;
-import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.Image2D;
-import saadadb.products.Misc;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astroframe;
@@ -26,21 +20,25 @@ import cds.savot.model.SavotCoosys;
  *
  * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
  */
-public class SpaceFrame {
+public class SpaceKWDetector extends KWDetector{
 	private AttributeHandler ascension_kw;
 	private AttributeHandler declination_kw;
+	private AttributeHandler err_min;
+	private AttributeHandler err_maj;
+	private AttributeHandler err_angle;
+	private AttributeHandler fov;
 	private Astroframe frame = null;
 	public static final int FRAME_FOUND = 1;
 	public static final int POS_KW_FOUND = 2;
 	private int status=0;
-	private Map<String, AttributeHandler> tableAttributeHandler;
 
 	
 	/**
 	 * @param tableAttributeHandler
 	 */
-	public SpaceFrame(Map<String, AttributeHandler> tableAttributeHandler) {
-		this.tableAttributeHandler = tableAttributeHandler;
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) {
+		super(tableAttributeHandler);
+		lookForError();
 		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
@@ -108,9 +106,10 @@ public class SpaceFrame {
 	/**
 	 * @param tableAttributeHandler
 	 */
-	public SpaceFrame(LinkedHashMap<String, AttributeHandler> tableAttributeHandler, LinkedHashMap<String, AttributeHandler> columnsAttributeHandler) {
-		this.tableAttributeHandler = tableAttributeHandler;
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> columnsAttributeHandler) {
+		super(tableAttributeHandler);
 		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
+		lookForError();
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
 		}
@@ -179,11 +178,10 @@ public class SpaceFrame {
 	 * @param infoCooSys
 	 * @param tableAttributeHandler
 	 */
-	public SpaceFrame(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) {
-		this.tableAttributeHandler = tableAttributeHandler;
-		/* * @version $Id: SpaceFrame.java 939 2014-02-13 08:17:24Z laurent.mistahl $
- * @version $Id: SpaceFrame.java 939 2014-02-13 08:17:24Z laurent.mistahl $
-
+	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) {
+		super(tableAttributeHandler);
+		lookForError();
+		/* 
 		 * Take first the coosys if not null and look for keywords matching that system
 		 */
 		if( infoCooSys != null ) {
@@ -245,6 +243,16 @@ public class SpaceFrame {
 		}
 	}
 
+	private void lookForError() {
+		this.err_maj = this.searchByUcd(RegExp.ERROR_MAJ_UCD);
+		if( this.err_maj == null ) this.err_maj = this.searchByUcd(RegExp.ERROR_MIN_KW);
+		this.err_min = this.searchByUcd(RegExp.ERROR_MIN_UCD);
+		if( this.err_min == null ) this.err_min = this.searchByUcd(RegExp.ERROR_MIN_KW);
+		this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_UCD);
+		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
+		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
+		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
+	}
 	/**
 	 * 
 	 */
@@ -423,30 +431,6 @@ public class SpaceFrame {
 		}
 	}
 	/**
-	 * @param ucd_regexp
-	 * @return
-	 */
-	private AttributeHandler searchByUcd(String ucd_regexp) {
-
-		for( AttributeHandler ah: tableAttributeHandler.values()) {
-			if( ah.getUcd().matches(ucd_regexp))
-				return ah;
-		}
-		return null;
-	}
-	/**
-	 * @param ucd_regexp
-	 * @return
-	 */
-	private AttributeHandler searchByName(String colname_regexp) {
-
-		for( AttributeHandler ah: tableAttributeHandler.values()) {
-			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp))
-				return ah;
-		}
-		return null;
-	}
-	/**
 	 * @return the astro_frame
 	 */
 	public Astroframe getFrame() {
@@ -489,37 +473,21 @@ public class SpaceFrame {
 		}
 		else return false;
 	}
-
-	/**
-	 * @param args
-	 * @throws FatalException 
-	 */
-	public static void main(String[] args) throws FatalException {
-		try {
-			Messenger.debug_mode = false;
-			Database.init("DEVBENCH1_5_1");
-			ArgsParser ap = new ArgsParser(new String[]{"-collection=qq", "-category=MISC"});
-			Misc img = new Misc(new File("/home/michel/Desktop/vizier_votable.ecl.vot"), ap.getProductMapping());
-			Messenger.debug_mode = true;
-			img.loadProductFile(ap.getProductMapping());
-			ap = new ArgsParser(new String[]{"-collection=qq", "-category=IMAGE"});
-			Image2D img2 = new Image2D(new File("/home/michel/Desktop/fsky090101_cps.fits"), ap.getProductMapping());
-			Messenger.debug_mode = true;
-			img2.loadProductFile(ap.getProductMapping());
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
+	
+	public AttributeHandler getErrorMin(){
+		return err_min;
+	}
+	public AttributeHandler getErrorMaj(){
+		return err_maj;
+	}
+	public AttributeHandler getErrorAngle(){
+		return err_angle;		
+	}
+	public AttributeHandler getfov(){
+		if( this.fov == null ){
+			this.fov = this.search(RegExp.FOV_UCD, RegExp.FOV_KW);
 		}
-		Database.close();
-		//		Astroframe ecf_af = new Ecliptic(2010);
-		//		Astroframe icrs_af = new FK5();
-		//		icrs_af.setFrameEpoch(2000);
-		//
-		//		double converted_coord[] = Coord.convert(icrs_af, new double[]{12, 24}, ecf_af);
-		//		System.out.println(icrs_af + " " + ecf_af + " " + converted_coord[0] + " " +  converted_coord[1]);
-		//		icrs_af.setFrameEpoch(2099);
-		//		
-		//		converted_coord = Coord.convert(icrs_af, new double[]{12, 24}, ecf_af);
-		//		System.out.println(icrs_af + " " + ecf_af + " " + converted_coord[0] + " " +  converted_coord[1]);
+		return fov;		
 	}
 
 }
