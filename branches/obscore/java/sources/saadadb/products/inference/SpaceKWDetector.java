@@ -38,7 +38,6 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) {
 		super(tableAttributeHandler);
-		lookForError();
 		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
@@ -101,6 +100,7 @@ public class SpaceKWDetector extends KWDetector{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
 		}
+		this.lookForError();
 	}
 
 	/**
@@ -172,6 +172,7 @@ public class SpaceKWDetector extends KWDetector{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
 		}
+		this.lookForError();
 	}
 
 	/**
@@ -241,6 +242,8 @@ public class SpaceKWDetector extends KWDetector{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
 		}
+		this.lookForError();
+
 	}
 
 	private void lookForError() {
