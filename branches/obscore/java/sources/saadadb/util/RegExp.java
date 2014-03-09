@@ -98,7 +98,10 @@ public class RegExp {
 	 * Spectral axis column names			System.out.println("coucou");
 
 	 */
-	public static final String SPEC_AXIS = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
+	public static final String SPEC_AXIS_KW  = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
+	public static final String SPEC_MIN_UCD  = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
+	public static final String SPEC_MAX_UCD  = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
+	public static final String SPEC_BAND_UCD = "(?i)(em\\.wl)";
 	/*
 	 * URL
 	 */
@@ -122,7 +125,7 @@ public class RegExp {
 	public static final String TARGET_KW        = "(?i)(object|target)";
 	public static final String TARGET_UCD       = "(?i)(meta\\.id)";
 	public static final String INSTRUMENT_UCD   = "(?i)meta\\.id;instr.*";
-	public static final String INSTRUMENT_KW    = "(?i)intrume.*";
+	public static final String INSTRUMENT_KW    = "(?i)instrume.*";
 	public static final String FACILITY_UCD     = "(?i).*instr\\.tel.*";
 	public static final String FACILITY_KW      = "(?i)(facility|telescop)";
 	/**
