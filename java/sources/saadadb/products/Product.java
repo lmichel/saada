@@ -38,12 +38,14 @@ import saadadb.products.inference.Coord;
 import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.inference.TimeKWDetector;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.CopyFile;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 import cds.astro.ICRS;
@@ -110,6 +112,7 @@ public class Product /*extends File*/ {
 	 */
 	protected AttributeHandler em_min_ref=null;
 	protected AttributeHandler em_max_ref=null;
+	private SpectralCoordinate spectralCoordinate;
 	protected AttributeHandler x_unit_org_ref=null;
 	protected PriorityMode energyMappingPriority = PriorityMode.LAST;
 	protected EnergyKWDetector energyKWDetector = null;
@@ -186,7 +189,7 @@ public class Product /*extends File*/ {
 		if( this.energyKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
-				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler);
+				this.energyKWDetector = new EnergyKWDetector(null);
 			} else {
 				this.energyKWDetector = this.productFile.getEnergyKWDetector(false);
 			}
@@ -856,6 +859,8 @@ public class Product /*extends File*/ {
 		this.mapSpaceAxe();
 		this.mapEnergyAxe();
 		this.mapTimeAxe();
+		System.exit(1);
+
 		this.mapIgnoredAndExtendedAttributes();
 	}
 
@@ -867,7 +872,7 @@ public class Product /*extends File*/ {
 
 		switch(this.observationMappingPriority){
 		case ONLY:			
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: ONLY: only mapped keywords will be used");
 			this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
 			this.target_name_ref = getMappedAttributeHander(mapping.getColumnMapping("target_name"));
 			this.facility_name_ref = getMappedAttributeHander(mapping.getColumnMapping("facility_name"));
@@ -875,7 +880,7 @@ public class Product /*extends File*/ {
 			break;
 
 		case FIRST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
 			if( this.obs_collection_ref == null) {
 				this.obs_collection_ref = this.observationKWDetector.getCollNameAttribute();
@@ -894,7 +899,7 @@ public class Product /*extends File*/ {
 			}
 			break;
 		case LAST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Observation mapping priority: LAST: KWs will first be infered and then mapped keywords will be used");
 			this.obs_collection_ref = this.observationKWDetector.getCollNameAttribute();
 			if( this.obs_collection_ref == null) {
 				this.obs_collection_ref = getMappedAttributeHander(mapping.getColumnMapping("obs_collection"));
@@ -917,49 +922,54 @@ public class Product /*extends File*/ {
 		reportOnAttRef("target_name", this.target_name_ref);
 		reportOnAttRef("facility_name", this.facility_name_ref);
 		reportOnAttRef("instrument_name", this.instrument_name_ref);
-		System.exit(1);
 	}
 
 	protected void mapEnergyAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Energy Axe");
 		AxeMapping mapping = this.mapping.getEnergyAxeMapping();
 		setEnergyKWDetector();
-
+		/*
+		 * Search for the unit to determine whether it must be detected later anyway 
+		 */
+		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+		
 		switch(this.energyMappingPriority){
 		case ONLY:			
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keywords will be used");
 			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
 			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
 			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+			this.spectralCoordinate = new SpectralCoordinate();
 			break;
 
 		case FIRST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
 			if( this.em_max_ref == null) {
-				this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+//				this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
 			}
 			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
 			if( this.em_min_ref == null) {
-				this.em_min_ref = this.energyKWDetector.getEminAttribute();
+	//			this.em_min_ref = this.energyKWDetector.getEminAttribute();
 			}
 			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
 			if( this.x_unit_org_ref == null) {
-				this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+//				this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
 			}
 
 			break;
+			
 		case LAST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
-			this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+////			this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
 			if( this.em_max_ref == null) {
 				this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
 			}
-			this.em_min_ref = this.energyKWDetector.getEminAttribute();
+//			this.em_min_ref = this.energyKWDetector.getEminAttribute();
 			if( this.em_min_ref == null) {
 				this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
 			}
-			this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
+//			this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
 			if( this.x_unit_org_ref == null) {
 				this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
 			}
@@ -973,13 +983,13 @@ public class Product /*extends File*/ {
 
 		switch(this.timeMappingPriority){
 		case ONLY:			
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: ONLY: only mapped keywords will be used");
 			this.t_max_ref = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			this.t_min_ref = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			break;
 
 		case FIRST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: FIRST: Mapped keyword will first be searched and then KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			this.t_max_ref = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			if( this.t_max_ref == null) {
 				this.t_max_ref = this.timeKWDetector.getTmaxName();
@@ -1067,11 +1077,11 @@ public class Product /*extends File*/ {
 		String msg = "";
 		switch(this.spaceMappingPriority) {
 		case ONLY :
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: ONLY: only mapped keywords will be used");
 			this.mapCollectionCooSysAttributesFromMapping();
 			break;
 		case FIRST :
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: FIRST: Mapped keyword will be first searched and then coosys KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: FIRST: Mapped keywords will be first searched and then coosys KWs will be infered");
 			if( !this.mapCollectionCooSysAttributesFromMapping() ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Try to find out the cood system");
 				this.mapCollectionCooSysAttributesAuto();
@@ -1079,7 +1089,7 @@ public class Product /*extends File*/ {
 			}			
 			break;
 		case LAST :
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: LAST: Coo sys KWs will be infered and then mapped keyword will be searched");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: LAST: Coo sys KWs will be infered and then mapped keywords will be searched");
 			if( !this.mapCollectionCooSysAttributesAuto()) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for coord system defined into the mapping");
 				this.mapCollectionPosAttributesFromMapping();
@@ -1225,11 +1235,11 @@ public class Product /*extends File*/ {
 		String msg = "";
 		switch( this.spaceMappingPriority) {
 		case ONLY:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: ONLY: only mapped keywords will be used");
 			this.mapCollectionPosAttributesFromMapping() ;
 			break;
 		case FIRST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: FIRST: Mapped keyword will first be searched and then position KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: FIRST: Mapped keywords will first be searched and then position KWs will be infered");
 			if( !this.mapCollectionPosAttributesFromMapping() ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Mapped keywords not found: try to find out position keywords");
 				this.mapCollectionPosAttributesAuto();
@@ -1237,7 +1247,7 @@ public class Product /*extends File*/ {
 			}			
 			break;
 		case LAST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: LAST: Position KWs will be infered and then mapped keyword will be searched");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: LAST: Position KWs will be infered and then mapped keywords will be searched");
 			if( !this.mapCollectionPosAttributesAuto()) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position KWs not found: look for mapped keywords");
 				this.mapCollectionPosAttributesFromMapping();
@@ -1277,11 +1287,11 @@ public class Product /*extends File*/ {
 		String msg="";
 		switch( this.mapping.getSpaceAxeMapping().getPriority()) {
 		case ONLY:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: ONLY: only mapped keyword will be used");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: ONLY: only mapped keywords will be used");
 			this.mapCollectionPoserrorAttributesFromMapping();
 			break;
 		case FIRST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: FIRST: Mapped keyword will be first searched and then position KWs will be infered");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: FIRST: Mapped keywords will be first searched and then position KWs will be infered");
 			if( !this.mapCollectionPoserrorAttributesFromMapping() ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Try to find out position keywords");
 				this.mapCollectionPoserrorAttributesAuto();
@@ -1289,7 +1299,7 @@ public class Product /*extends File*/ {
 			}			
 			break;
 		case LAST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: LAST: Position KWs will be infered and then apped keyword will be searched");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: LAST: Position KWs will be infered and then mapped keywords will be searched");
 			if( !this.mapCollectionPoserrorAttributesAuto()) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for position keywords defined into the mapping");
 				this.mapCollectionPoserrorAttributesFromMapping();
@@ -1344,6 +1354,91 @@ public class Product /*extends File*/ {
 		}
 
 	}
+	
+	/**
+	 * @throws Exception 
+	 * 
+	 */
+	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
+		ColumnMapping sc_col  = this.mapping.getEnergyAxeMapping().getColumnMapping("dispertion_column");
+		ColumnMapping sc_unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa");
+		spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
+		/*
+		 * The mapping gives numeric values for the spectral range
+		 */
+		if( sc_col.byValue() ) {
+			List<String> vals = sc_col.getValues();
+			if( vals.size() == 2 ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
+				this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
+				this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
+				
+				if( sc_unit.equals("AutoDetect") ) {
+					spectralCoordinate.setOrgUnit("channel");
+				} else {
+					spectralCoordinate.setOrgUnit(sc_unit.getValue());					
+				}
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getOrgUnit());
+				return spectralCoordinate.convert() ;
+			}
+			else {
+				Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col.getValue() + "> ca not be interptreted");						
+				return false;
+			}
+		}
+		/*
+		 * If no range set in params, try to find it out from fields
+		 */	
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + sc_col.getValue() + "> exists" );
+		LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
+		for( AttributeHandler ah : this.productFile.getEntryAttributeHandler().values() ) {
+			String key = ah.getNameorg();
+			if(key.equals(sc_col) ){
+				Messenger.printMsg(Messenger.TRACE, "Spectral abscissa column <" + sc_col + "> found");
+				this.setEnergyMinMaxValues(this.productFile.getExtrema(key));
+				/*
+				 * Although the mapping priority is ONLY, no unit is given in mapping, 
+				 * the unit found in the column description is taken
+				 */
+				if( sc_unit.equals("AutoDetect") ) {
+					if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
+						spectralCoordinate.setOrgUnit(ah.getUnit());
+						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + sc_unit + "> taken from column  description");
+					}
+					else {
+						Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");						
+					}
+				}
+				/*
+				 * else take mapped unit 
+				 */
+				else {
+					spectralCoordinate.setOrgUnit(sc_unit.getHandler().getValue());
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + sc_unit + "> taken from mapping");
+				}
+				return spectralCoordinate.convert() ;
+			}
+		}
+
+		return  false;	
+	}
+	
+	/**
+	 * @param ds
+	 * @return
+	 */
+	private void setEnergyMinMaxValues(double[] ds) {
+		if( ds == null || ds.length != 2 ) {
+			this.spectralCoordinate.setOrgMax(SaadaConstant.DOUBLE);
+			this.spectralCoordinate.setOrgMin(SaadaConstant.DOUBLE);
+		} else {
+			this.spectralCoordinate.setOrgMax(ds[1]);
+			this.spectralCoordinate.setOrgMin(ds[0]);		
+		}
+	}
+
 	/**
 	 * Set attributes used to build nstance names.
 	 * Take attributes defined into the configuration if defined. 
