@@ -11,7 +11,10 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -96,10 +99,6 @@ public class SQLTableProduct implements ProductFile {
 		return null;
 	}
 
-	@Override
-	public void setKWEntry(Map<String, AttributeHandler> tah)
-	throws IgnoreException {
-	}
 
 	@Override
 	public double[] getExtrema(String key) throws Exception {
@@ -136,23 +135,6 @@ public class SQLTableProduct implements ProductFile {
 	}
 
 	@Override
-	public SpaceFrame getSpaceFrame() {
-		return null;
-	}
-
-	@Override
-	public void setSpaceFrameForTable() throws IgnoreException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setSpaceFrame() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -171,6 +153,48 @@ public class SQLTableProduct implements ProductFile {
 			System.out.println(stp.getKWValueQuickly("oidsaada"));
 		}
 		Database.close();
+	}
+
+	@Override
+	public Map<String, AttributeHandler> getEntryAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, AttributeHandler> getAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TimeKWDetector getTimeKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
