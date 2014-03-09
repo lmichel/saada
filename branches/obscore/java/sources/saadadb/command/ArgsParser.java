@@ -365,7 +365,7 @@ public class ArgsParser implements Serializable{
 				return  getPriority(args[i]);
 			}
 		}
-		return null;		
+		return PriorityMode.LAST;		
 	}
 	public String[] getNameComponents(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
@@ -431,7 +431,7 @@ public class ArgsParser implements Serializable{
 				return  getPriority(args[i]);
 			}
 		}
-		return null;		
+		return PriorityMode.LAST;		
 	}
 	public String getTmin(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
@@ -543,7 +543,7 @@ public class ArgsParser implements Serializable{
 				return  getPriority(args[i]);
 			}
 		}
-		return null;		
+		return PriorityMode.LAST;		
 	}
 
 	/**
