@@ -5,8 +5,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 
 public class FooProduct implements ProductFile {
 	private int pointer = 0;
@@ -19,7 +23,7 @@ public class FooProduct implements ProductFile {
 	private double ra0=0, dec0=-10.;
 	private double raMax, ra, dec;
 	public static final double STEP=0.01;
-	private SpaceFrame frame;
+	private SpaceKWDetector frame;
 	
 	FooProduct(int size){
 		this.size = size;
@@ -117,21 +121,57 @@ public class FooProduct implements ProductFile {
 		return retour;
 	}
 
-	public SpaceFrame getSpaceFrame() {
+	public SpaceKWDetector getSpaceFrame() {
 		return frame;
 	}
 
 	public void setSpaceFrameForTable() throws IgnoreException {
-		frame = new SpaceFrame(kws);
+		frame = new SpaceKWDetector(kws);
 	}
 
 	public void setSpaceFrame() {
-		frame = new SpaceFrame(kws);
+		frame = new SpaceKWDetector(kws);
 	}
 
 	@Override
 	public String getName() {
 		return "Foo";
+	}
+	@Override
+	public Map<String, AttributeHandler> getEntryAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Map<String, AttributeHandler> getAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public TimeKWDetector getTimeKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
