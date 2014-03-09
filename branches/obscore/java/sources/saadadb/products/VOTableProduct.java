@@ -13,7 +13,10 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.SpaceFrame;
+import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.SpaceKWDetector;
+import saadadb.products.inference.TimeKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
@@ -70,7 +73,7 @@ public class VOTableProduct extends File implements ProductFile {
 	private Product product;
 
 	private boolean onfirstline = true;
-	protected SpaceFrame space_frame;
+	protected SpaceKWDetector space_frame;
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#closeStream()
@@ -740,7 +743,7 @@ public class VOTableProduct extends File implements ProductFile {
 				infoCooSys = (SavotCoosys) coosys.elementAt(0);
 			}
 		}
-		space_frame = new SpaceFrame(infoCooSys, lhm);
+		space_frame = new SpaceKWDetector(infoCooSys, lhm);
 	}
 	
 
@@ -766,13 +769,13 @@ public class VOTableProduct extends File implements ProductFile {
 				infoCooSys = (SavotCoosys) coosys.elementAt(0);
 			}
 		}
-		space_frame = new SpaceFrame(infoCooSys, lhm);
+		space_frame = new SpaceKWDetector(infoCooSys, lhm);
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getSpaceFrame()
 	 */
-	public SpaceFrame getSpaceFrame() {
+	public SpaceKWDetector getSpaceFrame() {
 		return space_frame;
 	}
 	/**
@@ -794,5 +797,47 @@ public class VOTableProduct extends File implements ProductFile {
 			Messenger.printStackTrace(e);
 		}
 			
+	}
+
+	@Override
+	public Map<String, AttributeHandler> getEntryAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, AttributeHandler> getAttributeHandler()
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TimeKWDetector getTimeKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

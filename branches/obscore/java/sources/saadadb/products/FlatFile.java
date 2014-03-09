@@ -22,7 +22,7 @@ import saadadb.util.Messenger;
  */
 public class FlatFile extends Product {
 
-	public FlatFile(File file, ProductMapping conf) {
+	public FlatFile(File file, ProductMapping conf) throws FatalException {
 		super(file, conf);
 	}
 
@@ -53,7 +53,7 @@ public class FlatFile extends Product {
 	 * @throws SaadaException
 	 * @throws AbortException
 	 */
-	public void loadProductFile(ProductMapping mapping) throws IgnoreException{
+	public void readProductFile(ProductMapping mapping) throws IgnoreException{
 		this.mapping = mapping;
 		
 			Messenger.printMsg(Messenger.TRACE, "Make a AnyTable instance with file <"  + this.file.getName() + ">");
@@ -68,7 +68,7 @@ public class FlatFile extends Product {
 	 */
 	public void initProductFile(ProductMapping conf) throws SaadaException{
 		
-		this.loadProductFile(mapping);
+		this.readProductFile(mapping);
 		this.mapCollectionAttributes();	
 	}
 	/**

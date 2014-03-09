@@ -1487,11 +1487,7 @@ public class FitsProduct extends File implements ProductFile{
 		}		
 	}
 	public EnergyKWDetector getEnergyKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new EnergyKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new EnergyKWDetector(this.getAttributeHandler());
-		}		
+		return new EnergyKWDetector(this);		
 	}
 	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
 		if( entryMode ){
