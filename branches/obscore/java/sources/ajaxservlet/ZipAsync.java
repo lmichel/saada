@@ -18,7 +18,7 @@ import uws.service.UserIdentifier;
 
 /** 
  * Servlet implementation class datapack
- * @version $Id: ZipAsync.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * @version $Id$
  */
 public class ZipAsync extends SaadaServlet  {
 	private static final long serialVersionUID = 1L;

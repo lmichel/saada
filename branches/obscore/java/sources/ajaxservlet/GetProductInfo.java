@@ -19,7 +19,7 @@ import org.json.simple.JSONObject;
  * Servlet implementation class getProductInfo
  * Return the http header of an url as a JSON string
  * @Author LM
- * @Version $Id: GetProductInfo.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * @Version $Id$
  */
 public class GetProductInfo extends SaadaServlet implements Servlet {
 	private static final long serialVersionUID = 1L;

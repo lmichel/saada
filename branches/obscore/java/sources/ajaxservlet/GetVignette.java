@@ -13,7 +13,7 @@ import saadadb.database.Database;
 
 /**
  * Servlet implementation class GetVignette
- * @version $Id: GetVignette.java 733 2013-07-31 08:06:29Z laurent.mistahl $
+ * @version $Id$
  */
 public class GetVignette extends SaadaServlet {
 	private static final long serialVersionUID = 1L;

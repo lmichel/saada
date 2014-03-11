@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @version $Id: Simbad.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  * Servlet implementation class Simbad
  * Simple proxy for Simbad pages
  * 05/2011: use of sendRedirect

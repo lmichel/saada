@@ -13,7 +13,7 @@ import ajaxservlet.accounting.UserTrap;
 /**
  * Servlet implementation class SessionServlet
  * Superclass of all services using user sessions
- * @version $Id: SessionServlet.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
 
  */
 public class SessionServlet extends SaadaServlet {

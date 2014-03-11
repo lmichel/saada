@@ -22,7 +22,7 @@ import ajaxservlet.accounting.UserTrap;
 
 /**
  *  
- * @version $Id: Download.java 733 2013-07-31 08:06:29Z laurent.mistahl $
+ * @version $Id$
  * Servlet implementation class Download
  */
 public class Download extends SaadaServlet {

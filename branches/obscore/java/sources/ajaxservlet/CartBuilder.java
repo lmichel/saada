@@ -22,7 +22,7 @@ import ajaxservlet.accounting.UserTrap;
 /**
  * UWS service managing cart service
  * Servlet implementation class ZipBuilder
- * @version $Id: CartBuilder.java 943 2014-02-26 14:04:27Z laurent.mistahl $
+ * @version $Id$
  */
 public class CartBuilder extends SaadaServlet {
 	private static final long serialVersionUID = 1L;

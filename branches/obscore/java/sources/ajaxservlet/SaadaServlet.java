@@ -33,7 +33,7 @@ import ajaxservlet.json.JsonUtils;
 /**
  * Make sure to SaadaDB connection to be open
  * @author michel
- * @version $Id: SaadaServlet.java 733 2013-07-31 08:06:29Z laurent.mistahl $
+ * @version $Id$
  *
  * 07/2011 add method dumpXmlFile
  * 06/2012 Connect to a log file

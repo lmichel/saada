@@ -11,7 +11,7 @@ import saadadb.vo.tap.TapServiceManager;
 
 /**
  * @author laurent
- * @version $Id: TAPTables.java 245 2012-02-21 17:52:11Z laurent.mistahl $
+ * @version $Id$
  */
 public class TAPTables extends SaadaServlet {
 
