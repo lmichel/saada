@@ -8,15 +8,15 @@ import ajaxservlet.SaadaServlet;
 import ajaxservlet.accounting.UserAccount;
 import ajaxservlet.accounting.UserTrap;
 
-/** * @version $Id: ResetFilter.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class ResetFilter
- * @version $Id: ResetFilter.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+ * @version $Id$
  */
 public class ResetFilter extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
 
-	/** * @version $Id: ResetFilter.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -25,10 +25,10 @@ public class ResetFilter extends SaadaServlet {
 		// TODO Auto-generated constructor stub
 	}
 
-	/** * @version $Id: ResetFilter.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 * * @version $Id: ResetFilter.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+	 * * @version $Id$
 /
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		process(request, response);

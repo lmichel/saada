@@ -12,7 +12,7 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import ajaxservlet.SaadaServlet;
 
-/** * @version $Id: JSDataTree.java 481 2012-09-12 16:22:37Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class JSDataTree
  */

@@ -19,7 +19,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.query.parser.PositionParser;
 import ajaxservlet.SaadaServlet;
 
-/** * @version $Id: SimbadTooltip.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class SimbadTooltip
  */

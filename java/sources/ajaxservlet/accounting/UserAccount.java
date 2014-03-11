@@ -14,7 +14,7 @@ import ajaxservlet.formator.StoredFilter;
 
 /**
  * @author michel
- * @version $Id: UserAccount.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+ * @version $Id$
  */
 public class UserAccount implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -14,7 +14,7 @@ import ajaxservlet.formator.StoredFilter;
 
 /**
  * Servlet implementation class SetFilter
- * @version $Id: SetFilter.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * @version $Id$
 
  */
 public class SetFilter extends SaadaServlet {

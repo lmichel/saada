@@ -28,7 +28,7 @@ import ajaxservlet.formator.SpectrumDisplayFilter;
 import ajaxservlet.formator.TableDisplayFilter;
 
 
-/** * @version $Id: GetMeta.java 878 2013-12-17 13:33:34Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class GetMeta
  * Protocol

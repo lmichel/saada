@@ -28,7 +28,7 @@ import ajaxservlet.formator.MiscDisplayFilter;
 import ajaxservlet.formator.SpectrumDisplayFilter;
 import ajaxservlet.formator.TableDisplayFilter;
 
-/** * @version $Id: JSAttributeHandlers.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class JSAttributeHandlers
  */
