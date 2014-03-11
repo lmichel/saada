@@ -9,6 +9,7 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 
 /**
+ * Super class of the the classes habdling the loader config for one axe (STOE)
  * @author michel
  *
  */
