@@ -12,7 +12,7 @@ import saadadb.exceptions.SaadaException;
  *@since 2.0
  */
 public class Misc extends Product{
-	/** * @version $Id: Misc.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * 
 	 */

@@ -40,7 +40,7 @@ import cds.savot.pull.SavotPullParser;
 
 /**
  * @author laurent
- * @version $Id: VOTableProduct.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * @version $Id$
  */
 public class VOTableProduct extends File implements ProductFile {
 

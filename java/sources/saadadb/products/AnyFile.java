@@ -15,7 +15,7 @@ import saadadb.products.inference.TimeKWDetector;
 
 /**
  * @author laurentmichel
- * * @version $Id: AnyFile.java 802 2013-10-30 16:33:04Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class AnyFile extends File implements ProductFile {

@@ -21,7 +21,6 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.AxeMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
-import saadadb.dataloader.mapping.ObservationMapping;
 import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.dataloader.mapping.RepositoryMode;
@@ -59,7 +58,7 @@ import cds.astro.ICRS;
  */
 /**
  * @author michel
- * @version $Id: Product.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class Product /*extends File*/ {
@@ -147,13 +146,12 @@ public class Product /*extends File*/ {
 		this.file = file;
 		this.mapping = conf;
 		/*
-		 * priority aef copied for conveniance
+		 * priority ref copied for convenience
 		 */
 		this.observationMappingPriority = conf.getObservationAxeMapping().getPriority();
 		this.spaceMappingPriority = conf.getSpaceAxeMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxeMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxeMapping().getPriority();
-		System.out.println("@@@@@@@ " + this.timeMappingPriority  );
 	}
 
 	/* (non-Javadoc)
@@ -212,13 +210,14 @@ public class Product /*extends File*/ {
 			msg += "not set";
 		} else if( att.getNameattr().equals(ColumnMapping.NUMERIC) ) {
 			msg += "Taken by value <" + att.getValue() +">";
-
+		} else if( att.getNameattr().equals(ColumnMapping.UNDEFINED) ) {
+			msg += "Undefined";
 		} else {
 			msg += "Taken by keyword <" + att.getNameorg() +">";
-
 		}
 		Messenger.printMsg(Messenger.TRACE, msg);	
 	}
+
 	/**
 	 * @return
 	 */
@@ -518,8 +517,6 @@ public class Product /*extends File*/ {
 	 * @throws Exception
 	 */
 	protected void setPositionFields(int number) throws Exception {
-
-
 		if( this.astroframe != null && this.s_ra_ref != null && this.s_dec_ref != null ) {
 			String ra_val;
 			/*
@@ -527,15 +524,13 @@ public class Product /*extends File*/ {
 			 */
 			if( this.s_ra_ref.isConstantValue() ) {
 				ra_val = this.s_ra_ref.getValue();
-			}
-			else {
+			} else {
 				ra_val = this.s_ra_ref.getValue().replaceAll("'", "");
 			}
 			String dec_val;
 			if( this.s_dec_ref.isConstantValue() ) {
 				dec_val = this.s_dec_ref.getValue();
-			}
-			else {
+			} else {
 				dec_val = this.s_dec_ref.getValue().replaceAll("'", "");
 			}
 
@@ -548,17 +543,8 @@ public class Product /*extends File*/ {
 			) {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set: keywords not set");
 				return;
-			}
-			else {
+			} else {
 				Astrocoo acoo;
-				/*	public static void main(String[] args ) {
-		try {
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/pop_1_9_kroupa_1e3_Z0.02.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/fuse.fits", null);
-			FitsProduct fp = new FitsProduct("/home/michel/Desktop/tile_eso.fit", null);
-
-				 * Both coordinates in one fields
-				 */
 				if( this.s_ra_ref == this.s_dec_ref) {
 					acoo= new Astrocoo(this.astroframe, ra_val ) ;
 				}
@@ -584,14 +570,10 @@ public class Product /*extends File*/ {
 				else
 					this.saadainstance.s_dec = dec;
 				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
-					this.saadainstance.pos_x_csa = Math.cos(Math.toRadians(this.saadainstance.s_dec)) * Math.cos(Math.toRadians(this.saadainstance.s_ra));
-					this.saadainstance.pos_y_csa = Math.cos(Math.toRadians(this.saadainstance.s_dec)) * Math.sin(Math.toRadians(this.saadainstance.s_ra));
-					this.saadainstance.pos_z_csa = Math.sin(Math.toRadians(this.saadainstance.s_dec));
 					this.saadainstance.calculSky_pixel_csa();
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
 							+ "> set to <" + this.saadainstance.s_ra + "," + this.saadainstance.s_dec + ">" );
-				}
-				else {
+				} else {
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
 				this.setPosErrorFields(number);
@@ -625,8 +607,7 @@ public class Product /*extends File*/ {
 			}
 			if( this.error_angle_ref == null ) {
 				angle = 90.0;
-			}
-			else {
+			} else {
 				angle = Double.parseDouble(this.error_angle_ref.getValue());				
 			}
 			/*
@@ -636,19 +617,16 @@ public class Product /*extends File*/ {
 				maj_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
 				min_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
-			}
-			else if( this.error_min_ref != null && this.error_maj_ref == null ) {
+			} else if( this.error_min_ref != null && this.error_maj_ref == null ) {
 				maj_err = convert*Double.parseDouble(this.error_min_ref.getValue());
 				min_err = convert*Double.parseDouble(this.error_min_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
-			}
-			else if( this.error_min_ref != null && this.error_maj_ref != null ) {
+			} else if( this.error_min_ref != null && this.error_maj_ref != null ) {
 				maj_err = convert*Double.parseDouble(this.error_min_ref.getValue());
 				min_err = convert*Double.parseDouble(this.error_maj_ref.getValue());
 				this.saadainstance.setError(maj_err, min_err, angle);
 			}
-		}
-		else {
+		} else {
 			if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	
 	}
@@ -785,12 +763,10 @@ public class Product /*extends File*/ {
 		if( try_votable ) {			
 			try {
 				this.productFile = new VOTableProduct(this);				
-			}
-			catch(SaadaException ev) {
+			} catch(SaadaException ev) {
 				Messenger.printStackTrace(ev);
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
-			}
-			catch(Exception ev) {
+			} catch(Exception ev) {
 				Messenger.printStackTrace(ev);
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
 			}
@@ -830,20 +806,21 @@ public class Product /*extends File*/ {
 	 * Mapping of the axe field references
 	 */
 	/**
-	 * 
+	 * @param columnMapping
+	 * @param label
+	 * @return
 	 */
 	protected AttributeHandler getMappedAttributeHander(ColumnMapping columnMapping) {
 		AttributeHandler cmah = columnMapping.getHandler();
-
 		if( columnMapping.byValue() ){
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take constant value <" + columnMapping.getValue()+ ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
 			return cmah;
 		} else if( columnMapping.byAttribute() ){
 			for( AttributeHandler ah: this.productAttributeHandler.values()) {
 				String keyorg  = ah.getNameorg();
 				String keyattr = ah.getNameattr();
 				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take key word <" + ah.getNameorg() + ">");
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
 					return ah;
 				}
 			}
@@ -864,6 +841,9 @@ public class Product /*extends File*/ {
 		this.mapIgnoredAndExtendedAttributes();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected void mapObservationAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Observation Axe");
 		this.mapInstanceName();
@@ -924,58 +904,81 @@ public class Product /*extends File*/ {
 		reportOnAttRef("instrument_name", this.instrument_name_ref);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected void mapEnergyAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Energy Axe");
-		AxeMapping mapping = this.mapping.getEnergyAxeMapping();
 		setEnergyKWDetector();
-		/*
-		 * Search for the unit to determine whether it must be detected later anyway 
-		 */
-		this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
-		
+		this.spectralCoordinate = this.energyKWDetector.getSpectralCoordinate();
+		if(!spectralCoordinate.isConfigurationValid(1
+				, 1
+				,SpectralCoordinate.getDispersionCode(Database.getSpect_type())
+				, Database.getSpect_unit())) {
+			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, "Spectral Configuration not valid");
+		}
 		switch(this.energyMappingPriority){
 		case ONLY:			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keywords will be used");
-			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
-			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
-			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
-			this.spectralCoordinate = new SpectralCoordinate();
+			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
+				this.em_min_ref = new AttributeHandler();
+				this.em_min_ref.setNameattr(ColumnMapping.UNDEFINED);
+				this.em_max_ref = new AttributeHandler();
+				this.em_max_ref.setNameattr(ColumnMapping.UNDEFINED);
+			}
 			break;
 
 		case FIRST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
-			this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
-			if( this.em_max_ref == null) {
-//				this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
+			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
+				if( this.x_unit_org_ref !=  null ) {
+					spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
+				}
+				if( this.spectralCoordinate.convert() ) {
+					this.em_min_ref = new AttributeHandler();
+					this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.em_min_ref.setValue(Double.toString(spectralCoordinate.getConvertedMin()));
+					this.em_max_ref = new AttributeHandler();
+					this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));
+				} else {
+					this.em_min_ref = new AttributeHandler();
+					this.em_min_ref.setNameattr(ColumnMapping.UNDEFINED);
+					this.em_max_ref = new AttributeHandler();
+					this.em_max_ref.setNameattr(ColumnMapping.UNDEFINED);
+				}
 			}
-			this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
-			if( this.em_min_ref == null) {
-	//			this.em_min_ref = this.energyKWDetector.getEminAttribute();
-			}
-			this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
-			if( this.x_unit_org_ref == null) {
-//				this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
-			}
-
 			break;
-			
+
 		case LAST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
-////			this.em_max_ref = this.energyKWDetector.getEmaxAttribute();
-			if( this.em_max_ref == null) {
-				this.em_max_ref = getMappedAttributeHander(mapping.getColumnMapping("em_max"));
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority LAST: KWs will first be inefered and then mapped keywords will be searched");
+			if( this.x_unit_org_ref !=  null ) {
+				spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
 			}
-//			this.em_min_ref = this.energyKWDetector.getEminAttribute();
-			if( this.em_min_ref == null) {
-				this.em_min_ref = getMappedAttributeHander(mapping.getColumnMapping("em_min"));
-			}
-//			this.x_unit_org_ref = this.energyKWDetector.getUnitAttribute();
-			if( this.x_unit_org_ref == null) {
-				this.x_unit_org_ref = getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
+			if( !this.spectralCoordinate.convert() ) {
+				if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
+					this.em_min_ref = new AttributeHandler();
+					this.em_min_ref.setNameattr(ColumnMapping.UNDEFINED);
+					this.em_max_ref = new AttributeHandler();
+					this.em_max_ref.setNameattr(ColumnMapping.UNDEFINED);
+				}
+			} else {
+				this.em_min_ref = new AttributeHandler();
+				this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
+				this.em_min_ref.setValue(Double.toString(spectralCoordinate.getConvertedMin()));
+				this.em_max_ref = new AttributeHandler();
+				this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
+				this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));				
 			}
 			break;
 		}
+		reportOnAttRef("x_unit_org", this.x_unit_org_ref);
+		reportOnAttRef("em_min", this.em_min_ref);
+		reportOnAttRef("em_max", this.em_max_ref);
 	}
+	/**
+	 * @throws Exception
+	 */
 	protected void mapTimeAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Time Axe");
 		AxeMapping mapping = this.mapping.getTimeAxeMapping();
@@ -1013,8 +1016,13 @@ public class Product /*extends File*/ {
 
 			break;
 		}
+		reportOnAttRef("t_min", this.t_min_ref);
+		reportOnAttRef("t_max", this.t_max_ref);
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected void mapSpaceAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Space Axe");
 		/*
@@ -1354,77 +1362,100 @@ public class Product /*extends File*/ {
 		}
 
 	}
-	
+
 	/**
 	 * @throws Exception 
 	 * 
 	 */
 	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
-		ColumnMapping sc_col  = this.mapping.getEnergyAxeMapping().getColumnMapping("dispertion_column");
-		ColumnMapping sc_unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa");
-		spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
-		/*
-		 * The mapping gives numeric values for the spectral range
-		 */
-		if( sc_col.byValue() ) {
-			List<String> vals = sc_col.getValues();
-			if( vals.size() == 2 ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
-				this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
-				this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
-				
-				if( sc_unit.equals("AutoDetect") ) {
-					spectralCoordinate.setOrgUnit("channel");
-				} else {
-					spectralCoordinate.setOrgUnit(sc_unit.getValue());					
+		AxeMapping mapping = this.mapping.getEnergyAxeMapping();
+		ColumnMapping sc_col  = mapping.getColumnMapping("dispertion_column");
+		ColumnMapping sc_unit = mapping.getColumnMapping("x_unit_org_csa");
+		this.spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
+		this.x_unit_org_ref = getMappedAttributeHander(sc_unit);
+		if( sc_col.notMapped() ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No mapping given for the dispersion column");
+			return false;
+		} else
+			/*
+			 * The mapping gives numeric values for the spectral range
+			 */
+			if( sc_col.byValue() ) {
+				List<String> vals = sc_col.getValues();
+				if( vals.size() == 2 ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
+					this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
+					this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
+
+					if( sc_unit.equals("AutoDetect") ) {
+						spectralCoordinate.setOrgUnit("channel");
+					} else {
+						spectralCoordinate.setOrgUnit(sc_unit.getValue());					
+					}
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getOrgUnit());
+					boolean retour = spectralCoordinate.convert() ;
+					this.em_min_ref = new AttributeHandler();
+					this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.em_min_ref.setValue(Double.toString(spectralCoordinate.getConvertedMin()));
+					this.em_max_ref = new AttributeHandler();
+					this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));
+					if( this.x_unit_org_ref !=  null ) {
+						spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
+					}
+					return retour;
 				}
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getOrgUnit());
-				return spectralCoordinate.convert() ;
+				else {
+					Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col.getValue() + "> ca not be interptreted");						
+					return false;
+				}
 			}
-			else {
-				Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col.getValue() + "> ca not be interptreted");						
-				return false;
-			}
-		}
 		/*
 		 * If no range set in params, try to find it out from fields
 		 */	
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + sc_col.getValue() + "> exists" );
-		LinkedHashMap<String, AttributeHandler> tah = new LinkedHashMap<String, AttributeHandler>();
+		String mappedName = sc_col.getHandler().getNameattr();
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
 		for( AttributeHandler ah : this.productFile.getEntryAttributeHandler().values() ) {
 			String key = ah.getNameorg();
-			if(key.equals(sc_col) ){
-				Messenger.printMsg(Messenger.TRACE, "Spectral abscissa column <" + sc_col + "> found");
+			if(key.equals(mappedName) ){
+				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
 				this.setEnergyMinMaxValues(this.productFile.getExtrema(key));
+				if( this.x_unit_org_ref !=  null ) {
+					spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
+				}
 				/*
-				 * Although the mapping priority is ONLY, no unit is given in mapping, 
+				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
 				 * the unit found in the column description is taken
 				 */
-				if( sc_unit.equals("AutoDetect") ) {
-					if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-						spectralCoordinate.setOrgUnit(ah.getUnit());
-						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + sc_unit + "> taken from column  description");
-					}
-					else {
-						Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");						
-					}
+				else  if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
+					spectralCoordinate.setOrgUnit(ah.getUnit());
+					this.x_unit_org_ref = new AttributeHandler();
+					this.x_unit_org_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.x_unit_org_ref.setValue(ah.getUnit());
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
+				} else {
+					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");						
 				}
-				/*
-				 * else take mapped unit 
-				 */
-				else {
-					spectralCoordinate.setOrgUnit(sc_unit.getHandler().getValue());
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + sc_unit + "> taken from mapping");
-				}
-				return spectralCoordinate.convert() ;
 			}
+			boolean retour = spectralCoordinate.convert() ;
+			this.em_min_ref = new AttributeHandler();
+			this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
+			this.em_min_ref.setValue(Double.toString(spectralCoordinate.getConvertedMin()));
+			this.em_max_ref = new AttributeHandler();
+			this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
+			this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));
+
+			return retour;
 		}
+
+
 
 		return  false;	
 	}
-	
+
 	/**
 	 * @param ds
 	 * @return
