@@ -14,7 +14,7 @@ import ajaxservlet.formator.DisplayFilter;
 
 /**
  * @author laurentmichel
-  * @version $Id: QueryContext.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+  * @version $Id$
 *
  */
 public class QueryContext implements Serializable {

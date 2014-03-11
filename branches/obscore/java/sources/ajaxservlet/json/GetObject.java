@@ -22,7 +22,7 @@ import ajaxservlet.formator.DisplayFilter;
 import ajaxservlet.formator.InstanceDisplayFilter;
 import ajaxservlet.formator.LinkDisplayFilter;
 
-/** * @version $Id: GetObject.java 593 2013-06-10 16:15:12Z laurent.mistahl $
+/** * @version $Id$
 
  * Return the description of the instance having oid = oid
  * Or the counterpart if there is a relation parameter

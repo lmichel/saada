@@ -17,7 +17,7 @@ public class GetJsonArray extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 
-	/** * @version $Id: GetJsonArray.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */

@@ -17,7 +17,7 @@ import ajaxservlet.accounting.UserTrap;
 import ajaxservlet.formator.DisplayFilter;
 import ajaxservlet.formator.DisplayFilterFactory;
 
-/** * @version $Id: RunQuery.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+/** * @version $Id$
 
  * Servlet implementation class RunQuery
  */

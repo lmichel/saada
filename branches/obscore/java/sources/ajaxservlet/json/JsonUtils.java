@@ -14,7 +14,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
- * * @version $Id: JsonUtils.java 608 2013-06-14 13:56:43Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public abstract class JsonUtils {
