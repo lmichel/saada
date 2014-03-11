@@ -44,7 +44,7 @@ import saadadb.util.TileRiceDecompressor;
 
 /**
  * @author laurent MICHEL
- *  * @version $Id: FitsProduct.java 927 2014-02-03 19:41:48Z laurent.mistahl $
+ *  * @version $Id$
 
  * 06/2011: Returns table rows a an array with the right type taken from the TFORM 
  *          keyword instead of using the reflexion of on data itself (fails on NULL value)
@@ -71,7 +71,7 @@ public class FitsProduct extends File implements ProductFile{
 	private Product product;
 	protected SpaceKWDetector space_frame;
 	private Map<String, AttributeHandler> attributeHandlers = null;
-	private Map<String, AttributeHandler> entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
+	private Map<String, AttributeHandler> entryAttributeHandlers = null;
 
 	private int[] colform ;
 	
@@ -685,7 +685,6 @@ public class FitsProduct extends File implements ProductFile{
 		/*
 		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
 		 */
-		//if( product.getConfiguration().getCategorySaada() == Category.SPECTRUM ) {
 		if( category.equals(Category.explain(Category.SPECTRUM)) ) {
 			i=0;
 			bHDU = null;
@@ -741,7 +740,7 @@ public class FitsProduct extends File implements ProductFile{
 			 * If there is no specified category (BINTABLE or IMAGE) any extension 
 			 * can be taken. That is the case for MISC products
 			 */
-			if( category == null || category.equals("") || category.equalsIgnoreCase("misc")) {
+			if( category == null || category.equals("") ) {
 				return true;
 			}
 			/*
@@ -753,7 +752,10 @@ public class FitsProduct extends File implements ProductFile{
 			else if( category.endsWith("TABLE") && (isBinTable(hdu) || isASCIITable(hdu)) ){
 				return true;
 			}
-			else if( category.endsWith("SPECTRUM") && (isBinTable(hdu) || isASCIITable(hdu))) {
+			/*
+			 * With V2 datamodel, the dataloader must be enabled to detect the energy range even for misc
+			 */
+			else if( (category.endsWith("SPECTRUM") ||category.endsWith("MISC")  ) && (isBinTable(hdu) || isASCIITable(hdu))) {
 				return true;
 			}
 		}

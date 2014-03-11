@@ -14,7 +14,7 @@ import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
-/**v * @version $Id: ProductFile.java 928 2014-02-03 19:42:06Z laurent.mistahl $
+/**v * @version $Id$
 
  * Interface for the specification of a product file.
  * An object that implements the ProductFile interface can be used in a standard way in all the Saada application.

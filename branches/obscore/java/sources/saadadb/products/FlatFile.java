@@ -17,7 +17,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
 
 /** 
- * @version $Id: FlatFile.java 826 2013-11-08 15:24:32Z laurent.mistahl $
+ * @version $Id$
  * 
  */
 public class FlatFile extends Product {

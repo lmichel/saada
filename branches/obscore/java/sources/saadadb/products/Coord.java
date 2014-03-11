@@ -76,7 +76,7 @@ import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
 
-/** * @version $Id: Coord.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * Manipulation des coordonnees
  *
