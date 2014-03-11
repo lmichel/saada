@@ -13,7 +13,7 @@ import saadadb.database.spooler.Spooler;
 
 /**
  * @author laurent
- * @version $Id: TAPAvailability.java 940 2014-02-14 10:04:15Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class TAPAvailability extends SaadaServlet {

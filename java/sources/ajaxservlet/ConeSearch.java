@@ -4,7 +4,7 @@ package ajaxservlet;
 /**
  * Endpoint of SIA services
  * @author michel
- * @version $Id: ConeSearch.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  *
  * 07/2011 switch to the new SIA request processing
  */
