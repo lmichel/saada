@@ -4,7 +4,7 @@ package saadadb.unit;
                 Astroformat class
  *==================================================================*/
 
-/** * @version $Id: Astroformat.java 477 2012-07-20 12:30:58Z laurent.mistahl $
+/** * @version $Id$
 
  * This class contains definitions used in Parsing and Editing of numbers,
  * and the default representation of the <b>NaN</b> <em>(null)</em> value.

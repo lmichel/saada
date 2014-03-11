@@ -38,7 +38,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	private final static String suffix = ".sqlitedb";
 	private static final String driver_classname = "org.sqlite.JDBC";
 
-	/** * @version $Id: SQLiteWrapper.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param server_or_driver
 	 * @param port_or_url

@@ -22,7 +22,7 @@ import saadadb.util.Messenger;
  * @author michel
  *
  */
-/** * @version $Id: RelationManager.java 871 2013-12-16 09:51:27Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  * 01/2010: suppression de la generation de code correlateur

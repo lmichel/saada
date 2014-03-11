@@ -8,7 +8,7 @@ import saadadb.database.Database;
 /**
  * This class is a simple dictionnary of regular expressions used in Saada
  * @author michel
- * * @version $Id: RegExp.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class RegExp {
@@ -95,13 +95,22 @@ public class RegExp {
 	public static final String RA_KW  = "(_*ra)|(_*ra.?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj)";
 	public static final String DEC_KW = "(_*de)|(_*dec)|(_*dec.?(2000)?)|(_*de.?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj)";
 	/*
-	 * Spectral axis column names			System.out.println("coucou");
-
+	 * Spectral axis column names			
 	 */
 	public static final String SPEC_AXIS_KW  = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
 	public static final String SPEC_MIN_UCD  = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
 	public static final String SPEC_MAX_UCD  = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
 	public static final String SPEC_BAND_UCD = "(?i)(em\\.wl)";
+	/*
+	 * TIme axis column names
+	 */
+	public static final String TIME_START_KW     = "(?i)((obs.*date)|(date.*obs)|(start.*date)|(obs.*time)|(time.*obs)|(mjd(.*obs)?))";
+	public static final String TIME_START_UCD    = "(?i)(time.start;obs)";
+	public static final String TIME_END_KW       = "(?i)((obs.*end)|(end.*obs)|(end.*date)|(date.*end))";
+	public static final String TIME_END_UCD      = "(?i)(time.end;obs)";
+	public static final String EXPOSURE_TIME_KW  = "(?i)(exptime)";
+	public static final String EXPOSURE_TIME_UCD = "(?i)(time.duration;obs.exposure)";
+	
 	/*
 	 * URL
 	 */

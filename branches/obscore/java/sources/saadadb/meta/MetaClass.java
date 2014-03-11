@@ -18,7 +18,7 @@ import saadadb.sqltable.SQLQuery;
 
 
 
-/** * @version $Id: MetaClass.java 557 2013-05-27 06:58:43Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  * 12/2009: add method getUCDField

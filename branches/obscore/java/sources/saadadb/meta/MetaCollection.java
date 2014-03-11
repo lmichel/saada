@@ -18,7 +18,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/** * @version $Id: MetaCollection.java 865 2013-12-04 15:25:26Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  * 05/2011: add methods getUCDs

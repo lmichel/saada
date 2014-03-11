@@ -42,7 +42,7 @@ public abstract class SchemaMapper {
 	protected boolean build_index = true;
 	protected Loader loader;
 
-	/** * @version $Id: SchemaMapper.java 617 2013-06-18 13:37:23Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param products
 	 * @param handler

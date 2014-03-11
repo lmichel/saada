@@ -21,7 +21,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 /**
  * @author michel
- * @version $Id: SchemaClassifierMapper.java 887 2014-01-14 09:33:09Z laurent.mistahl $
+ * @version $Id$
 
  */
 public class SchemaClassifierMapper extends SchemaMapper {

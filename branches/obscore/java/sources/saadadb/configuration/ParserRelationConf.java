@@ -36,7 +36,7 @@ public class ParserRelationConf extends DefaultHandler {
 
   static TreeMap<String, RelationConf> product=new TreeMap<String, RelationConf>();
 
-  /** * @version $Id: ParserRelationConf.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+  /** * @version $Id$
 
   * constructor object ParserRelationConf
   */

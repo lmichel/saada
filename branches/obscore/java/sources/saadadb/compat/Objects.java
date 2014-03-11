@@ -14,7 +14,7 @@ public class Objects
 {
   protected Objects() {}
 
-  /** * @version $Id: Objects.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+  /** * @version $Id$
 
    * Maps an array using Map.
    * If Map m is considered as a map from its keys to its values, then

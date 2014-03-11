@@ -18,7 +18,7 @@ public class ExtendedAttMapping extends AxeMapping {
 		for( String s: this.attributeNames) {
 			String v =  ap.getUserKeyword(entryMode, s);
 			if( v != null ) {
-				this.columnMapping.put(s, new ColumnMapping(ap.getUnit(), v));
+				this.columnMapping.put(s, new ColumnMapping(ap.getUnit(), v, s));
 			}
 		}
 		this.completeColumns();

@@ -10,7 +10,7 @@ import saadadb.exceptions.QueryException;
  * nn.init(collection, classes[], category);
  * nearest = nn.getCounterparts(target, -1, 0.2);
  * @author michel
- * * @version $Id: FirstNearestNeighbour.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  * @param <E>
  */

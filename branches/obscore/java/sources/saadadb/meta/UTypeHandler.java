@@ -26,7 +26,7 @@ public class UTypeHandler {
 	private String comment;
 	private boolean hidden=false;
 
-	/** * @version $Id: UTypeHandler.java 293 2012-03-23 16:52:46Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param resultSet
 	 * @throws SQLException 

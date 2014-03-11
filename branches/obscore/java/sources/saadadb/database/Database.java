@@ -31,7 +31,7 @@ import cds.astro.Qbox;
 
 /**
  * @author michel
- * @version $Id: Database.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * @version $Id$
  * 01/2014: Add healpixIndex filed with its getter
  * 02/2014: Use of the spooler for the admin connections
  *          getAStroFrame returns ICRS when the base is not initialized

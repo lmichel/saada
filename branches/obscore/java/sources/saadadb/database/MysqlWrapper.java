@@ -31,14 +31,14 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * @version $Id: MysqlWrapper.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+ * @version $Id$
  *
  * 11/2013 : creatDB: grant access to reader@localhost no to reader
  */
 public class MysqlWrapper extends DbmsWrapper {
 	private final TreeSet<String> recorded_tmptbl = new TreeSet<String>();
 
-	/** * @version $Id: MysqlWrapper.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param server_or_driver
 	 * @param port_or_url

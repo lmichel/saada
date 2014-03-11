@@ -26,7 +26,7 @@ import saadadb.util.Messenger;
  * Sub classes of ChoicePanel never run  actions, they just propose action selectors
  * 
  * @author laurent
- * @version $Id: ChoicePanel.java 743 2013-08-01 14:22:12Z rybak.jonathan $
+ * @version $Id$
  *
  */
 public abstract class ChoicePanel extends AdminPanel {

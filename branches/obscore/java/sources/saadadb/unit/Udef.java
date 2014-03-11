@@ -10,7 +10,7 @@ package saadadb.unit;
  */
 
 
-/** * @version $Id: Udef.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * This class defines what is a unit; it is required for the Unit class.
  * It is used by Unit, and is not public.

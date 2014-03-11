@@ -23,7 +23,7 @@ public abstract class VoTree extends JPanel {
 
 	public String[] flat_types;
 
-	/** * @version $Id: VoTree.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param frame
 	 * @param top_node

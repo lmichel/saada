@@ -24,7 +24,7 @@ import saadadb.util.Messenger;
  * This class is dedicated to load quickly flatfiles by short cutting the format analysis and by 
  * building and ASCII dump instead of one query per file.
  * @author michel
- * * @version $Id: FlatFileMapper.java 887 2014-01-14 09:33:09Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class FlatFileMapper extends SchemaMapper {

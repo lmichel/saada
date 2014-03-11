@@ -87,7 +87,7 @@ import saadadb.util.Messenger;
 /**
  * Base frame of the administration tool
  * @author michel
- * @version $Id: AdminTool.java 917 2014-01-31 08:11:29Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class AdminTool extends BaseFrame {

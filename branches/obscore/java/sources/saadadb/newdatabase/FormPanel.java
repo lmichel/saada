@@ -55,7 +55,7 @@ import saadadb.util.RegExp;
 
 /**
  * @author michel
- * @version $Id: FormPanel.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * @version $Id$
  *
  * 12/2013: new management of the extended attributes
  * 02/2014: Test the DB account within the repository directory in order to check that the

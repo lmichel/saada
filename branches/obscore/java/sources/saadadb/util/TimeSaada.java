@@ -5,7 +5,7 @@ package saadadb.util;
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: Observaroire Astronomique Strasbourg</p>
  * @author XXXX
- * @version $Id: TimeSaada.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  */
 /** Ceci est un petit chronometre qui mesure le temps ecoule entre 2 instants t1 et t2 en ms */
 public class TimeSaada {

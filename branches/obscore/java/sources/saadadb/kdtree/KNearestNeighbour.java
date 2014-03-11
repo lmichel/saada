@@ -4,7 +4,7 @@ import java.util.TreeMap;
 
 import saadadb.exceptions.QueryException;
 
-/** * @version $Id: KNearestNeighbour.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * USAGE: KNearestNeighbour nn = new KNearestNeighbour();
  * ....

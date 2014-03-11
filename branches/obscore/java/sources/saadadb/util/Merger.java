@@ -6,7 +6,7 @@ import java.util.Collection;
 
 /**
  * @author michel
- * * @version $Id: Merger.java 917 2014-01-31 08:11:29Z laurent.mistahl $
+ * * @version $Id$
 
  * 12/2009: ignore empty items in arrays to merge
  * 01/2014: Add merger on cCollections

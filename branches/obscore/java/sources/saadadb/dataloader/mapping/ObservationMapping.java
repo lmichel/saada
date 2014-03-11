@@ -10,20 +10,20 @@ public class ObservationMapping extends AxeMapping {
 		this.priority = PriorityMode.ONLY;
 		String[] ss;
 		if( (ss = ap.getNameComponents(entryMode)) != null  ){
-			this.columnMapping.put("obs_id", new ColumnMapping(null, ss));
+			this.columnMapping.put("obs_id", new ColumnMapping(null, ss, "obs_id"));
 		}
 		String s;
 		if( (s = ap.getObscollection(entryMode)) != null  ){
-			this.columnMapping.put("obs_collection", new ColumnMapping(null, s));
+			this.columnMapping.put("obs_collection", new ColumnMapping(null, s, "obs_collection"));
 		}
 		if( (s = ap.getFacility(entryMode)) != null  ){
-			this.columnMapping.put("facility_name", new ColumnMapping(null, s));
+			this.columnMapping.put("facility_name", new ColumnMapping(null, s, "facility_name"));
 		}
 		if( (s = ap.getInstrument(entryMode)) != null  ){
-			this.columnMapping.put("instrument_name", new ColumnMapping(null, s));
+			this.columnMapping.put("instrument_name", new ColumnMapping(null, s, "instrument_name"));
 		}
 		if( (s = ap.getTarget(entryMode)) != null  ){
-			this.columnMapping.put("target_name", new ColumnMapping(null, s));
+			this.columnMapping.put("target_name", new ColumnMapping(null, s, "target_name"));
 		}
 		this.priority = ap.getObsMappingPriority();
 		this.completeColumns();

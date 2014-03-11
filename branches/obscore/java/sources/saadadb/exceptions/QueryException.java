@@ -2,7 +2,7 @@ package saadadb.exceptions;
 
 /**
  * @author michel
- * @version $Id: QueryException.java 532 2013-04-11 07:19:10Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class QueryException extends SaadaException {

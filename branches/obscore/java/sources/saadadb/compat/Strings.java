@@ -29,7 +29,7 @@ public class Strings extends Objects
 
   /**
    * CharSequence version of indexOf
-   * * @version $Id: Strings.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+   * * @version $Id$
 
    * @param s CharSequence
    * @param c char

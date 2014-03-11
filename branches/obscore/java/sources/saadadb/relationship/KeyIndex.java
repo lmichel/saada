@@ -24,7 +24,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: KeyIndex.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class KeyIndex extends KeySet {

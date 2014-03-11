@@ -14,7 +14,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: NewWebServer.java 865 2013-12-04 15:25:26Z laurent.mistahl $
+ * * @version $Id$
  * 04/2012: method buildDBNameFile isolated to be used from the admin tool
 
  */

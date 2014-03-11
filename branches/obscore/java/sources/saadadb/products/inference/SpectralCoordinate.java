@@ -11,6 +11,10 @@ import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Unit;
 
+/**
+ * @author michel
+ *
+ */
 public class SpectralCoordinate{
 	public static final int WAVELENGTH      = 0;
 	public static final int FREQUENCY       = 1;
@@ -23,11 +27,6 @@ public class SpectralCoordinate{
 
 	private int type;
 	private int naxis;
-	/* * @version $Id: SpectralCoordinate.java 118 2012-01-06 14:33:51Z laurent.mistahl $
-
-	 * Default values are not defined in order to avoid to populate the database with 0 values 
-	 * when spectral coordinates can not be computed
-	 */
 	private String unit = SaadaConstant.STRING;
 	private double minValue = SaadaConstant.DOUBLE;
 	private double maxValue = SaadaConstant.DOUBLE;
@@ -129,38 +128,32 @@ public class SpectralCoordinate{
 	public boolean isConfigurationValid(int naxis, int num_axe, int type, String unit){
 		if( type < WAVELENGTH || type > CHANNEL ){
 			Messenger.printMsg(Messenger.ERROR, "Unknown Coordinate Type <"+type+">");
+		}else if( naxis != 1 && naxis != 2 ) {
+			Messenger.printMsg(Messenger.ERROR, "num_axe must equals 1 or 2");		
+		}else if( num_axe != 1 && num_axe != 2 ){
+			Messenger.printMsg(Messenger.ERROR, "naxis must equals 1 or 2");		
 		}else{
-			if( naxis != 1 && naxis != 2 ) {
-				Messenger.printMsg(Messenger.ERROR, "num_axe must equals 1 or 2");		
+			UnitRef o;
+			String sunit;
+			this.dispersion_axe_num = num_axe - 1;
+			this.naxis   = naxis;
+			if( unit == null || unit.equals("") || "NULL".equals(unit)){
+				sunit = "channel";
 			}else{
-				if( num_axe != 1 && num_axe != 2 ){
-					Messenger.printMsg(Messenger.ERROR, "naxis must equals 1 or 2");		
-				}else{
-					UnitRef o;
-					String sunit;
-					this.dispersion_axe_num = num_axe - 1;
-					this.naxis   = naxis;
-					if( unit == null || unit.equals("") || "NULL".equals(unit)){
-						sunit = "channel";
-					}else{
-						sunit = unit;
-					}
-					if( (o = SpectralCoordinate.getUniRef(sunit)) == null ){
-						Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
-						return false;
-					}else{
-						if( o.type != type ){
-							Messenger.printMsg(Messenger.ERROR, "Spectral Coordinate not valid: Unit <"+sunit 
-									+ "> doesn't match type <" + SpectralCoordinate.getDispersionName(type)
-									+ "> Allowed units are <" + SpectralCoordinate.getStringUnitsForType(type)+">");
-							return false;
-						}else{
-							this.unit = sunit;
-							this.type = type;
-							return true;
-						}
-					}
-				}
+				sunit = unit;
+			}
+			if( (o = SpectralCoordinate.getUniRef(sunit)) == null ){
+				Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
+				return false;
+			}else if( o.type != type ){
+				Messenger.printMsg(Messenger.ERROR, "Spectral Coordinate not valid: Unit <"+sunit 
+						+ "> doesn't match type <" + SpectralCoordinate.getDispersionName(type)
+						+ "> Allowed units are <" + SpectralCoordinate.getStringUnitsForType(type)+">");
+				return false;
+			}else{
+				this.unit = sunit;
+				this.type = type;
+				return true;
 			}
 		}
 		return false;
@@ -238,9 +231,11 @@ public class SpectralCoordinate{
 	 * @return
 	 */
 	public boolean convert(){
-		new Exception().printStackTrace();
-		return this.convert(this.getOrgUnit(), this.orgMin, this.orgMax);
-
+		if( this.getOrgUnit() == null || this.getOrgUnit().equals(SaadaConstant.STRING) ){
+			return false;
+		} else{
+			return this.convert(this.getOrgUnit(), this.orgMin, this.orgMax);
+		}
 	}
 
 	/**
@@ -256,7 +251,7 @@ public class SpectralCoordinate{
 		if( (unitOrg == null|| unitOrg.equals("NULL") || unitOrg.equals("")) && this.unit.equalsIgnoreCase("channel")){
 			this.minValue = minOrg;
 			this.maxValue = maxOrg;
-			checkMinMax();
+			this.checkMinMax();
 			Messenger.printMsg(Messenger.TRACE, "Spectral range not converted, take <" + minValue + ":" + maxValue + " " + this.unit + ">");
 			return true;
 		}
@@ -268,7 +263,7 @@ public class SpectralCoordinate{
 			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ maxOrg+unitOrg+"> into <"+this.unit+"> failed");
 			return false;
 		}
-		checkMinMax();
+		this.checkMinMax();
 		Messenger.printMsg(Messenger.TRACE, "Spectral range: <" + minOrg + ":" + maxOrg + " " + unitOrg + "> converted to <" + minValue + ":" + maxValue + " " + this.unit + ">");
 		return true;
 	} 
@@ -316,7 +311,7 @@ public class SpectralCoordinate{
 		int vTypeOrg = 0;
 		int vTypeNew = 0;
 		UnitRef ur;
-		
+
 		if( "AutoDetect".equals(unitOrg) ) {
 			Messenger.printMsg(Messenger.DEBUG, "No unit given");
 			return SaadaConstant.DOUBLE;
@@ -428,7 +423,7 @@ public class SpectralCoordinate{
 				value = convertValue(value, unitOrg, "eV");
 			}
 			if( value == 0 ){
-				Messenger.printMsg(Messenger.WARNING, "Cannot convert an energy NULL to a wavelength");
+				Messenger.printMsg(Messenger.TRACE, "Cannot convert energy=0 to a wavelength (div by 0)");
 				return SaadaConstant.DOUBLE;				
 			}
 			double energySI = value*joule;
@@ -454,7 +449,7 @@ public class SpectralCoordinate{
 				value = convertValue(value, unitOrg, "m");
 			}
 			if( value == 0 ){
-				Messenger.printMsg(Messenger.WARNING, "Cannot convert an wavelength NULL to a frequency");
+				Messenger.printMsg(Messenger.TRACE, "Cannot convert wavelength=0 to a frequency");
 				return SaadaConstant.DOUBLE;				
 			}
 			double frequency = c/value;
@@ -479,7 +474,7 @@ public class SpectralCoordinate{
 				value = convertValue(value, unitOrg, "Hz");
 			}
 			if( value == 0 ){
-				Messenger.printMsg(Messenger.WARNING, "Cannot convert an frequency NULL to a wavelength");
+				Messenger.printMsg(Messenger.TRACE, "Cannot convert an frequency NULL to a wavelength");
 				return SaadaConstant.DOUBLE;				
 			}
 			double waveLength = c/value;
@@ -545,18 +540,12 @@ public class SpectralCoordinate{
 		if(test!=null){
 			if(reference.equals("WAVELENGTH")){
 				return (test.equals("WAVE") || test.equals("em.wl"));
-			}else{
-				if(reference.equals("FREQUENCY")){
-					return (test.equals("FREQ") || test.equals("em.freq"));
-				}else{
-					if(reference.equals("ENERGY")){
-						return (test.equals("ENER") || test.equals("em.energy"));
-					}else{
-						if(reference.equals("CHANNEL")){
-							return (test.equals("No units") || test.equals(""));
-						}
-					}
-				}
+			}else if(reference.equals("FREQUENCY")){
+				return (test.equals("FREQ") || test.equals("em.freq"));
+			}else if(reference.equals("ENERGY")){
+				return (test.equals("ENER") || test.equals("em.energy"));
+			}else if(reference.equals("CHANNEL")){
+				return (test.equals("No units") || test.equals(""));
 			}
 		}
 		return false;

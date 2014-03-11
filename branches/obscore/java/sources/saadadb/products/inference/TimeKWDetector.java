@@ -3,6 +3,8 @@ package saadadb.products.inference;
 import java.util.Map;
 
 import saadadb.meta.AttributeHandler;
+import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 public class TimeKWDetector extends KWDetector {
 
@@ -15,10 +17,14 @@ public class TimeKWDetector extends KWDetector {
 	}
 
 	public AttributeHandler getTminName(){
-		return null;
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search for the start date");
+		return this.search(RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
 	}
 	public AttributeHandler getTmaxName(){
-		return null;
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search for the end date");
+		return this.search(RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
 	}
 	public AttributeHandler getExposureName(){
 		return null;

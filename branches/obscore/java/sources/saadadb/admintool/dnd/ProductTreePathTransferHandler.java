@@ -21,7 +21,7 @@ import saadadb.util.Messenger;
  *
  */
 public class ProductTreePathTransferHandler extends TransferHandler {
-	/** * @version $Id: ProductTreePathTransferHandler.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * 
 	 */

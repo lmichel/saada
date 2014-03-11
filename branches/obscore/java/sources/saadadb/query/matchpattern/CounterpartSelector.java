@@ -9,7 +9,7 @@ import saadadb.meta.MetaClass;
 /**
  * Store the stuff needed by the GUI to display counterpart matching a relation pattern
  * @author michel
- * * @version $Id: CounterpartSelector.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class CounterpartSelector implements Serializable{

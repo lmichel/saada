@@ -16,7 +16,7 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.exceptions.SaadaException;
 
 public class PopupNode extends JPopupMenu implements ActionListener{
-	/** * @version $Id: PopupNode.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * 
 	 */

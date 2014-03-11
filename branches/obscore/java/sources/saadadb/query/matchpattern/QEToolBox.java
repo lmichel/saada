@@ -8,7 +8,7 @@ import saadadb.relationship.KeyIndex;
 import saadadb.relationship.LongCPIndex;
 import saadadb.util.Messenger;
 
-/** * @version $Id: QEToolBox.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * Povide some usefull tools for the Query Engine of Saada
  * <p>

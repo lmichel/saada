@@ -9,7 +9,7 @@ import saadadb.query.parser.Operator;
 
 /**
  * @author laurentmichel
- *v * @version $Id: Qualif.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ *v * @version $Id$
 
  */
 public final class Qualif implements Serializable{

@@ -34,7 +34,7 @@ import saadadb.meta.MetaRelation;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-/* * @version $Id: RelationConf.java 887 2014-01-14 09:33:09Z laurent.mistahl $
+/* * @version $Id$
 
  * TODO class to be replaced with MetaRelation
  */

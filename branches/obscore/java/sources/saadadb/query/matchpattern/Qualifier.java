@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 
-/** * @version $Id: Qualifier.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author F.X. Pineau
  */

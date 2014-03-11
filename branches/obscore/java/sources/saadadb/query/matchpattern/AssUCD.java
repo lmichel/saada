@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.parser.ClauseUCD;
 
-/** * @version $Id: AssUCD.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author F.X. Pineau
  */

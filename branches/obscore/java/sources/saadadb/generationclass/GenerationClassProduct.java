@@ -34,7 +34,7 @@ import saadadb.util.Messenger;
 public class GenerationClassProduct{
 	private static String separ = System.getProperty("file.separator");
 	
-	/** * @version $Id: GenerationClassProduct.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param writer
 	 * @throws GenerateClassException

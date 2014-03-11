@@ -21,7 +21,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version $Id: ChoiceItem.java 657 2013-07-12 13:32:42Z rybak.jonathan $
+ * @version $Id$
  *
  */
 public class ChoiceItem extends AdminComponent {

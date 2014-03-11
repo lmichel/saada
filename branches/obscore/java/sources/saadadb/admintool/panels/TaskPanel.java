@@ -23,7 +23,7 @@ import saadadb.admintool.components.ToolBarPanel;
 /**
  * Input panel for administration task (create collection ......)
  * @author laurent
- * @version $Id: TaskPanel.java 871 2013-12-16 09:51:27Z laurent.mistahl $
+ * @version $Id$
  *
  */
 @SuppressWarnings("serial")

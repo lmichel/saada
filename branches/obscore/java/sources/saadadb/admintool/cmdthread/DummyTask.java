@@ -13,7 +13,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
- * @version $Id: DummyTask.java 751 2013-08-07 13:10:31Z rybak.jonathan $
+ * @version $Id$
  */
 public class DummyTask extends CmdThread {
 	

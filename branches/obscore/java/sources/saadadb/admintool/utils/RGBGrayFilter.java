@@ -56,7 +56,7 @@ import javax.swing.JComponent;
  * Thanks to Andrej Golovnin for suggesting a simpler filter formula.
  *
  * @author Karsten Lentzsch
- * @version $Revision$
+ * @version $Revision: 954 $
  */
 public final class RGBGrayFilter extends RGBImageFilter {
 

@@ -19,7 +19,7 @@ import cds.astro.FK4;
 import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
-/** * @version $Id: Image2DCoordinate.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  *@author Millan Patrick
  *@version 2.0

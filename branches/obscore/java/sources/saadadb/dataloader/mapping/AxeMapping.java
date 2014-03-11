@@ -8,6 +8,10 @@ import java.util.Set;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 
+/**
+ * @author michel
+ *
+ */
 public abstract class AxeMapping {
 	/**
 	 * Map of the column mapping handler
@@ -46,7 +50,7 @@ public abstract class AxeMapping {
 	protected void completeColumns() throws FatalException {
 		for( String s: attributeNames) {
 			if( columnMapping.get(s)  == null ) {
-				this.columnMapping.put(s, new ColumnMapping(MappingMode.NOMAPPING, null, null));
+				this.columnMapping.put(s, new ColumnMapping(MappingMode.NOMAPPING, null, null, s));
 				
 			}
 		}

@@ -20,11 +20,6 @@ public class SpectrumSaada extends WCSSaada{
 	/*
 	 * Energy Axe
 	 */
-	public double e_min   = SaadaConstant.DOUBLE;
-    public double e_max   = SaadaConstant.DOUBLE;
-    public int    x_type_csa  = SaadaConstant.INT;
-    public String x_unit_csa  = SaadaConstant.STRING;
-    public String x_colname_csa = SaadaConstant.STRING;
     public double x_min_org_csa  = SaadaConstant.DOUBLE;
     public double x_max_org_csa  = SaadaConstant.DOUBLE;
     public String x_unit_org_csa = SaadaConstant.STRING;

@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 /**
  * @author laurentmichel
- * * @version $Id: ProgressPanel.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class ProgressPanel extends JPanel {

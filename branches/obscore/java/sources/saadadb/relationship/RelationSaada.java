@@ -12,7 +12,7 @@ import saadadb.collection.obscoremin.SaadaInstance;
  */
 /**
  * @author laurentmichel
- * * @version $Id: RelationSaada.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public   abstract class  RelationSaada {

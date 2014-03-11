@@ -13,7 +13,7 @@ import saadadb.util.Messenger;
  * ZipEntryRef class models one entry of the ZIP archive
  * It is usually set by {@link saadadb.vo.cart.CartDecoder CartDecoder}
  * @author laurent
- * @version $Id: ZipEntryRef.java 491 2012-11-22 14:19:32Z laurent.mistahl $
+ * @version $Id$
  */
 @SuppressWarnings("rawtypes")
 public class ZipEntryRef implements Comparable {

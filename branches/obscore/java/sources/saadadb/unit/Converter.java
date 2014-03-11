@@ -206,7 +206,7 @@ public class Converter {
 	return(target.editedValue());
     }
 
-    /** * @version $Id: Converter.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+    /** * @version $Id$
 
      * Convert a value, return its edited form.
      * Convert the value from <em>source</em> unit into <em>target</em> unit

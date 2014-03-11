@@ -26,7 +26,7 @@ import saadadb.util.SaadaConstant;
  * The current row is returned as a SaadaInstance supposed to instanciate the right class.
  * No check is done. 
  * Method requiring random access are implemented but throw exceptions
- *  * @version $Id: SaadaInstanceResultSet.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+ *  * @version $Id$
 
  * @author laurentmichel
  * 03/2011

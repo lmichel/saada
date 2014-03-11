@@ -29,7 +29,7 @@ public class SaadaQLResultSet extends OidResultSet {
 	 * @param limit
 	 * @param const_att
 	 * @throws Exception
-	 * @version $Id: SaadaQLResultSet.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+	 * @version $Id$
 	 */
 	public SaadaQLResultSet(String sql_query, Set<Long> oidPattern, int limit, AttributeHandler[] ucols, Set<AttributeHandler> const_att) throws Exception {
 		super(limit);

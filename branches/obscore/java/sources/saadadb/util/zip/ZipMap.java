@@ -22,7 +22,7 @@ import saadadb.util.WorkDirectory;
 
 /**
  * @author laurent
- * @version $Id: ZipMap.java 895 2014-01-24 15:55:18Z laurent.mistahl $
+ * @version $Id$
  */
 public class ZipMap  {
 	private LinkedHashMap<String, Set<ZipEntryRef>> zipMap= new LinkedHashMap<String, Set<ZipEntryRef>>();

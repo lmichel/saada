@@ -16,7 +16,7 @@ import cds.savot.model.SavotCoosys;
 
 /**
  * @author michel
- * @version $Id: SpaceFrame.java 939 2014-02-13 08:17:24Z laurent.mistahl $
+ * @version $Id$
  *
  * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
  */

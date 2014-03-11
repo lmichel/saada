@@ -30,7 +30,7 @@ import saadadb.util.TimeSaada;
 
 /**
  * @author michel
- * * @version $Id: IndexBuilder.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+ * * @version $Id$
  * 05/2012:  Make sure index are empty for relation without counterparts. (a NULL OIDS were set right now)
  */
 public class IndexBuilder extends SaadaProcess { 

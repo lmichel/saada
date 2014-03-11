@@ -15,7 +15,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version $Id: ZIPUtil.java 890 2014-01-21 16:31:33Z laurent.mistahl $
+ * @version $Id$
  */
 public class ZIPUtil {
 	public static final int MAX_SIZE = 300; //Mb	

@@ -24,7 +24,7 @@ import saadadb.util.Messenger;
  *  That is the case in servlet mode
  *
  * @author michel
- * * @version $Id: SaadaClassReloader.java 353 2012-04-12 13:58:38Z laurent.mistahl $
+ * * @version $Id$
  *
  * 04/2012: Do not reload a class already loaded by the loader. 
  *          Made otherwise strange messages like classA could not be casted to classA

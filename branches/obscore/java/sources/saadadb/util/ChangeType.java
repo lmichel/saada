@@ -1,5 +1,5 @@
 package saadadb.util;
-/** * @version $Id: ChangeType.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * <p>Title: SAADA </p>
  * <p>Description: Automatic Archival System For Astronomical Data -

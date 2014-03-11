@@ -43,7 +43,7 @@ import cds.astro.Coo;
 
 /**
  * @author michel
- * @version $Id: ImageUtils.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * @version $Id$
  */
 public abstract class ImageUtils {
 
