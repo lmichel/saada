@@ -76,7 +76,7 @@ public class MetaRelation extends MetaObject {
 		return primary_coll;
 	}
 
-	/** * @version $Id: MetaRelation.java 586 2013-06-04 14:10:07Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @return Returns the secondary_category.
 	 */

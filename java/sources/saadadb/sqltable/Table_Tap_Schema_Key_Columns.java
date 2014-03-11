@@ -13,7 +13,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version $Id: Table_Tap_Schema_Key_Columns.java 591 2013-06-05 08:30:04Z laurent.mistahl $
+ * @version $Id$
  */
 public class Table_Tap_Schema_Key_Columns extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;

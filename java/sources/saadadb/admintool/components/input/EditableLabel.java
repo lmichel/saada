@@ -22,7 +22,7 @@ import saadadb.util.RegExp;
  * If it doesn't, error_msg is displayed
  */
 public class EditableLabel extends JPanel{
-	/** * @version $Id: EditableLabel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * 
 	 */

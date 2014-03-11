@@ -20,7 +20,7 @@ import saadadb.util.Messenger;
  * tableName can be a simple table name or it can be like tableName(col1,...) giving so the list of columns
  * concerned by the command 
  * @author michel
- * @version $Id: ManageTableIndex.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class ManageTableIndex extends SaadaProcess {

@@ -40,7 +40,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-/** * @version $Id: MappingRelationPanel.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
  * 
  */
 public class RelationCreatePanel extends TaskPanel {

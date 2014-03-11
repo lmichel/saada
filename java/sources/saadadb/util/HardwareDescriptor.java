@@ -2,7 +2,7 @@ package saadadb.util;
 
 /**
  * @author michel
- * * @version $Id: HardwareDescriptor.java 813 2013-11-06 08:25:53Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public abstract class HardwareDescriptor {

@@ -9,7 +9,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: SaadaDB.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * * @version $Id$
 
  */
 

@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.QueryException;
 import saadadb.query.parser.ClauseSQL;
 
-/** * @version $Id: AssObjAttClass.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author F.X. Pineau
  */

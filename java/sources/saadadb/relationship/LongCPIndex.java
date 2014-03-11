@@ -30,7 +30,7 @@ import saadadb.util.Messenger;
  */
 public class LongCPIndex extends KeyIndex {
 	/**
-	 *  * @version $Id: LongCPIndex.java 586 2013-06-04 14:10:07Z laurent.mistahl $
+	 *  * @version $Id$
 
 	 */
 	private static final long serialVersionUID = 1L;

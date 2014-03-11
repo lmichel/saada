@@ -2,7 +2,7 @@ package saadadb.util;
 
 /**
  * @author laurentmichel
- * * @version $Id: Version.java 873 2013-12-17 13:22:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 final public class Version {

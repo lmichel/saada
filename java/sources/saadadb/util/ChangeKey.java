@@ -20,7 +20,7 @@ public class ChangeKey {
 	return (Character.toString(c).getBytes())[0];
     }
  
-    /** * @version $Id: ChangeKey.java 448 2012-06-07 15:39:12Z laurent.mistahl $
+    /** * @version $Id$
 
      * Make the key compatible with SQL and Java. 
      * The changed key is in lower case and applying

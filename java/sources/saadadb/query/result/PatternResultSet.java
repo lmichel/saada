@@ -18,7 +18,7 @@ public class PatternResultSet extends OidResultSet {
 	private int position=0;
 	private long current_oid;
 	
-	/** * @version $Id: PatternResultSet.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param oidPattern
 	 * @throws SQLException 

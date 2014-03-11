@@ -12,7 +12,7 @@ import java.util.Stack;
  * implementations place no fixed limits on the number of elements
  * they may contain, but this interface supports capacity-restricted
  * deques as well as those with no fixed size limit.
- * * @version $Id: Deque.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  * <p>This interface defines methods to access the elements at both
  * ends of the deque.  Methods are provided to insert, remove, and

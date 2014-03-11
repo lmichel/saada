@@ -12,7 +12,7 @@ import saadadb.products.Spectrum;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-/** * @version $Id: WCSModel.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  * Class modeling a set of WCS keyword.
  * This class is the first stone for a future clean implementation of projections

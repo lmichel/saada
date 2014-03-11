@@ -15,7 +15,7 @@ import saadadb.database.SaadaDBConnector;
 public class GenerationClassSaadaDB{
     
     private static String separ = System.getProperty("file.separator");
-    /** * @version $Id: GenerationClassSaadaDB.java 842 2013-11-12 10:34:33Z laurent.mistahl $
+    /** * @version $Id$
 
      * @param saadadb_conf
      * @throws Exception

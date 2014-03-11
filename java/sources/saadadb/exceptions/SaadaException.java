@@ -4,7 +4,7 @@ package saadadb.exceptions;
 
 /**
  * @author laurentmichel
- *s- * @version $Id: SaadaException.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ *s- * @version $Id$
 
  */
 abstract public class SaadaException extends Exception{

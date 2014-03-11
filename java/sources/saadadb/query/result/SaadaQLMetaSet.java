@@ -15,7 +15,7 @@ import saadadb.util.Messenger;
  * with the attributes handlers if the touched Saada class attributes
  * The name of the SQL result column is taken
  * @author michel
- * * @version $Id: SaadaQLMetaSet.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class SaadaQLMetaSet {

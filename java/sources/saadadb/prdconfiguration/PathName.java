@@ -6,7 +6,7 @@ import saadadb.util.Messenger;
  *This class serves for describing the constraints in "pathname" mode
  *The constraint is on the name of the parent file of a tested file (product)
  *@author Millan Patrick
- *@version $Id: PathName.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ *@version $Id$
  *@see ProductIdentificationConstraint
  */
 public class PathName implements ProductIdentificationConstraint{

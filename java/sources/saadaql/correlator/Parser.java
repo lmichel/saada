@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author laurentmichel
- * * @version $Id: Parser.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class Parser implements ParserConstants {

@@ -46,7 +46,7 @@ import saadadb.util.TimeSaada;
 /**
  * @author laurent
  * 05/2011: add method getUCDColumns
- * * @version $Id: Query.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class Query extends Query_Report{

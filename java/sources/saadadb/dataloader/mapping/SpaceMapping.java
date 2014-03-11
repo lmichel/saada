@@ -50,8 +50,8 @@ public class SpaceMapping extends AxeMapping {
 			if( pp.getFormat() == PositionParser.NOFORMAT ) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Can not resolve name <" + av + ">");
 			} else {
-				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getRa())));
-				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getDec())));
+				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getRa()), ""));
+				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getDec()), ""));
 			}
 		}
 		/*
@@ -63,15 +63,15 @@ public class SpaceMapping extends AxeMapping {
 				pp = new PositionParser(tabRa_dec[0] + " " + tabRa_dec[1]);		
 				// Position keywords ALPHA,DELTA were taken as an object name, make a test to keep nulerical value only
 				if( pp.getFormat() == PositionParser.HMS ||  pp.getFormat() == PositionParser.DECIMAL ) {
-					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getRa())));
-					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getDec())));
+					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getRa()), ""));
+					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getDec()), ""));
 				} else {
-					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0]));
-					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1]));
+					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0], ""));
+					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1], ""));
 				}
 			} catch(QueryException e) {
-				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0]));
-				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1]));
+				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0], ""));
+				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1], ""));
 			}
 		}
 	}
@@ -88,29 +88,29 @@ public class SpaceMapping extends AxeMapping {
 		 * One poserror parameter: error is supposed to be a circle
 		 */
 		if( tabRa_dec.length == 1 ) {
-			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0"));
+			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0", ""));
 			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ) {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0]));
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_min_csa"));
 			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0]));
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_min_csa"));
 			}
 		}
 		/*
 		 * 2 poserror parameters: Error is supposed to be a canonical ellipse
 		 */
 		else if( tabRa_dec.length == 2 ) {
-			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0"));
+			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0", "error_angle_csa"));
 			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
 			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
 			}
 			if( tabRa_dec[1].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1]));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
 			} else {
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1]));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
 			}
 		}
 		/*
@@ -119,19 +119,19 @@ public class SpaceMapping extends AxeMapping {
 		 */
 		else if( tabRa_dec.length >= 3 ) {
 			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
 			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0]));
+				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
 			}
 			if( tabRa_dec[1].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1]));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
 			} else {
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1]));
+				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
 			}
 			if( tabRa_dec[2].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", tabRa_dec[2]));
+				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", tabRa_dec[2], "error_angle_csa"));
 			} else {
-				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[2]));
+				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[2], "error_angle_csa"));
 			}
 		}
 	}

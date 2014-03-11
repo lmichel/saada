@@ -16,7 +16,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: SaadaRelation.java 504 2012-12-19 15:03:35Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class SaadaRelation extends SaadaDMBrik {

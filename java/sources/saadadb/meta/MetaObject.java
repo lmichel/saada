@@ -9,7 +9,7 @@ import saadadb.util.Messenger;
  * 
  */
 
-/** * @version $Id: MetaObject.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  *

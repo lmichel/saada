@@ -7,8 +7,8 @@ import saadadb.exceptions.QueryException;
 public class SigmaKNearestNeighbour extends SigmaKDTree{
 
 
-	/** * @version $Id: SigmaKNearestNeighbour.java 118 2012-01-06 14:33:51Z laurent.mistahl $
- * @version $Id: SigmaKNearestNeighbour.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
+ * @version $Id$
 
 	 * Return the first neighbour at a distance <= dist_max
 	 * The result is encapsulated in a TreeMap in order to have the same interface id KNearestNeighbour

@@ -12,7 +12,7 @@ import saadadb.vo.request.CartRequest;
 
 /**
  * @author laurent
- * @version $Id: CartRequestTester.java 917 2014-01-31 08:11:29Z laurent.mistahl $
+ * @version $Id$
  */
 public class CartRequestTester {
 

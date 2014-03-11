@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import saadadb.products.Product;
 import saadadb.util.Messenger;
-/** * @version $Id: PatternRegex.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  *This class serves for describing the constraints of file name in mode "pattern regex"
  *The constraint is on the name of the tested file (product)

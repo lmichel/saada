@@ -9,13 +9,13 @@ import saadadb.util.RegExp;
 
 /**
  * @author michel
- * @version $Id: InstallParamValidator.java 468 2012-07-02 12:17:39Z laurent.mistahl $
+ * @version $Id$
  *
  * 04/2012: replace FatalException with QueryException
  */
 public class InstallParamValidator {
 
-	/** * @version $Id: InstallParamValidator.java 468 2012-07-02 12:17:39Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param name
 	 * @return

@@ -272,7 +272,7 @@ public class TransactionMaker {
 	
 	/**
 	 * @author laurent
-	 * @version $Id: TransactionMaker.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+	 * @version $Id$
 	 */
 	class QueryString {
 		protected String query;

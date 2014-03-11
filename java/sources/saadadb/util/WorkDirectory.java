@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 /**
  * Contains some methods managing working directories
  * @author laurent
- * @version $Id: WorkDirectory.java 850 2013-11-12 16:19:30Z laurent.mistahl $
+ * @version $Id$
  */
 public class WorkDirectory {
 	/**

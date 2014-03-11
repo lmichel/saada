@@ -22,7 +22,7 @@ import saadadb.util.Messenger;
 
 /** 
  * @author michel
- * @version $Id: GenerationClassCollection.java 865 2013-12-04 15:25:26Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class GenerationClassCollection{

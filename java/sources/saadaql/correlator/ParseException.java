@@ -1,6 +1,6 @@
 package saadaql.correlator;
 
-/** * @version $Id: ParseException.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * This exception is thrown when parse errors are encountered.
  * You can explicitly create objects of this exception type by

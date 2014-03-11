@@ -6,7 +6,7 @@ package saadadb.unit;
 
 import java.text.ParseException;
 
-/** * @version $Id: Astrotime.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * The astronomical time may be expressed in (Modified) Julian Days,
  * Julian Years or Besselian years. The conversion to Calendar can use the

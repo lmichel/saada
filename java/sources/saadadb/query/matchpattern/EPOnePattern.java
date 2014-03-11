@@ -31,7 +31,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.TimeSaada;
 
-/** * @version $Id: EPOnePattern.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  * @author F.X. Pineau, L. Michel
  */

@@ -25,7 +25,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: DoubleCPIndex.java 586 2013-06-04 14:10:07Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class DoubleCPIndex extends KeyIndex {

@@ -8,7 +8,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * * @version $Id: SaadaLink.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class SaadaLink extends SaadaDMBrik implements Comparable, Comparator {

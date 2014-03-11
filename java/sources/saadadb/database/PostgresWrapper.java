@@ -28,7 +28,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
- * * @version $Id: PostgresWrapper.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class PostgresWrapper extends DbmsWrapper {

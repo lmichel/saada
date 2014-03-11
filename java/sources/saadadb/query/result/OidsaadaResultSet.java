@@ -15,7 +15,7 @@ import saadadb.relationship.KeyIndex;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-/** * @version $Id: OidsaadaResultSet.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+/** * @version $Id$
 
  * This class run an SQL query and merge it with a pattern result set.
  * The SQL query is supposed to have an oidsaada in the first column. There is no check.

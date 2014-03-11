@@ -33,7 +33,7 @@ import cds.astro.Qbox;
 
 /**
  * @author michel
- * * @version $Id: DbmsWrapper.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * * @version $Id$
 
  * 07/2009: getInCircle uses QBOX for small cones and BOX + distance for larger ones 
  * 04/2012: Use qbox  i ADQL if columns are pos_ra/dec_csa

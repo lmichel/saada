@@ -1,19 +1,12 @@
 package saadadb.dataloader.mapping;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-
-import cds.astro.Astrotime;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import cds.astro.Astrotime;
 
 public class TimeMapping extends AxeMapping {
 
@@ -23,7 +16,7 @@ public class TimeMapping extends AxeMapping {
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
 				String v = getMJD(s);
-				this.columnMapping.put("t_min", new ColumnMapping(null, v));
+				this.columnMapping.put("t_min", new ColumnMapping(null, "'" + v + "'", "t_min"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_min: Cannot parse the date " + s  + ": ignored");
 			}
@@ -31,7 +24,7 @@ public class TimeMapping extends AxeMapping {
 		if( (s = ap.getTmax(entryMode)) != null  ){
 			try {
 				String v = getMJD(s);
-				this.columnMapping.put("t_max", new ColumnMapping(null, v));
+				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
 			}

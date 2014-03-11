@@ -15,7 +15,7 @@ public class SigmaKDTree extends KDTree<HasKCoo> {
 	
 	/* (non-Javadoc)
 	 * @see saadadb.kdtree.KDTree#init(java.lang.String, java.lang.String[], int)
-	 * * @version $Id: SigmaKDTree.java 916 2014-01-30 14:08:20Z laurent.mistahl $
+	 * * @version $Id$
 /
 	@Override
 	public void init(String collection, String[] classes, int category ) throws SaadaException{

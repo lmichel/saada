@@ -7,7 +7,7 @@ package saadadb.unit;
 //import java.io.*;
 //import java.util.*;
 
-/** * @version $Id: Editing.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * Class for 'nice' edition of numbers. 
  * This class contains options for the edition of integer / float numbers;

@@ -35,7 +35,7 @@ import cds.savot.model.TDSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 
-/** * @version $Id: VOResource.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurent
  * @version 07/2011 Make sure that position UCDs are set

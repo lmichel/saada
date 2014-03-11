@@ -11,11 +11,11 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
 
-/** * @version $Id: Repository.java 733 2013-07-31 08:06:29Z laurent.mistahl $
+/** * @version $Id$
 
  * some utilities handling repository files.
  * @author michel
- * @version $Id: Repository.java 733 2013-07-31 08:06:29Z laurent.mistahl $
+ * @version $Id$
  * 07/2011: method sweepReportDir + getUserReportsPath
  */
 public class Repository {

@@ -25,7 +25,7 @@ import saadadb.util.Messenger;
 	</target>
  *
  * @author michel
- * @version $Id: Compile.java 542 2013-04-12 09:35:28Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class Compile{      

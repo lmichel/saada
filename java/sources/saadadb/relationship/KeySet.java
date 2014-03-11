@@ -29,7 +29,7 @@ import saadadb.util.Messenger;
  * in replacement of Set which although more efficient require too much memory
  * Typical access time for 1000000 entries: 0.0014 ms/entry, about 15% slower tha TreeSet: I buy it
  * @author michel
- * * @version $Id: KeySet.java 941 2014-02-19 08:39:01Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class KeySet implements Serializable {

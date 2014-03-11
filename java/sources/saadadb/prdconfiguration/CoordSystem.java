@@ -6,7 +6,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version $Id: CoordSystem.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  */
 public class CoordSystem{
     private boolean autodetect = false;

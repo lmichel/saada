@@ -27,7 +27,7 @@ public class Files extends Strings
 {
   private static final char altSeparatorChar = File.separatorChar == '/' ? '\\' : '/';
 
-  /** * @version $Id: Files.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+  /** * @version $Id$
 
    * Calculates full path of a file
    * @param file

@@ -1,8 +1,5 @@
 package saadadb.products.inference;
 
-import java.util.Map;
-
-import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -18,6 +15,7 @@ public class EnergyKWDetector extends KWDetector {
 
 	public EnergyKWDetector(ProductFile productFile) throws SaadaException {
 		super(productFile.getAttributeHandler(), productFile.getEntryAttributeHandler());
+		this.productFile = productFile;
 	}
 
 	public void mustSearchUnit() {
@@ -84,7 +82,7 @@ public class EnergyKWDetector extends KWDetector {
 		 */	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinate found in header: explore columns names");
 		if( this.entryAttributeHandler != null ){
-			AttributeHandler ah = this.searchByName(RegExp.SPEC_AXIS_KW);
+			AttributeHandler ah = this.searchColumnsByName(RegExp.SPEC_AXIS_KW);
 			if( ah != null ){
 				this.setMinMaxValues(this.productFile.getExtrema(ah.getNameorg()));
 				if( mustSearchUnit && ah.getUnit() != null ) {
@@ -136,7 +134,7 @@ public class EnergyKWDetector extends KWDetector {
 			 */	
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinates found in header UCDs or UTypes: explore column definitions");
 			findMin = false;
-			ah = this.searchByUcd(RegExp.SPEC_BAND_UCD);
+			ah = this.searchColumnsByUcd(RegExp.SPEC_BAND_UCD);
 			if( ah !=null){
 				this.setMinMaxValues(this.productFile.getExtrema(ah.getNameorg()));
 				if( unit == null || unit.length() == 0) unit = ah.getUnit();

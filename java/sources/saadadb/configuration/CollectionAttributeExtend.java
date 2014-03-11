@@ -23,13 +23,13 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * @version $Id: CollectionAttributeExtend.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class CollectionAttributeExtend {
 	
 	/**
-	 *  * @version $Id: CollectionAttributeExtend.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+	 *  * @version $Id$
 
 	 */
 	private static final long serialVersionUID = 1L;

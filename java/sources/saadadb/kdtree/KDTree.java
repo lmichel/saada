@@ -18,7 +18,7 @@ import saadadb.meta.MetaClass;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
-/** * @version $Id: KDTree.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+/** * @version $Id$
 
  * The KDTree class contains methods to:
  *  - create a KDTree (create)

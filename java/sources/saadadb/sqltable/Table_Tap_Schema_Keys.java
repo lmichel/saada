@@ -15,7 +15,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurent
- * @version $Id: Table_Tap_Schema_Keys.java 788 2013-09-17 14:40:30Z laurent.mistahl $
+ * @version $Id$
  */
 public class Table_Tap_Schema_Keys extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;

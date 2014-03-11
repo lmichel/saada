@@ -17,10 +17,12 @@ import saadadb.util.RegExp;
  */
 public class ColumnMapping {
 	public static final String NUMERIC = "Numeric";
+	public static final String UNDEFINED = "Undefined";
 	private MappingMode mappingMode = MappingMode.NOMAPPING;
 	private List<AttributeHandler> attributeHandlers =new ArrayList<AttributeHandler>();
 	private static final Pattern constPattern = Pattern.compile("^'(.*)'$");
 	private static final Pattern numPattern = Pattern.compile("^(?:(" + RegExp.NUMERIC + "))$");
+	public final String label; // used for logging
 
 	//private static final Pattern constPattern = Pattern.compile("(?:^(?:(?:'(.*)')|(?:(" + RegExp.NUMERIC + ")))$)");
 	//private static final Pattern constPattern = Pattern.compile("(?:^(?:(" + RegExp.NUMERIC + "))$)");
@@ -32,8 +34,9 @@ public class ColumnMapping {
 	 * @param value
 	 * @throws FatalException
 	 */
-	ColumnMapping(MappingMode mappingMode, String unit, String value) throws FatalException{
+	ColumnMapping(MappingMode mappingMode, String unit, String value, String label) throws FatalException{
 		this.mappingMode = mappingMode;
+		this.label = label;
 		AttributeHandler ah = new AttributeHandler();
 		if( this.mappingMode == MappingMode.VALUE) {
 			ah.setNameattr(ColumnMapping.NUMERIC);
@@ -56,7 +59,8 @@ public class ColumnMapping {
 	 * @param values
 	 * @throws FatalException
 	 */
-	ColumnMapping(String unit, String value) throws FatalException{
+	ColumnMapping(String unit, String value, String label) throws FatalException{
+		this.label = label;
 		AttributeHandler ah = new AttributeHandler();
 		ah.setUnit(unit);			
 		Matcher m = constPattern.matcher(value);
@@ -67,7 +71,7 @@ public class ColumnMapping {
 			this.mappingMode = MappingMode.VALUE;
 		} else {
 			if( value.matches(".*['\"]+.*" )) {
-				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrog parameter " + value);					
+				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + value);					
 			}
 			this.mappingMode = MappingMode.ATTRIBUTE;
 			ah.setNameattr(value);
@@ -82,7 +86,8 @@ public class ColumnMapping {
 	 * @param values
 	 * @throws FatalException
 	 */
-	ColumnMapping(String unit, String[] values) throws FatalException{
+	ColumnMapping(String unit, String[] values, String label ) throws FatalException{
+		this.label = label;
 		this.mappingMode = (values == null)? MappingMode.NOMAPPING:  MappingMode.VALUE;
 		for( String s: values ) {
 			AttributeHandler ah = new AttributeHandler();

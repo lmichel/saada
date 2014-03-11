@@ -24,7 +24,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author michel
- * @version $Id: NewSaadaDBTool.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * @version $Id$
  * 
  * 11/2013: Not override old log files
  *
@@ -46,13 +46,12 @@ public class NewSaadaDBTool extends JFrame {
 	 */
 	public NewSaadaDBTool(ArgsParser ap, String saada_home) throws FatalException {
 		super("Saada " + Database.version() + ": Database Creation Tool");
-		System.out.println(saada_home);
+		Messenger.printMsg(Messenger.TRACE, "Build a new SaadaDB from " +saada_home);
 		NewSaadaDBTool.saada_home = saada_home;
 		//NewSaadaDBTool.saada_home = currentDir;
 		if( File.separator.equals("\\")) {
 			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
-		System.out.println(NewSaadaDBTool.saada_home);
 		this.setResizable(true);
 		this.setLayout(new GridBagLayout());	
 		/*

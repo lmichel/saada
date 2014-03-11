@@ -15,7 +15,7 @@ import saadadb.query.constbuilders.UTypeField;
 import saadadb.query.merger.Merger;
 import saadadb.query.parser.SelectFromIn;
 
-/** * @version $Id: PatternSQLBuilder.java 521 2013-03-20 14:13:11Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  * Build the SQL query requested by the pattern

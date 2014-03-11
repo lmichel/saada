@@ -22,7 +22,7 @@ import cds.astro.FK5;
 
 /**
  * @author michel
- * @version $Id: PositionParser.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * @version $Id$
  * 02/2014: Do the conversion only if the given frame differs from the this of the DB
  */
 public class PositionParser {

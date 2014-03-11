@@ -2,7 +2,7 @@ package saadadb.database;
 
 /**
  * @author laurentmichel
- * * @version $Id: DBUser.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * * @version $Id$
 
  */
 class DBUser {

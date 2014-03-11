@@ -5,7 +5,7 @@ import java.awt.Frame;
 
 public class VoUCDTree extends VoTree {
 	/**
-	 * * @version $Id: VoUCDTree.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	 * * @version $Id$
  
 	 */
 	private static final long serialVersionUID = 1L;

@@ -29,7 +29,7 @@ import cds.astro.ICRS;
 
 /**
  * @author michel
- * * @version $Id: SaadaDBConnector.java 936 2014-02-07 13:56:44Z laurent.mistahl $
+ * * @version $Id$
 
  * 07/2009: set jdbc_connection in autocommit = false
  */

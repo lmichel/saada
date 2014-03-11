@@ -11,7 +11,7 @@ public class TokenMgrError extends Error
     */
    static final int LEXICAL_ERROR = 0;
 
-   /** * @version $Id: TokenMgrError.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+   /** * @version $Id$
  * 
     * An attempt wass made to create a second instance of a static token manager.
     */

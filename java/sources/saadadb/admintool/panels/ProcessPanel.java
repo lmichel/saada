@@ -36,7 +36,7 @@ import saadadb.util.Messenger;
  * It is activated after the action is started
  * 
  * @author laurent
- * @version $Id: ProcessPanel.java 749 2013-08-07 09:58:32Z rybak.jonathan $
+ * @version $Id$
  *
  */
 public  class ProcessPanel extends TaskPanel {

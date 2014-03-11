@@ -12,7 +12,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.query.parser.ClauseDM;
 
-/** * @version $Id: AssUType.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurentmichel
  *

@@ -12,7 +12,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 
 /**
- * @version $Id: DummyTask.java 751 2013-08-07 13:10:31Z rybak.jonathan $
+ * @version $Id$
  */
 public class LongDummyVerboseTask extends CmdThread {
 	

@@ -18,7 +18,7 @@ import saadadb.meta.MetaCollection;
 import saadadb.query.parser.UnitHandler;
 import saadadb.unit.Unit;
 
-/** * @version $Id: DMAttributeTextField.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurentmichel
  *
