@@ -3,7 +3,7 @@
  * It creates all MVC and bind some DOM node with relevant event handlers
  * 
  * @author michel
- * @version $Id: ready.js 877 2013-12-17 13:33:06Z laurent.mistahl $
+ * @version $Id$
  */
 var resultPaneView;
 var saadaqlView ;
