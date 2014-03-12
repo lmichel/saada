@@ -9,7 +9,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-public class EnergyMapping extends AxeMapping {
+public class EnergyMapping extends AxisMapping {
 	/**
 	 * @param ap
 	 * @throws SaadaException

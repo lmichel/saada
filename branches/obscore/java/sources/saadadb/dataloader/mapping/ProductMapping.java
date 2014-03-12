@@ -166,20 +166,20 @@ public class ProductMapping {
     public RepositoryMode getRepositoryMode(){
     	return this.repositoryMode;
     }
-    public SpaceMapping getSpaceAxeMapping() throws FatalException {
-    	return (SpaceMapping) stoeMapping.getAxeMapping(Axe.SPACE);
+    public SpaceMapping getSpaceAxisMapping() throws FatalException {
+    	return (SpaceMapping) stoeMapping.getAxisMapping(Axis.SPACE);
     }
-    public AxeMapping getTimeAxeMapping() throws FatalException {
-    	return stoeMapping.getAxeMapping(Axe.TIME);
+    public AxisMapping getTimeAxisMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.TIME);
     }
-    public AxeMapping getEnergyAxeMapping() throws FatalException {
-    	return stoeMapping.getAxeMapping(Axe.ENERGY);
+    public AxisMapping getEnergyAxisMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.ENERGY);
     }
-    public AxeMapping getObservationAxeMapping() throws FatalException {
-    	return stoeMapping.getAxeMapping(Axe.OBSERVATION);
+    public AxisMapping getObservationAxisMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.OBSERVATION);
     }
-    public AxeMapping getExtenedAttMapping() throws FatalException {
-    	return stoeMapping.getAxeMapping(Axe.EXTENDEDATT);
+    public AxisMapping getExtenedAttMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.EXTENDEDATT);
     }
     public List<String>  getIgnoredAttributes() {
     	return this.stoeMapping.getIgnoredAttributes();

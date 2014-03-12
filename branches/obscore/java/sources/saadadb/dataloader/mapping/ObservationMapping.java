@@ -3,7 +3,7 @@ package saadadb.dataloader.mapping;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 
-public class ObservationMapping extends AxeMapping {
+public class ObservationMapping extends AxisMapping {
 
 	ObservationMapping(ArgsParser ap, boolean entryMode) throws FatalException {
 		super(ap, new String[]{"obs_id", "obs_collection", "facility_name", "instrument_name", "target_name"}, entryMode);
@@ -15,7 +15,7 @@ public class ObservationMapping extends AxeMapping {
 		String s;
 		if( (s = ap.getObscollection(entryMode)) != null  ){
 			this.columnMapping.put("obs_collection", new ColumnMapping(null, s, "obs_collection"));
-		}
+		} 
 		if( (s = ap.getFacility(entryMode)) != null  ){
 			this.columnMapping.put("facility_name", new ColumnMapping(null, s, "facility_name"));
 		}

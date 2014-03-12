@@ -20,7 +20,7 @@ import saadadb.util.Messenger;
  *
  */
 public class STEOMapping {
-	private Map<Axe, AxeMapping> axeMapping;
+	private Map<Axis, AxisMapping> axeMapping;
 	public final int category;
 	public final String collection;
 	private ArrayList<String> ignoredAttributes;
@@ -30,13 +30,13 @@ public class STEOMapping {
 	 * @throws FatalException
 	 */
 	STEOMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		this.axeMapping = new LinkedHashMap<Axe, AxeMapping>();
-		this.axeMapping.put(Axe.SPACE      , new SpaceMapping(ap, entryMode));
-		this.axeMapping.put(Axe.TIME       , new TimeMapping(ap, entryMode));
-		this.axeMapping.put(Axe.ENERGY     , new EnergyMapping(ap, entryMode));
-		this.axeMapping.put(Axe.OBSERVATION, new ObservationMapping(ap, entryMode));
+		this.axeMapping = new LinkedHashMap<Axis, AxisMapping>();
+		this.axeMapping.put(Axis.SPACE      , new SpaceMapping(ap, entryMode));
+		this.axeMapping.put(Axis.TIME       , new TimeMapping(ap, entryMode));
+		this.axeMapping.put(Axis.ENERGY     , new EnergyMapping(ap, entryMode));
+		this.axeMapping.put(Axis.OBSERVATION, new ObservationMapping(ap, entryMode));
 		this.category = Category.getCategory(ap.getCategory());
-		this.axeMapping.put(Axe.EXTENDEDATT, new ExtendedAttMapping(ap, entryMode));
+		this.axeMapping.put(Axis.EXTENDEDATT, new ExtendedAttMapping(ap, entryMode));
 		this.collection = ap.getCollection();
 		this.setIgnoredAttributes(ap,entryMode);
 	}
@@ -70,8 +70,8 @@ public class STEOMapping {
 	 * @return
 	 * @throws FatalException
 	 */
-	public AxeMapping getAxeMapping(Axe axe) throws FatalException{
-		if( axe == Axe.EXTENDEDATT && this.axeMapping.get(Axe.EXTENDEDATT) == null ) {
+	public AxisMapping getAxisMapping(Axis axe) throws FatalException{
+		if( axe == Axis.EXTENDEDATT && this.axeMapping.get(Axis.EXTENDEDATT) == null ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No extended attributes in this DB:  no mapping available");
 		}
 		return this.axeMapping.get(axe);
@@ -84,7 +84,7 @@ public class STEOMapping {
 		StringBuffer retour = new StringBuffer();
 		retour.append(this.category);
 		retour.append(Merger.getMergedCollection(this.ignoredAttributes).replaceAll("[, ] " , ""));
-		for(AxeMapping am: this.axeMapping.values() ){
+		for(AxisMapping am: this.axeMapping.values() ){
 			am.toString().replaceAll("\\n" , "").replaceAll("[, ] " , "");
 		}
 		return retour.toString();
@@ -95,7 +95,7 @@ public class STEOMapping {
 		sb.append("* Ignored att :");
 		sb.append("\n");
 		for( String ia: ignoredAttributes) sb.append(ia + " ");
-		for( Entry<Axe, AxeMapping>e: this.axeMapping.entrySet()){
+		for( Entry<Axis, AxisMapping>e: this.axeMapping.entrySet()){
 			sb.append("* Axe " + e.getKey() + "\n" + e.getValue());
 		}
 		return sb.toString();

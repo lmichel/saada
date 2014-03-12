@@ -9,7 +9,7 @@ package saadadb.dataloader.mapping;
  * @version $Id$
  *
  */
-public enum Axe {
+public enum Axis {
 	SPACE,
 	TIME,
 	ENERGY,
