@@ -22,7 +22,7 @@ import ajaxservlet.accounting.UserAccount;
 /**
  * AbstractJob implementation to build ZIP archive in asynchronous mode
  * @author laurent
- * @version $Id: CartJob.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * @version $Id$
  */
 public class CartJob extends AbstractJob {
 	private static final long serialVersionUID = 1L;
