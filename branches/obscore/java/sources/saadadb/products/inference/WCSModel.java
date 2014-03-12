@@ -1,14 +1,10 @@
 package saadadb.products.inference;
 
-import java.io.File;
 import java.util.Map;
 
-import saadadb.command.ArgsParser;
-import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.Spectrum;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -526,46 +522,4 @@ public class WCSModel {
 			return false;
 		}
 	}
-
-	
-	public static void main(String[] args)  {
-		
-		try {
-			ArgsParser ap = new ArgsParser(args);
-			Database.init(ap.getDBName());
-			Spectrum sp ;
-			sp = new Spectrum(new File("/home/michel/Desktop/MGC29864B.fit")
-			, (new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})).getProductMapping());
-			sp.readProductFile((new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})).getProductMapping());
-			Messenger.debug_mode = true;
-			WCSModel wm = new WCSModel(sp.getProductAttributeHandler());
-			wm.projectAllAxesToRealWord();
-			double[] retour = wm.getXYValue(new int[] {0, 0});
-			for( double v: retour) {
-				System.out.print(v + " " );
-			}
-			System.out.println();
-			retour = wm.getXYValue(new int[] {0, wm.getNAXISi(1)});
-			for( double v: retour) {
-				System.out.print(v + " " );
-			}
-			System.out.println();
-			retour = wm.getXYValue(new int[] {wm.getNAXISi(0), 0});
-			for( double v: retour) {
-				System.out.print(v + " " );
-			}
-			System.out.println();
-			retour = wm.getXYValue(new int[] {wm.getNAXISi(0), wm.getNAXISi(1)});
-			for( double v: retour) {
-				System.out.print(v + " " );
-			}
-			System.out.println();
-			
-			
-		} catch ( Exception e) {
-			e.printStackTrace();
-		}
-		Database.close();
-	}
-
 }
