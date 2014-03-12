@@ -10,7 +10,7 @@ import saadadb.exceptions.SaadaException;
  * @version $Id$
  *
  */
-public class ExtendedAttMapping extends AxeMapping {
+public class ExtendedAttMapping extends AxisMapping {
 
 	ExtendedAttMapping(ArgsParser ap, boolean entryMode) throws SaadaException{
 		super(ap,  Database.getCachemeta().getAtt_extend(Category.getCategory(ap.getCategory())).keySet().toArray(new String[0]), entryMode);		

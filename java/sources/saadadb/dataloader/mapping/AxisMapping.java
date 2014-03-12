@@ -7,13 +7,19 @@ import java.util.Set;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
+import saadadb.products.Product;
 
 /**
- * Super class of the the classes habdling the loader config for one axe (STOE)
+ * Super class of the the classes handling the loader config for one axe (STOE)
+ * The list of mapped columns match quantity but not necessarly unique fields
+ * The binding between the mapped column and the real column is donw by thye class {@link Product}
+ * 
+ * Each subclass correspond to one characterization axis (Obs, Space, Time, Energy)
+ * 
  * @author michel
- *
+ * @version $Id$
  */
-public abstract class AxeMapping {
+public abstract class AxisMapping {
 	/**
 	 * Map of the column mapping handler
 	 * key: attributeName
@@ -38,7 +44,7 @@ public abstract class AxeMapping {
 	 * @param ap command line parameters
 	 * @param attributesNames artray of the n ames of the collection level attributes mapped 
 	 */
-	AxeMapping(ArgsParser ap, String[] attributesNames, boolean entryMode) {
+	AxisMapping(ArgsParser ap, String[] attributesNames, boolean entryMode) {
 		this.attributeNames = attributesNames;
 		this.entryMode = entryMode;
 		this.columnMapping = new LinkedHashMap<String, ColumnMapping>();

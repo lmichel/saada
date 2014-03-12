@@ -9,7 +9,7 @@ import saadadb.products.Product;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 
-public class SpaceMapping extends AxeMapping {
+public class SpaceMapping extends AxisMapping {
     private CoordSystem coordSystem = new CoordSystem();
     private String errorUnit;
 

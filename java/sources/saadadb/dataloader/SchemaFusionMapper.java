@@ -77,7 +77,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 					i--;
 				}
 				try {
-					this.current_prd.readProductFile(this.mapping);
+					this.current_prd.readProductFile();
 				} catch(Exception e){
 					Messenger.printMsg(Messenger.ERROR, e.toString());
 					this.products.remove(i);
@@ -181,7 +181,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				this.entry_mapper.setProduct(entr);
 			}
 			try {
-				this.current_prd.initProductFile(this.mapping);
+				this.current_prd.initProductFile();
 			} catch(IgnoreException e){
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -261,13 +261,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 				this.entry_mapper.setProduct(entr);
 			}
 			try {
-				this.current_prd.initProductFile(this.mapping);
+				this.current_prd.initProductFile();
 			} catch(IgnoreException e){
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
 					return;
-				}
-				else {
+				} else {
 					continue;
 				}
 			}
@@ -276,7 +275,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			 */
 			this.current_prd.setMetaclass(this.current_class);
 			this.current_prd.loadValue(coltmpfile, bustmpfile, loadedtmpfile);
-			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getSaadainstance().oidsaada + ">");
+			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getActualOidsaada() + ">");
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
 		}	

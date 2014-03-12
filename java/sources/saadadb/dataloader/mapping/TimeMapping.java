@@ -8,7 +8,7 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astrotime;
 
-public class TimeMapping extends AxeMapping {
+public class TimeMapping extends AxisMapping {
 
 	TimeMapping(ArgsParser ap, boolean entryMode) throws FatalException {
 		super(ap, new String[]{"t_min", "t_max"}, entryMode);
