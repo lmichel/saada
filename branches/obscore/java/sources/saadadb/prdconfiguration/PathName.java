@@ -1,6 +1,6 @@
 package saadadb.prdconfiguration;
 
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
 /**
  *This class serves for describing the constraints in "pathname" mode
@@ -32,10 +32,10 @@ public class PathName implements ProductIdentificationConstraint{
     }
     /**This method confirms integrity of a product with this configuration constraint
      * and sending message in case of no validation
-     *@param Product that we want to validate
+     *@param ProductBuilder that we want to validate
      *@return boolean true or false if this constraint is confirmed
      */
-    public boolean valid(Product product){
+    public boolean valid(ProductBuilder product){
 	//If the name does not contain the forces name, the file (the product) is not valid
 	if(!(product.getParent().indexOf(name)>=0)){
 	    Messenger.printMsg(Messenger.ERROR, getClass().getName()+": "+name+" invalid in "+product.getName());

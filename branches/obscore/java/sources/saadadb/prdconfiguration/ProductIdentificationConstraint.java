@@ -1,6 +1,6 @@
 package saadadb.prdconfiguration;
 
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 /** * @version $Id$
 
  *Interface for specification of product identification constraint
@@ -13,10 +13,10 @@ public interface ProductIdentificationConstraint {
     
 	/**This method must confirms integrity of a product with configuration constraint
      * and must sending message in case of no validation
-     *@param Product that we want to validate
+     *@param ProductBuilder that we want to validate
      *@return boolean true or false if this constraint is confirmed
      */   
-    public boolean valid(Product product);
+    public boolean valid(ProductBuilder product);
     
     /**This method confirms integrity of this constraint in a new configuration
      * and must sending message in case of no validation
