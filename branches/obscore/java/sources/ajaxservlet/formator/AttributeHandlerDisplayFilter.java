@@ -14,7 +14,7 @@ import saadadb.query.result.OidsaadaResultSet;
 
 /**
  * @author laurentmichel
- * * @version $Id: AttributeHandlerDisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class AttributeHandlerDisplayFilter implements DisplayFilter {

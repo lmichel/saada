@@ -16,7 +16,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 
 public class LinkDisplayFilter extends DefaultDisplayFilter {
-	/** * @version $Id: LinkDisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * 
 	 */

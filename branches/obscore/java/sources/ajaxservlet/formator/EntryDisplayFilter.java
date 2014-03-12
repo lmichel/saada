@@ -26,7 +26,7 @@ import saadadb.util.SaadaConstant;
 /**
  * Model data of category TABLE
  * @author laurent
- * * @version $Id: EntryDisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class EntryDisplayFilter extends DefaultDisplayFilter {
