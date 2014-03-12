@@ -23,6 +23,10 @@ import ajaxservlet.json.JsonUtils;
 /**
  * Servlet implementation class UploadPosList
  */
+/**
+ * @author michel
+ * @version $Id$
+ */
 public class UploadPosList extends SaadaServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
 
