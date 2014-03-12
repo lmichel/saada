@@ -66,14 +66,14 @@ public class Table_Saada_Loaded_File {
 		
 		String 		sql = "insert into saada_loaded_file  values('" 
 			+ prd.getName() + "','"
-			+ prd.getSaadainstance().oidsaada + "','"
+			+ prd.getActualOidsaada()+ "','"
 			+ repository_name + "','"
 			+ coll_name + "','"
 			+ class_name + "','"
 			+ category + "','"
 			+ cdh.getSignature() + "','" 
 			+ cdh.getSignatureWithoutColl() + "','"
-			+ prd.getSaadainstance().contentsignature + "')";
+			+ prd.getContentSignature() + "')";
 		SQLTable.addQueryToTransaction(sql, "saada_loaded_file");
 		return repository_name;
 	}
@@ -114,14 +114,14 @@ public class Table_Saada_Loaded_File {
 		
 		String 		sql =
 			  prd.getName() + "\t"
-			+ prd.getSaadainstance().oidsaada + "\t"
+			+ prd.getActualOidsaada() + "\t"
 			+ repository_name + "\t"
 			+ coll_name + "\t"
 			+ class_name + "\t"
 			+ category + "\t"
 			+ cdh.getSignature() + "\t" 
 			+ cdh.getSignatureWithoutColl() + "\t"
-			+ prd.getSaadainstance().contentsignature + "\n";
+			+ prd.getContentSignature() + "\n";
 		loadedfilewriter.write(sql);
 
 		return repository_name;
@@ -204,7 +204,7 @@ public class Table_Saada_Loaded_File {
 		SQLQuery squery = new SQLQuery();
 		ResultSet rs = squery.run("select count(classname) from saada_loaded_file where md5_config='"
 		+ prd.getMapping().getSignature() + "' and content_sign='"
-		+ prd.getSaadainstance().contentsignature + "'");
+		+ prd.getContentSignature() + "'");
 		while( rs.next() ) {
 			if( rs.getInt(1) == 0 ) {
 				squery.close();
