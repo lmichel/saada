@@ -30,7 +30,7 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
 
 /**
  * @author laurent
- * @version $Id: ZipFormator.java 895 2014-01-24 15:55:18Z laurent.mistahl $
+ * @version $Id$
  * 01/2014: add method zipInstance
  */
 public class ZipFormator extends QueryResultFormator {

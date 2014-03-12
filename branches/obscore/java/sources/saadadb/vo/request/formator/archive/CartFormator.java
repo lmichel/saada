@@ -64,7 +64,7 @@ import saadadb.vo.request.formator.votable.SaadaqlVotableFormator;
  * 
  * This formator has the same API as all VOI formators {@link saadadb.vo.request.VORequest VORequest}
  * @author laurent
- * @version $Id: CartFormator.java 917 2014-01-31 08:11:29Z laurent.mistahl $
+ * @version $Id$
  * 
  * 01/2014: addLinkzedData: linked spectra are replaced with a zip ball containing their linked data too
  */
