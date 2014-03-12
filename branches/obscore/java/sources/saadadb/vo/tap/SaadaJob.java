@@ -22,7 +22,7 @@ import uws.job.Result;
 
 /**
  * @author Gregory
- * @version $Id: SaadaJob.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  * 07/2011 Switch on new VO request framework by LM
  * 07/2011 change report name by LM
  */

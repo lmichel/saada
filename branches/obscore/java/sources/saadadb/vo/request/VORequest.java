@@ -16,7 +16,7 @@ import saadadb.util.Messenger;
 import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.query.VOQuery;
 
-/** * @version $Id: VORequest.java 802 2013-10-30 16:33:04Z laurent.mistahl $
+/** * @version $Id$
 
  * Request and subclasses handle totality  of the process, from the params to the
  * report delivery

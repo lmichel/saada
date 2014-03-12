@@ -11,7 +11,7 @@ import saadadb.query.result.SaadaInstanceResultSet;
 /**
  * This a dummy query. It just stores the cart parameter for the CartFormator
  * @author laurent
- * @version $Id: CartQuery.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  */
 public class CartQuery extends VOQuery{
 

@@ -15,7 +15,7 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 
 
-/** * @version $Id: SaadaQLExecutor.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * Execute a SaadaQL/s query on a SaadaDB, and gets the result as a list of Saada OIds.
  */

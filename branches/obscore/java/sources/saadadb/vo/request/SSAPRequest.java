@@ -8,7 +8,7 @@ import saadadb.vo.request.formator.votable.SsapVotableFormator;
 import saadadb.vo.request.query.SSAPQuery;
 
 
-/** * @version $Id: SSAPRequest.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurent
  * @version 07/2011

@@ -11,7 +11,7 @@ import saadadb.vo.request.formator.archive.ZipFormator;
 import saadadb.vo.request.query.SaadaqlQuery;
 
 
-/** * @version $Id: ZipRequest.java 491 2012-11-22 14:19:32Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurent
  * @version 07/2011
