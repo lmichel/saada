@@ -19,7 +19,7 @@ import adqlParser.SaadaADQLQuery;
 
 
 
-/** * @version $Id: QueryResultFormator.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+/** * @version $Id$
 
  * @author michel
  * @version 07/2011

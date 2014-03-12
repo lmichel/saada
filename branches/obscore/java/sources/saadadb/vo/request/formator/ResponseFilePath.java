@@ -10,14 +10,14 @@ import saadadb.util.Messenger;
 /**
  * Do some system checking to make formators sure that they can write in requested response files
  * @author laurent
- * @version $Id: ResponseFilePath.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
 
  * 06/2011 creation
  */
 public class ResponseFilePath {
 	private String responseFilePath = null;;
 
-	/** * @version $Id: ResponseFilePath.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @return
 	 */

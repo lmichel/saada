@@ -11,7 +11,7 @@ import adqlParser.SaadaADQLQuery;
 /**
  * This is a simple interface with the very common services a formator must support.
  * @author laurent
- * * @version $Id: Formator.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * * @version $Id$
 
  * @version 06/2011 creation
  */
