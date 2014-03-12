@@ -11,7 +11,7 @@ import saadadb.exceptions.SaadaException;
  *@version 2.0
  *@since 2.0
  */
-public class Misc extends Product{
+public class Misc extends ProductBuilder{
 	/** * @version $Id$
 
 	 * 

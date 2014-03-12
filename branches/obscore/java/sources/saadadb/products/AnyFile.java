@@ -25,7 +25,7 @@ public class AnyFile extends File implements ProductFile {
 		super(parent, child);
 	}
 
-	public AnyFile(Product product) {
+	public AnyFile(ProductBuilder product) {
 		super(product.file.getAbsolutePath());
 	}
 

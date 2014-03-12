@@ -48,7 +48,7 @@ import saadadb.util.TileRiceDecompressor;
 
  * 06/2011: Returns table rows a an array with the right type taken from the TFORM 
  *          keyword instead of using the reflexion of on data itself (fails on NULL value)
- * 02/2014  Make it working with a {@link Product} without configuaration, so that the code 
+ * 02/2014  Make it working with a {@link ProductBuilder} without configuaration, so that the code 
  *          can be used out of a DB context
  */
 
@@ -68,7 +68,7 @@ public class FitsProduct extends File implements ProductFile{
 	private String ra="";
 
 	private String fmtsignature;
-	private Product product;
+	private ProductBuilder product;
 	protected SpaceKWDetector space_frame;
 	private Map<String, AttributeHandler> attributeHandlers = null;
 	private Map<String, AttributeHandler> entryAttributeHandlers = null;
@@ -80,7 +80,7 @@ public class FitsProduct extends File implements ProductFile{
 	 *@param String The name file of the product.
 	 * @throws FitsException 
 	 */
-	public FitsProduct(String name, Product product) throws Exception{
+	public FitsProduct(String name, ProductBuilder product) throws Exception{
 
 		//See the super class "File"(package java.io)
 		super(name);
@@ -511,7 +511,7 @@ public class FitsProduct extends File implements ProductFile{
 	 * @throws SaadaException 
 	 * @throws SaadaException 
 	 */
-	public FitsProduct(Product product) throws Exception {
+	public FitsProduct(ProductBuilder product) throws Exception {
 
 		super(product.file.getAbsolutePath());
 		this.product = product;
@@ -637,7 +637,7 @@ public class FitsProduct extends File implements ProductFile{
 	 * @throws IOException 
 	 * @throws FitsException 
 	 */
-	public void setFirstGoodHeader(Product product) throws SaadaException, FitsException, IOException{
+	public void setFirstGoodHeader(ProductBuilder product) throws SaadaException, FitsException, IOException{
 		/*
 		 * Extension containing ENTRIES are handled by the table product, not by the ENTRY product
 		 * Should never occur

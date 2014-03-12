@@ -70,7 +70,7 @@ public class VOTableProduct extends File implements ProductFile {
 
 	public int tableCount = 0;
 	
-	private Product product;
+	private ProductBuilder product;
 
 	private boolean onfirstline = true;
 	protected SpaceKWDetector space_frame;
@@ -537,7 +537,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 */
 	public VOTableProduct(String filename) throws Exception{
 		super(filename);
-		this.product = new Product(new File(filename), null);
+		this.product = new ProductBuilder(new File(filename), null);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
 		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	
 		currentTR = parser.getNextTR();       
@@ -556,7 +556,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 * @throws AbortException 
 	 * @throws AbortException 
 	 */
-	public VOTableProduct(Product product) throws Exception{
+	public VOTableProduct(ProductBuilder product) throws Exception{
 		
 		super(product.file.getAbsolutePath());
 		this.product = product;
