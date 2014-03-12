@@ -1465,19 +1465,18 @@ public abstract class SaadaInstance implements DMInterface {
 				+ File.separator + Category.explain(this.getCategory()) 
 				, new File(this.getRepositoryPath()).getName() );
 	}
-
-	/**
-	 * @param name
-	 * @throws AbortException 
-	 */
-	public abstract void setAccess_url(String name) throws AbortException ;
-	/**
-	 * @return
-	 */
+	
+	/***********************
+	 * Abstract setters allowing to handle SaadaInstance whatever the actual category
+	 *********************/
+    public abstract void setRepository_location(String name) ;
+    public abstract void setAccess_format(String name) ;
+    public abstract void setAccess_estsize (long size);
+    public abstract void setS_fov(double value);
+    public abstract void setS_region(String name) ;
+	public abstract void setAccess_url(String name)throws AbortException  ;
 	public abstract String getAccess_url() ;
-
-
-	public abstract void setDate_load(long time) throws AbortException ;
+	public abstract void setDate_load(long time)  ;
 	/**
 	 * @return
 	 */

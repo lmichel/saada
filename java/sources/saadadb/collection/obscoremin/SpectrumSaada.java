@@ -9,7 +9,7 @@ package saadadb.collection.obscoremin;
 */
 import saadadb.util.SaadaConstant;
 
-public class SpectrumSaada extends WCSSaada{
+public class SpectrumSaada extends FileRef{
 	/*
 	 * Public fields are persistent
 	 */

@@ -6,10 +6,13 @@ public class ImageSaada extends WCSSaada {
 	/*
 	 * Public fields are persistent
 	 */
-	/*
-	 * Saada Axe
-	 */
-   public int naxis1=SaadaConstant.INT, naxis2=SaadaConstant.INT;
+	/** Image width in degree */
+	public double size_alpha_csa = SaadaConstant.DOUBLE;
+	/** Image height in degree */
+	public double size_delta_csa = SaadaConstant.DOUBLE;
+	
+    public int naxis1=SaadaConstant.INT;
+    public int naxis2=SaadaConstant.INT;
 		
 
 
