@@ -19,7 +19,7 @@ import uws.job.Result;
 /**
  * AbstractJob implementation to build ZIP archive in asynchronous mode
  * @author laurent
- * @version $Id: ZipperJob.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  */
 public class ZipperJob extends AbstractJob {
 	private static final long serialVersionUID = 1L;
