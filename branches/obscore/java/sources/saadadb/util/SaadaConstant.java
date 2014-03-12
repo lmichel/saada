@@ -7,12 +7,14 @@ package saadadb.util;
  * <p>Company: Observaroire Astronomique Strasbourg</p>
  * @author XXXX
  * @version 00000001
+ * 
+ * 03/2014 use NaN for Float and DOUBLE
  */
 public class SaadaConstant{
   
   public static final String STRING = "NULL";
-  public static final double DOUBLE = Double.POSITIVE_INFINITY;
-  public static final float FLOAT = Float.POSITIVE_INFINITY;
+  public static final double DOUBLE = Double.NaN;
+  public static final float FLOAT = Float.NaN;
   public static final int INT = Integer.MAX_VALUE;
   public static final long LONG = Long.MAX_VALUE;
   public static final short SHORT = Short.MAX_VALUE;
