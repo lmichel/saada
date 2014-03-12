@@ -3,7 +3,7 @@ package saadadb.prdconfiguration;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 /**This class serves of use as center to the constraints management imposed in files.
  *It is a list of these constraints, in the form of a table (exactly a Vector),
  *with a method of iterative global validation on all these components (constraints) 
@@ -72,10 +72,10 @@ public class ProductSignature extends Vector{
 		return true;
     }
     /**This method confirms integrity of a product with all constraints in a configuration
-     *@param Product that we want to validate
+     *@param ProductBuilder that we want to validate
      *@return boolean true or false if all constraints are confirmed
      */
-    public boolean valid(Product product){
+    public boolean valid(ProductBuilder product){
 		//Initializes an enumeration of the components of this vector
 		Enumeration e = elements();
 		//Localize a ProductIdentificationConstraint

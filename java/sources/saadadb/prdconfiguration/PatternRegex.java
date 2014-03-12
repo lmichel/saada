@@ -3,7 +3,7 @@ package saadadb.prdconfiguration;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
 /** * @version $Id$
 
@@ -38,10 +38,10 @@ public class PatternRegex implements ProductIdentificationConstraint{
     }
     /**This method confirms integrity of a product with this configuration constraint
      * and sending message and IOException in case of no validation
-     *@param Product that we want to validate
+     *@param ProductBuilder that we want to validate
      *@return boolean true or false if this constraint is confirmed
      */
-    public boolean valid(Product product){
+    public boolean valid(ProductBuilder product){
 	boolean valid = false;
 	try{
 	    //Tells whether or not this file name matches the given regular expression
