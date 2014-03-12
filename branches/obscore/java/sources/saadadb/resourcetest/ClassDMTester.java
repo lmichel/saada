@@ -111,7 +111,7 @@ public class ClassDMTester extends SaadaInstance {
     }
 
 	@Override
-	public void setDate_load(long time) throws AbortException {
+	public void setDate_load(long time) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -120,5 +120,29 @@ public class ClassDMTester extends SaadaInstance {
 	public long getDate_load() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void setAccess_format(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAccess_estsize(long size) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setS_fov(double value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setS_region(String name) {
+		// TODO Auto-generated method stub
+		
 	}
 }
