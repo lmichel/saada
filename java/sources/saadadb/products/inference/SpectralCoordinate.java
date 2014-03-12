@@ -557,10 +557,10 @@ public class SpectralCoordinate{
 	 * @return
 	 * @throws Exception 
 	 */
-	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler, String config_unit) throws Exception{
+	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
 		this.attributesList = tableAttributeHandler;
-		String unitOrg = (config_unit == null)? "": config_unit;
 		WCSModel wm = new WCSModel(tableAttributeHandler);
+		String unitOrg = this.CUNIT;
 		wm.projectAllAxesToRealWord();
 		/*
 		 * A dispersion axe is found but unit can be not set or not valid
@@ -572,8 +572,7 @@ public class SpectralCoordinate{
 			UnitRef unit_class = getUniRef(wm.getCUNIT(dispersion_axe_num));
 			if(unit_class == null) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + config_unit + " as unit (given by the configuration)");
-				unitOrg = config_unit;
+					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.CUNIT + " as unit (given by the configuration)");
 			}
 		}
 		/*
@@ -606,13 +605,13 @@ public class SpectralCoordinate{
 						}
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "DISP(ERS) keyword found expressed in " 
-									+  m.group(0) + ": try to take " + unitOrg + " as dispersion unit");
+									+  m.group(0) + ": try to take " + this.CUNIT + " as dispersion unit");
 					}
 				}
 			}			
 		}
 
-		if( this.convert(unitOrg, wm.getMinValue(dispersion_axe_num), wm.getMaxValue(dispersion_axe_num)) ) {
+		if( this.convert(this.CUNIT, wm.getMinValue(dispersion_axe_num), wm.getMaxValue(dispersion_axe_num)) ) {
 			Messenger.printMsg(Messenger.TRACE, this.getRange());
 			return true;
 		}else{

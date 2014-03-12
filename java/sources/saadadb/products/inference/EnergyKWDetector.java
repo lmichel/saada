@@ -37,7 +37,7 @@ public class EnergyKWDetector extends KWDetector {
 
 	private boolean mapCollectionSpectralCoordinateAuto() throws Exception {	
 		spectralCoordinate = new SpectralCoordinate();
-		return ( this.findSpectralCoordinateByUCD() // ||  !this.findSpectralCoordinateByWCS() 
+		return ( this.findSpectralCoordinateByUCD()    ||  !this.findSpectralCoordinateByWCS() 
 				||  !this.findSpectralCoordinateByKW() || this.findSpectralCoordinateInPixels());
 	}
 
@@ -59,14 +59,14 @@ public class EnergyKWDetector extends KWDetector {
 		}
 	}
 
-	//	/**
-	//	 * @return
-	//	 * @throws Exception 
-	//	 */
-	//	private boolean findSpectralCoordinateByWCS() throws Exception{
-	//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in WCS keywords");
-	//		return  spectralCoordinate.convertWCS(this.tableAttributeHandler, this.unitOrg.getValue());
-	//	}
+	/**
+	 * @return
+	 * @throws Exception 
+	 */
+	private boolean findSpectralCoordinateByWCS() throws Exception{
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in WCS keywords");
+		return  spectralCoordinate.convertWCS(this.tableAttributeHandler);
+	}
 
 	/**
 	 * @return
