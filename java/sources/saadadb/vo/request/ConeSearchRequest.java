@@ -9,7 +9,7 @@ import saadadb.vo.request.query.ConeSearchQuery;
  * Translate CS parameters in a SAADAQL query and run it
  * and build the response files
  * @author laurent
- * @version $Id: ConeSearchRequest.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+ * @version $Id$
  *
  */
 public class ConeSearchRequest extends SaadaqlRequest {

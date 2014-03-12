@@ -17,7 +17,7 @@ import adqlParser.SaadaADQLQuery;
 
 /**
  * @author laurent
- * * @version $Id: TapAdqlRequest.java 318 2012-03-30 16:09:48Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class TapAdqlRequest extends VORequest {

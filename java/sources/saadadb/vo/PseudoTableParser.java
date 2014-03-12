@@ -16,7 +16,7 @@ public class PseudoTableParser {
 	ArrayList<String> classes = new ArrayList<String>();
 	String pseudotable;
 
-	/** * @version $Id: PseudoTableParser.java 118 2012-01-06 14:33:51Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param pseudotable
 	 * @throws QueryException

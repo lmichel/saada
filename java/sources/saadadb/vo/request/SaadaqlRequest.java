@@ -17,7 +17,7 @@ import saadadb.vo.request.query.SaadaqlQuery;
 import saadadb.vo.request.query.VOQuery;
 
 
-/** * @version $Id: SaadaqlRequest.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+/** * @version $Id$
 
  * @author laurent
  * @version 07/2011
