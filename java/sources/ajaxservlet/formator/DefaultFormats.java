@@ -23,7 +23,7 @@ public class DefaultFormats {
 		six.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		exp.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));	
 	}
-	/** * @version $Id: DefaultFormats.java 480 2012-07-27 14:20:57Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param res
 	 * @param message

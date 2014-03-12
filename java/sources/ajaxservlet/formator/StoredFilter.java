@@ -36,7 +36,7 @@ public class StoredFilter implements Serializable {
 	private ArrayList<String> collection_show;
 	private ArrayList<String> collection_query;
 
-	/** * @version $Id: StoredFilter.java 486 2012-10-12 14:33:48Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * creates a StoredFilter from a file containing
 	 * the JSONstring of the said filter

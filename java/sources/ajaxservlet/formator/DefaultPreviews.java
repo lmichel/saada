@@ -13,7 +13,7 @@ import ajaxservlet.SaadaServlet;
 abstract public class DefaultPreviews {
 	public static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
 
-	/** * @version $Id: DefaultPreviews.java 717 2013-07-30 12:26:19Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * @param oid
 	 * @param size

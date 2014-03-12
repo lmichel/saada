@@ -17,7 +17,7 @@ import saadadb.util.WorkDirectory;
  * @author Clémentine Frère
  * 
  * contact : frere.clementine[at]gmail.com
- * * @version $Id: FilterBase.java 491 2012-11-22 14:19:32Z laurent.mistahl $
+ * * @version $Id$
 
  */
 

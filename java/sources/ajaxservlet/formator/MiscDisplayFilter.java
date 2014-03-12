@@ -24,7 +24,7 @@ import saadadb.util.ChangeKey;
 
 /**
  * @author laurentmichel
- * * @version $Id: MiscDisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class MiscDisplayFilter extends DefaultDisplayFilter {

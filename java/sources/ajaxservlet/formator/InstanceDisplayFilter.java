@@ -18,7 +18,7 @@ import saadadb.meta.MetaCollection;
 
 public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	/**
-	 * * @version $Id: InstanceDisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+	 * * @version $Id$
 
 	 */
 	private static final long serialVersionUID = 1L;

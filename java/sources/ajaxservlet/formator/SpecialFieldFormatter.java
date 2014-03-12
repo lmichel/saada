@@ -8,7 +8,7 @@ import saadadb.exceptions.SaadaException;
 /**
  * class producing the datatable content depending on 
  * the class calling it
- *  * @version $Id: SpecialFieldFormatter.java 705 2013-07-26 12:02:28Z laurent.mistahl $
+ *  * @version $Id$
 
  * @author Clémentine Frère
  * contact : frere.clementine@gmail.com

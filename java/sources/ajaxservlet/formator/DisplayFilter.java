@@ -19,7 +19,7 @@ import saadadb.query.result.OidsaadaResultSet;
  */
 public interface DisplayFilter {
 	
-	/** * @version $Id: DisplayFilter.java 650 2013-07-08 11:37:30Z laurent.mistahl $
+	/** * @version $Id$
 
 	 * Set the oid of the object to process
 	 * @param oid

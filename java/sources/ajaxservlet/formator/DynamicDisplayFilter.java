@@ -27,7 +27,7 @@ import saadadb.util.SaadaConstant;
  * Used to handle to appaly a JSON filter (StoredFilter) to a specific Saada obkect instance
  * 
  * @author Clémentine Frère
- *  * @version $Id: DynamicDisplayFilter.java 705 2013-07-26 12:02:28Z laurent.mistahl $
+ *  * @version $Id$
 
  * contact : frere.clementine[at]gmail.com
  *

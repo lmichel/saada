@@ -21,7 +21,7 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author laurentmichel
- * * @version $Id: DefaultDisplayFilter.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * * @version $Id$
 
  */
 abstract public class DefaultDisplayFilter implements DisplayFilter,
