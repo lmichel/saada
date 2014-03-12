@@ -3,7 +3,7 @@ package saadadb.products;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.SaadaException;
 
-public class ImportedTable extends Product {
+public class ImportedTable extends ProductBuilder {
 	private String tableName;
 
 	public ImportedTable(String tableName, ProductMapping mapping) throws Exception{	

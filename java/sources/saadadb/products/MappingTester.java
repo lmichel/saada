@@ -13,11 +13,11 @@ public class MappingTester {
 	            {"delta", "", ""},
 	            {"poserror", "pos.eq;stat.error", "arcsec"}
 	            };
-		Product p = new Product(null, null);
+		ProductBuilder p = new ProductBuilder(null, null);
 		p.testMapping(new ArgsParser(new String[]{"-category=misc", "-collection=ABSC"}), atts);
-		p = new Product(null, null);
+		p = new ProductBuilder(null, null);
 		p.testMapping(new ArgsParser(new String[]{"-category=misc", "-collection=ABSC", "-posmapping=first"}), atts);
-		p = new Product(null, null);
+		p = new ProductBuilder(null, null);
 		p.testMapping(new ArgsParser(new String[]{"-name=alpha,'+',delta", "-category=misc", "-collection=ABSC", "-posmapping=first", "-position=alpha,delta", "-poserror=10,5,43", "-poserrorunit=mas"}), atts);	
 	}
 	/**
