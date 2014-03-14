@@ -16,7 +16,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
-import saadadb.products.FlatFile;
+import saadadb.products.FlatFileBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
@@ -48,7 +48,7 @@ public class FlatFileMapper extends SchemaMapper {
 			@SuppressWarnings("rawtypes")
 			Class                  cls = SaadaClassReloader.forGeneratedName("FLATFILEUserColl");
 			SaadaInstance           si = (SaadaInstance) cls.newInstance();
-			FlatFile               ffp = (FlatFile)(this.mapping.getNewProductInstance(this.products.get(0)));
+			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductInstance(this.products.get(0)));
 			Collection<AttributeHandler> it  = MetaCollection.getAttribute_handlers_flatfile().values(); 
 
 			ffp.mapIgnoredAndExtendedAttributes();

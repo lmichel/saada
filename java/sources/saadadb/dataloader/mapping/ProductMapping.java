@@ -10,10 +10,10 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.HeaderRef;
-import saadadb.products.FlatFile;
-import saadadb.products.Image2D;
+import saadadb.products.FlatFileBuilder;
+import saadadb.products.Image2DBuilder;
 import saadadb.products.Misc;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.products.Spectrum;
 import saadadb.products.Table;
 
@@ -237,13 +237,13 @@ public class ProductMapping {
 	 * @return
 	 * @throws IgnoreException
 	 */
-	public  Product getNewProductInstance(File file) throws SaadaException {
+	public  ProductBuilder getNewProductInstance(File file) throws SaadaException {
 		switch( this.category ) {
 		case Category.TABLE: return new Table(file, this) ;
 		case Category.MISC : return new Misc(file, this) ;
 		case Category.SPECTRUM : return new Spectrum(file, this) ;
-		case Category.IMAGE : return new Image2D(file, this) ;
-		case Category.FLATFILE : return new FlatFile(file, this) ;
+		case Category.IMAGE : return new Image2DBuilder(file, this) ;
+		case Category.FLATFILE : return new FlatFileBuilder(file, this) ;
 		default: IgnoreException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Can't handle product category <" + Category.explain(this.category) + ">");
 		return null;
 		}

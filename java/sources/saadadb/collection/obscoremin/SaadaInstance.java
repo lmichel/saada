@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -91,9 +92,9 @@ public abstract class SaadaInstance implements DMInterface {
 	public double s_ra = saadadb.util.SaadaConstant.DOUBLE;
 	public double s_dec = saadadb.util.SaadaConstant.DOUBLE;
 	public long   healpix_csa=SaadaConstant.LONG;
-//	public double pos_x_csa=SaadaConstant.DOUBLE ;
-//	public double pos_y_csa=SaadaConstant.DOUBLE ;
-//	public double pos_z_csa=SaadaConstant.DOUBLE ;
+	//	public double pos_x_csa=SaadaConstant.DOUBLE ;
+	//	public double pos_y_csa=SaadaConstant.DOUBLE ;
+	//	public double pos_z_csa=SaadaConstant.DOUBLE ;
 	/*
 	 * Major axis of the error ellipse
 	 */
@@ -333,20 +334,20 @@ public abstract class SaadaInstance implements DMInterface {
 			for( Field f: lf){
 				setFieldValue(f, rs);
 			}
-//			/** ----------Attention Super Class-------------* */
-//			// Class cls = obj.getClass();
-//			Class cls = this.getClass().getSuperclass();
-//			Vector<Class> vt_class = new Vector<Class>();
-//			while (!cls.getName().equals("saadadb.collection.SaadaInstance")) {
-//				vt_class.add(cls);
-//				cls = cls.getSuperclass();
-//			}
-//			for (int k = vt_class.size() - 1; k >= 0; k--) {
-//				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
-//				for (int i = 0; i < fieldlist.length; i++) {
-//					setFieldValue(fieldlist[i], rs);
-//				}
-//			}
+			//			/** ----------Attention Super Class-------------* */
+			//			// Class cls = obj.getClass();
+			//			Class cls = this.getClass().getSuperclass();
+			//			Vector<Class> vt_class = new Vector<Class>();
+			//			while (!cls.getName().equals("saadadb.collection.SaadaInstance")) {
+			//				vt_class.add(cls);
+			//				cls = cls.getSuperclass();
+			//			}
+			//			for (int k = vt_class.size() - 1; k >= 0; k--) {
+			//				Field fieldlist[] = (vt_class.get(k)).getDeclaredFields();
+			//				for (int i = 0; i < fieldlist.length; i++) {
+			//					setFieldValue(fieldlist[i], rs);
+			//				}
+			//			}
 		}
 		squery.close();;
 	}
@@ -836,6 +837,7 @@ public abstract class SaadaInstance implements DMInterface {
 	/**
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public void store() throws Exception {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Store Saada instance (business level) <" + this.oidsaada + ">");
 		String sql = "";
@@ -868,8 +870,8 @@ public abstract class SaadaInstance implements DMInterface {
 				+ "> is persistent");
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void store(BufferedWriter colwriter, BufferedWriter buswfriter) throws Exception {
-		String sql = "";
 		String nametable = this.getClass().getName();
 		// if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "SaadaInstance class
 		// name: "+nametable);
@@ -918,6 +920,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * in order ot avoid conflicts with attribute order or possible future non persistent attributes
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public  void storeCollection() throws FatalException {
 		try {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Store Saada instance (collection level) <" + this.oidsaada + ">");
@@ -928,23 +931,22 @@ public abstract class SaadaInstance implements DMInterface {
 			} else {
 				_cls = Class.forName("generated." + Database.getDbname() + ".FLATFILEUserColl");
 			}
-			Iterator it=null;
+			Collection<AttributeHandler> it=null;
 			switch(this.getCategory()) {
-			case Category.CUBE:     it = MetaCollection.getAttribute_handlers_cube().values().iterator(); break;
-			case Category.ENTRY:    it = MetaCollection.getAttribute_handlers_entry().values().iterator(); break;
-			case Category.TABLE:    it = MetaCollection.getAttribute_handlers_table().values().iterator(); break;
-			case Category.IMAGE:    it = MetaCollection.getAttribute_handlers_image().values().iterator(); break;
-			case Category.SPECTRUM: it = MetaCollection.getAttribute_handlers_spectrum().values().iterator(); break;
-			case Category.MISC:     it = MetaCollection.getAttribute_handlers_misc().values().iterator(); break;
-			case Category.FLATFILE: it = MetaCollection.getAttribute_handlers_flatfile().values().iterator(); break;
+			case Category.CUBE:     it = MetaCollection.getAttribute_handlers_cube().values(); break;
+			case Category.ENTRY:    it = MetaCollection.getAttribute_handlers_entry().values(); break;
+			case Category.TABLE:    it = MetaCollection.getAttribute_handlers_table().values(); break;
+			case Category.IMAGE:    it = MetaCollection.getAttribute_handlers_image().values(); break;
+			case Category.SPECTRUM: it = MetaCollection.getAttribute_handlers_spectrum().values(); break;
+			case Category.MISC:     it = MetaCollection.getAttribute_handlers_misc().values(); break;
+			case Category.FLATFILE: it = MetaCollection.getAttribute_handlers_flatfile().values(); break;
 			default: FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Internal error: category<" + this.getCategory() + "> unknown");
 			}
 			/*
 			 * Build the VALUE statement of the INSERT query
 			 */
 			boolean first = true;
-			while( it.hasNext()) {
-				AttributeHandler ah = (AttributeHandler)(it.next());
+			for( AttributeHandler ah : it){
 				String val = this.getSQL(_cls.getField(ah.getNameattr()));
 				if(!first) {
 					sql += ", ";				
@@ -968,27 +970,27 @@ public abstract class SaadaInstance implements DMInterface {
 	/**
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	public  void storeCollection(Writer writer) throws FatalException {
 		try {
 			String sql = "";
 			Class _cls = this.getClass().getSuperclass();
-			Iterator it=null;
+			Collection<AttributeHandler> it=null;
 			switch(this.getCategory()) {
-			case Category.CUBE:     it = MetaCollection.getAttribute_handlers_cube().values().iterator(); break;
-			case Category.ENTRY:    it = MetaCollection.getAttribute_handlers_entry().values().iterator(); break;
-			case Category.TABLE:    it = MetaCollection.getAttribute_handlers_table().values().iterator(); break;
-			case Category.IMAGE:    it = MetaCollection.getAttribute_handlers_image().values().iterator(); break;
-			case Category.SPECTRUM: it = MetaCollection.getAttribute_handlers_spectrum().values().iterator(); break;
-			case Category.MISC:     it = MetaCollection.getAttribute_handlers_misc().values().iterator(); break;
-			case Category.FLATFILE: it = MetaCollection.getAttribute_handlers_flatfile().values().iterator(); break;
+			case Category.CUBE:     it = MetaCollection.getAttribute_handlers_cube().values(); break;
+			case Category.ENTRY:    it = MetaCollection.getAttribute_handlers_entry().values(); break;
+			case Category.TABLE:    it = MetaCollection.getAttribute_handlers_table().values(); break;
+			case Category.IMAGE:    it = MetaCollection.getAttribute_handlers_image().values(); break;
+			case Category.SPECTRUM: it = MetaCollection.getAttribute_handlers_spectrum().values(); break;
+			case Category.MISC:     it = MetaCollection.getAttribute_handlers_misc().values(); break;
+			case Category.FLATFILE: it = MetaCollection.getAttribute_handlers_flatfile().values(); break;
 			default: FatalException.throwNewException(SaadaException.WRONG_PARAMETER,"Internal error: category<" + this.getCategory() + "> unknown");
 			}
 			/*
 			 * Build the VALUE statement of the INSERT query
 			 */
 			boolean first = true;
-			while( it.hasNext()) {
-				AttributeHandler ah = (AttributeHandler)(it.next());
+			for( AttributeHandler ah: it) {
 				Field f = _cls.getField(ah.getNameattr());
 				String val = "";
 				if( f.get(this) == null ) {
@@ -1378,7 +1380,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public long getFileSize() throws SaadaException {
 		try {
-			File f = new File(this.getRepositoryPath());
+			File f = new File(this.getRepository_location());
 			return f.length();
 		} catch (FatalException e) {
 			return SaadaConstant.LONG;
@@ -1391,31 +1393,13 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public String getFileName() throws SaadaException {
 		try {
-			File f = new File(this.getRepositoryPath());
+			File f = new File(this.getRepository_location());
 			return f.getName();
 		} catch (FatalException e) {
 			return null;
 		}
 	}
 
-	/**
-	 * Returns the full path of the repository file
-	 * @return
-	 * @throws SaadaException
-	 */
-	public String getRepositoryPath() throws SaadaException {
-		if( this.getAccess_url() == null ) {
-			return null;
-		}
-		else if( this.getAccess_url().indexOf(Database.getSepar()) != -1 ) {
-			return this.getAccess_url();
-		} else {
-			return Database.getRepository() + Database.getSepar() 
-			+ this.getCollection().getName() + Database.getSepar() 
-			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
-			+ this.getAccess_url();
-		}
-	}
 
 	public String getURL() {
 		return SaadaConstant.STRING;
@@ -1463,24 +1447,22 @@ public abstract class SaadaInstance implements DMInterface {
 		this.vignetteFile = new VignetteFile(Database.getRepository() 
 				+ File.separator + this.getCollection().getName() 
 				+ File.separator + Category.explain(this.getCategory()) 
-				, new File(this.getRepositoryPath()).getName() );
+				, new File(this.getRepository_location()).getName() );
 	}
-	
+
 	/***********************
 	 * Abstract setters allowing to handle SaadaInstance whatever the actual category
 	 *********************/
-    public abstract void setRepository_location(String name) ;
-    public abstract void setAccess_format(String name) ;
-    public abstract void setAccess_estsize (long size);
-    public abstract void setS_fov(double value);
-    public abstract void setS_region(String name) ;
-	public abstract void setAccess_url(String name)throws AbortException  ;
+	public abstract void   setRepository_location(String name) ;
+	public abstract String getRepository_location()throws SaadaException ;
+	public abstract void   setAccess_format(String name) ;
+	public abstract void   setAccess_estsize (long size);
+	public abstract void   setS_fov(double value);
+	public abstract void   setS_region(String name) ;
+	public abstract void   setAccess_url(String name)throws AbortException  ;
 	public abstract String getAccess_url() ;
-	public abstract void setDate_load(long time)  ;
-	/**
-	 * @return
-	 */
-	public abstract long getDate_load() ;
+	public abstract void   setDate_load(long time)  ;
+	public abstract long   getDate_load() ;
 
 	/**
 	 * Attempt to re-build the loader configuration from the class description stored in saada_class table.

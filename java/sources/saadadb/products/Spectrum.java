@@ -25,9 +25,9 @@ import saadadb.util.SaadaConstant;
  * 
  * @author Millan Patrick
  */
-public class Spectrum extends Product {
+public class Spectrum extends ProductBuilder {
 	/**
-	 *  * @version $Id: Spectrum.java 915 2014-01-29 16:59:00Z laurent.mistahl $
+	 *  * @version $Id$
 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -108,7 +108,7 @@ public class Spectrum extends Product {
 	 */
 	protected void mapCollectionSpectralCoordinate() throws Exception {		
 		boolean mapping_ok = true;
-		switch(this.mapping.getEnergyAxeMapping().getPriority()) {
+		switch(this.mapping.getEnergyAxisMapping().getPriority()) {
 		case ONLY: 
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Spectral Coordinate mapping priority: ONLY: only mapped keyword will be used");
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for Spectral Coordinate keywords defined into the mapping");
@@ -150,8 +150,8 @@ public class Spectrum extends Product {
 	 * 
 	 */
 	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
-		ColumnMapping sc_col  = this.mapping.getEnergyAxeMapping().getColumnMapping("dispertion_column");
-		ColumnMapping sc_unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa");
+		ColumnMapping sc_col  = this.mapping.getEnergyAxisMapping().getColumnMapping("dispertion_column");
+		ColumnMapping sc_unit = this.mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa");
 		spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
 		/*
 		 * The mapping gives numeric values for the spectral range
@@ -260,7 +260,7 @@ public class Spectrum extends Product {
 			 * Units cannot (yet) a
 			 * be detected automatically in case of pixel.
 			 */
-			String unit = this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue();
+			String unit = this.mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue();
 			if( !"AutoDetect".equals(unit) ) {
 				spectralCoordinate.setOrgUnit(unit);
 			}
@@ -278,7 +278,7 @@ public class Spectrum extends Product {
 	public boolean findSpectralCoordinateByWCS() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in WCS keywords <" +this.file.getName()+">");
 System.out.println(this.mapping);
-		return  spectralCoordinate.convertWCS(this.productAttributeHandler, this.mapping.getEnergyAxeMapping().getColumnMapping("x_unit_org_csa").getValue());
+		return  spectralCoordinate.convertWCS(this.productAttributeHandler, this.mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue());
 	}
 	
 	/**

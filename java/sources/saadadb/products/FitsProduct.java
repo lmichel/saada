@@ -74,7 +74,7 @@ public class FitsProduct extends File implements ProductFile{
 	private Map<String, AttributeHandler> entryAttributeHandlers = null;
 
 	private int[] colform ;
-	
+
 	/**Constructor (constructor of the super class "File").
 	 * Creates a new File instance by converting the given pathname string into an abstract patname.
 	 *@param String The name file of the product.
@@ -329,7 +329,7 @@ public class FitsProduct extends File implements ProductFile{
 					data[i] = ((double[])(cell))[0];		
 				}
 				break;
-				
+
 				case JavaTypeUtility.FLOAT:	if( cell == null ) {
 					data[i] = SaadaConstant.FLOAT;
 				}
@@ -359,13 +359,13 @@ public class FitsProduct extends File implements ProductFile{
 				}
 				break;
 				case JavaTypeUtility.INT: 
-				if( cell == null ) {
-					data[i] = SaadaConstant.INT;
-				}
-				else {
-					data[i] = ((int[])(cell))[0];		
-				}
-				break;
+					if( cell == null ) {
+						data[i] = SaadaConstant.INT;
+					}
+					else {
+						data[i] = ((int[])(cell))[0];		
+					}
+					break;
 				case JavaTypeUtility.SHORT: if( cell == null ) {
 					data[i] = SaadaConstant.SHORT;
 				}
@@ -558,7 +558,7 @@ public class FitsProduct extends File implements ProductFile{
 			 */
 			BasicHDU bHDU = null;
 			if( ext_num >= 0  && (bHDU = fits_data.getHDU(ext_num)) != null ) {
-				if( this.checkExtensionCategory(bHDU, this.getFITSExtensionCategory() )) {
+				if( this.checkExtensionCategory(bHDU, this.getProductCategory() )) {
 					this.good_header_number = ext_num;
 					this.good_header = bHDU;
 					Messenger.printMsg(Messenger.TRACE, "Required extension : "+product.mapping.getExtension()+" found (number: " + this.good_header_number + ")" );
@@ -567,7 +567,7 @@ public class FitsProduct extends File implements ProductFile{
 				 * If no BINTABLE has been found for spectra, we try to find out a one-row image
 				 */
 				else if( product.getMapping().getCategory() == Category.SPECTRUM ) {
-					if( (bHDU = fits_data.getHDU(ext_num))  != null &&  checkExtensionCategory(bHDU, "IMAGE") ) {
+					if( (bHDU = fits_data.getHDU(ext_num))  != null &&  checkExtensionCategory(bHDU, Category.IMAGE) ) {
 						//if( image.getAxes().length == 1 ) {
 						this.good_header = bHDU;
 						this.good_header_number = ext_num;
@@ -591,7 +591,7 @@ public class FitsProduct extends File implements ProductFile{
 					+ " is #"+this.getGood_header_number());
 		}
 		if( this.product.mapping != null )
-		this.product.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
+			this.product.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
 		this.product.productAttributeHandler = this.getAttributeHandler();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
@@ -645,11 +645,11 @@ public class FitsProduct extends File implements ProductFile{
 		if( product.getMapping() != null && product.mapping.getCategory() == Category.ENTRY ) {
 			return;
 		}
-		String category = this.getFITSExtensionCategory();
+		int category = this.getProductCategory();
 		/*
-		 * MISC product take no extension by default, just the 1HDU
+		 * MISC products take no extension by default, just the 1HDU
 		 */
-		if( category.length() == 0 ) {
+		if( category == Category.MISC ) {
 			return;
 		}
 		/*
@@ -673,23 +673,21 @@ public class FitsProduct extends File implements ProductFile{
 			}
 		} catch(IOException ioe) {
 			Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Too many pixels or extension starting without XTENSION or SIMPLE");
-
 		} catch(Exception oe) {
 			if( i > 0 ) {
 				Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Stop to read file");
-			}
-			else {
+			} else {
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, oe);
 			}
 		}
 		/*
 		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
 		 */
-		if( category.equals(Category.explain(Category.SPECTRUM)) ) {
+		if( category == Category.SPECTRUM ) {
 			i=0;
 			bHDU = null;
 			while( (bHDU = fits_data.getHDU(i))  != null) {
-				if( checkExtensionCategory(bHDU, "IMAGE") ) {
+				if( checkExtensionCategory(bHDU, Category.IMAGE) ) {
 					ImageHDU image = (ImageHDU)bHDU;
 					if( image.getAxes().length >= 1 ) {
 						this.good_header = bHDU;
@@ -701,31 +699,26 @@ public class FitsProduct extends File implements ProductFile{
 				i++;
 			}
 		}
-		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + category + " header");
+		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}
 
 	/**
-	 * Return the category of the FIST extension matching the product category
+	 * Return the category of the FITS extension matching the product category
 	 * @return
 	 * @throws FatalException 
 	 */
-	private String getFITSExtensionCategory() {
-		try {
+	private int getProductCategory() {
 		if( product.getMapping() != null) {
-			return Category.explain(product.mapping.getCategory());
-		} else if( product instanceof Image2D) {
-			return Category.explain(Category.IMAGE);
+			return product.mapping.getCategory();
+		} else if( product instanceof Image2DBuilder) {
+			return Category.IMAGE;
 		} else if( product instanceof Spectrum) {
-			return Category.explain(Category.SPECTRUM);
+			return Category.SPECTRUM;
 		}  else if( product instanceof Table) {
-			return Category.explain(Category.TABLE);
+			return Category.TABLE;
 		} else {
-			return Category.explain(Category.MISC);
+			return Category.MISC;
 		}
-		} catch(FatalException e){
-			return null;
-		}
-
 	}
 
 	/**
@@ -734,28 +727,28 @@ public class FitsProduct extends File implements ProductFile{
 	 * @param category
 	 * @return
 	 */
-	private boolean checkExtensionCategory(BasicHDU hdu, String category) {
+	private boolean checkExtensionCategory(BasicHDU hdu, int category) {
 		if( hdu   != null) {
 			/*
 			 * If there is no specified category (BINTABLE or IMAGE) any extension 
 			 * can be taken. That is the case for MISC products
 			 */
-			if( category == null || category.equals("") ) {
+			if( category == Category.UNKNOWN ) {
 				return true;
 			}
 			/*
 			 * 1st HDU can be seen as a 0x0 pixel image: Must look for the first not empty image
 			 */
-			else if( category.equals("IMAGE") && (isImage(hdu) || isTileCompressedImage(hdu)) ){
+			else if( category == Category.IMAGE && (isImage(hdu) || isTileCompressedImage(hdu)) ){
 				return true;
 			}					
-			else if( category.endsWith("TABLE") && (isBinTable(hdu) || isASCIITable(hdu)) ){
+			else if( category == Category.TABLE && (isBinTable(hdu) || isASCIITable(hdu)) ){
 				return true;
 			}
 			/*
 			 * With V2 datamodel, the dataloader must be enabled to detect the energy range even for misc
 			 */
-			else if( (category.endsWith("SPECTRUM") ||category.endsWith("MISC")  ) && (isBinTable(hdu) || isASCIITable(hdu))) {
+			else if( (category == Category.SPECTRUM ||category == Category.MISC  ) && (isBinTable(hdu) || isASCIITable(hdu))) {
 				return true;
 			}
 		}
@@ -773,10 +766,8 @@ public class FitsProduct extends File implements ProductFile{
 		 boolean findDEC = false;*/
 		this.addFirstHDU();
 		int cat_prd = -1;
-		try {
-			cat_prd = Category.getCategory(getFITSExtensionCategory());
-		} catch (FatalException e) {}
-		
+		cat_prd = getProductCategory();
+
 		List<String> kWIgnored = (this.product.mapping != null)? this.product.mapping.getIgnoredAttributes()
 				: new ArrayList<String>();
 
@@ -1072,7 +1063,7 @@ public class FitsProduct extends File implements ProductFile{
 		}
 
 	}
-	
+
 	/****************************
 	 * Interface Implementation
 	 ****************************/
@@ -1458,7 +1449,7 @@ public class FitsProduct extends File implements ProductFile{
 		return null;
 	}
 
-	
+
 	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException {
 		if( this.entryAttributeHandlers == null ){
 			this.mapEntryAttributeHandler();
@@ -1507,7 +1498,7 @@ public class FitsProduct extends File implements ProductFile{
 	 * @throws IOException
 	 */
 	@SuppressWarnings("rawtypes")
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
+	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(int category) throws IgnoreException {
 		try {
 			//int i=0;
 			BasicHDU bHDU = null;
@@ -1525,7 +1516,7 @@ public class FitsProduct extends File implements ProductFile{
 				ArrayList<AttributeHandler> attrs = new ArrayList<AttributeHandler>();
 				String ext_type = "BASIC";
 				String ext_name = "primary";
-				if( category == null || checkExtensionCategory(bHDU, category) ) {
+				if( category == Category.UNKNOWN || checkExtensionCategory(bHDU, category) ) {
 					this.good_header = bHDU;
 					Iterator it = this.good_header.getHeader().iterator();
 					if( isTileCompressedImage(this.good_header)) {
@@ -1578,7 +1569,7 @@ public class FitsProduct extends File implements ProductFile{
 			return null;
 		}
 	}
-	
+
 
 
 	/**
@@ -1611,7 +1602,7 @@ public class FitsProduct extends File implements ProductFile{
 			//					System.out.println(buf[i]);
 			//			}
 			//			System.exit(1);
-			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
+			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(Category.UNKNOWN);
 			for( String en: retour.keySet() ) {
 				System.out.println(en);
 				for( AttributeHandler ah: retour.get(en)) {

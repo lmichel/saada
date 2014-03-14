@@ -49,13 +49,13 @@ public class ArgsParser implements Serializable{
 		/*
 		 * Observation Axe
 		 */
-		allowedArgs.add("-obsmaping") ; 
-		allowedArgs.add("-name")    ; allowedArgs.add("-obsid") ;
-		allowedArgs.add("-ename")   ; allowedArgs.add("-entry.obsid") ;
+		allowedArgs.add("-obsmapping") ; 
+		allowedArgs.add("-name")          ; allowedArgs.add("-obsid") ;
+		allowedArgs.add("-ename")         ; allowedArgs.add("-entry.obsid") ;
 		allowedArgs.add("-obscollection") ; allowedArgs.add("-entry.obscollection") ;
-		allowedArgs.add("-facility") ; allowedArgs.add("-entry.facility") ;
-		allowedArgs.add("-instrument") ; allowedArgs.add("-entry.instrument") ;
-		allowedArgs.add("-target")  ; allowedArgs.add("-entry.target") ;
+		allowedArgs.add("-facility")      ; allowedArgs.add("-entry.facility") ;
+		allowedArgs.add("-instrument")    ; allowedArgs.add("-entry.instrument") ;
+		allowedArgs.add("-target")        ; allowedArgs.add("-entry.target") ;
 		/*
 		 * Space Axe
 		 */

@@ -33,7 +33,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.FitsProduct;
-import saadadb.products.Image2D;
+import saadadb.products.Image2DBuilder;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import cds.astro.Coo;
@@ -446,7 +446,7 @@ public abstract class ImageUtils {
 	 */
 	static public void buildTileFile(double ra, double dec, double box_size_ra, double box_size_dec, String source_file, ProductMapping cdh, String dest_file) throws Exception{
 		File sf = new File(source_file);
-		Image2D img  = new Image2D(sf,cdh);
+		Image2DBuilder img  = new Image2DBuilder(sf,cdh);
 		img.readProductFile();
 		Map<String, AttributeHandler> ahs = img.getProductAttributeHandler();
 		Image2DCoordinate i2c = new Image2DCoordinate();
@@ -664,7 +664,7 @@ public abstract class ImageUtils {
 
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		Image2D sp ;
+		Image2DBuilder sp ;
 
 		String img = "/rawdata/XIDResult/wfi_iap/images/AIP_XMM/DPLeo_R-BB_Rc_162_ESO844-852-set_6.fits";
 		Coo  c = new Coo(169.082889, 17.9419328);

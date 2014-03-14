@@ -8,7 +8,7 @@ import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.Image2D;
+import saadadb.products.Image2DBuilder;
 import saadadb.query.executor.Query;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
@@ -1115,31 +1115,6 @@ public class Image2DCoordinate{
 	public double getXorg() {
 		return Xorg;
 	}
-
-	public static void main(String[] args) throws Exception {
-		Messenger.debug_mode = true;
-		Database.init("MUSE");
-
-		Query q = new Query();
-		SaadaQLResultSet srs = q.runQuery("Select IMAGE From * In VariabilityCube Limit 1") ;
-		ProductMapping cdh = null;
-		ImageSaada is=null;
-		while( srs.next()) {
-//			is = (ImageSaada) Database.getCache().getObject(srs.oidsaada);
-//			cdh = is.getLoaderConfig();		
-//			Image2D img  = new Image2D(new File("/data/repository/MUSE/VariabilityCube/IMAGE/inst1.little_var.fits"),null);
-//			img.loadProductFile(cdh);
-//			Map<String, AttributeHandler> ahs = img.productAttributeHandler;
-//			Image2DCoordinate i2c = new Image2DCoordinate();
-//			i2c.setImage2DCoordinate(ahs);
-//			img.setWcsFields();
-
-		}
-		srs.close();
-		Database.close();
-		//ImageUtils.buildTileFile(68.90239, 16.54804, 1/120.0, 1/60.0, is.getRepositoryPath(), cdh, "/home/michel/Desktop/tile.fits");
-	}
-		
 
 }
 

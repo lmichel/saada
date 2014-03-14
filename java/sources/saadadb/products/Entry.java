@@ -28,9 +28,9 @@ import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
 
 
-public class Entry extends Product {
+public class Entry extends ProductBuilder {
 	/**
-	 *  * @version $Id: Entry.java 887 2014-01-14 09:33:09Z laurent.mistahl $
+	 *  * @version $Id$
 
 	 */
 	private static final long serialVersionUID = 1L;
@@ -174,7 +174,7 @@ public class Entry extends Product {
 				sqlfields     = new String[productAttributeHandler.size()];
 				//jtypefields   = new int[tableAttributeHandler.size()];
 				values        = new Object[row.length];
-				num_ext_att   = new int[this.extended_attributes.size()];
+				num_ext_att   = new int[this.extended_attributes_ref.size()];
 				for( int i=0 ; i<num_ext_att.length ; i++ ) {
 					num_ext_att[i] = -1;
 				}
@@ -250,11 +250,11 @@ public class Entry extends Product {
 						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC error col (" + nameField + ") read in column #" + num_att_read);
 						num_col_angle_err = index_pos_col[num_att_read];
 					}
-					if( this.extended_attributes != null ) {
+					if( this.extended_attributes_ref != null ) {
 						int extpos=0;
 						//for( AttributeHandler extah: this.extended_attrikeySetbutes ) {
-						for( String ext_att_name: this.extended_attributes.keySet() ) {
-							String mapped_ext_att = this.extended_attributes.get(ext_att_name).getNameattr();
+						for( String ext_att_name: this.extended_attributes_ref.keySet() ) {
+							String mapped_ext_att = this.extended_attributes_ref.get(ext_att_name).getNameattr();
 							if( mapped_ext_att.equals(nameField)  ) {
 								num_ext_att[extpos] = index_pos_col[num_att_read];
 								emsg += "(" + mapped_ext_att + " col#" + num_att_read + ") ";
@@ -277,7 +277,7 @@ public class Entry extends Product {
 				if( this.name_components != null ) {
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,nmsg);
 				}
-				if( this.extended_attributes != null ) {
+				if( this.extended_attributes_ref != null ) {
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,emsg);
 				}
 			} // first line processing
@@ -312,12 +312,12 @@ public class Entry extends Product {
 			/*
 			 * Set extended attribute
 			 */
-			if( this.extended_attributes != null ) {
+			if( this.extended_attributes_ref != null ) {
 				int extpos = 0;
 				//for( AttributeHandler nah: this.extended_attributes.keySet() ) {
-				for( String ext_att_name: this.extended_attributes.keySet() ) {
+				for( String ext_att_name: this.extended_attributes_ref.keySet() ) {
 					if( num_ext_att[extpos] != -1 ) {
-						this.extended_attributes.get(ext_att_name).setValue(values[num_ext_att[extpos]].toString());
+						this.extended_attributes_ref.get(ext_att_name).setValue(values[num_ext_att[extpos]].toString());
 					}
 					extpos++;
 				}

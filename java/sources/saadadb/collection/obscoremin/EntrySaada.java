@@ -87,12 +87,48 @@ public class EntrySaada extends SaadaInstance {
 	}
 
 	@Override
-	public void setDate_load(long time) throws AbortException {
+	public void setDate_load(long time) {
 	}
 
 	@Override
 	public long getDate_load() {
 		return SaadaConstant.LONG;
+	}
+
+	@Override
+	public void setRepository_location(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getRepository_location() throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAccess_format(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setAccess_estsize(long size) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setS_fov(double value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setS_region(String name) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

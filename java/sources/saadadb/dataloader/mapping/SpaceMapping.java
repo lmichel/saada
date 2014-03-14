@@ -5,7 +5,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.CoordSystem;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 
@@ -206,7 +206,7 @@ public class SpaceMapping extends AxisMapping {
 		return this.errorUnit;
 	}
 	/**
-	 * Error Unit can be set from the {@link Product#mapCollectionPoserrorAttributes}
+	 * Error Unit can be set from the {@link ProductBuilder#mapCollectionPoserrorAttributes}
 	 * @param errorUnit
 	 */
 	public void setErrorUnit(String errorUnit){

@@ -7,12 +7,12 @@ import java.util.Set;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 
 /**
  * Super class of the the classes handling the loader config for one axe (STOE)
  * The list of mapped columns match quantity but not necessarly unique fields
- * The binding between the mapped column and the real column is donw by thye class {@link Product}
+ * The binding between the mapped column and the real column is donw by thye class {@link ProductBuilder}
  * 
  * Each subclass correspond to one characterization axis (Obs, Space, Time, Energy)
  * 

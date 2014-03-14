@@ -1,5 +1,7 @@
 package saadadb.collection.obscoremin;
 
+import saadadb.collection.Category;
+import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 
@@ -95,4 +97,22 @@ public class FileRef extends SaadaInstance {
 	public void setRepository_location(String repository_location) {
     	this.repository_location = repository_location;
     }
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getRepository_location()
+	 */
+	@Override
+	public String getRepository_location() throws SaadaException {
+		if( this.repository_location == null ) {
+			return null;
+		}
+		else if( this.repository_location.indexOf(Database.getSepar()) != -1 ) {
+			return this.repository_location;
+		} else {
+			return Database.getRepository() + Database.getSepar() 
+			+ this.getCollection().getName() + Database.getSepar() 
+			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
+			+ this.repository_location;
+		}
+	}
+
 }
