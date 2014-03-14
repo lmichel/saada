@@ -22,7 +22,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.products.Entry;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.products.Table;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.UCDTableHandler;
@@ -47,7 +47,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 	/**
 	 * @param entr
 	 */
-	public SchemaFusionMapper(Loader loader, Product entr) {
+	public SchemaFusionMapper(Loader loader, ProductBuilder entr) {
 		super(loader, entr);
 		Messenger.setMaxProgress((2*1) + 2);
 	}

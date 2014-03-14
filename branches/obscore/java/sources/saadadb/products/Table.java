@@ -20,13 +20,13 @@ import saadadb.util.Messenger;
  * @version 2.0
  * @since 2.0
  */
-public class Table extends Product {
-	/** * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
- * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
- * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
- * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
- * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
-vvvvv * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
+public class Table extends ProductBuilder {
+	/** * @version $Id$
+ * @version $Id$
+ * @version $Id$
+ * @version $Id$
+ * @version $Id$
+vvvvv * @version $Id$
 
 	 * 
 	 */
@@ -129,7 +129,7 @@ vvvvv * @version $Id: Table.java 798 2013-10-11 07:43:42Z laurent.mistahl $
         /*
          * Build a new set of attribute handlers from the product given as a parameter
          */
-        Product prd_to_merge = this.mapping.getNewProductInstance(file_to_merge);
+        ProductBuilder prd_to_merge = this.mapping.getNewProductInstance(file_to_merge);
         prd_to_merge.mapping = this.mapping;
         
 		try {

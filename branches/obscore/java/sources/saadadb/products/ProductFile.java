@@ -70,7 +70,7 @@ public interface ProductFile extends Enumeration{
      * key = HDU
      * value = attribute handlers
      */
-	public Map<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException ;
+	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category) throws IgnoreException ;
 	/**
 	 * Returns the map of the attribute handlers modeling the columns of te data tables
 	 * @return

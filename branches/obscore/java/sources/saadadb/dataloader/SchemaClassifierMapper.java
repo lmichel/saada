@@ -15,7 +15,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.products.Entry;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.products.Table;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -39,7 +39,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	/**
 	 * @param entr
 	 */
-	public SchemaClassifierMapper(Loader loader, Product entr) {
+	public SchemaClassifierMapper(Loader loader, ProductBuilder entr) {
 		super(loader, entr);
 		Messenger.setMaxProgress(1 + 1);
 	}

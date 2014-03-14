@@ -19,7 +19,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.products.Entry;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Class;
@@ -35,7 +35,7 @@ public abstract class SchemaMapper {
 	private static String class_location;
 	private static String package_name;
 	protected List<File> products;
-	protected Product current_prd;
+	protected ProductBuilder current_prd;
 	protected MetaClass current_class;
 	protected SchemaMapper entry_mapper = null;
 	protected TreeSet<String> class_to_index = new TreeSet<String>();
@@ -47,7 +47,7 @@ public abstract class SchemaMapper {
 	 * @param products
 	 * @param handler
 	 */
-	public SchemaMapper(Loader loader, Product prd) {
+	public SchemaMapper(Loader loader, ProductBuilder prd) {
 		setProduct(prd);
 		this.loader = loader;
 		package_name = "generated." + Database.getName();
@@ -71,7 +71,7 @@ public abstract class SchemaMapper {
 	/**
 	 * @param prd
 	 */
-	protected void  setProduct(Product prd) {
+	protected void  setProduct(ProductBuilder prd) {
 		this.mapping = prd.getMapping();
 		this.current_prd= prd;		
 	}

@@ -11,7 +11,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
 
 public class Table_Saada_Loaded_File {
@@ -41,7 +41,7 @@ public class Table_Saada_Loaded_File {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static String recordLoadedFile(Product prd, String rep_name) throws Exception{
+	public static String recordLoadedFile(ProductBuilder prd, String rep_name) throws Exception{
 		MetaClass mc = prd.getMetaclass();
 		ProductMapping cdh = prd.getMapping();
 		String coll_name = cdh.getCollection();
@@ -89,7 +89,7 @@ public class Table_Saada_Loaded_File {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String recordLoadedFile(Product prd, String rep_name, BufferedWriter loadedfilewriter) throws Exception{
+	public static String recordLoadedFile(ProductBuilder prd, String rep_name, BufferedWriter loadedfilewriter) throws Exception{
 		MetaClass mc = prd.getMetaclass();
 		ProductMapping cdh = prd.getMapping();
 		String coll_name = cdh.getCollection();
@@ -200,7 +200,7 @@ public class Table_Saada_Loaded_File {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean productAlreadyExistsInDB(Product prd) throws Exception{
+	public static boolean productAlreadyExistsInDB(ProductBuilder prd) throws Exception{
 		SQLQuery squery = new SQLQuery();
 		ResultSet rs = squery.run("select count(classname) from saada_loaded_file where md5_config='"
 		+ prd.getMapping().getSignature() + "' and content_sign='"

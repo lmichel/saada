@@ -6,8 +6,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.exceptions.FatalException;
-import saadadb.products.Product;
+import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
 
 public class LoadSpecgtrum {
@@ -34,7 +33,7 @@ public class LoadSpecgtrum {
 					,"-tmax=12 03 2013" 		
 					, "Obscore"});
 
-			Product product = new Product(new File("/home/michel/Desktop/ADASS2008/data_sample/EPIC Spectra/P0205010201PNS003SRSPEC0003.FIT")
+			ProductBuilder product = new ProductBuilder(new File("/home/michel/Desktop/ADASS2008/data_sample/EPIC Spectra/P0205010201PNS003SRSPEC0003.FIT")
 			, new ProductMapping("mapping", ap));
 			product.initProductFile();
 			product.printReport();

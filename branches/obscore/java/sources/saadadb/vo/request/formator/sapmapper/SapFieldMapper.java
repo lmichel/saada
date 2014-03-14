@@ -58,17 +58,17 @@ public class SapFieldMapper {
 	private File  file;
 	private String ra, dec;
 	private int naxis1, naxis2;
-	private String wcs_rota;
-	private String wcs_cd11;
-	private String wcs_cd21;
-	private String wcs_cd22;
-	private String wcs_cd12;
-	private String wcs_val1;
-	private String wcs_val2;
-	private String wcs_pix1;
-	private String wcs_pix2;
-	private String wcs_type2;
-	private String wcs_type1;
+//	private String wcs_rota;
+//	private String wcs_cd11;
+//	private String wcs_cd21;
+//	private String wcs_cd22;
+//	private String wcs_cd12;
+//	private String wcs_val1;
+//	private String wcs_val2;
+//	private String wcs_pix1;
+//	private String wcs_pix2;
+//	private String wcs_type2;
+//	private String wcs_type1;
 	private double x_min;
 	private double x_max;
 	private String x_unit;
@@ -124,17 +124,17 @@ public class SapFieldMapper {
 	 */
 	private void setWcs() {
 		this.wcs_instance = (WCSSaada) this.instance;
-		wcs_rota =  valToString(this.wcs_instance.crota_csa);
-		wcs_cd11 =  valToString(this.wcs_instance.cd1_1_csa);
-		wcs_cd12 =  valToString(this.wcs_instance.cd1_2_csa);
-		wcs_cd21 =  valToString(this.wcs_instance.cd2_1_csa);
-		wcs_cd22 =  valToString(this.wcs_instance.cd2_2_csa);
-		wcs_val1 =  valToString(this.wcs_instance.crval1_csa);
-		wcs_val2 =  valToString(this.wcs_instance.crval2_csa);
-		wcs_pix1 =  valToString(this.wcs_instance.crpix1_csa);
-		wcs_pix2 =  valToString(this.wcs_instance.crpix2_csa);
-		wcs_type1 =  valToString(this.wcs_instance.ctype1_csa);
-		wcs_type2 =  valToString(this.wcs_instance.ctype2_csa);
+//		wcs_rota =  valToString(this.wcs_instance.crota_csa);
+//		wcs_cd11 =  valToString(this.wcs_instance.cd1_1_csa);
+//		wcs_cd12 =  valToString(this.wcs_instance.cd1_2_csa);
+//		wcs_cd21 =  valToString(this.wcs_instance.cd2_1_csa);
+//		wcs_cd22 =  valToString(this.wcs_instance.cd2_2_csa);
+//		wcs_val1 =  valToString(this.wcs_instance.crval1_csa);
+//		wcs_val2 =  valToString(this.wcs_instance.crval2_csa);
+//		wcs_pix1 =  valToString(this.wcs_instance.crpix1_csa);
+//		wcs_pix2 =  valToString(this.wcs_instance.crpix2_csa);
+//		wcs_type1 =  valToString(this.wcs_instance.ctype1_csa);
+//		wcs_type2 =  valToString(this.wcs_instance.ctype2_csa);
 		this.hasWcs=true;
 	}
 	/**
@@ -142,9 +142,9 @@ public class SapFieldMapper {
 	 */
 	private void setSpec() {
 		this.spec_instance = (SpectrumSaada) this.instance;
-		x_min = this.spec_instance.e_min;
-		x_max = this.spec_instance.e_max;
-		x_unit = valToString(this.spec_instance.x_unit_csa);
+		x_min = this.spec_instance.em_min;
+		x_max = this.spec_instance.em_max;
+		//x_unit = valToString(this.spec_instance.x_unit_csa);
 		this.hasSpRange=true;
 	}
 	/**
@@ -230,7 +230,7 @@ public class SapFieldMapper {
 					value.fieldValue = Double.toString(size_alpha / naxis1)  + " " +  Double.toString(size_delta / naxis2);
 				}					 
 			} else if( fieldIdentifier.equals("VOX:WCS_CoordProjection") ) {
-				String val = wcs_type1;
+			//	String val = wcs_type1;
 				// RA---TAN -> TAN e.g.
 				if( val != null && val.length() > 3 ) {
 					val = val.substring(val.length() - 3);
