@@ -1610,7 +1610,8 @@ public class ProductBuilder {
 			if( retour.get(fname) == null ){
 				ah = new AttributeHandler();
 				ah.setNameattr(fname); ah.setNameorg(fname); 
-				ah.setValue(si.getFieldValue(fname).toString());
+				Object o = si.getFieldValue(fname);
+				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
 				ah.setComment("Computed internally by Saada");				
 		        retour.put(fname, ah);
 			}
