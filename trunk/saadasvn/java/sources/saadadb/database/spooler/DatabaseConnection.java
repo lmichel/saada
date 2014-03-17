@@ -73,7 +73,7 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void close() throws SQLException{
-		this.connection.close();
+		if( this.connection != null ) this.connection.close();
 		this.connection = null;
 		this.status = OBSOLETE;	
 	}
