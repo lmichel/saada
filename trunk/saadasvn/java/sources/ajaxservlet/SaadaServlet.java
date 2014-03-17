@@ -164,7 +164,7 @@ public class SaadaServlet extends HttpServlet {
 			getErrorPage(req, res, "File " + f.getAbsolutePath() + " does not exist or cannot be read");
 			return;
 		}
-		downloadProduct(req, res, product_path,f.getName(), null );
+		downloadProduct(req, res, product_path,f.getName());
 	}
 
 	/**
@@ -172,9 +172,10 @@ public class SaadaServlet extends HttpServlet {
 	 * @param res
 	 * @param product_path
 	 * @param attachement
+	 * @param proposedFilename
 	 * @throws Exception
 	 */
-	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path, String attachement , String proposedFilename) throws Exception{
+	protected void downloadProduct(HttpServletRequest req, HttpServletResponse res, String product_path,  String proposedFilename) throws Exception{
 		String contentType = getServletContext().getMimeType(product_path);
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Download file " + product_path);
