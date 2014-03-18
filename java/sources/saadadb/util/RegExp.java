@@ -166,8 +166,8 @@ public class RegExp {
 	public static final String FK5_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
 	public static final String FK5_RA_UCD       = "(?i)(POS_EQ_RA|(pos\\.eq\\.ra))";
 	public static final String FK5_DEC_UCD      = "(?i)(POS_EQ_DEC|(pos\\.eq\\.dec))";
-	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^Bb]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
-	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^Bb]?(2000)?)|(_*de[^Bb]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
+	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^b]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
+	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^b]?(2000)?)|(_*de[^b]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
 
 	public static final String FK4_RA_MAINUCD   = "(?i)(POS_EQ_RA_MAIN|(pos\\.eq\\.ra;meta\\.main))";
 	public static final String FK4_DEC_MAINUCD  = "(?i)(POS_EQ_DEC_MAIN|(pos\\.eq\\.dec;meta\\.main))";
