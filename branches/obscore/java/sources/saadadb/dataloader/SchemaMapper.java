@@ -18,7 +18,7 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.Entry;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
@@ -286,7 +286,7 @@ public abstract class SchemaMapper {
 			 * Store the association between table class and entry class
 			 */
 			if( mapping.getCategory() == Category.ENTRY ) {
-				Entry entry = (Entry)this.current_prd;
+				EntryBuilder entry = (EntryBuilder)this.current_prd;
 				String table_class_name = entry.getTable().getMetaclass().getName();
 				Table_Saada_Class.setAssociateClass(class_name
 						, mapping.getCollection() 

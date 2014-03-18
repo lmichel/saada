@@ -12,10 +12,10 @@ import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.HeaderRef;
 import saadadb.products.FlatFileBuilder;
 import saadadb.products.Image2DBuilder;
-import saadadb.products.Misc;
+import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
-import saadadb.products.Spectrum;
-import saadadb.products.Table;
+import saadadb.products.SpectrumBuilder;
+import saadadb.products.TableBuilder;
 
 public class ProductMapping {
 	public final String name;
@@ -32,8 +32,7 @@ public class ProductMapping {
 	private ClassMapping classMapping;
 	private EntryMapping entryMapping;
 	/**
-	 * Avalable for the dataloader to store column index for any purpose
-	 * optimisation
+	 * Available for the dataloader to store column index for any purpose
 	 */
 	public List<Integer> freeIndex = new ArrayList<Integer>(); 
 
@@ -215,6 +214,9 @@ public class ProductMapping {
 		}
 		return false;
 	}
+	/**
+	 * @param index
+	 */
 	public void addToFreeIndex(int index){
 		this.freeIndex.add(index);
 	}
@@ -239,9 +241,9 @@ public class ProductMapping {
 	 */
 	public  ProductBuilder getNewProductInstance(File file) throws SaadaException {
 		switch( this.category ) {
-		case Category.TABLE: return new Table(file, this) ;
-		case Category.MISC : return new Misc(file, this) ;
-		case Category.SPECTRUM : return new Spectrum(file, this) ;
+		case Category.TABLE: return new TableBuilder(file, this) ;
+		case Category.MISC : return new MiscBuilder(file, this) ;
+		case Category.SPECTRUM : return new SpectrumBuilder(file, this) ;
 		case Category.IMAGE : return new Image2DBuilder(file, this) ;
 		case Category.FLATFILE : return new FlatFileBuilder(file, this) ;
 		default: IgnoreException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Can't handle product category <" + Category.explain(this.category) + ">");
