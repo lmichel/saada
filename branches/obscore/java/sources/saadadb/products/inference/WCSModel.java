@@ -27,7 +27,7 @@ public class WCSModel {
 	private int[] NAXISi;
 	private double[] matrix;
 	private int NAXIS;
-	private boolean kwset_ok = true;
+	boolean kwset_ok = true;
 
 
 	/**
@@ -470,8 +470,7 @@ public class WCSModel {
 		for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
 			if( axe2 == axe ) {
 				pix[axe2] = this.NAXISi[axe2];
-			}
-			else {
+			} else {
 				pix[axe2] = 0;
 			}
 		}
