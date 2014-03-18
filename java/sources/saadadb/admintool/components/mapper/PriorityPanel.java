@@ -14,7 +14,7 @@ public abstract class PriorityPanel extends MappingPanel {
 	protected JRadioButton noBtn ;
 	protected ButtonGroup buttonGroup ;
 
-	
+
 	public PriorityPanel(MappingKWPanel mappingPanel, String title) {
 		super(mappingPanel, title);
 		onlyBtn = new JRadioButton("only");
@@ -23,7 +23,7 @@ public abstract class PriorityPanel extends MappingPanel {
 		noBtn = new JRadioButton("no mapping");
 		buttonGroup = new ButtonGroup();
 	}
-	
+
 	public boolean isOnly() {
 		return onlyBtn.isSelected();
 	}
@@ -55,15 +55,18 @@ public abstract class PriorityPanel extends MappingPanel {
 		firstBtn.setSelected(false);
 		lastBtn.setSelected(false);
 		noBtn.setSelected(false);
-
-		switch(mode){
-		case ONLY:noBtn.setSelected(true);break;
-		case FIRST: firstBtn.setSelected(true); break;
-		case LAST: lastBtn.setSelected(true); break;
-		default: noBtn.setSelected(true);
+		if( mode != null ){
+			switch(mode){
+			case ONLY:noBtn.setSelected(true);break;
+			case FIRST: firstBtn.setSelected(true); break;
+			case LAST: lastBtn.setSelected(true); break;
+			default: noBtn.setSelected(true);
+			}
+		} else {
+			noBtn.setSelected(true);
 		}
 	}
-	
+
 	public boolean valid() {
 		if( this.isNo() ) {
 			return true;

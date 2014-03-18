@@ -23,6 +23,7 @@ import javax.swing.tree.TreePath;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.TreePathTransferable;
+import saadadb.collection.Category;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.FitsProduct;
 import saadadb.products.ProductFile;
@@ -85,7 +86,7 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 			return;
 		}
 		Map<String, ArrayList<AttributeHandler>> prd_map=null;
-		prd_map = prd.getProductMap(null);
+		prd_map = prd.getProductMap(Category.UNKNOWN);
 		for( String ext: prd_map.keySet()) {
 			ArrayList<AttributeHandler> alah = prd_map.get(ext);
 			for( AttributeHandler ah: alah ) {
