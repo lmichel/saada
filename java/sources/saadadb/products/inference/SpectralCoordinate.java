@@ -559,9 +559,19 @@ public class SpectralCoordinate{
 	 */
 	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
 		this.attributesList = tableAttributeHandler;
-		WCSModel wm = new WCSModel(tableAttributeHandler);
+		WCSModel wm = null;
+		try {
+			wm = new WCSModel(tableAttributeHandler);
+		} catch( Exception e) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No WCS keywords to get spectral coordinates");
+			return false;
+		}
 		String unitOrg = this.CUNIT;
 		wm.projectAllAxesToRealWord();
+		if( !wm.isKwset_ok() ){
+			return false;
+		}
 		/*
 		 * A dispersion axe is found but unit can be not set or not valid
 		 * In this case, we take unit given by the configuration

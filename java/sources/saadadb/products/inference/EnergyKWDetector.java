@@ -1,5 +1,7 @@
 package saadadb.products.inference;
 
+import java.util.Map;
+
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -13,9 +15,20 @@ public class EnergyKWDetector extends KWDetector {
 	private ProductFile productFile;
 	private boolean mustSearchUnit = false;
 
+	/**
+	 * @param productFile
+	 * @throws SaadaException
+	 */
 	public EnergyKWDetector(ProductFile productFile) throws SaadaException {
-		super(productFile.getAttributeHandler(), productFile.getEntryAttributeHandler());
+		super(productFile);
 		this.productFile = productFile;
+	}
+	/**
+	 * @param tableAttributeHandler
+	 */
+	public EnergyKWDetector(
+			Map<String, AttributeHandler> tableAttributeHandler) {
+		super(tableAttributeHandler);
 	}
 
 	public void mustSearchUnit() {
@@ -128,7 +141,7 @@ public class EnergyKWDetector extends KWDetector {
 
 			}
 		} 
-		if ( !findMax  || !findMin ){
+		if ( this.entryAttributeHandler != null && (!findMax  || !findMin) ){
 			/*
 			 * If no range set in params, try to find it out from fields
 			 */	
