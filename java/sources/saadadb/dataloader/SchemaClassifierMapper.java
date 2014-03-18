@@ -14,9 +14,9 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
-import saadadb.products.Entry;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
-import saadadb.products.Table;
+import saadadb.products.TableBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 /**
@@ -146,7 +146,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 				 */
 				if( mapping.getCategory() == Category.TABLE) {
 					Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
-					Entry entr = ((Table) current_prd).getEntry();
+					EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
 					this.entry_mapper = new SchemaClassifierMapper(this.loader, entr);
 					this.entry_mapper.updateSchemaForProduct();
 					/*

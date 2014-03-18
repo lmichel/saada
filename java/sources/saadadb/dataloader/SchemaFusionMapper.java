@@ -21,9 +21,9 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.Entry;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
-import saadadb.products.Table;
+import saadadb.products.TableBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.UCDTableHandler;
 import saadadb.util.Messenger;
@@ -118,7 +118,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.createClassFromProduct(ClassifierMode.CLASS_FUSION);		
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				Entry entr = ((Table) current_prd).getEntry();
+				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
 				this.entry_mapper = new SchemaFusionMapper(this.loader, entr);
 				this.entry_mapper.current_class = this.entry_mapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
@@ -133,7 +133,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.updateSchemaForProduct();
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				Entry entr = ((Table) current_prd).getEntry();
+				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
 				this.entry_mapper = new SchemaFusionMapper(this.loader, entr);
 				this.entry_mapper.updateSchemaForProduct();	
 				SQLTable.beginTransaction();
@@ -177,7 +177,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.current_prd = this.mapping.getNewProductInstance(file);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
 			if( this.entry_mapper != null ) {	
-				Entry entr = ((Table) current_prd).getEntry();
+				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
 				this.entry_mapper.setProduct(entr);
 			}
 			try {
@@ -257,7 +257,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.current_prd = this.mapping.getNewProductInstance(file);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
 			if( this.entry_mapper != null ) {	
-				Entry entr = ((Table) current_prd).getEntry();
+				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
 				this.entry_mapper.setProduct(entr);
 			}
 			try {
