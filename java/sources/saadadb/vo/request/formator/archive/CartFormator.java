@@ -191,7 +191,7 @@ public class CartFormator  extends QueryResultFormator{
 			if( zer.getType() == ZipEntryRef.SINGLE_FILE ) {
 				long oid = Long.parseLong(zer.getUri());
 				SaadaInstance si = Database.getCache().getObject(oid);
-				zer.setUri(si.getRepositoryPath());
+				zer.setUri(si.getRepository_location());
 				if( zer.includeLinkedData() ) {
 					/*
 					 * If linked data are also taken, filenames are prepended with OIDa to
@@ -256,7 +256,7 @@ public class CartFormator  extends QueryResultFormator{
 		for( long oid: oids) {
 			SaadaInstance si = Database.getCache().getObject(oid);
 
-			ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, Long.toString(oid) + "_" + si.getFileName(), si.getRepositoryPath(), options);
+			ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, Long.toString(oid) + "_" + si.getFileName(), si.getRepository_location(), options);
 			if( zer.includeLinkedData() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add linked data");
@@ -353,7 +353,7 @@ public class CartFormator  extends QueryResultFormator{
 			} else if( mr.getSecondary_category() != Category.ENTRY ) {
 				for( long cpoid: cpoids) {
 					SaadaInstance cpi = Database.getCache().getObject(cpoid);
-					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.oidsaada + "_" + cpi.getFileName(), cpi.getRepositoryPath());
+					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.oidsaada + "_" + cpi.getFileName(), cpi.getRepository_location());
 					this.zipMap.add(root, zer);
 				}
 			} else {

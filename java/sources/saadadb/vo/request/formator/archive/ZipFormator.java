@@ -188,15 +188,15 @@ public class ZipFormator extends QueryResultFormator {
 			long primary_size = 0;
 			for( long oid: this.oids ) {
 				SaadaInstance si = Database.getCache().getObject(oid);
-				String path = Database.getCache().getObject(oid).getRepositoryPath();
+				String path = Database.getCache().getObject(oid).getRepository_location();
 				/*
 				 * Add the oid to the name when there are relations in order to enable users to sort out individual links
 				 */
 				if( this.relationsToInclude.size() > 0 ) {
-					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepository_location(), ZipEntryRef.WITH_REL));
 				}
 				else {
-					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getFileName(),si.getRepositoryPath(), ZipEntryRef.WITH_REL));					
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getFileName(),si.getRepository_location(), ZipEntryRef.WITH_REL));					
 				}
 				Messenger.printMsg(Messenger.TRACE, "Add primary file " + path );
 				primary_size += (new File(path)).length()/1000000;
@@ -262,10 +262,10 @@ public class ZipFormator extends QueryResultFormator {
 			else {
 				for(long cp: cps){
 					si = Database.getCache().getObject(cp);
-					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepositoryPath(), 0));
+					ts.add(new ZipEntryRef(ZipEntryRef.SINGLE_FILE, this.getFileNamePrefix(oid) + si.getFileName(),si.getRepository_location(), 0));
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Store secondary response file " 
-								+ Database.getCache().getObject(cp).getRepositoryPath()  
+								+ Database.getCache().getObject(cp).getRepository_location()  
 								+ "(relation " + relationName + ")");
 				}
 			}

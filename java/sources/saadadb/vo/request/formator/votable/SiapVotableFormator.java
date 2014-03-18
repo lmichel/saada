@@ -63,7 +63,7 @@ public class SiapVotableFormator extends VotableFormator {
 			ImageUtils.buildTileFile(obj.s_ra, obj.s_dec
 					, Double.parseDouble(this.getProtocolParam("size_ra"))
 					, Double.parseDouble(this.getProtocolParam("size_dec"))
-					, obj.getRepositoryPath(), cdh, targetpath);
+					, obj.getRepository_location(), cdh, targetpath);
 			download_url = Database.getUrl_root() + "/getproduct?report=" + targetfile;
 			url = Database.getUrl_root() + "/getproduct?reports=" + targetfile;
 		} else {
@@ -94,7 +94,7 @@ public class SiapVotableFormator extends VotableFormator {
 				}
 			}
 			else if( ucd.equals("VOX:Image_FileSize") ) {
-				val = String.valueOf(((new File(obj.getRepositoryPath())).length()));					
+				val = String.valueOf(((new File(obj.getRepository_location())).length()));					
 			}
 			else if( ucd.equals("VOX:STC_CoordRefFrame") ) {
 				try {
