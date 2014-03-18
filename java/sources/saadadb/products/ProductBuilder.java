@@ -168,7 +168,7 @@ public class ProductBuilder {
 	/**
 	 * @throws SaadaException
 	 */
-	private void setObservationKWDetector() throws SaadaException {
+	protected void setObservationKWDetector() throws SaadaException {
 		if( this.observationKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
@@ -181,7 +181,7 @@ public class ProductBuilder {
 	/**
 	 * @throws SaadaException
 	 */
-	private void setSpaceKWDetector() throws SaadaException {
+	protected void setSpaceKWDetector() throws SaadaException {
 		if( this.spaceKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
@@ -194,11 +194,11 @@ public class ProductBuilder {
 	/**
 	 * @throws SaadaException
 	 */
-	private void setEnergyKWDetector() throws SaadaException {
+	protected void setEnergyKWDetector() throws SaadaException {
 		if( this.energyKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
-				this.energyKWDetector = new EnergyKWDetector(null);
+				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler);
 			} else {
 				this.energyKWDetector = this.productFile.getEnergyKWDetector(false);
 			}
@@ -207,7 +207,7 @@ public class ProductBuilder {
 	/**
 	 * @throws SaadaException
 	 */
-	private void setTimeKWDetector() throws SaadaException {
+	protected void setTimeKWDetector() throws SaadaException {
 		if( this.timeKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
@@ -268,7 +268,7 @@ public class ProductBuilder {
 	public ProductFile getProducFile() {
 		return productFile;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -324,7 +324,7 @@ public class ProductBuilder {
 		}
 		return value;
 	}
-	
+
 
 	/*************************************************
 	 * Initialization of the product
@@ -411,8 +411,8 @@ public class ProductBuilder {
 		this.fmtsignature =  MD5Key.calculMD5Key(md5Key+md5Type);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "fmtsignature " + this + " " + this.getName() + " " +  this.fmtsignature );
 	}
-	
-	
+
+
 	/**
 	 * Can be overloaded to use another ingestor
 	 * @throws Exception
@@ -449,7 +449,7 @@ public class ProductBuilder {
 		this.setProductIngestor();
 		this.productIngestor.loadValue(colwriter, buswriter, loadedfilewriter);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.file.getName() + "> complete");
-		}
+	}
 	/**
 	 * @throws Exception 
 	 * 
@@ -484,7 +484,14 @@ public class ProductBuilder {
 					return ah;
 				}
 			}
+		} else {
+			AttributeHandler ah = new AttributeHandler();
+			ah.setNameattr(ColumnMapping.UNDEFINED);
+			ah.setNameorg(ColumnMapping.UNDEFINED);
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": undefined");
+			return ah;
 		}
+
 		return null;
 	}
 	/**
@@ -492,6 +499,10 @@ public class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionAttributes() throws Exception {
+		System.out.println("@@@@@@@@@@@@@@ MAP COLLLLLLLLLLLLLLLLLLLL" + this);
+		(new Exception()).printStackTrace();
+		for(AttributeHandler ah: this.productAttributeHandler.values()) System.out.print(ah.getNameattr() + " " );
+		System.out.println("\n");
 		this.mapObservationAxe();
 		this.mapSpaceAxe();
 		this.mapEnergyAxe();
@@ -559,7 +570,7 @@ public class ProductBuilder {
 		/*
 		 * Take the Saada collection as default obs_collection
 		 */
-		if( this.obs_collection_ref == null) {
+		if( this.obs_collection_ref.getNameattr().equals(ColumnMapping.UNDEFINED) ){
 			AttributeHandler ah = new AttributeHandler();
 			ah.setNameattr(ColumnMapping.NUMERIC);
 			ah.setNameorg(ColumnMapping.NUMERIC);
@@ -1471,13 +1482,13 @@ public class ProductBuilder {
 		}
 		return ret;
 	}
-	
+
 	/*
 	 * 
 	 * Reporting
 	 *
 	 */
-	
+
 	/**
 	 * @param col
 	 * @param att
@@ -1495,8 +1506,8 @@ public class ProductBuilder {
 		}
 		Messenger.printMsg(Messenger.TRACE, msg);	
 	}
-	
-	private String getReportOnAttRef(String col, AttributeHandler att){
+
+	protected String getReportOnAttRef(String col, AttributeHandler att){
 		String msg = col + " ";
 		if( att == null ){
 			msg += "not set";
@@ -1522,89 +1533,89 @@ public class ProductBuilder {
 		ah.setNameattr("obs_collection"); ah.setNameorg("obs_collection"); 
 		ah.setValue(si.getFieldValue("obs_collection").toString());
 		ah.setComment(this.getReportOnAttRef("obs_collection", obs_collection_ref));
-        retour.put("obs_collection", ah);
-  
+		retour.put("obs_collection", ah);
+
 		ah = new AttributeHandler();
 		ah.setNameattr("target_name"); ah.setNameorg("target_name"); 
 		ah.setValue(si.getFieldValue("target_name").toString());
 		ah.setComment(this.getReportOnAttRef("target_name", target_name_ref));
-        retour.put("target_name", ah);
+		retour.put("target_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("facility_name"); ah.setNameorg("facility_name"); 
 		ah.setValue(si.getFieldValue("facility_name").toString());
 		ah.setComment(this.getReportOnAttRef("facility_name", facility_name_ref));
-        retour.put("facility_name", ah);
+		retour.put("facility_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("instrument_name"); ah.setNameorg("instrument_name"); 
 		ah.setValue(si.getFieldValue("instrument_name").toString());
 		ah.setComment(this.getReportOnAttRef("instrument_name", instrument_name_ref));
-        retour.put("instrument_name", ah);
+		retour.put("instrument_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("s_ra"); ah.setNameorg("s_ra"); 
 		ah.setValue(si.getFieldValue("s_ra").toString());
 		ah.setComment(this.getReportOnAttRef("s_ra", s_ra_ref));
-        retour.put("s_ra", ah);
+		retour.put("s_ra", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("s_dec"); ah.setNameorg("s_dec"); 
 		ah.setValue(si.getFieldValue("s_dec").toString());
 		ah.setComment(this.getReportOnAttRef("s_dec", s_dec_ref));
-        retour.put("s_dec", ah);
-        
+		retour.put("s_dec", ah);
+
 		ah = new AttributeHandler();
 		ah.setNameattr("error_maj_csa"); ah.setNameorg("error_maj_csa"); 
 		ah.setValue(si.getFieldValue("error_maj_csa").toString());
 		ah.setComment(this.getReportOnAttRef("error_maj_csa", error_maj_ref));
-        retour.put("error_maj_csa", ah);
+		retour.put("error_maj_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("error_min_csa"); ah.setNameorg("error_min_csa"); 
 		ah.setValue(si.getFieldValue("error_min_csa").toString());
 		ah.setComment(this.getReportOnAttRef("error_min_csa", error_min_ref));
-        retour.put("error_min_csa", ah);
+		retour.put("error_min_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("error_angle_csa"); ah.setNameorg("error_angle_csa"); 
 		ah.setValue(si.getFieldValue("error_angle_csa").toString());
 		ah.setComment(this.getReportOnAttRef("error_angle_csa", error_angle_ref));
-        retour.put("error_angle_csa", ah);
+		retour.put("error_angle_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("em_min"); ah.setNameorg("em_min"); 
 		ah.setValue(si.getFieldValue("em_min").toString());
 		ah.setComment(this.getReportOnAttRef("em_min", em_min_ref));
-        retour.put("em_min", ah);
+		retour.put("em_min", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("em_max"); ah.setNameorg("em_max"); 
 		ah.setValue(si.getFieldValue("em_max").toString());
 		ah.setComment(this.getReportOnAttRef("em_max", em_max_ref));
-        retour.put("em_max", ah);
+		retour.put("em_max", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("t_max"); ah.setNameorg("t_max"); 
 		ah.setValue(si.getFieldValue("t_max").toString());
 		ah.setComment(this.getReportOnAttRef("t_max", t_max_ref));
-        retour.put("t_max", ah);
+		retour.put("t_max", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("t_min"); ah.setNameorg("t_min"); 
 		ah.setValue(si.getFieldValue("t_min").toString());
 		ah.setComment(this.getReportOnAttRef("t_min", t_min_ref));
-        retour.put("t_min", ah);
- 		
-        for( AttributeHandler eah: this.extended_attributes_ref.values()){
+		retour.put("t_min", ah);
+
+		for( AttributeHandler eah: this.extended_attributes_ref.values()){
 			ah = new AttributeHandler();
 			String ahname = eah.getNameattr();
 			ah.setNameattr(ahname); ah.setNameorg(ahname); 
 			ah.setValue(si.getFieldValue(ahname).toString());
 			ah.setComment(this.getReportOnAttRef(ahname, eah));
-	        retour.put(ahname, ah);      	
-        }
-        
+			retour.put(ahname, ah);      	
+		}
+
 		for( Field f: si.getCollLevelPersisentFields() ){
 			String fname = f.getName();
 			if( retour.get(fname) == null ){
@@ -1613,22 +1624,26 @@ public class ProductBuilder {
 				Object o = si.getFieldValue(fname);
 				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
 				ah.setComment("Computed internally by Saada");				
-		        retour.put(fname, ah);
+				retour.put(fname, ah);
 			}
 		}
 		return retour;
 	}
-	
+
+	/**
+	 * Print out the report
+	 * @throws Exception
+	 */
 	public void printReport() throws Exception {
 		for( java.util.Map.Entry<String, AttributeHandler> e: this.getReport().entrySet()){
-			System.out.println(e.getKey());
+			System.out.print(e.getKey() + "=");
 			AttributeHandler ah = e.getValue();
-			System.out.println("    Mapping " + ah.getComment());
-			System.out.println("      Value " + ah.getValue());
+			System.out.print(ah.getValue());
+			System.out.println(" <" + ah.getComment() + ">");
 		}
 	}
 
-	
+
 	/**
 	 * @param ap
 	 * @param attributes

@@ -204,6 +204,9 @@ public class FitsProduct extends File implements ProductFile{
 							break;
 						}
 					}
+					/*
+					 * Store the number of the ignored columns
+					 */
 					if( entryconf != null && ignore ){
 						entryconf.addToFreeIndex(j);
 						continue;
@@ -712,9 +715,9 @@ public class FitsProduct extends File implements ProductFile{
 			return product.mapping.getCategory();
 		} else if( product instanceof Image2DBuilder) {
 			return Category.IMAGE;
-		} else if( product instanceof Spectrum) {
+		} else if( product instanceof SpectrumBuilder) {
 			return Category.SPECTRUM;
-		}  else if( product instanceof Table) {
+		}  else if( product instanceof TableBuilder) {
 			return Category.TABLE;
 		} else {
 			return Category.MISC;
@@ -1450,6 +1453,9 @@ public class FitsProduct extends File implements ProductFile{
 	}
 
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#getEntryAttributeHandler()
+	 */
 	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException {
 		if( this.entryAttributeHandlers == null ){
 			this.mapEntryAttributeHandler();
@@ -1457,6 +1463,9 @@ public class FitsProduct extends File implements ProductFile{
 		return this.entryAttributeHandlers;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductFile#getAttributeHandler()
+	 */
 	public Map<String, AttributeHandler> getAttributeHandler() {
 		if( this.attributeHandlers == null ){
 			this.mapAttributeHandler();
