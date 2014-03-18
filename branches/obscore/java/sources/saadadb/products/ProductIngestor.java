@@ -28,6 +28,7 @@ import cds.astro.Astrocoo;
 
 /**
  * Contains all the logic of the product storing.
+ * Basically: populate the SaadaInstance fields with values read from the input file or from the mapping rules
  * Must only be used by {@link ProductBuilder} and subclasses
  * @author michel
  * @version $Id$
@@ -51,8 +52,7 @@ class ProductIngestor {
 		 */
 		if( this.product.metaclass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaclass.getName()).newInstance();
-			long newoid = SaadaOID.newOid(this.product.metaclass.getName());
-			this.saadaInstance.oidsaada = newoid;	
+			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaclass.getName());
 			this.setBusinessFields();
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
@@ -69,10 +69,10 @@ class ProductIngestor {
 	/**
 	 * Used by FLatFileMapper to load flafiles by burst using a single instance of the this class
 	 * @param si
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void bindInstanceToFile(SaadaInstance si) throws Exception {
-		this.saadaInstance = si;
+		if( si != null ) this.saadaInstance = si;
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnegryFields();		
@@ -80,6 +80,14 @@ class ProductIngestor {
 		this.loadAttrExtends();
 	}
 
+	
+	/**
+	 * Used by subclasses to  iterate on tabular data
+	 * @return
+	 */
+	public boolean hasMoreElements() {
+		return false;
+	}
 
     /**
 	 * Populate native (business) attributes if the current instance
@@ -138,7 +146,7 @@ class ProductIngestor {
 	 * @param line 
 	 * @return
 	 */
-	private String getInstanceName(String suffix) {
+	protected String getInstanceName(String suffix) {
 		String name = "";
 		if( this.product.name_components != null ) {
 			int cpt = 0;
@@ -341,7 +349,7 @@ class ProductIngestor {
 	/**
 	 * @throws FatalException 
 	 */
-	protected void setEnegryFields() throws FatalException {
+	protected void setEnegryFields() throws SaadaException {
 		setField("em_min"    , this.product.em_min_ref);
 		setField("em_max"    , this.product.em_max_ref);
 	}
@@ -511,11 +519,11 @@ class ProductIngestor {
 			f = saadaInstance.getClass().getField(fieldName);
 			this.saadaInstance.setInField(f, value);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,
-					"Extended attribute " + fieldName 
+					"Attribute " + fieldName 
 					+ " set with the KW  <" + ah_ref.getNameorg()
 					+ "=" + value + ">");
 		} catch (Exception e) {
-			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Extended attribute " + fieldName 
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
 					+ " can not be set with the KW  <" + ah_ref.getNameorg()
 					+ "=" + value + ">");
 		}
