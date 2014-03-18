@@ -64,8 +64,8 @@ public class SsapVotableFormator extends VotableFormator {
 					 * Conversion must be first done because it could be non linear (e.g. Kev -> m)
 					 * Hence converting the mean is no equivalent to the mean of converted values
 					 */
-					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_min);
-					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_max);
+					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.em_min);
+					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.em_max);
 					val = (Double.toString((v1  + v2)/2));
 				} catch(Exception e) {
 					e.printStackTrace();
@@ -74,8 +74,8 @@ public class SsapVotableFormator extends VotableFormator {
 			}
 			else if( utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Extent")) {
 				try {
-					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_min);
-					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.e_max);
+					double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.em_min);
+					double v2 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", obj.em_max);
 					double v = v2 - v1;	
 					if( v < 0 ) v *= -1.;
 					val = (Double.toString(v));
