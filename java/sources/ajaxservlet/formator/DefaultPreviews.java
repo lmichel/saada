@@ -86,7 +86,7 @@ abstract public class DefaultPreviews {
 			/*
 			 * Check first if the flatfile can be displayed by the browser
 			 */
-			sp = fi.getRepositoryPath();
+			sp = fi.getRepository_location();
 			for(String app: disp_formats) {
 				if( sp.endsWith("." + app)) {
 					String vproduct = "getproduct?" 
