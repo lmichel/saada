@@ -41,7 +41,7 @@ public class MakeAJS {
 			SaadaInstance cpsi =  Database.getCache().getObject(cpoid);
 			String vignette_file = "vignette" + si.oidsaada  + ".fits";
 			ImageUtils.buildTileFile(si.s_ra, si.s_dec, 1/60.0, 1/60.0
-					, cpsi.getRepositoryPath()
+					, cpsi.getRepository_location()
 					,(new ArgsParser(new String[]{"-collection=WideFieldData"}).getProductMapping())
 			, Database.getVOreportDir() + Database.getSepar() + vignette_file);
 			retour += "\"WFIImage\"" + "=get file(" + root  + "/getproduct?report="  + vignette_file  + ");\n";
