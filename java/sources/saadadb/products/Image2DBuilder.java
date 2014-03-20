@@ -19,6 +19,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
+import saadadb.products.validation.FooProduct;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
 
@@ -37,6 +38,15 @@ public class Image2DBuilder extends ProductBuilder {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * @param productFile
+	 * @param conf
+	 * @throws FatalException
+	 */
+	public Image2DBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+		super(productFile, conf);
+	}
 
 	/**
 	 * @param fileName

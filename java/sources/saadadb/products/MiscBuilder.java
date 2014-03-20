@@ -5,6 +5,7 @@ import java.io.File;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.validation.FooProduct;
 
 /**This class redefines method specific in miscs during their collection load.
  *@author Millan Patrick
@@ -12,10 +13,6 @@ import saadadb.exceptions.SaadaException;
  *@since 2.0
  */
 public class MiscBuilder extends ProductBuilder{
-	/** * @version $Id$
-
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 						/* ######################################################
@@ -28,6 +25,9 @@ public class MiscBuilder extends ProductBuilder{
 		super(file, mapping);
 	}
 	
+	public MiscBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+		super(productFile, conf);
+	}
 
 }
 

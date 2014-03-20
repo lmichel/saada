@@ -6,13 +6,19 @@ import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
+import saadadb.products.validation.FooProduct;
 
 /** 
  * @version $Id$
  * 
  */
 public class FlatFileBuilder extends ProductBuilder {
+
+	public FlatFileBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+		super(productFile, conf);
+	}
 
 	public FlatFileBuilder(File file, ProductMapping conf) throws FatalException {
 		super(file, conf);

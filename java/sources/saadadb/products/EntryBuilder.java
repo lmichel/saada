@@ -28,15 +28,9 @@ import saadadb.util.SaadaConstant;
  * @version $Id$
  */
 public class EntryBuilder extends ProductBuilder {
-	/**
-	 *  * @version $Id$
-
-	 */
 	private static final long serialVersionUID = 1L;
-
 	/** The entries table * */
 	protected TableBuilder table;
-
 
 	/**
 	 * Constructor. Alias of the constructor Entry(String fileName, String

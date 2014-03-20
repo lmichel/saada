@@ -12,29 +12,28 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.validation.FooProduct;
 import saadadb.util.Messenger;
 
 /**
- * This class redefines method specific in tables during their collection load.
- * 
- * @author Millan Patrick
- * @version 2.0
- * @since 2.0
+ * @author michel
+ * @version $Id$
  */
 public class TableBuilder extends ProductBuilder {
-	/** * @version $Id$
- * @version $Id$
- * @version $Id$
- * @version $Id$
- * @version $Id$
-vvvvv * @version $Id$
 
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	/** The identification number of this table in data base* */
 	protected long oid;
 	protected EntryBuilder entryBuilder;
+	
+	/**
+	 * @param productFile
+	 * @param conf
+	 * @throws FatalException
+	 */
+	public TableBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+		super(productFile, conf);
+	}
 	
 	/**
 	 * @param fileName

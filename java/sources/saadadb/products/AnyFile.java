@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -126,7 +127,7 @@ public class AnyFile extends File implements ProductFile {
 	}
 
 	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode)
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit)
 			throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
@@ -138,5 +139,13 @@ public class AnyFile extends File implements ProductFile {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category)
+			throws IgnoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
