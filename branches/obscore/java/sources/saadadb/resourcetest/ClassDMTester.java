@@ -151,4 +151,10 @@ public class ClassDMTester extends SaadaInstance {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getRepository_location() throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
