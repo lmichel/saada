@@ -4,6 +4,7 @@ import java.text.ParseException;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
+import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astrotime;
@@ -15,7 +16,7 @@ public class TimeMapping extends AxisMapping {
 		String s;
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
-				String v = getMJD(s);
+				String v = DateUtils.getMJD(s);
 				this.columnMapping.put("t_min", new ColumnMapping(null, "'" + v + "'", "t_min"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_min: Cannot parse the date " + s  + ": ignored");
@@ -23,7 +24,7 @@ public class TimeMapping extends AxisMapping {
 		}
 		if( (s = ap.getTmax(entryMode)) != null  ){
 			try {
-				String v = getMJD(s);
+				String v = DateUtils.getMJD(s);
 				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
@@ -33,19 +34,6 @@ public class TimeMapping extends AxisMapping {
 		this.completeColumns();
 	}
 
-	public static String getMJD(String input) throws Exception {
-	    Astrotime af = new Astrotime();
-		if( input.matches(RegExp.FITS_FLOAT_NDN) ) {
-			af.set(Double.parseDouble(input));
-			return Double.toString(af.getMJD());
-		} else if( input.matches(RegExp.FITS_INT_VAL) ) {
-			af.set(Integer.parseInt(input));
-			return Double.toString(af.getMJD());
-		} else {
-			af.set(input);
-			return Double.toString(af.getMJD());
-		}
-	}
 	public static void main(String[] args) throws ParseException, FatalException{
 		TimeMapping tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=12/12/2012", "eeeee"}), false);
 		System.out.println(tm);

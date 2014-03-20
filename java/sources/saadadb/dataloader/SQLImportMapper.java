@@ -14,7 +14,6 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.ImportedTable;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.UCDTableHandler;
@@ -39,7 +38,8 @@ public class SQLImportMapper extends SchemaMapper {
 		/*
 		 * Build a set of attributes handlers matching all product to ingest
 		 */
-		this.current_prd = new ImportedTable(this.tableName, this.mapping) ;
+		//this.current_prd = new ImportedTable(this.tableName, this.mapping) ;
+		this.current_prd =null;
 		this.loader.processUserRequest();
 
 
