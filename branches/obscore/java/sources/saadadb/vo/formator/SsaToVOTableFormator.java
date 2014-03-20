@@ -13,7 +13,7 @@ import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 
-/**@version $Id$
+/**@version $Id: SsaToVOTableFormator.java 118 2012-01-06 14:33:51Z laurent.mistahl $
  * Get the result of a SSA query on Saada as a list of OIDs, and produces a
  * VOTable XML file containing a list of references to the spectra found.
  */
