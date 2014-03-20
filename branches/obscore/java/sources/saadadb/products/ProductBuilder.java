@@ -37,6 +37,7 @@ import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.inference.TimeKWDetector;
+import saadadb.products.validation.FooProduct;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -50,13 +51,6 @@ import cds.astro.ICRS;
  * Sprectra, Image2D, Misc, Table) The entries management extends indirectly of
  * this class, but with specificites appropriate for tables.
  * 
- */
-/**
- * @author michel
- * @version $Id$
- *
- */
-/**
  * @author michel
  * @version $Id$
  */
@@ -139,6 +133,20 @@ public class ProductBuilder {
 	protected Image2DCoordinate wcs;
 
 	/**
+	 * This constructor is used for debugging purpose
+	 * {@link FooProduct} is a class emulating a real data product with in memory with attributeHandlers hard coded
+	 * @param productFile
+	 * @param conf
+	 * @throws SaadaException 
+	 */
+	public ProductBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+		this.productFile = productFile;
+		this.productAttributeHandler = this.productFile.getAttributeHandler();
+		this.file = null;
+		this.mapping = conf;
+	}
+
+	/**
 	 * Constructor. This is a product constructor for the new loader.
 	 * @param file
 	 * @param conf
@@ -198,9 +206,13 @@ public class ProductBuilder {
 		if( this.energyKWDetector == null) {
 			// unit tst purpose
 			if(this.productFile == null ) {
-				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler);
+				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler
+						, this.energyMappingPriority
+						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getHandler().getValue());
 			} else {
-				this.energyKWDetector = this.productFile.getEnergyKWDetector(false);
+				this.energyKWDetector = this.productFile.getEnergyKWDetector(false
+						, this.energyMappingPriority
+						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getHandler().getValue());
 			}
 		}
 	}
@@ -336,7 +348,6 @@ public class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void initProductFile() throws SaadaException{
-
 		this.readProductFile();
 		try {
 			this.mapCollectionAttributes();
@@ -351,35 +362,37 @@ public class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void readProductFile() throws SaadaException{
-		String filename = this.file.getName();
-		boolean try_votable = false;
-		try {
-			this.productFile = new FitsProduct(this);			
-			this.mimeType = "application/fits";
-		} catch(IgnoreException ei) {
-			if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
-				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
-			} else {
-				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
-				//Messenger.printStackTrace(ei);
+		if( !(this.productFile instanceof FooProduct) ){
+			String filename = this.file.getName();
+			boolean try_votable = false;
+			try {
+				this.productFile = new FitsProduct(this);			
+				this.mimeType = "application/fits";
+			} catch(IgnoreException ei) {
+				if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
+					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
+				} else {
+					Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
+					try_votable = true;
+				}
+			} catch(Exception ef) {
+				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
 				try_votable = true;
 			}
-		} catch(Exception ef) {
-			Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
-			try_votable = true;
-		}
 
-		if( try_votable ) {			
-			try {
-				this.productFile = new VOTableProduct(this);				
-				this.mimeType = "application/x-votable+xml";
-			} catch(SaadaException ev) {
-				Messenger.printStackTrace(ev);
-				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
-			} catch(Exception ev) {
-				Messenger.printStackTrace(ev);
-				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
+			if( try_votable ) {			
+				try {
+					this.productFile = new VOTableProduct(this);				
+					this.mimeType = "application/x-votable+xml";
+				} catch(SaadaException ev) {
+					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
+				} catch(Exception ev) {
+					Messenger.printStackTrace(ev);
+					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
+				}
 			}
+		} else {
+			Messenger.printMsg(Messenger.TRACE, "Work with a Foo products");
 		}
 		this.setFmtsignature();
 	}
@@ -500,7 +513,6 @@ public class ProductBuilder {
 	 */
 	protected void mapCollectionAttributes() throws Exception {
 		System.out.println("@@@@@@@@@@@@@@ MAP COLLLLLLLLLLLLLLLLLLLL" + this);
-		(new Exception()).printStackTrace();
 		for(AttributeHandler ah: this.productAttributeHandler.values()) System.out.print(ah.getNameattr() + " " );
 		System.out.println("\n");
 		this.mapObservationAxe();
@@ -599,13 +611,6 @@ public class ProductBuilder {
 	protected void mapEnergyAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Energy Axe");
 		setEnergyKWDetector();
-		this.spectralCoordinate = this.energyKWDetector.getSpectralCoordinate();
-		if(!spectralCoordinate.isConfigurationValid(1
-				, 1
-				,SpectralCoordinate.getDispersionCode(Database.getSpect_type())
-				, Database.getSpect_unit())) {
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, "Spectral Configuration not valid");
-		}
 		switch(this.energyMappingPriority){
 		case ONLY:			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: ONLY: only mapped keywords will be used");
@@ -620,9 +625,7 @@ public class ProductBuilder {
 		case FIRST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
-				if( this.x_unit_org_ref !=  null ) {
-					spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
-				}
+				this.spectralCoordinate = this.energyKWDetector.getSpectralCoordinate();
 				if( this.spectralCoordinate.convert() ) {
 					this.em_min_ref = new AttributeHandler();
 					this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
@@ -630,20 +633,23 @@ public class ProductBuilder {
 					this.em_max_ref = new AttributeHandler();
 					this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
 					this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));
+					this.x_unit_org_ref = new AttributeHandler();
+					this.x_unit_org_ref.setNameattr(ColumnMapping.NUMERIC);
+					this.x_unit_org_ref.setValue(spectralCoordinate.getOrgUnit());
 				} else {
 					this.em_min_ref = new AttributeHandler();
 					this.em_min_ref.setNameattr(ColumnMapping.UNDEFINED);
 					this.em_max_ref = new AttributeHandler();
 					this.em_max_ref.setNameattr(ColumnMapping.UNDEFINED);
+					this.x_unit_org_ref = new AttributeHandler();
+					this.x_unit_org_ref.setNameattr(ColumnMapping.UNDEFINED);
 				}
 			}
 			break;
 
 		case LAST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority LAST: KWs will first be inefered and then mapped keywords will be searched");
-			if( this.x_unit_org_ref !=  null ) {
-				spectralCoordinate.setOrgUnit(this.x_unit_org_ref.getValue());				
-			}
+			this.spectralCoordinate = this.energyKWDetector.getSpectralCoordinate();
 			if( !this.spectralCoordinate.convert() ) {
 				if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
 					this.em_min_ref = new AttributeHandler();
@@ -658,12 +664,15 @@ public class ProductBuilder {
 				this.em_max_ref = new AttributeHandler();
 				this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
 				this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));				
+				this.x_unit_org_ref = new AttributeHandler();
+				this.x_unit_org_ref.setNameattr(ColumnMapping.NUMERIC);
+				this.x_unit_org_ref.setValue(spectralCoordinate.getOrgUnit());
 			}
 			break;
 		}
-		traceReportOnAttRef("x_unit_org", this.x_unit_org_ref);
-		traceReportOnAttRef("em_min", this.em_min_ref);
-		traceReportOnAttRef("em_max", this.em_max_ref);
+		this.traceReportOnAttRef("x_unit_org", this.x_unit_org_ref);
+		this.traceReportOnAttRef("em_min", this.em_min_ref);
+		this.traceReportOnAttRef("em_max", this.em_max_ref);
 	}
 	/**
 	 * @throws Exception
@@ -1376,10 +1385,18 @@ public class ProductBuilder {
 	/**
 	 * @return Returns the metaclass.
 	 */
+	public void setMetaclass(MetaClass mc) {
+		metaclass = mc;
+	}
+	/**
+	 * @return Returns the metaclass.
+	 */
 	public MetaClass getMetaclass() {
 		return metaclass;
 	}
-
+	/*
+	 * Format merging with an existingt class
+	 */
 	/**
 	 * @param file_to_merge
 	 * @throws FitsException
@@ -1435,42 +1452,41 @@ public class ProductBuilder {
 		this.setFmtsignature();
 	}
 
-	/**
-	 * @return Returns the metaclass.
+	/*
+	 * Methods overloading the most used accessors of File
 	 */
-	public void setMetaclass(MetaClass mc) {
-		metaclass = mc;
-	}
-
-	public void printKW() {
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Keyword list of " + this.getClass().getName());
-		String[] keys = this.productAttributeHandler.keySet().toArray(new String[0]);
-		for( int i=0 ; i<keys.length ; i++ ) {
-			System.out.println("- " + (i+1) + ": " + keys[i]);
-		}
-	}
-
-
 	/**
 	 * @return
 	 */
 	public String getName() {
-		return this.file.getName();
+		return (this.file == null)? "Foo": this.file.getName();
 	}
-
-
+	/**
+	 * @return
+	 * @throws IOException
+	 */
 	public CharSequence getCanonicalPath() throws IOException {
-		return this.file.getCanonicalPath();
+		return (this.file == null)? "foo/Foo": this.file.getCanonicalPath();
 	}
-
-
+	/**
+	 * @return
+	 */
 	public String getParent() {
-		return this.file.getParent();
+		return  (this.file == null)? "foo": this.file.getParent();
+	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return  (this.file == null)? "Foo product foo/Foo": this.file.getAbsolutePath();
+	}
+	/**
+	 * @return
+	 */
+	public long length() {
+		return  (this.file == null)? 1234: this.file.length();
 	}
 
-	public String toString() {
-		return this.file.getAbsolutePath();
-	}
 	/**
 	 * Returns a possible classname derived from the data file product name
 	 * @return

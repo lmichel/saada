@@ -132,7 +132,7 @@ class ProductIngestor {
 		this.saadaInstance.setAccess_url(this.saadaInstance.getDownloadURL(false));	
 		this.saadaInstance.setAccess_format(this.product.mimeType);
 		this.saadaInstance.setDate_load(new java.util.Date().getTime());
-		this.saadaInstance.setAccess_estsize(this.product.file.length());
+		this.saadaInstance.setAccess_estsize(this.product.length());
 		setField("target_name"    , this.product.target_name_ref);
 		setField("instrument_name", this.product.instrument_name_ref);
 		setField("facility_name"  , this.product.facility_name_ref);
@@ -165,7 +165,7 @@ class ProductIngestor {
 		 * That is better than an empty name
 		 */
 		if( name == null || name.length() == 0 ) {
-			name = this.product.file.getName();
+			name = this.product.getName();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
 
 			if( suffix == null ) {

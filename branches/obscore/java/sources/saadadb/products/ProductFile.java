@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import nom.tam.fits.FitsException;
+import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -94,13 +95,19 @@ public interface ProductFile extends Enumeration{
 	/**
 	 * Returns an instance of the detector of keywords covering the observation axe
 	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+	 * @param entryMode
+	 * @param priority
+	 * @param defaultUnit
+	 * @return
+	 * @throws SaadaException
 	 */
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode) throws SaadaException;
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException;
 	/**
 	 * Returns an instance of the detector of keywords covering the observation axe
 	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
 	 */
 	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException;
 	public String getName();
+
  }
   

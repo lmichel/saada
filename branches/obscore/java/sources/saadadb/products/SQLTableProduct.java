@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -129,8 +130,7 @@ public class SQLTableProduct implements ProductFile {
 	}
 
 	@Override
-	public Map<String, ArrayList<AttributeHandler>> getProductMap(String category)
-	throws IgnoreException {
+	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category) throws IgnoreException  {
 		return productMap;
 	}
 
@@ -183,12 +183,6 @@ public class SQLTableProduct implements ProductFile {
 		return null;
 	}
 
-	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public TimeKWDetector getTimeKWDetector(boolean entryMode)
@@ -196,5 +190,14 @@ public class SQLTableProduct implements ProductFile {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode,
+			PriorityMode priority, String defaultUnit) throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }

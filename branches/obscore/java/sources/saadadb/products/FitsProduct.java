@@ -27,6 +27,7 @@ import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 import saadadb.collection.Category;
 import saadadb.dataloader.mapping.EntryMapping;
+import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -1488,8 +1489,8 @@ public class FitsProduct extends File implements ProductFile{
 			return new SpaceKWDetector(this.getAttributeHandler());
 		}		
 	}
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode) throws SaadaException{
-		return new EnergyKWDetector(this);		
+	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException{
+		return new EnergyKWDetector(this, priority, defaultUnit );		
 	}
 	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
 		if( entryMode ){
