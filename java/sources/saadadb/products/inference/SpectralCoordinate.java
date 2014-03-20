@@ -39,6 +39,42 @@ public class SpectralCoordinate{
 	private Map<String, AttributeHandler> attributesList;
 	private String CUNIT;
 
+	/**
+	 * @param naxis
+	 * @param num_axe
+	 * @param type
+	 * @param unit
+	 */
+	public SpectralCoordinate(int naxis, int num_axe, int type, String unit){
+		if( type < WAVELENGTH || type > CHANNEL ){
+			Messenger.printMsg(Messenger.ERROR, "Unknown Coordinate Type <"+type+">");
+		}else if( naxis != 1 && naxis != 2 ) {
+			Messenger.printMsg(Messenger.ERROR, "num_axe must equals 1 or 2");		
+		}else if( num_axe != 1 && num_axe != 2 ){
+			Messenger.printMsg(Messenger.ERROR, "naxis must equals 1 or 2");		
+		}else{
+			UnitRef o;
+			String sunit;
+			this.dispersion_axe_num = num_axe - 1;
+			this.naxis   = naxis;
+			if( unit == null || unit.equals("") || "NULL".equals(unit)){
+				sunit = "channel";
+			}else{
+				sunit = unit;
+			}
+			if( (o = SpectralCoordinate.getUniRef(sunit)) == null ){
+				Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
+			}else if( o.type != type ){
+				Messenger.printMsg(Messenger.ERROR, "Spectral Coordinate not valid: Unit <"+sunit 
+						+ "> doesn't match type <" + SpectralCoordinate.getDispersionName(type)
+						+ "> Allowed units are <" + SpectralCoordinate.getStringUnitsForType(type)+">");
+			}else{
+				this.unit = sunit;
+				this.type = type;
+			}
+		}
+	}
+
 	public String getOrgUnit(){
 		return CUNIT;
 	}
@@ -105,7 +141,7 @@ public class SpectralCoordinate{
 		sc.put("ghz", new UnitRef("GHz", new Integer(FREQUENCY)));
 
 		sc.put("ev" , new UnitRef("eV"  , new Integer(ENERGY)));
-		sc.put("kev", new UnitRef("KeV" , new Integer(ENERGY)));
+		sc.put("kev", new UnitRef("keV" , new Integer(ENERGY)));
 		sc.put("mev", new UnitRef("MeV" , new Integer(ENERGY)));
 		sc.put("gev", new UnitRef("GeV" , new Integer(ENERGY)));
 		sc.put("tev", new UnitRef("TeV" , new Integer(ENERGY)));
@@ -124,39 +160,6 @@ public class SpectralCoordinate{
 		} else {
 			return allowed_units.get(unit.toLowerCase());
 		}
-	}
-	public boolean isConfigurationValid(int naxis, int num_axe, int type, String unit){
-		if( type < WAVELENGTH || type > CHANNEL ){
-			Messenger.printMsg(Messenger.ERROR, "Unknown Coordinate Type <"+type+">");
-		}else if( naxis != 1 && naxis != 2 ) {
-			Messenger.printMsg(Messenger.ERROR, "num_axe must equals 1 or 2");		
-		}else if( num_axe != 1 && num_axe != 2 ){
-			Messenger.printMsg(Messenger.ERROR, "naxis must equals 1 or 2");		
-		}else{
-			UnitRef o;
-			String sunit;
-			this.dispersion_axe_num = num_axe - 1;
-			this.naxis   = naxis;
-			if( unit == null || unit.equals("") || "NULL".equals(unit)){
-				sunit = "channel";
-			}else{
-				sunit = unit;
-			}
-			if( (o = SpectralCoordinate.getUniRef(sunit)) == null ){
-				Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
-				return false;
-			}else if( o.type != type ){
-				Messenger.printMsg(Messenger.ERROR, "Spectral Coordinate not valid: Unit <"+sunit 
-						+ "> doesn't match type <" + SpectralCoordinate.getDispersionName(type)
-						+ "> Allowed units are <" + SpectralCoordinate.getStringUnitsForType(type)+">");
-				return false;
-			}else{
-				this.unit = sunit;
-				this.type = type;
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -231,7 +234,9 @@ public class SpectralCoordinate{
 	 * @return
 	 */
 	public boolean convert(){
+		System.out.println("=================== " + this.unit);
 		if( this.getOrgUnit() == null || this.getOrgUnit().equals(SaadaConstant.STRING) ){
+			Messenger.printMsg(Messenger.TRACE, "No spectral unit found: cannot achieve the conversion");
 			return false;
 		} else{
 			return this.convert(this.getOrgUnit(), this.orgMin, this.orgMax);
@@ -318,6 +323,7 @@ public class SpectralCoordinate{
 		}
 		if((ur = getUniRef(unitOrg)) != null){
 			vTypeOrg = ur.type;
+			unitOrg = ur.unit;
 		}else{
 			if( "".equals(unitOrg)) {
 				Messenger.printMsg(Messenger.ERROR, "No valid unit <"+unitOrg+"> ");
@@ -326,7 +332,9 @@ public class SpectralCoordinate{
 		}
 		if((ur = getUniRef(unitNew)) != null){
 			vTypeNew = ur.type;
+			unitNew = ur.unit;
 		}else{
+			new Exception().printStackTrace();
 			Messenger.printMsg(Messenger.ERROR, "No new valid unit <"+unitNew+"> set for the SaadaDB");
 			return SaadaConstant.DOUBLE;
 		}
