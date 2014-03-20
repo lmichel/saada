@@ -83,7 +83,7 @@ public class Download extends SaadaServlet {
 					}
 					if( "vignette".equalsIgnoreCase(ext) ) {					
 						if( category != Category.IMAGE) {
-							String fn = si.getRepositoryPath();
+							String fn = si.getRepository_location();
 							String lfn = fn.toLowerCase();
 							if( lfn.endsWith(".jpg") || lfn.endsWith(".jpeg") || lfn.endsWith(".png") || lfn.endsWith(".gif") ) {
 								product_path = fn;						
@@ -106,7 +106,7 @@ public class Download extends SaadaServlet {
 						out.print(Database.getUrl_root() + "/getproduct?&oid=" + oid);
 						return;
 					} else {
-						product_path = si.getRepositoryPath();
+						product_path = si.getRepository_location();
 						if( report != null ) {
 							product_path +=  separ + report;
 						}

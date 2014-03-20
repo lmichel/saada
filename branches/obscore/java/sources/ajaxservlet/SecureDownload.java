@@ -78,7 +78,7 @@ public class SecureDownload extends Download implements Servlet {
 					getErrorPage(request, response, "There are no product files associated with individual catalogue entries");
 					return;						
 				}
-				product_path = si.getRepositoryPath();
+				product_path = si.getRepository_location();
 				if( report != null ) {
 					product_path +=  separ + report;
 				}

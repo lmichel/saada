@@ -11,7 +11,7 @@ import saadadb.util.Messenger;
 
 /**
  * @author laurentmichel
- * * @version $Id: NativeAttributesProvider.java 555 2013-05-25 17:18:55Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class NativeAttributesProvider {
@@ -170,22 +170,22 @@ public class NativeAttributesProvider {
 		String result = this.getWCSNative(attr_name);
 		if (result != null) return result;
 		if (attr_name.compareTo("e_min") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).e_min);
+			return DefaultFormats.getString(((SpectrumSaada)saadai).em_min);
 		
 		} else if (attr_name.compareTo("e_max") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).e_max);
+			return DefaultFormats.getString(((SpectrumSaada)saadai).em_max);
 		
-		} else if (attr_name.compareTo("x_type_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_type_csa);
-		
-		} else if (attr_name.compareTo("x_unit_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_csa);
+//		} else if (attr_name.compareTo("x_type_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_type_csa);
+//		
+//		} else if (attr_name.compareTo("x_unit_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_csa);
 		
 		} else if (attr_name.compareTo("x_naxis_csa") == 0) {
 			return DefaultFormats.getString(((SpectrumSaada)saadai).x_naxis_csa);
 		
-		} else if (attr_name.compareTo("x_colname_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_colname_csa);
+//		} else if (attr_name.compareTo("x_colname_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_colname_csa);
 		
 		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
 			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);

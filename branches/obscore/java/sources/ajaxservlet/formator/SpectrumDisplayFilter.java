@@ -26,7 +26,7 @@ import saadadb.util.SaadaConstant;
 
 /**
  * @author laurentmichel
- * * @version $Id: SpectrumDisplayFilter.java 717 2013-07-30 12:26:19Z laurent.mistahl $
+ * * @version $Id$
 
  */
 public class SpectrumDisplayFilter extends DefaultDisplayFilter {
@@ -113,7 +113,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				retour.add(sff.getPos());
 			}
 			else if( s.startsWith("Range") ) {
-				retour.add(DefaultFormats.getString(instance.e_min) + " - " + DefaultFormats.getString(instance.e_max) );
+				retour.add(DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) );
 			}
 			else if( "Name".equals(s)) {
 				retour.add(instance.obs_id);
@@ -183,7 +183,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
 				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
 				retour.add("Position " + DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
-				retour.add("Range " + DefaultFormats.getString(instance.e_min) + " - " + DefaultFormats.getString(instance.e_max) + " " + Database.getSpect_unit());
+				retour.add("Range " + DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) + " " + Database.getSpect_unit());
 				retour.addAll(super.getLinks());
 			}
 		} catch (Exception e) {}
