@@ -36,6 +36,7 @@ import saadadb.collection.SaadaOID;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.dataloader.mapping.TimeMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -52,6 +53,7 @@ import saadadb.relationship.LongCPIndex;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.ChangeType;
+import saadadb.util.DateUtils;
 import saadadb.util.DefineType;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -968,12 +970,13 @@ public abstract class SaadaInstance implements DMInterface {
 		}
 	}
 	/**
+	 * Appends to the writer a line denoting the collection attributes of the instance
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
 	public  void storeCollection(Writer writer) throws FatalException {
 		try {
-			String sql = "";
+			StringBuffer sql = new StringBuffer();
 			Class _cls = this.getClass().getSuperclass();
 			Collection<AttributeHandler> it=null;
 			switch(this.getCategory()) {
@@ -1013,17 +1016,17 @@ public abstract class SaadaInstance implements DMInterface {
 				}
 
 				if(!first) {
-					sql += "\t";				
+					sql.append("\t");				
 				} else {
 					first = false;
 				}
-				sql += val;				
+				sql.append(val);				
 			}
-			sql += "\n";
+			sql.append("\n");
 			/*
 			 * Append the ASCII row to the file
 			 */
-			writer.write(sql);
+			writer.write(sql.toString());
 		} catch(Exception e) {
 			e.printStackTrace();
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
@@ -1173,10 +1176,20 @@ public abstract class SaadaInstance implements DMInterface {
 		switch (DefineType.getType(ChangeType.getTypeJavaFromTypeClass(fld.getType().toString()))) {
 		case DefineType.FIELD_DOUBLE:
 			try {
-				fld.setDouble(this
-						, (tv.length() == 0)?SaadaConstant.DOUBLE:Double.parseDouble(value));
-			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName() + " " + e.getMessage());
+				String fname = fld.getName();
+				if( tv.length() != 0 ) {
+					double val;
+					if( fname.equals("t_min") || fname.equals("t_max") ) {
+						val = DateUtils.getFMJD(tv);
+					} else {
+						val = Double.parseDouble(tv);
+					}
+					fld.setDouble(this , val);
+				} else {
+					fld.setDouble(this, SaadaConstant.DOUBLE);
+				}
+			} catch(Exception e) {
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on DOUBLE fields " +  fld.getName() + " " + e.getMessage());
 				fld.setDouble(this, SaadaConstant.DOUBLE);					
 			}
 			break;
@@ -1185,7 +1198,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setShort(this
 						, (tv.length() == 0)?SaadaConstant.SHORT:Short.parseShort(value.replaceAll("\\+", "")));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on SHORT fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setShort(this, SaadaConstant.SHORT);					
 			}
 			break;
@@ -1194,7 +1207,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setInt(this
 						, (tv.length() == 0)?SaadaConstant.INT:Integer.parseInt(value.replaceAll("\\+", "")));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on INT fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setInt(this, SaadaConstant.INT);					
 			}
 			break;
@@ -1203,7 +1216,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setLong(this
 						, (tv.length() == 0)?SaadaConstant.LONG:Long.parseLong(value));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on LONG fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setLong(this, SaadaConstant.LONG);
 			}
 			break;
@@ -1212,7 +1225,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setByte(this
 						, (tv.length() == 0)?SaadaConstant.BYTE:Byte.parseByte(value));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on BYTE fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setByte(this, SaadaConstant.BYTE);
 			}
 			break;
@@ -1224,7 +1237,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setFloat(this
 						, (tv.length() == 0)?SaadaConstant.FLOAT:Float.parseFloat(value));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on FLOAT fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setFloat(this, SaadaConstant.FLOAT);
 			}
 			break;
@@ -1233,7 +1246,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setChar(this
 						, (tv.length() == 0)?SaadaConstant.CHAR:value.charAt(0));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on CHAR fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setChar(this, SaadaConstant.CHAR);
 			}
 			break;
@@ -1242,7 +1255,7 @@ public abstract class SaadaInstance implements DMInterface {
 				fld.setBoolean(this
 						, (tv.length() == 0)?false:Boolean.getBoolean(value));
 			} catch(NumberFormatException e) {
-				Messenger.printMsg(Messenger.ERROR, "Cast Error on fields " +  fld.getName()+ " " + e.getMessage());
+				Messenger.printMsg(Messenger.ERROR, "Cast Error on BOOLEAN fields " +  fld.getName()+ " " + e.getMessage());
 				fld.setBoolean(this, false);
 			}
 			break;
