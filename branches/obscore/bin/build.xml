@@ -119,7 +119,21 @@
 		<delete file="${SAADA_DB_HOME}/class_mapping/${SAADA_DB_NAME}generated.jar" failonerror="false" />
 		<jar destfile="${SAADA_DB_HOME}/class_mapping${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
 	</target>
-		
+	
+	<target name="saadadb.merge.mapping">		
+		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
+			<zipgroupfileset dir="${SAADA_DB_HOME}/lib">
+				<include name="**/*.jar" />
+			</zipgroupfileset>   
+			<zipgroupfileset dir="${SAADA_DB_HOME}/jtoold">
+				<include name="**/*.jar" />
+			</zipgroupfileset>   
+	
+	  		<manifest>
+	    		<attribute name="Main-Class" value="saadadb.admin.SaadaDBAdmin" />
+	  		</manifest>
+		</jar>
+	</target>
 
 	<!--
 	  Deploy the application on the Tomcat server declared at creation time. 
@@ -151,6 +165,7 @@
   		
 	</target>
 		
+	
 	<!--
 	  Remove the application from Tomcat. Musn't be used when Tomcat is running
 	--> 
