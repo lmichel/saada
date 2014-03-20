@@ -29,8 +29,9 @@ import cds.savot.model.SavotParam;
  * @author michel
  * @version $Id$
  * 
- * 02/1014: constantValu Flag used by  {@link ColumnMapping}
- *
+ * 02/1014: constantValue Flag used by  {@link ColumnMapping}
+ * 03/1014: Accessors give the existence of a valid value for the field unit value, ucd and utype
+
  */
 public class AttributeHandler implements Serializable , Cloneable{
 	static final DecimalFormat exp =  new DecimalFormat("0.00E00");
@@ -412,7 +413,6 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public String getUnit(){
 		return this.unit;
 	}
-
 	public String getComment(){
 		return this.comment;
 	}
@@ -432,7 +432,34 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public String getCollname(){
 		return this.collname;
 	}
-
+	/*
+	 * The following accessor give the existance of a valid value pfor the field
+	 * Lately added must be inserted within the code by opportunity
+	 */
+	/**
+	 * @return
+	 */
+	public boolean hasUnit() {
+		return !(this.unit == null || this.unit.length() == 0);
+	}
+	/**
+	 * @return
+	 */
+	public boolean hasUcd() {
+		return !(this.ucd == null || this.ucd.length() == 0);
+	}
+	/**
+	 * @return
+	 */
+	public boolean hasUtype() {
+		return !(this.utype == null || this.utype.length() == 0);
+	}
+	/**
+	 * @return
+	 */
+	public boolean hasValue() {
+		return !(this.value == null || this.value.length() == 0);
+	}
 
 	public String getInsertValues(int subkey) throws FatalException {
 		return  "( " + Database.getWrapper().getInsertAutoincrementStatement()
