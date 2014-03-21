@@ -38,6 +38,7 @@ public class productReport {
 					, new ProductMapping("mapping", ap));
 			break;
 			}
+			product.getReport()
 			product.initProductFile();
 			product.printReport();
 			System.exit(1);
