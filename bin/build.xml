@@ -21,14 +21,9 @@
   	<path id="saadadb.classpath">
  		<fileset dir="${SAADA_DB_HOME}/bin">
 			<include name="**/*.properties" />
-		</fileset>   
-    	<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
-   		<fileset dir="${SAADA_DB_HOME}/lib/">
-      		<include name="**/*.jar" />
-    	</fileset>
-    	<fileset dir="${SAADA_DB_HOME}/jtools/">
-      		<include name="**/*.jar" />
-    	</fileset>
+		</fileset>   	
+  		<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
+    	<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
   	</path>
 	
 	<!--
@@ -120,18 +115,24 @@
 		<jar destfile="${SAADA_DB_HOME}/class_mapping${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
 	</target>
 	
-	<target name="saadadb.merge.mapping">		
-		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
-			<zipgroupfileset dir="${SAADA_DB_HOME}/lib">
-				<include name="**/*.jar" />
-			</zipgroupfileset>   
-			<zipgroupfileset dir="${SAADA_DB_HOME}/jtoold">
-				<include name="**/*.jar" />
-			</zipgroupfileset>   
-	
-	  		<manifest>
-	    		<attribute name="Main-Class" value="saadadb.admin.SaadaDBAdmin" />
-	  		</manifest>
+	<target name="saadadb.jar.merge">	
+ 		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
+   			<restrict>
+        		<not>
+            		<or>
+                		<name name="**/*.RSA"/>
+                		<name name="**/*.SF"/>
+               			<name name="**/*.DSA"/>
+           			</or>
+        		</not>
+       			<archives>
+  					<zips><fileset dir="${SAADA_DB_HOME}/lib" includes="**/*.jar" /></zips>
+					<zips><fileset  dir="${SAADA_DB_HOME}/jtools" includes="**/*.jar"  /></zips>
+        		</archives>
+    		</restrict>
+    		<manifest>
+        		<attribute name="Main-Class" value="saadadb.admin.SaadaDBAdmin"/>
+   			</manifest>
 		</jar>
 	</target>
 
@@ -165,6 +166,44 @@
   		
 	</target>
 		
+	<!--
+		Web application management through Tomcat
+		Must be used with sant or make sure catalina-ant.jar in the the ant.lib directory
+		./sant tomcat.[deploy|undeploy|reload|start|stop].safe -Durl=http://localhost:8080/manager -Dusername=saadmin -Dpassword=saadmin 	
+	-->
+    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/>
+    <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/>
+    <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/>
+    <taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/>
+    <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/>
+	<target name="tomcat.start">
+		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />   		
+             <deploy url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}" war="file:${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war"/>
+	</target>	
+		
+	<target name="tomcat.deploy.safe">
+		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />   		
+             <deploy url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}" war="file:${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war"/>
+	</target>	
+	<target name="tomcat.undeploy.safe">
+             <undeploy url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}" />
+	</target>	
+	<target name="tomcat.reload.safe">
+             <reload url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}"/>
+	</target>	
+	<target name="tomcat.start.safe">
+             <start url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}" />
+	</target>	
+	<target name="tomcat.stop.safe">
+             <stop url="${url}" username="${username}" password="${password}"
+         path="/${SAADA_DB_NAME}" />
+	</target>	
+
 	
 	<!--
 	  Remove the application from Tomcat. Musn't be used when Tomcat is running
