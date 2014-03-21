@@ -102,6 +102,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws Exception 
 	 */
 	private boolean findSpectralCoordinateInPixels() throws Exception {
+		if(  this.productFile == null ) return false;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in pixel");
 		double[] ext = this.productFile.getExtrema(null);
 		if( ext != null ) {

@@ -1069,7 +1069,6 @@ public class ProductBuilder {
 		AxisMapping mapping = this.mapping.getEnergyAxisMapping();
 		ColumnMapping sc_col  = mapping.getColumnMapping("dispertion_column");
 		ColumnMapping sc_unit = mapping.getColumnMapping("x_unit_org_csa");
-		this.spectralCoordinate.setOrgUnit(SaadaConstant.STRING);		
 		this.x_unit_org_ref = getMappedAttributeHander(sc_unit);
 		if( sc_col.notMapped() ){
 			if (Messenger.debug_mode)
