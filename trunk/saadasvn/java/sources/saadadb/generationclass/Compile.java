@@ -66,6 +66,7 @@ public class Compile{
      * @throws Exception
      */
     private static void compileItWithAnt(String saadadbHome, String classToCompile, PrintStream printStream, boolean debug) throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Compiling class " + classToCompile);
     	Project p = new Project();
         p.setUserProperty("class.source", classToCompile + ".java");
         p.init();
@@ -76,7 +77,6 @@ public class Compile{
 		log.setMessageOutputLevel((debug)?Project.MSG_VERBOSE: Project.MSG_INFO);
 		p.addBuildListener(log);
 		helper.parse(p, new File(saadadbHome + File.separator + "bin" + File.separator  + "build.xml"));
-		Messenger.printMsg(Messenger.TRACE, "Compile class " + classToCompile);
 		p.executeTarget("javaclass.compile");
     }
 }

@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.sun.jmx.trace.Trace;
-
 import saadadb.command.ArgsParser;
 import saadadb.compat.Files;
 import saadadb.database.Database;
@@ -283,6 +281,7 @@ public class NewSaadaDB {
 		} catch (Exception e3) {
 			Messenger.printStackTrace(e3);
 		} finally {
+			(new Exception()).printStackTrace();
 			System.exit(retour);			
 		}
 	}

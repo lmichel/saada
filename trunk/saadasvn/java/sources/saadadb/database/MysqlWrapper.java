@@ -783,7 +783,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		ResultSet rs = sq.run();
 		ArrayList<String> retour = new ArrayList<String>();
 		while( rs.next() ) {
-			retour.add("DROP FUNCTION " + rs.getString("Name"));
+			retour.add("DROP FUNCTION "+ rs.getString("Db") + "." + rs.getString("Name"));
 		}
 		sq.close();
 		return retour.toArray(new String[0]);
@@ -798,7 +798,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		ResultSet rs= stmt.executeQuery("SHOW FUNCTION STATUS WHERE Db = '" + dbname + "'");
 		ArrayList<String> retour = new ArrayList<String>();
 		while( rs.next() ) {
-			retour.add("DROP FUNCTION " + rs.getString("Name"));
+			retour.add("DROP FUNCTION "+ rs.getString("Db") + "." + rs.getString("Name"));
 		}
 		stmt.close();
 		return retour.toArray(new String[0]);
