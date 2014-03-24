@@ -30,7 +30,7 @@ import saadadb.util.Messenger;
  *
  * Tested by the class {@link SpoolerTest}
  * @author michel
- * @version $Id$
+ * @version $Id: Spooler.java 1053 2014-03-11 16:45:28Z laurent.mistahl $
  *
  * 02/2014: Add the admin connection, with a lot of impact
  */
@@ -137,6 +137,10 @@ public class Spooler {
 		this.maxConnections = ( m != -1 )? m: maxConnections;
 		this.checkAvailableConnections();
 		this.spoolerIsRunning = true;
+		/*
+		 * Make sure to start with at least one connection
+		 */
+		this.addConnectionReference();
 		(new Thread(new ListChecker())).start();
 		Messenger.printMsg(Messenger.TRACE, "Spooler ready");
 	}
@@ -289,7 +293,7 @@ public class Spooler {
 	 * Appends a new connection to the list
 	 * @throws SQLException
 	 */
-	private void addConnectionReference() throws SQLException{
+	private void addConnectionReference() throws Exception{
 		connectionsReferences.add(new DatabaseConnection(this.numConnection++));
 	}
 	/**
@@ -318,7 +322,7 @@ public class Spooler {
 	 * 
 	 * @throws SQLException
 	 */
-	synchronized private void completeConnectionsReferences() throws SQLException {
+	synchronized private void completeConnectionsReferences() throws Exception {
 		/*
 		 * Remove the obsolete connections
 		 */
@@ -358,7 +362,7 @@ public class Spooler {
 	/**
 	 * Inner class checking in background the availability of connections in background
 	 * @author michel
-	 * @version $Id$
+	 * @version $Id: Spooler.java 1053 2014-03-11 16:45:28Z laurent.mistahl $
 	 *
 	 */
 	class ListChecker implements Runnable {

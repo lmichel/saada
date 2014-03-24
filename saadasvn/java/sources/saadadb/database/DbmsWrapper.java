@@ -17,7 +17,6 @@ import java.util.TreeSet;
 
 import saadadb.configuration.RelationConf;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -71,6 +70,15 @@ abstract public class DbmsWrapper {
 	public int getHardReaderConnectionLimit() {
 		return -1;
 	}
+	
+	public boolean checkAdminPrivileges( boolean clean_after) throws Exception {
+	//	[27/02/14 12:40:24]   DEBUG: UPDATE COPY TableTest FROM '/var/folders/sz/_6r8n_2s6b98q14v89t28z5m0000gn/T//testbasededonnees.psqldump'
+
+		String tempPath = System.getProperty("java.io.tmpdir");
+	      // a fix to handle the crazy path the Mac JVM returns
+	      if (tempPath.startsWith("/var/folders/")) tempPath = "/tmp/";
+		return checkAdminPrivileges(tempPath, clean_after);
+	}
 	/** 
 	 * @param tmp_dir
 	 * @param clean_after
@@ -79,8 +87,8 @@ abstract public class DbmsWrapper {
 	 */
 	public boolean checkAdminPrivileges(String tmp_dir, boolean clean_after) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Check privilege for admin role in "  + this.url + test_base);
-		Connection admin_connection = null;
-
+		Connection connection = null;
+		String tmp_filename = tmp_dir + Database.getSepar() + test_base.substring(test_base.lastIndexOf(Database.getSepar()) + 1)  + ".psqldump";
 		try {
 			/*
 			 * Drop the test DB if it exists
@@ -110,17 +118,15 @@ abstract public class DbmsWrapper {
 			/*
 			 * Connect the Test db
 			 */
-			Database.setAdminMode(admp);
-			DatabaseConnection connection = Spooler.getSpooler().getAdminConnection();
-			connection.setAutoCommit(true);
+			connection = this.getConnection(this.url + test_base, adm, admp);
+			connection.setAutoCommit(true);			
 			/*
 			 * Populate the Test db
 			 */
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
-			Statement stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-			loadSQLProcedures(stmt);		
-			admin_connection.setAutoCommit(true);
+			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
+			loadSQLProcedures(stmt);	
 			/*
 			 * Create a table
 			 */
@@ -128,12 +134,14 @@ abstract public class DbmsWrapper {
 				Messenger.printMsg(Messenger.DEBUG, "UPDATE " + "CREATE TABLE " + test_table + " ( name text)");
 			stmt.executeUpdate("CREATE TABLE " + test_table + " ( name text)" );
 			String q = grantSelectToPublic(test_table);
-			if( q != null && q.length() > 0 )
+			if( q != null && q.length() > 0 ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "UPDATE " +q);
 				stmt.executeUpdate(q);
+			}
 			/*
 			 * Populate the table from a file
 			 */
-			String tmp_filename = tmp_dir + Database.getSepar() + test_base.substring(test_base.lastIndexOf(Database.getSepar()) + 1)  + ".psqldump";
 			BufferedWriter tmpfile = new BufferedWriter(new FileWriter(tmp_filename));
 			tmpfile.write("'Pierre'\n");
 			tmpfile.write("'Paul'\n");			
@@ -144,12 +152,13 @@ abstract public class DbmsWrapper {
 				this.storeTable(connection, test_table, -1, tmp_filename) ;			
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "UPDATE " +str);				
 					stmt.executeUpdate(str);					
 				}
 			}
-			stmt.close();
 
-			stmt = admin_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
+			stmt = connection.createStatement()	;
 			String qt = "select count(*) from " + test_table;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
@@ -158,7 +167,6 @@ abstract public class DbmsWrapper {
 				int rc;
 				if( (rc = rs.getInt(1)) != 3 ) {
 					rs.close();
-					admin_connection.close();
 					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + rc + "> return by SQL select.");
 				} else {
 					Messenger.printMsg(Messenger.TRACE, "procedure returns 0.5: OK");
@@ -166,6 +174,17 @@ abstract public class DbmsWrapper {
 				break;
 			}
 			rs.close();
+			
+			qt = "select * from " + test_table + " WHERE name " + this.getRegexpOp() + " '.*'";
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+			rs = stmt.executeQuery(qt);
+			while( rs.next()) {
+				Messenger.printMsg(Messenger.TRACE, "REGEXP  procedure seems to be OK");
+				break;
+			}
+			rs.close();
+
 			qt = "select corner00_dec(0, 1) , boxoverlaps(1.0,2.0,3.0,4.0,5.0,6.0,7.0)";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
@@ -176,41 +195,41 @@ abstract public class DbmsWrapper {
 					Messenger.printMsg(Messenger.DEBUG, "Returns " + rs.getDouble(1) + " " + rs.getObject(2));
 				if( result != -0.5 ) {
 					rs.close();
-					admin_connection.close();
 					IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong result: <" + result + "> return by SQL select, should be 0.5");					
 				}
 				Messenger.printMsg(Messenger.TRACE, "SQL procedures seem to be OK");
 				break;
 			}
 			rs.close();
-			admin_connection.close();
+			
+			
+			connection.close();
 			if( clean_after) {
 				/*
 				 * Drop the base
 				 */
 				/*
-				 * Give 5 sec to the server to close th connection 
+				 * Give 0,5 sec to the server to close th connection 
 				 */
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 				}
 				dropDB(null, test_base);
 			}
+			new File(tmp_filename).delete();
 			/*
 			 * Make sure the db is closed in order to allow the user to make a second attempt
 			 */
 		} catch (SaadaException e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
-				admin_connection.close();
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
-
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
-				admin_connection.close();
 			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
+		} finally {
+			new File(tmp_filename).delete();
+			if( connection != null ) connection.close();
 		}
 		/*
 		 * If something goes wrong an exception is risen
@@ -224,12 +243,12 @@ abstract public class DbmsWrapper {
 	 * @throws SQLException
 	 * @throws IgnoreException
 	 */
-	public boolean checkReaderPrivileges() throws SQLException, IgnoreException {
+	public boolean checkReaderPrivileges() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Check privilege for reader role in " + url + test_base);
 		if( reader == null ) {
 			IgnoreException.throwNewException(SaadaException.WRONG_DB_ROLE, "No Reader Role");			
 		}
-		Connection reader_connection = DriverManager.getConnection(url + test_base , reader.getName(), reader.getPassword());
+		Connection reader_connection = this.getConnection(this.url + test_base, reader.getName(), reader.getPassword());
 		Statement stmt = reader_connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
 		String qt = "select count(*) from " + test_table;
 		if (Messenger.debug_mode)
@@ -244,6 +263,15 @@ abstract public class DbmsWrapper {
 				Messenger.printMsg(Messenger.TRACE, "test table readout: 3 rows found: OK");
 			}
 		}
+		qt = "select * from " + test_table + " WHERE name " + this.getRegexpOp() + " '.*'";
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Test query " + qt);
+		rs = stmt.executeQuery(qt);
+		while( rs.next()) {
+			Messenger.printMsg(Messenger.TRACE, "REGEXP  procedure seems to be OK");
+			break;
+		}
+		rs.close();
 
 		/*
 		 * If something goes wrong an axception is risen
@@ -416,7 +444,18 @@ abstract public class DbmsWrapper {
 	 * @param tableFile
 	 * @throws Exception
 	 */
-	public  void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+	public final void storeTable(DatabaseConnection connection, String tableName, int ncols, String tableFile) throws Exception {
+		storeTable(connection.getConnection(), tableName, ncols, tableFile);
+	}
+	/**
+	 * 
+	 * @param connection
+	 * @param tableName
+	 * @param ncols
+	 * @param tableFile
+	 * @throws Exception
+	 */
+	protected  void storeTable(Connection connection, String tableName, int ncols, String tableFile) throws Exception {
 	}
 
 	/**
@@ -1262,15 +1301,14 @@ abstract public class DbmsWrapper {
 	}
 
 	public void loadSQLProcedures(Statement stmt) throws Exception {
-		SQLTable.beginTransaction();
-		this.installLanguage(stmt);
-		String[] rp = this.removeProc();
-		for( String p: rp) {
-			stmt.executeUpdate(p);
-			//SQLTable.addQueryToTransaction(p);
-		}
 		File bf = this.getProcBaseRef();
 		if( bf != null ) {
+			this.installLanguage(stmt);
+			String[] rp = this.removeProc();
+			for( String p: rp) {
+				stmt.executeUpdate(p);
+				//SQLTable.addQueryToTransaction(p);
+			}
 			String[] fs = bf.list();
 			Messenger.printMsg(Messenger.TRACE, "Reading SQL proc files from " + bf.getAbsolutePath());
 			for( String f: fs ) {
@@ -1285,11 +1323,9 @@ abstract public class DbmsWrapper {
 					}
 					br.close();
 					stmt.executeUpdate(sb.toString());
-					//SQLTable.addQueryToTransaction(sb.toString());
 				}
 			}
 		}
-		SQLTable.commitTransaction();
 	}
 
 	/**

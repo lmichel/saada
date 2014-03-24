@@ -40,10 +40,9 @@ public class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public ArgsParser(String[] args) throws FatalException {
-		if( args == null || args.length == 0 ) {
+		if( args == null  ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameters given");
-		}
-		else {
+		} else {
 			this.args = args;
 			String msg="";
 			for( int i=0 ; i<args.length ; i++ ) {

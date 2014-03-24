@@ -11,11 +11,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import saadadb.database.Database;
+import saadadb.database.DbmsWrapper;
 
 /**
  * Wrapper for JDBC connection {@link Spooler}
  * @author michel
- * @version $Id$
+ * @version $Id: DatabaseConnection.java 1053 2014-03-11 16:45:28Z laurent.mistahl $
  * 02/2014: Add methods to handle update transactions: Due to the use of the spooler in admin mode
  */
 public class DatabaseConnection {
@@ -51,7 +52,7 @@ public class DatabaseConnection {
 	 * @param number ID number (debug purose)
 	 * @throws SQLException
 	 */
-	DatabaseConnection(int number) throws SQLException{
+	DatabaseConnection(int number) throws Exception{
 		this.number = number;
 		this.status = NOTREADY;
 		this.connect();
@@ -60,7 +61,7 @@ public class DatabaseConnection {
 	 * Connect to the database
 	 * @throws SQLException
 	 */
-	private void connect() throws SQLException{
+	private void connect() throws Exception{
 		this.connection = Database.getConnector().getNewConnection();
 		this.status = FREE;
 	}
@@ -73,7 +74,7 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void close() throws SQLException{
-		if( this.connection != null ) this.connection.close();
+		this.connection.close();
 		this.connection = null;
 		this.status = OBSOLETE;	
 	}
@@ -82,7 +83,7 @@ public class DatabaseConnection {
 	 * which has not the write_lock locking level
 	 * @throws SQLException
 	 */
-	protected void reconnect() throws SQLException{
+	protected void reconnect() throws Exception{
 		this.close();
 		this.connect();
 	}
@@ -161,6 +162,14 @@ public class DatabaseConnection {
 		this.statement = this.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 		Database.getWrapper().setFetchSize(this.statement,5000);
 		return this.statement;
+	}
+	/**
+	 * connection should be encaplusated, but we need it at DB creation time when we work without the spooler
+	 * used by {@link DbmsWrapper#checkAdminPrivileges(String, boolean)} to load a small TSV with SQLLIte
+	 * @return
+	 */
+	public Connection getConnection() {
+		return this.connection;
 	}
 	/**
 	 * AutoCommit is managed internally

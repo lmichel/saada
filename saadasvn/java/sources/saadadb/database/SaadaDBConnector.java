@@ -2,14 +2,12 @@ package saadadb.database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.postgresql.util.PSQLException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -17,7 +15,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;
@@ -52,7 +49,6 @@ public class SaadaDBConnector extends DefaultHandler {
 	protected  String jdbc_administrator;
 	protected  String jdbc_reader;
 	protected  String jdbc_reader_password;
-	protected  Connection jdbc_connection;
 
 	protected  String webapp_home;
 	protected  String url_root;
@@ -102,10 +98,11 @@ public class SaadaDBConnector extends DefaultHandler {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Connection getNewConnection() throws SQLException {
+	public Connection getNewConnection() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Create a new reader connection on " + this.jdbc_url);
-		return  DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
+		return this.getWrapper().getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
+		//return  DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
 		
 	}
 	/**
@@ -113,36 +110,12 @@ public class SaadaDBConnector extends DefaultHandler {
 	 * @return
 	 * @throws SQLException
 	 */
-	public Connection getNewAdminConnection(String password) throws SQLException {
+	public Connection getNewAdminConnection(String password) throws Exception {
 		Messenger.printMsg(Messenger.DEBUG, "Create a new admin connection on " + this.jdbc_url);
-		return  DriverManager.getConnection(this.jdbc_url, this.jdbc_administrator, password);
+		return  this.getWrapper().getConnection(this.jdbc_url, this.jdbc_administrator, password);
 		
 	}
 
-	/**
-	 * OPen a new DB connection. Can be used when the DB server has been restarted
-	 * @throws FatalException
-	 */
-	public void reconnect() throws FatalException {
-		try {
-			if( this.jdbc_url != null ) {
-				Messenger.printMsg(Messenger.TRACE, "Reconnect to the DB");
-				if( jdbc_connection != null  ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Close old connection");
-					jdbc_connection.close();
-				}
-				Class.forName(this.jdbc_driver);
-				jdbc_connection = DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
-				jdbc_connection.setAutoCommit(true);
-
-			}
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			FatalException.throwNewException(SaadaException.DB_ERROR, e);
-		}
-
-	}
 
 	/**
 	 * 
@@ -150,16 +123,14 @@ public class SaadaDBConnector extends DefaultHandler {
 	public void readSaadadbTable() {
 		try {
 			Class.forName(jdbc_driver);
-			if( jdbc_connection != null && !jdbc_connection.isClosed()) {
-				Messenger.printMsg(Messenger.WARNING, "Close the former connection");
-				jdbc_connection.close();
-			}
+			Connection jdbc_connection;
 			jdbc_connection     = getWrapper().getConnection(jdbc_url, jdbc_reader, jdbc_reader_password);				
 			jdbc_connection.setAutoCommit(true);
 			Statement _stmt = jdbc_connection.createStatement();
 			ResultSet rs    = _stmt.executeQuery("Select * from saadadb"); 
 			while( rs.next() ) {
 				dbname     = rs.getString("name");
+
 				root_dir   = rs.getString("root_dir");
 				repository = rs.getString("repository");
 				description= rs.getString("description");
@@ -180,8 +151,7 @@ public class SaadaDBConnector extends DefaultHandler {
 					Messenger.printMsg(Messenger.WARNING, "Column healpix_level not in saadadb table (take level=15): looks like an old version. Run the upgrade tool please!!");
 					healpix_level = 15;
 				}
-				rs.close();
-				_stmt.close();
+				jdbc_connection.close();
 				if( this.coord_sys.equals("FK4") ) {
 					this.astroframe = new FK4(this.coord_equi);
 				}
@@ -235,6 +205,7 @@ public class SaadaDBConnector extends DefaultHandler {
 					instance = new SaadaDBConnector();
 				}
 			}
+			System.out.println(instance);
 			return instance;	
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
@@ -314,16 +285,6 @@ public class SaadaDBConnector extends DefaultHandler {
 	 */
 	public int getHealpix_level() {
 		return healpix_level;
-	}
-	/**
-	 * @return
-	 * @throws FatalException 
-	 */
-	public Connection getJDBCConnection() throws FatalException {
-		if( this.jdbc_connection == null ) {
-			this.init();
-		}
-		return jdbc_connection;
 	}
 	/**
 	 * @return
@@ -500,42 +461,6 @@ public class SaadaDBConnector extends DefaultHandler {
 	}
 
 	/**
-	 * @param admin_mode The admin_mode to set.
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
-	 */
-	public void setAdminAuth(String password) throws Exception {
-		this.admin_mode = true;
-		if( jdbc_connection != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Close reader connection");
-			jdbc_connection.close();
-		} else {
-			Class.forName(this.jdbc_driver);			
-		}
-		Messenger.printMsg(Messenger.TRACE, "Switch DB connector in Administrator mode on " + this.jdbc_url);
-		//Class.forName(this.jdbc_driver);
-		jdbc_connection = getWrapper().getConnection(this.jdbc_url, this.jdbc_administrator, password);
-		jdbc_connection.setAutoCommit(false);
-	}
-
-	/**
-	 * @param admin_mode The admin_mode to set.
-	 * @throws SQLException 
-	 */
-	public void setReaderMode(String password) throws Exception {
-		this.admin_mode = false;
-		if( jdbc_connection != null ) {
-			jdbc_connection.close();
-		}
-		jdbc_connection = getWrapper().getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
-		/*
-		 * Needed to allow the interface to restart in case of query failure
-		 */
-		jdbc_connection.setAutoCommit(true);
-	}
-
-	/**
 	 * @return Returns the wrapper.
 	 * @throws ClassNotFoundException 
 	 */
@@ -564,12 +489,12 @@ public class SaadaDBConnector extends DefaultHandler {
 		return wrapper;
 	}
 
-	/**
-	 * @return
-	 * @throws SQLException
-	 */
-	public Statement getStatement() throws SQLException {
-		return jdbc_connection.createStatement(wrapper.getDefaultScrollMode(), wrapper.getDefaultConcurentMode());
-	}
+//	/**
+//	 * @return
+//	 * @throws SQLException
+//	 */
+//	public Statement getStatement() throws SQLException {
+//		return jdbc_connection.createStatement(wrapper.getDefaultScrollMode(), wrapper.getDefaultConcurentMode());
+//	}
 
 }
