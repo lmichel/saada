@@ -24,6 +24,7 @@
 		</fileset>   	
   		<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
     	<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
+    	<pathelement location="${SAADA_DB_HOME}/lib/saadadb.jar"/>   	
   	</path>
 	
 	<!--
@@ -118,14 +119,16 @@
 	</target>
 	
 	<target name="saadadb.jar.merge">	
- 		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
+   		<delete file="${SAADA_HOME}/dbtemplate/lib/BigSaadaJar.jar"/>
+		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
    			<restrict>
         		<not>
             		<or>
                 		<name name="**/*.RSA"/>
                 		<name name="**/*.SF"/>
                			<name name="**/*.DSA"/>
-           			</or>
+        				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
+            		</or>
         		</not>
        			<archives>
   					<zips><fileset dir="${SAADA_DB_HOME}/lib" includes="**/*.jar" /></zips>
