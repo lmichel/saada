@@ -16,13 +16,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -61,9 +57,10 @@ import saadadb.util.RegExp;
  * @author michel
  * @version $Id$
  *
- * 12/2013: new managment of the extended attributes
+ * 12/2013: new management of the extended attributes
+ * 02/2014: Test the DB account within the repository directory in order to check that the
+ *          DBMS server has the right read permissions
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class FormPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	protected JFrame frame;
@@ -459,8 +456,21 @@ public class FormPanel extends JPanel {
 						JOptionPane.ERROR_MESSAGE);
 				return  false;								
 			}
-			dbmswrapper.setAdminAuth(dbms_admin.getText().trim(), dbms_admin_passwd.getPassword());
-			dbmswrapper.checkAdminPrivileges(((NewSaadaDBTool)(frame)).saada_home + Database.getSepar() + "tmp", false);
+			try {
+				dbmswrapper.setAdminAuth(dbms_admin.getText().trim(), dbms_admin_passwd.getPassword());
+				dbmswrapper.checkAdminPrivileges(this.saadadb_rep.getText(), false);
+			} catch( Exception e){
+				JOptionPane.showMessageDialog(frame,
+						e.toString() + "\n Check that the DBMS server is really running and has the permission to read the repository directory  \n " 
+						+ this.saadadb_rep.getText()
+						+ "\n That can be a simple permission issue or the consequence of the OS kernel security policy"
+						+ "\n e.g. SELinux on Fedora branch, Apparmor on the Ubuntu branch, fine folder options on Windows"
+						+ "\n Consider installing thre repository out of the user directory"
+						+ "\n Have a look at the troubelshooting pages",
+						"Database failure",
+						JOptionPane.ERROR_MESSAGE);
+				return  false;								
+			}
 			if( !dbms_database_name.getText().trim().matches(RegExp.DBNAME) ) {
 				JOptionPane.showMessageDialog(frame,
 						"Relational database name badly formed.",
@@ -785,7 +795,7 @@ public class FormPanel extends JPanel {
 		c.fill  = GridBagConstraints.NONE;
 		JButton button = new JButton("add");
 		button.addActionListener(new ActionListener() {
-			public void actionPerformed(@SuppressWarnings("unused") ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) {
 				String name = att_name.getText().trim();
 				if( name.matches(RegExp.EXTATTRIBUTE) ) {
 					FormPanel.this.att_list.addItem(name + " (" + att_type.getSelectedItem() + ")") ;
@@ -812,7 +822,7 @@ public class FormPanel extends JPanel {
 		jp.add(att_list, c);
 		button = new JButton("Remove");
 		button.addActionListener(new ActionListener() {
-			public void actionPerformed(@SuppressWarnings("unused") ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) {
 				String name = FormPanel.this.att_list.getSelectedItem().toString().split(" ")[0];
 				FormPanel.this.att_list.removeItem(FormPanel.this.att_list.getSelectedItem());
 				for( Entry<String, LinkedHashMap<String, String>> entr:  cat_att.entrySet() ) {
