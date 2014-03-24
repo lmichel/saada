@@ -777,6 +777,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#removeProc()
 	 */
+	@Override
 	protected String[] removeProc() throws Exception {
 		SQLQuery sq = new SQLQuery("SHOW FUNCTION STATUS WHERE Db = '" + Database.getConnector().getDbname() + "'");
 		ResultSet rs = sq.run();
@@ -786,6 +787,23 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 		sq.close();
 		return retour.toArray(new String[0]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#removeProc(java.sql.Connection, java.lang.String)
+	 */
+	@Override
+	public String[]  removeProc(Connection connection, String dbname) throws Exception {
+		Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode());
+		ResultSet rs= stmt.executeQuery("SHOW FUNCTION STATUS WHERE Db = '" + dbname + "'");
+		ArrayList<String> retour = new ArrayList<String>();
+		while( rs.next() ) {
+			retour.add("DROP FUNCTION " + rs.getString("Name"));
+		}
+		stmt.close();
+		return retour.toArray(new String[0]);
+	
+	
 	}
 
 	/* (non-Javadoc)
