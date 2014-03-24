@@ -126,7 +126,7 @@ abstract public class DbmsWrapper {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
 			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-			loadSQLProcedures(stmt);	
+			loadSQLProcedures(connection, test_base);	
 			/*
 			 * Create a table
 			 */
@@ -1262,10 +1262,22 @@ abstract public class DbmsWrapper {
 
 	/**
 	 * Works with MySQl which can not CREATE or REPLACE a function
+	 * To be used in the DB creation context
 	 * @return
 	 * @throws Exception 
 	 */
 	protected String[] removeProc() throws Exception {
+		return new String[0];
+	}
+	/**
+	 * Works with MySQl which can not CREATE or REPLACE a function
+	 * To be used in the context of the validation of the available resources
+	 * @param connection
+	 * @param dbname
+	 * @return
+	 * @throws Exception
+	 */
+	public String[]  removeProc(Connection connection, String dbname) throws Exception {
 		return new String[0];
 	}
 	/**
@@ -1300,11 +1312,12 @@ abstract public class DbmsWrapper {
 		SQLTable.commitTransaction();
 	}
 
-	public void loadSQLProcedures(Statement stmt) throws Exception {
+	public void loadSQLProcedures(Connection connection, String dbname) throws Exception {
 		File bf = this.getProcBaseRef();
 		if( bf != null ) {
+			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
 			this.installLanguage(stmt);
-			String[] rp = this.removeProc();
+			String[] rp = this.removeProc(connection,  dbname);
 			for( String p: rp) {
 				stmt.executeUpdate(p);
 				//SQLTable.addQueryToTransaction(p);
@@ -1325,6 +1338,7 @@ abstract public class DbmsWrapper {
 					stmt.executeUpdate(sb.toString());
 				}
 			}
+			stmt.close();
 		}
 	}
 
