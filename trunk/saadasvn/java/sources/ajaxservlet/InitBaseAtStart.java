@@ -33,11 +33,6 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	public void contextDestroyed(ServletContextEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
-			Database.getConnector().getJDBCConnection().close();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-		}
-		try {
 			Spooler.getSpooler().close();
 		} catch (Exception e) {
 			e.printStackTrace();
