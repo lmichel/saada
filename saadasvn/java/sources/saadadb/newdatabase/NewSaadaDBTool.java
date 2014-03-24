@@ -51,7 +51,6 @@ public class NewSaadaDBTool extends JFrame {
 		super("Saada " + Database.version() + ": Database Creation Tool");
 		System.out.println(saada_home);
 		NewSaadaDBTool.saada_home = saada_home;
-		NewSaadaDBTool.saada_home = currentDir;
 		if( File.separator.equals("\\")) {
 			NewSaadaDBTool.saada_home = NewSaadaDBTool.saada_home.replaceAll("\\/", "\\\\");
 		}
