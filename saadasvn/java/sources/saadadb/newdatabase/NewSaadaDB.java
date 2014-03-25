@@ -255,7 +255,8 @@ public class NewSaadaDB {
 					if( !changes[i]) msg += " " + old[i];
 				}
 				if( msg.length() > 0 ) {
-					FatalException.throwNewException(SaadaException.WRONG_RESOURCE, "String(s) " + msg + " not found in template " + saada_dir+nameFile);
+					Messenger.printMsg(Messenger.WARNING, "String(s) " + msg + " not found in template " + saada_dir+nameFile);
+					//FatalException.throwNewException(SaadaException.WRONG_RESOURCE, "String(s) " + msg + " not found in template " + saada_dir+nameFile);
 				}
 			}
 		}
