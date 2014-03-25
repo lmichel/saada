@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.relationship.KeyIndex;
@@ -165,7 +166,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			sqlQuery.close();
 		}
 
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, oids.size() + "oids selected");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, oids.size() + " oids selected");
 		/*
 		 * Don't need it anymore, save memory
 		 */
