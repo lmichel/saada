@@ -189,7 +189,6 @@ public class UserAccount implements Serializable {
 		File directory = new File (this.filterDirectory);
 		String[] list = directory.list();
 		for (int i = 0; i < list.length; i++) {
-			System.out.println(list[i]);
 			if (list[i].endsWith(category+".json")) {
 				File entry = new File(directory, list[i]);
 				if (Messenger.debug_mode)

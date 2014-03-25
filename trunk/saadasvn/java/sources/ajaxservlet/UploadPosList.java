@@ -68,9 +68,7 @@ public class UploadPosList extends SaadaServlet implements Servlet {
 				 */
 				while (iter.hasNext()) {
 					FileItem item = (FileItem) iter.next();
-					System.out.println(" @@@ " + item);
 					if (item.isFormField()) {
-						System.out.println(" @@@@@@@@@ " + item.getFieldName());
 						if( item.getFieldName().equals("hidden_datafile") ) {
 							uploadedFile = new File(Database.getVOreportDir() + Database.getSepar() + item.getString());		
 						} else if( item.getFieldName().equals("hidden_service") ) {
