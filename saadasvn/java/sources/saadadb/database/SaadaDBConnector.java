@@ -205,7 +205,6 @@ public class SaadaDBConnector extends DefaultHandler {
 					instance = new SaadaDBConnector();
 				}
 			}
-			System.out.println(instance);
 			return instance;	
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
