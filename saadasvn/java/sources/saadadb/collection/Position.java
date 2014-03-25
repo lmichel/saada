@@ -3,7 +3,6 @@ package saadadb.collection;
 
 import healpix.tools.SpatialVector;
 import saadadb.database.Database;
-import saadadb.database.MysqlWrapper;
 import saadadb.exceptions.AbortException;
 import saadadb.util.SaadaConstant;
 import cds.astro.Coo;
@@ -83,6 +82,9 @@ public class Position extends SaadaInstance {
 	{
 		return this.sky_pixel_csa;
 	}
+	/**
+	 * @return
+	 */
 	public long getHealpix_csa()
 	{
 		return this.healpix_csa;
