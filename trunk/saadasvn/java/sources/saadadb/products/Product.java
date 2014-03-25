@@ -511,7 +511,7 @@ public class Product /*extends File*/ {
 					objColl.setPos_z(Math.sin(Math.toRadians(objColl.getPos_dec_csa())));
 					objColl.calculSky_pixel_csa();
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
-							+ "> set to <" + objColl.getPos_ra_csa() + "," + objColl.getPos_dec_csa() + ">" );
+							+ "> set to <" + objColl.getPos_ra_csa() + "," + objColl.getPos_dec_csa() + " hp=" + objColl.healpix_csa + ">" );
 				}
 				else {
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
