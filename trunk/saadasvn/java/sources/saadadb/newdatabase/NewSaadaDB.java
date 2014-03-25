@@ -253,7 +253,7 @@ public class NewSaadaDB {
 				String msg ="";
 				for( int i=0 ; i< changes.length; i++ ) {
 					if( !changes[i]) msg += " " + old[i];
-				}
+				} 
 				if( msg.length() > 0 ) {
 					Messenger.printMsg(Messenger.WARNING, "String(s) " + msg + " not found in template " + saada_dir+nameFile);
 					//FatalException.throwNewException(SaadaException.WRONG_RESOURCE, "String(s) " + msg + " not found in template " + saada_dir+nameFile);
