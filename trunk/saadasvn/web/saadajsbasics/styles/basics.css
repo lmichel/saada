@@ -1,0 +1,257 @@
+/*
+ * CSS rules by tags
+ * May be overriden by the final application
+ */
+@font-face {
+	font-family: Lane;
+	src: url(Lane.ttf) format("truetype");
+}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	min-width: 1010px;
+	height: auto;
+	overflow: auto;
+}
+
+span, p, td, option, label, legend {
+	font-size: small;
+	color: black;
+}
+
+li {
+	font-size: small;
+	color: black;
+}
+
+input {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
+/* 	color: black;
+ */}
+button {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
+	color: black;
+}
+
+h4 {
+	color: DimGray;
+}
+
+a:hover {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+
+.clear {
+	clear: both;
+}
+
+.help {
+	color: DimGray;
+	font-style: italic;
+}
+.spanhelp {
+	color: DarkGreen;
+	font-style: italic;
+	font-size: small;
+}
+.datahelp {
+	color: lightblue;
+    font-weight:bold;}
+    
+.datafield {
+	color: lightBlue;
+    font-weight:bold;
+    float: right;
+    }
+
+.strong {
+	color: DimGray;
+	font-size: x-large;
+}
+/*
+ * Samp status indications
+ */
+img.clickableicon{
+	border: 0;
+	}
+img:hover.clickableicon{
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+	}
+	
+a.sampOn {	
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 16px 0px 16px 38px;
+	background: transparent url(../icons/sampOn.png) center left no-repeat;
+}
+a:hover.sampOn {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+a.sampOff {	
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 16px 0px 16px 38px;
+	background: transparent url(../icons/sampOff.png) center left no-repeat;
+}
+a:hover.sampOff {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+
+
+a.ivoalogo  {	
+	overflow: visible;
+	padding: 16px 0 8px 64px;
+	background:transparent url(../icons/ivoa.jpg) center left no-repeat;
+}
+
+a.dlivoalogo  {	
+	overflow: visible;
+	padding: 8px 0 4px 28px;
+	background:transparent url(../icons/dl_ivoa.png) center left no-repeat;
+}
+a:hover.dlivoalogo {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+a.dldownload  {	
+	overflow: visible;
+	padding: 8px 0 4px 28px;
+	background:transparent url(../icons/dl_download.png) center left no-repeat;
+}
+a:hover.dldownload  {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+a.dlprinter  {	
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0 9px 23px;
+	background:transparent url(../icons/dl_print.png) center left no-repeat;
+}
+a:hover.dlprinter  {	
+	filter: alpha(opacity = 50);
+	opacity: 0.5;
+}
+.infologo  {	
+	display: inline;
+	float: left;
+	width: 48px;
+	height: 32px;
+	background:transparent url(../icons/info.png) top left no-repeat;
+}
+
+.warninglogo  {	
+	display: inline;
+	float: left;
+	width: 48px;
+	height: 32px;
+	background:transparent url(../icons/warning.png) top left no-repeat;
+}
+
+.confirmlogo  {	
+	display: inline;
+	float: left;
+	width: 48px;
+	height: 32px;
+	background:transparent url(../icons/confirm.png) top left no-repeat;
+}
+.progresslogo {
+	padding: 5px;
+	display: inline;
+	float: left;
+	width: 32px;
+	height: 32px;
+	border:0px;
+	background:transparent  url(../icons/ajax-loader.gif) center no-repeat;
+}
+a.printer {
+	display: inline-block;
+	height: 30px;
+	width: 39px;
+	overflow: visible;
+	padding: 0 0 0 0;
+	background: transparent url(../icons/print.png) bottom left
+		no-repeat;
+	}
+a:hover.printer {
+	filter: alpha(opacity = 50);
+/* 	-moz-opacity: 0.5; */
+	opacity: 0.5;
+}
+a:active.printer {
+	filter: alpha(opacity = 50);
+/* 	-moz-opacity: 0.8; */
+	opacity: 0.8;
+}
+
+a.sort_asc {	
+	display: block;
+	width: 19px;
+	height: 11px;
+	overflow: visible;
+	background: transparent url(../icons/sort_asc.png) center left no-repeat;
+}
+a.sort_asc_disabled {	
+	display: block;
+	width: 19px;
+	height: 11px;
+	overflow: visible;
+	background: transparent url(../icons/sort_asc_disabled.png) center left no-repeat;
+}
+a.sort_desc {	
+	display: block;
+	width: 19px;
+	height: 11px;
+	overflow: visible;
+	background: transparent url(../icons/sort_desc.png) center left no-repeat;
+}
+a.sort_desc_disabled {	
+	display: block;
+	width: 19px;
+	height: 11px;
+	overflow: visible;
+	background: transparent url(../icons/sort_desc_disabled.png) center left no-repeat;
+}
+div.sorter {
+	width: 16px;
+	height: 24px;
+	overflow:none;
+	float:left;
+}
+span.sorter{
+	position: relative;
+	top: 5px;
+	left: 0px;
+}
+.d-maxsize {
+  max-height:750px;
+  max-width:1000px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+/*
+Override jquery-ui-theme
+*/ 
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: small;
+/* 	color: black;
+ */}
+.ui-dialog { position: absolute; padding: .2em; width: 300px; }
+.ui-dialog .ui-dialog-content {
+position: relative;
+border: 0;
+padding: .5em 1em;
+background: none;
+overflow: none;
+zoom: 1;
+}

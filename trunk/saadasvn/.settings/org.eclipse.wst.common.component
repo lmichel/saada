@@ -5,7 +5,7 @@
         <dependent-module archiveName="SQLITEgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/saada/deploy/TestBeds/version2_0/dbms_SQLITE/saadadb/SQLITE/web/WEB-INF/lib/SQLITEgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="Saada1.7"/>
         <property name="java-output-path" value="/Saada1.7/build/classes"/>
+        <property name="context-root" value="Saada1.7.0"/>
     </wb-module>
 </project-modules>
