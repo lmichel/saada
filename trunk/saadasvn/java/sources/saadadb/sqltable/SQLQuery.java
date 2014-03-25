@@ -191,7 +191,7 @@ public class SQLQuery {
 			}
 			//System.out.println("============= CLOSE1 " +  Spooler.getSpooler());
 			Database.giveConnection(databaseConnection);
-			System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
+			//System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
