@@ -1,12 +1,19 @@
 -------------------------------------------------
-Version Saada1.7.0.build7
+Version Saada1.8.0
 
 L. MICHEL
-December 2013
+March 2014
 -------------------------------------------------
 
+---- DB connection spooler ----------
+Connection spooler used everywhere
+
+---- Spatial indexation -------------
+Use of healpix in place of QBox
+Upgrade tool available
+
 ---- Meta data editing --------------
-Extended attributes can be dited from the Meta panel of te admin tool
+Extended attributes can be edited from the Meta panel of te admin tool
 
 ---- MySQL -----------
 Make te relationship tabec in mode ROW_WIDTH=FIXED.
