@@ -26,12 +26,10 @@ public class MappingSpectrum extends Mapping {
     protected String ordinateColumn;
     /**The unit of the spectrum ordinate**/
     protected String ordinateUnit;
-    /**Constructor of the spectra mapping (Default constructor).
-     *@param Configuration the configuration of this spectra mapping. 
-     * @throws ParsingException 
-     */    
 	private int scPriority=DefineType.FIRST;
 
+    /**Constructor of the spectra mapping (Default constructor).
+     */    
 	public MappingSpectrum(ConfigurationDefaultHandler configuration) throws IgnoreException, FatalException{
 	//See MappingDefault (Default constructor)
 	super(configuration, null);
