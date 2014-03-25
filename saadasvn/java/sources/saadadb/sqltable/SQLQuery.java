@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -190,7 +191,7 @@ public class SQLQuery {
 			}
 			//System.out.println("============= CLOSE1 " +  Spooler.getSpooler());
 			Database.giveConnection(databaseConnection);
-			//System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
+			System.out.println("============= CLOSE2 " +  Spooler.getSpooler());
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
