@@ -101,6 +101,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	public Connection getNewConnection() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Create a new reader connection on " + this.jdbc_url);
+		Class.forName(this.jdbc_driver);
 		return this.getWrapper().getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
 		//return  DriverManager.getConnection(this.jdbc_url, this.jdbc_reader, this.jdbc_reader_password);
 		
