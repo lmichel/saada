@@ -693,7 +693,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Messenger.debug_mode = true;
-			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("localhost", "5432"); 
+			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("obs-he-lm", "5432"); 
 			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
 		//	dbmswrapper.checkAdminPrivileges("/tmp", false);
 			dbmswrapper.checkAdminPrivileges(false);
