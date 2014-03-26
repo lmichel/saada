@@ -342,12 +342,11 @@ public class CartFormator  extends QueryResultFormator{
 			/*
 			 * Linked spectra are packed with their attached data which are usually calibration data
 			 */
-			if( mr.getSecondary_category() == Category.SPECTRUM ) {
+			if( mr.getSecondary_category() == Category.SPECTRUM 
+					&& Database.getCachemeta().getRelationNamesStartingFromColl(mr.getSecondary_coll(), Category.SPECTRUM).length > 0) {
 				ZipFormator formator = new ZipFormator(null);
 				for( long cpoid: cpoids) {
-					if( Database.getCachemeta().getRelationNamesStartingFromColl(mr.getPrimary_coll(), Category.SPECTRUM).length > 0 ) {
-						formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
-					}
+					formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
 					String zpn = formator.getResponseFilePath();
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + (new File(zpn)).getName(), zpn);
 					this.zipMap.add(root, zer);
