@@ -172,6 +172,7 @@ public class Table_Saada_Loaded_File {
 			 * Same file name already recorded : add .inst# after the name
 			 */
 			else {
+				squery.close();
 				SQLQuery squery2 = new SQLQuery();
 				rs = squery2.run("select count(filename) from saada_loaded_file where collection = '" 
 						+ coll + "' and category = '" 
@@ -180,14 +181,12 @@ public class Table_Saada_Loaded_File {
 				int num =0;
 				if( rs.next() ) {
 					num = rs.getInt(1);
-					squery.close();
 				    squery2.close();
 					return "inst" + (num+1) + "." + prd_name;
 				}
 				squery2.close();
 			}
 		}
-		squery.close();
 		} catch ( SQLException e) {
 			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
