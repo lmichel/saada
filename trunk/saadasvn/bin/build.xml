@@ -26,6 +26,7 @@
     	<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
     	<pathelement location="${SAADA_DB_HOME}/lib/saadadb.jar"/>   	
     	<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
+    	<pathelement location="${SAADA_DB_HOME}/jtools/catalina-ant.jar"/>   	
   	</path>
 	
 	<!--
@@ -100,7 +101,10 @@
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
 			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
-            <classpath refid="saadadb.classpath"/>
+            <classpath>
+        		<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
+        		<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
+     		</classpath>
 		</javac>
 	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
 		     basedir="${SAADA_DB_HOME}/java/classes"
