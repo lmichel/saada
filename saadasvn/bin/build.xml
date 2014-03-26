@@ -25,6 +25,7 @@
   		<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
     	<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
     	<pathelement location="${SAADA_DB_HOME}/lib/saadadb.jar"/>   	
+    	<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
   	</path>
 	
 	<!--
@@ -119,7 +120,9 @@
 	</target>
 	
 	<target name="saadadb.jar.merge">	
-   		<delete file="${SAADA_HOME}/dbtemplate/lib/BigSaadaJar.jar"/>
+   		<delete file="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>
+		<move file="${SAADA_DB_HOME}/lib/saadadb.jar" tofile="${SAADA_DB_HOME}/lib/saadadb.jar.org"
+                       failonerror="false"/>
 		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
    			<restrict>
         		<not>
@@ -132,13 +135,15 @@
         		</not>
        			<archives>
   					<zips><fileset dir="${SAADA_DB_HOME}/lib" includes="**/*.jar" /></zips>
-					<zips><fileset  dir="${SAADA_DB_HOME}/jtools" includes="**/*.jar"  /></zips>
+					<zips><fileset  dir="${SAADA_DB_HOME}/jtools" includes="**/ant*.jar"  /></zips>
         		</archives>
     		</restrict>
     		<manifest>
         		<attribute name="Main-Class" value="com.mytest.MyProcessor"/>
    			</manifest>
 		</jar>
+		<move file="${SAADA_DB_HOME}/lib/saadadb.jar.org" tofile="${SAADA_DB_HOME}/lib/saadadb.jar"
+                       failonerror="false"/>
 	</target>
 
 	<!--
@@ -396,7 +401,7 @@
     	<java fork="true"  classname="saadadb.command.CreateCollectionIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-collection=${name}"/>
-	  		<arg value="-category${category}"/>
+	  		<arg value="-category${category}"/>        				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
 	  		<arg value="-debug=${debug}"/>
            <arg value="${SAADA_DB_NAME}"/>
     	</java> 
@@ -651,7 +656,7 @@
 			<arg value="-rename={name}"/>      
 			<arg value="-newname={newname}"/>      
 			<arg value="-category={category}"/>      
- 			<arg value="-comment={comment}"/>      
+ 			<arg value="-comment={comment}"/>              				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
  			<arg value="-unit={unit}"/>      
  	 		<arg value="-ucd={ucd}"/>      
  	 		<arg value="-utype={utype}"/>      
