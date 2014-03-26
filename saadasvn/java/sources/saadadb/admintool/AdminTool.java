@@ -278,7 +278,8 @@ public class AdminTool extends BaseFrame {
 			/*
 			 * If SQLITE is used, there is no need to switch the user but the schema update needs to be run anyway
 			 */
-		} else {
+		} else {					
+			Database.setAdminMode(null);
 			Database.updatSchema();
 		}
 		//this.activePanel(AdminComponent.MANAGE_EXTATTR);
