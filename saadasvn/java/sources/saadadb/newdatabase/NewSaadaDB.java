@@ -282,7 +282,6 @@ public class NewSaadaDB {
 		} catch (Exception e3) {
 			Messenger.printStackTrace(e3);
 		} finally {
-			(new Exception()).printStackTrace();
 			System.exit(retour);			
 		}
 	}
