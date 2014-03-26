@@ -220,7 +220,7 @@ public class Spooler {
 		if( !this.spoolerIsRunning ) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
 		} else if( this.adminConnection == null) {
-			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode han=sn't been set.");
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode hasn't been set.");
 		} else {
 			while( !this.adminConnection.isFree()  ) {
 				Thread.sleep(WAIT_DELAY);
