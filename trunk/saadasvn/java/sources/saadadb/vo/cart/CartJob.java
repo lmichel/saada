@@ -44,7 +44,6 @@ public class CartJob extends AbstractJob {
 	 */
 	public CartJob(Map<String, String> lstParam) throws UWSException {
 		super(lstParam);
-		System.out.println("@@@@@@@@@@@@@@ CartJob");
 		this.lstParam = lstParam;
 		globalCounter++;
 		this.sessionId = lstParam.get("owner");

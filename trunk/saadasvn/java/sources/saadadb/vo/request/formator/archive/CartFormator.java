@@ -345,7 +345,9 @@ public class CartFormator  extends QueryResultFormator{
 			if( mr.getSecondary_category() == Category.SPECTRUM ) {
 				ZipFormator formator = new ZipFormator(null);
 				for( long cpoid: cpoids) {
-					formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
+					if( Database.getCachemeta().getRelationNamesStartingFromColl(mr.getPrimary_coll(), Category.SPECTRUM).length > 0 ) {
+						formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
+					}
 					String zpn = formator.getResponseFilePath();
 					ZipEntryRef zer = new ZipEntryRef(ZipEntryRef.SINGLE_FILE, si.getOid() + "_" + (new File(zpn)).getName(), zpn);
 					this.zipMap.add(root, zer);
