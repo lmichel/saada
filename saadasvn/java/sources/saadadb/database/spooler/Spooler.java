@@ -207,7 +207,6 @@ public class Spooler {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
 		}
 		DatabaseConnection retour;
-		System.out.println("@@@@@@@@@@ READER " + this);
 		while( (retour = this.getFirstFreeConnection()) == null ) {
 			Thread.sleep(WAIT_DELAY);
 		}
@@ -223,7 +222,6 @@ public class Spooler {
 		} else if( this.adminConnection == null) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode han=sn't been set.");
 		} else {
-			System.out.println("@@@@@@@@@@ ADMIN " + this);
 			while( !this.adminConnection.isFree()  ) {
 				Thread.sleep(WAIT_DELAY);
 			}
