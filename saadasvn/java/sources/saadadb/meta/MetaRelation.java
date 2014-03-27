@@ -36,6 +36,7 @@ public class MetaRelation extends MetaObject {
 		this.secondary_category = Category.getCategory(rs.getString("secondary_cat").trim());
 		this.correlator         = rs.getString("correlator");
 		this.description        = rs.getString("description");
+		this.indexed            = rs.getBoolean("indexed");
 		try {
 		this.stat               = rs.getInt("stat");
 		} catch (SQLException e) {
@@ -44,20 +45,25 @@ public class MetaRelation extends MetaObject {
 		if( this.correlator == null ) {
 			this.correlator = "";
 		}
-		SQLQuery squery = new SQLQuery();
-		ResultSet qrs = squery.run("select qualifier from saada_qualifier where name = '" + this.name + "'");
-		while(qrs.next()) {
-			qualifier_names.add(qrs.getString(1));
-		}	
-		squery.close();
-		this.indexed = Table_Saada_Relation.isIndexed(this.name);
-
 	}
 
 	public MetaRelation(String name, int id) {
 		super(name, id);
 	}
 
+	/**
+	 * Out of the creator in order to avoid nested queries not supported by SQLITE
+	 * @throws Exception
+	 */
+	public void setQualifiers() throws Exception {
+		SQLQuery squery = new SQLQuery();
+		ResultSet qrs = squery.run("select qualifier from saada_qualifier where name = '" + this.name + "'");
+		while(qrs.next()) {
+			qualifier_names.add(qrs.getString(1));
+		}	
+		squery.close();
+	}
+	
 	public int getStat() {
 		return stat;
 	}
