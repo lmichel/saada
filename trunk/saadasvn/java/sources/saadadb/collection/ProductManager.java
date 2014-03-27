@@ -363,10 +363,6 @@ public class ProductManager extends EntityManager {
 				squery.close();
 			}
 		}
-		//		for( Entry<String, ArrayList<Long>> e: linkTargetsToRemove.entrySet()) {
-		//			System.out.println(e.getKey() + " " + e.getValue());
-		//			
-		//		}
 	}
 
 	private void removeLinkTargets() throws SaadaException {

@@ -1009,56 +1009,7 @@ public class CacheMeta {
 		}		
 	}
 
-	/**
-	 * @param args
-	 * @throws SaadaException 
-	 */
-	public static void main(String[] args) throws SaadaException {
-		ArgsParser ap = new ArgsParser(args);
-		Database.init(ap.getDBName());
-		Database.getCachemeta().showCollections();
-		Database.getCachemeta().showCollections();
 
-		//		try {
-		//		CacheMeta cm = new CacheMeta();
-		//		cm.reload(true);
-		//		System.out.println("* Collections");
-		//		String[] coll = cm.getCollection_names();
-		//		for( int i=0 ; i<coll.length ; i++ ) {
-		//		System.out.println("    " + coll[i]);
-		//		String[] classes = cm.getClassNames(coll[i], Category.IMAGE) ;
-		//		for( int j=0 ; j<classes.length ; j++ ) {
-		//		System.out.println("        class: " + classes[j] + " " + cm.getClass(classes[j]).getCategory());					
-		//		}
-		//		String[] relations = cm.getRelationNamesStartingFromColl(coll[i], -1) ;
-		//		for( int j=0 ; j<relations.length ; j++ ) {
-		//		System.out.println("        starting relation: " + relations[j]);					
-		//		}
-		//		relations = cm.getRelationNamesEndingOnColl(coll[i], -1) ;
-		//		for( int j=0 ; j<relations.length ; j++ ) {
-		//		System.out.println("        ending relation: " + relations[j]);					
-		//		}
-		//		}
-		//		System.out.println("classes from colection ARCH_CAT_EntrySaada");
-		//		String[] cls = cm.getClassesOfCollection("ARCH_CAT_EntrySaada", -1);
-		//		for( int i=0 ; i<cls.length ; i++ ) {
-		//		System.out.println("  " + cls[i]);
-		//		}
-		//		System.out.println("classes from collection ARCH_CAT");
-		//		cls = cm.getClassesOfCollection("ARCH_CAT", Category.TABLE);
-		//		for( int i=0 ; i<cls.length ; i++ ) {
-		//		System.out.println("  " + cls[i]);
-		//		}
-		//		System.out.println(cm.getAtt_extend_spectrum_names().length);
-		//		MetaRelation mr = cm.getRelation("ArchSrcToFov");
-		//		System.out.println(mr.getSecondary_coll());
-		//		System.out.println(mr.getSecondary_category());
-		//		} catch (Exception e) {
-		//		Messenger.printStackTrace(e);
-		//		}
-		Database.close();
-
-	}
 
 	/**
 	 * @return Returns the att_extend_entry.
