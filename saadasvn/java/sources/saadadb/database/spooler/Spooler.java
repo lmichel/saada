@@ -230,16 +230,13 @@ public class Spooler {
 			while( !this.adminConnection.isFree()  ) {
 				Thread.sleep(WAIT_DELAY);
 			}
-			System.out.println("@@@@@@@@@@@@ 1");
 			/*
 			 * With SQLITE it is always better to close and reopen the connection in order to allow it to get the "write_lock" locking level, 
 			 * which is necessary to modify the DB schema.
 			 */
 			if( !Database.getWrapper().supportDropTableInTransaction() ) {
-				System.out.println("@@@@@@@@@@@@ 11");
 				this.adminConnection.reconnect();
 			}
-			System.out.println("@@@@@@@@@@@@ 2");
 			return this.adminConnection;		
 		}
 		return null;	
