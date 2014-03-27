@@ -786,6 +786,7 @@ public final class CorrQueryTranslator {
 		Messenger.printMsg(Messenger.TRACE, cpt + " counterpart candidates processed (" + lcpt + " links)");
 
 		kdtreetmpfile.close();
+		squery.close();
 		Messenger.incrementeProgress();
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + tempo_table_name + " 3 " + kdtreedumpfile);
 		/*
@@ -797,7 +798,6 @@ public final class CorrQueryTranslator {
 		SQLTable.addQueryToTransaction("CREATE INDEX " + table_name.toLowerCase() + "_oidsecondary ON " + tempo_table_name + "(oidsecondary)");
 	
 		SQLTable.indexTable(tempo_table_name, this.manager);
-		squery.close();
 		return tempo_table_name;
 	}
 	/**
