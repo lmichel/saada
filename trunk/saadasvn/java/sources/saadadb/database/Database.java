@@ -206,22 +206,23 @@ public class Database {
 		if( localUrl_root.length() > 0 ) {
 			return localUrl_root;
 		} else {
-			return connector.getUrl_root();
+			return  (connector == null)? null : connector.getUrl_root();
 		}
 	}
 	public static void setUrl_root(String url_root) {
 		localUrl_root = url_root;
 	}
 	public static double getCoord_equi() {
-		return connector.getCoord_equi();
+		return  (connector == null)? null : connector.getCoord_equi();
 	}
 	public static String getCoord_sys() {
-		return connector.getCoord_sys();
+		return  (connector == null)? null : connector.getCoord_sys();
 	}
 	public static int getHeapix_level() {
 		return  (connector == null)? 14: connector.getHealpix_level();
 	}
-	public static String getCooSys() {
+	public static String getCooSys() { 
+		if(connector == null) return null ;
 		if( connector.getCoord_equi() != 0.0 ) {
 			return "J" + connector.getCoord_equi();
 		}
@@ -230,10 +231,10 @@ public class Database {
 		}
 	}
 	public static Astroframe getAstroframe() {
-		return connector.getAstroframe();
+		return  (connector == null)? null : connector.getAstroframe();
 	}
 	public static String getDbname() {
-		return connector.getDbname();
+		return  (connector == null)? null : connector.getDbname();
 	}
 	/**
 	 * Return the name of the database used by the reader for temporary table
@@ -244,40 +245,40 @@ public class Database {
 		return getWrapper().getTempodbName(connector.getDbname());
 	}
 	public static String getDescription() {
-		return connector.getDescription();
+		return  (connector == null)? null : connector.getDescription();
 	}
 	public static String getFlux_unit() {
-		return connector.getFlux_unit();
+		return  (connector == null)? null : connector.getFlux_unit();
 	}
 	public static String getJdbc_driver() {
-		return connector.getJdbc_driver();
+		return  (connector == null)? null : connector.getJdbc_driver();
 	}
 	public static String getJdbc_reader_password() {
-		return connector.getJdbc_reader_password();
+		return  (connector == null)? null : connector.getJdbc_reader_password();
 	}
 	public String getJdbc_url() {
-		return connector.getJdbc_url();
+		return  (connector == null)? null : connector.getJdbc_url();
 	}
 	public static String getJdbc_reader() {
-		return connector.getJdbc_reader();
+		return  (connector == null)? null : connector.getJdbc_reader();
 	}
 	public static String getJdbc_administrator() {
-		return connector.getJdbc_administrator();
+		return  (connector == null)? null : connector.getJdbc_administrator();
 	}
 	public static String getRepository() {
-		return connector.getRepository();
+		return  (connector == null)? null : connector.getRepository();
 	}
 	/**
 	 * @return
 	 */
 	public static String getRoot_dir() {
-		return connector.getRoot_dir();
+		return (connector == null)? null : connector.getRoot_dir();
 	}
 	/**
 	 * @return
 	 */
 	public static String getSpect_unit() {
-		return connector.getSpect_unit();
+		return  (connector == null)? null : connector.getSpect_unit();
 	}
 	public static String getClassLocation() {
 		return Database.getRoot_dir() + Database.getSepar() + "class_mapping";
