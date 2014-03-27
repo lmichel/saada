@@ -128,11 +128,11 @@ public class TransactionMaker {
 					execStatement(pstmt, q);
 				}
 			}
-			Database.giveAdminConnection();
 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "JDBC Commit");
 			connection.commit();
+			Database.giveAdminConnection();
 			
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Transaction done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");

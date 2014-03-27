@@ -261,13 +261,18 @@ public class CacheMeta {
 		for( MetaClass mc2: this.classes.values() ) {
 			mc2.setAttribute_names();
 		}
-		Iterator it = this.classes.values().iterator();
+		Iterator<MetaClass> it = this.classes.values().iterator();
 		while( it.hasNext()) {
 			((MetaClass)(it.next())).bindAssociatedAttributeHandler();
 		}
 		this.class_names = (this.classes.keySet().toArray(new String[0]));
 	}
 
+	/**
+	 * @param mc
+	 * @return
+	 * @throws FatalException
+	 */
 	private  String generateXMLTable(MetaClass mc) throws FatalException{
 		String xml = "\t\t<table xsi:type=\"output\">\n\t\t\t<name>"+mc.getName()+"</name>\n\t\t\t<description>"+mc.getDescription()+"</description>";
 		Collection<AttributeHandler> coll = this.getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
@@ -314,6 +319,10 @@ public class CacheMeta {
 		}
 		squery.close();
 		this.relation_names = (this.relations.keySet().toArray(new String[0]))	;
+		//Out of the creator in order to avoid nested queries not supported by SQLITE		
+		for( MetaRelation mr: this.relations.values()){
+			mr.setQualifiers();
+		}
 	}
 
 	public boolean isCollectionFilled(String collection_name) throws FatalException
