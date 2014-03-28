@@ -56,6 +56,7 @@ public class Spooler {
 	 * DB connection the the admin privilege
 	 */
 	private DatabaseConnection adminConnection;
+	private String adminPassword = null;
 	/**
 	 * Reference to the singleton instance
 	 */
@@ -207,6 +208,8 @@ public class Spooler {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
 		}
 		DatabaseConnection retour;
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Get connection " + Spooler.getSpooler());
 		while( (retour = this.getFirstFreeConnection()) == null ) {
 			Thread.sleep(WAIT_DELAY);
 		}
@@ -220,8 +223,10 @@ public class Spooler {
 		if( !this.spoolerIsRunning ) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
 		} else if( this.adminConnection == null) {
-			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode han=sn't been set.");
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode hasn't been set.");
 		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Get admin connection " + Spooler.getSpooler());
 			while( !this.adminConnection.isFree()  ) {
 				Thread.sleep(WAIT_DELAY);
 			}
@@ -260,13 +265,8 @@ public class Spooler {
 	 * @throws Exception
 	 */
 	public void openAdminConnection(String password) throws Exception{
-		if( this.adminConnection == null ) {
-			if( Database.getWrapper().supportConcurrentAccess() ) {
-				this.adminConnection = new DatabaseAdminConnection(-1, password);
-			} else {
-				this.adminConnection = this.connectionsReferences.get(0);
-			}
-		}		
+		this.adminPassword = password;
+		this.openAdminConnection();
 	}
 
 	/**
@@ -284,6 +284,19 @@ public class Spooler {
 		s += " [" + ((adminConnection == null)? "-": adminConnection.toShortString()) + "]";
 		return s;
 
+	}
+	
+	/**
+	 * @throws Exception
+	 */
+	private void openAdminConnection() throws Exception{
+		if( this.adminConnection == null ) {
+			if( Database.getWrapper().supportConcurrentAccess() ) {
+				this.adminConnection = new DatabaseAdminConnection(-1, this.adminPassword);
+			} else {
+				this.adminConnection = this.connectionsReferences.get(0);
+			}
+		}		
 	}
 
 	/****************************************************************************
@@ -334,7 +347,16 @@ public class Spooler {
 		}
 		int nbToRemove = toRemove.size();
 		if (nbToRemove > 0 ) {
+			boolean setAdminMode = false;
 			for( DatabaseConnection cr: toRemove){
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Remove connection " + cr);
+				if( this.adminConnection == cr ) {
+					setAdminMode = true;
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Remove admin connection ");
+					this.adminConnection = null;
+				}
 				connectionsReferences.remove(cr);
 			}
 			/*
@@ -343,9 +365,17 @@ public class Spooler {
 			for( int i=0 ; i<nbToRemove ; i++ ){
 				if( connectionsReferences.size() < maxConnections) {
 					this.addConnectionReference();
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Added new connection (" + this +")" + setAdminMode);
 					break;
 				}
 			}
+			if( setAdminMode && this.adminConnection == null) {
+				this.openAdminConnection();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Reopen admin connection(" + this +")");
+			}
+
 		}
 		boolean hasFree = false;
 		for( DatabaseConnection cr: connectionsReferences){
@@ -355,6 +385,8 @@ public class Spooler {
 			}
 		}
 		if( !hasFree && connectionsReferences.size() < maxConnections) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Add new connection (" + connectionsReferences.size() + " < " +  maxConnections +")");
 			this.addConnectionReference();
 		}
 	}

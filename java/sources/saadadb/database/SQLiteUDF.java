@@ -5,6 +5,7 @@ package saadadb.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import org.sqlite.Function;
 
 import saadadb.query.timespace.Procedures;
