@@ -15,7 +15,6 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.configuration.RelationConf;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;

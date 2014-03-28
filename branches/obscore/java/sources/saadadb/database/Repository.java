@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Date;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaOID;
 import saadadb.compat.Files;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;

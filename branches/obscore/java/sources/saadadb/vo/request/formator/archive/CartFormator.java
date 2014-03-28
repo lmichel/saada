@@ -342,7 +342,8 @@ public class CartFormator  extends QueryResultFormator{
 			/*
 			 * Linked spectra are packed with their attached data which are usually calibration data
 			 */
-			if( mr.getSecondary_category() == Category.SPECTRUM ) {
+			if( mr.getSecondary_category() == Category.SPECTRUM 
+					&& Database.getCachemeta().getRelationNamesStartingFromColl(mr.getSecondary_coll(), Category.SPECTRUM).length > 0) {
 				ZipFormator formator = new ZipFormator(null);
 				for( long cpoid: cpoids) {
 					formator.zipInstance(cpoid, this.responseDir, "any-relations", true, false);
@@ -378,16 +379,17 @@ public class CartFormator  extends QueryResultFormator{
 			}
 		}
 	}
-	@Override
-	protected void writeHouskeepingData(SaadaInstance obj)
-	throws SaadaException {
-		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Make non sense for ZIP formator");
-	}
 
-	@Override
-	protected void writeExtReferences(SaadaInstance obj) throws QueryException {
-		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Make non sense for ZIP formator");
-	}
+    @Override
+    protected void writeHouskeepingData(SaadaInstance obj)
+    throws SaadaException {
+            QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Make non sense for ZIP formator");
+    }
+
+    @Override
+    protected void writeExtReferences(SaadaInstance obj) throws QueryException {
+            QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Make non sense for ZIP formator");
+    }
 
 	@Override
 	protected void writeProtocolParamDescription() throws Exception {

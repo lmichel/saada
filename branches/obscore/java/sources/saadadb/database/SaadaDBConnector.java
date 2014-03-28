@@ -2,24 +2,19 @@ package saadadb.database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.postgresql.util.PSQLException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
-import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;

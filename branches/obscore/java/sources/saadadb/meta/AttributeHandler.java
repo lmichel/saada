@@ -341,22 +341,22 @@ public class AttributeHandler implements Serializable , Cloneable{
 	}
 
 	public void setClassname(String classname){
-		this.classname = classname.trim();
+		this.classname =  (classname == null)?null: classname.trim();
 	}
 
 	public void setCollname(String collname){
-		this.collname = collname.trim();
+		this.collname = (collname == null)?null: collname.trim();
 	}
 
 	public void setNameorg (String nameorg) {
 		if(nameorg != null){
-			this.nameorg = nameorg.trim();
+			this.nameorg =  (nameorg == null)?null: nameorg.trim();
 		}
 	}
 
 	public void setUcd(String ucd){
 		if(ucd != null){
-			this.ucd = ucd.trim();
+			this.ucd =  (ucd == null)?null: ucd.trim();
 		}
 	}
 

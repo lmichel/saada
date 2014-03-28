@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.executor.Query;
@@ -55,6 +56,7 @@ public class QueryContext implements Serializable {
 			colfmtor.addUCDColumn(ah); 
 		}
 		colfmtor.addConstrainedColumns(query.buildListAttrHandPrinc());
+		resultSet.close();
 	}
 	
 	public String getQuery() {

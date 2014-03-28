@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -81,7 +80,6 @@ import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
 /**
@@ -280,7 +278,7 @@ public class AdminTool extends BaseFrame {
 			/*
 			 * If SQLITE is used, there is no need to switch the user but the schema update needs to be run anyway
 			 */
-		} else {
+		} else {					
 			Database.setAdminMode(null);
 			Database.updatSchema();
 		}
