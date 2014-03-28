@@ -1,5 +1,8 @@
 package saadadb.products.inference;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import saadadb.exceptions.SaadaException;
@@ -40,6 +43,11 @@ public abstract class KWDetector {
 		System.out.println("CREATOR 3 " + this.tableAttributeHandler.size()+ " " + this.entryAttributeHandler.size()+ " " + this.getClass().getName());
 	}
 
+	/**
+	 * @param ucd_regexp
+	 * @param colname_regexp
+	 * @return
+	 */
 	protected  AttributeHandler search(String ucd_regexp, String colname_regexp){
 		AttributeHandler retour = null;
 		if(ucd_regexp!= null ){
@@ -50,6 +58,11 @@ public abstract class KWDetector {
 		}
 		return retour;
 	}
+	/**
+	 * @param ucd_regexp
+	 * @param colname_regexp
+	 * @return
+	 */
 	protected  AttributeHandler searchColumns(String ucd_regexp, String colname_regexp){
 		AttributeHandler retour = null;
 		if(ucd_regexp!= null ){
@@ -80,6 +93,42 @@ public abstract class KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return null;
 	}
+	
+	/**
+	 * @param ucd1_regexp
+	 * @param ucd2_regexp
+	 * @return
+	 */
+	protected List<AttributeHandler> searchByUcd(String ucd1_regexp, String ucd2_regexp) {
+		String msg = "";
+		AttributeHandler ah1 =  null;
+		AttributeHandler ah2 =  null;
+		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
+		if( Messenger.debug_mode ) 
+			msg = "Search by UCD /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
+		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
+			if( ah.getUcd().matches(ucd1_regexp) ){
+				ah1 = ah;
+				continue;
+			}
+			if( ah1 != null ) {
+				if( ah.getUcd().matches(ucd2_regexp)){
+					ah2 = ah;
+					if( Messenger.debug_mode ) 
+						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
+					retour.add(ah1);
+					retour.add(ah2);
+					return retour;
+				} else {
+					ah1 = null;
+				}
+			}
+		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
+		return retour;
+	}
+
 	/**
 	 * @param ucd_regexp
 	 * @return
@@ -98,6 +147,40 @@ public abstract class KWDetector {
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return null;
+	}
+	/**
+	 * @param colname1_regexp
+	 * @param colname2_regexp
+	 * @return
+	 */
+	protected List<AttributeHandler> searchByName(String colname1_regexp, String colname2_regexp) {
+		String msg = "";
+		AttributeHandler ah1 =  null;
+		AttributeHandler ah2 =  null;
+		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
+		if( Messenger.debug_mode ) 
+			msg = "Search by NAME /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
+		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
+			if( ah.getNameorg().matches(colname1_regexp) || ah.getNameattr().matches(colname1_regexp)){
+				ah1 = ah;
+				continue;
+			}
+			if( ah1 != null ) {
+				if( ah.getNameorg().matches(colname2_regexp) || ah.getNameattr().matches(colname2_regexp)){
+					ah2 = ah;
+					if( Messenger.debug_mode ) 
+						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
+					retour.add(ah1);
+					retour.add(ah2);
+					return retour;
+				} else {
+					ah1 = null;
+				}
+			}
+		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
+		return retour;
 	}
 
 	/**
@@ -120,6 +203,8 @@ public abstract class KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return null;
 	}
+	
+	
 	/**
 	 * @param ucd_regexp
 	 * @return

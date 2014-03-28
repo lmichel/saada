@@ -1,6 +1,7 @@
 package saadadb.products.inference;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import saadadb.meta.AttributeHandler;
@@ -49,36 +50,31 @@ public class SpaceKWDetector extends KWDetector{
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForEclpiticKeywords();					
-			}
-			else if( ah.getValue().matches(".*FK5.*")) {
+			} else if( ah.getValue().matches(".*FK5.*")) {
 				this.frame = new FK5();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForFK5Keywords();					
-			}
-			else if( ah.getValue().matches(".*FK4.*")) {
+			} else if( ah.getValue().matches(".*FK4.*")) {
 				this.frame = new FK4();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForFK4Keywords();					
-			}
-			else if( ah.getValue().toLowerCase().matches(".*galactic.*")) {
+			} else if( ah.getValue().toLowerCase().matches(".*galactic.*")) {
 				this.frame = new Galactic();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForGalacticKeywords();					
-			}
-			else if( ah.getValue().toLowerCase().matches(".*ICRS.*")) {
+			} else if( ah.getValue().toLowerCase().matches(".*ICRS.*")) {
 				this.frame = new ICRS();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
 				lookForICRSKeywords();					
-			}
-			else {
+			} else {
 				Messenger.printMsg(Messenger.WARNING, "Unknown coordinate system <" +  ah.getValue() + ">");
 			}
 			if( (status & FRAME_FOUND) > 0 && (status & POS_KW_FOUND) == 0 && Messenger.debug_mode) {
@@ -90,6 +86,8 @@ public class SpaceKWDetector extends KWDetector{
 		 * If no frame has been found, look for keywords and infers the frame from them
 		 */
 		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
 			detectKeywordsandInferFrame();
 		}
 		if( (status & FRAME_FOUND) == 0) {
@@ -162,6 +160,8 @@ public class SpaceKWDetector extends KWDetector{
 		 * If no frame has been found, look for keywords and infers the frame from them
 		 */
 		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
 			detectKeywordsandInferFrame();
 		}
 		if( (status & FRAME_FOUND) == 0) {
@@ -232,6 +232,8 @@ public class SpaceKWDetector extends KWDetector{
 		 * If no frame has been found, look for keywords and infers the frame from them
 		 */
 		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
 			detectKeywordsandInferFrame();
 		}
 		if( (status & FRAME_FOUND) == 0) {
@@ -247,6 +249,8 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	private void lookForError() {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
 		this.err_maj = this.searchByUcd(RegExp.ERROR_MAJ_UCD);
 		if( this.err_maj == null ) this.err_maj = this.searchByUcd(RegExp.ERROR_MIN_KW);
 		this.err_min = this.searchByUcd(RegExp.ERROR_MIN_UCD);
@@ -255,6 +259,7 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
 		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
 		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
+		System.exit(1);
 	}
 	/**
 	 * 
@@ -306,6 +311,8 @@ public class SpaceKWDetector extends KWDetector{
 	 * 
 	 */
 	private void lookForFK5Keywords() {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for FK5 keywords");
 		/*
 		 * Search by UCD first
 		 */
@@ -333,6 +340,8 @@ public class SpaceKWDetector extends KWDetector{
 	 * 
 	 */
 	private void lookForFK4Keywords() {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for FK4 keywords");
 		/*
 		 * Search by UCD first
 		 */
@@ -359,32 +368,59 @@ public class SpaceKWDetector extends KWDetector{
 	 * 
 	 */
 	private void lookForICRSKeywords() {
-		/*
-		 * Search by UCD first
-		 */
-		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_MAINUCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for ICRS keywords");
+		List<AttributeHandler> posKW;
+		posKW =  searchByUcd(RegExp.ICRS_RA_MAINUCD,RegExp.ICRS_DEC_MAINUCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_UCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
+		posKW =  searchByUcd(RegExp.ICRS_RA_UCD,RegExp.ICRS_DEC_UCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByName(RegExp.ICRS_RA_KW)) != null && (declination_kw = searchByName(RegExp.ICRS_DEC_KW))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (name)");
+		posKW =  searchByName(RegExp.ICRS_RA_KW, RegExp.ICRS_DEC_KW);
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
+//		;
+//		/*
+//		 * Search by UCD first
+//		 */
+//		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_MAINUCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_UCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByName(RegExp.ICRS_RA_KW)) != null && (declination_kw = searchByName(RegExp.ICRS_DEC_KW))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (name)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
 	}
 	/**
 	 * 
 	 */
 	private void lookForEclpiticKeywords() {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for Ecliptic keywords");
 		/*
 		 * Search by UCD first
 		 */
@@ -411,6 +447,8 @@ public class SpaceKWDetector extends KWDetector{
 	 * 
 	 */
 	private void lookForGalacticKeywords() {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for Galactic keywords");
 		/*
 		 * Search by UCD first
 		 */
