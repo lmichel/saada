@@ -6,6 +6,7 @@ package saadadb.products;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ class ProductIngestor {
 		this.loadAttrExtends();
 	}
 
-	
+
 	/**
 	 * Used by subclasses to  iterate on tabular data
 	 * @return
@@ -89,7 +90,7 @@ class ProductIngestor {
 		return false;
 	}
 
-    /**
+	/**
 	 * Populate native (business) attributes if the current instance
 	 * Checks for each field if a type conversion must be done
 	 * @throws Exception
@@ -115,7 +116,7 @@ class ProductIngestor {
 		}
 		this.saadaInstance.computeContentSignature(md5Value);
 	}
-	
+
 	/*
 	 * 
 	 * Set Fields attached to the Observation Axe
@@ -177,13 +178,13 @@ class ProductIngestor {
 		}
 		return name;
 	}
-	
+
 	/*
 	 * 
 	 * Set Fields attached to the Space Axe
 	 *
 	 */
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -191,7 +192,7 @@ class ProductIngestor {
 		this.setAstrofFrame();
 		this.setPositionFields(0);
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -242,39 +243,46 @@ class ProductIngestor {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set: keywords not set");
 				return;
 			} else {
-				Astrocoo acoo;
-				if( this.product.s_ra_ref == this.product.s_dec_ref) {
-					acoo= new Astrocoo(this.product.astroframe, ra_val ) ;
-				}
-				/*
-				 * or in separate columns
-				 */
-				else {
-					acoo= new Astrocoo(this.product.astroframe, ra_val + " " + dec_val) ;
+				try {
+					Astrocoo acoo;
+					if( this.product.s_ra_ref == this.product.s_dec_ref) {
+						acoo= new Astrocoo(this.product.astroframe, ra_val ) ;
+					}
+					/*
+					 * or in separate columns
+					 */
+					else {
+						acoo= new Astrocoo(this.product.astroframe, ra_val + " " + dec_val) ;
+					}
+
+					double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + this.product.astroframe + "> to <" + Database.getAstroframe() + ">");				
+					double ra = converted_coord[0];
+					double dec = converted_coord[1];
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);
+					if(Double.isNaN(ra))
+						this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
+					else
+						this.saadaInstance.s_ra = ra;
+					if(Double.isNaN(dec))
+						this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;
+					else
+						this.saadaInstance.s_dec = dec;
+					if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
+						this.saadaInstance.calculSky_pixel_csa();
+						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
+								+ "> set to <" + this.saadaInstance.s_ra + "," + this.saadaInstance.s_dec + ">" );
+					} else {
+						if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
+					}
+					this.setPosErrorFields(number);
+				} catch( ParseException e ) {
+					Messenger.printMsg(Messenger.TRACE, "Error whiled pasing the position " + e.getMessage());
+					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
+					this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 				}
 
-				double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
-				if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + this.product.astroframe + "> to <" + Database.getAstroframe() + ">");				
-				double ra = converted_coord[0];
-				double dec = converted_coord[1];
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);
-				if(Double.isNaN(ra))
-					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
-				else
-					this.saadaInstance.s_ra = ra;
-				if(Double.isNaN(dec))
-					this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;
-				else
-					this.saadaInstance.s_dec = dec;
-				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
-					this.saadaInstance.calculSky_pixel_csa();
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
-							+ "> set to <" + this.saadaInstance.s_ra + "," + this.saadaInstance.s_dec + ">" );
-				} else {
-					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
-				}
-				this.setPosErrorFields(number);
 			} // if position really found
 		} //if position mapped
 	}
@@ -331,8 +339,8 @@ class ProductIngestor {
 	/*
 	 * Set Time field
 	 */
-	
-	 /**
+
+	/**
 	 * @throws SaadaException
 	 */
 	protected void setTimeFields() throws SaadaException {
@@ -345,7 +353,7 @@ class ProductIngestor {
 	 * Set Energy fields
 	 * 
 	 */
-	
+
 	/**
 	 * @throws FatalException 
 	 */
@@ -355,7 +363,7 @@ class ProductIngestor {
 	}
 
 
-	
+
 	/**
 	 * This default method load the extended attributes in the parametered
 	 * product.
@@ -374,14 +382,14 @@ class ProductIngestor {
 			}
 		}
 	}
-	
-	
+
+
 	/*
 	 * 
 	 * Database storage
 	 *
 	 */
-	
+
 	/**
 	 * Stores the saada instance within the DB
 	 * Check the uniqueness (with a warning) of the product in debug mode. 
@@ -426,8 +434,8 @@ class ProductIngestor {
 	 * 
 	 * Actions related to the repository
 	 *
-     */
-	
+	 */
+
 	/**
 	 * Copy the product file into the repository with the name given as parameter
 	 * @param rep_name
@@ -505,7 +513,7 @@ class ProductIngestor {
 	 * Utilities
 	 * 
 	 */
-	
+
 	/**
 	 * Set the saada instance's field "fieldName" with the value read in ah_ref
 	 * @param fieldName

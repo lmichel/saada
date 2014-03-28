@@ -208,11 +208,11 @@ public class ProductBuilder {
 			if(this.productFile == null ) {
 				this.energyKWDetector = new EnergyKWDetector(this.productAttributeHandler
 						, this.energyMappingPriority
-						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getHandler().getValue());
+						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue());
 			} else {
 				this.energyKWDetector = this.productFile.getEnergyKWDetector(false
 						, this.energyMappingPriority
-						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getHandler().getValue());
+						, mapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue());
 			}
 		}
 	}
@@ -376,6 +376,7 @@ public class ProductBuilder {
 					try_votable = true;
 				}
 			} catch(Exception ef) {
+				ef.printStackTrace();
 				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
 				try_votable = true;
 			}
