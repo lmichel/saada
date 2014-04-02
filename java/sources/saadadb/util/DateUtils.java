@@ -33,7 +33,7 @@ public class DateUtils {
 	 */
 	public static double getFMJD(String input) throws Exception {
 	    Astrotime af = new Astrotime();
-		if( input.matches(RegExp.FITS_FLOAT_NDN) ) {
+		if( input.matches(RegExp.FITS_FLOAT_VAL) ) {
 			af.set(Double.parseDouble(input));
 			return af.getMJD();
 		} else if( input.matches(RegExp.FITS_INT_VAL) ) {
@@ -44,5 +44,4 @@ public class DateUtils {
 			return af.getMJD();
 		}
 	}
-
 }

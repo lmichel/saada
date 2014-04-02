@@ -181,17 +181,17 @@ public class NativeAttributesProvider {
 //		} else if (attr_name.compareTo("x_unit_csa") == 0) {
 //			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_csa);
 		
-		} else if (attr_name.compareTo("x_naxis_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_naxis_csa);
+//		} else if (attr_name.compareTo("x_naxis_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_naxis_csa);
 		
 //		} else if (attr_name.compareTo("x_colname_csa") == 0) {
 //			return DefaultFormats.getString(((SpectrumSaada)saadai).x_colname_csa);
 		
-		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);
-		
-		} else if (attr_name.compareTo("x_unit_org_csa") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_org_csa);
+//		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);
+//		
+//		} else if (attr_name.compareTo("x_unit_org_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_org_csa);
 		}
 		return null;
 	}

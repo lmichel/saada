@@ -16,12 +16,12 @@ public class SpectrumSaada extends FileRef{
 	/*
 	 * Saada Axe
 	 */	
-    public int    x_naxis_csa = SaadaConstant.INT;
+   // public int    x_naxis_csa = SaadaConstant.INT;
 	/*
 	 * Energy Axe
 	 */
-    public double x_min_org_csa  = SaadaConstant.DOUBLE;
-    public double x_max_org_csa  = SaadaConstant.DOUBLE;
-    public String x_unit_org_csa = SaadaConstant.STRING;
+//    public double x_min_org_csa  = SaadaConstant.DOUBLE;
+//    public double x_max_org_csa  = SaadaConstant.DOUBLE;
+//    public String x_unit_org_csa = SaadaConstant.STRING;
 }
   

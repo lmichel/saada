@@ -190,7 +190,7 @@ public class SaadaDBConnector extends DefaultHandler {
 		try {
 			if( instance == null || force) {
 				/*
-				 * Normal use, the caller (API or datalaoder) knows the database name
+				 * Normal use, the caller (API or dataloader) knows the database name
 				 * The connector can be configured
 				 */
 				if( dbname != null ) {

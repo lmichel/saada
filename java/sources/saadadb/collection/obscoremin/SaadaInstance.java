@@ -94,9 +94,9 @@ public abstract class SaadaInstance implements DMInterface {
 	public double s_ra = saadadb.util.SaadaConstant.DOUBLE;
 	public double s_dec = saadadb.util.SaadaConstant.DOUBLE;
 	public long   healpix_csa=SaadaConstant.LONG;
-	//	public double pos_x_csa=SaadaConstant.DOUBLE ;
-	//	public double pos_y_csa=SaadaConstant.DOUBLE ;
-	//	public double pos_z_csa=SaadaConstant.DOUBLE ;
+//	public double pos_x_csa=SaadaConstant.DOUBLE ;
+//	public double pos_y_csa=SaadaConstant.DOUBLE ;
+//	public double pos_z_csa=SaadaConstant.DOUBLE ;
 	/*
 	 * Major axis of the error ellipse
 	 */

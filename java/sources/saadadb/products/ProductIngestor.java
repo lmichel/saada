@@ -256,9 +256,10 @@ class ProductIngestor {
 					}
 
 					double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
-					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + this.product.astroframe + "> to <" + Database.getAstroframe() + ">");				
 					double ra = converted_coord[0];
 					double dec = converted_coord[1];
+					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + acoo.getLon() + "," + acoo.getLat() + " " + this.product.astroframe + "> to <" + ra + "," + dec + " "+  Database.getAstroframe() + ">");				
+
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);
 					if(Double.isNaN(ra))
@@ -278,7 +279,7 @@ class ProductIngestor {
 					}
 					this.setPosErrorFields(number);
 				} catch( ParseException e ) {
-					Messenger.printMsg(Messenger.TRACE, "Error whiled pasing the position " + e.getMessage());
+					Messenger.printMsg(Messenger.TRACE, "Error while parsing the position " + e.getMessage());
 					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 					this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 				}
@@ -333,7 +334,7 @@ class ProductIngestor {
 				this.saadaInstance.setError(maj_err, min_err, angle);
 			}
 		} else {
-			if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Position error not mapped or without unit: won't be set for this product");					
+			if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	
 	}
 	/*

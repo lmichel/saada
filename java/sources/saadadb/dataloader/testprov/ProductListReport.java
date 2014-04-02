@@ -1,11 +1,13 @@
 package saadadb.dataloader.testprov;
 
 import java.io.File;
+import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.meta.AttributeHandler;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -25,26 +27,37 @@ public class ProductListReport {
 			System.out.println(ap);
 			File[] files = (new File(ap.getFilename())).listFiles();
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
+			int cpt = 1;
+			int MAX = 3;
 			for( File f: files) {
-				System.out.println("======== " + f);
-				ProductBuilder product = null;
-				switch( Category.getCategory(ap.getCategory()) ) {
-				case Category.TABLE: product = new TableBuilder((new File(f.getAbsolutePath()))
-						, new ProductMapping("mapping", ap));
-				break;
-				case Category.MISC : product = new MiscBuilder((new File(f.getAbsolutePath()))
-						, new ProductMapping("mapping", ap));
-				break;
-				case Category.SPECTRUM: product = new SpectrumBuilder((new File(f.getAbsolutePath()))
-						, new ProductMapping("mapping", ap));
-				break;
-				case Category.IMAGE: product = new Image2DBuilder((new File(f.getAbsolutePath()))
-						, new ProductMapping("mapping", ap));
-				break;
+				if( cpt == MAX ) {
+					ProductBuilder product = null;
+					switch( Category.getCategory(ap.getCategory()) ) {
+					case Category.TABLE: product = new TableBuilder((new File(f.getAbsolutePath()))
+							, new ProductMapping("mapping", ap));
+					break;
+					case Category.MISC : product = new MiscBuilder((new File(f.getAbsolutePath()))
+							, new ProductMapping("mapping", ap));
+					break;
+					case Category.SPECTRUM: product = new SpectrumBuilder((new File(f.getAbsolutePath()))
+							, new ProductMapping("mapping", ap));
+					break;
+					case Category.IMAGE: product = new Image2DBuilder((new File(f.getAbsolutePath()))
+							, new ProductMapping("mapping", ap));
+					break;
+					}
+					product.initProductFile();
+					Map<String, AttributeHandler> r = product.getReport();
+					System.out.println("======== " + f);	
+					for( java.util.Map.Entry<String, AttributeHandler> e:r.entrySet()){
+						System.out.print(String.format("%20s",e.getKey()) + "     ");
+						AttributeHandler ah = e.getValue();
+						System.out.print(ah.getValue());
+						System.out.println(" <" + ah.getComment() + ">");
+					}
 				}
-				product.initProductFile();
-				product.printReport();
-				break;
+				if( cpt > MAX ) break;
+				cpt++;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
