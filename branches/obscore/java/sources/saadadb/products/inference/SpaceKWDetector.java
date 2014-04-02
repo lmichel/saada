@@ -259,7 +259,6 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
 		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
 		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
-		System.exit(1);
 	}
 	/**
 	 * 
@@ -313,27 +312,49 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForFK5Keywords() {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK5 keywords");
-		/*
-		 * Search by UCD first
-		 */
-		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_MAINUCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
+		List<AttributeHandler> posKW;
+		posKW =  searchByUcd(RegExp.FK5_RA_MAINUCD,RegExp.FK5_DEC_MAINUCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_UCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
+		posKW =  searchByUcd(RegExp.FK5_RA_UCD,RegExp.FK5_DEC_UCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByName(RegExp.FK5_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK5_DEC_KW))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (name)");
+		posKW =  searchByName(RegExp.FK5_RA_KW, RegExp.FK5_DEC_KW);
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
+//		/*
+//		 * Search by UCD first
+//		 */
+//		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_MAINUCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_UCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByName(RegExp.FK5_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK5_DEC_KW))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (name)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
 	}
 
 	/**
@@ -342,27 +363,49 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForFK4Keywords() {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK4 keywords");
-		/*
-		 * Search by UCD first
-		 */
-		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_MAINUCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
+		List<AttributeHandler> posKW;
+		posKW =  searchByUcd(RegExp.FK4_RA_MAINUCD,RegExp.FK4_DEC_MAINUCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_UCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
+		posKW =  searchByUcd(RegExp.FK4_RA_UCD,RegExp.FK4_DEC_UCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByName(RegExp.FK4_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK4_DEC_KW))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (name)");
+		posKW =  searchByName(RegExp.FK4_RA_KW, RegExp.FK4_DEC_KW);
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
+//		/*
+//		 * Search by UCD first
+//		 */
+//		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_MAINUCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_UCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByName(RegExp.FK4_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK4_DEC_KW))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (name)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
 	}
 	/**
 	 * 
@@ -421,27 +464,49 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForEclpiticKeywords() {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Ecliptic keywords");
-		/*
-		 * Search by UCD first
-		 */
-		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_MAINUCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
+		List<AttributeHandler> posKW;
+		posKW =  searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_UCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
+		posKW =  searchByUcd(RegExp.ECLIPTIC_RA_UCD,RegExp.ECLIPTIC_DEC_UCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByName(RegExp.ECLIPTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.ECLIPTIC_DEC_KW))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (name)");
+		posKW =  searchByName(RegExp.ECLIPTIC_RA_KW, RegExp.ECLIPTIC_DEC_KW);
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
+//		/*
+//		 * Search by UCD first
+//		 */
+//		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_MAINUCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_UCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByName(RegExp.ECLIPTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.ECLIPTIC_DEC_KW))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (name)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
 	}
 	/**
 	 * 
@@ -449,27 +514,49 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForGalacticKeywords() {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Galactic keywords");
-		/*
-		 * Search by UCD first
-		 */
-		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_MAINUCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
+		List<AttributeHandler> posKW;
+		posKW =  searchByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_UCD))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
+		posKW =  searchByUcd(RegExp.GALACTIC_RA_UCD,RegExp.GALACTIC_DEC_UCD );
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
-		if( (ascension_kw = searchByName(RegExp.GALACTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.GALACTIC_DEC_KW))  != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (name)");
+		posKW =  searchByName(RegExp.GALACTIC_RA_KW, RegExp.GALACTIC_DEC_KW);
+		if( posKW.size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
-			return ;			
+			return;
 		}
+//		/*
+//		 * Search by UCD first
+//		 */
+//		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_MAINUCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_UCD))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
+//		if( (ascension_kw = searchByName(RegExp.GALACTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.GALACTIC_DEC_KW))  != null ) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (name)");
+//			status |= POS_KW_FOUND;
+//			return ;			
+//		}
 	}
 	/**
 	 * @return the astro_frame

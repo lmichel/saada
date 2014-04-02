@@ -105,7 +105,7 @@ public abstract class KWDetector {
 		AttributeHandler ah2 =  null;
 		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
 		if( Messenger.debug_mode ) 
-			msg = "Search by UCD /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
+			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd1_regexp) ){
 				ah1 = ah;
@@ -159,7 +159,7 @@ public abstract class KWDetector {
 		AttributeHandler ah2 =  null;
 		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
 		if( Messenger.debug_mode ) 
-			msg = "Search by NAME /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
+			msg = "Search by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.getNameorg().matches(colname1_regexp) || ah.getNameattr().matches(colname1_regexp)){
 				ah1 = ah;

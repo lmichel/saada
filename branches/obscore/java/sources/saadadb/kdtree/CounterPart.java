@@ -21,19 +21,14 @@ public class CounterPart implements HasKCoo {
 	protected double distance;
 	
 	public CounterPart(ResultSet rs) throws SQLException{
-		this.pos_x_csa = rs.getDouble("pos_x_csa");
-		this.pos_y_csa = rs.getDouble("pos_y_csa");
-		this.pos_z_csa = rs.getDouble("pos_z_csa");
-		this.oidsaada =  rs.getLong("oidsaada");
+		double ra  = rs.getDouble("s_ra");
+		double dec = rs.getDouble("s_dec");
+		this.pos_x_csa = (Math.cos(Math.toRadians(dec)) * Math.cos(Math.toRadians(ra)));
+		this.pos_y_csa = (Math.cos(Math.toRadians(dec)) * Math.sin(Math.toRadians(ra)));
+		this.pos_z_csa = (Math.sin(Math.toRadians(dec)));
+		this.oidsaada  = rs.getLong("oidsaada");
 	}
-	
-	public CounterPart(double[] coo, long oid) throws SQLException{
-		this.pos_x_csa = coo[0];
-		this.pos_y_csa = coo[1];
-		this.pos_z_csa = coo[2];
-		this.oidsaada =  oid;
-	}
-	
+		
 	public final double coo(int i) {
 		if( i == 0 ) {
 			return this.pos_x_csa;

@@ -44,9 +44,11 @@ public class EnergyKWDetector extends KWDetector {
 		this.defaultUnit = defaultUnit;
 		switch (this.priority) {
 		case ONLY:
+			// Consider the default unit as this read
 			this.readUnit = this.defaultUnit;
 			break;
 		case FIRST: 
+			// Consider the default unit as this read if not null
 			if( this.defaultUnit != null && this.defaultUnit.length() != 0 ) {
 				this.readUnit = this.defaultUnit;
 				this.priority = PriorityMode.ONLY;
@@ -55,8 +57,12 @@ public class EnergyKWDetector extends KWDetector {
 			}
 			break;
 		default:
+			// Consider that no unit has been read right now
 			this.readUnit = null;
 			break;
+		}
+		if( this.defaultUnit == null || this.defaultUnit.length() == 0 ) {
+			this.defaultUnit = "channels";
 		}
 	}
 	/**

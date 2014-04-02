@@ -513,9 +513,6 @@ public class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionAttributes() throws Exception {
-		System.out.println("@@@@@@@@@@@@@@ MAP COLLLLLLLLLLLLLLLLLLLL" + this);
-		for(AttributeHandler ah: this.productAttributeHandler.values()) System.out.print(ah.getNameattr() + " " );
-		System.out.println("\n");
 		this.mapObservationAxe();
 		this.mapSpaceAxe();
 		this.mapEnergyAxe();
@@ -651,20 +648,29 @@ public class ProductBuilder {
 		case LAST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority LAST: KWs will first be inefered and then mapped keywords will be searched");
 			this.spectralCoordinate = this.energyKWDetector.getSpectralCoordinate();
+			System.out.println("aaaaaaaaaa");
 			if( !this.spectralCoordinate.convert() ) {
+				System.out.println("bbbbbbbbbbbbbbbb");
 				if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
+					System.out.println("cccccccccccccccc" + this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
+					
 					this.em_min_ref = new AttributeHandler();
 					this.em_min_ref.setNameattr(ColumnMapping.UNDEFINED);
+					this.em_min_ref.setComment( "vorg="+this.spectralCoordinate.getOrgMin() + this.spectralCoordinate.getOrgUnit());
 					this.em_max_ref = new AttributeHandler();
 					this.em_max_ref.setNameattr(ColumnMapping.UNDEFINED);
+					this.em_max_ref.setComment( "vorg="+this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
 				}
 			} else {
+				System.out.println("dddddddddddddddddd");
 				this.em_min_ref = new AttributeHandler();
 				this.em_min_ref.setNameattr(ColumnMapping.NUMERIC);
 				this.em_min_ref.setValue(Double.toString(spectralCoordinate.getConvertedMin()));
+				this.em_min_ref.setComment( "vorg="+this.spectralCoordinate.getOrgMin() + this.spectralCoordinate.getOrgUnit());
 				this.em_max_ref = new AttributeHandler();
 				this.em_max_ref.setNameattr(ColumnMapping.NUMERIC);
-				this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));				
+				this.em_max_ref.setValue(Double.toString(spectralCoordinate.getConvertedMax()));	
+				this.em_max_ref.setComment( "vorg="+this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
 				this.x_unit_org_ref = new AttributeHandler();
 				this.x_unit_org_ref.setNameattr(ColumnMapping.NUMERIC);
 				this.x_unit_org_ref.setValue(spectralCoordinate.getOrgUnit());
@@ -863,6 +869,8 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 */
 	private boolean mapCollectionCooSysAttributesFromMapping() throws SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "try to map the coord system from mapping");
 		/*
 		 * Do nothing if no mapping
 		 */
@@ -1067,6 +1075,8 @@ public class ProductBuilder {
 	 * 
 	 */
 	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "try to map the Energy axis from mapping");
 		AxisMapping mapping = this.mapping.getEnergyAxisMapping();
 		ColumnMapping sc_col  = mapping.getColumnMapping("dispertion_column");
 		ColumnMapping sc_unit = mapping.getColumnMapping("x_unit_org_csa");
@@ -1284,6 +1294,8 @@ public class ProductBuilder {
 	 * 
 	 */
 	private boolean mapCollectionPosAttributesFromMapping() throws SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "try to map the position from mapping");
 		ColumnMapping raMapping  =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_ra");
 		ColumnMapping decMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_dec");
 		boolean ra_found = false;
@@ -1328,6 +1340,8 @@ public class ProductBuilder {
 	 * 
 	 */
 	private boolean mapCollectionPoserrorAttributesFromMapping() throws SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "try to map the error on position from mapping");
 		ColumnMapping errMajMapping  =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_maj_csa");
 		ColumnMapping errMinMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_min_csa");
 		ColumnMapping errAngleMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_angle_csa");
@@ -1509,30 +1523,25 @@ public class ProductBuilder {
 	 * @param col
 	 * @param att
 	 */
-	private void traceReportOnAttRef(String col, AttributeHandler att){
-		String msg = col + " ";
-		if( att == null ){
-			msg += "not set";
-		} else if( att.getNameattr().equals(ColumnMapping.NUMERIC) ) {
-			msg += "Taken by value <" + att.getValue() +">";
-		} else if( att.getNameattr().equals(ColumnMapping.UNDEFINED) ) {
-			msg += "Undefined";
-		} else {
-			msg += "Taken by keyword <" + att.getNameorg() +">";
-		}
-		Messenger.printMsg(Messenger.TRACE, msg);	
+	private void traceReportOnAttRef(String col, AttributeHandler att){		
+		Messenger.printMsg(Messenger.TRACE, this.getReportOnAttRef(col, att));	
 	}
 
+	/**
+	 * @param col
+	 * @param att
+	 * @return
+	 */
 	protected String getReportOnAttRef(String col, AttributeHandler att){
 		String msg = col + " ";
 		if( att == null ){
 			msg += "not set";
 		} else if( att.getNameattr().equals(ColumnMapping.NUMERIC) ) {
-			msg += "Taken by value <" + att.getValue() +">";
+			msg += "Taken by value <" + att.getValue() +"> " + att.getComment();
 		} else if( att.getNameattr().equals(ColumnMapping.UNDEFINED) ) {
-			msg += "Undefined";
+			msg += "Undefined "+ att.getComment();
 		} else {
-			msg += "Taken by keyword <" + att.getNameorg() +">";
+			msg += "Taken by keyword <" + att.getNameorg() +"> "+ att.getComment();
 		}
 		return msg;	
 	}

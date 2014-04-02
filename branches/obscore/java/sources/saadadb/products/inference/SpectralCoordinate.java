@@ -253,18 +253,23 @@ public class SpectralCoordinate{
 		/*
 		 * Input spectra has no unit as the SaadaDB itself. 
 		 */
-		if( (unitOrg == null|| unitOrg.equals("NULL") || unitOrg.equals("")) && this.unit.equalsIgnoreCase("channel")){
-			this.minValue = minOrg;
-			this.maxValue = maxOrg;
-			this.checkMinMax();
-			Messenger.printMsg(Messenger.TRACE, "Spectral range not converted, take <" + minValue + ":" + maxValue + " " + this.unit + ">");
-			return true;
+		if( (unitOrg == null|| unitOrg.equals("NULL") || unitOrg.equals("") || unitOrg.equalsIgnoreCase("channel")) ) {
+			if( this.unit.equalsIgnoreCase("channel")){
+				this.minValue = minOrg;
+				this.maxValue = maxOrg;
+				this.checkMinMax();
+				Messenger.printMsg(Messenger.TRACE, "Spectral range not converted, take <" + minValue + ":" + maxValue + " " + this.unit + ">");
+				return true;
+			} else {
+				Messenger.printMsg(Messenger.TRACE, "Can not convert channels to " + this.unit);
+				return false;
+			}
 		}
-		if( (minValue = convertSaada(unitOrg, this.unit, minOrg)) == SaadaConstant.DOUBLE ) {
+		if(  Double.isNaN((minValue = convertSaada(unitOrg, this.unit, minOrg))) ) {
 			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ minOrg+unitOrg+"> into <"+this.unit+"> failed");
 			return false;
 		}
-		if( (maxValue = convertSaada(unitOrg, this.unit, maxOrg)) == SaadaConstant.DOUBLE ) {
+		if( Double.isNaN((maxValue = convertSaada(unitOrg, this.unit, maxOrg))) ) {
 			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ maxOrg+unitOrg+"> into <"+this.unit+"> failed");
 			return false;
 		}

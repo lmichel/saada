@@ -724,17 +724,17 @@ public final class CorrQueryTranslator {
 			throw new IllegalArgumentException("Bad collection or category");
 		}
 		if( !with_error) {
-			return  "SELECT pos_x_csa, pos_y_csa, pos_z_csa, oidsaada \nFROM "
+			return  "SELECT s_ra, s_dec, oidsaada \nFROM "
 			+ scat
-			+ " \nWHERE pos_x_csa is not null AND pos_y_csa is not null AND pos_z_csa is not null " + class_select;
+			+ " \nWHERE s_ra is not null AND s_dec is not null  " + class_select;
 		}
 		else {
 			/*
 			 * Error is set to 0 if not def
 			 */
-			return  "SELECT pos_x_csa, pos_y_csa, pos_z_csa, error_maj_csa, oidsaada \nFROM "
+			return  "SELECT s_ra, s_dec, error_maj_csa, oidsaada \nFROM "
 			+ scat
-			+ " \nWHERE pos_x_csa is not null AND pos_y_csa is not null AND pos_z_csa is not null " + class_select;
+			+ " \nWHERE s_ra is not null AND s_dec is not null " + class_select;
 		}
 
 	}
