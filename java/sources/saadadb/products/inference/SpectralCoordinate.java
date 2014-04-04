@@ -35,6 +35,7 @@ public class SpectralCoordinate{
 	private double orgMax = SaadaConstant.DOUBLE;
 
 	private int dispersion_axe_num;
+	public String detectionMessage ="";
 
 	private Map<String, AttributeHandler> attributesList;
 	private String CUNIT;
@@ -597,6 +598,7 @@ public class SpectralCoordinate{
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.CUNIT + " as unit (given by the configuration)");
 			}
+		this.detectionMessage = wm.detectionMessage;
 		}
 		/*
 		 * No dispersion axe: we consider the longer one as a good candidate
@@ -626,9 +628,10 @@ public class SpectralCoordinate{
 						if( unitOrg.equals("A") ) {
 							unitOrg = "Angstrom";
 						}
+						this.detectionMessage = "DISP(ERS) keyword found expressed in " 
+							+  m.group(0) + ": try to take " + this.CUNIT + " as dispersion unit";
 						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "DISP(ERS) keyword found expressed in " 
-									+  m.group(0) + ": try to take " + this.CUNIT + " as dispersion unit");
+							Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 					}
 				}
 			}			
@@ -637,7 +640,8 @@ public class SpectralCoordinate{
 		if( this.convert(this.CUNIT, wm.getMinValue(dispersion_axe_num), wm.getMaxValue(dispersion_axe_num)) ) {
 			Messenger.printMsg(Messenger.TRACE, this.getRange());
 			return true;
-		}else{
+		} else {
+			this.detectionMessage = "";
 			return false;
 		}
 	}

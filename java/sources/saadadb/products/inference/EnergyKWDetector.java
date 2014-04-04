@@ -4,9 +4,11 @@ import java.util.Map;
 
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetter;
 import saadadb.products.ProductFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -18,6 +20,7 @@ public class EnergyKWDetector extends KWDetector {
 	private PriorityMode priority;
 	private String defaultUnit;
 	private String readUnit;
+	public String detectionMessage ="";
 	/**
 	 * @param productFile
 	 * @throws SaadaException
@@ -114,6 +117,7 @@ public class EnergyKWDetector extends KWDetector {
 		if( ext != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Spectral coordinates found in FITS image pixels");
+			this.detectionMessage = "Take the largest image dimension";
 			this.setMinMaxValues(ext);	
 			return true;
 		}
@@ -128,7 +132,10 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	private boolean findSpectralCoordinateByWCS() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in WCS keywords");
-		return  spectralCoordinate.convertWCS(this.tableAttributeHandler);
+		boolean retour =  spectralCoordinate.convertWCS(this.tableAttributeHandler);
+		if( retour )
+			this.detectionMessage = spectralCoordinate.detectionMessage;
+		return retour;
 	}
 
 	/**
@@ -137,16 +144,16 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	private boolean findSpectralCoordinateByKW() throws Exception{
 
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in KWs ");
 		/*
 		 * If no range set in params, try to find it out from fields
 		 */	
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinate found in header: explore columns names");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Search specyral coordinate in the columns names");
 		if( this.entryAttributeHandler != null ){
-			AttributeHandler ah = this.searchColumnsByName(RegExp.SPEC_AXIS_KW);
-			if( ah != null ){
-				this.setMinMaxValues(this.productFile.getExtrema(ah.getNameorg()));
+			ColumnSetter ah = this.searchColumnsByName(RegExp.SPEC_AXIS_KW);
+			if( !ah.notSet()  ){
+				this.setMinMaxValues(this.productFile.getExtrema(ah.getAttNameOrg()));
 				this.readUnit = ah.getUnit();
+				this.detectionMessage = ah.message.toString();
 				return true;
 			}
 		}
@@ -162,15 +169,17 @@ public class EnergyKWDetector extends KWDetector {
 		boolean findMax = false;
 
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates by UCDs or UTypes ");
-		AttributeHandler ah = this.searchByUcd(RegExp.SPEC_MIN_UCD);
-		if( ah !=null){
+		ColumnSetter ah = this.searchByUcd(RegExp.SPEC_MIN_UCD);
+		if( !ah.notSet() ){
 			spectralCoordinate.setOrgMin(Double.parseDouble(ah.getValue()));
+			this.detectionMessage = ah.message.toString();
 			findMin = true;
 			this.readUnit = ah.getUnit();
 		}
 		ah = this.searchByUcd(RegExp.SPEC_MAX_UCD);
-		if( ah !=null){
+		if( !ah.notSet() ){
 			spectralCoordinate.setOrgMax(Double.parseDouble(ah.getValue()));
+			this.detectionMessage += ah.message.toString();
 			findMax = true;
 			if( this.readUnit == null || this.readUnit.length() == 0) this.readUnit = ah.getUnit();
 		}
@@ -182,8 +191,8 @@ public class EnergyKWDetector extends KWDetector {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinates found in header UCDs or UTypes: explore column definitions");
 			findMin = false;
 			ah = this.searchColumnsByUcd(RegExp.SPEC_BAND_UCD);
-			if( ah !=null){
-				this.setMinMaxValues(this.productFile.getExtrema(ah.getNameorg()));
+			if( !ah.notSet() ){
+				this.setMinMaxValues(this.productFile.getExtrema(ah.getAttNameOrg()));
 				if( this.readUnit == null || this.readUnit.length() == 0)  this.readUnit = ah.getUnit();
 				findMin = true;
 			}
@@ -209,4 +218,11 @@ public class EnergyKWDetector extends KWDetector {
 		}
 		return spectralCoordinate;
 	}
+	
+	public ColumnSetter getResPower() throws FatalException{
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search for the exposure time");
+		return this.search(RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+	}
+
 }

@@ -1,12 +1,14 @@
 package saadadb.products.inference;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetMode;
+import saadadb.products.ColumnSetter;
 import saadadb.products.ProductFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -20,7 +22,6 @@ public abstract class KWDetector {
 	 */
 	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler) {
 		this.tableAttributeHandler = tableAttributeHandler;
-		System.out.println("CREATOR 1 " + this.tableAttributeHandler.size() + " " + this.getClass().getName());
 	}
 	/**
 	 * @param tableAttributeHandler
@@ -29,7 +30,6 @@ public abstract class KWDetector {
 	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler) {
 		this.tableAttributeHandler = tableAttributeHandler;
 		this.entryAttributeHandler = entryAttributeHandler;
-		System.out.println("CREATOR 2 " + this.tableAttributeHandler.size()+ " " + this.entryAttributeHandler.size()+ " " + this.getClass().getName());
 	}
 	/**
 	 * @param productFile
@@ -40,44 +40,46 @@ public abstract class KWDetector {
 			this.tableAttributeHandler = productFile.getAttributeHandler();
 			this.entryAttributeHandler =  productFile.getEntryAttributeHandler();
 		}
-		System.out.println("CREATOR 3 " + this.tableAttributeHandler.size()+ " " + this.entryAttributeHandler.size()+ " " + this.getClass().getName());
 	}
 
 	/**
 	 * @param ucd_regexp
 	 * @param colname_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected  AttributeHandler search(String ucd_regexp, String colname_regexp){
-		AttributeHandler retour = null;
+	protected  ColumnSetter search(String ucd_regexp, String colname_regexp) throws FatalException{
+		ColumnSetter retour = null;
 		if(ucd_regexp!= null ){
 			retour = this.searchByUcd(ucd_regexp);
 		}
-		if( retour == null && colname_regexp != null){
+		if( retour.notSet() && colname_regexp != null){
 			retour = this.searchByName(colname_regexp);
 		}
-		return retour;
+		return (retour != null)? retour: new ColumnSetter();
 	}
 	/**
 	 * @param ucd_regexp
 	 * @param colname_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected  AttributeHandler searchColumns(String ucd_regexp, String colname_regexp){
-		AttributeHandler retour = null;
+	protected  ColumnSetter searchColumns(String ucd_regexp, String colname_regexp) throws FatalException{
+		ColumnSetter retour = null;
 		if(ucd_regexp!= null ){
 			retour = this.searchColumnsByUcd(ucd_regexp);
 		}
-		if( retour == null && colname_regexp != null){
-			retour = this.searchColumnsByName(colname_regexp);
+		if( retour.notSet() && colname_regexp != null){
+			retour =  this.searchColumnsByName(colname_regexp);
 		}
-		return retour;
+		return (retour != null)? retour: new ColumnSetter();
 	}
 	/**
 	 * @param ucd_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected AttributeHandler searchByUcd(String ucd_regexp) {
+	protected ColumnSetter searchByUcd(String ucd_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search by UCD /" + ucd_regexp + "/";
@@ -86,24 +88,25 @@ public abstract class KWDetector {
 			if( ah.getUcd().matches(ucd_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return ah;
+				return new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return null;
+		return notSetColumnSetter();
 	}
 	
 	/**
 	 * @param ucd1_regexp
 	 * @param ucd2_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected List<AttributeHandler> searchByUcd(String ucd1_regexp, String ucd2_regexp) {
+	protected List<ColumnSetter> searchByUcd(String ucd1_regexp, String ucd2_regexp) throws FatalException {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
-		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
+		List<ColumnSetter> retour = new ArrayList<ColumnSetter>();
 		if( Messenger.debug_mode ) 
 			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
@@ -116,8 +119,8 @@ public abstract class KWDetector {
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-					retour.add(ah1);
-					retour.add(ah2);
+					retour.add(new ColumnSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
+					retour.add(new ColumnSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					return retour;
 				} else {
 					ah1 = null;
@@ -132,8 +135,9 @@ public abstract class KWDetector {
 	/**
 	 * @param ucd_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected AttributeHandler searchByName(String colname_regexp) {
+	protected ColumnSetter searchByName(String colname_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAME /" + colname_regexp + "/";
@@ -141,23 +145,24 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return ah;
+				return new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, false, false);
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return null;
+		return notSetColumnSetter();
 	}
 	/**
 	 * @param colname1_regexp
 	 * @param colname2_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected List<AttributeHandler> searchByName(String colname1_regexp, String colname2_regexp) {
+	protected List<ColumnSetter> searchByName(String colname1_regexp, String colname2_regexp) throws FatalException {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
-		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
+		List<ColumnSetter> retour = new ArrayList<ColumnSetter>();
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
@@ -170,8 +175,8 @@ public abstract class KWDetector {
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-					retour.add(ah1);
-					retour.add(ah2);
+					retour.add(new ColumnSetter(ah1, ColumnSetMode.BY_KEYWORD, false, false));
+					retour.add(new ColumnSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
 					return retour;
 				} else {
 					ah1 = null;
@@ -186,8 +191,9 @@ public abstract class KWDetector {
 	/**
 	 * @param ucd_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected AttributeHandler searchColumnsByUcd(String ucd_regexp) {
+	protected ColumnSetter searchColumnsByUcd(String ucd_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search column by UCD /" + ucd_regexp + "/";
@@ -196,20 +202,21 @@ public abstract class KWDetector {
 			if( ah.getUcd().matches(ucd_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return ah;
+				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return null;
+		return notSetColumnSetter();
 	}
 	
 	
 	/**
 	 * @param ucd_regexp
 	 * @return
+	 * @throws FatalException 
 	 */
-	protected AttributeHandler searchColumnsByName(String colname_regexp) {
+	protected ColumnSetter searchColumnsByName(String colname_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search column by NAME /" + colname_regexp + "/";
@@ -217,14 +224,24 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return ah;
+				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found" );
-		return null;
+		return notSetColumnSetter();
 	}
 
+	/**
+	 * Builsd the ColumnSetter to return when no va;lue has been found
+	 * @return
+	 */
+	private ColumnSetter notSetColumnSetter(){
+		ColumnSetter retour = new ColumnSetter();
+		retour.completeMessage("Nothing found");
+		retour.setNotSet();
+		return retour;
+	}
 
 	public static void main(String[] args) {
 		String[] v = new String [] {"__r", "__raj2000", "__dej2000", "_nogg", "_pgcgal", "_namegal", "_rab1950", "_deb1950", "_cz", "_r_cz", "_bmag", "_r_bmag"};

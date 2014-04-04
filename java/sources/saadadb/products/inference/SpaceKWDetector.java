@@ -4,7 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import cds.astro.Astroframe;
@@ -22,12 +24,12 @@ import cds.savot.model.SavotCoosys;
  * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
  */
 public class SpaceKWDetector extends KWDetector{
-	private AttributeHandler ascension_kw;
-	private AttributeHandler declination_kw;
-	private AttributeHandler err_min;
-	private AttributeHandler err_maj;
-	private AttributeHandler err_angle;
-	private AttributeHandler fov;
+	private ColumnSetter ascension_kw;
+	private ColumnSetter declination_kw;
+	private ColumnSetter err_min;
+	private ColumnSetter err_maj;
+	private ColumnSetter err_angle;
+	private ColumnSetter fov;
 	private Astroframe frame = null;
 	public static final int FRAME_FOUND = 1;
 	public static final int POS_KW_FOUND = 2;
@@ -36,10 +38,11 @@ public class SpaceKWDetector extends KWDetector{
 	
 	/**
 	 * @param tableAttributeHandler
+	 * @throws FatalException 
 	 */
-	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) {
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) throws FatalException {
 		super(tableAttributeHandler);
-		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
+		ColumnSetter ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
 		}
@@ -103,10 +106,11 @@ public class SpaceKWDetector extends KWDetector{
 
 	/**
 	 * @param tableAttributeHandler
+	 * @throws FatalException 
 	 */
-	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> columnsAttributeHandler) {
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> columnsAttributeHandler) throws FatalException {
 		super(tableAttributeHandler);
-		AttributeHandler ah = searchByName(RegExp.FIST_COOSYS_KW);
+		ColumnSetter ah = searchByName(RegExp.FIST_COOSYS_KW);
 		lookForError();
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
@@ -178,8 +182,9 @@ public class SpaceKWDetector extends KWDetector{
 	/**
 	 * @param infoCooSys
 	 * @param tableAttributeHandler
+	 * @throws FatalException 
 	 */
-	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) {
+	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) throws FatalException {
 		super(tableAttributeHandler);
 		lookForError();
 		/* 
@@ -248,7 +253,7 @@ public class SpaceKWDetector extends KWDetector{
 
 	}
 
-	private void lookForError() {
+	private void lookForError() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
 		this.err_maj = this.searchByUcd(RegExp.ERROR_MAJ_UCD);
@@ -261,9 +266,10 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
 	}
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	public void detectKeywordsandInferFrame() {
+	public void detectKeywordsandInferFrame() throws FatalException {
 		lookForICRSKeywords();
 		if( (status & POS_KW_FOUND) != 0 ) {
 			this.frame = new ICRS();
@@ -307,12 +313,13 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	private void lookForFK5Keywords() {
+	private void lookForFK5Keywords() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK5 keywords");
-		List<AttributeHandler> posKW;
+		List<ColumnSetter> posKW;
 		posKW =  searchByUcd(RegExp.FK5_RA_MAINUCD,RegExp.FK5_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -358,12 +365,13 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	private void lookForFK4Keywords() {
+	private void lookForFK4Keywords() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK4 keywords");
-		List<AttributeHandler> posKW;
+		List<ColumnSetter> posKW;
 		posKW =  searchByUcd(RegExp.FK4_RA_MAINUCD,RegExp.FK4_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -408,12 +416,13 @@ public class SpaceKWDetector extends KWDetector{
 //		}
 	}
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	private void lookForICRSKeywords() {
+	private void lookForICRSKeywords() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for ICRS keywords");
-		List<AttributeHandler> posKW;
+		List<ColumnSetter> posKW;
 		posKW =  searchByUcd(RegExp.ICRS_RA_MAINUCD,RegExp.ICRS_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -459,12 +468,13 @@ public class SpaceKWDetector extends KWDetector{
 //		}
 	}
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	private void lookForEclpiticKeywords() {
+	private void lookForEclpiticKeywords() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Ecliptic keywords");
-		List<AttributeHandler> posKW;
+		List<ColumnSetter> posKW;
 		posKW =  searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -509,12 +519,13 @@ public class SpaceKWDetector extends KWDetector{
 //		}
 	}
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	private void lookForGalacticKeywords() {
+	private void lookForGalacticKeywords() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Galactic keywords");
-		List<AttributeHandler> posKW;
+		List<ColumnSetter> posKW;
 		posKW =  searchByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -571,7 +582,7 @@ public class SpaceKWDetector extends KWDetector{
 	/**
 	 * @return the ascension_kw
 	 */
-	public AttributeHandler getAscension_kw() {
+	public ColumnSetter getAscension_kw() {
 		if( (status & POS_KW_FOUND) > 0)
 			return ascension_kw;
 		else 
@@ -581,7 +592,7 @@ public class SpaceKWDetector extends KWDetector{
 	/**
 	 * @return the declination_kw
 	 */
-	public AttributeHandler getDeclination_kw() {
+	public ColumnSetter getDeclination_kw() {
 		if( (status & POS_KW_FOUND) > 0)
 			return declination_kw;
 		else 
@@ -602,16 +613,16 @@ public class SpaceKWDetector extends KWDetector{
 		else return false;
 	}
 	
-	public AttributeHandler getErrorMin(){
+	public ColumnSetter getErrorMin(){
 		return err_min;
 	}
-	public AttributeHandler getErrorMaj(){
+	public ColumnSetter getErrorMaj(){
 		return err_maj;
 	}
-	public AttributeHandler getErrorAngle(){
+	public ColumnSetter getErrorAngle(){
 		return err_angle;		
 	}
-	public AttributeHandler getfov(){
+	public ColumnSetter getfov() throws FatalException{
 		if( this.fov == null ){
 			this.fov = this.search(RegExp.FOV_UCD, RegExp.FOV_KW);
 		}
