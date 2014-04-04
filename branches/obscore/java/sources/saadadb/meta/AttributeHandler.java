@@ -710,8 +710,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 	 * 
 	 */
 	public void setAsConstant() {
-		this.nameattr = this.nameorg = ColumnMapping.NUMERIC
-;
+		this.nameattr = this.nameorg = ColumnMapping.NUMERIC;
 		this.constantValue = true;
 	}
 	public boolean isConstantValue() {
