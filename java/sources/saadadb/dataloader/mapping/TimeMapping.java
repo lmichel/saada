@@ -6,13 +6,11 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
-import cds.astro.Astrotime;
 
 public class TimeMapping extends AxisMapping {
 
 	TimeMapping(ArgsParser ap, boolean entryMode) throws FatalException {
-		super(ap, new String[]{"t_min", "t_max"}, entryMode);
+		super(ap, new String[]{"t_min", "t_max", "t_exptime"}, entryMode);
 		String s;
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
@@ -30,6 +28,9 @@ public class TimeMapping extends AxisMapping {
 				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
 			}
 		}
+		if( (s = ap.getExpTime(entryMode)) != null  ){
+			this.columnMapping.put("t_exptime", new ColumnMapping(null, s, "t_exptime"));
+		} 
 		this.priority = ap.getTimeMappingPriority();
 		this.completeColumns();
 	}

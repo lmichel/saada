@@ -94,11 +94,6 @@ public class ColumnMapping {
 			ah.setUnit(unit);	
 			String v;
 			if( (v = this.isConstant(s)) != null ) {
-//			Matcher m = constPattern.matcher(s.trim());
-//			boolean f = m.find();
-//			System.out.println(f + " " + constPattern + " " + s + " "  + " " + m.groupCount());
-//			for ( int i=1 ; i<=m.groupCount() ; i++) System.out.println(m.group(i));
-//			if( f && m.groupCount() == 2 ) {
 				ah.setNameattr(ColumnMapping.NUMERIC);
 				ah.setNameorg(ColumnMapping.NUMERIC);
 				ah.setAsConstant();
