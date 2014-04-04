@@ -225,7 +225,10 @@ public class EntryBuilder extends ProductBuilder {
 	}
 
 	
-	public Map<String, AttributeHandler> getReport() throws Exception {
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getReport()
+	 */
+	public Map<String, ColumnSetter> getReport() throws Exception {
 		this.setProductIngestor();
 		if( this.productIngestor.hasMoreElements() ) {
 			((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
@@ -311,14 +314,14 @@ public class EntryBuilder extends ProductBuilder {
 		ah.setComment(this.getReportOnAttRef("t_min", t_min_ref));
 		retour.put("t_min", ah);
 
-		for( AttributeHandler eah: this.extended_attributes_ref.values()){
-			ah = new AttributeHandler();
-			String ahname = eah.getNameattr();
-			ah.setNameattr(ahname); ah.setNameorg(ahname); 
-			ah.setValue(si.getFieldValue(ahname).toString());
-			ah.setComment(this.getReportOnAttRef(ahname, eah));
-			retour.put(ahname, ah);      	
-		}
+//		for( AttributeHandler eah: this.extended_attributes_ref.values()){
+//			ah = new AttributeHandler();
+//			String ahname = eah.getNameattr();
+//			ah.setNameattr(ahname); ah.setNameorg(ahname); 
+//			ah.setValue(si.getFieldValue(ahname).toString());
+//			ah.setComment(this.getReportOnAttRef(ahname, eah));
+//			retour.put(ahname, ah);      	
+//		}
 
 		for( Field f: si.getCollLevelPersisentFields() ){
 			String fname = f.getName();
@@ -331,7 +334,7 @@ public class EntryBuilder extends ProductBuilder {
 				retour.put(fname, ah);
 			}
 		}
-		return retour;
+		return null;
 	}
 
 }
