@@ -75,8 +75,10 @@ public final class EntryIngestor extends ProductIngestor {
 	private  int num_col_angle_err = -1;
 	private  int num_col_em_max  = -1;
 	private  int num_col_em_min  = -1;
+	private  int num_col_em_res_power  = -1;
 	private  int num_col_t_max   = -1;
 	private  int num_col_t_min   = -1;
+	private  int num_col_t_exptime   = -1;
 	/** number of business attribute in the Saada class*/
 	protected int nb_bus_att = -1;
 	/**
@@ -201,6 +203,8 @@ public final class EntryIngestor extends ProductIngestor {
 				this.product.em_max_ref.setByValue(this.values[this.num_col_em_max].toString(), true);
 			if( this.num_col_em_min != -1 )
 				this.product.em_min_ref.setByValue(this.values[this.num_col_em_min].toString(), true);
+			if( this.num_col_em_res_power != -1 )
+				this.product.em_res_power_ref.setByValue(this.values[this.num_col_em_res_power].toString(), true);
 		}
 		super.setEnegryFields();
 	}
@@ -214,6 +218,8 @@ public final class EntryIngestor extends ProductIngestor {
 				this.product.t_max_ref.setByValue(this.values[this.num_col_t_max].toString(), true);
 			if( this.num_col_t_min != -1 )
 				this.product.t_min_ref.setByValue(this.values[this.num_col_t_min].toString(), true);
+			if( this.num_col_t_exptime != -1 )
+				this.product.t_exptime_ref.setByValue(this.values[this.num_col_t_exptime].toString(), true);
 		}
 		super.setTimeFields();
 	}
@@ -365,12 +371,18 @@ public final class EntryIngestor extends ProductIngestor {
 			} else if( this.product.em_min_ref != null && nameField.equals(this.product.em_min_ref.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "em_min column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_em_min = index_pos_col[num_att_read];
+			} else if( this.product.em_res_power_ref != null && nameField.equals(this.product.em_res_power_ref.getAttNameAtt()) ) {
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "num_col_em_res_power column col (" + nameField + ") read in column #" + num_att_read);
+				num_col_em_res_power = index_pos_col[num_att_read];
 			} else if( this.product.t_max_ref != null && nameField.equals(this.product.t_max_ref.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_max column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_max = index_pos_col[num_att_read];
 			} else if( this.product.t_min_ref != null && nameField.equals(this.product.t_min_ref.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_min column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_min = index_pos_col[num_att_read];
+			 } else if( this.product.t_exptime_ref != null && nameField.equals(this.product.t_exptime_ref.getAttNameAtt()) ) {
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_exptime column col (" + nameField + ") read in column #" + num_att_read);
+				num_col_t_exptime = index_pos_col[num_att_read];
 			}
 
 			if( this.product.extended_attributes_ref != null ) {
