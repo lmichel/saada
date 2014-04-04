@@ -4,7 +4,7 @@
 package saadadb.dataloader.mapping;
 
 /**
- * Indicate the way the interpret the value returned by a column mapping
+ * Indicate the way to interpret the value returned by a column mapping
  * @author michel
  * @version $Id$
  *

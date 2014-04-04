@@ -8,6 +8,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -28,7 +29,7 @@ public class ProductListReport {
 			File[] files = (new File(ap.getFilename())).listFiles();
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 3;
+			int MAX = 1;
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;
@@ -47,13 +48,16 @@ public class ProductListReport {
 					break;
 					}
 					product.initProductFile();
-					Map<String, AttributeHandler> r = product.getReport();
+					Map<String, ColumnSetter> r = product.getReport();
 					System.out.println("======== " + f);	
-					for( java.util.Map.Entry<String, AttributeHandler> e:r.entrySet()){
+					for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 						System.out.print(String.format("%20s",e.getKey()) + "     ");
-						AttributeHandler ah = e.getValue();
-						System.out.print(ah.getValue());
-						System.out.println(" <" + ah.getComment() + ">");
+						ColumnSetter ah = e.getValue();
+						System.out.print(ah.getMode() + " " + ah.message);
+						if( !ah.notSet() ) 
+							System.out.print(" storedValue=" + ah.storedValue);
+						System.out.println("");
+
 					}
 				}
 				if( cpt > MAX ) break;
