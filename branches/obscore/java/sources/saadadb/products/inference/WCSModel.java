@@ -28,7 +28,7 @@ public class WCSModel {
 	private double[] matrix;
 	private int NAXIS;
 	boolean kwset_ok = true;
-
+	public String detectionMessage ="";
 
 	/**
 	 * @return
@@ -504,20 +504,21 @@ public class WCSModel {
 		 * Dispersion unit can be written in CTYPE keyword
 		 */
 		if( this.CTYPE[dispersion_axe_num].matches(".*(?i)(angstro).*") ) {
-			Messenger.printMsg(Messenger.TRACE, "Wrong CTYPE=\"" + this.CTYPE 
+			Messenger.printMsg(Messenger.TRACE, "Dispersion unit written in CTYPE keyword CTYPE=\"" + this.CTYPE 
 					+ "\". CTYPE=\"WAVE\" and CUNIT=\"Angstrom\" are taken"); 
 			this.CUNIT[dispersion_axe_num] = "Angstrom";
 			this.CTYPE[dispersion_axe_num] = "WAVE";
+			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")");
+				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;
-		}
-		else if( this.CTYPE[dispersion_axe_num].matches(".*(?i)((wavelength)|(frequency)|(energy)).*")  ) {
+		} else if( this.CTYPE[dispersion_axe_num].matches(".*(?i)((wavelength)|(frequency)|(energy)).*")  ) {
+			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")");
+				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;
-		}
-		else {
+		} else {
+			this.detectionMessage = "";
 			return false;
 		}
 	}

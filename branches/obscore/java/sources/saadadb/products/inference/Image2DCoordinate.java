@@ -1,16 +1,8 @@
 package saadadb.products.inference;
 
-import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import saadadb.collection.obscoremin.ImageSaada;
-import saadadb.database.Database;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.Image2DBuilder;
-import saadadb.query.executor.Query;
-import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
@@ -359,10 +351,6 @@ public class Image2DCoordinate{
 		Coord x_y_2 = new Coord() ;
 		Coord x_y_3 = new Coord() ;
 		Coord x_y_4 = new Coord() ;
-		double alpha1,delta1 ;
-		double alpha2,delta2 ;
-		double alpha3,delta3 ;
-		double alpha4,delta4 ;
 		if(aladin == 1){
 			Xcen = xnpix/2. ;
 			Ycen = ynpix/2. ;
@@ -622,8 +610,6 @@ public class Image2DCoordinate{
 	public void GetXY(Coord c) throws Exception {
 		double x_obj =1.;
 		double y_obj =1.;
-		double x_objr ;
-		double y_objr ;
 		double x_tet_phi;
 		double y_tet_phi;
 		double y_stand =0.03;
