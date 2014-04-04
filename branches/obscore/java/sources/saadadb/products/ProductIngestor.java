@@ -221,13 +221,13 @@ class ProductIngestor {
 			/*
 			 * Position values can either be read in keyword or be constants values
 			 */
-			if( this.product.s_ra_ref.isConstantValue() ) {
+			if( this.product.s_ra_ref.byValue() ) {
 				ra_val = this.product.s_ra_ref.getValue();
 			} else {
 				ra_val = this.product.s_ra_ref.getValue().replaceAll("'", "");
 			}
 			String dec_val;
-			if( this.product.s_dec_ref.isConstantValue() ) {
+			if( this.product.s_dec_ref.byValue() ) {
 				dec_val = this.product.s_dec_ref.getValue();
 			} else {
 				dec_val = this.product.s_dec_ref.getValue().replaceAll("'", "");
@@ -347,6 +347,7 @@ class ProductIngestor {
 	protected void setTimeFields() throws SaadaException {
 		setField("t_min"    , this.product.t_min_ref);
 		setField("t_max"    , this.product.t_max_ref);
+		setField("t_exptime", this.product.t_exptime_ref);
 	}
 
 	/*
@@ -361,6 +362,7 @@ class ProductIngestor {
 	protected void setEnegryFields() throws SaadaException {
 		setField("em_min"    , this.product.em_min_ref);
 		setField("em_max"    , this.product.em_max_ref);
+		setField("em_res_power", this.product.em_res_power_ref);
 	}
 
 
@@ -521,7 +523,7 @@ class ProductIngestor {
 	 * @param ah_ref
 	 * @throws FatalException
 	 */
-	private void setField(String fieldName, AttributeHandler ah_ref) throws FatalException{
+	private void setField(String fieldName, ColumnSetter ah_ref) throws FatalException{
 		String value = ah_ref.getValue();
 		Field f=null;
 		try {
@@ -529,11 +531,11 @@ class ProductIngestor {
 			this.saadaInstance.setInField(f, value);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,
 					"Attribute " + fieldName 
-					+ " set with the KW  <" + ah_ref.getNameorg()
+					+ " set with the KW  <" + ah_ref.getAttNameOrg()
 					+ "=" + value + ">");
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
-					+ " can not be set with the KW  <" + ah_ref.getNameorg()
+					+ " can not be set with the KW  <" + ah_ref.getAttNameOrg()
 					+ "=" + value + ">");
 		}
 	}

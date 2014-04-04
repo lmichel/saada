@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -723,7 +724,7 @@ public class VOTableProduct extends File implements ProductFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrameForTable()
 	 */
-	public void setSpaceFrameForTable(){
+	public void setSpaceFrameForTable() throws FatalException{
 		LinkedHashMap<String, AttributeHandler> lhm = new LinkedHashMap<String, AttributeHandler>();	
 		this.setKWEntry(lhm);
 		/*
@@ -751,7 +752,7 @@ public class VOTableProduct extends File implements ProductFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrame()
 	 */
-	public void setSpaceFrame(){
+	public void setSpaceFrame() throws FatalException{
 		LinkedHashMap<String, AttributeHandler> lhm = this.createTableAttributeHandler();
 		/*
 		 * Try first to take the resource coosys

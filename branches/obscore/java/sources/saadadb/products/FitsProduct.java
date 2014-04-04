@@ -1099,8 +1099,7 @@ public class FitsProduct extends File implements ProductFile{
 					double min2 = (double)(((ImageHDU)good_header).getAxes()[1]);
 					if( min1 > min2 ) {
 						return new double[]{0, min1};						
-					}
-					else {
+					} else {
 						return new double[]{0, min2};						
 					}
 				}
@@ -1227,8 +1226,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
-				}
-				else if( to[0].getClass().getName().equals("[D") ) {
+				} else if( to[0].getClass().getName().equals("[D") ) {
 					double too[] = (double[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
 						if( i == 0 ) {
@@ -1243,8 +1241,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
-				}
-				else if( to[0].getClass().getName().equals("[I") ) {
+				} else if( to[0].getClass().getName().equals("[I") ) {
 					int too[] = (int[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
 						if( i == 0 ) {
@@ -1259,8 +1256,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
-				}
-				else if( to[0].getClass().getName().equals("[S") ) {
+				} else if( to[0].getClass().getName().equals("[S") ) {
 					short too[] = (short[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
 						if( i == 0 ) {
@@ -1275,8 +1271,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
-				}
-				else if( to[0].getClass().getName().equals("[java.lang.String") ) {
+				} else if( to[0].getClass().getName().equals("[java.lang.String") ) {
 					String too[] = (String[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
 						if( i == 0 ) {
@@ -1291,8 +1286,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
-				}
-				else {
+				} else {
 					IgnoreException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Type " + to[0].getClass().getName() + " not suported to read column extrema");
 					return null;
 				}
@@ -1306,17 +1300,13 @@ public class FitsProduct extends File implements ProductFile{
 					double val = 0;
 					if( to[0].getClass().getName().equals("[F") ) {
 						val = ((float[])(to[i]))[0];
-					}
-					else if( to[0].getClass().getName().equals("[D") ) {
+					} else if( to[0].getClass().getName().equals("[D") ) {
 						val = ((double[])(to[i]))[0];
-					}
-					else if( to[0].getClass().getName().equals("[I") ) {
+					} else if( to[0].getClass().getName().equals("[I") ) {
 						val = ((int[])(to[i]))[0];
-					}
-					else if( to[0].getClass().getName().equals("[java.lang.String") ) {
+					} else if( to[0].getClass().getName().equals("[java.lang.String") ) {
 						val = Double.parseDouble(((String[])(to[i]))[0]);
-					}
-					else {
+					} else {
 						IgnoreException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Type " + to[0].getClass().getName() + " not suported to read column extrema");
 						return null;
 					}
