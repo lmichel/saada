@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.sun.jmx.trace.Trace;
-
 import saadadb.command.ArgsParser;
 import saadadb.compat.Files;
 import saadadb.database.Database;
