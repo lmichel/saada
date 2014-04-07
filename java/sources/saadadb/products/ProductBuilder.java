@@ -53,14 +53,6 @@ import cds.astro.ICRS;
  * @author michel
  * @version $Id$
  */
-/**
- * @author michel
- * @version $Id$
- */
-/**
- * @author michel
- * @version $Id$
- */
 public class ProductBuilder {
 	private static final long serialVersionUID = 1L;
 	protected static String separ = System.getProperty("file.separator");
@@ -487,21 +479,27 @@ public class ProductBuilder {
 		AttributeHandler cmah = columnMapping.getHandler();
 		if( columnMapping.byValue() ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
-			return new ColumnSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
+			ColumnSetter retour = new ColumnSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
+			retour.completeMessage("Using user mapping");
+			return retour;
 		} else if( columnMapping.byAttribute() ){
 			for( AttributeHandler ah: this.productAttributeHandler.values()) {
 				String keyorg  = ah.getNameorg();
 				String keyattr = ah.getNameattr();
 				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-					return new ColumnSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
+					ColumnSetter retour = new ColumnSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
+					retour.completeMessage("Using user mapping");
+					return retour;
 				}
 			}
 		}
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": undefined");
-		return new ColumnSetter();
+		ColumnSetter retour = new ColumnSetter();
+		retour.completeMessage("Using user mapping");
+		return retour;
 	}
-	
+
 	/**
 	 * @param ah
 	 * @return
@@ -654,7 +652,7 @@ public class ProductBuilder {
 				this.em_min_ref = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), false);
 				this.em_min_ref.completeMessage( "vorg="+this.spectralCoordinate.getOrgMin() + this.spectralCoordinate.getOrgUnit());
 				this.em_min_ref.completeMessage(this.energyKWDetector.detectionMessage );
-				
+
 				this.em_max_ref = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), false);
 				this.em_max_ref.completeMessage( "vorg="+this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
 				this.em_max_ref.completeMessage(this.energyKWDetector.detectionMessage );
@@ -1061,7 +1059,6 @@ public class ProductBuilder {
 			}
 			break;
 		}
-
 	}
 
 	/**
@@ -1143,9 +1140,6 @@ public class ProductBuilder {
 			this.em_max_ref = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), true);
 			return retour;
 		}
-
-
-
 		return  false;	
 	}
 
@@ -1508,7 +1502,7 @@ public class ProductBuilder {
 	 * @param att
 	 */
 	private void traceReportOnAttRef(String col, ColumnSetter att){		
-	//	Messenger.printMsg(Messenger.TRACE, this.getReportOnAttRef(col, att));	
+		//	Messenger.printMsg(Messenger.TRACE, this.getReportOnAttRef(col, att));	
 		Messenger.printMsg(Messenger.TRACE, col + " "+ att);	
 	}
 
@@ -1549,7 +1543,7 @@ public class ProductBuilder {
 		this.setProductIngestor();
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-		
+
 		retour.put("obs_collection", obs_collection_ref);
 		obs_collection_ref.storedValue = si.obs_collection;
 		retour.put("target_name", target_name_ref);

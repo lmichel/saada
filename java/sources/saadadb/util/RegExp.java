@@ -101,14 +101,16 @@ public class RegExp {
 	public static final String SPEC_MIN_UCD  = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
 	public static final String SPEC_MAX_UCD  = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
 	public static final String SPEC_BAND_UCD = "(?i)(em\\.wl)";
+	public static final String SPEC_RESPOWER_UCD = "(?i)((instr\\.dispersion)|(spect\\.resolution))";
+	public static final String SPEC_RESPOWER_KW = "(?i)((power)|(res)|(spres)|(r))";
 	/*
 	 * TIme axis column names
 	 */
-	public static final String TIME_START_KW     = "(?i)((obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(obs.*time)|(time.*obs)|(mjd(.*obs)?))";
+	public static final String TIME_START_KW     = "(?i)((obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(mjd(.*obs)?))";
 	public static final String TIME_START_UCD    = "(?i)(time.start;obs)";
 	public static final String TIME_END_KW       = "(?i)((obs.*end)|(end.*obs)|(end.*date)|(date.*end))";
 	public static final String TIME_END_UCD      = "(?i)(time.end;obs)";
-	public static final String EXPOSURE_TIME_KW  = "(?i)(exptime)";
+	public static final String EXPOSURE_TIME_KW  = "(?i)((exptime)|(obs.*time)|(time.*obs))";
 	public static final String EXPOSURE_TIME_UCD = "(?i)(time.duration;obs.exposure)";	
 	/*
 	 * URL
@@ -122,7 +124,7 @@ public class RegExp {
 	//public static final String UCD = "(?:(?:(?:\\w+\\.)*\\w+);)*(?:(?:\\w+\\.)*\\w+)";*
 	public static final String UCD = "(?:" + UTYPE + ";)*" + UTYPE;
 	/*
-	 * Used to detect not set field. Only the most current notset values are set here
+	 * Used to detect not set field. Only the most current not set values are set here
 	 */
 	public static final String NOT_SET_VALUE = "(NULL)|(NaN)|(Infinity)|(" + Integer.MAX_VALUE + ")";
 	/**
@@ -147,12 +149,12 @@ public class RegExp {
 	/**
 	 * Position error
 	 */
-	public static final String ERROR_MIN_KW     = "(?i)((radecerr.*)|(errmin)|(minaxis))";
-	public static final String ERROR_MIN_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*))";
-	public static final String ERROR_MAJ_KW     = "(?i)((radecerr.*)|(errmaj)|(majaxis))";
-	public static final String ERROR_MAJ_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*))";
+	public static final String ERROR_MIN_KW     = "(?i)((radecerr.*)|(errmin)|(minaxis)|(hpbw))";
+	public static final String ERROR_MIN_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*)|(pos\\.angResolution))";
+	public static final String ERROR_MAJ_KW     = "(?i)((radecerr.*)|(errmaj)|(majaxis)|(hpbw))";
+	public static final String ERROR_MAJ_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*)|(pos\\.angResolution))";
 	public static final String ERROR_ANGLE_KW   = "(?i)((theta)|(PosAng))";
-	public static final String ERROR_ANGLE_UCD  = "(?i)(pos\\.posAng)";
+	public static final String ERROR_ANGLE_UCD  = "(?i)((pos\\.posAng))";
 	/**
 	 * Fov
 	 */

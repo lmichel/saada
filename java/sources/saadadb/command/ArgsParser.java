@@ -68,21 +68,23 @@ public class ArgsParser implements Serializable{
 		 * Energy Axe
 		 */
 		allowedArgs.add("-spcmapping") ;
-		allowedArgs.add("-spcunit")   ;allowedArgs.add("-entry.spcunit") ;
-		allowedArgs.add("-spccolumn") ;allowedArgs.add("-entry.spccolumn") ;
+		allowedArgs.add("-spcunit")    ;allowedArgs.add("-entry.spcunit") ;
+		allowedArgs.add("-spccolumn")  ;allowedArgs.add("-entry.spccolumn") ;
+		allowedArgs.add("-spcrespower");allowedArgs.add("-entry.spcrespower") ;
 		/*
 		 * Time Axe
 		 */
 		allowedArgs.add("-timemapping") ;
 		allowedArgs.add("-tmin")      ;allowedArgs.add("-entry.tmin") ;
 		allowedArgs.add("-tmax")      ;allowedArgs.add("-entry.tmax") ;
+		allowedArgs.add("-exptime")   ;allowedArgs.add("-entry.exptime") ;
 		/*
 		 * Other Axe
 		 */
 		allowedArgs.add("-ignore") ;
-		allowedArgs.add("-eignore") ;
+		allowedArgs.add("-eignore") ; allowedArgs.add("-entry.ignore") ;
 		allowedArgs.add("-ukw") ;
-		allowedArgs.add("-eukw") ;
+		allowedArgs.add("-eukw") ;allowedArgs.add("-entry.ukw") ;
 		
 		allowedArgs.add("-empty") ;
 		allowedArgs.add("-remove") ;
@@ -455,6 +457,17 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
+	public String getExpTime(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-exptime")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.exptime") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
 
 	/**
 	 * returns a table with all ignored attributes -ignore=att1,att2,.....
@@ -475,7 +488,7 @@ public class ArgsParser implements Serializable{
 	 */
 	public String[] getEntryIgnoredAttributes() {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-eignore")) {
+			if( args[i] .startsWith("-eignore") ||  args[i] .startsWith("-entry.ignore")) {
 				return getArgsValue(args[i]).split(",");
 			}
 		}
@@ -681,6 +694,18 @@ public class ArgsParser implements Serializable{
 	public String getSpectralColumn() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-spccolumn")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;		
+	}
+	/**
+	 * Returns the spectral coordinate column -spccolumn=....
+	 * @return
+	 */
+	public String getSpectralResPower() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-spcrespower")) {
 				return getArgsValue(args[i]);
 			}
 		}

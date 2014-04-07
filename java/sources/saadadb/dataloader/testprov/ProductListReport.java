@@ -7,7 +7,6 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
