@@ -181,10 +181,25 @@ public final class ColumnSetter  {
 	/**
 	 * 
 	 */
+	public void setBySaada(){
+		this.setMode = ColumnSetMode.BY_SAADA;
+		this.attributeHandler.setValue(null);
+	}
+	/**
+	 * 
+	 */
 	public void setNotSet(){
 		this.setMode = ColumnSetMode.NOT_SET;
 		this.attributeHandler.setValue(null);
 	}
+	/**
+	 * 
+	 */
+	public void setValue(String value){
+		this.setMode = ColumnSetMode.BY_VALUE;
+		this.attributeHandler.setValue(value);
+	}
+	
 	/*
 	 * getters for the mode used to set the attribute
 	 */

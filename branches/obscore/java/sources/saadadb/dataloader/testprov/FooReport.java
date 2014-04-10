@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,6 +17,7 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.ColumnSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -67,6 +69,10 @@ public class FooReport {
 		String fn = jsonFilename.replace("json:", "");
 		if( fn.charAt(0) != File.separatorChar ){
 			fn = Database.getRoot_dir() + File.separator + "datatest" + File.separator + fn;
+			if( !(new File(fn)).exists() ) {
+				fn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
+				System.out.println(fn);
+			}
 		}
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(fn));  
@@ -107,7 +113,17 @@ public class FooReport {
 		break;
 		}
 		product.initProductFile();
-		product.printReport();
+		Map<String, ColumnSetter> r = product.getReport();
+		System.out.println("======== ");	
+		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
+			System.out.print(String.format("%20s",e.getKey()) + "     ");
+			ColumnSetter ah = e.getValue();
+			System.out.print(ah.getMode() + " " + ah.message);
+			if( !ah.notSet() ) 
+				System.out.print(" storedValue=" + ah.storedValue);
+			System.out.println("");
+
+		}
 	}
 
 	/**

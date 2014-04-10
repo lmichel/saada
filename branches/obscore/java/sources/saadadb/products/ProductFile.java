@@ -37,6 +37,11 @@ public interface ProductFile extends Enumeration{
      */
     public String getKWValueQuickly(String key);
    
+ 	/**
+ 	 * @param key
+ 	 * @return nim,max,nbpoints
+ 	 * @throws Exception
+ 	 */
  	public double[] getExtrema(String key) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.

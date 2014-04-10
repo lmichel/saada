@@ -40,7 +40,7 @@ public class EnergyKWDetector extends KWDetector {
 	}
 	/**
 	 * @param priority
-	 * @param defaultUnit
+	 * @param defaultUnit to be used if nothing else
 	 */
 	private void setUnitMode(PriorityMode priority, String defaultUnit){
 		this.priority = priority;
@@ -102,6 +102,7 @@ public class EnergyKWDetector extends KWDetector {
 		} else {
 			this.spectralCoordinate.setOrgMax(ds[1]);
 			this.spectralCoordinate.setOrgMin(ds[0]);		
+			this.spectralCoordinate.setNbBins((int) ds[2]);		
 		}
 	}
 
@@ -133,6 +134,7 @@ public class EnergyKWDetector extends KWDetector {
 	private boolean findSpectralCoordinateByWCS() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in WCS keywords");
 		boolean retour =  spectralCoordinate.convertWCS(this.tableAttributeHandler);
+		this.readUnit = this.spectralCoordinate.getOrgUnit();
 		if( retour )
 			this.detectionMessage = spectralCoordinate.detectionMessage;
 		return retour;
@@ -143,11 +145,10 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws IgnoreException 
 	 */
 	private boolean findSpectralCoordinateByKW() throws Exception{
-
 		/*
 		 * If no range set in params, try to find it out from fields
 		 */	
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Search specyral coordinate in the columns names");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Search spectral coordinate in the columns names");
 		if( this.entryAttributeHandler != null ){
 			ColumnSetter ah = this.searchColumnsByName(RegExp.SPEC_AXIS_KW);
 			if( !ah.notSet()  ){
@@ -219,10 +220,31 @@ public class EnergyKWDetector extends KWDetector {
 		return spectralCoordinate;
 	}
 	
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
 	public ColumnSetter getResPower() throws FatalException{
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search for the exposure time");
+			Messenger.printMsg(Messenger.DEBUG, "Search for the resolution power");
 		return this.search(RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+	}
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnSetter getComputedResPower() throws Exception{
+		if( spectralCoordinate == null ){
+			this.mapCollectionSpectralCoordinateAuto();
+		}
+		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
+			ColumnSetter retour =  new ColumnSetter();
+			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
+			retour.completeMessage("Computed from the nuber of bins ("+ spectralCoordinate.getNbBins() + ")");
+			return retour;
+		} 
+		return  new ColumnSetter();
 	}
 
 }

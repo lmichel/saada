@@ -34,11 +34,12 @@ public class SpectralCoordinate{
 	private double orgMin = SaadaConstant.DOUBLE;
 	private double orgMax = SaadaConstant.DOUBLE;
 
-	private int dispersion_axe_num;
+	private int dispersionAxeNum;
+	private int nbBins = SaadaConstant.INT;
 	public String detectionMessage ="";
 
 	private Map<String, AttributeHandler> attributesList;
-	private String CUNIT;
+	private String mappedUnit;
 
 	/**
 	 * @param naxis
@@ -56,7 +57,7 @@ public class SpectralCoordinate{
 		}else{
 			UnitRef o;
 			String sunit;
-			this.dispersion_axe_num = num_axe - 1;
+			this.dispersionAxeNum = num_axe - 1;
 			this.naxis   = naxis;
 			if( unit == null || unit.equals("") || "NULL".equals(unit)){
 				sunit = "channel";
@@ -77,7 +78,7 @@ public class SpectralCoordinate{
 	}
 
 	public String getOrgUnit(){
-		return CUNIT;
+		return mappedUnit;
 	}
 
 	public double getOrgMax(){
@@ -90,11 +91,17 @@ public class SpectralCoordinate{
 
 	public void setOrgUnit(String orgUnit){
 		if( orgUnit.startsWith("ANGSTROM") ){
-			this.CUNIT = "Angstrom";
+			this.mappedUnit = "Angstrom";
 		}
 		else {
-			this.CUNIT = orgUnit;
+			this.mappedUnit = orgUnit;
 		}
+	}
+	public void setNbBins(int nbBins){
+		this.nbBins = nbBins;
+	}
+	public int getNbBins(){
+		return this.nbBins;
 	}
 
 	public void setOrgMax(double orgMax){
@@ -128,6 +135,7 @@ public class SpectralCoordinate{
 	private static Map<String, UnitRef> initUnits() {
 		Map<String, UnitRef> sc =  new LinkedHashMap<String, UnitRef>();
 		sc.put("angstrom", new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
+		sc.put("angstroms", new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
 		sc.put("a"       , new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
 		sc.put("nm"      , new UnitRef("nm"       , new Integer(WAVELENGTH)));
 		sc.put("um"      , new UnitRef("um"       , new Integer(WAVELENGTH))); 
@@ -351,6 +359,7 @@ public class SpectralCoordinate{
 			try{
 				return convertValue(value, unitOrg, unitNew);
 			}catch(Exception e){
+				e.printStackTrace();
 				Messenger.printMsg(Messenger.ERROR, "Can not convert <"+unitOrg+"> into <"+unitNew+">");
 				return SaadaConstant.DOUBLE;
 			}
@@ -574,16 +583,17 @@ public class SpectralCoordinate{
 	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
 		this.attributesList = tableAttributeHandler;
 		WCSModel wm = null;
-		try {
 			wm = new WCSModel(tableAttributeHandler);
-		} catch( Exception e) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "No WCS keywords to get spectral coordinates");
-			return false;
-		}
-		String unitOrg = this.CUNIT;
+//			if( !wm.isKwset_ok() ){
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "=================");
+//				return false;
+//			}
+		String unitOrg = this.mappedUnit;
 		wm.projectAllAxesToRealWord();
 		if( !wm.isKwset_ok() ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Cannot achieve the WCS projection");
 			return false;
 		}
 		/*
@@ -592,11 +602,14 @@ public class SpectralCoordinate{
 		 */
 		int dan;
 		if( (dan = wm.getDispersionAxe()) != SaadaConstant.INT) {
-			this.dispersion_axe_num = dan; 
-			UnitRef unit_class = getUniRef(wm.getCUNIT(dispersion_axe_num));
+			this.dispersionAxeNum = dan; 
+			this.nbBins = wm.getNAXISi(dan);
+			UnitRef unit_class = getUniRef(wm.getCUNIT(dispersionAxeNum));
 			if(unit_class == null) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.CUNIT + " as unit (given by the configuration)");
+					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
+			} else  {
+				this.mappedUnit = unit_class.unit;
 			}
 		this.detectionMessage = wm.detectionMessage;
 		}
@@ -608,7 +621,8 @@ public class SpectralCoordinate{
 			for( int axe=0 ; axe<wm.getNAXIS() ; axe++) {
 				if( wm.getNAXISi(axe) > old_max ) {
 					old_max = wm.getNAXISi(axe);
-					dispersion_axe_num = axe;
+					this.dispersionAxeNum = axe;
+					this.nbBins = wm.getNAXISi(axe);
 				}
 				AttributeHandler ah;
 				if( (ah = attributesList.get(ChangeKey.changeKey("DISPERS").toLowerCase())) != null || 
@@ -628,16 +642,25 @@ public class SpectralCoordinate{
 						if( unitOrg.equals("A") ) {
 							unitOrg = "Angstrom";
 						}
+						
+						UnitRef unit_class = getUniRef(unitOrg);
+						if(unit_class == null) {
+							if (Messenger.debug_mode)
+								Messenger.printMsg(Messenger.DEBUG, "Can not get unit from DISPERS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
+						} else  {
+							this.mappedUnit = unit_class.unit;
+						}
 						this.detectionMessage = "DISP(ERS) keyword found expressed in " 
-							+  m.group(0) + ": try to take " + this.CUNIT + " as dispersion unit";
+							+  m.group(0) + ": try to take " + this.mappedUnit + " as dispersion unit";
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 					}
 				}
 			}			
 		}
-
-		if( this.convert(this.CUNIT, wm.getMinValue(dispersion_axe_num), wm.getMaxValue(dispersion_axe_num)) ) {
+		this.orgMin = wm.getMinValue(dispersionAxeNum);
+		this.orgMax = wm.getMaxValue(dispersionAxeNum);
+		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
 			Messenger.printMsg(Messenger.TRACE, this.getRange());
 			return true;
 		} else {
@@ -645,6 +668,5 @@ public class SpectralCoordinate{
 			return false;
 		}
 	}
-
 }
 

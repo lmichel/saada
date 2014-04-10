@@ -28,7 +28,7 @@ public class ProductListReport {
 			File[] files = (new File(ap.getFilename())).listFiles();
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 1;
+			int MAX = 10;
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;

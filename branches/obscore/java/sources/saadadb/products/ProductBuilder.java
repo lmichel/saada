@@ -96,6 +96,8 @@ public class ProductBuilder {
 	protected ColumnSetter error_angle_ref=null;
 	protected ColumnSetter s_ra_ref=null;
 	protected ColumnSetter s_dec_ref=null;
+	protected ColumnSetter s_fov_ref=null;
+	protected ColumnSetter s_region_ref=null;
 	protected PriorityMode spaceMappingPriority = PriorityMode.LAST;
 	protected SpaceKWDetector spaceKWDetector = null;
 
@@ -496,7 +498,7 @@ public class ProductBuilder {
 		}
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": undefined");
 		ColumnSetter retour = new ColumnSetter();
-		retour.completeMessage("Using user mapping");
+		retour.completeMessage("Not found by mapping");
 		return retour;
 	}
 
@@ -579,7 +581,7 @@ public class ProductBuilder {
 		/*
 		 * Take the Saada collection as default obs_collection
 		 */
-		if( this.obs_collection_ref.getAttNameOrg().equals(ColumnMapping.UNDEFINED) ){
+		if( this.obs_collection_ref.notSet() ){
 			this.obs_collection_ref = new ColumnSetter(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()), false);
 		}
 		if( this.target_name_ref == null) {
@@ -658,6 +660,9 @@ public class ProductBuilder {
 				this.em_max_ref.completeMessage(this.energyKWDetector.detectionMessage );
 				this.x_unit_org_ref = new ColumnSetter(spectralCoordinate.getOrgUnit(), false);
 				this.x_unit_org_ref.completeMessage(spectralCoordinate.getOrgUnit());
+				if( this.em_res_power_ref.notSet() ) {
+					this.em_res_power_ref = this.energyKWDetector.getComputedResPower();
+				}
 			}
 			System.out.println("========================");
 			if( !this.isAttributeHandlerMapped(this.em_res_power_ref) ) {
@@ -718,9 +723,18 @@ public class ProductBuilder {
 			}
 			break;
 		}
+		
+		if( this.t_min_ref.notSet() && !(this.t_max_ref.notSet() || this.t_exptime_ref.notSet()) ) {
+			this.t_min_ref.completeMessage("Computed from t_max and t_exptime");	
+			
+		} else if( this.t_max_ref.notSet() && !(this.t_min_ref.notSet() || this.t_exptime_ref.notSet()) ) {
+			this.t_max_ref.completeMessage("Computed from t_min and t_exptime");
+			this.t_max_ref.setBySaada();
+		}
+		
 		traceReportOnAttRef("t_min", this.t_min_ref);
 		traceReportOnAttRef("t_max", this.t_max_ref);
-		traceReportOnAttRef("t_exptime", this.t_max_ref);
+		traceReportOnAttRef("t_exptime", this.t_exptime_ref);
 	}
 
 	/**
@@ -819,8 +833,8 @@ public class ProductBuilder {
 		 */
 		if( this.astroframe == null && this.system_attribute == null ) {
 			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
-				this.s_ra_ref = null;
-				this.s_dec_ref = null;
+				this.s_ra_ref = new ColumnSetter();
+				this.s_dec_ref = new ColumnSetter();
 				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
 			}
 			else {
@@ -971,7 +985,7 @@ public class ProductBuilder {
 		/*
 		 * Printout the position status
 		 */
-		if( this.s_ra_ref == null || this.s_dec_ref == null ) {
+		if( this.s_ra_ref.notSet() || this.s_dec_ref.notSet() ) {
 			/*
 			 * For image, position can still be set from WCS keywords
 			 */
@@ -1239,7 +1253,9 @@ public class ProductBuilder {
 		this.setSpaceKWDetector();
 		if( this.spaceKWDetector.arePosColFound() ) {
 			this.s_ra_ref = this.spaceKWDetector.getAscension_kw();
-			this.s_dec_ref = this.spaceKWDetector.getDeclination_kw();				
+			this.s_dec_ref = this.spaceKWDetector.getDeclination_kw();		
+			this.s_fov_ref = this.getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_fov"));
+			this.s_region_ref = this.getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_region"));
 			return true;
 		}
 		else {
@@ -1284,12 +1300,17 @@ public class ProductBuilder {
 		if( raMapping.byValue() ) {
 			this.s_ra_ref = new ColumnSetter(raMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getHandler().getValue() + ">");
+		} else {
+			this.s_ra_ref = new ColumnSetter();
 		}
 		if( decMapping.byValue() ) {
 			this.s_dec_ref = new ColumnSetter(decMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);	
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getHandler().getValue() + ">");
+		} else {
+			this.s_dec_ref = new ColumnSetter();
 		}
-
+		this.s_region_ref = getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_region"));
+		this.s_fov_ref = getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_fov"));
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
@@ -1298,12 +1319,12 @@ public class ProductBuilder {
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
-			if( this.s_ra_ref == null && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
+			if( this.s_ra_ref.notSet() && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
 				this.s_ra_ref = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);
 				ra_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as right ascension");
 			}
-			if( this.s_dec_ref == null && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
+			if( this.s_dec_ref.notSet() && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
 				this.s_dec_ref = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);;
 				dec_found = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as declination");
@@ -1543,7 +1564,8 @@ public class ProductBuilder {
 		this.setProductIngestor();
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-
+		
+		
 		retour.put("obs_collection", obs_collection_ref);
 		obs_collection_ref.storedValue = si.obs_collection;
 		retour.put("target_name", target_name_ref);
@@ -1552,7 +1574,6 @@ public class ProductBuilder {
 		facility_name_ref.storedValue = si.facility_name;
 		retour.put("instrument_name", instrument_name_ref);
 		instrument_name_ref.storedValue = si.instrument_name;
-
 
 		retour.put("s_ra", s_ra_ref);
 		s_ra_ref.storedValue = si.s_ra;
@@ -1564,6 +1585,10 @@ public class ProductBuilder {
 		error_min_ref.storedValue = si.error_min_csa;
 		retour.put("error_angle_csa", error_angle_ref);
 		error_angle_ref.storedValue = si.error_angle_csa;
+		retour.put("s_fov", s_fov_ref);
+		s_fov_ref.storedValue = si.getS_fov();
+		retour.put("s_region", s_region_ref);
+		s_region_ref.storedValue = si.getS_region();
 
 		retour.put("em_min", em_min_ref);
 		em_min_ref.storedValue = si.em_min;
@@ -1574,10 +1599,11 @@ public class ProductBuilder {
 
 
 		retour.put("t_max", t_max_ref);
-		t_max_ref.storedValue = si.t_min;
+		t_max_ref.storedValue = si.t_max;
 		retour.put("t_min", t_min_ref);
 		t_min_ref.storedValue = si.t_min;
 		retour.put("t_exptime", t_exptime_ref);
+		t_exptime_ref.storedValue = si.t_exptime;
 
 		for( ColumnSetter eah: this.extended_attributes_ref.values()){
 			retour.put(eah.getAttNameOrg(), eah);      	
@@ -1590,8 +1616,10 @@ public class ProductBuilder {
 				ah.setNameattr(fname); ah.setNameorg(fname); 
 				Object o = si.getFieldValue(fname);
 				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
-				ah.setComment("Computed internally by Saada");				
-				retour.put(fname,  new ColumnSetter(ah, ColumnSetMode.BY_SAADA));
+				ah.setComment("Computed internally by Saada");		
+				ColumnSetter cs = new ColumnSetter(ah, ColumnSetMode.BY_SAADA);
+				cs.storedValue = ah.getValue();
+				retour.put(fname, cs);
 			}
 		}
 		return retour;

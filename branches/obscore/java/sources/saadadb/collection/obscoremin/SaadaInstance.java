@@ -1270,9 +1270,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	/**
-	 * HTM replaces with QBox
 	 * javadoc: http://aladin.u-strasbg.fr/java/doctech/cds/astro/Qbox.html
-	 * Level 10 hardcoded
 	 * @param level
 	 */
 	public void calculSky_pixel_csa()
@@ -1466,6 +1464,12 @@ public abstract class SaadaInstance implements DMInterface {
 				, new File(this.getRepository_location()).getName() );
 	}
 
+	public double getS_fov() {
+		return SaadaConstant.DOUBLE;
+	}
+	public String getS_region() {
+		return SaadaConstant.STRING;
+	}
 	/***********************
 	 * Abstract setters allowing to handle SaadaInstance whatever the actual category
 	 *********************/

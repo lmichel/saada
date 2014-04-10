@@ -229,6 +229,7 @@ public class VOTableProduct extends File implements ProductFile {
 		for( int i=0 ; i<fields.getItemCount() ; i++ ) {
 			SavotField field = (SavotField)fields.getItemAt(i);
 			if( field.getName().equals(key) || field.getId().equals(key)) {
+				int cpt = 0;
 				while( this.hasMoreElements() ) {
 					double val = Double.parseDouble(currentTR.getTDSet().getContent(i).trim());
 					if( onfirstline ) {
@@ -241,7 +242,9 @@ public class VOTableProduct extends File implements ProductFile {
 					else if( val > retour[1] ) {
 						retour[1] = val;
 					}
+					cpt++;
 				}
+				retour[2] = cpt;
 				return retour;
 			}
 		}
