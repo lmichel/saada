@@ -4,6 +4,7 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -89,6 +90,21 @@ public class FileRef extends SaadaInstance {
     public void setS_region(String s_region) {
     	this.s_region = s_region;
     }
+
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getS_fov()
+	 */
+	@Override
+	public double getS_fov() {
+		return this.s_fov;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getS_region()
+	 */
+	@Override
+	public String getS_region() {
+		return this.s_region;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.collection.obscoremin.SaadaInstance#setRepository_location(java.lang.String)

@@ -18,7 +18,7 @@ public class SpaceMapping extends AxisMapping {
 	 * @throws SaadaException
 	 */
 	SpaceMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		super(ap, new String[]{"s_ra", "s_dec","s_fov", "error_maj_csa", "error_min_csa", "error_angle_csa"}, entryMode);
+		super(ap, new String[]{"s_ra", "s_dec","s_fov","s_region", "error_maj_csa", "error_min_csa", "error_angle_csa"}, entryMode);
 		this.mapCoordSystem(ap);
 		this.mapPosition(ap);
 		this.mapPoserror(ap);

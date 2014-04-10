@@ -348,6 +348,14 @@ class ProductIngestor {
 		setField("t_min"    , this.product.t_min_ref);
 		setField("t_max"    , this.product.t_max_ref);
 		setField("t_exptime", this.product.t_exptime_ref);
+		boolean maxNaN = Double.isNaN(this.saadaInstance.t_max);
+		boolean minNaN = Double.isNaN(this.saadaInstance.t_min);
+		boolean expNaN = Double.isNaN(this.saadaInstance.t_exptime);
+		if( maxNaN && !minNaN && !expNaN ) {
+			this.saadaInstance.t_max = this.saadaInstance.t_min + (this.saadaInstance.t_exptime/(24*3600));
+		}
+		System.out.println(this.saadaInstance.t_max);
+
 	}
 
 	/*
@@ -529,10 +537,18 @@ class ProductIngestor {
 		try {
 			f = saadaInstance.getClass().getField(fieldName);
 			this.saadaInstance.setInField(f, value);
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,
-					"Attribute " + fieldName 
-					+ " set with the KW  <" + ah_ref.getAttNameOrg()
-					+ "=" + value + ">");
+			if( Messenger.debug_mode ) {
+				if( ah_ref.byKeyword()) {
+					Messenger.printMsg(Messenger.DEBUG,
+							"Attribute " + fieldName 
+							+ " set with the KW  <" + ah_ref.getAttNameOrg()
+							+ "=" + value + ">");
+				} else {
+					Messenger.printMsg(Messenger.DEBUG,
+							"Attribute " + fieldName 
+							+ " set with the value  <" + value + ">");
+				}
+			}
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
 					+ " can not be set with the KW  <" + ah_ref.getAttNameOrg()

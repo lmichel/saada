@@ -1089,7 +1089,7 @@ public class FitsProduct extends File implements ProductFile{
 			 */
 			if( good_header.getClass().getName().equals("nom.tam.fits.ImageHDU")) {
 				if( ((ImageHDU)good_header).getAxes().length == 1 ) {
-					return new double[]{0, (double)(((ImageHDU)good_header).getAxes()[0])};					
+					return new double[]{0, (double)(((ImageHDU)good_header).getAxes()[0]), (double)(((ImageHDU)good_header).getAxes()[0])};					
 				}
 				/*
 				 * The largest size is supposed to contain data
@@ -1098,9 +1098,9 @@ public class FitsProduct extends File implements ProductFile{
 					double min1 = (double)(((ImageHDU)good_header).getAxes()[0]);
 					double min2 = (double)(((ImageHDU)good_header).getAxes()[1]);
 					if( min1 > min2 ) {
-						return new double[]{0, min1};						
+						return new double[]{0, min1, min1};						
 					} else {
-						return new double[]{0, min2};						
+						return new double[]{0, min2, min2};						
 					}
 				}
 			}
@@ -1111,7 +1111,7 @@ public class FitsProduct extends File implements ProductFile{
 				return null;
 			}
 			Object o;
-			double[] retour = new double[2];
+			double[] retour = new double[3];
 			initEnumeration();
 			o =  tableEnumeration.getColumn(key);
 			/*
@@ -1134,6 +1134,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				}
 				else if( column_class.equals("[D") ) {
 					double too[] = (double[])(o);					
@@ -1150,6 +1151,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				}
 				else if( column_class.equals("[I") ) {
 					int too[] = (int[])(o);					
@@ -1166,6 +1168,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				}
 				else if( column_class.equals("[S") ) {
 					short too[] = (short[])(o);					
@@ -1182,6 +1185,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				}
 				else if( column_class.equals("[java.lang.String") ) {
 					String too[] = (String[])(o);					
@@ -1198,6 +1202,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				}
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Extrema: " + retour[0] + " " + retour[1]);
 				return retour;
@@ -1226,6 +1231,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				} else if( to[0].getClass().getName().equals("[D") ) {
 					double too[] = (double[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1241,6 +1247,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				} else if( to[0].getClass().getName().equals("[I") ) {
 					int too[] = (int[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1256,6 +1263,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				} else if( to[0].getClass().getName().equals("[S") ) {
 					short too[] = (short[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1271,6 +1279,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				} else if( to[0].getClass().getName().equals("[java.lang.String") ) {
 					String too[] = (String[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1286,6 +1295,7 @@ public class FitsProduct extends File implements ProductFile{
 							retour[1] = val;
 						}						
 					}
+					retour[2] = too.length;
 				} else {
 					IgnoreException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Type " + to[0].getClass().getName() + " not suported to read column extrema");
 					return null;
@@ -1320,6 +1330,7 @@ public class FitsProduct extends File implements ProductFile{
 					if( val > retour[1] ) {
 						retour[1] = val;
 					}						
+					retour[2] = ((Object[])(to[i])).length;
 				}				
 			}
 			return retour;

@@ -5,6 +5,8 @@ import java.util.Map;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetMode;
+import saadadb.products.ColumnSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -18,18 +20,18 @@ import saadadb.util.SaadaConstant;
  */
 public class WCSModel {
 	private Map<String, AttributeHandler> attributesList;
-	private double[] CRPIX;
-	private double[] CRVAL;
-	private double[] CDELT;
-	private String[] CTYPE;
-	private String[] CUNIT;
-	private double[] CD;
+	private ColumnSetter[] CRPIX;
+	private ColumnSetter[] CRVAL;
+	private ColumnSetter[] CDELT;
+	private ColumnSetter[] CTYPE;
+	private ColumnSetter[] CUNIT;
+	private ColumnSetter[] CD;
 	private int[] NAXISi;
 	private double[] matrix;
 	private int NAXIS;
 	boolean kwset_ok = true;
 	public String detectionMessage ="";
-
+	private WATInfos watInfos;
 	/**
 	 * @return
 	 * @throws Exception
@@ -37,130 +39,140 @@ public class WCSModel {
 	public WCSModel(Map<String, AttributeHandler> attributesList) throws Exception{
 		this.attributesList = attributesList;
 		AttributeHandler ah;
-		try {
-			if( (ah = this.attributesList.get("_naxis")) != null ) {
-				this.NAXIS  = Integer.parseInt(ah.getValue());
-				this.initArrays();
-			}
-			else {
-				IgnoreException.throwNewException(SaadaException.WCS_ERROR, "No NAXIS keyword");
-			}
-
-			for( int axe=0 ; axe<this.NAXIS ; axe++ ) {
-				int axe_num = axe+1;
-				if( (ah = this.attributesList.get("_naxis" + axe_num)) != null ) {
-					this.NAXISi[axe]  = Integer.parseInt(ah.getValue());
-				}
-				else {
-					kwset_ok = false;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No WCS keywords NAXIS" + axe_num);
-				}				
-
-
-				if( (ah = this.attributesList.get("_cunit" + axe_num)) != null || 
-						(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
-					this.CUNIT[axe] = ah.getValue();
-				}
-				else {
-					kwset_ok = false;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CUNIT" + axe_num + " or TCUNI" + axe_num);
-				}
-
-				if( (ah = this.attributesList.get("_ctype" + axe_num)) != null || 
-						(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
-					this.CTYPE[axe] = ah.getValue();
-				}
-				else {
-					kwset_ok = false;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CTYPE" + axe_num + " or TCTYP" + axe_num);
-				}
-
-				if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
-						(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
-					this.CRVAL[axe] = Double.parseDouble(ah.getValue());
-				}else{
-					kwset_ok = false;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRVAL" + axe_num  + " or TCRVL" + axe_num);
-				}
-
-				if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
-					this.CRPIX[axe] = Double.parseDouble(ah.getValue());
-				}else{
-					kwset_ok = false;
-					this.CRPIX[axe] = SaadaConstant.DOUBLE;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRPIX" + axe_num );
-				}
-				
-				if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
-						(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
-					this.CDELT[axe] = Double.parseDouble(ah.getValue());
-				}else{
-					kwset_ok = false;
-					this.CDELT[axe] = SaadaConstant.DOUBLE;
-				}
-
-				for( int axe2=0 ; axe2<NAXIS ; axe2++ ) {
-					int axe2_num = axe2+1;
-					if( (ah = this.attributesList.get("_pc" + axe_num + "_" + axe2_num)) != null || 
-							(ah = this.attributesList.get("_cd" + axe_num + "_" + axe2_num)) != null ) {
-						this.CD[(NAXIS*axe) + axe2] = Double.parseDouble(ah.getValue());
-
-					}else{
-						this.CD[(NAXIS*axe) + axe2] = SaadaConstant.DOUBLE;
-					}
-				}
-			}
-
-			if( !this.checkMatrix() ) {
-				kwset_ok = false;				
-			}
-			try {
-				this.setMatrix();
-			}catch (Exception e) {
-				Messenger.printMsg(Messenger.WARNING, e.getMessage());
-			}
-			/*
-			 * Exception are caught in case of failure on parseDouble
-			 * (NumberFormatException is not trapped by default)
-			 */
-		}catch (Exception e) {
-			IgnoreException.throwNewException(SaadaException.WCS_ERROR, e);
+		if( (ah = this.attributesList.get("_naxis")) != null ) {
+			this.NAXIS  = Integer.parseInt(ah.getValue());
+			this.initArrays();
+		} else {
+			IgnoreException.throwNewException(SaadaException.WCS_ERROR, "No NAXIS keyword");
 		}
+
+		this.watInfos = new WATInfos(NAXIS, attributesList);
+		for( int axe=0 ; axe<this.NAXIS ; axe++ ) {
+			int axe_num = axe+1;
+			if( (ah = this.attributesList.get("_naxis" + axe_num)) != null ) {
+				this.NAXISi[axe]  = Integer.parseInt(ah.getValue());
+			} else {
+				kwset_ok = false;
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords NAXIS" + axe_num);
+			}				
+
+
+			if( (ah = this.attributesList.get("_cunit" + axe_num)) != null || 
+					(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
+				this.CUNIT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);
+			} else {
+				kwset_ok = false;
+				this.CUNIT[axe] = new ColumnSetter();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CUNIT" + axe_num + " or TCUNI" + axe_num + " (look in comment later)");
+			}
+
+			if( (ah = this.attributesList.get("_ctype" + axe_num)) != null || 
+					(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
+				this.CTYPE[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+			} else {
+				kwset_ok = false;
+				this.CTYPE[axe] = new ColumnSetter();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CTYPE" + axe_num + " or TCTYP" + axe_num);
+			}
+
+			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
+					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
+				this.CRVAL[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+			}else{
+				kwset_ok = false;
+				this.CRVAL[axe] = new ColumnSetter();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRVAL" + axe_num  + " or TCRVL" + axe_num);
+			}
+
+			if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
+				this.CRPIX[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+			}else{
+				kwset_ok = false;
+				this.CRPIX[axe] = new ColumnSetter();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRPIX" + axe_num );
+			}
+
+			if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
+					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
+				this.CDELT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+			}else{
+				kwset_ok = false;
+				this.CDELT[axe] = new ColumnSetter();
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CDELT" + axe_num  + " or TCDLT" + axe_num );
+			}
+
+			for( int axe2=0 ; axe2<NAXIS ; axe2++ ) {
+				int axe2_num = axe2+1;
+				if( (ah = this.attributesList.get("_pc" + axe_num + "_" + axe2_num)) != null || 
+						(ah = this.attributesList.get("_cd" + axe_num + "_" + axe2_num)) != null ) {
+					this.CD[(NAXIS*axe) + axe2] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);
+
+				}else{
+					this.CD[(NAXIS*axe) + axe2].setNotSet();
+				}
+			}	
+			/*
+			 * Override with those read in WAT
+			 */
+			for( int axe2=0 ; axe2<NAXIS ; axe2++ ) {
+				String u = this.watInfos.getUnit(axe2);
+				if( u.length() > 0 ) {
+					this.CUNIT[axe2] = new ColumnSetter();
+					this.CUNIT[axe2].setByValue(u, false);
+					this.CUNIT[axe2].completeMessage("Read in WAT keywords");
+				}
+			}
+
+		}
+		if( !this.checkMatrix() ) {
+			kwset_ok = false;				
+		}
+		try {
+			this.setMatrix();
+		}catch (Exception e) {
+			Messenger.printMsg(Messenger.WARNING, e.getMessage());
+		}
+		/*
+		 * Exception are caught in case of failure on parseDouble
+		 * (NumberFormatException is not trapped by default)
+		 */
 	}
+
 
 	/**
 	 * Init arrays of WCS KWs
 	 */
 	private void initArrays() {
 
-		this.CRPIX   = new double[NAXIS];
-		this.CRVAL   = new double[NAXIS];
-		this.CDELT   = new double[NAXIS];
-		this.CTYPE   = new String[NAXIS];
-		this.CUNIT   = new String[NAXIS];
-		this.CD      = new double[NAXIS*NAXIS];
+		this.CRPIX   = new ColumnSetter[NAXIS];
+		this.CRVAL   = new ColumnSetter[NAXIS];
+		this.CDELT   = new ColumnSetter[NAXIS];
+		this.CTYPE   = new ColumnSetter[NAXIS];
+		this.CUNIT   = new ColumnSetter[NAXIS];
+		this.CD      = new ColumnSetter[NAXIS*NAXIS];
 		this.NAXISi  = new int[NAXIS];
 		this.matrix  = new double[NAXIS*NAXIS];
 		for( int i=0 ; i< NAXIS ; i++ ){
-			this.CRPIX[i] =  SaadaConstant.DOUBLE;
-			this.CRVAL[i] =  SaadaConstant.DOUBLE;
-			this.CDELT[i] =  SaadaConstant.DOUBLE;
-			this.CUNIT[i] =  "";
-			this.CTYPE[i] =  "";
+			this.CRPIX[i] =  null;
+			this.CRVAL[i] =  null;
+			this.CDELT[i] =  null;
+			this.CUNIT[i] =  null;
+			this.CTYPE[i] =  null;
 			this.NAXISi[i]  =  SaadaConstant.INT;
 		}
 		for( int i=0 ; i< (NAXIS*NAXIS) ; i++ ){
-			this.CD[i]    =  SaadaConstant.DOUBLE;
+			this.CD[i] = new ColumnSetter();
 			this.matrix[i] = SaadaConstant.DOUBLE;
 		}
 
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -194,11 +206,11 @@ public class WCSModel {
 		 */
 		if(hasSetElements(this.CDELT) ) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take CDELT keyword as projection matrix");
+				Messenger.printMsg(Messenger.DEBUG, "Take CDELT[i,j] keyword as projection matrix");
 			for( int axe=0 ; axe<this.NAXIS ; axe++) {
-				if( this.CDELT[axe] == SaadaConstant.DOUBLE) {
+				if( this.CDELT[axe].notSet()) {
 					IgnoreException.throwNewException(SaadaException.WCS_ERROR, "CDLET" + (axe+1) + "not set: Can not compute the projection matrix");
-					
+
 				}
 				this.setMatrix(axe, axe, this.CDELT[axe]);
 				/*
@@ -217,23 +229,22 @@ public class WCSModel {
 		 */
 		else if(hasSetElements(this.CD) ) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take CDi_j keywords as projection matrix");
+				Messenger.printMsg(Messenger.DEBUG, "Take CD[i,j] keywords as projection matrix");
 			for( int axe=0 ; axe<this.NAXIS ; axe++) {
 				/*
 				 * Diagonal elements are required at least
 				 */
-				if( this.getCD(axe, axe) == SaadaConstant.DOUBLE) {
+				if( this.getCD(axe, axe).notSet()) {
 					IgnoreException.throwNewException(SaadaException.WCS_ERROR, "CD" + (axe+1) + "_" + (axe+1) + "not set: Can not compute the projection matrix");
-					
+
 				}
 				/*
 				 * Cross elements are taken as 0 when not defined
 				 */
 				for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
-					if( this.getCD(axe, axe2) == SaadaConstant.DOUBLE) {
+					if( this.getCD(axe, axe2).notSet() ) {
 						this.setMatrix(axe, axe2, 0);
-					}
-					else {
+					} else {
 						this.setMatrix(axe, axe2, this.getCD(axe, axe2));						
 					}
 				}
@@ -250,9 +261,19 @@ public class WCSModel {
 	 * @param d
 	 * @throws Exception
 	 */
-	private void setMatrix(int ligne, int col, double d) throws Exception {
-		this.matrix[(this.NAXIS*ligne) + col] = d;
-		
+	private void setMatrix(int ligne, int col, ColumnSetter d) throws Exception {
+		this.matrix[(this.NAXIS*ligne) + col] = Double.parseDouble(d.getValue());
+
+	}
+	/**
+	 * @param ligne
+	 * @param col
+	 * @param v
+	 * @throws Exception
+	 */
+	private void setMatrix(int ligne, int col, double v ) throws Exception {
+		this.matrix[(this.NAXIS*ligne) + col] = v;
+
 	}
 
 	/**
@@ -260,9 +281,9 @@ public class WCSModel {
 	 * @return
 	 * @throws Exception
 	 */
-	private static boolean hasNotSetElements(double[] array) throws Exception {
+	private static boolean hasNotSetElements(ColumnSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
-			if( array[axe] == SaadaConstant.DOUBLE) {
+			if( array[axe].notSet()) {
 				return true;
 			}
 		}
@@ -273,9 +294,9 @@ public class WCSModel {
 	 * @return
 	 * @throws Exception
 	 */
-	private static boolean hasSetElements(double[] array) throws Exception {
+	private static boolean hasSetElements(ColumnSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
-			if( array[axe] != SaadaConstant.DOUBLE) {
+			if( !array[axe].notSet() ) {
 				return true;
 			}
 		}
@@ -286,7 +307,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public double getCRPIX(int axe) throws Exception {
-		return CRPIX[axe];
+		return (CRPIX[axe] == null)? SaadaConstant.DOUBLE: Double.parseDouble(CRPIX[axe].getValue());
 	}
 
 	/**
@@ -294,7 +315,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public double getCRVAL(int axe) throws Exception {
-		return CRVAL[axe];
+		return (CRVAL[axe] == null)? SaadaConstant.DOUBLE: Double.parseDouble(CRVAL[axe].getValue());
 	}
 
 	/**
@@ -302,7 +323,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public double getCDELT(int axe) throws Exception {
-		return CDELT[axe];
+		return (CDELT[axe] == null)? SaadaConstant.DOUBLE: Double.parseDouble(CDELT[axe].getValue());
 	}
 
 	/**
@@ -310,7 +331,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public String  getCTYPE(int axe) throws Exception {
-		return CTYPE[axe];
+		return (CTYPE[axe] == null)? null:CTYPE[axe].getValue();
 	}
 
 	/**
@@ -318,14 +339,14 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public String getCUNIT(int axe) throws Exception {
-		return CUNIT[axe];
+		return (CUNIT[axe] == null)? null:CUNIT[axe].getValue();
 	}
 
 	/**
 	 * @return the pC
 	 * @throws Exception
 	 */
-	public double getCD(int i, int j) throws Exception {
+	public ColumnSetter getCD(int i, int j) throws Exception {
 		return CD[(NAXIS*i) + j];
 	}
 
@@ -352,7 +373,7 @@ public class WCSModel {
 	public int getNAXIS() {
 		return NAXIS;
 	}
-	
+
 	/**
 	 * @return the kwset_ok
 	 * @throws Exception
@@ -368,7 +389,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public boolean isAxeProjectedToRealWord(int axe) throws Exception {
-		if( this.CRPIX[axe] != SaadaConstant.DOUBLE && this.CRVAL[axe] != SaadaConstant.DOUBLE && this.getMatrix(axe, axe) != SaadaConstant.DOUBLE) {
+		if( !this.CRPIX[axe].notSet() && !this.CRVAL[axe].notSet() && this.getMatrix(axe, axe) != SaadaConstant.DOUBLE) {
 			return true;
 		}
 		else {
@@ -377,7 +398,7 @@ public class WCSModel {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Set default projection parameters (1 to 1) on axe.
 	 * @param axe
@@ -386,8 +407,8 @@ public class WCSModel {
 	public void projectAxeToRealWord(int axe) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Set default projection parameters to axe #" + (axe+1));
-		this.CRPIX[axe] = 0;
-		this.CRVAL[axe] = 0;
+		this.CRPIX[axe].setByValue("0", false);
+		this.CRVAL[axe].setByValue("0", false);;
 		this.setMatrix(axe, axe, 1);
 		for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
 			if( axe2 != axe ) {
@@ -396,7 +417,7 @@ public class WCSModel {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the default porjection on all axes not droped to real word
 	 * @throws Exception
@@ -408,43 +429,29 @@ public class WCSModel {
 			}
 		}	
 	}
-	
+
 	/**
 	 * val = CRVLA + matrix*(pix - CPRIX)
 	 * @param pix
 	 * @return
 	 * @throws Exception
 	 */
-	public double[] getXYValue(int[] pix) throws Exception {
+	public double[] getRealWorldValue(int[] pix) throws Exception {
 		if( pix.length != this.NAXIS) {
 			IgnoreException.throwNewException(SaadaException.WCS_ERROR, "Attempt to read a pixel vector vith a size different from the pixel map");
 			return null;
 		}
 		double[] retour = new double[this.NAXIS];
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			retour[axe] = this.CRVAL[axe];
+			retour[axe] = Double.parseDouble(this.CRVAL[axe].getValue());
 			for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
-				retour[axe] += this.getMatrix(axe, axe2)*(pix[axe2]  - this.CRPIX[axe2]);
+				retour[axe] += this.getMatrix(axe, axe2)*(pix[axe2]  - Double.parseDouble(this.CRPIX[axe2].getValue()));
 			}
 		}
 		return retour;		
 	}	
-	
-	public double[] getXYValue(double[] pix) throws Exception {
-		if( pix.length != this.NAXIS) {
-			IgnoreException.throwNewException(SaadaException.WCS_ERROR, "Attempt to read a pixel vector vith a size different from the pixel map");
-			return null;
-		}
-		double[] retour = new double[this.NAXIS];
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			retour[axe] = this.CRVAL[axe];
-			for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
-				retour[axe] += this.getMatrix(axe, axe2)*(pix[axe2]  - this.CRPIX[axe2]);
-			}
-		}
-		return retour;		
-	}	
-	
+
+
 	/**
 	 * Return the min value following axe (all coords to 0)
 	 * @param axe
@@ -456,9 +463,9 @@ public class WCSModel {
 		for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
 			pix[axe2] = 0;
 		}
-		return getXYValue(pix)[axe];
+		return getRealWorldValue(pix)[axe];
 	}
-	
+
 	/**
 	 * Return the max value following axe (all coords expept axe to 0)
 	 * @param axe
@@ -474,7 +481,7 @@ public class WCSModel {
 				pix[axe2] = 0;
 			}
 		}
-		return getXYValue(pix)[axe];
+		return getRealWorldValue(pix)[axe];
 	}
 
 	/**
@@ -483,16 +490,23 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public int getDispersionAxe() throws Exception {
-		for( int axe=0  ; axe< this.NAXIS ; axe ++ ) {
-			if(isDispersionAxe(axe)) {
-				return axe;
+		int retour;
+		if( (retour = this.watInfos.getDispersionAxes()) != SaadaConstant.INT) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "WAP keywords: dispersion axe: " + retour);
+			return retour;
+		} else {
+			for( int axe=0  ; axe< this.NAXIS ; axe ++ ) {
+				if(isDispersionAxe(axe)) {
+					return axe;
+				}
 			}
 		}
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "No dispersion axe found");
 		return SaadaConstant.INT;
 	}
-	
+
 	/**
 	 * returns true if dispersion_axe_num is possibly a dispersion axe
 	 * @param dispersion_axe_num
@@ -503,16 +517,16 @@ public class WCSModel {
 		/*
 		 * Dispersion unit can be written in CTYPE keyword
 		 */
-		if( this.CTYPE[dispersion_axe_num].matches(".*(?i)(angstro).*") ) {
+		if( this.CTYPE[dispersion_axe_num].getValue().matches(".*(?i)(angstro).*") ) {
 			Messenger.printMsg(Messenger.TRACE, "Dispersion unit written in CTYPE keyword CTYPE=\"" + this.CTYPE 
 					+ "\". CTYPE=\"WAVE\" and CUNIT=\"Angstrom\" are taken"); 
-			this.CUNIT[dispersion_axe_num] = "Angstrom";
-			this.CTYPE[dispersion_axe_num] = "WAVE";
+			this.CUNIT[dispersion_axe_num].setValue("Angstrom");
+			this.CTYPE[dispersion_axe_num].setValue("WAVE");
 			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;
-		} else if( this.CTYPE[dispersion_axe_num].matches(".*(?i)((wavelength)|(frequency)|(energy)).*")  ) {
+		} else if( this.CTYPE[dispersion_axe_num].getValue().matches(".*(?i)((wavelength)|(frequency)|(energy)).*")  ) {
 			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
