@@ -223,23 +223,39 @@ class ProductIngestor {
 			 */
 			if( this.product.s_ra_ref.byValue() ) {
 				ra_val = this.product.s_ra_ref.getValue();
+			} else if( this.product.s_ra_ref.notSet() ) {
+				 this.product.s_ra_ref.setByValue(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
+				 this.product.s_ra_ref.completeMessage("taken from WCS CRVAL");
+				ra_val = this.product.s_ra_ref.getValue();
 			} else {
 				ra_val = this.product.s_ra_ref.getValue().replaceAll("'", "");
+			}
+			if( this.product.s_ra_ref.byKeyword() && this.product.s_ra_ref.getComment().matches(".*(?i)(hour).*")) {
+				try {
+					ra_val = Double.toString(Double.parseDouble(ra_val)*15);
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_ra_ref.getComment() + "): convert in deg");
+				} catch(Exception e){
+					 this.product.s_ra_ref.completeMessage("cannot convert " + ra_val + " from hours to deg");
+					ra_val = "";
+				}
 			}
 			String dec_val;
 			if( this.product.s_dec_ref.byValue() ) {
 				dec_val = this.product.s_dec_ref.getValue();
-			} else {
+			} else if( this.product.s_dec_ref.notSet() ) {
+				 this.product.s_dec_ref.setByValue(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
+				 this.product.s_dec_ref.completeMessage("taken from WCS CRVAL");
+				 dec_val = this.product.s_dec_ref.getValue();
+			}  else {
 				dec_val = this.product.s_dec_ref.getValue().replaceAll("'", "");
 			}
-
 			/*
 			 * Errors are not set when positions are not set
 			 */
 			if( ra_val == null || ra_val.equals("") || dec_val == null || dec_val.equals("") ||
 					ra_val.equals("Infinity") ||dec_val.equals("Infinity") ||
-					ra_val.equals("NaN") ||dec_val.equals("NaN") 
-			) {
+					ra_val.equals("NaN") ||dec_val.equals("NaN")  ) {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set: keywords not set");
 				return;
 			} else {

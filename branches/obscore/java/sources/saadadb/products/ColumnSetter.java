@@ -233,7 +233,7 @@ public final class ColumnSetter  {
 	/**
 	 * @return
 	 */
-	public Object getComment() {
+	public String getComment() {
 		return this.attributeHandler.getComment();
 	}
 	/**

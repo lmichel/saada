@@ -1,7 +1,9 @@
 package saadadb.dataloader.testprov;
 
 import java.io.File;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
@@ -25,10 +27,32 @@ public class ProductListReport {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			System.out.println(ap);
-			File[] files = (new File(ap.getFilename())).listFiles();
+			File[] allfiles = (new File(ap.getFilename())).listFiles();
+			String[] sample = {
+			"J_ApJ_703_894_PN_IC342_001.fits",
+			"J_ApJ_708_661_SN10297-12042005.fits",
+			"J_MNRAS_371_703_s0001.fits",
+			"moog_t5100g_00f-02a_06.fits",
+			"J_A+A_414_699_hd20766.fits",
+			"J_A+A_524_A86_SDSS0039_1.fit",
+			"j_a+a_507_929_time_serie_blue_78.fit",
+			"EN2_WINDESCRIPTOR_0105574071_20080415T231048_20080907T224903.fits",
+			"J_ApJ_727_125_time_serie_WASP12b_secondary_2008-10-29_Spitzer_IRAC_4.5_microns.fits",
+			"J_ApJ_703_894_p17_12co_2-1.fits"};
+			
+			Set<File> files = new LinkedHashSet<File>();
+			for( String s:sample ) {
+				for( File f: allfiles) {
+					if( f.getName().equals(s)) {
+						files.add(f);
+						break;
+					}
+				}
+			}
+
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 10;
+			int MAX = 9;
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;

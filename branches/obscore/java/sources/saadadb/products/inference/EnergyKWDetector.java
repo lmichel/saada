@@ -246,5 +246,19 @@ public class EnergyKWDetector extends KWDetector {
 		} 
 		return  new ColumnSetter();
 	}
+	
+	/**
+	 * @return
+	 */
+	public double getRaWCSCenter() {
+		return this.spectralCoordinate.getRaWCSCenter();
+	}
+	/**
+	 * @return
+	 */
+	public double getDecWCSCenter() {
+		return this.spectralCoordinate.getDecWCSCenter();
+	}
+
 
 }
