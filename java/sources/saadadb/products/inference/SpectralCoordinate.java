@@ -33,7 +33,8 @@ public class SpectralCoordinate{
 
 	private double orgMin = SaadaConstant.DOUBLE;
 	private double orgMax = SaadaConstant.DOUBLE;
-
+	private double raWCSCenter= SaadaConstant.DOUBLE;
+	private double decWCSCenter= SaadaConstant.DOUBLE;
 	private int dispersionAxeNum;
 	private int nbBins = SaadaConstant.INT;
 	public String detectionMessage ="";
@@ -584,11 +585,11 @@ public class SpectralCoordinate{
 		this.attributesList = tableAttributeHandler;
 		WCSModel wm = null;
 			wm = new WCSModel(tableAttributeHandler);
-//			if( !wm.isKwset_ok() ){
-//				if (Messenger.debug_mode)
-//					Messenger.printMsg(Messenger.DEBUG, "=================");
-//				return false;
-//			}
+			if( !wm.isKwset_ok() ){
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "WCS readout failed");
+				return false;
+			}
 		String unitOrg = this.mappedUnit;
 		wm.projectAllAxesToRealWord();
 		if( !wm.isKwset_ok() ){
@@ -660,6 +661,8 @@ public class SpectralCoordinate{
 		}
 		this.orgMin = wm.getMinValue(dispersionAxeNum);
 		this.orgMax = wm.getMaxValue(dispersionAxeNum);
+		this.raWCSCenter = wm.getCenterRa();
+		this.decWCSCenter = wm.getCenterDec();
 		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
 			Messenger.printMsg(Messenger.TRACE, this.getRange());
 			return true;
@@ -667,6 +670,19 @@ public class SpectralCoordinate{
 			this.detectionMessage = "";
 			return false;
 		}
+	}
+	
+	/**
+	 * @return
+	 */
+	double getRaWCSCenter() {
+		return this.raWCSCenter;
+	}
+	/**
+	 * @return
+	 */
+	double getDecWCSCenter() {
+		return this.decWCSCenter;
 	}
 }
 

@@ -62,7 +62,7 @@ public class WCSModel {
 					(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
 				this.CUNIT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);
 			} else {
-				kwset_ok = false;
+				//kwset_ok = false;
 				this.CUNIT[axe] = new ColumnSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CUNIT" + axe_num + " or TCUNI" + axe_num + " (look in comment later)");
@@ -72,7 +72,7 @@ public class WCSModel {
 					(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
 				this.CTYPE[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
 			} else {
-				kwset_ok = false;
+				//kwset_ok = false;
 				this.CTYPE[axe] = new ColumnSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CTYPE" + axe_num + " or TCTYP" + axe_num);
@@ -81,7 +81,13 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
 				this.CRVAL[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
-			}else{
+			}else if( this.NAXISi[axe] == 1 ){
+				ColumnSetter cd = new ColumnSetter();
+				cd.setByValue("0",false);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRVAL = 0");
+				this.CRVAL[axe] = cd;
+			} else{
 				kwset_ok = false;
 				this.CRVAL[axe] = new ColumnSetter();
 				if (Messenger.debug_mode)
@@ -90,7 +96,13 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
 				this.CRPIX[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
-			}else{
+			}else if( this.NAXISi[axe] == 1 ){
+				ColumnSetter cd = new ColumnSetter();
+				cd.setByValue("1",false);
+				this.CRPIX[axe] = cd;
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRPIX = 1");
+			} else{
 				kwset_ok = false;
 				this.CRPIX[axe] = new ColumnSetter();
 				if (Messenger.debug_mode)
@@ -100,7 +112,13 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
 				this.CDELT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
-			}else{
+			} else if( this.NAXISi[axe] == 1 ){
+				ColumnSetter cd = new ColumnSetter();
+				cd.setByValue("1",false);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CDELT = 1");
+				this.CDELT[axe] = cd;
+			} else {
 				kwset_ok = false;
 				this.CDELT[axe] = new ColumnSetter();
 				if (Messenger.debug_mode)
@@ -283,6 +301,7 @@ public class WCSModel {
 	 */
 	private static boolean hasNotSetElements(ColumnSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
+			System.out.println("@@@@@@@@@@@ " + axe + "  " + array[axe]);
 			if( array[axe].notSet()) {
 				return true;
 			}
@@ -514,6 +533,14 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public boolean isDispersionAxe(int dispersion_axe_num) throws Exception {
+		return (dispersionInCtype(dispersion_axe_num) || dispersionInCval(dispersion_axe_num));
+	}
+	
+	/**
+	 * @param dispersion_axe_num
+	 * @return
+	 */
+	private boolean dispersionInCtype(int dispersion_axe_num){
 		/*
 		 * Dispersion unit can be written in CTYPE keyword
 		 */
@@ -535,5 +562,64 @@ public class WCSModel {
 			this.detectionMessage = "";
 			return false;
 		}
+		
 	}
+
+	/**
+	 * @param dispersion_axe_num
+	 * @return
+	 */
+	private boolean dispersionInCval(int dispersion_axe_num){
+		String valComment = this.CRVAL[dispersion_axe_num].getComment();
+		String deltComment = this.CDELT[dispersion_axe_num].getComment();
+		if( valComment.matches(".*(?i)(angstro).*") 
+				|| 	deltComment .matches(".*(?i)(angstro).*")) {
+			this.CUNIT[dispersion_axe_num].setValue("Angstrom");
+			this.CTYPE[dispersion_axe_num].setValue("WAVE");
+			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CRVAL=" + valComment + " or CDELT=" + deltComment + ")";
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
+			return true;
+		} else {
+			this.detectionMessage = "";
+			return false;
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public double getCenterRa() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+				try {
+					retour = Double.parseDouble(this.CRVAL[axe].getValue());
+					break;
+				} catch (Exception e) {
+				}
+			}
+		}
+		return retour;
+
+	}
+	
+	/**
+	 * @return
+	 */
+	public double getCenterDec() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
+				try {
+					retour = Double.parseDouble(this.CRVAL[axe].getValue());
+					break;
+				} catch (Exception e) {
+				}
+			}
+		}
+		return retour;
+
+	}
+
 }
