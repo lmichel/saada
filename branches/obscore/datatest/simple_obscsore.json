@@ -8,7 +8,8 @@
 	"-spcunit=keV",
 	"-timemapping=only" 	,	
 	"-tmin=11 03 2013" 	,	
-	"-tmax=12 03 2013"	
+	"-tmax=12 03 2013"	,
+	"-debug=on"
 ],
 "fields": {
     "header": [	["RA", "double", "", "23.67"],
