@@ -1,5 +1,5 @@
  /******************************************************************************
-  *  This file is part of SAADA 1.7.0.build9
+  *  This file is part of SAADA 2.0
   *
   *  SAADA is free software; you can redistribute it and/or modify
   *   it under the terms of the GNU General Public License as published by
@@ -53,4 +53,9 @@ XML to Json conversion
 -----------------------
 Xml-to-Json http://www.bramstein.com/projects/xsltjson/
 Saxon9      http://www.saxon9.com/
+
+Healpix libray
+---------------
+Healpix java package written by William O'Mullane (womullan AT sciops.esa.int)
+and Emmanuel Joliet (ejoliet AT sciops.esa.int)
 
