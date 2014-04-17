@@ -1,9 +1,17 @@
 -------------------------------------------------
-Version Saada1.7.0.build7
+Version Saada 2.0
 
 L. MICHEL
 June 2013
 -------------------------------------------------
+
+Saada 1.8.0.build2
+------------------
+Use of healpix for the spatial indexation, The upgrade must be run manually with 
+the task database.upgrade
+All DB connections controlled by a spooler
+New task tomcat.deploy.safe using the Tomcat manager to deploy safely the Webb application
+
 Saada 1.7.0.build9
 -------------------
 Possibility of adding, removing and renaming extended attributes after the DB has been created

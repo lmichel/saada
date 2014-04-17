@@ -1,15 +1,25 @@
 -------------------------------------------------
-Version Saada1.7.0.build7
+Version Saada 2.0
 
 L. MICHEL
-December 2013
+April 2014
 -------------------------------------------------
 
+---- New data model based on Obscore ---------
+Includes new dataloder parameters
+
+---- DB connection spooler ----------
+Connection spooler used everywhere
+
+---- Spatial indexation -------------
+Use of healpix in place of QBox
+Upgrade tool available
+
 ---- Meta data editing --------------
-Extended attributes can be dited from the Meta panel of te admin tool
+Extended attributes can be edited from the Meta panel of the admin tool
 
 ---- MySQL -----------
-Make te relationship tabec in mode ROW_WIDTH=FIXED.
+Make the relationship table in mode ROW_WIDTH=FIXED.
 Indexes are built much more faster
 
 ---- Jars ----------------

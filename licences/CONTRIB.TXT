@@ -19,4 +19,5 @@ J-P. Mauhin		        (LPATC/Unistra 2013) 	Web site design
 N. Nussbaum		        (LPATC/Unistra 2013) 	Web site design
 F. Valence 		        (LPATC/Unistra 2013) 	Web site design
 J-B. Potier 		    (CESE Strasbourg 2013) 	Web page edition and testing
-J. Rybak 		        (ENSEIIE Strasbourg 2013) Admintool improvement, VO Interface
+J. Rybak 		        (ENSEIIE Strasbourg 2013) Admintool improvement, VO InterfaceJ. Rybak 		       
+J Remy					(IUT Nancy 2013)		Healpix Indexation; support of regions
