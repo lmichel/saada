@@ -224,7 +224,7 @@ class ProductIngestor {
 			if( this.product.s_ra_ref.byValue() ) {
 				ra_val = this.product.s_ra_ref.getValue();
 			} else if( this.product.s_ra_ref.notSet() ) {
-				 this.product.s_ra_ref.setByValue(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
+				 this.product.s_ra_ref.setByWCS(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
 				 this.product.s_ra_ref.completeMessage("taken from WCS CRVAL");
 				ra_val = this.product.s_ra_ref.getValue();
 			} else {
@@ -244,7 +244,7 @@ class ProductIngestor {
 			if( this.product.s_dec_ref.byValue() ) {
 				dec_val = this.product.s_dec_ref.getValue();
 			} else if( this.product.s_dec_ref.notSet() ) {
-				 this.product.s_dec_ref.setByValue(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
+				 this.product.s_dec_ref.setByWCS(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
 				 this.product.s_dec_ref.completeMessage("taken from WCS CRVAL");
 				 dec_val = this.product.s_dec_ref.getValue();
 			}  else {
