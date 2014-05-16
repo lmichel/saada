@@ -190,9 +190,11 @@ public class Spooler {
 			cpt++;
 		}
 		synchronized (this) {
-			for( DatabaseConnection cr : this.connectionsReferences){
-				cr.close();
-			}	
+			if( this.connectionsReferences != null ) {
+				for( DatabaseConnection cr : this.connectionsReferences){
+					cr.close();
+				}	
+			}
 			this.connectionsReferences = null;		
 		}
 		Messenger.printMsg(Messenger.TRACE, "Spooler stopped");
@@ -285,7 +287,7 @@ public class Spooler {
 		return s;
 
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */

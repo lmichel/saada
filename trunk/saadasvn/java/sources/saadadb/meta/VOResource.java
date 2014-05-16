@@ -265,18 +265,34 @@ public class VOResource {
 			 * That must be don for the next major release after 1.5.1
 			 */
 			String configfile  = Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + "vodm." + name + ".xml";
-			if( (new File(configfile)).exists() ) {
-				return new VOResource(configfile);
-			}
-			else {
-				Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found, try to look at the repository");
-				configfile  = Repository.getDmsPath()  + Database.getSepar() + "vodm." + name + ".xml";
-				if( (new File(configfile)).exists() ) {
-					return new VOResource(configfile);
+			File[] fs = (new File(Database.getRoot_dir() + Database.getSepar() + "config")).listFiles();
+			String fn =  "vodm." + name + ".xml";
+			for( File f: fs ){
+				if( f.getName().equalsIgnoreCase(fn)) {
+					return new VOResource(f.getAbsolutePath());
 				}
-				Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found");
-				return null;
 			}
+			Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found, try to look at the repository");
+			fs = (new File(Repository.getDmsPath())).listFiles();
+			for( File f: fs ){
+				if( f.getName().equalsIgnoreCase(fn)) {
+					return new VOResource(f.getAbsolutePath());
+				}
+			}
+			Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found");
+			
+//			if( (new File(configfile)).exists() ) {
+//				return new VOResource(configfile);
+//			}
+//			else {
+//				Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found, try to look at the repository");
+//				configfile  = Repository.getDmsPath()  + Database.getSepar() + "vodm." + name + ".xml";
+//				if( (new File(configfile)).exists() ) {
+//					return new VOResource(configfile);
+//				}
+//				Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found");
+				return null;
+//			}
 		}
 		/*
 		 * Otherwise, we look into the VO resource table

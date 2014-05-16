@@ -167,6 +167,7 @@ public class TapAdqlVotableFormator extends VotableFormator {
 			AttributeHandler meta = it.next();
 			SavotField f = null;
 			if (meta == null && adqlQuery != null){
+
 				f = new SavotField();
 				if (adqlQuery != null){
 					ADQLOperand col = adqlQuery.getColumn(indCol);
