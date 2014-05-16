@@ -1,5 +1,6 @@
 package ajaxservlet;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.tap.TAPToolBox;
 import saadadb.vo.tap.TAPToolBox.TAPParameters;
@@ -84,8 +86,14 @@ public class TAPSync extends SaadaServlet {
 				// Execute the query and return a formatted result:
 				String contentType = QueryResultFormator.getContentType(param.format);
 				if (contentType != null){
+					String reportDir =  Repository.getUserReportsPath(req.getSession().getId());
+					String fileName = "TAPSync" + "_"+ (int)(Math.random() * 100000);
+					fileName = TAPToolBox.executeTAPQuery(param.query, param.lang.equals("SaadaQL"), param.format, param.maxrec, reportDir, fileName);
+					
 					res.setContentType(contentType);
-					TAPToolBox.executeTAPQuery(param.query, param.lang.equals("SaadaQL"), param.format, param.maxrec, res.getOutputStream());
+					this.downloadProduct(req, res,  fileName );
+
+					
 				}else
 					getErrorPage(req, res, "The output format \""+param.format+"\" is not supported by this TAP service !");
 			}
