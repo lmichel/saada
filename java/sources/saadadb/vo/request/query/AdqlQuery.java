@@ -106,24 +106,7 @@ public class AdqlQuery extends VOQuery {
 			if(resultSet == null) {
 				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
 			}
-//		} catch( adqlParser.parser.ParseException e) {
-//			DefaultDBConsistency dbConsistency = new DefaultDBConsistency();
-//			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, QueryBuilderTools());
-//			adqlQuery = (SaadaADQLQuery)parse.Query();
-//
-//			if (limit > -1)
-//				adqlQuery.setLimit(limit);
-//			if( limit <= 0 || limit > DEFAULTSIZE) {
-//				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
-//				adqlQuery.setLimit(DEFAULTSIZE);
-//			}
-//			resultSet = new ADQLResultSet(adqlQuery.runQuery(), null);
-//
-//			if(resultSet == null) {
-//				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
-//			}
-//
-//		}
+
 
 	}
 
