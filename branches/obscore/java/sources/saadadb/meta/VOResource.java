@@ -280,8 +280,7 @@ public class VOResource {
 				}
 			}
 			Messenger.printMsg(Messenger.WARNING, "VOResource <" + configfile + "> not found");
-			
-				return null;
+			return null;
 		}
 		/*
 		 * Otherwise, we look into the VO resource table
