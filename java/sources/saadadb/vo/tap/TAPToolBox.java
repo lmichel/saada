@@ -194,11 +194,11 @@ public class TAPToolBox {
 	 * @param limit		    Result size limit.
 	 * @param outputDir  	Output directory.
 	 * @param outputFile	Output file name.
-	 * 
-	 * @throws IOException	If the format is HTML it is needed to write a temporary file and thus a IOException may occur.
-	 * @throws Exception	If an error occurs during the query execution.
+	 * @return              the full path of the report file
+	 * @throws IOException
+	 * @throws Exception
 	 */
-	public static void executeTAPQuery(String query, boolean saadaQL, String format, int limit, String outputDir, String reportFile) throws IOException, Exception{
+	public static String executeTAPQuery(String query, boolean saadaQL, String format, int limit, String outputDir, String reportFile) throws IOException, Exception{
 		LinkedHashMap<String, String> pmap = new LinkedHashMap<String, String>();
 		pmap.put("query", query);
 		pmap.put("limit", Integer.toString(limit));
@@ -208,165 +208,21 @@ public class TAPToolBox {
 			request.addFormator("votable");
 			request.setResponseFilePath(reportFile);
 			request.processRequest(pmap);
+			return  request.getResponseFilePath()[0];
 
 		} else if (format.equalsIgnoreCase("json") || format.equalsIgnoreCase("application/json")){
 			TapAdqlRequest request = new TapAdqlRequest("NoSession", outputDir);
 			request.addFormator("json");
 			request.setResponseFilePath(reportFile);
 			request.processRequest(pmap);
+			return  request.getResponseFilePath()[0];
 			// Other cases:
 		}else{
 			QueryException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Format " + format + " not supported");
-//			SaadaQLResultSet result = null;
-//			if (saadaQL){
-//				SaadaQLExecutor executor = new SaadaQLExecutor();
-//				result = executor.executeInStreaming(query);
-//				// CSV case:
-//				if (format.equalsIgnoreCase("csv") || format.equalsIgnoreCase("text/csv"))
-//					formatInText(result, ";", output);
-//
-//				// TSV case:
-//				else if (format.equalsIgnoreCase("tsv") || format.equalsIgnoreCase("text/tab-separated-values"))
-//					formatInText(result, "\t", output);
-//				executor.close();
-//			}else{
-//				ADQLExecutor executor = new ADQLExecutor();
-//				result = executor.execute(query, limit);
-//				// CSV case:
-//				if (format.equalsIgnoreCase("csv") || format.equalsIgnoreCase("text/csv"))
-//					formatInText(result, ";", output);
-//
-//				// TSV case:
-//				else if (format.equalsIgnoreCase("tsv") || format.equalsIgnoreCase("text/tab-separated-values"))
-//					formatInText(result, "\t", output);
-//				executor.close();
+			return null;
 			}			
 		}
 		
-		/**
-		 * Executes the given query and format its result in function of the given format.
-		 * 
-		 * @param query			The query to execute (ADQL or SaadaQL).
-		 * @param saadaQL		Indicates whether the given query is in SaadaQL else it is supposed to be in ADQL.
-		 * @param format		The result format (VOTABLE (default), HTML, CSV, TSV).
-		 * @param res			The HTTP response in which the result must be written.
-		 * 
-		 * @throws IOException	If the format is HTML it is needed to write a temporary file and thus a IOException may occur.
-		 * @throws Exception	If an error occurs during the query execution.
-		 */
-		public static void executeTAPQuery(String query, boolean saadaQL, String format, int limit, OutputStream output) throws IOException, Exception{
-			// VOTABLE case:
-			if (format.equalsIgnoreCase("votable") || format.equalsIgnoreCase("text/xml") || format.equalsIgnoreCase("application/x-votable+xml")){
-				TapAdqlVotableFormator formator = new TapAdqlVotableFormator();	
-			//	formator.processVOQuery(query, output, limit, saadaQL);
-
-			} else if (format.equalsIgnoreCase("json") || format.equalsIgnoreCase("application/json")){
-				TapAdqlJsonFormator formator = new TapAdqlJsonFormator();	
-				//formator.processVOQuery(query, output, limit, saadaQL);
-
-				// HTML case:
-			}else if (format.equalsIgnoreCase("html") || format.equalsIgnoreCase("text/html")){
-				// the XML version will be saved in a temporary file:
-				File tempFile = new File(Database.getVOreportDir(), "saada_temp_transform_xml_html.xml");
-				FileOutputStream xmlOutput = new FileOutputStream(tempFile);
-				// execute the query and format the result in XML:
-				TapAdqlVotableFormator formator = new TapAdqlVotableFormator();	
-			//	formator.processVOQuery(query, xmlOutput, limit, saadaQL);
-				// transform the XML result in HTML:
-				transformXMLToHTML(tempFile.getAbsolutePath(), output, Database.getUrl_root()+"/styles/votable.xsl");
-				// delete the temporary file:
-				tempFile.delete();
-
-				// Other cases:
-			}else{
-				SaadaQLResultSet result = null;
-				if (saadaQL){
-					SaadaQLExecutor executor = new SaadaQLExecutor();
-					result = executor.executeInStreaming(query);
-					// CSV case:
-					if (format.equalsIgnoreCase("csv") || format.equalsIgnoreCase("text/csv"))
-						formatInText(result, ";", output);
-
-					// TSV case:
-					else if (format.equalsIgnoreCase("tsv") || format.equalsIgnoreCase("text/tab-separated-values"))
-						formatInText(result, "\t", output);
-					executor.close();
-				}else{
-					ADQLExecutor executor = new ADQLExecutor();
-					result = executor.execute(query, limit);
-					// CSV case:
-					if (format.equalsIgnoreCase("csv") || format.equalsIgnoreCase("text/csv"))
-						formatInText(result, ";", output);
-
-					// TSV case:
-					else if (format.equalsIgnoreCase("tsv") || format.equalsIgnoreCase("text/tab-separated-values"))
-						formatInText(result, "\t", output);
-					executor.close();
-				}			
-
-
-				//			long[] oids; String[] columns;
-				//			// SaadaQL execution:
-				//			if (saadaQL){
-				//				// execute the query:
-				//				SaadaQLExecutor executor = new SaadaQLExecutor();
-				//				oids = executor.execute(query);
-				//				// get the list of columns:
-				//				SelectFromIn select = executor.getQuery().getSfiClause();
-				//				columns = select.getListColumns();
-				//				if (columns.length > 0){
-				//					if (columns[0].equalsIgnoreCase("*")){
-				//						Map<String, AttributeHandler> metaMap = MetaCollection.getAttribute_handlers(select.getCatego());
-				//						String[] classes;
-				//						if (select.getListColl().length > 0){
-				//							if (select.getListColl()[0].equalsIgnoreCase("*")){
-				//								classes = Database.getCachemeta().getClass_names();
-				//								for(String classe : classes)
-				//									metaMap.putAll(Database.getCachemeta().getClass(classe).getAttributes_handlers());
-				//							}else if (select.getListClass().length > 0){
-				//								if (select.getListClass()[0].equalsIgnoreCase("*")){
-				//									String[] collections = select.getListColl();
-				//									for(String collection : collections){
-				//										classes = Database.getCachemeta().getClassNames(collection, select.getCatego());
-				//										for(String classe : classes)
-				//											metaMap.putAll(Database.getCachemeta().getClass(classe).getAttributes_handlers());
-				//									}
-				//								}else{
-				//									classes = select.getListClass();
-				//									for(String classe : classes)
-				//										metaMap.putAll(Database.getCachemeta().getClass(classe).getAttributes_handlers());
-				//								}
-				//							}
-				//						}
-				//						columns = new String[metaMap.size()];
-				//						int i = 0;
-				//						for(AttributeHandler column : metaMap.values())
-				//							columns[i++] = column.getNameattr();
-				//					}
-				//				}else
-				//					throw new Exception("No select columns ! (error in a SaadaQL query)");
-				//				
-				//			// ADQL execution:
-				//			}else{
-				////				// execute the query:
-				////				ADQLExecutor executor = new ADQLExecutor();
-				////				oids = executor.execute(query);
-				////				// get the list of columns:
-				////				columns = executor.getQuery().getSfiClause().getListColumns();
-				//				throw new Exception("ADQL -> CSV/TSV: NOT YET IMPLEMENTED !");
-				//			}
-				//						
-				//		// CSV case:
-				//			if (format.equalsIgnoreCase("csv") || format.equalsIgnoreCase("text/csv"))
-				//				formatInText(oids, columns, ";", output);
-				//			
-				//		// TSV case:
-				//			else if (format.equalsIgnoreCase("tsv") || format.equalsIgnoreCase("text/tab-separated-values"))
-				//				formatInText(oids, columns, "\t", output);
-			}
-		}
-
-
 		/**
 		 * Format the response corresponding to the given list of oid in the specified text format (for now only: CSV and TSV).
 		 * 
