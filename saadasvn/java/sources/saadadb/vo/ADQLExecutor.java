@@ -74,7 +74,8 @@ public class ADQLExecutor {
 			query = (SaadaADQLQuery)parse.Query();
 			query.setMySQLMode(MySQLMode);
 //		parse.setDebug(true);
-		
+System.out.println("@@@@@@@@@@@@@@@@@@ " + limit + " " + query.getLimit());			
+(new Exception()).printStackTrace();			
 		if (limit > -1)
 			query.setLimit(limit);
 		if( limit <= 0 || limit > 50000) {

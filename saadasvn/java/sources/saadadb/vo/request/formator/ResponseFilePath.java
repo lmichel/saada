@@ -34,7 +34,7 @@ public class ResponseFilePath {
 		File f = new File(responseDir);
 		if( !f.exists() ) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Create file " + this.responseFilePath);
+				Messenger.printMsg(Messenger.DEBUG, "Create directory " + responseDir);
 			f.mkdir();
 		}
 		this.responseFilePath = responseDir + Database.getSepar() + filename;
