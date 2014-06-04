@@ -100,7 +100,7 @@
 		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
-			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
+			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlParser/**, xmleditorkit/**, upgrade/**">
             <classpath>
         		<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
         		<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
@@ -108,7 +108,7 @@
 		</javac>
 	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
 		     basedir="${SAADA_DB_HOME}/java/classes"
-			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
+			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,preproc/**,adqlParser/**, xmleditorkit/**, upgrade/**"/>
 	</target>
 
     
