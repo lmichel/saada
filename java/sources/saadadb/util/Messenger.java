@@ -27,6 +27,7 @@ import saadadb.admintool.dialogs.QueryExceptionDialog;
 import saadadb.admintool.dialogs.StartDialog;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -208,6 +209,11 @@ public class Messenger implements Serializable{
 		}
 
 	}
+	/**
+	 * In this mode {@link FatalException} or {@link AbortException} do not exit 
+	 * Only if Jframe not null
+	 * @param frame
+	 */
 	public static void setGraphicMode(JFrame frame) {
 		if( frame == null ) {
 			Messenger.mode = Messenger.COMMAND_LINE;
@@ -219,6 +225,10 @@ public class Messenger implements Serializable{
 		}
 	}
 
+	/**
+	 * In this mode {@link FatalException} or {@link AbortException} do not exit 
+	 * @param adminTool
+	 */
 	public static void setGraphicMode(AdminTool adminTool) {
 		if( adminTool == null ) {
 			Messenger.mode = Messenger.COMMAND_LINE;
@@ -246,9 +256,15 @@ public class Messenger implements Serializable{
 			Messenger.adminTool.noMoreAccess();
 	}
 
+	/**
+	 * In this mode {@link FatalException} or {@link AbortException} do not exit 
+	 */
 	public static void setServletMode() {
 		Messenger.mode = Messenger.SERVLET;	
 	}
+	/**
+	 * In this mode {@link FatalException} or {@link AbortException} do exit 
+	 */
 	public static void setCommandLineMode() {
 		Messenger.mode = Messenger.COMMAND_LINE;	
 	}
