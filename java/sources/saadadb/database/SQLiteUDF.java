@@ -39,8 +39,8 @@ public class SQLiteUDF {
 		/*
 		 * REGEXP procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure REGEXP");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure REGEXP");
 		Function.create(conn, "REGEXP", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -57,8 +57,8 @@ public class SQLiteUDF {
 		/*
 		 * corner00_ra procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner00_ra");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner00_ra");
 		Function.create(conn, "corner00_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -78,8 +78,8 @@ public class SQLiteUDF {
 		/*
 		 * corner00_dec procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner00_dec");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner00_dec");
 		Function.create(conn, "corner00_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -99,8 +99,8 @@ public class SQLiteUDF {
 		/*
 		 * corner01_ra procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner01_ra");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner01_ra");
 		Function.create(conn, "corner01_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -120,8 +120,8 @@ public class SQLiteUDF {
 		/*
 		 * corner01_dec procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner01_dec");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner01_dec");
 		Function.create(conn, "corner01_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -141,8 +141,8 @@ public class SQLiteUDF {
 		/*
 		 * corner10_ra procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner10_ra");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner10_ra");
 		Function.create(conn, "corner10_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -162,8 +162,8 @@ public class SQLiteUDF {
 		/*
 		 * corner10_dec procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner10_dec");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner10_dec");
 		Function.create(conn, "corner10_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -183,8 +183,8 @@ public class SQLiteUDF {
 		/*
 		 * corner11_ra procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner11_ra");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner11_ra");
 		Function.create(conn, "corner11_ra", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -204,8 +204,8 @@ public class SQLiteUDF {
 		/*
 		 * corner11_dec procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner11_dec");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure corner11_dec");
 		Function.create(conn, "corner11_dec", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -225,8 +225,8 @@ public class SQLiteUDF {
 		/*
 		 * distancedegree procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure distancedegree");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure distancedegree");
 		Function.create(conn, "distancedegree", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -246,8 +246,8 @@ public class SQLiteUDF {
 		/*
 		 * tileleftborder procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure tileleftborder");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure tileleftborder");
 		Function.create(conn, "tileleftborder", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -267,8 +267,8 @@ public class SQLiteUDF {
 		/*
 		 * tileleftborder procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure tilerightborder");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure tilerightborder");
 		Function.create(conn, "tilerightborder", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -288,8 +288,8 @@ public class SQLiteUDF {
 		/*
 		 * isinbox procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure isinbox");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure isinbox");
 		Function.create(conn, "isinbox", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -309,8 +309,8 @@ public class SQLiteUDF {
 		/*
 		 * getmjd procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure getmjd");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure getmjd");
 		Function.create(conn, "getmjd", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -325,8 +325,8 @@ public class SQLiteUDF {
 		/*
 		 * boxcenter procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxcenter");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxcenter");
 		Function.create(conn, "boxcenter", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -346,8 +346,8 @@ public class SQLiteUDF {
 		/*
 		 * boxcovers procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxcovers");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxcovers");
 		Function.create(conn, "boxcovers", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -367,8 +367,8 @@ public class SQLiteUDF {
 		/*
 		 * boxenclosed procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxenclosed");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxenclosed");
 		Function.create(conn, "boxenclosed", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -388,8 +388,8 @@ public class SQLiteUDF {
 		/*
 		 * boxoverlaps procedure
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxoverlaps");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "loading procedure boxoverlaps");
 		Function.create(conn, "boxoverlaps", new Function() {
 			@Override
 			public void xFunc() throws SQLException {
@@ -406,5 +406,8 @@ public class SQLiteUDF {
 				}
 			}       
 		});
+		
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "User Defined Procedures loaded");
 	}
 }

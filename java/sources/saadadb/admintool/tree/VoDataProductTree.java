@@ -15,6 +15,7 @@ import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -25,9 +26,9 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.collection.Category;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FitsProduct;
-import saadadb.products.ProductFile;
-import saadadb.products.VOTableProduct;
+import saadadb.products.FitsDataFile;
+import saadadb.products.DataFile;
+import saadadb.products.VOTableDataFile;
 import saadadb.util.RegExp;
 
 /**
@@ -74,21 +75,21 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 	 */
 	private void buildTree(String filename) throws Exception {
 		ArrayList<String> flat_array = new ArrayList<String>();
-		ProductFile prd = null;
+		DataFile prd = null;
 		if( filename.matches(RegExp.FITS_FILE) ) {
-			prd = new FitsProduct(filename, null);
+			prd = new FitsDataFile(filename, null);
 		}
 		else if( filename.matches(RegExp.VOTABLE_FILE) ) {
-			prd = new VOTableProduct(filename);				
+			prd = new VOTableDataFile(filename);				
 		}
 		else {
 			AdminComponent.showFatalError(frame, "Type of file <" + filename + "> not recognized");
 			return;
 		}
-		Map<String, ArrayList<AttributeHandler>> prd_map=null;
+		Map<String, List<AttributeHandler>> prd_map=null;
 		prd_map = prd.getProductMap(Category.UNKNOWN);
 		for( String ext: prd_map.keySet()) {
-			ArrayList<AttributeHandler> alah = prd_map.get(ext);
+			List<AttributeHandler> alah = prd_map.get(ext);
 			for( AttributeHandler ah: alah ) {
 				boolean set = false;
 				String leaf;

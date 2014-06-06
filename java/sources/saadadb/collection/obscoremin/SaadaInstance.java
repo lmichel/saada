@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
@@ -138,19 +139,38 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 	/**
 	 * Returns a list of all public fields of the hierarchy: those which are persistent in Saada
+	 * Here is an issue: The collection of fields returned by reflexion is not ordered. We need however to keep the field order to build the SWQL tables.
+	 * Getting the field class by class for the leaf to the root is not satisfactory since the result depends on the JDK implementation.
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	public List<Field> getAllPersisentFields() {
-		Class cls = this.getClass();
+	public List<Field> getAllPersistentFields() {
 		ArrayList<Field> retour = new ArrayList<Field>();
-		Field fl[] = cls.getFields();
-		for (int i = 0; i < fl.length; i++) {
-			Field field = fl[i];
-			if(Modifier.PUBLIC == field.getModifiers() ) {
-				retour.add(field);
-			}
+
+		Class cls = getClass();
+		Class _class = cls;
+		Vector<Class> vt_class = new Vector<Class>();
+		while ( !_class.getName().equals("java.lang.Object")  ) {
+			vt_class.add(_class);
+			_class = _class.getSuperclass();
 		}
+		for (int k = vt_class.size() - 1; k >= 0; k--) {
+			Field fl[] = (vt_class.get(k)).getDeclaredFields();
+			for (int i = 0; i < fl.length; i++) {
+				Field field = fl[i];
+				if(Modifier.PUBLIC == field.getModifiers() ) {
+					retour.add(field);
+				}
+			}
+		}		
+//		cls = this.getClass();
+//		Field fl[] = cls.getFields();
+//		for (int i = 0; i < fl.length; i++) {
+//			Field field = fl[i];
+//			if(Modifier.PUBLIC == field.getModifiers() ) {
+//				retour.add(field);
+//			}
+//		}
 		return retour;
 	}
 	/**
@@ -196,7 +216,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws Exception
 	 */
 	public void init(SaadaQLResultSet rs) throws Exception {
-		List<Field> fs = this.getAllPersisentFields();
+		List<Field> fs = this.getAllPersistentFields();
 		boolean classLevel = false;
 		for( Field f: fs ) {
 			String type = f.getType().toString();
@@ -250,7 +270,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @throws Exception
 	 */
 	public void init(ResultSet rs, Set<String> colNames) throws Exception {
-		List<Field> fs = this.getAllPersisentFields();
+		List<Field> fs = this.getAllPersistentFields();
 		boolean classLevel = false;
 		for( Field f: fs ) {
 			String type = f.getType().toString();
@@ -609,7 +629,7 @@ public abstract class SaadaInstance implements DMInterface {
 		try {
 			return this.getClass().getField(fieldName).get(this);
 		} catch (Exception e) {
-			List<Field> flds = this.getAllPersisentFields();
+			List<Field> flds = this.getAllPersistentFields();
 			for( Field f: flds) {
 				if( f.getName().equalsIgnoreCase(fieldName)) {
 					return f.get(this);
@@ -809,7 +829,7 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public AttributeHandler getFieldByUCD(String ucd, boolean queriable_only) throws Exception {
 		MetaClass mc = Database.getCachemeta().getClass(SaadaOID.getClassNum(this.oidsaada));
-		List<Field> fs = this.getAllPersisentFields();
+		List<Field> fs = this.getAllPersistentFields();
 		for( Field f: fs) {
 			AttributeHandler ah;
 			if( (ah = mc.getAttributes_handlers().get(f.getName())) != null ) {

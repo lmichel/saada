@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
@@ -1000,6 +1002,12 @@ abstract public class DbmsWrapper {
 	/**
 	 * Return the (COLUMN_NAME, TYPE_NAME) tuples for all columns of the searched_table
 	 * if it exist. Retuen NULL else.
+	 * The caller must give back the connection:
+	 * 		DatabaseConnection connection = Database.getConnection();
+	 *	ResultSet rs = Database.getWrapper().getTableColumns(connection, sqlTable);
+	 *       ........
+	 *	Database.giveConnection(connection);
+     *
 	 * @param searched_table
 	 * @return
 	 * @throws Exception
@@ -1193,6 +1201,11 @@ abstract public class DbmsWrapper {
 
 	/**
 	 * Returns a query sequence because SQLITE cannot directly change a column type
+	 * The caller must give back the connection:
+	 * 		DatabaseConnection connection = Database.getConnection();
+	 *	ResultSet rs = Database.getWrapper().getTableColumns(connection, sqlTable);
+	 *       ........
+	 *	Database.giveConnection(connection);
 	 * @param table
 	 * @param column
 	 * @return
