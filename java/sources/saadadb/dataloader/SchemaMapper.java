@@ -1,6 +1,5 @@
 package saadadb.dataloader;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +8,8 @@ import java.util.TreeSet;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -18,62 +17,69 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
+import saadadb.products.DataFile;
 import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.Table_Saada_Class;
-import saadadb.sqltable.Table_Saada_Data;
 import saadadb.sqltable.UCDTableHandler;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
+
+/**
+ * Super class of the classes doing the actual data loading 
+ * @author michel
+ * @version $Id$
+ */
 public abstract class SchemaMapper {
 
 	protected static String separ = System.getProperty("file.separator");
 	protected ProductMapping mapping;
 	private static String class_location;
 	private static String package_name;
-	protected List<File> products;
-	protected ProductBuilder current_prd;
-	protected MetaClass current_class;
-	protected SchemaMapper entry_mapper = null;
-	protected TreeSet<String> class_to_index = new TreeSet<String>();
-	protected boolean build_index = true;
+	protected List<DataFile> dataFiles;
+	protected ProductBuilder currentProductBuilder;
+	protected MetaClass currentClass;
+	protected SchemaMapper entryMapper = null;
+	protected TreeSet<String> classesToBeIndexed = new TreeSet<String>();
+	protected boolean mustIndex = true;
 	protected Loader loader;
 
-	/** * @version $Id$
-
-	 * @param products
-	 * @param handler
+	/**
+	 * @param loader
+	 * @param prd
 	 */
 	public SchemaMapper(Loader loader, ProductBuilder prd) {
 		setProduct(prd);
 		this.loader = loader;
 		package_name = "generated." + Database.getName();
 		class_location = Database.getRoot_dir() + separ+ "class_mapping";
-		this.build_index = !mapping.noIndex();
+		this.mustIndex = !mapping.noIndex();
 	}
 
 	/**
 	 * @param products
 	 * @param handler
 	 */
-	public SchemaMapper(Loader loader, List<File> products, ProductMapping mapping) {
+	public SchemaMapper(Loader loader, List<DataFile> products, ProductMapping mapping) {
 		this.loader = loader;
 		this.mapping = mapping;
-		this.products = products;
+		this.dataFiles = products;
 		package_name = "generated." + Database.getName();
 		class_location = Database.getRoot_dir() + separ+ "class_mapping";
-		this.build_index = !mapping.noIndex();
+		this.mustIndex = !mapping.noIndex();
 	}
-
+	
 	/**
 	 * @param prd
 	 */
 	protected void  setProduct(ProductBuilder prd) {
 		this.mapping = prd.getMapping();
-		this.current_prd= prd;		
+		this.currentProductBuilder= prd;		
 	}
 
 	/**
@@ -82,12 +88,12 @@ public abstract class SchemaMapper {
 	protected void loadProduct() throws Exception {
 
 		try {
-			this.current_prd.setMetaclass(this.current_class);
-			if( this.entry_mapper != null ) {
-				this.entry_mapper.current_prd.setMetaclass(this.entry_mapper.current_class);
+			this.currentProductBuilder.setMetaclass(this.currentClass);
+			if( this.entryMapper != null ) {
+				this.entryMapper.currentProductBuilder.setMetaclass(this.entryMapper.currentClass);
 			}
-			this.current_prd.loadValue();
-			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getActualOidsaada() + ">");
+			this.currentProductBuilder.loadValue();
+			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
 
 		} catch (Exception ex) {
 			Messenger.printStackTrace(ex);
@@ -226,7 +232,7 @@ public abstract class SchemaMapper {
 	 * @return
 	 * @throws Exception
 	 */
-	protected MetaClass createClassFromProduct(ClassifierMode mode) throws Exception {
+	public MetaClass createClassFromProduct(ClassifierMode mode) throws Exception {
 
 
 		String class_name;
@@ -236,14 +242,22 @@ public abstract class SchemaMapper {
 		 */
 		String className = this.mapping.getClassName();
 		if( className == null || className.length() == 0){
-			className = this.current_prd.possibleClassName();
+			className = this.currentProductBuilder.possibleClassName();
 		}
 		class_name = this.getNewcLassName(className);
-		//class_name = "Aldebaran010";
-		Messenger.printMsg(Messenger.TRACE,"Creation of the new class <" + class_name + ">");
+		/*
+		 * Check the class name
+		 */
+		String message = "";
+		if( !class_name.matches(RegExp.CLASSNAME) ) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Class name must match " + RegExp.CLASSNAME);
+		} else if( !Database.getCachemeta().isNameAvailable(class_name, message) )  {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+		}
 
+		Messenger.printMsg(Messenger.TRACE,"Creation of the new class <" + class_name + ">");
 		// Retrieve   attributeslist in the model
-		Map<String, AttributeHandler> tableAttribute = this.current_prd.getProductAttributeHandler();
+		Map<String, AttributeHandler> tableAttribute = this.currentProductBuilder.getProductAttributeHandler();
 		// Create and load of  java class
 		return createClassFromProduct(mode, class_name, tableAttribute);
 	}
@@ -270,6 +284,7 @@ public abstract class SchemaMapper {
 				SQLTable.commitTransaction();
 				dontforgettoreopentransaction = true;
 			}
+			Messenger.printMsg(Messenger.TRACE, "Storing the meta data of the class  " + class_name);
 			SQLTable.beginTransaction();
 			UCDTableHandler uth = new UCDTableHandler(class_name
 					, mapping.getCollection()
@@ -286,7 +301,7 @@ public abstract class SchemaMapper {
 			 * Store the association between table class and entry class
 			 */
 			if( mapping.getCategory() == Category.ENTRY ) {
-				EntryBuilder entry = (EntryBuilder)this.current_prd;
+				EntryBuilder entry = (EntryBuilder)this.currentProductBuilder;
 				String table_class_name = entry.getTable().getMetaclass().getName();
 				Table_Saada_Class.setAssociateClass(class_name
 						, mapping.getCollection() 
@@ -303,7 +318,7 @@ public abstract class SchemaMapper {
 			// Attention the table name in database is different
 			// from the java class name (without package)
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Creation of the SQL table for the class <" + class_name + ">");
-			Table_Saada_Data.createBusinessTable(class_name, cls);
+			Table_Saada_Business.createBusinessTable(class_name, cls);
 			// Load values and update UCD of valid list of all
 			// products with identical type
 			// Updates the UCD tables in current data base for the products list
@@ -318,10 +333,10 @@ public abstract class SchemaMapper {
 			SQLTable.beginTransaction();
 		}
 		Database.getCachemeta().reload(true);
-		this.current_class = Database.getCachemeta().getClass(class_name);
-		if( this.current_prd != null )
-			this.current_prd.setMetaclass(this.current_class);
-		return this.current_class;
+		this.currentClass = Database.getCachemeta().getClass(class_name);
+		if( this.currentProductBuilder != null )
+			this.currentProductBuilder.setMetaclass(this.currentClass);
+		return this.currentClass;
 	}
 
 	protected void updateSchemaForProduct() throws Exception {

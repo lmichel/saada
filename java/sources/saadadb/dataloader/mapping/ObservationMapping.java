@@ -1,6 +1,7 @@
 package saadadb.dataloader.mapping;
 
 import saadadb.command.ArgsParser;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 
 public class ObservationMapping extends AxisMapping {

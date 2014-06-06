@@ -1,6 +1,7 @@
 package saadadb.dataloader.mapping;
 
 import saadadb.command.ArgsParser;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 

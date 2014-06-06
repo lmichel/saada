@@ -18,6 +18,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.ColumnSetter;
+import saadadb.products.ExtensionSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -64,7 +65,7 @@ public class FooReport {
 	JSONObject jsonAhs;
 	FooProduct fooProduct;
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	FooReport(String jsonFilename) throws Exception{
 		String fn = jsonFilename.replace("json:", "");
 		if( fn.charAt(0) != File.separatorChar ){
@@ -114,7 +115,15 @@ public class FooReport {
 		}
 		product.initProductFile();
 		Map<String, ColumnSetter> r = product.getReport();
+		Map<String, ColumnSetter> er = product.getEntryReport();
+		System.out.println(this.ap);
+
 		System.out.println("======== ");	
+		System.out.println("      -- Loaded extensions");	
+		for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
+			System.out.println(es);
+		}
+		System.out.println("      -- Field values");	
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
@@ -123,6 +132,18 @@ public class FooReport {
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
 
+		}
+		if( er != null ){
+			System.out.println("      -- Entry Field values");	
+			for( java.util.Map.Entry<String, ColumnSetter> e:er.entrySet()){
+				System.out.print(String.format("%20s",e.getKey()) + "     ");
+				ColumnSetter ah = e.getValue();
+				System.out.print(ah.getMode() + " " + ah.message);
+				if( !ah.notSet() ) 
+					System.out.print(" storedValue=" + ah.storedValue);
+				System.out.println("");
+
+			}
 		}
 	}
 

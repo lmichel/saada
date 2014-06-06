@@ -11,32 +11,36 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.AnyFile;
+import saadadb.products.DataFile;
+import saadadb.products.FitsDataFile;
+import saadadb.products.VOTableDataFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
-import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 
 /**
+ * Entry point for loading data files. Get the list of files, build the appropriate {@link SchemaMapper} and run it
  * @author michel
- * * @version $Id$
-
+ * @version $Id$
  */
 public class Loader extends SaadaProcess {
-	
+
 	/*
 	 * COnfiguration used by  the current loading session
 	 */
 	private ProductMapping productMapping;
-	private ArrayList<File> file_to_load = null;
-	
+	private ArrayList<DataFile> filesToBeLoaded = null;
+
 	private ArgsParser tabArg;
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args){
-		
+
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			String config=null;
@@ -67,7 +71,7 @@ public class Loader extends SaadaProcess {
 		} 
 		Database.close();
 	}
-	
+
 	/**
 	 * Print out a short help and exit
 	 */
@@ -75,7 +79,7 @@ public class Loader extends SaadaProcess {
 		System.out.println("USAGE: jave dataloader.Loader [loader params] [db_name]");
 		System.exit(1);		
 	}
-	
+
 	/**
 	 * Creator init the loader and the database
 	 * @param args
@@ -119,10 +123,10 @@ public class Loader extends SaadaProcess {
 		 * The file to load list can be set by the GUI via the setFile_to_load method.
 		 * In that case we don't set this list again
 		 */
-		if( this.file_to_load == null ) {
+		if( this.filesToBeLoaded == null ) {
 			setCandidateFileList();
 		}
-		if( file_to_load.size() == 0 ) {
+		if( filesToBeLoaded.size() == 0 ) {
 			return;
 		}
 		ClassifierMode classifierMode = productMapping.getClassifier();
@@ -133,39 +137,39 @@ public class Loader extends SaadaProcess {
 		 * Flatfiles have no class, they can be loaded by burst
 		 */
 		if( productMapping.getCategory() == Category.FLATFILE ) {
-			(new FlatFileMapper(this, file_to_load, this.productMapping)).ingestProductSet();						
+			(new FlatFileMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSet();						
 		} else if (classifierMode == ClassifierMode.CLASS_FUSION) {
 			/*
 			 * Load all products in one step
 			 */
 			if( productMapping.getCategory() != Category.FLATFILE &&
 					productMapping.getCategory() != Category.TABLE	) {
-				(new SchemaFusionMapper(this, file_to_load, this.productMapping)).ingestProductSetByBurst();			
+				(new SchemaFusionMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSetByBurst();			
 
 			} else {
-				(new SchemaFusionMapper(this, file_to_load, this.productMapping)).ingestProductSet();			
+				(new SchemaFusionMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSet();			
 			}
 		} else if (classifierMode == ClassifierMode.CLASSIFIER){
 			/*
 			 * Load products one by one and 
 			 */
-			(new SchemaClassifierMapper(this, file_to_load, this.productMapping)).ingestProductSet();
+			(new SchemaClassifierMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSet();
 		}
 	}
-	
+
 	/**
 	 * @return
 	 * @throws AbortException 
 	 */
-	public void setCandidateFileList() throws AbortException {
-		this.file_to_load = new ArrayList<File>();
+	public void setCandidateFileList() throws Exception {
+		this.filesToBeLoaded = new ArrayList<DataFile>();
 		String filename = this.tabArg.getFilename();
 		String filter = this.tabArg.getFilter();
 		if( filename ==  null || filename.equals("")) {
 			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "A file (or dir) name must be specified");
 		}
 		File requested_file = new File(filename);
-		
+
 		if( !requested_file.exists()  ) {
 			try {
 				/*
@@ -173,12 +177,10 @@ public class Loader extends SaadaProcess {
 				 */
 				if( !(new File(requested_file.getCanonicalPath())).exists() ) {
 					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");	
-				}
-				else {
+				} else {
 					return;
 				}
-			} catch (Exception e) {
-			}
+			} catch (Exception e) {}
 			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");							
 		}
 		/*
@@ -186,20 +188,21 @@ public class Loader extends SaadaProcess {
 		 */ 
 		else if( requested_file.isDirectory() ) {
 			String[] dir_content = requested_file.list();
-			this.file_to_load = new ArrayList<File>(dir_content.length);
+			this.filesToBeLoaded = new ArrayList<DataFile>(dir_content.length);
 			if( dir_content.length == 0 ) {
 				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
 				return;
 			}
 			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.getAbsolutePath() + ">");							
 			int cpt = 0;
-			for( int i=0 ; i<dir_content.length ; i++ ) {	
-				File candidate_file = new File(requested_file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+			for( int i=0 ; i<dir_content.length ; i++ ) {
+				String fullPath = requested_file.getAbsolutePath() + File.separator + dir_content[i];
+			//	File candidate_file = new File(requested_file.getAbsolutePath() + File.separator + dir_content[i]);
 				/*
 				 * Do not proceed recursively: just files are taken
 				 */
-				if( !candidate_file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
-					this.file_to_load.add(candidate_file);
+				if( !(new File(fullPath)).isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
+					this.addDataFile(fullPath);
 					cpt++;
 				}
 				if( (cpt% 5000) == 0 ){
@@ -212,12 +215,27 @@ public class Loader extends SaadaProcess {
 		 *  "filename" is a single file to load
 		 */
 		else {
-			this.file_to_load.add(requested_file);
+			this.addDataFile(filename);
 			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.getAbsolutePath() + ">");							
 		}
-		
+
 	}
 	
+	/**
+	 * Create an appropriate DataFile from the file name and push it in the lits of files to be loaded
+	 * @param fullPath
+	 * @throws Exception 
+	 */
+	private void addDataFile(String fullPath) throws Exception {
+		if( fullPath.matches(RegExp.FITS_FILE) ) {
+			this.filesToBeLoaded.add(new FitsDataFile(fullPath));
+		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
+			this.filesToBeLoaded.add(new VOTableDataFile(fullPath));
+		} else {
+			this.filesToBeLoaded.add(new AnyFile(fullPath));
+		}		
+	}
+
 	/**
 	 * Check if filename is a possible datafile. It should match filter if not null, otherwise
 	 * it should be either a VOTable (except for images) or a FITS file.
@@ -228,15 +246,13 @@ public class Loader extends SaadaProcess {
 	private boolean validCandidateFile(String filename, String filter) {
 		if( filter != null ) {
 			return filename.matches(filter);
-		}
-		else {
+		} else {
 			switch(productMapping.getCategory()) {
 			case Category.FLATFILE: return true;
 			case Category.IMAGE: return filename.matches(RegExp.FITS_FILE);
 			default: if( !filename.matches(RegExp.FITS_FILE) ) {
 				return filename.matches(RegExp.VOTABLE_FILE);
-			}
-			else {
+			} else {
 				return true;
 			}
 			}
@@ -253,14 +269,14 @@ public class Loader extends SaadaProcess {
 		Database.getCachemeta().getCollection(this.tabArg.getCollection());
 		this.productMapping = tabArg.getProductMapping();
 	}
-	
+
 	/**
 	 * This methode return the option corresponding to the argument.
 	 * @param argument -- The argument we want to get the option. For example -uniqueinstance=
 	 * @return A string wich represent the option.
 	 */
 	public static String getOption(String argument, Vector<String> tabArg){
-		
+
 		String res = "";
 		for(int i=0; i<tabArg.size(); i++){
 			String arg = tabArg.get(i).trim();
@@ -269,9 +285,9 @@ public class Loader extends SaadaProcess {
 		}
 		return res;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Apply from args global parameters (debug...)
 	 * @param tabArg
@@ -279,18 +295,18 @@ public class Loader extends SaadaProcess {
 	public void setTabArg() {
 		this.tabArg.setDebugMode();
 	}
-	
+
 	/**
 	 * @param file_to_load The file_to_load to set.
 	 * @throws AbortException 
 	 */
-	public void setFile_to_load(ArrayList<String> file_to_load) throws AbortException {
+	public void setFile_to_load(ArrayList<String> file_to_load) throws Exception {
 		String base_dir = this.tabArg.getFilename();
-		this.file_to_load = new ArrayList<File>();
+		this.filesToBeLoaded = new ArrayList<DataFile>();
 		for( String f: file_to_load) {
 			File cf = new File(base_dir + Database.getSepar() + f);
 			if( cf.exists() && !cf.isDirectory() ) {
-				this.file_to_load.add(cf);
+				this.addDataFile(base_dir + Database.getSepar() + f);
 			}
 			else {
 				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.getAbsolutePath() + "> does not exist or is not a file");

@@ -14,5 +14,6 @@ public enum Axis {
 	TIME,
 	ENERGY,
 	OBSERVATION,
+	OBSERVABLE,
 	EXTENDEDATT
 }

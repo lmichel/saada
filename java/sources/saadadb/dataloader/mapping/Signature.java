@@ -3,6 +3,10 @@ package saadadb.dataloader.mapping;
 import saadadb.util.MD5Key;
 
 /**
+ * MD5 key builder.
+ * Builds to signatures, one name stringSignature a,d the other stringSignatureWithoutColl.
+ * They have no specific role, but usually  stringSignature is used for the signature englobing all fields and 
+ * stringSignatureWithoutColl for the signature built with business attributes only
  * @author michel
  * @version $Id$
  *
@@ -13,6 +17,7 @@ public class Signature {
 	private String md5Key = null, md5KeyWithoutColl = null;
 
 	/**
+	 * Add edlement to the signature
 	 * @param element
 	 * @param withColl
 	 */

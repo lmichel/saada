@@ -16,6 +16,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
+import saadadb.products.DataFile;
 import saadadb.products.FlatFileBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -30,7 +31,7 @@ import saadadb.util.Messenger;
 public class FlatFileMapper extends SchemaMapper {
 
 
-	public FlatFileMapper(Loader loader, List<File> products,
+	public FlatFileMapper(Loader loader, List<DataFile> products,
 			ProductMapping productMapping) {
 		super(loader, products, productMapping);
 		Messenger.setMaxProgress(-1);
@@ -38,7 +39,7 @@ public class FlatFileMapper extends SchemaMapper {
 
 	@Override
 	public void ingestProductSet() throws Exception {
-		if( this.products.size() == 0 ) {
+		if( this.dataFiles.size() == 0 ) {
 			Messenger.printMsg(Messenger.ERROR, "Attempt to load an empty set if flatfiles");
 			return;
 		} else {
@@ -48,7 +49,7 @@ public class FlatFileMapper extends SchemaMapper {
 			@SuppressWarnings("rawtypes")
 			Class                  cls = SaadaClassReloader.forGeneratedName("FLATFILEUserColl");
 			SaadaInstance           si = (SaadaInstance) cls.newInstance();
-			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductInstance(this.products.get(0)));
+			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductBuilderInstance(this.dataFiles.get(0)));
 			Collection<AttributeHandler> it  = MetaCollection.getAttribute_handlers_flatfile().values(); 
 
 			ffp.mapIgnoredAndExtendedAttributes();
@@ -63,7 +64,7 @@ public class FlatFileMapper extends SchemaMapper {
 			 */
 			long oid = SaadaOID.newFlatFileOid(this.mapping.getCollection());
 			int line=0;
-			for( File file: this.products) {
+			for( DataFile file: this.dataFiles) {
 				si.oidsaada = oid++;
 				ffp.bindInstanceToFile(si, file);
 				ffp.storeCopyFileInRepository();
@@ -87,7 +88,7 @@ public class FlatFileMapper extends SchemaMapper {
 				line++;
 				if( (line%100) == 0 ) {
 					Messenger.printMsg(Messenger.TRACE,
-							" <" + line + "/" + this.products.size()
+							" <" + line + "/" + this.dataFiles.size()
 							+ "> : Flatfiles loaded ");
 					if( (line % 15000) == 0 ) {
 						/*
@@ -101,13 +102,13 @@ public class FlatFileMapper extends SchemaMapper {
 			}
 			bustmpfile.close();
 			Messenger.printMsg(Messenger.TRACE,
-					+ line + "/" + this.products.size()
+					+ line + "/" + this.dataFiles.size()
 					+ " Flafiles read: copy the dump files into the database"); 
 			/*
 			 * Store the dump table
 			 */
 			SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + busdumpfile);
-			if( this.build_index ) {
+			if( this.mustIndex ) {
 				SQLTable.indexTable(ecoll_table, this.loader);
 			}
 			SQLTable.commitTransaction();

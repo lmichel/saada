@@ -6,6 +6,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -25,13 +26,13 @@ public class productReport {
 			System.out.println(ap);
 			ProductBuilder product = null;
 			switch( Category.getCategory(ap.getCategory()) ) {
-			case Category.TABLE: product = new TableBuilder((new File(ap.getFilename()))
+			case Category.TABLE: product = new TableBuilder((new FitsDataFile(ap.getFilename()))
 					, new ProductMapping("mapping", ap));
 			break;
-			case Category.MISC : product = new MiscBuilder((new File(ap.getFilename()))
+			case Category.MISC : product = new MiscBuilder((new FitsDataFile(ap.getFilename()))
 					, new ProductMapping("mapping", ap));
 			break;
-			case Category.SPECTRUM: product = new SpectrumBuilder((new File(ap.getFilename()))
+			case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(ap.getFilename()))
 					, new ProductMapping("mapping", ap));
 			break;
 			case Category.IMAGE: product = new Image2DBuilder((new File(ap.getFilename()))
