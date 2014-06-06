@@ -11,6 +11,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.util.ChangeKey;
 
 /**
+ * Build a map of attribute handler from a string array or fropm a JSON object.
+ * Used to emulate real products
  * @author michel
  * @version $Id$
  */
@@ -63,10 +65,11 @@ public abstract class KeywordsBuilder {
 			AttributeHandler ah = new AttributeHandler();
 			ah.setNameorg(ahs[0]);
 			ah.setNameattr(ChangeKey.changeKey(ahs[0]));
-			ah.setUnit(ahs[1]);
-			ah.setUcd(ahs[2]);
-			if( ahs.length > 3 ){
-				ah.setValue(ahs[3]);
+			ah.setType(ahs[1]);
+			ah.setUnit(ahs[2]);
+			ah.setUcd(ahs[3]);
+			if( ahs.length > 4 ){
+				ah.setValue(ahs[4]);
 			}
 			retour.add(ah);	
 		}
@@ -90,10 +93,11 @@ public abstract class KeywordsBuilder {
 			AttributeHandler ah = new AttributeHandler();
 			ah.setNameorg(jsonah.get(0).toString());
 			ah.setNameattr(ChangeKey.changeKey(jsonah.get(0).toString()));
-			ah.setUnit(jsonah.get(1).toString());
-			ah.setUcd(jsonah.get(2).toString());
-			if( jsonah.size() > 3 ){
-				ah.setValue(jsonah.get(3).toString());
+			ah.setType(jsonah.get(1).toString());
+			ah.setUnit(jsonah.get(2).toString());
+			ah.setUcd(jsonah.get(3).toString());
+			if( jsonah.size() > 4 ){
+				ah.setValue(jsonah.get(4).toString());
 			}
 			retour.add(ah);	
 		}
