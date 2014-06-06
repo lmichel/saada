@@ -1,12 +1,13 @@
 package saadadb.prdconfiguration;
 
 /**
+ * Simple reference to a data file header or resource (name + number)
  * @author michel
  *
  */
 public class HeaderRef {
 	private int number;
-	/** name can be either a FITS na eor a VOtable ID or a votable name */
+	/** name can be either a FITS header or a VOtable ID or a votable name */
 	private String name;
 	
 	/**
@@ -16,10 +17,6 @@ public class HeaderRef {
 		this.setNumber(number);
 	}
 	
-	/** * @version $Id$
-
-	 * @param name
-	 */
 	public HeaderRef(String name) {
 		this.setName(name);
 	}

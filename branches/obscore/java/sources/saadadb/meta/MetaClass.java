@@ -10,7 +10,7 @@ import java.util.Set;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ClassifierMode;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;

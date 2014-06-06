@@ -1,6 +1,5 @@
 package saadadb.products;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,6 +32,8 @@ public class TableBuilder extends ProductBuilder {
 	 */
 	public TableBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
 		super(productFile, conf);
+		this.entryBuilder = new EntryBuilder(this);
+		this.entryBuilder.bindDataFile(productFile);
 	}
 	
 	/**
@@ -40,9 +41,10 @@ public class TableBuilder extends ProductBuilder {
 	 * @param tabArg
 	 * @throws FatalException 
 	 */
-	public TableBuilder(File file, ProductMapping mapping) throws FatalException{	
+	public TableBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
 		super(file, mapping);
 		this.entryBuilder = new EntryBuilder(this);
+		this.entryBuilder.bindDataFile(file);
 	}	
 	/**
 	 * @return Returns the entry.
@@ -71,6 +73,7 @@ public class TableBuilder extends ProductBuilder {
 		 */
 		try {
 			//Messenger.printMsg(Messenger.TRACE, "Map entry attributes");
+			System.out.println(" ENTRY initProductFile @@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			this.entryBuilder.initProductFile();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -83,9 +86,8 @@ public class TableBuilder extends ProductBuilder {
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
 	@Override
-	public void readProductFile() throws SaadaException{
-		super.readProductFile();
-		this.entryBuilder.readProductFile();
+	public void bindDataFile(DataFile dataFile) throws Exception{
+		super.bindDataFile(dataFile);
 	}
 	
 	public void loadValue() throws Exception  {
@@ -101,7 +103,7 @@ public class TableBuilder extends ProductBuilder {
     /* (non-Javadoc)
      * @see saadadb.products.Product#mergeProductFormat(java.io.File)
      */
-    public void mergeProductFormat(File file_to_merge) throws FitsException, IOException, SaadaException {
+    public void mergeProductFormat(DataFile file_to_merge) throws FitsException, IOException, SaadaException {
     	if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Merge TABLE format with file <" + file_to_merge.getName() + ">");
     	/*
@@ -113,16 +115,16 @@ public class TableBuilder extends ProductBuilder {
         /*
          * Build a new set of attribute handlers from the product given as a parameter
          */
-        ProductBuilder prd_to_merge = this.mapping.getNewProductInstance(file_to_merge);
+        ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge);
         prd_to_merge.mapping = this.mapping;
         
 		try {
-			prd_to_merge.productFile = new FitsProduct(prd_to_merge);		
+			prd_to_merge.dataFile = new FitsDataFile(prd_to_merge);		
 			this.typeFile = "FITS";
 		}
 		catch(Exception ef) {
 			try {
-				prd_to_merge.productFile = new VOTableProduct(prd_to_merge);
+				prd_to_merge.dataFile = new VOTableDataFile(prd_to_merge);
 				this.typeFile = "VO";
 			}
 			catch(Exception ev) {
@@ -170,7 +172,7 @@ public class TableBuilder extends ProductBuilder {
         tableAttributeHandler_org = this.getEntry().getProductAttributeHandler();
         EntryBuilder entry_to_merge = ((TableBuilder)(prd_to_merge)).getEntry();
         entry_to_merge.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		entry_to_merge.productAttributeHandler = prd_to_merge.productFile.getEntryAttributeHandler();
+		entry_to_merge.productAttributeHandler = prd_to_merge.dataFile.getEntryAttributeHandler();
         
         for( AttributeHandler new_att: entry_to_merge.getProductAttributeHandler().values()) {
             AttributeHandler old_att = null;
@@ -183,8 +185,15 @@ public class TableBuilder extends ProductBuilder {
             }
         }
         this.entryBuilder.setFmtsignature();   
-        }
+     }
     
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getEntryReport()
+	 */
+	public Map<String, ColumnSetter> getEntryReport() throws Exception {
+		 return this.entryBuilder.getReport();
+	}
+
 	/**
 	 * Print out the report
 	 * @throws Exception

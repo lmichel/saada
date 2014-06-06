@@ -7,12 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
@@ -20,7 +21,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-public class SQLTableProduct implements ProductFile {
+public class SQLTableProduct implements DataFile {
 	private SQLQuery query;
 	private ResultSet resultSet;
 	private String name;
@@ -186,6 +187,14 @@ public class SQLTableProduct implements ProductFile {
 
 	@Override
 	public TimeKWDetector getTimeKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
 			throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;

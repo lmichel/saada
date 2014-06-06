@@ -23,7 +23,7 @@ public class SpectrumBuilder extends ProductBuilder {
 	 * @throws AbortException 
 	 * @throws SaadaException 
 	 */
-	public SpectrumBuilder(File file, ProductMapping mapping) throws SaadaException{		
+	public SpectrumBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
 		super(file, mapping);
 	}
 }

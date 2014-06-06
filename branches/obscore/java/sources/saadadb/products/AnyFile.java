@@ -3,13 +3,15 @@ import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
@@ -19,16 +21,17 @@ import saadadb.products.inference.TimeKWDetector;
  * * @version $Id$
 
  */
-public class AnyFile extends File implements ProductFile {
+public class AnyFile extends File implements DataFile {
 
 
 	public AnyFile(File parent, String child) {
 		super(parent, child);
 	}
-
-	public AnyFile(ProductBuilder product) {
-		super(product.file.getAbsolutePath());
+	
+	public AnyFile(String fileName) {
+		super(fileName);
 	}
+
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#closeStream()
@@ -139,9 +142,34 @@ public class AnyFile extends File implements ProductFile {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	@Override
-	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category)
+	public Map<String, DataFileExtension> getProductMap() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void bindBuilder(ProductBuilder builder) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<ExtensionSetter> reportOnLoadedExtension() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<AttributeHandler>> getProductMap(int category)
 			throws IgnoreException {
 		// TODO Auto-generated method stub
 		return null;

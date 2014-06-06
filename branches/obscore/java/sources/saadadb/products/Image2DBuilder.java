@@ -10,8 +10,8 @@ import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ColumnMapping;
-import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -52,7 +52,7 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @param fileName
 	 * @throws FatalException 
 	 */
-	public Image2DBuilder(File file, ProductMapping mapping) throws FatalException{		
+	public Image2DBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
 		super(file, mapping);
 		if( mapping != null )
 		this.load_vignette = !mapping.noVignette();
@@ -96,7 +96,7 @@ public class Image2DBuilder extends ProductBuilder {
 		} catch( Exception e ) {
 			Messenger.printMsg(Messenger.WARNING, "Can't create image vignette");
 		}
-		Messenger.printMsg(Messenger.TRACE, "Processing file <" + this.file.getName() + "> complete");
+		Messenger.printMsg(Messenger.TRACE, "Processing file <" + this.dataFile.getName() + "> complete");
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class Image2DBuilder extends ProductBuilder {
 		}
 		String namefilejpeg = basedir
 		+ separ + this.productIngestor.saadaInstance.getRepository_location() + ".jpg";
-		ImageUtils.createImage(namefilejpeg, (FitsProduct) this.productFile, 400);
+		ImageUtils.createImage(namefilejpeg, (FitsDataFile) this.dataFile, 400);
 		this.productIngestor.saadaInstance.setVignetteFile();
 	}
 
@@ -148,37 +148,37 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
 	@Override
-	public void readProductFile() throws IgnoreException{
+	public void bindDataFile(DataFile dataFile) throws IgnoreException{
 		try {
-			this.productFile = new FitsProduct(this);			
+			this.dataFile = new FitsDataFile(this);			
 			this.mimeType = "application/fits";
 		}
 		catch(Exception ef) {
 			ef.printStackTrace();
-			String filename = this.file.getName();
+			String filename = this.dataFile.getName();
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + ">  :" + ef + ". It cannot be loaded as an image.");			
 		}
 		this.setFmtsignature();
 	}
 
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.Product#main(java.lang.String[])
-	 */
-	public static void main(String[] args)  {
-		try {
-		Database.init("ThreeXMM");
-		//Image2D img = new Image2D(new File("/data/MUSE/Scene_fusion_01.fits"), null);
-		Image2DBuilder img = new Image2DBuilder(new File("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz")
-		, (new ArgsParser(new String[]{"-debug", "-system='Ecliptic'", "-collection=qwerty"})).getProductMapping());
-			img.initProductFile();
-			//			img.setWcsFields();
-
-			ImageUtils.createImage("/home/michel/Desktop/ma04979.fit.jpg", (FitsProduct) img.productFile, 200);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Database.close();
-	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.Product#main(java.lang.String[])
+//	 */
+//	public static void main(String[] args)  {
+//		try {
+//		Database.init("ThreeXMM");
+//		//Image2D img = new Image2D(new File("/data/MUSE/Scene_fusion_01.fits"), null);
+//		Image2DBuilder img = new Image2DBuilder(new File("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz")
+//		, (new ArgsParser(new String[]{"-debug", "-system='Ecliptic'", "-collection=qwerty"})).getProductMapping());
+//			img.initProductFile();
+//			//			img.setWcsFields();
+//
+//			ImageUtils.createImage("/home/michel/Desktop/ma04979.fit.jpg", (FitsDataFile) img.productFile, 200);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		Database.close();
+//	}
 
 }
