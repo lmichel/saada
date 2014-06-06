@@ -35,7 +35,7 @@ import saadadb.admintool.dialogs.DataFileChooser;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.command.ArgsParser;
-import saadadb.dataloader.mapping.RepositoryMode;
+import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 

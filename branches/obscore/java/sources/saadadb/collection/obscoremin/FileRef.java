@@ -31,6 +31,12 @@ public class FileRef extends SaadaInstance {
 	 */	
 	public double s_fov = saadadb.util.SaadaConstant.DOUBLE;
 	public String s_region = saadadb.util.SaadaConstant.STRING;
+	/*
+	 * Observable Axe
+	 */		
+	public String o_ucd = saadadb.util.SaadaConstant.STRING;
+	public String o_unit = saadadb.util.SaadaConstant.STRING;
+	public String o_calib_status = saadadb.util.SaadaConstant.STRING; //{uncalibrated, raw, calibrated
 	
 	@Override
 	public void setAccess_url(String access_url) throws AbortException {

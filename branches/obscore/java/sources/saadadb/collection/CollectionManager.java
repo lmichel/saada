@@ -1,5 +1,7 @@
 package saadadb.collection;
 
+import org.apache.tools.ant.util.regexp.Regexp;
+
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
@@ -13,6 +15,7 @@ import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Collection;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 public class CollectionManager extends EntityManager {
 
@@ -191,13 +194,12 @@ public class CollectionManager extends EntityManager {
 	 * @throws FatalException
 	 */
 	protected void create(String comment) throws FatalException  {
-		if( Database.getCachemeta().collectionExists(this.name)  ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Collection " + this.name + " already exists");
-		}
-		else if( !this.name.matches("[_a-zA-Z0-9]+") ) {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Collection  name con only contain letters, digitd or '_'");
-		}
-		else {
+		String message = "";
+		if( !this.name.matches(RegExp.COLLNAME) ) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Collection  name must match " + RegExp.COLLNAME);
+		} else if( !Database.getCachemeta().isNameAvailable(this.name, message) )  {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+		} else {
 			Messenger.setMaxProgress(2 + Category.NB_CAT);
 			Messenger.printMsg(Messenger.TRACE, "Create " + this.name);
 			String cc;

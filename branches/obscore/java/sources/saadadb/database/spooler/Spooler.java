@@ -220,6 +220,9 @@ public class Spooler {
 	 * @throws Exception
 	 */
 	public DatabaseConnection getAdminConnection() throws Exception {
+		synchronized (this) {
+			
+		
 		if( !this.spoolerIsRunning ) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
 		} else if( this.adminConnection == null) {
@@ -240,6 +243,7 @@ public class Spooler {
 			return this.adminConnection;		
 		}
 		return null;	
+		}
 	}
 
 	/**
@@ -285,7 +289,7 @@ public class Spooler {
 		return s;
 
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -335,59 +339,61 @@ public class Spooler {
 	 * 
 	 * @throws SQLException
 	 */
-	synchronized private void completeConnectionsReferences() throws Exception {
-		/*
-		 * Remove the obsolete connections
-		 */
-		ArrayList<DatabaseConnection> toRemove = new ArrayList<DatabaseConnection>();
-		for( DatabaseConnection cr: connectionsReferences){
-			if( cr.isObsolete() ){
-				toRemove.add(cr);
-			}
-		}
-		int nbToRemove = toRemove.size();
-		if (nbToRemove > 0 ) {
-			boolean setAdminMode = false;
-			for( DatabaseConnection cr: toRemove){
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove connection " + cr);
-				if( this.adminConnection == cr ) {
-					setAdminMode = true;
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Remove admin connection ");
-					this.adminConnection = null;
-				}
-				connectionsReferences.remove(cr);
-			}
+	private void completeConnectionsReferences() throws Exception {
+		synchronized(this){
 			/*
-			 * Replace the obsolete connection with new ones + one while the max is not reached
+			 * Remove the obsolete connections
 			 */
-			for( int i=0 ; i<nbToRemove ; i++ ){
-				if( connectionsReferences.size() < maxConnections) {
-					this.addConnectionReference();
+			ArrayList<DatabaseConnection> toRemove = new ArrayList<DatabaseConnection>();
+			for( DatabaseConnection cr: connectionsReferences){
+				if( cr.isObsolete() ){
+					toRemove.add(cr);
+				}
+			}
+			int nbToRemove = toRemove.size();
+			if (nbToRemove > 0 ) {
+				boolean setAdminMode = false;
+				for( DatabaseConnection cr: toRemove){
 					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Added new connection (" + this +")" + setAdminMode);
+						Messenger.printMsg(Messenger.DEBUG, "Remove connection " + cr);
+					if( this.adminConnection == cr ) {
+						setAdminMode = true;
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Remove admin connection ");
+						this.adminConnection = null;
+					}
+					connectionsReferences.remove(cr);
+				}
+				/*
+				 * Replace the obsolete connection with new ones + one while the max is not reached
+				 */
+				for( int i=0 ; i<nbToRemove ; i++ ){
+					if( connectionsReferences.size() < maxConnections) {
+						this.addConnectionReference();
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Added new connection (" + this +")" + setAdminMode);
+						break;
+					}
+				}
+				if( setAdminMode && this.adminConnection == null) {
+					this.openAdminConnection();
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Reopen admin connection(" + this +")");
+				}
+
+			}
+			boolean hasFree = false;
+			for( DatabaseConnection cr: connectionsReferences){
+				if( cr.isFree() ){
+					hasFree = true;
 					break;
 				}
 			}
-			if( setAdminMode && this.adminConnection == null) {
-				this.openAdminConnection();
+			if( !hasFree && connectionsReferences.size() < maxConnections) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Reopen admin connection(" + this +")");
+					Messenger.printMsg(Messenger.DEBUG, "Add new connection (" + connectionsReferences.size() + " < " +  maxConnections +")");
+				this.addConnectionReference();
 			}
-
-		}
-		boolean hasFree = false;
-		for( DatabaseConnection cr: connectionsReferences){
-			if( cr.isFree() ){
-				hasFree = true;
-				break;
-			}
-		}
-		if( !hasFree && connectionsReferences.size() < maxConnections) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Add new connection (" + connectionsReferences.size() + " < " +  maxConnections +")");
-			this.addConnectionReference();
 		}
 	}
 

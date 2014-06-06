@@ -700,11 +700,20 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public boolean classExists(String name) {
-		MetaClass ret = (this.classes.get(name));	
-		if( ret == null ) {
+		if( this.classes.get(name) == null ) {
 			return false;
+		} else {
+			return true;
 		}
-		else {
+	}
+	/**
+	 * @param name
+	 * @return
+	 */
+	public boolean relationExists(String name) {
+		if( this.relations.get(name) == null ) {
+			return false;
+		} 	else {
 			return true;
 		}
 	}
@@ -1123,6 +1132,45 @@ public class CacheMeta {
 			}
 		}
 		return retour.toArray(new AttributeHandler[0]);	
+	}
+
+	/**
+	 * Returns true if name cane be used to name a Saada entity (collection, class or relation)
+	 * @param name
+	 * @param message
+	 * @return
+	 */
+	public boolean isNameAvailable(String name, String message){
+		if( name == null || name.length() == 0 ) {
+			if( message != null ) message += "No name given";
+			return false;
+		}
+		if( this.collectionExists(name)) {
+			if( message != null ) message += "<" + name + "> already used for a collection";
+			return false;			
+		}
+		if( this.classExists(name)) {
+			if( message != null ) message += "<" + name + "> already used for a class";
+			return false;			
+		}
+		if( this.relationExists(name)) {
+			if( message != null ) message += "<" + name + "> already used for a relation";
+			return false;			
+		}
+		try {
+			if( Database.getWrapper().tableExist(name) ){
+				if( message != null ) message += "<" + name + "> already used for a SQL table";
+				return false;							
+			}
+			if( Database.getWrapper().tableExist(name.toLowerCase())){
+				if( message != null ) message += "<" + name.toLowerCase() + "> already used for a SQL table";
+				return false;							
+			}
+		} catch (Exception e) {
+			if( message != null ) message += e.getMessage();
+			return false;			
+		}
+		return true;
 	}
 
 }

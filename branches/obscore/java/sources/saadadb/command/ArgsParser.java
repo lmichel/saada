@@ -10,10 +10,10 @@ import java.util.TreeSet;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ClassifierMode;
-import saadadb.dataloader.mapping.PriorityMode;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.dataloader.mapping.RepositoryMode;
+import saadadb.enums.ClassifierMode;
+import saadadb.enums.PriorityMode;
+import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -78,6 +78,13 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-tmin")      ;allowedArgs.add("-entry.tmin") ;
 		allowedArgs.add("-tmax")      ;allowedArgs.add("-entry.tmax") ;
 		allowedArgs.add("-exptime")   ;allowedArgs.add("-entry.exptime") ;
+		/*
+		 * Observable Axe
+		 */
+		allowedArgs.add("-observablemapping") ;
+		allowedArgs.add("-oucd")         ;allowedArgs.add("-entry.oucd") ;
+		allowedArgs.add("-ounit")        ;allowedArgs.add("-entry.ounit") ;
+		allowedArgs.add("-ocalibstatus") ;allowedArgs.add("-entry.ocalibstatus") ;
 		/*
 		 * Other Axe
 		 */
@@ -467,8 +474,54 @@ public class ArgsParser implements Serializable{
 			}
 		}
 		return null;
-	}	
+	}
+	/*
+	 * TIME
+	 */
+	
+	public PriorityMode getObservableMappingPriority() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-observablemapping")) {
+				return  getPriority(args[i]);
+			}
+		}
+		return PriorityMode.LAST;		
+	}
 
+	public String getOucd(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-oucd")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.oucd") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	public String getOunit(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-ounit")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.ounit") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	public String getOcalibstatus(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-ocalibstatus")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.ocalibstatus") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	
 	/**
 	 * returns a table with all ignored attributes -ignore=att1,att2,.....
 	 * @return
