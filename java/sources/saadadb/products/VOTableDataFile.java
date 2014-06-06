@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
+import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
@@ -44,7 +45,7 @@ import cds.savot.pull.SavotPullParser;
  * @author laurent
  * @version $Id$
  */
-public class VOTableProduct extends File implements ProductFile {
+public class VOTableDataFile extends File implements DataFile {
 
 	private static final long serialVersionUID = 1L;
 
@@ -540,7 +541,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 * @param filename
 	 * @throws IgnoreException
 	 */
-	public VOTableProduct(String filename) throws Exception{
+	public VOTableDataFile(String filename) throws Exception{
 		super(filename);
 		this.product = new ProductBuilder(new File(filename), null);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
@@ -561,8 +562,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 * @throws AbortException 
 	 * @throws AbortException 
 	 */
-	public VOTableProduct(ProductBuilder product) throws Exception{
-		
+	public VOTableDataFile(ProductBuilder product) throws Exception{		
 		super(product.file.getAbsolutePath());
 		this.product = product;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
@@ -789,7 +789,7 @@ public class VOTableProduct extends File implements ProductFile {
 	public static void main(String[] args ) {
 		try {
 //			VOProduct fp = new VOProduct("/home/michel/saada/deploy/TestBench1_5/015.load_xml_spec/data/vospectre015.xml");
-			VOTableProduct fp = new VOTableProduct("/home/michel/Desktop/vizier_votable.ecl.vot");
+			VOTableDataFile fp = new VOTableDataFile("/home/michel/Desktop/vizier_votable.ecl.vot");
 			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
 			System.out.println(fp.getName());
 			for( String en: retour.keySet() ) {
@@ -846,6 +846,13 @@ public class VOTableProduct extends File implements ProductFile {
 		return null;
 	}
 
+
+	@Override
+	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
+			throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	@Override
 	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category)
 			throws IgnoreException {

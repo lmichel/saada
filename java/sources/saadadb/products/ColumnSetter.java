@@ -1,18 +1,32 @@
 package saadadb.products;
 
 import saadadb.dataloader.mapping.ColumnMapping;
+import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 
 /**
+ * This classs contains both the mapping of a column and the way it has be done.
  * @author michel
  * @version $Id$
  */
 public final class ColumnSetter  {
+	/**
+	 * Description of the column to be set 
+	 */
 	private AttributeHandler attributeHandler;
+	/**
+	 * Mode used to get the value
+	 */
 	protected ColumnSetMode setMode = ColumnSetMode.NOT_SET;
+	/**
+	 * Log of the mapping process
+	 */
 	public StringBuffer message = new StringBuffer();
+	/**
+	 * Value affected to the column
+	 */
 	public Object storedValue;
 	
 	/**
@@ -69,8 +83,17 @@ public final class ColumnSetter  {
 		this.setInitMessage();
 		this.setMappingMessage(fromMapping);
 	}
+	
+	/**
+	 * Basic constructor
+	 */
+	public ColumnSetter() {
+		this.attributeHandler = new AttributeHandler();
+		this.setNotSet();
+	}
 
 	/**
+	 * Log a standrd message indicating wether the vlue has been set by mapping or bu auto detection
 	 * @param fromMapping
 	 */
 	private void setMappingMessage( boolean fromMapping) {
@@ -81,7 +104,7 @@ public final class ColumnSetter  {
 		}
 	}
 	/**
-	 * 
+	 * Starts the log message according the mode used to get the KW value
 	 */
 	private void setInitMessage() {
 		switch(this.setMode){
@@ -110,13 +133,7 @@ public final class ColumnSetter  {
 
 	}
 	/**
-	 * 
-	 */
-	public ColumnSetter() {
-		this.attributeHandler = new AttributeHandler();
-		this.setNotSet();
-	}
-	/**
+	 * add "message" to the mapping log
 	 * @param message
 	 */
 	public void completeMessage(String message){

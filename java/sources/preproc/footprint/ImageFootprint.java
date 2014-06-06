@@ -19,7 +19,7 @@ import nom.tam.util.BufferedDataOutputStream;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FitsProduct;
+import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.util.Messenger;
 
@@ -96,7 +96,7 @@ public class ImageFootprint {
 
 			File input = new File(this.inputFile);
 			Image2DBuilder img  = new Image2DBuilder(input,null);
-			FitsProduct inputFits = new FitsProduct(img);
+			FitsDataFile inputFits = new FitsDataFile(img);
 			this.ahs = img.getProductAttributeHandler();
 			for( AttributeHandler ah: ahs.values()) {
 				if( ah.getNameorg().equals("NAXIS1") ){

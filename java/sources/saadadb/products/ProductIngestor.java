@@ -14,7 +14,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.RepositoryMode;
+import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -112,7 +112,7 @@ class ProductIngestor {
 				}
 			} else
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.file.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
+					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
 		}
 		this.saadaInstance.computeContentSignature(md5Value);
 	}
@@ -216,17 +216,17 @@ class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setPositionFields(int number) throws Exception {
-		if( this.product.astroframe != null && this.product.s_ra_ref != null && this.product.s_dec_ref != null ) {
+		if( this.product.astroframe != null && !this.product.s_ra_ref.notSet() && !this.product.s_dec_ref.notSet()) {
 			String ra_val;
 			/*
 			 * Position values can either be read in keyword or be constants values
 			 */
 			if( this.product.s_ra_ref.byValue() ) {
 				ra_val = this.product.s_ra_ref.getValue();
-			} else if( this.product.s_ra_ref.notSet() ) {
-				 this.product.s_ra_ref.setByWCS(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
-				 this.product.s_ra_ref.completeMessage("taken from WCS CRVAL");
-				ra_val = this.product.s_ra_ref.getValue();
+//			} else if( this.product.s_ra_ref.notSet() ) {
+//				this.product.s_ra_ref.setByWCS(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
+//				this.product.s_ra_ref.completeMessage("taken from WCS CRVAL");
+//				ra_val = this.product.s_ra_ref.getValue();
 			} else {
 				ra_val = this.product.s_ra_ref.getValue().replaceAll("'", "");
 			}
@@ -236,17 +236,17 @@ class ProductIngestor {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_ra_ref.getComment() + "): convert in deg");
 				} catch(Exception e){
-					 this.product.s_ra_ref.completeMessage("cannot convert " + ra_val + " from hours to deg");
+					this.product.s_ra_ref.completeMessage("cannot convert " + ra_val + " from hours to deg");
 					ra_val = "";
 				}
 			}
 			String dec_val;
 			if( this.product.s_dec_ref.byValue() ) {
 				dec_val = this.product.s_dec_ref.getValue();
-			} else if( this.product.s_dec_ref.notSet() ) {
-				 this.product.s_dec_ref.setByWCS(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
-				 this.product.s_dec_ref.completeMessage("taken from WCS CRVAL");
-				 dec_val = this.product.s_dec_ref.getValue();
+//			} else if( this.product.s_dec_ref.notSet() ) {
+//				this.product.s_dec_ref.setByWCS(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
+//				this.product.s_dec_ref.completeMessage("taken from WCS CRVAL");
+//				dec_val = this.product.s_dec_ref.getValue();
 			}  else {
 				dec_val = this.product.s_dec_ref.getValue().replaceAll("'", "");
 			}
@@ -435,6 +435,7 @@ class ProductIngestor {
 		 * Store the Saada instance
 		 */
 		this.storeCopyFileInRepository();
+		System.out.println(this.saadaInstance.getCategory() + " @@@@@@@@@@@@@ " + Long.toHexString(this.saadaInstance.oidsaada));
 		this.saadaInstance.store();
 	}
 
@@ -481,11 +482,16 @@ class ProductIngestor {
 			+ File.separator + this.product.mapping.getCollection() 
 			+ File.separator + Category.explain(this.product.mapping.getCategory()) 
 			+ File.separator;
-			CopyFile.copy(this.product.file.getAbsolutePath(), reportFile + repname);
-			if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.product.file.getAbsolutePath() + ">");
-				this.product.file.delete();
+			/*
+			 * In case of FooProduct or SQL table
+			 */
+			if( this.product.dataFile != null) {
+				CopyFile.copy(this.product.dataFile.getAbsolutePath(), reportFile + repname);
+				if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.product.dataFile.getAbsolutePath() + ">");
+					this.product.dataFile.delete();
+				}
 			}
 		}
 		/*
@@ -493,7 +499,7 @@ class ProductIngestor {
 		 * Product_url_csa is set with the absolute path
 		 */
 		else if( this.product.mapping.getRepositoryMode() == RepositoryMode.KEEP ) {
-			repname = this.product.file.getAbsolutePath();
+			repname = this.product.dataFile.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this.product, repname);
 		}
 		this.saadaInstance.setRepository_location(repname);
@@ -517,11 +523,11 @@ class ProductIngestor {
 			+ File.separator + this.product.mapping.getCollection() 
 			+ File.separator + Category.explain(this.product.mapping.getCategory()) 
 			+ File.separator;
-			CopyFile.copy(this.product.file.getAbsolutePath(), reportFile + repname);
+			CopyFile.copy(this.product.dataFile.getAbsolutePath(), reportFile + repname);
 			if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.product.file.getAbsolutePath() + ">");
-				this.product.file.delete();
+					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.product.dataFile.getAbsolutePath() + ">");
+				this.product.dataFile.delete();
 			}
 		}
 		/*
@@ -529,7 +535,7 @@ class ProductIngestor {
 		 * Product_url_csa is set with the absolute path
 		 */
 		else if( this.product.mapping.getRepositoryMode() == RepositoryMode.KEEP ) {
-			repname = this.product.file.getAbsolutePath();
+			repname = this.product.dataFile.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this.product, repname, loadedfilewriter);
 		}
 		this.saadaInstance.setRepository_location(repname);

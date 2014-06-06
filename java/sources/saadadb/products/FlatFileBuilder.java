@@ -20,7 +20,7 @@ public class FlatFileBuilder extends ProductBuilder {
 		super(productFile, conf);
 	}
 
-	public FlatFileBuilder(File file, ProductMapping conf) throws FatalException {
+	public FlatFileBuilder(DataFile file, ProductMapping conf) throws SaadaException {
 		super(file, conf);
 	}
 	
@@ -38,9 +38,8 @@ public class FlatFileBuilder extends ProductBuilder {
 	 * @throws Exception 
 	 * @throws AbortException 
 	 */
-	public void bindInstanceToFile(SaadaInstance si, File file) throws Exception {
-		this.file = file;
-		this.productFile = new AnyFile(this);
+	public void bindInstanceToFile(SaadaInstance si, DataFile file) throws Exception {
+		this.dataFile = file;
 		if( this.productIngestor == null ){
 			this.productIngestor = new ProductIngestor(this);
 		}

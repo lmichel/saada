@@ -1,6 +1,6 @@
 package saadadb.prdconfiguration;
 
-import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.enums.PriorityMode;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 

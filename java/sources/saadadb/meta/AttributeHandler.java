@@ -16,7 +16,7 @@ import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.VOTableProduct;
+import saadadb.products.VOTableDataFile;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
@@ -118,7 +118,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 		this.setUcd(savotField.getUcd());
 		this.setUtype(savotField.getUtype());
 		this.setUnit(savotField.getUnit());
-		this.setComment(VOTableProduct.getStandardDescription(savotField.getDescription()));
+		this.setComment(VOTableDataFile.getStandardDescription(savotField.getDescription()));
 		if( (savotField.getArraySize() != null && !savotField.getArraySize().equals(1) && !savotField.getArraySize().equals("")) 
 				|| this.getUnit().matches(".*(?i)(d:m:s).*") || this.getUnit().matches(".*(?i)(h:m:s).*")) {
 			this.setType("String");

@@ -4,12 +4,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
@@ -40,8 +38,8 @@ public class EntryBuilder extends ProductBuilder {
 	 *            The entries table.
 	 * @throws FatalException 
 	 */
-	public EntryBuilder(TableBuilder table) throws FatalException {
-		super(table.file, table.mapping.getEntryMapping());
+	public EntryBuilder(TableBuilder table) throws SaadaException {
+		super(table.dataFile, table.mapping.getEntryMapping());
 		this.table = table;
 	}
 
@@ -215,20 +213,21 @@ public class EntryBuilder extends ProductBuilder {
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
 	@Override
-	public void readProductFile() throws SaadaException {
+	public void bindDataFile(DataFile dataFile) throws SaadaException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
 		(new Exception()).printStackTrace();
 		//this.typeFile      = this.table.typeFile;
 		//this.productFile   = this.table.productFile;
-		this.productAttributeHandler = this.table.productFile.getEntryAttributeHandler();
+		this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
 		this.setFmtsignature();
+
 	}
 
 	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getReport()
 	 */
-	public Map<String, ColumnSetter> getReport() throws Exception {
+	public Map<String, ColumnSetter> getReportXX() throws Exception {
 		this.setProductIngestor();
 		if( this.productIngestor.hasMoreElements() ) {
 			((EntryIngestor)(this.productIngestor)).mapIndirectionTables();

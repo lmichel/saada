@@ -21,7 +21,7 @@ public class MiscBuilder extends ProductBuilder{
 						 * 
 						 *#######################################################*/
 
-	public MiscBuilder(File file, ProductMapping mapping) throws FatalException{	
+	public MiscBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
 		super(file, mapping);
 	}
 	
