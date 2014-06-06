@@ -1,0 +1,16 @@
+
+{
+"parameters": [
+	"-category=misc" ,
+	"-collection=FOO",
+	"-classfusion=classFusion"	
+],
+"fields": {
+    "header": [	["A", "double", "", "", "1.0"],
+                ["B", "String", "", "", "B"],
+                ["C", "String", "", "", "C"]
+              ]
+		,
+    "columns": []
+    }
+}
