@@ -277,7 +277,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 		BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
 		String sql = "";
 		Class cls = Class.forName("generated." + Database.getDbname() + "." + Category.NAMES[cat] + DefineType.TYPE_EXTEND_COLL);
-		List<Field> lf = ((SaadaInstance) cls.newInstance()).getAllPersisentFields();
+		List<Field> lf = ((SaadaInstance) cls.newInstance()).getAllPersistentFields();
 		for( Field f: lf) {
 			String fname = f.getName();
 			String ftype = f.getType().getName().replace("java.lang.", "");

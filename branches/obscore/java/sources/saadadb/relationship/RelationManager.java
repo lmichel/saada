@@ -17,6 +17,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 /**
  * @author michel
@@ -194,10 +195,12 @@ public class RelationManager extends  EntityManager {
 	 * @throws AbortException
 	 */
 	public void create() throws AbortException {
-		if( Database.getCachemeta().getRelation(this.relation_conf.getNameRelation()) != null ) {
-			AbortException.throwNewException(SaadaException.METADATA_ERROR, "Relation " + this.relation_conf.getNameRelation() + " already exists");
-		}
-		else {
+		String message = "";
+		if( !this.name.matches(RegExp.CLASSNAME) ) {
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation  name must match " + RegExp.CLASSNAME);
+		} else if( !Database.getCachemeta().isNameAvailable(this.name, message) )  {
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+		} else {
 			try {
 				Messenger.setMaxProgress(3);
 				this.processUserRequest();
