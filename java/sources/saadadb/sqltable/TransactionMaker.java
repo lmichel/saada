@@ -95,6 +95,7 @@ public class TransactionMaker {
 			 * Require explicit locks everywhere even in SELECT
 			 */
 			queries.add( new QueryString(Database.getWrapper().unlockTables(), null));
+			System.out.println(Spooler.getSpooler());
 			connection = Spooler.getSpooler().getAdminConnection();
 			connection.getConnection().setAutoCommit(false);
 			stmt = connection.getStatement(); 
