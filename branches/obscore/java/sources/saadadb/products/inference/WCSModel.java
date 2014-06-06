@@ -2,10 +2,10 @@ package saadadb.products.inference;
 
 import java.util.Map;
 
+import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetMode;
 import saadadb.products.ColumnSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -60,7 +60,7 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_cunit" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
-				this.CUNIT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);
+				this.CUNIT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
 			} else {
 				//kwset_ok = false;
 				this.CUNIT[axe] = new ColumnSetter();
@@ -70,7 +70,7 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_ctype" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
-				this.CTYPE[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+				this.CTYPE[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);;
 			} else {
 				//kwset_ok = false;
 				this.CTYPE[axe] = new ColumnSetter();
@@ -80,8 +80,8 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
-				this.CRVAL[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
-			}else if( this.NAXISi[axe] == 1 ){
+				this.CRVAL[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);;
+			} else if( this.NAXISi[axe] == 1 ){
 				ColumnSetter cd = new ColumnSetter();
 				cd.setByValue("0",false);
 				if (Messenger.debug_mode)
@@ -95,8 +95,8 @@ public class WCSModel {
 			}
 
 			if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
-				this.CRPIX[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
-			}else if( this.NAXISi[axe] == 1 ){
+				this.CRPIX[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);;
+			} else if( this.NAXISi[axe] == 1 ){
 				ColumnSetter cd = new ColumnSetter();
 				cd.setByValue("1",false);
 				this.CRPIX[axe] = cd;
@@ -111,7 +111,7 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
-				this.CDELT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);;
+				this.CDELT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);;
 			} else if( this.NAXISi[axe] == 1 ){
 				ColumnSetter cd = new ColumnSetter();
 				cd.setByValue("1",false);
@@ -129,7 +129,7 @@ public class WCSModel {
 				int axe2_num = axe2+1;
 				if( (ah = this.attributesList.get("_pc" + axe_num + "_" + axe2_num)) != null || 
 						(ah = this.attributesList.get("_cd" + axe_num + "_" + axe2_num)) != null ) {
-					this.CD[(NAXIS*axe) + axe2] = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD);
+					this.CD[(NAXIS*axe) + axe2] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
 
 				}else{
 					this.CD[(NAXIS*axe) + axe2].setNotSet();
@@ -146,7 +146,6 @@ public class WCSModel {
 					this.CUNIT[axe2].completeMessage("Read in WAT keywords");
 				}
 			}
-
 		}
 		if( !this.checkMatrix() ) {
 			kwset_ok = false;				
@@ -301,7 +300,6 @@ public class WCSModel {
 	 */
 	private static boolean hasNotSetElements(ColumnSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
-			System.out.println("@@@@@@@@@@@ " + axe + "  " + array[axe]);
 			if( array[axe].notSet()) {
 				return true;
 			}
@@ -597,11 +595,27 @@ public class WCSModel {
 					retour = Double.parseDouble(this.CRVAL[axe].getValue());
 					break;
 				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
 				}
 			}
 		}
 		return retour;
 
+	}
+	/**
+	 * @return
+	 */
+	public ColumnSetter getCenterRaSetter() {
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+				try {
+					return this.CRVAL[axe];
+				} catch (Exception e) {
+					return new ColumnSetter();
+				}
+			}
+		}
+		return new ColumnSetter();
 	}
 	
 	/**
@@ -615,11 +629,95 @@ public class WCSModel {
 					retour = Double.parseDouble(this.CRVAL[axe].getValue());
 					break;
 				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
 				}
 			}
 		}
 		return retour;
+	}
+	/**
+	 * @return
+	 */
+	public ColumnSetter getCenterDecSetter() {
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
+				try {
+					return this.CRVAL[axe];
+				} catch (Exception e) {
+					return new ColumnSetter();
+				}
+			}
+		}
+		return new ColumnSetter();
+	}
 
+	/**
+	 * @return
+	 */
+	public double getRaMin() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+				try {
+					retour =this.getMinValue( axe);
+					break;
+				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
+				}
+			}
+		}
+		return retour;	
+	}
+	/**
+	 * @return
+	 */
+	public double getRaMax() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+				try {
+					retour = this.getMaxValue( axe);
+					break;
+				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
+				}
+			}
+		}
+		return retour;	
+	}
+	/**
+	 * @return
+	 */
+	public double getDecMin() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
+				try {
+					retour =this.getMinValue( axe);
+					break;
+				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
+				}
+			}
+		}
+		return retour;	
+	}
+	/**
+	 * @return
+	 */
+	public double getDecMax() {
+		double retour = SaadaConstant.DOUBLE;
+		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
+				try {
+					retour = this.getMaxValue( axe);
+					break;
+				} catch (Exception e) {
+					retour  = SaadaConstant.DOUBLE;
+				}
+			}
+		}
+		return retour;	
 	}
 
 }

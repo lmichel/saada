@@ -4,11 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;
@@ -30,18 +32,21 @@ public class SpaceKWDetector extends KWDetector{
 	private ColumnSetter err_maj;
 	private ColumnSetter err_angle;
 	private ColumnSetter fov;
+	private ColumnSetter region;
 	private Astroframe frame = null;
 	public static final int FRAME_FOUND = 1;
 	public static final int POS_KW_FOUND = 2;
 	private int status=0;
+	private WCSModel wcsModel;
 
-	
+
 	/**
 	 * @param tableAttributeHandler
 	 * @throws FatalException 
 	 */
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) throws FatalException {
 		super(tableAttributeHandler);
+		lookForWCS();
 		ColumnSetter ah = searchByName(RegExp.FIST_COOSYS_KW);
 		if( ah == null ) {
 			ah = searchByUcd("pos.frame");
@@ -52,31 +57,31 @@ public class SpaceKWDetector extends KWDetector{
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForEclpiticKeywords();					
+				if( (status & POS_KW_FOUND) == 0 ) lookForEclpiticKeywords();					
 			} else if( ah.getValue().matches(".*FK5.*")) {
 				this.frame = new FK5();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForFK5Keywords();					
+				if( (status & POS_KW_FOUND) == 0 ) lookForFK5Keywords();					
 			} else if( ah.getValue().matches(".*FK4.*")) {
 				this.frame = new FK4();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForFK4Keywords();					
+				if( (status & POS_KW_FOUND) == 0 ) lookForFK4Keywords();					
 			} else if( ah.getValue().toLowerCase().matches(".*galactic.*")) {
 				this.frame = new Galactic();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForGalacticKeywords();					
+				if( (status & POS_KW_FOUND) == 0 ) lookForGalacticKeywords();					
 			} else if( ah.getValue().toLowerCase().matches(".*ICRS.*")) {
 				this.frame = new ICRS();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForICRSKeywords();					
+				if( (status & POS_KW_FOUND) == 0 ) lookForICRSKeywords();					
 			} else {
 				Messenger.printMsg(Messenger.WARNING, "Unknown coordinate system <" +  ah.getValue() + ">");
 			}
@@ -186,7 +191,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) throws FatalException {
 		super(tableAttributeHandler);
-		lookForError();
+		this.lookForError();
 		/* 
 		 * Take first the coosys if not null and look for keywords matching that system
 		 */
@@ -196,37 +201,32 @@ public class SpaceKWDetector extends KWDetector{
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForEclpiticKeywords();
-			}
-			else if( infoCooSys.getSystem().matches(RegExp.FK4_SYSTEM) ) {
+				this.lookForEclpiticKeywords();
+			} else if( infoCooSys.getSystem().matches(RegExp.FK4_SYSTEM) ) {
 				this.frame = new FK4();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForFK4Keywords();
-			}
-			else if( infoCooSys.getSystem().matches(RegExp.FK5_SYSTEM) ) {
+				this.lookForFK4Keywords();
+			} else if( infoCooSys.getSystem().matches(RegExp.FK5_SYSTEM) ) {
 				this.frame = new FK5();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForFK5Keywords();
-			}
-			else if( infoCooSys.getSystem().matches(RegExp.GALACTIC) ) {
+				this.lookForFK5Keywords();
+			} else if( infoCooSys.getSystem().matches(RegExp.GALACTIC) ) {
 				this.frame = new Galactic();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForGalacticKeywords();
-			}
-			else if( infoCooSys.getSystem().matches(RegExp.ICRS) ) {
+				this.lookForGalacticKeywords();
+			} else if( infoCooSys.getSystem().matches(RegExp.ICRS) ) {
 				this.frame = new ICRS();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in coosys)");
 				status |= FRAME_FOUND;
-				lookForICRSKeywords();
-			}
-			else {
+				this.lookForICRSKeywords();
+			} else {
 				Messenger.printMsg(Messenger.WARNING, "Unknown coordinate system <" +  infoCooSys.getSystem() + ">");
 			}
 			if( (status & FRAME_FOUND) > 0 && (status & POS_KW_FOUND) == 0 && Messenger.debug_mode) {
@@ -234,25 +234,88 @@ public class SpaceKWDetector extends KWDetector{
 			}
 		}			
 		/*
-		 * If no frame has been found, look for keywords and infers the frame from them
+		 * If no frame has been found, look for keywords and infer the frame from them
 		 */
 		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
-			detectKeywordsandInferFrame();
+			this.detectKeywordsandInferFrame();
 		}
 		if( (status & FRAME_FOUND) == 0) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coosys for an auto detection");
-		}
-		else if( (status & POS_KW_FOUND) == 0) {
+		} else if( (status & POS_KW_FOUND) == 0) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
 		}
 		this.lookForError();
-
 	}
 
+	/**
+	 * Look for the position in WCS keywords
+	 */
+	private void lookForWCS() {
+		try {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Searching spatial coordinates in WCS keywords");
+			this.wcsModel = new WCSModel(tableAttributeHandler);
+			this.ascension_kw = this.wcsModel.getCenterRaSetter();
+			this.declination_kw = this.wcsModel.getCenterDecSetter();		
+			double raMin = this.wcsModel.getRaMin();
+			double raMax = this.wcsModel.getRaMax();
+			double decMin = this.wcsModel.getDecMin();
+			double decMax = this.wcsModel.getDecMax();
+			if( this.ascension_kw.byWcs() && this.declination_kw.byWcs() ) {
+					if( raMin != SaadaConstant.DOUBLE && !Double.isNaN(raMin) &&
+							raMax != SaadaConstant.DOUBLE && !Double.isNaN(raMax) &&
+							decMin != SaadaConstant.DOUBLE && !Double.isNaN(decMin) &&
+							decMax != SaadaConstant.DOUBLE && !Double.isNaN(decMax) ) {
+						double fov = Math.abs(raMax - raMin);
+						AttributeHandler ah = new AttributeHandler();
+						ah.setNameattr("s_fov");
+						ah.setNameorg("s_fov");
+						ah.setUnit("deg");
+						ah.setUtype("Char.SpatialAxis.Coverage.Bounds.Extent.diameter");
+						if( fov > 180 ) fov = 360 -fov;
+						if( Math.abs(decMax - decMin) < fov ){
+							fov = Math.abs(decMax - decMin);
+							ah.setValue(Double.toString(fov));
+							this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+							this.fov.completeMessage("smaller image size taken (height)");							
+						} else {
+							ah.setValue(Double.toString(fov));
+							this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+							this.fov.completeMessage("smaller image size taken (width)");														
+						}
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Take " +fov + " as fov");
+						ah = new AttributeHandler();
+						ah.setNameattr("s_region");
+						ah.setNameorg("s_region");
+						ah.setUnit("deg");
+						ah.setUtype("Char.SpatialAxis.Coverage.Support.Area");
+						ah.setValue(raMin + " " + decMax + " " 
+								  + raMax + " " + decMax + " "
+								  + raMax + " " + decMin + " "
+								  + raMin + " " + decMin
+								  );
+						this.region = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+						this.region.completeMessage("Match the WCS rectangle");																			
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Take " +ah.getValue() + " as region");
+					}
+				this.status |= POS_KW_FOUND;
+			} else {
+				Messenger.printMsg(Messenger.DEBUG, "WCS keywords not found");				
+			}
+		} catch (Exception e) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "WCS keywords not valid " + e.getMessage());
+		}
+	}
+	/**
+	 * @throws FatalException
+	 */
 	private void lookForError() throws FatalException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
@@ -341,27 +404,6 @@ public class SpaceKWDetector extends KWDetector{
 			status |= POS_KW_FOUND;
 			return;
 		}
-//		/*
-//		 * Search by UCD first
-//		 */
-//		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_MAINUCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByUcd(RegExp.FK5_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK5_DEC_UCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByName(RegExp.FK5_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK5_DEC_KW))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK5 position (name)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
 	}
 
 	/**
@@ -393,27 +435,6 @@ public class SpaceKWDetector extends KWDetector{
 			status |= POS_KW_FOUND;
 			return;
 		}
-//		/*
-//		 * Search by UCD first
-//		 */
-//		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_MAINUCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByUcd(RegExp.FK4_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.FK4_DEC_UCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByName(RegExp.FK4_RA_KW)) != null && (declination_kw = searchByName(RegExp.FK4_DEC_KW))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an FK4 position (name)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
 	}
 	/**
 	 * @throws FatalException 
@@ -444,28 +465,6 @@ public class SpaceKWDetector extends KWDetector{
 			status |= POS_KW_FOUND;
 			return;
 		}
-//		;
-//		/*
-//		 * Search by UCD first
-//		 */
-//		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_MAINUCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByUcd(RegExp.ICRS_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ICRS_DEC_UCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByName(RegExp.ICRS_RA_KW)) != null && (declination_kw = searchByName(RegExp.ICRS_DEC_KW))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an ICRS position (name)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
 	}
 	/**
 	 * @throws FatalException 
@@ -496,27 +495,6 @@ public class SpaceKWDetector extends KWDetector{
 			status |= POS_KW_FOUND;
 			return;
 		}
-//		/*
-//		 * Search by UCD first
-//		 */
-//		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_MAINUCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByUcd(RegExp.ECLIPTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.ECLIPTIC_DEC_UCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByName(RegExp.ECLIPTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.ECLIPTIC_DEC_KW))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Ecliptic position (name)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
 	}
 	/**
 	 * @throws FatalException 
@@ -547,27 +525,6 @@ public class SpaceKWDetector extends KWDetector{
 			status |= POS_KW_FOUND;
 			return;
 		}
-//		/*
-//		 * Search by UCD first
-//		 */
-//		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_MAINUCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_MAINUCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByUcd(RegExp.GALACTIC_RA_UCD)) != null && (declination_kw = searchByUcd(RegExp.GALACTIC_DEC_UCD))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (ucd)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
-//		if( (ascension_kw = searchByName(RegExp.GALACTIC_RA_KW)) != null && (declination_kw = searchByName(RegExp.GALACTIC_DEC_KW))  != null ) {
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Keywords <" + ascension_kw.getNameorg() + "> and <" + declination_kw.getNameorg() + "> could be an Galactic position (name)");
-//			status |= POS_KW_FOUND;
-//			return ;			
-//		}
 	}
 	/**
 	 * @return the astro_frame
@@ -598,21 +555,21 @@ public class SpaceKWDetector extends KWDetector{
 		else 
 			return null;
 	}
-	
+
 	public boolean isFrameFound() {
 		if( (status & FRAME_FOUND) > 0  ) {
 			return true;
 		}
 		else return false;
 	}
-	
+
 	public boolean arePosColFound() {
 		if( (status & POS_KW_FOUND) > 0  ) {
 			return true;
 		}
 		else return false;
 	}
-	
+
 	public ColumnSetter getErrorMin(){
 		return err_min;
 	}
@@ -622,11 +579,27 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnSetter getErrorAngle(){
 		return err_angle;		
 	}
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
 	public ColumnSetter getfov() throws FatalException{
+		// fov = Diameter (bounds) of the covered region in deg
 		if( this.fov == null ){
 			this.fov = this.search(RegExp.FOV_UCD, RegExp.FOV_KW);
 		}
 		return fov;		
+	}
+	/**
+	 * The value returned contain just a list of point. The coord system must be added later.
+	 * @return
+	 * @throws FatalException
+	 */
+	public ColumnSetter getRegion() throws FatalException{
+		if( this.region == null ){
+			return new ColumnSetter();
+		}
+		return region;		
 	}
 
 }

@@ -48,7 +48,7 @@ public class WATInfos {
 					this.WATInfos[i-1] += attributesList.get(wah).getValue();
 				}
 			}			
-			if( Messenger.debug_mode) {
+			if(ahn.size() > 0 && Messenger.debug_mode) {
 				if( i == 0 )  Messenger.printMsg(Messenger.DEBUG, "WAT System " + this.WATSystem);
 				else          Messenger.printMsg(Messenger.DEBUG, "WAT info axe " + i + " "  + this.WATInfos[i-1]);
 			}
