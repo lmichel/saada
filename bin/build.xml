@@ -25,6 +25,8 @@
   		<pathelement location="${SAADA_DB_HOME}/class_mapping/"/>
     	<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
     	<pathelement location="${SAADA_DB_HOME}/lib/saadadb.jar"/>   	
+    	<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
+    	<pathelement location="${SAADA_DB_HOME}/jtools/catalina-ant.jar"/>   	
   	</path>
 	
 	<!--
@@ -40,6 +42,8 @@
             <classpath refid="saadadb.classpath"/>
 		</javac>
 	</target>
+
+
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  The following tasks are supposed to be used by any operator (even the beginners)
 	  They can be called by script wrapping the ant command
@@ -96,12 +100,15 @@
 		       source="${javac.target}" 
 		       srcdir="${SAADA_DB_HOME}/java/sources" 
 			   destdir="${SAADA_DB_HOME}/java/classes"
-			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**">
-            <classpath refid="saadadb.classpath"/>
+			   includes="saadadb/**, ajaxservlet/**,saadaql/**,preproc/**,adqlParser/**, xmleditorkit/**, upgrade/**">
+            <classpath>
+        		<pathelement location="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>   	
+        		<pathelement location="${SAADA_DB_HOME}/jtools/servlet-api.jar"/>   	
+     		</classpath>
 		</javac>
 	    <jar jarfile="${SAADA_DB_HOME}/lib/saadadb.jar" 
 		     basedir="${SAADA_DB_HOME}/java/classes"
-			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,preproc/**,adqlparser/**, xmleditorkit/**, upgrade/**"/>
+			 includes="saadadb/**, ajaxservlet/** ,saadaql/**,preproc/**,adqlParser/**, xmleditorkit/**, upgrade/**"/>
 	</target>
 
     
@@ -117,7 +124,9 @@
 	</target>
 	
 	<target name="saadadb.jar.merge">	
-   		<delete file="${SAADA_HOME}/dbtemplate/lib/BigSaadaJar.jar"/>
+   		<delete file="${SAADA_DB_HOME}/lib/BigSaadaJar.jar"/>
+		<move file="${SAADA_DB_HOME}/lib/saadadb.jar" tofile="${SAADA_DB_HOME}/lib/saadadb.jar.org"
+                       failonerror="false"/>
 		<jar destfile="${SAADA_DB_HOME}/lib/BigSaadaJar.jar">
    			<restrict>
         		<not>
@@ -130,13 +139,15 @@
         		</not>
        			<archives>
   					<zips><fileset dir="${SAADA_DB_HOME}/lib" includes="**/*.jar" /></zips>
-					<zips><fileset  dir="${SAADA_DB_HOME}/jtools" includes="**/*.jar"  /></zips>
+					<zips><fileset  dir="${SAADA_DB_HOME}/jtools" includes="**/ant*.jar"  /></zips>
         		</archives>
     		</restrict>
     		<manifest>
-        		<attribute name="Main-Class" value="saadadb.admin.SaadaDBAdmin"/>
+        		<attribute name="Main-Class" value="com.mytest.MyProcessor"/>
    			</manifest>
 		</jar>
+		<move file="${SAADA_DB_HOME}/lib/saadadb.jar.org" tofile="${SAADA_DB_HOME}/lib/saadadb.jar"
+                       failonerror="false"/>
 	</target>
 
 	<!--
@@ -144,29 +155,35 @@
 	  This task both deploy a WAR file and copy the directory tree. That allows
 	  Tomcat to automatically reload the application (default behaviour).
 	--> 
-  	<target name="tomcat.deploy">
+  	<target name="tomcat.war.build">
 		<echo>Make an archive with generated classes</echo>
 		<jar destfile="${SAADA_DB_HOME}/web/WEB-INF/lib/${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
 			
 		<echo>Copy libraries specific to that application</echo>
 		<copy todir="${SAADA_DB_HOME}/web/WEB-INF/lib" overwrite="true" failonerror="true" verbose="true">
     		<fileset dir="${SAADA_DB_HOME}/lib">
-      			<include name="**/*.jar"/>	
+      			<include name="BigSaadaJar.jar"/>	
+      			<include name="saadadb.jar"/>	
 			</fileset>		
     	</copy>
-  		
+ 
+  		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
+		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
+  	</target>
+
+  	<target name="tomcat.deploy" depends="tomcat.war.build">  
 		<echo>Remove the previous WebApp from ${TOMCAT_HOME}/webapps/</echo>
 		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
+  		
+		<echo>Copy war file to ${TOMCAT_HOME}/webapps/</echo>
+ 		<copy file="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" todir="${TOMCAT_HOME}/webapps"/>
   		
   		<!--
    		<echo>Copy web directory tree in ${TOMCAT_HOME}/webapps/</echo>
  		<copy todir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}">
   		    <fileset dir="${SAADA_DB_HOME}/web/"/>
   		 </copy>
-	--> 
-  		<echo>Push war file in ${TOMCAT_HOME}/webapps/</echo>
-		<jar destfile="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />
-  		
+	    --> 
 	</target>
 		
 	<!--
@@ -179,13 +196,13 @@
     <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/>
     <taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/>
     <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/>
-	<target name="tomcat.start">
+	<target name="tomcat.start" depends="tomcat.war.build">
 		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />   		
              <deploy url="${url}" username="${username}" password="${password}"
          path="/${SAADA_DB_NAME}" war="file:${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war"/>
 	</target>	
 		
-	<target name="tomcat.deploy.safe">
+	<target name="tomcat.deploy.safe" depends="tomcat.war.build">
 		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />   		
              <deploy url="${url}" username="${username}" password="${password}"
          path="/${SAADA_DB_NAME}" war="file:${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war"/>
@@ -207,13 +224,6 @@
          path="/${SAADA_DB_NAME}" />
 	</target>	
 
-	
-	<!--
-	  Remove the application from Tomcat. Musn't be used when Tomcat is running
-	--> 
-  	<target name="tomcat.remove">
-		<delete dir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}" failonerror="false" />
-  	</target>
 	
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  The following tasks are normally run by the GUI 
@@ -395,7 +405,7 @@
     	<java fork="true"  classname="saadadb.command.CreateCollectionIndex" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-collection=${name}"/>
-	  		<arg value="-category${category}"/>
+	  		<arg value="-category${category}"/>        				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
 	  		<arg value="-debug=${debug}"/>
            <arg value="${SAADA_DB_NAME}"/>
     	</java> 
@@ -650,7 +660,7 @@
 			<arg value="-rename={name}"/>      
 			<arg value="-newname={newname}"/>      
 			<arg value="-category={category}"/>      
- 			<arg value="-comment={comment}"/>      
+ 			<arg value="-comment={comment}"/>              				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
  			<arg value="-unit={unit}"/>      
  	 		<arg value="-ucd={ucd}"/>      
  	 		<arg value="-utype={utype}"/>      
