@@ -32,7 +32,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FitsProduct;
+import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
@@ -54,13 +54,13 @@ public abstract class ImageUtils {
 	 * @param max_size Size of the largest side of the thumbnail
 	 * @throws IgnoreException 
 	 */
-	public static void createImage(String nameFileOut, FitsProduct productFile, int max_size) throws IgnoreException {
+	public static void createImage(String nameFileOut, FitsDataFile productFile, int max_size) throws IgnoreException {
 		try{
 			Messenger.printMsg(Messenger.TRACE, "Create vignette");
 			int bin_size = 256;
 			int[] size;
 			int ww, hh, nbit;
-			FitsProduct fp = (FitsProduct) productFile;
+			FitsDataFile fp = (FitsDataFile) productFile;
 			Object img_pixels= fp.getImagePixels();
 			nbit = fp.getBitPIx();
 			size = fp.getImageSize();
@@ -447,7 +447,7 @@ public abstract class ImageUtils {
 	static public void buildTileFile(double ra, double dec, double box_size_ra, double box_size_dec, String source_file, ProductMapping cdh, String dest_file) throws Exception{
 		File sf = new File(source_file);
 		Image2DBuilder img  = new Image2DBuilder(sf,cdh);
-		img.readProductFile();
+		img.bindDataFile();
 		Map<String, AttributeHandler> ahs = img.getProductAttributeHandler();
 		Image2DCoordinate i2c = new Image2DCoordinate();
 		i2c.setImage2DCoordinate(ahs);
@@ -460,7 +460,7 @@ public abstract class ImageUtils {
 		 */		
 		int[] corner = new int[2];
 		int[] size = new int[2];
-		FitsProduct fp = ((FitsProduct)(img.getProducFile()));
+		FitsDataFile fp = ((FitsDataFile)(img.getProducFile()));
 		size[1]     = ift.getSizeY();
 		size[0]     = ift.getSizeX();
 		corner[1]   = ift.getCornerY();
