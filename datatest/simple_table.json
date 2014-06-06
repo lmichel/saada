@@ -1,7 +1,6 @@
-
 {
 "parameters": [
-	"-category=misc" ,
+	"-category=table" ,
 	"-collection=XMM",
 	"-filename=obscore",
 	"-repository=no",
@@ -13,7 +12,7 @@
 	"-debug=on"
 ],
 "fields": {
-    "header": [	["RA", "double", "", "", "23.67"],
+     "header": [	["RA", "double", "", "", "23.67"],
 				["DEC", "double", "", "", "-56.9"],
 				["eMin", "double", "KeV", "em.wl;stat.min", "1."],
 				["eMax", "double", "KeV", "em.wl;stat.max", "2."],
@@ -25,6 +24,9 @@
 				["facility", "String", "", "", "XMM"]
 		]
 		,
-    "columns": []
+    "columns": [["RA", "double", "", "", ""],
+                ["DEC", "double", "", "", ""],
+                ["NAME", "String", "", "", ""],
+        ]
     }
 }
