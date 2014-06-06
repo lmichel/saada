@@ -3,20 +3,20 @@ package saadadb.products.inference;
 import java.util.Map;
 
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.PriorityMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
-import saadadb.products.ProductFile;
+import saadadb.products.DataFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 
 public class EnergyKWDetector extends KWDetector {
 	private SpectralCoordinate spectralCoordinate;
-	private ProductFile productFile;
+	private DataFile productFile;
 	private PriorityMode priority;
 	private String defaultUnit;
 	private String readUnit;
@@ -25,7 +25,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @param productFile
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(ProductFile productFile, PriorityMode priority, String defaultUnit) throws SaadaException {
+	public EnergyKWDetector(DataFile productFile, PriorityMode priority, String defaultUnit) throws SaadaException {
 		super(productFile);
 		this.productFile = productFile;
 		this.setUnitMode(priority, defaultUnit);

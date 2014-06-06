@@ -584,12 +584,16 @@ public class SpectralCoordinate{
 	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
 		this.attributesList = tableAttributeHandler;
 		WCSModel wm = null;
+		try {
 			wm = new WCSModel(tableAttributeHandler);
-			if( !wm.isKwset_ok() ){
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "WCS readout failed");
-				return false;
-			}
+		} catch (Exception e) {
+			return false;
+		}
+		if( !wm.isKwset_ok() ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "WCS readout failed");
+			return false;
+		}
 		String unitOrg = this.mappedUnit;
 		wm.projectAllAxesToRealWord();
 		if( !wm.isKwset_ok() ){
@@ -612,7 +616,7 @@ public class SpectralCoordinate{
 			} else  {
 				this.mappedUnit = unit_class.unit;
 			}
-		this.detectionMessage = wm.detectionMessage;
+			this.detectionMessage = wm.detectionMessage;
 		}
 		/*
 		 * No dispersion axe: we consider the longer one as a good candidate
@@ -643,7 +647,7 @@ public class SpectralCoordinate{
 						if( unitOrg.equals("A") ) {
 							unitOrg = "Angstrom";
 						}
-						
+
 						UnitRef unit_class = getUniRef(unitOrg);
 						if(unit_class == null) {
 							if (Messenger.debug_mode)
@@ -671,7 +675,7 @@ public class SpectralCoordinate{
 			return false;
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */

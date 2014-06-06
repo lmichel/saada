@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetMode;
 import saadadb.products.ColumnSetter;
-import saadadb.products.ProductFile;
+import saadadb.products.DataFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
+/**
+ * Do search operations in a set of keyword.
+ * @author michel
+ * @version $Id$
+ */
 public abstract class KWDetector {
 	protected Map<String, AttributeHandler> tableAttributeHandler;
 	protected Map<String, AttributeHandler> entryAttributeHandler;
@@ -32,10 +37,11 @@ public abstract class KWDetector {
 		this.entryAttributeHandler = entryAttributeHandler;
 	}
 	/**
+	 * Take the WK map from a data file
 	 * @param productFile
 	 * @throws SaadaException
 	 */
-	public KWDetector(ProductFile productFile) throws SaadaException {
+	public KWDetector(DataFile productFile) throws SaadaException {
 		if( productFile != null ) {
 			this.tableAttributeHandler = productFile.getAttributeHandler();
 			this.entryAttributeHandler =  productFile.getEntryAttributeHandler();
@@ -43,8 +49,9 @@ public abstract class KWDetector {
 	}
 
 	/**
-	 * @param ucd_regexp
-	 * @param colname_regexp
+	 * Incorporate both search be UCD (first) and by column name in the table AttributeHandlers
+	 * @param ucd_regexp regular expression to be applied to the UCDs
+	 * @param colname_regexp regular expression to be applied to the column name
 	 * @return
 	 * @throws FatalException 
 	 */
@@ -58,9 +65,11 @@ public abstract class KWDetector {
 		}
 		return (retour != null)? retour: new ColumnSetter();
 	}
+	
 	/**
-	 * @param ucd_regexp
-	 * @param colname_regexp
+	 * Incorporate both search be UCD (first) and by column name in the entrty AttributeHandlers
+	 * @param ucd_regexp regular expression to be applied to the UCDs
+	 * @param colname_regexp regular expression to be applied to the column name
 	 * @return
 	 * @throws FatalException 
 	 */
@@ -75,6 +84,7 @@ public abstract class KWDetector {
 		return (retour != null)? retour: new ColumnSetter();
 	}
 	/**
+	 * Search the first attribute handler with an UCD matching ucd_regexp
 	 * @param ucd_regexp
 	 * @return
 	 * @throws FatalException 
@@ -97,6 +107,7 @@ public abstract class KWDetector {
 	}
 	
 	/**
+	 * Search the 2 attribute handlers with a UCD matching respectively ucd1_regexp and String ucd2_regexp
 	 * @param ucd1_regexp
 	 * @param ucd2_regexp
 	 * @return
@@ -133,6 +144,7 @@ public abstract class KWDetector {
 	}
 
 	/**
+	 * Search the first attribute handler with a name matching colname_regexp
 	 * @param ucd_regexp
 	 * @return
 	 * @throws FatalException 
@@ -153,6 +165,7 @@ public abstract class KWDetector {
 		return notSetColumnSetter();
 	}
 	/**
+	 * Search the 2 attribute handlers with a name matching respectively colname1_regexp and String colname2_regexp
 	 * @param colname1_regexp
 	 * @param colname2_regexp
 	 * @return
@@ -189,6 +202,7 @@ public abstract class KWDetector {
 	}
 
 	/**
+	 * Search the first entry attribute handler with an UCD matching ucd_regexp
 	 * @param ucd_regexp
 	 * @return
 	 * @throws FatalException 
@@ -212,6 +226,7 @@ public abstract class KWDetector {
 	
 	
 	/**
+	 * Search the first entry attribute handler with a name matching colname_regexp
 	 * @param ucd_regexp
 	 * @return
 	 * @throws FatalException 
