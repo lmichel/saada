@@ -1,6 +1,8 @@
 package saadadb.dataloader.mapping;
 
 import saadadb.command.ArgsParser;
+import saadadb.enums.MappingMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;

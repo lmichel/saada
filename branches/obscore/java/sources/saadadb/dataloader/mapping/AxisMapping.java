@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import saadadb.command.ArgsParser;
+import saadadb.enums.MappingMode;
+import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.products.ProductBuilder;
 

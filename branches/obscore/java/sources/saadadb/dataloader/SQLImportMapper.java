@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -39,7 +39,7 @@ public class SQLImportMapper extends SchemaMapper {
 		 * Build a set of attributes handlers matching all product to ingest
 		 */
 		//this.current_prd = new ImportedTable(this.tableName, this.mapping) ;
-		this.current_prd =null;
+		this.currentProductBuilder =null;
 		this.loader.processUserRequest();
 
 
@@ -114,9 +114,9 @@ public class SQLImportMapper extends SchemaMapper {
 			SQLTable.beginTransaction();
 		}
 		Database.getCachemeta().reload(true);
-		this.current_class = Database.getCachemeta().getClass(class_name);
-		if( this.current_prd != null )
-			this.current_prd.setMetaclass(this.current_class);
-		return this.current_class;
+		this.currentClass = Database.getCachemeta().getClass(class_name);
+		if( this.currentProductBuilder != null )
+			this.currentProductBuilder.setMetaclass(this.currentClass);
+		return this.currentClass;
 	}
 }

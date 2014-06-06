@@ -12,8 +12,8 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.dataloader.mapping.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -21,10 +21,12 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
+import saadadb.products.DataFile;
 import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.sqltable.SQLTable;
+import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.UCDTableHandler;
 import saadadb.util.Messenger;
 
@@ -34,14 +36,9 @@ import saadadb.util.Messenger;
  */
 public class SchemaFusionMapper extends SchemaMapper {
 
-	/** * @version $Id$
-
-	 * @param handler 
-	 * @param mapping
-	 */
-	public SchemaFusionMapper(Loader loader, ArrayList<File> prdvect_list, ProductMapping mapping) {
-		super(loader, prdvect_list, mapping);
-		Messenger.setMaxProgress((2*prdvect_list.size()) + 2);
+	public SchemaFusionMapper(Loader loader, ArrayList<DataFile> dataFiles, ProductMapping mapping) {
+		super(loader, dataFiles, mapping);
+		Messenger.setMaxProgress((2*dataFiles.size()) + 2);
 	}
 
 	/**
@@ -62,27 +59,27 @@ public class SchemaFusionMapper extends SchemaMapper {
 		/*
 		 * Build a set of attributes handlers matching all product to ingest
 		 */
-		this.current_prd = null;
-		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
-			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + file.getName() + "> ");
-			if( this.current_prd == null ) {
-				this.current_prd = this.mapping.getNewProductInstance(file);
+		this.currentProductBuilder = null;
+		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
+			DataFile dataFile = this.dataFiles.get(i);
+			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + dataFile.getName() + "> ");
+			if( this.currentProductBuilder == null ) {
+				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(dataFile);
 				/*
 				 * Discard file non matching the configuration
 				 */
-				if(  !this.mapping.isProductValid(current_prd) ) {
-					Messenger.printMsg(Messenger.TRACE, "Product <" + current_prd.getName()+ "> rejected");	
-					this.products.remove(i);
+				if(  !this.mapping.isProductValid(currentProductBuilder) ) {
+					Messenger.printMsg(Messenger.TRACE, "Product <" + currentProductBuilder.getName()+ "> rejected");	
+					this.dataFiles.remove(i);
 					i--;
 				}
 				try {
-					this.current_prd.readProductFile();
+					this.currentProductBuilder.bindDataFile();
 				} catch(Exception e){
 					Messenger.printMsg(Messenger.ERROR, e.toString());
-					this.products.remove(i);
+					this.dataFiles.remove(i);
 					i--;
-					this.current_prd = null;
+					this.currentProductBuilder = null;
 				}
 			}
 			else {
@@ -90,10 +87,10 @@ public class SchemaFusionMapper extends SchemaMapper {
 				 * AbortException rose of file type not recognized
 				 */
 				try {
-					this.current_prd.mergeProductFormat(file);
+					this.currentProductBuilder.mergeProductFormat(dataFile);
 				} catch(Exception e){	
 					Messenger.printMsg(Messenger.ERROR, e.toString());
-					this.products.remove(i);
+					this.dataFiles.remove(i);
 					i--;
 				}
 			}
@@ -107,7 +104,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
 		}
-		if( this.products.size() == 0 ) {
+		if( this.dataFiles.size() == 0 ) {
 			IgnoreException.throwNewException(SaadaException.FILE_ACCESS, "No longer product to load");
 		}
 		/*
@@ -118,9 +115,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.createClassFromProduct(ClassifierMode.CLASS_FUSION);		
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
-				this.entry_mapper = new SchemaFusionMapper(this.loader, entr);
-				this.entry_mapper.current_class = this.entry_mapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
+				this.entryMapper.currentClass = this.entryMapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
 			}
 			this.loader.processUserRequest();
@@ -133,9 +130,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.updateSchemaForProduct();
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
-				this.entry_mapper = new SchemaFusionMapper(this.loader, entr);
-				this.entry_mapper.updateSchemaForProduct();	
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
+				this.entryMapper.updateSchemaForProduct();	
 				SQLTable.beginTransaction();
 			}
 			this.loader.processUserRequest();
@@ -143,7 +140,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		}
 	}
 	/**
-	 * @param products
+	 * @param dataFiles
 	 * @param mapping
 	 * @throws Exception
 	 */
@@ -160,7 +157,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * Ingest all files
 		 */
 		Messenger.printMsg(Messenger.TRACE, "Start to ingest data");
-		this.current_prd = null;
+		this.currentProductBuilder = null;
 		int commit_frequency = 100;
 		if( mapping.getCategory() == Category.TABLE) {	
 			commit_frequency = 1;
@@ -170,18 +167,18 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 */
 		SQLTable.beginTransaction();
 		SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(mapping.getCollection() ,mapping.getCategory()), null);
-		SQLTable.dropTableIndex(this.current_class.getName(), null);
+		SQLTable.dropTableIndex(this.currentClass.getName(), null);
 
-		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
-			this.current_prd = this.mapping.getNewProductInstance(file);
-			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
-			if( this.entry_mapper != null ) {	
-				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
-				this.entry_mapper.setProduct(entr);
+		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
+			DataFile file = this.dataFiles.get(i);
+			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);
+			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
+			if( this.entryMapper != null ) {	
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				this.entryMapper.setProduct(entr);
 			}
 			try {
-				this.current_prd.initProductFile();
+				this.currentProductBuilder.initProductFile();
 			} catch(IgnoreException e){
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -205,13 +202,13 @@ public class SchemaFusionMapper extends SchemaMapper {
 		/*
 		 * Re-create SQL indexes
 		 */
-		if( this.build_index) {
+		if( this.mustIndex) {
 			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection() ,mapping.getCategory()), this.loader);
-			SQLTable.indexTable(this.current_class.getName(), this.loader);
+			SQLTable.indexTable(this.currentClass.getName(), this.loader);
 			this.loader.processUserRequest();
-			if( this.entry_mapper != null ) {
-				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entry_mapper.mapping.getCollection() , this.entry_mapper.mapping.getCategory()), this.loader);
-				SQLTable.indexTable(this.entry_mapper.current_class.getName(), this.loader);			
+			if( this.entryMapper != null ) {
+				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entryMapper.mapping.getCollection() , this.entryMapper.mapping.getCategory()), this.loader);
+				SQLTable.indexTable(this.entryMapper.currentClass.getName(), this.loader);			
 			}
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
@@ -220,7 +217,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 	}	
 
 	/**
-	 * @param products
+	 * @param dataFiles
 	 * @param mapping
 	 * @throws Exception
 	 */
@@ -236,32 +233,32 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * Ingest all files
 		 */
 		Messenger.printMsg(Messenger.TRACE, "Start to ingest data in blob mode");
-		this.current_prd = null;
+		this.currentProductBuilder = null;
 		/*
 		 * Drop SQL indexes
 		 */
 		SQLTable.beginTransaction();
-		SQLTable.dropTableIndex(this.current_class.getName(), null);
+		SQLTable.dropTableIndex(this.currentClass.getName(), null);
 		SQLTable.commitTransaction();
 
 		String         ecoll_table = Database.getCachemeta().getCollectionTableName(this.mapping.getCollection(), this.mapping.getCategory());
-		String        busdumpfile  = Repository.getTmpPath() + Database.getSepar()  + this.current_class.getName() +  ".psql";
+		String        busdumpfile  = Repository.getTmpPath() + Database.getSepar()  + this.currentClass.getName() +  ".psql";
 		BufferedWriter  bustmpfile = new BufferedWriter(new FileWriter(busdumpfile));
 		String        coldumpfile  = Repository.getTmpPath() + Database.getSepar()  + ecoll_table +  ".psql";
 		BufferedWriter  coltmpfile = new BufferedWriter(new FileWriter(coldumpfile));
 		String        loadedfile   = Repository.getTmpPath() + Database.getSepar()  + "saada_loaded_file.psql";
 		BufferedWriter loadedtmpfile = new BufferedWriter(new FileWriter(loadedfile));
 
-		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
-			this.current_prd = this.mapping.getNewProductInstance(file);
-			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
-			if( this.entry_mapper != null ) {	
-				EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
-				this.entry_mapper.setProduct(entr);
+		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
+			DataFile file = this.dataFiles.get(i);
+			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);
+			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
+			if( this.entryMapper != null ) {	
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				this.entryMapper.setProduct(entr);
 			}
 			try {
-				this.current_prd.initProductFile();
+				this.currentProductBuilder.initProductFile();
 			} catch(IgnoreException e){
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -273,9 +270,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 			/*
 			 * Must not be used with table (entry wouln't be loaded)
 			 */
-			this.current_prd.setMetaclass(this.current_class);
-			this.current_prd.loadValue(coltmpfile, bustmpfile, loadedtmpfile);
-			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getActualOidsaada() + ">");
+			this.currentProductBuilder.setMetaclass(this.currentClass);
+			this.currentProductBuilder.loadValue(coltmpfile, bustmpfile, loadedtmpfile);
+			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
 		}	
@@ -287,22 +284,22 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 */
 		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
-		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.current_class.getName() + " -1 " + busdumpfile);
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.currentClass.getName() + " -1 " + busdumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE saada_loaded_file -1 " + loadedfile);
 		SQLTable.commitTransaction();
 
 		/*
 		 * Re-create SQL indexes
 		 */
-		if( this.build_index) {
+		if( this.mustIndex) {
 			SQLTable.beginTransaction();
 
 			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection() ,mapping.getCategory()), this.loader);
-			SQLTable.indexTable(this.current_class.getName(), this.loader);
+			SQLTable.indexTable(this.currentClass.getName(), this.loader);
 			this.loader.processUserRequest();
-			if( this.entry_mapper != null ) {
-				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entry_mapper.mapping.getCollection() , this.entry_mapper.mapping.getCategory()), this.loader);
-				SQLTable.indexTable(this.entry_mapper.current_class.getName(), this.loader);			
+			if( this.entryMapper != null ) {
+				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entryMapper.mapping.getCollection() , this.entryMapper.mapping.getCategory()), this.loader);
+				SQLTable.indexTable(this.entryMapper.currentClass.getName(), this.loader);			
 			}
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
@@ -315,7 +312,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 	 * @throws Exception 
 	 */
 	@Override
-	protected void updateSchemaForProduct() throws Exception {
+	public void updateSchemaForProduct() throws Exception {
 
 		MetaClass mc = Database.getCachemeta().getClass(this.mapping.getClassName());	
 		if( mapping.getCategory() == Category.ENTRY ) {
@@ -339,9 +336,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 			for( int i=0 ; i<ahs.length ; i++ ) {
 				org_ah.put(ahs[i].getNameattr(), ahs[i]);
 			}
-			this.current_prd.mergeAttributeHandlers(org_ah);
+			this.currentProductBuilder.mergeAttributeHandlers(org_ah);
 
-			Map<String, AttributeHandler> new_ah = this.current_prd.getProductAttributeHandler();
+			Map<String, AttributeHandler> new_ah = this.currentProductBuilder.getProductAttributeHandler();
 			Iterator<AttributeHandler> it = new_ah.values().iterator();
 			boolean modified = false;
 			if( ahs.length != new_ah.size() ) {
@@ -359,8 +356,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 					modified = true;
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Column <" + nah.getNameattr() + "> of type \"" + nah.getType() + "\" added to table/class <" + mc.getName() + "> ");
-					SQLTable.addQueryToTransaction(Database.getWrapper().addColumn(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
-							, mc.getName());
+//					SQLTable.addQueryToTransaction(Database.getWrapper().addColumn(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
+//							, mc.getName());
 				}
 				/*
 				 * Attribute exist but type has been changed
@@ -379,8 +376,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 				(new UCDTableHandler(mc.getName()
 						, mapping.getCollection()
 						, mapping.getCategory()
-						, new ArrayList<AttributeHandler>(this.current_prd.getProductAttributeHandler().values()))).updateUCDTable(mc.getId());
-				GenerationClassProduct.buildJavaClass(this.current_prd.getProductAttributeHandler()
+						, new ArrayList<AttributeHandler>(this.currentProductBuilder.getProductAttributeHandler().values()))).updateUCDTable(mc.getId());
+				Table_Saada_Business.updateBusinessTable(mc.getName(), this.currentProductBuilder.getProductAttributeHandler());
+				GenerationClassProduct.buildJavaClass(this.currentProductBuilder.getProductAttributeHandler()
 						, SchemaMapper.getClass_location()
 						, mc.getName()
 						, Category.explain(mapping.getCategory()) + "UserColl");
@@ -397,6 +395,6 @@ public class SchemaFusionMapper extends SchemaMapper {
 				Database.getCachemeta().reload(true);
 			}
 		}
-		this.current_class = Database.getCachemeta().getClass(mc.getName());
+		this.currentClass = Database.getCachemeta().getClass(mc.getName());
 	}
 }

@@ -10,6 +10,8 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.products.ColumnSetter;
+import saadadb.products.ExtensionSetter;
+import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -38,7 +40,8 @@ public class ProductListReport {
 			"j_a+a_507_929_time_serie_blue_78.fit",
 			"EN2_WINDESCRIPTOR_0105574071_20080415T231048_20080907T224903.fits",
 			"J_ApJ_727_125_time_serie_WASP12b_secondary_2008-10-29_Spitzer_IRAC_4.5_microns.fits",
-			"J_ApJ_703_894_p17_12co_2-1.fits"};
+			"J_ApJ_703_894_p17_12co_2-1.fits",
+			"J_A+A_544_A114_lcmos1.fits"};
 			
 			Set<File> files = new LinkedHashSet<File>();
 			for( String s:sample ) {
@@ -57,22 +60,27 @@ public class ProductListReport {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;
 					switch( Category.getCategory(ap.getCategory()) ) {
-					case Category.TABLE: product = new TableBuilder((new File(f.getAbsolutePath()))
+					case Category.TABLE: product = new TableBuilder((new FitsDataFile(f.getAbsolutePath()))
 							, new ProductMapping("mapping", ap));
 					break;
-					case Category.MISC : product = new MiscBuilder((new File(f.getAbsolutePath()))
+					case Category.MISC : product = new MiscBuilder((new FitsDataFile(f.getAbsolutePath()))
 							, new ProductMapping("mapping", ap));
 					break;
-					case Category.SPECTRUM: product = new SpectrumBuilder((new File(f.getAbsolutePath()))
+					case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(f.getAbsolutePath()))
 							, new ProductMapping("mapping", ap));
 					break;
-					case Category.IMAGE: product = new Image2DBuilder((new File(f.getAbsolutePath()))
+					case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(f.getAbsolutePath()))
 							, new ProductMapping("mapping", ap));
 					break;
 					}
-					product.initProductFile();
+				//	product.initProductFile();
 					Map<String, ColumnSetter> r = product.getReport();
 					System.out.println("======== " + f);	
+					System.out.println("      -- Loaded extensions");	
+					for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
+						System.out.println(es);
+					}
+					System.out.println("      -- Field values");	
 					for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 						System.out.print(String.format("%20s",e.getKey()) + "     ");
 						ColumnSetter ah = e.getValue();

@@ -6,10 +6,13 @@ import java.util.List;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
+import saadadb.enums.ClassifierMode;
+import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.HeaderRef;
+import saadadb.products.DataFile;
 import saadadb.products.FlatFileBuilder;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
@@ -177,6 +180,9 @@ public class ProductMapping {
     public AxisMapping getObservationAxisMapping() throws FatalException {
     	return stoeMapping.getAxisMapping(Axis.OBSERVATION);
     }
+    public AxisMapping getObservableAxisMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.OBSERVABLE);
+    }
     public AxisMapping getExtenedAttMapping() throws FatalException {
     	return stoeMapping.getAxisMapping(Axis.EXTENDEDATT);
     }
@@ -239,7 +245,7 @@ public class ProductMapping {
 	 * @return
 	 * @throws IgnoreException
 	 */
-	public  ProductBuilder getNewProductInstance(File file) throws SaadaException {
+	public  ProductBuilder getNewProductBuilderInstance(DataFile file) throws SaadaException {
 		switch( this.category ) {
 		case Category.TABLE: return new TableBuilder(file, this) ;
 		case Category.MISC : return new MiscBuilder(file, this) ;

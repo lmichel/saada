@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ClassifierMode;
-import saadadb.dataloader.mapping.MappingMode;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.enums.ClassifierMode;
+import saadadb.enums.MappingMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
+import saadadb.products.DataFile;
 import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
@@ -30,7 +31,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	 * @param handler 
 	 * @param mapping
 	 */
-	public SchemaClassifierMapper(Loader loader, ArrayList<File> prdvect_list, ProductMapping mapping) {
+	public SchemaClassifierMapper(Loader loader, ArrayList<DataFile> prdvect_list, ProductMapping mapping) {
 		super(loader, prdvect_list, mapping);
 		if( prdvect_list != null )
 			Messenger.setMaxProgress(prdvect_list.size() + 2);
@@ -45,7 +46,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	}
 
 	/**
-	 * @param products
+	 * @param dataFiles
 	 * @param mapping
 	 * @throws Exception
 	 */
@@ -56,17 +57,18 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		/*
 		 * Drop SQL indexes
 		 */
+		Messenger.printMsg(Messenger.TRACE, "Ingesting the product set");
 		SQLTable.beginTransaction();
 		SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
-		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
+		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
+			DataFile file = this.dataFiles.get(i);
 			/*
 			 * Build the Saada Product instance
 			 */
-			this.current_prd = this.mapping.getNewProductInstance(file);				
-			Messenger.printMsg(Messenger.TRACE, "Build the Saada instance modeling <" + current_prd.getName()+ ">");
+			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);				
+			Messenger.printMsg(Messenger.TRACE, "Build the Saada instance modeling <" + currentProductBuilder.getName()+ ">");
 			try {
-				this.current_prd.initProductFile();
+				this.currentProductBuilder.initProductFile();
 			} catch(IgnoreException e) {
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -97,14 +99,14 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		/*
 		 * Re-create SQL indexes 
 		 */
-		if( this.build_index ) {
+		if( this.mustIndex ) {
 			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
-			for( String cti: class_to_index) {
+			for( String cti: classesToBeIndexed) {
 				SQLTable.indexTable(cti, this.loader);			
 			}
-			if( this.entry_mapper != null ) {
-				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), this.entry_mapper.mapping.getCategory()), this.loader);
-				for( String cti: this.entry_mapper.class_to_index) {
+			if( this.entryMapper != null ) {
+				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), this.entryMapper.mapping.getCategory()), this.loader);
+				for( String cti: this.entryMapper.classesToBeIndexed) {
 					this.loader.processUserRequest();
 					SQLTable.indexTable(cti, this.loader);			
 				}			
@@ -123,8 +125,8 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			/*
 			 * Products not matching the configare rejected
 			 */
-			if( !this.mapping.isProductValid(current_prd) ) {
-				Messenger.printMsg(Messenger.TRACE, "<" + current_prd.getName()+ "> rejected");	
+			if( !this.mapping.isProductValid(currentProductBuilder) ) {
+				Messenger.printMsg(Messenger.TRACE, "<" + currentProductBuilder.getName()+ "> rejected");	
 				return;
 			}
 			
@@ -146,9 +148,9 @@ public class SchemaClassifierMapper extends SchemaMapper {
 				 */
 				if( mapping.getCategory() == Category.TABLE) {
 					Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
-					EntryBuilder entr = ((TableBuilder) current_prd).getEntry();
-					this.entry_mapper = new SchemaClassifierMapper(this.loader, entr);
-					this.entry_mapper.updateSchemaForProduct();
+					EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+					this.entryMapper = new SchemaClassifierMapper(this.loader, entr);
+					this.entryMapper.updateSchemaForProduct();
 					/*
 					 * Transaction is closed when a class is created
 					 */
@@ -169,12 +171,12 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	protected void updateSchemaForProduct() throws Exception {
 		String className = this.mapping.getClassName();
 		if( className == null || className.length() == 0){
-			className = this.current_prd.possibleClassName();
+			className = this.currentProductBuilder.possibleClassName();
 		}
 		requested_classname = this.getRequestedClassName(className);
 
-		String fmt_signature = this.current_prd.getFmtsignature();
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"product " + this.current_prd.getClass().getName() + " " + fmt_signature);
+		String fmt_signature = this.currentProductBuilder.getFmtsignature();
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"product " + this.currentProductBuilder.getClass().getName() + " " + fmt_signature);
 		MetaClass mc=null;
 		if( !Database.getCachemeta().classWithSignatureExists(fmt_signature) ) {
 			if (Messenger.debug_mode)
@@ -182,7 +184,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Class <" + mc.getName() + "> created");
-			this.class_to_index.add(mc.getName());
+			this.classesToBeIndexed.add(mc.getName());
 		}
 		else {
 			boolean class_found = false;
@@ -200,8 +202,8 @@ public class SchemaClassifierMapper extends SchemaMapper {
 						&&  mc.getCategory() == mapping.getCategory() ) {
 					Messenger.printMsg(Messenger.TRACE, "Existing class <" + mc.getName() + "> matches the product format");
 					//SQLTable.dropTableIndex(mc.getName(), this.loader);
-					this.class_to_index.add(mc.getName());
-					this.current_prd.setMetaclass(mc);	
+					this.classesToBeIndexed.add(mc.getName());
+					this.currentProductBuilder.setMetaclass(mc);	
 					class_found = true;
 					break;
 				}
@@ -215,10 +217,10 @@ public class SchemaClassifierMapper extends SchemaMapper {
 				mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Class <" + mc.getName() + "> created");
-				this.class_to_index.add(mc.getName());
+				this.classesToBeIndexed.add(mc.getName());
 			}
 		}
-		this.current_class =  mc;
+		this.currentClass =  mc;
 		
 	}
 

@@ -1,11 +1,10 @@
 package saadadb.dataloader.testprov;
 
-import java.io.File;
-
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.products.FitsDataFile;
 import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
 
@@ -33,7 +32,7 @@ public class LoadSpecgtrum {
 					,"-tmax=12 03 2013" 		
 					, "Obscore"});
 
-			ProductBuilder product = new ProductBuilder(new File("/home/michel/Desktop/ADASS2008/data_sample/EPIC Spectra/P0205010201PNS003SRSPEC0003.FIT")
+			ProductBuilder product = new ProductBuilder(new FitsDataFile("/home/michel/Desktop/ADASS2008/data_sample/EPIC Spectra/P0205010201PNS003SRSPEC0003.FIT")
 			, new ProductMapping("mapping", ap));
 			product.initProductFile();
 			product.printReport();
