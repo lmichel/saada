@@ -176,15 +176,15 @@ public final class EntryIngestor extends ProductIngestor {
 	protected void setPositionFields(int number) throws Exception {
 		if( this.values != null ){
 			if( this.num_col_ra != -1 )
-				this.product.s_ra_ref.setByValue(this.values[this.num_col_ra].toString(), true);
+				this.product.s_raSetter.setByValue(this.values[this.num_col_ra].toString(), true);
 			if( this.num_col_dec != -1 )
-				this.product.s_dec_ref.setByValue(this.values[this.num_col_dec].toString(), true);
+				this.product.s_decSetter.setByValue(this.values[this.num_col_dec].toString(), true);
 			if( this.num_col_ra_err != -1 )
-				this.product.error_maj_ref.setByValue(this.values[this.num_col_ra_err].toString(), true);
+				this.product.errorMajSetter.setByValue(this.values[this.num_col_ra_err].toString(), true);
 			if( this.num_col_dec_err != -1 )
-				this.product.error_min_ref.setByValue(this.values[this.num_col_dec_err].toString(), true);
+				this.product.errorMinSetter.setByValue(this.values[this.num_col_dec_err].toString(), true);
 			if( this.num_col_angle_err != -1 )
-				this.product.error_angle_ref.setByValue(this.values[this.num_col_angle_err].toString(), true);
+				this.product.errorAngleSetter.setByValue(this.values[this.num_col_angle_err].toString(), true);
 		}
 		super.setPositionFields(number);
 		/*
@@ -200,11 +200,11 @@ public final class EntryIngestor extends ProductIngestor {
 	protected void setEnegryFields() throws SaadaException {
 		if( this.values != null ){
 			if( this.num_col_em_max != -1 )
-				this.product.em_max_ref.setByValue(this.values[this.num_col_em_max].toString(), true);
+				this.product.em_maxSetter.setByValue(this.values[this.num_col_em_max].toString(), true);
 			if( this.num_col_em_min != -1 )
-				this.product.em_min_ref.setByValue(this.values[this.num_col_em_min].toString(), true);
+				this.product.em_minSetter.setByValue(this.values[this.num_col_em_min].toString(), true);
 			if( this.num_col_em_res_power != -1 )
-				this.product.em_res_power_ref.setByValue(this.values[this.num_col_em_res_power].toString(), true);
+				this.product.em_res_powerSetter.setByValue(this.values[this.num_col_em_res_power].toString(), true);
 		}
 		super.setEnegryFields();
 	}
@@ -215,11 +215,11 @@ public final class EntryIngestor extends ProductIngestor {
 	protected void setTimeFields() throws SaadaException {
 		if( this.values != null ){
 			if( this.num_col_t_max != -1 )
-				this.product.t_max_ref.setByValue(this.values[this.num_col_t_max].toString(), true);
+				this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
 			if( this.num_col_t_min != -1 )
-				this.product.t_min_ref.setByValue(this.values[this.num_col_t_min].toString(), true);
+				this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
 			if( this.num_col_t_exptime != -1 )
-				this.product.t_exptime_ref.setByValue(this.values[this.num_col_t_exptime].toString(), true);
+				this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);
 		}
 		super.setTimeFields();
 	}
@@ -350,37 +350,37 @@ public final class EntryIngestor extends ProductIngestor {
 			 * map collection attributes
 			 */
 			String nameField = attribute.getNameattr();
-			if( this.product.s_ra_ref != null && nameField.equals(this.product.s_ra_ref.getAttNameAtt()) ) {
+			if( this.product.s_raSetter != null && nameField.equals(this.product.s_raSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "RA col (" + nameField + ") read in column #" + num_att_read);
 				num_col_ra = index_pos_col[num_att_read];
-			} else if( this.product.s_dec_ref != null && nameField.equals(this.product.s_dec_ref.getAttNameAtt()) ) {
+			} else if( this.product.s_decSetter != null && nameField.equals(this.product.s_decSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC col (" + nameField + ") read in column #" + num_att_read);
 				num_col_dec = index_pos_col[num_att_read];
-			} else if( this.product.error_maj_ref != null && nameField.equals(this.product.error_maj_ref.getAttNameAtt()) ) {
+			} else if( this.product.errorMajSetter != null && nameField.equals(this.product.errorMajSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "RA error col (" + nameField + ") read in column #" + num_att_read);
 				num_col_ra_err = index_pos_col[num_att_read];
-			} else if( this.product.error_min_ref != null && nameField.equals(this.product.error_min_ref.getAttNameAtt()) ) {
+			} else if( this.product.errorMinSetter != null && nameField.equals(this.product.errorMinSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC error col (" + nameField + ") read in column #" + num_att_read);
 				num_col_dec_err = index_pos_col[num_att_read];
-			} else if( this.product.error_angle_ref != null && nameField.equals(this.product.error_angle_ref.getAttNameAtt()) ) {
+			} else if( this.product.errorAngleSetter != null && nameField.equals(this.product.errorAngleSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Angle error col (" + nameField + ") read in column #" + num_att_read);
 				num_col_angle_err = index_pos_col[num_att_read];
-			} else if( this.product.em_max_ref != null && nameField.equals(this.product.em_max_ref.getAttNameAtt()) ) {
+			} else if( this.product.em_maxSetter != null && nameField.equals(this.product.em_maxSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "em_max column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_em_max = index_pos_col[num_att_read];
-			} else if( this.product.em_min_ref != null && nameField.equals(this.product.em_min_ref.getAttNameAtt()) ) {
+			} else if( this.product.em_minSetter != null && nameField.equals(this.product.em_minSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "em_min column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_em_min = index_pos_col[num_att_read];
-			} else if( this.product.em_res_power_ref != null && nameField.equals(this.product.em_res_power_ref.getAttNameAtt()) ) {
+			} else if( this.product.em_res_powerSetter != null && nameField.equals(this.product.em_res_powerSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "num_col_em_res_power column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_em_res_power = index_pos_col[num_att_read];
-			} else if( this.product.t_max_ref != null && nameField.equals(this.product.t_max_ref.getAttNameAtt()) ) {
+			} else if( this.product.t_maxSetter != null && nameField.equals(this.product.t_maxSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_max column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_max = index_pos_col[num_att_read];
-			} else if( this.product.t_min_ref != null && nameField.equals(this.product.t_min_ref.getAttNameAtt()) ) {
+			} else if( this.product.t_minSetter != null && nameField.equals(this.product.t_minSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_min column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_min = index_pos_col[num_att_read];
-			 } else if( this.product.t_exptime_ref != null && nameField.equals(this.product.t_exptime_ref.getAttNameAtt()) ) {
+			 } else if( this.product.t_exptimeSetter != null && nameField.equals(this.product.t_exptimeSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_exptime column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_exptime = index_pos_col[num_att_read];
 			}

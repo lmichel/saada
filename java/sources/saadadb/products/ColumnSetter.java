@@ -25,7 +25,7 @@ public final class ColumnSetter  {
 	 */
 	public StringBuffer message = new StringBuffer();
 	/**
-	 * Value affected to the column
+	 * Value affected to the column but whicg cab be saved as a string within the  AttributeHandler
 	 */
 	public Object storedValue;
 	
@@ -83,6 +83,16 @@ public final class ColumnSetter  {
 		this.setInitMessage();
 		this.setMappingMessage(fromMapping);
 	}
+	/**
+	 * Build an attribute handler carrying the value and put the apropriate messages
+	 * @param value   constant value for the column
+	 * @param fromMapping flag for messaging
+	 * @throws FatalException 
+	 */
+	public ColumnSetter(String value, boolean fromMapping, String message) throws FatalException {
+		this(value, fromMapping);
+		this.completeMessage(message);
+	}
 	
 	/**
 	 * Basic constructor
@@ -90,6 +100,14 @@ public final class ColumnSetter  {
 	public ColumnSetter() {
 		this.attributeHandler = new AttributeHandler();
 		this.setNotSet();
+	}
+	/**
+	 * Basic constructor
+	 */
+	public ColumnSetter(String message) {
+		this.attributeHandler = new AttributeHandler();
+		this.setNotSet();
+		this.completeMessage(message);
 	}
 
 	/**
@@ -293,9 +311,11 @@ public final class ColumnSetter  {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return this.attributeHandler + " "
+		String retour =  this.attributeHandler + " "
 		+ this.getMode() + " "
-		+ this.message
-		+ " storedValue=" + this.storedValue;
+		+ this.message;
+		if( this.storedValue != null )
+			retour += "storedValue=" + this.storedValue;
+		return retour;
 	}
 }

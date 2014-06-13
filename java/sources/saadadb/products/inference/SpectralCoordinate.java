@@ -667,6 +667,8 @@ public class SpectralCoordinate{
 		this.orgMax = wm.getMaxValue(dispersionAxeNum);
 		this.raWCSCenter = wm.getCenterRa();
 		this.decWCSCenter = wm.getCenterDec();
+		System.out.println("@@@@@@@@@@@@@@@ " + this.orgMin + " " + this.orgMax);
+		System.exit(1);
 		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
 			Messenger.printMsg(Messenger.TRACE, this.getRange());
 			return true;

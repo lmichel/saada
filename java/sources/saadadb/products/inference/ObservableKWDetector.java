@@ -31,7 +31,7 @@ public class ObservableKWDetector extends KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable UCD");
 		return new ColumnSetter();
 	}
-	public ColumnSetter getCalibStatusTime() throws FatalException{
+	public ColumnSetter getCalibStatus() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable calib status");
 		return new ColumnSetter();
