@@ -10,7 +10,7 @@ public class ObservationMapping extends AxisMapping {
 		super(ap, new String[]{"obs_id", "obs_collection", "facility_name", "instrument_name", "target_name"}, entryMode);
 		this.priority = PriorityMode.ONLY;
 		String[] ss;
-		if( (ss = ap.getNameComponents(entryMode)) != null  ){
+		if( (ss = ap.getNameComponents(entryMode)).length != 0  ){
 			this.columnMapping.put("obs_id", new ColumnMapping(null, ss, "obs_id"));
 		}
 		String s;

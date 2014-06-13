@@ -3,6 +3,7 @@ package saadadb.products.inference;
 import java.util.Map;
 
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -14,6 +15,12 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 
+/**
+ * The detection of the energy range is tricky. Even in self-detection mode it can use mapping parameters such as unit. 
+ * That is why the ProductMapping is  transmitted to that tool
+ * @author michel
+ * @version $Id$
+ */
 public class EnergyKWDetector extends KWDetector {
 	private SpectralCoordinate spectralCoordinate;
 	private DataFile productFile;
@@ -23,28 +30,34 @@ public class EnergyKWDetector extends KWDetector {
 	public String detectionMessage ="";
 	/**
 	 * @param productFile
+	 * @param productMapping
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(DataFile productFile, PriorityMode priority, String defaultUnit) throws SaadaException {
+	public EnergyKWDetector(DataFile productFile, ProductMapping productMapping) throws SaadaException {
 		super(productFile);
 		this.productFile = productFile;
-		this.setUnitMode(priority, defaultUnit);
+		if(productMapping != null ) {
+		this.setUnitMode(productMapping);
+		}
 	}
 	/**
 	 * @param tableAttributeHandler
+	 * @param productMapping
+	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(
-			Map<String, AttributeHandler> tableAttributeHandler, PriorityMode priority, String defaultUnit) {
+	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler, ProductMapping productMapping)throws SaadaException {
 		super(tableAttributeHandler);
-		this.setUnitMode(priority, defaultUnit);
+		this.setUnitMode(productMapping);
 	}
 	/**
 	 * @param priority
 	 * @param defaultUnit to be used if nothing else
+	 * @throws FatalException 
 	 */
-	private void setUnitMode(PriorityMode priority, String defaultUnit){
-		this.priority = priority;
-		this.defaultUnit = defaultUnit;
+	private void setUnitMode(ProductMapping productMapping) throws FatalException{
+		if( productMapping == null ) return ;
+		this.priority = productMapping.getEnergyAxisMapping().getPriority();
+		this.defaultUnit = productMapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue();
 		switch (this.priority) {
 		case ONLY:
 			// Consider the default unit as this read
@@ -224,28 +237,43 @@ public class EnergyKWDetector extends KWDetector {
 	 * @return
 	 * @throws FatalException
 	 */
-	public ColumnSetter getResPower() throws FatalException{
+	public ColumnSetter getResPower() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the resolution power");
-		return this.search(RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+		ColumnSetter retour =  this.search(RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+		if( retour.notSet() ) {
+			if( spectralCoordinate == null ){
+				this.mapCollectionSpectralCoordinateAuto();
+			}
+			if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
+				retour =  new ColumnSetter();
+				retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
+				retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
+				return retour;
+			} 
+			return  new ColumnSetter();
+			
+		} else {
+			return retour;
+		}
 	}
 	
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	public ColumnSetter getComputedResPower() throws Exception{
-		if( spectralCoordinate == null ){
-			this.mapCollectionSpectralCoordinateAuto();
-		}
-		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
-			ColumnSetter retour =  new ColumnSetter();
-			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
-			retour.completeMessage("Computed from the nuber of bins ("+ spectralCoordinate.getNbBins() + ")");
-			return retour;
-		} 
-		return  new ColumnSetter();
-	}
+//	/**
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	public ColumnSetter getComputedResPower() throws Exception{
+//		if( spectralCoordinate == null ){
+//			this.mapCollectionSpectralCoordinateAuto();
+//		}
+//		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
+//			ColumnSetter retour =  new ColumnSetter();
+//			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
+//			retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
+//			return retour;
+//		} 
+//		return  new ColumnSetter();
+//	}
 	
 	/**
 	 * @return
@@ -258,6 +286,18 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	public double getDecWCSCenter() {
 		return this.spectralCoordinate.getDecWCSCenter();
+	}
+	public ColumnSetter getEUnit() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public ColumnSetter getEMax() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public ColumnSetter getEMin() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

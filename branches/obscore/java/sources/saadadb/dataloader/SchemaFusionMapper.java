@@ -74,15 +74,14 @@ public class SchemaFusionMapper extends SchemaMapper {
 					i--;
 				}
 				try {
-					this.currentProductBuilder.bindDataFile();
+					this.currentProductBuilder.bindDataFile(dataFile);
 				} catch(Exception e){
 					Messenger.printMsg(Messenger.ERROR, e.toString());
 					this.dataFiles.remove(i);
 					i--;
 					this.currentProductBuilder = null;
 				}
-			}
-			else {
+			} else {
 				/*
 				 * AbortException rose of file type not recognized
 				 */

@@ -83,7 +83,7 @@ public class SpaceMapping extends AxisMapping {
 	 * @throws FatalException
 	 */
 	public void mapPoserror(ArgsParser tabArg) throws FatalException {
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set up position error mapping");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position error mapping");
 		String[] tabRa_dec = tabArg.getPoserrorMapping();
 		this.errorUnit = tabArg.getPoserrorUnit();
 		/*
@@ -177,12 +177,12 @@ public class SpaceMapping extends AxisMapping {
 				this.coordSystem.setEquinox(tabSys_eq[1]);
 			}
 		} else{	
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "You didn't specify a coordinate system. The loader'll try to detect them in the file.");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No cordiante system in the mapping. The loader  will try to detect it in the file.");
 			this.coordSystem.setAutodedect();
 		}
 		
 		if( priority == null ) {
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken.");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken first.");
 			this.coordSystem.setPriority(PriorityMode.FIRST);
 		} else if( priority == PriorityMode.ONLY ){			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : only. The values you've specified'll be taken.");

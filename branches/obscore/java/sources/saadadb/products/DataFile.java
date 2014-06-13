@@ -1,22 +1,17 @@
 package saadadb.products;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
 import nom.tam.fits.FitsException;
-import saadadb.enums.PriorityMode;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.EnergyKWDetector;
-import saadadb.products.inference.ObservableKWDetector;
-import saadadb.products.inference.ObservationKWDetector;
-import saadadb.products.inference.SpaceKWDetector;
-import saadadb.products.inference.TimeKWDetector;
+import saadadb.products.inference.QuantityDetector;
 /**v * @version $Id$
 
  * Interface for the specification of a product file.
@@ -89,36 +84,42 @@ public interface DataFile extends Enumeration{
 	 * @return
 	 */
 	public Map<String, AttributeHandler> getAttributeHandler() throws SaadaException ;
+//	/**
+//	 * Returns an instance of the detector of keywords covering the observation axis
+//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+//	 */
+//	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException;
+//	/**
+//	 * Returns an instance of the detector of keywords covering the space axis
+//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+//	 */
+//	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException;
+//	/**
+//	 * Returns an instance of the detector of keywords covering the energy axis
+//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+//	 * @param entryMode
+//	 * @param priority
+//	 * @param defaultUnit
+//	 * @return
+//	 * @throws SaadaException
+//	 */
+//	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException;
+//	/**
+//	 * Returns an instance of the detector of keywords covering the time axis
+//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+//	 */
+//	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException;
+//	/**
+//	 * Returns an instance of the detector of keywords covering the observable axis
+//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
+//	 */
+//	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException;
 	/**
-	 * Returns an instance of the detector of keywords covering the observation axis
-	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-	 */
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException;
-	/**
-	 * Returns an instance of the detector of keywords covering the space axis
-	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-	 */
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException;
-	/**
-	 * Returns an instance of the detector of keywords covering the energy axis
-	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
 	 * @param entryMode
-	 * @param priority
-	 * @param defaultUnit
 	 * @return
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException;
-	/**
-	 * Returns an instance of the detector of keywords covering the time axis
-	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-	 */
-	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException;
-	/**
-	 * Returns an instance of the detector of keywords covering the observable axis
-	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-	 */
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException;
+	public QuantityDetector getQuantityDetector(boolean entryMode, ProductMapping productMapping) throws SaadaException;
 	/**
 	 * Returns a map with all extension detected within the data product
 	 * @return
@@ -168,6 +169,7 @@ public interface DataFile extends Enumeration{
 	 * @return
 	 */
 	public String getName();
+
 
  }
   

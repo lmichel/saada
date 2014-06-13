@@ -111,6 +111,7 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
+
 				this.CDELT[axe] = new ColumnSetter(ah, ColumnSetMode.BY_WCS);;
 			} else if( this.NAXISi[axe] == 1 ){
 				ColumnSetter cd = new ColumnSetter();
@@ -200,14 +201,12 @@ public class WCSModel {
 				Messenger.printMsg(Messenger.TRACE, "Not all CDELT keywords are set");
 				return false;
 			}
-		}
-		else if( WCSModel.hasSetElements(this.CD)){
+		} else if( WCSModel.hasSetElements(this.CD)){
 			if( WCSModel.hasNotSetElements(this.CD))  {
 				Messenger.printMsg(Messenger.TRACE, "Not all CDi_j keywords are set");
 				return false;
 			}					
-		}
-		else {
+		} else {
 			Messenger.printMsg(Messenger.TRACE, "Neither CDELT nor CDi_j keywords are set");					
 			return false;
 		}
@@ -266,8 +265,7 @@ public class WCSModel {
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			IgnoreException.throwNewException(SaadaException.WCS_ERROR, "Neither CDELT nor CDi_j keywords defined: Can not compute the projection matrix");
 		}
 	}
@@ -533,12 +531,124 @@ public class WCSModel {
 	public boolean isDispersionAxe(int dispersion_axe_num) throws Exception {
 		return (dispersionInCtype(dispersion_axe_num) || dispersionInCval(dispersion_axe_num));
 	}
-	
+
 	/**
+	 * Supported dispersion type are given by
+	 * http://www.aanda.org/index.php?option=com_article&access=standard&Itemid=129&url=/articles/aa/full/2006/05/aa3818-05/aa3818-05.html
 	 * @param dispersion_axe_num
 	 * @return
 	 */
 	private boolean dispersionInCtype(int dispersion_axe_num){
+		if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("FREQ") ){// 	Frequency  	Hz
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("Hz");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit Hz");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("ENER") ){//  	Energy 		J
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("J");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit J");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("WAVN ") ){// 	Wavenumber 	m-1
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("1/m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit 1/m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VRAD") ){//  	Radio velocity 	  m/s-1
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m/s");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m/s");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("WAVE") ){//  	Vacuum wavelength 		m
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VOPT") ){//  	Optical velocity 	  s-1
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("ZOPT") ){//  	Redshift 	 	-
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("AWAV") ){//  	Air wavelength  	m
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VELO") ){//  	Apparent radial velocity 	m /s-1
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
+		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("BETA") ){//  	Beta factor v/c	-
+			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
+				this.CUNIT[dispersion_axe_num].setValue("m");
+				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+			} else {
+				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+			}
+			this.CTYPE[dispersion_axe_num].byWcs();
+			this.CUNIT[dispersion_axe_num].byWcs();
+			return true;			
+		}
 		/*
 		 * Dispersion unit can be written in CTYPE keyword
 		 */
@@ -560,7 +670,7 @@ public class WCSModel {
 			this.detectionMessage = "";
 			return false;
 		}
-		
+
 	}
 
 	/**
@@ -583,141 +693,133 @@ public class WCSModel {
 			return false;
 		}
 	}
-	
-	/**
-	 * @return
-	 */
-	public double getCenterRa() {
-		double retour = SaadaConstant.DOUBLE;
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
-				try {
-					retour = Double.parseDouble(this.CRVAL[axe].getValue());
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
-				}
-			}
-		}
-		return retour;
 
+	/*
+	 * Getters for the center of the real world coordinates 
+	 */
+	public ColumnSetter[] getGlonlatCenter() {
+		return getCenterCoords("GLON", "GLAT");
+	}
+	public ColumnSetter[] getElonlatCenter() {
+		return getCenterCoords("ELON", "ELAT");
+	}
+	public ColumnSetter[] getRadecCenter() {
+		return getCenterCoords("RA", "DEC");
 	}
 	/**
+	 * Return the real world of the projection center 
+	 * @param ascPrefix prefix CTYP of the ascension axis
+	 * @param decPrefix prefix CTYP of the declination axis
 	 * @return
 	 */
-	public ColumnSetter getCenterRaSetter() {
+	private ColumnSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
+		ColumnSetter asc=new ColumnSetter(), dec=new ColumnSetter();
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
-					return this.CRVAL[axe];
+					asc.setByWCS(String.valueOf(this.CRVAL[axe]), false);
+					asc.completeMessage("Center asc axe #" + axe);
 				} catch (Exception e) {
-					return new ColumnSetter();
+					asc.completeMessage(e.getMessage());
 				}
 			}
-		}
-		return new ColumnSetter();
+			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
+				try {
+					dec.setByWCS(String.valueOf(this.CRVAL[axe]), false);
+					dec.completeMessage("Center dec axe #" + axe);
+				} catch (Exception e) {
+					dec.completeMessage(e.getMessage());
+				}
+			}
+		}		
+		return new ColumnSetter[]{ asc, dec};
 	}
-	
-	/**
-	 * @return
+	/*
+	 * Getters for the resultion
 	 */
-	public double getCenterDec() {
-		double retour = SaadaConstant.DOUBLE;
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
-				try {
-					retour = Double.parseDouble(this.CRVAL[axe].getValue());
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
-				}
-			}
-		}
-		return retour;
+	public ColumnSetter getGlonlatResolution() {
+		return getResolution("GLON", "GLAT");
 	}
-	/**
-	 * @return
-	 */
-	public ColumnSetter getCenterDecSetter() {
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
-				try {
-					return this.CRVAL[axe];
-				} catch (Exception e) {
-					return new ColumnSetter();
-				}
-			}
-		}
-		return new ColumnSetter();
+	public ColumnSetter getElonlatResolution() {
+		return getResolution("ELON", "ELAT");
+	}
+	public ColumnSetter getRadecResolution() {
+		return getResolution("RA", "DEC");
 	}
 
 	/**
+	 * Return resolution computed as range/naxis
+	 * The worst resolution is taken 
+	 * @param ascPrefix ascPrefix prefix CTYP of the ascension axis
+	 * @param decPrefix decPrefix prefix CTYP of the declination axis
 	 * @return
 	 */
-	public double getRaMin() {
-		double retour = SaadaConstant.DOUBLE;
+	private ColumnSetter getResolution(String ascPrefix, String decPrefix) {
+		double r1 = SaadaConstant.DOUBLE, r2 = SaadaConstant.DOUBLE;
+		ColumnSetter retour = new ColumnSetter();
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
-					retour =this.getMinValue( axe);
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
+					r1 = Math.abs(this.getMaxValue( axe) - this.getMinValue( axe)/this.NAXISi[axe]);
+				} catch (Exception e) {	}
+			}
+			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
+				try {
+					r2 =  Math.abs(this.getMaxValue( axe) - this.getMinValue( axe)/this.NAXISi[axe]);
+				} catch (Exception e) {	
+					retour.completeMessage(e.getMessage());
 				}
 			}
 		}
-		return retour;	
+
+		if( r1 != SaadaConstant.DOUBLE && r2 != SaadaConstant.DOUBLE) {
+			double r = (r1 > r2)?r1: r2;
+			retour.setByWCS(String.valueOf(r), false);
+			retour.completeMessage("Range / NAXIS");
+		}
+		return retour;
+	}
+
+	/*
+	 * Getters for the range of the real world coordinates 
+	 */
+	public ColumnSetter[] getRaRange() {
+		return getPixelRange("RA");
+	}
+	public ColumnSetter[] getDecRange() {
+		return getPixelRange("DEC");
+	}
+	public ColumnSetter[] getGlonRange() {
+		return getPixelRange("GLON");
+	}
+	public ColumnSetter[] getGlatRange() {
+		return getPixelRange("GLAT");
+	}
+	public ColumnSetter[] getElonRange() {
+		return getPixelRange("ELON");
+	}
+	public ColumnSetter[] getElatRange() {
+		return getPixelRange("ELAT");
 	}
 	/**
+	 * Return the real world range value of the axis with CTYPE beginning with ctypePrefix
+	 * @param ctypePrefix
 	 * @return
 	 */
-	public double getRaMax() {
-		double retour = SaadaConstant.DOUBLE;
+	private ColumnSetter[] getPixelRange(String ctypePrefix){
+		ColumnSetter[] retour = new ColumnSetter[]{new ColumnSetter(), new ColumnSetter()};;
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("RA") ) {
+			if( this.CTYPE[axe].getValue().startsWith(ctypePrefix) ) {
 				try {
-					retour = this.getMaxValue( axe);
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
-				}
+					retour[0].setByWCS(String.valueOf(this.getMinValue( axe)), false);
+					retour[0].completeMessage("min of WCS axis #" + axe);
+					retour[1].setByWCS(String.valueOf(this.getMaxValue( axe)), false);
+					retour[1].completeMessage("max of WCS axis #" + axe);
+					return retour;
+				} catch (Exception e) {	}
 			}
 		}
-		return retour;	
-	}
-	/**
-	 * @return
-	 */
-	public double getDecMin() {
-		double retour = SaadaConstant.DOUBLE;
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
-				try {
-					retour =this.getMinValue( axe);
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
-				}
-			}
-		}
-		return retour;	
-	}
-	/**
-	 * @return
-	 */
-	public double getDecMax() {
-		double retour = SaadaConstant.DOUBLE;
-		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			if( this.CTYPE[axe].getValue().startsWith("DEC") ) {
-				try {
-					retour = this.getMaxValue( axe);
-					break;
-				} catch (Exception e) {
-					retour  = SaadaConstant.DOUBLE;
-				}
-			}
-		}
-		return retour;	
+		return retour;
 	}
 
 }

@@ -28,21 +28,19 @@ import nom.tam.util.BufferedDataOutputStream;
 import nom.tam.util.Cursor;
 import saadadb.collection.Category;
 import saadadb.dataloader.mapping.EntryMapping;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.DataFileExtensionType;
 import saadadb.enums.ExtensionSetMode;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.EnergyKWDetector;
-import saadadb.products.inference.ObservableKWDetector;
-import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
-import saadadb.products.inference.TimeKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 import saadadb.util.TileRiceDecompressor;
 
@@ -105,7 +103,8 @@ public class FitsDataFile extends File implements DataFile{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
 		this.fits_data = new Fits(name);
-		this.getProductMap();		
+		this.getProductMap();	
+		System.out.println("FitsDataFile()=========================");
 	}
 	/**
 	 * @param product
@@ -189,10 +188,10 @@ public class FitsDataFile extends File implements DataFile{
 			}
 		} else {
 			this.setFirstGoodHeader(product);
-			Messenger.printMsg(Messenger.TRACE, "The first extension possibly a(n) "
-					//+  Category.explain(product.getConfiguration().getCategorySaada())
-					+ this.productBuilder.getClass().getName()
-					+ " is #"+this.getGood_header_number());				
+			Messenger.printMsg(Messenger.TRACE, "The first  "
+					+  Category.explain(product.mapping.getCategory())
+				///	+ this.productBuilder.getClass().getName()
+					+ " extension is #"+this.getGood_header_number());				
 		}
 
 
@@ -320,10 +319,9 @@ public class FitsDataFile extends File implements DataFile{
 			}
 		} else {
 			this.setFirstGoodHeader(this.productBuilder);
-			Messenger.printMsg(Messenger.TRACE, "The first extension possibly a(n) "
-					//+  Category.explain(product.getConfiguration().getCategorySaada())
-					+ this.productBuilder.getClass().getName()
-					+ " is #"+this.getGood_header_number());				
+			Messenger.printMsg(Messenger.TRACE, "The first  "
+					+  Category.explain(this.productBuilder.mapping.getCategory())
+					+ " extension is #"+this.getGood_header_number());				
 		}
 
 		if( this.productBuilder.mapping != null )
@@ -790,63 +788,176 @@ public class FitsDataFile extends File implements DataFile{
 		if( category == Category.MISC ) {
 			return;
 		}
-		/*
-		 * Modified to look for data extensions in the 1st HDU too
-		 * where is no XTENSION keyword
-		 */
-		/*
-		 * It FITS file is too long, Header.read() considers that a new extension begins, but it finds no key (null) there: IOException
-		 * The same exception is rose if a new extension starts there but not starting with  XTENSION or SIMPLE
-		 */
-		//	int i=0;
-		//BasicHDU bHDU = null;
-		//	try {
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			//	while( (bHDU = fits_data.getHDU(i))  != null) {
-			if( this.checkExtensionCategory(dfe, category) ) {
-				this.good_header = fits_data.getHDU(dfe.num);
-				String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.num +  " as data extension for " + Category.explain(category);
-				this.extensionSetter = new ExtensionSetter(dfe.num
-						, ExtensionSetMode.DETECTED
-						, msg);
-				Messenger.printMsg(Messenger.TRACE, msg);
-				return;
-			}
-			//i++;	
+		DataFileExtension dfe=null;
+		switch (category) {
+		case Category.ENTRY:
+		case Category.FLATFILE:
+		case Category.MISC:
+			return;
+		case Category.IMAGE:
+			dfe = this.getFirstImageExtension();
+			break;
+		case Category.SPECTRUM:
+			dfe = this.getFirstSpectralExtension();
+			break;
+		case Category.TABLE:
+			dfe = this.getFirstTableExtension();
+			break;
+		default:
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Unknow category" + category);
 		}
-		//		} catch(IOException ioe) {
-		//			Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Too many pixels or extension starting without XTENSION or SIMPLE");
-		//		} catch(Exception oe) {
-		//			if( i > 0 ) {
-		//				Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Stop to read file");
-		//			} else {
-		//				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, oe);
-		//			}
-		//		}
-		/*
-		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
-		 */
-		if( category == Category.SPECTRUM ) {
-			//i=0;
-			//	bHDU = null;
-			for( DataFileExtension dfe: this.productMap.values() ) {
-				//	while( (bHDU = fits_data.getHDU(i))  != null) {
-				if( checkExtensionCategory(dfe, Category.IMAGE) ) {
-					ImageHDU image = (ImageHDU)fits_data.getHDU(dfe.num);
-					if( image.getAxes().length >= 1 ) {
-						this.good_header = image;
-						String message = "Take pixels of image HDU#" + dfe.num + " as spectral chanels";
-						this.extensionSetter = new ExtensionSetter(dfe.num , ExtensionSetMode.DETECTED, message);
-						Messenger.printMsg(Messenger.TRACE, message);
-						return;
-					}
-				}
-				//	i++;
-			}
+		
+		if( dfe != null ){
+			this.good_header = fits_data.getHDU(dfe.num);
+			String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.num +  " as data extension for " + Category.explain(category);
+			this.extensionSetter = new ExtensionSetter(dfe.num
+					, ExtensionSetMode.DETECTED
+					, msg);
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, msg);
+			return;			
 		}
 		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
+//		/*
+//		 * Modified to look for data extensions in the 1st HDU too
+//		 * where is no XTENSION keyword
+//		 */
+//		/*
+//		 * It FITS file is too long, Header.read() considers that a new extension begins, but it finds no key (null) there: IOException
+//		 * The same exception is rose if a new extension starts there but not starting with  XTENSION or SIMPLE
+//		 */
+//		//	int i=0;
+//		//BasicHDU bHDU = null;
+//		//	try {
+//		for( DataFileExtension dfe: this.productMap.values() ) {
+//			//	while( (bHDU = fits_data.getHDU(i))  != null) {
+//			if( this.checkExtensionCategory(dfe, category) ) {
+//				this.good_header = fits_data.getHDU(dfe.num);
+//				String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.num +  " as data extension for " + Category.explain(category);
+//				this.extensionSetter = new ExtensionSetter(dfe.num
+//						, ExtensionSetMode.DETECTED
+//						, msg);
+//				Messenger.printMsg(Messenger.TRACE, msg);
+//				return;
+//			}
+//			//i++;	
+//		}
+//		//		} catch(IOException ioe) {
+//		//			Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Too many pixels or extension starting without XTENSION or SIMPLE");
+//		//		} catch(Exception oe) {
+//		//			if( i > 0 ) {
+//		//				Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Stop to read file");
+//		//			} else {
+//		//				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, oe);
+//		//			}
+//		//		}
+//		/*
+//		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
+//		 */
+//		if( category == Category.SPECTRUM ) {
+//			//i=0;
+//			//	bHDU = null;
+//			for( DataFileExtension dfe: this.productMap.values() ) {
+//				//	while( (bHDU = fits_data.getHDU(i))  != null) {
+//				if( checkExtensionCategory(dfe, Category.IMAGE) ) {
+//					ImageHDU image = (ImageHDU)fits_data.getHDU(dfe.num);
+//					if( image.getAxes().length >= 1 ) {
+//						this.good_header = image;
+//						String message = "Take pixels of image HDU#" + dfe.num + " as spectral chanels";
+//						this.extensionSetter = new ExtensionSetter(dfe.num , ExtensionSetMode.DETECTED, message);
+//						Messenger.printMsg(Messenger.TRACE, message);
+//						return;
+//					}
+//				}
+//				//	i++;
+//			}
+//		}
+//		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}
 
+	/**
+	 * Returns the first extension possibly spectra data
+	 * @return
+	 */
+	private DataFileExtension getFirstSpectralExtension() {
+		/*
+		 * Look first at images
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isImage() ) {
+				for( AttributeHandler ah: dfe.attributeHandlers ) {
+					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT)){
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " has spectral WCS");
+						return dfe;
+					}
+				}
+			}
+		}
+		/*
+		 * else take the first table
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isDataTable() ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " is a table: taken as spectra data");
+				return dfe;				
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the first extension possibly spectra data
+	 * @return
+	 */
+	private DataFileExtension getFirstTableExtension() {
+		/*
+		 * else take the first table
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isDataTable() ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " is a table");
+				return dfe;				
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the first extension possibly image data
+	 * @return
+	 */
+	private DataFileExtension getFirstImageExtension() {
+		/*
+		 * Look  at images
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isImage() ) {
+				boolean foundAsc = false;
+				boolean foundDec = false;
+				for( AttributeHandler ah: dfe.attributeHandlers ) {
+					if( ah.getNameorg().startsWith("CTYP") ) {
+						if( !foundAsc && ah.getValue().matches(RegExp.FITS_CTYPE_ASC)){
+							foundAsc = true;
+						}
+						if( !foundDec && ah.getValue().matches(RegExp.FITS_CTYPE_DEC)){
+							foundDec = true;
+						}
+					}
+					if( foundAsc && foundDec ) {
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " has image WCS (both coords found)");
+						return dfe;					
+					}					
+				}
+			}
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * Return the category of the FITS extension matching the product category
 	 * @return
@@ -864,40 +975,6 @@ public class FitsDataFile extends File implements DataFile{
 		} else {
 			return Category.MISC;
 		}
-	}
-
-	/**
-	 * Returns true if bHDU matches the data category (ASCIITABLE, BINTABLE or IMAGE)
-	 * @param bHDU
-	 * @param category
-	 * @return
-	 */
-	private boolean checkExtensionCategoryXXXX(BasicHDU hdu, int category) {
-		if( hdu   != null) {
-			/*
-			 * If there is no specified category (BINTABLE or IMAGE) any extension 
-			 * can be taken. That is the case for MISC products
-			 */
-			if( category == Category.UNKNOWN ) {
-				return true;
-			}
-			/*
-			 * 1st HDU can be seen as a 0x0 pixel image: Must look for the first not empty image
-			 */
-			else if( category == Category.IMAGE && (isImage(hdu) || isTileCompressedImage(hdu)) ){
-				return true;
-			}					
-			else if( category == Category.TABLE && (isBinTable(hdu) || isASCIITable(hdu)) ){
-				return true;
-			}
-			/*
-			 * With V2 datamodel, the dataloader must be enabled to detect the energy range even for misc
-			 */
-			else if( (category == Category.SPECTRUM ||category == Category.MISC  ) && (isBinTable(hdu) || isASCIITable(hdu))) {
-				return true;
-			}
-		}
-		return false;		
 	}
 
 	/**
@@ -1653,63 +1730,72 @@ public class FitsDataFile extends File implements DataFile{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getObservationKWDetector(boolean)
-	 */
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.DataFile#getObservationKWDetector(boolean)
+//	 */
+//	@Override
+//	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException{
+//		if( entryMode ){
+//			return  new ObservationKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+//		} else {
+//			return new ObservationKWDetector(this.getAttributeHandler());
+//		}		
+//	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.DataFile#getSpaceKWDetector(boolean)
+//	 */
+//	@Override
+//	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException{
+//		if( entryMode ){
+//			return  new SpaceKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+//		} else {
+//			return new SpaceKWDetector(this.getAttributeHandler());
+//		}		
+//	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.DataFile#getEnergyKWDetector(boolean, saadadb.dataloader.mapping.PriorityMode, java.lang.String)
+//	 */
+//	@Override
+//	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException{
+//		return new EnergyKWDetector(this, priority, defaultUnit );		
+//	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.DataFile#getTimeKWDetector(boolean)
+//	 */
+//	@Override
+//	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
+//		if( entryMode ){
+//			return  new TimeKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+//		} else {
+//			return new TimeKWDetector(this.getAttributeHandler());
+//		}		
+//	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.DataFile#getObservableKWDetector(boolean)
+//	 */
+//	@Override
+//	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException{
+//		if( entryMode ){
+//			return  new ObservableKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+//		} else {
+//			return new ObservableKWDetector(this.getAttributeHandler());
+//		}		
+//	}
 	@Override
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException{
+	public QuantityDetector getQuantityDetector(boolean entryMode, ProductMapping productMapping) throws SaadaException{
 		if( entryMode ){
-			return  new ObservationKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
+			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), productMapping);
 		} else {
-			return new ObservationKWDetector(this.getAttributeHandler());
+			return new QuantityDetector(this.getAttributeHandler(), productMapping);
 		}		
 	}
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getSpaceKWDetector(boolean)
-	 */
-	@Override
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new SpaceKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new SpaceKWDetector(this.getAttributeHandler());
-		}		
-	}
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getEnergyKWDetector(boolean, saadadb.dataloader.mapping.PriorityMode, java.lang.String)
-	 */
-	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException{
-		return new EnergyKWDetector(this, priority, defaultUnit );		
-	}
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getTimeKWDetector(boolean)
-	 */
-	@Override
-	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new TimeKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new TimeKWDetector(this.getAttributeHandler());
-		}		
-	}
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getObservableKWDetector(boolean)
-	 */
-	@Override
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new ObservableKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new ObservableKWDetector(this.getAttributeHandler());
-		}		
-	}
-
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#getMap()
 	 */
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
 		if( this.productMap == null ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Build product map");
 			this.productMap = new LinkedHashMap<String, DataFileExtension>();
 			BasicHDU bHDU = null;
 			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = new LinkedHashMap<String, ArrayList<AttributeHandler>>();

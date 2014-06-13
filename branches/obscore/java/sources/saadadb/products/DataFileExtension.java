@@ -10,6 +10,7 @@ import saadadb.meta.AttributeHandler;
 
 /**
  * Class used to map the extensions accessible within a data product;
+ * This class is file format agnostic: no logic checking the attributes handlers
  * @author michel
  * @version $Id$
  */

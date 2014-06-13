@@ -238,79 +238,79 @@ public class EntryBuilder extends ProductBuilder {
 		AttributeHandler ah = new AttributeHandler();
 		ah.setNameattr("obs_collection"); ah.setNameorg("obs_collection"); 
 		ah.setValue(si.getFieldValue("obs_collection").toString());
-		ah.setComment(this.getReportOnAttRef("obs_collection", obs_collection_ref));
+		ah.setComment(this.getReportOnAttRef("obs_collection", collectionSetter));
 		retour.put("obs_collection", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("target_name"); ah.setNameorg("target_name"); 
 		ah.setValue(si.getFieldValue("target_name").toString());
-		ah.setComment(this.getReportOnAttRef("target_name", target_name_ref));
+		ah.setComment(this.getReportOnAttRef("target_name", targetNameSetter));
 		retour.put("target_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("facility_name"); ah.setNameorg("facility_name"); 
 		ah.setValue(si.getFieldValue("facility_name").toString());
-		ah.setComment(this.getReportOnAttRef("facility_name", facility_name_ref));
+		ah.setComment(this.getReportOnAttRef("facility_name", facilityNameSetter));
 		retour.put("facility_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("instrument_name"); ah.setNameorg("instrument_name"); 
 		ah.setValue(si.getFieldValue("instrument_name").toString());
-		ah.setComment(this.getReportOnAttRef("instrument_name", instrument_name_ref));
+		ah.setComment(this.getReportOnAttRef("instrument_name", instrumentNameSetter));
 		retour.put("instrument_name", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("s_ra"); ah.setNameorg("s_ra"); 
 		ah.setValue(si.getFieldValue("s_ra").toString());
-		ah.setComment(this.getReportOnAttRef("s_ra", s_ra_ref));
+		ah.setComment(this.getReportOnAttRef("s_ra", s_raSetter));
 		retour.put("s_ra", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("s_dec"); ah.setNameorg("s_dec"); 
 		ah.setValue(si.getFieldValue("s_dec").toString());
-		ah.setComment(this.getReportOnAttRef("s_dec", s_dec_ref));
+		ah.setComment(this.getReportOnAttRef("s_dec", s_decSetter));
 		retour.put("s_dec", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("error_maj_csa"); ah.setNameorg("error_maj_csa"); 
 		ah.setValue(si.getFieldValue("error_maj_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_maj_csa", error_maj_ref));
+		ah.setComment(this.getReportOnAttRef("error_maj_csa", errorMajSetter));
 		retour.put("error_maj_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("error_min_csa"); ah.setNameorg("error_min_csa"); 
 		ah.setValue(si.getFieldValue("error_min_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_min_csa", error_min_ref));
+		ah.setComment(this.getReportOnAttRef("error_min_csa", errorMinSetter));
 		retour.put("error_min_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("error_angle_csa"); ah.setNameorg("error_angle_csa"); 
 		ah.setValue(si.getFieldValue("error_angle_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_angle_csa", error_angle_ref));
+		ah.setComment(this.getReportOnAttRef("error_angle_csa", errorAngleSetter));
 		retour.put("error_angle_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("em_min"); ah.setNameorg("em_min"); 
 		ah.setValue(si.getFieldValue("em_min").toString());
-		ah.setComment(this.getReportOnAttRef("em_min", em_min_ref));
+		ah.setComment(this.getReportOnAttRef("em_min", em_minSetter));
 		retour.put("em_min", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("em_max"); ah.setNameorg("em_max"); 
 		ah.setValue(si.getFieldValue("em_max").toString());
-		ah.setComment(this.getReportOnAttRef("em_max", em_max_ref));
+		ah.setComment(this.getReportOnAttRef("em_max", em_maxSetter));
 		retour.put("em_max", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("t_max"); ah.setNameorg("t_max"); 
 		ah.setValue(si.getFieldValue("t_max").toString());
-		ah.setComment(this.getReportOnAttRef("t_max", t_max_ref));
+		ah.setComment(this.getReportOnAttRef("t_max", t_maxSetter));
 		retour.put("t_max", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("t_min"); ah.setNameorg("t_min"); 
 		ah.setValue(si.getFieldValue("t_min").toString());
-		ah.setComment(this.getReportOnAttRef("t_min", t_min_ref));
+		ah.setComment(this.getReportOnAttRef("t_min", t_minSetter));
 		retour.put("t_min", ah);
 
 //		for( AttributeHandler eah: this.extended_attributes_ref.values()){
