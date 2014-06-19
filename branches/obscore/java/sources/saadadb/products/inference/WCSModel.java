@@ -775,6 +775,7 @@ public class WCSModel {
 		if( r1 != SaadaConstant.DOUBLE && r2 != SaadaConstant.DOUBLE) {
 			double r = (r1 > r2)?r1: r2;
 			retour.setByWCS(String.valueOf(r), false);
+			retour.setUnit("deg");
 			retour.completeMessage("Range / NAXIS");
 		}
 		return retour;
