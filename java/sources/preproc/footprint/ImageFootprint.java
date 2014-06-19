@@ -94,7 +94,7 @@ public class ImageFootprint {
 			this.outFile = this.outFiles.get(num);
 			Messenger.printMsg(Messenger.TRACE, "Process " + this.inputFile);
 
-			File input = new File(this.inputFile);
+			FitsDataFile input = new FitsDataFile(this.inputFile);
 			Image2DBuilder img  = new Image2DBuilder(input,null);
 			FitsDataFile inputFits = new FitsDataFile(img);
 			this.ahs = img.getProductAttributeHandler();
