@@ -14,6 +14,7 @@ import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;
+import saadadb.enums.DispersionType;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
@@ -290,7 +291,7 @@ public class Database {
 	public static String getVOreportDir() {
 		return Repository.getVoreportsPath();
 	}
-	public static String getSpect_type() {
+	public static DispersionType getSpect_type() {
 		return connector.getSpect_type();
 	}
 

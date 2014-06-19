@@ -1,11 +1,13 @@
 package saadadb.products.inference;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import saadadb.database.Database;
+import saadadb.enums.DispersionType;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.ColumnSetter;
 import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -16,31 +18,33 @@ import cds.astro.Unit;
  *
  */
 public class SpectralCoordinate{
-	public static final int WAVELENGTH      = 0;
-	public static final int FREQUENCY       = 1;
-	public static final int ENERGY          = 2;
-	public static final int CHANNEL         = 3;
+
 	public static final double h            = 6.626068e-34; // constante de Planck en m2.kg/s
 	public static final double c            = 2.997925e8; // c en m/sec
 	public static final double joule        = 1.60219e-19;
-	public static Map<String, UnitRef> allowed_units = initUnits();
 
-	private int type;
-	private int naxis;
-	private String unit = SaadaConstant.STRING;
+	private DispersionType type;
+	/**
+	 * Unit to convert to
+	 */
+	private String finalUnit = SaadaConstant.STRING;  // Unit to convert tpo
 	private double minValue = SaadaConstant.DOUBLE;
 	private double maxValue = SaadaConstant.DOUBLE;
 
+	/**
+	 * Unit to convert from
+	 */
+	private String mappedUnit;
 	private double orgMin = SaadaConstant.DOUBLE;
 	private double orgMax = SaadaConstant.DOUBLE;
+	
 	private double raWCSCenter= SaadaConstant.DOUBLE;
 	private double decWCSCenter= SaadaConstant.DOUBLE;
-	private int dispersionAxeNum;
+	//	private int dispersionAxeNum;
 	private int nbBins = SaadaConstant.INT;
 	public String detectionMessage ="";
 
 	private Map<String, AttributeHandler> attributesList;
-	private String mappedUnit;
 
 	/**
 	 * @param naxis
@@ -48,128 +52,113 @@ public class SpectralCoordinate{
 	 * @param type
 	 * @param unit
 	 */
-	public SpectralCoordinate(int naxis, int num_axe, int type, String unit){
-		if( type < WAVELENGTH || type > CHANNEL ){
-			Messenger.printMsg(Messenger.ERROR, "Unknown Coordinate Type <"+type+">");
-		}else if( naxis != 1 && naxis != 2 ) {
-			Messenger.printMsg(Messenger.ERROR, "num_axe must equals 1 or 2");		
-		}else if( num_axe != 1 && num_axe != 2 ){
-			Messenger.printMsg(Messenger.ERROR, "naxis must equals 1 or 2");		
+	public SpectralCoordinate(String unit){
+		String sunit;
+		if(unit == null || unit.equals("") || "NULL".equals(unit)){
+			sunit = "channel";
 		}else{
-			UnitRef o;
-			String sunit;
-			this.dispersionAxeNum = num_axe - 1;
-			this.naxis   = naxis;
-			if( unit == null || unit.equals("") || "NULL".equals(unit)){
-				sunit = "channel";
-			}else{
-				sunit = unit;
-			}
-			if( (o = SpectralCoordinate.getUniRef(sunit)) == null ){
-				Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
-			}else if( o.type != type ){
-				Messenger.printMsg(Messenger.ERROR, "Spectral Coordinate not valid: Unit <"+sunit 
-						+ "> doesn't match type <" + SpectralCoordinate.getDispersionName(type)
-						+ "> Allowed units are <" + SpectralCoordinate.getStringUnitsForType(type)+">");
-			}else{
-				this.unit = sunit;
-				this.type = type;
-			}
+			sunit = unit;
+		}
+		if(  UnitRef.getUniRef(sunit) == null ){
+			Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
+		} else{
+			this.finalUnit = sunit;
+			this.type = UnitRef.getDispersionType(sunit);
 		}
 	}
 
-	public String getOrgUnit(){
+	public SpectralCoordinate(){
+		this(Database.getSpect_unit());
+	}
+	/**
+	 * @return
+	 */
+	public String getMappedUnit(){
 		return mappedUnit;
 	}
-
+	/**
+	 * @return
+	 */
 	public double getOrgMax(){
 		return orgMax;
 	}
-
+	/**
+	 * @return
+	 */
 	public double getOrgMin(){
 		return orgMin;
 	}
-
-	public void setOrgUnit(String orgUnit){
+	/**
+	 * @param orgUnit
+	 */
+	public void setMappedUnit(String orgUnit){
 		if( orgUnit.startsWith("ANGSTROM") ){
 			this.mappedUnit = "Angstrom";
-		}
-		else {
+		} else {
 			this.mappedUnit = orgUnit;
 		}
 	}
+	/**
+	 * @param nbBins
+	 */
 	public void setNbBins(int nbBins){
 		this.nbBins = nbBins;
 	}
+	/**
+	 * @return
+	 */
 	public int getNbBins(){
 		return this.nbBins;
 	}
-
+	/**
+	 * @param orgMax
+	 */
 	public void setOrgMax(double orgMax){
 		this.orgMax = orgMax;
 	}
-
+	/**
+	 * @param orgMin
+	 */
 	public void setOrgMin(double orgMin){
 		this.orgMin = orgMin;
 	}
-
-	public String getConvertedUnit(){
-		return unit;
+	/**
+	 * @param ds
+	 */
+	public void setOrgMinMax(double[] ds) {
+		if( ds == null || ds.length != 2 ) {
+			this.setOrgMax(SaadaConstant.DOUBLE);
+			this.setOrgMin(SaadaConstant.DOUBLE);
+		} else {
+			this.setOrgMax(ds[1]);
+			this.setOrgMin(ds[0]);		
+		}
+	}
+	/**
+	 * @return
+	 */
+	public String getFinalUnit(){
+		return finalUnit;
 	}
 
-	public int getConvertedType(){
+	/**
+	 * @return
+	 */
+	public DispersionType getConvertedType(){
 		return type;
 	}
 
-	public int getConvertedNaxis(){
-		return naxis;
-	}
-
+	/**
+	 * @return
+	 */
 	public double getConvertedMax(){
 		return maxValue;
 	}
-
-	public double getConvertedMin(){
-		return minValue;
-	}
-
-	private static Map<String, UnitRef> initUnits() {
-		Map<String, UnitRef> sc =  new LinkedHashMap<String, UnitRef>();
-		sc.put("angstrom", new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
-		sc.put("angstroms", new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
-		sc.put("a"       , new UnitRef("Angstrom" , new Integer(WAVELENGTH)));
-		sc.put("nm"      , new UnitRef("nm"       , new Integer(WAVELENGTH)));
-		sc.put("um"      , new UnitRef("um"       , new Integer(WAVELENGTH))); 
-		sc.put("m"       , new UnitRef("m"        , new Integer(WAVELENGTH)));
-		sc.put("mm"      , new UnitRef("mm"       , new Integer(WAVELENGTH)));
-		sc.put("cm"      , new UnitRef("cm"       , new Integer(WAVELENGTH)));
-		sc.put("km"      , new UnitRef("km"       , new Integer(WAVELENGTH)));
-
-		sc.put("hz" , new UnitRef("Hz" , new Integer(FREQUENCY)));
-		sc.put("khz", new UnitRef("KHz", new Integer(FREQUENCY)));
-		sc.put("mhz", new UnitRef("MHz", new Integer(FREQUENCY)));
-		sc.put("ghz", new UnitRef("GHz", new Integer(FREQUENCY)));
-
-		sc.put("ev" , new UnitRef("eV"  , new Integer(ENERGY)));
-		sc.put("kev", new UnitRef("keV" , new Integer(ENERGY)));
-		sc.put("mev", new UnitRef("MeV" , new Integer(ENERGY)));
-		sc.put("gev", new UnitRef("GeV" , new Integer(ENERGY)));
-		sc.put("tev", new UnitRef("TeV" , new Integer(ENERGY)));
-
-		sc.put("", new UnitRef("channel", new Integer(CHANNEL)));
-		return sc;
-	}
 	/**
-	 * Implement a map access case unsensitive
-	 * @param unit
 	 * @return
 	 */
-	private static UnitRef getUniRef(String unit){
-		if( unit == null){
-			return null;
-		} else {
-			return allowed_units.get(unit.toLowerCase());
-		}
+	public double getConvertedMin(){
+		return minValue;
 	}
 
 	/**
@@ -177,79 +166,20 @@ public class SpectralCoordinate{
 	 * @param type
 	 * @return
 	 */
-	public static String getDispersionName(int type) {
-		if( type == WAVELENGTH ){
-			return "WAVELENGTH";
-		}else if( type == FREQUENCY ){
-			return "FREQUENCY";
-		}else if( type == ENERGY ){
-			return "ENERGY";
-		}else if( type == CHANNEL ){
-			return "CHANNEL";
-		}else{
-			return "Unknown type <"+type+">";
-		}
+	public static DispersionType getDispersionName(DispersionType type) {
+		return  type;
 	}
 
-
-	/**
-	 * Returns the numeric code of the dispersion type (energy, ...)
-	 * @param type
-	 * @return
-	 */
-	public static int getDispersionCode(String type) {
-		if(type.equals("WAVELENGTH")){
-			return WAVELENGTH;
-		}else if(type.equals("FREQUENCY")){
-			return FREQUENCY;
-		}else if(type.equals("ENERGY")){
-			return ENERGY;
-		}else if(type.equals("CHANNEL")){
-			return CHANNEL;
-		}else{
-			return -1;
-		}
-	}
-
-	/**
-	 * Return a table of available units for the given type
-	 * @param type
-	 * @return
-	 */
-	public static String[] getUnitsForType(int type) {
-		Vector<String> v = new Vector<String>();
-		for(UnitRef ur: allowed_units.values()){
-			if( ur.type == type ){
-				v.add(ur.unit);
-			}
-		}
-		return (String[])(v.toArray(new String[0]));
-	}
-
-	/**
-	 * Returns a string merging all units available for the type
-	 * @param type
-	 * @return
-	 */
-	public static String getStringUnitsForType(int type) {
-		String[] lstr = SpectralCoordinate.getUnitsForType(type);
-		StringBuffer retour = new StringBuffer();
-		for( int i=0 ; i<lstr.length ; i++ ){
-			retour.append(lstr[i] + " ");
-		}
-		return retour.toString();
-	}
 
 	/**
 	 * @return
 	 */
 	public boolean convert(){
-		System.out.println("=================== " + this.unit);
-		if( this.getOrgUnit() == null || this.getOrgUnit().equals(SaadaConstant.STRING) ){
+		if( this.getMappedUnit() == null || this.getMappedUnit().equals(SaadaConstant.STRING) ){
 			Messenger.printMsg(Messenger.TRACE, "No spectral unit found: cannot achieve the conversion");
 			return false;
 		} else{
-			return this.convert(this.getOrgUnit(), this.orgMin, this.orgMax);
+			return this.convert(this.getMappedUnit(), this.orgMin, this.orgMax);
 		}
 	}
 
@@ -264,27 +194,27 @@ public class SpectralCoordinate{
 		 * Input spectra has no unit as the SaadaDB itself. 
 		 */
 		if( (unitOrg == null|| unitOrg.equals("NULL") || unitOrg.equals("") || unitOrg.equalsIgnoreCase("channel")) ) {
-			if( this.unit.equalsIgnoreCase("channel")){
+			if( this.finalUnit.equalsIgnoreCase("channel")){
 				this.minValue = minOrg;
 				this.maxValue = maxOrg;
 				this.checkMinMax();
-				Messenger.printMsg(Messenger.TRACE, "Spectral range not converted, take <" + minValue + ":" + maxValue + " " + this.unit + ">");
+				Messenger.printMsg(Messenger.TRACE, "Spectral range not converted, take <" + minValue + ":" + maxValue + " " + this.finalUnit + ">");
 				return true;
 			} else {
-				Messenger.printMsg(Messenger.TRACE, "Can not convert channels to " + this.unit);
+				Messenger.printMsg(Messenger.TRACE, "Can not convert channels to " + this.finalUnit);
 				return false;
 			}
 		}
-		if(  Double.isNaN((minValue = convertSaada(unitOrg, this.unit, minOrg))) ) {
-			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ minOrg+unitOrg+"> into <"+this.unit+"> failed");
+		if(  Double.isNaN((minValue = convertSaada(unitOrg, this.finalUnit, minOrg))) ) {
+			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ minOrg+unitOrg+"> into <"+this.finalUnit+"> failed");
 			return false;
 		}
-		if( Double.isNaN((maxValue = convertSaada(unitOrg, this.unit, maxOrg))) ) {
-			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ maxOrg+unitOrg+"> into <"+this.unit+"> failed");
+		if( Double.isNaN((maxValue = convertSaada(unitOrg, this.finalUnit, maxOrg))) ) {
+			Messenger.printMsg(Messenger.ERROR, "Conversion <"+ maxOrg+unitOrg+"> into <"+this.finalUnit+"> failed");
 			return false;
 		}
 		this.checkMinMax();
-		Messenger.printMsg(Messenger.TRACE, "Spectral range: <" + minOrg + ":" + maxOrg + " " + unitOrg + "> converted to <" + minValue + ":" + maxValue + " " + this.unit + ">");
+		Messenger.printMsg(Messenger.TRACE, "Spectral range: <" + minOrg + ":" + maxOrg + " " + unitOrg + "> converted to <" + minValue + ":" + maxValue + " " + this.finalUnit + ">");
 		return true;
 	} 
 
@@ -305,7 +235,7 @@ public class SpectralCoordinate{
 	 * @return
 	 */
 	public String getRange(){
-		return "Range in SaadaDB units:  Min <"+this.minValue+" "+this.unit+"> Max <"+this.maxValue+" "+this.unit+">";
+		return "Range in SaadaDB units:  Min <"+this.minValue+" "+this.finalUnit+"> Max <"+this.maxValue+" "+this.finalUnit+">";
 	}
 
 	/**
@@ -328,15 +258,15 @@ public class SpectralCoordinate{
 	 * @return
 	 */
 	public static double convertSaada(String unitOrg, String unitNew, double value){
-		int vTypeOrg = 0;
-		int vTypeNew = 0;
+		DispersionType vTypeOrg;
+		DispersionType vTypeNew;
 		UnitRef ur;
 
 		if( "AutoDetect".equals(unitOrg) ) {
 			Messenger.printMsg(Messenger.DEBUG, "No unit given");
 			return SaadaConstant.DOUBLE;
 		}
-		if((ur = getUniRef(unitOrg)) != null){
+		if((ur = UnitRef.getUniRef(unitOrg)) != null){
 			vTypeOrg = ur.type;
 			unitOrg = ur.unit;
 		}else{
@@ -345,7 +275,7 @@ public class SpectralCoordinate{
 			}
 			return SaadaConstant.DOUBLE;
 		}
-		if((ur = getUniRef(unitNew)) != null){
+		if((ur = UnitRef.getUniRef(unitNew)) != null){
 			vTypeNew = ur.type;
 			unitNew = ur.unit;
 		}else{
@@ -364,35 +294,35 @@ public class SpectralCoordinate{
 				Messenger.printMsg(Messenger.ERROR, "Can not convert <"+unitOrg+"> into <"+unitNew+">");
 				return SaadaConstant.DOUBLE;
 			}
-		} else if (vTypeNew == CHANNEL) {
+		} else if (vTypeNew == DispersionType.CHANNEL) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "SaadaDB in channel mode: no conversion to do");
 			return value;
 		}else{
 			switch(vTypeOrg){
 			case WAVELENGTH:
-				if(vTypeNew == FREQUENCY){
+				if(vTypeNew == DispersionType.FREQUENCY){
 					return convertWaveLengthIntoFrequency(value, unitOrg, unitNew);
 				}else{
-					if(vTypeNew == ENERGY){
+					if(vTypeNew == DispersionType.ENERGY){
 						return convertWaveLengthIntoEnergy(value, unitOrg, unitNew);
 					}
 				}
 				break;
 			case FREQUENCY:
-				if(vTypeNew == WAVELENGTH){
+				if(vTypeNew == DispersionType.WAVELENGTH){
 					return convertFrequencyIntoWaveLength(value, unitOrg, unitNew);
 				}else{
-					if(vTypeNew == ENERGY){
+					if(vTypeNew == DispersionType.ENERGY){
 						return convertFrequencyIntoEnergy(value, unitOrg, unitNew);
 					}
 				}
 				break;
 			case ENERGY:
-				if(vTypeNew == FREQUENCY){
+				if(vTypeNew == DispersionType.FREQUENCY){
 					return convertEnergyIntoFrequency(value, unitOrg, unitNew);
 				}else{
-					if(vTypeNew == WAVELENGTH){
+					if(vTypeNew == DispersionType.WAVELENGTH){
 						return convertEnergyIntoWaveLength(value, unitOrg, unitNew);
 					}
 				}
@@ -582,6 +512,7 @@ public class SpectralCoordinate{
 	 * @throws Exception 
 	 */
 	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
+		int dispersionAxeNum = 0;
 		this.attributesList = tableAttributeHandler;
 		WCSModel wm = null;
 		try {
@@ -607,9 +538,9 @@ public class SpectralCoordinate{
 		 */
 		int dan;
 		if( (dan = wm.getDispersionAxe()) != SaadaConstant.INT) {
-			this.dispersionAxeNum = dan; 
+			dispersionAxeNum = dan; 
 			this.nbBins = wm.getNAXISi(dan);
-			UnitRef unit_class = getUniRef(wm.getCUNIT(dispersionAxeNum));
+			UnitRef unit_class = UnitRef.getUniRef(wm.getCUNIT(dispersionAxeNum));
 			if(unit_class == null) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
@@ -626,7 +557,7 @@ public class SpectralCoordinate{
 			for( int axe=0 ; axe<wm.getNAXIS() ; axe++) {
 				if( wm.getNAXISi(axe) > old_max ) {
 					old_max = wm.getNAXISi(axe);
-					this.dispersionAxeNum = axe;
+					dispersionAxeNum = axe;
 					this.nbBins = wm.getNAXISi(axe);
 				}
 				AttributeHandler ah;
@@ -648,7 +579,7 @@ public class SpectralCoordinate{
 							unitOrg = "Angstrom";
 						}
 
-						UnitRef unit_class = getUniRef(unitOrg);
+						UnitRef unit_class = UnitRef.getUniRef(unitOrg);
 						if(unit_class == null) {
 							if (Messenger.debug_mode)
 								Messenger.printMsg(Messenger.DEBUG, "Can not get unit from DISPERS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
@@ -665,8 +596,9 @@ public class SpectralCoordinate{
 		}
 		this.orgMin = wm.getMinValue(dispersionAxeNum);
 		this.orgMax = wm.getMaxValue(dispersionAxeNum);
-		this.raWCSCenter = wm.getCenterRa();
-		this.decWCSCenter = wm.getCenterDec();
+		ColumnSetter[]cs = wm.getRadecCenter();
+		this.raWCSCenter = Double.parseDouble(cs[0].getValue());
+		this.decWCSCenter = Double.parseDouble(cs[1].getValue());
 		System.out.println("@@@@@@@@@@@@@@@ " + this.orgMin + " " + this.orgMax);
 		System.exit(1);
 		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {

@@ -19,12 +19,12 @@ public class TimeKWDetector extends KWDetector {
 
 	public ColumnSetter getTMin() throws FatalException{
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search for the start date");
+			Messenger.printMsg(Messenger.DEBUG, "Search for the date start");
 		return this.search(RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
 	}
 	public ColumnSetter getTMax() throws FatalException{
 		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search for the end date");
+			Messenger.printMsg(Messenger.DEBUG, "Search for the date end");
 		return this.search(RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
 	}
 	public ColumnSetter getExpTime() throws FatalException{

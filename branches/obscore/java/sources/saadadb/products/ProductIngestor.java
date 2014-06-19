@@ -260,21 +260,21 @@ class ProductIngestor {
 				return;
 			} else {
 				try {
-					Astrocoo acoo;
-					if( this.product.s_raSetter == this.product.s_decSetter) {
-						acoo= new Astrocoo(this.product.astroframe, ra_val ) ;
-					}
-					/*
-					 * or in separate columns
-					 */
-					else {
-						acoo= new Astrocoo(this.product.astroframe, ra_val + " " + dec_val) ;
-					}
-
-					double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
-					double ra = converted_coord[0];
-					double dec = converted_coord[1];
-					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + acoo.getLon() + "," + acoo.getLat() + " " + this.product.astroframe + "> to <" + ra + "," + dec + " "+  Database.getAstroframe() + ">");				
+//					Astrocoo acoo;
+//					if( this.product.s_raSetter == this.product.s_decSetter) {
+//						acoo= new Astrocoo(this.product.astroframe, ra_val ) ;
+//					}
+//					/*
+//					 * or in separate columns
+//					 */
+//					else {
+//						acoo= new Astrocoo(this.product.astroframe, ra_val + " " + dec_val) ;
+//					}
+//
+//					double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+//					double ra = converted_coord[0];
+//					double dec = converted_coord[1];
+//					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + acoo.getLon() + "," + acoo.getLat() + " " + this.product.astroframe + "> to <" + ra + "," + dec + " "+  Database.getAstroframe() + ">");				
 
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);

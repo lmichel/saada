@@ -139,7 +139,7 @@ public class ColumnMapping {
 	/**
 	 * @return
 	 */
-	public AttributeHandler getHandler() {
+	public AttributeHandler getAttributeHandler() {
 		if (mappingMode == MappingMode.NOMAPPING) {
 			return null;
 		} else {
@@ -151,7 +151,7 @@ public class ColumnMapping {
 	 * @return
 	 */
 	public String getValue() {
-		AttributeHandler ah = this.getHandler();
+		AttributeHandler ah = this.getAttributeHandler();
 		return ((ah == null)? "": (ah.getValue() == null)? "": ah.getValue());
 	}
 

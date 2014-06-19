@@ -81,10 +81,10 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
-	public ColumnSetter getObsIdComponents() throws SaadaException{
+	public ColumnSetter getExposureName()throws SaadaException{
 		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getObsIdComponents()).notSet() ){
-			return this.observationKWDetector.getObsIdComponents();
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExposureName()).notSet() ){
+			return this.timeKWDetector.getExposureName();
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
@@ -190,14 +190,14 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
-	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
-		try  {
-			return this.energyKWDetector.getSpectralCoordinate();
-		} catch (Exception e) {
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
-			return null;
-		}
-	}
+//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
+//		try  {
+//			return this.energyKWDetector.getSpectralCoordinate();
+//		} catch (Exception e) {
+//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
+//			return null;
+//		}
+//	}
 
 	/*
 	 * Time axis
@@ -211,7 +211,7 @@ public class QuantityDetector {
 	}
 	public ColumnSetter getTMax() throws SaadaException{
 		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMin()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMax()).notSet() ){
 			return this.timeKWDetector.getTMax();
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
@@ -220,13 +220,6 @@ public class QuantityDetector {
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExpTime()).notSet() ){
 			return this.timeKWDetector.getExpTime();
-		} 
-		return (retour == null)?new ColumnSetter(): retour;
-	}
-	public ColumnSetter getExposureName()throws SaadaException{
-		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExposureName()).notSet() ){
-			return this.timeKWDetector.getExposureName();
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}

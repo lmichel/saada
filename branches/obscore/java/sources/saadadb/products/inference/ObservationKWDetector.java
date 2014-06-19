@@ -38,21 +38,4 @@ public class ObservationKWDetector extends KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, "Search for an instrument_name");
 		return this.search(RegExp.INSTRUMENT_UCD, RegExp.INSTRUMENT_KW);
 	}
-	public ColumnSetter getObsIdComponents() throws FatalException{
-		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search for an obs_id");
-		String obsid="";
-		ColumnSetter cs;
-		if( !(cs = this.getFacilityName()).notSet() ) obsid += cs.getValue();
-		if( !(cs = this.getTargetName()).notSet() ){
-			if( obsid.length() >= 0 ) obsid += " [";
-			obsid += cs.getValue() + "]";
-		}
-		if( obsid.length() >= 0 ) {
-			cs = new ColumnSetter(obsid, false, "Build with instrument_name and target_name");
-			return cs;
-		}
-		return new ColumnSetter();
-	}
-
 }

@@ -17,6 +17,7 @@ import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
+import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -34,10 +35,12 @@ import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpectralCoordinate;
+import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 import cds.astro.ICRS;
 
@@ -97,7 +100,7 @@ public class ProductBuilder {
 	protected ColumnSetter em_minSetter=null;
 	protected ColumnSetter em_maxSetter=null;
 	protected ColumnSetter em_res_powerSetter=null;
-	private SpectralCoordinate spectralCoordinate;
+	//	private SpectralCoordinate spectralCoordinate;
 	protected ColumnSetter x_unit_orgSetter=null;
 	protected PriorityMode energyMappingPriority = PriorityMode.LAST;
 	/*
@@ -150,6 +153,12 @@ public class ProductBuilder {
 		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
+		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@à
+		this.observationMappingPriority = PriorityMode.FIRST;
+		this.spaceMappingPriority =PriorityMode.FIRST;
+		this.energyMappingPriority = PriorityMode.FIRST;
+		this.timeMappingPriority = PriorityMode.FIRST;
+		
 		try {
 			this.bindDataFile(file);
 			this.mapCollectionAttributes();
@@ -294,40 +303,40 @@ public class ProductBuilder {
 			this.mimeType = "application/x-votable+xml";
 		}
 		this.dataFile.bindBuilder(this);
-//		
-//		if( !(this.dataFile instanceof FooProduct) ){
-//			String filename = this.file.getName();
-//			boolean try_votable = false;
-//			try {
-//				this.dataFile = new FitsDataFile(this);			
-//				this.mimeType = "application/fits";
-//			} catch(IgnoreException ei) {
-//				if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
-//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
-//				} else {
-//					Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
-//					try_votable = true;
-//				}
-//			} catch(Exception ef) {
-//				ef.printStackTrace();
-//				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
-//				try_votable = true;
-//			}
-//
-//			if( try_votable ) {			
-//				try {
-//					this.dataFile = new VOTableDataFile(this);				
-//					this.mimeType = "application/x-votable+xml";
-//				} catch(SaadaException ev) {
-//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
-//				} catch(Exception ev) {
-//					Messenger.printStackTrace(ev);
-//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
-//				}
-//			}
-//		} else {
-//			Messenger.printMsg(Messenger.TRACE, "Work with a Foo products");
-//		}
+		//		
+		//		if( !(this.dataFile instanceof FooProduct) ){
+		//			String filename = this.file.getName();
+		//			boolean try_votable = false;
+		//			try {
+		//				this.dataFile = new FitsDataFile(this);			
+		//				this.mimeType = "application/fits";
+		//			} catch(IgnoreException ei) {
+		//				if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
+		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
+		//				} else {
+		//					Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
+		//					try_votable = true;
+		//				}
+		//			} catch(Exception ef) {
+		//				ef.printStackTrace();
+		//				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
+		//				try_votable = true;
+		//			}
+		//
+		//			if( try_votable ) {			
+		//				try {
+		//					this.dataFile = new VOTableDataFile(this);				
+		//					this.mimeType = "application/x-votable+xml";
+		//				} catch(SaadaException ev) {
+		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
+		//				} catch(Exception ev) {
+		//					Messenger.printStackTrace(ev);
+		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
+		//				}
+		//			}
+		//		} else {
+		//			Messenger.printMsg(Messenger.TRACE, "Work with a Foo products");
+		//		}
 		this.setFmtsignature();
 	}
 
@@ -405,8 +414,8 @@ public class ProductBuilder {
 		this.setProductIngestor();
 		this.productIngestor.storeCopyFileInRepository();		
 	}
-	
-	
+
+
 	/************************************************************************************************
 	 * Code doing the mapping between the collection KW, the mapping rule and the KW of the data file
 	 *************************************************************************************************/
@@ -422,7 +431,7 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 */
 	protected ColumnSetter getMappedAttributeHander(ColumnMapping columnMapping) throws FatalException {
-		AttributeHandler cmah = columnMapping.getHandler();
+		AttributeHandler cmah = columnMapping.getAttributeHandler();
 		if( columnMapping.byValue() ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
 			ColumnSetter retour = new ColumnSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
@@ -440,7 +449,7 @@ public class ProductBuilder {
 				}
 			}
 		}
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": undefined");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
 		ColumnSetter retour = new ColumnSetter();
 		retour.completeMessage("Not found by mapping");
 		return retour;
@@ -462,10 +471,14 @@ public class ProductBuilder {
 		this.mapSpaceAxe();
 		System.out.println("=================finit ======================");
 		System.exit(1);
-
 		this.mapEnergyAxe();
+
+
 		this.mapTimeAxe();
+
 		this.mapObservableAxe();
+		System.out.println("=================finit ======================");
+		System.exit(1);
 		this.mapIgnoredAndExtendedAttributes();
 	}
 
@@ -553,6 +566,7 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 */
 	public void mapInstanceName() throws SaadaException {
+		Messenger.printMsg(Messenger.TRACE, "Building the name");
 		/*
 		 * Uses the config first
 		 */
@@ -589,49 +603,29 @@ public class ProductBuilder {
 			return;
 		} else {
 			this.name_components = new ArrayList<AttributeHandler>();
+			String obsid="";
 			ColumnSetter cs;
+			if( !(cs = quantityDetector.getFacilityName()).notSet() ) obsid += cs.getValue();
+			if( !(cs = quantityDetector.getTargetName()).notSet() ){
+				if( obsid.length() >= 0 ) obsid += " [";
+				obsid += cs.getValue() + "]";
+			}
 			AttributeHandler ah = new AttributeHandler();
-			ah.setAsConstant();
-			if( !(cs = this.quantityDetector.getObsIdComponents()).notSet() ){
-				ah.setValue(cs.getValue());
+			if( obsid.length() >= 0 ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Build with instrument_name and target_name");
+				ah.setAsConstant();
+				ah.setValue(obsid);
 				ah.setNameorg(cs.getAttNameOrg());
 				ah.setNameattr(cs.getAttNameAtt());
 			} else {
 				ah.setValue(this.dataFile.getName());
 			}
 			this.name_components.add(ah);
-			Messenger.printMsg(Messenger.TRACE, "Value " + ah.getValue() + " taken as obs_id");
+			Messenger.printMsg(Messenger.TRACE, "Take <" + ah.getValue() + "> as name");
 			return;			
 		}
-//		/*
-//		 * Uses UCDs after
-//		 */
-//		else if( this.productAttributeHandler != null ) {
-//			@SuppressWarnings("rawtypes")
-//			Iterator it = this.productAttributeHandler.keySet().iterator();
-//			while( it.hasNext() ) {
-//				AttributeHandler ah = this.productAttributeHandler.get(it.next());
-//				String ucd = ah.getUcd();
-//				if( ucd.equals("meta.id;meta.main") ) {
-//					this.name_components = new ArrayList<AttributeHandler>();
-//					this.name_components.add(ah);
-//					Messenger.printMsg(Messenger.TRACE, "Attribute "+ ah.getNameorg() + " taken as name (ucd=" + ucd + ")");
-//					return;
-//				}
-//			}
-//			it = this.productAttributeHandler.keySet().iterator();
-//			while( it.hasNext() ) {
-//				AttributeHandler ah = this.productAttributeHandler.get(it.next());
-//				String ucd = ah.getUcd();
-//				if( ucd.equals("meta.id") ) {
-//					this.name_components = new ArrayList<AttributeHandler>();
-//					this.name_components.add(ah);
-//					Messenger.printMsg(Messenger.TRACE, "Attribute "+ ah.getNameorg() + " taken as name (ucd=" + ucd + ")");
-//					return;
-//				}
-//			}
-//
-//		}
+
 	}
 	/**
 	 * @throws Exception
@@ -652,15 +646,18 @@ public class ProductBuilder {
 		case FIRST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
-				this.spectralCoordinate = this.quantityDetector.getSpectralCoordinate();
-				if( this.spectralCoordinate.convert() ) {
+				SpectralCoordinate spectralCoordinate = new SpectralCoordinate(this.quantityDetector.getEUnit().getValue());
+				spectralCoordinate.setOrgMin(Double.parseDouble(this.quantityDetector.getEMin().getValue()));
+				spectralCoordinate.setOrgMax(Double.parseDouble(this.quantityDetector.getEMax().getValue()));
+				//	this.spectralCoordinate = this.quantityDetector.getSpectralCoordinate();
+				if( spectralCoordinate.convert() ) {
 					this.em_minSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), false);
 					this.em_minSetter.completeMessage(this.quantityDetector.detectionMessage );
 					this.em_minSetter.completeMessage(this.quantityDetector.detectionMessage );
 					this.em_maxSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), false);
 					this.em_maxSetter.completeMessage(this.quantityDetector.detectionMessage );
 					this.em_maxSetter.completeMessage(this.quantityDetector.detectionMessage );
-					this.x_unit_orgSetter = new ColumnSetter(spectralCoordinate.getOrgUnit(), false);
+					this.x_unit_orgSetter = new ColumnSetter(spectralCoordinate.getMappedUnit(), false);
 				} else {
 					this.em_minSetter = new ColumnSetter();
 					this.em_maxSetter = new ColumnSetter();
@@ -674,32 +671,26 @@ public class ProductBuilder {
 
 		case LAST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority LAST: KWs will first be inefered and then mapped keywords will be searched");
-			this.spectralCoordinate = this.quantityDetector.getSpectralCoordinate();
-			this.em_res_powerSetter = this.quantityDetector.getResPower();
-			System.out.println(this.em_res_powerSetter);
-			if( !this.spectralCoordinate.convert() ) {
+			ColumnSetter qdMin = this.quantityDetector.getEMin();
+			ColumnSetter qdMax = this.quantityDetector.getEMax();
+			ColumnSetter qdUnit = this.quantityDetector.getEUnit();
+			SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
+			spectralCoordinate.setMappedUnit(qdUnit.getValue());
+			spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
+			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
+			if( !spectralCoordinate.convert() ) {
 				if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
 					this.em_minSetter = new ColumnSetter();
-					this.em_minSetter.completeMessage("vorg="+this.spectralCoordinate.getOrgMin() + this.spectralCoordinate.getOrgUnit());
+					this.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit());
 					this.em_maxSetter = new ColumnSetter();
-					this.em_maxSetter.completeMessage( "vorg="+this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
+					this.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit());
 				}
 			} else {
-				this.em_minSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), false);
-				this.em_minSetter.completeMessage( "vorg="+this.spectralCoordinate.getOrgMin() + this.spectralCoordinate.getOrgUnit());
-				this.em_minSetter.completeMessage(this.quantityDetector.detectionMessage );
-
-				this.em_maxSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), false);
-				this.em_maxSetter.completeMessage( "vorg="+this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgUnit());
-				this.em_maxSetter.completeMessage(this.quantityDetector.detectionMessage );
-				this.x_unit_orgSetter = new ColumnSetter(spectralCoordinate.getOrgUnit(), false);
-				this.x_unit_orgSetter.completeMessage(spectralCoordinate.getOrgUnit());
-				if( this.em_res_powerSetter.notSet() ) {
-					//this.em_res_powerSetter = this.quantityDetector.getComputedResPower();
-					this.em_res_powerSetter = this.quantityDetector.getResPower();
-				}
+				this.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
+				this.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
+				this.x_unit_orgSetter = qdUnit;
+				this.em_res_powerSetter =  quantityDetector.getResPower();
 			}
-			System.out.println("========================");
 			if( !this.isAttributeHandlerMapped(this.em_res_powerSetter) ) {
 				this.em_res_powerSetter = this.getMappedAttributeHander(this.mapping.getEnergyAxisMapping().getColumnMapping("em_res_power"));
 			}
@@ -708,7 +699,7 @@ public class ProductBuilder {
 		this.traceReportOnAttRef("x_unit_org", this.x_unit_orgSetter);
 		this.traceReportOnAttRef("em_min", this.em_minSetter);
 		this.traceReportOnAttRef("em_max", this.em_maxSetter);
-		this.traceReportOnAttRef("em_res_power", this.em_maxSetter);
+		this.traceReportOnAttRef("em_res_power", this.em_res_powerSetter);
 	}
 	/**
 	 * @throws Exception
@@ -730,11 +721,13 @@ public class ProductBuilder {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: FIRST: Mapped keywords will first be searched and then KWs will be infered");
 			this.t_maxSetter = this.getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
-				this.t_maxSetter = this.quantityDetector.getTMax();
+				ColumnSetter cs = this.quantityDetector.getTMax();
+				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
 			}
 			this.t_minSetter = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
-				this.t_minSetter = this.quantityDetector.getTMin();
+				ColumnSetter cs = this.quantityDetector.getTMin();
+				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
 			}
 			this.t_exptimeSetter = getMappedAttributeHander(mapping.getColumnMapping("t_exptime"));
 			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
@@ -743,12 +736,14 @@ public class ProductBuilder {
 			break;
 
 		case LAST:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: LAST: KWs will first be infered and then mzpped keywords will be used");
-			this.t_maxSetter = this.quantityDetector.getTMax();
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Time mapping priority: LAST: KWs will first be infered and then mapped keywords will be used");
+			ColumnSetter cs = this.quantityDetector.getTMax();
+			this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			}
-			this.t_minSetter = this.quantityDetector.getTMin();
+			cs = this.quantityDetector.getTMin();
+			this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			}
@@ -758,15 +753,25 @@ public class ProductBuilder {
 			}
 			break;
 		}
-		
-		if( this.t_minSetter.notSet() && !(this.t_maxSetter.notSet() || this.t_exptimeSetter.notSet()) ) {
-			this.t_minSetter.completeMessage("Computed from t_max and t_exptime");	
-			
-		} else if( this.t_maxSetter.notSet() && !(this.t_minSetter.notSet() || this.t_exptimeSetter.notSet()) ) {
-			this.t_maxSetter.completeMessage("Computed from t_min and t_exptime");
-			this.t_maxSetter.setBySaada();
+
+		if( this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && !this.t_exptimeSetter.notSet() ) {
+			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
+			this.t_minSetter = new ColumnSetter();
+			this.t_minSetter.setByValue(String.valueOf(v), false);
+			this.t_minSetter.completeMessage("Computed from t_max and t_exptime");				
+		} else if( !this.t_minSetter.notSet() && this.t_maxSetter.notSet() && !this.t_exptimeSetter.notSet() ) {
+			double v = Double.parseDouble(this.t_minSetter.getValue()) + Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
+			this.t_maxSetter = new ColumnSetter();
+			this.t_maxSetter.setByValue(String.valueOf(v), false);
+			this.t_maxSetter.completeMessage("Computed from t_min and t_exptime");	
+		} else if( !this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && this.t_exptimeSetter.notSet() ) {
+			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_minSetter.getValue());
+			this.t_exptimeSetter = new ColumnSetter();
+			this.t_exptimeSetter.setByValue(String.valueOf(v), false);
+			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
+			this.t_exptimeSetter.setUnit("s");
 		}
-		
+
 		traceReportOnAttRef("t_min", this.t_minSetter);
 		traceReportOnAttRef("t_max", this.t_maxSetter);
 		traceReportOnAttRef("t_exptime", this.t_exptimeSetter);
@@ -817,13 +822,13 @@ public class ProductBuilder {
 			}
 			break;
 		}
-				
+
 		traceReportOnAttRef("o_ucd", this.o_ucdSetter);
 		traceReportOnAttRef("o_unit", this.o_unitSetter);
 		traceReportOnAttRef("o_calib_status", this.o_calib_statusSetter);
 	}
 
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -834,12 +839,44 @@ public class ProductBuilder {
 		 */
 		this.mapCollectionCooSysAttributes();
 		/*
-		 * Don't map position if there is o astroframe
+		 * Don't map position if there is no astroframe
 		 */
 		if( this.astroframe != null || this.system_attribute != null) {
 			this.mapCollectionPosAttributes();
 			this.mapCollectionPoserrorAttributes();
+			Astrocoo acoo;
+			/*
+			 * Convert coordinates
+			 */
+			if( this.s_raSetter == this.s_decSetter) {
+				acoo= new Astrocoo(this.astroframe,this.s_raSetter.getValue() ) ;
+			} else {
+				acoo= new Astrocoo(this.astroframe, this.s_raSetter.getValue() + " " + this.s_decSetter.getValue()) ;
+			}
+			double converted_coord[] = Coord.convert(this.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+			double ra = converted_coord[0];
+			double dec = converted_coord[1];
+			this.s_raSetter.setValue(String.valueOf(ra)); this.s_raSetter.completeMessage("Converted in " +  Database.getAstroframe());
+			this.s_decSetter.setValue(String.valueOf(dec)); this.s_decSetter.completeMessage("Converted in " +  Database.getAstroframe());
+			if( this.s_regionSetter.storedValue  != null ) {
+				String stc = "Polygon " + Database.getAstroframe();
+				double[] pts = (double[]) this.s_regionSetter.storedValue;
+				for( int i=0 ; i<(pts.length/2) ; i++ ) {
+					converted_coord = Coord.convert(this.astroframe, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
+					stc += " " +converted_coord[0] + " " + converted_coord[1];
+				}
+				this.s_regionSetter.setValue(stc);
+				this.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+			}
+
 		}
+		traceReportOnAttRef("frame", astroframeSetter);
+		traceReportOnAttRef("s_ra", s_raSetter);
+		traceReportOnAttRef("s_dec", s_decSetter);
+		traceReportOnAttRef("errMax", error_majSetter);
+		traceReportOnAttRef("errMin", error_minSetter);
+		traceReportOnAttRef("s_region", s_regionSetter);
+		traceReportOnAttRef("s_fov", s_fovSetter);
 	}
 
 	/**
@@ -863,13 +900,13 @@ public class ProductBuilder {
 			 * or from read values
 			 */
 			if( columnMapping.byValue() ) {
-				this.extended_attributesSetter.put(att_ext_name , new ColumnSetter(columnMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false));
+				this.extended_attributesSetter.put(att_ext_name , new ColumnSetter(columnMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false));
 			}
 			/*
 			 * Flatfile have not tableAttributeHandler
 			 */
 			else if (this.productAttributeHandler != null ) {
-				String cm = (columnMapping.getHandler() != null)? columnMapping.getHandler().getNameattr(): null;
+				String cm = (columnMapping.getAttributeHandler() != null)? columnMapping.getAttributeHandler().getNameattr(): null;
 				for( AttributeHandler ah : this.productAttributeHandler.values() ) {
 					if( ah.getNameattr().equals(cm)) {
 						this.extended_attributesSetter.put(att_ext_name,new ColumnSetter( ah, ColumnSetMode.BY_KEYWORD, true, false));
@@ -1009,8 +1046,7 @@ public class ProductBuilder {
 			for( AttributeHandler ah : this.productAttributeHandler.values()) {
 				if( this.system_attribute == null && ah.getNameorg().equals(cs.getSystem()) ) {
 					this.system_attribute = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				}
-				else if( this.equinox_attribute == null && ah.getNameorg().equals(cs.getEquinox()) ) {
+				} else if( this.equinox_attribute == null && ah.getNameorg().equals(cs.getEquinox()) ) {
 					this.equinox_attribute =  new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);;
 				}
 			}
@@ -1050,7 +1086,7 @@ public class ProductBuilder {
 		case FIRST:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position mapping priority: FIRST: Mapped keywords will first be searched and then position KWs will be infered");
 			if( !this.mapCollectionPosAttributesFromMapping() ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Mapped keywords not found: try to find out position keywords");
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No mapping found for position : try to find it out");
 				this.mapCollectionPosAttributesAuto();
 				msg = " (auto. detection) ";
 			}			
@@ -1094,7 +1130,7 @@ public class ProductBuilder {
 	 */
 	protected void mapCollectionPoserrorAttributes() throws SaadaException {
 		String msg="";
-		switch( this.mapping.getSpaceAxisMapping().getPriority()) {
+		switch( this.spaceMappingPriority) {
 		case ONLY:
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position error mapping priority: ONLY: only mapped keywords will be used");
 			this.mapCollectionPoserrorAttributesFromMapping();
@@ -1112,8 +1148,7 @@ public class ProductBuilder {
 			if( !this.mapCollectionPoserrorAttributesAuto()) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for position keywords defined into the mapping");
 				this.mapCollectionPoserrorAttributesFromMapping();
-			}	
-			else {
+			}	 else {
 				msg = " (auto. detection) ";
 			}
 			break;
@@ -1127,15 +1162,11 @@ public class ProductBuilder {
 		 * Mapp errors on positions
 		 */
 		if( this.error_majSetter == null || this.error_minSetter == null ) {
-			Messenger.printMsg(Messenger.WARNING, "Error ellipse neither found " + msg + " in keywords nor by value");
-		} 
-		else {
+			Messenger.printMsg(Messenger.TRACE, "Error ellipse neither found " + msg + " in keywords nor by value");
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "found");
 			this.setError_unit();
-			Messenger.printMsg(Messenger.TRACE, "Error ellipse mapped " + msg + "<" 
-					+ this.error_minSetter.message + " " 
-					+ this.error_majSetter.message + " " 
-					+ this.error_angleSetter.message 
-					+ "> unit: " + this.mapping.getSpaceAxisMapping().getErrorUnit());
 		} 
 	}
 
@@ -1145,17 +1176,21 @@ public class ProductBuilder {
 	 * 
 	 */
 	private void setError_unit() throws SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Search for error unit");
 		String unit_read = this.error_minSetter.getUnit();
 		if( unit_read == null ) {
 			unit_read = this.error_majSetter.getUnit();			
 		}
 		switch( this.mapping.getSpaceAxisMapping().getPriority()) {
 		case FIRST: 
+			PriorityMessage.first("Error unit");
 			if( this.mapping.getSpaceAxisMapping().getErrorUnit() == null ) {
 				this.mapping.getSpaceAxisMapping().setErrorUnit(unit_read);
 			}
 			break;
 		case LAST: 
+			PriorityMessage.last("Error unit");
 			if( unit_read != null ) {
 				this.mapping.getSpaceAxisMapping().setErrorUnit(unit_read);
 			}
@@ -1188,22 +1223,22 @@ public class ProductBuilder {
 				if( vals.size() == 2 ) {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
-					this.spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
-					this.spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
-
+					SpectralCoordinate spectralCoordinate;
 					if( sc_unit.equals("AutoDetect") ) {
-						spectralCoordinate.setOrgUnit("channel");
+						spectralCoordinate = new SpectralCoordinate("channel");					
 					} else {
-						spectralCoordinate.setOrgUnit(sc_unit.getValue());					
+						spectralCoordinate = new SpectralCoordinate(sc_unit.getValue());					
 					}
+					spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
+					spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
 					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getOrgUnit());
+						Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getMappedUnit());
 					boolean retour = spectralCoordinate.convert() ;
 					this.em_minSetter = new ColumnSetter();
 					this.em_minSetter.setByValue(Double.toString(spectralCoordinate.getConvertedMin()), true);
 					this.em_maxSetter = new ColumnSetter();
 					if( !this.isAttributeHandlerMapped(this.x_unit_orgSetter) ) {
-						spectralCoordinate.setOrgUnit(this.x_unit_orgSetter.getValue());				
+						spectralCoordinate.setMappedUnit(this.x_unit_orgSetter.getValue());				
 					}
 					return retour;
 				}
@@ -1215,50 +1250,38 @@ public class ProductBuilder {
 		/*
 		 * If no range set in params, find it out from table columns
 		 */	
-		String mappedName = sc_col.getHandler().getNameorg();
+		String mappedName = sc_col.getAttributeHandler().getNameorg();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
 		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
 			String key = ah.getNameorg();
 			if(key.equals(mappedName) ){
 				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
-				this.setEnergyMinMaxValues(this.dataFile.getExtrema(key));
+				SpectralCoordinate spectralCoordinate;
 				if( this.x_unit_orgSetter !=  null ) {
-					spectralCoordinate.setOrgUnit(this.x_unit_orgSetter.getValue());				
+					spectralCoordinate = new SpectralCoordinate(this.x_unit_orgSetter.getValue());				
 				}
 				/*
 				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
 				 * the unit found in the column description is taken
 				 */
 				else  if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-					spectralCoordinate.setOrgUnit(ah.getUnit());
+					spectralCoordinate = new SpectralCoordinate(ah.getUnit());
 					this.x_unit_orgSetter = new ColumnSetter(ah.getUnit(), true);
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
 				} else {
-					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");						
+					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
+					return false;
 				}
+				spectralCoordinate.setOrgMinMax(this.dataFile.getExtrema(key));
+				boolean retour = spectralCoordinate.convert() ;
+				this.em_minSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), true);
+				this.em_maxSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), true);
+				return retour;
 			}
-			boolean retour = spectralCoordinate.convert() ;
-			this.em_minSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), true);
-			this.em_maxSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), true);
-			return retour;
+
 		}
 		return  false;	
 	}
-
-	/**
-	 * @param ds
-	 * @return
-	 */
-	private void setEnergyMinMaxValues(double[] ds) {
-		if( ds == null || ds.length != 2 ) {
-			this.spectralCoordinate.setOrgMax(SaadaConstant.DOUBLE);
-			this.spectralCoordinate.setOrgMin(SaadaConstant.DOUBLE);
-		} else {
-			this.spectralCoordinate.setOrgMax(ds[1]);
-			this.spectralCoordinate.setOrgMin(ds[0]);		
-		}
-	}
-
 
 	/**
 	 * Look first for fields with good UCDs. 
@@ -1271,8 +1294,8 @@ public class ProductBuilder {
 		if( this.quantityDetector.arePosColFound() ) {
 			this.s_raSetter = this.quantityDetector.getAscension();
 			this.s_decSetter = this.quantityDetector.getDeclination();		
-			this.s_fovSetter = this.getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_fov"));
-			this.s_regionSetter = this.getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_region"));
+			this.s_fovSetter = this.quantityDetector.getfov();
+			this.s_regionSetter = this.quantityDetector.getRegion();
 			return true;
 		}
 		else {
@@ -1308,21 +1331,25 @@ public class ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "try to map the position from mapping");
 		ColumnMapping raMapping  =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_ra");
+		if (raMapping.notMapped() && Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "No mapping for s_ra");
 		ColumnMapping decMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_dec");
+		if (decMapping.notMapped() && Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "No mapping for s_dec");
 		boolean ra_found = false;
 		boolean dec_found = false;
 		/*
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( raMapping.byValue() ) {
-			this.s_raSetter = new ColumnSetter(raMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getHandler().getValue() + ">");
+			this.s_raSetter = new ColumnSetter(raMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getAttributeHandler().getValue() + ">");
 		} else {
 			this.s_raSetter = new ColumnSetter();
 		}
 		if( decMapping.byValue() ) {
-			this.s_decSetter = new ColumnSetter(decMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);	
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getHandler().getValue() + ">");
+			this.s_decSetter = new ColumnSetter(decMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getAttributeHandler().getValue() + ">");
 		} else {
 			this.s_decSetter = new ColumnSetter();
 		}
@@ -1331,8 +1358,8 @@ public class ProductBuilder {
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String raCol =  (raMapping.getHandler() != null)? raMapping.getHandler().getNameorg() : null;
-		String decCol =  (decMapping.getHandler() != null)? decMapping.getHandler().getNameorg() : null;
+		String raCol =  (raMapping.getAttributeHandler() != null)? raMapping.getAttributeHandler().getNameorg() : null;
+		String decCol =  (decMapping.getAttributeHandler() != null)? decMapping.getAttributeHandler().getNameorg() : null;
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
@@ -1367,26 +1394,26 @@ public class ProductBuilder {
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( errMajMapping.byValue() ) {
-			this.error_minSetter = new ColumnSetter(errMajMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);	
+			this.error_minSetter = new ColumnSetter(errMajMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
 			ra_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getHandler().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getAttributeHandler().getValue() + ">");
 		}
 		if( errMinMapping.byValue() ) {
-			this.error_majSetter = new ColumnSetter(errMinMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);		
+			this.error_majSetter = new ColumnSetter(errMinMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);		
 			dec_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getHandler().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getAttributeHandler().getValue() + ">");
 		}
 		if( errAngleMapping.byValue() ) {
-			this.error_angleSetter = new ColumnSetter(errAngleMapping.getHandler(), ColumnSetMode.BY_VALUE, true, false);		
+			this.error_angleSetter = new ColumnSetter(errAngleMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);		
 			angle_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getHandler().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getAttributeHandler().getValue() + ">");
 		}
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String minCol   =  (errMajMapping.getHandler() != null)?errMajMapping.getHandler().getNameorg(): null;
-		String maxCol   =  (errMinMapping.getHandler() != null)?errMinMapping.getHandler().getNameorg(): null;
-		String angleCol =  (errAngleMapping.getHandler() != null)?errAngleMapping.getHandler().getNameorg(): null;
+		String minCol   =  (errMajMapping.getAttributeHandler() != null)?errMajMapping.getAttributeHandler().getNameorg(): null;
+		String maxCol   =  (errMinMapping.getAttributeHandler() != null)?errMinMapping.getAttributeHandler().getNameorg(): null;
+		String angleCol =  (errAngleMapping.getAttributeHandler() != null)?errAngleMapping.getAttributeHandler().getNameorg(): null;
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
@@ -1573,7 +1600,7 @@ public class ProductBuilder {
 		}
 		return msg;	
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -1598,7 +1625,7 @@ public class ProductBuilder {
 		this.setProductIngestor();
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-			
+
 		retour.put("obs_collection", obs_collectionSetter);
 		obs_collectionSetter.storedValue = si.obs_collection;
 		retour.put("target_name", target_nameSetter);
