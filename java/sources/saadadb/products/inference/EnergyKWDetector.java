@@ -86,21 +86,19 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws Exception
 	 */
 	private boolean mapCollectionSpectralCoordinateAuto() throws Exception {	
-		spectralCoordinate = new SpectralCoordinate(1, 1
-				,SpectralCoordinate.getDispersionCode(Database.getSpect_type())
-				, Database.getSpect_unit());
+		spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
 		boolean retour = ( this.findSpectralCoordinateByUCD() ||  this.findSpectralCoordinateByKW() || this.findSpectralCoordinateByWCS() ||
 				              this.findSpectralCoordinateInPixels());
 		if( this.priority == PriorityMode.LAST ) {
 			if( this.readUnit == null || this.readUnit.length() == 0) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
-				spectralCoordinate.setOrgUnit(this.defaultUnit);
+				spectralCoordinate.setMappedUnit(this.defaultUnit);
 			} else {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
-				spectralCoordinate.setOrgUnit(this.readUnit);
+				spectralCoordinate.setMappedUnit(this.readUnit);
 			}
 		}
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getOrgUnit());
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
 		return retour;
 	}
 
@@ -147,7 +145,7 @@ public class EnergyKWDetector extends KWDetector {
 	private boolean findSpectralCoordinateByWCS() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in WCS keywords");
 		boolean retour =  spectralCoordinate.convertWCS(this.tableAttributeHandler);
-		this.readUnit = this.spectralCoordinate.getOrgUnit();
+		this.readUnit = this.spectralCoordinate.getMappedUnit();
 		if( retour )
 			this.detectionMessage = spectralCoordinate.detectionMessage;
 		return retour;

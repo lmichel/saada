@@ -34,15 +34,33 @@ public abstract class PipelineParser {
 	 * @return
 	 */
 	protected AttributeHandler getAttributeHandler(String key){
-		AttributeHandler retour = this.attributeHandlers.get(key);
-		if( retour == null ) {
-			 retour = this.attributeHandlers.get("_" + key.toLowerCase());
-				if( retour == null && Messenger.debug_mode)
+		for( AttributeHandler ah: this.attributeHandlers.values() ){
+			if( key.equals(ah.getNameattr()) ||  key.equals(ah.getNameorg()) ) {
+				 return ah;
+			}
+		}
+		if( Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Missing keyword " + key + " in product identified as " + this.getClass().getName());
-		} 
-		return retour;
-		
+		return null;
 	}
+	/**
+	 * Returns a ColumnSetter ready to be used set with the value/unit of the AH matching the key
+	 * @param key
+	 * @return
+	 */
+	protected ColumnSetter getColmumnSetter(String key){
+		AttributeHandler ah = this.getAttributeHandler(key);
+		if( ah == null ){
+			return new ColumnSetter();
+		} else {
+			ColumnSetter cs = new ColumnSetter();
+			cs.setByWCS(ah.getValue(), false);
+			cs.setUnit(ah.getUnit());
+			cs.completeMessage("Issued from the knowledge base");
+			return cs;
+		}
+	}
+	
 	/**
 	 * @param key: supposed to be a nameOrg
 	 * @return
@@ -55,6 +73,19 @@ public abstract class PipelineParser {
 		}
 		return SaadaConstant.DOUBLE;
 	}
+	/**
+	 * @param key supposed to be a nameOrg
+	 * @return
+	 * @throws IgnoreException
+	 */
+	protected String getStringValue(String key) throws IgnoreException{
+		try {
+			return this.getAttributeHandler(key).getValue();
+		} catch (Exception e) {
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e)		;
+		}
+		return SaadaConstant.STRING;
+	}
 
 	/*
 	 * Observation axis
@@ -66,6 +97,9 @@ public abstract class PipelineParser {
 		return new ColumnSetter();
 	}
 	public ColumnSetter getFacilityName() throws SaadaException {
+		return new ColumnSetter();
+	}
+	public ColumnSetter getExposureName() throws SaadaException {
 		return new ColumnSetter();
 	}
 	public ColumnSetter getInstrumentName() throws SaadaException {
@@ -101,9 +135,6 @@ public abstract class PipelineParser {
 	public ColumnSetter getRegion() throws SaadaException {
 		return new ColumnSetter();
 	}
-	public ColumnSetter getResPower() throws SaadaException {
-		return new ColumnSetter();
-	}
 	/*
 	 * Energy axis
 	 */
@@ -116,16 +147,19 @@ public abstract class PipelineParser {
 	public ColumnSetter getEUnit() throws SaadaException {
 		return new ColumnSetter();
 	}
+	public ColumnSetter getResPower() throws SaadaException {
+		return new ColumnSetter();
+	}
 	/*
 	 * time axis
 	 */
 	public ColumnSetter getTMin() throws SaadaException {
 		return new ColumnSetter();
 	}
-	public ColumnSetter getExpTime() throws SaadaException {
+	public ColumnSetter getTMax() throws SaadaException {
 		return new ColumnSetter();
 	}
-	public ColumnSetter getExposureName() throws SaadaException {
+	public ColumnSetter getExpTime() throws SaadaException {
 		return new ColumnSetter();
 	}
 	/*

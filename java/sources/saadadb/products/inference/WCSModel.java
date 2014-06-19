@@ -717,7 +717,7 @@ public class WCSModel {
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
-					asc.setByWCS(String.valueOf(this.CRVAL[axe]), false);
+					asc.setByWCS(this.CRVAL[axe].getValue(), false);
 					asc.completeMessage("Center asc axe #" + axe);
 				} catch (Exception e) {
 					asc.completeMessage(e.getMessage());
@@ -725,7 +725,7 @@ public class WCSModel {
 			}
 			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
 				try {
-					dec.setByWCS(String.valueOf(this.CRVAL[axe]), false);
+					dec.setByWCS(this.CRVAL[axe].getValue(), false);
 					dec.completeMessage("Center dec axe #" + axe);
 				} catch (Exception e) {
 					dec.completeMessage(e.getMessage());
@@ -760,12 +760,12 @@ public class WCSModel {
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
-					r1 = Math.abs(this.getMaxValue( axe) - this.getMinValue( axe)/this.NAXISi[axe]);
+					r1 = Math.abs((this.getMaxValue( axe) - this.getMinValue( axe))/this.NAXISi[axe]);
 				} catch (Exception e) {	}
 			}
 			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
 				try {
-					r2 =  Math.abs(this.getMaxValue( axe) - this.getMinValue( axe)/this.NAXISi[axe]);
+					r2 =  Math.abs((this.getMaxValue( axe) - this.getMinValue( axe))/this.NAXISi[axe]);
 				} catch (Exception e) {	
 					retour.completeMessage(e.getMessage());
 				}

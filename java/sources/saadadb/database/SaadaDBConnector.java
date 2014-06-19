@@ -12,6 +12,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import saadadb.enums.DispersionType;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -40,7 +41,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	protected Astroframe astroframe;
 
 	protected String spect_unit;
-	protected String spect_type;
+	protected DispersionType spect_type;
 	protected String flux_unit;
 	protected int healpix_level;
 	protected  String jdbc_url = null;	
@@ -143,7 +144,10 @@ public class SaadaDBConnector extends DefaultHandler {
 				coord_sys  = rs.getString("coord_sys");
 				coord_equi = rs.getDouble("coord_equi");   	
 				spect_unit = rs.getString("spect_coord_unit");
-				spect_type = rs.getString("spect_coord_type");
+				String s = rs.getString("spect_coord_type");
+				spect_type = (s.equals("WAVELENGTH"))? DispersionType.WAVELENGTH
+						  :  (s.equals("ENERGY"))? DispersionType.ENERGY
+						  :  (s.equals("FREQUENCY"))? DispersionType.FREQUENCY: DispersionType.CHANNEL;
 				flux_unit  = rs.getString("spect_flux_unit");
 				try {
 					healpix_level = rs.getInt("healpix_level");
@@ -289,7 +293,7 @@ public class SaadaDBConnector extends DefaultHandler {
 	/**
 	 * @return
 	 */
-	public String getSpect_type() {
+	public DispersionType getSpect_type() {
 		return spect_type;
 	}
 	/**
@@ -395,7 +399,11 @@ public class SaadaDBConnector extends DefaultHandler {
 		str = elementName;
 
 		if(elementName.equals("abscisse")){
-			this.spect_type = attrs.getValue("type").trim();
+			String s = attrs.getValue("type").trim();
+			this.spect_type = (s.equals("WAVELENGTH"))? DispersionType.WAVELENGTH
+					  :  (s.equals("ENERGY"))? DispersionType.ENERGY
+					  :  (s.equals("FREQUENCY"))? DispersionType.FREQUENCY: DispersionType.CHANNEL;
+
 			this.spect_unit = attrs.getValue("unit").trim();
 		}
 	}

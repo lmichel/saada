@@ -39,6 +39,7 @@ public class SpaceKWDetector extends KWDetector{
 	public static final int FRAME_FOUND = 1;
 	public static final int POS_KW_FOUND = 2;
 	public static final int WCS_KW_FOUND = 4;
+	public static final int ERR_KW_FOUND = 8;
 	private int status=0;
 	private WCSModel wcsModel;
 	private boolean isInit = false;
@@ -366,8 +367,12 @@ public class SpaceKWDetector extends KWDetector{
 			}
 			this.ascension_kw = center[0];
 			this.declination_kw = center[1];
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Take " + center[0].getValue() + " " + center[1].getValue() + " as image center");				
 			this.err_maj = resolution;
 			this.err_min = resolution;
+			this.err_angle = new ColumnSetter();
+			this.err_angle.setByWCS("0", false);
 			double raMin = Double.parseDouble(ascRange[0].getValue());
 			double raMax = Double.parseDouble(ascRange[1].getValue());
 			double decMin = Double.parseDouble(decRange[0].getValue());
@@ -396,15 +401,18 @@ public class SpaceKWDetector extends KWDetector{
 			ah.setNameorg("s_region");
 			ah.setUnit("deg");
 			ah.setUtype("Char.SpatialAxis.Coverage.Support.Area");
-			ah.setValue(raMin + " " + decMax + " " 
-					+ raMax + " " + decMax + " "
-					+ raMax + " " + decMin + " "
-					+ raMin + " " + decMin);
+			double[] pts = new double[8];
+			pts[0] = raMin; pts[1] = decMax; 
+			pts[2] = raMax; pts[3] = decMax; 
+			pts[4] = raMax; pts[5] = decMin; 
+			pts[6] = raMin; pts[7] = decMin; 
 			this.region = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
-			this.region.completeMessage("Match the WCS rectangle");																			
+			this.region.completeMessage("Match the WCS rectangle");			
+			this.region.storedValue = pts;
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " +ah.getValue() + " as region");
+				Messenger.printMsg(Messenger.DEBUG, "Take " + (pts.length/2)  + " points for the region");
 			this.status |= WCS_KW_FOUND;
+			this.status |= POS_KW_FOUND;
 
 		} else {
 			Messenger.printMsg(Messenger.DEBUG, "WCS keywords not found");				
@@ -414,6 +422,12 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws SaadaException
 	 */
 	private void lookForError() throws SaadaException {
+		ColumnSetter eM=null, em=null, ea=null;
+		if( this.err_maj.byWcs() ) {
+			eM = this.err_maj;
+			em = this.err_min;
+			ea = this.err_angle;
+		}
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
 		this.err_maj = this.searchByUcd(RegExp.ERROR_MAJ_UCD);
@@ -424,6 +438,17 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
 		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
 		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
+		
+		if( this.err_maj.notSet() && eM != null ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Keep WCS error values");
+			this.err_maj = eM;
+			this.err_min = em;
+			if( this.err_angle.notSet() && ea != null ) {
+				this.err_angle = ea;
+			}
+
+		}
 	}
 	/**
 	 * @throws SaadaException 

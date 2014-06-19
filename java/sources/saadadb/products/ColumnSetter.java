@@ -11,7 +11,7 @@ import saadadb.meta.AttributeHandler;
  * @author michel
  * @version $Id$
  */
-public final class ColumnSetter  {
+public final class ColumnSetter implements Cloneable {
 	/**
 	 * Description of the column to be set 
 	 */
@@ -165,7 +165,7 @@ public final class ColumnSetter  {
 	public void setByValue(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
-		this.completeMessage("value <" + attributeHandler.getValue()+ ">");
+		this.completeMessage("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
@@ -185,8 +185,8 @@ public final class ColumnSetter  {
 	 */
 	public void setByWCS(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_WCS;
-		this.completeMessage("WCS value <" + attributeHandler.getValue()+ ">");
 		this.attributeHandler.setValue(value);
+		this.completeMessage("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
@@ -197,7 +197,7 @@ public final class ColumnSetter  {
 	public void setByPixels(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_PIXELS;
 		this.attributeHandler.setValue(value);
-		this.completeMessage("pixel value <" + attributeHandler.getValue()+ ">");
+		this.completeMessage("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
@@ -208,7 +208,7 @@ public final class ColumnSetter  {
 	public void setByTabeColumn(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
-		this.completeMessage("content of the column <" + attributeHandler.getValue()+ ">");
+		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
@@ -219,6 +219,17 @@ public final class ColumnSetter  {
 	public void setBySaada(){
 		this.setMode = ColumnSetMode.BY_SAADA;
 		this.attributeHandler.setValue(null);
+	}
+	/**
+	 * Stores value/unit within the attribute handler without changing the mode.
+	 * storedValue is also set with value
+	 * @param value
+	 * @param unit
+	 */
+	public void setValue(double value, String unit){
+		this.attributeHandler.setValue(String.valueOf(value));
+		this.attributeHandler.setUnit(unit);
+		this.storedValue = value;
 	}
 	/**
 	 * 
@@ -258,6 +269,9 @@ public final class ColumnSetter  {
 	}
 	public boolean notSet() {
 		return (this.setMode == ColumnSetMode.NOT_SET);
+	}
+	public void setUnit(String unit) {
+		this.attributeHandler.setUnit(unit);
 	}
 	/**
 	 * @return
@@ -307,6 +321,25 @@ public final class ColumnSetter  {
 			   (setMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
 			   (setMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
 	}
+	
+	/**
+	 * Returns a clone of the current instance but with value/unit changed
+	 * and a message mentioning the conversion 
+	 * @param value
+	 * @param unit
+	 * @return
+	 */
+	public ColumnSetter getConverted(double value, String unit) {
+		ColumnSetter retour;
+		try {
+			retour = (ColumnSetter) this.clone();
+			retour.completeMessage(" Converted to " +  value + unit);
+			retour.setValue(value, unit);
+			return retour;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -315,7 +348,7 @@ public final class ColumnSetter  {
 		+ this.getMode() + " "
 		+ this.message;
 		if( this.storedValue != null )
-			retour += "storedValue=" + this.storedValue;
+			retour += " storedValue=" + this.storedValue;
 		return retour;
 	}
 }
