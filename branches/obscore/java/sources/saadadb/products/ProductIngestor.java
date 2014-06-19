@@ -134,10 +134,10 @@ class ProductIngestor {
 		this.saadaInstance.setAccess_format(this.product.mimeType);
 		this.saadaInstance.setDate_load(new java.util.Date().getTime());
 		this.saadaInstance.setAccess_estsize(this.product.length());
-		setField("target_name"    , this.product.targetNameSetter);
-		setField("instrument_name", this.product.instrumentNameSetter);
-		setField("facility_name"  , this.product.facilityNameSetter);
-		setField("obs_collection" , this.product.collectionSetter);
+		setField("target_name"    , this.product.target_nameSetter);
+		setField("instrument_name", this.product.instrument_nameSetter);
+		setField("facility_name"  , this.product.facility_nameSetter);
+		setField("obs_collection" , this.product.obs_collectionSetter);
 
 	}
 	/**
@@ -217,92 +217,73 @@ class ProductIngestor {
 	 */
 	protected void setPositionFields(int number) throws Exception {
 		if( this.product.astroframe != null && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
-			String ra_val;
-			/*
-			 * Position values can either be read in keyword or be constants values
-			 */
-			if( this.product.s_raSetter.byValue() ) {
-				ra_val = this.product.s_raSetter.getValue();
-//			} else if( this.product.s_ra_ref.notSet() ) {
-//				this.product.s_ra_ref.setByWCS(Double.toString(this.product.energyKWDetector.getRaWCSCenter()), false);
-//				this.product.s_ra_ref.completeMessage("taken from WCS CRVAL");
-//				ra_val = this.product.s_ra_ref.getValue();
-			} else {
-				ra_val = this.product.s_raSetter.getValue().replaceAll("'", "");
-			}
-			if( this.product.s_raSetter.byKeyword() && this.product.s_raSetter.getComment().matches(".*(?i)(hour).*")) {
-				try {
-					ra_val = Double.toString(Double.parseDouble(ra_val)*15);
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_raSetter.getComment() + "): convert in deg");
-				} catch(Exception e){
-					this.product.s_raSetter.completeMessage("cannot convert " + ra_val + " from hours to deg");
-					ra_val = "";
-				}
-			}
-			String dec_val;
-			if( this.product.s_decSetter.byValue() ) {
-				dec_val = this.product.s_decSetter.getValue();
-//			} else if( this.product.s_dec_ref.notSet() ) {
-//				this.product.s_dec_ref.setByWCS(Double.toString(this.product.energyKWDetector.getDecWCSCenter()), false);
-//				this.product.s_dec_ref.completeMessage("taken from WCS CRVAL");
-//				dec_val = this.product.s_dec_ref.getValue();
-			}  else {
-				dec_val = this.product.s_decSetter.getValue().replaceAll("'", "");
-			}
-			/*
-			 * Errors are not set when positions are not set
-			 */
-			if( ra_val == null || ra_val.equals("") || dec_val == null || dec_val.equals("") ||
-					ra_val.equals("Infinity") ||dec_val.equals("Infinity") ||
-					ra_val.equals("NaN") ||dec_val.equals("NaN")  ) {
-				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set: keywords not set");
-				return;
-			} else {
-				try {
-//					Astrocoo acoo;
-//					if( this.product.s_raSetter == this.product.s_decSetter) {
-//						acoo= new Astrocoo(this.product.astroframe, ra_val ) ;
-//					}
-//					/*
-//					 * or in separate columns
-//					 */
-//					else {
-//						acoo= new Astrocoo(this.product.astroframe, ra_val + " " + dec_val) ;
-//					}
-//
-//					double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
-//					double ra = converted_coord[0];
-//					double dec = converted_coord[1];
-//					if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Coordinates converted from <" + acoo.getLon() + "," + acoo.getLat() + " " + this.product.astroframe + "> to <" + ra + "," + dec + " "+  Database.getAstroframe() + ">");				
 
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, acoo.getLon() + "," + acoo.getLat() + " converted " + ra + "," + dec);
-					if(Double.isNaN(ra))
-						this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
-					else
-						this.saadaInstance.s_ra = ra;
-					if(Double.isNaN(dec))
-						this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;
-					else
-						this.saadaInstance.s_dec = dec;
-					if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
-						this.saadaInstance.calculSky_pixel_csa();
-						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Native Coordinates <" + ra_val + "," + dec_val 
-								+ "> set to <" + this.saadaInstance.s_ra + "," + this.saadaInstance.s_dec + ">" );
-					} else {
-						if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
+			try {
+				Astrocoo acoo;
+				/*
+				 * Convert coordinates
+				 */
+				if( this.product.s_raSetter.byValue() ) {
+					this.product.s_raSetter.setValue(this.product.s_raSetter.getValue().replaceAll("'", ""));
+				}
+				if( this.product.s_raSetter.byKeyword() && this.product.s_raSetter.getComment().matches(".*(?i)(hour).*")) {
+					try {
+						this.product.s_raSetter = this.product.s_raSetter.getConverted(Double.parseDouble(this.product.s_raSetter.getValue())*15, "deg");
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_raSetter.getComment() + "): convert in deg");
+					} catch(Exception e){
+						this.product.s_raSetter = new ColumnSetter();
+						this.product.s_raSetter.completeMessage("cannot convert " + this.product.s_raSetter.getValue() + " from hours to deg");
 					}
-					this.setPosErrorFields(number);
-				} catch( ParseException e ) {
-					Messenger.printMsg(Messenger.TRACE, "Error while parsing the position " + e.getMessage());
-					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
-					this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
+				}
+				if( this.product.s_decSetter.byValue() ) {
+					this.product.s_decSetter.setValue(this.product.s_decSetter.getValue().replaceAll("'", ""));
 				}
 
-			} // if position really found
-		} //if position mapped
-	}
+				if( this.product.s_raSetter == this.product.s_decSetter) {
+					acoo= new Astrocoo(this.product.astroframe,this.product.s_raSetter.getValue() ) ;
+				} else {
+					acoo= new Astrocoo(this.product.astroframe, this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue()) ;
+				}
+				double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+				double ra = converted_coord[0];
+				double dec = converted_coord[1];
+				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString());
+				this.product.s_decSetter =  this.product.s_decSetter.getConverted(dec, Database.getAstroframe().toString());
+				if( this.product.s_regionSetter.storedValue  != null ) {
+					String stc = "Polygon " + Database.getAstroframe();
+					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
+					for( int i=0 ; i<(pts.length/2) ; i++ ) {
+						converted_coord = Coord.convert(this.product.astroframe, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
+						stc += " " +converted_coord[0] + " " + converted_coord[1];
+					}
+					this.product.s_regionSetter.setValue(stc);
+					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+				}
+
+				if(this.product.s_raSetter.notSet())
+					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
+				else 
+					this.saadaInstance.s_ra = ra;
+				if(this.product.s_raSetter.notSet())
+					this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;
+				else
+					this.saadaInstance.s_dec = dec;
+				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
+					this.saadaInstance.calculSky_pixel_csa();
+				} else {
+					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
+				}
+				this.setPosErrorFields(number);
+			} catch( ParseException e ) {
+				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
+				this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
+				this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
+			}
+
+		} // if position really found
+	} //if position mapped
+
 
 	/**
 	 * Set all fields related to the position error at collection level
@@ -312,7 +293,7 @@ class ProductIngestor {
 	 */
 	protected void setPosErrorFields(int number) throws Exception {
 		String error_unit = this.product.mapping.getSpaceAxisMapping().getErrorUnit();
-		if( this.product.errorMinSetter != null &&  error_unit != null ){
+		if( this.product.error_minSetter != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
 			/*
 			 * Errors are always stored in degrees in Saada
@@ -328,25 +309,25 @@ class ProductIngestor {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;
 			}
-			if( this.product.errorAngleSetter == null ) {
+			if( this.product.error_angleSetter == null ) {
 				angle = 90.0;
 			} else {
-				angle = Double.parseDouble(this.product.errorAngleSetter.getValue());				
+				angle = Double.parseDouble(this.product.error_angleSetter.getValue());				
 			}
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( this.product.errorMinSetter == null && this.product.errorMajSetter != null ) {
-				maj_err = convert*Double.parseDouble(this.product.errorMajSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.errorMajSetter.getValue());
+			if( this.product.error_minSetter == null && this.product.error_majSetter != null ) {
+				maj_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
+				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( this.product.errorMinSetter != null && this.product.errorMajSetter == null ) {
-				maj_err = convert*Double.parseDouble(this.product.errorMinSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.errorMinSetter.getValue());
+			} else if( this.product.error_minSetter != null && this.product.error_majSetter == null ) {
+				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
+				min_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( this.product.errorMinSetter != null && this.product.errorMajSetter != null ) {
-				maj_err = convert*Double.parseDouble(this.product.errorMinSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.errorMajSetter.getValue());
+			} else if( this.product.error_minSetter != null && this.product.error_majSetter != null ) {
+				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
+				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
 			}
 		} else {
@@ -403,9 +384,9 @@ class ProductIngestor {
 	 * @throws SaadaException 
 	 */
 	public void loadAttrExtends() throws SaadaException {
-		if( this.product.extended_attributes_ref != null ) {
-			for( String ext_att_name: this.product.extended_attributes_ref.keySet() ) {
-				this.setField(ext_att_name, this.product.extended_attributes_ref.get(ext_att_name));
+		if( this.product.extended_attributesSetter != null ) {
+			for( String ext_att_name: this.product.extended_attributesSetter.keySet() ) {
+				this.setField(ext_att_name, this.product.extended_attributesSetter.get(ext_att_name));
 			}
 		}
 	}

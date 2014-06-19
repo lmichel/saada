@@ -245,6 +245,15 @@ public final class ColumnSetter implements Cloneable {
 		this.setMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 	}
+	/**
+	 * Set the value as a string  into the AttributeHandler and keep the double value as the storedValue
+	 * @param value
+	 */
+	public void setValue(double value){
+		this.setMode = ColumnSetMode.BY_VALUE;
+		this.attributeHandler.setValue(String.valueOf(value));
+		this.storedValue = value;
+	}
 	
 	/*
 	 * getters for the mode used to set the attribute
