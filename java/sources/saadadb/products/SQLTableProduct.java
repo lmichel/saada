@@ -1,12 +1,15 @@
 package saadadb.products;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
@@ -15,6 +18,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
 import saadadb.sqltable.SQLQuery;
@@ -131,8 +135,8 @@ public class SQLTableProduct implements DataFile {
 	}
 
 	@Override
-	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category) throws IgnoreException  {
-		return productMap;
+	public Map<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
+		return null;
 	}
 
 	@Override
@@ -170,41 +174,62 @@ public class SQLTableProduct implements DataFile {
 		return null;
 	}
 
+
+
+
 	@Override
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
-			throws SaadaException {
+	public QuantityDetector getQuantityDetector(boolean entryMode,
+			ProductMapping productMapping) throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public TimeKWDetector getTimeKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
-			throws SaadaException {
+	public Map<String, DataFileExtension> getProductMap() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode,
-			PriorityMode priority, String defaultUnit) throws SaadaException {
+	public void bindBuilder(ProductBuilder builder) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<ExtensionSetter> reportOnLoadedExtension() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getCanonicalPath() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getAbsolutePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getParent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long length() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean delete() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

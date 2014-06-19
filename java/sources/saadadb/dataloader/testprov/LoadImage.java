@@ -6,6 +6,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.Loader;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.util.Messenger;
@@ -34,7 +35,7 @@ public class LoadImage {
 					,"-tmax=12 03 2013" 		
 					, "Obscore"});
 
-			ProductBuilder product = new Image2DBuilder(new File("/home/michel/Desktop/ADASS2008/data_sample/imagesXMM/P0105070101EPX000OIMAGE8000.FIT")
+			ProductBuilder product = new Image2DBuilder(new FitsDataFile("/home/michel/Desktop/ADASS2008/data_sample/imagesXMM/P0105070101EPX000OIMAGE8000.FIT")
 			, new ProductMapping("mapping", ap));
 			product.initProductFile();
 			product.printReport();

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -13,6 +14,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
 
@@ -115,40 +117,6 @@ public class AnyFile extends File implements DataFile {
 		return null;
 	}
 
-	@Override
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TimeKWDetector getTimeKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
@@ -171,6 +139,13 @@ public class AnyFile extends File implements DataFile {
 	@Override
 	public Map<String, List<AttributeHandler>> getProductMap(int category)
 			throws IgnoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuantityDetector getQuantityDetector(boolean entryMode,
+			ProductMapping productMapping) throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}

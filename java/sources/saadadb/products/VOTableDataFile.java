@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -18,6 +19,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
 import saadadb.util.ChangeKey;
@@ -543,7 +545,7 @@ public class VOTableDataFile extends File implements DataFile {
 	 */
 	public VOTableDataFile(String filename) throws Exception{
 		super(filename);
-		this.product = new ProductBuilder(new File(filename), null);
+		//this.product = new ProductBuilder(new File(filename), null);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
 		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	
 		currentTR = parser.getNextTR();       
@@ -563,7 +565,7 @@ public class VOTableDataFile extends File implements DataFile {
 	 * @throws AbortException 
 	 */
 	public VOTableDataFile(ProductBuilder product) throws Exception{		
-		super(product.file.getAbsolutePath());
+		super(product.getName());
 		this.product = product;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
 		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);		
@@ -727,7 +729,7 @@ public class VOTableDataFile extends File implements DataFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrameForTable()
 	 */
-	public void setSpaceFrameForTable() throws FatalException{
+	public void setSpaceFrameForTable() throws SaadaException{
 		LinkedHashMap<String, AttributeHandler> lhm = new LinkedHashMap<String, AttributeHandler>();	
 		this.setKWEntry(lhm);
 		/*
@@ -755,7 +757,7 @@ public class VOTableDataFile extends File implements DataFile {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrame()
 	 */
-	public void setSpaceFrame() throws FatalException{
+	public void setSpaceFrame() throws SaadaException{
 		LinkedHashMap<String, AttributeHandler> lhm = this.createTableAttributeHandler();
 		/*
 		 * Try first to take the resource coosys
@@ -819,44 +821,36 @@ public class VOTableDataFile extends File implements DataFile {
 	}
 
 	@Override
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TimeKWDetector getTimeKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode)
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public Map<String, ArrayList<AttributeHandler>> getProductMap(int category)
+	public Map<String, List<AttributeHandler>> getProductMap(int category)
 			throws IgnoreException {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public QuantityDetector getQuantityDetector(boolean entryMode,
+			ProductMapping productMapping) throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, DataFileExtension> getProductMap() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void bindBuilder(ProductBuilder builder) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<ExtensionSetter> reportOnLoadedExtension() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

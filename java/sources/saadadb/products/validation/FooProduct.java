@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.json.simple.JSONObject;
 
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.DataFileExtensionType;
 import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
@@ -20,6 +21,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.inference.EnergyKWDetector;
 import saadadb.products.inference.ObservableKWDetector;
 import saadadb.products.inference.ObservationKWDetector;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.products.inference.TimeKWDetector;
 
@@ -143,42 +145,8 @@ public class FooProduct implements DataFile {
 			throws SaadaException {
 		return this.attributeHandlers;
 	}
-	@Override
-	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new ObservationKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new ObservationKWDetector(this.getAttributeHandler());
-		}		
-	}
-	@Override
-	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new SpaceKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new SpaceKWDetector(this.getAttributeHandler());
-		}		
-	}
-	@Override
-	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException{
-		return new EnergyKWDetector(this, priority, defaultUnit);		
-	}
-	@Override
-	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new ObservableKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new ObservableKWDetector(this.getAttributeHandler());
-		}		
-	}
-	@Override
-	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
-		if( entryMode ){
-			return  new TimeKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-		} else {
-			return new TimeKWDetector(this.getAttributeHandler());
-		}		
-	}
+
+
 	@Override
 	public Map<String, List<AttributeHandler>> getProductMap(int category)
 			throws IgnoreException {
@@ -234,6 +202,13 @@ public class FooProduct implements DataFile {
 	public boolean delete() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public QuantityDetector getQuantityDetector(boolean entryMode,
+			ProductMapping productMapping) throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	
