@@ -35,7 +35,7 @@ public class productReport {
 			case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(ap.getFilename()))
 					, new ProductMapping("mapping", ap));
 			break;
-			case Category.IMAGE: product = new Image2DBuilder((new File(ap.getFilename()))
+			case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(ap.getFilename()))
 					, new ProductMapping("mapping", ap));
 			break;
 			}

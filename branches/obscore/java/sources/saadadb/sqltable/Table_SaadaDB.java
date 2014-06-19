@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import saadadb.database.Database;
+import saadadb.enums.DispersionType;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -36,6 +37,13 @@ public class Table_SaadaDB extends SQLTable {
 		        + "description text "
 				, null
 				, false);
+		String stype;
+		switch(Database.getConnector().getSpect_type()){
+		case WAVELENGTH: stype = "WAVELENGTH"; break;
+		case ENERGY: stype = "ENERGY"; break;
+		case FREQUENCY: stype = "FREQUENCY"; break;
+		default: stype = "CHANNEL"; break;
+		}
 		SQLTable.addQueryToTransaction(
 				Database.getWrapper().getInsertStatement("saadadb",
 						new String[] {"name", "root_dir" , "repository", "webapp_home", "url_root" , "jdbc_driver",
@@ -54,7 +62,7 @@ public class Table_SaadaDB extends SQLTable {
 						, Merger.quoteString(Database.getConnector().getCoord_sys())
 						, Double.toString(Database.getConnector().getCoord_equi())
 						, Merger.quoteString(Database.getConnector().getSpect_unit())
-						, Merger.quoteString(Database.getConnector().getSpect_type())
+						, Merger.quoteString(stype)
 						, Merger.quoteString(Database.getConnector().getFlux_unit())
 						, Integer.toString(Database.getConnector().getHealpix_level())
 						, Merger.quoteString(Database.getConnector().getDescription() )}

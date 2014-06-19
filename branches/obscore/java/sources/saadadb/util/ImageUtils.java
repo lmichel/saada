@@ -446,8 +446,8 @@ public abstract class ImageUtils {
 	 */
 	static public void buildTileFile(double ra, double dec, double box_size_ra, double box_size_dec, String source_file, ProductMapping cdh, String dest_file) throws Exception{
 		File sf = new File(source_file);
-		Image2DBuilder img  = new Image2DBuilder(sf,cdh);
-		img.bindDataFile();
+		Image2DBuilder img  = new Image2DBuilder(null,cdh);
+		img.bindDataFile(null);
 		Map<String, AttributeHandler> ahs = img.getProductAttributeHandler();
 		Image2DCoordinate i2c = new Image2DCoordinate();
 		i2c.setImage2DCoordinate(ahs);
