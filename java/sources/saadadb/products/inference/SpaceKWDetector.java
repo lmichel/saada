@@ -391,11 +391,11 @@ public class SpaceKWDetector extends KWDetector{
 			if( fov > 180 ) fov = 360 -fov;
 			if( Math.abs(decMax - decMin) < fov ){
 				fov = Math.abs(decMax - decMin);
-				ah.setValue(Double.toString(fov));
+				ah.setValue(fov);
 				this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov.completeMessage("smaller image size taken (height)");							
 			} else {
-				ah.setValue(Double.toString(fov));
+				ah.setValue(fov);
 				this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov.completeMessage("smaller image size taken (width)");														
 			}

@@ -22,6 +22,7 @@ import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.util.SaadaConstant;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 
@@ -58,6 +59,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 	private String unit = "";
 	private String comment = "";
 	public String value = "";
+	public double numValue = SaadaConstant.DOUBLE;
 	public String format = "";
 	// not stored in the DB currently but may be useful to feed some JSON message
 	public RangeValue range;
@@ -388,7 +390,13 @@ public class AttributeHandler implements Serializable , Cloneable{
 		if(value != null){
 			this.value = value.trim();
 		}
+		this.numValue = SaadaConstant.DOUBLE;
 	}
+	public void setValue(double value){
+			this.numValue = value;
+		this.value = String.valueOf(value);
+	}
+	
 
 	public String getNameorg(){
 		return this.nameorg;
@@ -400,6 +408,9 @@ public class AttributeHandler implements Serializable , Cloneable{
 
 	public String getValue(){
 		return this.value;
+	}
+	public double getNumValue(){
+		return this.numValue;
 	}
 
 	public String getUcd(){
