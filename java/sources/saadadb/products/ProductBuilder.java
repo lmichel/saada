@@ -33,7 +33,6 @@ import saadadb.prdconfiguration.CoordSystem;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
-import saadadb.products.inference.SpectralCoordinate;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -151,7 +150,7 @@ public class ProductBuilder {
 		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
-		//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@à
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@àà
 		this.observationMappingPriority = PriorityMode.FIRST;
 		this.spaceMappingPriority =PriorityMode.FIRST;
 		this.energyMappingPriority = PriorityMode.FIRST;
@@ -161,7 +160,6 @@ public class ProductBuilder {
 			this.bindDataFile(file);
 			this.mapCollectionAttributes();
 		} catch (Exception e) {
-			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		}	
 
@@ -616,8 +614,8 @@ public class ProductBuilder {
 			Messenger.printMsg(Messenger.TRACE, "Take <" + ah.getValue() + "> as name");
 			return;			
 		}
-
 	}
+	
 	/**
 	 * @throws Exception
 	 */
@@ -627,72 +625,55 @@ public class ProductBuilder {
 		switch(this.energyMappingPriority){
 		case ONLY:		
 			PriorityMessage.only("Energy");
-			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
-				this.em_minSetter = new ColumnSetter();
-				this.em_maxSetter = new ColumnSetter();
-				this.em_res_powerSetter = new ColumnSetter();
-			}
+			this.mapCollectionSpectralCoordinateFromMapping() ;
 			break;
 
 		case FIRST:
 			PriorityMessage.first("Energy");
-			if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
-				ColumnSetter qdMin = this.quantityDetector.getEMin();
-				ColumnSetter qdMax = this.quantityDetector.getEMax();
-				ColumnSetter qdUnit = this.quantityDetector.getEUnit();
-				SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
-				spectralCoordinate.setMappedUnit(qdUnit.getValue());
-				spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
-				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
-				if( spectralCoordinate.convert() ) {
-					this.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
-					this.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
-					this.x_unit_orgSetter = qdUnit;
-					this.em_res_powerSetter =  quantityDetector.getResPower();						
-				} else {
-					this.em_minSetter = new ColumnSetter();
-					this.em_maxSetter = new ColumnSetter();
-					this.em_res_powerSetter = new ColumnSetter();
-				}
+			this.mapCollectionSpectralCoordinateFromMapping();
+			if( this.em_minSetter.notSet() || this.em_maxSetter.notSet() ) {
+				this.em_minSetter = this.quantityDetector.getEMin();
+				this.em_maxSetter = this.quantityDetector.getEMax();				
 			}
-			if( !this.isAttributeHandlerMapped(this.em_res_powerSetter) ) {
-				this.em_res_powerSetter = this.getMappedAttributeHander(this.mapping.getEnergyAxisMapping().getColumnMapping("em_res_power"));
+			if( this.x_unit_orgSetter.notSet()  ) {
+				this.x_unit_orgSetter = this.quantityDetector.getEUnit();
+			}
+			if( this.em_res_powerSetter.notSet()  ) {
+				this.em_res_powerSetter = this.quantityDetector.getResPower();
 			}
 			break;
 
 		case LAST:
 			PriorityMessage.last("Energy");
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Energy mapping priority LAST: KWs will first be inefered and then mapped keywords will be searched");
+			this.mapCollectionSpectralCoordinateFromMapping();
 			ColumnSetter qdMin = this.quantityDetector.getEMin();
 			ColumnSetter qdMax = this.quantityDetector.getEMax();
 			ColumnSetter qdUnit = this.quantityDetector.getEUnit();
-			SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
-			spectralCoordinate.setMappedUnit(qdUnit.getValue());
-			spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
-			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
-			if( !spectralCoordinate.convert() ) {
-				if( !this.mapCollectionSpectralCoordinateFromMapping() ) {
-					this.em_minSetter = new ColumnSetter();
-					this.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit());
-					this.em_maxSetter = new ColumnSetter();
-					this.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit());
-				}
+			ColumnSetter qdRPow= this.quantityDetector.getResPower();
+			if( qdMin.notSet() || qdMax.notSet() ) {
+				this.em_minSetter = this.quantityDetector.getEMin();
+				this.em_maxSetter = this.quantityDetector.getEMax();				
 			} else {
-				this.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
-				this.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
+				this.em_minSetter = qdMin;
+				this.em_maxSetter = qdMax;				
+			}
+			if( qdUnit.notSet()  ) {
+				this.x_unit_orgSetter = this.quantityDetector.getEUnit();
+			} else {
 				this.x_unit_orgSetter = qdUnit;
-				this.em_res_powerSetter =  quantityDetector.getResPower();
 			}
-			if( !this.isAttributeHandlerMapped(this.em_res_powerSetter) ) {
-				this.em_res_powerSetter = this.getMappedAttributeHander(this.mapping.getEnergyAxisMapping().getColumnMapping("em_res_power"));
+			if( qdRPow.notSet()  ) {
+				this.x_unit_orgSetter = this.quantityDetector.getResPower();
+			} else {
+				this.x_unit_orgSetter = qdRPow;
 			}
-			break;
 		}
 		this.traceReportOnAttRef("x_unit_org", this.x_unit_orgSetter);
 		this.traceReportOnAttRef("em_min", this.em_minSetter);
 		this.traceReportOnAttRef("em_max", this.em_maxSetter);
 		this.traceReportOnAttRef("em_res_power", this.em_res_powerSetter);
 	}
+	
 	/**
 	 * @throws Exception
 	 */
@@ -1163,18 +1144,21 @@ public class ProductBuilder {
 	 * @throws Exception 
 	 * 
 	 */
-	private boolean mapCollectionSpectralCoordinateFromMapping() throws Exception {
+	private void mapCollectionSpectralCoordinateFromMapping() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "try to map the Energy axis from mapping");
-		AxisMapping mapping = this.mapping.getEnergyAxisMapping();
-		ColumnMapping sc_col  = mapping.getColumnMapping("dispertion_column");
-		ColumnMapping sc_unit = mapping.getColumnMapping("x_unit_org_csa");
-		this.x_unit_orgSetter = this.getMappedAttributeHander(sc_unit);
+		AxisMapping mapping     = this.mapping.getEnergyAxisMapping();
+		ColumnMapping sc_col    = mapping.getColumnMapping("dispertion_column");
+
+		this.x_unit_orgSetter   = this.getMappedAttributeHander(mapping.getColumnMapping("x_unit_org_csa"));
 		this.em_res_powerSetter = this.getMappedAttributeHander(mapping.getColumnMapping("em_res_power"));
+		this.em_minSetter = new ColumnSetter();
+		this.em_maxSetter = new ColumnSetter();
+
 		if( sc_col.notMapped() ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No mapping given for the dispersion column");
-			return false;
+			return ;
 		} else
 			/*
 			 * The mapping gives numeric values for the spectral range
@@ -1184,28 +1168,13 @@ public class ProductBuilder {
 				if( vals.size() == 2 ) {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Spectral range given as numeric values <" + vals.get(0) + " " + vals.get(1) + ">");
-					SpectralCoordinate spectralCoordinate;
-					if( sc_unit.equals("AutoDetect") ) {
-						spectralCoordinate = new SpectralCoordinate("channel");					
-					} else {
-						spectralCoordinate = new SpectralCoordinate(sc_unit.getValue());					
-					}
-					spectralCoordinate.setOrgMin(Double.parseDouble(vals.get(0)));
-					spectralCoordinate.setOrgMax(Double.parseDouble(vals.get(1)));	
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Spectral unit set as " + spectralCoordinate.getMappedUnit());
-					boolean retour = spectralCoordinate.convert() ;
 					this.em_minSetter = new ColumnSetter();
-					this.em_minSetter.setByValue(Double.toString(spectralCoordinate.getConvertedMin()), true);
+					this.em_minSetter.setByValue(vals.get(0), true);
 					this.em_maxSetter = new ColumnSetter();
-					if( !this.isAttributeHandlerMapped(this.x_unit_orgSetter) ) {
-						spectralCoordinate.setMappedUnit(this.x_unit_orgSetter.getValue());				
-					}
-					return retour;
-				}
-				else {
-					Messenger.printMsg(Messenger.WARNING, "spectral coord. <" + sc_col.getValue() + "> can not be interptreted");						
-					return false;
+					this.em_maxSetter.setByValue(vals.get(1), true);
+				} else {
+					Messenger.printMsg(Messenger.TRACE, "spectral coord. <" + sc_col.getValue() + "> can not be interptreted");						
+					return;
 				}
 			}
 		/*
@@ -1217,31 +1186,23 @@ public class ProductBuilder {
 			String key = ah.getNameorg();
 			if(key.equals(mappedName) ){
 				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
-				SpectralCoordinate spectralCoordinate;
-				if( this.x_unit_orgSetter !=  null ) {
-					spectralCoordinate = new SpectralCoordinate(this.x_unit_orgSetter.getValue());				
-				}
 				/*
 				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
 				 * the unit found in the column description is taken
 				 */
-				else  if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-					spectralCoordinate = new SpectralCoordinate(ah.getUnit());
+				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
 					this.x_unit_orgSetter = new ColumnSetter(ah.getUnit(), true);
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
 				} else {
 					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
-					return false;
+					return;
 				}
-				spectralCoordinate.setOrgMinMax(this.dataFile.getExtrema(key));
-				boolean retour = spectralCoordinate.convert() ;
-				this.em_minSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMin()), true);
-				this.em_maxSetter = new ColumnSetter(Double.toString(spectralCoordinate.getConvertedMax()), true);
-				return retour;
+				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+				return;
 			}
-
 		}
-		return  false;	
+		return ;	
 	}
 
 	/**
@@ -1587,43 +1548,48 @@ public class ProductBuilder {
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_collection", obs_collectionSetter);
-		obs_collectionSetter.storedValue = si.obs_collection;
+		this.obs_collectionSetter.storedValue = si.obs_collection;
 		retour.put("target_name", target_nameSetter);
-		target_nameSetter.storedValue = si.target_name;
+		this.target_nameSetter.storedValue = si.target_name;
 		retour.put("facility_name", facility_nameSetter);
-		facility_nameSetter.storedValue = si.facility_name;
+		this.facility_nameSetter.storedValue = si.facility_name;
 		retour.put("instrument_name", instrument_nameSetter);
-		instrument_nameSetter.storedValue = si.instrument_name;
+		this.instrument_nameSetter.storedValue = si.instrument_name;
 
 		retour.put("s_ra", s_raSetter);
-		s_raSetter.storedValue = si.s_ra;
+		this.s_raSetter.storedValue = si.s_ra;
 		retour.put("s_dec", s_decSetter);
-		s_decSetter.storedValue = si.s_dec;
+		this.s_decSetter.storedValue = si.s_dec;
 		retour.put("error_maj_csa", error_majSetter);
-		error_majSetter.storedValue = si.error_maj_csa;
+		this.error_majSetter.storedValue = si.error_maj_csa;
 		retour.put("error_min_csa", error_minSetter);
-		error_minSetter.storedValue = si.error_min_csa;
+		this.error_minSetter.storedValue = si.error_min_csa;
 		retour.put("error_angle_csa", error_angleSetter);
-		error_angleSetter.storedValue = si.error_angle_csa;
+		this.error_angleSetter.storedValue = si.error_angle_csa;
 		retour.put("s_fov", s_fovSetter);
-		s_fovSetter.storedValue = si.getS_fov();
+		this.s_fovSetter.storedValue = si.getS_fov();
 		retour.put("s_region", s_regionSetter);
-		s_regionSetter.storedValue = si.getS_region();
+		this.s_regionSetter.storedValue = si.getS_region();
 
 		retour.put("em_min", em_minSetter);
-		em_minSetter.storedValue = si.em_min;
+		this.em_minSetter.storedValue = si.em_min;
 		retour.put("em_max", em_maxSetter);
-		em_maxSetter.storedValue = si.em_max;
+		this.em_maxSetter.storedValue = si.em_max;
 		retour.put("em_res_power", em_res_powerSetter);
-		em_res_powerSetter.storedValue = si.em_res_power;
+		this.em_res_powerSetter.storedValue = si.em_res_power;
 
 
 		retour.put("t_max", t_maxSetter);
-		t_maxSetter.storedValue = si.t_max;
+		this.t_maxSetter.storedValue = si.t_max;
 		retour.put("t_min", t_minSetter);
-		t_minSetter.storedValue = si.t_min;
+		this.t_minSetter.storedValue = si.t_min;
 		retour.put("t_exptime", t_exptimeSetter);
-		t_exptimeSetter.storedValue = si.t_exptime;
+		this.t_exptimeSetter.storedValue = si.t_exptime;
+		
+		retour.put("t_min", t_minSetter);
+		this.t_minSetter.storedValue = si.t_min;
+		retour.put("t_exptime", t_exptimeSetter);
+		this.t_exptimeSetter.storedValue = si.t_exptime;
 
 		for( ColumnSetter eah: this.extended_attributesSetter.values()){
 			retour.put(eah.getAttNameOrg(), eah);      	

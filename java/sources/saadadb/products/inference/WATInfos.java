@@ -121,7 +121,7 @@ public class WATInfos {
 	 * @return  return {@link SaadaConstant#INT} if nothing found
 	 * @throws Exception
 	 */
-	public int getDispersionAxes()  throws Exception{
+	public int getDispersionAxe()  throws Exception{
 		for( int i=0 ; i<this.NAXIS ; i++ ){
 			if( this.isWavelength(i) ) {
 				return i;

@@ -180,6 +180,14 @@ public final class ColumnSetter implements Cloneable {
 			this.completeMessage("user mapping");
 		}
 	}
+	public void setByKeyword(String value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_KEYWORD;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
 	/**
 	 * @param value
 	 */

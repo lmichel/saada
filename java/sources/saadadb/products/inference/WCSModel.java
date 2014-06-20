@@ -506,7 +506,7 @@ public class WCSModel {
 	 */
 	public int getDispersionAxe() throws Exception {
 		int retour;
-		if( (retour = this.watInfos.getDispersionAxes()) != SaadaConstant.INT) {
+		if( (retour = this.watInfos.getDispersionAxe()) != SaadaConstant.INT) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "WAP keywords: dispersion axe: " + retour);
 			return retour;

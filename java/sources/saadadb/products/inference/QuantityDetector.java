@@ -164,6 +164,7 @@ public class QuantityDetector {
 			try {
 				return this.energyKWDetector.getResPower();
 			} catch (Exception e) {
+				e.printStackTrace();
 				IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 			}
 		} 
@@ -229,14 +230,22 @@ public class QuantityDetector {
 	public ColumnSetter getObservableUcd() throws SaadaException{
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUcdName()).notSet() ){
-			return this.observableKWDetector.getUcdName();
+			retour = this.observableKWDetector.getUcdName();
+			if( retour.notSet() && !getEUnit().notSet() ) {
+				retour.setByValue("phot.count", false);
+				retour.completeMessage("Value taken by default since the dispersion axis is set");
+			}
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
 	public ColumnSetter getObservableUnit() throws SaadaException{
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).notSet() ){
-			return this.observableKWDetector.getUnitName();
+			retour = this.observableKWDetector.getUnitName();
+			if( retour.notSet() && !getEUnit().notSet() ) {
+				retour.setByValue("count", false);
+				retour.completeMessage("Value taken by default since the dispersion axis is set");
+			}
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 
@@ -244,7 +253,11 @@ public class QuantityDetector {
 	public ColumnSetter getCalibStatus() throws SaadaException{
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
-			return this.observableKWDetector.getCalibStatus();
+			retour = this.observableKWDetector.getCalibStatus();
+			if( retour.notSet() && !getEUnit().notSet() ) {
+				retour.setByValue("2", false);
+				retour.completeMessage("Value taken by default since the dispersion axis is set");
+			}
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}

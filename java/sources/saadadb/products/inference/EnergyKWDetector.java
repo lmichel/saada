@@ -37,7 +37,7 @@ public class EnergyKWDetector extends KWDetector {
 		super(productFile);
 		this.productFile = productFile;
 		if(productMapping != null ) {
-		this.setUnitMode(productMapping);
+			this.setUnitMode(productMapping);
 		}
 	}
 	/**
@@ -85,21 +85,26 @@ public class EnergyKWDetector extends KWDetector {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean mapCollectionSpectralCoordinateAuto() throws Exception {	
-		spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
-		boolean retour = ( this.findSpectralCoordinateByUCD() ||  this.findSpectralCoordinateByKW() || this.findSpectralCoordinateByWCS() ||
-				              this.findSpectralCoordinateInPixels());
-		if( this.priority == PriorityMode.LAST ) {
-			if( this.readUnit == null || this.readUnit.length() == 0) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
-				spectralCoordinate.setMappedUnit(this.defaultUnit);
-			} else {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
-				spectralCoordinate.setMappedUnit(this.readUnit);
+	private boolean mapCollectionSpectralCoordinateAuto() throws SaadaException {	
+		try {
+			spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
+			boolean retour = ( this.findSpectralCoordinateByUCD() ||  this.findSpectralCoordinateByKW() || this.findSpectralCoordinateByWCS() ||
+					this.findSpectralCoordinateInPixels());
+			if( this.priority == PriorityMode.LAST ) {
+				if( this.readUnit == null || this.readUnit.length() == 0) {
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
+					spectralCoordinate.setMappedUnit(this.defaultUnit);
+				} else {
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
+					spectralCoordinate.setMappedUnit(this.readUnit);
+				}
 			}
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Detected range " + spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
+			return retour;
+		} catch (Exception e) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+			return false;
 		}
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
-		return retour;
 	}
 
 	/**
@@ -230,7 +235,7 @@ public class EnergyKWDetector extends KWDetector {
 		}
 		return spectralCoordinate;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws FatalException
@@ -243,36 +248,37 @@ public class EnergyKWDetector extends KWDetector {
 			if( spectralCoordinate == null ){
 				this.mapCollectionSpectralCoordinateAuto();
 			}
-			if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
+			if( spectralCoordinate.getNbBins() != SaadaConstant.INT 
+					&&  this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE &&  this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE) {
 				retour =  new ColumnSetter();
-				retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
+				retour.setByValue(Double.toString(((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMax())/(2*spectralCoordinate.getNbBins()))), false);
 				retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
 				return retour;
 			} 
 			return  new ColumnSetter();
-			
+
 		} else {
 			return retour;
 		}
 	}
-	
-//	/**
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	public ColumnSetter getComputedResPower() throws Exception{
-//		if( spectralCoordinate == null ){
-//			this.mapCollectionSpectralCoordinateAuto();
-//		}
-//		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
-//			ColumnSetter retour =  new ColumnSetter();
-//			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
-//			retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
-//			return retour;
-//		} 
-//		return  new ColumnSetter();
-//	}
-	
+
+	//	/**
+	//	 * @return
+	//	 * @throws Exception
+	//	 */
+	//	public ColumnSetter getComputedResPower() throws Exception{
+	//		if( spectralCoordinate == null ){
+	//			this.mapCollectionSpectralCoordinateAuto();
+	//		}
+	//		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
+	//			ColumnSetter retour =  new ColumnSetter();
+	//			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
+	//			retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
+	//			return retour;
+	//		} 
+	//		return  new ColumnSetter();
+	//	}
+
 	/**
 	 * @return
 	 */
@@ -285,17 +291,38 @@ public class EnergyKWDetector extends KWDetector {
 	public double getDecWCSCenter() {
 		return this.spectralCoordinate.getDecWCSCenter();
 	}
-	public ColumnSetter getEUnit() {
-		// TODO Auto-generated method stub
-		return null;
+	public ColumnSetter getEUnit() throws SaadaException{
+		if( spectralCoordinate == null ){
+			this.mapCollectionSpectralCoordinateAuto();
+		}
+		ColumnSetter retour = new ColumnSetter();
+		if( this.spectralCoordinate.getMappedUnit() != null ){
+			retour.setByValue(String.valueOf(this.spectralCoordinate.getMappedUnit()), false);
+			retour.completeMessage(this.spectralCoordinate.detectionMessage);
+		}
+		return retour;
 	}
-	public ColumnSetter getEMax() {
-		// TODO Auto-generated method stub
-		return null;
+	public ColumnSetter getEMax() throws SaadaException{
+		if( spectralCoordinate == null ){
+			this.mapCollectionSpectralCoordinateAuto();
+		}
+		ColumnSetter retour = new ColumnSetter();
+		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE ){
+			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
+			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
+		}
+		return retour;
 	}
-	public ColumnSetter getEMin() {
-		// TODO Auto-generated method stub
-		return null;
+	public ColumnSetter getEMin() throws SaadaException {
+		if( spectralCoordinate == null ){
+			this.mapCollectionSpectralCoordinateAuto();
+		}
+		ColumnSetter retour = new ColumnSetter();
+		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE ){
+			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
+			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
+		}
+		return retour;
 	}
 
 

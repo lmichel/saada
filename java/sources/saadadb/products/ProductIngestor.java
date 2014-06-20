@@ -21,6 +21,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.Coord;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
@@ -38,6 +39,10 @@ class ProductIngestor {
 	protected SaadaInstance saadaInstance;
 	protected ProductBuilder product;
 
+	/**
+	 * @param product
+	 * @throws Exception
+	 */
 	ProductIngestor(ProductBuilder product) throws Exception {
 		this.product = product;
 		this.buildInstance();
@@ -54,7 +59,6 @@ class ProductIngestor {
 		if( this.product.metaclass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaclass.getName()).newInstance();
 			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaclass.getName());
-			this.setBusinessFields();
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
@@ -63,8 +67,9 @@ class ProductIngestor {
 		this.setSpaceFields();
 		this.setEnegryFields();		
 		this.setTimeFields();
+		this.setObservableFields();
 		this.loadAttrExtends();
-
+		this.setBusinessFields();
 	}
 
 	/**
@@ -78,6 +83,7 @@ class ProductIngestor {
 		this.setSpaceFields();
 		this.setEnegryFields();		
 		this.setTimeFields();
+		this.setObservableFields();
 		this.loadAttrExtends();
 	}
 
@@ -345,14 +351,6 @@ class ProductIngestor {
 		setField("t_min"    , this.product.t_minSetter);
 		setField("t_max"    , this.product.t_maxSetter);
 		setField("t_exptime", this.product.t_exptimeSetter);
-		boolean maxNaN = Double.isNaN(this.saadaInstance.t_max);
-		boolean minNaN = Double.isNaN(this.saadaInstance.t_min);
-		boolean expNaN = Double.isNaN(this.saadaInstance.t_exptime);
-		if( maxNaN && !minNaN && !expNaN ) {
-			this.saadaInstance.t_max = this.saadaInstance.t_min + (this.saadaInstance.t_exptime/(24*3600));
-		}
-		System.out.println(this.saadaInstance.t_max);
-
 	}
 
 	/*
@@ -365,6 +363,24 @@ class ProductIngestor {
 	 * @throws FatalException 
 	 */
 	protected void setEnegryFields() throws SaadaException {
+		
+		ColumnSetter qdMin = this.product.em_minSetter;
+		ColumnSetter qdMax = this.product.em_maxSetter;
+		ColumnSetter qdUnit = this.product.x_unit_orgSetter;
+		SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
+		spectralCoordinate.setMappedUnit(qdUnit.getValue());
+		spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
+		spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
+		if( !spectralCoordinate.convert() ) {
+				this.product.em_minSetter = new ColumnSetter();
+				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit());
+				this.product.em_maxSetter = new ColumnSetter();
+				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit());
+				this.product.em_res_powerSetter =  new ColumnSetter();
+		} else {
+			this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
+			this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
+		}	
 		setField("em_min"    , this.product.em_minSetter);
 		setField("em_max"    , this.product.em_maxSetter);
 		setField("em_res_power", this.product.em_res_powerSetter);
@@ -391,7 +407,17 @@ class ProductIngestor {
 		}
 	}
 
-
+	/*
+	 * Observable axis
+	 */
+	protected void setObservableFields() throws SaadaException {
+		setField("o_ucd"    , this.product.o_ucdSetter);
+		setField("o_unit"    , this.product.o_unitSetter);
+		setField("o_calib_status", this.product.o_calib_statusSetter);		
+		this.saadaInstance.setO_ucd(this.product.o_ucdSetter.getValue());
+		this.saadaInstance.setO_unit(this.product.o_unitSetter.getValue());
+		this.saadaInstance.setO_calib_status(this.product.o_calib_statusSetter.getValue());	
+	}
 	/*
 	 * 
 	 * Database storage
@@ -552,6 +578,8 @@ class ProductIngestor {
 							+ " set with the value  <" + value + ">");
 				}
 			}
+		} catch (NoSuchFieldException e) {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
 					+ " can not be set with the KW  <" + ah_ref.getAttNameOrg()

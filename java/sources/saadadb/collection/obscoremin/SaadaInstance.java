@@ -163,16 +163,10 @@ public abstract class SaadaInstance implements DMInterface {
 				}
 			}
 		}		
-//		cls = this.getClass();
-//		Field fl[] = cls.getFields();
-//		for (int i = 0; i < fl.length; i++) {
-//			Field field = fl[i];
-//			if(Modifier.PUBLIC == field.getModifiers() ) {
-//				retour.add(field);
-//			}
-//		}
 		return retour;
 	}
+	
+	
 	/**
 	 * Returns a list of all public fields of the hierarchy under the generated class: those which are persistent in Saada
 	 * @return
@@ -208,6 +202,7 @@ public abstract class SaadaInstance implements DMInterface {
 		return retour;
 	}
 
+	
 	/**
 	 * Set all instance field from result set. There is no control of 
 	 * the compliance between both result set and Java class. That must me done at higher level.
@@ -1297,8 +1292,7 @@ public abstract class SaadaInstance implements DMInterface {
 	{
 		if( Double.isNaN(this.s_ra) || Double.isNaN(this.s_dec ) ) {
 			this.healpix_csa = SaadaConstant.LONG;
-		}
-		else {
+		} else {
 			try {
 				this.healpix_csa = Database.getHealpixIndex().vec2pix_nest(new SpatialVector(this.s_ra ,  this.s_dec));
 			} catch (Exception e) {this.healpix_csa = SaadaConstant.LONG;}
@@ -1320,8 +1314,7 @@ public abstract class SaadaInstance implements DMInterface {
 		double angle = theta;
 		if(maj == min) {
 			angle=0.0;
-		}
-		else{
+		} else{
 			while(angle<=-90.0) angle+=180.0;
 			while(angle > 90.0) angle-=180.0;
 		}
@@ -1499,6 +1492,9 @@ public abstract class SaadaInstance implements DMInterface {
 	public abstract void   setAccess_estsize (long size);
 	public abstract void   setS_fov(double value);
 	public abstract void   setS_region(String name) ;
+	public abstract void   setO_unit(String unit);
+	public abstract void   setO_ucd(String ucd) ;
+	public abstract void   setO_calib_status(String status);
 	public abstract void   setAccess_url(String name)throws AbortException  ;
 	public abstract String getAccess_url() ;
 	public abstract void   setDate_load(long time)  ;
@@ -1529,8 +1525,7 @@ public abstract class SaadaInstance implements DMInterface {
 			case Category.FLATFILE: return (new ArgsParser( m.group(1).trim().split(" "))).getProductMapping();
 			default: FatalException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown category <" + this.getCategory() + ">");
 			}
-		}
-		else {
+		} else {
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not read configuration for class " + mc.getName() + " in SQL table saada_class");			
 		}
 		return null;
@@ -1553,8 +1548,7 @@ public abstract class SaadaInstance implements DMInterface {
 					retour += "\n" + e.getKey() + " (" + e.getValue() + ") = " + this.getDMFieldValue(e.getKey());
 				}
 				return retour;
-			}
-			else {
+			} else {
 				retour = "Native Attribute\nCollection: " + this.getCollection().getName() 
 				+ " Category: " + Category.explain(this.getCategory()) 
 				+ " class: " + this.getSaadaClass().getName() + "\n";

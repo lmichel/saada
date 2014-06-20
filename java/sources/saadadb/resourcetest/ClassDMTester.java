@@ -157,4 +157,22 @@ public class ClassDMTester extends SaadaInstance {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void setO_unit(String unit) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setO_ucd(String ucd) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setO_calib_status(String status) {
+		// TODO Auto-generated method stub
+		
+	}
 }
