@@ -235,7 +235,7 @@ public final class ColumnSetter implements Cloneable {
 	 * @param unit
 	 */
 	public void setValue(double value, String unit){
-		this.attributeHandler.setValue(String.valueOf(value));
+		this.attributeHandler.setValue(value);
 		this.attributeHandler.setUnit(unit);
 		this.storedValue = value;
 	}
@@ -259,7 +259,7 @@ public final class ColumnSetter implements Cloneable {
 	 */
 	public void setValue(double value){
 		this.setMode = ColumnSetMode.BY_VALUE;
-		this.attributeHandler.setValue(String.valueOf(value));
+		this.attributeHandler.setValue(value);
 		this.storedValue = value;
 	}
 	
