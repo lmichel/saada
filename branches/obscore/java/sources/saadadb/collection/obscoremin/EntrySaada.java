@@ -96,40 +96,32 @@ public class EntrySaada extends SaadaInstance {
 	}
 
 	@Override
-	public void setRepository_location(String name) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setRepository_location(String name) {}
 
 	@Override
-	public String getRepository_location() throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public String getRepository_location() throws SaadaException {return null;}
 
 	@Override
-	public void setAccess_format(String name) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setAccess_format(String name) {}
 
 	@Override
-	public void setAccess_estsize(long size) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setAccess_estsize(long size) {}
 
 	@Override
-	public void setS_fov(double value) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setS_fov(double value) {}
 
 	@Override
-	public void setS_region(String name) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void setS_region(String name) {}
 
+	@Override
+	public void setO_unit(String unit) {}
+
+	@Override
+	public void setO_ucd(String ucd) {}
+
+	@Override
+	public void setO_calib_status(String status) {}
+
+	
 }
 

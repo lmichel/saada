@@ -141,9 +141,9 @@ public class RegExp {
 	/**
 	 * Coordinate system
 	 */
-	public static final String ECL_SYSTEM = "(?i)(ecl_FK5|ecliptic)";
-	public static final String FK4_SYSTEM = "(?i)(eq_FK4|FK4)";
-	public static final String FK5_SYSTEM = "(?i)(eq_FK5|FK5)";
+	public static final String ECL_SYSTEM = "(?i)(.*((ecl_FK5)|(ecliptic)))";
+	public static final String FK4_SYSTEM = "(?i)(.*((eq_FK4)|(FK4)))";
+	public static final String FK5_SYSTEM = "(?i)(.*((eq_FK5)|(FK5)))";
 	public static final String GALACTIC_SYSTEM   = "(?i)(galactic)";		
 	public static final String ICRS_SYSTEM       = "(?i)(icrs)";		
 	/**
@@ -199,7 +199,7 @@ public class RegExp {
 	public static final String GALACTIC_RA_KW        = "(?i)(_glon)";
 	public static final String GALACTIC_DEC_KW       = "(?i)(_glat)";
 
-	public static final String FITS_COOSYS_KW   = "(?i)(COO.*SYS|RADECSYS|SYSTEM)";
+	public static final String FITS_COOSYS_KW   = "(?i)((COORDS)|(COO.*SYS)|(RADECSYS)|(SYSTEM))";
 	/** http://www.aanda.org/articles/aa/full/2006/05/aa3818-05/table1.html */
 	public static final String FITS_CTYPE_SPECT = "(?i)(((FREQ)|(ENER)|(WAVN)|(VRAD)|(WAVE)|(VOPT)|(ZOPT)|(AWAV)|(VELO)|(BETA)).*)";
 	public static final String FITS_CTYPE_ASC   = "(?i)(((RA--)|(GLON)|(ELON)).*)";

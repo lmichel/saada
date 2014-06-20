@@ -597,17 +597,18 @@ public class SpectralCoordinate{
 		this.orgMin = wm.getMinValue(dispersionAxeNum);
 		this.orgMax = wm.getMaxValue(dispersionAxeNum);
 		ColumnSetter[]cs = wm.getRadecCenter();
-		this.raWCSCenter = Double.parseDouble(cs[0].getValue());
-		this.decWCSCenter = Double.parseDouble(cs[1].getValue());
-		System.out.println("@@@@@@@@@@@@@@@ " + this.orgMin + " " + this.orgMax);
-		System.exit(1);
-		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
-			Messenger.printMsg(Messenger.TRACE, this.getRange());
-			return true;
-		} else {
-			this.detectionMessage = "";
-			return false;
-		}
+		if( !cs[0].notSet())
+			this.raWCSCenter = Double.parseDouble(cs[0].getValue());
+		if( !cs[1].notSet())
+			this.decWCSCenter = Double.parseDouble(cs[1].getValue());
+		return true;
+//		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
+//			Messenger.printMsg(Messenger.TRACE, this.getRange());
+//			return true;
+//		} else {
+//			this.detectionMessage = "";
+//			return false;
+//		}
 	}
 
 	/**

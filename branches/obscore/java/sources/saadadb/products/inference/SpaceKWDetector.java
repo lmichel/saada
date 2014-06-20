@@ -6,9 +6,11 @@ import java.util.Map;
 
 import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
+import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
@@ -288,6 +290,8 @@ public class SpaceKWDetector extends KWDetector{
 			}
 		}
 		if( (status & FRAME_FOUND) != 0 ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Take " + frame + " found");
 			this.frameSetter.completeMessage(message);
 			this.frameSetter.storedValue = frame;
 			this.frameSetter.byWcs();
@@ -321,6 +325,7 @@ public class SpaceKWDetector extends KWDetector{
 					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			IgnoreException.throwNewException(SaadaException.METADATA_ERROR, e);
 		}
 		this.isInit = true;
@@ -423,7 +428,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	private void lookForError() throws SaadaException {
 		ColumnSetter eM=null, em=null, ea=null;
-		if( this.err_maj.byWcs() ) {
+		if( this.err_maj != null && this.err_maj.byWcs() ) {
 			eM = this.err_maj;
 			em = this.err_min;
 			ea = this.err_angle;
@@ -459,22 +464,27 @@ public class SpaceKWDetector extends KWDetector{
 			lookForICRSKeywords();
 			Astroframe frame = null;
 			if( (status & POS_KW_FOUND) != 0 ) {
+				this.formatPos();
 				frame = new ICRS();
 			} else {
 				lookForFK5Keywords();
 				if( (status & POS_KW_FOUND) != 0 ) {
+					this.formatPos();
 					frame = new FK5();
 				} else {
 					lookForFK4Keywords();
 					if( (status & POS_KW_FOUND) != 0 ) {
+						this.formatPos();
 						frame = new FK4();
 					} else {
 						lookForEclpiticKeywords();
 						if( (status & POS_KW_FOUND) != 0 ) {
+							this.formatPos();
 							frame = new Ecliptic();
 						} else {
 							lookForGalacticKeywords();
 							if( (status & POS_KW_FOUND) != 0 ) {
+								this.formatPos();
 								frame = new Galactic();
 							}	
 						}
@@ -491,6 +501,20 @@ public class SpaceKWDetector extends KWDetector{
 			} else {
 				this.frameSetter.completeMessage("Cannot guess the frame from the  from the name of the position keywords");
 			}
+		}
+	}
+	
+	/**
+	 * Makes sure coordiantes are in decimal 
+	 */
+	private void formatPos() {
+		try {
+			PositionParser pp = new PositionParser(this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue());
+			this.ascension_kw.setValue(pp.getRa());
+			this.declination_kw.setValue(pp.getDec());
+		} catch (QueryException e) {
+			Messenger.printMsg(Messenger.WARNING, "formatPos " 
+					+ this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue() + " "  + e.getMessage());
 		}
 	}
 

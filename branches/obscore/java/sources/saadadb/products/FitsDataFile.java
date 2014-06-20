@@ -786,6 +786,13 @@ public class FitsDataFile extends File implements DataFile{
 		 * MISC products take no extension by default, just the 1HDU
 		 */
 		if( category == Category.MISC ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "MISC products no extension taken by default, just the 1HDU");
+			return;
+		}
+		if( this.productMap.size() == 1) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Mo extension, take just the 1HDU");
 			return;
 		}
 		DataFileExtension dfe=null;
@@ -1132,9 +1139,8 @@ public class FitsDataFile extends File implements DataFile{
 	 * @return Returns the good_header_number.
 	 */
 	public int getGood_header_number() {
-		return this.extensionSetter.goodHeaderNumber;
+		return (this.extensionSetter != null)?this.extensionSetter.goodHeaderNumber: 0;
 	}
-
 
 	/**
 	 * @param hdu

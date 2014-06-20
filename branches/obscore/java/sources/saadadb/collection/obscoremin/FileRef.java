@@ -4,7 +4,6 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -135,6 +134,18 @@ public class FileRef extends SaadaInstance {
 			+ Category.explain(this.getCategory()).toUpperCase() + Database.getSepar() 
 			+ this.repository_location;
 		}
+	}
+	@Override
+	public void setO_unit(String unit) {
+		this.o_unit = unit;		
+	}
+	@Override
+	public void setO_ucd(String ucd) {
+		this.o_ucd = ucd;
+	}
+	@Override
+	public void setO_calib_status(String status) {
+		this.o_calib_status = status;
 	}
 
 }
