@@ -177,7 +177,7 @@ public class SpaceMapping extends AxisMapping {
 				this.coordSystem.setEquinox(tabSys_eq[1]);
 			}
 		} else{	
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No cordiante system in the mapping. The loader  will try to detect it in the file.");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No cordinate system in the mapping. The loader  will try to detect it in the file.");
 			this.coordSystem.setAutodedect();
 		}
 		

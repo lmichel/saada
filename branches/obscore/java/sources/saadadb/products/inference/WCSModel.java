@@ -509,6 +509,7 @@ public class WCSModel {
 		if( (retour = this.watInfos.getDispersionAxe()) != SaadaConstant.INT) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "WAP keywords: dispersion axe: " + retour);
+			this.detectionMessage = "Dispersion taken from WAT keywords";
 			return retour;
 		} else {
 			for( int axe=0  ; axe< this.NAXIS ; axe ++ ) {
@@ -657,12 +658,12 @@ public class WCSModel {
 					+ "\". CTYPE=\"WAVE\" and CUNIT=\"Angstrom\" are taken"); 
 			this.CUNIT[dispersion_axe_num].setValue("Angstrom");
 			this.CTYPE[dispersion_axe_num].setValue("WAVE");
-			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
+			this.detectionMessage =  "Dispersion on axis #" + dispersion_axe_num + " (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;
 		} else if( this.CTYPE[dispersion_axe_num].getValue().matches(".*(?i)((wavelength)|(frequency)|(energy)).*")  ) {
-			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
+			this.detectionMessage =  "Dispersion on axis #" + dispersion_axe_num + " (CTYPE=" + this.CTYPE[dispersion_axe_num] + ")";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;
@@ -684,7 +685,7 @@ public class WCSModel {
 				|| 	deltComment .matches(".*(?i)(angstro).*")) {
 			this.CUNIT[dispersion_axe_num].setValue("Angstrom");
 			this.CTYPE[dispersion_axe_num].setValue("WAVE");
-			this.detectionMessage =  "Axe #" + dispersion_axe_num + " can be a dispersion axe (CRVAL=" + valComment + " or CDELT=" + deltComment + ")";
+			this.detectionMessage =  "Dispersion on axis #" + dispersion_axe_num + " (CRVAL=" + valComment + " or CDELT=" + deltComment + ")";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
 			return true;

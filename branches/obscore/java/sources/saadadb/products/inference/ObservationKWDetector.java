@@ -1,5 +1,6 @@
 package saadadb.products.inference;
 
+import java.util.List;
 import java.util.Map;
 
 import saadadb.exceptions.FatalException;
@@ -11,10 +12,11 @@ import saadadb.util.RegExp;
 public class ObservationKWDetector extends KWDetector {
 
 	public ObservationKWDetector(
-			Map<String, AttributeHandler> tableAttributeHandler) {
+			Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
 		super(tableAttributeHandler);
 	}
-	public ObservationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler) {
+	public ObservationKWDetector(Map<String, AttributeHandler> tableAttributeHandler
+			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments) {
 		super(tableAttributeHandler, entryAttributeHandler);
 	}
 	

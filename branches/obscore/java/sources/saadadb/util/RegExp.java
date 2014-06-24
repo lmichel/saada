@@ -97,18 +97,22 @@ public class RegExp {
 	/*
 	 * Spectral axis column names			
 	 */
-	public static final String SPEC_AXIS_KW  = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
-	public static final String SPEC_MIN_UCD  = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
-	public static final String SPEC_MAX_UCD  = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
-	public static final String SPEC_BAND_UCD = "(?i)(em\\.wl)";
+	public static final String SPEC_AXIS_KW      = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
+	public static final String SPEC_AXIS_DESC    = "(?i)(.*\\s((channel)|(wavelength)|(freq)|(frequency)|(spectral_value)))";
+	public static final String SPEC_FLUX_KW      = "(?i)((flux)|(count))";
+	public static final String SPEC_FLUX_DESC    = "(?i)(.*\\s((flux)|(count)))";
+	public static final String SPEC_MIN_UCD      = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
+	public static final String SPEC_MAX_UCD      = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
+	public static final String SPEC_BAND_UCD     = "(?i)(em\\.wl)";
 	public static final String SPEC_RESPOWER_UCD = "(?i)((instr\\.dispersion)|(spect\\.resolution))";
-	public static final String SPEC_RESPOWER_KW = "(?i)((power)|(res)|(spres)|(r))";
+	public static final String SPEC_RESPOWER_KW  = "(?i)((power)|(res)|(spres)|(r))";
 	/*
 	 * TIme axis column names
 	 */
-	public static final String TIME_START_KW     = "(?i)((obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(mjd(.*obs)?))";
+	public static final String TIME_REF_KW       = "(?i)(mjdref)";
+	public static final String TIME_START_KW     = "(?i)((tstart)|(obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(mjd(.*obs)?))";
 	public static final String TIME_START_UCD    = "(?i)(time.start;obs)";
-	public static final String TIME_END_KW       = "(?i)((obs.*end)|(end.*obs)|(end.*date)|(date.*end))";
+	public static final String TIME_END_KW       = "(?i)((tstop)|(obs.*end)|(end.*obs)|(end.*date)|(date.*end))";
 	public static final String TIME_END_UCD      = "(?i)(time.end;obs)";
 	public static final String EXPOSURE_TIME_KW  = "(?i)((exptime)|(texp)|(obs.*time)|(time.*obs))";
 	public static final String EXPOSURE_TIME_UCD = "(?i)(time.duration;obs.exposure)";	

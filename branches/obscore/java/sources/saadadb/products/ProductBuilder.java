@@ -63,7 +63,7 @@ public class ProductBuilder {
 	 */
 	protected ProductMapping mapping;
 
-	/**The list which maps attribute names formated in the standard of Saada (keys) to their objects modelling attribute informations (values)**/
+	/**The list which maps attribute names formated in the standard of Saada (keys) to their objects modeling attribute informations (values)**/
 	protected Map<String, AttributeHandler> productAttributeHandler;
 	protected String fmtsignature;
 	/*
@@ -150,16 +150,18 @@ public class ProductBuilder {
 		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@àà
-		this.observationMappingPriority = PriorityMode.FIRST;
-		this.spaceMappingPriority =PriorityMode.FIRST;
-		this.energyMappingPriority = PriorityMode.FIRST;
-		this.timeMappingPriority = PriorityMode.FIRST;
+		//		this.observationMappingPriority = PriorityMode.FIRST;
+		//		this.spaceMappingPriority =PriorityMode.FIRST;
+		//		this.energyMappingPriority = PriorityMode.FIRST;
+		//		this.timeMappingPriority = PriorityMode.FIRST;
 
 		try {
 			this.bindDataFile(file);
 			this.mapCollectionAttributes();
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		}	
 
@@ -177,13 +179,13 @@ public class ProductBuilder {
 	/**
 	 * @throws SaadaException
 	 */
-	protected void setQuantityDetector() throws SaadaException {
+	protected void setQuantityDetector() throws Exception {
 		if( this.quantityDetector == null) {
 			// unit tst purpose
 			if(this.dataFile == null ) {
-				this.quantityDetector = new QuantityDetector(this.productAttributeHandler, this.mapping);
+				this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping);
 			} else {
-				this.quantityDetector = this.dataFile.getQuantityDetector(false, this.mapping);
+				this.quantityDetector = this.dataFile.getQuantityDetector(this.mapping);
 			}
 		}
 	}
@@ -292,6 +294,8 @@ public class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void bindDataFile(DataFile dataFile) throws Exception{
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder");
 		this.dataFile = dataFile;
 		if( this.dataFile instanceof FitsDataFile ) {
 			this.mimeType = "application/fits";
@@ -299,40 +303,6 @@ public class ProductBuilder {
 			this.mimeType = "application/x-votable+xml";
 		}
 		this.dataFile.bindBuilder(this);
-		//		
-		//		if( !(this.dataFile instanceof FooProduct) ){
-		//			String filename = this.file.getName();
-		//			boolean try_votable = false;
-		//			try {
-		//				this.dataFile = new FitsDataFile(this);			
-		//				this.mimeType = "application/fits";
-		//			} catch(IgnoreException ei) {
-		//				if( ei.getMessage().equals(SaadaException.MISSING_RESOURCE) ) {
-		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ei.getContext());	
-		//				} else {
-		//					Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ei.getMessage());
-		//					try_votable = true;
-		//				}
-		//			} catch(Exception ef) {
-		//				ef.printStackTrace();
-		//				Messenger.printMsg(Messenger.TRACE, "Not a FITS file (try VOTable) " + ef.getMessage());
-		//				try_votable = true;
-		//			}
-		//
-		//			if( try_votable ) {			
-		//				try {
-		//					this.dataFile = new VOTableDataFile(this);				
-		//					this.mimeType = "application/x-votable+xml";
-		//				} catch(SaadaException ev) {
-		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.getContext());			
-		//				} catch(Exception ev) {
-		//					Messenger.printStackTrace(ev);
-		//					IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + "> can't be read: " + ev.toString());			
-		//				}
-		//			}
-		//		} else {
-		//			Messenger.printMsg(Messenger.TRACE, "Work with a Foo products");
-		//		}
 		this.setFmtsignature();
 	}
 
@@ -615,7 +585,7 @@ public class ProductBuilder {
 			return;			
 		}
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -663,9 +633,9 @@ public class ProductBuilder {
 				this.x_unit_orgSetter = qdUnit;
 			}
 			if( qdRPow.notSet()  ) {
-				this.x_unit_orgSetter = this.quantityDetector.getResPower();
+				this.em_res_powerSetter = this.quantityDetector.getResPower();
 			} else {
-				this.x_unit_orgSetter = qdRPow;
+				this.em_res_powerSetter = qdRPow;
 			}
 		}
 		this.traceReportOnAttRef("x_unit_org", this.x_unit_orgSetter);
@@ -673,7 +643,7 @@ public class ProductBuilder {
 		this.traceReportOnAttRef("em_max", this.em_maxSetter);
 		this.traceReportOnAttRef("em_res_power", this.em_res_powerSetter);
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */
@@ -871,7 +841,7 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 * 
 	 */
-	protected void mapCollectionCooSysAttributes() throws SaadaException {
+	protected void mapCollectionCooSysAttributes() throws Exception {
 		String msg = "";
 		switch(this.spaceMappingPriority) {
 		case ONLY :
@@ -936,7 +906,7 @@ public class ProductBuilder {
 	 * @return
 	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionCooSysAttributesAuto() throws SaadaException {
+	private boolean mapCollectionCooSysAttributesAuto() throws Exception {
 		this.setQuantityDetector();
 		if( (this.astroframeSetter = this.quantityDetector.getFrame()) != null ) {
 			this.astroframe = (Astroframe) this.astroframeSetter.storedValue;
@@ -1025,7 +995,7 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 * 
 	 */
-	protected void mapCollectionPosAttributes() throws SaadaException {
+	protected void mapCollectionPosAttributes() throws Exception {
 		switch( this.spaceMappingPriority) {
 		case ONLY:
 			PriorityMessage.only("Position");
@@ -1068,7 +1038,7 @@ public class ProductBuilder {
 	 * @throws FatalException 
 	 * 
 	 */
-	protected void mapCollectionPoserrorAttributes() throws SaadaException {
+	protected void mapCollectionPoserrorAttributes() throws Exception {
 		String msg="";
 		switch( this.spaceMappingPriority) {
 		case ONLY:
@@ -1103,6 +1073,9 @@ public class ProductBuilder {
 		 */
 		if( this.error_majSetter == null || this.error_minSetter == null ) {
 			Messenger.printMsg(Messenger.TRACE, "Error ellipse neither found " + msg + " in keywords nor by value");
+			this.error_majSetter = new ColumnSetter();
+			this.error_minSetter = new ColumnSetter();
+			this.error_angleSetter = new ColumnSetter();
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "found");
@@ -1211,7 +1184,7 @@ public class ProductBuilder {
 	 * @return
 	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionPosAttributesAuto() throws SaadaException {
+	private boolean mapCollectionPosAttributesAuto() throws Exception {
 		this.setQuantityDetector();
 		if( this.quantityDetector.arePosColFound() ) {
 			this.s_raSetter = this.quantityDetector.getAscension();
@@ -1231,7 +1204,7 @@ public class ProductBuilder {
 	 * @return
 	 * @throws SaadaException 
 	 */
-	private boolean mapCollectionPoserrorAttributesAuto() throws SaadaException {
+	private boolean mapCollectionPoserrorAttributesAuto() throws Exception {
 		this.setQuantityDetector();
 		this.error_minSetter = this.quantityDetector.getErrorMin();
 		this.error_majSetter = this.quantityDetector.getErrorMaj();
@@ -1577,6 +1550,8 @@ public class ProductBuilder {
 		this.em_maxSetter.storedValue = si.em_max;
 		retour.put("em_res_power", em_res_powerSetter);
 		this.em_res_powerSetter.storedValue = si.em_res_power;
+		retour.put("x_unit_org", x_unit_orgSetter);
+		this.x_unit_orgSetter.storedValue = this.x_unit_orgSetter.getValue();
 
 
 		retour.put("t_max", t_maxSetter);
@@ -1585,12 +1560,14 @@ public class ProductBuilder {
 		this.t_minSetter.storedValue = si.t_min;
 		retour.put("t_exptime", t_exptimeSetter);
 		this.t_exptimeSetter.storedValue = si.t_exptime;
-		
-		retour.put("t_min", t_minSetter);
-		this.t_minSetter.storedValue = si.t_min;
-		retour.put("t_exptime", t_exptimeSetter);
-		this.t_exptimeSetter.storedValue = si.t_exptime;
 
+		retour.put("o_ucd", o_ucdSetter);
+		this.o_ucdSetter.storedValue = si.getO_ucd();
+		retour.put("o_unit", o_unitSetter);
+		this.o_unitSetter.storedValue = si.getO_unit();
+		retour.put("o_calib_status", o_calib_statusSetter);
+		this.o_calib_statusSetter.storedValue = si.getO_calib_status();
+		
 		for( ColumnSetter eah: this.extended_attributesSetter.values()){
 			retour.put(eah.getAttNameOrg(), eah);      	
 		}

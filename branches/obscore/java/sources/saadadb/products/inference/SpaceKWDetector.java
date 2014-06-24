@@ -51,7 +51,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @param tableAttributeHandler
 	 * @throws SaadaException 
 	 */
-	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler) throws SaadaException {
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler);
 
 	}
@@ -60,14 +60,15 @@ public class SpaceKWDetector extends KWDetector{
 	 * @param tableAttributeHandler
 	 * @throws SaadaException 
 	 */
-	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> columnsAttributeHandler) throws SaadaException {
-		super(tableAttributeHandler);
-		ColumnSetter ah = searchByName(RegExp.FITS_COOSYS_KW);
-		lookForError();
-		if( ah == null ) {
-			ah = searchByUcd("pos.frame");
-		}
-		this.tableAttributeHandler = columnsAttributeHandler;
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler
+			, Map<String, AttributeHandler> columnsAttributeHandler, List<String> comments) throws SaadaException {
+		super(tableAttributeHandler, columnsAttributeHandler);
+//		ColumnSetter ah = searchByName(RegExp.FITS_COOSYS_KW);
+//		lookForError();
+//		if( ah == null ) {
+//			ah = searchByUcd("pos.frame");
+//		}
+//		this.tableAttributeHandler = columnsAttributeHandler;
 		//		if( ah != null ) {
 		//			if( ah.getValue().toLowerCase().matches(RegExp.ECL_SYSTEM)) {
 		//				this.frame = new Ecliptic();
@@ -239,7 +240,7 @@ public class SpaceKWDetector extends KWDetector{
 		 */
 		if( (status & FRAME_FOUND) == 0 ) {
 			ah = searchByName(RegExp.FITS_EQUINOX);		
-			if( ah != null ) {
+			if( !ah.notSet() ) {
 				float val = Float.parseFloat(ah.getValue());
 				if( val == 1950.f) {
 					frame = new FK4();
@@ -677,6 +678,7 @@ public class SpaceKWDetector extends KWDetector{
 		try {
 			this.searchFrame();
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.METADATA_ERROR, e);
 		}
 		return this.frameSetter;

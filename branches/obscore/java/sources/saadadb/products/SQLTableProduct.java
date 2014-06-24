@@ -4,23 +4,16 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.EnergyKWDetector;
-import saadadb.products.inference.ObservableKWDetector;
-import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.QuantityDetector;
-import saadadb.products.inference.SpaceKWDetector;
-import saadadb.products.inference.TimeKWDetector;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -178,8 +171,7 @@ public class SQLTableProduct implements DataFile {
 
 
 	@Override
-	public QuantityDetector getQuantityDetector(boolean entryMode,
-			ProductMapping productMapping) throws SaadaException {
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -230,6 +222,12 @@ public class SQLTableProduct implements DataFile {
 	public boolean delete() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<String> getComments() throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -1,6 +1,10 @@
 package saadadb.products.inference;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
@@ -27,27 +31,31 @@ public class EnergyKWDetector extends KWDetector {
 	private PriorityMode priority;
 	private String defaultUnit;
 	private String readUnit;
-	public String detectionMessage ="";
+	public String detectionMessage =""; 
+	public List<String> comments;
+
 	/**
-	 * @param productFile
+	 * @param tableAttributeHandler
+	 * @param comments
 	 * @param productMapping
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(DataFile productFile, ProductMapping productMapping) throws SaadaException {
-		super(productFile);
-		this.productFile = productFile;
-		if(productMapping != null ) {
-			this.setUnitMode(productMapping);
-		}
+	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments, ProductMapping productMapping)throws SaadaException {
+		super(tableAttributeHandler);
+		this.setUnitMode(productMapping);
+		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	/**
 	 * @param tableAttributeHandler
+	 * @param entryAttributeHandler
+	 * @param comments
 	 * @param productMapping
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler, ProductMapping productMapping)throws SaadaException {
-		super(tableAttributeHandler);
+	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments, ProductMapping productMapping)throws SaadaException {
+		super(tableAttributeHandler, entryAttributeHandler);
 		this.setUnitMode(productMapping);
+		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	/**
 	 * @param priority
@@ -101,7 +109,11 @@ public class EnergyKWDetector extends KWDetector {
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Detected range " + spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
 			return retour;
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+			return false;
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 			return false;
 		}
@@ -118,7 +130,7 @@ public class EnergyKWDetector extends KWDetector {
 		} else {
 			this.spectralCoordinate.setOrgMax(ds[1]);
 			this.spectralCoordinate.setOrgMin(ds[0]);		
-			this.spectralCoordinate.setNbBins((int) ds[2]);		
+			this.spectralCoordinate.setNbBins((int)(ds[1] - ds[0]));		
 		}
 	}
 
@@ -128,19 +140,29 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws Exception 
 	 */
 	private boolean findSpectralCoordinateInPixels() throws Exception {
-		if(  this.productFile == null ) return false;
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in pixel");
-		double[] ext = this.productFile.getExtrema(null);
-		if( ext != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Spectral coordinates found in FITS image pixels");
-			this.detectionMessage = "Take the largest image dimension";
-			this.setMinMaxValues(ext);	
-			return true;
+		Pattern p = Pattern.compile("Image column (.*) is wavelength \\((.*)\\)");
+		int dim = 0;
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates in pixel array");
+		for( String c: this.comments ) {
+			Matcher m = p.matcher(c);
+			if( m.find() && m.groupCount() == 2 ) {
+				for( AttributeHandler ah : this.tableAttributeHandler.values() ){
+					if( ah.getNameorg().matches("NAXIS\\d$")) {
+						int v = Integer.parseInt(ah.getValue());
+						dim = (v > dim)? v: dim;
+					}
+				}
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "find range=" + dim + "pixels unit=" + m.group(2).trim());
+				this.spectralCoordinate = new SpectralCoordinate();
+				this.spectralCoordinate.setOrgMin(0);
+				this.spectralCoordinate.setOrgMax(dim);
+				this.spectralCoordinate.setNbBins(dim);
+				this.spectralCoordinate.setMappedUnit(m.group(2).trim());
+				this.readUnit = m.group(2).trim();
+				return true;
+			}
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	/**
@@ -164,16 +186,34 @@ public class EnergyKWDetector extends KWDetector {
 		/*
 		 * If no range set in params, try to find it out from fields
 		 */	
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Search spectral coordinate in the columns names");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the columns names");
 		if( this.entryAttributeHandler != null ){
-			ColumnSetter ah = this.searchColumnsByName(RegExp.SPEC_AXIS_KW);
+			ColumnSetter ah = this.searchColumns(null, RegExp.SPEC_AXIS_KW, RegExp.SPEC_AXIS_DESC);
 			if( !ah.notSet()  ){
 				this.setMinMaxValues(this.productFile.getExtrema(ah.getAttNameOrg()));
 				this.readUnit = ah.getUnit();
 				this.detectionMessage = ah.message.toString();
 				return true;
+			} 		
+			/*
+			 * If no column look like a dispersion, we look for a flux column, and take the row numlber as dispersion
+			 */
+			else {
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Check if a column can be a flux");
+				ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
+				if( !ah.notSet()  ){
+					AttributeHandler na = this.tableAttributeHandler.get("_naxis2");
+					if( na == null ) {
+						Messenger.printMsg(Messenger.TRACE, "No NAXIS2 key found: product format look suspect");
+						return false;
+					}
+					this.setMinMaxValues(new double[]{0, Double.parseDouble(na.getValue())});
+					this.readUnit = "channel";
+					this.detectionMessage = "take row number as dispersion axis";
+					return true;
+				} 		
 			}
-		}
+		} 
 		return  false;
 	}
 
@@ -251,8 +291,10 @@ public class EnergyKWDetector extends KWDetector {
 			if( spectralCoordinate.getNbBins() != SaadaConstant.INT 
 					&&  this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE &&  this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE) {
 				retour =  new ColumnSetter();
-				retour.setByValue(Double.toString(((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMax())/(2*spectralCoordinate.getNbBins()))), false);
-				retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
+				double v     = ((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMin())/2.);
+				double delta = ((this.spectralCoordinate.getOrgMax() - this.spectralCoordinate.getOrgMin())/spectralCoordinate.getNbBins());
+				retour.setByValue(Double.toString(v/delta), false);
+				retour.completeMessage("Computed from both range and bin number ("+ spectralCoordinate.getNbBins() + ")");
 				return retour;
 			} 
 			return  new ColumnSetter();
@@ -261,23 +303,6 @@ public class EnergyKWDetector extends KWDetector {
 			return retour;
 		}
 	}
-
-	//	/**
-	//	 * @return
-	//	 * @throws Exception
-	//	 */
-	//	public ColumnSetter getComputedResPower() throws Exception{
-	//		if( spectralCoordinate == null ){
-	//			this.mapCollectionSpectralCoordinateAuto();
-	//		}
-	//		if( spectralCoordinate.getNbBins() != SaadaConstant.INT) {
-	//			ColumnSetter retour =  new ColumnSetter();
-	//			retour.setByValue(Double.toString((1.0/spectralCoordinate.getNbBins())), false);
-	//			retour.completeMessage("Computed from the number of bins ("+ spectralCoordinate.getNbBins() + ")");
-	//			return retour;
-	//		} 
-	//		return  new ColumnSetter();
-	//	}
 
 	/**
 	 * @return
@@ -291,6 +316,10 @@ public class EnergyKWDetector extends KWDetector {
 	public double getDecWCSCenter() {
 		return this.spectralCoordinate.getDecWCSCenter();
 	}
+	/**
+	 * @return
+	 * @throws SaadaException
+	 */
 	public ColumnSetter getEUnit() throws SaadaException{
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
@@ -302,6 +331,10 @@ public class EnergyKWDetector extends KWDetector {
 		}
 		return retour;
 	}
+	/**
+	 * @return
+	 * @throws SaadaException
+	 */
 	public ColumnSetter getEMax() throws SaadaException{
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
@@ -313,6 +346,10 @@ public class EnergyKWDetector extends KWDetector {
 		}
 		return retour;
 	}
+	/**
+	 * @return
+	 * @throws SaadaException
+	 */
 	public ColumnSetter getEMin() throws SaadaException {
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
@@ -324,6 +361,4 @@ public class EnergyKWDetector extends KWDetector {
 		}
 		return retour;
 	}
-
-
 }

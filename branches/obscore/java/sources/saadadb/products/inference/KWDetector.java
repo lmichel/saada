@@ -56,14 +56,14 @@ public abstract class KWDetector {
 	 * @throws FatalException 
 	 */
 	protected  ColumnSetter search(String ucd_regexp, String colname_regexp) throws FatalException{
-		ColumnSetter retour = null;
+		ColumnSetter retour = new ColumnSetter();
 		if(ucd_regexp!= null ){
 			retour = this.searchByUcd(ucd_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
 			retour = this.searchByName(colname_regexp);
 		}
-		return (retour != null)? retour: new ColumnSetter();
+		return retour;
 	}
 	
 	/**
@@ -74,14 +74,35 @@ public abstract class KWDetector {
 	 * @throws FatalException 
 	 */
 	protected  ColumnSetter searchColumns(String ucd_regexp, String colname_regexp) throws FatalException{
-		ColumnSetter retour = null;
-		if(ucd_regexp!= null ){
+		ColumnSetter retour = new ColumnSetter();
+		if(ucd_regexp != null ){
 			retour = this.searchColumnsByUcd(ucd_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
 			retour =  this.searchColumnsByName(colname_regexp);
 		}
-		return (retour != null)? retour: new ColumnSetter();
+		return retour;
+	}
+	/**
+	 * Incorporate  search be UCD (first) then by column name and then by description in the entry AttributeHandlers
+	 * @param ucd_regexp
+	 * @param colname_regexp
+	 * @param desc_regexp
+	 * @return
+	 * @throws FatalException
+	 */
+	protected  ColumnSetter searchColumns(String ucd_regexp, String colname_regexp, String desc_regexp) throws FatalException{
+		ColumnSetter retour = new ColumnSetter();
+		if(ucd_regexp != null ){
+			retour = this.searchColumnsByUcd(ucd_regexp);
+		}
+		if( retour.notSet() && colname_regexp != null){
+			retour =  this.searchColumnsByName(colname_regexp);
+		}
+		if( retour.notSet() && colname_regexp != null){
+			retour =  this.searchColumnsByDescription(desc_regexp);
+		}
+		return retour;
 	}
 	/**
 	 * Search the first attribute handler with an UCD matching ucd_regexp
@@ -237,6 +258,27 @@ public abstract class KWDetector {
 			msg = "Search column by NAME /" + colname_regexp + "/";
 		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
+				if( Messenger.debug_mode ) 
+					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
+				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
+			}
+		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found" );
+		return notSetColumnSetter();
+	}
+	/**
+	 * Search the first entry attribute handler with a description matching colname_regexp
+	 * @param ucd_regexp
+	 * @return
+	 * @throws FatalException 
+	 */
+	protected ColumnSetter searchColumnsByDescription(String colname_regexp) throws FatalException {
+		String msg = "";
+		if( Messenger.debug_mode ) 
+			msg = "Search column by DESCRIPTION /" + colname_regexp + "/";
+		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
+			if( ah.getComment().matches(colname_regexp) ){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
