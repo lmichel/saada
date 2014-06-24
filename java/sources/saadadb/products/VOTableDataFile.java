@@ -828,8 +828,7 @@ public class VOTableDataFile extends File implements DataFile {
 	}
 
 	@Override
-	public QuantityDetector getQuantityDetector(boolean entryMode,
-			ProductMapping productMapping) throws SaadaException {
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -848,6 +847,12 @@ public class VOTableDataFile extends File implements DataFile {
 
 	@Override
 	public List<ExtensionSetter> reportOnLoadedExtension() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}

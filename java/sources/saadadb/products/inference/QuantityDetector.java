@@ -1,5 +1,6 @@
 package saadadb.products.inference;
 
+import java.util.List;
 import java.util.Map;
 
 import saadadb.dataloader.mapping.ProductMapping;
@@ -25,12 +26,12 @@ public class QuantityDetector {
 	 * @param tableAttributeHandlers
 	 * @throws SaadaException 
 	 */
-	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers, ProductMapping productMapping) throws SaadaException {
-		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers);
-		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers);						
-		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, productMapping);
-		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers);
-		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers);
+	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers, List<String> comments, ProductMapping productMapping) throws SaadaException {
+		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, comments);
+		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, comments);						
+		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, comments, productMapping);
+		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, comments);
+		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -40,12 +41,12 @@ public class QuantityDetector {
 	 * @throws SaadaException 
 	 */
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
-			, Map<String, AttributeHandler> entryAttributeHandlers, ProductMapping productMapping) throws SaadaException {
-		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers);
-		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers);
-		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, productMapping);
-		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers);
-		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers);
+			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments, ProductMapping productMapping) throws SaadaException {
+		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments, productMapping);
+		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -254,7 +255,7 @@ public class QuantityDetector {
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
-			if( retour.notSet() && !getEUnit().notSet() ) {
+			if( retour.notSet() && !this.getEUnit().notSet() ) {
 				retour.setByValue("2", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}

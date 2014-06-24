@@ -63,7 +63,7 @@ public class FitsDataFile extends File implements DataFile{
 	private int nb_rows = 0;
 	protected Fits fits_data=null;
 	//	protected int good_header_number;
-	protected ExtensionSetter  extensionSetter;
+	protected ExtensionSetter  extensionSetter = new ExtensionSetter();
 	protected BasicHDU good_header;
 	protected BasicHDU first_header;
 
@@ -77,6 +77,8 @@ public class FitsDataFile extends File implements DataFile{
 
 	private Map<String, AttributeHandler> attributeHandlers = null;
 	private Map<String, AttributeHandler> entryAttributeHandlers = null;
+	/** Comment read within the header and the extension */
+	private List<String> comments = new ArrayList<String>();
 
 	private int[] colform ;
 
@@ -104,7 +106,6 @@ public class FitsDataFile extends File implements DataFile{
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
 		this.fits_data = new Fits(name);
 		this.getProductMap();	
-		System.out.println("FitsDataFile()=========================");
 	}
 	/**
 	 * @param product
@@ -352,12 +353,12 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws IgnoreException
 	 */
 	private Map<String, AttributeHandler> getEntryAttributeHandler(int hduNum) throws IgnoreException {
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		try {
 			BasicHDU bHDU = fits_data.getHDU(hduNum);
-			Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 			if(  !(bHDU instanceof  nom.tam.fits.TableHDU) ){
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Can not get column names for a " + bHDU.getClass().getName());
-				return null;  		
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No column names for a " + bHDU.getClass().getName());
+				return retour;  		
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Read the meta data of the columns of the extension #" + hduNum);
 			/*
@@ -440,21 +441,23 @@ public class FitsDataFile extends File implements DataFile{
 				if( this.productBuilder != null)
 					attribute.setCollname(this.productBuilder.mapping.getCollection());
 				//Sets the unit of this entry to this field in the attribute object
-				attribute.setUnit(unitValue);
-				if(!unitComment.equals("no Comment")){
-					attribute.setComment(unitComment);
-				}
+				attribute.setUnit(unitValue);				
+				attribute.setComment(cardType.getComment());
+//				if(!unitComment.equals("no Comment")){
+//					attribute.setComment(unitComment);
+//				}
 				//Initiazes the reality format of this entry
 				format = table.getColumnFormat(j);
 				int javatypecode = JavaTypeUtility.convertFitsFormatToJavaType(format, isascii);
 				attribute.setType(JavaTypeUtility.convertJavaTypeCodeToName(javatypecode));
-				return retour;
 			}
+			return retour;
+
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
 		}
-		return null;
+		return retour;
 	}
 
 
@@ -1092,6 +1095,10 @@ public class FitsDataFile extends File implements DataFile{
 			hcard = (HeaderCard) it.next();
 
 			String key = hcard.getKey().trim();
+			if( key.startsWith("COMMENT")) {
+				this.comments.add(hcard.getComment());
+				continue;
+			} 
 			AttributeHandler attribute = new AttributeHandler(hcard);
 			key = attribute.getNameorg();
 			if( attribute.getNameorg().length() == 0 ) {
@@ -1735,64 +1742,21 @@ public class FitsDataFile extends File implements DataFile{
 		return this.attributeHandlers;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.DataFile#getComments()
+	 */
+	public List<String> getComments() {
+		return this .comments;
+	}
 
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.DataFile#getObservationKWDetector(boolean)
-//	 */
-//	@Override
-//	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException{
-//		if( entryMode ){
-//			return  new ObservationKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-//		} else {
-//			return new ObservationKWDetector(this.getAttributeHandler());
-//		}		
-//	}
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.DataFile#getSpaceKWDetector(boolean)
-//	 */
-//	@Override
-//	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException{
-//		if( entryMode ){
-//			return  new SpaceKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-//		} else {
-//			return new SpaceKWDetector(this.getAttributeHandler());
-//		}		
-//	}
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.DataFile#getEnergyKWDetector(boolean, saadadb.dataloader.mapping.PriorityMode, java.lang.String)
-//	 */
-//	@Override
-//	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException{
-//		return new EnergyKWDetector(this, priority, defaultUnit );		
-//	}
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.DataFile#getTimeKWDetector(boolean)
-//	 */
-//	@Override
-//	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException{
-//		if( entryMode ){
-//			return  new TimeKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-//		} else {
-//			return new TimeKWDetector(this.getAttributeHandler());
-//		}		
-//	}
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.DataFile#getObservableKWDetector(boolean)
-//	 */
-//	@Override
-//	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException{
-//		if( entryMode ){
-//			return  new ObservableKWDetector(this.getAttributeHandler(), this.getEntryAttributeHandler());
-//		} else {
-//			return new ObservableKWDetector(this.getAttributeHandler());
-//		}		
-//	}
 	@Override
-	public QuantityDetector getQuantityDetector(boolean entryMode, ProductMapping productMapping) throws SaadaException{
-		if( entryMode ){
-			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), productMapping);
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
+		if( this.getEntryAttributeHandler().size() > 0  ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
+			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping);
 		} else {
-			return new QuantityDetector(this.getAttributeHandler(), productMapping);
+			return new QuantityDetector(this.getAttributeHandler(), this.comments, productMapping);
 		}		
 	}
 	/* (non-Javadoc)
@@ -1899,7 +1863,7 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public List<ExtensionSetter> reportOnLoadedExtension() {
 		List<ExtensionSetter> retour = new ArrayList<ExtensionSetter>();
-		retour.add(extensionSetter);
+		if( this.extensionSetter != null )retour.add(this.extensionSetter);
 		return retour;
 	}
 

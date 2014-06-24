@@ -4,6 +4,7 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -95,7 +96,6 @@ public class FileRef extends SaadaInstance {
     public void setS_region(String s_region) {
     	this.s_region = s_region;
     }
-
 	/* (non-Javadoc)
 	 * @see saadadb.collection.obscoremin.SaadaInstance#getS_fov()
 	 */
@@ -109,6 +109,24 @@ public class FileRef extends SaadaInstance {
 	@Override
 	public String getS_region() {
 		return this.s_region;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getO_unit()
+	 */
+	public String getO_unit() {
+		return this.o_unit;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getO_ucd()
+	 */
+	public String getO_ucd() {
+		return this.o_ucd;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getO_calib_status()
+	 */
+	public String getO_calib_status() {
+		return this.o_calib_status;
 	}
 
 	/* (non-Javadoc)

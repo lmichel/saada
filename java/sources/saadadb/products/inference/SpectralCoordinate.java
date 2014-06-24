@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sun.net.ssl.internal.ssl.Debug;
+
 import saadadb.database.Database;
 import saadadb.enums.DispersionType;
 import saadadb.meta.AttributeHandler;
@@ -545,6 +547,8 @@ public class SpectralCoordinate{
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
 			} else  {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Take " + unit_class.unit  + " as unit");
 				this.mappedUnit = unit_class.unit;
 			}
 			this.detectionMessage = wm.detectionMessage;

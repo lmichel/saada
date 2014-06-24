@@ -1483,6 +1483,15 @@ public abstract class SaadaInstance implements DMInterface {
 	public String getS_region() {
 		return SaadaConstant.STRING;
 	}
+	public String getO_unit() {
+		return SaadaConstant.STRING;
+	}
+	public String getO_ucd() {
+		return SaadaConstant.STRING;
+	}
+	public String getO_calib_status() {
+		return SaadaConstant.STRING;
+	}
 	/***********************
 	 * Abstract setters allowing to handle SaadaInstance whatever the actual category
 	 *********************/

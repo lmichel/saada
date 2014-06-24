@@ -84,6 +84,12 @@ public interface DataFile extends Enumeration{
 	 * @return
 	 */
 	public Map<String, AttributeHandler> getAttributeHandler() throws SaadaException ;
+	/**
+	 * Return a lis of comments which can be used to do the automatic mapping
+	 * @return
+	 * @throws SaadaException
+	 */
+	public List<String> getComments() throws SaadaException ;
 //	/**
 //	 * Returns an instance of the detector of keywords covering the observation axis
 //	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
@@ -115,11 +121,11 @@ public interface DataFile extends Enumeration{
 //	 */
 //	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException;
 	/**
-	 * @param entryMode
 	 * @return
 	 * @throws SaadaException
+	 * @throws Exception 
 	 */
-	public QuantityDetector getQuantityDetector(boolean entryMode, ProductMapping productMapping) throws SaadaException;
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception;
 	/**
 	 * Returns a map with all extension detected within the data product
 	 * @return

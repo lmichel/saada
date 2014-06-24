@@ -7,16 +7,11 @@ import java.util.List;
 import java.util.Map;
 
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.inference.EnergyKWDetector;
-import saadadb.products.inference.ObservableKWDetector;
-import saadadb.products.inference.ObservationKWDetector;
 import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
-import saadadb.products.inference.TimeKWDetector;
 
 /**
  * @author laurentmichel
@@ -144,8 +139,13 @@ public class AnyFile extends File implements DataFile {
 	}
 
 	@Override
-	public QuantityDetector getQuantityDetector(boolean entryMode,
-			ProductMapping productMapping) throws SaadaException {
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
 	}
