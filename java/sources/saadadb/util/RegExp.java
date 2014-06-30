@@ -99,8 +99,8 @@ public class RegExp {
 	 */
 	public static final String SPEC_AXIS_KW      = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
 	public static final String SPEC_AXIS_DESC    = "(?i)(.*\\s((channel)|(wavelength)|(freq)|(frequency)|(spectral_value)))";
-	public static final String SPEC_FLUX_KW      = "(?i)((flux)|(count))";
-	public static final String SPEC_FLUX_DESC    = "(?i)(.*\\s((flux)|(count)))";
+	public static final String SPEC_FLUX_KW      = "(?i)((flux)|(count[s]?))";
+	public static final String SPEC_FLUX_DESC    = "(?i)(.*\\s((flux)|(count[s]?)))";
 	public static final String SPEC_MIN_UCD      = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
 	public static final String SPEC_MAX_UCD      = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
 	public static final String SPEC_BAND_UCD     = "(?i)(em\\.wl)";

@@ -54,4 +54,8 @@ public class DataFileExtension {
 	public String getSType() {
 		return (isImage())? "IMAGE": (isDataTable())? "TABLE": "UNKNOWN";
 	}
+	
+	public String toString() {
+		return this.num + " " + this.name + " " + this.type + " " + this.attributeHandlers.size() + " columns";
+	}
 }

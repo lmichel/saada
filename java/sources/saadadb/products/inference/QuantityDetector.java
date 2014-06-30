@@ -9,6 +9,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
+import saadadb.products.DataFile;
 import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
 
@@ -22,6 +23,7 @@ public class QuantityDetector {
 	private final ObservationKWDetector observationKWDetector;
 	private final ProductMapping productMapping;
 	public String detectionMessage;
+
 	/**
 	 * @param tableAttributeHandlers
 	 * @throws SaadaException 
@@ -41,10 +43,11 @@ public class QuantityDetector {
 	 * @throws SaadaException 
 	 */
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
-			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments, ProductMapping productMapping) throws SaadaException {
+			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments
+			, ProductMapping productMapping, DataFile productFile) throws SaadaException {
 		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments, productMapping);
+		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments, productMapping, productFile);
 		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
@@ -192,14 +195,14 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
-//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
-//		try  {
-//			return this.energyKWDetector.getSpectralCoordinate();
-//		} catch (Exception e) {
-//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
-//			return null;
-//		}
-//	}
+	//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
+	//		try  {
+	//			return this.energyKWDetector.getSpectralCoordinate();
+	//		} catch (Exception e) {
+	//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
+	//			return null;
+	//		}
+	//	}
 
 	/*
 	 * Time axis
@@ -244,7 +247,7 @@ public class QuantityDetector {
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).notSet() ){
 			retour = this.observableKWDetector.getUnitName();
 			if( retour.notSet() && !getEUnit().notSet() ) {
-				retour.setByValue("count", false);
+				retour.setByValue("counts", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
 		} 
@@ -256,8 +259,13 @@ public class QuantityDetector {
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
 			if( retour.notSet() && !this.getEUnit().notSet() ) {
-				retour.setByValue("2", false);
-				retour.completeMessage("Value taken by default since the dispersion axis is set");
+				if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
+					retour.setByValue("1", false);
+					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
+				} else {
+					retour.setByValue("2", false);
+					retour.completeMessage("Value taken by default since the dispersion axis is set");
+				}
 			}
 		} 
 		return (retour == null)?new ColumnSetter(): retour;

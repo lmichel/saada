@@ -828,61 +828,6 @@ public class FitsDataFile extends File implements DataFile{
 			return;			
 		}
 		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
-//		/*
-//		 * Modified to look for data extensions in the 1st HDU too
-//		 * where is no XTENSION keyword
-//		 */
-//		/*
-//		 * It FITS file is too long, Header.read() considers that a new extension begins, but it finds no key (null) there: IOException
-//		 * The same exception is rose if a new extension starts there but not starting with  XTENSION or SIMPLE
-//		 */
-//		//	int i=0;
-//		//BasicHDU bHDU = null;
-//		//	try {
-//		for( DataFileExtension dfe: this.productMap.values() ) {
-//			//	while( (bHDU = fits_data.getHDU(i))  != null) {
-//			if( this.checkExtensionCategory(dfe, category) ) {
-//				this.good_header = fits_data.getHDU(dfe.num);
-//				String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.num +  " as data extension for " + Category.explain(category);
-//				this.extensionSetter = new ExtensionSetter(dfe.num
-//						, ExtensionSetMode.DETECTED
-//						, msg);
-//				Messenger.printMsg(Messenger.TRACE, msg);
-//				return;
-//			}
-//			//i++;	
-//		}
-//		//		} catch(IOException ioe) {
-//		//			Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Too many pixels or extension starting without XTENSION or SIMPLE");
-//		//		} catch(Exception oe) {
-//		//			if( i > 0 ) {
-//		//				Messenger.printMsg(Messenger.WARNING, "Bad format for extension # " + i + ": Stop to read file");
-//		//			} else {
-//		//				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, oe);
-//		//			}
-//		//		}
-//		/*
-//		 * If no BINTABLE has been found for spectra, we try to find out a one-row image
-//		 */
-//		if( category == Category.SPECTRUM ) {
-//			//i=0;
-//			//	bHDU = null;
-//			for( DataFileExtension dfe: this.productMap.values() ) {
-//				//	while( (bHDU = fits_data.getHDU(i))  != null) {
-//				if( checkExtensionCategory(dfe, Category.IMAGE) ) {
-//					ImageHDU image = (ImageHDU)fits_data.getHDU(dfe.num);
-//					if( image.getAxes().length >= 1 ) {
-//						this.good_header = image;
-//						String message = "Take pixels of image HDU#" + dfe.num + " as spectral chanels";
-//						this.extensionSetter = new ExtensionSetter(dfe.num , ExtensionSetMode.DETECTED, message);
-//						Messenger.printMsg(Messenger.TRACE, message);
-//						return;
-//					}
-//				}
-//				//	i++;
-//			}
-//		}
-//		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}
 
 	/**
@@ -891,7 +836,17 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	private DataFileExtension getFirstSpectralExtension() {
 		/*
-		 * Look first at images
+		 * Look first for an extension named SPECRUM
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( (dfe.isImage() || dfe.isDataTable()) && dfe.name.equalsIgnoreCase("spectrum")) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Take " + dfe + " as spectrum extension because it is named SPECTRUM");
+				return dfe;
+			}
+		}
+		/*
+		 * then Look at images
 		 */
 		for( DataFileExtension dfe: this.productMap.values() ) {
 			if( dfe.isImage() ) {
@@ -1352,7 +1307,7 @@ public class FitsDataFile extends File implements DataFile{
 			}
 			/*
 			 * Spectral data can be stored in image pixels. In this case extrem values are given by
-			 * nhumber of pixels in the first dimension
+			 * number of pixels in the first dimension
 			 */
 			if( good_header instanceof nom.tam.fits.ImageHDU ) {
 				if( ((ImageHDU)good_header).getAxes().length == 1 ) {
@@ -1754,7 +1709,7 @@ public class FitsDataFile extends File implements DataFile{
 		if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping);
+			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);
 		} else {
 			return new QuantityDetector(this.getAttributeHandler(), this.comments, productMapping);
 		}		

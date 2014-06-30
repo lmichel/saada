@@ -295,7 +295,7 @@ public abstract class KWDetector {
 	 */
 	private ColumnSetter notSetColumnSetter(){
 		ColumnSetter retour = new ColumnSetter();
-		retour.completeMessage("Nothing found");
+		//retour.completeMessage("Nothing found");
 		retour.setNotSet();
 		return retour;
 	}

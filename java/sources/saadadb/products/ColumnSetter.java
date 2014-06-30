@@ -213,7 +213,7 @@ public final class ColumnSetter implements Cloneable {
 	/**
 	 * @param value
 	 */
-	public void setByTabeColumn(String value, boolean fromMapping){
+	public void setByTableColumn(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
@@ -323,6 +323,12 @@ public final class ColumnSetter implements Cloneable {
 	/**
 	 * @return
 	 */
+	public String getUcd() {
+		return this.attributeHandler.getUcd();
+	}
+	/**
+	 * @return
+	 */
 	public String getMessage() {
 		return this.message.toString();
 	}
@@ -333,7 +339,7 @@ public final class ColumnSetter implements Cloneable {
 	public String getMode() {
 		return (setMode == ColumnSetMode.BY_KEYWORD)? "BY_KEYWORD" :
 			   (setMode == ColumnSetMode.BY_PIXELS)? "BY_PIXELS" :
-			   (setMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_PIXELS" :
+			   (setMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_TABLE_COLUMN" :
 			   (setMode == ColumnSetMode.BY_VALUE)? "BY_VALUE" :
 			   (setMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
 			   (setMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
