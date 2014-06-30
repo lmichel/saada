@@ -67,6 +67,11 @@ public abstract class AdminComponent extends JPanel {
 	public static final String SPECTRUM_MAPPER = "KW Mapper for Spectra";
 	public static final String IMAGE_MAPPER    = "KW Mapper for Images";
 	public static final String FLATFILE_MAPPER = "KW Mapper for Flatfiles";
+	
+	/*
+	 * Constant corresponding to the new class MappingFilterPanel which should replace MappingKWPanel
+	 */
+	public static final String NEW_MAPPER = "New KW Mapper";
 
 	public static final String CREATE_RELATION   = "Create Relationship";
 	public static final String COMMENT_RELATION  = "Comment Relationship";

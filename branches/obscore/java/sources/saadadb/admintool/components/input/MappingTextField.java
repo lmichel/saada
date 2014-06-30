@@ -7,12 +7,14 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 
 /**
+ * Modifié Valentin Pertuy 26/06/2014
  * @author michel
  * * @version $Id$
 
@@ -28,6 +30,9 @@ public class MappingTextField extends TreepathDropableTextField {
 	protected String ext_type;
 	protected ButtonGroup  priority_bg;
 	
+	protected VPSTOEPanel newForm;
+	
+	
 	/**
 	 * @param form
 	 */
@@ -41,6 +46,20 @@ public class MappingTextField extends TreepathDropableTextField {
 		 */
 		this.setTransferHandler(new ProductTreePathTransferHandler(num_node));			
 	}
+	
+	/*
+	 * Add by Valentin Pertuy
+	 */
+//	MappingTextField(VPSTOEPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
+//		this.newForm = form;
+//		this.for_entry = for_entry;
+//		this.num_node = num_node;
+//		this.priority_bg = priority_bg;
+//		/*
+//		 * Takes the second node, without extension checking
+//		 */
+//		this.setTransferHandler(new ProductTreePathTransferHandler(num_node));			
+//	}
 	
 	/**
 	 * @param treepath

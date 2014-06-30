@@ -10,12 +10,15 @@ import javax.swing.JPanel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.RenameButton;
 import saadadb.admintool.components.SaveButton;
+import saadadb.admintool.components.SwitchButtonWIP;
 
 @SuppressWarnings("serial")
 public abstract class EditPanel extends AdminPanel{
 	protected JButton loadButton;
 	protected RenameButton saveAsButton;
 	protected SaveButton saveButton;
+	
+
 
 	public EditPanel(AdminTool rootFrame, String title, String icon, String ancestor) {
 		super(rootFrame, title, icon, ancestor);

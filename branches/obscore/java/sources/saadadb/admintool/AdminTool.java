@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;
@@ -131,6 +132,8 @@ public class AdminTool extends BaseFrame {
 	private EditPanel tableMapperPanel;;
 	private EditPanel imageMapperPanel;;
 	private EditPanel flatfileMapperPanel;
+	
+	private EditPanel mappingFilterPanel;
 
 	private EditPanel dbInstallPanel;
 	private EditPanel webInstallPanel;
@@ -198,14 +201,19 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 1;
 		c.weighty = 1;
 		leftPanel.add(metaDataTree,c);
-		currentProcess = new LoadBarButton("Current Process");
+		//Temporary change
+		//currentProcess = new LoadBarButton("Current Process"); 
+		currentProcess=new LoadBarButton("SwapTemporaire");
 		currentProcess.btn.setToolTipText("Display the console panel connected on the current asynchronous process");
 		currentProcess.btn.addActionListener(new ActionListener() {
+			
+			// Temporary modification by Valentin Pertuy
 			public void actionPerformed(ActionEvent arg0) {
-				int x = (int)(Math.random() * 10);
-				activePanel(AdminComponent.PROCESS_PANEL);
-				activePanel.setDataTreePath(new DataTreePath("collection" + x, "CATEGORY", "classe" + x));
-				activePanel.setCurrentTask("Au Boulot");
+//				int x = (int)(Math.random() * 10);
+//				activePanel(AdminComponent.PROCESS_PANEL);
+//				activePanel.setDataTreePath(new DataTreePath("collection" + x, "CATEGORY", "classe" + x));
+//				activePanel.setCurrentTask("Au Boulot");
+				activePanel(AdminComponent.NEW_MAPPER);
 			}
 		});
 		c.gridx = 0;
@@ -464,7 +472,10 @@ public class AdminTool extends BaseFrame {
 		} else 	if( panelTitle.equals(AdminComponent.TABLE_MAPPER) ) {
 			if( tableMapperPanel == null ) {
 				tableMapperPanel = new MappingKWPanel(this, AdminComponent.TABLE_MAPPER, Category.TABLE, AdminComponent.DATA_LOADER);
+				//mappingFilterPanel=new MappingFilterPanel(this,AdminComponent.NEW_MAPPER,AdminComponent.DATA_LOADER);
+
 			}
+			
 			activePanel = tableMapperPanel;
 		} else 	if( panelTitle.equals(AdminComponent.IMAGE_MAPPER) ) {
 			if( imageMapperPanel == null ) {
@@ -476,9 +487,21 @@ public class AdminTool extends BaseFrame {
 				flatfileMapperPanel = new MappingKWPanel(this, AdminComponent.FLATFILE_MAPPER, Category.FLATFILE,  AdminComponent.DATA_LOADER);
 			}
 			activePanel = flatfileMapperPanel;
+			
+			//Replacement for the MappingKWPanel (VP)
+		} else if(panelTitle.equals(AdminComponent.NEW_MAPPER))
+		{
+			if(mappingFilterPanel==null)
+			{
+				mappingFilterPanel=new VPSTOEPanel(this,AdminComponent.NEW_MAPPER,Category.SPECTRUM,AdminComponent.ROOT_PANEL);
+				
+			}
+			activePanel=mappingFilterPanel;
 			/*
 			 * Relationship management
 			 */
+			
+
 		} else 	if( panelTitle.equals(AdminComponent.CREATE_RELATION) ) {
 			if( createRelationPanel == null ) {
 				createRelationPanel = new RelationCreatePanel(this, AdminComponent.MANAGE_RELATIONS);
