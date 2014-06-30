@@ -31,6 +31,7 @@ public class ProductListReport {
 			System.out.println(ap);
 			File[] allfiles = (new File(ap.getFilename())).listFiles();
 			String[] sample = {
+			"P0403390101M1S001SRSPEC0017.FIT",
 			"J_ApJ_703_894_PN_IC342_001.fits",
 			"J_ApJ_708_661_SN10297-12042005.fits",
 			"J_MNRAS_371_703_s0001.fits",
@@ -55,7 +56,7 @@ public class ProductListReport {
 
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 11;
+			int MAX = 1;
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;

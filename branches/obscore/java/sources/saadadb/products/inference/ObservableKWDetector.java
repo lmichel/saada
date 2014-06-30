@@ -10,6 +10,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ColumnSetter;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 /**
 
@@ -26,6 +27,7 @@ public class ObservableKWDetector extends KWDetector {
 	private ColumnSetter calib=new ColumnSetter();;
 	private boolean commentSearched = false;
 	private boolean keywordsSearched = false;
+	private boolean columnsSearched = false;
 
 	public ObservableKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
 		super(tableAttributeHandler);
@@ -46,8 +48,52 @@ public class ObservableKWDetector extends KWDetector {
 		if( this.unit.notSet()){
 			this.searchInComments();
 		}
+		if( this.unit.notSet()){
+			this.searchInColumns();
+		}
 	}
 
+	/**
+	 * @throws FatalException 
+	 * 
+	 */
+	private void searchInColumns() throws FatalException {
+		if( this.columnsSearched ){
+			return;
+		}
+		this.columnsSearched = true;
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the column names");
+		if( this.entryAttributeHandler != null ){
+			ColumnSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
+			if( !ah.notSet()  ){
+				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
+					this.unit.setByTableColumn(ah.getUnit(), false);
+					this.unit.completeMessage("Taken from description of column " + ah.getAttNameOrg());
+				} else {
+					this.unit.setByTableColumn(ah.getUnit(), false);
+					this.unit.completeMessage("Not unit for column " + ah.getAttNameOrg() + " take counts");					
+				}
+				if( ah.getUcd() != null && ah.getUcd().length() > 0 ) {
+					this.ucd.setByTableColumn(ah.getUcd(), false);
+					this.ucd.completeMessage("Taken from description of column " + ah.getAttNameOrg());
+				} else if( ah.getUnit() != null && ah.getUnit().length() > 0 ){
+					this.ucd.setByValue("phot.flux", false);
+					this.ucd.completeMessage("Infered from unit");					
+				} else {
+					this.ucd.setByTableColumn("phot.count", false);
+					this.ucd.completeMessage("Infered from unit");					
+				}
+				if( !this.unit.notSet() && !this.unit.getValue().matches("(?i)(.*count.*)") ) {
+					this.calib.setByValue("2", false);
+					this.calib.completeMessage("Infered from both ucd and unit");
+				} else {
+					this.calib.setByValue("1", false);
+					this.calib.completeMessage("Infered from both ucd and unit");
+				}
+			}
+		}
+	
+	}
 	/**
 	 * 
 	 */

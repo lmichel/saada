@@ -50,12 +50,15 @@ public class EnergyKWDetector extends KWDetector {
 	 * @param entryAttributeHandler
 	 * @param comments
 	 * @param productMapping
+	 * @param productFile   : used to get the ra,age of columns values
 	 * @throws SaadaException
 	 */
-	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments, ProductMapping productMapping)throws SaadaException {
+	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler
+			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments, ProductMapping productMapping, DataFile productFile)throws SaadaException {
 		super(tableAttributeHandler, entryAttributeHandler);
 		this.setUnitMode(productMapping);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
+		this.productFile = productFile;
 	}
 	/**
 	 * @param priority
@@ -124,7 +127,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @return
 	 */
 	private void setMinMaxValues(double[] ds) {
-		if( ds == null || ds.length != 2 ) {
+		if( ds == null || ds.length != 3 ) {
 			this.spectralCoordinate.setOrgMax(SaadaConstant.DOUBLE);
 			this.spectralCoordinate.setOrgMin(SaadaConstant.DOUBLE);
 		} else {
@@ -196,7 +199,7 @@ public class EnergyKWDetector extends KWDetector {
 				return true;
 			} 		
 			/*
-			 * If no column look like a dispersion, we look for a flux column, and take the row numlber as dispersion
+			 * If no column look like a dispersion, we look for a flux column, and take the row number as dispersion
 			 */
 			else {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Check if a column can be a flux");
