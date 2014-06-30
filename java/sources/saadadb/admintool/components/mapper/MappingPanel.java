@@ -7,6 +7,7 @@ import java.awt.Color;
 
 import javax.swing.JTextArea;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
@@ -21,6 +22,11 @@ public abstract class MappingPanel {
 	public final MappingKWPanel mappingPanel;
 	public String[] helpText;
 	public JTextArea helpLabel;
+	
+	/*
+	 * Valentin Pertuy
+	 */
+	//public final VPSTOEPanel mappingPanel2;
 
 	public MappingPanel(MappingKWPanel mappingPanel, String title) {
 		this.container = new CollapsiblePanel(title);	
@@ -32,6 +38,26 @@ public abstract class MappingPanel {
 		helpLabel.setForeground(Color.GRAY);
 
 	}
+	
+
+	/*
+	 * Constructor add for the new form (Valentin Pertuy)
+	 */
+
+//	public MappingPanel(String title) {
+//		this.container = new CollapsiblePanel(title);	
+//		//this.mappingPanel2 = null;
+//		helpLabel = new JTextArea();
+//		helpLabel.setEditable(false);	
+//		helpLabel.setFont(AdminComponent.helpFont);		
+//		helpLabel.setBackground(AdminComponent.LIGHTBACKGROUND);
+//		helpLabel.setForeground(Color.GRAY);
+//		
+//		this.mappingPanel=null;
+//
+//	}
+//	
+	
 
 	public void setCollapsed(boolean collapse) {
 		this.container.setCollapsed(collapse);

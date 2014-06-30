@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
@@ -29,6 +30,27 @@ public class ExtensionTextFieldPanel extends MappingPanel {
 		panel.add(helpLabel, cae);
 		setHelpLabel(HelpDesk.EXTENSION_MAPPING);
 	}
+	
+	
+	/*
+	 * Add by Valentin Pertuy (for VPClassMappingPanel)
+	 */
+	
+//	public ExtensionTextFieldPanel(VPSTOEPanel mappingPanel, String title, boolean forEntry) {
+//		super(title);
+//		JPanel panel =  container.getContentPane();
+//		panel.setLayout(new GridBagLayout());
+//		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
+//		mappingTextField = new ExtMappingTextField(this.mappingPanel, 1, forEntry, null);
+//		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
+//		GridBagConstraints cae = new GridBagConstraints();
+//		cae.anchor = GridBagConstraints.WEST;
+//		cae.weightx = 0.0; cae.gridx = 0; cae.gridy = 0;
+//		panel.add(mappingTextField, cae);
+//		cae.weightx = 1.0; cae.gridx++;
+//		panel.add(helpLabel, cae);
+//		setHelpLabel(HelpDesk.EXTENSION_MAPPING);
+//	}
 
 	public boolean checkChange() {
 		return mappingTextField.checkChange(mappingTextField.getText());

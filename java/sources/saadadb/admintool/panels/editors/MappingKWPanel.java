@@ -26,6 +26,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.LoaderConfigChooser;
 import saadadb.admintool.components.RenameButton;
 import saadadb.admintool.components.SaveButton;
+import saadadb.admintool.components.SwitchButtonWIP;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.mapper.ClassMapperPanel;
 import saadadb.admintool.components.mapper.CoordSysMapperPanel;
@@ -61,19 +62,23 @@ public class MappingKWPanel extends EditPanel {
 	/**
 	 * 
 	 */
+	
+	//Temporary button used for the developpment of the new form
+	
+	
 	private static final long serialVersionUID = 1L;
 	private int category;
-	private String confName = "Default";
+	protected String confName = "Default";
 
 	private JPanel category_panel;
 
 	private JPanel entry_panel;
 
-	private GridBagConstraints globalGridConstraint ;
+	protected GridBagConstraints globalGridConstraint ;
 	private GridBagConstraints e_globalGridConstraint ;
 	private String last_saved = "";
 
-	private JPanel editorPanel;
+	protected JPanel editorPanel;
 	private JPanel e_editorPanel;
 
 	private MappingTextfieldPanel nameMapper;
@@ -107,7 +112,7 @@ public class MappingKWPanel extends EditPanel {
 	/**
 	 * 
 	 */
-	private void addCategoryPanel() {
+	protected void addCategoryPanel() {
 		if( category_panel == null ) {
 			category_panel = new JPanel(new GridBagLayout());			
 			category_panel.setBackground(LIGHTBACKGROUND);
@@ -964,6 +969,8 @@ public class MappingKWPanel extends EditPanel {
 		this.saveButton.setEnabled(true);
 		this.saveAsButton = new RenameButton(this);
 		this.saveAsButton.setEnabled(true);
+//		this.switchButton = new SwitchButtonWIP(this.rootFrame);
+//		this.switchButton.setEnabled(true);
 
 		JPanel tPanel = new JPanel();
 		tPanel.setLayout(new GridBagLayout());
@@ -980,6 +987,8 @@ public class MappingKWPanel extends EditPanel {
 		c.gridx++;	
 		tPanel.add(saveAsButton, c);
 		c.gridx++;		
+		//tPanel.add(switchButton,c);
+		c.gridx++;
 		/*
 		 * Just to push all previous components to the left
 		 */

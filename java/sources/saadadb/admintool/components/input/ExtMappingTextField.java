@@ -3,6 +3,7 @@ package saadadb.admintool.components.input;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
@@ -13,13 +14,20 @@ public class ExtMappingTextField extends MappingTextField {
 
 	/** * @version $Id$
 
-	 * 
+	 * Modifié par valentin pertuy
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public ExtMappingTextField(MappingKWPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
 		super(form, num_node, for_entry, priority_bg);
 	}
+	
+	/*
+	 * Ajouté par valentin Pertuy
+	 */
+//	public ExtMappingTextField(VPSTOEPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
+//		super(form, num_node, for_entry, priority_bg);
+//	}
 
 	/**
 	 * @param treepath

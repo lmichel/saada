@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
+import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
@@ -35,6 +36,9 @@ public class MappingTextfieldPanel extends MappingPanel{
 		cae.weightx = 1.0; cae.gridx++;
 		panel.add(helpLabel, cae);
 	}
+	
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.components.MappingPanel#getText()
