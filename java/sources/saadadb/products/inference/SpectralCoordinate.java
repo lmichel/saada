@@ -555,7 +555,8 @@ public class SpectralCoordinate{
 		 * No dispersion axe: we consider the longer one as a good candidate
 		 */
 		else {
-			int old_max = 0;
+			return false;
+/*			int old_max = 0;
 			for( int axe=0 ; axe<wm.getNAXIS() ; axe++) {
 				if( wm.getNAXISi(axe) > old_max ) {
 					old_max = wm.getNAXISi(axe);
@@ -567,16 +568,16 @@ public class SpectralCoordinate{
 						(ah = attributesList.get(ChangeKey.changeKey("DISP").toLowerCase())) != null ) {		
 
 					String dispers = ah.getValue();	
-					/*
+					
 					 * Dispersion is often a string from which we attempt to extract the unit 
-					 */
+					 
 					Matcher m   = (Pattern.compile("[^\\s]*\\/[^\\s,\\']*")).matcher(dispers);
 					while( m.find() ) {
 						String disp_unit = m.group(0);
 						unitOrg = disp_unit.substring(0, disp_unit.indexOf("/"));
-						/*
+						
 						 * "Angtroem" is often written like "Ampere"
-						 */
+						 
 						if( unitOrg.equals("A") ) {
 							unitOrg = "Angstrom";
 						}
@@ -595,7 +596,7 @@ public class SpectralCoordinate{
 					}
 				}
 			}			
-		}
+*/		}
 		this.orgMin = wm.getMinValue(dispersionAxeNum);
 		this.orgMax = wm.getMaxValue(dispersionAxeNum);
 		ColumnSetter[]cs = wm.getRadecCenter();
