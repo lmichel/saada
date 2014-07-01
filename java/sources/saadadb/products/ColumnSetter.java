@@ -5,6 +5,7 @@ import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.SaadaConstant;
 
 /**
  * This classs contains both the mapping of a column and the way it has be done.
@@ -25,7 +26,8 @@ public final class ColumnSetter implements Cloneable {
 	 */
 	public StringBuffer message = new StringBuffer();
 	/**
-	 * Value affected to the column but whicg cab be saved as a string within the  AttributeHandler
+	 * Normally used to store the value as it will be put inti the DB, can however to used to store 
+	 * the value affected to the column but which can be saved as a string within the  AttributeHandler
 	 */
 	public Object storedValue;
 	
@@ -69,7 +71,8 @@ public final class ColumnSetter implements Cloneable {
 		this.setMappingMessage(fromMapping);
 	}
 	/**
-	 * Build an attribute handler carrying the value and put the apropriate messages
+	 * Build an attribute handler carrying the value and put the appropriate message
+	 * Set on BY_VALUE mode
 	 * @param value   constant value for the column
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
@@ -84,12 +87,40 @@ public final class ColumnSetter implements Cloneable {
 		this.setMappingMessage(fromMapping);
 	}
 	/**
-	 * Build an attribute handler carrying the value and put the apropriate messages
+	 * Build an attribute handler carrying the value
+	 * Set on BY_VALUE mode
+	 * @param value numeric value for the column
+	 * @param fromMapping flag for messaging
+	 * @throws FatalException 
+	 */
+	public ColumnSetter(double value, boolean fromMapping) throws FatalException {
+		this.attributeHandler = new AttributeHandler();
+		this.setMode = ColumnSetMode.BY_VALUE ;
+		this.attributeHandler.setValue(value);
+		this.attributeHandler.setNameattr(ColumnMapping.NUMERIC);
+		this.attributeHandler.setNameorg(ColumnMapping.NUMERIC);
+		this.setInitMessage();
+		this.setMappingMessage(fromMapping);
+	}
+	/**
+	 * Build an attribute handler carrying the value and put the appropriate messages
+	 * Set on BY_VALUE mode
 	 * @param value   constant value for the column
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
 	 */
 	public ColumnSetter(String value, boolean fromMapping, String message) throws FatalException {
+		this(value, fromMapping);
+		this.completeMessage(message);
+	}
+	/**
+	 * Build an attribute handler carrying the value and put the appropriate messages
+	 * Set on BY_VALUE mode
+	 * @param value   numeric value for the column
+	 * @param fromMapping flag for messaging
+	 * @throws FatalException 
+	 */
+	public ColumnSetter(double value, boolean fromMapping, String message) throws FatalException {
 		this(value, fromMapping);
 		this.completeMessage(message);
 	}
@@ -160,9 +191,24 @@ public final class ColumnSetter implements Cloneable {
 		this.message.append(message);
 	}
 	/**
+	 * Set the value (STring) and set the BY_VALUE mode
+	 * @param fromMapping
 	 * @param value
 	 */
 	public void setByValue(String value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_VALUE;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
+	/**
+	 * Set the value (numeric) and set the BY_VALUE mode
+	 * @param value
+	 * @param fromMapping
+	 */
+	public void setByValue(double value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
@@ -180,6 +226,12 @@ public final class ColumnSetter implements Cloneable {
 			this.completeMessage("user mapping");
 		}
 	}
+	
+	/**
+	 * Set the value (STring) and set the BY_WCS mode
+	 * @param value
+	 * @param fromMapping
+	 */
 	public void setByKeyword(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_KEYWORD;
 		this.attributeHandler.setValue(value);
@@ -189,7 +241,22 @@ public final class ColumnSetter implements Cloneable {
 		}
 	}
 	/**
+	 * Set the value (numeric) and set the BY_WCS mode
 	 * @param value
+	 * @param fromMapping
+	 */
+	public void setByKeyword(double value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_KEYWORD;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
+	/**
+	 * Set the value (STring) and set the BY_WCS mode
+	 * @param value
+	 * @param fromMapping
 	 */
 	public void setByWCS(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_WCS;
@@ -200,7 +267,22 @@ public final class ColumnSetter implements Cloneable {
 		}
 	}
 	/**
+	 * Set the value (numeric) and set the BY_WCS mode
 	 * @param value
+	 * @param fromMapping
+	 */
+	public void setByWCS(double value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_WCS;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
+	/**
+	 * Set the value (STring) and set the BY_PIXEL mode
+	 * @param value
+	 * @param fromMapping
 	 */
 	public void setByPixels(String value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_PIXELS;
@@ -211,9 +293,37 @@ public final class ColumnSetter implements Cloneable {
 		}
 	}
 	/**
+	 * Set the value (numeric) and set the BY_PIXEL mode
 	 * @param value
+	 * @param fromMapping
+	 */
+	public void setByPixels(double value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_PIXELS;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
+	/**
+	 * Set the value (STring) and set the BY_PIXEL mode
+	 * @param value
+	 * @param fromMapping
 	 */
 	public void setByTableColumn(String value, boolean fromMapping){
+		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
+		this.attributeHandler.setValue(value);
+		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
+	}
+	/**
+	 * Set the value (numeric) and set the BY_PIXEL mode
+	 * @param value
+	 * @param fromMapping
+	 */
+	public void setByTabeColumn(double value, boolean fromMapping){
 		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
@@ -247,7 +357,7 @@ public final class ColumnSetter implements Cloneable {
 		this.attributeHandler.setValue(null);
 	}
 	/**
-	 * 
+	 * Set also the BY_VALUE mode
 	 */
 	public void setValue(String value){
 		this.setMode = ColumnSetMode.BY_VALUE;
@@ -255,6 +365,11 @@ public final class ColumnSetter implements Cloneable {
 	}
 	/**
 	 * Set the value as a string  into the AttributeHandler and keep the double value as the storedValue
+	public void setValue(double value, String unit){
+		this.attributeHandler.setValue(value);
+		this.attributeHandler.setUnit(unit);
+		this.storedValue = value;
+	}
 	 * @param value
 	 */
 	public void setValue(double value){
@@ -291,10 +406,19 @@ public final class ColumnSetter implements Cloneable {
 		this.attributeHandler.setUnit(unit);
 	}
 	/**
+	 * Returns String value stored into the attribute Handler
 	 * @return
 	 */
 	public String getValue() {
 		return this.attributeHandler.getValue();
+	}
+	/**
+	 * Returns double value stored into the attribute Handler
+	 * If the AH value has been set with a string, this method can return a {@link SaadaConstant#DOUBLE}
+	 * @return
+	 */
+	public double getNumValue() {
+		return this.attributeHandler.getNumValue();
 	}
 	/**
 	 * @return
