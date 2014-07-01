@@ -165,8 +165,6 @@ public class EnergyKWDetector extends KWDetector {
 				return true;
 			}
 		}
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Not found");
-
 		return false;
 	}
 
@@ -180,8 +178,6 @@ public class EnergyKWDetector extends KWDetector {
 		this.readUnit = this.spectralCoordinate.getMappedUnit();
 		if( retour )
 			this.detectionMessage = spectralCoordinate.detectionMessage;
-		else if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Not found");
-
 		return retour;
 	}
 
@@ -221,7 +217,6 @@ public class EnergyKWDetector extends KWDetector {
 				} 		
 			}
 		} 
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Not found");
 		return  false;
 	}
 
