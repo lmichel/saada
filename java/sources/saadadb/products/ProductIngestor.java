@@ -320,7 +320,7 @@ class ProductIngestor {
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;
 			}
-			if( this.product.error_angleSetter == null ) {
+			if( this.product.error_angleSetter.notSet() ) {
 				angle = 90.0;
 			} else {
 				angle = Double.parseDouble(this.product.error_angleSetter.getValue());				
