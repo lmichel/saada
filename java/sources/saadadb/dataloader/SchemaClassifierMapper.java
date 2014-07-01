@@ -65,10 +65,10 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			/*
 			 * Build the Saada Product instance
 			 */
-			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);				
-			Messenger.printMsg(Messenger.TRACE, "Build the Saada instance modeling <" + currentProductBuilder.getName()+ ">");
 			try {
-				this.currentProductBuilder.initProductFile();
+				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);				
+				Messenger.printMsg(Messenger.TRACE, "Build the Saada instance modeling <" + currentProductBuilder.getName()+ ">");
+				//this.currentProductBuilder.initProductFile();
 			} catch(IgnoreException e) {
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -77,17 +77,17 @@ public class SchemaClassifierMapper extends SchemaMapper {
 				else {
 					continue;
 				}
-				
+
 			}
 			/*
 			 * Only AbortException are caught, because they don't stop the process
 			 */
 			//try {
-				this.ingestCurrentProduct();
+			this.ingestCurrentProduct();
 			//} catch( AbortException e) {
 			//	SQLTable.beginTransaction();				
 			//}
-			
+
 			if( i > 0 && (i%100) == 0 ) {
 				SQLTable.commitTransaction();	
 				Database.gc();
@@ -122,47 +122,47 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	 * 
 	 */
 	protected void ingestCurrentProduct() throws Exception {
+		/*
+		 * Products not matching the configare rejected
+		 */
+		if( !this.mapping.isProductValid(currentProductBuilder) ) {
+			Messenger.printMsg(Messenger.TRACE, "<" + currentProductBuilder.getName()+ "> rejected");	
+			return;
+		}
+
+		/*
+		 * No schema update for flatfile: no need to generate classes because product content
+		 * is not read
+		 */
+		if( mapping.getCategory() != Category.FLATFILE ) {
 			/*
-			 * Products not matching the configare rejected
+			 * Create misssing class and load the product
 			 */
-			if( !this.mapping.isProductValid(currentProductBuilder) ) {
-				Messenger.printMsg(Messenger.TRACE, "<" + currentProductBuilder.getName()+ "> rejected");	
-				return;
-			}
-			
+			this.updateSchemaForProduct();
 			/*
-			 * No schema update for flatfile: no need to generate classes because product content
-			 * is not read
+			 * Transaction is closed when a class is created
 			 */
-			if( mapping.getCategory() != Category.FLATFILE ) {
-				/*
-				 * Create misssing class and load the product
-				 */
-				this.updateSchemaForProduct();
+			//SQLTable.beginTransaction();
+			/*
+			 * build table entry class  if any
+			 */
+			if( mapping.getCategory() == Category.TABLE) {
+				Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				this.entryMapper = new SchemaClassifierMapper(this.loader, entr);
+				this.entryMapper.updateSchemaForProduct();
 				/*
 				 * Transaction is closed when a class is created
 				 */
 				//SQLTable.beginTransaction();
-				/*
-				 * build table entry class  if any
-				 */
-				if( mapping.getCategory() == Category.TABLE) {
-					Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
-					EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
-					this.entryMapper = new SchemaClassifierMapper(this.loader, entr);
-					this.entryMapper.updateSchemaForProduct();
-					/*
-					 * Transaction is closed when a class is created
-					 */
-					//SQLTable.beginTransaction();
-				}
 			}
-			/*
-			 * Store product
-			 */
-			this.loadProduct();
 		}
-	
+		/*
+		 * Store product
+		 */
+		this.loadProduct();
+	}
+
 	/**
 	 * @param product
 	 * @throws Exception 
@@ -221,7 +221,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			}
 		}
 		this.currentClass =  mc;
-		
+
 	}
 
 
