@@ -261,12 +261,17 @@ class ProductIngestor {
 					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
 					for( int i=0 ; i<(pts.length/2) ; i++ ) {
 						converted_coord = Coord.convert(this.product.astroframe, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
-						stc += " " +converted_coord[0] + " " + converted_coord[1];
+						stc += " " +converted_coord[0] + " " + converted_coord[1] + " " ;
 					}
 					this.product.s_regionSetter.setValue(stc);
 					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+					this.saadaInstance.setS_region(stc);
 				}
 
+				if(this.product.s_fovSetter.notSet())
+					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
+				else 
+					this.saadaInstance.setS_fov(Double.parseDouble(this.product.s_fovSetter.getValue()));
 				if(this.product.s_raSetter.notSet())
 					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 				else 
