@@ -2,10 +2,7 @@ package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagLayout;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
@@ -13,7 +10,7 @@ import saadadb.admintool.utils.MyGBC;
 
 public class VPAxisPriorityPanel extends VPAxisPanel {
 
-	private VPPriorityPanel priority;
+	protected VPPriorityPanel priority;
 	dummy dum;
 
 	public VPAxisPriorityPanel(VPSTOEPanel mappingPanel,String title) {
@@ -23,7 +20,13 @@ public class VPAxisPriorityPanel extends VPAxisPanel {
 
 		panel=this.getContainer().getContentPane();
 		MyGBC gbc = new MyGBC(3,3,3,3);
-//		gbc.right(true);
+		gbc.right(false);
+		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
+		gbc.next();
+		gbc.left(false);
+		
+		priority=new VPPriorityPanel(mappingPanel,"plop");
+		panel.add(priority,gbc);
 //		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 //		gbc.next();
 //		gbc.left(false);

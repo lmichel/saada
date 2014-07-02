@@ -4,9 +4,9 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
 
-public class KwMapperPanel extends JPanel {
+public class VPKwMapperPanel extends JPanel {
 
-	public KwMapperPanel()
+	public VPKwMapperPanel()
 	{
 		setBackground(AdminComponent.LIGHTBACKGROUND);
 	}

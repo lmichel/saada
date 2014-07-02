@@ -17,15 +17,15 @@ import saadadb.admintool.components.AdminComponent;
 public class VPMapperPrioritySelector {
 	private JRadioButton nomapping;
 	private JComponent[] components;
+	private JRadioButton[] buttons;
 
 	/**
 	 * @param buttons
 	 * @param nomapping
 	 * @param components
 	 */
-	public VPMapperPrioritySelector(JRadioButton[] buttons, JRadioButton nomapping, ButtonGroup bg, JComponent[] components, JPanel panel, GridBagConstraints ccs) {
+	public VPMapperPrioritySelector(JRadioButton[] buttons, JRadioButton nomapping, ButtonGroup bg, JPanel panel, GridBagConstraints ccs) {
 		this.nomapping = nomapping;
-		this.components = components;
 		JPanel jp = new JPanel();
 		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
 		jp.setLayout(new BoxLayout(jp, BoxLayout.LINE_AXIS));
@@ -44,6 +44,20 @@ public class VPMapperPrioritySelector {
 				b.setToolTipText("Only the automatic detection will be applied ");
 			}
 		}
+		this.buttons=buttons;
+		this.nomapping=nomapping;
+		for( JRadioButton jrb: buttons) {
+			jp.add(jrb);	
+			bg.add(jrb);
+		}
+		
+		panel.add(jp, ccs);
+	
+	}
+
+	public void buildMapper(JComponent[] components)
+	{
+		this.components=components;
 		for( JRadioButton jrb: buttons) {
 			jrb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -60,16 +74,16 @@ public class VPMapperPrioritySelector {
 			else {
 				jrb.setSelected(false);
 			}
-			jp.add(jrb);	
-			bg.add(jrb);
-		}
-		panel.add(jp, ccs);
-		this.setEnable(false);
-	}
 
+		}
+		this.setEnable(false);
+		
+	}
+	
 	/**
 	 * @param b
 	 */
+	
 	protected void setEnable(boolean b) {
 		for( JComponent jc: components) {
 			if( jc.getClass().getName().matches(".*Text.*") ) {

@@ -1,13 +1,11 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
@@ -40,9 +38,8 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
 		super("Axe Class-Mapping");
 		JPanel panel =  getContainer().getContentPane();
-		JLabel ext = new JLabel("Extension to Load");
 		panel.setLayout(new GridBagLayout());
-		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
+		//panel.setBackground(AdminComponent.LIGHTBACKGROUND);
 		
 		// this custom GridBagConstraint manage the positions of our elements
 		MyGBC gbc = new MyGBC(3,3,3,3);
@@ -99,8 +96,8 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		gbc.next();
 		gbc.left(true);
 
-		ccs.gridx = 1; ccs.gridy = 1;
-		ccs.anchor = GridBagConstraints.LINE_START;
+//		ccs.gridx = 1; ccs.gridy = 1;
+//		ccs.anchor = GridBagConstraints.LINE_START;
 		panel.add(classField, gbc);
 		
 		gbc.newRow();

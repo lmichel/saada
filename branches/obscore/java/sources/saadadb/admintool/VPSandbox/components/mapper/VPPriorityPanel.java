@@ -3,44 +3,44 @@ package saadadb.admintool.VPSandbox.components.mapper;
 import java.awt.GridBagLayout;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.input.AppendMappingTextField;
-import saadadb.admintool.components.mapper.MapperPrioritySelector;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.enums.PriorityMode;
 
 public class VPPriorityPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	protected JRadioButton onlyBtn;
 	protected JRadioButton firstBtn ;
 	protected JRadioButton lastBtn ;
 	protected JRadioButton noBtn ;
 	protected ButtonGroup buttonGroup ;
+	protected VPMapperPrioritySelector selector;
 
-	public VPPriorityPanel(MappingKWPanel mappingPanel, String title, JComponent[] component){
+	public VPPriorityPanel(MappingKWPanel mappingPanel, String title){
 		//super(title);
 		super();
 		this.setLayout(new GridBagLayout());
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
 		MyGBC gbc = new MyGBC();
-		gbc.right(false);
-		this.add(AdminComponent.getPlainLabel("Priority "), gbc);
-		gbc.next();
 		gbc.left(true);
 		onlyBtn = new JRadioButton("only");
 		firstBtn = new JRadioButton("first");
 		lastBtn = new JRadioButton("last");
 		noBtn = new JRadioButton("no mapping");
 		buttonGroup = new ButtonGroup();
-		new MapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup
-				,  component
-		, this, gbc);
+//		new MapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup
+//				,  component
+//		, this, gbc);
+		selector = new VPMapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup
+				, this, gbc);
 	}
 
 	public boolean isOnly() {
