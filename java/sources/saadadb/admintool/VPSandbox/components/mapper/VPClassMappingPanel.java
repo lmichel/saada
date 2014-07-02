@@ -1,4 +1,4 @@
-package saadadb.admintool.VPSandbox;
+package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,10 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.components.mapper.MapperPrioritySelector;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.util.RegExp;
 
@@ -37,7 +39,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	 */
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
 		super("Axe Class-Mapping");
-		JPanel panel =  container.getContentPane();
+		JPanel panel =  getContainer().getContentPane();
 		JLabel ext = new JLabel("Extension to Load");
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -60,14 +62,14 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		// Class name field
 		classField    = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
 		
-		gbc.left(false);
+		gbc.right(false);
 
 		
-		panel.add(AdminComponent.getPlainLabel("Mapping Mode :"), gbc);
+		panel.add(AdminComponent.getPlainLabel("Mapping Mode "), gbc);
 
 		gbc.next();
-		gbc.left(true);
-
+		gbc.left(false);
+		// We set the class-mapping selector
 		new MapperPrioritySelector(new JRadioButton[] {classifier_btn, fusion_btn, noclass_btn}
 		, noclass_btn
 		, new ButtonGroup()
@@ -75,10 +77,17 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		, panel
 		, gbc);
 		
+		// We set the "help" button
+		gbc.next();
+		gbc.right(true);
+		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+		panel.add(helpLabel,gbc);
+		
+		
 		gbc.newRow();
-		gbc.left(false);
+		gbc.right(false);
 
-		panel.add(AdminComponent.getPlainLabel("Class Name :"), gbc);
+		panel.add(AdminComponent.getPlainLabel("Class Name "), gbc);
 		classField.setColumns(10);
 		classField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -95,24 +104,31 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		panel.add(classField, gbc);
 		
 		gbc.newRow();
-		gbc.left(false);
+		gbc.right(false);
 
-		
-		panel.add(AdminComponent.getPlainLabel("Extension to Load :"), gbc);		
+		// We set the "Extension to Load" selector
+		panel.add(AdminComponent.getPlainLabel("Extension to Load "), gbc);		
 		
 		gbc.next();
 		gbc.left(true);
 		
-		ccs.gridx = 1; ccs.gridy = 2;
-		ccs.anchor = GridBagConstraints.LINE_START;
 		//panel.add(ext,ccs);
-		//ccs.gridx = 2; ccs.gridy = 2;
 		//Partie pour l'extension (Attention, pas repris de ExxAttMapperPanel mais de ExtensionTextFieldPanel)
 		// Booleen "ForEntry", mis à faux temporairement
 		mappingTextField = new ExtMappingTextField(mappingPanel, 1, false, null);
 		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
 		//GridBagConstraints cae = new GridBagConstraints();
 		panel.add(mappingTextField, gbc);
+		
+//		gbc.newRow();
+//		gbc.left(true);
+//		
+//		
+//		panel.add(new VPPriorityPanel(mappingPanel,"plop"),gbc);
+//		
+		
+		
+		
 
 //		panel.add(helpLabel, ccs);
 //		setHelpLabel(HelpDesk.CLASS_MAPPING);
@@ -134,6 +150,11 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		else {
 			return "";
 		}
+	}
+	@Override
+	public String getText() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	@Override

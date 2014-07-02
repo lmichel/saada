@@ -62,9 +62,7 @@ public class MappingKWPanel extends EditPanel {
 	/**
 	 * 
 	 */
-	
-	//Temporary button used for the developpment of the new form
-	
+		
 	
 	private static final long serialVersionUID = 1L;
 	private int category;

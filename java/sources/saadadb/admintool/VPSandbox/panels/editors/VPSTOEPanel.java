@@ -1,61 +1,22 @@
 /*
  * This package is (probably) temporary
  */
-package saadadb.admintool.VPSandbox;
+package saadadb.admintool.VPSandbox.panels.editors;
 
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Observable;
 
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.LoaderConfigChooser;
-import saadadb.admintool.components.RenameButton;
-import saadadb.admintool.components.SaveButton;
-import saadadb.admintool.components.SwitchButtonWIP;
-import saadadb.admintool.components.ToolBarPanel;
-import saadadb.admintool.components.mapper.ClassMapperPanel;
-import saadadb.admintool.components.mapper.CoordSysMapperPanel;
-import saadadb.admintool.components.mapper.DispersionMapperPanel;
-import saadadb.admintool.components.mapper.ExtAttMapperPanel;
-import saadadb.admintool.components.mapper.ExtensionTextFieldPanel;
-import saadadb.admintool.components.mapper.MappingTextfieldPanel;
-import saadadb.admintool.components.mapper.PositionErrorMapperPanel;
-import saadadb.admintool.components.mapper.PositionMapperPanel;
-import saadadb.admintool.dialogs.DialogConfName;
-import saadadb.admintool.dialogs.DialogFileChooser;
-import saadadb.admintool.panels.EditPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPSaadaMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.admintool.panels.tasks.DataLoaderPanel;
-import saadadb.admintool.tree.VoDataProductTree;
-import saadadb.api.SaadaDB;
-import saadadb.collection.Category;
-import saadadb.command.ArgsParser;
-import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
-import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
 
 /**
@@ -99,6 +60,12 @@ public class VPSTOEPanel extends MappingKWPanel {
 //	private PositionErrorMapperPanel e_positionErrorMapper;
 //	protected  LoaderConfigChooser configChooser;
 //	private Container category_panel;
+	private VPClassMappingPanel classMapping;
+	private VPObservableMappingPanel observableMapping;
+	private VPSpaceMappingPanel spaceMapping;
+	private VPTimeMappingPanel timeMapping;
+	private VPSaadaMappingPanel saadaMapping;
+	private VPEnergyMappingPanel energyMapping;
 	
 	
 	
@@ -180,16 +147,19 @@ public class VPSTOEPanel extends MappingKWPanel {
 	private void buildAxis()
 	{
 		//Build the Class-Mapping axis (include the extension name choice)
-		VPClassMappingPanel classMappingAxis = new VPClassMappingPanel(this);
-		classMappingAxis.expand();
-		editorPanel.add(classMappingAxis.container,globalGridConstraint);
+		classMapping = new VPClassMappingPanel(this);
+		classMapping.expand();
+		editorPanel.add(classMapping.getContainer(),globalGridConstraint);
 		
 		globalGridConstraint.gridy++;
 		
 		//Build the observable Axis
-		VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
-		ObservableAxis.collapse();
-		editorPanel.add(ObservableAxis.container, globalGridConstraint);
+		//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
+		//ObservableAxis.collapse();
+		//editorPanel.add(ObservableAxis.container, globalGridConstraint);
+		observableMapping = new VPObservableMappingPanel(this);
+		observableMapping.expand();
+		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
 
 		
 		//WIP

@@ -82,6 +82,9 @@ public class CollapsiblePanel extends JPanel {
     public CollapsiblePanel(String text) {
         arrow.setText(text);
         titleComponent = arrow;
+        //titleComponent.setForeground(new Color(0x20878E));
+        titleComponent.setForeground(new Color(0x107279));
+        titleComponent.setFont(AdminComponent.titleFont);
         collapsed = true;
         commonConstructor();
     }
