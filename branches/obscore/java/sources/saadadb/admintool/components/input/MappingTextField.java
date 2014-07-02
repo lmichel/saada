@@ -7,7 +7,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
-import saadadb.admintool.VPSandbox.VPSTOEPanel;
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.dnd.TreepathDropableTextField;
@@ -36,7 +36,7 @@ public class MappingTextField extends TreepathDropableTextField {
 	/**
 	 * @param form
 	 */
-	MappingTextField(MappingKWPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
+	public MappingTextField(MappingKWPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
 		this.form = form;
 		this.for_entry = for_entry;
 		this.num_node = num_node;

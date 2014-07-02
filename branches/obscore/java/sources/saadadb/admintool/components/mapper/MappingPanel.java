@@ -5,9 +5,9 @@ package saadadb.admintool.components.mapper;
 
 import java.awt.Color;
 
+import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-import saadadb.admintool.VPSandbox.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
@@ -63,7 +63,13 @@ public abstract class MappingPanel {
 		this.container.setCollapsed(collapse);
 	}
 	
+	/*
+	 * Modifié par Valentin Pertuy
+	 */
 	public void setHelpLabel(int textKey) {
+
+		
+		//Old code
 		helpLabel.setText("");
 		String[] phrases = HelpDesk.get(textKey);
 		if( phrases != null ) {
@@ -71,6 +77,9 @@ public abstract class MappingPanel {
 				helpLabel.append(str + "\n");
 			}
 		}
+		//end old code
+		
+
 	}
 
 	/**

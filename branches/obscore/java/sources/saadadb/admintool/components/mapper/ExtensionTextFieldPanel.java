@@ -5,7 +5,7 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JPanel;
 
-import saadadb.admintool.VPSandbox.VPSTOEPanel;
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;

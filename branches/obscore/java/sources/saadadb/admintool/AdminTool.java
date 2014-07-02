@@ -23,7 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
-import saadadb.admintool.VPSandbox.VPSTOEPanel;
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
 import saadadb.admintool.components.AdminComponent;

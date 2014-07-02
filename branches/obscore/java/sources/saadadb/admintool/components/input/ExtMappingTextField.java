@@ -3,7 +3,7 @@ package saadadb.admintool.components.input;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
-import saadadb.admintool.VPSandbox.VPSTOEPanel;
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
