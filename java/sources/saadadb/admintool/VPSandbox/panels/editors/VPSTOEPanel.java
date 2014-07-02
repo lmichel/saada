@@ -160,6 +160,30 @@ public class VPSTOEPanel extends MappingKWPanel {
 		observableMapping = new VPObservableMappingPanel(this);
 		observableMapping.expand();
 		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		energyMapping = new VPEnergyMappingPanel(this);
+		energyMapping.collapse();
+		editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		saadaMapping = new VPSaadaMappingPanel(this);
+		saadaMapping.collapse();
+		editorPanel.add(saadaMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		spaceMapping = new VPSpaceMappingPanel(this);
+		spaceMapping.collapse();
+		editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		timeMapping = new VPTimeMappingPanel(this);
+		timeMapping.collapse();
+		editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
 
 		
 		//WIP

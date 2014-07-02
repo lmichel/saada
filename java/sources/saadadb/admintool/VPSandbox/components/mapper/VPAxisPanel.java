@@ -1,11 +1,9 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
-import java.awt.Color;
 import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
@@ -33,11 +31,11 @@ public abstract class VPAxisPanel {
 
 		//super(title);
 		this.setContainer(new CollapsiblePanel(title));
-		axisPanel =  getContainer().getContentPane();
+		axisPanel = getContainer().getContentPane();
 		axisPanel.setLayout(new GridBagLayout());
 		axisPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
-		ccs = new MyGBC();
-		ccs.left(false);
+//		ccs = new MyGBC();
+//		ccs.left(false);
 
 		
 
