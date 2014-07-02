@@ -47,16 +47,16 @@ public class ProductListReport {
 			Set<File> files = new LinkedHashSet<File>();
 			for( String s:sample ) {
 				for( File f: allfiles) {
-				//	if( f.getName().equals(s)) {
+					if( f.getName().matches(".*114.*")) {
 						files.add(f);
-					//	break;
-				//	}
+					break;
+				    }
 				}
 			}
 
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 18;
+			int MAX = 1;
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
@@ -137,7 +138,6 @@ public class EnergyKWDetector extends KWDetector {
 		}
 	}
 
-
 	/**
 	 * @return
 	 * @throws Exception 
@@ -165,6 +165,10 @@ public class EnergyKWDetector extends KWDetector {
 				return true;
 			}
 		}
+		this.spectralCoordinate = new SpectralCoordinate();
+		this.spectralCoordinate.setOrgMin(SaadaConstant.DOUBLE);
+		this.spectralCoordinate.setOrgMax(SaadaConstant.DOUBLE);
+		this.spectralCoordinate.setMappedUnit(null);
 		return false;
 	}
 
@@ -343,7 +347,7 @@ public class EnergyKWDetector extends KWDetector {
 			this.mapCollectionSpectralCoordinateAuto();
 		}
 		ColumnSetter retour = new ColumnSetter();
-		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE ){
+		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMax())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
 			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
 		}
@@ -358,7 +362,7 @@ public class EnergyKWDetector extends KWDetector {
 			this.mapCollectionSpectralCoordinateAuto();
 		}
 		ColumnSetter retour = new ColumnSetter();
-		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE ){
+		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMin())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
 			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
 		}

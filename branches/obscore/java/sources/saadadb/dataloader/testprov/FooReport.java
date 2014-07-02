@@ -19,12 +19,12 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.ColumnSetter;
 import saadadb.products.ExtensionSetter;
+import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.validation.FooProduct;
 import saadadb.products.validation.ObscoreKWSet;
 
 /**
@@ -68,15 +68,23 @@ public class FooReport {
 	@SuppressWarnings({ "unchecked" })
 	FooReport(String jsonFilename) throws Exception{
 		String fn = jsonFilename.replace("json:", "");
+		String ffn = "";
 		if( fn.charAt(0) != File.separatorChar ){
-			fn = Database.getRoot_dir() + File.separator + "datatest" + File.separator + fn;
-			if( !(new File(fn)).exists() ) {
-				fn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
-				System.out.println(fn);
+			ffn = Database.getRoot_dir() + File.separator + "datatest" + File.separator + fn;
+			if( !(new File(ffn)).exists() ) {
+				ffn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
+				if( !(new File(fn)).exists() ) {
+					ffn = "/Users/laurentmichel/Documents/workspace/SaadaObscore/datatest/" + fn;
+					if( !(new File(ffn)).exists() ) {
+						System.out.println(ffn + " does not exist");
+						System.exit(1);
+					}
+					System.out.println(ffn);
+				}
 			}
 		}
 		JSONParser parser = new JSONParser();  
-		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(fn));  
+		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn));  
 		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
 		Iterator<String> iterator = parameters.iterator();  
@@ -113,7 +121,6 @@ public class FooReport {
 		case Category.IMAGE: product = new Image2DBuilder(this.fooProduct, new ProductMapping("mapping", this.ap));
 		break;
 		}
-		product.initProductFile();
 		Map<String, ColumnSetter> r = product.getReport();
 		Map<String, ColumnSetter> er = product.getEntryReport();
 		System.out.println(this.ap);

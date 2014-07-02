@@ -1,4 +1,4 @@
-package saadadb.products.validation;
+package saadadb.products;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,11 +13,10 @@ import saadadb.enums.DataFileExtensionType;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
-import saadadb.products.DataFileExtension;
-import saadadb.products.ExtensionSetter;
-import saadadb.products.ProductBuilder;
 import saadadb.products.inference.QuantityDetector;
+import saadadb.products.validation.JsonKWSet;
+import saadadb.products.validation.KeywordsBuilder;
+import saadadb.util.Messenger;
 
 public class FooProduct implements DataFile {
 	private int pointer = 0;
@@ -25,6 +24,7 @@ public class FooProduct implements DataFile {
 	private Map<String, AttributeHandler> attributeHandlers = null;
 	private Map<String, AttributeHandler> entryAttributeHandlers = null;
 	protected Map<String, DataFileExtension> productMap;
+	private ProductBuilder productBuilder;
 
 	/**
 	 * Json format
@@ -164,31 +164,27 @@ public class FooProduct implements DataFile {
 
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception {
-		// TODO Auto-generated method stub
-		
+		this.productBuilder = builder;
+		this.productBuilder.productAttributeHandler = this.getAttributeHandler();		
 	}
 
 	@Override
 	public String getCanonicalPath() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return "no file";
 	}
 
 	@Override
 	public String getAbsolutePath() {
-		// TODO Auto-generated method stub
-		return null;
+		return "no file";
 	}
 
 	@Override
 	public String getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		return "no file";
 	}
 
 	@Override
 	public long length() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -200,14 +196,19 @@ public class FooProduct implements DataFile {
 
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
+		if( this.getEntryAttributeHandler().size() > 0  ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
+			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.getComments(), productMapping, this);
+		} else {
+			return new QuantityDetector(this.getAttributeHandler(), this.getComments(), productMapping);
+		}		
 	}
 
 	@Override
 	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<String>();
 	}
 	
 	

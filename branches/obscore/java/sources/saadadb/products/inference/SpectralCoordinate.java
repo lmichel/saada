@@ -92,7 +92,7 @@ public class SpectralCoordinate{
 	 * @param orgUnit
 	 */
 	public void setMappedUnit(String orgUnit){
-		if( orgUnit.startsWith("ANGSTROM") ){
+		if( orgUnit != null && orgUnit.startsWith("ANGSTROM") ){
 			this.mappedUnit = "Angstrom";
 		} else {
 			this.mappedUnit = orgUnit;
@@ -555,6 +555,7 @@ public class SpectralCoordinate{
 		 * No dispersion axe: we consider the longer one as a good candidate
 		 */
 		else {
+			this.mappedUnit = null;
 			return false;
 /*			int old_max = 0;
 			for( int axe=0 ; axe<wm.getNAXIS() ; axe++) {

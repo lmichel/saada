@@ -417,7 +417,7 @@ public class ProductBuilder {
 		}
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
 		ColumnSetter retour = new ColumnSetter();
-		retour.completeMessage("Not found by mapping");
+		//retour.completeMessage("Not found by mapping");
 		return retour;
 	}
 
