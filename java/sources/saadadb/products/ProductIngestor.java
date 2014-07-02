@@ -328,15 +328,15 @@ class ProductIngestor {
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( this.product.error_minSetter == null && this.product.error_majSetter != null ) {
+			if( this.product.error_minSetter.notSet() && !this.product.error_majSetter.notSet() ) {
 				maj_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
 				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( this.product.error_minSetter != null && this.product.error_majSetter == null ) {
+			} else if( !this.product.error_minSetter.notSet() && this.product.error_majSetter.notSet() ) {
 				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
 				min_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( this.product.error_minSetter != null && this.product.error_majSetter != null ) {
+			} else if( !this.product.error_minSetter.notSet() && !this.product.error_majSetter.notSet() ) {
 				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
 				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
 				this.saadaInstance.setError(maj_err, min_err, angle);
@@ -368,24 +368,26 @@ class ProductIngestor {
 	 * @throws FatalException 
 	 */
 	protected void setEnegryFields() throws SaadaException {
-		
+
 		ColumnSetter qdMin = this.product.em_minSetter;
 		ColumnSetter qdMax = this.product.em_maxSetter;
 		ColumnSetter qdUnit = this.product.x_unit_orgSetter;
-		SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
-		spectralCoordinate.setMappedUnit(qdUnit.getValue());
-		spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
-		spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
-		if( !spectralCoordinate.convert() ) {
+		if( !qdMin.notSet() && !qdMax.notSet() &&!qdUnit.notSet() ){
+			SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
+			spectralCoordinate.setMappedUnit(qdUnit.getValue());
+			spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
+			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
+			if( !spectralCoordinate.convert() ) {
 				this.product.em_minSetter = new ColumnSetter();
 				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit());
 				this.product.em_maxSetter = new ColumnSetter();
 				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit());
 				this.product.em_res_powerSetter =  new ColumnSetter();
-		} else {
-			this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
-			this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
-		}	
+			} else {
+				this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
+				this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
+			}
+		}
 		setField("em_min"    , this.product.em_minSetter);
 		setField("em_max"    , this.product.em_maxSetter);
 		setField("em_res_power", this.product.em_res_powerSetter);

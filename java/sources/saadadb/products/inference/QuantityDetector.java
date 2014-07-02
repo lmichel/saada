@@ -235,7 +235,7 @@ public class QuantityDetector {
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUcdName()).notSet() ){
 			retour = this.observableKWDetector.getUcdName();
-			if( retour.notSet() && !getEUnit().notSet() ) {
+			if( retour.notSet() && !getEMin().notSet() && !getEMax().notSet() ) {
 				retour.setByValue("phot.count", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
@@ -246,7 +246,7 @@ public class QuantityDetector {
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).notSet() ){
 			retour = this.observableKWDetector.getUnitName();
-			if( retour.notSet() && !getEUnit().notSet() ) {
+			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet()) {
 				retour.setByValue("counts", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
@@ -258,8 +258,11 @@ public class QuantityDetector {
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
-			if( retour.notSet() && !this.getEUnit().notSet() ) {
-				if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
+			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
+				if( this.getEUnit().notSet()) {
+					retour.setByValue("0", false);
+					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
+				} else if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
 					retour.setByValue("1", false);
 					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
 				} else {

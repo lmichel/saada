@@ -11,7 +11,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.validation.FooProduct;
 import saadadb.util.Messenger;
 
 /**

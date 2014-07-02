@@ -8,7 +8,6 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
-import saadadb.products.validation.FooProduct;
 
 /** 
  * @version $Id$

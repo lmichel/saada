@@ -678,8 +678,9 @@ public class SpaceKWDetector extends KWDetector{
 		try {
 			this.searchFrame();
 		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.METADATA_ERROR, e);
+			ColumnSetter retour = new ColumnSetter();
+			retour.completeMessage(e.getMessage());
+			return retour;
 		}
 		return this.frameSetter;
 	}
