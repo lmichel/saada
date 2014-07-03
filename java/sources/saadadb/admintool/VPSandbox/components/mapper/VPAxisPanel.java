@@ -20,7 +20,6 @@ public abstract class VPAxisPanel {
 	protected JPanel axisPanel;
 	protected JLabel axisLabel;
 	private CollapsiblePanel container;
-	protected MyGBC ccs;
 	private String helpString;
 	protected JLabel helpLabel;
 	/*

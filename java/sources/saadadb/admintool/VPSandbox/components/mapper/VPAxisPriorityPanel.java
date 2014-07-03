@@ -2,24 +2,35 @@ package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagLayout;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 
 public class VPAxisPriorityPanel extends VPAxisPanel {
 
 	protected VPPriorityPanel priority;
-	dummy dum;
+	protected dummy dum;
+	protected MyGBC gbc;
+	protected JPanel panel;
 
-	public VPAxisPriorityPanel(VPSTOEPanel mappingPanel,String title) {
+	/**
+	 * 
+	 * @param mappingPanel : Calling class
+	 * @param title : Title of the axis
+	 * @param classMapping : reference of the "Help" String for the axis
+	 */
+	public VPAxisPriorityPanel(VPSTOEPanel mappingPanel,String title,int classMapping) {
 		// TODO Auto-generated constructor stub
 		super(title);
-		JPanel panel = new JPanel(new GridBagLayout());
-
+		panel = new JPanel(new GridBagLayout());
 		panel=this.getContainer().getContentPane();
-		MyGBC gbc = new MyGBC(3,3,3,3);
+		gbc = new MyGBC(3,3,3,3);
+		helpLabel = new JLabel("?");
+		//gbc.gridwidth=3;
 		gbc.right(false);
 		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 		gbc.next();
@@ -28,7 +39,12 @@ public class VPAxisPriorityPanel extends VPAxisPanel {
 		priority=new VPPriorityPanel(mappingPanel,"plop");
 		panel.add(priority,gbc);
 //		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
-//		gbc.next();
+		gbc.next();
+		gbc.right(true);
+		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+		panel.add(helpLabel,gbc);
+		gbc.newRow();
+		
 //		gbc.left(false);
 
 	
