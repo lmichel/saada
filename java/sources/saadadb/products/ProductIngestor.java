@@ -27,6 +27,7 @@ import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
+import cds.astro.Astroframe;
 
 /**
  * Contains all the logic of the product storing.
@@ -79,6 +80,8 @@ class ProductIngestor {
 	 */
 	public void bindInstanceToFile(SaadaInstance si) throws Exception {
 		if( si != null ) this.saadaInstance = si;
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Set fields of the Saada instance");
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnegryFields();		
@@ -195,34 +198,34 @@ class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setSpaceFields() throws Exception {
-		this.setAstrofFrame();
+		//this.setAstrofFrame();
 		this.setPositionFields(0);
 	}
 
-	/**
-	 * @throws Exception
-	 */
-	protected void setAstrofFrame()throws Exception {
-		/*
-		 * Compute first the astroframe if it is not already done
-		 * With constant values given in the configuration
-		 */
-		if( this.product.astroframe == null && this.product.system_attribute != null ) {
-			if( this.product.equinox_attribute == null ) {
-				this.product.astroframe = Coord.getAstroframe(this.product.system_attribute.getValue(), null);
-			}
-			else {
-				this.product.astroframe = Coord.getAstroframe(this.product.system_attribute.getValue(), this.product.equinox_attribute.getValue());				
-			}	
-		}	
-	}
+//	/**
+//	 * @throws Exception
+//	 */
+//	protected void setAstrofFrame()throws Exception {
+//		/*
+//		 * Compute first the astroframe if it is not already done
+//		 * With constant values given in the configuration
+//		 */
+//		if( this.product.astroframeSetter == null && this.product.system_attribute != null ) {
+//			if( this.product.equinox_attribute == null ) {
+//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), null);
+//			}
+//			else {
+//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), this.product.equinox_attribute.getValue());				
+//			}	
+//		}	
+//	}
 	/**
 	 * Set all fields related to the position at collection level
 	 * @param number: no message if number != 0
 	 * @throws Exception
 	 */
 	protected void setPositionFields(int number) throws Exception {
-		if( this.product.astroframe != null && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
+		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
 
 			try {
 				Astrocoo acoo;
@@ -246,12 +249,13 @@ class ProductIngestor {
 					this.product.s_decSetter.setValue(this.product.s_decSetter.getValue().replaceAll("'", ""));
 				}
 
+				Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
 				if( this.product.s_raSetter == this.product.s_decSetter) {
-					acoo= new Astrocoo(this.product.astroframe,this.product.s_raSetter.getValue() ) ;
+					acoo= new Astrocoo(af ,this.product.s_raSetter.getValue() ) ;
 				} else {
-					acoo= new Astrocoo(this.product.astroframe, this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue()) ;
+					acoo= new Astrocoo(af, this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue()) ;
 				}
-				double converted_coord[] = Coord.convert(this.product.astroframe, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+				double converted_coord[] = Coord.convert(af, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
 				double ra = converted_coord[0];
 				double dec = converted_coord[1];
 				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString());
@@ -260,7 +264,7 @@ class ProductIngestor {
 					String stc = "Polygon " + Database.getAstroframe();
 					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
 					for( int i=0 ; i<(pts.length/2) ; i++ ) {
-						converted_coord = Coord.convert(this.product.astroframe, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
+						converted_coord = Coord.convert(af, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
 						stc += " " +converted_coord[0] + " " + converted_coord[1] + " " ;
 					}
 					this.product.s_regionSetter.setValue(stc);
@@ -292,7 +296,10 @@ class ProductIngestor {
 				this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 			}
 
-		} // if position really found
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
+		}
 	} //if position mapped
 
 
