@@ -22,7 +22,7 @@ public class ShakePosition extends ParamShaker{
 		+ "	\"-collection=XMM\", \n"
 		+ "	\"-filename=obscore\", \n"
 		+ "	\"-repository=no\", \n"
-		+ "	\"-spcmapping=first\" , \n"
+		+ "	\"-posmapping=first\" , \n"
 		+ "	\"-spcunit=keV\", \n"
 		+ "	\"-timemapping=only\" 	,	 \n"
 		+ "	\"-tmin=11 03 2013\" 	,	 \n"

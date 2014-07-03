@@ -95,6 +95,8 @@ public abstract class ParamShaker {
 		params.add(Database.getDbname());  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
+		System.out.println(this.argsParser);
+
 	}
 
 	/**
@@ -217,6 +219,7 @@ public abstract class ParamShaker {
 //			System.out.println(es);
 //		}
 //		System.out.println("      -- Field values");	
+		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			if( this.paramsOfInterest.contains(e.getKey())) {
 				String str = "";
