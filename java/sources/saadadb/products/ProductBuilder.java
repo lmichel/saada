@@ -847,7 +847,6 @@ public class ProductBuilder {
 		case FIRST :
 			PriorityMessage.first("Coo system");
 			if( !this.mapCollectionCooSysAttributesFromMapping() ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Try to find out the cood system");
 				this.mapCollectionCooSysAttributesAuto();
 				msg = " (auto.detection) ";
 			}			
@@ -855,7 +854,6 @@ public class ProductBuilder {
 		case LAST :
 			PriorityMessage.last("Coo system");
 			if( !this.mapCollectionCooSysAttributesAuto()) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for coord system defined into the mapping");
 				this.mapCollectionPosAttributesFromMapping();
 			}			
 			else {
@@ -863,39 +861,38 @@ public class ProductBuilder {
 			}
 			break;
 		default:
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Coord system mapping priority: ONLY: Coo sys  KWs will be infered");
 			this.mapCollectionCooSysAttributesAuto();
 			msg = " (auto.detection) ";
 		}
-		/*
-		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
-		 */
-		if( this.astroframe == null && this.system_attribute == null ) {
-			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
-				this.s_raSetter = new ColumnSetter();
-				this.s_decSetter = new ColumnSetter();
-				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
-			}
-			else {
-				this.astroframe = new ICRS();
-				Messenger.printMsg(Messenger.TRACE, "Product coordinate system taken (default value) <" + this.astroframe +  "> ");
-			}
-		}
-		/*
-		 * The following test suit is just made to display proper messages
-		 */
-		else if( this.astroframe != null) {
-			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" + this.astroframe + "> ");
-		} else if( this.equinox_attribute != null ) {
-			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken " + msg + "<" 
-					+ this.system_attribute.message + " "
-					+ this.equinox_attribute.message
-					+ "> ");
-		} else{
-			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" 
-					+ this.system_attribute.message
-					+ "> ");
-		} 		
+//		/*
+//		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
+//		 */
+//		if( this.astroframe == null && this.system_attribute == null ) {
+//			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
+//				this.s_raSetter = new ColumnSetter();
+//				this.s_decSetter = new ColumnSetter();
+//				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
+//			}
+//			else {
+//				this.astroframe = new ICRS();
+//				Messenger.printMsg(Messenger.TRACE, "Product coordinate system taken (default value) <" + this.astroframe +  "> ");
+//			}
+//		}
+//		/*
+//		 * The following test suit is just made to display proper messages
+//		 */
+//		else if( this.astroframe != null) {
+//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" + this.astroframe + "> ");
+//		} else if( this.equinox_attribute != null ) {
+//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken " + msg + "<" 
+//					+ this.system_attribute.message + " "
+//					+ this.equinox_attribute.message
+//					+ "> ");
+//		} else{
+//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" 
+//					+ this.system_attribute.message
+//					+ "> ");
+//		} 		
 	}
 
 	/**
@@ -903,11 +900,16 @@ public class ProductBuilder {
 	 * @throws SaadaException 
 	 */
 	private boolean mapCollectionCooSysAttributesAuto() throws Exception {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Try to find out the coord system in kw");
+		
 		this.setQuantityDetector();
-		if( (this.astroframeSetter = this.quantityDetector.getFrame()) != null ) {
+		if( !(this.astroframeSetter = this.quantityDetector.getFrame()).notSet() ) {
 			this.astroframe = (Astroframe) this.astroframeSetter.storedValue;
 			return true;
 		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No coosys found");
 			return false;
 		}
 
