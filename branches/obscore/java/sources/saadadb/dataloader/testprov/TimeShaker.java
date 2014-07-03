@@ -14,7 +14,7 @@ import saadadb.exceptions.FatalException;
  * @author michel
  * @version $Id$
  */
-public class PositionShaker extends ParamShaker{
+public class TimeShaker extends ParamShaker{
 
 	static {
 		TEMPLATE = "{"
@@ -25,12 +25,24 @@ public class PositionShaker extends ParamShaker{
 			+ "	\"-filename=obscore\", \n"
 			+ "	\"-repository=no\", \n"
 			+ "	\"-posmapping=first\" , \n"
-			+ "	\"-position=RA,DEC\"  \n"
+			+ "	\"-position=RA,DEC\" , \n"
+			+ "	\"-spcunit=keV\", \n"
+			+ "	\"-timemapping=only\" 	,	 \n"
+			+ "	\"-tmin=11 03 2013\" 	,	 \n"
+			+ "	\"-tmax=12 03 2013\"	 \n"
 			+ "], \n"
 			+ "\"fields\": { \n"
 			+ "    \"header\": [\n"
 			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"23.67\"], \n"
-			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"-56.9\"] \n"
+			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"-56.9\"], \n"
+			+ "				[\"eMin\"      , \"double\", \"KeV\"   , \"em.wl;stat.min\", \"1.\"], \n"
+			+ "				[\"eMax\"      , \"double\", \"KeV\"   , \"em.wl;stat.max\", \"2.\"], \n"
+			+ "				[\"obsStart\"  , \"\"      , \"\"      , \"\"              , \"2014-02-12\"], \n"
+			+ "				[\"obsEnd\"    , \"\"      , \"\"      , \"\"              , \"2014-02-13\"], \n"
+			+ "				[\"collection\", \"\"      , \"string\", \"\"              , \"3XMM\"], \n"
+			+ "				[\"target\"    , \"\"      , \"string\", \"\"              , \"M33\"], \n"
+			+ "				[\"instrume\"  , \"\"      , \"string\", \"\"              , \"MOS1\"], \n"
+			+ "				[\"facility\"  , \"\"      , \"string\", \"\"              , \"XMM\"] \n"
 			+ "		]\n"
 			+ "		,\n"
 			+ "    \"columns\": []\n"
@@ -38,7 +50,7 @@ public class PositionShaker extends ParamShaker{
 			+ "}\n";
 	}
 
-	PositionShaker() throws Exception{
+	TimeShaker() throws Exception{
 		super();
 		this.paramsOfInterest = new HashSet<String>();
 		this.paramsOfInterest.add("s_ra");
@@ -76,8 +88,8 @@ public class PositionShaker extends ParamShaker{
 	protected void runFirstWithWrongIParams() throws Exception{
 		super.runFirstWithWrongIParams();
 		this.setArgParam("-position", "RA,DEC");
-		this.setField("RA", null, null, null, "1000");
-		this.setField("DEC", null, null, null, "1000");
+		this.setField("RA", null, null, null, "");
+		this.setField("DEC", null, null, null, "");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -85,9 +97,6 @@ public class PositionShaker extends ParamShaker{
 	 */
 	protected void runFirstWithPWrongMParams() throws Exception{
 		super.runFirstWithPWrongMParams();
-		this.setArgParam("-position", "12,4567");
-		this.setField("RA", null, null, null, "12");
-		this.setField("DEC", null, null, null, "22");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -146,7 +155,7 @@ public class PositionShaker extends ParamShaker{
 	public static void main(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		PositionShaker sp = new PositionShaker();
+		TimeShaker sp = new TimeShaker();
 		sp.processAll();
 		sp.showReport();
 		Database.close();

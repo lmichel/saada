@@ -271,7 +271,7 @@ class ProductIngestor {
 					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
 					this.saadaInstance.setS_region(stc);
 				}
-
+System.out.println("===========================");
 				if(this.product.s_fovSetter.notSet())
 					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 				else 
@@ -287,16 +287,23 @@ class ProductIngestor {
 				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
 					this.saadaInstance.calculSky_pixel_csa();
 				} else {
+					this.product.s_raSetter.completeMessage("Cannot be converted, wrong value?");
+					this.product.s_decSetter.completeMessage("Cannot be converted, wrong value?");
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
 				this.setPosErrorFields(number);
 			} catch( ParseException e ) {
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
+				this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
+				this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
 				this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 				this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 			}
 
 		} else {
+			System.out.println("============XXXX===============");
+			this.product.s_raSetter.completeMessage("Conv failed: no frame");
+			this.product.s_decSetter.completeMessage("Conv failed: no frame " );
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
 		}

@@ -106,7 +106,6 @@ public abstract class ParamShaker {
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
-			System.out.println(param + " " + value + " " +s);
 			if( s.startsWith(param) ) {
 				s = param + "=" + value;
 				jsa.set(i, s);
@@ -128,7 +127,7 @@ public abstract class ParamShaker {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	protected void setFields(String name, String type, String unit, String ucd, String value) throws Exception{
+	protected void setField(String name, String type, String unit, String ucd, String value) throws Exception{
 		JSONObject jso = (JSONObject) jsonObject.get("fields");
 		JSONArray jsa = (JSONArray) jso.get("header");
 		for( int i=0 ; i<jsa.size() ; i++ ){
@@ -150,7 +149,7 @@ public abstract class ParamShaker {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	protected void initProduct() throws Exception {
+	protected void readJson() throws Exception {
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
 		Iterator<String> iterator = parameters.iterator();  
 		List<String> params = new ArrayList<String>();
@@ -167,6 +166,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithGoodMParams() throws Exception{
+		readJson();
 		setFirst();	
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithGoodMParams", this.currentReport);
@@ -176,6 +176,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithGoodIParams() throws Exception{
+		readJson();
 		setFirst();	
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithGoodIParams", this.currentReport);
@@ -185,6 +186,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithWrongMParams() throws Exception{
+		readJson();
 		setFirst();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithWrongMParams", this.currentReport);
@@ -194,6 +196,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithWrongIParams() throws Exception{
+		readJson();
 		setFirst();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithWrongIParams", this.currentReport);
@@ -203,6 +206,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithPWrongMParams() throws Exception{
+		readJson();
 		setFirst();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithPWrongMParams", this.currentReport);
@@ -212,6 +216,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runFirstWithPWrongIParams() throws Exception{
+		readJson();
 		setFirst();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithPWrongIParams", this.currentReport);
@@ -221,6 +226,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithGoodMParams() throws Exception{
+		readJson();
 		setLast();		
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithGoodMParams", this.currentReport);
@@ -230,6 +236,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithGoodIParams() throws Exception{
+		readJson();
 		setLast();	
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithGoodIParams", this.currentReport);
@@ -239,6 +246,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithWrongMParams() throws Exception{
+		readJson();
 		setLast();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithWrongMParams", this.currentReport);
@@ -248,6 +256,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithWrongIParams() throws Exception{
+		readJson();
 		setLast();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithWrongIParams", this.currentReport);
@@ -257,6 +266,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithPWrongMParams() throws Exception{
+		readJson();
 		setLast();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithPWrongMParams", this.currentReport);
@@ -266,6 +276,7 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithPWrongIParams() throws Exception{
+		readJson();
 		setLast();
 		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithPWrongIParams", this.currentReport);
@@ -276,7 +287,7 @@ public abstract class ParamShaker {
 	 * @throws Exception
 	 */
 	protected void process() throws Exception {
-		this.initProduct();
+		this.readJson();
 		ProductBuilder product = null;
 		switch( Category.getCategory(argsParser.getCategory()) ) {
 		case Category.TABLE: product = new TableBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
@@ -314,7 +325,7 @@ public abstract class ParamShaker {
 		runFirstWithGoodIParams();
 		runFirstWithWrongMParams();
 		runFirstWithWrongIParams();
-//		runFirstWithPWrongMParams();
+		runFirstWithPWrongMParams();
 //		runFirstWithPWrongIParams();
 //		runLastWithGoodMParams();
 //		runLastWithGoodIParams();
