@@ -39,6 +39,9 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
+import cds.astro.FK4;
+import cds.astro.FK5;
+import cds.astro.Galactic;
 import cds.astro.ICRS;
 
 /**
@@ -73,46 +76,46 @@ public class ProductBuilder {
 	 * Observation Axis
 	 */
 	protected List<AttributeHandler> name_components;
-	protected ColumnSetter obs_collectionSetter=null;
-	protected ColumnSetter target_nameSetter=null;
-	protected ColumnSetter facility_nameSetter=null;
-	protected ColumnSetter instrument_nameSetter=null;
+	protected ColumnSetter obs_collectionSetter=new ColumnSetter();
+	protected ColumnSetter target_nameSetter=new ColumnSetter();
+	protected ColumnSetter facility_nameSetter=new ColumnSetter();
+	protected ColumnSetter instrument_nameSetter=new ColumnSetter();
 	protected PriorityMode observationMappingPriority = PriorityMode.LAST;
 	/*
 	 * Space Axis
 	 */
-	protected ColumnSetter error_majSetter=null;
-	protected ColumnSetter error_minSetter=null;
-	protected ColumnSetter error_angleSetter=null;
-	protected ColumnSetter s_raSetter=null;
-	protected ColumnSetter s_decSetter=null;
-	protected ColumnSetter s_fovSetter=null;
-	protected ColumnSetter s_regionSetter=null;
+	protected ColumnSetter error_majSetter=new ColumnSetter();
+	protected ColumnSetter error_minSetter=new ColumnSetter();
+	protected ColumnSetter error_angleSetter=new ColumnSetter();
+	protected ColumnSetter s_raSetter=new ColumnSetter();
+	protected ColumnSetter s_decSetter=new ColumnSetter();
+	protected ColumnSetter s_fovSetter=new ColumnSetter();
+	protected ColumnSetter s_regionSetter=new ColumnSetter();
 	protected ColumnSetter astroframeSetter;
 	protected PriorityMode spaceMappingPriority = PriorityMode.LAST;
 
 	/*
 	 * Energy Axis
 	 */
-	protected ColumnSetter em_minSetter=null;
-	protected ColumnSetter em_maxSetter=null;
-	protected ColumnSetter em_res_powerSetter=null;
+	protected ColumnSetter em_minSetter=new ColumnSetter();
+	protected ColumnSetter em_maxSetter=new ColumnSetter();
+	protected ColumnSetter em_res_powerSetter=new ColumnSetter();
 	//	private SpectralCoordinate spectralCoordinate;
-	protected ColumnSetter x_unit_orgSetter=null;
+	protected ColumnSetter x_unit_orgSetter=new ColumnSetter();
 	protected PriorityMode energyMappingPriority = PriorityMode.LAST;
 	/*
 	 * Time Axis
 	 */
-	protected ColumnSetter t_minSetter=null;
-	protected ColumnSetter t_maxSetter=null;
-	protected ColumnSetter t_exptimeSetter=null;
+	protected ColumnSetter t_minSetter=new ColumnSetter();
+	protected ColumnSetter t_maxSetter=new ColumnSetter();
+	protected ColumnSetter t_exptimeSetter=new ColumnSetter();
 	protected PriorityMode timeMappingPriority = PriorityMode.LAST;
 	/*
 	 * Observable Axis
 	 */
-	protected ColumnSetter o_ucdSetter=null;
-	protected ColumnSetter o_unitSetter=null;
-	protected ColumnSetter o_calib_statusSetter=null;
+	protected ColumnSetter o_ucdSetter=new ColumnSetter();
+	protected ColumnSetter o_unitSetter=new ColumnSetter();
+	protected ColumnSetter o_calib_statusSetter=new ColumnSetter();
 	protected PriorityMode observableMappingPriority = PriorityMode.LAST;
 	/**
 	 * Manage all tools used to detect quantities in keywords
@@ -122,9 +125,9 @@ public class ProductBuilder {
 	protected Map<String,ColumnSetter> extended_attributesSetter;
 	protected List<AttributeHandler> ignored_attributesSetter;
 
-	protected ColumnSetter system_attribute;
-	protected ColumnSetter equinox_attribute;
-	protected Astroframe astroframe;
+	//	protected ColumnSetter system_attribute;
+	//	protected ColumnSetter equinox_attribute;
+	//	protected ColumnSetter astroframeSetter;
 
 	/** The file type ("FITS" or "VO") * */
 	protected String typeFile;
@@ -255,9 +258,8 @@ public class ProductBuilder {
 	 * return 0. CrossSettererence of the homonymous method defined in the current
 	 * product file.
 	 * 
-	 * @return int The row number in the table.
-	 * @throws IOException 
-	 * @throws FitsException 
+	 * @return
+	 * @throws SaadaException
 	 */
 	public int getNRows() throws SaadaException {
 		return dataFile.getNRows();
@@ -780,10 +782,10 @@ public class ProductBuilder {
 		/*
 		 * Don't map position if there is no astroframe
 		 */
-		if( this.astroframe != null || this.system_attribute != null) {
-			this.mapCollectionPosAttributes();
-			this.mapCollectionPoserrorAttributes();
-		}
+		//if( this.astroframe != null || this.system_attribute != null) {
+		this.mapCollectionPosAttributes();
+		this.mapCollectionPoserrorAttributes();
+		//}
 		traceReportOnAttRef("frame", astroframeSetter);
 		traceReportOnAttRef("s_ra", s_raSetter);
 		traceReportOnAttRef("s_dec", s_decSetter);
@@ -854,7 +856,7 @@ public class ProductBuilder {
 		case LAST :
 			PriorityMessage.last("Coo system");
 			if( !this.mapCollectionCooSysAttributesAuto()) {
-				this.mapCollectionPosAttributesFromMapping();
+				this.mapCollectionCooSysAttributesFromMapping();
 			}			
 			else {
 				msg = " (auto.detection) ";
@@ -864,35 +866,35 @@ public class ProductBuilder {
 			this.mapCollectionCooSysAttributesAuto();
 			msg = " (auto.detection) ";
 		}
-//		/*
-//		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
-//		 */
-//		if( this.astroframe == null && this.system_attribute == null ) {
-//			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
-//				this.s_raSetter = new ColumnSetter();
-//				this.s_decSetter = new ColumnSetter();
-//				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
-//			}
-//			else {
-//				this.astroframe = new ICRS();
-//				Messenger.printMsg(Messenger.TRACE, "Product coordinate system taken (default value) <" + this.astroframe +  "> ");
-//			}
-//		}
-//		/*
-//		 * The following test suit is just made to display proper messages
-//		 */
-//		else if( this.astroframe != null) {
-//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" + this.astroframe + "> ");
-//		} else if( this.equinox_attribute != null ) {
-//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken " + msg + "<" 
-//					+ this.system_attribute.message + " "
-//					+ this.equinox_attribute.message
-//					+ "> ");
-//		} else{
-//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" 
-//					+ this.system_attribute.message
-//					+ "> ");
-//		} 		
+		//		/*
+		//		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
+		//		 */
+		//		if( this.astroframe == null && this.system_attribute == null ) {
+		//			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
+		//				this.s_raSetter = new ColumnSetter();
+		//				this.s_decSetter = new ColumnSetter();
+		//				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
+		//			}
+		//			else {
+		//				this.astroframe = new ICRS();
+		//				Messenger.printMsg(Messenger.TRACE, "Product coordinate system taken (default value) <" + this.astroframe +  "> ");
+		//			}
+		//		}
+		//		/*
+		//		 * The following test suit is just made to display proper messages
+		//		 */
+		//		else if( this.astroframe != null) {
+		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" + this.astroframe + "> ");
+		//		} else if( this.equinox_attribute != null ) {
+		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken " + msg + "<" 
+		//					+ this.system_attribute.message + " "
+		//					+ this.equinox_attribute.message
+		//					+ "> ");
+		//		} else{
+		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" 
+		//					+ this.system_attribute.message
+		//					+ "> ");
+		//		} 		
 	}
 
 	/**
@@ -902,17 +904,14 @@ public class ProductBuilder {
 	private boolean mapCollectionCooSysAttributesAuto() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to find out the coord system in kw");
-		
+
 		this.setQuantityDetector();
-		if( !(this.astroframeSetter = this.quantityDetector.getFrame()).notSet() ) {
-			this.astroframe = (Astroframe) this.astroframeSetter.storedValue;
-			return true;
-		} else {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "No coosys found");
+		this.astroframeSetter = this.quantityDetector.getFrame();
+		if( this.astroframeSetter.notSet() &&  Messenger.debug_mode) {
+			Messenger.printMsg(Messenger.DEBUG, "No coosys found");
 			return false;
 		}
-
+		return true;
 	}
 
 	/**
@@ -922,14 +921,12 @@ public class ProductBuilder {
 	 */
 	private boolean mapCollectionCooSysAttributesFromMapping() throws SaadaException {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "try to map the coord system from mapping");
+			Messenger.printMsg(Messenger.DEBUG, "Try to map the coord system from mapping");
 		/*
 		 * Do nothing if no mapping
 		 */
 		CoordSystem cs = this.mapping.getSpaceAxisMapping().getCoordSystem();
 		if( cs.getSystem().length() == 0 && cs.getSystem_value().length() == 0 ) {
-			this.equinox_attribute = null;
-			this.system_attribute = null;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No coordinate system given into the mapping." );
 			return false;			
@@ -937,20 +934,24 @@ public class ProductBuilder {
 		/*
 		 * Consider first the case where the system is given as constant values
 		 */
+		String system_attribute="", equinox_attribute="";
 		if( cs.getSystem_value().length() != 0 ) {
-			this.system_attribute = new ColumnSetter(cs.getEquinox_value().replaceAll("'", ""), true);
+			system_attribute = cs.getSystem().replaceAll("'", "");
 		}
 		if( cs.getEquinox_value().length() != 0 ) {
-			this.equinox_attribute = new ColumnSetter(cs.getEquinox_value().replaceAll("'", ""), true);
+			equinox_attribute = cs.getEquinox_value().replaceAll("'", "");
 		}
 		/*
 		 * Both system parameters have been given as constant value
 		 * We check that can be used to build an astroframe
 		 */
-		if( this.equinox_attribute != null && this.system_attribute != null ) {
+		if( system_attribute.length() > 0 && equinox_attribute.length() > 0 ) {
 			try {
-				this.astroframe = Coord.getAstroframe(this.system_attribute.getValue()
-						, this.equinox_attribute.getValue()) ;
+				Astroframe astroFrame = Coord.getAstroframe(system_attribute, equinox_attribute) ;
+				this.astroframeSetter = new ColumnSetter();
+				this.astroframeSetter.setByValue(astroFrame.toString(), true);
+				this.astroframeSetter.completeMessage("From both system and equinox keywords");
+				this.astroframeSetter.storedValue = astroFrame;
 			} catch(SaadaException e) {
 				return false;
 			}
@@ -961,29 +962,35 @@ public class ProductBuilder {
 		 */
 		else {
 			for( AttributeHandler ah : this.productAttributeHandler.values()) {
-				if( this.system_attribute == null && ah.getNameorg().equals(cs.getSystem()) ) {
-					this.system_attribute = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				} else if( this.equinox_attribute == null && ah.getNameorg().equals(cs.getEquinox()) ) {
-					this.equinox_attribute =  new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);;
+				if( ah.getNameorg().equals(cs.getSystem()) ) {
+					system_attribute = ah.getValue();
+				} else if( ah.getNameorg().equals(cs.getEquinox()) ) {
+					equinox_attribute = ah.getValue();
 				}
 			}
 			/*
 			 * Equinox may be null but not the system
 			 */
-			if( cs.getSystem().length() > 0 && this.system_attribute == null ) {
-				this.equinox_attribute = null;
+			if( cs.getSystem().length() > 0 && system_attribute.length() == 0) {
 				Messenger.printMsg(Messenger.TRACE, "No attribute matches the Coord system given into the mapping: <" + cs.getSystem() + ">");
 				return false;			
 			}
 			/*
 			 * But if a KW is given for the equinox which is not found, the mapping is considered as wrong
 			 */
-			else if( cs.getEquinox().length() > 0 && this.equinox_attribute == null ) {
-				this.system_attribute = null;
+			else if( cs.getEquinox().length() > 0 &&  equinox_attribute.length() == 0 ) {
 				Messenger.printMsg(Messenger.TRACE, "No attribute matches the equinox given into the mapping: <" + cs.getEquinox() + ">");
 				return false;							
-			}
-			else {
+			} else {
+				try {
+					Astroframe astroFrame = Coord.getAstroframe(system_attribute, equinox_attribute) ;
+					this.astroframeSetter = new ColumnSetter();
+					this.astroframeSetter.setByValue(astroFrame.toString(), true);
+					this.astroframeSetter.completeMessage("From both system and equinox keywords");
+					this.astroframeSetter.storedValue = astroFrame;
+				} catch(SaadaException e) {
+					return false;
+				}
 				return true;			
 			}
 		}
@@ -1002,14 +1009,12 @@ public class ProductBuilder {
 		case FIRST:
 			PriorityMessage.first("Position");
 			if( !this.mapCollectionPosAttributesFromMapping() ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No mapping found for position : try to find it out");
 				this.mapCollectionPosAttributesAuto();
 			}			
 			break;
 		case LAST:
 			PriorityMessage.last("Position");
 			if( !this.mapCollectionPosAttributesAuto()) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Position KWs not found: look for mapped keywords");
 				this.mapCollectionPosAttributesFromMapping();
 			}			
 			break;
@@ -1017,19 +1022,6 @@ public class ProductBuilder {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No position mapping priority: Only Position KWs will be infered");
 			this.mapCollectionPosAttributesAuto();
 		}
-		/*
-		 * Printout the position status
-		 */
-		if( this.s_raSetter.notSet() || this.s_decSetter.notSet() ) {
-			/*
-			 * For image, position can still be set from WCS keywords
-			 */
-			if(  this.mapping.getSpaceAxisMapping().mappingOnly() || this.mapping.getCategory() != Category.IMAGE ) {
-				Messenger.printMsg(Messenger.TRACE, "Position not found");
-			} 
-		} else {
-			Messenger.printMsg(Messenger.TRACE, "Position found ");
-		} 
 	}
 
 	/**
@@ -1046,7 +1038,6 @@ public class ProductBuilder {
 		case FIRST:
 			PriorityMessage.first("Pos error");
 			if( !this.mapCollectionPoserrorAttributesFromMapping() ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Try to find out position keywords");
 				this.mapCollectionPoserrorAttributesAuto();
 				msg = " (auto. detection) ";
 			}			
@@ -1054,29 +1045,26 @@ public class ProductBuilder {
 		case LAST:
 			PriorityMessage.last("Pos error");
 			if( !this.mapCollectionPoserrorAttributesAuto()) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Look for position keywords defined into the mapping");
 				this.mapCollectionPoserrorAttributesFromMapping();
 			}	 else {
 				msg = " (auto. detection) ";
 			}
 			break;
 		default: 
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No position error mapping priority: Only Position KWs will be infered");
 			this.mapCollectionPoserrorAttributesAuto();
 			msg = " (auto. detection) ";
 		}
 
 		/*
-		 * Mapp errors on positions
+		 * Map errors on positions
 		 */
-		if( this.error_majSetter == null || this.error_minSetter == null ) {
-			Messenger.printMsg(Messenger.TRACE, "Error ellipse neither found " + msg + " in keywords nor by value");
+		if( this.error_majSetter.notSet()|| this.error_minSetter.notSet() ) {
+			if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Error ellipse neither found " + msg + " in keywords nor by value");
 			this.error_majSetter = new ColumnSetter();
 			this.error_minSetter = new ColumnSetter();
 			this.error_angleSetter = new ColumnSetter();
 		} else {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "found");
 			this.setError_unit();
 		} 
 	}
@@ -1183,37 +1171,29 @@ public class ProductBuilder {
 	 * @throws SaadaException 
 	 */
 	private boolean mapCollectionPosAttributesAuto() throws Exception {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Try to find the position in keywords");
 		this.setQuantityDetector();
 		if( this.quantityDetector.arePosColFound() ) {
+			if( this.astroframeSetter.notSet() ){
+				this.astroframeSetter = this.quantityDetector.getFrame();
+			}
 			this.s_raSetter = this.quantityDetector.getAscension();
 			this.s_decSetter = this.quantityDetector.getDeclination();		
 			this.s_fovSetter = this.quantityDetector.getfov();
 			this.s_regionSetter = this.quantityDetector.getRegion();
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Position OK");
 			return true;
-		}
-		else {
+		} else {
+			this.s_raSetter = new ColumnSetter();
+			this.s_decSetter = new ColumnSetter();		
+			this.s_fovSetter = new ColumnSetter();
+			this.s_regionSetter = new ColumnSetter();
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Failed");
 			return false;
 		}
-	}
-
-	/**
-	 * Look first for fields with good UCDs. 
-	 * Parse field names if not
-	 * @return
-	 * @throws SaadaException 
-	 */
-	private boolean mapCollectionPoserrorAttributesAuto() throws Exception {
-		this.setQuantityDetector();
-		this.error_minSetter = this.quantityDetector.getErrorMin();
-		this.error_majSetter = this.quantityDetector.getErrorMaj();
-		this.error_angleSetter = this.quantityDetector.getErrorAngle();
-
-		if( this.error_angleSetter == null ) {
-			this.error_angleSetter = new ColumnSetter("0", false);
-			this.error_angleSetter.completeMessage("Default value");
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set angle=0 for orror ellipses");
-		}
-		return (this.error_minSetter != null) & (this.error_majSetter != null);
 	}
 
 	/**
@@ -1222,7 +1202,7 @@ public class ProductBuilder {
 	 */
 	private boolean mapCollectionPosAttributesFromMapping() throws SaadaException {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "try to map the position from mapping");
+			Messenger.printMsg(Messenger.DEBUG, "Try to map the position from mapping");
 		ColumnMapping raMapping  =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_ra");
 		if (raMapping.notMapped() && Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "No mapping for s_ra");
@@ -1232,42 +1212,119 @@ public class ProductBuilder {
 		boolean ra_found = false;
 		boolean dec_found = false;
 		/*
-		 * Process first the case where the position mapping is given as cnstant values
+		 * Process first the case where the position mapping is given as constant values
 		 */
 		if( raMapping.byValue() ) {
 			this.s_raSetter = new ColumnSetter(raMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Right Ascension set with the constant value <" +raMapping.getAttributeHandler().getValue() + ">");
+			ra_found = true;
 		} else {
 			this.s_raSetter = new ColumnSetter();
 		}
 		if( decMapping.byValue() ) {
 			this.s_decSetter = new ColumnSetter(decMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Declination set with the constant value <" + decMapping.getAttributeHandler().getValue() + ">");
+			dec_found = true;
 		} else {
 			this.s_decSetter = new ColumnSetter();
 		}
 		this.s_regionSetter = getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_region"));
 		this.s_fovSetter = getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_fov"));
+
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String raCol =  (raMapping.getAttributeHandler() != null)? raMapping.getAttributeHandler().getNameorg() : null;
-		String decCol =  (decMapping.getAttributeHandler() != null)? decMapping.getAttributeHandler().getNameorg() : null;
-		for( AttributeHandler ah: this.productAttributeHandler.values()) {
-			String keyorg  = ah.getNameorg();
-			String keyattr = ah.getNameattr();
-			if( this.s_raSetter.notSet() && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
-				this.s_raSetter = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);
-				ra_found = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as right ascension");
+		if( !(ra_found && dec_found) ) {
+			String raCol =  (raMapping.getAttributeHandler() != null)? raMapping.getAttributeHandler().getNameorg() : null;
+			String decCol =  (decMapping.getAttributeHandler() != null)? decMapping.getAttributeHandler().getNameorg() : null;
+			for( AttributeHandler ah: this.productAttributeHandler.values()) {
+				String keyorg  = ah.getNameorg();
+				String keyattr = ah.getNameattr();
+				if( this.s_raSetter.notSet() && (keyorg.equals(raCol) || keyattr.equals(raCol)) ) {
+					this.s_raSetter = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);
+					ra_found = true;
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as right ascension");
+				}
+				if( this.s_decSetter.notSet() && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
+					this.s_decSetter = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);;
+					dec_found = true;
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as declination");
+				}
 			}
-			if( this.s_decSetter.notSet() && (keyorg.equals(decCol) || keyattr.equals(decCol)) ) {
-				this.s_decSetter = new ColumnSetter(ah,  ColumnSetMode.BY_KEYWORD, true, false);;
-				dec_found = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as declination");
+
+			if( this.astroframeSetter.notSet() && (ra_found && dec_found) ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Try to infer the astroframe from the mapped keywords");
+				String raName = this.s_raSetter.getAttNameOrg();
+				String raUcd = (this.s_raSetter.getUcd() != null)? this.s_raSetter.getUcd(): "";				
+				String decName = this.s_decSetter.getAttNameOrg();
+				String decUcd = (this.s_decSetter.getUcd() != null)? this.s_decSetter.getUcd(): "";
+				Astroframe af = null;
+				if( (raName.matches(RegExp.ICRS_RA_KW) || raUcd.matches(RegExp.ICRS_RA_MAINUCD) || raUcd.matches(RegExp.ICRS_RA_UCD)) &&
+						(decName.matches(RegExp.ICRS_DEC_KW) || decUcd.matches(RegExp.ICRS_DEC_MAINUCD) || decUcd.matches(RegExp.ICRS_DEC_UCD)) ) {
+					af = new ICRS();				
+				} else if( (raName.matches(RegExp.FK5_RA_KW) || raUcd.matches(RegExp.FK5_RA_MAINUCD) || raUcd.matches(RegExp.FK5_RA_UCD)) &&
+						(decName.matches(RegExp.FK5_DEC_KW) || decUcd.matches(RegExp.FK5_DEC_MAINUCD) || decUcd.matches(RegExp.FK5_DEC_UCD)) ) {
+					af = new FK5();				
+				} else if( (raName.matches(RegExp.FK4_RA_KW) || raUcd.matches(RegExp.FK4_RA_MAINUCD) || raUcd.matches(RegExp.FK4_RA_UCD)) &&
+						(decName.matches(RegExp.FK4_DEC_KW) || decUcd.matches(RegExp.FK4_DEC_MAINUCD) || decUcd.matches(RegExp.FK4_DEC_UCD)) ) {
+					af = new FK4();				
+				} else if( (raName.matches(RegExp.GALACTIC_RA_KW) || raUcd.matches(RegExp.GALACTIC_RA_MAINUCD) || raUcd.matches(RegExp.GALACTIC_RA_UCD)) &&
+						(decName.matches(RegExp.GALACTIC_DEC_KW) || decUcd.matches(RegExp.GALACTIC_DEC_MAINUCD) || decUcd.matches(RegExp.GALACTIC_DEC_UCD)) ) {
+					af = new Galactic();				
+				} else if( (raName.matches(RegExp.ECLIPTIC_RA_KW) || raUcd.matches(RegExp.ECLIPTIC_RA_MAINUCD) || raUcd.matches(RegExp.ECLIPTIC_RA_UCD)) &&
+						(decName.matches(RegExp.ECLIPTIC_DEC_KW) || decUcd.matches(RegExp.ECLIPTIC_DEC_MAINUCD) || decUcd.matches(RegExp.ECLIPTIC_DEC_UCD)) ) {
+					af = new Galactic();				
+				}
+				if( af != null ){
+					this.astroframeSetter.setByValue("", true);
+					this.astroframeSetter.storedValue= af;
+					this.astroframeSetter.completeMessage("Inferred from key words orf UCDs of " + raName + " and " + decName);
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Take " + af + ": inferred from key words orf UCDs of " + raName + " and " + decName);					
+				} else {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Failed");
+				}
 			}
 		}
-		return (ra_found && dec_found);		
+		if (ra_found && dec_found){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Position OK");
+			return true;
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Failed");
+			return false;
+		}
+	}
+
+	/**
+	 * @return
+	 * @throws SaadaException 
+	 */
+	private boolean mapCollectionPoserrorAttributesAuto() throws Exception {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Try detect the error on position in keywords");
+		this.setQuantityDetector();
+		this.error_minSetter = this.quantityDetector.getErrorMin();
+		this.error_majSetter = this.quantityDetector.getErrorMaj();
+		this.error_angleSetter = this.quantityDetector.getErrorAngle();
+
+		if( this.error_angleSetter.notSet() ) {
+			this.error_angleSetter = new ColumnSetter("0", false);
+			this.error_angleSetter.completeMessage("Default value");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set angle=0 for error ellipses");
+		}
+		if (this.error_minSetter.notSet() ||  this.error_majSetter.notSet() ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Failed");
+			return false;
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
+			return true;
+		}
 	}
 
 
@@ -1277,23 +1334,23 @@ public class ProductBuilder {
 	 */
 	private boolean mapCollectionPoserrorAttributesFromMapping() throws SaadaException {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "try to map the error on position from mapping");
+			Messenger.printMsg(Messenger.DEBUG, "Try to map the error on position from mapping");
 		ColumnMapping errMajMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_maj_csa");
 		ColumnMapping errMinMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_min_csa");
 		ColumnMapping errAngleMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_angle_csa");
 
-		boolean ra_found=false, dec_found=false, angle_found=false;
+		boolean errMaj=false, errMin=false, angle_found=false;
 		/*
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( errMajMapping.byValue() ) {
 			this.error_minSetter = new ColumnSetter(errMajMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
-			ra_found = true;
+			errMaj = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getAttributeHandler().getValue() + ">");
 		}
 		if( errMinMapping.byValue() ) {
 			this.error_majSetter = new ColumnSetter(errMinMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);		
-			dec_found = true;
+			errMin = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getAttributeHandler().getValue() + ">");
 		}
 		if( errAngleMapping.byValue() ) {
@@ -1312,12 +1369,12 @@ public class ProductBuilder {
 			String keyattr = ah.getNameattr();
 			if( this.error_minSetter == null && (keyorg.equals(minCol) || keyattr.equals(minCol)) ) {
 				this.error_minSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				ra_found = true;
+				errMaj = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error Maj axis");
 			}
 			if( this.error_majSetter == null && (keyorg.equals(maxCol) || keyattr.equals(maxCol)) ) {
 				this.error_majSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				dec_found = true;
+				errMin = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error mn axis");
 			}
 			if( this.error_angleSetter == null && (keyorg.equals(angleCol) || keyattr.equals(angleCol)) ) {
@@ -1329,7 +1386,15 @@ public class ProductBuilder {
 		/*
 		 * The 3 parameters must be set at mapping time (Mapping.java) So if one is found the others are presents
 		 */
-		return (ra_found & dec_found & angle_found);		
+		if (errMaj & errMin & angle_found) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
+			return true;
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Failed");
+			return false;
+		}
 	}
 
 	/**
@@ -1565,7 +1630,7 @@ public class ProductBuilder {
 		this.o_unitSetter.storedValue = si.getO_unit();
 		retour.put("o_calib_status", o_calib_statusSetter);
 		this.o_calib_statusSetter.storedValue = si.getO_calib_status();
-		
+
 		for( ColumnSetter eah: this.extended_attributesSetter.values()){
 			retour.put(eah.getAttNameOrg(), eah);      	
 		}
@@ -1639,9 +1704,7 @@ public class ProductBuilder {
 		for(AttributeHandler ah:  ignored_attributesSetter) {
 			System.out.println("  " + ah);
 		}
-		System.out.println("system_attribute   : " + system_attribute);
-		System.out.println("equinox_attribute  : " + equinox_attribute);
-		System.out.println("Astroframe         : " + astroframe);
+		System.out.println("Astroframe         : " + astroframeSetter);
 
 	}
 }

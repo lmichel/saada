@@ -330,7 +330,7 @@ public class VOTableDataFile extends File implements DataFile {
 				case DefineType.FIELD_DOUBLE:
 					String unit = (String) typeUnit.get(new Integer(k));
 					if ( unit.equals("h:m:s") || unit.equals("d:m:s") || unit.equals("hours") /* || tdContent.matches("[^\\s]+[:\\s]+[^\\s]+.*") */) {
-						Astrocoo coord = new Astrocoo(this.product.astroframe);
+						Astrocoo coord = (Astrocoo) this.product.astroframeSetter.storedValue;
 						try {
 							if( tdContent.startsWith("+") || tdContent.startsWith("-")) {
 								coord.set("0 0 0 " + tdContent) ;

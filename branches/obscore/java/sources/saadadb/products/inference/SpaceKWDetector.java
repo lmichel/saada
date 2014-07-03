@@ -31,9 +31,9 @@ import cds.savot.model.SavotCoosys;
 public class SpaceKWDetector extends KWDetector{
 	private ColumnSetter ascension_kw;
 	private ColumnSetter declination_kw;
-	private ColumnSetter err_min;
-	private ColumnSetter err_maj;
-	private ColumnSetter err_angle;
+	private ColumnSetter err_min = new  ColumnSetter();
+	private ColumnSetter err_maj= new  ColumnSetter();
+	private ColumnSetter err_angle= new  ColumnSetter();
 	private ColumnSetter fov;
 	private ColumnSetter region;
 	//private Astroframe frame = null;
@@ -45,6 +45,7 @@ public class SpaceKWDetector extends KWDetector{
 	private int status=0;
 	private WCSModel wcsModel;
 	private boolean isInit = false;
+	private boolean errorSearched = false;
 
 
 	/**
@@ -63,67 +64,7 @@ public class SpaceKWDetector extends KWDetector{
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> columnsAttributeHandler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, columnsAttributeHandler);
-//		ColumnSetter ah = searchByName(RegExp.FITS_COOSYS_KW);
-//		lookForError();
-//		if( ah == null ) {
-//			ah = searchByUcd("pos.frame");
-//		}
-//		this.tableAttributeHandler = columnsAttributeHandler;
-		//		if( ah != null ) {
-		//			if( ah.getValue().toLowerCase().matches(RegExp.ECL_SYSTEM)) {
-		//				this.frame = new Ecliptic();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in " + ah.getAttNameOrg() + ")");
-		//				status |= FRAME_FOUND;
-		//				lookForEclpiticKeywords();					
-		//			} else if( ah.getValue().matches(RegExp.FK5_SYSTEM)) {
-		//				this.frame = new FK5();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in " + ah.getAttNameOrg() + ")");
-		//				status |= FRAME_FOUND;
-		//				lookForFK5Keywords();					
-		//			} else if( ah.getValue().matches(RegExp.FK4_SYSTEM)) {
-		//				this.frame = new FK4();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in " + ah.getAttNameOrg() + ")");
-		//				status |= FRAME_FOUND;
-		//				lookForFK4Keywords();					
-		//			} else if( ah.getValue().toLowerCase().matches(RegExp.GALACTIC_SYSTEM)) {
-		//				this.frame = new Galactic();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in " + ah.getAttNameOrg() + ")");
-		//				status |= FRAME_FOUND;
-		//				lookForGalacticKeywords();					
-		//			} else if( ah.getValue().toLowerCase().matches(RegExp.ICRS_SYSTEM)) {
-		//				this.frame = new ICRS();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (read in " + ah.getAttNameOrg() + ")");
-		//				status |= FRAME_FOUND;
-		//				lookForICRSKeywords();					
-		//			} else {
-		//				Messenger.printMsg(Messenger.WARNING, "Unknown coordinate system <" +  ah.getValue() + ">");
-		//			}
-		//			if( (status & FRAME_FOUND) > 0 && (status & POS_KW_FOUND) == 0 && Messenger.debug_mode) {
-		//				Messenger.printMsg(Messenger.DEBUG, "No keyword matching the system <" +  ah.getValue() + "> found. Try to find coordinate in another system");
-		//			}
-		//		}
-		//		/*
-		//		 * If no frame has been found, look for keywords and infers the frame from them
-		//		 */
-		//		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
-		//			detectKeywordsandInferFrame();
-		//		}
-		//		if( (status & FRAME_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No coosys for an auto detection");
-		//		}
-		//		else if( (status & POS_KW_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
-		//		}
-		//		this.lookForError();
+
 	}
 
 	/**
@@ -133,63 +74,6 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) throws SaadaException {
 		super(tableAttributeHandler);
-		this.lookForError();
-		/* 
-		 * Take first the coosys if not null and look for keywords matching that system
-		 */
-		//		if( infoCooSys != null ) {
-		//			if( infoCooSys.getSystem().matches(RegExp.ECL_SYSTEM) ) {
-		//				this.frame = new Ecliptic();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (Coosys Info = " + infoCooSys.getSystem() + ")");
-		//				this.status |= FRAME_FOUND;
-		//				this.lookForEclpiticKeywords();
-		//			} else if( infoCooSys.getSystem().matches(RegExp.FK4_SYSTEM) ) {
-		//				this.frame = new FK4();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (Coosys Info " +infoCooSys.getSystem() + ")");
-		//				this.status |= FRAME_FOUND;
-		//				this.lookForFK4Keywords();
-		//			} else if( infoCooSys.getSystem().matches(RegExp.FK5_SYSTEM) ) {
-		//				this.frame = new FK5();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (Coosys Info " + infoCooSys.getSystem() + ")");
-		//				this.status |= FRAME_FOUND;
-		//				this.lookForFK5Keywords();
-		//			} else if( infoCooSys.getSystem().matches(RegExp.GALACTIC_SYSTEM) ) {
-		//				this.frame = new Galactic();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (Coosys Info " + infoCooSys.getSystem() + ")");
-		//				this.status |= FRAME_FOUND;
-		//				this.lookForGalacticKeywords();
-		//			} else if( infoCooSys.getSystem().matches(RegExp.ICRS_SYSTEM) ) {
-		//				this.frame = new ICRS();
-		//				if (Messenger.debug_mode)
-		//					Messenger.printMsg(Messenger.DEBUG, "Could take <" + this.frame + "> as frame (Coosys Info " + infoCooSys.getSystem() + ")");
-		//				this.status |= FRAME_FOUND;
-		//				this.lookForICRSKeywords();
-		//			} else {
-		//				Messenger.printMsg(Messenger.WARNING, "Unknown coordinate system <" +  infoCooSys.getSystem() + ">");
-		//			}
-		//			if( (this.status & FRAME_FOUND) > 0 && (status & POS_KW_FOUND) == 0 && Messenger.debug_mode) {
-		//				Messenger.printMsg(Messenger.DEBUG, "No keyword matching the system <" +  infoCooSys.getSystem() + "> found. Try to find coordinate in another system");
-		//			}
-		//		}			
-		//		/*
-		//		 * If no frame has been found, look for keywords and infer the frame from them
-		//		 */
-		//		if( (status & FRAME_FOUND) == 0 || (status & POS_KW_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No frame found, try to infer it from the position keywords");
-		//			this.detectKeywordsandInferFrame();
-		//		}
-		//		if( (status & FRAME_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No coosys for an auto detection");
-		//		} else if( (status & POS_KW_FOUND) == 0) {
-		//			if (Messenger.debug_mode)
-		//				Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW found for an auto detection");
-		//		}
 		this.lookForError();
 	}
 
@@ -311,7 +195,17 @@ public class SpaceKWDetector extends KWDetector{
 			if( this.isInit )
 				return;
 			this.searchFrame();
-			if( (status & FRAME_FOUND) != 0 ) {
+			if( (status & FRAME_FOUND) == 0 ) {
+				detectKeywordsandInferFrame();				
+				if( (status & POS_KW_FOUND) == 0) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
+				}
+			} 
+			if( (status & FRAME_FOUND) == 0 ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");				
+			} else  if( (status & POS_KW_FOUND) == 0 ) {
 				lookForAstrometryInWCS();
 				if( (status & POS_KW_FOUND) == 0 ) {
 					detectKeywordsandInferFrame();				
@@ -319,11 +213,10 @@ public class SpaceKWDetector extends KWDetector{
 				if( (status & POS_KW_FOUND) == 0) {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
-				}
-				this.lookForError();			
-			}else  {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");
+				}	
+			}
+			if( (status & FRAME_FOUND) != 0 && (status & POS_KW_FOUND) != 0) {
+				this.lookForError();							
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -424,6 +317,23 @@ public class SpaceKWDetector extends KWDetector{
 			Messenger.printMsg(Messenger.DEBUG, "WCS keywords not found");				
 		}
 	}
+
+	/**
+	 * Search for the position error either in WCS or in the keyword
+	 * @throws Exception
+	 */
+	private void searchError() throws SaadaException {
+		if( this.isInit || this.errorSearched ) {
+			return;
+		}
+		try{
+			this.errorSearched = true;
+			this.lookForAstrometryInWCS();
+			this.lookForError();	
+		} catch (Exception e) {}
+
+	}
+
 	/**
 	 * @throws SaadaException
 	 */
@@ -444,7 +354,7 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
 		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
 		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
-		
+
 		if( this.err_maj.notSet() && eM != null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Keep WCS error values");
@@ -492,19 +402,22 @@ public class SpaceKWDetector extends KWDetector{
 					}
 				}
 			}
-
-			if( frame != null ) {
-				status |= FRAME_FOUND;		
-				this.frameSetter = new ColumnSetter();
-				this.frameSetter.setByValue("", false);
-				this.frameSetter.completeMessage("Take <" + frame + "> as frame (infered from the name of the position keywords)");
-				this.frameSetter.storedValue = frame;
-			} else {
-				this.frameSetter.completeMessage("Cannot guess the frame from the  from the name of the position keywords");
+			if((this.status & FRAME_FOUND) == 0 ) {
+				if( frame != null ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Take " + frame + " infered from position keywords");
+					this.status |= FRAME_FOUND;		
+					this.frameSetter = new ColumnSetter();
+					this.frameSetter.setByValue("", false);
+					this.frameSetter.completeMessage("Take <" + frame + "> as frame (infered from the name of the position keywords)");
+					this.frameSetter.storedValue = frame;
+				} else {
+					this.frameSetter.completeMessage("Cannot guess the frame from the  from the name of the position keywords");
+				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Makes sure coordiantes are in decimal 
 	 */
@@ -724,15 +637,15 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	public ColumnSetter getErrorMin() throws SaadaException{
-		this.init();
+		this.searchError();
 		return err_min;
 	}
 	public ColumnSetter getErrorMaj() throws SaadaException{
-		this.init();
+		this.searchError();
 		return err_maj;
 	}
 	public ColumnSetter getErrorAngle() throws SaadaException{
-		this.init();
+		this.searchError();
 		return err_angle;		
 	}
 	/**
@@ -744,6 +657,16 @@ public class SpaceKWDetector extends KWDetector{
 		this.init();
 		if( this.fov == null ){
 			this.fov = this.search(RegExp.FOV_UCD, RegExp.FOV_KW);
+		}	
+		if( this.fov.notSet() && (this.status & POS_KW_FOUND) != 0){
+			AttributeHandler ah = new AttributeHandler();
+			ah.setNameattr("s_fov");
+			ah.setNameorg("s_fov");
+			ah.setUnit("deg");
+			ah.setUtype("Char.SpatialAxis.Coverage.Bounds.Extent.diameter");
+			ah.setValue("0");
+			this.fov = new ColumnSetter(ah, ColumnSetMode.BY_VALUE);
+			this.fov.completeMessage("Default value");														
 		}
 		return fov;		
 	}

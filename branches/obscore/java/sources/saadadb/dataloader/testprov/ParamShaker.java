@@ -1,6 +1,5 @@
 package saadadb.dataloader.testprov;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,14 +13,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.exceptions.FatalException;
 import saadadb.products.ColumnSetter;
-import saadadb.products.ExtensionSetter;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
@@ -30,15 +26,36 @@ import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.util.Messenger;
 
+/**
+ * Superclass of test for the fields attached to one axis.
+ * Take a JSON object as input, and modify it as long as the priority during test
+ * There 12 tests: 
+ * 	2 priority level LAST/FIRST 
+ * 		good mapped parameters, good inferred parameters 
+ * 		wrong mapped parameters, wrong inferred parameters 
+ * 		partially wrong mapped parameters, partially wrong inferred parameters 
+ * @author michel
+ * @version $Id$
+ */
 public abstract class ParamShaker {
+	/** JSON template: set in sublcasses*/
 	protected static String TEMPLATE ;
+	/** JSON instance of the product in the current state */
 	protected static JSONObject jsonObject;
+	/** Saada data product built with the JSON object */
 	protected FooProduct fooProduct;
+	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
+	/** List of Obscore fields of interest: theu are reported */
 	protected Set<String> paramsOfInterest;
+	/** Test report, one entry er test, and several  lines par entry*/
 	protected Map<String, List<String>> report;
+	/** pointer on the retpor current of the current test*/ 
 	protected List<String> currentReport;
 
+	/**
+	 * @throws Exception
+	 */
 	ParamShaker() throws Exception{
 		JSONParser parser = new JSONParser();  
 		try {
@@ -50,22 +67,66 @@ public abstract class ParamShaker {
 		}  
 	}
 
+	/**
+	 * Set all priorities to FISR ion the arg parser
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
 	protected void setFirst() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
 			s = s.replace("mapping=last", "mapping=first");
+			jsa.set(i, s);
+			break;
 		}		
 	}
 
+	/**
+	 * Set all priorities to FISR ion the arg parser
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
 	protected void setLast() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
 			s = s.replace("mapping=first", "mapping=last");
+			jsa.set(i, s);
+			break;
 		}		
 	}
+	/**
+	 * @param param starts  with '-'
+	 * @param value
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	protected void setArgParam(String param, String value) throws Exception{
+		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
+		for( int i=0 ; i<jsa.size() ; i++ ){
+			String s = (String) jsa.get(i);
+			System.out.println(param + " " + value + " " +s);
+			if( s.startsWith(param) ) {
+				s = param + "=" + value;
+				jsa.set(i, s);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Set  " +s);
+				break;
+			}
+		}	
+	}
 
+	/**
+	 * Change the parameters for the field "name"
+	 * only non nul parameters are set
+	 * @param name
+	 * @param type
+	 * @param unit
+	 * @param ucd
+	 * @param value
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	protected void setFields(String name, String type, String unit, String ucd, String value) throws Exception{
 		JSONObject jso = (JSONObject) jsonObject.get("fields");
@@ -84,6 +145,10 @@ public abstract class ParamShaker {
 		throw new Exception("Param " + name + " not found" );
 	}
 
+	/**
+	 * Build the productBuilder from the JSON object
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	protected void initProduct() throws Exception {
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
@@ -95,8 +160,6 @@ public abstract class ParamShaker {
 		params.add(Database.getDbname());  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
-		System.out.println(this.argsParser);
-
 	}
 
 	/**
@@ -114,6 +177,7 @@ public abstract class ParamShaker {
 	 */
 	protected void runFirstWithGoodIParams() throws Exception{
 		setFirst();	
+		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithGoodIParams", this.currentReport);
 	}
 	/**
@@ -122,6 +186,7 @@ public abstract class ParamShaker {
 	 */
 	protected void runFirstWithWrongMParams() throws Exception{
 		setFirst();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithWrongMParams", this.currentReport);
 	}
 	/**
@@ -130,6 +195,7 @@ public abstract class ParamShaker {
 	 */
 	protected void runFirstWithWrongIParams() throws Exception{
 		setFirst();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithWrongIParams", this.currentReport);
 	}
 	/**
@@ -138,6 +204,7 @@ public abstract class ParamShaker {
 	 */
 	protected void runFirstWithPWrongMParams() throws Exception{
 		setFirst();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithPWrongMParams", this.currentReport);
 	}
 	/**
@@ -146,6 +213,7 @@ public abstract class ParamShaker {
 	 */
 	protected void runFirstWithPWrongIParams() throws Exception{
 		setFirst();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("FirstWithPWrongIParams", this.currentReport);
 	}
 	/**
@@ -153,7 +221,8 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithGoodMParams() throws Exception{
-		setFirst();		
+		setLast();		
+		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithGoodMParams", this.currentReport);
 	}
 	/**
@@ -161,7 +230,8 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithGoodIParams() throws Exception{
-		setFirst();	
+		setLast();	
+		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithGoodIParams", this.currentReport);
 	}
 	/**
@@ -169,7 +239,8 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithWrongMParams() throws Exception{
-		setFirst();
+		setLast();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithWrongMParams", this.currentReport);
 	}
 	/**
@@ -177,7 +248,8 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithWrongIParams() throws Exception{
-		setFirst();
+		setLast();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithWrongIParams", this.currentReport);
 	}
 	/**
@@ -185,7 +257,8 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithPWrongMParams() throws Exception{
-		setFirst();
+		setLast();
+		this.currentReport = new ArrayList<String>();
 		this.report.put("LastWithPWrongMParams", this.currentReport);
 	}
 	/**
@@ -193,9 +266,15 @@ public abstract class ParamShaker {
 	 * @throws Exception 
 	 */
 	protected void runLastWithPWrongIParams() throws Exception{
-		setFirst();
+		setLast();
+		this.currentReport = new ArrayList<String>();
+		this.report.put("LastWithPWrongIParams", this.currentReport);
 	}
 
+	/**
+	 * run the mapping on the current product and stores the result within the report
+	 * @throws Exception
+	 */
 	protected void process() throws Exception {
 		this.initProduct();
 		ProductBuilder product = null;
@@ -211,14 +290,6 @@ public abstract class ParamShaker {
 		}
 		Map<String, ColumnSetter> r = product.getReport();
 		Map<String, ColumnSetter> er = product.getEntryReport();
-//		System.out.println(this.argsParser);
-//
-//		System.out.println("======== ");	
-//		System.out.println("      -- Loaded extensions");	
-//		for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
-//			System.out.println(es);
-//		}
-//		System.out.println("      -- Field values");	
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			if( this.paramsOfInterest.contains(e.getKey())) {
@@ -234,14 +305,15 @@ public abstract class ParamShaker {
 	}
 
 	/**
+	 * Process all test
 	 * @throws Exception
 	 */
 	protected void processAll() throws Exception {
 		Messenger.debug_mode = true;
 		runFirstWithGoodMParams();
-//		runFirstWithGoodIParams();
-//		runFirstWithWrongMParams();
-//		runFirstWithWrongIParams();
+		runFirstWithGoodIParams();
+		runFirstWithWrongMParams();
+		runFirstWithWrongIParams();
 //		runFirstWithPWrongMParams();
 //		runFirstWithPWrongIParams();
 //		runLastWithGoodMParams();
@@ -252,6 +324,9 @@ public abstract class ParamShaker {
 //		runLastWithPWrongIParams();
 	}
 
+	/**
+	 * Print out the test report
+	 */
 	protected void showReport(){
 		for( Entry<String, List<String>>entry: this.report.entrySet()){
 			System.out.println(entry.getKey());
@@ -259,7 +334,5 @@ public abstract class ParamShaker {
 				System.out.println("  " + s);
 			}
 		}
-
 	}
-
 }
