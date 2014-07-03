@@ -12,6 +12,7 @@ import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.mapper.MapperPrioritySelector;
 
 
 public class VPMapperPrioritySelector {
@@ -54,6 +55,48 @@ public class VPMapperPrioritySelector {
 		panel.add(jp, ccs);
 	
 	}
+	
+	
+	public VPMapperPrioritySelector(JRadioButton[] buttons, JRadioButton nomapping, ButtonGroup bg, JComponent[] components, JPanel panel, GridBagConstraints ccs) {
+		this.nomapping = nomapping;
+		JPanel jp = new JPanel();
+		jp.setBackground(AdminComponent.LIGHTBACKGROUND);
+		jp.setLayout(new BoxLayout(jp, BoxLayout.LINE_AXIS));
+
+		for( JRadioButton b: buttons) {
+			if( b.getText().equalsIgnoreCase("only")) {
+				b.setToolTipText("Only the rule given below will be applied");
+			}
+			else if( b.getText().equalsIgnoreCase("first")) {
+				b.setToolTipText("The rule given below will be applied first and then, in case of failure,  an automatic detection.");
+			}
+			else if( b.getText().equalsIgnoreCase("last")) {
+				b.setToolTipText("An automatic detection will be applied first and then, in case of failure, the rule given below.");
+			}
+			else if( b.getText().equalsIgnoreCase("no mapping")) {
+				b.setToolTipText("Only the automatic detection will be applied ");
+			}
+		}
+		this.buttons=buttons;
+		this.nomapping=nomapping;
+		for( JRadioButton jrb: buttons) {
+			jp.add(jrb);	
+			bg.add(jrb);
+		}
+		
+		panel.add(jp, ccs);
+		
+		buildMapper(components);
+	
+	}
+	
+	
+
+	
+	/**
+	 * Make the link between the radio buttons and the components
+	 * @param components
+	 */
 
 	public void buildMapper(JComponent[] components)
 	{

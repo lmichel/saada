@@ -13,7 +13,7 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
-import saadadb.admintool.VPSandbox.components.mapper.VPSaadaMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
@@ -61,10 +61,10 @@ public class VPSTOEPanel extends MappingKWPanel {
 //	protected  LoaderConfigChooser configChooser;
 //	private Container category_panel;
 	private VPClassMappingPanel classMapping;
-	private VPObservableMappingPanel observableMapping;
+	private VPObservationMappingPanel observationMapping;
 	private VPSpaceMappingPanel spaceMapping;
 	private VPTimeMappingPanel timeMapping;
-	private VPSaadaMappingPanel saadaMapping;
+	private VPObservableMappingPanel observableMapping;
 	private VPEnergyMappingPanel energyMapping;
 	
 	
@@ -157,21 +157,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 		//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
 		//ObservableAxis.collapse();
 		//editorPanel.add(ObservableAxis.container, globalGridConstraint);
-		observableMapping = new VPObservableMappingPanel(this);
-		observableMapping.expand();
-		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
-		
-		energyMapping = new VPEnergyMappingPanel(this);
-		energyMapping.collapse();
-		editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
-		
-		saadaMapping = new VPSaadaMappingPanel(this);
-		saadaMapping.collapse();
-		editorPanel.add(saadaMapping.getContainer(),globalGridConstraint);
+		observationMapping = new VPObservationMappingPanel(this);
+		observationMapping.expand();
+		editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
 		
 		globalGridConstraint.gridy++;
 		
@@ -179,11 +167,25 @@ public class VPSTOEPanel extends MappingKWPanel {
 		spaceMapping.collapse();
 		editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
 		
+		
+		globalGridConstraint.gridy++;
+		
+		energyMapping = new VPEnergyMappingPanel(this);
+		energyMapping.collapse();
+		editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
+		
+
 		globalGridConstraint.gridy++;
 		
 		timeMapping = new VPTimeMappingPanel(this);
 		timeMapping.collapse();
 		editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		observableMapping = new VPObservableMappingPanel(this);
+		observableMapping.collapse();
+		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
 
 		
 		//WIP

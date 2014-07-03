@@ -1,9 +1,8 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
-import java.awt.GridBagLayout;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import saadadb.admintool.components.AdminComponent;
@@ -15,18 +14,26 @@ public class dummy extends VPKwMapperPanel {
 	private JButton test2;
 	private JLabel test3;
 	
-	public dummy()
+	
+	public dummy(VPAxisPriorityPanel axisPanel)
 	{
+		super(axisPanel);
 		test1 = new JTextField("Ceci est aussi un test !");
-		test2 = new JButton();
+		test2 = new JButton("clic");
 		test3 = new JLabel("Test dummy ");
-		this.setLayout(new GridBagLayout());
-		MyGBC gbc = new MyGBC(3,3,3,3);
+		components[0]=test1;
+		components[1]=test2;
+		components[2]=test3;
+		MyGBC gbc = axisPanel.gbc;
+		JPanel panel = axisPanel.panel;
 		gbc.right(false);
-		this.add(AdminComponent.getPlainLabel("Test Dummy "), gbc);
+		panel.add(AdminComponent.getPlainLabel("Test Dummy "), gbc);
 		gbc.next();
 		gbc.left(false);
-		this.add(test1,gbc);
+		panel.add(test1,gbc);
+		gbc.next();
+		gbc.left(true);
+		panel.add(test2,gbc);
 //		gbc.next();gbc.left(true);
 //		this.add(test2,gbc);
 	}

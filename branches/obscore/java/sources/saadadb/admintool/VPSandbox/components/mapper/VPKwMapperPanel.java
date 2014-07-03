@@ -1,13 +1,14 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-import saadadb.admintool.components.AdminComponent;
 
-public class VPKwMapperPanel extends JPanel {
+public class VPKwMapperPanel{
+	
+	protected JComponent[] components;
 
-	public VPKwMapperPanel()
+	public VPKwMapperPanel(VPAxisPriorityPanel axisPanel)
 	{
-		setBackground(AdminComponent.LIGHTBACKGROUND);
+		//setBackground(AdminComponent.LIGHTBACKGROUND);
 	}
 }
