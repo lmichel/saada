@@ -150,10 +150,6 @@ public class ProductBuilder {
 		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
-		//		this.observationMappingPriority = PriorityMode.FIRST;
-		//		this.spaceMappingPriority =PriorityMode.FIRST;
-		//		this.energyMappingPriority = PriorityMode.FIRST;
-		//		this.timeMappingPriority = PriorityMode.FIRST;
 
 		try {
 			this.bindDataFile(file);
