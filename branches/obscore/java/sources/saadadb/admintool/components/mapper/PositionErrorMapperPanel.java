@@ -18,6 +18,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.command.ArgsParser;
+import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -37,7 +38,7 @@ public class PositionErrorMapperPanel extends PriorityPanel {
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
 		GridBagConstraints ccs = new GridBagConstraints();
-		errorfield = new AppendMappingTextField(mappingPanel, 2, forEntry, buttonGroup);
+		errorfield = new AppendMappingTextField(mappingPanel, DataMapLevel.KEYWORD, forEntry, buttonGroup);
 		unitCombo  = new JComboBox(new String[]{"deg", "arcsec", "arcmin", "mas"});
 		errorfield.setColumns(15);
 

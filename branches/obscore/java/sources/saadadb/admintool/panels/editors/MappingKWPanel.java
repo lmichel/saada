@@ -94,6 +94,7 @@ public class MappingKWPanel extends EditPanel {
 	private PositionErrorMapperPanel positionErrorMapper;
 	private PositionErrorMapperPanel e_positionErrorMapper;
 	protected  LoaderConfigChooser configChooser;
+ 
 
 
 	/**

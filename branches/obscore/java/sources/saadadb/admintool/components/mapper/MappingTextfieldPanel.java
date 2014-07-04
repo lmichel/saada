@@ -12,6 +12,7 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.enums.DataMapLevel;
 
 /**
  * @author laurentmichel
@@ -27,7 +28,7 @@ public class MappingTextfieldPanel extends MappingPanel{
 		JPanel panel =  container.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
-		mappingTextField = new AppendMappingTextField(this.mappingPanel, 2, forEntry, null);
+		mappingTextField = new AppendMappingTextField(this.mappingPanel, DataMapLevel.KEYWORD, forEntry, null);
 		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
 		GridBagConstraints cae = new GridBagConstraints();
 		cae.anchor = GridBagConstraints.WEST;

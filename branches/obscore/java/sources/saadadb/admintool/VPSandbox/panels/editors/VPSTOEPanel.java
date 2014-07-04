@@ -17,6 +17,8 @@ import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.command.ArgsParser;
+import saadadb.exceptions.FatalException;
 
 
 /**
@@ -67,7 +69,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 	private VPObservableMappingPanel observableMapping;
 	private VPEnergyMappingPanel energyMapping;
 	
-	
+	//protected ArgsParser args;
 	
 	/**
 	 * 
@@ -85,13 +87,19 @@ public class VPSTOEPanel extends MappingKWPanel {
 		// TODO Auto-generated constructor stub
 	}
 
-
+//
+//	public ArgsParser getArgs()
+//	{
+//		return args;
+//	}
 
 
 	@Override
 	protected void setActivePanel() {
 		// TODO Auto-generated method stub
 		// this code have been copied from the old class MappingKwPanel
+//		if(checkParams())
+//			args = getArgsParser();
 		
 		globalGridConstraint = new GridBagConstraints();
 		globalGridConstraint.weightx = 1;			
@@ -157,7 +165,12 @@ public class VPSTOEPanel extends MappingKWPanel {
 		//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
 		//ObservableAxis.collapse();
 		//editorPanel.add(ObservableAxis.container, globalGridConstraint);
-		observationMapping = new VPObservationMappingPanel(this);
+		try {
+			observationMapping = new VPObservationMappingPanel(this);
+		} catch (FatalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		observationMapping.expand();
 		editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
 		

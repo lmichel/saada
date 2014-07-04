@@ -15,6 +15,7 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
+import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -30,7 +31,7 @@ public class PositionMapperPanel extends PriorityPanel {
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
 		GridBagConstraints ccs = new GridBagConstraints();
-		positionField = new AppendMappingTextField(mappingPanel, 2, forEntry, buttonGroup);
+		positionField = new AppendMappingTextField(mappingPanel, DataMapLevel.KEYWORD, forEntry, buttonGroup);
 
 		ccs.gridx = 0; ccs.gridy = 0;ccs.weightx = 0;
 		new MapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup

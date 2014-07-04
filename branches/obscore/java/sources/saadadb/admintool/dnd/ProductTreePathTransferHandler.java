@@ -11,6 +11,7 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.components.voresources.VOServiceList;
 import saadadb.admintool.components.voresources.VOServiceListItem;
 import saadadb.admintool.utils.DataTreePath;
+import saadadb.enums.DataMapLevel;
 import saadadb.util.Messenger;
 
 
@@ -27,10 +28,10 @@ public class ProductTreePathTransferHandler extends TransferHandler {
 	 */
 	private static final long serialVersionUID = 1L;
 	boolean check_extension;
-	int node_to_copy;
+	int index;
 
-	public ProductTreePathTransferHandler(int node_to_copy) {
-		this.node_to_copy = node_to_copy;
+	public ProductTreePathTransferHandler(int index) {
+		this.index = index;
 	}
 
 

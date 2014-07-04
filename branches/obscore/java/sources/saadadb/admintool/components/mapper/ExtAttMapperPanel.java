@@ -14,6 +14,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
+import saadadb.enums.DataMapLevel;
 
 public class ExtAttMapperPanel extends MappingPanel {
 	public final ReplaceMappingTextField[] mappingTextFields;
@@ -48,7 +49,7 @@ public class ExtAttMapperPanel extends MappingPanel {
 				cae.fill = GridBagConstraints.NONE;      //reset to default
 				cae.weightx = 0.0;                       //reset to default
 				mappingTextLabels[i] = AdminComponent.getPlainLabel(ext_att[i]);
-				mappingTextFields[i] = new ReplaceMappingTextField(this.mappingPanel, 2, forEntry, null);
+				mappingTextFields[i] = new ReplaceMappingTextField(this.mappingPanel, DataMapLevel.KEYWORD, forEntry, null);
 				mappingTextFields[i].setColumns(10);
 				panel.add(mappingTextLabels[i], cae);
 				cae.gridwidth = GridBagConstraints.REMAINDER;     //end row

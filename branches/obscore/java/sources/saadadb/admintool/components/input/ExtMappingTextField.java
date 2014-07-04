@@ -3,10 +3,10 @@ package saadadb.admintool.components.input;
 import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
-import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
+import saadadb.enums.DataMapLevel;
 
 
 public class ExtMappingTextField extends MappingTextField {
@@ -18,8 +18,8 @@ public class ExtMappingTextField extends MappingTextField {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ExtMappingTextField(MappingKWPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
-		super(form, num_node, for_entry, priority_bg);
+	public ExtMappingTextField(MappingKWPanel form, DataMapLevel dataMapLevel, boolean for_entry, ButtonGroup priority_bg) {
+		super(form, dataMapLevel, for_entry, priority_bg);
 	}
 	
 	/*
