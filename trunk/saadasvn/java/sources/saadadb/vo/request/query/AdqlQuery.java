@@ -94,8 +94,8 @@ public class AdqlQuery extends VOQuery {
 			if(Messenger.debug_mode) parse.enable_tracing();
 			adqlQuery = (SaadaADQLQuery)parse.Query();
 			
-			System.out.println("@@@@@@@@@@@@@@@@@@ " + limit + " " + adqlQuery.getLimit());			
-			(new Exception()).printStackTrace();			
+//			System.out.println("@@@@@@@@@@@@@@@@@@ " + limit + " " + adqlQuery.getLimit());			
+//			(new Exception()).printStackTrace();			
 
 			
 //			if (adqlQuery.getLimit() > -1)
