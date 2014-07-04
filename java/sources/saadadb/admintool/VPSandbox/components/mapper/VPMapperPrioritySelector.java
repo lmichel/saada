@@ -12,7 +12,6 @@ import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.mapper.MapperPrioritySelector;
 
 
 public class VPMapperPrioritySelector {
@@ -101,6 +100,31 @@ public class VPMapperPrioritySelector {
 	public void buildMapper(JComponent[] components)
 	{
 		this.components=components;
+		for( JRadioButton jrb: buttons) {
+			jrb.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if( e.getSource() == VPMapperPrioritySelector.this.nomapping ) {
+						VPMapperPrioritySelector.this.setEnable(false);
+					}
+					else 
+						VPMapperPrioritySelector.this.setEnable(true);
+				}
+			});
+			if( jrb == nomapping ) {
+				jrb.setSelected(true);
+			}
+			else {
+				jrb.setSelected(false);
+			}
+
+		}
+		this.setEnable(false);
+		
+	}
+	
+	public void buildMapper(VPKwMapperPanel kwMapper)
+	{
+		this.components=kwMapper.components;
 		for( JRadioButton jrb: buttons) {
 			jrb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
