@@ -104,6 +104,7 @@ public class TapToVOTableFormator extends VOTableFormator {
 				// Build the result file in the VOTable format:
 //				this.buildResultFile(oids);
 				this.buildResultFile(result);
+				result.close();
     		}
     	} catch(Exception e) {
     		Messenger.printStackTrace(e);

@@ -82,6 +82,7 @@ public class TapToJsonFormator extends  VOResultFormator {
 				// Fill only needed fields of queryInfos:
 				queryInfos = new QueryInfos();
 				//queryInfos.setSaadaqlQuery(queryStr);
+
 			}else{
 				// Execute the SaadaQL query:
 				SaadaQLExecutor executor = new SaadaQLExecutor();
@@ -91,9 +92,9 @@ public class TapToJsonFormator extends  VOResultFormator {
 				queryInfos = new QueryInfos();
 				queryInfos.setSaadaqlQuery(queryStr);
 			}
-			
 			this.buildResultFile(result);
 			result.close();
+			
 		} catch(Exception e) {
 			Messenger.printStackTrace(e);
 			if (e instanceof ParseException)
@@ -103,6 +104,10 @@ public class TapToJsonFormator extends  VOResultFormator {
 		} catch(Error e) {
 			e.printStackTrace();
 			this.buildResultErrorFile(e.toString());
+		} finally{
+			if( result != null ) {
+				result.close();
+			}
 		}
 	}
 	
