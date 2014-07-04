@@ -10,12 +10,13 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.exceptions.FatalException;
 
 public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 	
 
 	
-	public VPObservationMappingPanel(VPSTOEPanel mappingPanel){
+	public VPObservationMappingPanel(VPSTOEPanel mappingPanel) throws FatalException{
 		super(mappingPanel, "Observation Axis",HelpDesk.CLASS_MAPPING);
 		//JPanel panel =  getContainer().getContentPane();
 

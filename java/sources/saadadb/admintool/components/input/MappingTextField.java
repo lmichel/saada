@@ -12,6 +12,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.enums.DataMapLevel;
 
 /**
  * Modifié Valentin Pertuy 26/06/2014
@@ -22,7 +23,7 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 public class MappingTextField extends TreepathDropableTextField {
 	private static final long serialVersionUID = 1L;
 	protected MappingKWPanel form;
-	protected int num_node;
+	protected DataMapLevel dataMapLevel;
 	protected boolean for_entry;
 	protected String previous_value="";
 	protected String ext_num;
@@ -36,15 +37,15 @@ public class MappingTextField extends TreepathDropableTextField {
 	/**
 	 * @param form
 	 */
-	public MappingTextField(MappingKWPanel form, int num_node, boolean for_entry, ButtonGroup priority_bg) {
+	public MappingTextField(MappingKWPanel form, DataMapLevel dataMapLevel, boolean for_entry, ButtonGroup priority_bg) {
 		this.form = form;
 		this.for_entry = for_entry;
-		this.num_node = num_node;
+		this.dataMapLevel = dataMapLevel;
 		this.priority_bg = priority_bg;
 		/*
 		 * Takes the second node, without extension checking
 		 */
-		this.setTransferHandler(new ProductTreePathTransferHandler(num_node));			
+		this.setTransferHandler(new ProductTreePathTransferHandler(getDataMapLevelNumber(dataMapLevel)));			
 	}
 	
 	/*
@@ -70,7 +71,7 @@ public class MappingTextField extends TreepathDropableTextField {
 		this.previous_value = this.getText().trim();
 		this.setExtensionFields();
 		if( valid() ) {
-			this.setText(treepath.getPathComponent(num_node).toString());
+			this.setText(treepath.getPathComponent(getDataMapLevelNumber(dataMapLevel)).toString());
 			return true;
 		}	
 		else {
@@ -147,10 +148,10 @@ public class MappingTextField extends TreepathDropableTextField {
 	 * Check if the tree path contains enough nodes to get the requested value 
 	 */
 	protected boolean checkPathCount() {
-		if( treepath.getPathCount() != (num_node+1) ) {
-			switch( num_node) {
-			case 1: AdminComponent.showFatalError(this.getParent(), "You must select an extension"); break;
-			case 2: AdminComponent.showFatalError(this.getParent(), "You must select an attribute"); break;
+		if( treepath.getPathCount() != (getDataMapLevelNumber(dataMapLevel)+1) ) {
+			switch( dataMapLevel) {
+			case EXTENSION: AdminComponent.showFatalError(this.getParent(), "You must select an extension"); break;
+			case KEYWORD: AdminComponent.showFatalError(this.getParent(), "You must select an attribute"); break;
 			default: AdminComponent.showFatalError(this.getParent(), "You must select an higher level node"); break;
 			}
 			return false;
@@ -193,6 +194,39 @@ public class MappingTextField extends TreepathDropableTextField {
 			}
 			
 		}
+	}
+	
+	/**
+	 * Make the correspondance between the DataMapLevel and the index number needed for the tree object
+	 * @param dataMapLevel
+	 * @return
+	 */
+	protected int getDataMapLevelNumber(DataMapLevel dataMapLevel)
+	{
+		int index=-1;
+		switch (dataMapLevel)
+		{
+			case ROOT :
+			{
+				index=0;
+				break;
+			}
+			case EXTENSION :
+			{
+				index=1;
+				break;
+			}
+			case KEYWORD :
+			{
+				index=2;
+			}
+				
+			default:
+				break;
+		
+		}
+		return index;
+		
 	}
 
 }

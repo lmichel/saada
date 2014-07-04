@@ -5,6 +5,8 @@ import javax.swing.JComponent;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
+import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 public class VPKWName extends VPKwMapperPanel{
 
@@ -21,18 +23,18 @@ public class VPKWName extends VPKwMapperPanel{
 	private AppendMappingTextField facility_name;
 	private AppendMappingTextField instrument_name;
 	
-	public VPKWName(VPSTOEPanel mappingPanel,VPAxisPriorityPanel axisPanel) {
-		super(axisPanel);
+	public VPKWName(VPSTOEPanel mappingPanel,VPAxisPriorityPanel axisPanel) throws FatalException {
+		super(mappingPanel,axisPanel);
 		/*
 		 * Attention ! 3 derniers paramètres corrects ?
 		 */
-		obs_collection = new AppendMappingTextField(mappingPanel,2, false, null);
+		obs_collection = new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false, null);
 		obs_collection.setColumns(AdminComponent.STRING_FIELD_NAME);
-		target_name =  new AppendMappingTextField(mappingPanel,2, false, null);
+		target_name =  new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false, null);
 		target_name.setColumns(AdminComponent.STRING_FIELD_NAME);
-		facility_name = new AppendMappingTextField(mappingPanel,2, false, null);
+		facility_name = new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false, null);
 		facility_name.setColumns(AdminComponent.STRING_FIELD_NAME);
-		instrument_name =  new AppendMappingTextField(mappingPanel,2, false, null);
+		instrument_name =  new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false, null);
 		instrument_name.setColumns(AdminComponent.STRING_FIELD_NAME);
 		components = new JComponent[4];
 		components[0]=obs_collection;

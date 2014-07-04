@@ -16,6 +16,7 @@ import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.components.mapper.MapperPrioritySelector;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.enums.DataMapLevel;
 import saadadb.util.RegExp;
 
 public class VPClassMappingPanel extends VPAxisPanel {
@@ -112,7 +113,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		//panel.add(ext,ccs);
 		//Partie pour l'extension (Attention, pas repris de ExxAttMapperPanel mais de ExtensionTextFieldPanel)
 		// Booleen "ForEntry", mis à faux temporairement
-		mappingTextField = new ExtMappingTextField(mappingPanel, 1, false, null);
+		mappingTextField = new ExtMappingTextField(mappingPanel, DataMapLevel.EXTENSION, false, null);
 		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
 		//GridBagConstraints cae = new GridBagConstraints();
 		panel.add(mappingTextField, gbc);

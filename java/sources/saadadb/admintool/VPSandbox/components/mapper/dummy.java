@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.exceptions.FatalException;
 
 public class dummy extends VPKwMapperPanel {
 
@@ -21,9 +22,9 @@ public class dummy extends VPKwMapperPanel {
 	private JComboBox coosysCombo;
 	private  JTextField coosysField;
 	
-	public dummy(VPAxisPriorityPanel axisPanel)
+	public dummy(VPAxisPriorityPanel axisPanel) throws FatalException
 	{
-		super(axisPanel);
+		super(null,axisPanel);
 		test1 = new JTextField("Ceci est aussi un test !");
 		test2 = new JButton("clic");
 		test3 = new JLabel("Test dummy ");

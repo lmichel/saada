@@ -16,6 +16,7 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
+import saadadb.enums.DataMapLevel;
 
 public class CoordSysMapperPanel extends PriorityPanel {
 	private JComboBox coosysCombo = new JComboBox(new String[]{"ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
@@ -29,7 +30,7 @@ public class CoordSysMapperPanel extends PriorityPanel {
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
 		GridBagConstraints ccs = new GridBagConstraints();
 
-		coosysField = new AppendMappingTextField(mappingPanel, 2, false, buttonGroup);
+		coosysField = new AppendMappingTextField(mappingPanel, DataMapLevel.KEYWORD, false, buttonGroup);
 		coosysCombo = new JComboBox(new String[]{"", "ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
 
 		ccs.gridx = 0; ccs.gridy = 0; ccs.weightx = 0;ccs.gridwidth = 2;

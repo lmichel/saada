@@ -16,6 +16,7 @@ import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
+import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -51,7 +52,7 @@ public class DispersionMapperPanel extends PriorityPanel {
 		specunit_combo.addItem("MeV" );
 		specunit_combo.addItem("GeV" );
 		specunit_combo.addItem("TeV" );
-		spec_field = new ReplaceMappingTextField(mappingPanel, 2, false, buttonGroup);
+		spec_field = new ReplaceMappingTextField(mappingPanel, DataMapLevel.KEYWORD, false, buttonGroup);
 		spec_field.setColumns(15);
 
 

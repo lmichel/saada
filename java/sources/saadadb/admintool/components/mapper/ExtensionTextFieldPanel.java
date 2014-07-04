@@ -10,6 +10,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.enums.DataMapLevel;
 
 public class ExtensionTextFieldPanel extends MappingPanel {
 
@@ -20,7 +21,7 @@ public class ExtensionTextFieldPanel extends MappingPanel {
 		JPanel panel =  container.getContentPane();
 		panel.setLayout(new GridBagLayout());
 		panel.setBackground(AdminComponent.LIGHTBACKGROUND);
-		mappingTextField = new ExtMappingTextField(this.mappingPanel, 1, forEntry, null);
+		mappingTextField = new ExtMappingTextField(this.mappingPanel, DataMapLevel.EXTENSION, forEntry, null);
 		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
 		GridBagConstraints cae = new GridBagConstraints();
 		cae.anchor = GridBagConstraints.WEST;
