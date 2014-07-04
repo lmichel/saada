@@ -13,7 +13,7 @@ import saadadb.admintool.utils.MyGBC;
 public class VPAxisPriorityPanel extends VPAxisPanel {
 
 	protected VPPriorityPanel priority;
-	protected dummy dum;
+	protected VPKwMapperPanel kwMapper;;
 	protected MyGBC gbc;
 	protected JPanel panel;
 

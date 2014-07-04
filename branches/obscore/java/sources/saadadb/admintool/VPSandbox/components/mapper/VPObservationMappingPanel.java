@@ -13,29 +13,20 @@ import saadadb.admintool.utils.MyGBC;
 
 public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 	
-	private JComboBox coosysCombo;
-	private  JTextField coosysField;
+
 	
 	public VPObservationMappingPanel(VPSTOEPanel mappingPanel){
 		super(mappingPanel, "Observation Axis",HelpDesk.CLASS_MAPPING);
 		//JPanel panel =  getContainer().getContentPane();
-		coosysCombo = new JComboBox(new String[]{"ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
-		coosysField = new JTextField("Ceci est un test");
-		priority.selector.buildMapper(new JComponent[]{coosysCombo,coosysField});
+
+		//dum = new dummy(this);
+		kwMapper = new VPKWName(mappingPanel,this);
+		priority.selector.buildMapper(kwMapper);
 
 		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
 		
-		gbc.right(false);
-		panel.add(AdminComponent.getPlainLabel("Test "), gbc);
-		gbc.next();
-		gbc.left(false);
-	
-		panel.add(coosysField,gbc);
-		gbc.next();
-		gbc.left(true);
-		panel.add(coosysCombo,gbc);
-		gbc.newRow();
-		dum = new dummy(this);
+
+		kwMapper.setComponents();
 	
 //		
 	
