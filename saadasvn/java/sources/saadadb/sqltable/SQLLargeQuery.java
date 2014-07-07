@@ -30,6 +30,7 @@ public class SQLLargeQuery extends SQLQuery {
 	}	
 
 	public ResultSet run() throws  QueryException {
+		Exception te=null;
 		try {
 			_stmts = databaseConnection.getLargeStatement();
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select large query: " + this.query);
@@ -39,11 +40,15 @@ public class SQLLargeQuery extends SQLQuery {
 				Messenger.printMsg(Messenger.DEBUG, "Done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
 			return resultset;
 		
-
+		} catch (SaadaException e) {
+			te = e;
 		} catch (Exception e) {
+			te = e;
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
-			QueryException.throwNewException(SaadaException.DB_ERROR, e);
+		} finally {
+			this.close();
+			QueryException.throwNewException(SaadaException.DB_ERROR, te);
 		}
 		return null;
 	}
