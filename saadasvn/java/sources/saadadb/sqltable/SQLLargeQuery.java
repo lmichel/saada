@@ -42,11 +42,12 @@ public class SQLLargeQuery extends SQLQuery {
 		
 		} catch (SaadaException e) {
 			te = e;
+			this.close();
+			QueryException.throwNewException(SaadaException.DB_ERROR, te);
 		} catch (Exception e) {
 			te = e;
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			Messenger.printStackTrace(e);
-		} finally {
 			this.close();
 			QueryException.throwNewException(SaadaException.DB_ERROR, te);
 		}
