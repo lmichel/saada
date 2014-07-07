@@ -24,8 +24,8 @@
    <TR>
     <TD>Observation</TD>
     <TD>dataproduct_type</TD>
-    <TD></TD>
-    <TD>obs.dataProductType</TD>
+    <TD>meta.id</TD>
+    <TD>Obs.dataProductType</TD>
     <TD>char</TD>
     <TD>-1</TD>
     <TD></TD>
@@ -37,7 +37,7 @@
    <TR>
     <TD>Observation</TD>
     <TD>calib_level</TD>
-    <TD></TD>
+    <TD>meta.code;obs.calib</TD>
     <TD>obs:calibLevel</TD>
     <TD>int</TD>
     <TD>1</TD>
@@ -51,7 +51,7 @@
    <TR>
     <TD>Target</TD>
     <TD>targe_name</TD>
-    <TD></TD>
+    <TD>meta.id;src</TD>
     <TD>Target.Name</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -64,7 +64,7 @@
    <TR>
     <TD>Target</TD>
     <TD>target_class</TD>
-    <TD></TD>
+    <TD>src.class</TD>
     <TD>Target.Class</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -78,7 +78,7 @@
    <TR>
     <TD>DataID</TD>
     <TD>obs_id</TD>
-    <TD></TD>
+    <TD>meta.id</TD>
     <TD>DataID.observationID</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -91,7 +91,7 @@
    <TR>
     <TD>DataID</TD>
     <TD>obs_collection</TD>
-    <TD></TD>
+    <TD>meta.id</TD>
     <TD>DataID.Collection</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -104,7 +104,7 @@
    <TR>
     <TD>DataID</TD>
     <TD>obs_creator_name</TD>
-    <TD></TD>
+    <TD>meta.id</TD>
     <TD>DataID.Creator</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -118,7 +118,7 @@
   <TR>
     <TD>Curation</TD>
     <TD>obs_publisher_did</TD>
-    <TD></TD>
+    <TD>meta.ref.url;meta.curation</TD>
     <TD>Curation.PublisherDID</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -131,7 +131,7 @@
    <TR>
     <TD>Curation</TD>
     <TD>bib_reference</TD>
-    <TD></TD>
+    <TD>meta.bib.bibcode</TD>
     <TD>Curation.Reference</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -144,7 +144,7 @@
    <TR>
     <TD>Curation</TD>
     <TD>data_rights</TD>
-    <TD></TD>
+    <TD>meta.code</TD>
     <TD>Curation.Rights</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -158,7 +158,7 @@
    <TR>
     <TD>Access</TD>
     <TD>access_url</TD>
-    <TD></TD>
+    <TD>meta.ref.url</TD>
     <TD>Acces.Reference</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -171,7 +171,7 @@
    <TR>
     <TD>Access</TD>
     <TD>access_format</TD>
-    <TD></TD>
+    <TD>meta.code.mime</TD>
     <TD>Acces.Format</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -184,7 +184,7 @@
   <TR>
     <TD>Access</TD>
     <TD>access_estsize</TD>
-    <TD></TD>
+    <TD>phys.size;meta.file</TD>
     <TD>Acces.Format</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -197,7 +197,7 @@
    <TR>
     <TD>Access</TD>
     <TD>DataLink</TD>
-    <TD></TD>
+    <TD>meta.ref.url</TD>
     <TD>Acces.DataLink</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -211,7 +211,7 @@
   <TR>
     <TD>SpatialAxis</TD>
     <TD>s_ra</TD>
-    <TD></TD>
+    <TD>pos.eq.ra</TD>
     <TD>Char.SpatialAxis.Coverage.Location.coord.Position2D.Value2.C1</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -224,7 +224,7 @@
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_dec</TD>
-    <TD></TD>
+    <TD>pos.eq.dec</TD>
     <TD>Char.SpatialAxis.Coverage.Location.coord.Position2D.Value2.C2</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -250,7 +250,7 @@
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_region</TD>
-    <TD></TD>
+    <TD>phys.angSize;instr.fov</TD>
     <TD>Char.SpatialAxis.Coverage.Support.Area</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -263,7 +263,7 @@
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_resolution</TD>
-    <TD></TD>
+    <TD>pos.angResolution</TD>
     <TD>Char.SpatialAxis.Resolution.refVal</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -276,7 +276,7 @@
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_ucd</TD>
-    <TD></TD>
+    <TD>meta.ucd</TD>
     <TD>Char.SpatialAxis.ucd</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -290,7 +290,7 @@
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_min</TD>
-    <TD></TD>
+    <TD>time.start;obs.exposure</TD>
     <TD>Char.TimeAxis.Coverage.Bounds.Limits.TimeInterval.StartTime</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -303,7 +303,7 @@
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_max</TD>
-    <TD></TD>
+    <TD>time.end;obs.exposure</TD>
     <TD>Char.TimeAxis.Coverage.Bounds.Limits.TimeInterval.StopTime in MJD</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -316,7 +316,7 @@
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_exptime</TD>
-    <TD></TD>
+    <TD>time.duration;obs.exposure</TD>
     <TD>Char.TimeAxis.Coverage.Support.Extent</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -329,7 +329,7 @@
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_resolution</TD>
-    <TD></TD>
+    <TD>time.resolution</TD>
     <TD>Char.TimeAxis.Resolution.refVal</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -341,8 +341,8 @@
    </TR>
    <TR>
     <TD>TimeAxis</TD>
-    <TD>t_cal_status</TD>
-    <TD></TD>
+    <TD>t_calib_status</TD>
+    <TD>meta.code.qual</TD>
     <TD>Char.TimeAxis.calibStatus</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -355,7 +355,7 @@
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_stat_err</TD>
-    <TD></TD>
+    <TD>stat.error;pos.eq</TD>
     <TD>Char.TimeAxis.Accuracy.StatError.errorRefVal.value</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -369,7 +369,7 @@
   <TR>
     <TD>SpectralAxis</TD>
     <TD>em_unit</TD>
-    <TD></TD>
+    <TD>meta.unit</TD>
     <TD>Char.SpectralAxis.unit</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -382,7 +382,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_min</TD>
-    <TD></TD>
+    <TD>em.wl;stat.min</TD>
     <TD>Char.SpectralAxis.Coverage.Bounds.limits.Interval.LoLim</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -395,7 +395,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_max</TD>
-    <TD></TD>
+    <TD>em.wl;stat.max</TD>
     <TD>Char.SpectralAxis.Coverage.Bounds.limits.Interval.HiLim</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -412,7 +412,7 @@
     <TD>Char.SpectralAxis.Resolution.ResolPower</TD>
     <TD>double</TD>
     <TD>1</TD>
-    <TD></TD>
+    <TD>spect.resolution</TD>
     <TD>false</TD>
     <TD>null</TD>
     <TD>Value of the resolution power along the SpectralAxis.</TD>
@@ -421,7 +421,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_resolPower_min</TD>
-    <TD></TD>
+    <TD>spect.resolution;stat.min</TD>
     <TD>Char.Spectral.Resolution.bounds.Limits.Interval.LoLim</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -434,7 +434,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_resolPower_max</TD>
-    <TD></TD>
+    <TD>spect.resolution;stat.max</TD>
     <TD>Char.Spectral.Resolution.bounds.Limits.Interval.HiLim</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -447,7 +447,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_resolution</TD>
-    <TD></TD>
+    <TD>spect.resolution;stat.mean</TD>
     <TD>Char.SpectralAxis.Resolution.refVal.value</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -460,7 +460,7 @@
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_stat_err</TD>
-    <TD></TD>
+    <TD>stat.error;em</TD>
     <TD>Char.SpectralAxis.Accuracy.StatError.errorRefVal.value</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -474,7 +474,7 @@
    <TR>
     <TD>ObservableAxis</TD>
     <TD>o_ucd</TD>
-    <TD></TD>
+    <TD>meta.ucd</TD>
     <TD>Char.ObservableAxis.ucd</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -487,7 +487,7 @@
    <TR>
     <TD>ObservableAxis</TD>
     <TD>o_calib_status</TD>
-    <TD></TD>
+    <TD>meta.code.qual</TD>
     <TD>Char.ObservableAxis.calibStatus</TD>
     <TD>int</TD>
     <TD>1</TD>
@@ -500,7 +500,7 @@
    <TR>
     <TD>ObservableAxis</TD>
     <TD>o_stat_err</TD>
-    <TD></TD>
+    <TD>stat.error;phot.flux</TD>
     <TD>Char.ObservableAxis.Accuracy.StatError.errorRefVal.value</TD>
     <TD>double</TD>
     <TD>1</TD>
@@ -515,7 +515,7 @@
    <TR>
     <TD>PolarizationAxis</TD>
     <TD>pol_stat</TD>
-    <TD></TD>
+    <TD>meta.code;phys.polarization</TD>
     <TD>Char.PolarizationAxis.stateList</TD>
     <TD>int</TD>
     <TD>1</TD>
@@ -529,7 +529,7 @@
    <TR>
     <TD>Provenance</TD>
     <TD>facility_name</TD>
-    <TD></TD>
+    <TD>meta.id;instr.tel</TD>
     <TD>Provenance.ObsConfig.facility.name</TD>
     <TD>char</TD>
     <TD>-1</TD>
@@ -542,7 +542,7 @@
    <TR>
     <TD>Provenance</TD>
     <TD>instrument_name</TD>
-    <TD></TD>
+    <TD>meta.id;instr</TD>
     <TD>Provenance.ObsConfig.facility.name</TD>
     <TD>char</TD>
     <TD>-1</TD>
