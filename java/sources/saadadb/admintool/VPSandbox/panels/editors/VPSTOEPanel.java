@@ -5,6 +5,7 @@ package saadadb.admintool.VPSandbox.panels.editors;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,9 +17,14 @@ import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
+import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 
 /**
@@ -202,6 +208,155 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		
 		//WIP
+	}
+	
+	
+	@Override
+	public ArgsParser getArgsParser() {
+		ArrayList<String> params = new ArrayList<String>();
+		ArrayList<String> temp;
+		/*
+		 * ClassMapping and extension
+		 */
+
+
+		temp=classMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+
+
+
+		/*
+		 * Category
+		 */
+	
+		switch (this.category ) {
+		case Category.MISC: params.add("-category=misc"); break;
+		case Category.IMAGE: params.add("-category=image"); break;
+		case Category.SPECTRUM: params.add("-category=spectrum"); break;
+		case Category.TABLE: params.add("-category=table");break;
+		case Category.FLATFILE: params.add("-category=flatfile"); break;
+		default: break;}
+		
+		/*
+		 * Observation axis
+		 */
+		
+		temp=observationMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		try {
+			ArgsParser retour;
+			retour = new ArgsParser((String[])(params.toArray(new String[0])));
+			retour.setName(confName);
+			return retour;
+		} catch (FatalException e) {
+			Messenger.trapFatalException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean checkParams() {
+		String msg = "";
+		String temp ="";
+		temp+=classMapping.checkAxisParams();
+		classMapping.setOnError(false);
+		if(!temp.isEmpty())
+		{
+			classMapping.setOnError(true);
+			msg+=temp;
+		}
+	
+		
+	
+//		if( cooSysMapper != null ) {
+//			cooSysMapper.setOnError(false);
+//			if( !cooSysMapper.isNo() && cooSysMapper.getText().length() == 0 ){
+//				cooSysMapper.setOnError(true);
+//				msg += "<LI>Empty coord. system  not allowed in this mapping mode</LI>";
+//			}
+//			if( !cooSysMapper.valid()  ){
+//				cooSysMapper.setOnError(true);
+//				msg += "<LI>Coord System badly formed</LI>";				
+//			}
+//		}
+//		if( positionMapper != null ) {
+//			positionMapper.setOnError(false);
+//			if( !positionMapper.isNo() && positionMapper.getText().length() == 0 ){
+//				cooSysMapper.setOnError(true);
+//				msg += "<LI>Empty coordinates not allowed in this mapping mode</LI>";
+//			}
+//			if( !positionMapper.valid()  ){
+//				positionMapper.setOnError(true);
+//				msg += "<LI>Coord mapping badly formed</LI>";				
+//			}
+//		}
+//		if( e_positionMapper != null ) {
+//			e_positionMapper.setOnError(false);
+//			if( !e_positionMapper.isNo() && e_positionMapper.getText().length() == 0 ){
+//				e_positionMapper.setOnError(true);
+//				msg += "<LI>Empty coordinates not allowed in this mapping mode</LI>";
+//			}
+//			if( !e_positionMapper.valid()  ){
+//				e_positionMapper.setOnError(true);
+//				msg += "<LI>Coord mapping badly formed</LI>";				
+//			}
+//		}
+//		if( positionErrorMapper != null ) {
+//			positionErrorMapper.setOnError(false);
+//			if( !positionErrorMapper.isNo() && positionErrorMapper.getText().length() == 0 ){
+//				positionErrorMapper.setOnError(true);
+//				msg += "<LI>Empty coordinates error not allowed in this mapping mode</LI>";
+//			}
+//			if( !positionErrorMapper.valid()  ){
+//				positionErrorMapper.setOnError(true);
+//				msg += "<LI>Coord error mapping badly formed</LI>";				
+//			}
+//		}
+//		if( e_positionErrorMapper != null ) {
+//			e_positionErrorMapper.setOnError(false);
+//			if( !e_positionErrorMapper.isNo() && e_positionErrorMapper.getText().length() == 0 ){
+//				e_positionErrorMapper.setOnError(true);
+//				msg += "<LI>Empty coordinate error not allowed in this mapping mode</LI>";
+//			}
+//			if( !e_positionErrorMapper.valid()  ){
+//				e_positionErrorMapper.setOnError(true);
+//				msg += "<LI>Coord error mapping badly formed</LI>";				
+//			}
+//		}
+//		
+//		if( dispersionMapper != null ) {
+//			dispersionMapper.setOnError(false);
+//			if( !dispersionMapper.isNo() &&  dispersionMapper.getText().length() == 0 ) {
+//				dispersionMapper.setOnError(true);
+//				msg += "<LI>Empty spectral dispersion not allowed in this mapping mode</LI>";
+//			}
+//			if( !dispersionMapper.valid()  ){
+//				dispersionMapper.setOnError(true);
+//				msg += "<LI>Spectral dispersion badly formed</LI>";				
+//			}
+//		}
+		
+		if( msg.length() > 0 ) {
+			AdminComponent.showInputError(rootFrame, "<HTML><UL>" + msg);
+			return false;
+		}
+		else {
+			return true;
+		}
+
 	}
 	
 /*

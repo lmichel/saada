@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
+import saadadb.admintool.VPSandbox.components.input.VPKWMapperPanel;
 import saadadb.admintool.components.AdminComponent;
 
 
@@ -122,9 +123,9 @@ public class VPMapperPrioritySelector {
 		
 	}
 	
-	public void buildMapper(VPKwMapperPanel kwMapper)
+	public void buildMapper(VPKWMapperPanel[] kwMapper)
 	{
-		this.components=kwMapper.components;
+		this.components=kwMapper;
 		for( JRadioButton jrb: buttons) {
 			jrb.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

@@ -30,7 +30,10 @@ public class ProductTreePathTransferHandler extends TransferHandler {
 	boolean check_extension;
 	int index;
 
+
+
 	public ProductTreePathTransferHandler(int index) {
+		// TODO Auto-generated constructor stub
 		this.index = index;
 	}
 
