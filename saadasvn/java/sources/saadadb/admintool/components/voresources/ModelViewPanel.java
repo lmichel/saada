@@ -263,6 +263,7 @@ public class ModelViewPanel extends JPanel {
 				"<table cellpadding=2 cellspacing=0><TR><TD ALIGN=RIGHT><B><FONT size=-1>Name</TD><TD><FONT size=-1>" + uth.getNickname() + "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Type</TD><TD><FONT size=-1>" + uth.getType()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>UType</TD><TD><FONT size=-1>" + uth.getUtype()+ "</TD></TR>"
+				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>UCD</TD><TD><FONT size=-1>" + uth.getUcd()+ "</TD></TR>"
 				+ "<TR><TD ALIGN=RIGHT><B><FONT size=-1>Unit</TD><TD><FONT size=-1>" + uth.getUnit()+ "</TD></TR></TABLE>"
 				+ "<HR><FONT size=-1>" + uth.getComment() + "<HR>"
 		);	
