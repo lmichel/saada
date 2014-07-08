@@ -65,7 +65,7 @@ public class MappingKWPanel extends EditPanel {
 		
 	
 	private static final long serialVersionUID = 1L;
-	private int category;
+	protected int category;
 	protected String confName = "Default";
 
 	private JPanel category_panel;
@@ -94,7 +94,7 @@ public class MappingKWPanel extends EditPanel {
 	private PositionErrorMapperPanel positionErrorMapper;
 	private PositionErrorMapperPanel e_positionErrorMapper;
 	protected  LoaderConfigChooser configChooser;
- 
+	//private ArgsParser args;
 
 
 	/**
@@ -108,6 +108,8 @@ public class MappingKWPanel extends EditPanel {
 		this.category = category;
 	}
 
+	
+	
 	/**
 	 * 
 	 */

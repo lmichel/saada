@@ -1,19 +1,27 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import saadadb.admintool.VPSandbox.components.input.VPKWMapperPanel;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 
-public class VPAxisPriorityPanel extends VPAxisPanel {
+/**
+ * This class represent the Axis which depend of a priority selector
+ * @author pertuy
+ * @version $Id$
+ */
+public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
+
 
 	protected VPPriorityPanel priority;
-	protected VPKwMapperPanel kwMapper;;
+	protected VPKWMapperPanel kwMapper;;
 	protected MyGBC gbc;
 	protected JPanel panel;
 
@@ -23,9 +31,9 @@ public class VPAxisPriorityPanel extends VPAxisPanel {
 	 * @param title : Title of the axis
 	 * @param classMapping : reference of the "Help" String for the axis
 	 */
-	public VPAxisPriorityPanel(VPSTOEPanel mappingPanel,String title,int classMapping) {
+	public  VPAxisPriorityPanel(VPSTOEPanel mappingPanel,String title,int classMapping) {
 		// TODO Auto-generated constructor stub
-		super(title);
+		super(mappingPanel,title);
 		panel = new JPanel(new GridBagLayout());
 		panel=this.getContainer().getContentPane();
 		gbc = new MyGBC(3,3,3,3);
@@ -36,7 +44,7 @@ public class VPAxisPriorityPanel extends VPAxisPanel {
 		gbc.next();
 		gbc.left(false);
 		
-		priority=new VPPriorityPanel(mappingPanel,"plop");
+		priority=new VPPriorityPanel(mappingPanel,"Priority");
 		panel.add(priority,gbc);
 //		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 		gbc.next();
@@ -51,11 +59,20 @@ public class VPAxisPriorityPanel extends VPAxisPanel {
 	
 	}
 
+	public VPPriorityPanel getPriority() {
+		return priority;
+	}
 
 	@Override
 	public String getText() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+	@Override
+	public abstract ArrayList<String> getAxisParams();
+		// TODO Auto-generated method stub
+
 
 }

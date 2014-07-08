@@ -1,14 +1,19 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.admintool.utils.MyGBC;
+import saadadb.command.ArgsParser;
+import saadadb.exceptions.QueryException;
 
 /*
  * This class manage the expensible container corresponding to an axis
@@ -22,10 +27,11 @@ public abstract class VPAxisPanel {
 	private CollapsiblePanel container;
 	private String helpString;
 	protected JLabel helpLabel;
+	protected VPSTOEPanel mappingPanel;
 	/*
 	 * Fonctionnement basé sur ClassMappingPanel() 
 	 */
-	public VPAxisPanel(String title)
+	public VPAxisPanel(VPSTOEPanel mappingPanel,String title)
 	{
 
 		//super(title);
@@ -33,12 +39,54 @@ public abstract class VPAxisPanel {
 		axisPanel = getContainer().getContentPane();
 		axisPanel.setLayout(new GridBagLayout());
 		axisPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
+		
+		//Temporaire
+//		JLabel ds = AdminComponent.getPlainLabel("<HTML><A HREF=>TEST</A>");
+//		ds.addMouseListener(new MouseAdapter(){
+//			public void mouseReleased(MouseEvent e) {
+//				getArgs();
+//			}});
+//		axisPanel.add(ds);
+	
+		this.mappingPanel=mappingPanel;
 //		ccs = new MyGBC();
 //		ccs.left(false);
 
 		
 
 	}
+	
+	/**
+	 * Get the values from the axis fields
+	 * @return
+	 * @throws QueryException 
+	 * @throws Exception 
+	 *  
+	 */
+	public abstract ArrayList<String> getAxisParams() throws QueryException;
+
+	
+	
+	/**
+	 * Used to get the Args from the main panel
+	 */
+//	public String[] getArgs()
+//	{
+//		String[] args = null ;
+//		if(mappingPanel.checkParams())
+//		{
+//			ArgsParser args_parser = mappingPanel.getArgsParser();
+//			if( args_parser != null ) {
+//				args = args_parser.getArgs();
+//				String summary = "";
+//				for( int i=0 ; i<args.length ; i++ ) {
+//					summary += args[i] + "\n";
+//				}
+//				System.out.println(summary);
+//			}
+//		}
+//		return args;
+//	}
 	
 	/**
 	 * Create and return a JLabel which display some help if you put your mouse on it
@@ -69,19 +117,13 @@ public abstract class VPAxisPanel {
 		return helpLabel;
 	}
 
-	/*
-	 * Used to know if our Panel is collapsed or not
-	 */
-	public boolean isCollapsed()
-	{
-		return getContainer().isCollapsed();
-	}
-	
+
 
 	/**
 	 * Allow to collapse the axis box
 	 */
-	public void collapse() {
+	public void collapse() 
+	{
 		this.getContainer().setCollapsed(true);
 	}
 	
@@ -105,6 +147,26 @@ public abstract class VPAxisPanel {
 
 	public void setContainer(CollapsiblePanel container) {
 		this.container = container;
+	}
+
+	public void setText(String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void reset() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * Check the Axis parameter. Return the corresponding error message or an empty String if everything's ok
+	 * @return
+	 */
+	public abstract String checkAxisParams();
+	
+	public void setOnError(boolean onError) {
+		container.setOnError(onError);
 	}
 
 //	

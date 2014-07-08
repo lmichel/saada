@@ -3,6 +3,7 @@ package saadadb.admintool.VPSandbox.components.mapper;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
@@ -13,10 +14,12 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.components.input.NodeNameTextField;
-import saadadb.admintool.components.mapper.MapperPrioritySelector;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.enums.ClassifierMode;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.util.RegExp;
 
 public class VPClassMappingPanel extends VPAxisPanel {
@@ -37,7 +40,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	 * 
 	 */
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
-		super("Axe Class-Mapping");
+		super(mappingPanel,"Axe Class-Mapping");
 		JPanel panel =  getContainer().getContentPane();
 		panel.setLayout(new GridBagLayout());
 		//panel.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -138,6 +141,24 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	/**
 	 * @return
 	 */
+//	public String getParam() {
+//		if( classifier_btn.isSelected()  ) {
+//			return "-classifier=" + classField.getText();							
+//		}
+//		else if( fusion_btn.isSelected()  ) {
+//			return "-classfusion=" + classField.getText();											
+//		}
+//		else {
+//			return "";
+//		}
+//	}
+	@Override
+	public String getText() {
+		return classField.getText();
+	}
+	/**
+	 * @return
+	 */
 	public String getParam() {
 		if( classifier_btn.isSelected()  ) {
 			return "-classifier=" + classField.getText();							
@@ -149,43 +170,93 @@ public class VPClassMappingPanel extends VPAxisPanel {
 			return "";
 		}
 	}
+
 	@Override
-	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setText(String text) {
+		classField.setText((text == null)? "": text);
 	}
 
-//	@Override
-//	public void setText(String text) {
-//		classField.setText((text == null)? "": text);
-//	}
-//
-//	/**
-//	 * @param classifierMode
-//	 * @param text
-//	 */
-//	public void setText(ClassifierMode classifierMode, String text) {
-//		classifier_btn.setSelected(false);
-//		fusion_btn.setSelected(false);
-//		noclass_btn.setSelected(false);
-//		switch(classifierMode){
-//		case CLASS_FUSION: fusion_btn.setSelected(true);
-//		this.setText(text);
-//		break;
-//		case CLASSIFIER: classifier_btn.setSelected(true);
-//		this.setText(text);
-//		break;
-//		default: noclass_btn.setSelected(true);
-//		}
-//	}
-//	@Override
-//			public void reset() {
-//		classField.setText("");
-//	}
-//
-//	public boolean hasMapping() {
-//		return (classifier_btn.isSelected() || fusion_btn.isSelected()) ;
-//	}
+	/**
+	 * @param classifierMode
+	 * @param text
+	 */
+	public void setText(ClassifierMode classifierMode, String text) {
+		classifier_btn.setSelected(false);
+		fusion_btn.setSelected(false);
+		noclass_btn.setSelected(false);
+		switch(classifierMode){
+		case CLASS_FUSION: fusion_btn.setSelected(true);
+		this.setText(text);
+		break;
+		case CLASSIFIER: classifier_btn.setSelected(true);
+		this.setText(text);
+		break;
+		default: noclass_btn.setSelected(true);
+		}
+	}
+	@Override
+	public void reset() {
+		classField.setText("");
+	}
+
+	public boolean hasMapping() {
+		return (classifier_btn.isSelected() || fusion_btn.isSelected()) ;
+	}
+	
+	/**
+	 * @throws QueryException 
+	 * 
+	 */
+	@Override
+	//We throw an exception when a button is selected but the corresponding field is empty
+	public ArrayList<String> getAxisParams(){
+		// TODO Auto-generated method stub
+			
+		ArrayList<String> params = new ArrayList<String>();
+
+		/*
+		 * the Class Mapping params
+		 */
+		if(hasMapping())
+			{
+			if( classifier_btn.isSelected()) {
+				if ( classField.getText().length()>0)
+					params.add("-classifier=" + classField.getText());		
+			}
+			else if( fusion_btn.isSelected()  ) {
+				if ( classField.getText().length()>0)
+					params.add("-classfusion=" + classField.getText());	
+				}
+			else {
+				params.add("");
+			}
+	
+		}
+		/*
+		 * The mappingTextField Param
+		 */
+		if(mappingTextField.getText().length()>0)
+			params.add("-extension="+mappingTextField.getText());
+		return params;
+	}
+	
+	public String checkAxisParams()
+	{
+		if(hasMapping())
+		{
+			if(classifier_btn.isSelected() || fusion_btn.isSelected())
+			{
+				if(classField.getText().length()==0)
+					return "<LI>Empty class name not allowed in this classification mode</LI>";
+				
+				if(!classField.getText().matches(RegExp.CLASSNAME))
+					return "<LI>Bad class name</LI>";
+			}
+		}
+		return "";
+	}
+	
+
 
 }
 
