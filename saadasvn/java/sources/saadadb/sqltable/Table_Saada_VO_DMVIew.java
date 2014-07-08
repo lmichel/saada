@@ -162,7 +162,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 		while( rs.next() ) {
 			retour.add(Database.getCachemeta().getClass(rs.getInt(1)).getName());
 		}
-		rs.close();
+		sqlquery.close();
 		return retour;
 
 	}
