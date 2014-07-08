@@ -31,7 +31,6 @@ public class AdqlRequestTester {
 		Database.init(args[args.length - 1]);
 		TapAdqlRequest request = new TapAdqlRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
-		request.addFormator("json");
 		request.setResponseFilePath(Capability.TAP);
 		request.processRequest(pmap);
 		Database.close();
