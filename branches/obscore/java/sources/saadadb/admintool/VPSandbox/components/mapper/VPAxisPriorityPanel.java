@@ -59,6 +59,14 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 	
 	}
 
+	public MyGBC getGbc() {
+		return gbc;
+	}
+
+	public JPanel getPanel() {
+		return panel;
+	}
+
 	public VPPriorityPanel getPriority() {
 		return priority;
 	}

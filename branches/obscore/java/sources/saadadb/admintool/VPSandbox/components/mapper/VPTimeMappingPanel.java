@@ -7,7 +7,7 @@ import saadadb.admintool.utils.HelpDesk;
 
 public class VPTimeMappingPanel extends VPAxisPriorityPanel {
 
-	public VPTimeMappingPanel(VPSTOEPanel mappingPanel) {
+	public VPTimeMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry) {
 		super(mappingPanel, "Time Axis",HelpDesk.CLASS_MAPPING);
 		// TODO Auto-generated constructor stub
 	}

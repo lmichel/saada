@@ -160,7 +160,11 @@ public class VPSTOEPanel extends MappingKWPanel {
 	
 	private void buildAxis()
 	{
+		// temporaire)
+		boolean forEntry = false;
+
 		//Build the Class-Mapping axis (include the extension name choice)
+		
 		classMapping = new VPClassMappingPanel(this);
 		classMapping.expand();
 		editorPanel.add(classMapping.getContainer(),globalGridConstraint);
@@ -171,38 +175,35 @@ public class VPSTOEPanel extends MappingKWPanel {
 		//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
 		//ObservableAxis.collapse();
 		//editorPanel.add(ObservableAxis.container, globalGridConstraint);
-		try {
-			observationMapping = new VPObservationMappingPanel(this);
-		} catch (FatalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		
+		observationMapping = new VPObservationMappingPanel(this,forEntry);
 		observationMapping.expand();
 		editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
 		
 		globalGridConstraint.gridy++;
 		
-		spaceMapping = new VPSpaceMappingPanel(this);
+		spaceMapping = new VPSpaceMappingPanel(this,forEntry);
 		spaceMapping.collapse();
 		editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
 		
 		
 		globalGridConstraint.gridy++;
 		
-		energyMapping = new VPEnergyMappingPanel(this);
+		energyMapping = new VPEnergyMappingPanel(this,forEntry);
 		energyMapping.collapse();
 		editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
 		
 
 		globalGridConstraint.gridy++;
 		
-		timeMapping = new VPTimeMappingPanel(this);
+		timeMapping = new VPTimeMappingPanel(this,forEntry);
 		timeMapping.collapse();
 		editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
 		
 		globalGridConstraint.gridy++;
 		
-		observableMapping = new VPObservableMappingPanel(this);
+		observableMapping = new VPObservableMappingPanel(this,forEntry);
 		observableMapping.collapse();
 		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
 
@@ -215,21 +216,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public ArgsParser getArgsParser() {
 		ArrayList<String> params = new ArrayList<String>();
 		ArrayList<String> temp;
-		/*
-		 * ClassMapping and extension
-		 */
-
-
-		temp=classMapping.getAxisParams();
-		if(temp!=null)
-		{
-			for (String s : temp)
-			{
-				params.add(s);
-			}
-		}
-
-
 
 		/*
 		 * Category
@@ -244,6 +230,19 @@ public class VPSTOEPanel extends MappingKWPanel {
 		default: break;}
 		
 		/*
+		 * ClassMapping and extension
+		 */
+		temp=classMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		
+		/*
 		 * Observation axis
 		 */
 		
@@ -256,6 +255,65 @@ public class VPSTOEPanel extends MappingKWPanel {
 			}
 		}
 		
+		
+		
+		/*
+		 * Space Axis
+		 */
+		
+	
+		temp=spaceMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		
+		
+		/*
+		 * Energy Axis
+		 */
+		
+		
+		temp=energyMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		
+		/*
+		 * Time Axis
+		 */
+		
+		temp=timeMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		
+		/*
+		 * Observable Panel
+		 */
+		
+		temp=observableMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
 		try {
 			ArgsParser retour;
 			retour = new ArgsParser((String[])(params.toArray(new String[0])));

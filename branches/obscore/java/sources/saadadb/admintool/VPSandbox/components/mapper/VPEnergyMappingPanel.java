@@ -7,7 +7,7 @@ import saadadb.admintool.utils.HelpDesk;
 
 public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 
-	public VPEnergyMappingPanel(VPSTOEPanel mappingPanel) {
+	public VPEnergyMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry) {
 		super(mappingPanel, "Energy Axis",HelpDesk.CLASS_MAPPING);
 		// TODO Auto-generated constructor stub
 	}
