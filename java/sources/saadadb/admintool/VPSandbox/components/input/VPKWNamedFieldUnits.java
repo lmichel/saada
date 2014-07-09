@@ -9,16 +9,15 @@ import javax.swing.JPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.input.MappingTextField;
 import saadadb.admintool.utils.MyGBC;
 
 public class VPKWNamedFieldUnits extends VPKWNamedField {
 
 	private JComboBox comboBox ;
 	
-	public VPKWNamedFieldUnits(VPSTOEPanel mappingPanel,
-			VPAxisPriorityPanel axisPanel, String name, boolean forEntry,
-			ButtonGroup bg,String[] combo) {
-		super(mappingPanel, axisPanel, name, forEntry, bg);
+	public VPKWNamedFieldUnits(VPAxisPriorityPanel axisPanel, String name,MappingTextField field,String[] combo) {
+		super(axisPanel, name, field);
 		
 		comboBox= new JComboBox(combo);
 //		container = new JPanel(new GridLayout(0,2));
