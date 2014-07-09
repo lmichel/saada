@@ -14,7 +14,7 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 
-public class VPKWMappingTextField extends VPKWMapperPanel{
+public class VPKWMappingTextField extends TreepathDropableTextField{
 
 
 	protected MappingKWPanel form;
@@ -46,7 +46,7 @@ public class VPKWMappingTextField extends VPKWMapperPanel{
 	 * @throws FatalException 
 	 */
 	public VPKWMappingTextField(MappingKWPanel form, DataMapLevel dataMapLevel, boolean for_entry, ButtonGroup priority_bg) {
-		super((VPSTOEPanel)form);
+		super();
 		this.form = form;
 		this.for_entry = for_entry;
 		this.dataMapLevel = dataMapLevel;

@@ -1,36 +1,40 @@
 package saadadb.admintool.VPSandbox.components.input;
 
-import java.util.ArrayList;
+import java.awt.Container;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
-import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
-import saadadb.admintool.dnd.TreepathDropableTextField;
-import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.command.ArgsParser;
-import saadadb.exceptions.FatalException;
 
 
-public abstract class VPKWMapperPanel extends TreepathDropableTextField{
+
+
+/**
+ * Every KwMapper represent a line in one axis
+ * @author pertuy
+ * @version $Id$
+ */
+public abstract class VPKWMapperPanel{
 	
-	/**
-	 * 
-	 */
+	
+
 	private static final long serialVersionUID = 1L;
 	/*
 	 * components contains the area which are concerned by the "priority" 
 	 */
-//	protected JComponent[] components;
-	protected VPSTOEPanel mappingPanel;
-	//protected VPAxisPriorityPanel axisPanel;
+	//protected JComponent[] components;
+	//protected VPSTOEPanel mappingPanel;
+	protected VPAxisPriorityPanel axisPanel;
+	protected String Label;
+	protected Container container;
+	protected JPanel panel;
+	protected MyGBC gbc;
 
-	public VPKWMapperPanel(VPSTOEPanel form)
+	public VPKWMapperPanel(VPAxisPriorityPanel axisPanel,String titre)
 	{
-		//this.axisPanel=axisPanel;
-		this.mappingPanel=form;
+		this.axisPanel=axisPanel;
+	//this.mappingPanel=form;
 		
 //		argsParser=mappingPanel.getArgs();
 //		if (argsParser!=null)
@@ -38,12 +42,12 @@ public abstract class VPKWMapperPanel extends TreepathDropableTextField{
 //		else
 //			System.out.println("Erreur");
 		 
-		 
-		
-
 
 		//setBackground(AdminComponent.LIGHTBACKGROUND);
 	}
+	
+	public abstract String getText();
+
 	
 //	/**
 //	 * Get the input from each component
@@ -53,6 +57,6 @@ public abstract class VPKWMapperPanel extends TreepathDropableTextField{
 //	/**
 //	 * Add the class's components to the VPAxisPriorityPanel from the constructor
 //	 */
-//	public abstract void setComponents();
+	public abstract void setComponents();
 
 }

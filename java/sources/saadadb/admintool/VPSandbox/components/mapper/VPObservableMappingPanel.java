@@ -7,7 +7,7 @@ import saadadb.admintool.utils.HelpDesk;
 
 public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 
-	public VPObservableMappingPanel(VPSTOEPanel mappingPanel) {
+	public VPObservableMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry) {
 		super(mappingPanel, "Saada Axis",HelpDesk.CLASS_MAPPING);
 		// TODO Auto-generated constructor stub
 	}

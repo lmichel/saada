@@ -36,7 +36,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	 */
 	
 	
-	/*
+	/*/!\ RAJOUTER IGNORED KEYWORDS
 	 * 
 	 */
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
