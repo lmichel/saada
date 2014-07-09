@@ -40,7 +40,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	 * 
 	 */
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
-		super(mappingPanel,"Axe Class-Mapping");
+		super(mappingPanel,"Class-Mapping Axis");
 		JPanel panel =  getContainer().getContentPane();
 		panel.setLayout(new GridBagLayout());
 		//panel.setBackground(AdminComponent.LIGHTBACKGROUND);

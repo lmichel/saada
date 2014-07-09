@@ -1,16 +1,15 @@
 package saadadb.admintool.VPSandbox.components.input;
 
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
-import javax.swing.tree.TreePath;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.input.AppendMappingTextField;
+import saadadb.admintool.components.input.MappingTextField;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.enums.DataMapLevel;
 
@@ -25,16 +24,16 @@ public class VPKWNamedField extends VPKWMapperPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private VPKWAppendTextField field;
+	private MappingTextField field;
 	private String nameField;
 	
-	public VPKWNamedField(VPSTOEPanel mappingPanel, VPAxisPriorityPanel axisPanel,String name,boolean forEntry,ButtonGroup bg) {
+	public VPKWNamedField(VPAxisPriorityPanel axisPanel,String name,MappingTextField mappingTextField) {
 		super(axisPanel,name);
 		MyGBC gbc = axisPanel.getGbc();
 		container=new JPanel(new FlowLayout(FlowLayout.CENTER,3,0));
-		field =  new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,bg);
-		field.setColumns(AdminComponent.STRING_FIELD_NAME);
-		container.add(field);
+		this.field =  mappingTextField;//new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,bg);
+		this.field.setColumns(AdminComponent.STRING_FIELD_NAME);
+		container.add(mappingTextField);
 		nameField=name;
 
 
@@ -51,7 +50,7 @@ public class VPKWNamedField extends VPKWMapperPanel {
 		return field.getText();
 	}
 
-	public VPKWAppendTextField getField()
+	public MappingTextField getField()
 	{
 		return field;
 	}

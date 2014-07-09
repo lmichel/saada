@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 import javax.swing.JComponent;
 
-import saadadb.admintool.VPSandbox.components.input.VPKWAppendTextField;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
-import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.enums.DataMapLevel;
 
@@ -39,10 +38,10 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 //		instrument_name =  new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
 //		instrument_name.setColumns(AdminComponent.STRING_FIELD_NAME);
 
-		obs_collection = new VPKWNamedField(mappingPanel,this,"Collection ",forEntry,priority.buttonGroup);
-		target_name = new VPKWNamedField(mappingPanel,this,"Target name ",forEntry,priority.buttonGroup);
-		facility_name = new VPKWNamedField(mappingPanel,this,"Facility name ",forEntry,priority.buttonGroup);
-		instrument_name = new VPKWNamedField(mappingPanel,this,"Instrument name ",forEntry,priority.buttonGroup);
+		obs_collection = new VPKWNamedField(this,"Collection ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
+		target_name = new VPKWNamedField(this,"Target name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
+		facility_name = new VPKWNamedField(this,"Facility name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
+		instrument_name = new VPKWNamedField(this,"Instrument name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
 		
 		priority.selector.buildMapper(new JComponent[]{obs_collection.getField(),target_name.getField(),facility_name.getField(),instrument_name.getField()});
 		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);

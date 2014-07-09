@@ -2,15 +2,11 @@ package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.util.ArrayList;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
-import saadadb.admintool.VPSandbox.components.input.VPKWAppendTextField;
-import saadadb.admintool.VPSandbox.components.input.VPKWMapperPanel;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldUnits;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.enums.DataMapLevel;
@@ -48,9 +44,9 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 //		errorField.setColumns(15);
 		
 		//unitCombo  = new JComboBox(new String[]{"","deg", "arcsec", "arcmin", "mas"});
-		positionField = new VPKWNamedField(mappingPanel,this,"Position ",forEntry,priority.buttonGroup);
-		positionError = new VPKWNamedFieldUnits(mappingPanel,this,"Position error ",forEntry,priority.buttonGroup,new String[]{"","deg", "arcsec", "arcmin", "mas"});
-		systemField = new VPKWNamedField(mappingPanel,this,"System ",forEntry,priority.buttonGroup);
+		positionField = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
+		positionError = new VPKWNamedFieldUnits(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
+		systemField = new VPKWNamedField(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
 		
 		priority.selector.buildMapper(new JComponent[]{systemField.getField(),positionField.getField(),positionError.getField(),positionError.getComboBox()});
 		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
