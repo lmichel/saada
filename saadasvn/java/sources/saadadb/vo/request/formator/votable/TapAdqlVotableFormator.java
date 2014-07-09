@@ -165,12 +165,15 @@ public class TapAdqlVotableFormator extends VotableFormator {
 		/*
 		 * As TAP does not provide any way to know whether a response is mode compliant, we check if one searched table matches a DM.
 		 * In this case, we will load the model and take its UTypehandler matching the name of the selected columns
-		 * That way, we get ay mata data of the model with an evident risk of mismatch
+		 * That way, we get a metadata of the model with an evident risk of mismatch
+		 * @TODO This procedure should be generalized to all TAP tables and pushed in AdqlResultSet
 		 */
 		boolean obsceLike=false;
 		Iterator<ADQLTable> itt = adqlQuery.getTables();
 		while(itt.hasNext() ) {
 			if( itt.next().getTable().equalsIgnoreCase("obscore")) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "ADQL query on obscore: try apply the model");
 				obsceLike=true;
 				break;
 			}
@@ -208,6 +211,8 @@ public class TapAdqlVotableFormator extends VotableFormator {
 					UTypeHandler uth=null;	
 				if( obsceLike ){
 					uth = this.dataModel.getUTypeHandler(meta.getNameorg());
+					if (uth != null && Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "found DM field " + meta.getNameorg());
 				}
 				f = (uth == null)?(new UTypeHandler(meta)).getSavotField(cpt): uth.getSavotField(cpt);
 				/*
