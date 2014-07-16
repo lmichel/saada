@@ -689,16 +689,16 @@ public class ArgsParser implements Serializable{
 		return PriorityMode.LAST;		
 	}
 	/**
-	 * returns a table with both position error values (KW or values) -poserror=KW_A,KW_D:
+	 * returns a table with both position error values (KW or values) -poserror=KW
 	 * @return
 	 */
-	public String[] getPoserrorMapping() {
+	public String getPoserrorMapping() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-poserror=")) {
-				return getArgsValue(args[i]).split(",");
+				return getArgsValue(args[i]);
 			}
 		}
-		return new String[0];
+		return null;
 	}
 	/**
 	 * returns a table with both position error values (KW or values) -poserror=KW_A,KW_D:
@@ -1380,34 +1380,6 @@ public class ArgsParser implements Serializable{
 		return retour;
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		//String params[] = {"-classifier=CLASSE", "dbname"};
-		String params[][] = { {"-debug", "-poserrormapping=LAST", "-poserror=a,b,c", "-poserrorunit=arcsec", "-config=${config}", "AAAAA"}
-		,{"-debug", "-poserrormapping=LAST", "-poserror=10.5,b,c", "-poserrorunit=arcsec", "-config={config}", "AAAAA"}};
-
-		ArgsParser ap;
-		try {
-			for( int p=0 ; p<params.length ; p++) {
-
-				ap = new ArgsParser(params[p]);
-				String poserror[] = ap.getPoserrorMapping();
-				System.out.print(poserror.length + " poserror params: ");
-				for( int i=0 ; i<poserror.length ; i++) {
-					System.out.print(poserror[i] + " " );
-				}
-				System.out.println();
-				LinkedHashMap<String, String> pmap = ap.getParamsMap();
-				for( Entry<String, String> e: pmap.entrySet() ) {
-					System.out.println("Entry: " + e);
-				}
-			}
-		} catch (FatalException e) {
-			Messenger.printStackTrace(e);
-		}
-	}
 
 	/**
 	 * @return Returns the args.
