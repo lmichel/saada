@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.JTextComponent;
 
-import saadadb.admintool.VPSandbox.components.input.VPKWMapperPanel;
+import saadadb.admintool.VPSandbox.components.input.VPKWMapper;
 import saadadb.admintool.components.AdminComponent;
 
 

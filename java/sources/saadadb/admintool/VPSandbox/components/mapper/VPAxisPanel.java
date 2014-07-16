@@ -12,6 +12,7 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.admintool.utils.MyGBC;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.QueryException;
 
@@ -22,6 +23,7 @@ import saadadb.exceptions.QueryException;
 
 //Hériter directement de MappingPanel ?
 public abstract class VPAxisPanel {
+	protected MyGBC gbc;
 	protected JPanel axisPanel;
 	protected JLabel axisLabel;
 	private CollapsiblePanel container;
@@ -36,6 +38,7 @@ public abstract class VPAxisPanel {
 
 		//super(title);
 		this.setContainer(new CollapsiblePanel(title));
+		gbc = new MyGBC(3,3,3,3);
 		axisPanel = getContainer().getContentPane();
 		axisPanel.setLayout(new GridBagLayout());
 		axisPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -63,7 +66,7 @@ public abstract class VPAxisPanel {
 	 * @throws Exception 
 	 *  
 	 */
-	public abstract ArrayList<String> getAxisParams() throws QueryException;
+	public abstract ArrayList<String> getAxisParams();
 
 	
 	
@@ -135,11 +138,14 @@ public abstract class VPAxisPanel {
 	}
 	
 	
-	public boolean valid() {
-		return this.getText().matches("(('.*')|([^\\s]+))([,:;\\.](('.*')|([^\\s]+)))*");
-	}
-	
-	abstract public  String getText() ;
+//	public boolean valid() {
+//		return this.getText().matches("(('.*')|([^\\s]+))([,:;\\.](('.*')|([^\\s]+)))*");
+//	}
+//	
+//	public String getText() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	public CollapsiblePanel getContainer() {
 		return container;
@@ -154,10 +160,7 @@ public abstract class VPAxisPanel {
 		
 	}
 
-	public void reset() {
-		// TODO Auto-generated method stub
-		
-	}
+
 	
 	/**
 	 * Check the Axis parameter. Return the corresponding error message or an empty String if everything's ok
@@ -167,6 +170,16 @@ public abstract class VPAxisPanel {
 	
 	public void setOnError(boolean onError) {
 		container.setOnError(onError);
+	}
+
+	public JPanel getPanel() {
+		// TODO Auto-generated method stub
+		return axisPanel;
+	}
+
+	public MyGBC getGbc() {
+		// TODO Auto-generated method stub
+		return gbc;
 	}
 
 //	

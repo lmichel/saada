@@ -4,7 +4,9 @@ import java.awt.Container;
 
 import javax.swing.JPanel;
 
+import saadadb.admintool.VPSandbox.components.mapper.VPAxisPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
+import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.MyGBC;
 
 
@@ -15,7 +17,7 @@ import saadadb.admintool.utils.MyGBC;
  * @author pertuy
  * @version $Id$
  */
-public abstract class VPKWMapperPanel{
+public abstract class VPKWMapper{
 	
 	
 
@@ -25,15 +27,16 @@ public abstract class VPKWMapperPanel{
 	 */
 	//protected JComponent[] components;
 	//protected VPSTOEPanel mappingPanel;
-	protected VPAxisPriorityPanel axisPanel;
-	protected String Label;
+	protected VPAxisPanel axisPanel;
+	protected String title;
 	protected Container container;
 	protected JPanel panel;
-	protected MyGBC gbc;
+	//protected MyGBC gbc;
 
-	public VPKWMapperPanel(VPAxisPriorityPanel axisPanel,String titre)
+	public VPKWMapper(VPAxisPanel axisPanel2,String title)
 	{
-		this.axisPanel=axisPanel;
+		this.axisPanel=axisPanel2;
+		this.title=title;
 	//this.mappingPanel=form;
 		
 //		argsParser=mappingPanel.getArgs();
@@ -57,6 +60,15 @@ public abstract class VPKWMapperPanel{
 //	/**
 //	 * Add the class's components to the VPAxisPriorityPanel from the constructor
 //	 */
-	public abstract void setComponents();
+	public void setComponents()
+	{
+		panel = axisPanel.getPanel();
+		MyGBC gbc = axisPanel.getGbc();
+		gbc.right(false);
+		panel.add(AdminComponent.getPlainLabel(title), gbc);
+		gbc.next();gbc.left(true);
+		panel.add(container,gbc);
+		gbc.newRow();
+	}
 
 }
