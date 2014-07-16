@@ -316,7 +316,7 @@ System.out.println("===========================");
 	 * @throws Exception
 	 */
 	protected void setPosErrorFields(int number) throws Exception {
-		String error_unit = this.product.mapping.getSpaceAxisMapping().getErrorUnit();
+		String error_unit = this.product.s_resolutionSetter.getUnit();
 		if( this.product.s_resolutionSetter != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
 			/*
@@ -325,19 +325,20 @@ System.out.println("===========================");
 			 * Sometime arcsec/min is written arcsec/mins
 			 */
 			if( error_unit.equals("deg") ) convert = 1;
-			else if( error_unit.startsWith("arcmin") ) convert = 1/60.0;
-			else if( error_unit.startsWith("arcsec") ) convert = 1/3600.0;
-			else if( error_unit.equals("mas") ) convert = 1/(1000*3600.0);
-			else if( error_unit.equals("uas") ) convert = 1/(1000*1000*3600.0);
+			else if( error_unit.startsWith("arcmin") ) convert = 60.0;
+			else if( error_unit.startsWith("arcsec") ) convert = 3600.0;
+			else if( error_unit.equals("mas") ) convert = (1000*3600.0);
+			else if( error_unit.equals("uas") ) convert = (1000*1000*3600.0);
 			else {
-				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
+				if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;
 			}
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( this.product.s_resolutionSetter.notSet() ) {
+			if( !this.product.s_resolutionSetter.notSet() ) {
 				maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
+				this.product.s_resolutionSetter.getConverted(maj_err, "arcsec");
 				this.saadaInstance.s_resolution = maj_err;
 			} 
 		} else {

@@ -59,11 +59,11 @@ public class SpectralCoordinate{
 		}else{
 			sunit = unit;
 		}
-		if(  UnitRef.getUniRef(sunit) == null ){
+		if(  DispersionUnitRef.getUniRef(sunit) == null ){
 			Messenger.printMsg(Messenger.ERROR, " Spectral Coordinate not valid: Unknown unit <"+sunit+">"); 
 		} else{
 			this.finalUnit = sunit;
-			this.type = UnitRef.getDispersionType(sunit);
+			this.type = DispersionUnitRef.getDispersionType(sunit);
 		}
 	}
 
@@ -260,13 +260,13 @@ public class SpectralCoordinate{
 	public static double convertSaada(String unitOrg, String unitNew, double value){
 		DispersionType vTypeOrg;
 		DispersionType vTypeNew;
-		UnitRef ur;
+		DispersionUnitRef ur;
 
 		if( "AutoDetect".equals(unitOrg) ) {
 			Messenger.printMsg(Messenger.DEBUG, "No unit given");
 			return SaadaConstant.DOUBLE;
 		}
-		if((ur = UnitRef.getUniRef(unitOrg)) != null){
+		if((ur = DispersionUnitRef.getUniRef(unitOrg)) != null){
 			vTypeOrg = ur.type;
 			unitOrg = ur.unit;
 		}else{
@@ -275,7 +275,7 @@ public class SpectralCoordinate{
 			}
 			return SaadaConstant.DOUBLE;
 		}
-		if((ur = UnitRef.getUniRef(unitNew)) != null){
+		if((ur = DispersionUnitRef.getUniRef(unitNew)) != null){
 			vTypeNew = ur.type;
 			unitNew = ur.unit;
 		}else{
@@ -540,7 +540,7 @@ public class SpectralCoordinate{
 		if( (dan = wm.getDispersionAxe()) != SaadaConstant.INT) {
 			dispersionAxeNum = dan; 
 			this.nbBins = wm.getNAXISi(dan);
-			UnitRef unit_class = UnitRef.getUniRef(wm.getCUNIT(dispersionAxeNum));
+			DispersionUnitRef unit_class = DispersionUnitRef.getUniRef(wm.getCUNIT(dispersionAxeNum));
 			if(unit_class == null) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
