@@ -330,12 +330,12 @@ public abstract class ParamShaker {
 	protected void processAll() throws Exception {
 		Messenger.debug_mode = true;
 		runFirstWithGoodMParams();
-//		runFirstWithGoodIParams();
-//		runFirstWithWrongMParams();
-//		runFirstWithWrongIParams();
-//		runFirstWithPWrongMParams();
-//		runFirstWithPWrongIParams();
-//		runLastWithGoodMParams();
+		runFirstWithGoodIParams();
+		runFirstWithWrongMParams();
+		runFirstWithWrongIParams();
+		runFirstWithPWrongMParams();
+		runFirstWithPWrongIParams();
+		runLastWithGoodMParams();
 //		runLastWithGoodIParams();
 //		runLastWithWrongMParams();
 //		runLastWithWrongIParams();
