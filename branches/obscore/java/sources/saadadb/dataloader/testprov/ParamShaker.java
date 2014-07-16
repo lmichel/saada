@@ -68,33 +68,33 @@ public abstract class ParamShaker {
 	}
 
 	/**
-	 * Set all priorities to FISR ion the arg parser
+	 * Set all priorities to FIRST ion the arg parser
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected void setFirst() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
+		List<String> params = new ArrayList<String>();
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
 			s = s.replace("mapping=last", "mapping=first");
-			jsa.set(i, s);
-			break;
+			params.add(s);
 		}		
+		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 	}
 
 	/**
 	 * Set all priorities to FISR ion the arg parser
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected void setLast() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
+		List<String> params = new ArrayList<String>();
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
 			s = s.replace("mapping=first", "mapping=last");
-			jsa.set(i, s);
-			break;
+			params.add(s);
 		}		
+		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 	}
 	/**
 	 * @param param starts  with '-'
@@ -104,6 +104,7 @@ public abstract class ParamShaker {
 	@SuppressWarnings("unchecked")
 	protected void setArgParam(String param, String value) throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
+		List<String> params = new ArrayList<String>();
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
 			if( s.startsWith(param) ) {
@@ -114,6 +115,11 @@ public abstract class ParamShaker {
 				break;
 			}
 		}	
+		for( int i=0 ; i<jsa.size() ; i++ ){
+			params.add((String) jsa.get(i));
+		}	
+		this.argsParser = new ArgsParser(params.toArray(new String[0]));
+		
 	}
 
 	/**
@@ -138,10 +144,11 @@ public abstract class ParamShaker {
 				if( ucd != null) jsah.set(3, ucd);
 				if( value != null) jsah.set(4, value);
 				Messenger.printMsg(Messenger.TRACE, "Attribute " + name + " changed");
-				return;
+				break;
 			}
 		}
-		throw new Exception("Param " + name + " not found" );
+		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
+		//throw new Exception("Param " + name + " not found" );
 	}
 
 	/**
@@ -150,6 +157,8 @@ public abstract class ParamShaker {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void readJson() throws Exception {
+		JSONParser parser = new JSONParser();  
+		jsonObject = (JSONObject)parser.parse(TEMPLATE);
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
 		Iterator<String> iterator = parameters.iterator();  
 		List<String> params = new ArrayList<String>();
@@ -287,7 +296,6 @@ public abstract class ParamShaker {
 	 * @throws Exception
 	 */
 	protected void process() throws Exception {
-		this.readJson();
 		ProductBuilder product = null;
 		switch( Category.getCategory(argsParser.getCategory()) ) {
 		case Category.TABLE: product = new TableBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
@@ -322,10 +330,10 @@ public abstract class ParamShaker {
 	protected void processAll() throws Exception {
 		Messenger.debug_mode = true;
 		runFirstWithGoodMParams();
-		runFirstWithGoodIParams();
-		runFirstWithWrongMParams();
-		runFirstWithWrongIParams();
-		runFirstWithPWrongMParams();
+//		runFirstWithGoodIParams();
+//		runFirstWithWrongMParams();
+//		runFirstWithWrongIParams();
+//		runFirstWithPWrongMParams();
 //		runFirstWithPWrongIParams();
 //		runLastWithGoodMParams();
 //		runLastWithGoodIParams();
