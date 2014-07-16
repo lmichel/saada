@@ -14,7 +14,7 @@ import saadadb.exceptions.FatalException;
  * @author michel
  * @version $Id$
  */
-public class PositionShaker extends ParamShaker{
+public class PositionErrorShaker extends ParamShaker{
 
 	static {
 		TEMPLATE = "{"
@@ -25,15 +25,17 @@ public class PositionShaker extends ParamShaker{
 			+ "	\"-filename=obscore\", \n"
 			+ "	\"-repository=no\", \n"
 			+ "	\"-posmapping=first\" , \n"
-			+ "	\"-position=alpha,delta\"  \n"
+			+ "	\"-position=RA,RA\"  \n"
+			+ "	\"-poserror='2,1'\" \n"
+			+ "	\"-poserrorunit='arcmin'\" \n"
 			+ "	\"-system='FK5'\"  \n"
 			+ "], \n"
 			+ "\"fields\": { \n"
 			+ "    \"header\": [\n"
 			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"10\"], \n"
 			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"+20\"] \n"
-			+ "             [\"alpha\"       , \"double\", \"deg\"   , \"\"              , \"-10\"], \n"
-			+ "				[\"delta\"       , \"double\", \"deg\"   , \"\"              , \"-20\"] \n"
+			+ "             [\"errmaj\"       , \"double\", \"arcmin\"   , \"\"              , \"20\"], \n"
+			+ "				[\"errmin\"       , \"double\", \"arcmin\"   , \"\"              , \"10\"] \n"
 			+ "		]\n"
 			+ "		,\n"
 			+ "    \"columns\": []\n"
@@ -41,11 +43,12 @@ public class PositionShaker extends ParamShaker{
 			+ "}\n";
 	}
 
-	PositionShaker() throws Exception{
+	PositionErrorShaker() throws Exception{
 		super();
 		this.paramsOfInterest = new HashSet<String>();
-		this.paramsOfInterest.add("s_ra");
-		this.paramsOfInterest.add("s_dec");
+		this.paramsOfInterest.add("error_min_csa");
+		this.paramsOfInterest.add("error_maj_csa");
+		this.paramsOfInterest.add("error_angle_csa");
 		this.paramsOfInterest.add("s_region");
 		this.paramsOfInterest.add("s_fov");
 	}
@@ -155,7 +158,7 @@ public class PositionShaker extends ParamShaker{
 		try {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		PositionShaker sp = new PositionShaker();
+		PositionErrorShaker sp = new PositionErrorShaker();
 		sp.processAll();
 		sp.showReport();
 		} catch (Exception e) {

@@ -20,7 +20,7 @@ public class SpaceMapping extends AxisMapping {
 	 * @throws SaadaException
 	 */
 	SpaceMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		super(ap, new String[]{"s_ra", "s_dec","s_fov","s_region", "error_maj_csa", "error_min_csa", "error_angle_csa"}, entryMode);
+		super(ap, new String[]{"s_ra", "s_dec","s_fov","s_region", "s_resoltion"}, entryMode);
 		this.mapCoordSystem(ap);
 		this.mapPosition(ap);
 		this.mapPoserror(ap);
@@ -84,56 +84,22 @@ public class SpaceMapping extends AxisMapping {
 	 */
 	public void mapPoserror(ArgsParser tabArg) throws FatalException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position error mapping");
+		
 		String[] tabRa_dec = tabArg.getPoserrorMapping();
 		this.errorUnit = tabArg.getPoserrorUnit();
 		/*
 		 * One poserror parameter: error is supposed to be a circle
 		 */
-		if( tabRa_dec.length == 1 ) {
-			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0", ""));
-			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ) {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_min_csa"));
+		if( tabRa_dec.length >= 1 ) {
+			String av = tabRa_dec[0];
+			/*
+			 * Object name can be in '' or in ""
+			 */
+			if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
+				av= av.substring(1, av.length() -1);
+				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "s_resolution"));				
 			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_min_csa"));
-			}
-		}
-		/*
-		 * 2 poserror parameters: Error is supposed to be a canonical ellipse
-		 */
-		else if( tabRa_dec.length == 2 ) {
-			this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", "0.0", "error_angle_csa"));
-			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-			}
-			if( tabRa_dec[1].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
-			} else {
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
-			}
-		}
-		/*
-		 * 3 poserror parameters: Error is supposed to be an oriented ellipse
-		 * angle is taken between north and maj axis (see class Coord)
-		 */
-		else if( tabRa_dec.length >= 3 ) {
-			if( tabRa_dec[0].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-			} else {
-				this.columnMapping.put("error_maj_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "error_maj_csa"));
-			}
-			if( tabRa_dec[1].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
-			} else {
-				this.columnMapping.put("error_min_csa", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[1], "error_min_csa"));
-			}
-			if( tabRa_dec[2].matches("[0-9]+(\\.[0-9]+)?") ){
-				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.VALUE, "deg", tabRa_dec[2], "error_angle_csa"));
-			} else {
-				this.columnMapping.put("error_angle_csa", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[2], "error_angle_csa"));
+				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "s_resolution"));				
 			}
 		}
 	}
