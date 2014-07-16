@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import saadadb.admintool.VPSandbox.components.input.VPKWMapperPanel;
+import saadadb.admintool.VPSandbox.components.input.VPKWMapper;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.HelpDesk;
@@ -21,8 +21,8 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 
 
 	protected VPPriorityPanel priority;
-	protected VPKWMapperPanel kwMapper;;
-	protected MyGBC gbc;
+	protected VPKWMapper kwMapper;;
+	//protected MyGBC gbc;
 	protected JPanel panel;
 
 	/**
@@ -36,7 +36,6 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 		super(mappingPanel,title);
 		panel = new JPanel(new GridBagLayout());
 		panel=this.getContainer().getContentPane();
-		gbc = new MyGBC(3,3,3,3);
 		helpLabel = new JLabel("?");
 		//gbc.gridwidth=3;
 		gbc.right(false);
@@ -49,7 +48,7 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 //		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 		gbc.next();
 		gbc.right(true);
-		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+		helpLabel=setHelpLabel(classMapping);
 		panel.add(helpLabel,gbc);
 		gbc.newRow();
 		
@@ -59,9 +58,11 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 	
 	}
 
-	public MyGBC getGbc() {
-		return gbc;
+	public void reset()
+	{
+		priority.noBtn.setSelected(true);
 	}
+
 
 	public JPanel getPanel() {
 		return panel;
@@ -71,11 +72,11 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 		return priority;
 	}
 
-	@Override
-	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public String getText() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 
 	@Override

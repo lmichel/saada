@@ -19,7 +19,6 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.enums.ClassifierMode;
 import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.util.RegExp;
 
 public class VPClassMappingPanel extends VPAxisPanel {
@@ -28,8 +27,6 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	protected JRadioButton fusion_btn ;
 	protected JRadioButton noclass_btn ;
 	private ExtMappingTextField mappingTextField;
-	
-	
 	/**
 	 * This class is basically the "Axis Class-mapping" Box in the new form
 	 * @param mappingPanel
@@ -61,7 +58,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		fusion_btn.setToolTipText("One class (with a default name) created for each group of identical product files");
 		
 		// Class name field
-		classField    = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
+		classField = new NodeNameTextField(AdminComponent.STRING_FIELD_NAME, RegExp.CLASSNAME, null);
 		
 		gbc.right(false);
 
@@ -120,42 +117,9 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		mappingTextField.setColumns(AdminComponent.STRING_FIELD_NAME);
 		//GridBagConstraints cae = new GridBagConstraints();
 		panel.add(mappingTextField, gbc);
-		
-//		gbc.newRow();
-//		gbc.left(true);
-//		
-//		
-//		panel.add(new VPPriorityPanel(mappingPanel,"plop"),gbc);
-//		
-		
-		
-		
 
-//		panel.add(helpLabel, ccs);
-//		setHelpLabel(HelpDesk.CLASS_MAPPING);
 	}
-//	@Override
-//	public String getText() {
-//		return classField.getText();
-//	}
-	/**
-	 * @return
-	 */
-//	public String getParam() {
-//		if( classifier_btn.isSelected()  ) {
-//			return "-classifier=" + classField.getText();							
-//		}
-//		else if( fusion_btn.isSelected()  ) {
-//			return "-classfusion=" + classField.getText();											
-//		}
-//		else {
-//			return "";
-//		}
-//	}
-	@Override
-	public String getText() {
-		return classField.getText();
-	}
+
 	/**
 	 * @return
 	 */
@@ -194,10 +158,7 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		default: noclass_btn.setSelected(true);
 		}
 	}
-	@Override
-	public void reset() {
-		classField.setText("");
-	}
+
 
 	public boolean hasMapping() {
 		return (classifier_btn.isSelected() || fusion_btn.isSelected()) ;
@@ -237,6 +198,10 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		 */
 		if(mappingTextField.getText().length()>0)
 			params.add("-extension="+mappingTextField.getText());
+//		
+//		if(ignoredKWField.getText().length()>0)
+//			params.add("-ignore="+ignoredKWField.getText());
+		
 		return params;
 	}
 	
@@ -254,6 +219,16 @@ public class VPClassMappingPanel extends VPAxisPanel {
 			}
 		}
 		return "";
+	}
+	
+	public void reset(boolean keep_ext)
+	{
+		noclass_btn.setSelected(true);
+		classField.setText("");
+		if(keep_ext==false)
+		{
+			mappingTextField.setText("");
+		}
 	}
 	
 

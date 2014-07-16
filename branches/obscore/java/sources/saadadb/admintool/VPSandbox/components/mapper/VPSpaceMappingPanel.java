@@ -1,87 +1,65 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
-import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldUnits;
+import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldnBox;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
 
 public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 
-//	private VPKWAppendTextField positionField;
-//	private VPKWAppendTextField errorField;
-//	private VPKWAppendTextField systemField;
-	
+	//	private VPKWAppendTextField positionField;
+	//	private VPKWAppendTextField errorField;
+	//	private VPKWAppendTextField systemField;
+
 	//private JComboBox unitCombo;
 
-	private VPKWNamedFieldUnits positionError;
+	private VPKWNamedFieldnBox positionError;
 	private VPKWNamedField positionField;
-	private VPKWNamedField systemField;
+	private VPKWNamedFieldnBox system;
 
-	
-	
+
+
 	public VPSpaceMappingPanel(VPSTOEPanel mappingPanel,boolean forEntry) {
 		super(mappingPanel, "Space Axis",HelpDesk.POSITION_MAPPING);
-
-//		positionField = new VPKWAppendTextField(mappingPanel, DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		positionField.setColumns(AdminComponent.STRING_FIELD_NAME);
-//
-//		errorField = new VPKWAppendTextField(mappingPanel, DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		//errorField.setColumns(AdminComponent.STRING_FIELD_NAME);
-//		
-//		
-//		//ATTENTION : C'est bien des Keyword qu'on veut ici ?
-//		systemField = new VPKWAppendTextField(mappingPanel, DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		systemField.setColumns(AdminComponent.STRING_FIELD_NAME);
-//
-//		
-//	
-//		errorField.setColumns(15);
-		
-		//unitCombo  = new JComboBox(new String[]{"","deg", "arcsec", "arcmin", "mas"});
 		positionField = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		positionError = new VPKWNamedFieldUnits(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
-		systemField = new VPKWNamedField(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		
-		priority.selector.buildMapper(new JComponent[]{systemField.getField(),positionField.getField(),positionError.getField(),positionError.getComboBox()});
-		helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
-		
-		
-		systemField.setComponents();
+		positionError = new VPKWNamedFieldnBox(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
+		system = new VPKWNamedFieldnBox(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"", "ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
+
+		priority.selector.buildMapper(new JComponent[]{system.getField(),positionField.getField(),positionError.getField(),positionError.getComboBox(),system.getComboBox()});
+		//helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+
+
 		positionField.setComponents();
 		positionError.setComponents();
-		
-//		gbc.right(false);
-//		panel.add(AdminComponent.getPlainLabel("System "), gbc);
-//		gbc.next();
-//		gbc.left(true);
-//		panel.add(systemField,gbc);
-//		gbc.newRow();
-//		
-//		gbc.right(false);
-//		panel.add(AdminComponent.getPlainLabel("Position "), gbc);
-//		gbc.next();
-//		gbc.left(true);
-//		panel.add(positionField,gbc);
-//		gbc.newRow();
-//		
-//		gbc.right(false);
-//		panel.add(AdminComponent.getPlainLabel("Position error"), gbc);
-//		gbc.next();
-//		gbc.left(false);
-//		panel.add(errorField,gbc);
-//		gbc.next();
-//		panel.add(AdminComponent.getPlainLabel("unity "), gbc);
-//		gbc.next();
-//		gbc.left(true);
-//		panel.add(unitCombo,gbc);
+		system.setComponents();
 
-		// TODO Auto-generated constructor stub
+
+		/*
+		 * We had the action listener allowing to link the system box to the system field
+		 */
+		system.getComboBox().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JComboBox temp =system.getComboBox();
+				if( e.getSource() == system.getComboBox()) {
+					system.getField().setText("'" + temp.getSelectedItem() + "'");
+					if( priority.noBtn.isSelected() ) {
+						priority.firstBtn.setSelected(true) ;
+					}
+				}
+			}
+		});
+
+
 	}
 
 	@Override
@@ -89,32 +67,67 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		ArrayList<String> params = new ArrayList<String>();
 		if (!getPriority().noBtn.isSelected())
 		{
-			
-			params.add("-posmapping="+priority.getMode());
-			if(systemField.getText().length()>0)
-				params.add("-system="+systemField.getText());
-	
-			if(positionField.getText().length()>0)
-				params.add("-position="+positionField.getText());
-	
-			if(positionError.getText().length()>0)
-				params.add("-poserror="+positionError.getText());
 
-			if(positionError.getComboBox().getSelectedItem().toString().length()>0)
-				params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+			params.add("-posmapping="+priority.getMode());
+			if(system.getText().length()>0)
+				params.add("-system="+system.getText());
+
+			if(mappingPanel.getCategory()!=Category.ENTRY)
+			{
+				if(positionField.getText().length()>0)
+					params.add("-position="+positionField.getText());
 	
+				if(positionError.getText().length()>0)
+					params.add("-poserror="+positionError.getText());
+	
+				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
+					params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+			}
+			else
+			{
+				if(positionField.getText().length()>0)
+					params.add("-entry.position="+positionField.getText());
+	
+				if(positionError.getText().length()>0)
+					params.add("-entry.poserror="+positionError.getText());
+	
+				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
+					params.add("-entry.poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+				
+			}
+
 		}
-//		if(getPriority().onlyBtn.isSelected() && emptyField)
-//			mappingPanel.showInfo(mappingPanel.rootFrame,"You selected the \"Only\" priority for the Observation Axis but didn't fill each corresponding field");
-//			
+
 
 		return params;
 	}
 
 	@Override
 	public String checkAxisParams() {
-		// TODO Auto-generated method stub
-		return null;
+		String error ="";
+		if(priority.isOnly())
+		{
+			if(system.getText().length()==0)
+				error+= "<LI>Space Axis : Priority \"Only\" selected but no system specified</LI>";
+			if(positionField.getText().length()==0)
+				error+= "<LI>Space Axis : Priority \"Only\" selected but no position specified</LI>";
+			if(positionError.getText().length()==0)
+				error+= "<LI>Space Axis : Priority \"Only\" selected but no position error specified</LI>";			
+			if(positionError.getComboBox().getSelectedItem().toString().length()==0)
+				error+= "<LI>Space Axis : Priority \"Only\" selected but no position error unit specified</LI>";
+
+		}
+
+		return error;
+	}
+
+	@Override
+	public void reset() {
+		system.reset();
+		positionField.reset();
+		positionError.reset();
+		
+		
 	}
 
 }

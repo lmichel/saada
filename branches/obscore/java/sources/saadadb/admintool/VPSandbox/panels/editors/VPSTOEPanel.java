@@ -13,8 +13,10 @@ import javax.swing.JScrollPane;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPOtherMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
 import saadadb.admintool.components.AdminComponent;
@@ -22,9 +24,7 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 
 
 /**
@@ -74,6 +74,10 @@ public class VPSTOEPanel extends MappingKWPanel {
 	private VPTimeMappingPanel timeMapping;
 	private VPObservableMappingPanel observableMapping;
 	private VPEnergyMappingPanel energyMapping;
+	private VPOtherMappingPanel otherMapping;
+	private VPIgnoredMappingPanel ignoredMapping;
+	
+	
 	
 	//protected ArgsParser args;
 	
@@ -203,14 +207,52 @@ public class VPSTOEPanel extends MappingKWPanel {
 		
 		globalGridConstraint.gridy++;
 		
-		observableMapping = new VPObservableMappingPanel(this,forEntry);
+		observableMapping = new VPObservableMappingPanel(this,forEntry,rootFrame);
 		observableMapping.collapse();
 		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
+		
+		ignoredMapping=new VPIgnoredMappingPanel(this, forEntry);
+		ignoredMapping.collapse();
+		editorPanel.add(ignoredMapping.getContainer(),globalGridConstraint);
+		
+		globalGridConstraint.gridy++;
 
+		otherMapping = new VPOtherMappingPanel(this, forEntry);
+		otherMapping.collapse();
+		editorPanel.add(otherMapping.getContainer(),globalGridConstraint);
+		
 		
 		//WIP
 	}
-	
+	@Override
+	public void reset(boolean keep_ext) {
+		if(classMapping!=null)
+			classMapping.reset(keep_ext);
+		
+		if(observationMapping!=null)
+			observationMapping.reset();
+		
+		if(spaceMapping!=null)
+			spaceMapping.reset();
+		
+		if(energyMapping!=null)
+			energyMapping.reset();
+		
+		if(timeMapping!=null)
+			timeMapping.reset();
+		
+		if(observableMapping!=null)
+			observableMapping.reset();
+		
+		if(ignoredMapping!=null)
+			ignoredMapping.reset();
+		
+		if(otherMapping!=null)
+			otherMapping.reset();
+
+	}
 	
 	@Override
 	public ArgsParser getArgsParser() {
@@ -220,7 +262,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 		/*
 		 * Category
 		 */
-	
 		switch (this.category ) {
 		case Category.MISC: params.add("-category=misc"); break;
 		case Category.IMAGE: params.add("-category=image"); break;
@@ -240,12 +281,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
-		
 		/*
 		 * Observation axis
 		 */
-		
 		temp=observationMapping.getAxisParams();
 		if(temp!=null)
 		{
@@ -255,13 +293,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 			}
 		}
 		
-		
-		
 		/*
 		 * Space Axis
 		 */
-		
-	
 		temp=spaceMapping.getAxisParams();
 		if(temp!=null)
 		{
@@ -270,14 +304,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
-		
-		
 		/*
 		 * Energy Axis
 		 */
-		
-		
 		temp=energyMapping.getAxisParams();
 		if(temp!=null)
 		{
@@ -286,12 +315,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
-		
 		/*
 		 * Time Axis
 		 */
-		
 		temp=timeMapping.getAxisParams();
 		if(temp!=null)
 		{
@@ -300,10 +326,8 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
-		
 		/*
-		 * Observable Panel
+		 * Observable Axis
 		 */
 		
 		temp=observableMapping.getAxisParams();
@@ -314,6 +338,38 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
+		
+		
+		/*
+		 * Ignored keywords
+		 */
+		
+		
+		temp=ignoredMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
+		
+		
+		
+		/*
+		 * Other Axis
+		 */
+		
+		temp=otherMapping.getAxisParams();
+		if(temp!=null)
+		{
+			for (String s : temp)
+			{
+				params.add(s);
+			}
+		}
+		
 		try {
 			ArgsParser retour;
 			retour = new ArgsParser((String[])(params.toArray(new String[0])));
@@ -329,14 +385,66 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public boolean checkParams() {
 		String msg = "";
 		String temp ="";
-		temp+=classMapping.checkAxisParams();
+		
+		/*
+		 * Class mapping check
+		 */
+		temp=classMapping.checkAxisParams();
 		classMapping.setOnError(false);
 		if(!temp.isEmpty())
 		{
 			classMapping.setOnError(true);
 			msg+=temp;
 		}
+		
+		/*
+		 * Observation check
+		 */
+		
+		temp=observationMapping.checkAxisParams();
+		observationMapping.setOnError(false);
+		if(!temp.isEmpty())
+		{
+			observationMapping.setOnError(true);
+			msg+=temp;
+		}
+		
+		/*
+		 * Space check
+		 */
+		temp=spaceMapping.checkAxisParams();
+		spaceMapping.setOnError(false);
+		if(!temp.isEmpty())
+		{
+			spaceMapping.setOnError(true);
+			msg+=temp;
+		}
+		
+		/*
+		 * Energy check
+		 */
+		temp=energyMapping.checkAxisParams();
+		energyMapping.setOnError(false);
+		if(!temp.isEmpty())
+		{
+			energyMapping.setOnError(true);
+			msg+=temp;
+		}
+
+		/*
+		 * Time check
+		 */
+		temp=timeMapping.checkAxisParams();
+		timeMapping.setOnError(false);
+		if(!temp.isEmpty())
+		{
+			timeMapping.setOnError(true);
+			msg+=temp;
+		}
 	
+		/*
+		 * Observable Check
+		 */
 		
 	
 //		if( cooSysMapper != null ) {
