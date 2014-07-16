@@ -101,15 +101,15 @@ public abstract class SaadaInstance implements DMInterface {
 	/*
 	 * Major axis of the error ellipse
 	 */
-	public double error_maj_csa=SaadaConstant.DOUBLE ;
+	public double s_resolution=SaadaConstant.DOUBLE ;
 	/*
 	 * Minor axis of the error ellipse
 	 */
-	public double error_min_csa=SaadaConstant.DOUBLE;
+//	public double error_min_csa=SaadaConstant.DOUBLE;
 	/*
 	 * Orientation error ellipse related to the noth (in degree)
 	 */
-	public double error_angle_csa=SaadaConstant.DOUBLE;
+//	public double error_angle_csa=SaadaConstant.DOUBLE;
 	/*
 	 * Time Axe
 	 */
@@ -1310,23 +1310,29 @@ public abstract class SaadaInstance implements DMInterface {
 	 * @param b = \sigma_min
 	 * @param theta_deg == \theta (degree from NOTHR axis)
 	 */
+	/**
+	 * @param maj
+	 * @param min
+	 * @param theta
+	 */
 	public void setError(double maj,double min,double theta){
-		double angle = theta;
-		if(maj == min) {
-			angle=0.0;
-		} else{
-			while(angle<=-90.0) angle+=180.0;
-			while(angle > 90.0) angle-=180.0;
-		}
-		if(maj >= min){
-			this.error_maj_csa = maj;
-			this.error_min_csa = min;
-			this.error_angle_csa = angle;
-		}else{
-			this.error_maj_csa = min;
-			this.error_min_csa = maj;
-			this.error_angle_csa = (angle>0.0)?angle-90.0:angle+90.0;
-		}
+		this.s_resolution = maj;
+//		double angle = theta;
+//		if(maj == min) {
+//			angle=0.0;
+//		} else{
+//			while(angle<=-90.0) angle+=180.0;
+//			while(angle > 90.0) angle-=180.0;
+//		}
+//		if(maj >= min){
+//			this.error_maj_csa = maj;
+//			this.error_min_csa = min;
+//			this.error_angle_csa = angle;
+//		}else{
+//			this.error_maj_csa = min;
+//			this.error_min_csa = maj;
+//			this.error_angle_csa = (angle>0.0)?angle-90.0:angle+90.0;
+//		}
 	}
 
 
