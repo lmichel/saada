@@ -33,6 +33,7 @@ import saadadb.prdconfiguration.CoordSystem;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
+import saadadb.query.parser.PositionParser;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -84,9 +85,7 @@ public class ProductBuilder {
 	/*
 	 * Space Axis
 	 */
-	protected ColumnSetter error_majSetter=new ColumnSetter();
-	protected ColumnSetter error_minSetter=new ColumnSetter();
-	protected ColumnSetter error_angleSetter=new ColumnSetter();
+	protected ColumnSetter s_resolutionSetter=new ColumnSetter();
 	protected ColumnSetter s_raSetter=new ColumnSetter();
 	protected ColumnSetter s_decSetter=new ColumnSetter();
 	protected ColumnSetter s_fovSetter=new ColumnSetter();
@@ -791,9 +790,7 @@ public class ProductBuilder {
 		traceReportOnAttRef("s_dec", s_decSetter);
 		traceReportOnAttRef("s_region", s_regionSetter);
 		traceReportOnAttRef("s_fov", s_fovSetter);
-		traceReportOnAttRef("error_maj", error_majSetter);
-		traceReportOnAttRef("error_min", error_minSetter);
-		traceReportOnAttRef("error_angle", error_angleSetter);
+		traceReportOnAttRef("s_resolution", s_resolutionSetter);
 	}
 
 	/**
@@ -936,7 +933,7 @@ public class ProductBuilder {
 		 */
 		String system_attribute="", equinox_attribute="";
 		if( cs.getSystem_value().length() != 0 ) {
-			system_attribute = cs.getSystem().replaceAll("'", "");
+			system_attribute = cs.getSystem_value().replaceAll("'", "");
 		}
 		if( cs.getEquinox_value().length() != 0 ) {
 			equinox_attribute = cs.getEquinox_value().replaceAll("'", "");
@@ -945,12 +942,14 @@ public class ProductBuilder {
 		 * Both system parameters have been given as constant value
 		 * We check that can be used to build an astroframe
 		 */
-		if( system_attribute.length() > 0 && equinox_attribute.length() > 0 ) {
+		if( system_attribute.length() > 0/* && equinox_attribute.length() > 0*/ ) {
 			try {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Found " + system_attribute + " in mapping");
 				Astroframe astroFrame = Coord.getAstroframe(system_attribute, equinox_attribute) ;
 				this.astroframeSetter = new ColumnSetter();
 				this.astroframeSetter.setByValue(astroFrame.toString(), true);
-				this.astroframeSetter.completeMessage("From both system and equinox keywords");
+				this.astroframeSetter.completeMessage("From both mapped value");
 				this.astroframeSetter.storedValue = astroFrame;
 			} catch(SaadaException e) {
 				return false;
@@ -1010,7 +1009,12 @@ public class ProductBuilder {
 			PriorityMessage.first("Position");
 			if( !this.mapCollectionPosAttributesFromMapping() ) {
 				this.mapCollectionPosAttributesAuto();
-			}			
+			}	
+			if( this.s_fovSetter.notSet() ){
+				this.s_fovSetter = new ColumnSetter();
+				this.s_fovSetter.completeMessage("Default value");
+				this.s_fovSetter.setByValue("0", false);
+			}
 			break;
 		case LAST:
 			PriorityMessage.last("Position");
@@ -1058,13 +1062,7 @@ public class ProductBuilder {
 		/*
 		 * Map errors on positions
 		 */
-		if( this.error_majSetter.notSet()|| this.error_minSetter.notSet() ) {
-			if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Error ellipse neither found " + msg + " in keywords nor by value");
-			this.error_majSetter = new ColumnSetter();
-			this.error_minSetter = new ColumnSetter();
-			this.error_angleSetter = new ColumnSetter();
-		} else {
+		if( !this.s_resolutionSetter.notSet() ){
 			this.setError_unit();
 		} 
 	}
@@ -1075,10 +1073,8 @@ public class ProductBuilder {
 	 * 
 	 */
 	private void setError_unit() throws SaadaException {
-		String unit_read = this.error_minSetter.getUnit();
-		if( unit_read == null ) {
-			unit_read = this.error_majSetter.getUnit();			
-		}
+		String unit_read = this.s_resolutionSetter.getUnit();
+
 		switch( this.spaceMappingPriority) {
 		case FIRST: 
 			PriorityMessage.first("Error unit");
@@ -1307,16 +1303,9 @@ public class ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try detect the error on position in keywords");
 		this.setQuantityDetector();
-		this.error_minSetter = this.quantityDetector.getErrorMin();
-		this.error_majSetter = this.quantityDetector.getErrorMaj();
-		this.error_angleSetter = this.quantityDetector.getErrorAngle();
+		this.s_resolutionSetter = this.quantityDetector.getSpatialError();
 
-		if( this.error_angleSetter.notSet() ) {
-			this.error_angleSetter = new ColumnSetter("0", false);
-			this.error_angleSetter.completeMessage("Default value");
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set angle=0 for error ellipses");
-		}
-		if (this.error_minSetter.notSet() ||  this.error_majSetter.notSet() ) {
+		if (this.s_resolutionSetter.notSet() ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Failed");
 			return false;
@@ -1335,52 +1324,28 @@ public class ProductBuilder {
 	private boolean mapCollectionPoserrorAttributesFromMapping() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to map the error on position from mapping");
-		ColumnMapping errMajMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_maj_csa");
-		ColumnMapping errMinMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_min_csa");
-		ColumnMapping errAngleMapping =  this.mapping.getSpaceAxisMapping().getColumnMapping("error_angle_csa");
-
+		ColumnMapping sResolutionMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_resulotion");
+	
 		boolean errMaj=false, errMin=false, angle_found=false;
 		/*
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
-		if( errMajMapping.byValue() ) {
-			this.error_minSetter = new ColumnSetter(errMajMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
+		if( sResolutionMapping.byValue() ) {
+			this.s_resolutionSetter = new ColumnSetter(sResolutionMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
 			errMaj = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + errMajMapping.getAttributeHandler().getValue() + ">");
-		}
-		if( errMinMapping.byValue() ) {
-			this.error_majSetter = new ColumnSetter(errMinMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);		
-			errMin = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Minor error axis set with the constant value <" + errMinMapping.getAttributeHandler().getValue() + ">");
-		}
-		if( errAngleMapping.byValue() ) {
-			this.error_angleSetter = new ColumnSetter(errAngleMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);		
-			angle_found = true;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Error ellipse angle set with the constant value <" + errAngleMapping.getAttributeHandler().getValue() + ">");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + sResolutionMapping.getAttributeHandler().getValue() + ">");
 		}
 		/*
 		 * Look for attributes mapping the position parameters without constant values
 		 */
-		String minCol   =  (errMajMapping.getAttributeHandler() != null)?errMajMapping.getAttributeHandler().getNameorg(): null;
-		String maxCol   =  (errMinMapping.getAttributeHandler() != null)?errMinMapping.getAttributeHandler().getNameorg(): null;
-		String angleCol =  (errAngleMapping.getAttributeHandler() != null)?errAngleMapping.getAttributeHandler().getNameorg(): null;
+		String sResCol   =  (sResolutionMapping.getAttributeHandler() != null)?sResolutionMapping.getAttributeHandler().getNameorg(): null;
 		for( AttributeHandler ah: this.productAttributeHandler.values()) {
 			String keyorg  = ah.getNameorg();
 			String keyattr = ah.getNameattr();
-			if( this.error_minSetter == null && (keyorg.equals(minCol) || keyattr.equals(minCol)) ) {
-				this.error_minSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
+			if( this.s_resolutionSetter == null && (keyorg.equals(sResCol) || keyattr.equals(sResCol)) ) {
+				this.s_resolutionSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
 				errMaj = true;
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error Maj axis");
-			}
-			if( this.error_majSetter == null && (keyorg.equals(maxCol) || keyattr.equals(maxCol)) ) {
-				this.error_majSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				errMin = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error mn axis");
-			}
-			if( this.error_angleSetter == null && (keyorg.equals(angleCol) || keyattr.equals(angleCol)) ) {
-				this.error_angleSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				angle_found = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error ellipse orientation");
 			}
 		}
 		/*
@@ -1393,6 +1358,7 @@ public class ProductBuilder {
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Failed");
+			System.exit(1);
 			return false;
 		}
 	}
@@ -1596,12 +1562,8 @@ public class ProductBuilder {
 		this.s_raSetter.storedValue = si.s_ra;
 		retour.put("s_dec", s_decSetter);
 		this.s_decSetter.storedValue = si.s_dec;
-		retour.put("error_maj_csa", error_majSetter);
-		this.error_majSetter.storedValue = si.error_maj_csa;
-		retour.put("error_min_csa", error_minSetter);
-		this.error_minSetter.storedValue = si.error_min_csa;
-		retour.put("error_angle_csa", error_angleSetter);
-		this.error_angleSetter.storedValue = si.error_angle_csa;
+		retour.put("s_resolution",s_resolutionSetter);
+		this.s_resolutionSetter.storedValue = si.s_resolution;
 		retour.put("s_fov", s_fovSetter);
 		this.s_fovSetter.storedValue = si.getS_fov();
 		retour.put("s_region", s_regionSetter);
@@ -1687,9 +1649,8 @@ public class ProductBuilder {
 		for(AttributeHandler ah:  productAttributeHandler.values()) {
 			System.out.println("  " + ah);
 		}
-		System.out.println("min_err_attribute  : " + error_majSetter);
-		System.out.println("maj_err_attribute  : " + error_minSetter);
-		System.out.println("angle_err_attribute: " + error_angleSetter);
+
+		System.out.println("s_resolution       : " + s_resolutionSetter);
 		System.out.println("ra_attribute       : " + s_raSetter);
 		System.out.println("dec_attribute      : " + s_decSetter);
 		System.out.println("name_components    : ");

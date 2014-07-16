@@ -226,7 +226,6 @@ class ProductIngestor {
 	 */
 	protected void setPositionFields(int number) throws Exception {
 		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
-
 			try {
 				Astrocoo acoo;
 				/*
@@ -318,7 +317,7 @@ System.out.println("===========================");
 	 */
 	protected void setPosErrorFields(int number) throws Exception {
 		String error_unit = this.product.mapping.getSpaceAxisMapping().getErrorUnit();
-		if( this.product.error_minSetter != null &&  error_unit != null ){
+		if( this.product.s_resolutionSetter != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
 			/*
 			 * Errors are always stored in degrees in Saada
@@ -334,27 +333,13 @@ System.out.println("===========================");
 				if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;
 			}
-			if( this.product.error_angleSetter.notSet() ) {
-				angle = 90.0;
-			} else {
-				angle = Double.parseDouble(this.product.error_angleSetter.getValue());				
-			}
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( this.product.error_minSetter.notSet() && !this.product.error_majSetter.notSet() ) {
-				maj_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
-				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( !this.product.error_minSetter.notSet() && this.product.error_majSetter.notSet() ) {
-				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
-				this.saadaInstance.setError(maj_err, min_err, angle);
-			} else if( !this.product.error_minSetter.notSet() && !this.product.error_majSetter.notSet() ) {
-				maj_err = convert*Double.parseDouble(this.product.error_minSetter.getValue());
-				min_err = convert*Double.parseDouble(this.product.error_majSetter.getValue());
-				this.saadaInstance.setError(maj_err, min_err, angle);
-			}
+			if( this.product.s_resolutionSetter.notSet() ) {
+				maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
+				this.saadaInstance.s_resolution = maj_err;
+			} 
 		} else {
 			if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	

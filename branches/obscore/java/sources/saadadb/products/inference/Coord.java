@@ -111,9 +111,9 @@ public final class Coord {
 	 * @throws FatalException 
 	 */
 	public static Astroframe getAstroframe(String sys, String equi) throws FatalException {
-		if( sys.equalsIgnoreCase("FK4") ) {
-			if( equi == null ) {
-				Messenger.printMsg(Messenger.TRACE, "No equinox takes, (B1950.0,Ep=J2000.0) by default");
+		if( sys.equalsIgnoreCase("FK4")) {
+			if( equi == null || equi.length() == 0 ) {
+				Messenger.printMsg(Messenger.TRACE, "No equinox take (B1950.0,Ep=J2000.0) by default");
 				return new FK4();				
 			}
 			else {
@@ -121,8 +121,8 @@ public final class Coord {
 			}
 		}
 		else if( sys.equalsIgnoreCase("FK5") ) {
-			if( equi == null ) {
-				Messenger.printMsg(Messenger.TRACE, "No equinox takes, J2000 by default");
+			if( equi == null || equi.length() == 0) {
+				Messenger.printMsg(Messenger.TRACE, "No equinox take J2000 by default");
 				return new FK5();				
 			}
 			else {

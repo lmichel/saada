@@ -116,27 +116,13 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
-	public ColumnSetter getErrorMin() throws SaadaException{
+	public ColumnSetter getSpatialError() throws SaadaException{
 		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getErrorMin()).notSet() ){
-			return this.spaceKWDetector.getErrorMin();
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialError()).notSet() ){
+			return this.spaceKWDetector.getSpatialError();
 		} 
 		return (retour == null)?new ColumnSetter(): retour;
 	}
-	public ColumnSetter getErrorMaj() throws SaadaException{
-		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getErrorMaj()).notSet() ){
-			return this.spaceKWDetector.getErrorMaj();
-		} 
-		return (retour == null)?new ColumnSetter(): retour;
-	}
-	public ColumnSetter getErrorAngle() throws SaadaException{
-		ColumnSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getErrorAngle()).notSet() ){
-			return this.spaceKWDetector.getErrorAngle();
-		} 
-		return (retour == null)?new ColumnSetter(): retour;
-	}	
 	public ColumnSetter getfov() throws SaadaException{
 		ColumnSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getfov()).notSet() ){

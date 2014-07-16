@@ -43,7 +43,9 @@ public class WCSModel {
 			this.NAXIS  = Integer.parseInt(ah.getValue());
 			this.initArrays();
 		} else {
-			IgnoreException.throwNewException(SaadaException.WCS_ERROR, "No NAXIS keyword");
+			this.kwset_ok = false;
+			return;
+		//	IgnoreException.throwNewException(SaadaException.WCS_ERROR, "No NAXIS keyword");
 		}
 
 		this.watInfos = new WATInfos(NAXIS, attributesList);
