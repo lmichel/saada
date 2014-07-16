@@ -85,21 +85,20 @@ public class SpaceMapping extends AxisMapping {
 	public void mapPoserror(ArgsParser tabArg) throws FatalException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position error mapping");
 		
-		String[] tabRa_dec = tabArg.getPoserrorMapping();
+		String av  = tabArg.getPoserrorMapping();
 		this.errorUnit = tabArg.getPoserrorUnit();
 		/*
 		 * One poserror parameter: error is supposed to be a circle
 		 */
-		if( tabRa_dec.length >= 1 ) {
-			String av = tabRa_dec[0];
+		if( av != null ) {
 			/*
 			 * Object name can be in '' or in ""
 			 */
 			if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
 				av= av.substring(1, av.length() -1);
-				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, tabRa_dec[0], "s_resolution"));				
+				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, av, "s_resolution"));				
 			} else {
-				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, tabRa_dec[0], "s_resolution"));				
+				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, av, "s_resolution"));				
 			}
 		}
 	}
