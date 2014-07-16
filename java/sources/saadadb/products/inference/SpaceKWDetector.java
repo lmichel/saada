@@ -147,7 +147,7 @@ public class SpaceKWDetector extends KWDetector{
 					this.wcsModel = new WCSModel(tableAttributeHandler);
 				} catch (Exception e) {if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, e.toString());
-					return;
+				return;
 				}
 			}
 			if( this.wcsModel.isKwset_ok() ){
@@ -351,25 +351,28 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
-		this.err_maj = this.search(RegExp.ERROR_MAJ_UCD, RegExp.ERROR_MAJ_KW);
-		if( this.err_maj == null ) this.err_maj = this.searchByUcd(RegExp.ERROR_MIN_KW);
-		this.err_min = this.search(RegExp.ERROR_MIN_UCD, RegExp.ERROR_MIN_KW);
-		if( this.err_min == null ) this.err_min = this.searchByUcd(RegExp.ERROR_MIN_KW);
-		this.err_angle = this.search(RegExp.ERROR_ANGLE_UCD, RegExp.ERROR_ANGLE_KW);
-		this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_UCD);
-		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
-		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
-		if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
+		this.err_min = this.search(RegExp.ERROR_UCD, RegExp.ERROR_KW);
+		if( !this.err_min .notSet() ) {
+			this.err_maj = this.err_min;
+		} else {
+			this.err_maj = this.search(RegExp.ERROR_MAJ_UCD, RegExp.ERROR_MAJ_KW);		
+			this.err_min = this.search(RegExp.ERROR_MIN_UCD, RegExp.ERROR_MIN_KW);
 
-		if( this.err_maj.notSet() && eM != null ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Keep WCS error values");
-			this.err_maj = eM;
-			this.err_min = em;
-			if( this.err_angle.notSet() && ea != null ) {
-				this.err_angle = ea;
+			this.err_angle = this.search(RegExp.ERROR_ANGLE_UCD, RegExp.ERROR_ANGLE_KW);
+			this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_UCD);
+			if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
+			if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
+			if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
+
+			if( this.err_maj.notSet() && eM != null ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Keep WCS error values");
+				this.err_maj = eM;
+				this.err_min = em;
+				if( this.err_angle.notSet() && ea != null ) {
+					this.err_angle = ea;
+				}
 			}
-
 		}
 	}
 	/**

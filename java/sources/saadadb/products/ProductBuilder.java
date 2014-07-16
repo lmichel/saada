@@ -33,6 +33,7 @@ import saadadb.prdconfiguration.CoordSystem;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
+import saadadb.products.inference.SpatialResolutionUnitRef;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
@@ -1309,13 +1310,26 @@ public class ProductBuilder {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Failed");
 			return false;
+		} else if( !SpatialResolutionUnitRef.isUnitValid(this.s_resolutionSetter.getUnit())) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getUnit() + " is not a valid unit for the spatial resolution");		
+			this.s_resolutionSetter = new ColumnSetter();
+			return false;
 		} else {
+			try {
+				Double.parseDouble(this.s_resolutionSetter.getValue());
+			} catch (Exception e) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getValue() + " is not a valid value for the spatial resolution");		
+				this.s_resolutionSetter = new ColumnSetter();
+				return false;
+			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
+			this.s_resolutionSetter.completeMessage("orgVal:" + this.s_resolutionSetter.getValue() + this.s_resolutionSetter.getUnit());
 			return true;
-		}
+		} 
 	}
-
 
 	/**
 	 * @throws FatalException 
@@ -1324,41 +1338,59 @@ public class ProductBuilder {
 	private boolean mapCollectionPoserrorAttributesFromMapping() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to map the error on position from mapping");
-		ColumnMapping sResolutionMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_resulotion");
-	
-		boolean errMaj=false, errMin=false, angle_found=false;
+		ColumnMapping sResolutionMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_resolution");
+		String rUnit = sResolutionMapping.getAttributeHandler().getUnit();
+		if( !SpatialResolutionUnitRef.isUnitValid(rUnit) ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, rUnit + " is not a valid unit");
+			return false;		
+		}
+
+		boolean errMaj=false;
 		/*
 		 * Process first the case where the position mapping is given as cnstant values
 		 */
 		if( sResolutionMapping.byValue() ) {
-			this.s_resolutionSetter = new ColumnSetter(sResolutionMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);	
+			this.s_resolutionSetter = new ColumnSetter(sResolutionMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false);
+			this.s_resolutionSetter.completeMessage("orgVal:" + this.s_resolutionSetter.getValue() + rUnit);
 			errMaj = true;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Major error axis set with the constant value <" + sResolutionMapping.getAttributeHandler().getValue() + ">");
-		}
-		/*
-		 * Look for attributes mapping the position parameters without constant values
-		 */
-		String sResCol   =  (sResolutionMapping.getAttributeHandler() != null)?sResolutionMapping.getAttributeHandler().getNameorg(): null;
-		for( AttributeHandler ah: this.productAttributeHandler.values()) {
-			String keyorg  = ah.getNameorg();
-			String keyattr = ah.getNameattr();
-			if( this.s_resolutionSetter == null && (keyorg.equals(sResCol) || keyattr.equals(sResCol)) ) {
-				this.s_resolutionSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
-				errMaj = true;
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error Maj axis");
+		} else {
+			/*
+			 * Look for attributes mapping the position parameters without constant values
+			 */
+			String sResCol   =  (sResolutionMapping.getAttributeHandler() != null)?sResolutionMapping.getAttributeHandler().getNameorg(): null;
+			for( AttributeHandler ah: this.productAttributeHandler.values()) {
+				String keyorg  = ah.getNameorg();
+				String keyattr = ah.getNameattr();
+				if( this.s_resolutionSetter == null && (keyorg.equals(sResCol) || keyattr.equals(sResCol)) ) {
+					this.s_resolutionSetter = new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, true, false);
+					this.s_resolutionSetter.completeMessage("unitOrg: " + rUnit);
+					errMaj = true;
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Key word <" + ah.getNameorg() + "> taken as error Maj axis");
+				}
 			}
 		}
-		/*
-		 * The 3 parameters must be set at mapping time (Mapping.java) So if one is found the others are presents
-		 */
-		if (errMaj & errMin & angle_found) {
+		if( !SpatialResolutionUnitRef.isUnitValid(this.s_resolutionSetter.getUnit())) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getUnit() + " is not a valid unit for the spatial resolution");		
+			this.s_resolutionSetter = new ColumnSetter();
+			return false;
+		} else if (errMaj ) {
+			try {
+				Double.parseDouble(this.s_resolutionSetter.getValue());
+			} catch (Exception e) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getValue() + " is not a valid value for the spatial resolution");		
+				this.s_resolutionSetter = new ColumnSetter();
+				return false;
+			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
 			return true;
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Failed");
-			System.exit(1);
 			return false;
 		}
 	}
