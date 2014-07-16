@@ -13,7 +13,6 @@ import saadadb.products.ColumnSetter;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
-import saadadb.util.SaadaConstant;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;
@@ -143,8 +142,14 @@ public class SpaceKWDetector extends KWDetector{
 		 * Then look at the WCS projection
 		 */
 		if( (status & FRAME_FOUND) == 0 ) {
-			if( this.wcsModel == null )
-				this.wcsModel = new WCSModel(tableAttributeHandler);
+			if( this.wcsModel == null ) {
+				try {
+					this.wcsModel = new WCSModel(tableAttributeHandler);
+				} catch (Exception e) {if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, e.toString());
+					return;
+				}
+			}
 			if( this.wcsModel.isKwset_ok() ){
 				ColumnSetter[] center;
 				center = this.wcsModel.getGlonlatCenter();
@@ -323,7 +328,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws Exception
 	 */
 	private void searchError() throws SaadaException {
-		if( this.isInit || this.errorSearched ) {
+		if( this.errorSearched ) {
 			return;
 		}
 		try{
@@ -346,10 +351,11 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
-		this.err_maj = this.searchByUcd(RegExp.ERROR_MAJ_UCD);
+		this.err_maj = this.search(RegExp.ERROR_MAJ_UCD, RegExp.ERROR_MAJ_KW);
 		if( this.err_maj == null ) this.err_maj = this.searchByUcd(RegExp.ERROR_MIN_KW);
-		this.err_min = this.searchByUcd(RegExp.ERROR_MIN_UCD);
+		this.err_min = this.search(RegExp.ERROR_MIN_UCD, RegExp.ERROR_MIN_KW);
 		if( this.err_min == null ) this.err_min = this.searchByUcd(RegExp.ERROR_MIN_KW);
+		this.err_angle = this.search(RegExp.ERROR_ANGLE_UCD, RegExp.ERROR_ANGLE_KW);
 		this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_UCD);
 		if( this.err_angle == null ) this.err_angle = this.searchByUcd(RegExp.ERROR_ANGLE_KW);
 		if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
@@ -427,8 +433,9 @@ public class SpaceKWDetector extends KWDetector{
 			this.ascension_kw.setValue(pp.getRa());
 			this.declination_kw.setValue(pp.getDec());
 		} catch (QueryException e) {
-			Messenger.printMsg(Messenger.WARNING, "formatPos " 
+			Messenger.printMsg(Messenger.TRACE, "formatPos " 
 					+ this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue() + " "  + e.getMessage());
+			this.status &= ~POS_KW_FOUND;
 		}
 	}
 
@@ -636,17 +643,9 @@ public class SpaceKWDetector extends KWDetector{
 		else return false;
 	}
 
-	public ColumnSetter getErrorMin() throws SaadaException{
-		this.searchError();
-		return err_min;
-	}
-	public ColumnSetter getErrorMaj() throws SaadaException{
+	public ColumnSetter getSpatialError() throws SaadaException{
 		this.searchError();
 		return err_maj;
-	}
-	public ColumnSetter getErrorAngle() throws SaadaException{
-		this.searchError();
-		return err_angle;		
 	}
 	/**
 	 * @return

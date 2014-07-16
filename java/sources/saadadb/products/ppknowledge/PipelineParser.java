@@ -120,13 +120,7 @@ public abstract class PipelineParser {
 	public ColumnSetter getDeclination() {
 		return new ColumnSetter();
 	}
-	public ColumnSetter getErrorMin() throws SaadaException {
-		return new ColumnSetter();
-	}
-	public ColumnSetter getErrorMaj() throws SaadaException {
-		return new ColumnSetter();
-	}
-	public ColumnSetter getErrorAngle() throws SaadaException {
+	public ColumnSetter getSpatialError() throws SaadaException {
 		return new ColumnSetter();
 	}
 	public ColumnSetter getfov() throws SaadaException {

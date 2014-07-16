@@ -9,7 +9,6 @@ import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
@@ -70,9 +69,9 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	private  int num_col_ra      = -1;
 	private  int num_col_dec     = -1;
-	private  int num_col_ra_err  = -1;
-	private  int num_col_dec_err = -1;
-	private  int num_col_angle_err = -1;
+	private  int num_col_err  = -1;
+//	private  int num_col_dec_err = -1;
+//	private  int num_col_angle_err = -1;
 	private  int num_col_em_max  = -1;
 	private  int num_col_em_min  = -1;
 	private  int num_col_em_res_power  = -1;
@@ -179,12 +178,8 @@ public final class EntryIngestor extends ProductIngestor {
 				this.product.s_raSetter.setByValue(this.values[this.num_col_ra].toString(), true);
 			if( this.num_col_dec != -1 )
 				this.product.s_decSetter.setByValue(this.values[this.num_col_dec].toString(), true);
-			if( this.num_col_ra_err != -1 )
-				this.product.error_majSetter.setByValue(this.values[this.num_col_ra_err].toString(), true);
-			if( this.num_col_dec_err != -1 )
-				this.product.em_minSetter.setByValue(this.values[this.num_col_dec_err].toString(), true);
-			if( this.num_col_angle_err != -1 )
-				this.product.error_angleSetter.setByValue(this.values[this.num_col_angle_err].toString(), true);
+			if( this.num_col_err != -1 )
+				this.product.s_resolutionSetter.setByValue(this.values[this.num_col_err].toString(), true);
 		}
 		super.setPositionFields(number);
 		/*
@@ -356,15 +351,9 @@ public final class EntryIngestor extends ProductIngestor {
 			} else if( this.product.s_decSetter != null && nameField.equals(this.product.s_decSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC col (" + nameField + ") read in column #" + num_att_read);
 				num_col_dec = index_pos_col[num_att_read];
-			} else if( this.product.error_majSetter != null && nameField.equals(this.product.error_majSetter.getAttNameAtt()) ) {
+			} else if( this.product.s_resolutionSetter != null && nameField.equals(this.product.s_resolutionSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "RA error col (" + nameField + ") read in column #" + num_att_read);
-				num_col_ra_err = index_pos_col[num_att_read];
-			} else if( this.product.em_minSetter != null && nameField.equals(this.product.em_minSetter.getAttNameAtt()) ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC error col (" + nameField + ") read in column #" + num_att_read);
-				num_col_dec_err = index_pos_col[num_att_read];
-			} else if( this.product.error_angleSetter != null && nameField.equals(this.product.error_angleSetter.getAttNameAtt()) ) {
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Angle error col (" + nameField + ") read in column #" + num_att_read);
-				num_col_angle_err = index_pos_col[num_att_read];
+				num_col_err = index_pos_col[num_att_read];
 			} else if( this.product.em_maxSetter != null && nameField.equals(this.product.em_maxSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "em_max column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_em_max = index_pos_col[num_att_read];

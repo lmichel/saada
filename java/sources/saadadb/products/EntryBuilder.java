@@ -272,22 +272,10 @@ public class EntryBuilder extends ProductBuilder {
 		retour.put("s_dec", ah);
 
 		ah = new AttributeHandler();
-		ah.setNameattr("error_maj_csa"); ah.setNameorg("error_maj_csa"); 
-		ah.setValue(si.getFieldValue("error_maj_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_maj_csa", error_majSetter));
+		ah.setNameattr("s_resolution"); ah.setNameorg("s_resolution"); 
+		ah.setValue(si.getFieldValue("s_resolution").toString());
+		ah.setComment(this.getReportOnAttRef("s_resolution", s_resolutionSetter));
 		retour.put("error_maj_csa", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("error_min_csa"); ah.setNameorg("error_min_csa"); 
-		ah.setValue(si.getFieldValue("error_min_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_min_csa", error_minSetter));
-		retour.put("error_min_csa", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("error_angle_csa"); ah.setNameorg("error_angle_csa"); 
-		ah.setValue(si.getFieldValue("error_angle_csa").toString());
-		ah.setComment(this.getReportOnAttRef("error_angle_csa", error_angleSetter));
-		retour.put("error_angle_csa", ah);
 
 		ah = new AttributeHandler();
 		ah.setNameattr("em_min"); ah.setNameorg("em_min"); 
