@@ -336,11 +336,11 @@ public abstract class ParamShaker {
 		runFirstWithPWrongMParams();
 		runFirstWithPWrongIParams();
 		runLastWithGoodMParams();
-//		runLastWithGoodIParams();
-//		runLastWithWrongMParams();
-//		runLastWithWrongIParams();
-//		runLastWithPWrongMParams();
-//		runLastWithPWrongIParams();
+		runLastWithGoodIParams();
+		runLastWithWrongMParams();
+		runLastWithWrongIParams();
+		runLastWithPWrongMParams();
+		runLastWithPWrongIParams();
 	}
 
 	/**

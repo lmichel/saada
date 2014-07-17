@@ -117,7 +117,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithWrongMParams() throws Exception{
 		super.runLastWithWrongMParams();
-		this.setArgParam("-position", "a,b");
+		this.setArgParam("-poserror", "'fsdfsdff'");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -125,8 +125,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithWrongIParams() throws Exception{
 		super.runLastWithWrongIParams();
-		this.setField("RA", null, null, null, "AZERT");
-		this.setField("DEC", null, null, null, "AZERT");
+		this.setField("errmaj", null, "arcmin", null, "zzzzz");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -134,7 +133,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongMParams() throws Exception{
 		super.runLastWithPWrongMParams();
-	    this.setArgParam("-position", "12,AZERT");
+		this.setArgParam("-poserror", "'fsdfsdff'");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -142,7 +141,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongIParams() throws Exception{
 		super.runLastWithPWrongIParams();
-		this.setField("RA", null, null, null, "AZERT");
+		this.setField("errmaj", null, "arcmin", null, "zzzzz");
 		this.process();
 	}
 	/**
