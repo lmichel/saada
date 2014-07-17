@@ -14,11 +14,13 @@ import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
+import saadadb.meta.VOResource;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.util.Messenger;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLOperand;
+import adqlParser.query.ADQLTable;
 import cds.savot.model.FieldSet;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotTR;
@@ -47,7 +49,7 @@ public class TapAdqlVotableFormator extends VotableFormator {
 		this.adqlQuery = adqlQuery;
 		this.infoMap.put("QUERY", "<![CDATA["+adqlQuery+"]]>");
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.votable.VOTableFormator#writeData()
@@ -77,10 +79,10 @@ public class TapAdqlVotableFormator extends VotableFormator {
 				SavotTR savotTR = new SavotTR();					
 				tdSet = new TDSet(); 
 				writeRowData(null);
-//				this.writeHouskeepingData(si);
+				//				this.writeHouskeepingData(si);
 				//this.writeMappedUtypeData(oid);
 				//this.writeAttExtendData(oid);
-//				this.writeExtReferences(si);
+				//				this.writeExtReferences(si);
 				savotTR.setTDs(tdSet);
 				writer.writeTR(savotTR);
 				i++;
@@ -141,7 +143,7 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
 		this.protocolParams = fmtParams;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.votable.VotableFormator#writeExtMetaReferences()
 	 */
@@ -151,7 +153,7 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	 * @see saadadb.vo.request.formator.votable.VotableFormator#writeHousekeepingFieldAndGroup()
 	 */
 	protected void writeHousekeepingFieldAndGroup() {
-		
+
 	}
 
 
@@ -160,6 +162,25 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	 */
 	protected void writeDMFieldsAndGroups() throws Exception{
 		dataModelFieldSet = new FieldSet();
+		/*
+		 * As TAP does not provide any way to know whether a response is mode compliant, we check if one searched table matches a DM.
+		 * In this case, we will load the model and take its UTypehandler matching the name of the selected columns
+		 * That way, we get ay mata data of the model with an evident risk of mismatch
+		 *  @TODO This procedure should be generalized to all TAP tables and pushed in AdqlResultSet
+		 */
+		boolean obsceLike=false;
+		Iterator<ADQLTable> itt = adqlQuery.getTables();
+		while(itt.hasNext() ) {
+			if( itt.next().getTable().equalsIgnoreCase("obscore")) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "ADQL query on obscore: try apply the model");
+				obsceLike=true;
+				break;
+			}
+		}
+		if( obsceLike) {
+			this.dataModel = VOResource.getResource("ObsCore");
+		}		
 		// Create one field for each returned column:
 		int cpt = 100, indCol = 0;
 		Iterator<AttributeHandler> it = adqlResultSet.getMeta().iterator();
@@ -186,7 +207,11 @@ public class TapAdqlVotableFormator extends VotableFormator {
 				f.setDataType("char");
 				f.setArraySize("*");
 			}else {
-				f = (new UTypeHandler(meta)).getSavotField(cpt);
+				UTypeHandler uth=null;
+				if( obsceLike ){
+					uth = this.dataModel.getUTypeHandler(meta.getNameorg());
+				}
+				f = (uth == null)?(new UTypeHandler(meta)).getSavotField(cpt): uth.getSavotField(cpt);
 				/*
 				 * oidsaada could be replaced with download URLs
 				 */
