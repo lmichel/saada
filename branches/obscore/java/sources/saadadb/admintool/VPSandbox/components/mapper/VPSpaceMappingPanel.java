@@ -50,8 +50,13 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		system.getComboBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JComboBox temp =system.getComboBox();
-				if( e.getSource() == system.getComboBox()) {
-					system.getField().setText("'" + temp.getSelectedItem() + "'");
+				if( e.getSource() == temp) {
+					//We don't want to display the quotes if the blank option is selected
+					if(temp.getSelectedIndex()!=0)
+						system.getField().setText("'" + temp.getSelectedItem() + "'");
+					else
+						system.getField().setText("");
+					
 					if( priority.noBtn.isSelected() ) {
 						priority.firstBtn.setSelected(true) ;
 					}

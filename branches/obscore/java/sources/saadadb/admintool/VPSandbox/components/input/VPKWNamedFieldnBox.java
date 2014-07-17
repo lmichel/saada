@@ -1,17 +1,9 @@
 package saadadb.admintool.VPSandbox.components.input;
 
-import java.awt.GridLayout;
-
-import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
-import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
-import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.input.MappingTextField;
-import saadadb.admintool.utils.MyGBC;
 
 public class VPKWNamedFieldnBox extends VPKWNamedField {
 

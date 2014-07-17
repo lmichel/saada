@@ -2,19 +2,14 @@ package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.util.ArrayList;
 
-import javax.swing.JComponent;
-
-import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
-import saadadb.exceptions.QueryException;
 
 public class VPIgnoredMappingPanel extends VPAxisPanel {
-	private VPKWNamedField ignoredKWMapper;
 	private AppendMappingTextField ignoredKWField;
 	public VPIgnoredMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry) {
 		super(mappingPanel, "Ignored Keywords");
