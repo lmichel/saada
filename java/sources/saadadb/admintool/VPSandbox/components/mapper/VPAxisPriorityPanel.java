@@ -9,8 +9,6 @@ import javax.swing.JPanel;
 import saadadb.admintool.VPSandbox.components.input.VPKWMapper;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.utils.HelpDesk;
-import saadadb.admintool.utils.MyGBC;
 
 /**
  * This class represent the Axis which depend of a priority selector

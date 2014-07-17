@@ -5,7 +5,6 @@ import java.awt.Container;
 import javax.swing.JPanel;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPanel;
-import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.MyGBC;
 

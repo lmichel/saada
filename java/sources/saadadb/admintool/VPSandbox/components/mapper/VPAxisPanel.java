@@ -1,8 +1,6 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.GridBagLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -13,7 +11,6 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.command.ArgsParser;
 import saadadb.exceptions.QueryException;
 
 /*

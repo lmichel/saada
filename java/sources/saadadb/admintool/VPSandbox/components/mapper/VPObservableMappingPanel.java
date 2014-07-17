@@ -9,7 +9,6 @@ import javax.swing.JComponent;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedComboBox;
-import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldnButton;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.SQLJTable;

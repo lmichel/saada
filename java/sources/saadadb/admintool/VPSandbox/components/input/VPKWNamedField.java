@@ -18,7 +18,6 @@ public class VPKWNamedField extends VPKWMapper {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private JTextField field;
 
 	

@@ -2,7 +2,6 @@ package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.util.ArrayList;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
@@ -13,7 +12,6 @@ import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
-import saadadb.util.RegExp;
 
 public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 
