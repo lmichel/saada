@@ -32,7 +32,7 @@ public class MakeAJS {
 	private static String getCPImageScript(EntrySaada si) throws Exception {
 		SQLQuery sq = new SQLQuery("SELECT oidsaada\n"
 				+ " FROM WideFieldData_IMAGE \n"
-				+ " WHERE boxoverlaps(" + si.s_ra + "," + si.s_dec + ", " + si.error_maj_csa 
+				+ " WHERE boxoverlaps(" + si.s_ra + "," + si.s_dec + ", " + si.s_resolution 
 				+ ", WideFieldData_IMAGE.pos_ra_csa, WideFieldData_IMAGE.pos_dec_csa, WideFieldData_IMAGE.size_alpha_csa, WideFieldData_IMAGE.size_delta_csa) limit 1000\n");
 		ResultSet rs = sq.run();
 		String retour = "";		
@@ -121,8 +121,8 @@ public class MakeAJS {
 				bw.write(getCPImageScript(es) +";\n");
 				bw.write("draw mode(RADEC);\n");
 
-				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.error_maj_csa/10  +"arcsec); \n");
-				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.error_maj_csa*1.65  +"arcsec); \n");
+				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.s_resolution/10  +"arcsec); \n");
+				bw.write("draw circle( " + es.s_ra + ", " +  es.s_dec + ", "+ 3600*es.s_resolution*1.65  +"arcsec); \n");
 				bw.write("draw tag(" + es.s_ra + ", " +  es.s_dec + ", \"" + es.obs_id+ "\", 50, 135" +
 				", arrow, 10);\n");
 				bw.write(getCPSourceScript(es) + ";\n"); 		
