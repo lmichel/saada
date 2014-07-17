@@ -153,6 +153,9 @@ public class RegExp {
 	/**
 	 * Position error
 	 */
+	public static final String ERROR_KW    = "(?i)((radecerr.*)|(hpbw)|(e_ra.*)|(e_de.*))";
+	public static final String ERROR_UCD    = "(?i)((stat.error;pos.eq\\..*)|(pos\\.angResolution)|(pos\\.posAng;pos\\.errorEllipse))";
+
 	public static final String ERROR_MIN_KW     = "(?i)((radecerr.*)|(errmin)|(minaxis)|(hpbw))";
 	public static final String ERROR_MIN_UCD    = "(?i)((pos\\.posAng;pos\\.errorEllipse)|(stat\\.error;pos\\.eq.*)|(pos\\.angResolution))";
 	public static final String ERROR_MAJ_KW     = "(?i)((radecerr.*)|(errmaj)|(majaxis)|(hpbw))";
