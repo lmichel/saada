@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
@@ -128,7 +129,10 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		
 		JPanel tPanel = this.addSubPanel("Filter Editor");
-		editorPanel = new JPanel( );
+		
+		//JTabbedPane test=new JTabbedPane();
+		editorPanel = new JPanel();
+		//test.addTab("Normal Panel", editorPanel);
 		editorPanel.setBackground(LIGHTBACKGROUND);
 		editorPanel.setLayout(new GridBagLayout());
 		this.addCategoryPanel();
