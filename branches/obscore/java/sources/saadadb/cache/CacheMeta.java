@@ -688,8 +688,7 @@ public class CacheMeta {
 		if( ret == null ) {
 			FatalException.throwNewException(SaadaException.METADATA_ERROR, "Class <" + name + "> doesn't exist");
 			return null;
-		}
-		else {
+		} else {
 			return ret;
 		}
 	}
@@ -700,7 +699,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public boolean classExists(String name) {
-		if( this.classes.get(name) == null ) {
+		MetaClass ret = (this.classes.get(name));	
+		if( ret == null ) {
 			return false;
 		} else {
 			return true;
@@ -711,9 +711,10 @@ public class CacheMeta {
 	 * @return
 	 */
 	public boolean relationExists(String name) {
-		if( this.relations.get(name) == null ) {
+		MetaRelation ret = (this.relations.get(name));	
+		if( ret == null ) {
 			return false;
-		} 	else {
+		} else {
 			return true;
 		}
 	}
@@ -1172,5 +1173,4 @@ public class CacheMeta {
 		}
 		return true;
 	}
-
 }
