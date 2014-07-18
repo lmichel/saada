@@ -67,13 +67,18 @@ public class VPClassMappingPanel extends VPAxisPanel {
 
 		gbc.next();
 		gbc.left(false);
+		
 		// We set the class-mapping selector
-		new VPMapperPrioritySelector(new JRadioButton[] {classifier_btn, fusion_btn, noclass_btn}
+		VPMapperPrioritySelector selector = new VPMapperPrioritySelector(new JRadioButton[] {classifier_btn, fusion_btn, noclass_btn}
 		, noclass_btn
 		, new ButtonGroup()
-		, new JComponent[] {classField}
 		, panel
 		, gbc);
+		ArrayList<JComponent> axisPriorityComponents =new ArrayList<JComponent>();
+		axisPriorityComponents.add(classField);
+		selector.buildMapper(axisPriorityComponents);
+		
+		
 		
 		// We set the "help" button
 		gbc.next();

@@ -1,8 +1,13 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
@@ -13,43 +18,69 @@ import saadadb.enums.DataMapLevel;
 
 public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 	
-//	private VPKWAppendTextField obs_collection;
-//	private VPKWAppendTextField target_name;
-//	private VPKWAppendTextField facility_name;
-//	private VPKWAppendTextField instrument_name;
 	
 	private VPKWNamedField obs_collection;
 	private VPKWNamedField target_name;
 	private VPKWNamedField facility_name;
 	private VPKWNamedField instrument_name;
-
 	
-	public VPObservationMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry){
+	//protected ArrayList<JComponent> priorityComponents;
+//	private JPanel panel;
+//	private MyGBC obsgbc;
+	
+	public VPObservationMappingPanel(VPSTOEPanel mappingPanel){
 		super(mappingPanel, "Observation Axis",HelpDesk.CLASS_MAPPING);
-		//JPanel panel =  getContainer().getContentPane();
-		
-		
-		
-//		obs_collection = new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		obs_collection.setColumns(AdminComponent.STRING_FIELD_NAME);
-//		target_name =  new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		target_name.setColumns(AdminComponent.STRING_FIELD_NAME);
-//		facility_name = new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		facility_name.setColumns(AdminComponent.STRING_FIELD_NAME);
-//		instrument_name =  new VPKWAppendTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry, priority.buttonGroup);
-//		instrument_name.setColumns(AdminComponent.STRING_FIELD_NAME);
+//		panel = new JPanel(new GridBagLayout());
+//		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+//		obsgbc = new MyGBC(3,3,3,3);
 
-		obs_collection = new VPKWNamedField(this,"Collection ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		target_name = new VPKWNamedField(this,"Target name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		facility_name = new VPKWNamedField(this,"Facility name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		instrument_name = new VPKWNamedField(this,"Instrument name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
+
+		//We set the field we always display
+		obs_collection = new VPKWNamedField(this,"Collection ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
+		target_name = new VPKWNamedField(this,"Target name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
+		facility_name = new VPKWNamedField(this,"Facility name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
+		instrument_name = new VPKWNamedField(this,"Instrument name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
+		axisPriorityComponents = new ArrayList<JComponent>();
 		
-		priority.selector.buildMapper(new JComponent[]{obs_collection.getField(),target_name.getField(),facility_name.getField(),instrument_name.getField()});		
+		axisPriorityComponents.add(obs_collection.getField());
+		axisPriorityComponents.add(target_name.getField());
+		axisPriorityComponents.add(facility_name.getField());
+		axisPriorityComponents.add(instrument_name.getField());
+
 		
+		// = If Category=Entry or Category=Table
+		if(this instanceof VPObservationEntryMappingPanel)
+		{
+			gbc.fill=GridBagConstraints.HORIZONTAL;
+			gbc.gridwidth=GridBagConstraints.REMAINDER;
+			axisPanel.add(new JSeparator(),
+					gbc);
+
+			gbc.newRow();
+			gbc.fill=GridBagConstraints.NONE;
+			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			gbc.right(false);
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+			axisPanel.add(subPanelTitle,gbc);
+			gbc.newRow();
+
+		}
+		else
+		{	
+			priority.selector.buildMapper(axisPriorityComponents);		
+		}
+		
+	
 		obs_collection.setComponents();
 		target_name.setComponents();
 		facility_name.setComponents();
 		instrument_name.setComponents();
+		
+//		gbc.fill=GridBagConstraints.HORIZONTAL;
+//		gbc.gridwidth=GridBagConstraints.REMAINDER;
+//		axisPanel.add(panel,gbc);
+//		gbc.newRow();
+//		
 
 	}
 	
@@ -60,64 +91,32 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 
 		if (!getPriority().noBtn.isSelected())
 		{
-			
+
 			params.add("-obsmapping="+priority.getMode());
 
-			if(mappingPanel.getCategory()!=Category.ENTRY)
-			{
-				if(obs_collection.getText().length()>0)
-					params.add("-obscollection="+obs_collection.getText());
 
-				if(target_name.getText().length()>0)
-					params.add("-target="+target_name.getText());
+			if(obs_collection.getText().length()>0)
+				params.add("-obscollection="+obs_collection.getText());
 
-				if(facility_name.getText().length()>0)
-					params.add("-facility="+facility_name.getText());
+			if(target_name.getText().length()>0)
+				params.add("-target="+target_name.getText());
 
-				if(instrument_name.getText().length()>0)
-					params.add("-instrument="+instrument_name.getText());
-			}
-			else
-			{
-				if(obs_collection.getText().length()>0)
-					params.add("-entry.obscollection="+obs_collection.getText());
+			if(facility_name.getText().length()>0)
+				params.add("-facility="+facility_name.getText());
 
-				if(target_name.getText().length()>0)
-					params.add("-entry.target="+target_name.getText());
+			if(instrument_name.getText().length()>0)
+				params.add("-instrument="+instrument_name.getText());
 
-				if(facility_name.getText().length()>0)
-					params.add("-entry.facility="+facility_name.getText());
-
-				if(instrument_name.getText().length()>0)
-					params.add("-entry.instrument="+instrument_name.getText());
-			}
 
 		}
-		
+
 //		if(getPriority().onlyBtn.isSelected() && emptyField)
 //			mappingPanel.showInfo(mappingPanel.rootFrame,"You selected the \"Only\" priority for the Observation Axis but didn't fill each corresponding field");
 //			
 
 		return params;
 	}
-//
-//	@Override
-//	public String getText() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public void setText(String text) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void reset() {
-//		// TODO Auto-generated method stub
-//		
-//	}
+
 
 	@Override
 	public String checkAxisParams() {
@@ -140,11 +139,20 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 
 	@Override
 	public void reset() {
+		super.reset();
 		obs_collection.reset();
 		target_name.reset();
 		facility_name.reset();
 		instrument_name.reset();
 	}
+
+//	public JPanel getPanel() {
+//		return panel;
+//	}
+//
+//	public MyGBC getGbc() {
+//		return obsgbc;
+//	}
 
 
 }

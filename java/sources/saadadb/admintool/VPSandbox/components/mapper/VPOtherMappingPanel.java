@@ -1,10 +1,14 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JLabel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
@@ -25,8 +29,20 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 	private HashMap<String,JTextField> fields;
 
 
-	public VPOtherMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry) {
+	public VPOtherMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel, "Extended attributes");
+		
+		if(this instanceof VPOtherEntryMappingPanel)
+		{
+			
+			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			gbc.right(false);
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+			axisPanel.add(subPanelTitle,gbc);
+			gbc.newRow();
+
+		}
+		
 		int cpt =0;
 		JTextField field;
 		//		lines= new ArrayList<VPKWNamedField>();
@@ -43,7 +59,7 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 			gbc.next();gbc.left(true);
 			//Here we can add a type check to choose the Field we need
 
-			field=new ReplaceMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,null);
+			field=new ReplaceMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,null);
 			field.setColumns(AdminComponent.STRING_FIELD_NAME);
 			fields.put(e.getKey(), field);
 			axisPanel.add(field,gbc);
@@ -83,14 +99,14 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 		{
 			if(e.getValue().getText().length()>0)
 			{
-				if(mappingPanel.getCategory()!=Category.ENTRY) {
+//				if(mappingPanel.getCategory()!=Category.ENTRY) {
 					params.add("-ukw");
 					params.add(e.getKey().trim()+"="+e.getValue().getText());
-				}
-				else  {
-					params.add("-eukw");
-					params.add(e.getKey().trim()+"="+e.getValue().getText());
-				}
+//				}
+//				else  {
+//					params.add("-eukw");
+//					params.add(e.getKey().trim()+"="+e.getValue().getText());
+//				}
 
 			}
 		}

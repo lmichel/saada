@@ -1,10 +1,12 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import saadadb.admintool.VPSandbox.components.input.VPKWMapper;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
@@ -36,19 +38,27 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 		panel=this.getContainer().getContentPane();
 		helpLabel = new JLabel("?");
 		//gbc.gridwidth=3;
+		
+		
 		gbc.right(false);
 		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 		gbc.next();
 		gbc.left(false);
 		
 		priority=new VPPriorityPanel(mappingPanel,"Priority");
+		
+
+		
 		panel.add(priority,gbc);
 //		panel.add(AdminComponent.getPlainLabel("Priority "), gbc);
 		gbc.next();
 		gbc.right(true);
 		helpLabel=setHelpLabel(classMapping);
 		panel.add(helpLabel,gbc);
+		
 		gbc.newRow();
+	
+	
 		
 //		gbc.left(false);
 

@@ -9,14 +9,17 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPObservableEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPObservationEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPOtherEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPOtherMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
@@ -79,6 +82,8 @@ public class VPSTOEPanel extends MappingKWPanel {
 	private VPIgnoredMappingPanel ignoredMapping;
 	
 	
+	//private JTabbedPane tabs;
+	
 	
 	//protected ArgsParser args;
 	
@@ -94,7 +99,8 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public VPSTOEPanel(AdminTool rootFrame, String title, int category,
 			String ancestor) {
 		super(rootFrame, title, category, ancestor);
-		// this.category = category;
+		 //this.category = category;
+
 		// TODO Auto-generated constructor stub
 	}
 
@@ -111,6 +117,8 @@ public class VPSTOEPanel extends MappingKWPanel {
 		// this code have been copied from the old class MappingKwPanel
 //		if(checkParams())
 //			args = getArgsParser();
+		
+
 		
 		globalGridConstraint = new GridBagConstraints();
 		globalGridConstraint.weightx = 1;			
@@ -130,7 +138,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 		
 		JPanel tPanel = this.addSubPanel("Filter Editor");
 		
-		//JTabbedPane test=new JTabbedPane();
+
 		editorPanel = new JPanel();
 		//test.addTab("Normal Panel", editorPanel);
 		editorPanel.setBackground(LIGHTBACKGROUND);
@@ -148,16 +156,16 @@ public class VPSTOEPanel extends MappingKWPanel {
 		 * Basé sur les appels fait dans MappingKWPanel
 		 */
 		
-		
 		buildAxis();
-		
 
 		//this.add(axisTest2.axisPanel);
 		
 		tPanel.add(new JScrollPane(editorPanel),localGridConstraint);
-
+//		localGridConstraint.gridy++;
+//		tPanel.add(new JScrollPane(tabs),localGridConstraint);
 		this.setActionBar();
 		this.setConfName("Default");
+
 		
 	}
 	
@@ -168,66 +176,138 @@ public class VPSTOEPanel extends MappingKWPanel {
 	
 	private void buildAxis()
 	{
-		// temporaire)
-		boolean forEntry = false;
+		
+		/*
+		 * Category set here because this code is executed by a super class creator
+		 * before the category parameter is used
+		 */
+		if( this.title.equals(MISC_MAPPER) ){
+			category = Category.MISC;
+		}
+		if( this.title.equals(FLATFILE_MAPPER) ){
+			category = Category.FLATFILE;
+		}
+		if( this.title.equals(IMAGE_MAPPER) ){
+			category = Category.IMAGE;
+		}
+		if( this.title.equals(SPECTRUM_MAPPER) ){
+			category = Category.SPECTRUM;
+		}
+		if( this.title.equals(TABLE_MAPPER) ){
+			category = Category.TABLE;
+		}
+		
+		//Temporaire
+		if(this.title.equals(NEW_MAPPER))
+			category=Category.TABLE;
+		
 
 		//Build the Class-Mapping axis (include the extension name choice)
-		
+		System.out.println(this.category);
 		classMapping = new VPClassMappingPanel(this);
 		classMapping.expand();
 		editorPanel.add(classMapping.getContainer(),globalGridConstraint);
 		
 		globalGridConstraint.gridy++;
 		
-		//Build the observable Axis
-		//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
-		//ObservableAxis.collapse();
-		//editorPanel.add(ObservableAxis.container, globalGridConstraint);
+		if(this.category==Category.ENTRY || this.category==Category.TABLE)
+		{
+			observationMapping = new VPObservationEntryMappingPanel(this);
+			observationMapping.expand();
+			editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
+			
+			globalGridConstraint.gridy++;
 
-		
-		observationMapping = new VPObservationMappingPanel(this,forEntry);
-		observationMapping.expand();
-		editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
-		
-		spaceMapping = new VPSpaceMappingPanel(this,forEntry);
-		spaceMapping.collapse();
-		editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
-		
-		
-		globalGridConstraint.gridy++;
-		
-		energyMapping = new VPEnergyMappingPanel(this,forEntry);
-		energyMapping.collapse();
-		editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
-		
+			spaceMapping = new VPSpaceMappingPanel(this);
+			spaceMapping.collapse();
+			editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
 
-		globalGridConstraint.gridy++;
-		
-		timeMapping = new VPTimeMappingPanel(this,forEntry);
-		timeMapping.collapse();
-		editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
-		
-		observableMapping = new VPObservableMappingPanel(this,forEntry,rootFrame);
-		observableMapping.collapse();
-		editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
-		
-		ignoredMapping=new VPIgnoredMappingPanel(this, forEntry);
-		ignoredMapping.collapse();
-		editorPanel.add(ignoredMapping.getContainer(),globalGridConstraint);
-		
-		globalGridConstraint.gridy++;
 
-		otherMapping = new VPOtherMappingPanel(this, forEntry);
-		otherMapping.collapse();
-		editorPanel.add(otherMapping.getContainer(),globalGridConstraint);
-		
-		
+			globalGridConstraint.gridy++;
+
+			energyMapping = new VPEnergyMappingPanel(this);
+			energyMapping.collapse();
+			editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
+
+
+			globalGridConstraint.gridy++;
+
+			timeMapping = new VPTimeMappingPanel(this);
+			timeMapping.collapse();
+			editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			observableMapping = new VPObservableEntryMappingPanel(this,rootFrame);
+			observableMapping.collapse();
+			editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			ignoredMapping=new VPIgnoredEntryMappingPanel(this);
+			ignoredMapping.collapse();
+			editorPanel.add(ignoredMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			otherMapping = new VPOtherEntryMappingPanel(this);
+			otherMapping.collapse();
+			editorPanel.add(otherMapping.getContainer(),globalGridConstraint);
+		}
+		else
+		{
+
+
+
+			//Build the observable Axis
+			//VPObservableMappingPanel ObservableAxis = new VPObservableMappingPanel();
+			//ObservableAxis.collapse();
+			//editorPanel.add(ObservableAxis.container, globalGridConstraint);
+
+
+			observationMapping = new VPObservationMappingPanel(this);
+			observationMapping.expand();
+			editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			spaceMapping = new VPSpaceMappingPanel(this);
+			spaceMapping.collapse();
+			editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
+
+
+			globalGridConstraint.gridy++;
+
+			energyMapping = new VPEnergyMappingPanel(this);
+			energyMapping.collapse();
+			editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
+
+
+			globalGridConstraint.gridy++;
+
+			timeMapping = new VPTimeMappingPanel(this);
+			timeMapping.collapse();
+			editorPanel.add(timeMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			observableMapping = new VPObservableMappingPanel(this,rootFrame);
+			observableMapping.collapse();
+			editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			ignoredMapping=new VPIgnoredMappingPanel(this);
+			ignoredMapping.collapse();
+			editorPanel.add(ignoredMapping.getContainer(),globalGridConstraint);
+
+			globalGridConstraint.gridy++;
+
+			otherMapping = new VPOtherMappingPanel(this);
+			otherMapping.collapse();
+			editorPanel.add(otherMapping.getContainer(),globalGridConstraint);
+
+		}
 		//WIP
 	}
 	@Override
@@ -255,6 +335,8 @@ public class VPSTOEPanel extends MappingKWPanel {
 		
 		if(otherMapping!=null)
 			otherMapping.reset();
+		
+
 
 	}
 	
@@ -445,79 +527,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 			timeMapping.setOnError(true);
 			msg+=temp;
 		}
-	
-		/*
-		 * Observable Check
-		 */
-		
-	
-//		if( cooSysMapper != null ) {
-//			cooSysMapper.setOnError(false);
-//			if( !cooSysMapper.isNo() && cooSysMapper.getText().length() == 0 ){
-//				cooSysMapper.setOnError(true);
-//				msg += "<LI>Empty coord. system  not allowed in this mapping mode</LI>";
-//			}
-//			if( !cooSysMapper.valid()  ){
-//				cooSysMapper.setOnError(true);
-//				msg += "<LI>Coord System badly formed</LI>";				
-//			}
-//		}
-//		if( positionMapper != null ) {
-//			positionMapper.setOnError(false);
-//			if( !positionMapper.isNo() && positionMapper.getText().length() == 0 ){
-//				cooSysMapper.setOnError(true);
-//				msg += "<LI>Empty coordinates not allowed in this mapping mode</LI>";
-//			}
-//			if( !positionMapper.valid()  ){
-//				positionMapper.setOnError(true);
-//				msg += "<LI>Coord mapping badly formed</LI>";				
-//			}
-//		}
-//		if( e_positionMapper != null ) {
-//			e_positionMapper.setOnError(false);
-//			if( !e_positionMapper.isNo() && e_positionMapper.getText().length() == 0 ){
-//				e_positionMapper.setOnError(true);
-//				msg += "<LI>Empty coordinates not allowed in this mapping mode</LI>";
-//			}
-//			if( !e_positionMapper.valid()  ){
-//				e_positionMapper.setOnError(true);
-//				msg += "<LI>Coord mapping badly formed</LI>";				
-//			}
-//		}
-//		if( positionErrorMapper != null ) {
-//			positionErrorMapper.setOnError(false);
-//			if( !positionErrorMapper.isNo() && positionErrorMapper.getText().length() == 0 ){
-//				positionErrorMapper.setOnError(true);
-//				msg += "<LI>Empty coordinates error not allowed in this mapping mode</LI>";
-//			}
-//			if( !positionErrorMapper.valid()  ){
-//				positionErrorMapper.setOnError(true);
-//				msg += "<LI>Coord error mapping badly formed</LI>";				
-//			}
-//		}
-//		if( e_positionErrorMapper != null ) {
-//			e_positionErrorMapper.setOnError(false);
-//			if( !e_positionErrorMapper.isNo() && e_positionErrorMapper.getText().length() == 0 ){
-//				e_positionErrorMapper.setOnError(true);
-//				msg += "<LI>Empty coordinate error not allowed in this mapping mode</LI>";
-//			}
-//			if( !e_positionErrorMapper.valid()  ){
-//				e_positionErrorMapper.setOnError(true);
-//				msg += "<LI>Coord error mapping badly formed</LI>";				
-//			}
-//		}
-//		
-//		if( dispersionMapper != null ) {
-//			dispersionMapper.setOnError(false);
-//			if( !dispersionMapper.isNo() &&  dispersionMapper.getText().length() == 0 ) {
-//				dispersionMapper.setOnError(true);
-//				msg += "<LI>Empty spectral dispersion not allowed in this mapping mode</LI>";
-//			}
-//			if( !dispersionMapper.valid()  ){
-//				dispersionMapper.setOnError(true);
-//				msg += "<LI>Spectral dispersion badly formed</LI>";				
-//			}
-//		}
+
 		
 		if( msg.length() > 0 ) {
 			AdminComponent.showInputError(rootFrame, "<HTML><UL>" + msg);

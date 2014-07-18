@@ -3,6 +3,7 @@ package saadadb.admintool.VPSandbox.components.mapper;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -20,6 +21,11 @@ import saadadb.exceptions.QueryException;
 
 //Hériter directement de MappingPanel ?
 public abstract class VPAxisPanel {
+	
+	public final static int SUBPANELCOLOR = 0x194B6C;
+	public final static String SUBPANELHEADER="Header Mapper";
+	public final static String SUBPANELENTRY="Entry Mapper";
+	
 	protected MyGBC gbc;
 	protected JPanel axisPanel;
 	protected JLabel axisLabel;
@@ -27,6 +33,9 @@ public abstract class VPAxisPanel {
 	private String helpString;
 	protected JLabel helpLabel;
 	protected VPSTOEPanel mappingPanel;
+	
+	//List of component which depend of the priority (or fusion selector) in the axis
+	protected ArrayList<JComponent> axisPriorityComponents;
 	/*
 	 * Fonctionnement basé sur ClassMappingPanel() 
 	 */

@@ -32,6 +32,7 @@ public class VPKWNamedFieldnBox extends VPKWNamedField {
 	{
 		super.reset();
 		comboBox.setSelectedIndex(0);
+		comboBox.setEnabled(false);
 	}
 	
 
