@@ -1,11 +1,15 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JSeparator;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedComboBox;
@@ -25,11 +29,39 @@ public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 	//Just here to allow the use of the MetaDataPanel
 	private SQLJTable productTable;
 
-	public VPObservableMappingPanel(VPSTOEPanel mappingPanel, boolean forEntry,final AdminTool rootFrame) {
+	public VPObservableMappingPanel(VPSTOEPanel mappingPanel, final AdminTool rootFrame) {
 		super(mappingPanel, "Observable Axis",HelpDesk.CLASS_MAPPING);
+		
 		oucd = new VPKWNamedFieldnButton(this,"UCD ",new UcdTextField(50),new JButton("Open Meta Data panel"));
 		ocalibstatus = new VPKWNamedComboBox(this,"Calibration Status",new String[]{"","0","1","2","3","4"});
-		priority.selector.buildMapper(new JComponent[]{oucd.getField(),ocalibstatus.getComboBox(),oucd.getButton()});
+		axisPriorityComponents = new ArrayList<JComponent>();
+		
+		axisPriorityComponents.add(oucd.getField());
+		axisPriorityComponents.add(oucd.getButton());
+		axisPriorityComponents.add(ocalibstatus.getComboBox());
+		
+		// = If Category=Entry or Category=Table
+		if(this instanceof VPObservableEntryMappingPanel)
+		{
+			gbc.fill=GridBagConstraints.HORIZONTAL;
+			gbc.gridwidth=GridBagConstraints.REMAINDER;
+			axisPanel.add(new JSeparator(),
+					gbc);
+
+			gbc.newRow();
+			gbc.fill=GridBagConstraints.NONE;
+			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			gbc.right(false);
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+			axisPanel.add(subPanelTitle,gbc);
+			gbc.newRow();
+
+		}
+		else
+		{	
+			priority.selector.buildMapper(axisPriorityComponents);		
+		}
+		
 
 		oucd.setComponents();ocalibstatus.setComponents();	
 
@@ -56,22 +88,22 @@ public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 		{
 
 			params.add("-observablemapping="+priority.getMode());
-			if(mappingPanel.getCategory()!=Category.ENTRY)
-			{
+//			if(mappingPanel.getCategory()!=Category.ENTRY)
+//			{
 				if(oucd.getText().length()>0)
 					params.add("-oucd="+oucd.getText());
 
 				if(ocalibstatus.getComboBox().getSelectedItem().toString().length()>0)
 					params.add("-ocalibstatus="+ocalibstatus.getComboBox().getSelectedItem().toString());
-			}
-			else
-			{
-				if(oucd.getText().length()>0)
-					params.add("-entry.oucd="+oucd.getText());
-
-				if(ocalibstatus.getComboBox().getSelectedItem().toString().length()>0)
-					params.add("-entry.ocalibstatus="+ocalibstatus.getComboBox().getSelectedItem().toString());
-			}
+//			}
+//			else
+//			{
+//				if(oucd.getText().length()>0)
+//					params.add("-entry.oucd="+oucd.getText());
+//
+//				if(ocalibstatus.getComboBox().getSelectedItem().toString().length()>0)
+//					params.add("-entry.ocalibstatus="+ocalibstatus.getComboBox().getSelectedItem().toString());
+//			}
 
 		}
 
@@ -99,6 +131,7 @@ public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 
 	@Override
 	public void reset() {
+		super.reset();
 		oucd.reset();
 		ocalibstatus.reset();
 		

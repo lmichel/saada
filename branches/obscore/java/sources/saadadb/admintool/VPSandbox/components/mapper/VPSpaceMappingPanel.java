@@ -29,13 +29,20 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 
 
 
-	public VPSpaceMappingPanel(VPSTOEPanel mappingPanel,boolean forEntry) {
+	public VPSpaceMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel, "Space Axis",HelpDesk.POSITION_MAPPING);
-		positionField = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup));
-		positionError = new VPKWNamedFieldnBox(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
-		system = new VPKWNamedFieldnBox(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,priority.buttonGroup),new String[]{"", "ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
+		positionField = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
+		positionError = new VPKWNamedFieldnBox(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
+		system = new VPKWNamedFieldnBox(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup),new String[]{"", "ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
 
-		priority.selector.buildMapper(new JComponent[]{system.getField(),positionField.getField(),positionError.getField(),positionError.getComboBox(),system.getComboBox()});
+		axisPriorityComponents = new ArrayList<JComponent>();
+		//Field which are dependant of the priority
+		axisPriorityComponents.add(positionField.getField());
+		axisPriorityComponents.add(positionError.getField());
+		axisPriorityComponents.add(positionError.getComboBox());
+		axisPriorityComponents.add(system.getField());
+		axisPriorityComponents.add(system.getComboBox());
+		priority.selector.buildMapper(axisPriorityComponents);
 		//helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
 
 
@@ -57,9 +64,9 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 					else
 						system.getField().setText("");
 					
-					if( priority.noBtn.isSelected() ) {
-						priority.firstBtn.setSelected(true) ;
-					}
+//					if( priority.noBtn.isSelected() ) {
+//						priority.firstBtn.setSelected(true) ;
+//					}
 				}
 			}
 		});
@@ -77,8 +84,8 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 			if(system.getText().length()>0)
 				params.add("-system="+system.getText());
 
-			if(mappingPanel.getCategory()!=Category.ENTRY)
-			{
+//			if(mappingPanel.getCategory()!=Category.ENTRY)
+//			{
 				if(positionField.getText().length()>0)
 					params.add("-position="+positionField.getText());
 	
@@ -87,19 +94,19 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 	
 				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
 					params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
-			}
-			else
-			{
-				if(positionField.getText().length()>0)
-					params.add("-entry.position="+positionField.getText());
-	
-				if(positionError.getText().length()>0)
-					params.add("-entry.poserror="+positionError.getText());
-	
-				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
-					params.add("-entry.poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
-				
-			}
+//			}
+//			else
+//			{
+//				if(positionField.getText().length()>0)
+//					params.add("-entry.position="+positionField.getText());
+//	
+//				if(positionError.getText().length()>0)
+//					params.add("-entry.poserror="+positionError.getText());
+//	
+//				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
+//					params.add("-entry.poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+//				
+//			}
 
 		}
 
@@ -128,6 +135,7 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 
 	@Override
 	public void reset() {
+		super.reset();
 		system.reset();
 		positionField.reset();
 		positionError.reset();

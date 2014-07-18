@@ -19,5 +19,12 @@ public class VPKWNamedFieldnButton extends VPKWNamedField {
 	public JButton getButton() {
 		return button;
 	}
+	
+	
+	public void reset()
+	{
+		super.reset();
+		button.setEnabled(false);
+	}
 
 }

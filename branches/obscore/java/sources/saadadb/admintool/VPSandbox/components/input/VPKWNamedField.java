@@ -27,6 +27,7 @@ public class VPKWNamedField extends VPKWMapper {
 		this.field =  mappingTextField;//new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,bg);
 		this.field.setColumns(AdminComponent.STRING_FIELD_NAME);
 		container.add(mappingTextField);
+		
 
 
 
@@ -40,6 +41,7 @@ public class VPKWNamedField extends VPKWMapper {
 	public void reset()
 	{
 		field.setText("");
+		field.setEnabled(false);
 	}
 	
 	public String getText()
