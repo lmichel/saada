@@ -1,18 +1,21 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Color;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JSeparator;
 
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldnBox;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
 
 public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
@@ -42,8 +45,36 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		axisPriorityComponents.add(positionError.getComboBox());
 		axisPriorityComponents.add(system.getField());
 		axisPriorityComponents.add(system.getComboBox());
-		priority.selector.buildMapper(axisPriorityComponents);
+		//priority.selector.buildMapper(axisPriorityComponents);
 		//helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+		// = If Category=Entry or Category=Table
+		if(this instanceof VPSpaceEntryMappingPanel)
+		{
+			gbc.fill=GridBagConstraints.HORIZONTAL;
+			gbc.gridwidth=GridBagConstraints.REMAINDER;
+			JSeparator separator = new JSeparator();
+			separator.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
+			separator.setForeground(new Color(VPAxisPanel.SEPARATORCOLOR));
+			axisPanel.add(separator,
+					gbc);
+
+
+			gbc.newRow();
+			gbc.fill=GridBagConstraints.NONE;
+			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			gbc.right(false);
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+			axisPanel.add(subPanelTitle,gbc);
+			gbc.newRow();
+
+		}
+		else
+		{	
+			priority.selector.buildMapper(axisPriorityComponents);		
+		}
+		
+		
+
 
 
 		positionField.setComponents();

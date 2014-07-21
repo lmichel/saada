@@ -10,8 +10,6 @@ import javax.swing.JSeparator;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
-import saadadb.admintool.utils.HelpDesk;
-import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
 
 public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
@@ -23,16 +21,17 @@ public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 		//The separator
 		gbc.fill=GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
-		JSeparator sep = new JSeparator();
-		sep.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
-		axisPanel.add(sep,
+		JSeparator separator = new JSeparator();
+		separator.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
+		separator.setForeground(new Color(VPAxisPanel.SEPARATORCOLOR));
+		axisPanel.add(separator,
 				gbc);
 
 		gbc.newRow();
 		gbc.fill=GridBagConstraints.NONE;
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
 		gbc.right(false);
-		subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+		subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 		axisPanel.add(subPanelTitle,gbc);
 		gbc.newRow();
 

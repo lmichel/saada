@@ -15,7 +15,7 @@ import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredMappingPanel;
-import saadadb.admintool.VPSandbox.components.mapper.VPObservableEntryMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPSpaceEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
@@ -218,7 +218,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 			
 			globalGridConstraint.gridy++;
 
-			spaceMapping = new VPSpaceMappingPanel(this);
+			spaceMapping = new VPSpaceEntryMappingPanel(this);
 			spaceMapping.collapse();
 			editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
 
@@ -238,7 +238,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 			globalGridConstraint.gridy++;
 
-			observableMapping = new VPObservableEntryMappingPanel(this,rootFrame);
+			observableMapping = new VPObservableMappingPanel(this,rootFrame);
 			observableMapping.collapse();
 			editorPanel.add(observableMapping.getContainer(),globalGridConstraint);
 

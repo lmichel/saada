@@ -1,5 +1,6 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.QueryException;
 
-/*
+/**
  * This class manage the expensible container corresponding to an axis
  */
 
@@ -22,10 +23,10 @@ import saadadb.exceptions.QueryException;
 //Hériter directement de MappingPanel ?
 public abstract class VPAxisPanel {
 	
-	public final static int SUBPANELCOLOR = 0x194B6C;
+	public final static int SUBPANELTITLECOLOR = CollapsiblePanel.COLLAPSIBLEPANELTITLECOLOR;
 	public final static String SUBPANELHEADER="Header Mapper";
 	public final static String SUBPANELENTRY="Entry Mapper";
-	public final static int SEPARATORCOLOR = 0xFAFAFA;
+	public final static int SEPARATORCOLOR = 0xBBBEBF;
 	
 	protected MyGBC gbc;
 	protected JPanel axisPanel;
@@ -60,6 +61,7 @@ public abstract class VPAxisPanel {
 //		axisPanel.add(ds);
 	
 		this.mappingPanel=mappingPanel;
+		//container.setBorder(BorderFactory.createLineBorder(Color.red));
 //		ccs = new MyGBC();
 //		ccs.left(false);
 

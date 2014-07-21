@@ -10,12 +10,19 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * Represent the Energy axis in the panel
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 
 	// spectral range (=column)
+	/*
+	 * Each attribute represent a line
+	 */
 	private VPKWNamedFieldnBox spcRange;
 	private VPKWNamedField spcResPower;
 	

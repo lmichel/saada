@@ -35,7 +35,7 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 			
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
-			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
 
