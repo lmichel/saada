@@ -37,11 +37,14 @@ public class CollapsiblePanel extends JPanel {
 
         Vector<CollapeListener> collapeListeners;
 
+    public final static int COLLAPSIBLEPANELTITLECOLOR=0x107279;
+    public final static int COLLAPSIBLEPANELBORDERCOLOR = 0x5992D4;
+        
     //Border
     CollapsableTitledBorder border; // includes upper left component and line type
     Border collapsedBorderLine = BorderFactory.createEmptyBorder(2, 2, 2, 2); // no border
-    Border expandedBorderLine = null; // because this is null, default is used, etched lowered border on MAC
-
+    //Border expandedBorderLine = null; // because this is null, default is used, etched lowered border on MAC
+    Border expandedBorderLine = BorderFactory.createLineBorder(new Color(COLLAPSIBLEPANELBORDERCOLOR));
     //Title
     AbstractButton titleComponent; // displayed in the titled border
 
@@ -83,7 +86,7 @@ public class CollapsiblePanel extends JPanel {
         arrow.setText(text);
         titleComponent = arrow;
         //titleComponent.setForeground(new Color(0x20878E));
-        titleComponent.setForeground(new Color(0x107279));
+        titleComponent.setForeground(new Color(COLLAPSIBLEPANELTITLECOLOR));
         titleComponent.setFont(AdminComponent.titleFont);
         collapsed = true;
         commonConstructor();
@@ -323,9 +326,12 @@ public class CollapsiblePanel extends JPanel {
                     borderR.height -= diff;
                     break;
             }
+           
             border.paintBorder(c, g, borderR.x, borderR.y, borderR.width, borderR.height);
             Color col = g.getColor();
+//            Color col = new Color(0xFFFFFF);
             g.setColor(c.getBackground());
+//            g.setColor(new Color(0xFFFFFF));
             g.fillRect(compR.x, compR.y, compR.width, compR.height);
             g.setColor(col);
         }
