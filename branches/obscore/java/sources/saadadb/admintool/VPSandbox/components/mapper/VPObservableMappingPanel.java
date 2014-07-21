@@ -1,15 +1,11 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JSeparator;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedComboBox;
@@ -19,7 +15,6 @@ import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.components.input.UcdTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.windows.VoTreeFrame;
-import saadadb.collection.Category;
 
 public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 
@@ -41,28 +36,28 @@ public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 		axisPriorityComponents.add(ocalibstatus.getComboBox());
 		
 		// = If Category=Entry or Category=Table
-		if(this instanceof VPObservableEntryMappingPanel)
-		{
-			gbc.fill=GridBagConstraints.HORIZONTAL;
-			gbc.gridwidth=GridBagConstraints.REMAINDER;
-			JSeparator sep = new JSeparator();
-			sep.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
-			axisPanel.add(sep,
-					gbc);
-
-			gbc.newRow();
-			gbc.fill=GridBagConstraints.NONE;
-			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
-			gbc.right(false);
-			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
-			axisPanel.add(subPanelTitle,gbc);
-			gbc.newRow();
-
-		}
-		else
-		{	
+//		if(this instanceof VPSpaceEntryMappingPanel)
+//		{
+//			gbc.fill=GridBagConstraints.HORIZONTAL;
+//			gbc.gridwidth=GridBagConstraints.REMAINDER;
+//			JSeparator sep = new JSeparator();
+//			sep.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
+//			axisPanel.add(sep,
+//					gbc);
+//
+//			gbc.newRow();
+//			gbc.fill=GridBagConstraints.NONE;
+//			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+//			gbc.right(false);
+//			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+//			axisPanel.add(subPanelTitle,gbc);
+//			gbc.newRow();
+//
+//		}
+//		else
+//		{	
 			priority.selector.buildMapper(axisPriorityComponents);		
-		}
+//		}
 		
 
 		oucd.setComponents();ocalibstatus.setComponents();	

@@ -8,7 +8,6 @@ import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.collection.Category;
 import saadadb.enums.DataMapLevel;
 
 public class VPTimeMappingPanel extends VPAxisPriorityPanel {

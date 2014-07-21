@@ -1,11 +1,9 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.Color;
-import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
-import javax.swing.JSeparator;
 
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
@@ -30,7 +28,7 @@ public class VPIgnoredMappingPanel extends VPAxisPanel {
 
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
-			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELCOLOR));
+			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
 

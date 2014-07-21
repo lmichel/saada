@@ -33,9 +33,6 @@ public class VPClassMappingPanel extends VPAxisPanel {
 	 */
 	
 	
-	/*/!\ RAJOUTER IGNORED KEYWORDS
-	 * 
-	 */
 	public VPClassMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel,"Class-Mapping Axis");
 		JPanel panel =  getContainer().getContentPane();
