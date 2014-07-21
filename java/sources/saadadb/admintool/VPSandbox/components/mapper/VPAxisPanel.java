@@ -25,6 +25,7 @@ public abstract class VPAxisPanel {
 	public final static int SUBPANELCOLOR = 0x194B6C;
 	public final static String SUBPANELHEADER="Header Mapper";
 	public final static String SUBPANELENTRY="Entry Mapper";
+	public final static int SEPARATORCOLOR = 0xFAFAFA;
 	
 	protected MyGBC gbc;
 	protected JPanel axisPanel;
@@ -48,6 +49,7 @@ public abstract class VPAxisPanel {
 		axisPanel = getContainer().getContentPane();
 		axisPanel.setLayout(new GridBagLayout());
 		axisPanel.setBackground(AdminComponent.LIGHTBACKGROUND);
+		
 		
 		//Temporaire
 //		JLabel ds = AdminComponent.getPlainLabel("<HTML><A HREF=>TEST</A>");

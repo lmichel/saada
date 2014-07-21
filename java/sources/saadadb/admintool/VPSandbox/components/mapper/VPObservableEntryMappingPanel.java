@@ -32,7 +32,9 @@ public class VPObservableEntryMappingPanel extends VPObservableMappingPanel{
 		//The separator
 		gbc.fill=GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
-		axisPanel.add(new JSeparator(),
+		JSeparator sep = new JSeparator();
+		sep.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
+		axisPanel.add(sep,
 				gbc);
 
 		gbc.newRow();

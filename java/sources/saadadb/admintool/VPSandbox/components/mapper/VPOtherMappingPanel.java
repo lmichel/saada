@@ -1,14 +1,12 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
 import java.awt.Color;
-import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JLabel;
-import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
