@@ -71,10 +71,10 @@ public class ExtAttMapperPanel extends MappingPanel {
 		for( int i=0 ; i<mappingTextFields.length ; i++) {
 			if( mappingTextFields[i].getText().length() > 0 ) {
 				if( category == Category.ENTRY ){
-					retour.add("-ukw");		
+					retour.add("-eukw");		
 				}
 				else {
-					retour.add("-eukw");							
+					retour.add("-ukw");							
 				}
 				retour.add(mappingTextLabels[i].getText() + "=" + mappingTextFields[i].getText());							
 			}			
