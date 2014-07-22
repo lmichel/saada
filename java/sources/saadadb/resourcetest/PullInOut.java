@@ -136,14 +136,14 @@ public class PullInOut {
 					System.out.println(cpt);
 				}
 				// on verifie s'il s'agit du debut d'une table, ce qui permet de detecter une nouvelle table, sachant que toutes les metadonnees complementaires sont egalement en memoire comme pour la table precedente
-				if (sb.getStatistics().iTRLocalGet() == 1) {
-					// first row of a (new) TABLE
-					//System.out.println("premiere ligne");
-				}
-				else { // la suite de la table
-					// row of the current TABLE 
-					//System.out.println("ligne suivante");
-				}
+//				if (sb.getStatistics().iTRLocalGet() == 1) {
+//					// first row of a (new) TABLE
+//					//System.out.println("premiere ligne");
+//				}
+//				else { // la suite de la table
+//					// row of the current TABLE 
+//					//System.out.println("ligne suivante");
+//				}
 				
 				currentTR = sb.getNextTR();    
 			}
