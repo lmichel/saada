@@ -609,7 +609,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	/**
-	 * @param name
+	 * @param tableName
 	 * @return
 	 * @throws Exception 
 	 */
@@ -659,7 +659,7 @@ public abstract class SaadaInstance implements DMInterface {
 		}
 	}
 	/**
-	 * @param name
+	 * @param tableName
 	 * @return
 	 * @throws Exception 
 	 */
@@ -796,7 +796,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 	/**
 	 * Return the value of the first field having the requested UCD
-	 * @param name
+	 * @param tableName
 	 * @return
 	 * @throws NoSuchFieldException 
 	 * @throws IllegalAccessException 
