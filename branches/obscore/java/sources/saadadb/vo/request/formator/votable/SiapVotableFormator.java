@@ -218,7 +218,7 @@ public class SiapVotableFormator extends VotableFormator {
 		}
 	}
 	@Override
-	protected void writeProtocolParamDescription() {
+	protected void writeProtocolParamDescription() throws Exception{
 		ParamSet paramSet = new ParamSet();
 		SavotParam param = new SavotParam();
 		param.setName("INPUT:POS");

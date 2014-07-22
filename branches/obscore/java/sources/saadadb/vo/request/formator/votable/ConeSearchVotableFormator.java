@@ -1,5 +1,7 @@
 package saadadb.vo.request.formator.votable;
 
+import java.io.IOException;
+
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
@@ -154,7 +156,7 @@ public class ConeSearchVotableFormator extends VotableFormator{
 	}
 
 	@Override
-	protected void writeProtocolParamDescription() {
+	protected void writeProtocolParamDescription() throws IOException {
 		ParamSet paramSet = new ParamSet();
 		SavotParam param = new SavotParam();
 		param.setName("INPUT:RA");
