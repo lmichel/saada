@@ -15,18 +15,20 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import saadadb.admintool.AdminTool;
+import saadadb.admintool.VPSandbox.panels.VPPreviewPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.LoaderConfigChooser;
 import saadadb.admintool.components.RenameButton;
 import saadadb.admintool.components.SaveButton;
-import saadadb.admintool.components.SwitchButtonWIP;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.mapper.ClassMapperPanel;
 import saadadb.admintool.components.mapper.CoordSysMapperPanel;
@@ -174,7 +176,44 @@ public class MappingKWPanel extends EditPanel {
 				}
 			});
 			category_panel.add(ds, ccs);
+			
+			ccs.gridx++; 
+			
+			
+			/*
+			 * Add by Valentin Pertuy : Preview Link
+			 */
+			ds = AdminComponent.getPlainLabel("<HTML><A HREF=>Preview</A> ");
+			ds.setToolTipText("Show dataloader parameters matching the current configuration.");
+			
+			category_panel.add(ds, ccs);
+			ds.addMouseListener(new MouseAdapter()
+			{
+				public void mouseReleased(MouseEvent e) {
+					//WIP
+					int returnVal=0;
+					File selectedFile=null;
+					JFrame frame = new JFrame();
+					frame.setBackground(AdminComponent.LIGHTBACKGROUND);
+					JFileChooser chooser = new JFileChooser();
+					returnVal=chooser.showOpenDialog(null);
+					if(returnVal == JFileChooser.APPROVE_OPTION) {
+						if(chooser.getSelectedFile()!=null)
+							selectedFile=new File(chooser.getSelectedFile().getAbsolutePath());
+					}
+					//if a file is selected, we create the preview
+					if(selectedFile!=null)
+					{
+						ArgsParser ap = getArgsParser();
+						frame.add(new VPPreviewPanel(ap,selectedFile));
+						frame.pack();
+						frame.setVisible(true);
+					}
+				}
+			
+			});
 
+			
 			globalGridConstraint.weightx = 1;
 			editorPanel.add(category_panel, globalGridConstraint);
 		}
