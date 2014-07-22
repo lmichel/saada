@@ -8,16 +8,14 @@ import javax.swing.JPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 
 public class VPKWNamedComboBox extends VPKWMapper{
-
-
+	
 	private JComboBox comboBox;
+	
 	public VPKWNamedComboBox(VPAxisPriorityPanel axisPanel, String title, String[] choices) {
 		super(axisPanel, title);
 		comboBox = new JComboBox(choices);
 		container=new JPanel(new FlowLayout(FlowLayout.CENTER,2,0));
 		container.add(comboBox);
-
-
 		// TODO Auto-generated constructor stub
 	}
 
@@ -27,12 +25,14 @@ public class VPKWNamedComboBox extends VPKWMapper{
 		return comboBox.getSelectedItem().toString();
 	}
 	
-	
 	public JComboBox getComboBox()
 	{
 		return comboBox;
 	}
 	
+	/**
+	 * put the comboBox to its first index
+	 */
 	public void reset()
 	{
 		comboBox.setSelectedIndex(0);

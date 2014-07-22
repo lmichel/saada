@@ -5,28 +5,26 @@ import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 
+/**
+ * Represent a line in an Axis panel composed of a name, an AppendTextField (KeyWord mapped field) and a comboBox
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPKWNamedFieldnBox extends VPKWNamedField {
 
 	private JComboBox comboBox ;
-	
+
 	public VPKWNamedFieldnBox(VPAxisPriorityPanel axisPanel, String name,JTextField field,String[] combo) {
 		super(axisPanel, name, field);
-		
 		comboBox= new JComboBox(combo);
-//		container = new JPanel(new GridLayout(0,2));
-//		container.add(field);
-		//container.add(AdminComponent.getPlainLabel("Units "));
 		container.add(comboBox);
-	
-	
 	}
-	
-	
+
 	public JComboBox getComboBox()
 	{
 		return comboBox;
 	}
-	
+
 	@Override
 	public void reset()
 	{
@@ -34,7 +32,7 @@ public class VPKWNamedFieldnBox extends VPKWNamedField {
 		comboBox.setSelectedIndex(0);
 		comboBox.setEnabled(false);
 	}
-	
+
 
 
 }
