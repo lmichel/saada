@@ -41,8 +41,10 @@ import saadadb.util.Messenger;
 
 // Héritage temporaire (évite les modifications..)
 public class VPSTOEPanel extends MappingKWPanel {
-
-
+	
+	/*
+	 * The list of axis (subpanel) of the form 
+	 */
 	private VPClassMappingPanel classMapping;
 	private VPObservationMappingPanel observationMapping;
 	private VPSpaceMappingPanel spaceMapping;
@@ -57,9 +59,11 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public VPSTOEPanel(AdminTool rootFrame, String title, int category,
 			String ancestor) {
 		super(rootFrame, title, category, ancestor);
-
 	}
 
+	/**
+	 * Call when the user select "Create Filter", it builds the filter panel
+	 */
 	@Override
 	protected void setActivePanel() {
 		globalGridConstraint = new GridBagConstraints();
@@ -76,16 +80,16 @@ public class VPSTOEPanel extends MappingKWPanel {
 		localGridConstraint.anchor = GridBagConstraints.NORTH;
 		localGridConstraint.gridx = 0;
 		localGridConstraint.gridy = 0;
-		
+
 		JPanel tPanel = this.addSubPanel("Filter Editor");
-		
+
 		editorPanel = new JPanel();
 		editorPanel.setBackground(LIGHTBACKGROUND);
 		editorPanel.setLayout(new GridBagLayout());
 		this.addCategoryPanel();
 		globalGridConstraint.gridy++;
-		
-		//we build the panels;
+
+		//we build the subpanels/Axis;
 		buildAxis();
 
 		tPanel.add(new JScrollPane(editorPanel),localGridConstraint);
@@ -93,17 +97,21 @@ public class VPSTOEPanel extends MappingKWPanel {
 		this.setActionBar();
 		this.setConfName("Default");
 
-		
+
 	}
-	
+
 	/**
 	 * Build the axis panels and add them to the editor_panel
 	 */
-	
-	
+
+
 	private void buildAxis()
 	{
 
+		/*
+		 * Category set here because this code is executed by a super class creator
+		 * before the category parameter is used
+		 */
 		if( this.title.equals(MISC_MAPPER) ){
 			category = Category.MISC;
 		}
@@ -119,37 +127,35 @@ public class VPSTOEPanel extends MappingKWPanel {
 		if( this.title.equals(TABLE_MAPPER) ){
 			category = Category.TABLE;
 		}
-		
-		//Temporaire
+
+		//Temporary
 		if(this.title.equals(NEW_MAPPER))
-			category=Category.TABLE;
+			category=Category.SPECTRUM;
 
 		classMapping = new VPClassMappingPanel(this);
 		classMapping.expand();
 		editorPanel.add(classMapping.getContainer(),globalGridConstraint);
-		
+
 		globalGridConstraint.gridy++;
-		
+
 		//if we're in the case of a Table
 		if(this.category==Category.ENTRY || this.category==Category.TABLE)
 		{
 			observationMapping = new VPObservationEntryMappingPanel(this);
 			observationMapping.expand();
 			editorPanel.add(observationMapping.getContainer(),globalGridConstraint);
-			
+
 			globalGridConstraint.gridy++;
 
 			spaceMapping = new VPSpaceEntryMappingPanel(this);
 			spaceMapping.collapse();
 			editorPanel.add(spaceMapping.getContainer(),globalGridConstraint);
 
-
 			globalGridConstraint.gridy++;
 
 			energyMapping = new VPEnergyMappingPanel(this);
 			energyMapping.collapse();
 			editorPanel.add(energyMapping.getContainer(),globalGridConstraint);
-
 
 			globalGridConstraint.gridy++;
 
@@ -229,29 +235,29 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public void reset(boolean keep_ext) {
 		if(classMapping!=null)
 			classMapping.reset(keep_ext);
-		
+
 		if(observationMapping!=null)
 			observationMapping.reset();
-		
+
 		if(spaceMapping!=null)
 			spaceMapping.reset();
-		
+
 		if(energyMapping!=null)
 			energyMapping.reset();
-		
+
 		if(timeMapping!=null)
 			timeMapping.reset();
-		
+
 		if(observableMapping!=null)
 			observableMapping.reset();
-		
+
 		if(ignoredMapping!=null)
 			ignoredMapping.reset();
-		
+
 		if(otherMapping!=null)
 			otherMapping.reset();
 	}
-	
+
 	/**
 	 * This method instantiate an object which contains every argument from the form
 	 */
@@ -270,7 +276,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 		case Category.TABLE: params.add("-category=table");break;
 		case Category.FLATFILE: params.add("-category=flatfile"); break;
 		default: break;}
-		
 		/*
 		 * ClassMapping and extension
 		 */
@@ -293,7 +298,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
 		/*
 		 * Space Axis
 		 */
@@ -338,7 +342,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
 		/*
 		 * Ignored keywords
 		 */
@@ -350,7 +353,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
 		/*
 		 * Extended Keywords
 		 */
@@ -362,7 +364,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 				params.add(s);
 			}
 		}
-		
+
 		try {
 			ArgsParser retour;
 			retour = new ArgsParser((String[])(params.toArray(new String[0])));
@@ -382,7 +384,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 	public boolean checkParams() {
 		String msg = "";
 		String temp ="";
-		
+
 		/*
 		 * Class mapping check
 		 */
@@ -393,11 +395,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 			classMapping.setOnError(true);
 			msg+=temp;
 		}
-		
 		/*
 		 * Observation check
 		 */
-		
 		temp=observationMapping.checkAxisParams();
 		observationMapping.setOnError(false);
 		if(!temp.isEmpty())
@@ -405,7 +405,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 			observationMapping.setOnError(true);
 			msg+=temp;
 		}
-		
 		/*
 		 * Space check
 		 */
@@ -416,7 +415,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 			spaceMapping.setOnError(true);
 			msg+=temp;
 		}
-		
 		/*
 		 * Energy check
 		 */
@@ -427,7 +425,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 			energyMapping.setOnError(true);
 			msg+=temp;
 		}
-
 		/*
 		 * Time check
 		 */
@@ -438,8 +435,6 @@ public class VPSTOEPanel extends MappingKWPanel {
 			timeMapping.setOnError(true);
 			msg+=temp;
 		}
-
-		
 		if( msg.length() > 0 ) {
 			AdminComponent.showInputError(rootFrame, "<HTML><UL>" + msg);
 			return false;
@@ -449,14 +444,4 @@ public class VPSTOEPanel extends MappingKWPanel {
 		}
 
 	}
-	
-/*
- * From this point, olds functions from MappingKWPanel (non-Javadoc)
- * @see saadadb.admintool.panels.EditPanel#setActionBar()
- */
-	
-
-
-	
-
 }
