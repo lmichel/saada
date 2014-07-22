@@ -12,6 +12,11 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * This class inherit of VPObservationMappingPanel and represent the subpanel in the case where the category=TABLE
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 
 	private VPKWNamedField target_name_entry;
@@ -20,8 +25,9 @@ public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 	public VPObservationEntryMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel);
 
-
-		//The separator
+		/*
+		 * We create a separator to separate the normal fields from the entries
+		 */
 		gbc.fill=GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
 		JSeparator separator = new JSeparator();
@@ -50,11 +56,9 @@ public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 
 		instrument_name_entry.setComponents();
 		target_name_entry.setComponents();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public ArrayList<String> getAxisParams() {
-		// TODO Auto-generated method stub
 		ArrayList<String> params = super.getAxisParams();
 
 		if (!getPriority().noBtn.isSelected())
@@ -69,26 +73,20 @@ public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 		return params;
 	}
 	
-	
-	
-	
 	public String checkAxisParams() {
 		String error =super.checkAxisParams();
 		if(priority.isOnly())
 		{
-
 			if(target_name_entry.getText().length()==0)
 				error+= "<LI>Observation Axis : Priority \"Only\" selected but no target entry specified</LI>";
 	
 			if(instrument_name_entry.getText().length()==0)
 				error+= "<LI>Observation Axis : Priority \"Only\" selected but no instrument entry specified</LI>";
-
 		}
 
 		return error;
 	}
 
-	
 	public void reset() {
 		super.reset();
 		target_name_entry.reset();

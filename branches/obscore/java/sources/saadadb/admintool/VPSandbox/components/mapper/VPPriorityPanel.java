@@ -11,11 +11,13 @@ import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.enums.PriorityMode;
 
+/**
+ * Represent a priority
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPPriorityPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	protected JRadioButton onlyBtn;
 	protected JRadioButton firstBtn ;
@@ -25,7 +27,6 @@ public class VPPriorityPanel extends JPanel {
 	protected VPMapperPrioritySelector selector;
 
 	public VPPriorityPanel(MappingKWPanel mappingPanel, String title){
-		//super(title);
 		super();
 		this.setLayout(new GridBagLayout());
 		this.setBackground(AdminComponent.LIGHTBACKGROUND);
@@ -36,9 +37,6 @@ public class VPPriorityPanel extends JPanel {
 		lastBtn = new JRadioButton("last");
 		noBtn = new JRadioButton("no mapping");
 		buttonGroup = new ButtonGroup();
-//		new MapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup
-//				,  component
-//		, this, gbc);
 		selector = new VPMapperPrioritySelector(new JRadioButton[] {onlyBtn, firstBtn, lastBtn, noBtn}, noBtn, buttonGroup
 				, this, gbc);
 	}
@@ -85,19 +83,5 @@ public class VPPriorityPanel extends JPanel {
 			noBtn.setSelected(true);
 		}
 	}
-
-//	public boolean valid() {
-//		if( this.isNo() ) {
-//			return true;
-//		}
-//		return super.valid();
-//	}
-//
-//	@Override
-//	public String getText() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 
 }
