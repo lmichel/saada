@@ -9,60 +9,37 @@ import saadadb.admintool.VPSandbox.components.mapper.VPAxisPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.MyGBC;
 
-
-
-
 /**
- * Every KwMapper represent a line in one axis
+ * Every KwMapper represent a line in one axis/subpanel of the Filter form (see STOEPanel)
  * @author pertuy
  * @version $Id$
  */
 public abstract class VPKWMapper{
-	
-	
 
-	private static final long serialVersionUID = 1L;
-	/*
-	 * components contains the area which are concerned by the "priority" 
-	 */
-	//protected JComponent[] components;
-	//protected VPSTOEPanel mappingPanel;
+	//The calling class
 	protected VPAxisPanel axisPanel;
-	protected String title;
-	protected Container container;
+	
+	//the panel representing the lane
 	protected JPanel panel;
+	
+	//The name of the line
 	protected JLabel fieldName;
-	//protected MyGBC gbc;
+	
+	//every other component from the same line
+	protected Container container;
+	
 
 	public VPKWMapper(VPAxisPanel axisPanel,String title)
 	{
 		this.axisPanel=axisPanel;
-		this.title=title;
 		fieldName=AdminComponent.getPlainLabel(title);
-	
-	//this.mappingPanel=form;
-		
-//		argsParser=mappingPanel.getArgs();
-//		if (argsParser!=null)
-//			System.out.println(argsParser.getCategory());
-//		else
-//			System.out.println("Erreur");
-		 
-
-		//setBackground(AdminComponent.LIGHTBACKGROUND);
 	}
-	
+
 	public abstract String getText();
 
-	
-//	/**
-//	 * Get the input from each component
-//	 */
-//	public abstract  ArrayList<String> getParams();
-//	
-//	/**
-//	 * Add the class's components to the VPAxisPriorityPanel from the constructor
-//	 */
+	/**
+	 * Add the class's components to the VPAxisPriorityPanel from the constructor
+	 */
 	public void setComponents()
 	{
 		panel = axisPanel.getPanel();
@@ -72,7 +49,5 @@ public abstract class VPKWMapper{
 		gbc.next();gbc.left(true);
 		panel.add(container,gbc);
 		gbc.newRow();
-		//container.setVisible(false);
 	}
-
 }

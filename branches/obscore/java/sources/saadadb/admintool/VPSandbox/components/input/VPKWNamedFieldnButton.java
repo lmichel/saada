@@ -5,6 +5,11 @@ import javax.swing.JTextField;
 
 import saadadb.admintool.VPSandbox.components.mapper.VPAxisPriorityPanel;
 
+/**
+ * Represent a line in an Axis panel composed of a name, an AppendTextField (KeyWord mapped field) and a button
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPKWNamedFieldnButton extends VPKWNamedField {
 
 	private JButton button;
