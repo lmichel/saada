@@ -15,8 +15,10 @@ import saadadb.meta.AttributeHandler;
  * @version $Id$
  */
 public class DataFileExtension {
-	public final int num;
-	public final String name;
+	public final int resourceNum;
+	public final String resourceName;
+	public final int tableNum;
+	public final String tableName;
 	public final DataFileExtensionType type;
 	public final List<AttributeHandler> attributeHandlers;
 
@@ -26,10 +28,22 @@ public class DataFileExtension {
 	 * @param type
 	 * @param attributeHandlers
 	 */
-	public DataFileExtension(int num, String name, DataFileExtensionType type, List<AttributeHandler> attributeHandlers) {
-		super();
-		this.num = num;
-		this.name = name;
+	public DataFileExtension(int tableNum, String tableName, DataFileExtensionType type, List<AttributeHandler> attributeHandlers) {
+		this(0, null, tableNum, tableName, type, attributeHandlers);
+	}
+	
+	/**
+	 * @param resourceNum
+	 * @param tableNum
+	 * @param name
+	 * @param type
+	 * @param attributeHandlers
+	 */
+	public DataFileExtension(int resourceNum, String resourceName, int tableNum, String tableName, DataFileExtensionType type, List<AttributeHandler> attributeHandlers) {
+		this.resourceNum = resourceNum;
+		this.resourceName = (resourceName != null)? resourceName: "No name";
+		this.tableNum = tableNum;
+		this.tableName = (tableName != null)? tableName: "No name";;
 		this.type = type;
 		this.attributeHandlers = attributeHandlers;
 	}
@@ -56,6 +70,6 @@ public class DataFileExtension {
 	}
 	
 	public String toString() {
-		return this.num + " " + this.name + " " + this.type + " " + this.attributeHandlers.size() + " columns";
+		return this.resourceNum + ":" + this.resourceName + " " + this.tableNum + ":" + this.tableName + " " + this.type + " " + this.attributeHandlers.size() + " columns";
 	}
 }

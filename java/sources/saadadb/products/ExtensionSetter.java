@@ -14,6 +14,10 @@ public class ExtensionSetter {
 	 * Log of the mapping process
 	 */
 	public StringBuffer message = new StringBuffer();
+	/*
+	 * handle id as bot string (VOTable) or num (FITS)
+	 */
+	public final String goodHeaderId;
 	public final int goodHeaderNumber;
 
 	/**
@@ -21,7 +25,23 @@ public class ExtensionSetter {
 	 * @param setMode
 	 * @param message
 	 */
+	ExtensionSetter(String goodHeaderId,  ExtensionSetMode setMode, String message){
+		this.goodHeaderId = goodHeaderId;
+		int v=0;
+		try {
+			v = Integer.parseInt(goodHeaderId);
+		} catch (Exception e) {	}
+		this.goodHeaderNumber = v;
+		this.setMode = setMode;
+		this.completeMessage(message);
+	}
+	/**
+	 * @param goodHeaderId
+	 * @param setMode
+	 * @param message
+	 */
 	ExtensionSetter(int goodHeaderNumber,  ExtensionSetMode setMode, String message){
+		this.goodHeaderId = String.valueOf(goodHeaderNumber);
 		this.goodHeaderNumber = goodHeaderNumber;
 		this.setMode = setMode;
 		this.completeMessage(message);
@@ -30,6 +50,7 @@ public class ExtensionSetter {
 	 * Default constructor
 	 */
 	public ExtensionSetter(){
+		this.goodHeaderId = "0";
 		this.goodHeaderNumber = 0;
 		this.setMode = ExtensionSetMode.NOT_SET;
 		this.completeMessage("Default value");
@@ -51,6 +72,12 @@ public class ExtensionSetter {
 	public int getGoodHeaderNumber() {
 		return this.goodHeaderNumber;
 	}
+	/**
+	 * @return
+	 */
+	public String getGoodHeaderId() {
+		return this.goodHeaderId;
+	}
 	
 	/**
 	 * @return
@@ -63,7 +90,7 @@ public class ExtensionSetter {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "Extension #" +this.goodHeaderNumber + " "
+		return "Extension #" +this.goodHeaderId + " "
 		+ this.getMode() + " "
 		+ this.message;
 	}
