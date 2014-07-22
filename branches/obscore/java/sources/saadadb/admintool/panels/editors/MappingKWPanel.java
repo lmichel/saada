@@ -212,8 +212,6 @@ public class MappingKWPanel extends EditPanel {
 				}
 			
 			});
-
-			
 			globalGridConstraint.weightx = 1;
 			editorPanel.add(category_panel, globalGridConstraint);
 		}
