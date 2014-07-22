@@ -35,11 +35,11 @@ public interface DataFile extends Enumeration{
     public String getKWValueQuickly(String key);
    
  	/**
- 	 * @param key
- 	 * @return nim,max,nbpoints
+ 	 * @param key  column name as it is in the file
+ 	 * @return min,max,nbpoints
  	 * @throws Exception
  	 */
- 	public double[] getExtrema(String key) throws Exception ;
+ 	public double[] getExtrema(String keyOrg) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.
      * If there is no table for this product format, this method will return 0.

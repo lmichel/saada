@@ -162,7 +162,7 @@ public class FitsDataFile extends File implements DataFile{
 			if(  ext_num >= 0 ) {
 				boolean found = false;
 				for( DataFileExtension dfe: this.productMap.values()){
-					if( dfe.num == ext_num && !dfe.isDataTable() ) {
+					if( dfe.tableNum == ext_num && !dfe.isDataTable() ) {
 						found = true;
 						if(checkExtensionCategory(dfe, this.getProductCategory()) ){
 							String msg = "Required extension : "+product.mapping.getExtension()+" found (number: " + ext_num + ")";
@@ -291,7 +291,7 @@ public class FitsDataFile extends File implements DataFile{
 			if(  ext_num >= 0 ) {
 				boolean found = false;
 				for( DataFileExtension dfe: this.productMap.values()){
-					if( dfe.num == ext_num && !dfe.isDataTable() ) {
+					if( dfe.tableNum == ext_num && !dfe.isDataTable() ) {
 						found = true;
 						if(checkExtensionCategory(dfe, this.getProductCategory()) ){
 							String msg = "Required extension : "+this.productBuilder.mapping.getExtension()+" found (number: " + ext_num + ")";
@@ -818,9 +818,9 @@ public class FitsDataFile extends File implements DataFile{
 		}
 		
 		if( dfe != null ){
-			this.good_header = fits_data.getHDU(dfe.num);
-			String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.num +  " as data extension for " + Category.explain(category);
-			this.extensionSetter = new ExtensionSetter(dfe.num
+			this.good_header = fits_data.getHDU(dfe.tableNum);
+			String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.tableNum +  " as data extension for " + Category.explain(category);
+			this.extensionSetter = new ExtensionSetter(dfe.tableNum
 					, ExtensionSetMode.DETECTED
 					, msg);
 			if (Messenger.debug_mode)
@@ -839,7 +839,7 @@ public class FitsDataFile extends File implements DataFile{
 		 * Look first for an extension named SPECRUM
 		 */
 		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( (dfe.isImage() || dfe.isDataTable()) && dfe.name.equalsIgnoreCase("spectrum")) {
+			if( (dfe.isImage() || dfe.isDataTable()) && dfe.tableName.equalsIgnoreCase("spectrum")) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Take " + dfe + " as spectrum extension because it is named SPECTRUM");
 				return dfe;
@@ -853,7 +853,7 @@ public class FitsDataFile extends File implements DataFile{
 				for( AttributeHandler ah: dfe.attributeHandlers ) {
 					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT)){
 						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " has spectral WCS");
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has spectral WCS");
 						return dfe;
 					}
 				}
@@ -865,7 +865,7 @@ public class FitsDataFile extends File implements DataFile{
 		for( DataFileExtension dfe: this.productMap.values() ) {
 			if( dfe.isDataTable() ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " is a table: taken as spectra data");
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table: taken as spectra data");
 				return dfe;				
 			}
 		}
@@ -883,7 +883,7 @@ public class FitsDataFile extends File implements DataFile{
 		for( DataFileExtension dfe: this.productMap.values() ) {
 			if( dfe.isDataTable() ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " is a table");
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table");
 				return dfe;				
 			}
 		}
@@ -913,7 +913,7 @@ public class FitsDataFile extends File implements DataFile{
 					}
 					if( foundAsc && foundDec ) {
 						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.num + " has image WCS (both coords found)");
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has image WCS (both coords found)");
 						return dfe;					
 					}					
 				}
@@ -929,7 +929,9 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws FatalException 
 	 */
 	private int getProductCategory() {
-		if( productBuilder.getMapping() != null) {
+		if( productBuilder == null ){
+			return Category.UNKNOWN;
+		} else if( productBuilder.getMapping() != null) {
 			return productBuilder.mapping.getCategory();
 		} else if( productBuilder instanceof Image2DBuilder) {
 			return Category.IMAGE;
@@ -1704,6 +1706,9 @@ public class FitsDataFile extends File implements DataFile{
 		return this .comments;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.DataFile#getQuantityDetector(saadadb.dataloader.mapping.ProductMapping)
+	 */
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
 		if( this.getEntryAttributeHandler().size() > 0  ){
@@ -1717,13 +1722,13 @@ public class FitsDataFile extends File implements DataFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#getMap()
 	 */
+	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
 		if( this.productMap == null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Build product map");
 			this.productMap = new LinkedHashMap<String, DataFileExtension>();
 			BasicHDU bHDU = null;
-			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = new LinkedHashMap<String, ArrayList<AttributeHandler>>();
 			/*
 			 * Some file crash javafits when running the while loop
 			 */
