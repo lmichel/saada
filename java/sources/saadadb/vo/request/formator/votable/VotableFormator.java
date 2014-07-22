@@ -1,5 +1,6 @@
 package saadadb.vo.request.formator.votable;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map.Entry;
 
@@ -137,7 +138,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#buildErrorResponse(java.lang.Exception)
 	 */
-	public void buildErrorResponse(Exception e) {
+	public void buildErrorResponse(Exception e) throws Exception {
 		initWriter();
 		writeBeginingVOTable();
 
@@ -162,8 +163,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	
 	/**
 	 * @param file
+	 * @throws Exception 
 	 */
-	protected void initWriter() {
+	protected void initWriter() throws Exception {
 		writer = new SavotWriter();
 		writer.enableAttributeEntities(false);
 		writer.enableElementEntities(false);
@@ -251,8 +253,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 * Write the XML header of the VOTable
 	 * @param description
 	 * @param resType
+	 * @throws Exception 
 	 */
-	protected void writeBeginingVOTable() {
+	protected void writeBeginingVOTable() throws Exception {
 		SavotVOTable votable = new SavotVOTable();
 		
 		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.1");
@@ -340,8 +343,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	
 	/**
 	 * Set housekeeping fields
+	 * @throws Exception 
 	 */
-	protected void writeHousekeepingFieldAndGroup() {
+	protected void writeHousekeepingFieldAndGroup() throws Exception {
 		fieldSet_housekeeping = new FieldSet();		
 		/*
 		 * Param used by Aladin to order the response tree
@@ -566,8 +570,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 * Write field for the extension table matching the Saada relation
 	 * @param relation
 	 * @throws SaadaException 
+	 * @throws IOException 
 	 */
-	protected void writeExtMetaData(String relation) throws SaadaException {
+	protected void writeExtMetaData(String relation) throws SaadaException, IOException {
 		MetaRelation mr = Database.getCachemeta().getRelation(relation);
 		if ( mr  == null) {
 			Messenger.printMsg(Messenger.ERROR,

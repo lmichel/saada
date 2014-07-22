@@ -235,7 +235,7 @@ public abstract class QueryResultFormator implements Formator{
 	 * @param oid
 	 * @throws SaadaException
 	 */
-	protected abstract void writeHouskeepingData(SaadaInstance obj) throws SaadaException ;
+	protected abstract void writeHouskeepingData(SaadaInstance obj) throws Exception ;
 	/**
 	 * @param obj
 	 * @throws QueryException 
@@ -256,9 +256,10 @@ public abstract class QueryResultFormator implements Formator{
 
 	/**
 	 * @throws QueryException 
+	 * @throws Exception 
 	 * 
 	 */
-	protected abstract void writeHousekeepingFieldAndGroup() throws QueryException ;
+	protected abstract void writeHousekeepingFieldAndGroup() throws Exception ;
 
 	/**
 	 * @param length
