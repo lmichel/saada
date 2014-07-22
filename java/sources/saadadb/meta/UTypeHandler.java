@@ -2,6 +2,7 @@ package saadadb.meta;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 import saadadb.exceptions.QueryException;
@@ -70,13 +71,13 @@ public class UTypeHandler {
 	 * @param std
 	 * @throws Exception
 	 */
-	public UTypeHandler(Vector<SavotTD> std) throws Exception {
-		this.nickname  = ((SavotTD)std.get(1)).getContent();
-		this.ucd       = ((SavotTD)std.get(2)).getContent();
-		this.utype     = ((SavotTD)std.get(3)).getContent();
-		this.type      = ((SavotTD)std.get(4)).getContent();
+	public UTypeHandler(List<SavotTD> std) throws Exception {
+		this.nickname  = (std.get(1)).getContent();
+		this.ucd       = (std.get(2)).getContent();
+		this.utype     = (std.get(3)).getContent();
+		this.type      = (std.get(4)).getContent();
 		this.arraysize = Integer.parseInt(((SavotTD)std.get(5)).getContent());
-		this.unit      = ((SavotTD)std.get(6)).getContent();
+		this.unit      = (std.get(6)).getContent();
 		this.hidden    = Boolean.parseBoolean(((SavotTD)std.get(7)).getContent());
 		this.value     = ((SavotTD)std.get(8)).getContent();;
 		this.comment   = ((SavotTD)std.get(9)).getContent();
