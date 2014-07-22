@@ -16,14 +16,20 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * This class inherit of SpaceMappingPanel and represent the subpanel in the case where the category=TABLE
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 
 	private VPKWNamedFieldnBox positionError_entry;
 	private VPKWNamedField positionField_entry;
 	private VPKWNamedFieldnBox system_entry;
 	
-	//Just here to allow the use of the MetaDataPanel
-
+	/*
+	 * see ObservationEntryMappingPanel for functionals precisions
+	 */
 	public VPSpaceEntryMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel);
 		
@@ -35,7 +41,6 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		separator.setForeground(new Color(VPAxisPanel.SEPARATORCOLOR));
 		axisPanel.add(separator,
 				gbc);
-
 
 		gbc.newRow();
 		gbc.fill=GridBagConstraints.NONE;
@@ -61,7 +66,7 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		system_entry.setComponents();
 
 		/*
-		 * Action Listener allowing the button to open the Metadata Panel
+		 * Link the comboBox to the system field
 		 */
 		system_entry.getComboBox().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -72,19 +77,12 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 						system_entry.getField().setText("'" + temp.getSelectedItem() + "'");
 					else
 						system_entry.getField().setText("");
-					
-//					if( priority.noBtn.isSelected() ) {
-//						priority.firstBtn.setSelected(true) ;
-//					}
 				}
 			}
 		});
-
 	}
 	
-	
 	public ArrayList<String> getAxisParams() {
-		// TODO Auto-generated method stub
 		ArrayList<String> params = super.getAxisParams();
 
 		if (!getPriority().noBtn.isSelected())
@@ -101,9 +99,6 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 
 		return params;
 	}
-	
-	
-	
 	
 	public String checkAxisParams() {
 		String error =super.checkAxisParams();
@@ -124,7 +119,6 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		return error;
 	}
 
-	
 	public void reset() {
 		super.reset();
 		system_entry.reset();

@@ -16,34 +16,43 @@ public class VPIgnoredMappingPanel extends VPAxisPanel {
 	
 	private AppendMappingTextField ignoredKWField;
 	
+	/**
+	 * Represent the Ignored Keywords ubpanel in the filter form
+	 * @author pertuy
+	 * @version $Id$
+	 */
 	public VPIgnoredMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel, "Ignored Keywords");
-//		ignoredKWMapper = new VPKWNamedField(this,"Keywords",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, forEntry,null));
-//		ignoredKWMapper.setComponents();
-//		gbc.next();gbc.right(true);
-//		axisPanel.add(this.setHelpLabel(HelpDesk.CLASS_MAPPING),gbc);
 		
+		/*
+		 * equivalent to "if(category==Table)"
+		 */
 		if(this instanceof VPIgnoredEntryMappingPanel)
 		{
-
+			//this label differentiate the entries fields from the normal ones.
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
 			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
-
 		}
-		
 		gbc.right(false);
+		
 		axisPanel.add(AdminComponent.getPlainLabel("Ignored Keywords"),gbc);
+		
 		gbc.next();
 		gbc.left(false);
+		
 		ignoredKWField= new AppendMappingTextField(this.mappingPanel, DataMapLevel.KEYWORD, true, null);
 		ignoredKWField.setColumns(AdminComponent.STRING_FIELD_NAME);
+		
 		axisPanel.add(ignoredKWField,gbc);
+		
 		gbc.next();
 		gbc.right(true);
+		
 		axisPanel.add(setHelpLabel(HelpDesk.CLASS_MAPPING),gbc);
+		
 		gbc.newRow();
 	}
 	@Override

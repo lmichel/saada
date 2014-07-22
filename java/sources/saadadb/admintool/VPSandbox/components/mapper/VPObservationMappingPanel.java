@@ -14,32 +14,29 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * Represent the Observation axis/subpanel in the filter form
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPObservationMappingPanel extends VPAxisPriorityPanel {
-	
 	
 	private VPKWNamedField obs_collection;
 	private VPKWNamedField target_name;
 	private VPKWNamedField facility_name;
 	private VPKWNamedField instrument_name;
-	
-	//protected ArrayList<JComponent> priorityComponents;
-//	private JPanel panel;
-//	private MyGBC obsgbc;
-	
+
 	public VPObservationMappingPanel(VPSTOEPanel mappingPanel){
 		super(mappingPanel, "Observation Axis",HelpDesk.CLASS_MAPPING);
-//		panel = new JPanel(new GridBagLayout());
-//		panel.setBorder(BorderFactory.createLineBorder(Color.black));
-//		obsgbc = new MyGBC(3,3,3,3);
-
 
 		//We set the field we always display
 		obs_collection = new VPKWNamedField(this,"Collection ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
 		target_name = new VPKWNamedField(this,"Target name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
 		facility_name = new VPKWNamedField(this,"Facility name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
 		instrument_name = new VPKWNamedField(this,"Instrument name ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
-		axisPriorityComponents = new ArrayList<JComponent>();
 		
+		//We link the priority mapper and the fields
+		axisPriorityComponents = new ArrayList<JComponent>();
 		axisPriorityComponents.add(obs_collection.getField());
 		axisPriorityComponents.add(target_name.getField());
 		axisPriorityComponents.add(facility_name.getField());
@@ -51,39 +48,36 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 		{
 			gbc.fill=GridBagConstraints.HORIZONTAL;
 			gbc.gridwidth=GridBagConstraints.REMAINDER;
+			
+			//We separate the priority mapper from the fields
 			JSeparator separator = new JSeparator();
 			separator.setBackground(new Color(VPAxisPanel.SEPARATORCOLOR));
 			separator.setForeground(new Color(VPAxisPanel.SEPARATORCOLOR));
 			axisPanel.add(separator,
 					gbc);
 
-
 			gbc.newRow();
 			gbc.fill=GridBagConstraints.NONE;
+			
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			
 			gbc.right(false);
+			
 			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 			axisPanel.add(subPanelTitle,gbc);
+			
 			gbc.newRow();
-
 		}
 		else
 		{	
 			priority.selector.buildMapper(axisPriorityComponents);		
 		}
 		
-	
 		obs_collection.setComponents();
 		target_name.setComponents();
 		facility_name.setComponents();
 		instrument_name.setComponents();
 		
-//		gbc.fill=GridBagConstraints.HORIZONTAL;
-//		gbc.gridwidth=GridBagConstraints.REMAINDER;
-//		axisPanel.add(panel,gbc);
-//		gbc.newRow();
-//		
-
 	}
 	
 	@Override
@@ -108,17 +102,9 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 
 			if(instrument_name.getText().length()>0)
 				params.add("-instrument="+instrument_name.getText());
-
-
 		}
-
-//		if(getPriority().onlyBtn.isSelected() && emptyField)
-//			mappingPanel.showInfo(mappingPanel.rootFrame,"You selected the \"Only\" priority for the Observation Axis but didn't fill each corresponding field");
-//			
-
 		return params;
 	}
-
 
 	@Override
 	public String checkAxisParams() {
@@ -135,7 +121,6 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 				error+= "<LI>Observation Axis : Priority \"Only\" selected but no instrument specified</LI>";
 
 		}
-
 		return error;
 	}
 
@@ -147,14 +132,4 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 		facility_name.reset();
 		instrument_name.reset();
 	}
-
-//	public JPanel getPanel() {
-//		return panel;
-//	}
-//
-//	public MyGBC getGbc() {
-//		return obsgbc;
-//	}
-
-
 }

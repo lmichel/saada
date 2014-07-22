@@ -18,20 +18,19 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * Represent the Space axis/subpanel in the filter form
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
-
-	//	private VPKWAppendTextField positionField;
-	//	private VPKWAppendTextField errorField;
-	//	private VPKWAppendTextField systemField;
-
-	//private JComboBox unitCombo;
-
 	private VPKWNamedFieldnBox positionError;
 	private VPKWNamedField positionField;
 	private VPKWNamedFieldnBox system;
 
-
-
+	/*
+	 * See ObservationMapping for functional explanations
+	 */
 	public VPSpaceMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel, "Space Axis",HelpDesk.POSITION_MAPPING);
 		positionField = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
@@ -45,8 +44,7 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		axisPriorityComponents.add(positionError.getComboBox());
 		axisPriorityComponents.add(system.getField());
 		axisPriorityComponents.add(system.getComboBox());
-		//priority.selector.buildMapper(axisPriorityComponents);
-		//helpLabel=setHelpLabel(HelpDesk.CLASS_MAPPING);
+
 		// = If Category=Entry or Category=Table
 		if(this instanceof VPSpaceEntryMappingPanel)
 		{
@@ -72,10 +70,6 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		{	
 			priority.selector.buildMapper(axisPriorityComponents);		
 		}
-		
-		
-
-
 
 		positionField.setComponents();
 		positionError.setComponents();
@@ -94,15 +88,9 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 						system.getField().setText("'" + temp.getSelectedItem() + "'");
 					else
 						system.getField().setText("");
-					
-//					if( priority.noBtn.isSelected() ) {
-//						priority.firstBtn.setSelected(true) ;
-//					}
 				}
 			}
 		});
-
-
 	}
 
 	@Override
@@ -115,33 +103,15 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 			if(system.getText().length()>0)
 				params.add("-system="+system.getText());
 
-//			if(mappingPanel.getCategory()!=Category.ENTRY)
-//			{
-				if(positionField.getText().length()>0)
-					params.add("-position="+positionField.getText());
-	
-				if(positionError.getText().length()>0)
-					params.add("-poserror="+positionError.getText());
-	
-				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
-					params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
-//			}
-//			else
-//			{
-//				if(positionField.getText().length()>0)
-//					params.add("-entry.position="+positionField.getText());
-//	
-//				if(positionError.getText().length()>0)
-//					params.add("-entry.poserror="+positionError.getText());
-//	
-//				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
-//					params.add("-entry.poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
-//				
-//			}
+			if(positionField.getText().length()>0)
+				params.add("-position="+positionField.getText());
 
+			if(positionError.getText().length()>0)
+				params.add("-poserror="+positionError.getText());
+
+			if(positionError.getComboBox().getSelectedItem().toString().length()>0)
+				params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
 		}
-
-
 		return params;
 	}
 
@@ -158,9 +128,7 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 				error+= "<LI>Space Axis : Priority \"Only\" selected but no position error specified</LI>";			
 			if(positionError.getComboBox().getSelectedItem().toString().length()==0)
 				error+= "<LI>Space Axis : Priority \"Only\" selected but no position error unit specified</LI>";
-
 		}
-
 		return error;
 	}
 
@@ -170,8 +138,5 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		system.reset();
 		positionField.reset();
 		positionError.reset();
-		
-		
 	}
-
 }

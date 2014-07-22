@@ -12,13 +12,20 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.enums.DataMapLevel;
 
+/**
+ * This class inherit of IgnoredMappingPanel and represent the subpanel in the case where the category=TABLE
+ * @author pertuy
+ * @version $Id$
+ */
 public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 	private AppendMappingTextField ignoredKWField_entry;
 
 	public VPIgnoredEntryMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel);
-		// TODO Auto-generated constructor stub
-		//The separator
+
+		/*
+		 * We create a separator to separate the normal fields from the entries
+		 */
 		gbc.fill=GridBagConstraints.HORIZONTAL;
 		gbc.gridwidth=GridBagConstraints.REMAINDER;
 		JSeparator separator = new JSeparator();
@@ -29,22 +36,27 @@ public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 
 		gbc.newRow();
 		gbc.fill=GridBagConstraints.NONE;
+		
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
+		
 		gbc.right(false);
+		
 		subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
 		axisPanel.add(subPanelTitle,gbc);
+		
 		gbc.newRow();
-
-
 		gbc.right(false);
+		
 		axisPanel.add(AdminComponent.getPlainLabel("Ignored Keywords"),gbc);
+		
 		gbc.next();gbc.left(true);
+		
+		//We had the additional fields to the axis
 		ignoredKWField_entry= new AppendMappingTextField(this.mappingPanel, DataMapLevel.KEYWORD, false, null);
 		ignoredKWField_entry.setColumns(AdminComponent.STRING_FIELD_NAME);
+		
 		axisPanel.add(ignoredKWField_entry,gbc);
-
 	}
-	
 	
 	public ArrayList<String> getAxisParams(){
 		ArrayList<String> params = super.getAxisParams();
@@ -54,7 +66,6 @@ public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 		}
 		return params;
 	}
-	
 	
 	public void reset()
 	{
