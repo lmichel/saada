@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -119,7 +120,7 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			Vector tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			if( tdv.size() != 11 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return;
@@ -591,13 +592,13 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			Vector tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return null;
 			}
-			if(((SavotTD)(tdv.get(1))).getContent().length() > 1 )
-			retour.put(((SavotTD)(tdv.get(0))).getContent(),((SavotTD)(tdv.get(1))).getContent());
+			if((tdv.get(1)).getContent().length() > 1 )
+			retour.put((tdv.get(0)).getContent(),(tdv.get(1)).getContent());
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
 		return retour;
