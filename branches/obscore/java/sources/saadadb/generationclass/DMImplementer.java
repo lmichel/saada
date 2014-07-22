@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Vector;
 
 import saadadb.database.Database;
@@ -90,13 +91,13 @@ public class DMImplementer {
 			}
 			TDSet tds = currentTR.getTDSet();
 			@SuppressWarnings("rawtypes")
-			Vector tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + mappingfilepath + "> badly formated at <TR> #" + cpt); 
 				return ;
 			}
-			retour.put( ((SavotTD)(tdv.get(0))).getContent().toString()
-					  , ((SavotTD)(tdv.get(1))).getContent().toString());
+			retour.put( tdv.get(0).getContent().toString()
+					  , tdv.get(1).getContent().toString());
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
 		this.vor.storeClassMapping(retour);
