@@ -108,11 +108,6 @@ public class SpaceMapping extends AxisMapping {
 	 * @throws FatalException
 	 */
 	private void mapCoordSystem(ArgsParser tabArg) throws FatalException {
-		/*
-		 * Coordinate system mapping
-		 */
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for the coordinate SYSTEM and EQUINOX");
-		
 		String[] tabSys_eq ;
 		tabSys_eq = tabArg.getCoordinateSystem();
 		/*

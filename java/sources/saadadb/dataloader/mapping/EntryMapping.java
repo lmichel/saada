@@ -15,9 +15,6 @@ public class EntryMapping extends ProductMapping {
 	public EntryMapping(String name, ArgsParser ap) throws SaadaException {
 		super(name, ap, true);
 		this.category = Category.ENTRY;
-    	this.stoeMapping    = new STEOMapping(ap, true);
-
-
+    	//this.stoeMapping    = new STEOMapping(ap, true);
 	}
-
 }
