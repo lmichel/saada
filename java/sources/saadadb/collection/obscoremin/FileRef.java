@@ -4,7 +4,6 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -26,7 +25,6 @@ public class FileRef extends SaadaInstance {
     public String access_url = saadadb.util.SaadaConstant.STRING;
 	public String access_format = saadadb.util.SaadaConstant.STRING;
 	public long access_estsize = saadadb.util.SaadaConstant.LONG;
-	public String obs_id        = saadadb.util.SaadaConstant.STRING;
 	public String obs_collection = saadadb.util.SaadaConstant.STRING;
 	/*
 	 * Space Axe
@@ -85,26 +83,16 @@ public class FileRef extends SaadaInstance {
     	this.access_estsize = access_estsize;
     }
 	/* (non-Javadoc)
-	 * @see saadadb.collection.obscoremin.SaadaInstance#setObs_id(java.lang.String)
-	 */
-	public void   setObs_id(String obsid){
-		this.obs_id  = obsid;
-	}
-	/* (non-Javadoc)
-	 * @see saadadb.collection.obscoremin.SaadaInstance#getObs_id()
-	 */
-	public String getObs_id()throws SaadaException {
-		return this.obs_id;
-	}
-	/* (non-Javadoc)
 	 * @see saadadb.collection.obscoremin.SaadaInstance#setObs_collection(java.lang.String)
 	 */
+	@Override
 	public void   setObs_collection(String collection) {
 		this.obs_collection = collection;
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.collection.obscoremin.SaadaInstance#getObs_collection()
 	 */
+	@Override
 	public String getObs_collection()throws SaadaException {
 		return this.obs_collection;
 	}

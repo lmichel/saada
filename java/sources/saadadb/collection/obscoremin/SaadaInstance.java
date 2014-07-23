@@ -82,7 +82,7 @@ public abstract class SaadaInstance implements DMInterface {
 	/*
 	 * Observation Axe
 	 */	
-//	public String obs_id        = saadadb.util.SaadaConstant.STRING;
+	public String obs_id        = saadadb.util.SaadaConstant.STRING;
 //	public String obs_collection = saadadb.util.SaadaConstant.STRING;
 	public String facility_name = saadadb.util.SaadaConstant.STRING;
 	public String instrument_name = saadadb.util.SaadaConstant.STRING;
@@ -346,7 +346,7 @@ public abstract class SaadaInstance implements DMInterface {
 			cpt++;
 
 			this.oidsaada = rs.getLong("oidsaada");
-			this.setObs_id(rs.getString("namesaada"));
+			this.obs_id = rs.getString("namesaada");
 			this.setDate_load(rs.getLong("date_load"));
 			List<Field> lf = this.getCollLevelPersisentFields();
 			for( Field f: lf){
@@ -871,7 +871,7 @@ public abstract class SaadaInstance implements DMInterface {
 			attr += "," + fieldlist[i].getName();
 		}
 		sql = "Insert into " + nametable + "(" + attr + ")" + " values ( "
-		+ this.oidsaada + ",'" + this.getObs_id() + "' ,'"
+		+ this.oidsaada + ",'" + this.obs_id + "' ,'"
 		+ this.contentsignature + "' ";
 		for (int i = 0; i < fieldlist.length; i++)  {
 			sql +=  ", " + this.getSQL(fieldlist[i]);
@@ -897,7 +897,7 @@ public abstract class SaadaInstance implements DMInterface {
 				nametable.length());
 		Class cls = this.getClass();
 		Field fieldlist[] = cls.getDeclaredFields();
-		String file_bus_sql = "" + this.getObs_id() + "\t"
+		String file_bus_sql = "" + this.obs_id + "\t"
 		+ this.contentsignature;
 
 		for( int i=0 ; i<fieldlist.length ; i++  ) {
@@ -1498,8 +1498,6 @@ public abstract class SaadaInstance implements DMInterface {
 	/***********************
 	 * Abstract setters allowing to handle SaadaInstance whatever the actual category
 	 *********************/
-	public abstract void   setObs_id(String obsid) ;
-	public abstract String getObs_id()throws SaadaException ;
 	public abstract void   setObs_collection(String collection) ;
 	public abstract String getObs_collection()throws SaadaException ;
 	public abstract void   setRepository_location(String name) ;

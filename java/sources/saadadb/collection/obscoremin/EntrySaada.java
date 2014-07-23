@@ -123,13 +123,6 @@ public class EntrySaada extends SaadaInstance {
 	public void setO_calib_status(String status) {}
 
 	@Override
-	public void   setObs_id(String obsid){}
-
-	@Override
-	public String getObs_id()throws SaadaException {
-		return SaadaConstant.STRING;
-	}
-	@Override
 	public void   setObs_collection(String collection) {}
 
 	@Override
