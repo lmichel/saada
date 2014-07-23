@@ -70,7 +70,7 @@ public class ProductMapping {
     protected ProductMapping(String name, ArgsParser ap, boolean entryMode) throws SaadaException {
     	this.name           = name;
 		this.loaderParams   = ap.toString();
-    	this.stoeMapping    = new STEOMapping(ap, true);
+    	this.stoeMapping    = new STEOMapping(ap, entryMode);
 		this.collection     = ap.getCollection();
 		this.category       = Category.ENTRY;
 		this.extension      = ap.getExtension();
