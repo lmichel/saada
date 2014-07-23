@@ -1019,7 +1019,7 @@ public class EPOnePattern extends Query_Report {
 		while( srs.next()) {
 			long oid = srs.getOid();
 			if( !api_result.contains(oid)) {
-				System.out.println("erreur on " + Database.getCache().getObject(oid).obs_id);
+				System.out.println("erreur on " + Database.getCache().getObject(oid).getObs_id());
 			}
 		}	
 		srs.close();
@@ -1145,7 +1145,7 @@ public class EPOnePattern extends Query_Report {
 			 */
 			long oid = srs.getOid();
 			if( !api_result.contains(oid)) {
-				System.out.println("erreur on " + Database.getCache().getObject(oid).obs_id+  " (" + Long.toHexString(oid) + ")");
+				System.out.println("erreur on " + Database.getCache().getObject(oid).getObs_id() +  " (" + Long.toHexString(oid) + ")");
 			}
 		}	
 		srs.close();
