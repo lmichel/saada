@@ -176,18 +176,6 @@ public class ClassDMTester extends SaadaInstance {
 	}
 
 	@Override
-	public void setObs_id(String obsid) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getObs_id() throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setObs_collection(String collection) {
 		// TODO Auto-generated method stub
 		

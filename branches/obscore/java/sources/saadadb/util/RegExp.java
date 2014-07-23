@@ -3,7 +3,6 @@ package saadadb.util;
 import java.io.File;
 
 import saadadb.collection.Category;
-import saadadb.database.Database;
 
 /**
  * This class is a simple dictionnary of regular expressions used in Saada
@@ -134,14 +133,14 @@ public class RegExp {
 	/**
 	 * Observation keywords
 	 */
-	public static final String COLLNAME_KW      = "(?i)collection";
-	public static final String COLLNAME_UCD     = "(?i).*obs\\.param;obs.*";
-	public static final String TARGET_KW        = "(?i)(object|target)";
+	public static final String COLLNAME_KW      = "(?i)(collection)";
+	public static final String COLLNAME_UCD     = "(?i)(.*obs\\.param;obs.*)";
+	public static final String TARGET_KW        = "(?i)((object)|(target(.*name)?))";
 	public static final String TARGET_UCD       = "(?i)(meta\\.id)";
-	public static final String INSTRUMENT_UCD   = "(?i)meta\\.id;instr.*";
-	public static final String INSTRUMENT_KW    = "(?i)instrume.*";
-	public static final String FACILITY_UCD     = "(?i).*instr\\.tel.*";
-	public static final String FACILITY_KW      = "(?i)(facility|telescop)";
+	public static final String INSTRUMENT_UCD   = "(?i)(meta\\.id;instr.*)";
+	public static final String INSTRUMENT_KW    = "(?i)((instrume.*)|(.*instrument))";
+	public static final String FACILITY_UCD     = "(?i)(.*instr\\.tel.*)";
+	public static final String FACILITY_KW      = "(?i)((facility)|(telescop))";
 	/**
 	 * Coordinate system
 	 */
@@ -153,7 +152,7 @@ public class RegExp {
 	/**
 	 * Position error
 	 */
-	public static final String ERROR_KW    = "(?i)((radecerr.*)|(hpbw)|(e_ra.*)|(e_de.*))";
+	public static final String ERROR_KW    = "(?i)((radec.*err.*)|(hpbw)|(e_ra.*)|(e_de.*))";
 	public static final String ERROR_UCD    = "(?i)((stat.error;pos.eq\\..*)|(pos\\.angResolution)|(pos\\.posAng;pos\\.errorEllipse))";
 
 	public static final String ERROR_MIN_KW     = "(?i)((radecerr.*)|(errmin)|(minaxis)|(hpbw))";
@@ -188,9 +187,9 @@ public class RegExp {
 	public static final String ICRS_RA_MAINUCD   = "(?i)((POS_EQ_RA_MAIN)|(pos\\.eq\\.ra;meta\\.main))";
 	public static final String ICRS_DEC_MAINUCD  = "(?i)((POS_EQ_DEC_MAIN)|(pos\\.eq\\.dec;meta\\.main))";
 	public static final String ICRS_RA_UCD       = "(?i)((POS_EQ_RA)|(pos\\.eq\\.ra))";
-	public static final String ICRS_DEC_UCD      = "(?i)((POS_EQ_DE)C|(pos\\.eq\\.dec))";
-	public static final String ICRS_RA_KW        = "(?i)(_*ra[^(dec)]*)";
-	public static final String ICRS_DEC_KW       = "(?i)(_*de[^(ra)]*)";
+	public static final String ICRS_DEC_UCD      = "(?i)((POS_EQ_DE)|(pos\\.eq\\.dec))";
+	public static final String ICRS_RA_KW        = "(?i)((_*ra[^(dec)]*)|(.*right.*ascension))";
+	public static final String ICRS_DEC_KW       = "(?i)((_*de[^(ra)]*)|(.*declination))";
 
 	public static final String ECLIPTIC_RA_MAINUCD   = "(?i)((POS_EC_RA_MAIN)|(pos\\.ecliptic\\.lon;meta\\.main))";
 	public static final String ECLIPTIC_DEC_MAINUCD  = "(?i)((POS_EC_DEC_MAIN)|(pos\\.ecliptic\\.lat;meta\\.main))";
@@ -213,6 +212,8 @@ public class RegExp {
 	public static final String FITS_CTYPE_DEC   = "(?i)(((DEC-)|(GLAT)|(ELAT)).*)";
 	public static final String FITS_EQUINOX     = "(?i)(EQUINOX)";
 	
+	public static final String OBSERVABLE_UNIT_KW = "(?i)((BUNIT)|(.*flux.*unit)|(.*dispersion.*unit))";
+	public static final String OBSERVABLE_UCD_KW = "(?i)((.*flux.*ucd)|(.*dispersion.*ucd))";
 	
 	/**
 	 * DataFileChooser Shortcuts

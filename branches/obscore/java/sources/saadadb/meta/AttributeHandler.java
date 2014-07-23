@@ -95,9 +95,9 @@ public class AttributeHandler implements Serializable , Cloneable{
 		/*
 		 * Position can be declared as numeric and set with a couple of values
 		 */
-		else if( !this.getType().equals("boolean") && !value.matches(RegExp.FITS_FLOAT_VAL) && !value.matches(RegExp.FITS_INT_VAL) ) {
+		else if( !this.getType().equals("boolean") && !this.getType().equals("String") && !value.matches(RegExp.FITS_FLOAT_VAL) && !value.matches(RegExp.FITS_INT_VAL) ) {
 			if ( Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Param <" + this.getNameorg() + "> is declared as numeric but contains a none numeric value: " + value + ": type forced to String");
+				Messenger.printMsg(Messenger.DEBUG, "Param <" + this.getNameorg() + "> is declared as numeric ( " + this.getType() + ") but contains a none numeric value: " + value + ": type forced to String");
 			this.setType("String");
 		}
 	}
@@ -365,6 +365,10 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public void setType(String type){
 		if(type != null){
 			this.type = type.trim();
+			if( "char".equals(this.type) ) {
+				this.type = "String";
+			}
+
 		}
 	}
 
