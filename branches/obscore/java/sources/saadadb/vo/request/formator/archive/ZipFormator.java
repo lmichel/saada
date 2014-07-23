@@ -70,7 +70,7 @@ public class ZipFormator extends QueryResultFormator {
 		this.setProtocolParams(params);
 		String name = si.getFileName().split("\\.")[0];
 		if( name == null ) {
-			name = si.obs_id.replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
+			name = si.getObs_id().replaceAll("[^_a-zA-Z0-9\\-\\./]+", "_");
 		}
 		this.setResponseFilePath(dir, name);
 		this.buildDataResponse(flatMode, cleanAfter);

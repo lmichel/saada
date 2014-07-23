@@ -375,7 +375,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 */
 	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
 		addTD(Long.toString(obj.oidsaada));
-		addCDataTD(obj.obs_id.replaceAll("#", ""));
+		addCDataTD(obj.getObs_id().replaceAll("#", ""));
 	}
 
 
@@ -731,7 +731,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 					break;
 				}
 				// Saada name (Savot doesn't support # in dataset, even in a CDATA)
-				addCDataTD(counterpart.obs_id.replace("#", "_").trim());
+				addCDataTD(counterpart.getObs_id().replace("#", "_").trim());
 				// Links to pixels
 				addCDataTD(obj.getURL(true) );
 				// OID used as key for the Aladin link
@@ -808,7 +808,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 					break;
 				}
 				// Saada name (Savot doesn't support # in dataset, even in a CDATA)
-				addCDataTD(counterpart.obs_id.replace("#", "_").trim());
+				addCDataTD(counterpart.getObs_id().replace("#", "_").trim());
 				// Links to pixels
 				addCDataTD(obj.getURL(true) );
 				// OID used as key for the Aladin link

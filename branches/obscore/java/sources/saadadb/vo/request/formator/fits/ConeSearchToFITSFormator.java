@@ -146,7 +146,7 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 				((String[])data_column)[currentLine] = "catalog";
 			}
 			else if( ucd.equalsIgnoreCase("meta.title;meta.dataset") ) {
-				((String[])data_column)[currentLine] = obj.obs_id.replaceAll("#", "");
+				((String[])data_column)[currentLine] = obj.getObs_id().replaceAll("#", "");
 			}
 			else if( name.equals("LinktoPixels")) {
 				((String[])data_column)[currentLine] = obj.getURL(true);
@@ -164,7 +164,7 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 				((String[])data_column)[currentLine] = String.valueOf(obj.oidsaada);
 			}
 			else if( ucd.equalsIgnoreCase("meta.title") ){
-				((String[])data_column)[currentLine] = obj.obs_id.replaceAll("#", "");
+				((String[])data_column)[currentLine] = obj.getObs_id().replaceAll("#", "");
 			}
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first
