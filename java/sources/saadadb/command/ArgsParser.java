@@ -1,10 +1,13 @@
 package saadadb.command;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -163,6 +166,57 @@ public class ArgsParser implements Serializable{
 		}
 
 	}
+	
+	/**
+	 * We build the ArgsParser by loading the parameters from the specified file
+	 * @param conf_path
+	 * @throws FatalException
+	 * @throws IOException 
+	 */
+	public ArgsParser(String conf_path) throws FatalException, IOException {
+		ArrayList<String> argsArray = new ArrayList<String>();
+		String[] args;
+		FileReader fr;
+		
+		fr = new FileReader(conf_path);
+		BufferedReader br = new BufferedReader(fr); 
+		//ObjectInputStream in = new ObjectInputStream(fis);
+		String s;
+		while((s = br.readLine()) != null) {
+			argsArray.add(s);
+		}
+		br.close();
+		args = argsArray.toArray(new String[argsArray.size()]);
+		
+		if( args == null || args.length == 0 ) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameters given");
+		}
+		else {
+			this.args = args;
+			String msg="";
+			for( int i=0 ; i<args.length ; i++ ) {
+				String arg = args[i];
+				if( arg.startsWith("-") ) {
+					int pos = arg.indexOf('=');
+					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
+					    (pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
+						msg += " <" + arg + ">";
+						if( pos >=0 ) System.out.println(arg.substring(0, pos));
+					}
+				}
+			}			
+			this.setSilentMode();
+			this.setDebugMode();
+			this.setContinueMode();
+			if( msg.length() > 0 ) {
+				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The following parametres are not understood: " + msg);	
+			}
+
+		}
+
+	}
+	
+	
 
 	/**
 	 * Return the last parameter, supposed to be the last
@@ -643,9 +697,35 @@ public class ArgsParser implements Serializable{
 	 * returns a table with both position values (KW or values) -posmapping=KW_A,KW_D:
 	 * @return
 	 */
-	public String[] getPositionMapping() {
+	public String[] getPositionMapping(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-position")) {
+			if( !entry && args[i] .startsWith("-position")) {
+				String av = getArgsValue(args[i]) ;
+				/*
+				 * Object name are in '' or n ""
+				 */
+				if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
+					//					return (new String[]{av.substring(1, av.length() -1)});
+					return (new String[]{av});
+				}
+				else {
+					/*
+					 * Only one parameter which is not an object: Can only be
+					 * a keywords with both position (e.g.1:2:3 +3:4:5)
+					 */
+					String[] ret = getArgsValue(args[i]).split(",");
+					if( ret.length == 1 ) {
+						return (new String[]{ret[0], ret[0]});						
+					}
+					/*
+					 * Else return both parameters
+					 */
+					else {
+						return ret;
+					}
+				}
+			}
+			if( entry &&  args[i] .startsWith("-entry.position")) {
 				String av = getArgsValue(args[i]) ;
 				/*
 				 * Object name are in '' or n ""
@@ -692,9 +772,12 @@ public class ArgsParser implements Serializable{
 	 * returns a table with both position error values (KW or values) -poserror=KW
 	 * @return
 	 */
-	public String getPoserrorMapping() {
+	public String getPoserrorMapping(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-poserror=")) {
+			if( !entry && args[i] .startsWith("-poserror=")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.poserror=")) {
 				return getArgsValue(args[i]);
 			}
 		}
@@ -704,9 +787,12 @@ public class ArgsParser implements Serializable{
 	 * returns a table with both position error values (KW or values) -poserror=KW_A,KW_D:
 	 * @return
 	 */
-	public String getPoserrorUnit() {
+	public String getPoserrorUnit(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-poserrorunit")) {
+			if( !entry && args[i] .startsWith("-poserrorunit")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.poserrorunit")) {
 				return getArgsValue(args[i]);
 			}
 		}
