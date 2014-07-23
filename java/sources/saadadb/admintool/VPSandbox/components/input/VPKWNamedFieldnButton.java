@@ -32,4 +32,9 @@ public class VPKWNamedFieldnButton extends VPKWNamedField {
 		button.setEnabled(false);
 	}
 
+	@Override
+	public void setEnable(boolean enable) {
+		super.setEnable(enable);
+		button.setEnabled(enable);		
+	}
 }

@@ -5,8 +5,12 @@ package saadadb.admintool.VPSandbox.panels.editors;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -15,18 +19,22 @@ import saadadb.admintool.VPSandbox.components.mapper.VPClassMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPEnergyMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPIgnoredMappingPanel;
-import saadadb.admintool.VPSandbox.components.mapper.VPSpaceEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservableMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPObservationMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPOtherEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPOtherMappingPanel;
+import saadadb.admintool.VPSandbox.components.mapper.VPSpaceEntryMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPSpaceMappingPanel;
 import saadadb.admintool.VPSandbox.components.mapper.VPTimeMappingPanel;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.admintool.dialogs.DialogConfName;
 import saadadb.admintool.panels.editors.MappingKWPanel;
+import saadadb.admintool.panels.tasks.DataLoaderPanel;
+import saadadb.api.SaadaDB;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
@@ -96,6 +104,9 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		this.setActionBar();
 		this.setConfName("Default");
+		
+		loadConfFile("/home/pertuy/Programmes/saadinstall/saadadb/dbtest/config/TABLE.ENTRYSAVETEST2.config");//(ArgsParser)in.readObject();
+
 
 
 	}
@@ -130,7 +141,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		//Temporary
 		if(this.title.equals(NEW_MAPPER))
-			category=Category.SPECTRUM;
+			category=Category.TABLE;
 
 		classMapping = new VPClassMappingPanel(this);
 		classMapping.expand();
@@ -256,6 +267,220 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		if(otherMapping!=null)
 			otherMapping.reset();
+	}
+	
+	/**
+	 * @param parser
+	 */
+	public void loadConfig(ArgsParser parser)  {
+		try {
+			if( parser != null ) {
+				this.last_saved = parser.toString();
+				setConfName(parser.getName());
+				/*
+				 * Class-Mapping Axis
+				 */
+				if( classMapping != null ) {
+					classMapping.setParams(parser);
+				}
+				/*
+				 * Observation Axis
+				 */
+				if( observationMapping != null) {
+					this.observationMapping.setParams(parser);
+				}
+				/*
+				 * Space Axis
+				 */
+				if( spaceMapping != null  ) {
+					spaceMapping.setParams(parser);
+				}
+				/*
+				 * Energy Axis
+				 */
+				if( energyMapping != null ) {
+					energyMapping.setParams(parser);
+				}
+				/*
+				 * Time Axis
+				 */
+				if( timeMapping != null ) {
+					timeMapping.setParams(parser);			
+				}
+				/*
+				 * Observable Mapping
+				 */
+				if( observableMapping != null ) {
+					observableMapping.setParams(parser);			
+				}
+				/*
+				 * Ignored Keywords
+				 */
+				if( ignoredMapping != null ) {
+					ignoredMapping.setParams(parser);
+				}
+				/*
+				 * Extended Attributes
+				 */
+				if( otherMapping != null ) {
+					otherMapping.setParams(parser);
+				}
+
+			}				
+			else {
+				setConfName(null);
+			}
+
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			JOptionPane.showMessageDialog(rootFrame,
+					e.toString(),
+					"Error while loading configuration",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	
+	
+	/**
+	 * @param conf_path
+	 */
+	public void loadConfFile(String conf_path) {
+		ArgsParser ap = null;
+		if( conf_path.length() != 0 ) {
+
+			try {
+//				FileReader fr = new FileReader(conf_path);
+//				BufferedReader br = new BufferedReader(fr); 
+//				String s;
+//				while((s = br.readLine()) != null) {
+//					args.add(s);
+//				}
+//				br.close();
+//				ap = new ArgsParser(args.toArray(new String[args.size()]));
+//				loadConfig(ap);
+				ap = new ArgsParser(conf_path);
+				loadConfig(ap);
+			} catch(Exception ex) {
+				Messenger.printStackTrace(ex);
+				showFatalError(rootFrame, ex);
+				return;
+			}				
+		}
+	}
+	
+	
+	public void rename() {
+		try {
+			ArgsParser ap = this.getArgsParser();
+			if( checkParams() ) {
+				FileWriter fw = null;
+				String name = ap.getClassName();
+				if( name == null || name.length() == 0 || name.equalsIgnoreCase("null")) {
+					name = "NewConfig";
+				}
+				while( true ) {
+					DialogConfName dial = new DialogConfName(rootFrame, "Configuration Name", name);
+					dial.pack();
+					dial.setLocationRelativeTo(rootFrame);
+					dial.setVisible(true);
+					String prefix = null;
+					prefix = Category.explain(this.category);
+					name = dial.getTyped_name();
+					if( name == null ) {
+						return;
+					}
+					else if( name.equalsIgnoreCase("null") ) {
+						AdminComponent.showFatalError(rootFrame, "Wrong config name.");
+					}
+					else {
+						String filename = SaadaDB.getRoot_dir() 
+						+ Database.getSepar() + "config" 
+						+ Database.getSepar() + prefix + "." + name + ".config";
+						if( (new File(filename)).exists() 
+								&& AdminComponent.showConfirmDialog(rootFrame
+										, "Loader configuration <" + name + "> for \"" + prefix + "\" already exists.\nOverwrite it?") == false ) {
+							ap.setName(name);
+						}
+						else {
+							BufferedWriter writer;
+							ap.setName(name);
+							this.setConfName(name);
+							fw = new FileWriter(SaadaDB.getRoot_dir() 
+									+ Database.getSepar() + "config" 
+									+ Database.getSepar() + prefix + "." + name + ".config");
+							writer = new BufferedWriter(fw);						
+							for(String s:ap.getArgs())
+								writer.write(s+"\n");
+							writer.close();			
+							if( this.ancestor.equals(DATA_LOADER)) {
+								if (rootFrame.getActivePanel() instanceof DataLoaderPanel)
+								{
+									((DataLoaderPanel)(rootFrame.getActivePanel())).cancelChanges();
+								}
+								rootFrame.activePanel(DATA_LOADER);
+								if (rootFrame.getActivePanel() instanceof DataLoaderPanel)
+								{
+									((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName);
+								}
+							}
+
+							return;
+						}
+					}
+				}
+
+			}
+		} catch(Exception ex) {
+			Messenger.printStackTrace(ex);
+			AdminComponent.showFatalError(this, ex);
+			return;
+		}
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see saadadb.admintool.panels.editors.MappingKWPanel#save()
+	 */
+	@Override
+	public void save() {
+		if( confName==null || "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
+			this.rename();
+
+		}
+		else if( !this.hasChanged() ){
+			if( this.ancestor.equals(DATA_LOADER)) {
+				rootFrame.activePanel(DATA_LOADER);
+				((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+			}
+			return;
+		}
+		else if( checkParams() ) {
+			ArgsParser ap = this.getArgsParser();
+			FileWriter fw = null;
+			try {
+				BufferedWriter writer;
+				String prefix = Category.explain(this.category);
+				fw = new FileWriter(SaadaDB.getRoot_dir() 
+						+ Database.getSepar() + "config" 
+						+ Database.getSepar() + prefix + "." + confName + ".config");
+				writer = new BufferedWriter(fw);
+				for(String s:ap.getArgs())
+					writer.write(s+"\n");
+				writer.close();
+				this.last_saved  = ap.toString();
+				if( this.ancestor.equals(DATA_LOADER)) {
+					rootFrame.activePanel(DATA_LOADER);
+					((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+				}
+
+			} catch(Exception ex) {
+				Messenger.printStackTrace(ex);
+				AdminComponent.showFatalError(this, ex);
+				return;
+			}
+		}
 	}
 
 	/**

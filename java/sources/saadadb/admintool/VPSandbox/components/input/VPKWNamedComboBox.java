@@ -37,6 +37,18 @@ public class VPKWNamedComboBox extends VPKWMapper{
 	{
 		comboBox.setSelectedIndex(0);
 	}
+
+	@Override
+	public void setText(String text) {
+		comboBox.setSelectedItem(text);
+		
+	}
+
+	@Override
+	public void setEnable(boolean enable) {
+		comboBox.setEnabled(enable);
+	}
+
 	
 
 //	@Override

@@ -34,8 +34,17 @@ public abstract class VPKWMapper{
 		this.axisPanel=axisPanel;
 		fieldName=AdminComponent.getPlainLabel(title);
 	}
-
+	
+	
+	/**
+	 * Set the components values
+	 * @param text
+	 */
+	public abstract void setText(String text);
+	
 	public abstract String getText();
+	
+	public abstract void setEnable(boolean enable);
 
 	/**
 	 * Add the class's components to the VPAxisPriorityPanel from the constructor

@@ -1,5 +1,6 @@
 package saadadb.admintool.VPSandbox.components.mapper;
 
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 
@@ -12,6 +13,8 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
+import saadadb.command.ArgsParser;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 
 /**
@@ -21,6 +24,7 @@ import saadadb.exceptions.QueryException;
 public abstract class VPAxisPanel {
 
 	public final static int SUBPANELTITLECOLOR = CollapsiblePanel.COLLAPSIBLEPANELTITLECOLOR;
+	public final static Font SUBPANELTITLEFONT = AdminComponent.plainFont;
 	public final static String SUBPANELHEADER="Header Mapper";
 	public final static String SUBPANELENTRY="Entry Mapper";
 	public final static int SEPARATORCOLOR = 0xBBBEBF;
@@ -128,4 +132,11 @@ public abstract class VPAxisPanel {
 	public MyGBC getGbc() {
 		return gbc;
 	}
+	
+	/**
+	 * Allow to set the fields when the user load a configuration (defined filter)
+	 * @param ap
+	 * @throws FatalException 
+	 */
+	public abstract void setParams(ArgsParser ap) throws FatalException;
 }

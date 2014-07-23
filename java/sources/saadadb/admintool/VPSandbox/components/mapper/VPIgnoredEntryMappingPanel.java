@@ -10,6 +10,7 @@ import javax.swing.JSeparator;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
 
 /**
@@ -38,6 +39,7 @@ public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 		gbc.fill=GridBagConstraints.NONE;
 		
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
+		subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
 		
 		gbc.right(false);
 		
@@ -71,5 +73,15 @@ public class VPIgnoredEntryMappingPanel extends VPIgnoredMappingPanel{
 	{
 		super.reset();
 		ignoredKWField_entry.setText("");
+	}
+	
+	@Override
+	public void setParams(ArgsParser ap) {
+		super.setParams(ap);
+		StringBuilder builder = new StringBuilder();
+		for(String s : ap.getIgnoredAttributes(true)) {
+		    builder.append(s);
+		}
+		ignoredKWField_entry.setText(builder.toString());
 	}
 }

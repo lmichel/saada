@@ -16,7 +16,9 @@ import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldnBox;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 /**
  * Represent the Space axis/subpanel in the filter form
@@ -62,6 +64,8 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
 			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+			subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
+
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
 
@@ -109,8 +113,11 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 			if(positionError.getText().length()>0)
 				params.add("-poserror="+positionError.getText());
 
-			if(positionError.getComboBox().getSelectedItem().toString().length()>0)
-				params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+			if(positionError.getComboBox().getSelectedItem()!=null)
+			{
+				if(positionError.getComboBox().getSelectedItem().toString().length()>0)
+					params.add("-poserrorunit="+positionError.getComboBox().getSelectedItem().toString());
+			}
 		}
 		return params;
 	}
@@ -138,5 +145,56 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		system.reset();
 		positionField.reset();
 		positionError.reset();
+	}
+
+	@Override
+	public void setParams(ArgsParser ap) throws FatalException {
+		priority.noBtn.setSelected(false);
+		switch(ap.getPositionMappingPriority()){
+		case FIRST:priority.firstBtn.setSelected(true);
+			break;
+		case ONLY: priority.onlyBtn.setSelected(true);
+			break;
+		case LAST: priority.lastBtn.setSelected(true);
+			break;
+		default: priority.noBtn.setSelected(true);
+		}
+		if(fieldsEmpty(ap))
+			priority.noBtn.setSelected(true);
+		if(!priority.noBtn.isSelected())
+		{
+			system.setEnable(true);
+			positionError.setEnable(true);
+			positionField.setEnable(true);
+		}
+		
+		//We use a StringBuilder to transform the String[] into a simple String
+		StringBuilder builder = new StringBuilder();
+		for(String s : ap.getCoordinateSystem()) {
+		    builder.append(s);
+		}
+		//We delete the ' characters for the comboBox to correspond with the String it contains
+		system.setText(builder.toString(), builder.toString().replace("'", ""));
+		
+		builder = new StringBuilder();
+		for(String s : ap.getPositionMapping(false)) {
+		    builder.append(s);
+		}
+		positionField.setText(builder.toString());
+		positionError.setText(ap.getPoserrorMapping(false), ap.getPoserrorUnit(false));
+		
+	}
+
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		boolean empty=true;
+		for(String s : ap.getCoordinateSystem()) {
+			empty=false;
+		}
+		for(String s : ap.getPositionMapping(false)) {
+			empty=false;		
+			}
+		return empty &&	ap.getPoserrorMapping(false)==null && ap.getPoserrorUnit(false)==null;
+
 	}
 }

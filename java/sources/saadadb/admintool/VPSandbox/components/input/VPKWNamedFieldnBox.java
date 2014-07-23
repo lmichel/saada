@@ -32,6 +32,17 @@ public class VPKWNamedFieldnBox extends VPKWNamedField {
 		comboBox.setSelectedIndex(0);
 		comboBox.setEnabled(false);
 	}
+	
+	public void setText(String text,String boxText) {
+		super.setText(text);
+		comboBox.setSelectedItem(boxText);
+	}
+	
+	@Override
+	public void setEnable(boolean enable) {
+		super.setEnable(enable);
+		comboBox.setEnabled(enable);		
+	}
 
 
 

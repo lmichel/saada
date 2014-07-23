@@ -10,7 +10,9 @@ import javax.swing.JSeparator;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 /**
  * This class inherit of VPObservationMappingPanel and represent the subpanel in the case where the category=TABLE
@@ -41,6 +43,8 @@ public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
 		gbc.right(false);
 		subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+		subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
+
 		axisPanel.add(subPanelTitle,gbc);
 		gbc.newRow();
 
@@ -91,5 +95,22 @@ public class VPObservationEntryMappingPanel extends VPObservationMappingPanel{
 		super.reset();
 		target_name_entry.reset();
 		instrument_name_entry.reset();
+	}
+	
+	public void setParams(ArgsParser ap) throws FatalException {
+		super.setParams(ap);
+		if(!priority.noBtn.isSelected())
+		{
+			target_name_entry.setEnable(true);
+			instrument_name_entry.setEnable(true);
+		}
+		target_name_entry.setText(ap.getTarget(true));
+		instrument_name_entry.setText(ap.getInstrument(true));
+	}
+	
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		return super.fieldsEmpty(ap) && ap.getTarget(true)==null && ap.getInstrument(true)==null;
+
 	}
 }

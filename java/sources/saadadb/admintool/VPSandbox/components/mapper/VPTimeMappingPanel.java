@@ -8,6 +8,7 @@ import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
 
 /**
@@ -87,4 +88,36 @@ public class VPTimeMappingPanel extends VPAxisPriorityPanel {
 		tmax.reset();
 		exptime.reset();
 	}
+
+	@Override
+	public void setParams(ArgsParser ap) {
+		priority.noBtn.setSelected(false);
+		switch(ap.getTimeMappingPriority()){
+		case FIRST:priority.firstBtn.setSelected(true);
+			break;
+		case ONLY: priority.onlyBtn.setSelected(true);
+			break;
+		case LAST: priority.lastBtn.setSelected(true);
+			break;
+		default: priority.noBtn.setSelected(true);
+		}
+		if(fieldsEmpty(ap))
+			priority.noBtn.setSelected(true);
+		if(!priority.noBtn.isSelected())
+		{
+			tmin.setEnable(true);
+			tmax.setEnable(true);
+			exptime.setEnable(true);
+		}
+		tmin.setText(ap.getTmin(false));
+		tmax.setText(ap.getTmax(false));
+		exptime.setText(ap.getExpTime(false));
+		
+	}
+
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		return ap.getTmin(false)==null && ap.getTmax(false)==null && ap.getExpTime(false)==null;
+	}
+	
 }

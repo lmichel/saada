@@ -14,7 +14,9 @@ import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.components.input.VPKWNamedFieldnBox;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 /**
  * This class inherit of SpaceMappingPanel and represent the subpanel in the case where the category=TABLE
@@ -25,7 +27,6 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 
 	private VPKWNamedFieldnBox positionError_entry;
 	private VPKWNamedField positionField_entry;
-	private VPKWNamedFieldnBox system_entry;
 	
 	/*
 	 * see ObservationEntryMappingPanel for functionals precisions
@@ -47,39 +48,22 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
 		gbc.right(false);
 		subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+		subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
+
 		axisPanel.add(subPanelTitle,gbc);
 		gbc.newRow();
 		
 		positionField_entry = new VPKWNamedField(this,"Position ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup));
 		positionError_entry = new VPKWNamedFieldnBox(this,"Position error ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup),new String[]{"","deg", "arcsec", "arcmin", "mas"});
-		system_entry = new VPKWNamedFieldnBox(this,"System ",new AppendMappingTextField(mappingPanel,DataMapLevel.KEYWORD, false,priority.buttonGroup),new String[]{"", "ICRS", "FK5,J2000", "Galactic", "Ecliptic"});
 
 		axisPriorityComponents.add(positionField_entry.getField());
 		axisPriorityComponents.add(positionError_entry.getField());
 		axisPriorityComponents.add(positionError_entry.getComboBox());
-		axisPriorityComponents.add(system_entry.getField());
-		axisPriorityComponents.add(system_entry.getComboBox());
 		priority.selector.buildMapper(axisPriorityComponents);		
 
 		positionField_entry.setComponents();
 		positionError_entry.setComponents();
-		system_entry.setComponents();
 
-		/*
-		 * Link the comboBox to the system field
-		 */
-		system_entry.getComboBox().addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JComboBox temp =system_entry.getComboBox();
-				if( e.getSource() == temp) {
-					//We don't want to display the quotes if the blank option is selected
-					if(temp.getSelectedIndex()!=0)
-						system_entry.getField().setText("'" + temp.getSelectedItem() + "'");
-					else
-						system_entry.getField().setText("");
-				}
-			}
-		});
 	}
 	
 	public ArrayList<String> getAxisParams() {
@@ -93,8 +77,11 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 			if(positionError_entry.getText().length()>0)
 				params.add("-entry.poserror="+positionError_entry.getText());
 
-			if(positionError_entry.getComboBox().getSelectedItem().toString().length()>0)
-				params.add("-entry.poserrorunit="+positionError_entry.getComboBox().getSelectedItem().toString());
+			if(positionError_entry.getComboBox().getSelectedItem()!=null)
+			{
+				if(positionError_entry.getComboBox().getSelectedItem().toString().length()>0)
+					params.add("-entry.poserrorunit="+positionError_entry.getComboBox().getSelectedItem().toString());
+			}
 		}
 
 		return params;
@@ -104,9 +91,6 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		String error =super.checkAxisParams();
 		if(priority.isOnly())
 		{
-
-			if(system_entry.getText().length()==0)
-				error+= "<LI>Space Axis : Priority \"Only\" selected but no system specified</LI>";
 			if(positionField_entry.getText().length()==0)
 				error+= "<LI>Space Axis : Priority \"Only\" selected but no position specified</LI>";
 			if(positionError_entry.getText().length()==0)
@@ -121,9 +105,34 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 
 	public void reset() {
 		super.reset();
-		system_entry.reset();
 		positionField_entry.reset();
 		positionError_entry.reset();
+	}
+	
+	public void setParams(ArgsParser ap) throws FatalException {
+		super.setParams(ap);
+		StringBuilder builder = new StringBuilder();
+		for(String s : ap.getPositionMapping(true)) {
+		    builder.append(s);
+		}
+		if(!priority.noBtn.isSelected())
+		{
+			positionError_entry.setEnable(true);
+			positionField_entry.setEnable(true);
+		}
+		positionField_entry.setText(builder.toString());
+		positionError_entry.setText(ap.getPoserrorMapping(true), ap.getPoserrorUnit(true));
+		
+	}
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		boolean empty=true;
+		for(String s : ap.getPositionMapping(true)) {
+		    empty=false;
+		}
+		return super.fieldsEmpty(ap) && empty  &&	ap.getPoserrorMapping(true)==null && 
+				ap.getPoserrorUnit(true)==null;
+
 	}
 	
 }

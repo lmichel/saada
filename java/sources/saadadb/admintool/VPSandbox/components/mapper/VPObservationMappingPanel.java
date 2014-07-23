@@ -12,7 +12,9 @@ import saadadb.admintool.VPSandbox.components.input.VPKWNamedField;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 /**
  * Represent the Observation axis/subpanel in the filter form
@@ -59,7 +61,8 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 			gbc.newRow();
 			gbc.fill=GridBagConstraints.NONE;
 			
-			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
+			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);		
+			subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
 			
 			gbc.right(false);
 			
@@ -131,5 +134,42 @@ public class VPObservationMappingPanel extends VPAxisPriorityPanel {
 		target_name.reset();
 		facility_name.reset();
 		instrument_name.reset();
+	}
+
+	@Override
+	public void setParams(ArgsParser ap) throws FatalException {
+		priority.noBtn.setSelected(true);
+		switch(ap.getObsMappingPriority()){
+		case FIRST:priority.firstBtn.setSelected(true);
+			break;
+		case ONLY: priority.onlyBtn.setSelected(true);
+			break;
+		case LAST: priority.lastBtn.setSelected(true);
+		break;
+
+		default: priority.noBtn.setSelected(true);
+		}
+		if(fieldsEmpty(ap))
+			priority.noBtn.setSelected(true);
+		if(!priority.noBtn.isSelected())
+		{
+			obs_collection.setEnable(true);
+			target_name.setEnable(true);
+			facility_name.setEnable(true);
+			instrument_name.setEnable(true);
+
+		}
+		
+		obs_collection.setText(ap.getObscollection(false));
+		target_name.setText(ap.getTarget(false));
+		facility_name.setText(ap.getFacility(false));
+		instrument_name.setText(ap.getInstrument(false));
+	}
+
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		return ap.getObscollection(false)==null && ap.getTarget(false)==null &&
+				ap.getFacility(false)==null && ap.getInstrument(false)==null;
+
 	}
 }

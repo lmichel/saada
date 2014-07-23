@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import saadadb.admintool.VPSandbox.components.input.VPKWMapper;
 import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
+import saadadb.command.ArgsParser;
 
 /**
  * This class represent an Axis/subpanel dependent of a priority selector
@@ -64,6 +65,13 @@ public abstract class  VPAxisPriorityPanel extends VPAxisPanel {
 	public JPanel getPanel() {
 		return panel;
 	}
+	
+	/**
+	 * Check if all the axis fields are empty
+	 * @param ap
+	 * @return
+	 */
+	public abstract boolean fieldsEmpty(ArgsParser ap);
 
 	public VPPriorityPanel getPriority() {
 		return priority;

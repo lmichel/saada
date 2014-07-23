@@ -15,6 +15,7 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.collection.Category;
+import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.enums.DataMapLevel;
 import saadadb.meta.AttributeHandler;
@@ -44,6 +45,7 @@ public class VPOtherEntryMappingPanel extends VPOtherMappingPanel{
 		gbc.fill=GridBagConstraints.NONE;
 		
 		JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELENTRY);
+		subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
 		
 		gbc.right(false);
 		
@@ -97,6 +99,13 @@ public class VPOtherEntryMappingPanel extends VPOtherMappingPanel{
 		for(Entry<String, JTextField> e: fields_entry.entrySet())
 		{
 			e.getValue().setText("");
+		}
+	}
+	
+	public void setParams(ArgsParser ap) {
+		super.setParams(ap);
+		for( Entry<String, JTextField> e: fields_entry.entrySet()){
+				e.getValue().setText(ap.getUserKeyword(false, e.getKey()));
 		}
 	}
 
