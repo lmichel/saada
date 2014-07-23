@@ -1,9 +1,15 @@
 package saadadb.util;  
 
+import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
+import saadadb.meta.UTypeHandler;
+import saadadb.meta.VOResource;
 /**This class defines all standard integers allowing the use of a switch/case.
  * Attention: All methods are statics, and this class must be initialized before every use (methods "initTypeMapping" and "initFieldsNames").
  *@author Millan Patrick
@@ -67,20 +73,39 @@ public class DefineType extends Hashtable{
 
 
 	/**
+	 * @throws FatalException 
 	 * 
 	 */
-	public static void init() { 
+	public static void init() throws FatalException { 
 		if( !already_init ) {
 			initFieldNames();
 			initCollUCDs();
 			initCollSDMUtypes();
 			initCollNameOrg();
 			initCollUnits();
+			appendObsCore();
 			already_init = true;
 
 		}
 	}
 
+	/**
+	 * @throws FatalException
+	 */
+	private static void appendObsCore() throws FatalException {
+		try {
+			VOResource vor = new VOResource(Database.getRoot_dir() + File.separator + "config" +  File.separator + "vodm.ObsCore.xml");
+			List<UTypeHandler> uths = vor.getUTypeHandlers();
+			for(UTypeHandler uth: uths ){
+				collection_ucds.put(uth.getNickname(), uth.getUcd());
+				collection_name_org.put(uth.getNickname(), uth.getNickname());
+				collection_units.put(uth.getNickname(), uth.getUnit());
+				coll_sdm_utypes.put(uth.getNickname(), uth.getUtype());
+			}
+		} catch (Exception e) {
+			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
+		}
+	}
 	/**Initializes this class for this use.
 	 * Use for the determining of the integer of java fields.
 	 *@return void.
@@ -228,16 +253,18 @@ public class DefineType extends Hashtable{
 	/**Returns the integer corresponding to the parametered mapping type.
 	 *@param String The tested mapping type.
 	 *@return int The integer corresponding to the mapping type.
+	 * @throws FatalException 
 	 */    
-	public int getTypeMapping(String type){
+	public int getTypeMapping(String type) throws FatalException{
 		init();
 		return ((Integer)get(type)).intValue();
 	}
 	/**Returns the data type if this type exists.
 	 *@param String The tested data type.
 	 *@return String The tested data type or null.
+	 * @throws FatalException 
 	 */
-	public static String getDataType(String type){
+	public static String getDataType(String type) throws FatalException{
 		init();
 		String test;
 		for(int i = 0; i<nbDataType; i++){
@@ -251,8 +278,9 @@ public class DefineType extends Hashtable{
 	/**Returns the integer corresponding to the parametered data type.
 	 *@param String The tested data type.
 	 *@return int The integer corresponding to the data type.
+	 * @throws FatalException 
 	 */
-	public static int getIntDataType(String type){
+	public static int getIntDataType(String type) throws FatalException{
 		init();
 		String test;
 		for(int i = 0; i<nbDataType; i++){
@@ -265,31 +293,35 @@ public class DefineType extends Hashtable{
 	}
 	/**
 	 * @return Returns the coll_sdm_utypes.
+	 * @throws FatalException 
 	 */
-	public static Hashtable<String, String> getColl_sdm_utypes() {
+	public static Hashtable<String, String> getColl_sdm_utypes() throws FatalException {
 		init();
 		return coll_sdm_utypes;
 	}
 	/**
 	 * @return Returns the collection_ucds.
+	 * @throws FatalException 
 	 */
-	public static Hashtable<String, String> getCollection_ucds() {
+	public static Hashtable<String, String> getCollection_ucds() throws FatalException {
 		init();
 		return collection_ucds;
 	}
 
 	/**
 	 * @return Returns the collection_name_org.
+	 * @throws FatalException 
 	 */
-	public static Hashtable<String, String> getCollection_name_org() {
+	public static Hashtable<String, String> getCollection_name_org() throws FatalException {
 		init();
 		return collection_name_org;
 	}
 
 	/**
 	 * @return Returns the collection_units.
+	 * @throws FatalException 
 	 */
-	public static Hashtable<String, String> getCollection_units() {
+	public static Hashtable<String, String> getCollection_units() throws FatalException {
 		init();
 		return collection_units;
 	}
