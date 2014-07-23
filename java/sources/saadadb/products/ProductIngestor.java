@@ -66,7 +66,7 @@ class ProductIngestor {
 		}
 		this.setObservationFields();
 		this.setSpaceFields();
-		this.setEnegryFields();		
+		this.setEnergyFields();		
 		this.setTimeFields();
 		this.setObservableFields();
 		this.loadAttrExtends();
@@ -84,7 +84,7 @@ class ProductIngestor {
 			Messenger.printMsg(Messenger.DEBUG, "Set fields of the Saada instance");
 		this.setObservationFields();
 		this.setSpaceFields();
-		this.setEnegryFields();		
+		this.setEnergyFields();		
 		this.setTimeFields();
 		this.setObservableFields();
 		this.loadAttrExtends();
@@ -138,7 +138,7 @@ class ProductIngestor {
 	 * @throws AbortException 
 	 */
 	protected void setObservationFields() throws SaadaException {
-		this.saadaInstance.setObs_id(this.getInstanceName(null));
+		this.saadaInstance.obs_id  = this.getInstanceName(null);
 		this.saadaInstance.setAccess_url(this.saadaInstance.getDownloadURL(false));	
 		this.saadaInstance.setAccess_format(this.product.mimeType);
 		this.saadaInstance.setDate_load(new java.util.Date().getTime());
@@ -367,7 +367,7 @@ System.out.println("===========================");
 	/**
 	 * @throws FatalException 
 	 */
-	protected void setEnegryFields() throws SaadaException {
+	protected void setEnergyFields() throws SaadaException {
 
 		ColumnSetter qdMin = this.product.em_minSetter;
 		ColumnSetter qdMax = this.product.em_maxSetter;
@@ -379,9 +379,9 @@ System.out.println("===========================");
 			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 			if( !spectralCoordinate.convert() ) {
 				this.product.em_minSetter = new ColumnSetter();
-				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit());
+				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
 				this.product.em_maxSetter = new ColumnSetter();
-				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit());
+				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
 				this.product.em_res_powerSetter =  new ColumnSetter();
 			} else {
 				this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
@@ -440,7 +440,7 @@ System.out.println("===========================");
 	public void loadValue() throws Exception  {
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this.product) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
-					+ this.saadaInstance.getObs_id()+ "> in Collection <"
+					+ this.saadaInstance.obs_id+ "> in Collection <"
 					+ this.saadaInstance.getCollection().getName() + "> with md5 <"
 					+ this.saadaInstance.contentsignature + "> exists in the data base <"
 					+ Database.getName() + ">");	
@@ -449,7 +449,6 @@ System.out.println("===========================");
 		 * Store the Saada instance
 		 */
 		this.storeCopyFileInRepository();
-		System.out.println(this.saadaInstance.getCategory() + " @@@@@@@@@@@@@ " + Long.toHexString(this.saadaInstance.oidsaada));
 		this.saadaInstance.store();
 	}
 
@@ -463,7 +462,7 @@ System.out.println("===========================");
 	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this.product) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
-					+ this.saadaInstance.getObs_id()+ "> in Collection <"
+					+ this.saadaInstance.obs_id+ "> in Collection <"
 					+ this.saadaInstance.getCollection().getName() + "> with md5 <"
 					+ this.saadaInstance.contentsignature + "> exists in the data base <"
 					+ Database.getName() + ">");	
@@ -567,7 +566,7 @@ System.out.println("===========================");
 	 * @param ah_ref
 	 * @throws FatalException
 	 */
-	private void setField(String fieldName, ColumnSetter ah_ref) throws FatalException{
+	protected void setField(String fieldName, ColumnSetter ah_ref) throws FatalException{
 		String value = ah_ref.getValue();
 		Field f=null;
 		try {

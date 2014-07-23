@@ -349,7 +349,7 @@ public class EnergyKWDetector extends KWDetector {
 		ColumnSetter retour = new ColumnSetter();
 		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMax())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
-			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
+			retour.completeMessage(this.detectionMessage);	
 		}
 		return retour;
 	}
@@ -364,7 +364,7 @@ public class EnergyKWDetector extends KWDetector {
 		ColumnSetter retour = new ColumnSetter();
 		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMin())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
-			retour.completeMessage(this.spectralCoordinate.detectionMessage);	
+			retour.completeMessage(this.detectionMessage);	
 		}
 		return retour;
 	}

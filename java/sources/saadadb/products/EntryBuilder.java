@@ -12,6 +12,7 @@ import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -157,7 +158,7 @@ public class EntryBuilder extends ProductBuilder {
 					md5KeySQL.append(val);
 				}
 			}
-			file_bus_sql.insert(0, entryIngestor.saadaInstance.oidsaada + "\t" + entryIngestor.saadaInstance.getObs_id() + "\t" + MD5Key.calculMD5Key(md5KeySQL.toString()));
+			file_bus_sql.insert(0, entryIngestor.saadaInstance.oidsaada + "\t" + entryIngestor.saadaInstance.obs_id + "\t" + MD5Key.calculMD5Key(md5KeySQL.toString()));
 			file_bus_sql.append("\n");
 			bustmpfile.write(file_bus_sql.toString());
 			/*
@@ -228,16 +229,79 @@ public class EntryBuilder extends ProductBuilder {
 	 */
 	@Override
 	public void bindDataFile(DataFile dataFile) throws SaadaException {
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
 		//this.typeFile      = this.table.typeFile;
 		//this.productFile   = this.table.productFile;
 		/*
 		 * This operation van be done in super(...) then before this table is set.
 		 */
 		if( this.table != null ) {
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
 			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
 			this.setFmtsignature();
 		}
+	}
+
+	public Map<String, ColumnSetter> getReport() throws Exception {
+		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
+		this.setProductIngestor();
+
+		this.productIngestor.bindInstanceToFile(this.productIngestor.saadaInstance);
+		SaadaInstance si = this.productIngestor.saadaInstance;
+
+		retour.put("entry.target_name", target_nameSetter);
+		this.target_nameSetter.storedValue = si.target_name;
+		retour.put("entry.facility_name", facility_nameSetter);
+		this.facility_nameSetter.storedValue = si.facility_name;
+		retour.put("entry.instrument_name", instrument_nameSetter);
+		this.instrument_nameSetter.storedValue = si.instrument_name;
+
+		retour.put("entry.s_ra", s_raSetter);
+		this.s_raSetter.storedValue = si.s_ra;
+		retour.put("entry.s_dec", s_decSetter);
+		this.s_decSetter.storedValue = si.s_dec;
+		retour.put("entry.s_resolution",s_resolutionSetter);
+		this.s_resolutionSetter.storedValue = si.s_resolution;
+		retour.put("entry.s_fov", s_fovSetter);
+		this.s_fovSetter.storedValue = si.getS_fov();
+		retour.put("entry.s_region", s_regionSetter);
+		this.s_regionSetter.storedValue = si.getS_region();
+
+		retour.put("entry.em_min", em_minSetter);
+		this.em_minSetter.storedValue = si.em_min;
+		retour.put("entry.em_max", em_maxSetter);
+		this.em_maxSetter.storedValue = si.em_max;
+		retour.put("entry.em_res_power", em_res_powerSetter);
+		this.em_res_powerSetter.storedValue = si.em_res_power;
+		retour.put("entry.x_unit_org", x_unit_orgSetter);
+		this.x_unit_orgSetter.storedValue = this.x_unit_orgSetter.getValue();
+
+
+		retour.put("entry.t_max", t_maxSetter);
+		this.t_maxSetter.storedValue = si.t_max;
+		retour.put("entry.t_min", t_minSetter);
+		this.t_minSetter.storedValue = si.t_min;
+		retour.put("entry.t_exptime", t_exptimeSetter);
+		this.t_exptimeSetter.storedValue = si.t_exptime;
+
+
+		for( ColumnSetter eah: this.extended_attributesSetter.values()){
+			retour.put("entry." + eah.getAttNameOrg(), eah);     
+		}
+
+		for( Field f: si.getCollLevelPersisentFields() ){
+			String fname = f.getName();
+			if( retour.get(fname) == null ){
+				AttributeHandler ah = new AttributeHandler();
+				ah.setNameattr(fname); ah.setNameorg(fname); 
+				Object o = si.getFieldValue(fname);
+				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
+				ah.setComment("Computed internally by Saada");		
+				ColumnSetter cs = new ColumnSetter(ah, ColumnSetMode.BY_SAADA);
+				cs.storedValue = ah.getValue();
+				retour.put("entry." + fname, cs);
+			}
+		}
+		return retour;
 	}
 
 	/* (non-Javadoc)
