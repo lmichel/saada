@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import saadadb.collection.obscoremin.SaadaInstance;
-import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.DMInterface;
@@ -174,5 +173,29 @@ public class ClassDMTester extends SaadaInstance {
 	public void setO_calib_status(String status) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setObs_id(String obsid) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getObs_id() throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setObs_collection(String collection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getObs_collection() throws SaadaException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

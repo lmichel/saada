@@ -66,7 +66,7 @@ public class ObjectScaner {
 							long oid = ors.getLong(1);
 							nb_obj++;
 							SaadaInstance si = Database.getCache().getObject(oid);
-							printout("        " + oid + "<" + si.obs_id+ ">");
+							printout("        " + oid + "<" + si.getObs_id()+ ">");
 						}
 						
 					}
@@ -82,7 +82,7 @@ public class ObjectScaner {
 								long oid = ors.getLong(1);
 								nb_obj++;
 								SaadaInstance si = Database.getCache().getObject(oid);
-								printout("        " + oid + "<" + si.obs_id+ ">");
+								printout("        " + oid + "<" + si.getObs_id()+ ">");
 							}
 						}
 					}

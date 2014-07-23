@@ -57,7 +57,7 @@ public class QueryRunner {
 				//System.out.println(ors.getOId());
 				cpt++;
 				SaadaInstance si = Database.getCache().getObject(ors.getOId());		
-				System.out.println(si.obs_id);
+				System.out.println(si.getObs_id());
 				for(AttributeHandler ah: constrained_attr) {
 					System.out.println(" ATT " + ah.getNameorg() + " " + si.getFieldValue(ah.getNameattr()));
 				}
