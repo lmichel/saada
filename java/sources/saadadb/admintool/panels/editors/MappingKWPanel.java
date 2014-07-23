@@ -21,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.VPSandbox.panels.VPPreviewPanel;
@@ -76,7 +75,7 @@ public class MappingKWPanel extends EditPanel {
 
 	protected GridBagConstraints globalGridConstraint ;
 	private GridBagConstraints e_globalGridConstraint ;
-	private String last_saved = "";
+	protected String last_saved = "";
 
 	protected JPanel editorPanel;
 	private JPanel e_editorPanel;
@@ -768,15 +767,19 @@ public class MappingKWPanel extends EditPanel {
 	public void save() {
 		if( confName==null || "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
 			this.rename();
-		}
+			Messenger.printMsg(Messenger.DEBUG, "Premier IF Save MPKWPanel");
+}
 		else if( !this.hasChanged() ){
 			if( this.ancestor.equals(DATA_LOADER)) {
 				rootFrame.activePanel(DATA_LOADER);
-				((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 	
+				((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 
+				Messenger.printMsg(Messenger.DEBUG, "Deuxième IF Save MPKWPanel");
 			}
 			return;
 		}
 		else if( checkParams() ) {
+			Messenger.printMsg(Messenger.DEBUG, "Troisième IF Save MPKWPanel");
+
 			ArgsParser ap = this.getArgsParser();
 			FileOutputStream fos = null;
 			ObjectOutputStream out = null;
