@@ -18,15 +18,16 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.QuantityDetector;
-import saadadb.products.inference.SpaceKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
+import cds.savot.binary.DataBinaryReader;
 import cds.savot.model.FieldSet;
 import cds.savot.model.GroupSet;
 import cds.savot.model.ParamSet;
+import cds.savot.model.SavotBinary;
 import cds.savot.model.SavotCoosys;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotGroup;
@@ -36,7 +37,6 @@ import cds.savot.model.SavotTR;
 import cds.savot.model.SavotTable;
 import cds.savot.model.SavotVOTable;
 import cds.savot.model.TDSet;
-import cds.savot.model.TRSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
 
@@ -86,6 +86,17 @@ public class VOTableDataFile extends File implements DataFile {
 	private ArrayList<Integer> entryTypeCode;
 	/**array of the data column types (optimization)*/	
 	private ArrayList<String> entryTypeString;
+	/*
+	 * internal pointer used to read internal data
+	 */
+	/** Flag for switching in bin mode */
+	private boolean binaryMode = false;
+	/** Pointer to the select binary data blob */
+	private SavotBinary binaryData;
+	/** Fields stored with the binary blob */
+	private FieldSet binaryFields;
+	/** Binary data reader */
+	private DataBinaryReader binaryParser;
 
 	/**
 	 * This creator musn't be sed to load data but just to build a map of the porduct 
@@ -95,8 +106,8 @@ public class VOTableDataFile extends File implements DataFile {
 	public VOTableDataFile(String filename) throws Exception{
 		super(filename);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Modeling the VOTable");
-		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	    
-		voTable = parser.getVOTable();
+		this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	    
+		this.voTable = parser.getVOTable();
 		this.getProductMap();
 	}
 
@@ -200,7 +211,6 @@ public class VOTableDataFile extends File implements DataFile {
 	 * @param savotTable
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	private LinkedHashMap<String, AttributeHandler> createTableAttributeHandlerFromResourceDesc(SavotResource savotResource, SavotTable savotTable){
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		String keyChanged = "";
@@ -393,17 +403,53 @@ public class VOTableDataFile extends File implements DataFile {
 		 */
 		this.entryTypeCode = new ArrayList<Integer>();
 		for( AttributeHandler ah: this.dataExtension.attributeHandlers ){
-			System.out.println(ah.getNameorg() + " " + ah.getType());
 			this.entryTypeCode.add(DefineType.getType(ah.getType()));
 		}
 		this.entryTypeString = new ArrayList<String>();
 		for( AttributeHandler ah: this.dataExtension.attributeHandlers ){
-			System.out.println(ah.getNameorg() + " " + ah.getType());
 			this.entryTypeString.add(ah.getType());
+		}
+		if( this.dataExtension.type == DataFileExtensionType.BINTABLE){
+			this.setPointerOnBinaryData();
 		}
 		this.extensionSetter = new ExtensionSetter("#" + this.headerExtension.resourceNum + "." + this.headerExtension.tableNum
 				, esm
 				, "Given by the mapping");
+	}
+
+	private void  setPointerOnBinaryData() throws IgnoreException {
+		SavotResource savotResource;
+		int rCpt=1;
+		int tCpt=1;// tables are tagged without regards for the resource to be usable for the parser
+		this.binaryMode = true;
+		try {
+			this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);
+		} catch (IOException e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, e);
+		}	    
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Switch on binary mode");
+		while ((savotResource = this.parser.getNextResource()) != null) {
+			if( savotResource.getTables().getItems() == null ) {
+				Messenger.printMsg(Messenger.TRACE, "No table in resource #" + rCpt);
+				continue;
+			}
+System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + " " +  this.dataExtension.tableNum);
+			for( SavotTable savotTable: savotResource.getTables().getItems()) {
+				if( rCpt == this.dataExtension.resourceNum && tCpt == this.dataExtension.tableNum ) {
+					if( (this.binaryData = savotTable.getData().getBinary()) == null  ) {
+						IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "The table #" + rCpt + " is not binary as declared in the porduct map");
+					}
+					this.binaryFields = savotTable.getFields();			
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Binary data found");
+					return;
+				}
+				tCpt++;
+			}
+			rCpt++;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -494,15 +540,25 @@ public class VOTableDataFile extends File implements DataFile {
 	 */
 	@Override
 	public void initEnumeration() {
-		try {
-			this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);
-			this.voTable = parser.getVOTable();
-			this.rowNum = 0;
-		} catch (IOException e) {}	    
+		if( this.binaryMode ) {
+			try {
+				this.binaryParser = new DataBinaryReader(this.binaryData.getStream(), this.binaryFields, false, this.getParent());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-		while( parser.getNextTR() != null) {
-			if( parser.getTableCount() == this.headerExtension.tableNum ){
-				return;
+		} else {
+			try {
+				this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);
+				this.voTable = parser.getVOTable();
+				this.rowNum = 0;
+			} catch (IOException e) {}	    
+
+			while( parser.getNextTR() != null) {
+				if( parser.getTableCount() == this.headerExtension.tableNum ){
+					return;
+				}
 			}
 		}
 	}
@@ -513,10 +569,20 @@ public class VOTableDataFile extends File implements DataFile {
 	 */
 	@Override
 	public boolean hasMoreElements() {
-		if( (this.savotTR = parser.getNextTR()) != null )  {
-			return ( parser.getTableCount() == this.headerExtension.tableNum );
+		if( this.binaryMode ) {
+			try {
+				return this.binaryParser.next();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
 		} else {
-			return  false;
+			if( (this.savotTR = parser.getNextTR()) != null )  {
+				return ( parser.getTableCount() == this.headerExtension.tableNum );
+			} else {
+				return  false;
+			}
 		}
 	}
 
@@ -526,93 +592,101 @@ public class VOTableDataFile extends File implements DataFile {
 	@Override
 	public Object nextElement() throws NumberFormatException, NullPointerException {
 		Vector<Object> line = new Vector<Object>();
-		TDSet td = this.savotTR.getTDSet();
-		if( td.getItemCount() != this.dataExtension.attributeHandlers.size()) {
-			throw new NullPointerException("Line #" + this.rowNum + ": More <TD> elements than declared <FIELDS>");
-		}
-		for (int k = 0; k < td.getItemCount(); k++) {
-			int typeCode = this.entryTypeCode.get(k);
-			String tdContent = td.getContent(k).trim();
-			Object obj = null;
-			/*
-			 * Il est des gens qui mettent NULL pour signifier qu'un champ n'est pas affect� au lieu de mettre un champs vide
-			 */
-			if( (typeCode == DefineType.FIELD_STRING || !tdContent.equals("")) && !tdContent.equalsIgnoreCase("null") ) {
-				switch (typeCode) {
-				case DefineType.FIELD_DATE:
-					obj = tdContent;
-					break;
-				case DefineType.FIELD_STRING:
-					if( tdContent.startsWith("<![CDATA[")) {
-						tdContent = tdContent.substring(9, tdContent.length() - 3);
-					}
-					if (tdContent.equals("") || tdContent == null) {
-						obj = " ";
-					} else {
-						obj = tdContent;
-					}
-					break;
-				case DefineType.FIELD_INT:
-					if( tdContent == null)
-						obj = null;
-					else
-						obj = new Integer(tdContent);
-					break;
-				case DefineType.FIELD_DOUBLE:
-					String unit = (String) this.entryTypeString.get(k);
-					if ( unit.equals("h:m:s") || unit.equals("d:m:s") || unit.equals("hours") /* || tdContent.matches("[^\\s]+[:\\s]+[^\\s]+.*") */) {
-						Astrocoo coord = (Astrocoo) this.productBuilder.astroframeSetter.storedValue;
-						try {
-							if( tdContent.startsWith("+") || tdContent.startsWith("-")) {
-								coord.set("0 0 0 " + tdContent) ;
-								obj = new Double(coord.getLat());
-							}
-							else  {
-								coord.set(tdContent + " +0 0 0") ;
-								obj = new Double(coord.getLon());
-							}
-						} catch (Exception e) {
-							Messenger.printStackTrace(e);
-							obj = "null";
-						}
-					} else {
-						if( tdContent.equalsIgnoreCase("null")) {
-							obj = new Double(Double.POSITIVE_INFINITY);
-						}
-						else {
-							obj = new Double(tdContent);
-						}
-					}
-					break;
-				case DefineType.FIELD_FLOAT:
-					obj = new Float(tdContent);
-					break;
-				case DefineType.FIELD_LONG:
-					obj = new Long(tdContent);
-					break;
-				case DefineType.FIELD_SHORT:
-					obj = new Short(tdContent);
-					break;
-				case DefineType.FIELD_BOOLEAN:
-					boolean[] boo = new boolean[1];
-					boo[0] = Boolean.getBoolean(tdContent);
-					obj = boo;
-					break;
-				case DefineType.FIELD_BYTE:
-					obj = new Byte(tdContent);
-					break;
-				case DefineType.FIELD_CHAR:
-					obj = new Character((tdContent.toCharArray())[0]);
-					break;
-				default:
-					obj = new Object();
-					break;		
-				}
-			} else {
-				obj = "";
+		if( this.binaryMode ) {
+			for( int f=0 ; f< this.binaryFields.getItemCount() ; f++ ){
+				Object o = this.binaryParser.getCellAsString(f);
+				line.add(o);
 			}
-			line.add(obj);
-			// message += "<"+type+" / "+tdContent+">";
+		} else {
+
+			TDSet td = this.savotTR.getTDSet();
+			if( td.getItemCount() != this.dataExtension.attributeHandlers.size()) {
+				throw new NullPointerException("Line #" + this.rowNum + ": More <TD> elements than declared <FIELDS>");
+			}
+			for (int k = 0; k < td.getItemCount(); k++) {
+				int typeCode = this.entryTypeCode.get(k);
+				String tdContent = td.getContent(k).trim();
+				Object obj = null;
+				/*
+				 * Il est des gens qui mettent NULL pour signifier qu'un champ n'est pas affect� au lieu de mettre un champs vide
+				 */
+				if( (typeCode == DefineType.FIELD_STRING || !tdContent.equals("")) && !tdContent.equalsIgnoreCase("null") ) {
+					switch (typeCode) {
+					case DefineType.FIELD_DATE:
+						obj = tdContent;
+						break;
+					case DefineType.FIELD_STRING:
+						if( tdContent.startsWith("<![CDATA[")) {
+							tdContent = tdContent.substring(9, tdContent.length() - 3);
+						}
+						if (tdContent.equals("") || tdContent == null) {
+							obj = " ";
+						} else {
+							obj = tdContent;
+						}
+						break;
+					case DefineType.FIELD_INT:
+						if( tdContent == null)
+							obj = null;
+						else
+							obj = new Integer(tdContent);
+						break;
+					case DefineType.FIELD_DOUBLE:
+						String unit = (String) this.entryTypeString.get(k);
+						if ( unit.equals("h:m:s") || unit.equals("d:m:s") || unit.equals("hours") /* || tdContent.matches("[^\\s]+[:\\s]+[^\\s]+.*") */) {
+							Astrocoo coord = (Astrocoo) this.productBuilder.astroframeSetter.storedValue;
+							try {
+								if( tdContent.startsWith("+") || tdContent.startsWith("-")) {
+									coord.set("0 0 0 " + tdContent) ;
+									obj = new Double(coord.getLat());
+								}
+								else  {
+									coord.set(tdContent + " +0 0 0") ;
+									obj = new Double(coord.getLon());
+								}
+							} catch (Exception e) {
+								Messenger.printStackTrace(e);
+								obj = "null";
+							}
+						} else {
+							if( tdContent.equalsIgnoreCase("null")) {
+								obj = new Double(Double.POSITIVE_INFINITY);
+							}
+							else {
+								obj = new Double(tdContent);
+							}
+						}
+						break;
+					case DefineType.FIELD_FLOAT:
+						obj = new Float(tdContent);
+						break;
+					case DefineType.FIELD_LONG:
+						obj = new Long(tdContent);
+						break;
+					case DefineType.FIELD_SHORT:
+						obj = new Short(tdContent);
+						break;
+					case DefineType.FIELD_BOOLEAN:
+						boolean[] boo = new boolean[1];
+						boo[0] = Boolean.getBoolean(tdContent);
+						obj = boo;
+						break;
+					case DefineType.FIELD_BYTE:
+						obj = new Byte(tdContent);
+						break;
+					case DefineType.FIELD_CHAR:
+						obj = new Character((tdContent.toCharArray())[0]);
+						break;
+					default:
+						obj = new Object();
+						break;		
+					}
+				} else {
+					obj = "";
+				}
+				line.add(obj);
+				// message += "<"+type+" / "+tdContent+">";
+			}
 		}
 		// Messenger.printMsg(Messenger.TRACE, message);
 		this.rowNum++;
@@ -716,8 +790,7 @@ public class VOTableDataFile extends File implements DataFile {
 			ArrayList<AttributeHandler> attrs = new ArrayList<AttributeHandler>();
 			int rCpt=1;
 			int tCpt=1;// tables are tagged without regards for the resource to be usable for the parser
-			int numTable=1;
-			while ((savotResource = parser.getNextResource()) != null) {
+			while ((savotResource = this.parser.getNextResource()) != null) {
 				if( savotResource.getTables().getItems() == null ) {
 					Messenger.printMsg(Messenger.TRACE, "No table in resource #" + rCpt);
 					continue;
@@ -732,8 +805,6 @@ public class VOTableDataFile extends File implements DataFile {
 						Messenger.printMsg(Messenger.TRACE, "Data format not supported");
 						continue;
 					}
-					System.out.println(numTable);
-					numTable++;
 					this.createTableAttributeHandlerFromResourceDesc(savotResource, savotTable);
 					this.readParams(savotTable);
 					Map<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
@@ -815,31 +886,7 @@ public class VOTableDataFile extends File implements DataFile {
 	public static void main(String[] args ) {
 		try {
 			Messenger.debug_mode = true;
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/pop_1_9_kroupa_1e3_Z0.02.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/fuse.fits", null);
 			VOTableDataFile fp = new VOTableDataFile(args[0]);
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/SSA.xml", null);
-			//			ImageHDU himage = (ImageHDU)fp.fits_data.getHDU(0);
-			//			int[] size = himage.getAxes();
-			//			System.out.println(size.length + " " + size[0]);
-			//System.exit(1);
-			//			ImageHDU bHDU = (ImageHDU) fp.fits_data.getHDU(0);
-			//			System.out.println(bHDU.getAxes()[0] + " " + bHDU.isData());
-			//		
-			//			ImageHDU.
-			//			System.out.println(bHDU.getClass().getName());
-			//			System.exit(1);
-			//			Fits f = new Fits("/home/michel/Desktop/tile_eso.fit");
-			//			BinaryTableHDU t = (BinaryTableHDU) f.getHDU(1);
-			//			byte[] buf = new byte[4300000];
-			//			ArrayDataInput arg0 = new BufferedDataInputStream(new ByteArrayInputStream(buf));
-			//			t.readData(arg0);
-			//			arg0.close();
-			//			for( int i=0 ; i<buf.length ; i++ ) {
-			//				if( buf[i] != 0 )
-			//					System.out.println(buf[i]);
-			//			}
-			//			System.exit(1);
 			Map<String, List<AttributeHandler>> retour = fp.getProductMap(Category.TABLE);
 			for( String en: retour.keySet() ) {
 				System.out.println(en);
@@ -851,22 +898,21 @@ public class VOTableDataFile extends File implements DataFile {
 			System.out.println(fp.headerExtension);
 			System.out.println(fp.dataExtension);
 			fp.initEnumeration();
-			while (fp.hasMoreElements()) {
-				System.out.println(fp.savotTR.getTDSet().getItemCount());
-			}
+			//			while (fp.hasMoreElements()) {
+			//				System.out.println(fp.savotTR.getTDSet().getItemCount());
+			//			}
 
-			fp.selectResourceAndTable("#2.3");
-			System.out.println(fp.headerExtension);
-			System.out.println(fp.dataExtension);
-			fp.initEnumeration();
-			while (fp.hasMoreElements()) {
-				System.out.println(fp.savotTR.getTDSet().getItemCount());
-			}
-
-			fp.selectResourceAndTable("II_86_suppl");
-			System.out.println(fp.headerExtension);
-			System.out.println(fp.dataExtension);		
-			fp.initEnumeration();
+			//			fp.selectResourceAndTable("#2.3");
+			//			System.out.println(fp.headerExtension);
+			//			System.out.println(fp.dataExtension);
+			//			fp.initEnumeration();
+			//			while (fp.hasMoreElements()) {
+			//				System.out.println(fp.savotTR.getTDSet().getItemCount());
+			//			}
+			//
+			//			fp.selectResourceAndTable("II_86_suppl");
+			//			System.out.println(fp.headerExtension);
+			//			System.out.println(fp.dataExtension);		
 			while (fp.hasMoreElements()) {
 				Object[] v =  (Object[]) fp.nextElement();
 				for( Object o: v){

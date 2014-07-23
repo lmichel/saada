@@ -13,6 +13,7 @@ import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;
@@ -41,6 +42,19 @@ public class EntryBuilder extends ProductBuilder {
 	public EntryBuilder(TableBuilder table) throws SaadaException {
 		super(table.dataFile, table.mapping.getEntryMapping());
 		this.table = table;
+		/*
+		 * This operation is done in super(...) then before this table is set.
+		 * SO we do it again
+		 */
+		try {
+			this.mapCollectionAttributes();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
+		this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
+		System.out.println(this.productAttributeHandler);
+		this.setFmtsignature();
 	}
 
 	/**
@@ -143,7 +157,7 @@ public class EntryBuilder extends ProductBuilder {
 					md5KeySQL.append(val);
 				}
 			}
-			file_bus_sql.insert(0, entryIngestor.saadaInstance.oidsaada + "\t" + entryIngestor.saadaInstance.obs_id + "\t" + MD5Key.calculMD5Key(md5KeySQL.toString()));
+			file_bus_sql.insert(0, entryIngestor.saadaInstance.oidsaada + "\t" + entryIngestor.saadaInstance.getObs_id() + "\t" + MD5Key.calculMD5Key(md5KeySQL.toString()));
 			file_bus_sql.append("\n");
 			bustmpfile.write(file_bus_sql.toString());
 			/*
@@ -215,15 +229,17 @@ public class EntryBuilder extends ProductBuilder {
 	@Override
 	public void bindDataFile(DataFile dataFile) throws SaadaException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
-		(new Exception()).printStackTrace();
 		//this.typeFile      = this.table.typeFile;
 		//this.productFile   = this.table.productFile;
-		this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
-		this.setFmtsignature();
-
+		/*
+		 * This operation van be done in super(...) then before this table is set.
+		 */
+		if( this.table != null ) {
+			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
+			this.setFmtsignature();
+		}
 	}
 
-	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getReport()
 	 */
@@ -301,14 +317,14 @@ public class EntryBuilder extends ProductBuilder {
 		ah.setComment(this.getReportOnAttRef("t_min", t_minSetter));
 		retour.put("t_min", ah);
 
-//		for( AttributeHandler eah: this.extended_attributes_ref.values()){
-//			ah = new AttributeHandler();
-//			String ahname = eah.getNameattr();
-//			ah.setNameattr(ahname); ah.setNameorg(ahname); 
-//			ah.setValue(si.getFieldValue(ahname).toString());
-//			ah.setComment(this.getReportOnAttRef(ahname, eah));
-//			retour.put(ahname, ah);      	
-//		}
+		//		for( AttributeHandler eah: this.extended_attributes_ref.values()){
+		//			ah = new AttributeHandler();
+		//			String ahname = eah.getNameattr();
+		//			ah.setNameattr(ahname); ah.setNameorg(ahname); 
+		//			ah.setValue(si.getFieldValue(ahname).toString());
+		//			ah.setComment(this.getReportOnAttRef(ahname, eah));
+		//			retour.put(ahname, ah);      	
+		//		}
 
 		for( Field f: si.getCollLevelPersisentFields() ){
 			String fname = f.getName();
