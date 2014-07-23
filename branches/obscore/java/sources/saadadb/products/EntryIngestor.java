@@ -126,7 +126,7 @@ public final class EntryIngestor extends ProductIngestor {
 		}
 		this.setObservationFields();
 		this.setSpaceFields();
-		this.setEnegryFields();		
+		this.setEnergyFields();		
 		this.setTimeFields();
 		this.loadAttrExtends();
 	}
@@ -155,9 +155,7 @@ public final class EntryIngestor extends ProductIngestor {
 				cpt++;
 			}
 		}
-
 		this.lineNumber++;
-
 	}
 	
 	/* (non-Javadoc)
@@ -165,7 +163,10 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setObservationFields() throws SaadaException {
-		super.setObservationFields();
+		this.saadaInstance.obs_id  = this.getInstanceName(null);
+		setField("target_name"    , this.product.target_nameSetter);
+		setField("instrument_name", this.product.instrument_nameSetter);
+		setField("facility_name"  , this.product.facility_nameSetter);
 	}
 
 	/* (non-Javadoc)
@@ -174,34 +175,34 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected void setPositionFields(int number) throws Exception {
 		if( this.values != null ){
-			if( this.num_col_ra != -1 )
+			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
 				this.product.s_raSetter.setByValue(this.values[this.num_col_ra].toString(), true);
-			if( this.num_col_dec != -1 )
+			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
 				this.product.s_decSetter.setByValue(this.values[this.num_col_dec].toString(), true);
-			if( this.num_col_err != -1 )
+			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
 				this.product.s_resolutionSetter.setByValue(this.values[this.num_col_err].toString(), true);
 		}
 		super.setPositionFields(number);
 		/*
 		 * Belongs to the obseravtion axis but needs the coordinates
 		 */
-		this.saadaInstance.setObs_id( this.getInstanceName("#" + this.lineNumber));
+		this.saadaInstance.obs_id = this.getInstanceName("#" + this.lineNumber);
 	}
 	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setEnegryFields()
 	 */
 	@Override
-	protected void setEnegryFields() throws SaadaException {
+	protected void setEnergyFields() throws SaadaException {
 		if( this.values != null ){
-			if( this.num_col_em_max != -1 )
+			if( this.num_col_em_max != -1 && this.product.em_maxSetter.byKeyword() )
 				this.product.em_maxSetter.setByValue(this.values[this.num_col_em_max].toString(), true);
-			if( this.num_col_em_min != -1 )
+			if( this.num_col_em_min != -1 && this.product.em_minSetter.byKeyword() )
 				this.product.em_minSetter.setByValue(this.values[this.num_col_em_min].toString(), true);
-			if( this.num_col_em_res_power != -1 )
+			if( this.num_col_em_res_power != -1 && this.product.em_res_powerSetter.byKeyword())
 				this.product.em_res_powerSetter.setByValue(this.values[this.num_col_em_res_power].toString(), true);
 		}
-		super.setEnegryFields();
+		super.setEnergyFields();
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setTimeFields()
@@ -209,16 +210,23 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected void setTimeFields() throws SaadaException {
 		if( this.values != null ){
-			if( this.num_col_t_max != -1 )
+			if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() )
 				this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
-			if( this.num_col_t_min != -1 )
+			if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() )
 				this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
-			if( this.num_col_t_exptime != -1 )
+			if( this.num_col_t_exptime != -1 && this.product.t_exptimeSetter.byKeyword())
 				this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);
 		}
 		super.setTimeFields();
 	}
 	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductIngestor#setObservableFields()
+	 */
+	@Override
+	protected void setObservableFields() throws SaadaException {
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#loadAttrExtends()
 	 */

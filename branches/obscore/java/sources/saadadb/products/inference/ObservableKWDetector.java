@@ -150,7 +150,7 @@ public class ObservableKWDetector extends KWDetector {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Search observable quantities in keywords");
 		this.keywordsSearched = true;
-		this.unit = this.searchByName("(?i)(BUNIT)");
+		this.unit = this.searchByName(RegExp.OBSERVABLE_UNIT_KW);
 		if( !this.unit.notSet() ){
 			this.calib.setByValue( "2", false);
 			this.calib.completeMessage("Infered from detected units");

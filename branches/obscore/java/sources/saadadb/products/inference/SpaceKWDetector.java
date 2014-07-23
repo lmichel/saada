@@ -432,6 +432,12 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	private void formatPos() {
 		try {
+			/*
+			 * values not set: likely a table where AH are just colmun descriptions
+			 */
+			if( this.ascension_kw.getValue().length() == 0 &&  this.declination_kw.getValue().length() == 0 ) {
+				return;
+			}
 			PositionParser pp = new PositionParser(this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue());
 			this.ascension_kw.setValue(pp.getRa());
 			this.declination_kw.setValue(pp.getDec());

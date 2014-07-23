@@ -212,10 +212,16 @@ public class VOTableDataFile extends File implements DataFile {
 	 * @return
 	 */
 	private LinkedHashMap<String, AttributeHandler> createTableAttributeHandlerFromResourceDesc(SavotResource savotResource, SavotTable savotTable){
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Build pseudo params from various table infos");
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		String keyChanged = "";
 		SavotCoosys infoCooSys = null;
-		if (voTable.getDefinitions() != null && voTable.getDefinitions().getCoosys() != null) {
+		if( voTable.getCoosys() != null ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at resource level  ");
+			infoCooSys = (SavotCoosys) voTable.getCoosys().getItems().get(0);			
+		} else	if (voTable.getDefinitions() != null && voTable.getDefinitions().getCoosys() != null) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at table level");
 			infoCooSys = (SavotCoosys) voTable.getDefinitions().getCoosys().getItems().get(0);
@@ -253,6 +259,8 @@ public class VOTableDataFile extends File implements DataFile {
 			attributeSystem.setComment("Added by Saada");
 			attributeSystem.setType("String");
 			attributeSystem.setValue(system);
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Coosys: " + attributeSystem.getValue() + " " + attributeEquinox.getValue());
 		}
 
 		AttributeHandler attributeResource = new AttributeHandler();
@@ -288,6 +296,8 @@ public class VOTableDataFile extends File implements DataFile {
 		attributeTable.setValue(savotTable.getName());
 		attributeTable.setUcd(savotTable.getUcd());
 		retour.put(keyChanged, attributeTable);
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, retour.size() + " params added");
 		return retour;
 	}
 
@@ -296,6 +306,8 @@ public class VOTableDataFile extends File implements DataFile {
 	 * @param num_table
 	 */
 	private LinkedHashMap<String, AttributeHandler> readParams(SavotTable savotTable){
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Read params and groups");
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();		
 		if( savotTable != null ) {
 			ParamSet param = savotTable.getParams();
@@ -306,7 +318,6 @@ public class VOTableDataFile extends File implements DataFile {
 				} else {
 					AttributeHandler attributeParam = new AttributeHandler(savotParam);
 					String name = savotParam.getName();
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Params " + name + " ( " + attributeParam.getNameattr() + ")");
 					retour.put(attributeParam.getNameattr(), attributeParam);
 				}
 			}
@@ -324,6 +335,8 @@ public class VOTableDataFile extends File implements DataFile {
 				}				
 			}
 		}
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, retour.size() + " params found");
 		return retour;
 	}
 
@@ -805,8 +818,6 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 						Messenger.printMsg(Messenger.TRACE, "Data format not supported");
 						continue;
 					}
-					this.createTableAttributeHandlerFromResourceDesc(savotResource, savotTable);
-					this.readParams(savotTable);
 					Map<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
 					tahe = this.createTableAttributeHandlerFromResourceDesc(savotResource, savotTable);
 					tahe.putAll(this.readParams(savotTable));

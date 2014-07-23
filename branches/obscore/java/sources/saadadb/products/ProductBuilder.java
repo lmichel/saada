@@ -432,12 +432,14 @@ public class ProductBuilder {
 	 */
 	protected void mapCollectionAttributes() throws Exception {
 		if( this.productAttributeHandler != null ) {
+			System.out.println("@@@@@@@@@@@ MAP " + this.getClass().getName());
 			this.mapObservationAxe();
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
 			this.mapTimeAxe();
 			this.mapObservableAxe();
 			this.mapIgnoredAndExtendedAttributes();
+			System.out.println("@@@@@@@@@@@ OVER " + this.getClass().getName());
 		}
 	}
 
@@ -1318,13 +1320,18 @@ public class ProductBuilder {
 			this.s_resolutionSetter = new ColumnSetter();
 			return false;
 		} else {
-			try {
-				Double.parseDouble(this.s_resolutionSetter.getValue());
-			} catch (Exception e) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getValue() + " is not a valid value for the spatial resolution");		
-				this.s_resolutionSetter = new ColumnSetter();
-				return false;
+			/*
+			 * If no value: probably a table entry: no check 
+			 */
+			if( this.s_resolutionSetter.getValue().length() > 0 ) {
+				try {
+					Double.parseDouble(this.s_resolutionSetter.getValue());
+				} catch (Exception e) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getValue() + " is not a valid value for the spatial resolution");		
+					this.s_resolutionSetter = new ColumnSetter();
+					return false;
+				}
 			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
