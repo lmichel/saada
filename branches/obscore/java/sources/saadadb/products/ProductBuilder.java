@@ -431,12 +431,14 @@ public class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionAttributes() throws Exception {
-		this.mapObservationAxe();
-		this.mapSpaceAxe();
-		this.mapEnergyAxe();
-		this.mapTimeAxe();
-		this.mapObservableAxe();
-		this.mapIgnoredAndExtendedAttributes();
+		if( this.productAttributeHandler != null ) {
+			this.mapObservationAxe();
+			this.mapSpaceAxe();
+			this.mapEnergyAxe();
+			this.mapTimeAxe();
+			this.mapObservableAxe();
+			this.mapIgnoredAndExtendedAttributes();
+		}
 	}
 
 	/**
@@ -1339,7 +1341,7 @@ public class ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to map the error on position from mapping");
 		ColumnMapping sResolutionMapping   =  this.mapping.getSpaceAxisMapping().getColumnMapping("s_resolution");
-		String rUnit = sResolutionMapping.getAttributeHandler().getUnit();
+		String rUnit = (sResolutionMapping.getAttributeHandler() == null)? "": sResolutionMapping.getAttributeHandler().getUnit();
 		if( !SpatialResolutionUnitRef.isUnitValid(rUnit) ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, rUnit + " is not a valid unit");
@@ -1582,7 +1584,7 @@ public class ProductBuilder {
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_collection", obs_collectionSetter);
-		this.obs_collectionSetter.storedValue = si.obs_collection;
+		this.obs_collectionSetter.storedValue = si.getObs_collection();
 		retour.put("target_name", target_nameSetter);
 		this.target_nameSetter.storedValue = si.target_name;
 		retour.put("facility_name", facility_nameSetter);

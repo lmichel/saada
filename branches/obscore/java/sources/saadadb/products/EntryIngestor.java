@@ -185,7 +185,7 @@ public final class EntryIngestor extends ProductIngestor {
 		/*
 		 * Belongs to the obseravtion axis but needs the coordinates
 		 */
-		this.saadaInstance.obs_id = this.getInstanceName("#" + this.lineNumber);
+		this.saadaInstance.setObs_id( this.getInstanceName("#" + this.lineNumber));
 	}
 	
 	/* (non-Javadoc)
