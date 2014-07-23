@@ -65,11 +65,11 @@ public class Database {
 				cachemeta = new CacheMeta();
 				cache = new CacheManager();
 				Qbox.setLevel(10);
+				DefineType.init();
 			}catch(Exception e){
 				Messenger.printStackTrace(e);
 				Messenger.trapFatalException( new FatalException(e.getMessage(), SaadaException.getExceptionMessage(e)));
 			}
-			DefineType.init();
 			/*
 			 * Flag must be set here to avoid recursivity in cacheindex.getCache(20);
 			 */
@@ -316,7 +316,7 @@ public class Database {
 			ResultSet rs = squery.run(sql);
 			if (rs.next()) {
 				obj.oidsaada = rs.getLong("oidsaada");
-				obj.setObs_id(rs.getString("namesaada").trim());
+				obj.obs_id = rs.getString("namesaada").trim();
 				String sm = rs.getString("md5keysaada");
 				/*
 				 * ObsCOre obj have no MD5
