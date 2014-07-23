@@ -5,9 +5,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -92,10 +95,10 @@ public class LoaderConfigChooser extends JPanel {
 						String filterName = confList.getSelectedValue().toString();
 						AdminTool at = LoaderConfigChooser.this.taskPanel.rootFrame;
 						try {
-							FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
-							ObjectInputStream in = new ObjectInputStream(fis);
-							argsParser = (ArgsParser)in.readObject();
-							in.close();
+//							FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
+//							ObjectInputStream in = new ObjectInputStream(fis);
+							argsParser = new ArgsParser(CONF_DIR + File.separator + category + "."  + filterName + ".config" );//(ArgsParser)in.readObject();
+							//in.close();
 							((MappingKWPanel)(at.getActivePanel())).loadConfig(argsParser);
 						} catch (Exception e) {
 							AdminComponent.showFatalError(at, e);
@@ -141,10 +144,22 @@ public class LoaderConfigChooser extends JPanel {
 					argsParser = null;
 					if( !filterName.equals("Default") ) {
 						try {
-							FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
-							ObjectInputStream in = new ObjectInputStream(fis);
-							argsParser = (ArgsParser)in.readObject();
-							in.close();
+							ArrayList<String> args = new ArrayList<String>();
+							FileReader fr = new FileReader(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
+							BufferedReader br = new BufferedReader(fr); 
+							//ObjectInputStream in = new ObjectInputStream(fis);
+							String s;
+							while((s = br.readLine()) != null) {
+								args.add(s);
+							}
+							br.close();
+							argsParser = new ArgsParser(args.toArray(new String[args.size()]));
+							//in.close();
+							
+							//FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
+							//ObjectInputStream in = new ObjectInputStream(fis);
+//							argsParser = (ArgsParser)in.readObject();
+//							in.close();
 						} catch(Exception ex) {
 							AdminComponent.showFatalError(LoaderConfigChooser.this.taskPanel.rootFrame, ex);
 							return;
