@@ -197,7 +197,7 @@ public class QueryPatternTester {
 						while( qn_res.next() ) {
 							long oid= qn_res.getOid();
 							SaadaInstance si = Database.getCache().getObject(oid);
-							System.out.println("#" + cpt + " Name <" + si.obs_id+ ">");
+							System.out.println("#" + cpt + " Name <" + si.getObs_id()+ ">");
 							for( Entry<String, CounterpartSelector> e: qn.getMatchingCounterpartQueries().entrySet()) {
 								String rel_name = e.getKey();
 								MetaRelation mr = Database.getCachemeta().getRelation(rel_name);

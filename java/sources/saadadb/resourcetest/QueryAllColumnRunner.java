@@ -31,7 +31,7 @@ public class QueryAllColumnRunner {
 		int cpt=0;
 		while(sirs.next()) {
 			SaadaInstance sri = sirs.getInstance();
-			System.out.println(cpt + ": " + sri.oidsaada + " " + sri.obs_id);
+			System.out.println(cpt + ": " + sri.oidsaada + " " + sri.getObs_id());
 			cpt++;
 		}
 		Database.close();
