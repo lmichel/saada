@@ -102,7 +102,7 @@ public class ConeSearchVotableFormator extends VotableFormator{
 				addCDataTD("catalog");
 			}
 			else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
-				addCDataTD(obj.obs_id.replaceAll("#", ""));
+				addCDataTD(obj.getObs_id().replaceAll("#", ""));
 			}
 			else if( id.equals("LinktoPixels")) {
 				addCDataTD(obj.getURL(true));
@@ -117,7 +117,7 @@ public class ConeSearchVotableFormator extends VotableFormator{
 				addTD(Long.toString(obj.oidsaada));
 			}
 			else if( ucd.equalsIgnoreCase("meta.title") ){
-				addTD(obj.obs_id);
+				addTD(obj.getObs_id());
 			}
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first
