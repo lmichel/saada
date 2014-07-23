@@ -10,6 +10,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
 
 public class VPIgnoredMappingPanel extends VPAxisPanel {
@@ -33,6 +34,8 @@ public class VPIgnoredMappingPanel extends VPAxisPanel {
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
 			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+			subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
+
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
 		}
@@ -80,6 +83,14 @@ public class VPIgnoredMappingPanel extends VPAxisPanel {
 	public void reset()
 	{
 		ignoredKWField.setText("");
+	}
+	@Override
+	public void setParams(ArgsParser ap) {
+		StringBuilder builder = new StringBuilder();
+		for(String s : ap.getIgnoredAttributes(false)) {
+		    builder.append(s);
+		}
+		ignoredKWField.setText(builder.toString());
 	}
 
 

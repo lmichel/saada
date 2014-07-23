@@ -10,7 +10,9 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 
 /**
  * Represent the Energy axis/subpanel in the filter form
@@ -58,8 +60,11 @@ public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 			if(spcRange.getText().length()>0)
 				params.add("-spccolumn="+spcRange.getText());
 
-			if(spcRange.getComboBox().getSelectedItem().toString().length()>0)
-				params.add("-spcunit="+spcRange.getComboBox().getSelectedItem().toString());
+			if(spcRange.getComboBox().getSelectedItem()!=null)
+			{
+				if(spcRange.getComboBox().getSelectedItem().toString().length()>0)
+					params.add("-spcunit="+spcRange.getComboBox().getSelectedItem().toString());
+			}
 
 			if(spcResPower.getText().length()>0)
 				params.add("-spcrespower="+spcResPower.getText());
@@ -89,6 +94,36 @@ public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 		super.reset();
 		spcRange.reset();
 		spcResPower.reset();
+	}
+
+	@Override
+	public void setParams(ArgsParser ap) throws FatalException {
+		priority.noBtn.setSelected(true);
+		switch(ap.getSpectralMappingPriority()){
+		case FIRST:priority.firstBtn.setSelected(true);
+			break;
+		case ONLY: priority.onlyBtn.setSelected(true);
+			break;
+		case LAST: priority.lastBtn.setSelected(true);
+			break;
+		default: priority.noBtn.setSelected(true);
+		}
+		if(fieldsEmpty(ap))
+			priority.noBtn.setSelected(true);
+		if(!priority.noBtn.isSelected())
+		{
+			spcResPower.setEnable(true);
+			spcRange.setEnable(true);
+		}
+		
+		spcResPower.setText(ap.getSpectralResPower());
+		spcRange.setText(ap.getSpectralColumn(),ap.getSpectralUnit());
+		
+	}
+
+	@Override
+	public boolean fieldsEmpty(ArgsParser ap) {
+		return ap.getSpectralResPower()==null && ap.getSpectralColumn()==null && ap.getSpectralUnit()==null;
 	}
 
 }

@@ -16,8 +16,9 @@ import saadadb.admintool.components.input.ExtMappingTextField;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.enums.ClassifierMode;
+import saadadb.command.ArgsParser;
 import saadadb.enums.DataMapLevel;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.util.RegExp;
 
@@ -109,29 +110,6 @@ public class VPClassMappingPanel extends VPAxisPanel {
 
 	}
 
-	public void setText(String text) {
-		classField.setText((text == null)? "": text);
-	}
-
-	/**
-	 * @param classifierMode
-	 * @param text
-	 */
-	public void setText(ClassifierMode classifierMode, String text) {
-		classifier_btn.setSelected(false);
-		fusion_btn.setSelected(false);
-		noclass_btn.setSelected(false);
-		switch(classifierMode){
-		case CLASS_FUSION: fusion_btn.setSelected(true);
-			this.setText(text);
-			break;
-		case CLASSIFIER: classifier_btn.setSelected(true);
-			this.setText(text);
-			break;
-		default: noclass_btn.setSelected(true);
-		}
-	}
-
 
 	public boolean hasMapping() {
 		return (classifier_btn.isSelected() || fusion_btn.isSelected()) ;
@@ -200,7 +178,24 @@ public class VPClassMappingPanel extends VPAxisPanel {
 		}
 	}
 
-
-
+	@Override
+	public void setParams(ArgsParser ap) throws FatalException{
+		classifier_btn.setSelected(false);
+		fusion_btn.setSelected(false);
+		noclass_btn.setSelected(false);
+		classField.setText(ap.getClassName());
+		mappingTextField.setText(ap.getExtension());
+		switch(ap.getMappingType()){
+		case CLASS_FUSION:fusion_btn.setSelected(true);
+			classField.setEnabled(true);
+			classField.setEditable(true);
+			break;
+		case CLASSIFIER: classifier_btn.setSelected(true);
+			classField.setEnabled(true);
+			classField.setEditable(true);
+			break;
+		default: noclass_btn.setSelected(true);
+		}
+	}
 }
 

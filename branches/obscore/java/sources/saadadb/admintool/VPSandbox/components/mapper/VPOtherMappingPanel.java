@@ -14,6 +14,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
+import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.enums.DataMapLevel;
 import saadadb.meta.AttributeHandler;
@@ -27,7 +28,6 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 
 	//Contains the name of the extended attribute + its field
 	private HashMap<String,JTextField> fields;
-
 	public VPOtherMappingPanel(VPSTOEPanel mappingPanel) {
 		super(mappingPanel, "Extended attributes");
 
@@ -36,6 +36,8 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 			JLabel subPanelTitle = new JLabel(VPAxisPanel.SUBPANELHEADER);
 			gbc.right(false);
 			subPanelTitle.setForeground(new Color(VPAxisPanel.SUBPANELTITLECOLOR));
+			subPanelTitle.setFont(VPAxisPanel.SUBPANELTITLEFONT);
+
 			axisPanel.add(subPanelTitle,gbc);
 			gbc.newRow();
 		}
@@ -94,6 +96,13 @@ public class VPOtherMappingPanel extends VPAxisPanel {
 		for(Entry<String, JTextField> e: fields.entrySet())
 		{
 			e.getValue().setText("");
+		}
+	}
+
+	@Override
+	public void setParams(ArgsParser ap) {
+		for( Entry<String, JTextField> e: fields.entrySet()){
+				e.getValue().setText(ap.getUserKeyword(false, e.getKey()));
 		}
 	}
 

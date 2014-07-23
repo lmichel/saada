@@ -45,5 +45,19 @@ public class VPKWNamedField extends VPKWMapper {
 		return field;
 	}
 
+	@Override
+	public void setText(String text) {
+		field.setText(text);
+		
+	}
+
+	@Override
+	public void setEnable(boolean enable) {
+		field.setEnabled(enable);
+		field.setEditable(enable);
+	}
+
+
+
 
 }
