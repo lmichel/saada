@@ -5,7 +5,7 @@ import java.util.Map;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -48,12 +48,12 @@ public abstract class PipelineParser {
 	 * @param key
 	 * @return
 	 */
-	protected ColumnSetter getColmumnSetter(String key){
+	protected ColumnSingleSetter getColmumnSetter(String key){
 		AttributeHandler ah = this.getAttributeHandler(key);
 		if( ah == null ){
-			return new ColumnSetter();
+			return new ColumnSingleSetter();
 		} else {
-			ColumnSetter cs = new ColumnSetter();
+			ColumnSingleSetter cs = new ColumnSingleSetter();
 			cs.setByWCS(ah.getValue(), false);
 			cs.setUnit(ah.getUnit());
 			cs.completeMessage("Issued from the knowledge base");
@@ -90,82 +90,82 @@ public abstract class PipelineParser {
 	/*
 	 * Observation axis
 	 */
-	public ColumnSetter getCollectionName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getCollectionName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getTargetName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getTargetName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getFacilityName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getFacilityName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getExposureName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getExposureName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getInstrumentName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getInstrumentName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getObsIdComponents() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getObsIdComponents() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
 	/*
 	 * space axis
 	 */
-	public ColumnSetter getFrame() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getFrame() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getAscension() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getAscension() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getDeclination() {
-		return new ColumnSetter();
+	public ColumnSingleSetter getDeclination() {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getSpatialError() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getSpatialError() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getfov() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getfov() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getRegion() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getRegion() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
 	/*
 	 * Energy axis
 	 */
-	public ColumnSetter getEMin() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getEMin() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getEMax() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getEMax() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getEUnit() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getEUnit() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getResPower() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getResPower() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
 	/*
 	 * time axis
 	 */
-	public ColumnSetter getTMin() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getTMin() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getTMax() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getTMax() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getExpTime() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getExpTime() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
 	/*
 	 * Observable axis
 	 */
-	public ColumnSetter getUnitName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getUnitName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getCalibStatus() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getCalibStatus() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
-	public ColumnSetter getUcdName() throws SaadaException {
-		return new ColumnSetter();
+	public ColumnSingleSetter getUcdName() throws SaadaException {
+		return new ColumnSingleSetter();
 	}
 }

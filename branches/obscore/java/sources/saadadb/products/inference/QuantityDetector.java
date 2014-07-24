@@ -8,10 +8,10 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
 import saadadb.products.DataFile;
 import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
+import saadadb.products.setter.ColumnSingleSetter;
 
 public class QuantityDetector {
 	private final PipelineParser pipelineParser;
@@ -57,85 +57,85 @@ public class QuantityDetector {
 	/*
 	 * Observation axis
 	 */
-	public ColumnSetter getCollectionName() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getCollectionName() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCollectionName()).notSet() ){
 			return this.observationKWDetector.getCollectionName();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getTargetName() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getTargetName() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTargetName()).notSet() ){
 			return this.observationKWDetector.getTargetName();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getFacilityName() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getFacilityName() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFacilityName()).notSet() ){
 			return this.observationKWDetector.getFacilityName();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getInstrumentName() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getInstrumentName() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getInstrumentName()).notSet() ){
 			return this.observationKWDetector.getInstrumentName();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getExposureName()throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getExposureName()throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExposureName()).notSet() ){
 			return this.timeKWDetector.getExposureName();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
 	/*
 	 * Space Axe
 	 */	
-	public ColumnSetter getFrame()  throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getFrame()  throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFrame()).notSet() ){
 			return this.spaceKWDetector.getFrame();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getAscension()  throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getAscension()  throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getAscension()).notSet() ){
 			return this.spaceKWDetector.getAscension();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getDeclination()  throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getDeclination()  throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getDeclination()).notSet() ){
 			return this.spaceKWDetector.getDeclination();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getSpatialError() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getSpatialError() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialError()).notSet() ){
 			return this.spaceKWDetector.getSpatialError();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getfov() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getfov() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getfov()).notSet() ){
 			return this.spaceKWDetector.getfov();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getRegion() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getRegion() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getRegion()).notSet() ){
 			return this.spaceKWDetector.getRegion();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
 	/**
 	 * @return
@@ -148,8 +148,8 @@ public class QuantityDetector {
 	/*
 	 * Energy axis
 	 */
-	public ColumnSetter getResPower() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getResPower() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getResPower()).notSet() ){
 			try {
 				return this.energyKWDetector.getResPower();
@@ -158,28 +158,28 @@ public class QuantityDetector {
 				IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 			}
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getEMin() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getEMin() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMin()).notSet() ){
 			return this.energyKWDetector.getEMin();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getEMax() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getEMax() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMax()).notSet() ){
 			return this.energyKWDetector.getEMax();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getEUnit() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getEUnit() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEUnit()).notSet() ){
 			return this.energyKWDetector.getEUnit();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
 	//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
 	//		try  {
@@ -193,32 +193,32 @@ public class QuantityDetector {
 	/*
 	 * Time axis
 	 */
-	public ColumnSetter getTMin() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getTMin() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMin()).notSet() ){
 			return this.timeKWDetector.getTMin();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getTMax() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getTMax() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMax()).notSet() ){
 			return this.timeKWDetector.getTMax();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getExpTime() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getExpTime() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExpTime()).notSet() ){
 			return this.timeKWDetector.getExpTime();
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
 	/*
 	 * Observable axis
 	 */
-	public ColumnSetter getObservableUcd() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getObservableUcd() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUcdName()).notSet() ){
 			retour = this.observableKWDetector.getUcdName();
 			if( retour.notSet() && !getEMin().notSet() && !getEMax().notSet() ) {
@@ -226,10 +226,10 @@ public class QuantityDetector {
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
-	public ColumnSetter getObservableUnit() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getObservableUnit() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).notSet() ){
 			retour = this.observableKWDetector.getUnitName();
 			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet()) {
@@ -237,11 +237,11 @@ public class QuantityDetector {
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 
 	}
-	public ColumnSetter getCalibStatus() throws SaadaException{
-		ColumnSetter retour = null;
+	public ColumnSingleSetter getCalibStatus() throws SaadaException{
+		ColumnSingleSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
 			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
@@ -257,7 +257,7 @@ public class QuantityDetector {
 				}
 			}
 		} 
-		return (retour == null)?new ColumnSetter(): retour;
+		return (retour == null)?new ColumnSingleSetter(): retour;
 	}
 
 

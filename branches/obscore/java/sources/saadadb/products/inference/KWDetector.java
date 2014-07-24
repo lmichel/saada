@@ -8,8 +8,8 @@ import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
 import saadadb.products.DataFile;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -55,8 +55,8 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected  ColumnSetter search(String ucd_regexp, String colname_regexp) throws FatalException{
-		ColumnSetter retour = new ColumnSetter();
+	protected  ColumnSingleSetter search(String ucd_regexp, String colname_regexp) throws FatalException{
+		ColumnSingleSetter retour = new ColumnSingleSetter();
 		if(ucd_regexp!= null ){
 			retour = this.searchByUcd(ucd_regexp);
 		}
@@ -73,8 +73,8 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected  ColumnSetter searchColumns(String ucd_regexp, String colname_regexp) throws FatalException{
-		ColumnSetter retour = new ColumnSetter();
+	protected  ColumnSingleSetter searchColumns(String ucd_regexp, String colname_regexp) throws FatalException{
+		ColumnSingleSetter retour = new ColumnSingleSetter();
 		if(ucd_regexp != null ){
 			retour = this.searchColumnsByUcd(ucd_regexp);
 		}
@@ -91,8 +91,8 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException
 	 */
-	protected  ColumnSetter searchColumns(String ucd_regexp, String colname_regexp, String desc_regexp) throws FatalException{
-		ColumnSetter retour = new ColumnSetter();
+	protected  ColumnSingleSetter searchColumns(String ucd_regexp, String colname_regexp, String desc_regexp) throws FatalException{
+		ColumnSingleSetter retour = new ColumnSingleSetter();
 		if(ucd_regexp != null ){
 			retour = this.searchColumnsByUcd(ucd_regexp);
 		}
@@ -110,7 +110,7 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected ColumnSetter searchByUcd(String ucd_regexp) throws FatalException {
+	protected ColumnSingleSetter searchByUcd(String ucd_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search by UCD /" + ucd_regexp + "/";
@@ -119,7 +119,7 @@ public abstract class KWDetector {
 			if( ah.getUcd().matches(ucd_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
+				return new ColumnSingleSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -134,11 +134,11 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected List<ColumnSetter> searchByUcd(String ucd1_regexp, String ucd2_regexp) throws FatalException {
+	protected List<ColumnSingleSetter> searchByUcd(String ucd1_regexp, String ucd2_regexp) throws FatalException {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
-		List<ColumnSetter> retour = new ArrayList<ColumnSetter>();
+		List<ColumnSingleSetter> retour = new ArrayList<ColumnSingleSetter>();
 		if( Messenger.debug_mode ) 
 			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
@@ -151,8 +151,8 @@ public abstract class KWDetector {
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-					retour.add(new ColumnSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
-					retour.add(new ColumnSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
+					retour.add(new ColumnSingleSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
+					retour.add(new ColumnSingleSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					return retour;
 				} else {
 					ah1 = null;
@@ -170,7 +170,7 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected ColumnSetter searchByName(String colname_regexp) throws FatalException {
+	protected ColumnSingleSetter searchByName(String colname_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAME /" + colname_regexp + "/";
@@ -178,7 +178,7 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnSetter(ah, ColumnSetMode.BY_KEYWORD, false, false);
+				return new ColumnSingleSetter(ah, ColumnSetMode.BY_KEYWORD, false, false);
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -192,11 +192,11 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected List<ColumnSetter> searchByName(String colname1_regexp, String colname2_regexp) throws FatalException {
+	protected List<ColumnSingleSetter> searchByName(String colname1_regexp, String colname2_regexp) throws FatalException {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
-		List<ColumnSetter> retour = new ArrayList<ColumnSetter>();
+		List<ColumnSingleSetter> retour = new ArrayList<ColumnSingleSetter>();
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
@@ -209,8 +209,8 @@ public abstract class KWDetector {
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-					retour.add(new ColumnSetter(ah1, ColumnSetMode.BY_KEYWORD, false, false));
-					retour.add(new ColumnSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
+					retour.add(new ColumnSingleSetter(ah1, ColumnSetMode.BY_KEYWORD, false, false));
+					retour.add(new ColumnSingleSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
 					return retour;
 				} else {
 					ah1 = null;
@@ -228,7 +228,7 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected ColumnSetter searchColumnsByUcd(String ucd_regexp) throws FatalException {
+	protected ColumnSingleSetter searchColumnsByUcd(String ucd_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search column by UCD /" + ucd_regexp + "/";
@@ -237,7 +237,7 @@ public abstract class KWDetector {
 			if( ah.getUcd().matches(ucd_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
+				return new ColumnSingleSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -252,7 +252,7 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected ColumnSetter searchColumnsByName(String colname_regexp) throws FatalException {
+	protected ColumnSingleSetter searchColumnsByName(String colname_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search column by NAME /" + colname_regexp + "/";
@@ -260,7 +260,7 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
+				return new ColumnSingleSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -273,7 +273,7 @@ public abstract class KWDetector {
 	 * @return
 	 * @throws FatalException 
 	 */
-	protected ColumnSetter searchColumnsByDescription(String colname_regexp) throws FatalException {
+	protected ColumnSingleSetter searchColumnsByDescription(String colname_regexp) throws FatalException {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search column by DESCRIPTION /" + colname_regexp + "/";
@@ -281,7 +281,7 @@ public abstract class KWDetector {
 			if( ah.getComment().matches(colname_regexp) ){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
+				return new ColumnSingleSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -293,8 +293,8 @@ public abstract class KWDetector {
 	 * Builsd the ColumnSetter to return when no va;lue has been found
 	 * @return
 	 */
-	private ColumnSetter notSetColumnSetter(){
-		ColumnSetter retour = new ColumnSetter();
+	private ColumnSingleSetter notSetColumnSetter(){
+		ColumnSingleSetter retour = new ColumnSingleSetter();
 		//retour.completeMessage("Nothing found");
 		retour.setNotSet();
 		return retour;

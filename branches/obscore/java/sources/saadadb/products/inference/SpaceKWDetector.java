@@ -9,7 +9,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -28,15 +28,15 @@ import cds.savot.model.SavotCoosys;
  * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
  */
 public class SpaceKWDetector extends KWDetector{
-	private ColumnSetter ascension_kw;
-	private ColumnSetter declination_kw;
-	private ColumnSetter err_min = new  ColumnSetter();
-	private ColumnSetter err_maj= new  ColumnSetter();
-	private ColumnSetter err_angle= new  ColumnSetter();
-	private ColumnSetter fov;
-	private ColumnSetter region;
+	private ColumnSingleSetter ascension_kw;
+	private ColumnSingleSetter declination_kw;
+	private ColumnSingleSetter err_min = new  ColumnSingleSetter();
+	private ColumnSingleSetter err_maj= new  ColumnSingleSetter();
+	private ColumnSingleSetter err_angle= new  ColumnSingleSetter();
+	private ColumnSingleSetter fov;
+	private ColumnSingleSetter region;
 	//private Astroframe frame = null;
-	private ColumnSetter frameSetter = null;
+	private ColumnSingleSetter frameSetter = null;
 	public static final int FRAME_FOUND = 1;
 	public static final int POS_KW_FOUND = 2;
 	public static final int WCS_KW_FOUND = 4;
@@ -86,8 +86,8 @@ public class SpaceKWDetector extends KWDetector{
 		/*
 		 * Search first an explicit mention of Frame
 		 */
-		this.frameSetter = new ColumnSetter();
-		ColumnSetter ah = search("pos.frame", RegExp.FITS_COOSYS_KW);
+		this.frameSetter = new ColumnSingleSetter();
+		ColumnSingleSetter ah = search("pos.frame", RegExp.FITS_COOSYS_KW);
 		Astroframe frame = null;
 		String message="";
 		if( ah != null ) {
@@ -151,7 +151,7 @@ public class SpaceKWDetector extends KWDetector{
 				}
 			}
 			if( this.wcsModel.isKwset_ok() ){
-				ColumnSetter[] center;
+				ColumnSingleSetter[] center;
 				center = this.wcsModel.getGlonlatCenter();
 				if( !center[0].notSet() && !center[1].notSet()) {
 					frame = new Galactic();
@@ -242,10 +242,10 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.wcsModel == null )
 			this.wcsModel = new WCSModel(tableAttributeHandler);
 		if( this.wcsModel.isKwset_ok() ){
-			ColumnSetter[] center ;
-			ColumnSetter[] 	ascRange ;
-			ColumnSetter[] 	decRange ;
-			ColumnSetter  	resolution ;
+			ColumnSingleSetter[] center ;
+			ColumnSingleSetter[] 	ascRange ;
+			ColumnSingleSetter[] 	decRange ;
+			ColumnSingleSetter  	resolution ;
 			center = this.wcsModel.getRadecCenter();
 			if( center[0].notSet() || center[1].notSet()  )  {
 				center = this.wcsModel.getGlonlatCenter();
@@ -275,7 +275,7 @@ public class SpaceKWDetector extends KWDetector{
 				Messenger.printMsg(Messenger.DEBUG, "Take " + center[0].getValue() + " " + center[1].getValue() + " as image center");				
 			this.err_maj = resolution;
 			this.err_min = resolution;
-			this.err_angle = new ColumnSetter();
+			this.err_angle = new ColumnSingleSetter();
 			this.err_angle.setByWCS("0", false);
 			double raMin = Double.parseDouble(ascRange[0].getValue());
 			double raMax = Double.parseDouble(ascRange[1].getValue());
@@ -291,11 +291,11 @@ public class SpaceKWDetector extends KWDetector{
 			if( Math.abs(decMax - decMin) < fov ){
 				fov = Math.abs(decMax - decMin);
 				ah.setValue(fov);
-				this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+				this.fov = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov.completeMessage("smaller image size taken (height)");							
 			} else {
 				ah.setValue(fov);
-				this.fov = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+				this.fov = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov.completeMessage("smaller image size taken (width)");														
 			}
 			if (Messenger.debug_mode)
@@ -310,7 +310,7 @@ public class SpaceKWDetector extends KWDetector{
 			pts[2] = raMax; pts[3] = decMax; 
 			pts[4] = raMax; pts[5] = decMin; 
 			pts[6] = raMin; pts[7] = decMin; 
-			this.region = new ColumnSetter(ah, ColumnSetMode.BY_WCS);
+			this.region = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);
 			this.region.completeMessage("Match the WCS rectangle");			
 			this.region.storedValue = pts;
 			if (Messenger.debug_mode)
@@ -343,7 +343,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws SaadaException
 	 */
 	private void lookForError() throws SaadaException {
-		ColumnSetter eM=null, em=null, ea=null;
+		ColumnSingleSetter eM=null, em=null, ea=null;
 		if( this.err_maj != null && this.err_maj.byWcs() ) {
 			eM = this.err_maj;
 			em = this.err_min;
@@ -416,7 +416,7 @@ public class SpaceKWDetector extends KWDetector{
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Take " + frame + " infered from position keywords");
 					this.status |= FRAME_FOUND;		
-					this.frameSetter = new ColumnSetter();
+					this.frameSetter = new ColumnSingleSetter();
 					this.frameSetter.setByValue("", false);
 					this.frameSetter.completeMessage("Take <" + frame + "> as frame (infered from the name of the position keywords)");
 					this.frameSetter.storedValue = frame;
@@ -455,7 +455,7 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForFK5Keywords() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK5 keywords");
-		List<ColumnSetter> posKW;
+		List<ColumnSingleSetter> posKW;
 		posKW =  searchByUcd(RegExp.FK5_RA_MAINUCD,RegExp.FK5_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -486,7 +486,7 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForFK4Keywords() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK4 keywords");
-		List<ColumnSetter> posKW;
+		List<ColumnSingleSetter> posKW;
 		posKW =  searchByUcd(RegExp.FK4_RA_MAINUCD,RegExp.FK4_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -516,7 +516,7 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForICRSKeywords() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for ICRS keywords");
-		List<ColumnSetter> posKW;
+		List<ColumnSingleSetter> posKW;
 		posKW =  searchByUcd(RegExp.ICRS_RA_MAINUCD,RegExp.ICRS_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -546,7 +546,7 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForEclpiticKeywords() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Ecliptic keywords");
-		List<ColumnSetter> posKW;
+		List<ColumnSingleSetter> posKW;
 		posKW =  searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -576,7 +576,7 @@ public class SpaceKWDetector extends KWDetector{
 	private void lookForGalacticKeywords() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for Galactic keywords");
-		List<ColumnSetter> posKW;
+		List<ColumnSingleSetter> posKW;
 		posKW =  searchByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
@@ -603,11 +603,11 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return the astro_frame
 	 * @throws SaadaException 
 	 */
-	public ColumnSetter getFrame() throws SaadaException {
+	public ColumnSingleSetter getFrame() throws SaadaException {
 		try {
 			this.searchFrame();
 		} catch (Exception e) {
-			ColumnSetter retour = new ColumnSetter();
+			ColumnSingleSetter retour = new ColumnSingleSetter();
 			retour.completeMessage(e.getMessage());
 			return retour;
 		}
@@ -618,7 +618,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return the ascension_kw
 	 * @throws SaadaException 
 	 */
-	public ColumnSetter getAscension() throws SaadaException {
+	public ColumnSingleSetter getAscension() throws SaadaException {
 		if( this.arePosColFound() )
 			return ascension_kw;
 		else 
@@ -629,7 +629,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return the declination_kw
 	 * @throws SaadaException 
 	 */
-	public ColumnSetter getDeclination() throws SaadaException {
+	public ColumnSingleSetter getDeclination() throws SaadaException {
 		if( this.arePosColFound() )
 			return declination_kw;
 		else 
@@ -652,7 +652,7 @@ public class SpaceKWDetector extends KWDetector{
 		else return false;
 	}
 
-	public ColumnSetter getSpatialError() throws SaadaException{
+	public ColumnSingleSetter getSpatialError() throws SaadaException{
 		this.searchError();
 		return err_maj;
 	}
@@ -660,7 +660,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public ColumnSetter getfov() throws SaadaException{
+	public ColumnSingleSetter getfov() throws SaadaException{
 		// fov = Diameter (bounds) of the covered region in deg
 		this.init();
 		if( this.fov == null ){
@@ -673,7 +673,7 @@ public class SpaceKWDetector extends KWDetector{
 			ah.setUnit("deg");
 			ah.setUtype("Char.SpatialAxis.Coverage.Bounds.Extent.diameter");
 			ah.setValue("0");
-			this.fov = new ColumnSetter(ah, ColumnSetMode.BY_VALUE);
+			this.fov = new ColumnSingleSetter(ah, ColumnSetMode.BY_VALUE);
 			this.fov.completeMessage("Default value");														
 		}
 		return fov;		
@@ -683,10 +683,10 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public ColumnSetter getRegion() throws SaadaException{
+	public ColumnSingleSetter getRegion() throws SaadaException{
 		this.init();
 		if( this.region == null ){
-			return new ColumnSetter();
+			return new ColumnSingleSetter();
 		}
 		return region;		
 	}

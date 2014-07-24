@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -22,9 +22,9 @@ public class ObservableKWDetector extends KWDetector {
 	/**
 	 * Quantities are bound each to other. they are set together and returned by accessors
 	 */
-	private ColumnSetter ucd=new ColumnSetter();
-	private ColumnSetter unit=new ColumnSetter();
-	private ColumnSetter calib=new ColumnSetter();;
+	private ColumnSingleSetter ucd=new ColumnSingleSetter();
+	private ColumnSingleSetter unit=new ColumnSingleSetter();
+	private ColumnSingleSetter calib=new ColumnSingleSetter();;
 	private boolean commentSearched = false;
 	private boolean keywordsSearched = false;
 	private boolean columnsSearched = false;
@@ -64,7 +64,7 @@ public class ObservableKWDetector extends KWDetector {
 		this.columnsSearched = true;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the column names");
 		if( this.entryAttributeHandler != null ){
-			ColumnSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
+			ColumnSingleSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
 			if( !ah.notSet()  ){
 				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
 					this.unit.setByTableColumn(ah.getUnit(), false);
@@ -177,7 +177,7 @@ public class ObservableKWDetector extends KWDetector {
 	 * @return
 	 * @throws FatalException
 	 */
-	public ColumnSetter getUcdName() throws FatalException{
+	public ColumnSingleSetter getUcdName() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
 		this.search() ;
@@ -188,13 +188,13 @@ public class ObservableKWDetector extends KWDetector {
 	 * @return
 	 * @throws FatalException
 	 */
-	public ColumnSetter getUnitName() throws FatalException{
+	public ColumnSingleSetter getUnitName() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
 		this.search() ;
 		return this.unit;
 	}
-	public ColumnSetter getCalibStatus() throws FatalException{
+	public ColumnSingleSetter getCalibStatus() throws FatalException{
 		//		Level 0: Raw instrumental data, in a proprietary or internal data-provider defined format, that needs instrument specific tools to be handled.
 		//		Level 1: Instrumental data in a standard format (FITS, VOTable, SDFITS, ASDM, etc.) which could be manipulated with standard astronomical packages.
 		//		Level 2: Calibrated, science ready data with the instrument signature removed.

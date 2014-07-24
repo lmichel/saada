@@ -22,6 +22,8 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
+import saadadb.products.setter.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
@@ -240,7 +242,7 @@ class ProductIngestor {
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_raSetter.getComment() + "): convert in deg");
 					} catch(Exception e){
-						this.product.s_raSetter = new ColumnSetter();
+						this.product.s_raSetter = new ColumnSingleSetter();
 						this.product.s_raSetter.completeMessage("cannot convert " + this.product.s_raSetter.getValue() + " from hours to deg");
 					}
 				}
@@ -378,11 +380,11 @@ System.out.println("===========================");
 			spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
 			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 			if( !spectralCoordinate.convert() ) {
-				this.product.em_minSetter = new ColumnSetter();
+				this.product.em_minSetter = new ColumnSingleSetter();
 				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
-				this.product.em_maxSetter = new ColumnSetter();
+				this.product.em_maxSetter = new ColumnSingleSetter();
 				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
-				this.product.em_res_powerSetter =  new ColumnSetter();
+				this.product.em_res_powerSetter =  new ColumnSingleSetter();
 			} else {
 				this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
 				this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
