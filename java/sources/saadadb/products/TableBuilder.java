@@ -1,21 +1,18 @@
 package saadadb.products;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import nom.tam.fits.FitsException;
-import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -27,7 +24,7 @@ public class TableBuilder extends ProductBuilder {
 	/** The identification number of this table in data base* */
 	protected long oid;
 	protected EntryBuilder entryBuilder;
-	
+
 	/**
 	 * @param productFile
 	 * @param conf
@@ -38,7 +35,7 @@ public class TableBuilder extends ProductBuilder {
 		this.entryBuilder = new EntryBuilder(this);
 		this.entryBuilder.bindDataFile(productFile);
 	}
-	
+
 	/**
 	 * @param fileName
 	 * @param tabArg
@@ -82,6 +79,7 @@ public class TableBuilder extends ProductBuilder {
 	/* (non-Javadoc)
 	 * @see saadadb.products.Product#initProductFile(java.lang.String, saadadb.prdconfiguration.Configuration)
 	 */
+	@Override
 	public void initProductFile() throws SaadaException{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Init TABLE instance");
 		super.initProductFile();
@@ -98,7 +96,7 @@ public class TableBuilder extends ProductBuilder {
 		}	
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
@@ -106,7 +104,11 @@ public class TableBuilder extends ProductBuilder {
 	public void bindDataFile(DataFile dataFile) throws Exception{
 		super.bindDataFile(dataFile);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#loadValue()
+	 */
+	@Override
 	public void loadValue() throws Exception  {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Load table header");
@@ -116,25 +118,26 @@ public class TableBuilder extends ProductBuilder {
 		this.entryBuilder.loadValue();
 	}
 
-	
-    /* (non-Javadoc)
-     * @see saadadb.products.Product#mergeProductFormat(java.io.File)
-     */
-    public void mergeProductFormat(DataFile file_to_merge) throws FitsException, IOException, SaadaException {
-    	if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Merge TABLE format with file <" + file_to_merge.getName() + ">");
-    	/*
-         * Store the current set of attribute handlers
-         */
-        Map<String, AttributeHandler> tableAttributeHandler_org;
-        tableAttributeHandler_org = this.productAttributeHandler;
 
-        /*
-         * Build a new set of attribute handlers from the product given as a parameter
-         */
-        ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge);
-        prd_to_merge.mapping = this.mapping;
-        
+	/* (non-Javadoc)
+	 * @see saadadb.products.Product#mergeProductFormat(java.io.File)
+	 */
+	@Override
+	public void mergeProductFormat(DataFile file_to_merge) throws FitsException, IOException, SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Merge TABLE format with file <" + file_to_merge.getName() + ">");
+		/*
+		 * Store the current set of attribute handlers
+		 */
+		Map<String, AttributeHandler> tableAttributeHandler_org;
+		tableAttributeHandler_org = this.productAttributeHandler;
+
+		/*
+		 * Build a new set of attribute handlers from the product given as a parameter
+		 */
+		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge);
+		prd_to_merge.mapping = this.mapping;
+
 		try {
 			prd_to_merge.dataFile = new FitsDataFile(prd_to_merge);		
 			this.typeFile = "FITS";
@@ -149,71 +152,73 @@ public class TableBuilder extends ProductBuilder {
 			}
 		}
 
-//		
-//        if( filename.endsWith(".fit") || filename.endsWith(".fits") ||
-//            filename.endsWith(".fits.gz") || filename.endsWith(".fit.gz") || filename.endsWith(".ftz")) {
-//            this.typeFile = "FITS";
-//            prd_to_merge.productFile = new FitsProduct(prd_to_merge);
-//        }
-//        else if( filename.endsWith(".xml") || filename.endsWith(".vo") ||
-//                filename.endsWith(".votable") || filename.endsWith(".vot") ) {
-//            this.typeFile = "VO";
-//            prd_to_merge.productFile = new VOProduct(prd_to_merge);
-//        }
-//        else {
-//            IgnoreException.throwException("<" + filename + "> File type not recognized");
-//            return;
-//        }
-        /*
-         * Merge old a new sets of attribute handlers
-         */
-        Iterator<AttributeHandler> it = prd_to_merge.getProductAttributeHandler().values().iterator();
-        while( it.hasNext()) {
-            AttributeHandler new_att = it.next();
-            AttributeHandler old_att = null;
-            if( (old_att = tableAttributeHandler_org.get(new_att.getNameattr())) != null ) {
-                old_att.mergeAttribute(new_att);
-            }
-            else {
-                if (Messenger.debug_mode)
+		//		
+		//        if( filename.endsWith(".fit") || filename.endsWith(".fits") ||
+		//            filename.endsWith(".fits.gz") || filename.endsWith(".fit.gz") || filename.endsWith(".ftz")) {
+		//            this.typeFile = "FITS";
+		//            prd_to_merge.productFile = new FitsProduct(prd_to_merge);
+		//        }
+		//        else if( filename.endsWith(".xml") || filename.endsWith(".vo") ||
+		//                filename.endsWith(".votable") || filename.endsWith(".vot") ) {
+		//            this.typeFile = "VO";
+		//            prd_to_merge.productFile = new VOProduct(prd_to_merge);
+		//        }
+		//        else {
+		//            IgnoreException.throwException("<" + filename + "> File type not recognized");
+		//            return;
+		//        }
+		/*
+		 * Merge old a new sets of attribute handlers
+		 */
+		Iterator<AttributeHandler> it = prd_to_merge.getProductAttributeHandler().values().iterator();
+		while( it.hasNext()) {
+			AttributeHandler new_att = it.next();
+			AttributeHandler old_att = null;
+			if( (old_att = tableAttributeHandler_org.get(new_att.getNameattr())) != null ) {
+				old_att.mergeAttribute(new_att);
+			}
+			else {
+				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add attribute <" + new_att.getNameattr() + ">");
-                tableAttributeHandler_org.put(new_att.getNameattr(), new_att);
-            }
-        }
-        this.setFmtsignature();   
-        /*
-         * Merge old a new sets of entry attribute handlers
-         */
-    	if (Messenger.debug_mode)
+				tableAttributeHandler_org.put(new_att.getNameattr(), new_att);
+			}
+		}
+		this.setFmtsignature();   
+		/*
+		 * Merge old a new sets of entry attribute handlers
+		 */
+		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Merge ENTRY format with file <" + file_to_merge.getName() + ">");
-        tableAttributeHandler_org = this.getEntry().getProductAttributeHandler();
-        EntryBuilder entry_to_merge = ((TableBuilder)(prd_to_merge)).getEntry();
-        entry_to_merge.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
+		tableAttributeHandler_org = this.getEntry().getProductAttributeHandler();
+		EntryBuilder entry_to_merge = ((TableBuilder)(prd_to_merge)).getEntry();
+		entry_to_merge.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 		entry_to_merge.productAttributeHandler = prd_to_merge.dataFile.getEntryAttributeHandler();
-        
-        for( AttributeHandler new_att: entry_to_merge.getProductAttributeHandler().values()) {
-            AttributeHandler old_att = null;
-            if( (old_att = tableAttributeHandler_org.get(new_att.getNameattr())) != null ) {
-                old_att.mergeAttribute(new_att);
-            } else {
-                if (Messenger.debug_mode)
+
+		for( AttributeHandler new_att: entry_to_merge.getProductAttributeHandler().values()) {
+			AttributeHandler old_att = null;
+			if( (old_att = tableAttributeHandler_org.get(new_att.getNameattr())) != null ) {
+				old_att.mergeAttribute(new_att);
+			} else {
+				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add attribute <" + new_att.getNameattr() + ">");
-                tableAttributeHandler_org.put(new_att.getNameattr(), new_att);
-            }
-        }
-        this.entryBuilder.setFmtsignature();   
-     }
-    
+				tableAttributeHandler_org.put(new_att.getNameattr(), new_att);
+			}
+		}
+		this.entryBuilder.setFmtsignature();   
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getEntryReport()
 	 */
+	@Override
 	public Map<String, ColumnSetter> getEntryReport() throws Exception {
-		 return this.entryBuilder.getReport();
+		return this.entryBuilder.getReport();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getReport()
 	 */
+	@Override
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour = super.getReport();
@@ -221,10 +226,10 @@ public class TableBuilder extends ProductBuilder {
 		return retour;
 	}
 
-	/**
-	 * Print out the report
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#printReport()
 	 */
+	@Override
 	public void printReport() throws Exception {
 		super.printReport();
 		this.entryBuilder.printReport();

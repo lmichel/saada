@@ -17,6 +17,8 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.setter.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -284,7 +286,7 @@ public class EntryBuilder extends ProductBuilder {
 		this.t_exptimeSetter.storedValue = si.t_exptime;
 
 
-		for( ColumnSetter eah: this.extended_attributesSetter.values()){
+		for( ColumnSingleSetter eah: this.extended_attributesSetter.values()){
 			retour.put("entry." + eah.getAttNameOrg(), eah);     
 		}
 
@@ -296,7 +298,7 @@ public class EntryBuilder extends ProductBuilder {
 				Object o = si.getFieldValue(fname);
 				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
 				ah.setComment("Computed internally by Saada");		
-				ColumnSetter cs = new ColumnSetter(ah, ColumnSetMode.BY_SAADA);
+				ColumnSingleSetter cs = new ColumnSingleSetter(ah, ColumnSetMode.BY_SAADA);
 				cs.storedValue = ah.getValue();
 				retour.put("entry." + fname, cs);
 			}
@@ -307,7 +309,7 @@ public class EntryBuilder extends ProductBuilder {
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getReport()
 	 */
-	public Map<String, ColumnSetter> getReportXX() throws Exception {
+	public Map<String, ColumnSingleSetter> getReportXX() throws Exception {
 		this.setProductIngestor();
 		if( this.productIngestor.hasMoreElements() ) {
 			((EntryIngestor)(this.productIngestor)).mapIndirectionTables();

@@ -1,4 +1,4 @@
-package saadadb.products;
+package saadadb.products.setter;
 
 import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.enums.ColumnSetMode;
@@ -12,50 +12,37 @@ import saadadb.util.SaadaConstant;
  * @author michel
  * @version $Id$
  */
-public final class ColumnSetter implements Cloneable {
+public final class ColumnSingleSetter extends ColumnSetter implements Cloneable {
 	/**
 	 * Description of the column to be set 
 	 */
 	private AttributeHandler attributeHandler;
-	/**
-	 * Mode used to get the value
-	 */
-	protected ColumnSetMode setMode = ColumnSetMode.NOT_SET;
-	/**
-	 * Log of the mapping process
-	 */
-	public StringBuffer message = new StringBuffer();
-	/**
-	 * Normally used to store the value as it will be put inti the DB, can however to used to store 
-	 * the value affected to the column but which can be saved as a string within the  AttributeHandler
-	 */
-	public Object storedValue;
-	
+
+
 	/**
 	 * Constructor: instance must always have a not null attribute handler
 	 * Make the setter as NOT_SET
 	 * @param attributeHandler
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(AttributeHandler attributeHandler) throws FatalException {
+	public ColumnSingleSetter(AttributeHandler attributeHandler) throws FatalException {
+		super();
 		if( attributeHandler == null ){
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null attributeHandler");
 		}
 		this.attributeHandler = attributeHandler;
-		this.setNotSet();
 	}
 	/**
 	 * @param attributeHandler
 	 * @param setMode
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(AttributeHandler attributeHandler, ColumnSetMode setMode) throws FatalException {
+	public ColumnSingleSetter(AttributeHandler attributeHandler, ColumnSetMode setMode) throws FatalException {
+		super(setMode);
 		if( attributeHandler == null ){
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null attributeHandler");
 		}
 		this.attributeHandler = attributeHandler;
-		this.setMode = setMode;
-		this.setInitMessage();
 	}	
 	
 	/**
@@ -66,7 +53,7 @@ public final class ColumnSetter implements Cloneable {
 	 * @param byUcd take by name if false
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(AttributeHandler attributeHandler, ColumnSetMode setMode, boolean fromMapping, boolean byUcd) throws FatalException {
+	public ColumnSingleSetter(AttributeHandler attributeHandler, ColumnSetMode setMode, boolean fromMapping, boolean byUcd) throws FatalException {
 		this(attributeHandler,setMode );
 		this.setMappingMessage(fromMapping);
 	}
@@ -77,9 +64,9 @@ public final class ColumnSetter implements Cloneable {
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(String value, boolean fromMapping) throws FatalException {
+	public ColumnSingleSetter(String value, boolean fromMapping) throws FatalException {
 		this.attributeHandler = new AttributeHandler();
-		this.setMode = ColumnSetMode.BY_VALUE ;
+		this.settingMode = ColumnSetMode.BY_VALUE ;
 		this.attributeHandler.setValue(value);
 		this.attributeHandler.setNameattr(ColumnMapping.NUMERIC);
 		this.attributeHandler.setNameorg(ColumnMapping.NUMERIC);
@@ -93,9 +80,9 @@ public final class ColumnSetter implements Cloneable {
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(double value, boolean fromMapping) throws FatalException {
+	public ColumnSingleSetter(double value, boolean fromMapping) throws FatalException {
 		this.attributeHandler = new AttributeHandler();
-		this.setMode = ColumnSetMode.BY_VALUE ;
+		this.settingMode = ColumnSetMode.BY_VALUE ;
 		this.attributeHandler.setValue(value);
 		this.attributeHandler.setNameattr(ColumnMapping.NUMERIC);
 		this.attributeHandler.setNameorg(ColumnMapping.NUMERIC);
@@ -109,7 +96,7 @@ public final class ColumnSetter implements Cloneable {
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(String value, boolean fromMapping, String message) throws FatalException {
+	public ColumnSingleSetter(String value, boolean fromMapping, String message) throws FatalException {
 		this(value, fromMapping);
 		this.completeMessage(message);
 	}
@@ -120,7 +107,7 @@ public final class ColumnSetter implements Cloneable {
 	 * @param fromMapping flag for messaging
 	 * @throws FatalException 
 	 */
-	public ColumnSetter(double value, boolean fromMapping, String message) throws FatalException {
+	public ColumnSingleSetter(double value, boolean fromMapping, String message) throws FatalException {
 		this(value, fromMapping);
 		this.completeMessage(message);
 	}
@@ -128,35 +115,23 @@ public final class ColumnSetter implements Cloneable {
 	/**
 	 * Basic constructor
 	 */
-	public ColumnSetter() {
+	public ColumnSingleSetter() {
+		super();
 		this.attributeHandler = new AttributeHandler();
-		this.setNotSet();
 	}
 	/**
 	 * Basic constructor
 	 */
-	public ColumnSetter(String message) {
+	public ColumnSingleSetter(String message) {
+		super(message);
 		this.attributeHandler = new AttributeHandler();
-		this.setNotSet();
-		this.completeMessage(message);
 	}
 
-	/**
-	 * Log a standrd message indicating wether the vlue has been set by mapping or bu auto detection
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setInitMessage()
 	 */
-	private void setMappingMessage( boolean fromMapping) {
-		if( fromMapping ) {
-			this.completeMessage("user-mapping");
-		} else {
-			this.completeMessage("auto-detection");
-		}
-	}
-	/**
-	 * Starts the log message according the mode used to get the KW value
-	 */
-	private void setInitMessage() {
-		switch(this.setMode){
+	protected void setInitMessage() {
+		switch(this.settingMode){
 		case BY_KEYWORD:
 			this.completeMessage("keyword <" + this.attributeHandler.getNameorg()+ ">");
 			break;
@@ -181,318 +156,244 @@ public final class ColumnSetter implements Cloneable {
 		}
 
 	}
-	/**
-	 * add "message" to the mapping log
-	 * @param message
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByValue(java.lang.String, boolean)
 	 */
-	public void completeMessage(String message){
-		if( this.message.length() > 0 )
-			this.message.append(" ");
-		this.message.append(message);
-	}
-	/**
-	 * Set the value (STring) and set the BY_VALUE mode
-	 * @param fromMapping
-	 * @param value
-	 */
+	@Override
 	public void setByValue(String value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_VALUE;
+		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (numeric) and set the BY_VALUE mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByValue(double, boolean)
 	 */
+	@Override
 	public void setByValue(double value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_VALUE;
+		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * @param keyword
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByKeyword(java.lang.String, boolean)
 	 */
-	public void setByKeyword(boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_KEYWORD;
-		this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
-		if( fromMapping  ) {
-			this.completeMessage("user mapping");
-		}
-	}
-	
-	/**
-	 * Set the value (STring) and set the BY_WCS mode
-	 * @param value
-	 * @param fromMapping
-	 */
+	@Override
 	public void setByKeyword(String value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_KEYWORD;
+		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (numeric) and set the BY_WCS mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByKeyword(double, boolean)
 	 */
+	@Override
 	public void setByKeyword(double value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_KEYWORD;
+		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (STring) and set the BY_WCS mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByWCS(java.lang.String, boolean)
 	 */
+	@Override
 	public void setByWCS(String value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_WCS;
+		this.settingMode = ColumnSetMode.BY_WCS;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (numeric) and set the BY_WCS mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByWCS(double, boolean)
 	 */
+	@Override
 	public void setByWCS(double value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_WCS;
+		this.settingMode = ColumnSetMode.BY_WCS;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (STring) and set the BY_PIXEL mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByPixels(java.lang.String, boolean)
 	 */
+	@Override
 	public void setByPixels(String value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_PIXELS;
+		this.settingMode = ColumnSetMode.BY_PIXELS;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (numeric) and set the BY_PIXEL mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByPixels(double, boolean)
 	 */
+	@Override
 	public void setByPixels(double value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_PIXELS;
+		this.settingMode = ColumnSetMode.BY_PIXELS;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (STring) and set the BY_PIXEL mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByTableColumn(java.lang.String, boolean)
 	 */
+	@Override
 	public void setByTableColumn(String value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
+		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * Set the value (numeric) and set the BY_PIXEL mode
-	 * @param value
-	 * @param fromMapping
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByTabeColumn(double, boolean)
 	 */
+	@Override
 	public void setByTabeColumn(double value, boolean fromMapping){
-		this.setMode = ColumnSetMode.BY_TABLE_COLUMN;
+		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
 		this.completeMessage("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
 		if( fromMapping  ) {
 			this.completeMessage("user mapping");
 		}
 	}
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setBySaada()
 	 */
+	@Override
 	public void setBySaada(){
-		this.setMode = ColumnSetMode.BY_SAADA;
+		this.settingMode = ColumnSetMode.BY_SAADA;
 		this.attributeHandler.setValue(null);
 	}
-	/**
-	 * Stores value/unit within the attribute handler without changing the mode.
-	 * storedValue is also set with value
-	 * @param value
-	 * @param unit
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setByKeyword(boolean)
 	 */
+	@Override
+	public void setByKeyword(boolean fromMapping) {
+        this.settingMode = ColumnSetMode.BY_KEYWORD;
+        this.completeMessage("keyword <" + attributeHandler.getNameorg()+ ">");
+        if( fromMapping  ) {
+                this.completeMessage("user mapping");
+        }
+    }
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setValue(double, java.lang.String)
+	 */
+	@Override
 	public void setValue(double value, String unit){
 		this.attributeHandler.setValue(value);
 		this.attributeHandler.setUnit(unit);
 		this.storedValue = value;
 	}
-	/**
-	 * 
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setNotSet()
 	 */
+	@Override
 	public void setNotSet(){
-		this.setMode = ColumnSetMode.NOT_SET;
+		this.settingMode = ColumnSetMode.NOT_SET;
 		this.attributeHandler.setValue(null);
 	}
-	/**
-	 * Set also the BY_VALUE mode
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value){
-		this.setMode = ColumnSetMode.BY_VALUE;
+		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 	}
-	/**
-	 * Set the value as a string  into the AttributeHandler and keep the double value as the storedValue
-	public void setValue(double value, String unit){
-		this.attributeHandler.setValue(value);
-		this.attributeHandler.setUnit(unit);
-		this.storedValue = value;
-	}
-	 * @param value
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setValue(double)
 	 */
+	@Override
 	public void setValue(double value){
-		this.setMode = ColumnSetMode.BY_VALUE;
+		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 		this.storedValue = value;
 	}
 	
-	/*
-	 * getters for the mode used to set the attribute
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#setUnit(java.lang.String)
 	 */
-	public boolean byValue() {
-		return (this.setMode == ColumnSetMode.BY_VALUE);
-	}
-	public boolean byKeyword() {
-		return (this.setMode == ColumnSetMode.BY_KEYWORD);
-	}
-	public boolean byPiwels() {
-		return (this.setMode == ColumnSetMode.BY_PIXELS);
-	}
-	public boolean byTableColumn() {
-		return (this.setMode == ColumnSetMode.BY_TABLE_COLUMN);
-	}
-	public boolean byWcs() {
-		return (this.setMode == ColumnSetMode.BY_WCS);
-	}
-	public boolean bySaada() {
-		return (this.setMode == ColumnSetMode.BY_SAADA);
-	}
-	public boolean notSet() {
-		return (this.setMode == ColumnSetMode.NOT_SET);
-	}
+	@Override
 	public void setUnit(String unit) {
 		this.attributeHandler.setUnit(unit);
 	}
-	/**
-	 * Returns String value stored into the attribute Handler
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getValue()
 	 */
+	@Override
 	public String getValue() {
 		return this.attributeHandler.getValue();
 	}
-	/**
-	 * Returns double value stored into the attribute Handler
-	 * If the AH value has been set with a string, this method can return a {@link SaadaConstant#DOUBLE}
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getNumValue()
 	 */
+	@Override
 	public double getNumValue() {
 		return this.attributeHandler.getNumValue();
 	}
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getComment()
 	 */
+	@Override
 	public String getComment() {
 		return this.attributeHandler.getComment();
 	}
 	/**
 	 * @return
 	 */
+	@Override
 	public String getAttNameOrg() {
 		return this.attributeHandler.getNameorg();
 	}
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getAttNameAtt()
 	 */
+	@Override
 	public String getAttNameAtt() {
 		return this.attributeHandler.getNameattr();
 	}
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getUnit()
 	 */
+	@Override
 	public String getUnit() {
 		return this.attributeHandler.getUnit();
 	}
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#getUcd()
 	 */
+	@Override
 	public String getUcd() {
 		return this.attributeHandler.getUcd();
 	}
-	/**
-	 * @return
-	 */
-	public String getMessage() {
-		return this.message.toString();
-	}
 	
-	/**
-	 * @return
-	 */
-	public String getMode() {
-		return (setMode == ColumnSetMode.BY_KEYWORD)? "BY_KEYWORD" :
-			   (setMode == ColumnSetMode.BY_PIXELS)? "BY_PIXELS" :
-			   (setMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_TABLE_COLUMN" :
-			   (setMode == ColumnSetMode.BY_VALUE)? "BY_VALUE" :
-			   (setMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
-			   (setMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
-	}
-	
-	/**
-	 * Returns a clone of the current instance but with value/unit changed
-	 * and a message mentioning the conversion 
-	 * @param value
-	 * @param unit
-	 * @return
-	 */
-	public ColumnSetter getConverted(double value, String unit) {
-		ColumnSetter retour;
-		try {
-			retour = (ColumnSetter) this.clone();
-			retour.completeMessage(" Converted to " +  value + unit);
-			retour.setValue(value, unit);
-			return retour;
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		String retour =  this.attributeHandler + " "
-		+ this.getMode() + " "
+		+ this.getSettingMode() + " "
 		+ this.message;
 		if( this.storedValue != null )
 			retour += " storedValue=" + this.storedValue;

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
@@ -25,11 +25,11 @@ public class TimeKWDetector extends KWDetector {
 	 * @param retour
 	 * @throws FatalException
 	 */
-	private void addTimeRef(ColumnSetter retour) throws FatalException{
+	private void addTimeRef(ColumnSingleSetter retour) throws FatalException{
 		try{
 			double d= Double.parseDouble(retour.getValue());
 			
-			ColumnSetter ref = this.searchByName(RegExp.TIME_REF_KW);
+			ColumnSingleSetter ref = this.searchByName(RegExp.TIME_REF_KW);
 			if( !ref.notSet() ) {
 				double v = Double.parseDouble(ref.getValue());
 				retour.completeMessage("Taken MJDREF as time ref (" + v + ")");
@@ -43,18 +43,18 @@ public class TimeKWDetector extends KWDetector {
 	 * @return
 	 * @throws FatalException
 	 */
-	public ColumnSetter getTMin() throws FatalException{
+	public ColumnSingleSetter getTMin() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the date start");
-		ColumnSetter retour =  this.search(RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
+		ColumnSingleSetter retour =  this.search(RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
 		if( retour.notSet() ) {
-			ColumnSetter year = this.searchByName("YEAR");
-			ColumnSetter month = this.searchByName("MONTH");
-			ColumnSetter day = this.searchByName("DAY");
+			ColumnSingleSetter year = this.searchByName("YEAR");
+			ColumnSingleSetter month = this.searchByName("MONTH");
+			ColumnSingleSetter day = this.searchByName("DAY");
 			if( !year.notSet() && !month.notSet() && !day.notSet() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No date found but YEAR/MONTH/DAY");
-				retour = new ColumnSetter();
+				retour = new ColumnSingleSetter();
 				retour.setByValue(year.getValue() + "-" + month.getValue()  + "-" + day.getValue() , false);
 				retour.completeMessage("Build from YEAR/MONTH/DAY keywords");
 			} 
@@ -63,21 +63,21 @@ public class TimeKWDetector extends KWDetector {
 		}
 		return retour;
 	}
-	public ColumnSetter getTMax() throws FatalException{
+	public ColumnSingleSetter getTMax() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the date end");
-		ColumnSetter retour =  this.search(RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
+		ColumnSingleSetter retour =  this.search(RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
 		if( !retour.notSet() ){
 			this.addTimeRef(retour);
 		}
 		return retour;
 	}
-	public ColumnSetter getExpTime() throws FatalException{
+	public ColumnSingleSetter getExpTime() throws FatalException{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the exposure time");
 		return this.search(RegExp.EXPOSURE_TIME_UCD, RegExp.EXPOSURE_TIME_KW);
 	}
-	public ColumnSetter getExposureName(){
+	public ColumnSingleSetter getExposureName(){
 		return null;
 	}
 
