@@ -17,7 +17,6 @@ import saadadb.command.ArgsParser;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.ColumnSetter;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
@@ -25,6 +24,7 @@ import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.setter.ColumnSetter;
 
 /**
  * Create and show the result of the choosen filter when you load a data
@@ -70,6 +70,9 @@ public class VPPreviewPanel extends JPanel {
 			String[] temp = en.getValue();
 
 			//To avoid any problem between the messages and the html
+			if(temp[0]==null)
+				temp[0]="NOT SET";
+			
 			if(temp[2].contains(">"))
 			{
 				System.out.println("AVANT :"+temp[2]);
@@ -132,7 +135,7 @@ public class VPPreviewPanel extends JPanel {
 			String[] temp = new String[3];
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
-			temp[1]=ah.getMode();
+			temp[1]=ah.getSettingMode().toString();
 			temp[2]=ah.getMessage();
 			if( !ah.notSet() ) 
 				temp[0]=ah.storedValue.toString();

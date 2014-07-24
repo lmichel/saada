@@ -118,7 +118,7 @@ public class VPObservableMappingPanel extends VPAxisPriorityPanel {
 			oucd.setEnable(true);
 			ocalibstatus.setEnable(true);
 		}
-		
+		//We check if the UcdTextField exist because its setText() method don't handle this possibility
 		if(ap.getOucd(false)!=null)
 			oucd.setText(ap.getOucd(false));
 		
