@@ -36,7 +36,7 @@ public class SpaceMapping extends AxisMapping {
 	private void mapPosition(ArgsParser tabArg) throws SaadaException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position mapping");
 		String[] tabRa_dec;
-		tabRa_dec = tabArg.getPositionMapping();
+		tabRa_dec = tabArg.getPositionMapping(this.entryMode);
 		/*
 		 * One position parameter: must be an object name
 		 */
@@ -85,8 +85,8 @@ public class SpaceMapping extends AxisMapping {
 	public void mapPoserror(ArgsParser tabArg) throws FatalException {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position error mapping");
 		
-		String av  = tabArg.getPoserrorMapping();
-		this.errorUnit = tabArg.getPoserrorUnit();
+		String av  = tabArg.getPoserrorMapping(this.entryMode);
+		this.errorUnit = tabArg.getPoserrorUnit(this.entryMode);
 		/*
 		 * One poserror parameter: error is supposed to be a circle
 		 */

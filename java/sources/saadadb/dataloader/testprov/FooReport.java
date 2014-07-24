@@ -17,7 +17,6 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.ColumnSetter;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
@@ -25,6 +24,8 @@ import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.setter.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.products.validation.ObscoreKWSet;
 
 /**
@@ -134,7 +135,7 @@ public class FooReport {
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
-			System.out.print(ah.getMode() + " " + ah.message);
+			System.out.print(ah.getSettingMode() + " " + ah.message);
 			if( !ah.notSet() ) 
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
@@ -145,7 +146,7 @@ public class FooReport {
 			for( java.util.Map.Entry<String, ColumnSetter> e:er.entrySet()){
 				System.out.print(String.format("%20s",e.getKey()) + "     ");
 				ColumnSetter ah = e.getValue();
-				System.out.print(ah.getMode() + " " + ah.message);
+				System.out.print(ah.getSettingMode() + " " + ah.message);
 				if( !ah.notSet() ) 
 					System.out.print(" storedValue=" + ah.storedValue);
 				System.out.println("");
