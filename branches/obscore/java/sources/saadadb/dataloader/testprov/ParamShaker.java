@@ -17,13 +17,14 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.products.ColumnSetter;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.setter.ColumnSetter;
+import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 
 /**
@@ -315,7 +316,7 @@ public abstract class ParamShaker {
 				String str = "";
 				str = String.format("%20s",e.getKey()) + "     ";
 				ColumnSetter ah = e.getValue();
-				str += ah.getMode() + " " + ah.message;
+				str += ah.getSettingMode() + " " + ah.message;
 				if( !ah.notSet() ) 
 					str += " storedValue=" + ah.storedValue;
 				this.currentReport.add(str);
