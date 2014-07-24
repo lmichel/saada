@@ -105,7 +105,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 		this.setActionBar();
 		this.setConfName("Default");
 		
-		loadConfFile("/home/pertuy/Programmes/saadinstall/saadadb/dbtest/config/TABLE.ENTRYSAVETEST2.config");//(ArgsParser)in.readObject();
+		//loadConfFile("/home/pertuy/Programmes/saadinstall/saadadb/dbtest/config/TABLE.ENTRYSAVETEST2.config");//(ArgsParser)in.readObject();
 
 
 
@@ -141,7 +141,7 @@ public class VPSTOEPanel extends MappingKWPanel {
 
 		//Temporary
 		if(this.title.equals(NEW_MAPPER))
-			category=Category.TABLE;
+			category=Category.SPECTRUM;
 
 		classMapping = new VPClassMappingPanel(this);
 		classMapping.expand();
