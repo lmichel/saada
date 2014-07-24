@@ -55,6 +55,7 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 */
 	public ColumnSingleSetter(AttributeHandler attributeHandler, ColumnSetMode setMode, boolean fromMapping, boolean byUcd) throws FatalException {
 		this(attributeHandler,setMode );
+		this.setInitMessage();
 		this.setMappingMessage(fromMapping);
 	}
 	/**
@@ -118,6 +119,7 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public ColumnSingleSetter() {
 		super();
 		this.attributeHandler = new AttributeHandler();
+		this.attributeHandler.setValue(null);
 	}
 	/**
 	 * Basic constructor
@@ -131,6 +133,9 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 * @see saadadb.products.setter.ColumnSetter#setInitMessage()
 	 */
 	protected void setInitMessage() {
+		if( this.attributeHandler == null ) {
+			return;
+		}
 		switch(this.settingMode){
 		case BY_KEYWORD:
 			this.completeMessage("keyword <" + this.attributeHandler.getNameorg()+ ">");

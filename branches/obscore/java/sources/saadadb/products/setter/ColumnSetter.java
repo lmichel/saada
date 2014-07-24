@@ -34,7 +34,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @throws FatalException 
 	 */
 	public ColumnSetter()  {
-		this.setNotSet();
+		this.settingMode = ColumnSetMode.NOT_SET;
 	}
 	/**
 	 * @param attributeHandler
