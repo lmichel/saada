@@ -5,12 +5,16 @@ package saadadb.products;
 
 import java.util.Enumeration;
 
+import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
+import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
+import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
@@ -70,8 +74,8 @@ public final class EntryIngestor extends ProductIngestor {
 	private  int num_col_ra      = -1;
 	private  int num_col_dec     = -1;
 	private  int num_col_err  = -1;
-//	private  int num_col_dec_err = -1;
-//	private  int num_col_angle_err = -1;
+	//	private  int num_col_dec_err = -1;
+	//	private  int num_col_angle_err = -1;
 	private  int num_col_em_max  = -1;
 	private  int num_col_em_min  = -1;
 	private  int num_col_em_res_power  = -1;
@@ -94,11 +98,11 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	private long oidTable;
 	/**
-	 * oidsaada must ne incremented when false;
+	 * oidsaada must be incremented when false;
 	 */
 	private boolean firstCall = true;
 	private long lineNumber=0;;
-	
+
 	/**
 	 * @param product
 	 * @throws Exception
@@ -108,20 +112,33 @@ public final class EntryIngestor extends ProductIngestor {
 		this.enumerateRow = product.table.elements();
 		this.oidTable = product.table.productIngestor.saadaInstance.oidsaada;
 		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
-
-		System.out.println("Creator =====================================");
+		this.addMEssage = false;
 	}
 
+	protected void buildInstance() throws Exception {
+		/*
+		 * Build the Saada instance
+		 */
+		if( this.product.metaclass != null ) {
+			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaclass.getName()).newInstance();
+			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaclass.getName());
+		} else {
+			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
+			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
+		}
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#bindInstanceToFile(saadadb.collection.obscoremin.SaadaInstance, long)
 	 */
 	@Override
 	public void bindInstanceToFile(SaadaInstance si) throws Exception {
-		System.out.println("BInd =====================================");
 		this.nextElement();
 		if( si != null ) this.saadaInstance = si;
 		if( this.product.metaclass != null && ! this.firstCall) {
 			this.saadaInstance.oidsaada = SaadaOID.newOid(this.product.metaclass.getName());
+		} else {
 			this.firstCall = false;
 		}
 		this.setObservationFields();
@@ -136,7 +153,7 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	public boolean hasMoreElements() {
-		return this.enumerateRow.hasMoreElements();
+		return (this.lineNumber > 3)?  false: this.enumerateRow.hasMoreElements();
 	}
 
 	/**
@@ -157,7 +174,14 @@ public final class EntryIngestor extends ProductIngestor {
 		}
 		this.lineNumber++;
 	}
-	
+
+	/**
+	 * @throws Exception
+	 */
+	protected void setSpaceFields() throws Exception {
+		this.setPositionFields((int) this.lineNumber);
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setObservationFields()
 	 */
@@ -176,11 +200,11 @@ public final class EntryIngestor extends ProductIngestor {
 	protected void setPositionFields(int number) throws Exception {
 		if( this.values != null ){
 			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
-				this.product.s_raSetter.setByValue(this.values[this.num_col_ra].toString(), true);
+				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
 			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
-				this.product.s_decSetter.setByValue(this.values[this.num_col_dec].toString(), true);
+				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
 			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
-				this.product.s_resolutionSetter.setByValue(this.values[this.num_col_err].toString(), true);
+				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
 		}
 		super.setPositionFields(number);
 		/*
@@ -188,7 +212,7 @@ public final class EntryIngestor extends ProductIngestor {
 		 */
 		this.saadaInstance.obs_id = this.getInstanceName("#" + this.lineNumber);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setEnegryFields()
 	 */
@@ -209,24 +233,30 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setTimeFields() throws SaadaException {
+		try {
 		if( this.values != null ){
-			if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() )
+			if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() ) {
 				this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
-			if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() )
+				this.product.t_maxSetter = this.product.t_maxSetter.getConverted(DateUtils.getFMJD(this.product.t_maxSetter.getValue()), "mjd", addMEssage);
+			}
+			if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() ){
 				this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
+				this.product.t_minSetter = this.product.t_minSetter.getConverted(DateUtils.getFMJD(this.product.t_minSetter.getValue()), "mjd", addMEssage);
+			}
 			if( this.num_col_t_exptime != -1 && this.product.t_exptimeSetter.byKeyword())
 				this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);
 		}
 		super.setTimeFields();
+		} catch (Exception e) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
-	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setObservableFields()
 	 */
 	@Override
 	protected void setObservableFields() throws SaadaException {
 	}
-
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#loadAttrExtends()
 	 */
@@ -260,8 +290,15 @@ public final class EntryIngestor extends ProductIngestor {
 		if( this.product.name_components != null ) {
 			int cpt = 0;
 			for( AttributeHandler ah: this.product.name_components ) {
-				name += ( cpt > 0)? " " + ah.getValue(): ah.getValue();
-				cpt++;
+				String v = ah.getValue();
+				if( v != null && v.length() > 0 ) {
+					if( cpt > 0 ) {
+						name += " " +v;
+					} else {
+						name += v;					
+					}
+					cpt++;
+				}
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
 		}
@@ -291,6 +328,8 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	protected void mapIndirectionTables() {
 		//AttributeHandler[] saada_ah = this.product.metaclass.getClassAttributes();
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Map the indirection tables for the entry table");
 		AttributeHandler[] saada_ah ;
 		if(this.product.metaclass == null  ) {
 			saada_ah = this.product.productAttributeHandler.values().toArray(new AttributeHandler[0]);			
@@ -377,7 +416,7 @@ public final class EntryIngestor extends ProductIngestor {
 			} else if( this.product.t_minSetter != null && nameField.equals(this.product.t_minSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_min column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_min = index_pos_col[num_att_read];
-			 } else if( this.product.t_exptimeSetter != null && nameField.equals(this.product.t_exptimeSetter.getAttNameAtt()) ) {
+			} else if( this.product.t_exptimeSetter != null && nameField.equals(this.product.t_exptimeSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "t_exptime column col (" + nameField + ") read in column #" + num_att_read);
 				num_col_t_exptime = index_pos_col[num_att_read];
 			}
@@ -395,7 +434,7 @@ public final class EntryIngestor extends ProductIngestor {
 			}
 			if( this.product.name_components != null ) {
 				int namepos=0;
-					for( AttributeHandler nah: this.product.name_components ) {
+				for( AttributeHandler nah: this.product.name_components ) {
 					if( nah.getNameattr().equals(nameField)) {
 						num_name_att[namepos] = index_pos_col[num_att_read];	
 						nmsg += "(" + nah.getNameattr() + " col#" + num_att_read + ") ";
@@ -412,4 +451,5 @@ public final class EntryIngestor extends ProductIngestor {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,emsg);
 		}
 	}
+
 }

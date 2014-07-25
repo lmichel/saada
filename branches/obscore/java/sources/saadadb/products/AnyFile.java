@@ -20,6 +20,7 @@ import saadadb.products.inference.SpaceKWDetector;
  */
 public class AnyFile extends File implements DataFile {
 
+	private List<String> comments = new ArrayList<String>();
 
 	public AnyFile(File parent, String child) {
 		super(parent, child);
@@ -121,7 +122,7 @@ public class AnyFile extends File implements DataFile {
 
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception {
-		// TODO Auto-generated method stub
+		builder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 		
 	}
 
@@ -140,8 +141,7 @@ public class AnyFile extends File implements DataFile {
 
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
+		return new QuantityDetector( new LinkedHashMap<String, AttributeHandler>(), this.comments, productMapping);
 	}
 
 	@Override

@@ -41,6 +41,8 @@ import cds.astro.Astroframe;
 class ProductIngestor {
 	protected SaadaInstance saadaInstance;
 	protected ProductBuilder product;
+	/** allows the ColumnSetter to append messages after conversion */
+	protected boolean addMEssage = true;
 
 	/**
 	 * @param product
@@ -163,12 +165,15 @@ class ProductIngestor {
 		if( this.product.name_components != null ) {
 			int cpt = 0;
 			for( AttributeHandler ah: this.product.name_components ) {
-				if( cpt > 0 ) {
-					name += " " + ah.getValue();
-				} else {
-					name += ah.getValue();					
+				String v = ah.getValue();
+				if( v != null && v.length() > 0 ) {
+					if( cpt > 0 ) {
+						name += " " +v;
+					} else {
+						name += v;					
+					}
+					cpt++;
 				}
-				cpt++;
 			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
 		}
@@ -204,23 +209,23 @@ class ProductIngestor {
 		this.setPositionFields(0);
 	}
 
-//	/**
-//	 * @throws Exception
-//	 */
-//	protected void setAstrofFrame()throws Exception {
-//		/*
-//		 * Compute first the astroframe if it is not already done
-//		 * With constant values given in the configuration
-//		 */
-//		if( this.product.astroframeSetter == null && this.product.system_attribute != null ) {
-//			if( this.product.equinox_attribute == null ) {
-//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), null);
-//			}
-//			else {
-//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), this.product.equinox_attribute.getValue());				
-//			}	
-//		}	
-//	}
+	//	/**
+	//	 * @throws Exception
+	//	 */
+	//	protected void setAstrofFrame()throws Exception {
+	//		/*
+	//		 * Compute first the astroframe if it is not already done
+	//		 * With constant values given in the configuration
+	//		 */
+	//		if( this.product.astroframeSetter == null && this.product.system_attribute != null ) {
+	//			if( this.product.equinox_attribute == null ) {
+	//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), null);
+	//			}
+	//			else {
+	//				this.product.astroframeSetter = Coord.getAstroframe(this.product.system_attribute.getValue(), this.product.equinox_attribute.getValue());				
+	//			}	
+	//		}	
+	//	}
 	/**
 	 * Set all fields related to the position at collection level
 	 * @param number: no message if number != 0
@@ -238,7 +243,8 @@ class ProductIngestor {
 				}
 				if( this.product.s_raSetter.byKeyword() && this.product.s_raSetter.getComment().matches(".*(?i)(hour).*")) {
 					try {
-						this.product.s_raSetter = this.product.s_raSetter.getConverted(Double.parseDouble(this.product.s_raSetter.getValue())*15, "deg");
+						this.product.s_raSetter = this.product.s_raSetter.getConverted(Double.parseDouble(
+								this.product.s_raSetter.getValue())*15, "deg", addMEssage);
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_raSetter.getComment() + "): convert in deg");
 					} catch(Exception e){
@@ -259,8 +265,8 @@ class ProductIngestor {
 				double converted_coord[] = Coord.convert(af, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
 				double ra = converted_coord[0];
 				double dec = converted_coord[1];
-				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString());
-				this.product.s_decSetter =  this.product.s_decSetter.getConverted(dec, Database.getAstroframe().toString());
+				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString(), addMEssage);
+				this.product.s_decSetter =  this.product.s_decSetter.getConverted(dec, Database.getAstroframe().toString(), addMEssage);
 				if( this.product.s_regionSetter.storedValue  != null ) {
 					String stc = "Polygon " + Database.getAstroframe();
 					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
@@ -272,7 +278,6 @@ class ProductIngestor {
 					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
 					this.saadaInstance.setS_region(stc);
 				}
-System.out.println("===========================");
 				if(this.product.s_fovSetter.notSet())
 					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 				else 
@@ -293,7 +298,7 @@ System.out.println("===========================");
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
 				this.setPosErrorFields(number);
-			} catch( ParseException e ) {
+			} catch( Exception e ) {
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
 				this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
 				this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
@@ -340,7 +345,7 @@ System.out.println("===========================");
 			 */
 			if( !this.product.s_resolutionSetter.notSet() ) {
 				maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
-				this.product.s_resolutionSetter.getConverted(maj_err, "arcsec");
+				this.product.s_resolutionSetter.getConverted(maj_err, "arcsec", addMEssage);
 				this.saadaInstance.s_resolution = maj_err;
 			} 
 		} else {
@@ -386,8 +391,8 @@ System.out.println("===========================");
 				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
 				this.product.em_res_powerSetter =  new ColumnSingleSetter();
 			} else {
-				this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit());
-				this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit());
+				this.product.em_minSetter = qdMin.getConverted(spectralCoordinate.getConvertedMin(), spectralCoordinate.getFinalUnit(), addMEssage);
+				this.product.em_maxSetter = qdMax.getConverted(spectralCoordinate.getConvertedMax(), spectralCoordinate.getFinalUnit(), addMEssage);
 			}
 		}
 		setField("em_min"    , this.product.em_minSetter);

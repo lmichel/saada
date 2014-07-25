@@ -11,6 +11,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.meta.MetaClass;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
 
@@ -116,6 +117,13 @@ public class TableBuilder extends ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Load entries ");
 		this.entryBuilder.loadValue();
+	}
+
+	/**
+	 * @return Returns the metaclass.
+	 */
+	public void setMetaclass(MetaClass mc) {
+		super.setMetaclass(mc);
 	}
 
 
