@@ -18,6 +18,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.VOTableDataFile;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
@@ -475,7 +476,39 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public boolean hasValue() {
 		return !(this.value == null || this.value.length() == 0);
 	}
+	
+	/**
+	 * Used to populate the meta category tables {@link Table_Saada_Metacat}
+	 * @param subkey
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getDumpLine(int subkey) throws FatalException {
+			
+		return  subkey
+		+ "\t"  + this.level
+		+ "\t"  + this.classid
+		+ "\t"  + this.classname
+		+ "\t" + this.nameattr
+		+ "\t" + this.type
+		+ "\t" + Database.getWrapper().getEscapeQuote(this.nameorg)
+		+ "\t" + this.ucd
+		+ "\t" + this.utype
+		+ "\t" + this.vo_dm
+		+ "\t"  + "null"
+		+ "\t"   + Database.getWrapper().getBooleanAsString(this.queriable)
+		+ "\t"  + this.unit
+		+ "\t" + this.comment.replaceAll("'", "")
+		+ "\t" + this.collname 
+		+ "\t"   + this.collid 
+		+ "\t"  + this.format ;
+	}
 
+	/**
+	 * @param subkey no longer used
+	 * @return
+	 * @throws FatalException
+	 */
 	public String getInsertValues(int subkey) throws FatalException {
 		return  "( " + Database.getWrapper().getInsertAutoincrementStatement()
 		+ ", '"  + this.level
