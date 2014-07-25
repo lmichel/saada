@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -35,7 +36,7 @@ public class VPPreviewPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private ArrayList<String> loadedExtensionsList;
-	private HashMap<String,String[]> loadedValuesList;
+	private TreeMap<String,String[]> loadedValuesList;
 	private JEditorPane loadedValuesTable,loadedExtensionsTable;
 
 	/**
@@ -110,7 +111,7 @@ public class VPPreviewPanel extends JPanel {
 	{
 
 		loadedExtensionsList = new ArrayList<String>();
-		loadedValuesList = new HashMap<String,String[]>();
+		loadedValuesList = new TreeMap<String,String[]>();
 		ProductBuilder product = null;
 		switch( Category.getCategory(ap.getCategory()) ) {
 		case Category.TABLE: product = new TableBuilder((new FitsDataFile(file.getAbsolutePath()))
