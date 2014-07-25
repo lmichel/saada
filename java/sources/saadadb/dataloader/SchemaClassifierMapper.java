@@ -197,9 +197,11 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			 */
 			for( int i=0 ; i<existing_classes.length ; i++ ) {
 				mc = Database.getCachemeta().getClass(existing_classes[i]);
-				if( (mc.getName().equals(requested_classname + "Entry") || mc.getName().matches(requested_classname.replaceAll("Entry$","") + "(_[0-9]+(Entry)?)?" ))
+				
+				if( ((mc.getName().equals(requested_classname) || mc.getName().matches(requested_classname + "(_[0-9]+(Entry)?)?"))
+						|| ((mc.getName().equals(requested_classname + "Entry") || mc.getName().matches(requested_classname.replaceAll("Entry$","") + "(_[0-9]+(Entry)?)?")) ))
 						&&  mc.getCollection_name().equals(mapping.getCollection()) 
-						&&  mc.getCategory() == mapping.getCategory() ) {
+						&&  mc.getCategory() == mapping.getCategory()  ) {
 					Messenger.printMsg(Messenger.TRACE, "Existing class <" + mc.getName() + "> matches the product format");
 					//SQLTable.dropTableIndex(mc.getName(), this.loader);
 					this.classesToBeIndexed.add(mc.getName());
@@ -212,8 +214,9 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			 * If not found, a new class is created
 			 */
 			if( !class_found ) {
-				Messenger.printMsg(Messenger.TRACE, "One class with signature <" + fmt_signature 
-						+ "> found (" + mc.getName() + "), but associed with another collection, category or name");
+				System.out.println(requested_classname + " " + mc.getCollection_name() +" " +mapping.getCollection() + " " +  Category.explain(mc.getCategory()) + " " + Category.explain(mapping.getCategory()));
+				Messenger.printMsg(Messenger.TRACE, "One class found (" 
+						+ mc.getName() + ") but associed with another collection (" + mc.getCollection_name() + ") or category (" + Category.explain(mc.getCategory()) + ")");
 				mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Class <" + mc.getName() + "> created");

@@ -27,7 +27,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
-import saadadb.sqltable.UCDTableHandler;
+import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.Messenger;
 
 /**
@@ -372,7 +372,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				}
 			}
 			if( modified ) {
-				(new UCDTableHandler(mc.getName()
+				(new Table_Saada_Metacat(mc.getName()
 						, mapping.getCollection()
 						, mapping.getCategory()
 						, new ArrayList<AttributeHandler>(this.currentProductBuilder.getProductAttributeHandler().values()))).updateUCDTable(mc.getId());

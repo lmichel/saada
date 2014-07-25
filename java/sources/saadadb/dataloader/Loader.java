@@ -13,6 +13,7 @@ import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
 import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
+import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.AnyFile;
 import saadadb.products.DataFile;
@@ -40,7 +41,6 @@ public class Loader extends SaadaProcess {
 	 * @param args
 	 */
 	public static void main(String[] args){
-
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			String config=null;
