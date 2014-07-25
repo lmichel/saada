@@ -86,7 +86,7 @@ public class PositionMapperPanel extends PriorityPanel {
 		} catch (FatalException e) {
 			Messenger.trapFatalException(e);
 		}
-		setText(getMergedComponent(parser.getPositionMapping()));	
+		setText(getMergedComponent(parser.getPositionMapping(forEntry)));	
 	}
 
 	/**
