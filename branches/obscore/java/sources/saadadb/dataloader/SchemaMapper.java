@@ -24,7 +24,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.Table_Saada_Class;
-import saadadb.sqltable.UCDTableHandler;
+import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
@@ -286,7 +286,7 @@ public abstract class SchemaMapper {
 			}
 			Messenger.printMsg(Messenger.TRACE, "Storing the meta data of the class  " + class_name);
 			SQLTable.beginTransaction();
-			UCDTableHandler uth = new UCDTableHandler(class_name
+			Table_Saada_Metacat uth = new Table_Saada_Metacat(class_name
 					, mapping.getCollection()
 					, mapping.getCategory()
 					, new ArrayList<AttributeHandler>(tableAttribute.values()));

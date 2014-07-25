@@ -83,6 +83,8 @@ public class FooReport {
 					System.out.println(ffn);
 				}
 			}
+		} else {
+			ffn = jsonFilename;
 		}
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn));  
@@ -166,11 +168,7 @@ public class FooReport {
 			FooReport fr;
 			String fn = ap.getFilename();
 			System.out.println(fn);
-			if( fn.startsWith("json:") ){
-				fr = new FooReport(new ArgsParser(args).getFilename());
-			} else {
-				fr = new FooReport(args);
-			}
+			fr = new FooReport(new ArgsParser(args).getFilename());
 			fr.process();
 			System.exit(0);
 		} catch (Exception e) {
