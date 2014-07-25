@@ -59,7 +59,6 @@ public class Table_Saada_Business extends SQLTable {
 		 */
 		DatabaseConnection connection = Database.getConnection();
 		ResultSet rs = Database.getWrapper().getTableColumns(connection, tableName);
-		System.out.println("");
 		Set<String> colorg = new HashSet<String>();
 		while( rs.next()) {
 			colorg.add(rs.getString("COLUMN_NAME"));
