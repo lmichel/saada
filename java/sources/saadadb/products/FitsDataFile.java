@@ -243,7 +243,7 @@ public class FitsDataFile extends File implements DataFile{
 	}
 
 	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#bindBuilder(saadadb.products.ProductBuilder)
+	 * @see saadadb.products.DataFile#(saadadb.products.ProductBuilder)
 	 */
 	public void bindBuilder(ProductBuilder builder) throws Exception{
 		this.productBuilder = builder;
@@ -1711,7 +1711,11 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
-		if( this.getEntryAttributeHandler().size() > 0  ){
+		if( productMapping.getCategory() == Category.ENTRY ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
+			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping);			
+		} else if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
 			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);

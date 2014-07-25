@@ -847,7 +847,11 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 	 */
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		if( this.getEntryAttributeHandler().size() > 0  ){
+		if( productMapping.getCategory() == Category.ENTRY ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
+			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping);			
+		} else if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
 			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);

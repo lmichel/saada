@@ -322,7 +322,6 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 */
 	@Override
 	public void setValue(String value){
-		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
 	}
 	/* (non-Javadoc)
@@ -334,7 +333,6 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 		this.attributeHandler.setValue(value);
 		this.storedValue = value;
 	}
-	
 	/* (non-Javadoc)
 	 * @see saadadb.products.setter.ColumnSetter#setUnit(java.lang.String)
 	 */

@@ -50,14 +50,14 @@ public class EntryBuilder extends ProductBuilder {
 		 * SO we do it again
 		 */
 		try {
+			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
+			this.dataFile = table.dataFile;
 			this.mapCollectionAttributes();
+			this.setFmtsignature();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
-		this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
-		System.out.println(this.productAttributeHandler);
-		this.setFmtsignature();
 	}
 
 	/**
@@ -70,23 +70,8 @@ public class EntryBuilder extends ProductBuilder {
 		}		
 	}
 
-
-	/**
-	 * The specific method for the table entries redefining the homonymous
-	 * method of the products class. This method load the entries attributes in
-	 * the data base and makes a persistent object. She loads the collection
-	 * values of entries in data base and makes this persistent object.
-	 * 
-	 * @param Configuration
-	 *            The configuration of the product.
-	 * @param String
-	 *            The name of the class product.
-	 * @param SaadaDBConf
-	 *            The configuration Object of the Saada database.
-	 * @param Database
-	 *            The current database.
-	 * @return void.
-	 * @throws Exception 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#loadValue()
 	 */
 	@Override
 	public void loadValue() throws Exception {
@@ -133,6 +118,7 @@ public class EntryBuilder extends ProductBuilder {
 
 			} // first line processing
 			line++;
+			/* make the next line readout */
 			this.productIngestor.bindInstanceToFile(entryInstance);
 			/*
 			 * Build the SQL query for business table
@@ -231,12 +217,11 @@ public class EntryBuilder extends ProductBuilder {
 	 */
 	@Override
 	public void bindDataFile(DataFile dataFile) throws SaadaException {
-		//this.typeFile      = this.table.typeFile;
-		//this.productFile   = this.table.productFile;
 		/*
 		 * This operation van be done in super(...) then before this table is set.
 		 */
 		if( this.table != null ) {
+			this.dataFile = dataFile;
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
 			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
 			this.setFmtsignature();
@@ -246,7 +231,6 @@ public class EntryBuilder extends ProductBuilder {
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		this.setProductIngestor();
-
 		this.productIngestor.bindInstanceToFile(this.productIngestor.saadaInstance);
 		SaadaInstance si = this.productIngestor.saadaInstance;
 
@@ -277,7 +261,6 @@ public class EntryBuilder extends ProductBuilder {
 		retour.put("entry.x_unit_org", x_unit_orgSetter);
 		this.x_unit_orgSetter.storedValue = this.x_unit_orgSetter.getValue();
 
-
 		retour.put("entry.t_max", t_maxSetter);
 		this.t_maxSetter.storedValue = si.t_max;
 		retour.put("entry.t_min", t_minSetter);
@@ -285,15 +268,14 @@ public class EntryBuilder extends ProductBuilder {
 		retour.put("entry.t_exptime", t_exptimeSetter);
 		this.t_exptimeSetter.storedValue = si.t_exptime;
 
-
 		for( ColumnSingleSetter eah: this.extended_attributesSetter.values()){
 			retour.put("entry." + eah.getAttNameOrg(), eah);     
 		}
 
 		for( Field f: si.getCollLevelPersisentFields() ){
 			String fname = f.getName();
-			if( retour.get(fname) == null ){
-				AttributeHandler ah = new AttributeHandler();
+			if( retour.get("entry." + fname) == null ){
+			AttributeHandler ah = new AttributeHandler();
 				ah.setNameattr(fname); ah.setNameorg(fname); 
 				Object o = si.getFieldValue(fname);
 				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());

@@ -291,11 +291,11 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param unit
 	 * @return
 	 */
-	public ColumnSetter getConverted(double value, String unit) {
+	public ColumnSetter getConverted(double value, String unit, boolean addMessage) {
 		ColumnSetter retour;
 		try {
 			retour = (ColumnSetter) this.clone();
-			retour.completeMessage(" Converted to " +  value + unit);
+			if( addMessage ) retour.completeMessage(" Converted to " +  value + unit);
 			retour.setValue(value, unit);
 			return retour;
 		} catch (CloneNotSupportedException e) {

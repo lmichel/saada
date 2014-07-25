@@ -551,10 +551,6 @@ public class ProductBuilder {
 				 * flatfiles have no tableAttributeHandler
 				 */
 				else if( this.productAttributeHandler != null ){
-					/*
-					 * Attribte names reacin the command line vcan match either original name or 
-					 * saada names: We must check AH one bu one witout using the Map
-					 */
 					for( AttributeHandler ahp: this.productAttributeHandler.values()) {
 						if( ah.getNameorg().equals(ahp.getNameorg()) || ah.getNameorg().equals(ahp.getNameorg())) {
 							this.name_components.add(ah);					
@@ -563,12 +559,13 @@ public class ProductBuilder {
 					}
 				}
 			}
-			return;
 		} else {
 			this.name_components = new ArrayList<AttributeHandler>();
 			String obsid="";
 			ColumnSingleSetter cs;
-			if( !(cs = quantityDetector.getFacilityName()).notSet() ) obsid += cs.getValue();
+			if( !(cs = quantityDetector.getFacilityName()).notSet() ) {
+				obsid += cs.getValue();
+			}
 			if( !(cs = quantityDetector.getTargetName()).notSet() ){
 				if( obsid.length() >= 0 ) obsid += " [";
 				obsid += cs.getValue() + "]";
@@ -576,7 +573,7 @@ public class ProductBuilder {
 			AttributeHandler ah = new AttributeHandler();
 			if( obsid.length() >= 0 ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Build with instrument_name and target_name");
+					Messenger.printMsg(Messenger.DEBUG, "Build with facility_name and target_name");
 				ah.setAsConstant();
 				ah.setValue(obsid);
 				ah.setNameorg(cs.getAttNameOrg());
@@ -586,7 +583,6 @@ public class ProductBuilder {
 			}
 			this.name_components.add(ah);
 			Messenger.printMsg(Messenger.TRACE, "Take <" + ah.getValue() + "> as name");
-			return;			
 		}
 	}
 
@@ -669,12 +665,12 @@ public class ProductBuilder {
 			this.t_maxSetter = this.getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				ColumnSingleSetter cs = this.quantityDetector.getTMax();
-				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
+				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
 			}
 			this.t_minSetter = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				ColumnSingleSetter cs = this.quantityDetector.getTMin();
-				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
+				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
 			}
 			this.t_exptimeSetter = getMappedAttributeHander(mapping.getColumnMapping("t_exptime"));
 			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
@@ -685,12 +681,12 @@ public class ProductBuilder {
 		case LAST:
 			PriorityMessage.last("Time");
 			ColumnSingleSetter cs = this.quantityDetector.getTMax();
-			this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
+			this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			}
 			cs = this.quantityDetector.getTMin();
-			this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd");
+			this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			}
@@ -1177,6 +1173,8 @@ public class ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to find the position in keywords");
 		this.setQuantityDetector();
+		System.out.println(this.productAttributeHandler.get("_ra_pnt"));
+		System.out.println(this.productAttributeHandler.get("RA_PNT"));
 		if( this.quantityDetector.arePosColFound() ) {
 			if( this.astroframeSetter.notSet() ){
 				this.astroframeSetter = this.quantityDetector.getFrame();
