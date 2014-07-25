@@ -106,10 +106,6 @@ public class Table_Saada_Metacat{
 				k++;
 				String s = hdl.getDumpLine(k) + "\n";
 				bustmpfile.write(s);
-				System.out.println(s.split("\\t").length);
-				s = s.replaceAll("\\t", "@");
-				System.out.print(s);
-				System.out.println(s.split("@").length);
 			}
 			bustmpfile.close();
 			SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.tableName + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
