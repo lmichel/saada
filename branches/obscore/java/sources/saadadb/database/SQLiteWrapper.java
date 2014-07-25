@@ -879,7 +879,10 @@ public class SQLiteWrapper extends DbmsWrapper {
 		int line = 0;
 		while( (str = br.readLine()) != null ) {
 			line++;
-			String fs[] = str.split("\\t");
+			/*
+			 * Add the trailing \n otherwise the last field is ignored when it is empty
+			 */
+			String fs[] = (str + "\n").split("\\t");
 			if( fs.length != nb_col ) {
 				QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line + " number of values (" + fs.length + ") does not match the number of columns (" +  nb_col + ")");
 			}
