@@ -105,7 +105,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 				retour.add(sff.getPos());
 			}
 			else if( "Error (arcsec)".equals(s)) {
-				double e = instance.error_maj_csa;
+				double e = instance.s_resolution;
 				if( e == SaadaConstant.DOUBLE ) {
 					retour.add(DefaultFormats.getString(e));
 				}

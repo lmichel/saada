@@ -275,7 +275,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 						.oidtable));
 
 			} else if ("Error (arcsec)".equals(speField)) {
-				double e = ((EntrySaada) si).error_maj_csa;
+				double e = ((EntrySaada) si).s_resolution;
 				if (e == SaadaConstant.DOUBLE) {
 					retour.add(DefaultFormats.getString(e));
 				} else {

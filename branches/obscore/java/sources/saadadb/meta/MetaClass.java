@@ -15,6 +15,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
+import saadadb.util.Messenger;
 
 
 
@@ -47,28 +48,42 @@ public class MetaClass extends MetaObject{
 	}
 
 	/**
-	 * add the attribute handler read in the current row of rs
-	 * in the attributes of the given category
 	 * @param rs
 	 * @param cat
-	 * @throws FatalException 
-	 * @throws SQLException
+	 * @param collName : given to workaround the class without attribute (the collmane is usually taken from the ah)
+	 * @throws Exception
 	 */
-	public void update(ResultSet rs, int cat) throws FatalException  {
+	public MetaClass(ResultSet rs, int cat, String collName) throws Exception {
+		super(rs.getString("cname"), -1);
+		attribute_handlers    = new LinkedHashMap<String, AttributeHandler>();
+		String t = rs.getString("mapping_type");
+		if( t.equals(ClassifierMode.CLASSIFIER)) this.mapping_type = ClassifierMode.CLASSIFIER;
+		else  this.mapping_type = ClassifierMode.CLASS_FUSION;
+		this.id = rs.getInt("cclass_id");
+		this.category = cat;
+		this.collection_id = rs.getInt("ccollection_id");
+		this.collection_name = collName;
+		this.signature = rs.getString("signature");
+		this.associate_class = rs.getString("associate_class");
+		this.description = rs.getString("description");
+	}
+
+	/**
+	 * add the attribute handler read in the current row of rs
+	 * @param rs
+	 * @throws FatalException
+	 */
+	public void readAttribute(ResultSet rs) throws FatalException  {
 		try {
-			String t = rs.getString("mapping_type");
-			if( t.equals(ClassifierMode.CLASSIFIER)) this.mapping_type = ClassifierMode.CLASSIFIER;
-			else  this.mapping_type = ClassifierMode.CLASS_FUSION;
-			this.id = rs.getInt("class_id");
-			AttributeHandler ah = new AttributeHandler(rs);
-			attribute_handlers.put(ah.getNameattr()  , ah);
-			this.category = cat;
-			this.collection_name = rs.getString("name_coll");
-			this.collection_id = rs.getInt("id_collection");
-			this.signature = rs.getString("signature");
-			this.associate_class = rs.getString("associate_class");
-			this.description = rs.getString("description");
+			/*
+			 * Do not prohibit classes with no attributes
+			 */
+			if( rs.getString("name_attr") != null ) {
+				AttributeHandler ah = new AttributeHandler(rs);
+				attribute_handlers.put(ah.getNameattr()  , ah);
+			}
 		} catch(Exception  e) {
+			Messenger.printStackTrace(e);
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}
@@ -263,7 +278,7 @@ public class MetaClass extends MetaObject{
 	public String getDescription() {
 		return description;
 	}
-	
+
 	/**
 	 * Returns ths size of the class table 
 	 * @return

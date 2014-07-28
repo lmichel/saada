@@ -54,18 +54,18 @@ public class Launch {
 
 		
 		for( File f: retour){
-			Product product =  new Product(f.getAbsolutePath());
-			VOTableGenerator voGen = new VOTableGenerator(product);
-			Loader loader = new Loader(args);
-			for(int i=0; i<voGen.getVFileName().size(); i++){
-				args[1] = "-filename="+voGen.getVFileName().get(i);
-				try {
-					loader.load();
-				} catch (Exception e) {
-					Messenger.printStackTrace(e);
-					System.exit(1);
-				}
-			}
+//			Product product =  new Product(f.getAbsolutePath());
+//			VOTableGenerator voGen = new VOTableGenerator(product);
+//			Loader loader = new Loader(args);
+//			for(int i=0; i<voGen.getVFileName().size(); i++){
+//				args[1] = "-filename="+voGen.getVFileName().get(i);
+//				try {
+//					loader.load();
+//				} catch (Exception e) {
+//					Messenger.printStackTrace(e);
+//					System.exit(1);
+//				}
+//			}
 		}
 		Database.close();
 
