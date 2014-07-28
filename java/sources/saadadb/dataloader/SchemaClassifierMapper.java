@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.sun.net.ssl.internal.ssl.Debug;
+
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -170,7 +172,9 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	@Override
 	protected void updateSchemaForProduct() throws Exception {
 		String className = this.mapping.getClassName();
+		boolean classNameImposed = true;
 		if( className == null || className.length() == 0){
+			classNameImposed = false;
 			className = this.currentProductBuilder.possibleClassName();
 		}
 		requested_classname = this.getRequestedClassName(className);
@@ -197,17 +201,34 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			 */
 			for( int i=0 ; i<existing_classes.length ; i++ ) {
 				mc = Database.getCachemeta().getClass(existing_classes[i]);
-				
-				if( ((mc.getName().equals(requested_classname) || mc.getName().matches(requested_classname + "(_[0-9]+(Entry)?)?"))
-						|| ((mc.getName().equals(requested_classname + "Entry") || mc.getName().matches(requested_classname.replaceAll("Entry$","") + "(_[0-9]+(Entry)?)?")) ))
-						&&  mc.getCollection_name().equals(mapping.getCollection()) 
-						&&  mc.getCategory() == mapping.getCategory()  ) {
-					Messenger.printMsg(Messenger.TRACE, "Existing class <" + mc.getName() + "> matches the product format");
-					//SQLTable.dropTableIndex(mc.getName(), this.loader);
-					this.classesToBeIndexed.add(mc.getName());
-					this.currentProductBuilder.setMetaclass(mc);	
-					class_found = true;
-					break;
+
+				System.out.println("@@@@@@@@@@@@@ " + mc.getName() + " " + requested_classname);				
+				System.out.println("@@@@@@@@@@@@@ " + mc.getCollection_name() + " " + mapping.getCollection());				
+				System.out.println("@@@@@@@@@@@@@ " + mc.getCategory() + " " + mapping.getCategory());		
+				boolean classFormatFound = false;
+				if(  mc.getCollection_name().equals(mapping.getCollection()) &&
+						mc.getCategory() == mapping.getCategory() ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Found a class matching the format");
+					classFormatFound = true;
+				}
+				if( classFormatFound ) {
+					if( !classNameImposed ) {					
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Take it without regard for the name");
+						this.classesToBeIndexed.add(mc.getName());
+						this.currentProductBuilder.setMetaclass(mc);	
+						class_found = true;
+						break;
+					} else if( ( (mc.getName().equals(requested_classname) || mc.getName().matches(requested_classname + "(_[0-9]+(Entry)?)?")) ||
+							     ((mc.getName().equals(requested_classname + "Entry") || mc.getName().matches(requested_classname.replaceAll("Entry$","") + "(_[0-9]+(Entry)?)?")))))  {
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Name " + requested_classname + " matches as well, take it");
+						this.classesToBeIndexed.add(mc.getName());
+						this.currentProductBuilder.setMetaclass(mc);	
+						class_found = true;
+						break;		
+					}
 				}
 			}
 			/*

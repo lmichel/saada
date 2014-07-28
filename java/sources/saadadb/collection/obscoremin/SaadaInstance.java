@@ -346,7 +346,7 @@ public abstract class SaadaInstance implements DMInterface {
 			cpt++;
 
 			this.oidsaada = rs.getLong("oidsaada");
-			this.obs_id = rs.getString("namesaada");
+			this.obs_id = rs.getString("obs_id");
 			this.setDate_load(rs.getLong("date_load"));
 			List<Field> lf = this.getCollLevelPersisentFields();
 			for( Field f: lf){

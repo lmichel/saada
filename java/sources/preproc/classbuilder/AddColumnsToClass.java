@@ -10,7 +10,7 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.sqltable.SQLTable;
-import saadadb.sqltable.UCDTableHandler;
+import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 
@@ -77,7 +77,7 @@ public class AddColumnsToClass {
 				LinkedHashMap<String, AttributeHandler> ahmap = new LinkedHashMap<String, AttributeHandler>();
 				ahmap.putAll(mc.getAttributes_handlers());
 				ahmap.put(nah.getNameattr(), nah);
-				(new UCDTableHandler(mc.getName()
+				(new Table_Saada_Metacat(mc.getName()
 						, mc.getCollection_name()
 						, mc.getCategory()
 						, new ArrayList<AttributeHandler>(ahmap.values()))).updateUCDTable(mc.getId());

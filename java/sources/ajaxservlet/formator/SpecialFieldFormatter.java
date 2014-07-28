@@ -47,7 +47,7 @@ public class SpecialFieldFormatter {
 	public String getPosWithError() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
-			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(saadai.error_maj_csa) +"]</span>");
+			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(saadai.s_resolution) +"]</span>");
 		}
 		return null;
 	}

@@ -3,7 +3,6 @@ import java.awt.Frame;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -13,9 +12,7 @@ import java.util.Set;
 
 import saadadb.admintool.popups.PopupReloadCache;
 import saadadb.collection.Category;
-import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -64,7 +61,6 @@ public class CacheMeta {
 
 	private boolean loaded = false;
 
-	private String tables = "";
 	/*
 	 * Collection attributes not published by TAP
 	 */
@@ -103,8 +99,8 @@ public class CacheMeta {
 			Messenger.printMsg(Messenger.TRACE, "Reload cache meta");
 			try {
 				this.loadAllExtAttr();
-				this.loadClasses();
 				this.loadCollections();
+				this.loadClasses();
 				this.loadRelations();
 				this.loaded = true;
 			} catch(Exception e) {
@@ -224,11 +220,11 @@ public class CacheMeta {
 		this.classes = new LinkedHashMap<String, MetaClass>(); 
 		for( int cat=1 ; cat<Category.NB_CAT ; cat++ ) {
 			String str_cat = Category.NAMES[cat].toLowerCase();
-
 			SQLQuery squery = new SQLQuery();
-			ResultSet rs = squery.run("SELECT c.class_id as cclass_id, c.mapping_type, c.signature, c.associate_class, c.description, mc.* "
-					+ "  FROM saada_class c, saada_metaclass_" + str_cat + " mc "
-					+ "  WHERE c.class_id = mc.class_id "
+			ResultSet rs = squery.run("SELECT c.name as cname, c.class_id as cclass_id, c.collection_id as ccollection_id,c.mapping_type, c.signature, c.associate_class, c.description, mc.* "
+					+ "  FROM saada_class c"
+					+ "  LEFT JOIN saada_metaclass_" + str_cat + " mc ON (c.class_id = mc.class_id)" 
+					+ "  WHERE c.category = '" + Category.explain(cat) + "'"
 					+ "  ORDER by c.class_id, mc.pk");
 			String last_classname = "";
 			String classname = "";
@@ -237,15 +233,15 @@ public class CacheMeta {
 				classname = rs.getString("name_class");
 				if( !last_classname.equals(classname) ) {
 					/*
-					 * create the new metaclass
+					 * create the new meta class
 					 */
 					if( (mc = this.classes.get(classname)) == null ) {
-						mc = new MetaClass(classname);						
+						mc = new MetaClass(rs, cat, this.getCollection(rs.getInt("ccollection_id")).getName());						
 						this.classes.put(mc.getName(), mc);
 					}
 					last_classname = classname;
 				}
-				mc.update(rs, cat);
+				mc.readAttribute(rs);
 			}	
 			squery.close();
 			/*
@@ -256,7 +252,7 @@ public class CacheMeta {
 			}
 		}
 		/*
-		 * Just kep a direct reference to the keyset of attribute names
+		 * Just keep a direct reference to the keyset of attribute names
 		 */
 		for( MetaClass mc2: this.classes.values() ) {
 			mc2.setAttribute_names();
@@ -266,42 +262,6 @@ public class CacheMeta {
 			((MetaClass)(it.next())).bindAssociatedAttributeHandler();
 		}
 		this.class_names = (this.classes.keySet().toArray(new String[0]));
-	}
-
-	/**
-	 * @param mc
-	 * @return
-	 * @throws FatalException
-	 */
-	private  String generateXMLTable(MetaClass mc) throws FatalException{
-		String xml = "\t\t<table xsi:type=\"output\">\n\t\t\t<name>"+mc.getName()+"</name>\n\t\t\t<description>"+mc.getDescription()+"</description>";
-		Collection<AttributeHandler> coll = this.getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).values();
-		for(AttributeHandler ah : coll) {
-			if( !ignoreCollAttrs.contains(ah.getNameattr())) {
-				xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
-					+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
-					+ah.getComment()+"]]></description>"
-					+"\n\t\t\t\t<unit>"
-					+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
-					+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
-					+ah.getUtype()+"</utype>"
-					+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
-					+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
-			}
-		}
-
-		coll = mc.getAttributes_handlers().values();
-		for(AttributeHandler ah : coll)
-			xml += "\n\t\t\t<column>\n\t\t\t\t<name>"
-				+ah.getNameattr()+"</name>\n\t\t\t\t<description><![CDATA["
-				+ah.getComment()+"]]></description>"
-				+"\n\t\t\t\t<unit>"
-				+ah.getUnit()+"</unit>\n\t\t\t\t<ucd>"
-				+ah.getUcd()+"</ucd>\n\t\t\t\t<utype>"
-				+ah.getUtype()+"</utype>"
-				+"\n\t\t\t\t<dataType xsi:type=\"vod:TAPType\">"
-				+((ah.getType().equalsIgnoreCase("String"))?"varchar":ah.getType()).toUpperCase()+"</dataType>\n\t\t\t</column>";
-		return xml+"\n\t\t</table>";
 	}
 
 	/**
@@ -729,32 +689,24 @@ public class CacheMeta {
 	 * @return
 	 */
 	public String[] getClassesOfCollection(int id, int category) {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
 		ArrayList<String> retour = new ArrayList<String>();
-		while (ie.hasNext()) {
-			MetaClass mc = (MetaClass)(ie.next());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getCollection_id() == id && mc.getCategory() == category) {
 				retour.add(mc.getName());
 			}
 		}
 		return (retour.toArray(new String[0]));
 	}
-
-
 	/**
 	 * @param name
 	 * @param category
 	 * @return
 	 */
 	public String[] getClassesOfCollection(String name, int category) {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
 		ArrayList<String> retour = new ArrayList<String>();
-
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaClass mc = (MetaClass)(e.getValue());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getCollection_name().equals(name) && mc.getCategory() == category ) {
 				retour.add(mc.getName());
 			}
@@ -769,10 +721,7 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public MetaClass getClass(int id) throws FatalException {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
 			MetaClass mc = (MetaClass)(e.getValue());
 			if( mc.getId() == id ) {
 				return mc;
@@ -790,12 +739,9 @@ public class CacheMeta {
 	 * @throws SaadaException
 	 */
 	public String[] getClassWithSignatureNames(String signature)  {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
 		ArrayList<String> retour = new ArrayList<String>();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaClass mc = (MetaClass)(e.getValue());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getSignature().equals(signature) ) {
 				retour.add(mc.getName());
 			}
@@ -809,11 +755,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public MetaClass getClassWithSignature(String signature) throws FatalException {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaClass mc = (MetaClass)(e.getValue());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getSignature().equals(signature) ) {
 				return mc;
 			}
@@ -828,11 +771,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public boolean classExists(int id)  {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaClass mc = (MetaClass)(e.getValue());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getId() == id ) {
 				return true;
 			}
@@ -846,11 +786,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public boolean classWithSignatureExists(String signature)  {
-		Set entries = this.classes.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaClass mc = (MetaClass)(e.getValue());
+		for( Entry<String, MetaClass> e : this.classes.entrySet()) {
+			MetaClass mc = e.getValue();
 			if( mc.getSignature().equals(signature)) {
 				return true;
 			}
@@ -864,11 +801,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public MetaCollection getCollection(int id) throws FatalException {
-		Set entries = this.collections.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaCollection mc = (MetaCollection)(e.getValue());
+		for( Entry<String, MetaCollection> e : this.collections.entrySet()) {
+			MetaCollection mc = e.getValue();
 			if( mc.getId() == id ) {
 				return mc;
 			}
@@ -883,11 +817,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public boolean collectionExists(int id)  {
-		Set entries = this.collections.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaCollection mc = (MetaCollection)(e.getValue());
+		for( Entry<String, MetaCollection> e : this.collections.entrySet()) {
+			MetaCollection mc = e.getValue();
 			if( mc.getId() == id ) {
 				return true;
 			}
@@ -932,11 +863,8 @@ public class CacheMeta {
 	 * @throws SaadaException 
 	 */
 	public String getCollectionTableName(int id, int cat) throws FatalException {
-		Set entries = this.collections.entrySet();
-		Iterator ie = entries.iterator();
-		while (ie.hasNext()) {
-			Entry e = (Entry)(ie.next());
-			MetaCollection mc = (MetaCollection)(e.getValue());
+		for( Entry<String, MetaCollection> e : this.collections.entrySet()) {
+			MetaCollection mc = e.getValue();
 			if( mc.getId() == id ) {
 				return mc.getName() + "_" + Category.explain(cat).toLowerCase();
 			}

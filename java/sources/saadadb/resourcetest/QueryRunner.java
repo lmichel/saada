@@ -31,7 +31,6 @@ public class QueryRunner {
 			Database.init(ap.getDBName());
 			String query = ap.getQuery();
 			Connection large_connection = DriverManager.getConnection(Database.getConnector().getJdbc_url(),Database.getConnector().getJdbc_reader(), Database.getConnector().getJdbc_reader_password());
-			Statement _stmts =large_connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 //			 _stmts.executeUpdate("pragma cache_size=4000"); 
 //			 _stmts.executeUpdate("pragma page_size=4096"); 
 			 large_connection.close();
@@ -78,6 +77,7 @@ public class QueryRunner {
 				
 				}
 			}
+			ors.close();
 			Messenger.printMsg(Messenger.TRACE, cpt  + " oids found");
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -52,14 +52,8 @@ public class NativeAttributesProvider {
 		} else if (attr_name.compareTo("healpix_csa") == 0) {
 			return DefaultFormats.getString(saadai.healpix_csa);
 		
-		} else if (attr_name.compareTo("error_maj_csa") == 0) {
-			return DefaultFormats.getString(saadai.error_maj_csa);
-		
-		} else if (attr_name.compareTo("error_min_csa") == 0) {
-			return DefaultFormats.getString(saadai.error_min_csa);
-		
-		} else if (attr_name.compareTo("error_angle_csa") == 0) {
-			return DefaultFormats.getString(saadai.error_angle_csa);
+		} else if (attr_name.compareTo("s_resolution") == 0) {
+			return DefaultFormats.getString(saadai.s_resolution);
 		}
 		
 		return null;

@@ -138,7 +138,7 @@ public class Image2DBuilder extends ProductBuilder {
 			bf.mkdir();
 		}
 		String namefilejpeg = basedir
-		+ separ + this.productIngestor.saadaInstance.getRepository_location() + ".jpg";
+		+ separ + this.getName() + ".jpg";
 		ImageUtils.createImage(namefilejpeg, (FitsDataFile) this.dataFile, 400);
 		this.productIngestor.saadaInstance.setVignetteFile();
 	}
@@ -147,37 +147,17 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
 	@Override
-	public void bindDataFile(DataFile dataFile) throws IgnoreException{
-		try {
-			this.dataFile = new FitsDataFile(this);			
+	public void bindDataFile(DataFile dataFile) throws Exception{
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder");
+		this.dataFile = dataFile;
+		if( this.dataFile instanceof FitsDataFile ) {
 			this.mimeType = "application/fits";
+		} else if( this.dataFile instanceof VOTableDataFile ) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "An image cannot be a VOTable");
 		}
-		catch(Exception ef) {
-			ef.printStackTrace();
-			String filename = this.dataFile.getName();
-			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + ">  :" + ef + ". It cannot be loaded as an image.");			
-		}
+		this.dataFile.bindBuilder(this);
 		this.setFmtsignature();
 	}
-
-
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.Product#main(java.lang.String[])
-//	 */
-//	public static void main(String[] args)  {
-//		try {
-//		Database.init("ThreeXMM");
-//		//Image2D img = new Image2D(new File("/data/MUSE/Scene_fusion_01.fits"), null);
-//		Image2DBuilder img = new Image2DBuilder(new File("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz")
-//		, (new ArgsParser(new String[]{"-debug", "-system='Ecliptic'", "-collection=qwerty"})).getProductMapping());
-//			img.initProductFile();
-//			//			img.setWcsFields();
-//
-//			ImageUtils.createImage("/home/michel/Desktop/ma04979.fit.jpg", (FitsDataFile) img.productFile, 200);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		Database.close();
-//	}
 
 }
