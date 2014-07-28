@@ -13,7 +13,7 @@ import java.sql.Statement;
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 
-/**
+/*
  * Wrapper for JDBC connection {@link Spooler}
  * @author michel
  * @version $Id$
@@ -74,7 +74,7 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void close() throws SQLException{
-		this.connection.close();
+		if( this.connection != null ) this.connection.close();
 		this.connection = null;
 		this.status = OBSOLETE;	
 	}
