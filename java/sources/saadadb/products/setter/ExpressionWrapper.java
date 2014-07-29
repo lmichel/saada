@@ -24,7 +24,7 @@ public class ExpressionWrapper {
 	 * @return
 	 * @throws FatalException
 	 */
-	public static String evaluate(String expression,List<AttributeHandler> variables) throws FatalException
+	public String evaluate(String expression,List<AttributeHandler> variables) throws Exception
 	{
 		
 		if(expression==null)
@@ -44,5 +44,13 @@ public class ExpressionWrapper {
 		return String.valueOf(expr.evaluate());
 		
 	}
-
+	
+	/**
+	 * Trivial test function
+	 * @throws Exception
+	 */
+	public void trivialTest() throws Exception
+	{
+		System.out.println(evaluate("1+2+3+4+5*2",null));
+	}
 }
