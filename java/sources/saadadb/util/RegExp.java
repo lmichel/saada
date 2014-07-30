@@ -222,6 +222,13 @@ public class RegExp {
 	public static final String SHORTCUT_DOCUMENTS = "(?i)^documents?$";
 	public static final String SHORTCUT_DOWNLOADS = "(?i)^(downloads?|t.l.chargements?)$";
 	
+	/**
+	 * ColumnExpression setters regex
+	 * @param args
+	 */
+	
+	public static final String FUNCTION_NAME = "([^()]*)";
+	public static final String FUNCTION_ARGS = "\\(([^)]+)\\)";
 	
 	public static void main(String[] args) {
 		String ra = "__raj2000";
