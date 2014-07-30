@@ -40,7 +40,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * The list of attribute being String functions arguments (names of AH)
 	 */
-	private List<String> stringFunctionArgumentsList;
+	private List<AttributeHandler> stringFunctionArgumentsList;
 	
 	/**
 	 * The result of the expression
@@ -65,19 +65,23 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		expression=expr;
-
-		if(attributes!=null)
-		{
-			/*
-			 * We build the list of AH present in the expression and we format their names (in the expression)
-			 */
-			exprAttributes = new ArrayList<AttributeHandler>();
-			buildAttributeList(attributes);
-		}
 		/*
 		 * We treat the String functions
 		 */
-		checkAndExecStringFunction();
+		checkAndExecStringFunction(attributes);
+
+		if(attributes!=null)
+		{
+
+			/*
+			 * We build the list of AH present in the expression and we format their names (in the expression)
+			 */
+			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+			exprAttributes = ahExtractor.extractAH();//new ArrayList<AttributeHandler>();
+			expression=ahExtractor.expression;
+			//buildAttributeList(attributes);
+		}
+
 		
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
@@ -103,13 +107,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @throws Exception 
 	 * 
 	 */
-	private void checkAndExecStringFunction() throws Exception
+	private void checkAndExecStringFunction(Map<String,AttributeHandler> attributes) throws Exception
 	{
 		StringFunctionExtractor extractor = new StringFunctionExtractor(this.expression);
 		//We only do something if a String function have been found
 		if(extractor.extractAndSplit())
 		{
-			this.stringFunctionArgumentsList=new ArrayList<String>(extractor.stringFunctionList.values());
+			stringFunctionArgumentsList= new ArrayList<AttributeHandler>();
 			//We're getting back the new expression (with flags)
 			this.expression=extractor.expression;
 			//for each function
@@ -119,11 +123,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				//We replace the AH name by their values for each argument
 				for(int i=0;i<args.length;i++)
 				{
-					for(AttributeHandler ah : exprAttributes)
+					for(Entry<String,AttributeHandler> ah : attributes.entrySet())
 					{
-						if(args[i].contains(ah.getNameattr()) || args[i].contains(ah.getNameorg()))
+						if(args[i].contains(ah.getValue().getNameattr()) || (args[i].contains(ah.getValue().getNameorg()) &&
+								ah.getValue().getNameorg()!=""))
 						{
-							args[i]=ah.getValue();
+							args[i]=ah.getValue().getValue();
+							stringFunctionArgumentsList.add(ah.getValue());
 						}
 					}
 				}
@@ -152,7 +158,8 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		for(Entry<String,AttributeHandler> e : attributes.entrySet())
 		{
 			AttributeHandler temp = e.getValue();
-			if(expression.contains(temp.getNameattr()) || expression.contains(temp.getNameorg()))
+			if(expression.contains(temp.getNameattr()) || (expression.contains(temp.getNameorg()) 
+					&& (temp.getNameorg()!="")))
 			{
 				exprAttributes.add(temp);
 				//if the variable in the expression don't have the good format, we replace it
@@ -335,98 +342,16 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	
 	public static void main(String args[])
 	{
-//		Map<String,String> test = new TreeMap<String,String>();
-//		Matcher matcher;
-//		String expr="MJD(_tmin)+MJD(\"06/07/1990\")+toLower(_facility)";
-//		Pattern pattern;
-//		int i=0;
-//		/*
-//		 * For all our Dictionary functions
-//		 */
-//		for(Entry<String,String> e:DictionaryString.index.entrySet())
-//		{
-//
-//			pattern=Pattern.compile(e.getKey()+"\\([^()]*\\)");
-//			matcher=pattern.matcher(expr);
-//			while (matcher.find())
-//			{
-//
-//					i++;
-//					//System.out.println(matcher.group());
-//
-//					expr=expr.replace(matcher.group(), "Test"+i);
-//					test.put("Test"+i, matcher.group());
-//
-//			}
-//			
-//		}
-//	//	System.out.println(expr);
-//		
-//		
-//		
-//		//Exec String Function test
-//		
-//		String temp = "";
-//		List<AttributeHandler> attributes = new ArrayList<AttributeHandler>();
-//		AttributeHandler ah1=new AttributeHandler();
-//		ah1.setNameattr("_tmin");
-//		ah1.setValue("12/07/2014");
-//		attributes.add(ah1);
-//		AttributeHandler ah2=new AttributeHandler();
-//		ah2.setNameattr("_facility");
-//		ah2.setValue("HELLOWORLD");
-//		attributes.add(ah2);
-//		String funcName ="";
-//		pattern=Pattern.compile("\\(([^)]+)\\)");
-//		Pattern pattern2=Pattern.compile("([^()]*)");
-//		for(Entry<String,String>e:test.entrySet())
-//		{
-//			matcher=pattern.matcher(e.getValue());
-//			if(matcher.find())
-//				temp=matcher.group(1);
-//			//Permet de récupérer tous les params)
-//			
-//			temp=temp.replace("\"","");
-//			String[] arg =temp.split("\\s*,\\s*");
-//			
-//
-//			matcher=pattern2.matcher(e.getValue());
-//			if(matcher.find())
-//				 funcName = matcher.group();
-//			
-//			for(int j=0;j<arg.length;j++)
-//			{
-//				for(AttributeHandler ah : attributes)
-//				{
-//
-//					if(arg[j].contains(ah.getNameattr()))
-//					{
-//						arg[j]=ah.getValue();
-//
-//					}
-//				}
-//
-//			}
-//						
-//		
-//			
-//			
-//			try {
-//				expr=expr.replace(e.getKey(), DictionaryString.exec(funcName, arg));
-//			} catch (Exception e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//			System.out.println(expr);
-//		}
-//		
+
 		Map<String,AttributeHandler> mapTest = new TreeMap<String,AttributeHandler>();
 		AttributeHandler ah1 = new AttributeHandler();
 		AttributeHandler ah2 = new AttributeHandler();
 		AttributeHandler ah3 = new AttributeHandler();
+		AttributeHandler ah4 = new AttributeHandler();
+
 		
 		ah1.setNameattr("_tmin");
-		ah1.setValue("12/06/2042");
+		ah1.setValue("11/06/2042");
 		
 		ah2.setNameattr("_emax");
 		ah2.setNameorg("EMAX");
@@ -435,20 +360,26 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		ah3.setNameattr("_emin");
 		ah3.setValue("6");
 		
+		ah4.setNameattr("_tmax");
+		ah4.setValue("02/02/1995");
 		mapTest.put(ah1.getNameattr(), ah1);
 		mapTest.put(ah2.getNameattr(), ah2);
 		mapTest.put(ah3.getNameattr(), ah3);
-		
-		String expr = "MJD(_tmin)+6-EMAX*_emin";
-		ColumnExpressionSetter test=null;
+		mapTest.put(ah4.getNameattr(), ah4);
+		String expr = "MJD(_tmin)+6-EMAX*_emin +MJD(_tmax)";
+		String expr2="6+5+3+2";
+		ColumnExpressionSetter test=null,test2=null;
 		try {
 			test = new ColumnExpressionSetter(expr, mapTest);
+			test2 = new ColumnExpressionSetter(expr2, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println(test.getExpression());
 		System.out.println(test.getResult());
+		System.out.println(test2.getExpression());
+		System.out.println(test2.getResult());
 		
 	}
 
