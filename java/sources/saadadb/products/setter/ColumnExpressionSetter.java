@@ -36,6 +36,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 */
 	private List<AttributeHandler> exprAttributes;
 	
+	
+	/**
+	 * The list of attribute being String functions arguments (names of AH)
+	 */
+	private List<String> stringFunctionArgumentsList;
+	
 	/**
 	 * The result of the expression
 	 */
@@ -55,11 +61,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public ColumnExpressionSetter(String expr, Map<String,AttributeHandler> attributes) throws Exception
 	{
 		super();
-		if( expression == null ){
+		if( expr == null ){
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		expression=expr;
-		wrapper = new ExpressionWrapper();
 
 		if(attributes!=null)
 		{
@@ -72,7 +77,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 * We treat the String functions
 		 */
-		execStringFunction();
+		checkAndExecStringFunction();
 		
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
@@ -83,106 +88,51 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
-			result=calculateExpression();
+			wrapper = new ExpressionWrapper(expression, exprAttributes);
+			result=wrapper.getStringValue();
 		} catch (Exception e) {
+			e.printStackTrace();
 			result=SaadaConstant.STRING;
 		}
 	}
 	
-	/**
-	 * Look for String functions and stock them. the function also modify the value of "expression"
-	 * @return true if a String function have been found
-	 */
-	private boolean checkStringFunction()
-	{
-		boolean functionFound=false;
-		Matcher matcher;
-		Pattern pattern;
-		stringFunctionList=new TreeMap<String,String>();
-		String key="SF";
-		int i=0;
-		/*
-		 * For all our Dictionary functions
-		 */
-		for(Entry<String,String> e:DictionaryString.index.entrySet())
-		{
-			/*
-			 * We check in the expression if there's a string like "... Function(something) ... "
-			 */
-			pattern=Pattern.compile(e.getKey()+"\\([^()]*\\)");
-			matcher=pattern.matcher(expression);
-			//if we find a match, we're stocking it in the stringFunctionList
-			while(matcher.find())
-			{
-				i++;
-				functionFound=true;
-				expression=expression.replace(matcher.group(), key+i);
-				stringFunctionList.put(key+i, matcher.group());
-			}
-		}
-		return functionFound;
-		
-	}
+
 	
 	/**
-	 * Execute the String functions stocked in the map StringFunctionList and give the correct value to Expression
+	 * Execute the String functions in the expression and replaced them by their values
 	 * @throws Exception 
 	 * 
 	 */
-	private void execStringFunction() throws Exception
+	private void checkAndExecStringFunction() throws Exception
 	{
-		//We do something only if a String function have been found
-
-		if(checkStringFunction())
+		StringFunctionExtractor extractor = new StringFunctionExtractor(this.expression);
+		//We only do something if a String function have been found
+		if(extractor.extractAndSplit())
 		{
-			//This regex allow us to get the params from the functions
-			Pattern paramPattern=Pattern.compile("\\(([^)]+)\\)");
-			//This regex allow us to obtain the fuction name
-			Pattern functionNamePattern=Pattern.compile("([^()]*)");
-			Matcher matcher;
-			String tempArgs="";
-			String functionName="";
-			String[] functionArgs=null;
-			
-			//first step : we separate the function name from the parameters.
-			
-			for(Entry<String,String> e : stringFunctionList.entrySet())
+			this.stringFunctionArgumentsList=new ArrayList<String>(extractor.stringFunctionList.values());
+			//We're getting back the new expression (with flags)
+			this.expression=extractor.expression;
+			//for each function
+			for(Entry<String,StringFunctionDescriptor> e : extractor.splitedFunctionsMap.entrySet())
 			{
-				//We get the arguments from the function
-				matcher=paramPattern.matcher(e.getValue());
-				if(matcher.find())
-					tempArgs=matcher.group(1);
-				
-				//We delete the quotes from the arguments
-				tempArgs=tempArgs.replace("\"","");
-				
-				//Separate the differents paramater from a same function
-				functionArgs =tempArgs.split("\\s*,\\s*");
-				
-				//We get the function name
-				matcher=functionNamePattern.matcher(e.getValue());
-				if(matcher.find())
-					 functionName = matcher.group();
-				
-				/*
-				 * second step, we're replacing the ah name by their value
-				 */
-				for(int i=0;i<functionArgs.length;i++)
+				String[] args = e.getValue().functionArguments;
+				//We replace the AH name by their values for each argument
+				for(int i=0;i<args.length;i++)
 				{
 					for(AttributeHandler ah : exprAttributes)
 					{
-						if(functionArgs[i].contains(ah.getNameattr()))
+						if(args[i].contains(ah.getNameattr()) || args[i].contains(ah.getNameorg()))
 						{
-							functionArgs[i]=ah.getValue();
+							args[i]=ah.getValue();
 						}
 					}
 				}
-				/*
-				 * third and last step : We replacing the function by its result in the expression
-				 */
-				expression=expression.replace(e.getKey(), DictionaryString.exec(functionName, functionArgs));
+				//We execute the String function
+				expression=expression.replace(e.getKey(), DictionaryString.exec(e.getValue().functionName, args));
 
+				
 			}
+				
 		}
 		
 
@@ -206,26 +156,31 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			{
 				exprAttributes.add(temp);
 				//if the variable in the expression don't have the good format, we replace it
-				expression=expression.replace(temp.getNameorg(), temp.getNameattr());
+				if(temp.getNameorg()!="")
+					expression=expression.replace(temp.getNameorg(), temp.getNameattr());
 			}
 			
 		}
 	}
 	
-	/**
-	 * Call the Wrapper to calculate the expression
-	 * @return
-	 * @throws Exception
-	 */
-	private String calculateExpression() throws Exception
-	{
-		return wrapper.evaluate(expression, exprAttributes);
-	}
+//	/**
+//	 * Call the Wrapper to calculate the expression
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	private String calculateExpression() throws Exception
+//	{
+//		return wrapper.evaluate(expression, exprAttributes);
+//	}
 	
 	
 	public String getResult()
 	{
 		return result;
+	}
+	
+	public String getExpression() {
+		return expression;
 	}
 	
 	@Override
@@ -380,96 +335,131 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	
 	public static void main(String args[])
 	{
-		Map<String,String> test = new TreeMap<String,String>();
-		Matcher matcher;
-		String expr="MJD(_tmin)+MJD(\"06/07/1990\")+toLower(_facility)";
-		Pattern pattern;
-		int i=0;
-		/*
-		 * For all our Dictionary functions
-		 */
-		for(Entry<String,String> e:DictionaryString.index.entrySet())
-		{
-
-			pattern=Pattern.compile(e.getKey()+"\\([^()]*\\)");
-			matcher=pattern.matcher(expr);
-			while (matcher.find())
-			{
-
-					i++;
-					//System.out.println(matcher.group());
-
-					expr=expr.replace(matcher.group(), "Test"+i);
-					test.put("Test"+i, matcher.group());
-
-			}
-			
-		}
-	//	System.out.println(expr);
-		
-		
-		
-		//Exec String Function test
-		
-		String temp = "";
-		List<AttributeHandler> attributes = new ArrayList<AttributeHandler>();
-		AttributeHandler ah1=new AttributeHandler();
-		ah1.setNameattr("_tmin");
-		ah1.setValue("12/07/2014");
-		attributes.add(ah1);
-		AttributeHandler ah2=new AttributeHandler();
-		ah2.setNameattr("_facility");
-		ah2.setValue("HELLOWORLD");
-		attributes.add(ah2);
-		String funcName ="";
-		pattern=Pattern.compile("\\(([^)]+)\\)");
-		Pattern pattern2=Pattern.compile("([^()]*)");
-		for(Entry<String,String>e:test.entrySet())
-		{
-			matcher=pattern.matcher(e.getValue());
-			if(matcher.find())
-				temp=matcher.group(1);
-			//Permet de récupérer tous les params)
-			
-			temp=temp.replace("\"","");
-			String[] arg =temp.split("\\s*,\\s*");
-			
-//			for(String s:arg)
+//		Map<String,String> test = new TreeMap<String,String>();
+//		Matcher matcher;
+//		String expr="MJD(_tmin)+MJD(\"06/07/1990\")+toLower(_facility)";
+//		Pattern pattern;
+//		int i=0;
+//		/*
+//		 * For all our Dictionary functions
+//		 */
+//		for(Entry<String,String> e:DictionaryString.index.entrySet())
+//		{
+//
+//			pattern=Pattern.compile(e.getKey()+"\\([^()]*\\)");
+//			matcher=pattern.matcher(expr);
+//			while (matcher.find())
 //			{
-//				System.out.println("ARGS ="+s);
+//
+//					i++;
+//					//System.out.println(matcher.group());
+//
+//					expr=expr.replace(matcher.group(), "Test"+i);
+//					test.put("Test"+i, matcher.group());
+//
 //			}
-			matcher=pattern2.matcher(e.getValue());
-			if(matcher.find())
-				 funcName = matcher.group();
-			
-			for(int j=0;j<arg.length;j++)
-			{
-				for(AttributeHandler ah : attributes)
-				{
-					//System.out.println("ARGS ="+s);
-					//System.out.println("AH ="+ah.getNameattr());
-					if(arg[j].contains(ah.getNameattr()))
-					{
-						arg[j]=ah.getValue();
-						//System.out.println("AHAHA:"+s);
-					}
-				}
-
-			}
-			System.out.println("HORS BOUCLE:"+arg[0]);
-			
-			
-			
-			
-			
-			try {
-				expr=expr.replace(e.getKey(), DictionaryString.exec(funcName, arg));
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			System.out.println(expr);
+//			
+//		}
+//	//	System.out.println(expr);
+//		
+//		
+//		
+//		//Exec String Function test
+//		
+//		String temp = "";
+//		List<AttributeHandler> attributes = new ArrayList<AttributeHandler>();
+//		AttributeHandler ah1=new AttributeHandler();
+//		ah1.setNameattr("_tmin");
+//		ah1.setValue("12/07/2014");
+//		attributes.add(ah1);
+//		AttributeHandler ah2=new AttributeHandler();
+//		ah2.setNameattr("_facility");
+//		ah2.setValue("HELLOWORLD");
+//		attributes.add(ah2);
+//		String funcName ="";
+//		pattern=Pattern.compile("\\(([^)]+)\\)");
+//		Pattern pattern2=Pattern.compile("([^()]*)");
+//		for(Entry<String,String>e:test.entrySet())
+//		{
+//			matcher=pattern.matcher(e.getValue());
+//			if(matcher.find())
+//				temp=matcher.group(1);
+//			//Permet de récupérer tous les params)
+//			
+//			temp=temp.replace("\"","");
+//			String[] arg =temp.split("\\s*,\\s*");
+//			
+//
+//			matcher=pattern2.matcher(e.getValue());
+//			if(matcher.find())
+//				 funcName = matcher.group();
+//			
+//			for(int j=0;j<arg.length;j++)
+//			{
+//				for(AttributeHandler ah : attributes)
+//				{
+//
+//					if(arg[j].contains(ah.getNameattr()))
+//					{
+//						arg[j]=ah.getValue();
+//
+//					}
+//				}
+//
+//			}
+//						
+//		
+//			
+//			
+//			try {
+//				expr=expr.replace(e.getKey(), DictionaryString.exec(funcName, arg));
+//			} catch (Exception e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//			System.out.println(expr);
+//		}
+//		
+		Map<String,AttributeHandler> mapTest = new TreeMap<String,AttributeHandler>();
+		AttributeHandler ah1 = new AttributeHandler();
+		AttributeHandler ah2 = new AttributeHandler();
+		AttributeHandler ah3 = new AttributeHandler();
+		
+		ah1.setNameattr("_tmin");
+		ah1.setValue("12/06/2042");
+		
+		ah2.setNameattr("_emax");
+		ah2.setNameorg("EMAX");
+		ah2.setValue("42");
+		
+		ah3.setNameattr("_emin");
+		ah3.setValue("6");
+		
+		mapTest.put(ah1.getNameattr(), ah1);
+		mapTest.put(ah2.getNameattr(), ah2);
+		mapTest.put(ah3.getNameattr(), ah3);
+		
+		String expr = "MJD(_tmin)+6-EMAX*_emin";
+		ColumnExpressionSetter test=null;
+		try {
+			test = new ColumnExpressionSetter(expr, mapTest);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		System.out.println(test.getExpression());
+		System.out.println(test.getResult());
+		
 	}
+
+
+
+	@Override
+	public AttributeHandler getAssociateAtttribute() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }
