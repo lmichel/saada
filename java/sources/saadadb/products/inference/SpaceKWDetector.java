@@ -67,16 +67,6 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	/**
-	 * @param infoCooSys
-	 * @param tableAttributeHandler
-	 * @throws SaadaException 
-	 */
-	public SpaceKWDetector(SavotCoosys infoCooSys, LinkedHashMap<String, AttributeHandler> tableAttributeHandler) throws SaadaException {
-		super(tableAttributeHandler);
-		this.lookForError();
-	}
-
-	/**
 	 * @throws Exception
 	 */
 	private void searchFrame() throws Exception {
@@ -380,33 +370,40 @@ public class SpaceKWDetector extends KWDetector{
 	 * 
 	 */
 	public void detectKeywordsandInferFrame() throws SaadaException {
+		Astroframe frame = null;
 		if( (status & POS_KW_FOUND) == 0 ) {
-			lookForICRSKeywords();
-			Astroframe frame = null;
-			if( (status & POS_KW_FOUND) != 0 ) {
+			lookForTaggedKeywords();
+			if( (status & POS_KW_FOUND) == 0 ) {
 				this.formatPos();
 				frame = new ICRS();
 			} else {
-				lookForFK5Keywords();
+				lookForICRSKeywords();
+				frame = null;
 				if( (status & POS_KW_FOUND) != 0 ) {
 					this.formatPos();
-					frame = new FK5();
+					frame = new ICRS();
 				} else {
-					lookForFK4Keywords();
+					lookForFK5Keywords();
 					if( (status & POS_KW_FOUND) != 0 ) {
 						this.formatPos();
-						frame = new FK4();
+						frame = new FK5();
 					} else {
-						lookForEclpiticKeywords();
+						lookForFK4Keywords();
 						if( (status & POS_KW_FOUND) != 0 ) {
 							this.formatPos();
-							frame = new Ecliptic();
+							frame = new FK4();
 						} else {
-							lookForGalacticKeywords();
+							lookForEclpiticKeywords();
 							if( (status & POS_KW_FOUND) != 0 ) {
 								this.formatPos();
-								frame = new Galactic();
-							}	
+								frame = new Ecliptic();
+							} else {
+								lookForGalacticKeywords();
+								if( (status & POS_KW_FOUND) != 0 ) {
+									this.formatPos();
+									frame = new Galactic();
+								}	
+							}
 						}
 					}
 				}
@@ -448,6 +445,86 @@ public class SpaceKWDetector extends KWDetector{
 		}
 	}
 
+	
+	/**
+	 * Look for position keywords by using UCDs. To be valid, keywords must have an associate AH named COOSYS.
+	 * Both COOSYS must have the same valid value.
+	 * @throws SaadaException
+	 */
+	private void lookForTaggedKeywords() throws SaadaException {
+		Astroframe frame=null;
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for tagged  keywords");
+		List<ColumnSingleSetter> posKW;
+		posKW =  searchColumnByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD );
+		if( (posKW =  searchColumnByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD )).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		} else if( (posKW =  searchColumnByUcd(RegExp.RA_UCD,RegExp.DEC_UCD)).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		} else if( (posKW =  searchColumnByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD)).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		} else if( (posKW =  searchColumnByUcd(RegExp.ECLIPTIC_RA_UCD,RegExp.ECLIPTIC_DEC_UCD)).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		}else if( (posKW =  searchColumnByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD)).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		} else if( (posKW =  searchColumnByUcd(RegExp.GALACTIC_RA_UCD,RegExp.GALACTIC_DEC_UCD)).size() == 2 ) {
+			ascension_kw = posKW.get(0);
+			declination_kw = posKW.get(1);
+		}
+		/*
+		 * Look at he associate attribute which could carry the Coossys info.
+		 * The associate attribute implements the if/ref mechanism of VOTables
+		 */
+		AttributeHandler raCoosys;
+		AttributeHandler decCoosys;
+		if( (raCoosys  = ascension_kw.getAssociateAtttribute()) != null && "COOSYS".equals(raCoosys.getNameorg()) &&
+			(decCoosys = declination_kw.getAssociateAtttribute()) != null && "COOSYS".equals(decCoosys.getNameorg())){
+			String cooString = raCoosys.getValue();
+			if( cooString.equals(decCoosys.getValue()) ) {
+				if( cooString.matches(RegExp.ICRS_SYSTEM)) {
+					frame = new ICRS();
+					status |= FRAME_FOUND;
+					status |= POS_KW_FOUND;
+				} else if( cooString.matches(RegExp.FK5_SYSTEM)) {
+					frame = new FK5();
+					status |= FRAME_FOUND;
+					status |= POS_KW_FOUND;
+				} else if( cooString.matches(RegExp.FK4_SYSTEM)) {
+					frame = new FK4();
+					status |= FRAME_FOUND;
+					status |= POS_KW_FOUND;
+				} else if( cooString.matches(RegExp.GALACTIC_SYSTEM)) {
+					frame = new Galactic();
+					status |= FRAME_FOUND;
+					status |= POS_KW_FOUND;
+				} else if( cooString.matches(RegExp.ECL_SYSTEM)) {
+					frame = new Ecliptic();
+					status |= FRAME_FOUND;
+					status |= POS_KW_FOUND;
+				} else {
+					Messenger.printMsg(Messenger.TRACE, "Cooo system " + cooString + " not undestood: ignored ");
+				}
+				if( frame != null  ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG,  "Fing position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
+								+ " tagged with coosys " + cooString);					this.status |= FRAME_FOUND;		
+					this.frameSetter = new ColumnSingleSetter();
+					this.frameSetter.setByValue("", false);
+					this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenceed by position keywords)");
+					this.frameSetter.storedValue = frame;
+				}
+			} else {
+				Messenger.printMsg(Messenger.TRACE, "Position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
+						+ " point different coo systems " + cooString + " and " + decCoosys.getValue() + ": ignored" );
+			}
+		}
+	}
+
 	/**
 	 * @throws SaadaException 
 	 * 
@@ -456,14 +533,14 @@ public class SpaceKWDetector extends KWDetector{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK5 keywords");
 		List<ColumnSingleSetter> posKW;
-		posKW =  searchByUcd(RegExp.FK5_RA_MAINUCD,RegExp.FK5_DEC_MAINUCD );
+		posKW =  searchByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
 			return;
 		}
-		posKW =  searchByUcd(RegExp.FK5_RA_UCD,RegExp.FK5_DEC_UCD );
+		posKW =  searchByUcd(RegExp.RA_UCD,RegExp.DEC_UCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
@@ -487,14 +564,14 @@ public class SpaceKWDetector extends KWDetector{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for FK4 keywords");
 		List<ColumnSingleSetter> posKW;
-		posKW =  searchByUcd(RegExp.FK4_RA_MAINUCD,RegExp.FK4_DEC_MAINUCD );
+		posKW =  searchByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
 			return;
 		}
-		posKW =  searchByUcd(RegExp.FK4_RA_UCD,RegExp.FK4_DEC_UCD );
+		posKW =  searchByUcd(RegExp.RA_UCD,RegExp.DEC_UCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
@@ -509,6 +586,7 @@ public class SpaceKWDetector extends KWDetector{
 			return;
 		}
 	}
+	
 	/**
 	 * @throws SaadaException 
 	 * 
@@ -517,14 +595,14 @@ public class SpaceKWDetector extends KWDetector{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for ICRS keywords");
 		List<ColumnSingleSetter> posKW;
-		posKW =  searchByUcd(RegExp.ICRS_RA_MAINUCD,RegExp.ICRS_DEC_MAINUCD );
+		posKW =  searchByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
 			status |= POS_KW_FOUND;
 			return;
 		}
-		posKW =  searchByUcd(RegExp.ICRS_RA_UCD,RegExp.ICRS_DEC_UCD );
+		posKW =  searchByUcd(RegExp.RA_UCD,RegExp.DEC_UCD );
 		if( posKW.size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
