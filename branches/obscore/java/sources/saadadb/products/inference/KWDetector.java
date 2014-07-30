@@ -244,7 +244,44 @@ public abstract class KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return notSetColumnSetter();
 	}
-	
+
+	/**
+	 * Search the 2 colmuns attribute handlers with a UCD matching respectively ucd1_regexp and String ucd2_regexp
+	 * @param ucd1_regexp
+	 * @param ucd2_regexp
+	 * @return
+	 * @throws FatalException 
+	 */
+	protected List<ColumnSingleSetter> searchColumnByUcd(String ucd1_regexp, String ucd2_regexp) throws FatalException {
+		String msg = "";
+		AttributeHandler ah1 =  null;
+		AttributeHandler ah2 =  null;
+		List<ColumnSingleSetter> retour = new ArrayList<ColumnSingleSetter>();
+		if( Messenger.debug_mode ) 
+			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
+		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
+			if( ah.getUcd().matches(ucd1_regexp) ){
+				ah1 = ah;
+				continue;
+			}
+			if( ah1 != null ) {
+				if( ah.getUcd().matches(ucd2_regexp)){
+					ah2 = ah;
+					if( Messenger.debug_mode ) 
+						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
+					retour.add(new ColumnSingleSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
+					retour.add(new ColumnSingleSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
+					return retour;
+				} else {
+					ah1 = null;
+				}
+			}
+		}
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
+		return retour;
+	}
+
 	
 	/**
 	 * Search the first entry attribute handler with a name matching colname_regexp
