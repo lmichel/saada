@@ -21,7 +21,6 @@ public class VignetteFile {
 	private String path=null;
 	private String name=null;
 
-	
 	/**
 	 * Set instance fields if a vignette file is found.
 	 * Fields remains null otherwise
