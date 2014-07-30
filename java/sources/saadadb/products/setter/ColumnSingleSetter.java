@@ -386,6 +386,10 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 * @see saadadb.products.setter.ColumnSetter#getUcd()
 	 */
 	@Override
+	public AttributeHandler getAssociateAtttribute() {
+		return this.attributeHandler.getAssociateAtttribute();
+	}
+	@Override
 	public String getUcd() {
 		return this.attributeHandler.getUcd();
 	}
