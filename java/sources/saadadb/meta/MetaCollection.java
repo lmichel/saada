@@ -134,7 +134,7 @@ public class MetaCollection extends MetaObject {
 				while (rs.next()) {
 					AttributeHandler ah_prim = lah.get(rs.getString(1));
 					AttributeHandler ah_ass = lah.get(rs.getString(3));
-					ah_prim.setAss_error(ah_ass);	
+					ah_prim.setAssociateAttribute(ah_ass);	
 				}
 				squery.close();
 			}
