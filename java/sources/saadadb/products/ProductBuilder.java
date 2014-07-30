@@ -1261,14 +1261,14 @@ public class ProductBuilder {
 				String decName = this.s_decSetter.getAttNameOrg();
 				String decUcd = (this.s_decSetter.getUcd() != null)? this.s_decSetter.getUcd(): "";
 				Astroframe af = null;
-				if( (raName.matches(RegExp.ICRS_RA_KW) || raUcd.matches(RegExp.ICRS_RA_MAINUCD) || raUcd.matches(RegExp.ICRS_RA_UCD)) &&
-						(decName.matches(RegExp.ICRS_DEC_KW) || decUcd.matches(RegExp.ICRS_DEC_MAINUCD) || decUcd.matches(RegExp.ICRS_DEC_UCD)) ) {
+				if( (raName.matches(RegExp.ICRS_RA_KW) || raUcd.matches(RegExp.RA_MAINUCD) || raUcd.matches(RegExp.RA_UCD)) &&
+						(decName.matches(RegExp.ICRS_DEC_KW) || decUcd.matches(RegExp.DEC_MAINUCD) || decUcd.matches(RegExp.DEC_UCD)) ) {
 					af = new ICRS();				
-				} else if( (raName.matches(RegExp.FK5_RA_KW) || raUcd.matches(RegExp.FK5_RA_MAINUCD) || raUcd.matches(RegExp.FK5_RA_UCD)) &&
-						(decName.matches(RegExp.FK5_DEC_KW) || decUcd.matches(RegExp.FK5_DEC_MAINUCD) || decUcd.matches(RegExp.FK5_DEC_UCD)) ) {
+				} else if( (raName.matches(RegExp.FK5_RA_KW) || raUcd.matches(RegExp.RA_MAINUCD) || raUcd.matches(RegExp.RA_UCD)) &&
+						(decName.matches(RegExp.FK5_DEC_KW) || decUcd.matches(RegExp.DEC_MAINUCD) || decUcd.matches(RegExp.DEC_UCD)) ) {
 					af = new FK5();				
-				} else if( (raName.matches(RegExp.FK4_RA_KW) || raUcd.matches(RegExp.FK4_RA_MAINUCD) || raUcd.matches(RegExp.FK4_RA_UCD)) &&
-						(decName.matches(RegExp.FK4_DEC_KW) || decUcd.matches(RegExp.FK4_DEC_MAINUCD) || decUcd.matches(RegExp.FK4_DEC_UCD)) ) {
+				} else if( (raName.matches(RegExp.FK4_RA_KW) || raUcd.matches(RegExp.RA_MAINUCD) || raUcd.matches(RegExp.RA_UCD)) &&
+						(decName.matches(RegExp.FK4_DEC_KW) || decUcd.matches(RegExp.DEC_MAINUCD) || decUcd.matches(RegExp.DEC_UCD)) ) {
 					af = new FK4();				
 				} else if( (raName.matches(RegExp.GALACTIC_RA_KW) || raUcd.matches(RegExp.GALACTIC_RA_MAINUCD) || raUcd.matches(RegExp.GALACTIC_RA_UCD)) &&
 						(decName.matches(RegExp.GALACTIC_DEC_KW) || decUcd.matches(RegExp.GALACTIC_DEC_MAINUCD) || decUcd.matches(RegExp.GALACTIC_DEC_UCD)) ) {
