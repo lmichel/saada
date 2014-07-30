@@ -145,8 +145,8 @@ public class RegExp {
 	 * Coordinate system
 	 */
 	public static final String ECL_SYSTEM = "(?i)(.*((ecl_FK5)|(ecliptic)))";
-	public static final String FK4_SYSTEM = "(?i)(.*((eq_FK4)|(FK4)))";
-	public static final String FK5_SYSTEM = "(?i)(.*((eq_FK5)|(FK5)))";
+	public static final String FK4_SYSTEM = "(?i)(.*((eq_FK4)|(FK4)).*)";
+	public static final String FK5_SYSTEM = "(?i)(.*((eq_FK5)|(FK5)).*)";
 	public static final String GALACTIC_SYSTEM   = "(?i)(galactic)";		
 	public static final String ICRS_SYSTEM       = "(?i)(icrs)";		
 	/**
@@ -170,24 +170,17 @@ public class RegExp {
 	/**
 	 * Position kw
 	 */
-	public static final String FK5_RA_MAINUCD   = "(?i)((POS_EQ_RA_MAIN)|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String FK5_DEC_MAINUCD  = "(?i)((POS_EQ_DEC_MAIN)|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String FK5_RA_UCD       = "(?i)((POS_EQ_RA)|(pos\\.eq\\.ra))";
-	public static final String FK5_DEC_UCD      = "(?i)((POS_EQ_DEC)|(pos\\.eq\\.dec))";
+	public static final String RA_MAINUCD   = "(?i)((POS_EQ_RA_MAIN)|(pos\\.eq\\.ra;meta\\.main))";
+	public static final String DEC_MAINUCD  = "(?i)((POS_EQ_DEC_MAIN)|(pos\\.eq\\.dec;meta\\.main))";
+	public static final String RA_UCD       = "(?i)((POS_EQ_RA)|(pos\\.eq\\.ra))";
+	public static final String DEC_UCD      = "(?i)((POS_EQ_DEC)|(pos\\.eq\\.dec))";
+
 	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^b]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
 	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^b]?(2000)?)|(_*de[^b]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
 
-	public static final String FK4_RA_MAINUCD   = "(?i)((POS_EQ_RA_MAIN)|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String FK4_DEC_MAINUCD  = "(?i)((POS_EQ_DEC_MAIN)|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String FK4_RA_UCD       = "(?i)((POS_EQ_RA)|(pos\\.eq\\.ra))";
-	public static final String FK4_DEC_UCD      = "(?i)((POS_EQ_DEC)|(pos\\.eq\\.dec))";
 	public static final String FK4_RA_KW        = "(?i)(_*ra[^(dec)]*b1950)";
 	public static final String FK4_DEC_KW       = "(?i)(_*de[^(ra)]*b1950)";
 	
-	public static final String ICRS_RA_MAINUCD   = "(?i)((POS_EQ_RA_MAIN)|(pos\\.eq\\.ra;meta\\.main))";
-	public static final String ICRS_DEC_MAINUCD  = "(?i)((POS_EQ_DEC_MAIN)|(pos\\.eq\\.dec;meta\\.main))";
-	public static final String ICRS_RA_UCD       = "(?i)((POS_EQ_RA)|(pos\\.eq\\.ra))";
-	public static final String ICRS_DEC_UCD      = "(?i)((POS_EQ_DE)|(pos\\.eq\\.dec))";
 	public static final String ICRS_RA_KW        = "(?i)((_*ra[^(dec)]*)|(.*right.*ascension))";
 	public static final String ICRS_DEC_KW       = "(?i)((_*de[^(ra)]*)|(.*declination))";
 
