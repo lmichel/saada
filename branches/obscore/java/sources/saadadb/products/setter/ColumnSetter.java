@@ -258,6 +258,10 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public abstract String getUnit() ;
+	/**
+	 * @return
+	 */
+	public abstract AttributeHandler getAssociateAtttribute() ;
 	
 	/**
 	 * @return
