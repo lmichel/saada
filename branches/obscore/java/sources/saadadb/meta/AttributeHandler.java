@@ -55,7 +55,8 @@ public class AttributeHandler implements Serializable , Cloneable{
 	private String ucd = "";
 	private String utype = "";
 	private String vo_dm = "";
-	private AttributeHandler ass_error;
+	/** Used for associate error or to implement ref in VOTables */
+	private AttributeHandler associateAttribute;
 	private boolean queriable;
 	private String unit = "";
 	private String comment = "";
@@ -65,7 +66,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 	// not stored in the DB currently but may be useful to feed some JSON message
 	public RangeValue range;
 	/**
-	 * Used by {@link ColumnMapping} for switch from mapped to constante values
+	 * Used by {@link ColumnMapping} for switch from mapped to constant values
 	 */
 	public boolean constantValue = false; 
 	public AttributeHandler(){}
@@ -544,15 +545,15 @@ public class AttributeHandler implements Serializable , Cloneable{
 	/**
 	 * @return Returns the ass_error.
 	 */
-	public AttributeHandler getAss_error() {
-		return ass_error;
+	public AttributeHandler getAssociateAtttribute() {
+		return associateAttribute;
 	}
 
 	/**
 	 * @param ass_error The ass_error to set.
 	 */
-	public void setAss_error(AttributeHandler ass_error) {
-		this.ass_error = ass_error;
+	public void setAssociateAttribute(AttributeHandler associateAttribute) {
+		this.associateAttribute = associateAttribute;
 	}
 
 
