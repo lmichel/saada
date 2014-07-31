@@ -373,7 +373,7 @@ public class SpaceKWDetector extends KWDetector{
 		Astroframe frame = null;
 		if( (status & POS_KW_FOUND) == 0 ) {
 			lookForTaggedKeywords();
-			if( (status & POS_KW_FOUND) == 0 ) {
+			if( (status & POS_KW_FOUND) != 0 ) {
 				this.formatPos();
 				frame = new ICRS();
 			} else {
@@ -452,29 +452,36 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws SaadaException
 	 */
 	private void lookForTaggedKeywords() throws SaadaException {
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look for tagged keyword");
 		Astroframe frame=null;
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for tagged  keywords");
 		List<ColumnSingleSetter> posKW;
-		posKW =  searchColumnByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD );
-		if( (posKW =  searchColumnByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD )).size() == 2 ) {
+		if( (posKW =  searchByUcd(RegExp.RA_MAINUCD,RegExp.DEC_MAINUCD )).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
-		} else if( (posKW =  searchColumnByUcd(RegExp.RA_UCD,RegExp.DEC_UCD)).size() == 2 ) {
+		} else if( (posKW =  searchByUcd(RegExp.RA_UCD,RegExp.DEC_UCD)).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
-		} else if( (posKW =  searchColumnByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD)).size() == 2 ) {
+		} else if( (posKW =  searchByUcd(RegExp.ECLIPTIC_RA_MAINUCD,RegExp.ECLIPTIC_DEC_MAINUCD)).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
-		} else if( (posKW =  searchColumnByUcd(RegExp.ECLIPTIC_RA_UCD,RegExp.ECLIPTIC_DEC_UCD)).size() == 2 ) {
+		} else if( (posKW =  searchByUcd(RegExp.ECLIPTIC_RA_UCD,RegExp.ECLIPTIC_DEC_UCD)).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
-		}else if( (posKW =  searchColumnByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD)).size() == 2 ) {
+		}else if( (posKW =  searchByUcd(RegExp.GALACTIC_RA_MAINUCD,RegExp.GALACTIC_DEC_MAINUCD)).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
-		} else if( (posKW =  searchColumnByUcd(RegExp.GALACTIC_RA_UCD,RegExp.GALACTIC_DEC_UCD)).size() == 2 ) {
+		} else if( (posKW =  searchByUcd(RegExp.GALACTIC_RA_UCD,RegExp.GALACTIC_DEC_UCD)).size() == 2 ) {
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
+		}
+		
+		if( ascension_kw == null || declination_kw == null ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "not found");
+			return ;
 		}
 		/*
 		 * Look at he associate attribute which could carry the Coossys info.
@@ -515,7 +522,7 @@ public class SpaceKWDetector extends KWDetector{
 								+ " tagged with coosys " + cooString);					this.status |= FRAME_FOUND;		
 					this.frameSetter = new ColumnSingleSetter();
 					this.frameSetter.setByValue("", false);
-					this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenceed by position keywords)");
+					this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenced by position keywords)");
 					this.frameSetter.storedValue = frame;
 				}
 			} else {
