@@ -18,6 +18,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.sqlite.SQLiteConfig;
+import org.sqlite.SQLiteConfig.SynchronousMode;
+
 
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
@@ -184,7 +186,9 @@ public class SQLiteWrapper extends DbmsWrapper {
 			Messenger.printMsg(Messenger.DEBUG, "No-User connecting " + url); 
 		SQLiteConfig config = new SQLiteConfig();
 		config.enableLoadExtension(true);	
+		config.setSynchronous(SynchronousMode.OFF);
 		Connection conn =  DriverManager.getConnection(url, config.toProperties() );
+	//	Connection conn =  DriverManager.getConnection(url );
 //		/*
 //		 * Extension must be loaded once: Tomcat fails at context change otherwise
 //		 */
@@ -895,8 +899,9 @@ public class SQLiteWrapper extends DbmsWrapper {
 			prep.addBatch();
 			if( (line%5000) == 0  )  {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Store 5000 lines into the DB");
+					Messenger.printMsg(Messenger.DEBUG, "Store lines " + (line - 5000) + "-" + line + " into the DB");
 				prep.executeBatch();
+				prep.clearBatch();
 			}
 		}
 		prep.executeBatch();
@@ -937,28 +942,6 @@ public class SQLiteWrapper extends DbmsWrapper {
 		rsTables.close();
 		return false;
 	}
-
-
-	/**
-	 * @param table table to be populated
-	 * @param file   datafile (TSV)
-	 * @param db_file database file
-	 * @return
-	 * @throws Exception
-	 */
-	public static int importTSV(String table, String file, String db_file) throws Exception {
-		return importASCIIFile(table, file, "\t", db_file);
-	}
-
-	/**
-	 * @param table table to be populated
-	 * @param file datafile (TSV)
-	 * @param separ field separator (one char string)
-	 * @param db_file database file
-	 * @return
-	 * @throws Exception
-	 */
-	native static int importASCIIFile(String table, String file, String separ, String db_file) throws Exception;
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#supportAccount()
