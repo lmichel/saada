@@ -228,9 +228,15 @@ public class EntryBuilder extends ProductBuilder {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getReport()
+	 */
+	@Override
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		this.setProductIngestor();
+		((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
+		this.dataFile.hasMoreElements();
 		this.productIngestor.bindInstanceToFile(this.productIngestor.saadaInstance);
 		SaadaInstance si = this.productIngestor.saadaInstance;
 
