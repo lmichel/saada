@@ -6,7 +6,6 @@ package saadadb.products;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,8 @@ import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.Table_Saada_Loaded_File;
+import saadadb.unit.Converter;
+import saadadb.unit.Unit;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -42,7 +43,9 @@ class ProductIngestor {
 	protected SaadaInstance saadaInstance;
 	protected ProductBuilder product;
 	/** allows the ColumnSetter to append messages after conversion */
-	protected boolean addMEssage = true;
+	protected boolean addMEssage = true;					
+	private final Unit fovUnitConverter = new Unit("deg");
+
 
 	/**
 	 * @param product
@@ -278,10 +281,6 @@ class ProductIngestor {
 					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
 					this.saadaInstance.setS_region(stc);
 				}
-				if(this.product.s_fovSetter.notSet())
-					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
-				else 
-					this.saadaInstance.setS_fov(Double.parseDouble(this.product.s_fovSetter.getValue()));
 				if(this.product.s_raSetter.notSet())
 					this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 				else 
@@ -297,14 +296,37 @@ class ProductIngestor {
 					this.product.s_decSetter.completeMessage("Cannot be converted, wrong value?");
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
-				this.setPosErrorFields(number);
 			} catch( Exception e ) {
+				e.printStackTrace();
+				System.exit(1);
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
 				this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
 				this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
 				this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 				this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 			}
+			try {
+				if(this.product.s_fovSetter.notSet())
+					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
+				else {
+					String unit;
+					if( (unit = this.product.s_fovSetter.getUnit()).length() > 0 ) {
+						if( "deg".equals(unit )) {
+							this.saadaInstance.setS_fov(Double.parseDouble(this.product.s_fovSetter.getValue()));
+						} else {
+							fovUnitConverter.convertFrom(new Unit(this.product.s_fovSetter.getValue() + this.product.s_fovSetter.getUnit()));
+							this.saadaInstance.setS_fov(fovUnitConverter.value);
+						}
+					}
+				}
+			} catch( Exception e ) {
+				e.printStackTrace();
+				System.exit(1);
+				Messenger.printMsg(Messenger.TRACE, "Error while converting the FoV " + e.getMessage());
+				this.product.s_fovSetter.completeMessage("Conv failed " + e.getMessage());
+				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
+			}
+			this.setPosErrorFields(number);
 
 		} else {
 			System.out.println("============XXXX===============");
@@ -327,15 +349,15 @@ class ProductIngestor {
 		if( this.product.s_resolutionSetter != null &&  error_unit != null ){
 			double angle, maj_err=0, min_err=0, convert = -1;
 			/*
-			 * Errors are always stored in degrees in Saada
+			 * Errors are always stored in arcsec in Saada
 			 * let's make a simple convertion;
 			 * Sometime arcsec/min is written arcsec/mins
 			 */
-			if( error_unit.equals("deg") ) convert = 1;
+			if( error_unit.equals("deg") ) convert = 3600;
 			else if( error_unit.startsWith("arcmin") ) convert = 60.0;
-			else if( error_unit.startsWith("arcsec") ) convert = 3600.0;
-			else if( error_unit.equals("mas") ) convert = (1000*3600.0);
-			else if( error_unit.equals("uas") ) convert = (1000*1000*3600.0);
+			else if( error_unit.startsWith("arcsec") ) convert = 1;
+			else if( error_unit.equals("mas") ) convert = 1./1000.;
+			else if( error_unit.equals("uas") ) convert = 1./(1000.*1000.);
 			else {
 				if( number == 0 ) Messenger.printMsg(Messenger.TRACE, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
 				return ;

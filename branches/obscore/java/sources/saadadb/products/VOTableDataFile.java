@@ -77,7 +77,10 @@ public class VOTableDataFile extends File implements DataFile {
 	/** AttributeHandler of the header of the selected table */
 	private Map<String, AttributeHandler> attributeHandlers = null;
 	/** AttributeHandler of the data table of the selected table */
-	private Map<String, AttributeHandler> entryAttributeHandlers = null;
+	private Map<String, AttributeHandler> entryAttributeHandlers = null;	
+	/** Pseudo AHs containing info possibly referenced by fields */
+	private Map<String, AttributeHandler> idForRef = new LinkedHashMap<String, AttributeHandler>();
+
 	/** reference of the table containing the data */
 	private DataFileExtension dataExtension;
 	/** reference of the table containing the table header */
@@ -105,7 +108,7 @@ public class VOTableDataFile extends File implements DataFile {
 	 */
 	public VOTableDataFile(String filename) throws Exception{
 		super(filename);
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Modeling the VOTable");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Modeling the VOTable " + filename);
 		this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	    
 		this.voTable = parser.getVOTable();
 		this.getProductMap();
@@ -205,62 +208,49 @@ public class VOTableDataFile extends File implements DataFile {
 		return standard;
 	}
 
+	private void addIdForRef(SavotCoosys infoCooSys ){
+		String system, equinox;
+		system = infoCooSys.getSystem();
+		equinox = infoCooSys.getEquinox();
+		AttributeHandler attributeCoosys = new AttributeHandler();
+		attributeCoosys.setNameorg("COOSYS");
+		attributeCoosys.setNameattr(ChangeKey.changeKey("COOSYS"));
+		attributeCoosys.setType("String");
+		attributeCoosys.setValue(system + " " + equinox);
+		this.idForRef.put(infoCooSys.getId(), attributeCoosys);
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Add " + attributeCoosys + " as referenced COOSYS");
+	}
 	/**
 	 * returns a map of pseudo parameters built from description of both resource and table
 	 * @param savotResource
 	 * @param savotTable
 	 * @return
 	 */
-	private LinkedHashMap<String, AttributeHandler> createTableAttributeHandlerFromResourceDesc(SavotResource savotResource, SavotTable savotTable){
+	private Map<String, AttributeHandler> createTableAttributeHandlerFromResourceDesc(SavotResource savotResource, SavotTable savotTable){
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Build pseudo params from various table infos");
-		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		this.idForRef = new LinkedHashMap<String, AttributeHandler>();
 		String keyChanged = "";
 		SavotCoosys infoCooSys = null;
-		if( voTable.getCoosys() != null ){
+		if( voTable.getCoosys() != null && voTable.getCoosys().getItems() != null){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at resource level  ");
-			infoCooSys = (SavotCoosys) voTable.getCoosys().getItems().get(0);			
-		} else	if (voTable.getDefinitions() != null && voTable.getDefinitions().getCoosys() != null) {
+			infoCooSys = (SavotCoosys) voTable.getCoosys().getItems().get(0);	
+			this.addIdForRef(infoCooSys);
+		} 
+		if (voTable.getDefinitions() != null && voTable.getDefinitions().getCoosys() != null && voTable.getDefinitions().getCoosys() != null) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at table level");
+				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at VOtable definition level");
 			infoCooSys = (SavotCoosys) voTable.getDefinitions().getCoosys().getItems().get(0);
-		} else if( savotResource.getCoosys() != null && savotResource.getCoosys().getItems() != null) {
+			this.addIdForRef(infoCooSys);
+		} 
+		if( savotResource.getCoosys() != null && savotResource.getCoosys().getItems() != null) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take the Coosys at resource level");
 			infoCooSys = (SavotCoosys) savotResource.getCoosys().getItems().get( (savotResource.getCoosys().getItems().size()) - 1);
-		}
-
-		if(infoCooSys  != null ) {
-			String system, equinox;
-			system = infoCooSys.getSystem();
-			equinox = infoCooSys.getEquinox();
-			AttributeHandler attributeEquinox = new AttributeHandler();
-			attributeEquinox.setNameorg("EQUINOX");
-			keyChanged = ChangeKey.changeKey("EQUINOX");
-			attributeEquinox.setNameattr(keyChanged);
-			retour.put(keyChanged, attributeEquinox);
-			//if( this.product.mapping != null ) attributeEquinox.setCollname(this.product.mapping.getCollection());
-			attributeEquinox.setComment("Added by Saada");
-			attributeEquinox.setType("String");
-			String valueEquinox = equinox;
-			int indexJ = valueEquinox.indexOf("J");
-			if (indexJ >= 0) {
-				valueEquinox = valueEquinox.substring(indexJ + 1);
-			}
-			attributeEquinox.setValue(valueEquinox);
-
-			AttributeHandler attributeSystem = new AttributeHandler();
-			attributeSystem.setNameorg("SYSTEM");
-			keyChanged = ChangeKey.changeKey("SYSTEM");
-			attributeSystem.setNameattr(keyChanged);
-			retour.put(keyChanged, attributeSystem);
-			//	if( this.product.mapping != null ) attributeSystem.setCollname(this.product.mapping.getCollection());
-			attributeSystem.setComment("Added by Saada");
-			attributeSystem.setType("String");
-			attributeSystem.setValue(system);
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Coosys: " + attributeSystem.getValue() + " " + attributeEquinox.getValue());
+			this.addIdForRef(infoCooSys);
 		}
 
 		AttributeHandler attributeResource = new AttributeHandler();
@@ -297,7 +287,7 @@ public class VOTableDataFile extends File implements DataFile {
 		attributeTable.setUcd(savotTable.getUcd());
 		retour.put(keyChanged, attributeTable);
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, retour.size() + " params added");
+			Messenger.printMsg(Messenger.DEBUG, "Resource/Description/table names added to header parameters");
 		return retour;
 	}
 
@@ -829,7 +819,14 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 					attrs = new ArrayList<AttributeHandler>();					
 					for( int i=0 ; i<fields.getItemCount() ; i++ ) {
 						SavotField sf = (SavotField) fields.getItemAt(i);
-						attrs.add(new AttributeHandler(sf));
+						AttributeHandler att = new AttributeHandler(sf);						
+						attrs.add(att);
+						AttributeHandler assAh;
+						if( (assAh = this.idForRef.get(sf.getRef())) != null ) {
+							att.setAssociateAttribute(assAh);
+							if (Messenger.debug_mode)
+								Messenger.printMsg(Messenger.DEBUG, "Bind column " + att.getNameorg() + " with " + assAh);
+						}
 					}
 					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId() + " (" + det + ")"
 							, new DataFileExtension(rCpt, savotResource.getId(), tCpt,savotTable.getName(),det,attrs));
