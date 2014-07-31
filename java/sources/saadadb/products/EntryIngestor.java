@@ -73,6 +73,7 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	private  int num_col_ra      = -1;
 	private  int num_col_dec     = -1;
+	private  int num_col_fov  = -1;
 	private  int num_col_err  = -1;
 	//	private  int num_col_dec_err = -1;
 	//	private  int num_col_angle_err = -1;
@@ -153,7 +154,7 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	public boolean hasMoreElements() {
-		return (this.lineNumber > 3)?  false: this.enumerateRow.hasMoreElements();
+		return this.enumerateRow.hasMoreElements();
 	}
 
 	/**
@@ -203,6 +204,8 @@ public final class EntryIngestor extends ProductIngestor {
 				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
 			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
 				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
+			if( this.num_col_fov != -1 && this.product.s_fovSetter.byKeyword())
+				this.product.s_fovSetter.setValue(this.values[this.num_col_fov].toString());
 			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
 				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
 		}
@@ -398,6 +401,9 @@ public final class EntryIngestor extends ProductIngestor {
 			} else if( this.product.s_decSetter != null && nameField.equals(this.product.s_decSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "DEC col (" + nameField + ") read in column #" + num_att_read);
 				num_col_dec = index_pos_col[num_att_read];
+			} else if( this.product.s_fovSetter != null && nameField.equals(this.product.s_fovSetter.getAttNameAtt()) ) {
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FoV col (" + nameField + ") read in column #" + num_att_read);
+				num_col_fov = index_pos_col[num_att_read];
 			} else if( this.product.s_resolutionSetter != null && nameField.equals(this.product.s_resolutionSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "RA error col (" + nameField + ") read in column #" + num_att_read);
 				num_col_err = index_pos_col[num_att_read];

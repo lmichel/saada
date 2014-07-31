@@ -52,7 +52,9 @@ public class TableBuilder extends ProductBuilder {
 		try {
 			this.entryBuilder = new EntryBuilder(this);
 			this.entryBuilder.bindDataFile(file);
-			this.entryBuilder.mapCollectionAttributes();
+//			this.entryBuilder.mapCollectionAttributes();
+//			this.entryBuilder.setFmtsignature();
+
 		} catch (SaadaException e) {
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		} catch (Exception e) {

@@ -435,6 +435,7 @@ public class ProductBuilder {
 	protected void mapCollectionAttributes() throws Exception {
 		if( this.productAttributeHandler != null ) {
 			System.out.println("@@@@@@@@@@@ MAP " + this.getClass().getName());
+			(new Exception()).printStackTrace();
 			this.mapObservationAxe();
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
