@@ -33,5 +33,10 @@ public enum ColumnSetMode {
 	/**
 	 * Not set at all 
 	 */
-	NOT_SET;
+	NOT_SET,
+	/**
+	 * Calculate from an expression
+	 */
+	BY_EXPRESSION;
+	
 }
