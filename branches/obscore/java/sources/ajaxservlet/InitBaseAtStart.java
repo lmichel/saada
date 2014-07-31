@@ -19,7 +19,6 @@ import saadadb.database.spooler.Spooler;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
-
 /**
  * Listener invoked by Tomcat at starting time and at shutdown time.
  * It is declared in web.xml

@@ -24,7 +24,7 @@ import saadadb.util.SaadaConstant;
 
 
 /**
- * Used to handle to appaly a JSON filter (StoredFilter) to a specific Saada obkect instance
+ * Used to handle to apply a JSON filter (StoredFilter) to a specific Saada object instance
  * 
  * @author Clémentine Frère
  *  * @version $Id$
@@ -285,10 +285,11 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			} else if ("Preview".equals(speField)) {
 				retour.add(DefaultPreviews.getFlatfilePreview(oidsaada, 64));
 
-			} else if ( speField.startsWith("Range") ) {
+			} else if ( speField.startsWith("Energy Range") ) {
 				retour.add(DefaultFormats.getString(si.em_min) + " - " + DefaultFormats.getString(si.em_max) );
-			}
-			else if ( speField.startsWith("Gallery") ) {
+			} else if ( speField.startsWith("time range") ) {
+				retour.add(DefaultFormats.getDateRangeFromMJD(si.t_min, si.t_max) );
+			} else if ( speField.startsWith("Gallery") ) {
 				retour.add(Long.toString(oidsaada) );
 			}
 		}

@@ -10,16 +10,14 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import ajaxservlet.SaadaServlet;
 
+
+/**
+ * @author michel
+ * @version $Id$
+ */
 abstract public class DefaultPreviews {
 	public static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
 
-	/** * @version $Id$
-
-	 * @param oid
-	 * @param size
-	 * @return
-	 * @throws FatalException
-	 */
 	public static final String getImageVignette(long oid, int size) throws FatalException {
 		String url =  "getvignette?oid=" + oid;
 		return "<A border=0 TITLE='Show real size' onclick='resultPaneView.fireShowVignette(\"" 

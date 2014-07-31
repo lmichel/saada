@@ -42,7 +42,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		datatable_columns.add("Detail");
 */		datatable_columns.add("Position");
 		datatable_columns.add("Name");
-		datatable_columns.add("Range (" + Database.getSpect_unit() + ")");
+		datatable_columns.add("Energy Range (" + Database.getSpect_unit() + ")");
 	}
 
 	@Override
@@ -112,9 +112,9 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 			else if( "Position".equals(s)) {
 				retour.add(sff.getPos());
 			}
-			else if( s.startsWith("Range") ) {
+			else if( s.startsWith("Energy Range") ) {
 				retour.add(DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) );
-			}
+			} 
 			else if( "Name".equals(s)) {
 				retour.add(instance.obs_id);
 			}
@@ -181,9 +181,8 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
-				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
 				retour.add("Position " + DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
-				retour.add("Range " + DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) + " " + Database.getSpect_unit());
+				retour.add("Energy Range " + DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) + " " + Database.getSpect_unit());
 				retour.addAll(super.getLinks());
 			}
 		} catch (Exception e) {}
@@ -206,7 +205,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		result += "},";
 		result += "\"ucd.show\": \"false\",";
 		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Access\", \"Position\", \"Name\", \"Range (" + Database.getSpect_unit() + ")\"],";
+		result += "\"specialField\": [\"Access\", \"Position\", \"Name\", \"Energy Range (" + Database.getSpect_unit() + ")\",\"time range\" ],";
 		result += "\"collections\": {";
 		result += "\"show\": [],";
 		result += "\"query\": []}}";
