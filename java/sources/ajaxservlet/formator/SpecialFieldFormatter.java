@@ -39,7 +39,11 @@ public class SpecialFieldFormatter {
 	public String getPos() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
-			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
+			if( pos.startsWith("Not") ){
+				return pos;
+			} else {
+				return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
+			}
 		}
 		return null;
 	}
