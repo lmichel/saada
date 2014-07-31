@@ -222,7 +222,8 @@ public class RegExp {
 	
 	public static final String FUNCTION_NAME = "([^()]*)";
 	public static final String FUNCTION_ARGS = "\\(([^)]+)\\)";
-	public static final String KEYWORD = "([[_][a-z][A-Z][0-9]]+[^(])[ +-/\\*)]";
+	public static final String KEYWORD = "([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\\)\\s\\*-\\+]+)|$)";//"([[_][a-z][A-Z][0-9]]+[^(])[ +-/\\*)]";
+	// 	([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\)\s\*-\+]+)|$)
 	
 	public static void main(String[] args) {
 		String ra = "__raj2000";
