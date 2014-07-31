@@ -59,7 +59,8 @@ public class ThreadLoadData extends CmdThread {
 	 */
 	public void runCommand() {
 		try {
-			Loader loader = new Loader(ap.getArgs());
+			saada_process = new Loader(ap.getArgs());
+			Loader loader  = (Loader)saada_process;
 			if( fileList != null && fileList.size() > 0 ) {
 				loader.setFile_to_load(fileList);
 			}
