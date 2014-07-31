@@ -28,18 +28,18 @@ public class DisplayFilterTest {
 	public static void main(String[] args) throws Exception {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
-		StoredFilter sf = new StoredFilter(rawJson);
-		DynamicClassDisplayFilter ddf = new DynamicClassDisplayFilter(sf, "ACDS", "arch_0011AEntry");
-		System.out.println(sf);
-		System.out.println(ddf);
-		
-		sf.store(FilterBase.filterDirectory + File.separator + "df." +sf.getTreepath() + ".json");
+//		StoredFilter sf = new StoredFilter(rawJson);
+//		DynamicClassDisplayFilter ddf = new DynamicClassDisplayFilter(sf, "ACDS", "arch_0011AEntry");
+//		System.out.println(sf);
+//		System.out.println(ddf);
+//		
+//		sf.store(FilterBase.filterDirectory + File.separator + "df." +sf.getTreepath() + ".json");
 		
 		FilterBase.init(false);
-		sf = FilterBase.get("ACDS", "ENTRY");
+		StoredFilter sf = FilterBase.get("Foo", "SPECTRUM");
 		System.out.println(sf);
-		sf = FilterBase.get("ACDS", "ENTRY", "arch_0011AEntry");
-		System.out.println(sf);
+		System.out.println(sf.getRawJSON());
+		System.out.println((new DynamicClassDisplayFilter(sf, "Foo", "*")));
 		Database.close();
 	}
 }
