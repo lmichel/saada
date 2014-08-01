@@ -24,7 +24,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * The expression to evaluate 
 	 */
 	private String expression;
+	
+	/**
+	 * The last expression evaluated
+	 */
 	 
+	private String lastExpressionEvaluated;
+	
 	/**
 	 * The wrapper used to evaluate the expression
 	 */
@@ -44,7 +50,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * The result of the expression
 	 */
-	private String result;
+	private String result="Not set";
 	
 	
 	/**
@@ -52,60 +58,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 */
 	private ColumnSingleSetter singleSetter;
 	
-//	
-//	/**
-//	 * Initialize the wrapper, the expression and if not null, the list of AttributeHandler then calculate the result
-//	 * @param expr
-//	 * @param attributes
-//	 * @throws FatalException
-//	 */
-//	public ColumnExpressionSetter(String expr, Map<String,AttributeHandler> attributes) throws Exception
-//	{
-//		super();
-//		this.settingMode = ColumnSetMode.BY_EXPRESSION;
-//		if( expr == null ){
-//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-//		}
-//		expression=expr;
-//		singleSetter = new ColumnSingleSetter();
-//		if(attributes==null || attributes.isEmpty())
-//		{
-//			this.settingMode=ColumnSetMode.BY_VALUE;
-//		}
-//		/*
-//		 * We treat the String functions
-//		 */
-//		checkAndExecStringFunction(attributes);
-//		//If attributes not null and not empty
-//		if(this.settingMode==ColumnSetMode.BY_EXPRESSION)
-//		{
-//			/*
-//			 * We build the list of AH present in the expression and we format their names (in the expression)
-//			 * The String functions MUST have been treated at this point
-//			 */
-//			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-//			exprAttributes = ahExtractor.extractAH();
-//			expression=ahExtractor.expression;
-//		}
-//		
-//		/*
-//		 *\/!\ WARNING : We must handle the numerics functions here
-//		 */
-//		/*
-//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-//		 */
-//		try {
-//			wrapper = new ExpressionWrapper(expression, exprAttributes);
-//			result=wrapper.getStringValue();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			result=SaadaConstant.STRING;
-//		}
-//		
-//		//Check THIS
-//		if(settingMode==ColumnSetMode.BY_VALUE)
-//			singleSetter.setValue(result);
-//	}
+
 	
 	/**
 	 * Main constructor
@@ -147,6 +100,8 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 */
 	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception
 	{
+		boolean isNewExpression = true;
+
 		if( expression == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
@@ -174,6 +129,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			exprAttributes = ahExtractor.extractAH();
 			expression=ahExtractor.expression;
 		}	
+		//We check if we already evaluated the same expression
+		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+		{
+			isNewExpression=false;
+		}
+		
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */	
@@ -181,8 +142,16 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
-			wrapper = new ExpressionWrapper(expression, exprAttributes);
-			result=wrapper.getStringValue();
+			if(isNewExpression)
+			{
+				wrapper = new ExpressionWrapper(expression, exprAttributes);
+				lastExpressionEvaluated=expression;
+			}
+			else
+			{
+				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
+				wrapper.evaluate(exprAttributes);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			result=SaadaConstant.STRING;
@@ -201,10 +170,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 */
 	public void calculateExpression(String expr,Map<String,AttributeHandler> attributes) throws Exception
 	{
+		boolean isNewExpression = true;
 		if( expr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
+
 		expression=expr;
+
 		/*
 		 * We treat the String functions
 		 */
@@ -229,6 +201,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			exprAttributes = ahExtractor.extractAH();
 			expression=ahExtractor.expression;
 		}
+		//We check if we already evaluated the same expression
+		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+		{
+			isNewExpression=false;
+		}
+		
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
@@ -237,7 +215,16 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
-			wrapper = new ExpressionWrapper(expression, exprAttributes);
+			if(isNewExpression)
+			{
+				wrapper = new ExpressionWrapper(expression, exprAttributes);
+				lastExpressionEvaluated=expression;
+			}
+			else
+			{
+				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
+				wrapper.evaluate(exprAttributes);
+			}
 			result=wrapper.getStringValue();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -367,7 +354,19 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	
 	@Override
 	protected void setInitMessage() {
-		// TODO Auto-generated method stub
+		if(expression==null || expression.isEmpty())
+			return;
+		switch(this.settingMode){
+		case BY_EXPRESSION:
+			this.completeMessage("expression <"+this.singleSetter.getAssociateAtttribute().getValue()+">");
+		case BY_VALUE:
+			this.completeMessage("value <" +this.result+">");
+			break;
+
+		default:
+			this.completeMessage("Nothing found");
+			break;
+		}
 		
 	}
 
@@ -697,12 +696,62 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		}
 		System.out.println(ces);
 
-//		mapTest.put(ah1.getNameattr(), ah1);
-//		mapTest.put(ah2.getNameattr(), ah2);
-//		mapTest.put(ah3.getNameattr(), ah3);
-//		mapTest.put(ah4.getNameattr(), ah4);
-//		mapTest.put(ah5.getNameattr(), ah5);
 
+		System.out.println();
+		mapTest = new TreeMap<String,AttributeHandler>();
+
+		mapTest.put("_emax", ah2);
+		mapTest.put("_emin", ah3);
+		expression = "EMAX*_emin";
+		ces = new ColumnExpressionSetter();
+		System.out.println("Test Passage expression Wrapper");
+		System.out.println("---- Résultat souhaité : 20");
+		try {
+			ces.calculateExpression(expression,mapTest);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(ces);
+		System.out.println();
+
+		
+		
+		System.out.println(ces);
+
+
+		System.out.println();
+		mapTest = new TreeMap<String,AttributeHandler>();
+
+		mapTest.put("_emax", ah2);
+		mapTest.put("_emin", ah3);
+		expression = "EMAX*_emin";
+		System.out.println("Test Passage expression Wrapper");
+		System.out.println("---- Résultat should be the same");
+		try {
+			ces.calculateExpression(expression,mapTest);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(ces);
+		System.out.println();
+		
+		
+		
+		mapTest.clear();
+		mapTest.put("_emax", ah2);
+		mapTest.put("_emin59", ah5);
+		expression = "EMAX+_emin59";
+		System.out.println("Result should be different");
+		try {
+			ces.calculateExpression(expression,mapTest);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println(ces);
+		System.out.println();
 
 	
 
