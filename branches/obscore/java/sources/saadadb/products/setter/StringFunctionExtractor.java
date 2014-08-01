@@ -39,7 +39,7 @@ public class StringFunctionExtractor {
 		/*
 		 * For all our Dictionary functions
 		 */
-		for(Entry<String,String> e:DictionaryString.index.entrySet())
+		for(Entry<String,String> e:DictionaryStringFunction.index.entrySet())
 		{
 			/*
 			 * We check in the expression if there's a string like "... Function(something) ... "
