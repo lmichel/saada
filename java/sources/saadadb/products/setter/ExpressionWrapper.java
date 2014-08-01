@@ -69,17 +69,20 @@ public class ExpressionWrapper {
 		} 
 	}
 	/**
+	 * Evaluate an expression with the Attributehandler provided
+	 * Can be use on a wrapper to recalculate the same expression with differents values 
 	 * @param attributeHandlers
 	 * @throws FatalException
 	 */
-	private void evaluate(List<AttributeHandler> attributeHandlers) throws Exception{
+	public void evaluate(List<AttributeHandler> attributeHandlers) throws Exception{
 		if(this.isEvaluated ) {
 			return;
 		}
 		try {
 			this.attributeHandlers = attributeHandlers;
-			if( this.expressionBuilder == null ) {
+			if( this.expressionBuilder == null) {
 				this.expressionBuilder = new ExpressionBuilder(this.expression).build();
+				System.out.println("New Expression Builder");
 			}
 			if(this.attributeHandlers!=null)
 			{	
@@ -97,6 +100,9 @@ public class ExpressionWrapper {
 		} 
 
 	}
+	
+	
+
 	/**
 	 * @return
 	 */
