@@ -92,8 +92,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		expression=expr;
 	}
 	
-	
-	
 	/**
 	 * Calculate the Expression using its stocked value
 	 * @throws Exception 
@@ -238,7 +236,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	
 	/**
 	 * Calculate an Expression with no Keywords
-	 * @expr The expression to calculate
+	 * @param expr The expression to calculate
 	 * @throws Exception 
 	 */
 	public void calculateExpression(String expr) throws Exception
@@ -305,7 +303,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 					}
 				}
 				//We execute the String function
-				expression=expression.replace(e.getKey(), DictionaryString.exec(e.getValue().functionName, args));	
+				expression=expression.replace(e.getKey(), DictionaryStringFunction.exec(e.getValue().functionName, args));	
 			}		
 		}
 	}
@@ -372,152 +370,141 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public void setByValue(String value, boolean fromMapping) {
-		// TODO Auto-generated method stub
-		
+		this.singleSetter.setByValue(value, fromMapping);
+			
 	}
 
 	@Override
 	public void setByValue(double value, boolean fromMapping) {
-		// TODO Auto-generated method stub
-		
+		this.singleSetter.setByValue(value, fromMapping);		
 	}
 
 	@Override
 	public void setByKeyword(boolean fromMapping) {
-		// TODO Auto-generated method stub
-		
+		this.singleSetter.setByKeyword(fromMapping);
 	}
 
 	@Override
 	public void setByKeyword(String value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByKeyword(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByKeyword(double value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByKeyword(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByWCS(String value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByWCS(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByWCS(double value, boolean fromMapping) {
-		// TODO Auto-generated method stub
-		
+		this.singleSetter.setByWCS(value, fromMapping);		
 	}
 
 	@Override
 	public void setByPixels(String value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByPixels(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByPixels(double value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByPixels(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByTableColumn(String value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByTableColumn(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setByTabeColumn(double value, boolean fromMapping) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setByTabeColumn(value, fromMapping);
 		
 	}
 
 	@Override
 	public void setBySaada() {
-		// TODO Auto-generated method stub
+		this.singleSetter.setBySaada();
 		
 	}
 
 	@Override
 	public void setValue(double value, String unit) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setValue(value, unit);
 		
 	}
 
 	@Override
 	public void setNotSet() {
-		// TODO Auto-generated method stub
+		this.singleSetter.setNotSet();
 		
 	}
 
 	@Override
 	public void setValue(String value) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setValue(value);
 		
 	}
 
 	@Override
 	public void setValue(double value) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setValue(value);
 		
 	}
 
 	@Override
 	public void setUnit(String unit) {
-		// TODO Auto-generated method stub
+		this.singleSetter.setUnit(unit);
 		
 	}
 
 	@Override
 	public String getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getValue();
 	}
 
 	@Override
 	public double getNumValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.singleSetter.getNumValue();
 	}
 
 	@Override
 	public String getComment() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getComment();
 	}
 
 	@Override
 	public String getAttNameOrg() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getAttNameOrg();
 	}
 
 	@Override
 	public String getAttNameAtt() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getAttNameAtt();
 	}
 
 	@Override
 	public String getUnit() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getUnit();
 	}
 
 	@Override
 	public String getUcd() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getUcd();
 	}
 	
 	@Override
 	public AttributeHandler getAssociateAtttribute() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.singleSetter.getAssociateAtttribute();
 	}
 	public static void main(String args[])
 	{
@@ -553,7 +540,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -568,7 +554,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -586,7 +571,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -601,7 +585,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -618,7 +601,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -633,7 +615,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 		System.out.println(ces);		
@@ -648,7 +630,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -662,7 +644,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -677,7 +658,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -691,7 +671,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -709,7 +688,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -731,7 +709,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
@@ -747,21 +724,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		try {
 			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		System.out.println(ces);
 		System.out.println();
-
-	
-
-		
 	}
-
-
-
-
-
-
-
 }

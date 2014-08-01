@@ -11,7 +11,7 @@ import saadadb.util.DateUtils;
  * @author pertuy
  * @version $Id$
  */
-public class DictionaryString {
+public class DictionaryStringFunction {
 	
 	public static final String MJD = "MJD";
 	public static final String LOWERCASE="toLower";
