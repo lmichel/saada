@@ -36,7 +36,6 @@ public class ExpressionShaker {
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(path));  
 		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
 		this.fooProduct = new FooProduct(this.jsonAhs, 0);
-		wrapper = new ExpressionWrapper();
 
 	}
 	
@@ -48,8 +47,8 @@ public class ExpressionShaker {
 	 */
 	public void noKeywordTest(String expr) throws Exception
 	{
-		String res=wrapper.evaluate(expr,null);
-		report.add("-NoKeywordTest result : "+res);
+		wrapper=new ExpressionWrapper(expr,null,null);
+		report.add("-NoKeywordTest result : "+wrapper.getStringValue());
 	}
 	
 	/**
@@ -62,9 +61,8 @@ public class ExpressionShaker {
 	 */
 	public String keywordsTest(String expr,List<AttributeHandler> values) throws Exception
 	{
-
-		String res=wrapper.evaluate(expr,values);
-		return res;
+		wrapper=new ExpressionWrapper(expr,values,null);
+		return wrapper.getStringValue();
 	}
 	
 	/**

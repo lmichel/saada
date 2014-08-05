@@ -1,11 +1,13 @@
 package saadadb.products.setter;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.objecthunter.exp4j.function.Function;
 import saadadb.util.RegExp;
 
 /**
@@ -29,7 +31,7 @@ public class StringFunctionExtractor {
 	 * Build a map of functions and replace the functions by a flag in the expression
 	 * @return
 	 */
-	private void extractFunction()
+	private void extractStringFunction()
 	{
 		Matcher matcher;
 		Pattern pattern;
@@ -56,6 +58,8 @@ public class StringFunctionExtractor {
 			}
 		}
 	}
+	
+	
 
 	/**
 	 * Split the functions contained by the StringFunctionMap and stock them in a new Map
@@ -84,7 +88,7 @@ public class StringFunctionExtractor {
 					tempArgs=matcher.group(1);
 
 				//We delete the quotes from the arguments
-				tempArgs=tempArgs.replace("\"","");
+				//tempArgs=tempArgs.replace("\"","");
 
 				//Separate the differents paramater from a same function
 				functionArgs =tempArgs.split("\\s*,\\s*");
@@ -107,7 +111,7 @@ public class StringFunctionExtractor {
 	 */
 	public boolean extractAndSplit()
 	{
-		extractFunction();
+		extractStringFunction();
 		splitFunction();
 		return functionFound;
 	}
