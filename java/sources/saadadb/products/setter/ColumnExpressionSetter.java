@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import net.objecthunter.exp4j.function.Function;
 import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -54,10 +55,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	
 	
 	/**
-	 * Use for the abstract methods from ColumnSetter and when mode=ByValue
+	 * A ColumnSingleSetter used for the abstract methods from ColumnSetter and when mode=ByValue
 	 */
 	private ColumnSingleSetter singleSetter;
 	
+	/**
+	 * The List of all numeric function used in the expression
+	 */
+	private ArrayList<Function> numericFunctionList;
 
 	
 	/**
@@ -99,13 +104,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception
 	{
 		boolean isNewExpression = true;
-
 		if( expression == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		/*
-		 * We treat the String functions
-		 */
+		//We checl if we're in the value or Expression case
 		if(attributes==null || attributes.isEmpty())
 		{
 			this.settingMode=ColumnSetMode.BY_VALUE;
@@ -115,6 +117,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			this.settingMode=ColumnSetMode.BY_EXPRESSION;
 		}
 		
+		/*
+		 * We treat the String functions
+		 */
 		this.checkAndExecStringFunction(attributes);
 
 		if(settingMode==ColumnSetMode.BY_EXPRESSION)
@@ -133,22 +138,24 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			isNewExpression=false;
 		}
 		
+		
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */	
+		ExtractNumericFunction(attributes);
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
 			if(isNewExpression)
 			{
-				wrapper = new ExpressionWrapper(expression, exprAttributes);
+				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
 				lastExpressionEvaluated=expression;
 			}
 			else
 			{
 				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-				wrapper.evaluate(exprAttributes);
+				wrapper.evaluate(exprAttributes,numericFunctionList);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -208,20 +215,20 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
-		
+		ExtractNumericFunction(attributes);
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
 			if(isNewExpression)
 			{
-				wrapper = new ExpressionWrapper(expression, exprAttributes);
+				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
 				lastExpressionEvaluated=expression;
 			}
 			else
 			{
 				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-				wrapper.evaluate(exprAttributes);
+				wrapper.evaluate(exprAttributes,numericFunctionList);
 			}
 			result=wrapper.getStringValue();
 		} catch (Exception e) {
@@ -232,10 +239,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			singleSetter.setValue(result);
 	}
 	
-	
+
 	
 	/**
-	 * Calculate an Expression with no Keywords
+	 * Calculate an Expression with no Keywords (ex : "(5+6+9)/20")
 	 * @param expr The expression to calculate
 	 * @throws Exception 
 	 */
@@ -254,11 +261,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
+		ExtractNumericFunction(null);
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
 		try {
-			wrapper = new ExpressionWrapper(expression, null);
+			wrapper = new ExpressionWrapper(expression, null,numericFunctionList);
 			result=wrapper.getStringValue();
 			singleSetter.setValue(result);
 		} catch (Exception e) {
@@ -266,6 +274,18 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			result=SaadaConstant.STRING;
 		}
 		
+	}
+	
+	/**
+	 * Add all numeric function to the ArrayList and treat the special case of the convert function
+	 * @param attributes 
+	 * @throws Exception
+	 */
+	private void ExtractNumericFunction(Map<String, AttributeHandler> attributes) throws Exception
+	{
+		NumericFunctionExtractor extractor = new NumericFunctionExtractor(expression);
+		numericFunctionList=extractor.extractFunction();
+		expression=extractor.treatConvertFunction(attributes);
 	}
 	
 	/**
@@ -292,13 +312,22 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 					for(int i=0;i<args.length;i++)
 					{
 						args[i]=args[i].trim();
-						for(Entry<String,AttributeHandler> ah : attributes.entrySet())
+						//If between quote, it's not an AH
+						if(!args[i].contains("\""))
 						{
-							if((args[i].equals(ah.getValue().getNameattr())) || (args[i].equals(ah.getValue().getNameorg())))
+							for(Entry<String,AttributeHandler> ah : attributes.entrySet())
 							{
-								args[i]=ah.getValue().getValue();
-								stringFunctionArgumentsList.add(ah.getValue());
+								if((args[i].equals(ah.getValue().getNameattr())) || (args[i].equals(ah.getValue().getNameorg())))
+								{
+									args[i]=ah.getValue().getValue();
+									stringFunctionArgumentsList.add(ah.getValue());
+								}
 							}
+						}
+						else
+						{
+							//we delete the quotes do use the function
+							args[i]=args[i].replace("\"", "");
 						}
 					}
 				}
@@ -307,33 +336,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			}		
 		}
 	}
-	
-	
-//	/**
-//	 * Search the expression for corresponding attributeHandler
-//	 * @param attributes
-//	 * @return
-//	 */
-//	private void buildAttributeList(Map<String,AttributeHandler> attributes)
-//	{
-//		/*
-//		 * We must check the NameAttr and the NameOrg for each AttributeHandler
-//		 */
-//		for(Entry<String,AttributeHandler> e : attributes.entrySet())
-//		{
-//			AttributeHandler temp = e.getValue();
-//			if(expression.contains(temp.getNameattr()) || (expression.contains(temp.getNameorg()) 
-//					&& (temp.getNameorg()!="")))
-//			{
-//				exprAttributes.add(temp);
-//				//if the variable in the expression don't have the good format, we replace it
-//				if(temp.getNameorg()!="")
-//					expression=expression.replace(temp.getNameorg(), temp.getNameattr());
-//			}
-//			
-//		}
-//	}
-	
 	
 	public String toString()
 	{
@@ -694,9 +696,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		System.out.println();
 
 		
-		
-		System.out.println(ces);
-
 
 		System.out.println();
 		mapTest = new TreeMap<String,AttributeHandler>();
@@ -723,6 +722,29 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		System.out.println("Result should be different");
 		try {
 			ces.calculateExpression(expression,mapTest);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		System.out.println(ces);
+		System.out.println();
+		
+		
+		expression="toRadian(180)";
+		System.out.println("Result =3.14...");
+		try {
+			ces.calculateExpression(expression,null);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		System.out.println(ces);
+		System.out.println();
+		
+		mapTest.put("_emax", ah2);
+		mapTest.put("_emin", ah3);
+		expression="toRadian(10) + 10 + convert(6,mm,m)";
+		System.out.println("Result =12.17...");
+		try {
+			ces.calculateExpression(expression);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

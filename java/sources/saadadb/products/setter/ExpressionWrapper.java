@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import net.objecthunter.exp4j.function.Function;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -20,7 +21,8 @@ import saadadb.util.SaadaConstant;
 public class ExpressionWrapper {
 	private String expKey;
 	private String expression;
-	private Expression expressionBuilder;
+	private ExpressionBuilder expressionBuilder;
+	private Expression expr;
 	private List<AttributeHandler> attributeHandlers;
 	private double value = SaadaConstant.DOUBLE;
 	boolean isEvaluated = false;
@@ -33,7 +35,7 @@ public class ExpressionWrapper {
 	 * @return
 	 * @throws FatalException
 	 */
-	public ExpressionWrapper(String expression,List<AttributeHandler> attributeHandlers) throws Exception
+	public ExpressionWrapper(String expression,List<AttributeHandler> attributeHandlers,List<Function> numericFuncList) throws Exception
 	{
 		if(expression==null)
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "expression parameter missing");
@@ -43,7 +45,7 @@ public class ExpressionWrapper {
 			this.attributeHandlers = attributeHandlers;
 			this.expKey = expression.replaceAll("\\s", "");
 			this.expression=expression;
-			this.evaluate(attributeHandlers);
+			this.evaluate(attributeHandlers,numericFuncList);
 		} catch(Exception e ){
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
@@ -71,29 +73,42 @@ public class ExpressionWrapper {
 	/**
 	 * Evaluate an expression with the Attributehandler provided
 	 * Can be use on a wrapper to recalculate the same expression with differents values 
-	 * @param attributeHandlers
+	 * @param numericFuncList : List of custom function to evaluate
+	 * @param attributeHandlers list of variables
 	 * @throws FatalException
 	 */
-	public void evaluate(List<AttributeHandler> attributeHandlers) throws Exception{
+	public void evaluate(List<AttributeHandler> attributeHandlers,List<Function> numericFuncList) throws Exception{
 		if(this.isEvaluated ) {
 			return;
 		}
 		try {
 			this.attributeHandlers = attributeHandlers;
-			if( this.expressionBuilder == null) {
-				this.expressionBuilder = new ExpressionBuilder(this.expression).build();
-				System.out.println("New Expression Builder");
+
+		
+			
+			if( this.expr == null) {
+				expressionBuilder = new ExpressionBuilder(this.expression);	
+				if(numericFuncList!=null && !numericFuncList.isEmpty())
+				{
+					for(Function f:numericFuncList)
+					{
+						expressionBuilder.function(f);
+					}
+				}
+				this.expr = expressionBuilder.build();
 			}
+			
 			if(this.attributeHandlers!=null)
 			{	
 				for(AttributeHandler ah:this.attributeHandlers)
 				{
 					//We check if the variable exist in the expression before any link
 					//if(this.expression.contains(ah.getNameattr()))
-					this.expressionBuilder.variable(ah.getNameattr(), Double.valueOf(ah.getValue()));
+					this.expr.variable(ah.getNameattr(), Double.valueOf(ah.getValue()));
 				}
 			}
-			this.value = this.expressionBuilder.evaluate();	
+			
+			this.value = this.expr.evaluate();	
 		} catch(Exception e ){
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
@@ -120,9 +135,9 @@ public class ExpressionWrapper {
 	 * @return
 	 * @throws FatalException
 	 */
-	public double getValue(List<AttributeHandler> attributeHandlers) throws Exception {
+	public double getValue(List<AttributeHandler> attributeHandlers,List<Function> numericFuncList) throws Exception {
 		this.isEvaluated = false;
-		this.evaluate(attributeHandlers);
+		this.evaluate(attributeHandlers,numericFuncList);
 		return this.value;
 	}
 	/**
@@ -136,8 +151,8 @@ public class ExpressionWrapper {
 	 * @return
 	 * @throws FatalException
 	 */
-	public String getStringValue(List<AttributeHandler> attributeHandlers) throws Exception {
-		return String.valueOf(this.getValue(attributeHandlers));
+	public String getStringValue(List<AttributeHandler> attributeHandlers,List<Function> numericFuncList) throws Exception {
+		return String.valueOf(this.getValue(attributeHandlers,numericFuncList));
 	}
 
 }
