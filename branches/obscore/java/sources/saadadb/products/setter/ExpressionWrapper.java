@@ -20,9 +20,21 @@ import saadadb.util.SaadaConstant;
 
 public class ExpressionWrapper {
 	private String expKey;
+	/**
+	 * The String expression from the ColumnExpressionSetter
+	 */
 	private String expression;
+	/**
+	 * The object creating and exp4j expression
+	 */
 	private ExpressionBuilder expressionBuilder;
-	private Expression expr;
+	/**
+	 * The expj4 object representing an expression
+	 */
+	private Expression exp4jExpression;
+	/**
+	 * The keyword list comming from the ColumnExpressionSetter
+	 */
 	private List<AttributeHandler> attributeHandlers;
 	private double value = SaadaConstant.DOUBLE;
 	boolean isEvaluated = false;
@@ -39,17 +51,17 @@ public class ExpressionWrapper {
 	{
 		if(expression==null)
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "expression parameter missing");
-		try {
+//		try {
 			//		if(variables==null)
 			//			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "variables parameter missing");
 			this.attributeHandlers = attributeHandlers;
 			this.expKey = expression.replaceAll("\\s", "");
 			this.expression=expression;
 			this.evaluate(attributeHandlers,numericFuncList);
-		} catch(Exception e ){
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		} 
+//		} catch(Exception e ){
+//			Messenger.printStackTrace(e);
+//			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+//		} 
 	}
 	/**
 	 * @param expression
@@ -81,12 +93,12 @@ public class ExpressionWrapper {
 		if(this.isEvaluated ) {
 			return;
 		}
-		try {
+//		try {
 			this.attributeHandlers = attributeHandlers;
 
 		
 			
-			if( this.expr == null) {
+			if( this.exp4jExpression == null) {
 				expressionBuilder = new ExpressionBuilder(this.expression);	
 				if(numericFuncList!=null && !numericFuncList.isEmpty())
 				{
@@ -95,7 +107,7 @@ public class ExpressionWrapper {
 						expressionBuilder.function(f);
 					}
 				}
-				this.expr = expressionBuilder.build();
+				this.exp4jExpression = expressionBuilder.build();
 			}
 			
 			if(this.attributeHandlers!=null)
@@ -104,15 +116,15 @@ public class ExpressionWrapper {
 				{
 					//We check if the variable exist in the expression before any link
 					//if(this.expression.contains(ah.getNameattr()))
-					this.expr.variable(ah.getNameattr(), Double.valueOf(ah.getValue()));
+					this.exp4jExpression.variable(ah.getNameattr(), Double.valueOf(ah.getValue()));
 				}
 			}
 			
-			this.value = this.expr.evaluate();	
-		} catch(Exception e ){
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		} 
+			this.value = this.exp4jExpression.evaluate();	
+//		} catch(Exception e ){
+//			Messenger.printStackTrace(e);
+//			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+//		} 
 
 	}
 	

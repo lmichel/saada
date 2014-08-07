@@ -107,7 +107,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		if( expression == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		//We checl if we're in the value or Expression case
+		//We check if we're in the value or Expression case
 		if(attributes==null || attributes.isEmpty())
 		{
 			this.settingMode=ColumnSetMode.BY_VALUE;
@@ -142,7 +142,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */	
-		ExtractNumericFunction(attributes);
+		ExtractNumericFunction();
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
@@ -215,7 +215,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
-		ExtractNumericFunction(attributes);
+		ExtractNumericFunction();
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
@@ -261,31 +261,31 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
-		ExtractNumericFunction(null);
+		ExtractNumericFunction();
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
-		try {
+//		try {
 			wrapper = new ExpressionWrapper(expression, null,numericFunctionList);
 			result=wrapper.getStringValue();
 			singleSetter.setValue(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-			result=SaadaConstant.STRING;
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//
+//			result=SaadaConstant.STRING;
+//		}
 		
 	}
 	
 	/**
 	 * Add all numeric function to the ArrayList and treat the special case of the convert function
-	 * @param attributes 
 	 * @throws Exception
 	 */
-	private void ExtractNumericFunction(Map<String, AttributeHandler> attributes) throws Exception
+	private void ExtractNumericFunction() throws Exception
 	{
 		NumericFunctionExtractor extractor = new NumericFunctionExtractor(expression);
 		numericFunctionList=extractor.extractFunction();
-		expression=extractor.treatConvertFunction(attributes);
+		expression=extractor.treatConvertFunction(exprAttributes);
 	}
 	
 	/**
@@ -343,9 +343,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	}
 	
 	
-	public String getResult()
+	public String getExpressionResult()
 	{
 		return result;
+	}
+	
+	public double getNumExpressionResult()
+	{
+		return Double.valueOf(result);
 	}
 	
 	public String getExpression() {
@@ -729,7 +734,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		System.out.println();
 		
 		
-		expression="toRadian(180)";
+		expression="toRadian(180)+toRadian(90)";
 		System.out.println("Result =3.14...");
 		try {
 			ces.calculateExpression(expression,null);
@@ -741,10 +746,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		
 		mapTest.put("_emax", ah2);
 		mapTest.put("_emin", ah3);
-		expression="toRadian(10) + 10 + convert(6,mm,m)";
+		expression="toRadian(10) + _emax + convert(_emin,mm,m)";
 		System.out.println("Result =12.17...");
 		try {
-			ces.calculateExpression(expression);
+			ces.calculateExpression(expression,mapTest);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}

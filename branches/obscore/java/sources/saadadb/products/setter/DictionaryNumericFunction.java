@@ -54,7 +54,7 @@ public class DictionaryNumericFunction {
 	
 	public static double convert(String value, String oldUnit, String newUnit)
 	{
-		return Double.valueOf(value);
+		return 42;
 	}
 
 }
