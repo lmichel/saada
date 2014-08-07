@@ -51,6 +51,25 @@ public class NumericFunctionTest {
 		
 	}
 	
+	public void tooMuchArgs() throws Exception
+	{
+		wrapper = new ExpressionWrapper("toRadian(5,5)");
+		try {
+			DictionaryNumericFunction.addToFunctionList(DictionaryNumericFunction.TORADIAN, functionList);
+	
+		} catch (Exception e) {
+			log+="tooMuchArgs test failed (Dictionary Exception)\n";
+		}
+		try {
+			wrapper.evaluate(null, functionList);
+		} catch (Exception e) {
+			log+="tooMuchArgs test succeed (wrapper Exception)\n";
+		}
+
+		if(!Double.isNaN(wrapper.getValue()))
+			log+="invalidFunction test failed (Should raise an Exception)\n";
+	}
+	
 	public void severalValidFunction() throws Exception
 	{
 		wrapper = new ExpressionWrapper("(sqrt(4)+10)/pow(2)");
@@ -95,15 +114,25 @@ public class NumericFunctionTest {
 		}
 		if(!Double.isNaN(wrapper.getValue()))
 			log+="invalidFunction test failed (Should raise an Exception)\n";
-		
 
+	}
+	
+	public void convertFunction()
+	{
+		if(DictionaryNumericFunction.convert("5", "plop", "plop")!=42)
+		{
+			log+="Convertion Function test failed \n";
+		}
+		else
+			log+="Convertion Function test succeed\n";
 	}
 	
 	public void testAll() throws Exception
 	{
 		onlyOneValidFunction();
 		severalValidFunction();
-		invalidFunction();
+		convertFunction();
+		tooMuchArgs();
 		System.out.println(log);
 	}
 	

@@ -60,12 +60,12 @@ public class NumericFunctionExtractor {
 	
 	/**
 	 * Treat the conversion Function case
-	 * @param attributes 
+	 * @param exprAttributes 
 	 * @param convert function with its arguments
 	 * @return result of the conversion
 	 * @throws IgnoreException 
 	 */
-	public String treatConvertFunction(Map<String, AttributeHandler> attributes) throws IgnoreException
+	public String treatConvertFunction(List<AttributeHandler> exprAttributes) throws IgnoreException
 	{
 		String function = checkConvertFunction();
 		if(function!=null)
@@ -80,7 +80,6 @@ public class NumericFunctionExtractor {
 			matcher=paramPattern.matcher(function);
 			if(matcher.find())
 				tempArgs=matcher.group(1);
-			System.out.println("TEMP ARGUMENT :"+function);
 
 			//We delete the quotes from the arguments
 			tempArgs=tempArgs.replace("\"","");
@@ -95,14 +94,14 @@ public class NumericFunctionExtractor {
 			}
 			
 			//We check and replace the Ah presents in the function
-			if(attributes!=null && !attributes.isEmpty())
+			if(exprAttributes!=null && !exprAttributes.isEmpty())
 				for (int i=0;i<functionArgs.length;i++)
 				{
-					for(Entry<String,AttributeHandler> e :attributes.entrySet())
+					for(AttributeHandler ah :exprAttributes)
 					{
-						if(functionArgs[i].trim().equals(e.getValue().getNameattr()) || functionArgs[i].trim().equals(e.getValue().getNameorg()))
+						if(functionArgs[i].trim().equals(ah.getNameattr()) || functionArgs[i].trim().equals(ah.getNameorg()))
 						{
-							functionArgs[i]=e.getValue().getValue();
+							functionArgs[i]=ah.getValue();
 						}
 					}
 				}

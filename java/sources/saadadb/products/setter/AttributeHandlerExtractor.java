@@ -53,6 +53,7 @@ public class AttributeHandlerExtractor {
 		while(matcher.find())
 		{
 			extractedString = matcher.group(1).trim();
+			//System.out.println(extractedString);
 			for(Entry<String,AttributeHandler> e:orderedAttributeMap.entrySet())
 			{
 				if((extractedString.equals(e.getValue().getNameattr())) ||(extractedString.equals(e.getValue().getNameorg())))
