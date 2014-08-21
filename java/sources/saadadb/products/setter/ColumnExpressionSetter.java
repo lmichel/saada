@@ -66,25 +66,65 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	
 	/**
-	 * Main constructor
+	 * Constructor without keyword calculating the expression immediatly
 	 * @param expr
-	 * @throws IgnoreException
+	 * @throws Exception 
 	 */
-	public ColumnExpressionSetter(String expr) throws IgnoreException
+	public ColumnExpressionSetter(String expr) throws Exception
 	{
 		super();
-		this.settingMode = ColumnSetMode.BY_EXPRESSION;
+		this.settingMode = ColumnSetMode.NOT_SET;
 		if( expr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		expression=expr;
+		//expression=expr;
 		singleSetter = new ColumnSingleSetter();
+		this.calculateExpression(expr);
 	}
 	
+	/**
+	 * Constructor with only one ah calculating the expression immediatly
+	 * @param attr
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter(AttributeHandler attr) throws Exception
+	{
+		super();
+		this.settingMode = ColumnSetMode.NOT_SET;
+		if( attr == null ){
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+		}
+		//expression=expr;
+		singleSetter = new ColumnSingleSetter();
+		exprAttributes= new ArrayList<AttributeHandler>();
+		this.calculateExpression(attr);
+	}
+	
+	/**
+	 * Constructor with expression and list of ah calculating the expression immediatly
+	 * @param expression
+	 * @param attr
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter(String expression,Map<String,AttributeHandler> attr) throws Exception
+	{
+		super();
+		this.settingMode = ColumnSetMode.NOT_SET;
+		if( attr == null ){
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+		}
+		//expression=expr;
+		singleSetter = new ColumnSingleSetter();
+		this.calculateExpression(expression,attr);
+	} 
+	
+	/**
+	 * Main constructor
+	 */
 	public ColumnExpressionSetter()
 	{
 		super();
-		this.settingMode = ColumnSetMode.BY_EXPRESSION;
+		this.settingMode = ColumnSetMode.NOT_SET;
 		singleSetter = new ColumnSingleSetter();
 	}
 	
@@ -96,6 +136,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	{
 		expression=expr;
 	}
+	
+
+
 	
 	/**
 	 * Calculate the Expression using its stocked value
@@ -179,9 +222,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		if( expr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-
 		expression=expr;
-
 		/*
 		 * We treat the String functions
 		 */
@@ -192,10 +233,8 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		else
 		{
 			this.settingMode=ColumnSetMode.BY_EXPRESSION;
-		}
-		
+		}	
 		this.checkAndExecStringFunction(attributes);
-
 		if(settingMode==ColumnSetMode.BY_EXPRESSION)
 		{
 			/*
@@ -211,10 +250,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		{
 			isNewExpression=false;
 		}
-		
-		/*
-		 *\/!\ WARNING : We must handle the numerics functions here
-		 */
 		ExtractNumericFunction();
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
@@ -265,17 +300,62 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
-//		try {
+		try {
 			wrapper = new ExpressionWrapper(expression, null,numericFunctionList);
 			result=wrapper.getStringValue();
 			singleSetter.setValue(result);
+		} catch (Exception e) {
+		//	e.printStackTrace();
+
+			result=SaadaConstant.STRING;
+		}
+	}
+	
+	
+	/**
+	 * Calculate an Expression composed of one ah only
+	 * @param expr The expression to calculate
+	 * @throws Exception 
+	 */
+	public void calculateExpression(AttributeHandler ah) throws Exception
+	{
+		if( ah == null ){
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+		}
+		this.settingMode=ColumnSetMode.BY_EXPRESSION;
+		expression=ah.getNameattr().toString();
+		//If we only have on AH, we just get his value
+		//System.out.println(ah.getValue());
+		result=ah.getValue();
+//		this.exprAttributes.add(ah);
+//		/*
+//		 * We treat the String functions
+//		 */
+//		this.checkAndExecStringFunction(null);
+//
+//		/*
+//		 *\/!\ WARNING : We must handle the numerics functions here
+//		 */
+//		ExtractNumericFunction();
+//		/*
+//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
+//		 */
+//		try {
+//			wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+//			result=wrapper.getStringValue();
+//			singleSetter.setValue(result);
 //		} catch (Exception e) {
+//			System.out.println(expression);
 //			e.printStackTrace();
 //
-//			result=SaadaConstant.STRING;
+//			//result=SaadaConstant.STRING;
+//			//Dans le cas d'un seul Ah considéré comme une expression, si l'expressionWrapper ne peut pas le calculer on suppose qu'il
+//			//s'agit d'un string et on lui donne la valeur de l'expression.
+//			result=expression;
 //		}
 		
 	}
+	
 	
 	/**
 	 * Add all numeric function to the ArrayList and treat the special case of the convert function
@@ -459,6 +539,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setValue(String value) {
 		this.singleSetter.setValue(value);
+		this.result=value;
 		
 	}
 
@@ -476,12 +557,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public String getValue() {
-		return this.singleSetter.getValue();
+		return this.result;
 	}
 
 	@Override
 	public double getNumValue() {
-		return this.singleSetter.getNumValue();
+		return Double.valueOf(this.result);
 	}
 
 	@Override
