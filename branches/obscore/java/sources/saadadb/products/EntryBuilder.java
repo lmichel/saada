@@ -17,6 +17,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.SQLTable;
@@ -274,7 +275,7 @@ public class EntryBuilder extends ProductBuilder {
 		retour.put("entry.t_exptime", t_exptimeSetter);
 		this.t_exptimeSetter.storedValue = si.t_exptime;
 
-		for( ColumnSingleSetter eah: this.extended_attributesSetter.values()){
+		for( ColumnExpressionSetter eah: this.extended_attributesSetter.values()){
 			retour.put("entry." + eah.getAttNameOrg(), eah);     
 		}
 
