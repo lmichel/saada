@@ -1,17 +1,13 @@
 package saadadb.dataloader;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import com.sun.net.ssl.internal.ssl.Debug;
 
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.ClassifierMode;
-import saadadb.enums.MappingMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
