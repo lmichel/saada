@@ -8,6 +8,10 @@ import saadadb.products.setter.numericFunctions.NumPowerByTwo;
 import saadadb.products.setter.numericFunctions.NumSqrt;
 import saadadb.products.setter.numericFunctions.ToRadian;
 
+/**
+ * @author pertuy
+ * @version $Id$
+ */
 public class DictionaryNumericFunction {
 	public static final String TORADIAN="toRadian";
 	public static final String SQRT="sqrt";
@@ -52,9 +56,14 @@ public class DictionaryNumericFunction {
 	}
 	
 	
-	public static double convert(String value, String oldUnit, String newUnit)
+	public static String convert(String value, String oldUnit, String newUnit)
 	{
-		return 42;
+		return value+"*10";
 	}
+	
+//	public static String convert(String value,String newUnit)
+//	{
+//		return value+"*5";
+//	}
 
 }
