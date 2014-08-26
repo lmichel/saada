@@ -25,6 +25,10 @@ public enum MappingMode {
 	/**
 	 * There is no mapping
 	 */
-	NOMAPPING
+	NOMAPPING,
+	/**
+	 * the mapping rule returns an expression which must be calculate
+	 */
+	EXPRESSION
 
 }
