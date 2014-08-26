@@ -6,7 +6,7 @@ import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -20,12 +20,12 @@ import saadadb.util.SaadaConstant;
  */
 public class WCSModel {
 	private Map<String, AttributeHandler> attributesList;
-	private ColumnSingleSetter[] CRPIX;
-	private ColumnSingleSetter[] CRVAL;
-	private ColumnSingleSetter[] CDELT;
-	private ColumnSingleSetter[] CTYPE;
-	private ColumnSingleSetter[] CUNIT;
-	private ColumnSingleSetter[] CD;
+	private ColumnExpressionSetter[] CRPIX;
+	private ColumnExpressionSetter[] CRVAL;
+	private ColumnExpressionSetter[] CDELT;
+	private ColumnExpressionSetter[] CTYPE;
+	private ColumnExpressionSetter[] CUNIT;
+	private ColumnExpressionSetter[] CD;
 	private int[] NAXISi;
 	private double[] matrix;
 	private int NAXIS;
@@ -62,51 +62,56 @@ public class WCSModel {
 
 			if( (ah = this.attributesList.get("_cunit" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
-				this.CUNIT[axe] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);
+				//this.CUNIT[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
+				this.CUNIT[axe] = new ColumnExpressionSetter(ah);
+
 			} else {
 				//kwset_ok = false;
-				this.CUNIT[axe] = new ColumnSingleSetter();
+				this.CUNIT[axe] = new ColumnExpressionSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CUNIT" + axe_num + " or TCUNI" + axe_num + " (look in comment later)");
 			}
 
 			if( (ah = this.attributesList.get("_ctype" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
-				this.CTYPE[axe] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);;
+				//this.CTYPE[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
+				this.CTYPE[axe] = new ColumnExpressionSetter(ah);
 			} else {
 				//kwset_ok = false;
-				this.CTYPE[axe] = new ColumnSingleSetter();
+				this.CTYPE[axe] = new ColumnExpressionSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CTYPE" + axe_num + " or TCTYP" + axe_num);
 			}
 
 			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
-				this.CRVAL[axe] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);;
+				//this.CRVAL[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
+				this.CRVAL[axe] = new ColumnExpressionSetter(ah);;
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnSingleSetter cd = new ColumnSingleSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter();
 				cd.setByValue("0",false);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRVAL = 0");
 				this.CRVAL[axe] = cd;
 			} else{
 				kwset_ok = false;
-				this.CRVAL[axe] = new ColumnSingleSetter();
+				this.CRVAL[axe] = new ColumnExpressionSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRVAL" + axe_num  + " or TCRVL" + axe_num);
 			}
 
 			if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
-				this.CRPIX[axe] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);;
+				//this.CRPIX[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
+				this.CRPIX[axe] = new ColumnExpressionSetter(ah);
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnSingleSetter cd = new ColumnSingleSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter();
 				cd.setByValue("1",false);
 				this.CRPIX[axe] = cd;
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRPIX = 1");
 			} else{
 				kwset_ok = false;
-				this.CRPIX[axe] = new ColumnSingleSetter();
+				this.CRPIX[axe] = new ColumnExpressionSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRPIX" + axe_num );
 			}
@@ -114,16 +119,18 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_cdelt" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
 
-				this.CDELT[axe] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);;
+				//this.CDELT[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
+				this.CDELT[axe] = new ColumnExpressionSetter(ah);
+
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnSingleSetter cd = new ColumnSingleSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter();
 				cd.setByValue("1",false);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CDELT = 1");
 				this.CDELT[axe] = cd;
 			} else {
 				kwset_ok = false;
-				this.CDELT[axe] = new ColumnSingleSetter();
+				this.CDELT[axe] = new ColumnExpressionSetter();
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CDELT" + axe_num  + " or TCDLT" + axe_num );
 			}
@@ -132,7 +139,9 @@ public class WCSModel {
 				int axe2_num = axe2+1;
 				if( (ah = this.attributesList.get("_pc" + axe_num + "_" + axe2_num)) != null || 
 						(ah = this.attributesList.get("_cd" + axe_num + "_" + axe2_num)) != null ) {
-					this.CD[(NAXIS*axe) + axe2] = new ColumnSingleSetter(ah, ColumnSetMode.BY_WCS);
+					//this.CD[(NAXIS*axe) + axe2] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
+					this.CD[(NAXIS*axe) + axe2] = new ColumnExpressionSetter(ah);
+
 
 				}else{
 					this.CD[(NAXIS*axe) + axe2].setNotSet();
@@ -144,7 +153,7 @@ public class WCSModel {
 			for( int axe2=0 ; axe2<NAXIS ; axe2++ ) {
 				String u = this.watInfos.getUnit(axe2);
 				if( u.length() > 0 ) {
-					this.CUNIT[axe2] = new ColumnSingleSetter();
+					this.CUNIT[axe2] = new ColumnExpressionSetter();
 					this.CUNIT[axe2].setByValue(u, false);
 					this.CUNIT[axe2].completeMessage("Read in WAT keywords");
 				}
@@ -170,12 +179,12 @@ public class WCSModel {
 	 */
 	private void initArrays() {
 
-		this.CRPIX   = new ColumnSingleSetter[NAXIS];
-		this.CRVAL   = new ColumnSingleSetter[NAXIS];
-		this.CDELT   = new ColumnSingleSetter[NAXIS];
-		this.CTYPE   = new ColumnSingleSetter[NAXIS];
-		this.CUNIT   = new ColumnSingleSetter[NAXIS];
-		this.CD      = new ColumnSingleSetter[NAXIS*NAXIS];
+		this.CRPIX   = new ColumnExpressionSetter[NAXIS];
+		this.CRVAL   = new ColumnExpressionSetter[NAXIS];
+		this.CDELT   = new ColumnExpressionSetter[NAXIS];
+		this.CTYPE   = new ColumnExpressionSetter[NAXIS];
+		this.CUNIT   = new ColumnExpressionSetter[NAXIS];
+		this.CD      = new ColumnExpressionSetter[NAXIS*NAXIS];
 		this.NAXISi  = new int[NAXIS];
 		this.matrix  = new double[NAXIS*NAXIS];
 		for( int i=0 ; i< NAXIS ; i++ ){
@@ -187,7 +196,7 @@ public class WCSModel {
 			this.NAXISi[i]  =  SaadaConstant.INT;
 		}
 		for( int i=0 ; i< (NAXIS*NAXIS) ; i++ ){
-			this.CD[i] = new ColumnSingleSetter();
+			this.CD[i] = new ColumnExpressionSetter();
 			this.matrix[i] = SaadaConstant.DOUBLE;
 		}
 
@@ -278,7 +287,7 @@ public class WCSModel {
 	 * @param d
 	 * @throws Exception
 	 */
-	private void setMatrix(int ligne, int col, ColumnSingleSetter d) throws Exception {
+	private void setMatrix(int ligne, int col, ColumnExpressionSetter d) throws Exception {
 		this.matrix[(this.NAXIS*ligne) + col] = Double.parseDouble(d.getValue());
 
 	}
@@ -298,7 +307,7 @@ public class WCSModel {
 	 * @return
 	 * @throws Exception
 	 */
-	private static boolean hasNotSetElements(ColumnSingleSetter[] array) throws Exception {
+	private static boolean hasNotSetElements(ColumnExpressionSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
 			if( array[axe].notSet()) {
 				return true;
@@ -311,7 +320,7 @@ public class WCSModel {
 	 * @return
 	 * @throws Exception
 	 */
-	private static boolean hasSetElements(ColumnSingleSetter[] array) throws Exception {
+	private static boolean hasSetElements(ColumnExpressionSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
 			if( !array[axe].notSet() ) {
 				return true;
@@ -363,7 +372,7 @@ public class WCSModel {
 	 * @return the pC
 	 * @throws Exception
 	 */
-	public ColumnSingleSetter getCD(int i, int j) throws Exception {
+	public ColumnExpressionSetter getCD(int i, int j) throws Exception {
 		return CD[(NAXIS*i) + j];
 	}
 
@@ -700,13 +709,13 @@ public class WCSModel {
 	/*
 	 * Getters for the center of the real world coordinates 
 	 */
-	public ColumnSingleSetter[] getGlonlatCenter() {
+	public ColumnExpressionSetter[] getGlonlatCenter() {
 		return getCenterCoords("GLON", "GLAT");
 	}
-	public ColumnSingleSetter[] getElonlatCenter() {
+	public ColumnExpressionSetter[] getElonlatCenter() {
 		return getCenterCoords("ELON", "ELAT");
 	}
-	public ColumnSingleSetter[] getRadecCenter() {
+	public ColumnExpressionSetter[] getRadecCenter() {
 		return getCenterCoords("RA", "DEC");
 	}
 	/**
@@ -715,8 +724,8 @@ public class WCSModel {
 	 * @param decPrefix prefix CTYP of the declination axis
 	 * @return
 	 */
-	private ColumnSingleSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
-		ColumnSingleSetter asc=new ColumnSingleSetter(), dec=new ColumnSingleSetter();
+	private ColumnExpressionSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
+		ColumnExpressionSetter asc=new ColumnExpressionSetter(), dec=new ColumnExpressionSetter();
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
@@ -735,18 +744,18 @@ public class WCSModel {
 				}
 			}
 		}		
-		return new ColumnSingleSetter[]{ asc, dec};
+		return new ColumnExpressionSetter[]{ asc, dec};
 	}
 	/*
 	 * Getters for the resultion
 	 */
-	public ColumnSingleSetter getGlonlatResolution() {
+	public ColumnExpressionSetter getGlonlatResolution() {
 		return getResolution("GLON", "GLAT");
 	}
-	public ColumnSingleSetter getElonlatResolution() {
+	public ColumnExpressionSetter getElonlatResolution() {
 		return getResolution("ELON", "ELAT");
 	}
-	public ColumnSingleSetter getRadecResolution() {
+	public ColumnExpressionSetter getRadecResolution() {
 		return getResolution("RA", "DEC");
 	}
 
@@ -757,9 +766,9 @@ public class WCSModel {
 	 * @param decPrefix decPrefix prefix CTYP of the declination axis
 	 * @return
 	 */
-	private ColumnSingleSetter getResolution(String ascPrefix, String decPrefix) {
+	private ColumnExpressionSetter getResolution(String ascPrefix, String decPrefix) {
 		double r1 = SaadaConstant.DOUBLE, r2 = SaadaConstant.DOUBLE;
-		ColumnSingleSetter retour = new ColumnSingleSetter();
+		ColumnExpressionSetter retour = new ColumnExpressionSetter();
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
@@ -787,22 +796,22 @@ public class WCSModel {
 	/*
 	 * Getters for the range of the real world coordinates 
 	 */
-	public ColumnSingleSetter[] getRaRange() {
+	public ColumnExpressionSetter[] getRaRange() {
 		return getPixelRange("RA");
 	}
-	public ColumnSingleSetter[] getDecRange() {
+	public ColumnExpressionSetter[] getDecRange() {
 		return getPixelRange("DEC");
 	}
-	public ColumnSingleSetter[] getGlonRange() {
+	public ColumnExpressionSetter[] getGlonRange() {
 		return getPixelRange("GLON");
 	}
-	public ColumnSingleSetter[] getGlatRange() {
+	public ColumnExpressionSetter[] getGlatRange() {
 		return getPixelRange("GLAT");
 	}
-	public ColumnSingleSetter[] getElonRange() {
+	public ColumnExpressionSetter[] getElonRange() {
 		return getPixelRange("ELON");
 	}
-	public ColumnSingleSetter[] getElatRange() {
+	public ColumnExpressionSetter[] getElatRange() {
 		return getPixelRange("ELAT");
 	}
 	/**
@@ -810,8 +819,8 @@ public class WCSModel {
 	 * @param ctypePrefix
 	 * @return
 	 */
-	private ColumnSingleSetter[] getPixelRange(String ctypePrefix){
-		ColumnSingleSetter[] retour = new ColumnSingleSetter[]{new ColumnSingleSetter(), new ColumnSingleSetter()};;
+	private ColumnExpressionSetter[] getPixelRange(String ctypePrefix){
+		ColumnExpressionSetter[] retour = new ColumnExpressionSetter[]{new ColumnExpressionSetter(), new ColumnExpressionSetter()};;
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ctypePrefix) ) {
 				try {
