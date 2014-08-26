@@ -53,23 +53,23 @@ public class DictionaryStringFunction {
 		 */
 		switch(function){
 		case MJD:
-			if(functionArgs.length>1)
-				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Too many arguments");
+			if(functionArgs.length!=1)
+				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 1 parameter");
 			result=MJD(functionArgs[0]);
 			break;
 		case SUBSTRING:
 			if(functionArgs.length!=3)
-				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter argument");
+				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 3 parameter");
 			result = SUBSTRING(functionArgs[0],Integer.parseInt(functionArgs[1]), Integer.parseInt(functionArgs[2]));
 			break;
 		case LOWERCASE:
-			if(functionArgs.length>1)
-				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Too many arguments");
+			if(functionArgs.length!=1)
+				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 1 parameter");
 			result=functionArgs[0].toLowerCase();
 			break;
 		default:
 			//If we reach this point, we didn't find any corresponding function
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "No function found");
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, function + ": unknown function");
 		}
 
 		return result;

@@ -2,17 +2,15 @@ package saadadb.products.setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.objecthunter.exp4j.function.Function;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.RegExp;
-import net.objecthunter.exp4j.function.Function;
 
 /**
  * This class is used to get the numeric Functions used by exp4j
@@ -33,7 +31,7 @@ public class NumericFunctionExtractor {
 	 * @return a list of numeric functions
 	 * @throws Exception
 	 */
-	public ArrayList<Function> extractFunction() throws Exception
+	public ArrayList<Function> extractFunctions() throws Exception
 	{
 		Matcher matcher;
 		Pattern pattern;
@@ -67,7 +65,8 @@ public class NumericFunctionExtractor {
 	 */
 	public String treatConvertFunction(List<AttributeHandler> exprAttributes) throws IgnoreException
 	{
-		String function = checkConvertFunction();
+		AttributeHandler ahToConvert = null;
+		String function = this.checkConvertFunction();
 		if(function!=null)
 		{
 			//This regex allow us to get the params from the functions
@@ -88,9 +87,9 @@ public class NumericFunctionExtractor {
 			functionArgs =tempArgs.split("\\s*,\\s*");
 
 
-			if(functionArgs.length!=3)
+			if(functionArgs.length>3 && functionArgs.length<2)
 			{
-				IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Convert function must have 3 arguments");
+				IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Convert function must have 2 or 3 arguments");
 			}
 			
 			//We check and replace the Ah presents in the function
@@ -101,11 +100,25 @@ public class NumericFunctionExtractor {
 					{
 						if(functionArgs[i].trim().equals(ah.getNameattr()) || functionArgs[i].trim().equals(ah.getNameorg()))
 						{
-							functionArgs[i]=ah.getValue();
+							functionArgs[i]=ah.getNameattr();//getValue();
+							ahToConvert=ah;
+							break;
 						}
 					}
+					//There is only one Ah to detect in the convert function
+					if(ahToConvert!=null)
+						break;
 				}
-			String result=Double.toString(DictionaryNumericFunction.convert(functionArgs[0], functionArgs[1], functionArgs[2]));
+			String result="";
+			if(functionArgs.length==3)
+				 result=DictionaryNumericFunction.convert(functionArgs[0], functionArgs[1], functionArgs[2]);//Double.toString(DictionaryNumericFunction.convert(functionArgs[0], functionArgs[1], functionArgs[2]));
+			else
+			{
+				if((ahToConvert.getUnit()!=null) && (!ahToConvert.getUnit().isEmpty()))
+					 result=DictionaryNumericFunction.convert(functionArgs[0], ahToConvert.getUnit(), functionArgs[1]);
+				else
+					IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "The keyword ("+ ahToConvert.getNameattr()+") to convert have no defined unit");
+			}
 			expression=expression.replace(function, result);
 		}
 		return expression;
