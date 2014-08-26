@@ -210,7 +210,8 @@ public class ColumnExpressionTest {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			success=true;
-			log+="Test succeed\n";	
+			log+="Test succeed "+e.getMessage()+"\n";	
+			
 		}
 		if(!success)
 			log+="Test failed : No exception\n";
@@ -346,7 +347,7 @@ public class ColumnExpressionTest {
 	 */
 	private void numericFunctionWithVariableArgs()
 	{
-		log+="\nTest : Expression with String functions using VARIABLES arguments\n";
+		log+="\nTest : Expression with Numeric functions using VARIABLES arguments\n";
 
 
 		AttributeHandler ah5 = new AttributeHandler();
@@ -383,21 +384,30 @@ public class ColumnExpressionTest {
 	 */
 	private void convertFunction()
 	{
+
 		log+="\nTest : Expression using the convert function\n";
+		AttributeHandler ah5 = new AttributeHandler();
+		ah5.setNameattr("_emin59");
+		ah5.setValue("5");
+		ah5.setUnit("km");
+		mapTest.clear();
+		mapTest.put("_emin59", ah5);
+
 		boolean success=true;
 		try {
-			testColumnSetterWith("convert(5,mm,nn)",null);
+			testColumnSetterWith("convert(_emin59,mm)",mapTest);
+			//System.out.println(ces);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			log+="ERROR : Exception\n";
 		}
-		if(ces.getNumExpressionResult()!=42)
+		if(ces.getNumExpressionResult()!=50)
 		{
 			log+="ERROR : Wrong Result\n";
 			success=false;
 		}
 	
-		if(ces.getSettingMode()!=ColumnSetMode.BY_VALUE)
+		if(ces.getSettingMode()!=ColumnSetMode.BY_EXPRESSION)
 		{
 			log+="ERROR : Wrong ColumnMode. The ColumnMode should be By_Value and is"+ces.getSettingMode()+"\n";
 			success=false;
