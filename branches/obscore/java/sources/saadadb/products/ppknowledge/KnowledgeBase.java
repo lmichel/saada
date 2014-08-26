@@ -1,6 +1,5 @@
 package saadadb.products.ppknowledge;
 
-import java.lang.reflect.Constructor;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -11,8 +10,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.Messenger;
-import java.lang.reflect.Type;
-import static java.lang.System.out;
 
 
 /**

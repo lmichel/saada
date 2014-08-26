@@ -4,7 +4,7 @@ import java.util.Map;
 
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -22,32 +22,32 @@ public class Grenoble extends PipelineParser {
 	}
 
 	@Override
-	public ColumnSingleSetter getTargetName() throws SaadaException {
+	public ColumnExpressionSetter getTargetName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getTargetName: read knowledge base");
 		return this.getColmumnSetter("OBJECT");
 	}
 	@Override
-	public ColumnSingleSetter getFacilityName() throws SaadaException {
+	public ColumnExpressionSetter getFacilityName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getFacilityName: read knowledge base");
 		return this.getColmumnSetter("TELESCOP");
 	}
 	@Override
-	public ColumnSingleSetter getInstrumentName() throws SaadaException {
+	public ColumnExpressionSetter getInstrumentName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getInstrumentName: read knowledge base");
 		return this.getColmumnSetter("TELESCOP");
 	}
 
 	@Override
-	public ColumnSingleSetter getEMin() throws SaadaException {
+	public ColumnExpressionSetter getEMin() throws Exception {
 		double retour = SaadaConstant.DOUBLE;
 		try { 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getEMin: read knowledge base");
 			retour = getValue("RESTFREQ") + getValue("CRVAL1") + (0 - getValue("CRPIX1"))*getValue("CDELT1");
-			ColumnSingleSetter cs = new ColumnSingleSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter();
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base");
@@ -55,17 +55,17 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnSingleSetter(e.getMessage());
+			return  new ColumnExpressionSetter(e.getMessage());
 		}
 	}
 	@Override
-	public ColumnSingleSetter getEMax() throws SaadaException {
+	public ColumnExpressionSetter getEMax() throws Exception {
 		double retour = SaadaConstant.DOUBLE;
 		try { 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getEMax: read knowledge base");
 			retour = getValue("RESTFREQ") + getValue("CRVAL1") + (getValue("NAXIS1") - getValue("CRPIX1"))*getValue("CDELT1");
-			ColumnSingleSetter cs = new ColumnSingleSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter();
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base");
@@ -73,17 +73,19 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnSingleSetter(e.getMessage());
+			return  new ColumnExpressionSetter(e.getMessage());
 		}
 	}
 	@Override
-	public ColumnSingleSetter getEUnit() throws SaadaException {
+	public ColumnExpressionSetter getEUnit() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getEUnit: read knowledge base");
-		return new ColumnSingleSetter("Hz", false, "Issued from the knowledge base");
+		//return new ColumnExpressionSetter("Hz", false, "Issued from the knowledge base");
+		return new ColumnExpressionSetter("Hz");
+
 	}
 	@Override
-	public ColumnSingleSetter getResPower() throws SaadaException {
+	public ColumnExpressionSetter getResPower() throws Exception {
 		double retour = SaadaConstant.DOUBLE;
 		try { 			
 			if (Messenger.debug_mode)
@@ -92,7 +94,7 @@ public class Grenoble extends PipelineParser {
 			retour += getValue("RESTFREQ") + getValue("CRVAL1") + (0 - getValue("CRPIX1"))*getValue("CDELT1");
 			retour /= 2*getValue("CDELT1");
 			retour = Math.abs(retour);
-			ColumnSingleSetter cs = new ColumnSingleSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter();
 			cs.setUnit("");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base F/CDELT");
@@ -100,7 +102,7 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnSingleSetter(e.getMessage());
+			return  new ColumnExpressionSetter(e.getMessage());
 		}
 	}
 
@@ -108,16 +110,16 @@ public class Grenoble extends PipelineParser {
 	 * @see saadadb.products.ppknowledge.PipelineParser#getTMin()
 	 */
 	@Override
-	public ColumnSingleSetter getTMin() throws SaadaException {
+	public ColumnExpressionSetter getTMin() throws Exception {
 		try { 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
-			ColumnSingleSetter cs = new ColumnSingleSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter();
 			cs.setByWCS(getStringValue("DATE-OBS"), false);
 			cs.completeMessage("Issued from the knowledge base");
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnSingleSetter(e.getMessage());
+			return  new ColumnExpressionSetter(e.getMessage());
 		}
 	}
 	
@@ -125,10 +127,10 @@ public class Grenoble extends PipelineParser {
 	 * @see saadadb.products.ppknowledge.PipelineParser#getUnitName()
 	 */
 	@Override
-	public ColumnSingleSetter getUnitName() throws SaadaException {
+	public ColumnExpressionSetter getUnitName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
-		ColumnSingleSetter cs = new ColumnSingleSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter();
 		cs.setByValue("count", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;
@@ -137,10 +139,10 @@ public class Grenoble extends PipelineParser {
 	 * @see saadadb.products.ppknowledge.PipelineParser#getUcdName()
 	 */
 	@Override
-	public ColumnSingleSetter getUcdName() throws SaadaException {
+	public ColumnExpressionSetter getUcdName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
-		ColumnSingleSetter cs = new ColumnSingleSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter();
 		cs.setByValue("phot.count", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;
@@ -149,10 +151,10 @@ public class Grenoble extends PipelineParser {
 	 * @see saadadb.products.ppknowledge.PipelineParser#getCalibStatus()
 	 */
 	@Override
-	public ColumnSingleSetter getCalibStatus() throws SaadaException {
+	public ColumnExpressionSetter getCalibStatus() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getCalibStatus: read knowledge base");
-		ColumnSingleSetter cs = new ColumnSingleSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter();
 		cs.setByValue("2", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;
