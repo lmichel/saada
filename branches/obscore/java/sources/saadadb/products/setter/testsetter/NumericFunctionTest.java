@@ -117,23 +117,32 @@ public class NumericFunctionTest {
 
 	}
 	
-	public void convertFunction()
-	{
-		if(DictionaryNumericFunction.convert("5", "plop", "plop")!=42)
-		{
-			log+="Convertion Function test failed \n";
-		}
-		else
-			log+="Convertion Function test succeed\n";
-	}
+//	public void convertFunction()
+//	{
+//		if(DictionaryNumericFunction.convert("5", "plop", "plop")!=42)
+//		{
+//			log+="Convertion Function test failed \n";
+//		}
+//		else
+//			log+="Convertion Function test succeed\n";
+//	}
 	
 	public void testAll() throws Exception
 	{
+		try {
 		onlyOneValidFunction();
+		} catch(Exception e){e.printStackTrace();}
+		try {
 		severalValidFunction();
-		convertFunction();
+		} catch(Exception e){e.printStackTrace();}
+		try {
+//		convertFunction();
 		tooMuchArgs();
-		System.out.println(log);
+		} catch(Exception e){e.printStackTrace();}
+		try {
+			invalidFunction();
+			} catch(Exception e){e.printStackTrace();}
+			System.out.println(log);
 	}
 	
 	public static void main(String args[])
