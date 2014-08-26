@@ -5,7 +5,7 @@ import java.util.Map;
 
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -20,22 +20,22 @@ public class ObservationKWDetector extends KWDetector {
 		super(tableAttributeHandler, entryAttributeHandler);
 	}
 	
-	public ColumnSingleSetter getCollectionName() throws FatalException{
+	public ColumnExpressionSetter getCollectionName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for an obs_collection");
 		return this.search(RegExp.COLLNAME_UCD, RegExp.COLLNAME_KW);
 	}
-	public ColumnSingleSetter getTargetName() throws FatalException{
+	public ColumnExpressionSetter getTargetName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for a target_name");
 		return this.search(RegExp.TARGET_UCD, RegExp.TARGET_KW);
 	}
-	public ColumnSingleSetter getFacilityName() throws FatalException{
+	public ColumnExpressionSetter getFacilityName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for a facility_name");
 		return this.search(RegExp.FACILITY_UCD, RegExp.FACILITY_KW);
 	}
-	public ColumnSingleSetter getInstrumentName() throws FatalException{
+	public ColumnExpressionSetter getInstrumentName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for an instrument_name");
 		return this.search(RegExp.INSTRUMENT_UCD, RegExp.INSTRUMENT_KW);

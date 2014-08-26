@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 
@@ -22,9 +22,9 @@ public class ObservableKWDetector extends KWDetector {
 	/**
 	 * Quantities are bound each to other. they are set together and returned by accessors
 	 */
-	private ColumnSingleSetter ucd=new ColumnSingleSetter();
-	private ColumnSingleSetter unit=new ColumnSingleSetter();
-	private ColumnSingleSetter calib=new ColumnSingleSetter();;
+	private ColumnExpressionSetter ucd=new ColumnExpressionSetter();
+	private ColumnExpressionSetter unit=new ColumnExpressionSetter();
+	private ColumnExpressionSetter calib=new ColumnExpressionSetter();;
 	private boolean commentSearched = false;
 	private boolean keywordsSearched = false;
 	private boolean columnsSearched = false;
@@ -41,9 +41,9 @@ public class ObservableKWDetector extends KWDetector {
 	
 	/**
 	 * DO a global search in metatdata: first in keyword a,d then in infos and comments
-	 * @throws FatalException
+	 * @throws Exception 
 	 */
-	private void search() throws FatalException {
+	private void search() throws Exception {
 		this.searchInkeywords();
 		if( this.unit.notSet()){
 			this.searchInComments();
@@ -54,17 +54,17 @@ public class ObservableKWDetector extends KWDetector {
 	}
 
 	/**
-	 * @throws FatalException 
+	 * @throws Exception 
 	 * 
 	 */
-	private void searchInColumns() throws FatalException {
+	private void searchInColumns() throws Exception {
 		if( this.columnsSearched ){
 			return;
 		}
 		this.columnsSearched = true;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the column names");
 		if( this.entryAttributeHandler != null ){
-			ColumnSingleSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
+			ColumnExpressionSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
 			if( !ah.notSet()  ){
 				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
 					this.unit.setByTableColumn(ah.getUnit(), false);
@@ -140,10 +140,10 @@ public class ObservableKWDetector extends KWDetector {
 		}		
 	}
 	/**
-	 * @throws FatalException 
+	 * @throws Exception 
 	 * 
 	 */
-	private void searchInkeywords() throws FatalException {
+	private void searchInkeywords() throws Exception {
 		if( this.keywordsSearched ){
 			return;
 		}
@@ -175,9 +175,9 @@ public class ObservableKWDetector extends KWDetector {
 
 	/**
 	 * @return
-	 * @throws FatalException
+	 * @throws Exception 
 	 */
-	public ColumnSingleSetter getUcdName() throws FatalException{
+	public ColumnExpressionSetter getUcdName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
 		this.search() ;
@@ -186,15 +186,15 @@ public class ObservableKWDetector extends KWDetector {
 
 	/**
 	 * @return
-	 * @throws FatalException
+	 * @throws Exception 
 	 */
-	public ColumnSingleSetter getUnitName() throws FatalException{
+	public ColumnExpressionSetter getUnitName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
 		this.search() ;
 		return this.unit;
 	}
-	public ColumnSingleSetter getCalibStatus() throws FatalException{
+	public ColumnExpressionSetter getCalibStatus() throws Exception{
 		//		Level 0: Raw instrumental data, in a proprietary or internal data-provider defined format, that needs instrument specific tools to be handled.
 		//		Level 1: Instrumental data in a standard format (FITS, VOTable, SDFITS, ASDM, etc.) which could be manipulated with standard astronomical packages.
 		//		Level 2: Calibrated, science ready data with the instrument signature removed.
