@@ -67,7 +67,7 @@ public class StringFunctionTest {
 	{
 		String result=null;
 
-		funcName="imInvalid";
+		funcName="MJD";
 		args =null;
 		try {
 			result=DictionaryStringFunction.exec(funcName, args);

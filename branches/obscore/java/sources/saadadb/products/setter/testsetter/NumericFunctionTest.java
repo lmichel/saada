@@ -6,6 +6,11 @@ import net.objecthunter.exp4j.function.Function;
 import saadadb.products.setter.DictionaryNumericFunction;
 import saadadb.products.setter.ExpressionWrapper;
 
+/**
+ * Testing class for the numerics function
+ * @author pertuy
+ * @version $Id$
+ */
 public class NumericFunctionTest {
 	private String expression;
 	private ExpressionWrapper wrapper;
@@ -26,6 +31,10 @@ public class NumericFunctionTest {
 
 	}
 	
+	/**
+	 * Test one valid function
+	 * @throws Exception
+	 */
 	public void onlyOneValidFunction() throws Exception
 	{
 		wrapper = new ExpressionWrapper("sqrt(4)");
@@ -51,6 +60,11 @@ public class NumericFunctionTest {
 		
 	}
 	
+	
+	/**
+	 * Test a function with too much arguments
+	 * @throws Exception
+	 */
 	public void tooMuchArgs() throws Exception
 	{
 		wrapper = new ExpressionWrapper("toRadian(5,5)");
@@ -70,6 +84,11 @@ public class NumericFunctionTest {
 			log+="invalidFunction test failed (Should raise an Exception)\n";
 	}
 	
+	
+	/**
+	 * Test an expression with several valid functions
+	 * @throws Exception
+	 */
 	public void severalValidFunction() throws Exception
 	{
 		wrapper = new ExpressionWrapper("(sqrt(4)+10)/pow(2)");
@@ -97,7 +116,10 @@ public class NumericFunctionTest {
 		
 	}
 	
-	
+	/**
+	 * Test an expression with an invalid function
+	 * @throws Exception
+	 */
 	public void invalidFunction() throws Exception
 	{
 		wrapper = new ExpressionWrapper("(sqru(4)+10)/poe(2)");
@@ -127,6 +149,10 @@ public class NumericFunctionTest {
 //			log+="Convertion Function test succeed\n";
 //	}
 	
+	/**
+	 * Test all the functions
+	 * @throws Exception
+	 */
 	public void testAll() throws Exception
 	{
 		try {

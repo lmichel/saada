@@ -110,7 +110,7 @@ public class ColumnExpressionTest {
 		log+="\nTest : Expression with CONSTANT Operation\n";
 		boolean success=true;
 		try {
-			testColumnSetterWith("6*7",null);
+			testColumnSetterWith("'6'*'7'",null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			log+="ERROR : Exception\n";
@@ -241,7 +241,7 @@ public class ColumnExpressionTest {
 		log+="\nTest : Expression with String functions using CONSTANT arguments\n";
 		boolean success=true;
 		try {
-			testColumnSetterWith("MJD(11/22/1858) - MJD(11/19/1858)",null);
+			testColumnSetterWith("MJD(\"11/22/1858\") - MJD(\"11/19/1858\")",null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			log+="ERROR : Exception\n";
