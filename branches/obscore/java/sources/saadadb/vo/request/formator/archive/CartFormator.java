@@ -315,7 +315,7 @@ public class CartFormator  extends QueryResultFormator{
 	 */
 	private void addAllLinkedData(String node, SaadaInstance si)  throws Exception{
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Add linked data for oid " + si.getObs_id());
+			Messenger.printMsg(Messenger.DEBUG, "Add linked data for oid " + si.obs_id);
 		String[] relations = si.getSaadaClass().getStartingRelationNames();
 		for( String  rel: relations) {
 			this.addLinkedData(node, si, rel);
