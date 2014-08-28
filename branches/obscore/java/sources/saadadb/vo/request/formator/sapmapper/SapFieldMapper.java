@@ -211,7 +211,7 @@ public class SapFieldMapper {
 			} else if( fieldIdentifier.equals("DataID.Title") || fieldIdentifier.equalsIgnoreCase("VOX:Image_Title") 
 					|| fieldIdentifier.equalsIgnoreCase("meta.title")) {
 				value.isCdata = true;
-				value.fieldValue = instance.getObs_id();
+				value.fieldValue = instance.obs_id;
 			} else if( fieldIdentifier.equalsIgnoreCase("POS_EQ_RA_MAIN") || fieldIdentifier.equalsIgnoreCase("pos.eq.ra") 
 					|| fieldIdentifier.equalsIgnoreCase("pos.eq.ra;meta.main")){
 				value.fieldValue = ra;
