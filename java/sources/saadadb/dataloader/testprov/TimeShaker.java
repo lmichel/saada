@@ -28,12 +28,13 @@ public class TimeShaker extends ParamShaker{
 			+ "	\"-position=RA,DEC\" , \n"
 			+ "	\"-spcunit=keV\", \n"
 			+ "	\"-timemapping=only\" 	,	 \n"
-			+ "	\"-tmin=11 03 2013\" 	,	 \n"
-			+ "	\"-tmax=12 03 2013\"	 \n"
+			+ "	\"-tmin='11 03 2013'\" 	,	 \n"
+			+ "	\"-tmax='11 04 2013'\"	 \n"
+			+ "	\"-oucd=pow(RA)+pow('10')+eMin\"	 \n"
 			+ "], \n"
 			+ "\"fields\": { \n"
 			+ "    \"header\": [\n"
-			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"23.67\"], \n"
+			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"10\"], \n"
 			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"-56.9\"], \n"
 			+ "				[\"eMin\"      , \"double\", \"KeV\"   , \"em.wl;stat.min\", \"1.\"], \n"
 			+ "				[\"eMax\"      , \"double\", \"KeV\"   , \"em.wl;stat.max\", \"2.\"], \n"
@@ -53,10 +54,7 @@ public class TimeShaker extends ParamShaker{
 	TimeShaker() throws Exception{
 		super();
 		this.paramsOfInterest = new HashSet<String>();
-		this.paramsOfInterest.add("s_ra");
-		this.paramsOfInterest.add("s_dec");
-		this.paramsOfInterest.add("s_region");
-		this.paramsOfInterest.add("s_fov");
+		this.paramsOfInterest.add("o_ucd");
 	}
 
 	/* (non-Javadoc)
