@@ -10,7 +10,6 @@ import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
 /**
@@ -196,76 +195,76 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 
 	
-	/**
-	 * Calculate the Expression using its stocked value
-	 * @throws Exception 
-	 */
-	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception
-	{
-		boolean isNewExpression = true;
-		if( expression == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		//if the setting mode haven't been manually override
-		if(!columnModeForced)
-		{//We check if we're in the value or Expression case
-			if(attributes==null || attributes.isEmpty())
-			{
-				this.settingMode=ColumnSetMode.BY_VALUE;
-			}
-			else
-			{
-				this.settingMode=ColumnSetMode.BY_EXPRESSION;
-			}
-		}
-		
-		/*
-		 * We treat the String functions
-		 */
-		this.checkAndExecStringFunction(attributes);
-
-		if(settingMode==ColumnSetMode.BY_EXPRESSION)
-		{
-			/*
-			 * We build the list of AH present in the expression and we format their names (in the expression)
-			 * The String functions MUST have been treated at this point
-			 */
-			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-			exprAttributes = ahExtractor.extractAH();
-			expression=ahExtractor.expression;
-		}	
-		//We check if we already evaluated the same expression
-		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
-		{
-			isNewExpression=false;
-		}
-		/*
-		 *\/!\ WARNING : We must handle the numerics functions here
-		 */	
-		ExtractNumericFunction();
-		/*
-		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-		 */
-		try {
-			if(isNewExpression)
-			{
-				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-				lastExpressionEvaluated=expression;
-			}
-			else
-			{
-				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-				wrapper.evaluate(exprAttributes,numericFunctionList);
-			}
-		} catch (Exception e) {
-			//Messenger.printStackTrace(e);
-			result=SaadaConstant.STRING;
-			IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
-		}
-		//Check THIS
-		if(settingMode==ColumnSetMode.BY_VALUE)
-			singleSetter.setValue(result);
-	}
+//	/**
+//	 * Calculate the Expression using its stocked value
+//	 * @throws Exception 
+//	 */
+//	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception
+//	{
+//		boolean isNewExpression = true;
+//		if( expression == null ){
+//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+//		}
+//		//if the setting mode haven't been manually override
+//		if(!columnModeForced)
+//		{//We check if we're in the value or Expression case
+//			if(attributes==null || attributes.isEmpty())
+//			{
+//				this.settingMode=ColumnSetMode.BY_VALUE;
+//			}
+//			else
+//			{
+//				this.settingMode=ColumnSetMode.BY_EXPRESSION;
+//			}
+//		}
+//		
+//		/*
+//		 * We treat the String functions
+//		 */
+//		this.checkAndExecStringFunction(attributes);
+//
+//		if(settingMode==ColumnSetMode.BY_EXPRESSION)
+//		{
+//			/*
+//			 * We build the list of AH present in the expression and we format their names (in the expression)
+//			 * The String functions MUST have been treated at this point
+//			 */
+//			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+//			exprAttributes = ahExtractor.extractAH();
+//			expression=ahExtractor.expression;
+//		}	
+//		//We check if we already evaluated the same expression
+//		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+//		{
+//			isNewExpression=false;
+//		}
+//		/*
+//		 *\/!\ WARNING : We must handle the numerics functions here
+//		 */	
+//		ExtractNumericFunction();
+//		/*
+//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
+//		 */
+//		try {
+//			if(isNewExpression)
+//			{
+//				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+//				lastExpressionEvaluated=expression;
+//			}
+//			else
+//			{
+//				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
+//				wrapper.evaluate(exprAttributes,numericFunctionList);
+//			}
+//		} catch (Exception e) {
+//			//Messenger.printStackTrace(e);
+//			result=SaadaConstant.STRING;
+//			//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
+//		}
+//		//Check THIS
+//		if(settingMode==ColumnSetMode.BY_VALUE)
+//			singleSetter.setValue(result);
+//	}
 	
 	
 	/**
@@ -280,65 +279,74 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		if( expr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		expression=expr;
-		this.completeMessage("expression <" + expr+ "> ");
+		//if the attributes list is null, we call the calculateExpr without ah
+		if(attributes!=null || !attributes.isEmpty())
+		{
+			expression=expr;
+			this.completeMessage("expression <" + expr+ "> ");
 
-		/*
-		 * We treat the String functions
-		 */
-		if(!columnModeForced)
-		{//We check if we're in the value or Expression case
-			if(attributes==null || attributes.isEmpty())
-			{
-				this.settingMode=ColumnSetMode.BY_VALUE;
-			}
-			else
-			{
-				this.settingMode=ColumnSetMode.BY_EXPRESSION;
-			}
-		}
-		this.checkAndExecStringFunction(attributes);
-		if(settingMode==ColumnSetMode.BY_EXPRESSION)
-		{
 			/*
-			 * We build the list of AH present in the expression and we format their names (in the expression)
-			 * The String functions MUST have been treated at this point
+			 * We treat the String functions
 			 */
-			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-			exprAttributes = ahExtractor.extractAH();
-			expression=ahExtractor.expression;
+			if(!columnModeForced)
+			{//We check if we're in the value or Expression case
+				if(attributes==null || attributes.isEmpty())
+				{
+					this.settingMode=ColumnSetMode.BY_VALUE;
+				}
+				else
+				{
+					this.settingMode=ColumnSetMode.BY_EXPRESSION;
+				}
+			}
+			this.checkAndExecStringFunction(attributes);
+			if(settingMode==ColumnSetMode.BY_EXPRESSION)
+			{
+				/*
+				 * We build the list of AH present in the expression and we format their names (in the expression)
+				 * The String functions MUST have been treated at this point
+				 */
+				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+				exprAttributes = ahExtractor.extractAH();
+				expression=ahExtractor.expression;
+			}
+			//We check if we already evaluated the same expression
+			if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+			{
+				isNewExpression=false;
+			}
+			ExtractNumericFunction();
+			expression=expression.replace("'", "");
+			/*
+			 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
+			 */
+			try {
+				if(isNewExpression)
+				{
+					wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+					lastExpressionEvaluated=expression;
+				}
+				else
+				{
+					//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
+					wrapper.evaluate(exprAttributes,numericFunctionList);
+				}
+				result=wrapper.getStringValue();
+				singleSetter.setValue(result);
+			} catch (Exception e) {
+				//Messenger.printStackTrace(e);
+				result=SaadaConstant.STRING;
+				//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
+			}
+			if(settingMode==ColumnSetMode.BY_VALUE)
+				singleSetter.setValue(result);
 		}
-		//We check if we already evaluated the same expression
-		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+		else
 		{
-			isNewExpression=false;
+			this.calculateExpression(expr);
 		}
-		ExtractNumericFunction();
-		/*
-		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-		 */
-		try {
-			if(isNewExpression)
-			{
-				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-				lastExpressionEvaluated=expression;
-			}
-			else
-			{
-				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-				wrapper.evaluate(exprAttributes,numericFunctionList);
-			}
-			result=wrapper.getStringValue();
-			singleSetter.setValue(result);
-		} catch (Exception e) {
-			//Messenger.printStackTrace(e);
-			result=SaadaConstant.STRING;
-			IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
-		}
-		if(settingMode==ColumnSetMode.BY_VALUE)
-			singleSetter.setValue(result);
 	}
-	
+
 
 	
 	/**
@@ -365,6 +373,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		 *\/!\ WARNING : We must handle the numerics functions here
 		 */
 		ExtractNumericFunction();
+		expression=expression.replace("'", "");
 		/*
 		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
 		 */
@@ -377,7 +386,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 			//Messenger.printStackTrace(e);
 			result=expression;
-			IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
+			//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
 		}
 	}
 	
@@ -458,6 +467,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			//We're getting back the new expression (with flags)
 			this.expression=extractor.expression;
 			//for each function
+			boolean attributeFound =false;
 			for(Entry<String,StringFunctionDescriptor> e : extractor.splitedFunctionsMap.entrySet())
 			{
 				String[] args = e.getValue().functionArguments;
@@ -466,6 +476,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 					//We replace the AH name by their values for each argument
 					for(int i=0;i<args.length;i++)
 					{
+						attributeFound = false;
 						args[i]=args[i].trim();
 						//If between quote, it's not an AH
 						if(!args[i].contains("\""))
@@ -474,16 +485,33 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 							{
 								if((args[i].equals(ah.getValue().getNameattr())) || (args[i].equals(ah.getValue().getNameorg())))
 								{
+									attributeFound=true;
 									args[i]=ah.getValue().getValue();
 									stringFunctionArgumentsList.add(ah.getValue());
 								}
 							}
+							if(attributeFound==false)
+								IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be between quote or keywords");
+
 						}
 						else
 						{
 							//we delete the quotes do use the function
 							args[i]=args[i].replace("\"", "");
 						}
+					}
+				}
+				else
+				{
+					/* If there is no attributes
+					 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
+					 */
+					for(int i=0;i<args.length;i++)
+					{
+						if(args[i].contains("\""))
+							args[i]=args[i].replace("\"", "");
+						else
+							IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be between quote or keywords");
 					}
 				}
 				//We execute the String function
