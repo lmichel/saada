@@ -78,13 +78,24 @@ public class ColumnMapping {
 			ah.setUnit(unit);
 			ah.setValue(value);
 			this.attributeHandlers.add(ah);
-		} else if(this.mappingMode==MappingMode.EXPRESSION){
+		} else if(this.mappingMode==MappingMode.EXPRESSION || mappingMode==MappingMode.ATTRIBUTE){
 			//We have an expression with ONE keyword.
-			ah.setNameattr(value);
-			ah.setNameorg(value);
-			ah.setUnit(unit);
+			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
+			Matcher m=keywordsPattern.matcher(value);
+			//We search for keywords in the expression, each keyword become an attribute
+			while(m.find())
+			{
+				AttributeHandler temp = new AttributeHandler();
+				temp.setNameattr(m.group(1).trim());
+				temp.setNameorg(m.group(1).trim());
+				temp.setUnit(unit);
+				this.attributeHandlers.add(temp);
+			}
+//			ah.setNameattr(value);
+//			ah.setNameorg(value);
+//			ah.setUnit(unit);
 			//When we are in "Attribute mode" we consider we're in an expression composed of only one Attribute
-			expression=value.toString();
+			expression=value;
 			this.attributeHandlers.add(ah);
 		}else if( this.mappingMode != MappingMode.NOMAPPING) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Mapping mode SQL not suported yet");
@@ -133,18 +144,32 @@ public class ColumnMapping {
 		if( m.find() && m.groupCount() == 1 ) {
 			ah.setNameattr(ColumnMapping.NUMERIC);
 			ah.setNameorg(ColumnMapping.NUMERIC);
-			ah.setValue(m.group(1).trim());					
+			ah.setValue(m.group(1).trim());	
+			expression=m.group(1).trim();
 			this.mappingMode = MappingMode.VALUE;
+			this.attributeHandlers.add(ah);
 		} else {
-			if( value.matches(".*['\"]+.*" )) {
-				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + value);					
-			}
+//			if( value.matches(".*['\"]+.*" )) {
+//				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + value);					
+//			}
 			//Expression replace Attribute
 			this.mappingMode = MappingMode.EXPRESSION;
-			ah.setNameattr(value);
-			ah.setNameorg(value);
+			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
+			m=keywordsPattern.matcher(value);
+			//We search for keywords in the expression, each keyword become an attribute
+			while(m.find())
+			{
+				AttributeHandler temp = new AttributeHandler();
+				temp.setNameattr(m.group(1).trim());
+				temp.setNameorg(m.group(1).trim());
+				temp.setUnit(unit);
+				this.attributeHandlers.add(temp);
+			}
+//			ah.setNameattr(value);
+//			ah.setNameorg(value);
+			this.expression=value;
 		}
-		this.attributeHandlers.add(ah);
+//		this.attributeHandlers.add(ah);
 
 	}
 	
@@ -205,9 +230,9 @@ public class ColumnMapping {
 					ah.setAsConstant();
 					ah.setValue(v);					
 				} else {
-					if( s.matches(".*['\"]+.*" )) {
-						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + s);					
-					}
+//					if( s.matches(".*['\"]+.*" )) {
+//						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + s);					
+//					}
 //					this.mappingMode = MappingMode.ATTRIBUTE;
 					ah.setNameattr(s);
 					ah.setNameorg(s);
@@ -300,8 +325,19 @@ public class ColumnMapping {
 		for( AttributeHandler ah: this.attributeHandlers ) {
 			retour += " " + ah + "\n";
 		}
-		retour+="Expression = "+this.expression+"\n";
+		if(this.expression==null || this.expression.isEmpty())
+			retour += "No expression associate\n";
+		else
+			retour+="Expression = "+this.expression+"\n";
 		return retour;
+	}
+
+	public String getExpression() {
+		return expression;
+	}
+
+	public void setExpression(String expression) {
+		this.expression = expression;
 	}
 
 }

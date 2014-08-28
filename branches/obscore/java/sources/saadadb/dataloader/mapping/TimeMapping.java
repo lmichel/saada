@@ -14,16 +14,29 @@ public class TimeMapping extends AxisMapping {
 		String s;
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
-				String v = DateUtils.getMJD(s);
-				this.columnMapping.put("t_min", new ColumnMapping(null, "'" + v + "'", "t_min"));
+				if((s.startsWith("'") && s.endsWith("'")))
+				{
+					//s=DateUtils.getMJD(s);
+					this.columnMapping.put("t_min", new ColumnMapping(null,s, "t_min"));
+
+				}
+				this.columnMapping.put("t_min", new ColumnMapping(null, s, "t_min"));
+
+				//String v = DateUtils.getMJD(s);
+				//this.columnMapping.put("t_min", new ColumnMapping(null, "'" + v + "'", "t_min"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_min: Cannot parse the date " + s  + ": ignored");
 			}
 		}
 		if( (s = ap.getTmax(entryMode)) != null  ){
 			try {
-				String v = DateUtils.getMJD(s);
-				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
+				if(s.contains("'"))
+				{
+					s=DateUtils.getMJD(s);
+				}
+				this.columnMapping.put("t_min", new ColumnMapping(null, s, "t_min"));
+//				String v = DateUtils.getMJD(s);
+//				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
 			}
@@ -36,13 +49,13 @@ public class TimeMapping extends AxisMapping {
 	}
 
 	public static void main(String[] args) throws ParseException, FatalException{
-		TimeMapping tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=12/12/2012", "eeeee"}), false);
+		TimeMapping tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=\'12/12/2012\'", "eeeee"}), false);
 		System.out.println(tm);
-		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=56273.0", "eeeee"}), false);
+		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=\'56273.0\'", "eeeee"}), false);
 		System.out.println(tm);
-		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=-123000", "eeeee"}), false);
+		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin='10'+emax", "eeeee"}), false);
 		System.out.println(tm);
-		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=fsdfsfsd", "eeeee"}), false);
+		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=t_max-t_exptime", "eeeee"}), false);
 		System.out.println(tm);
 	}
 }
