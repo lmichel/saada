@@ -162,6 +162,7 @@ public class ProductBuilder {
 			this.bindDataFile(file);
 			this.mapCollectionAttributes();
 		} catch (SaadaException e) {
+			//e.printStackTrace();
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -399,46 +400,141 @@ public class ProductBuilder {
 	 * @throws Exception 
 	 */
 	protected ColumnExpressionSetter getMappedAttributeHander(ColumnMapping columnMapping) throws Exception {
-		AttributeHandler cmah = columnMapping.getAttributeHandler();
+		List<AttributeHandler> cmlah = columnMapping.getHandlers();
+		AttributeHandler cmah=null;
+		TreeMap<String,AttributeHandler> temp=null;
+		//We check if we have one or several ah
+		if(cmlah!=null)
+		{
+			if(cmlah.size()==1 && columnMapping.byValue())
+			{
+				cmah = cmlah.get(0);
+			}
+			else{
+				temp=new TreeMap<String,AttributeHandler>();
+				for(AttributeHandler ah:cmlah)
+				{
+					temp.put(ah.getNameattr(), ah);
+				}
+			}
+		}
+
 		if( columnMapping.byValue() ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
 			//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
 			ColumnExpressionSetter retour = new ColumnExpressionSetter();
 			//On calcule l'expression à partir de la valeur de l'ah
-			retour.calculateExpression(cmah.getValue());
+			if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
+				retour.calculateExpression(cmah.getValue());
+			else
+				retour.calculateExpression(columnMapping.getExpression());
 			retour.completeMessage("Using user mapping");
 			return retour;
-		} else if( columnMapping.byAttribute() ){
-			for( AttributeHandler ah: this.productAttributeHandler.values()) {
-				String keyorg  = ah.getNameorg();
-				String keyattr = ah.getNameattr();
-				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
-					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-					retour.calculateExpression(cmah);
-					retour.completeMessage("Using user mapping");
-					return retour;
+
+			//Expression case
+		} else if( columnMapping.byAttribute() || columnMapping.byExpression() ){
+			boolean ahfound=false;
+			ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			
+			//When there is only one ah 
+			if(cmah!=null)
+			{
+				for( AttributeHandler ah: this.productAttributeHandler.values()) {
+					String keyorg  = ah.getNameorg();
+					String keyattr = ah.getNameattr();
+
+					if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
+						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
+						//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
+						retour = new ColumnExpressionSetter();
+
+						if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
+						{
+							retour.calculateExpression(cmah);
+						}
+						else
+						{
+							//temp.put(cmah.getNameattr(), cmah);
+							retour.calculateExpression(columnMapping.getExpression(),temp);
+						}
+						retour.completeMessage("Using user mapping");
+						return retour;
+					}
+
 				}
 			}
-		} else if( columnMapping.byExpression() ){
-			for( AttributeHandler ah: this.productAttributeHandler.values()) {
-				String keyorg  = ah.getNameorg();
-				String keyattr = ah.getNameattr();
-				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
-					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-					retour.calculateExpression(cmah);
-					retour.completeMessage("Using user mapping");
-					return retour;
+			else
+			{
+				//several ah
+				retour = new ColumnExpressionSetter();
+				if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
+				{
+					IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The expression of the columnMapping : "+columnMapping.label+"is empty or null");
 				}
+				//for every ah contained by the columnMapping
+				for(AttributeHandler ahc : cmlah)
+				{
+					String keyorg  = ahc.getNameorg();
+					String keyattr = ahc.getNameattr();
+					ahfound=false;
+					//Plusieurs attributHandlers
+					for( AttributeHandler ah: this.productAttributeHandler.values()) 
+					{
+						if(keyorg.equals(ah.getNameorg()) || (keyattr.equals(ah.getNameattr())))
+						{
+							ahfound=true;
+							ahc.setValue(ah.getValue());
+							break;
+						}
+					}
+					//If no corresponding ah have been found
+					if(!ahfound)
+					{
+						IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "One or Several attributes handler of the columnMapping : "+columnMapping.label+" are missing");
+					}
+
+				}
+				//if the attributes of the columnMapping doesn't exist we stop here
+
 			}
+			//if we found the expression AND the ah, we calculate the expression
+			retour.calculateExpression(columnMapping.getExpression(),temp);
+			
+			retour.completeMessage("Using user mapping");
+			return retour;
 		}
+		else{
+	
+	//		} else if( columnMapping.byExpression() ){
+	//			for( AttributeHandler ah: this.productAttributeHandler.values()) {
+	//				String keyorg  = ah.getNameorg();
+	//				String keyattr = ah.getNameattr();
+//				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
+//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
+//					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
+////					ColumnExpressionSetter retour = new ColumnExpressionSetter();
+////					retour.calculateExpression(cmah);
+//					ColumnExpressionSetter retour = new ColumnExpressionSetter();
+//					if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
+//					{
+//						retour.calculateExpression(cmah);
+//					}
+//					else
+//					{
+//						temp.put(cmah.getNameattr(), cmah);
+//						retour.calculateExpression(columnMapping.getExpression(),temp);
+//					}
+//					retour.completeMessage("Using user mapping");
+//					return retour;
+//				}
+//			}
+//		}
+			
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
 		ColumnExpressionSetter retour = new ColumnExpressionSetter();
 		//retour.completeMessage("Not found by mapping");
 		return retour;
+		}
 	}
 
 	/**
@@ -1278,6 +1374,7 @@ public class ProductBuilder {
 		 * Look for attributes mapping the position parameters without constant values
 		 */
 		if( !(ra_found && dec_found) ) {
+			//this.s_raSetter=getMappedAttributeHander(this.mapping.getSpaceAxisMapping().getColumnMapping("s_ra"));
 			String raCol =  (raMapping.getAttributeHandler() != null)? raMapping.getAttributeHandler().getNameorg() : null;
 			String decCol =  (decMapping.getAttributeHandler() != null)? decMapping.getAttributeHandler().getNameorg() : null;
 			for( AttributeHandler ah: this.productAttributeHandler.values()) {
