@@ -33,7 +33,7 @@ public class ExpressionWrapper {
 	 */
 	private Expression exp4jExpression;
 	/**
-	 * The keyword list comming from the ColumnExpressionSetter
+	 * The keyword list coming from the ColumnExpressionSetter
 	 */
 	private List<AttributeHandler> attributeHandlers;
 	private double value = SaadaConstant.DOUBLE;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import net.objecthunter.exp4j.function.Function;
 import saadadb.enums.ColumnSetMode;
@@ -19,527 +20,517 @@ import saadadb.util.SaadaConstant;
  */
 public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
-	
+
 	/**
 	 * The expression to evaluate 
 	 */
 	private String expression;
-	
+
 	/**
 	 * The last expression evaluated
 	 */
-	 
+
 	private String lastExpressionEvaluated;
-	
+
 	/**
 	 * The wrapper used to evaluate the expression
 	 */
 	private ExpressionWrapper wrapper;
-	
+
 	/**
 	 * The list of attributes used in the ExpressionWrapper
 	 */
-	private List<AttributeHandler> exprAttributes;
-	
-	
+	private List<AttributeHandler> exprAttributes = new ArrayList<AttributeHandler>();;
+
+
 	/**
 	 * The list of attribute being String functions arguments (names of AH)
 	 */
-	private List<AttributeHandler> stringFunctionArgumentsList;
-	
+	//private List<AttributeHandler> stringFunctionArgumentsList = new ArrayList<AttributeHandler>();
+
 	/**
 	 * The result of the expression
 	 */
-	private String result="Not set";
-	
-	
+	private String result="NotSet";
+
+
 	/**
 	 * A ColumnSingleSetter used for the abstract methods from ColumnSetter and when mode=ByValue
 	 */
 	private ColumnSingleSetter singleSetter;
-	
+
 	/**
 	 * The List of all numeric function used in the expression
 	 */
 	private ArrayList<Function> numericFunctionList;
 
-	/**
-	 * Boolean indicating if we've override the automatic detection of settingmode
-	 */
-	private boolean columnModeForced=false;
-	
+	//	/**
+	//	 * Boolean indicating if we've override the automatic detection of settingmode
+	//	 */
+	//	private boolean columnModeForced=false;
+
+	private StringFunctionExtractor stringFunctionExtractor;
+	private NumericFunctionExtractor numericFunctionExtractor;
 	/**
 	 * Constructor without keyword calculating the expression immediatly
 	 * @param expr
 	 * @throws Exception 
 	 */
-	public ColumnExpressionSetter(String expr) throws Exception
-	{
+	public ColumnExpressionSetter(String expr) throws Exception	{
 		super();
 		this.settingMode = ColumnSetMode.NOT_SET;
 		if( expr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		//expression=expr;
-		singleSetter = new ColumnSingleSetter();
-		this.calculateExpression(expr);
+		this.singleSetter = new ColumnSingleSetter();
+		this.setExpression(expr);
 	}
-	
-	
-	/**
-	 * Constructor without keyword calculating the expression immediatly the setting mode is manually given
-	 * @param expr
-	 * @throws Exception 
-	 */
-	public ColumnExpressionSetter(String expr,ColumnSetMode mode) throws Exception
-	{
-		super();
-		this.settingMode = mode;
-		if( expr == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		//expression=expr;
-		singleSetter = new ColumnSingleSetter();
-		columnModeForced=true;
-		this.calculateExpression(expr);
-		
-	}
-	
+
 	/**
 	 * Constructor with only one ah calculating the expression immediatly
 	 * @param attr
 	 * @throws Exception
 	 */
-	public ColumnExpressionSetter(AttributeHandler attr) throws Exception
-	{
+	public ColumnExpressionSetter(AttributeHandler attr) throws Exception {
 		super();
 		this.settingMode = ColumnSetMode.NOT_SET;
 		if( attr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		//expression=expr;
-		singleSetter = new ColumnSingleSetter(attr);
-		exprAttributes= new ArrayList<AttributeHandler>();
-		this.calculateExpression(attr);
+		this.singleSetter = new ColumnSingleSetter(attr);
+		this.exprAttributes= new ArrayList<AttributeHandler>();
+		this.setExpression(attr.getNameorg());
+		Map<String,AttributeHandler> attributes = new TreeMap<String, AttributeHandler>();
+		attributes.put(attr.getNameorg(), attr);
+		this.calculateExpression(attributes);
 	}
-	
-	
+
+
 	/**
 	 * Constructor with only one ah calculating the expression immediatly, the setting mode is manually given
 	 * @param attr
 	 * @throws Exception
 	 */
-	public ColumnExpressionSetter(AttributeHandler attr, ColumnSetMode mode) throws Exception
-	{
-		super();
+	public ColumnExpressionSetter(AttributeHandler attr, ColumnSetMode mode) throws Exception {
+		this(attr);
 		this.settingMode = mode;
-		if( attr == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		//expression=expr;
-		singleSetter = new ColumnSingleSetter(attr,mode);
-		exprAttributes= new ArrayList<AttributeHandler>();
-		columnModeForced=true;
-		this.calculateExpression(attr);
 	}
-	
-	/**
-	 * Constructor with expression and list of ah calculating the expression immediatly
-	 * @param expression
-	 * @param attr
-	 * @throws Exception
-	 */
-	public ColumnExpressionSetter(String expression,Map<String,AttributeHandler> attr) throws Exception
-	{
-		super();
-		this.settingMode = ColumnSetMode.NOT_SET;
-		if( attr == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		//expression=expr;
-		singleSetter = new ColumnSingleSetter();
-		this.calculateExpression(expression,attr);
-	} 
-	
-	/**
-	 * Main constructor
-	 */
-	public ColumnExpressionSetter(ColumnSetMode mode)
-	{
-		super();
-		this.settingMode = mode;
-		singleSetter = new ColumnSingleSetter();
-		columnModeForced=true;
-	}
-	
+
 
 	/**
 	 * Override the auto-mode détection
 	 */
-	public ColumnExpressionSetter()
-	{
+	public ColumnExpressionSetter()	{
 		super();
 		this.settingMode = ColumnSetMode.NOT_SET;
-		singleSetter = new ColumnSingleSetter();
+		this.singleSetter = new ColumnSingleSetter();
 	}
-	
+
 	/**
-	 * Set the expression to the specified value
-	 * @param expr
+	 * @param expression
+	 * @throws Exception
 	 */
-	public void setExpression(String expr)
-	{
-		expression=expr;
+	public void setExpression(String expression) throws Exception{
+		if( expression == null ){
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+		}
+		this.stringFunctionExtractor = new StringFunctionExtractor(expression);
+		if( this.stringFunctionExtractor.isSingleStringExpression() ) {
+			this.wrapper = null;
+			this.expression = this.stringFunctionExtractor.expression;					
+			if( this.useKeywords() ) {
+				this.settingMode = ColumnSetMode.BY_EXPRESSION;
+			} else {
+				for(Entry<String,StringFunctionDescriptor> e : stringFunctionExtractor.splitedFunctionsMap.entrySet()) {
+					this.expression = this.expression.replace(e.getKey()
+							, DictionaryStringFunction.exec(e.getValue().functionName
+									, e.getValue().getUnquotedArguments()));	
+				}
+				this.result = this.expression;
+				this.settingMode = ColumnSetMode.BY_VALUE;
+			}
+		} else {
+			if( this.stringFunctionExtractor.splitedFunctionsMap.size() == 0 ){
+				this.expression = expression;
+				this.stringFunctionExtractor = null;
+			} else {
+				this.expression = this.stringFunctionExtractor.expression;					
+			}
+			this.settingMode = ColumnSetMode.BY_EXPRESSION;
+			if( this.stringFunctionExtractor  != null && !this.stringFunctionExtractor.useKeywords() ){
+				for(Entry<String,StringFunctionDescriptor> e : stringFunctionExtractor.splitedFunctionsMap.entrySet()) {
+					this.expression = this.expression.replace(e.getKey()
+							, DictionaryStringFunction.exec(e.getValue().functionName
+									, e.getValue().getUnquotedArguments()));	
+				}
+				this.stringFunctionExtractor = null;
+			}
+			this.extractNumericFunctions();
+			this.expression=this.expression.replace("'", "");
+		}
 	}
-	
 
+	/**
+	 * @param attributes
+	 * @throws Exception
+	 */
+	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception{
+		try {
+			if( this.settingMode == ColumnSetMode.BY_VALUE || this.settingMode == ColumnSetMode.NOT_SET){
+				System.out.println("by value");
+				return;
+			} else if( this.settingMode == ColumnSetMode.BY_EXPRESSION ){
+				if( this.stringFunctionExtractor!= null ){
+					System.out.println("evl string");
+					this.execStringFunction(attributes);
+				}
+				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+				this.exprAttributes = ahExtractor.extractAH();
+				this.expression=ahExtractor.expression;
+				if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
+					System.out.println("new expression");
+					this.lastExpressionEvaluated = this.expression.trim();
+					this.wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+					this.wrapper.evaluate(exprAttributes,numericFunctionList);
+					this.result=wrapper.getStringValue();
+					if( this.exprAttributes.size() == 0 && !(this.stringFunctionExtractor != null && this.stringFunctionExtractor.useKeywords()) ){
+						this.settingMode = ColumnSetMode.BY_VALUE;
+					} 
+				} else {
+					System.out.println("same expression");
+				}
+			}
+		} catch (Exception e) {
+			this.result = SaadaConstant.STRING;
+			this.settingMode = ColumnSetMode.NOT_SET;
+			this.completeMessage("exp failed: " + e.getMessage());
+		}
+	}
 
-	
-//	/**
-//	 * Calculate the Expression using its stocked value
-//	 * @throws Exception 
-//	 */
-//	public void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception
-//	{
-//		boolean isNewExpression = true;
-//		if( expression == null ){
-//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-//		}
-//		//if the setting mode haven't been manually override
-//		if(!columnModeForced)
-//		{//We check if we're in the value or Expression case
-//			if(attributes==null || attributes.isEmpty())
-//			{
-//				this.settingMode=ColumnSetMode.BY_VALUE;
-//			}
-//			else
-//			{
-//				this.settingMode=ColumnSetMode.BY_EXPRESSION;
-//			}
-//		}
-//		
-//		/*
-//		 * We treat the String functions
-//		 */
-//		this.checkAndExecStringFunction(attributes);
-//
-//		if(settingMode==ColumnSetMode.BY_EXPRESSION)
-//		{
-//			/*
-//			 * We build the list of AH present in the expression and we format their names (in the expression)
-//			 * The String functions MUST have been treated at this point
-//			 */
-//			AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-//			exprAttributes = ahExtractor.extractAH();
-//			expression=ahExtractor.expression;
-//		}	
-//		//We check if we already evaluated the same expression
-//		if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
-//		{
-//			isNewExpression=false;
-//		}
-//		/*
-//		 *\/!\ WARNING : We must handle the numerics functions here
-//		 */	
-//		ExtractNumericFunction();
-//		/*
-//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-//		 */
-//		try {
-//			if(isNewExpression)
-//			{
-//				wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-//				lastExpressionEvaluated=expression;
-//			}
-//			else
-//			{
-//				//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-//				wrapper.evaluate(exprAttributes,numericFunctionList);
-//			}
-//		} catch (Exception e) {
-//			//Messenger.printStackTrace(e);
-//			result=SaadaConstant.STRING;
-//			//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
-//		}
-//		//Check THIS
-//		if(settingMode==ColumnSetMode.BY_VALUE)
-//			singleSetter.setValue(result);
-//	}
-	
-	
+	/**
+	 * Execute the String functions in the expression and replaced them by their values
+	 * @throws Exception 
+	 * 
+	 */
+	private void execStringFunction(Map<String,AttributeHandler> attributes) throws Exception {
+		System.out.println("string expression");
+		//We're getting back the new expression (with flags)
+		this.expression=this.stringFunctionExtractor.expression;
+		//for each function
+		boolean attributeFound =false;
+
+		for(Entry<String,StringFunctionDescriptor> e : this.stringFunctionExtractor.splitedFunctionsMap.entrySet()){
+			String[] args = e.getValue().functionArguments;
+			String[] values = new String[args.length];
+			if(attributes!=null && !attributes.isEmpty()) {
+				//We replace the AH name by their values for each argument
+				for(int i=0;i<args.length;i++) {
+					attributeFound = false;
+					args[i]=args[i].trim();
+					//If between quote, it's not an AH
+					if(!(args[i].startsWith("\"") || args[i].startsWith("'"))) {
+						for(AttributeHandler ah : attributes.values()) {
+							if( ah.isNamedLike(args[i])) {
+								attributeFound=true;
+								values[i]= ah.getValue();
+								//	this.stringFunctionArgumentsList.add(ah);
+							}
+						}
+						if(attributeFound==false)
+							IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "Attribute " + args[i] + " referenced by the expression not found in the product attributes");
+
+					} else {
+						//we delete the quotes do use the function
+						//args[i]=args[i].replaceAll("[\"']", "");
+						values[i]=args[i].replaceAll("[\"']", "");
+					}
+				}
+			} else {
+				/* If there is no attributes
+				 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
+				 */
+				for(int i=0;i<args.length;i++) {
+					if( (args[i].startsWith("\"") || args[i].startsWith("'"))) {
+						values[i]=args[i].replaceAll("[\"']", "");
+					} else
+						IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be quoted strings or keywords");
+				}
+			}
+			//We execute the String function
+			expression=expression.replace(e.getKey(), DictionaryStringFunction.exec(e.getValue().functionName, values));	
+		}		
+	}
 	/**
 	 * Calculate the Expression 
 	 * @param expr the expression to calculate
 	 * @param attributes the AttributHandlers which can be in the expression
 	 * @throws Exception 
 	 */
-	public void calculateExpression(String expr,Map<String,AttributeHandler> attributes) throws Exception
-	{
-		boolean isNewExpression = true;
-		if( expr == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		//if the attributes list is null, we call the calculateExpr without ah
-		if(attributes!=null || !attributes.isEmpty())
-		{
-			expression=expr;
-			this.completeMessage("expression <" + expr+ "> ");
-
-			/*
-			 * We treat the String functions
-			 */
-			if(!columnModeForced)
-			{//We check if we're in the value or Expression case
-				if(attributes==null || attributes.isEmpty())
-				{
-					this.settingMode=ColumnSetMode.BY_VALUE;
-				}
-				else
-				{
-					this.settingMode=ColumnSetMode.BY_EXPRESSION;
-				}
-			}
-			this.checkAndExecStringFunction(attributes);
-			if(settingMode==ColumnSetMode.BY_EXPRESSION)
-			{
-				/*
-				 * We build the list of AH present in the expression and we format their names (in the expression)
-				 * The String functions MUST have been treated at this point
-				 */
-				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-				exprAttributes = ahExtractor.extractAH();
-				expression=ahExtractor.expression;
-			}
-			//We check if we already evaluated the same expression
-			if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
-			{
-				isNewExpression=false;
-			}
-			ExtractNumericFunction();
-			expression=expression.replace("'", "");
-			/*
-			 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-			 */
-			try {
-				if(isNewExpression)
-				{
-					wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-					lastExpressionEvaluated=expression;
-				}
-				else
-				{
-					//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
-					wrapper.evaluate(exprAttributes,numericFunctionList);
-				}
-				result=wrapper.getStringValue();
-				singleSetter.setValue(result);
-			} catch (Exception e) {
-				//Messenger.printStackTrace(e);
-				result=SaadaConstant.STRING;
-				//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
-			}
-			if(settingMode==ColumnSetMode.BY_VALUE)
-				singleSetter.setValue(result);
-		}
-		else
-		{
-			this.calculateExpression(expr);
-		}
-	}
-
-
-	
+	//	public void calculateExpression(String expr,Map<String,AttributeHandler> attributes) throws Exception
+	//	{
+	//		boolean isNewExpression = true;
+	//		if( expr == null ){
+	//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+	//		}
+	//		//if the attributes list is null, we call the calculateExpr without ah
+	//		if(attributes!=null && !attributes.isEmpty())
+	//		{
+	//			expression=expr;
+	//			this.completeMessage("expression <" + expr+ "> ");
+	//
+	//			/*
+	//			 * We treat the String functions
+	//			 */
+	//			if(!columnModeForced)
+	//			{//We check if we're in the value or Expression case
+	//				if(attributes==null || attributes.isEmpty())
+	//				{
+	//					this.settingMode=ColumnSetMode.BY_VALUE;
+	//				}
+	//				else
+	//				{
+	//					this.settingMode=ColumnSetMode.BY_EXPRESSION;
+	//				}
+	//			}
+	//			this.checkAndExecStringFunction(attributes);
+	//			System.out.println("@@@@@@@@@@ " + this.expression);
+	//			if(settingMode==ColumnSetMode.BY_EXPRESSION)
+	//			{
+	//				/*
+	//				 * We build the list of AH present in the expression and we format their names (in the expression)
+	//				 * The String functions MUST have been treated at this point
+	//				 */
+	//				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+	//				exprAttributes = ahExtractor.extractAH();
+	//				expression=ahExtractor.expression;
+	//			}
+	//			//We check if we already evaluated the same expression
+	//			if(lastExpressionEvaluated!=null && expression.trim().equals(lastExpressionEvaluated.trim()))
+	//			{
+	//				isNewExpression=false;
+	//			}
+	//			ExtractNumericFunction();
+	//			expression=expression.replace("'", "");
+	//			/*
+	//			 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
+	//			 */
+	//			try {
+	//				if(isNewExpression)
+	//				{
+	//					wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+	//					lastExpressionEvaluated=expression;
+	//				}
+	//				else
+	//				{
+	//					//If we did evaluate the same expression, we have no need to rebuild the expressionBuilder in the ExpressionWrapper
+	//					wrapper.evaluate(exprAttributes,numericFunctionList);
+	//				}
+	//				result=wrapper.getStringValue();
+	//				singleSetter.setValue(result);
+	//			} catch (Exception e) {
+	//				//Messenger.printStackTrace(e);
+	//				result=SaadaConstant.STRING;
+	//				settingMode = ColumnSetMode.NOT_SET;
+	//				//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
+	//			}
+	//			if(settingMode==ColumnSetMode.BY_VALUE)
+	//				singleSetter.setValue(result);
+	//		}
+	//		else
+	//		{
+	//			this.calculateExpression(expr);
+	//		}
+	//	}
 	/**
 	 * Calculate an Expression with no Keywords (ex : "(5+6+9)/20")
 	 * @param expr The expression to calculate
 	 * @throws Exception 
 	 */
-	public void calculateExpression(String expr) throws Exception
-	{
-		if( expr == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
-		}
-		if(!columnModeForced)
-			this.settingMode=ColumnSetMode.BY_VALUE;
-		expression=expr;
-		this.completeMessage("value <" + expr+ "> ");
+	//	public void calculateExpression(String expr) throws Exception
+	//	{
+	//		if( expr == null ){
+	//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+	//		}
+	//		if(!columnModeForced)
+	//			this.settingMode=ColumnSetMode.BY_VALUE;
+	//		expression=expr;
+	//		this.completeMessage("value <" + expr+ "> ");
+	//
+	//		/*
+	//		 * We treat the String functions
+	//		 */
+	//		this.checkAndExecStringFunction(null);
+	//		/*
+	//		 *\/!\ WARNING : We must handle the numerics functions here
+	//		 */
+	//		ExtractNumericFunction();
+	//		expression=expression.replace("'", "");
+	//		/*
+	//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
+	//		 */
+	//		try {
+	//			wrapper = new ExpressionWrapper(expression, null,numericFunctionList);
+	//			result=wrapper.getStringValue();
+	//			singleSetter.setValue(result);
+	//		} catch (Exception e) {
+	//		//	e.printStackTrace();
+	//
+	//			//Messenger.printStackTrace(e);
+	//			result=expression;
+	//			//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
+	//		}
+	//	}
 
-		/*
-		 * We treat the String functions
-		 */
-		this.checkAndExecStringFunction(null);
 
-		/*
-		 *\/!\ WARNING : We must handle the numerics functions here
-		 */
-		ExtractNumericFunction();
-		expression=expression.replace("'", "");
-		/*
-		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-		 */
-		try {
-			wrapper = new ExpressionWrapper(expression, null,numericFunctionList);
-			result=wrapper.getStringValue();
-			singleSetter.setValue(result);
-		} catch (Exception e) {
-		//	e.printStackTrace();
+	//	/**
+	//	 * Calculate an Expression composed of one ah only
+	//	 * @param expr The expression to calculate
+	//	 * @throws Exception 
+	//	 */
+	//	public void calculateExpression(AttributeHandler ah) throws Exception
+	//	{
+	//		if( ah == null ){
+	//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+	//		}
+	//		if(!columnModeForced)	
+	//			this.settingMode=ColumnSetMode.BY_EXPRESSION;
+	//		expression=ah.getNameattr().toString();
+	//		this.completeMessage("Attribute <" + ah.getNameorg()+ ah.getUnit()+ "> ");
+	//
+	//		//If we only have on AH, we just get his value
+	//		//System.out.println(ah.getValue());
+	//		result=ah.getValue();
+	//		singleSetter.setValue(result);
+	//
+	//	}
 
-			//Messenger.printStackTrace(e);
-			result=expression;
-			//IgnoreException.throwNewException(SaadaException.SYNTAX_ERROR, e);
-		}
-	}
-	
-	
 	/**
-	 * Calculate an Expression composed of one ah only
-	 * @param expr The expression to calculate
-	 * @throws Exception 
+	 * @return
 	 */
-	public void calculateExpression(AttributeHandler ah) throws Exception
-	{
-		if( ah == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
+	private boolean useKeywords() {
+		if( this.stringFunctionExtractor.useKeywords()){
+			return true;
+		} else if( exprAttributes.size() > 0 ){
+			return true;
+		} else {
+			return false;
 		}
-		if(!columnModeForced)	
-			this.settingMode=ColumnSetMode.BY_EXPRESSION;
-		expression=ah.getNameattr().toString();
-		this.completeMessage("Attribute <" + ah.getNameorg()+ ah.getUnit()+ "> ");
-
-		//If we only have on AH, we just get his value
-		//System.out.println(ah.getValue());
-		result=ah.getValue();
-		singleSetter.setValue(result);
-
-//		this.exprAttributes.add(ah);
-//		/*
-//		 * We treat the String functions
-//		 */
-//		this.checkAndExecStringFunction(null);
-//
-//		/*
-//		 *\/!\ WARNING : We must handle the numerics functions here
-//		 */
-//		ExtractNumericFunction();
-//		/*
-//		 * If an exception is risen in the Wrapper (Wrong value in ah, missins value), the result is set to "NULL"
-//		 */
-//		try {
-//			wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-//			result=wrapper.getStringValue();
-//			singleSetter.setValue(result);
-//		} catch (Exception e) {
-//			System.out.println(expression);
-//			e.printStackTrace();
-//
-//			//result=SaadaConstant.STRING;
-//			//Dans le cas d'un seul Ah considéré comme une expression, si l'expressionWrapper ne peut pas le calculer on suppose qu'il
-//			//s'agit d'un string et on lui donne la valeur de l'expression.
-//			result=expression;
-//		}
-		
 	}
-	
-	
+
 	/**
 	 * Add all numeric function to the ArrayList and treat the special case of the convert function
 	 * @throws Exception
 	 */
-	private void ExtractNumericFunction() throws Exception
+	private void extractNumericFunctions() throws Exception
 	{
-		NumericFunctionExtractor extractor = new NumericFunctionExtractor(expression);
-		numericFunctionList=extractor.extractFunctions();
-		expression=extractor.treatConvertFunction(exprAttributes);
+		this.numericFunctionExtractor = new NumericFunctionExtractor(expression);
+		this.numericFunctionList=numericFunctionExtractor.extractFunctions();
+		this.expression=numericFunctionExtractor.treatConvertFunction(exprAttributes);
 	}
-	
-	/**
-	 * Execute the String functions in the expression and replaced them by their values
-	 * @throws Exception 
-	 * 
-	 */
-	private void checkAndExecStringFunction(Map<String,AttributeHandler> attributes) throws Exception
-	{
-		StringFunctionExtractor extractor = new StringFunctionExtractor(this.expression);
-		//We only do something if a String function have been found
-		if(extractor.extractAndSplit())
-		{
-			stringFunctionArgumentsList= new ArrayList<AttributeHandler>();
-			//We're getting back the new expression (with flags)
-			this.expression=extractor.expression;
-			//for each function
-			boolean attributeFound =false;
-			for(Entry<String,StringFunctionDescriptor> e : extractor.splitedFunctionsMap.entrySet())
-			{
-				String[] args = e.getValue().functionArguments;
-				if(attributes!=null && !attributes.isEmpty())
-				{
-					//We replace the AH name by their values for each argument
-					for(int i=0;i<args.length;i++)
-					{
-						attributeFound = false;
-						args[i]=args[i].trim();
-						//If between quote, it's not an AH
-						if(!args[i].contains("\""))
-						{
-							for(Entry<String,AttributeHandler> ah : attributes.entrySet())
-							{
-								if((args[i].equals(ah.getValue().getNameattr())) || (args[i].equals(ah.getValue().getNameorg())))
-								{
-									attributeFound=true;
-									args[i]=ah.getValue().getValue();
-									stringFunctionArgumentsList.add(ah.getValue());
-								}
-							}
-							if(attributeFound==false)
-								IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be between quote or keywords");
 
-						}
-						else
-						{
-							//we delete the quotes do use the function
-							args[i]=args[i].replace("\"", "");
-						}
-					}
-				}
-				else
-				{
-					/* If there is no attributes
-					 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
-					 */
-					for(int i=0;i<args.length;i++)
-					{
-						if(args[i].contains("\""))
-							args[i]=args[i].replace("\"", "");
-						else
-							IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be between quote or keywords");
-					}
-				}
-				//We execute the String function
-				expression=expression.replace(e.getKey(), DictionaryStringFunction.exec(e.getValue().functionName, args));	
-			}		
-		}
-	}
-	
+	//	/**
+	//	 * Execute the String functions in the expression and replaced them by their values
+	//	 * @throws Exception 
+	//	 * 
+	//	 */
+	//	private void checkAndExecStringFunction(Map<String,AttributeHandler> attributes) throws Exception
+	//	{
+	//		StringFunctionExtractor extractor = new StringFunctionExtractor(this.expression);
+	//		//We only do something if a String function have been found
+	//		if(extractor.extractAndSplit()) {
+	//
+	//			//stringFunctionArgumentsList= new ArrayList<AttributeHandler>();
+	//			//We're getting back the new expression (with flags)
+	//			this.expression=extractor.expression;
+	//			//for each function
+	//			boolean attributeFound =false;
+	//			for(Entry<String,StringFunctionDescriptor> e : extractor.splitedFunctionsMap.entrySet())
+	//			{
+	//				String[] args = e.getValue().functionArguments;
+	//				if(attributes!=null && !attributes.isEmpty())
+	//				{
+	//					//We replace the AH name by their values for each argument
+	//					for(int i=0;i<args.length;i++)
+	//					{
+	//						attributeFound = false;
+	//						args[i]=args[i].trim();
+	//						//If between quote, it's not an AH
+	//						if(!(args[i].startsWith("\"") || args[i].startsWith("'")))
+	//						{
+	//							for(AttributeHandler ah : attributes.values())
+	//							{
+	//								if( ah.isNamedLike(args[i]))
+	//								{
+	//									attributeFound=true;
+	//									//args[i]= ah.getValue();
+	//									//stringFunctionArgumentsList.add(ah);
+	//								}
+	//							}
+	//							if(attributeFound==false)
+	//								IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "Attribute " + args[i] + " referenced by the expression not found in the product attributes");
+	//
+	//						}
+	//						else
+	//						{
+	//							//we delete the quotes do use the function
+	//							args[i]=args[i].replaceAll("[\"']", "");
+	//						}
+	//					}
+	//				}
+	//				else
+	//				{
+	//					/* If there is no attributes
+	//					 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
+	//					 */
+	//					for(int i=0;i<args.length;i++)
+	//					{
+	//						if( (args[i].startsWith("\"") || args[i].startsWith("'"))) {
+	//							args[i]=args[i].replaceAll("[\"']", "");
+	//						}
+	//						else
+	//							IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be quoted strings or keywords");
+	//					}
+	//				}
+	//				//We execute the String function
+	//				expression=expression.replace(e.getKey(), DictionaryStringFunction.exec(e.getValue().functionName, args));	
+	//			}		
+	//		}
+	//	}
+	//
 	public String toString()
 	{
-		return "---- Expression calculée = "+expression+" //// Résultat obtenu : "+result;
+
+		String retour =  "\"" + this.expression + "\"=" +result
+				+ " [";
+		for( AttributeHandler ah: this.exprAttributes) {
+			retour += ah.getNameorg() + " ";
+		}
+		retour += "] " 
+				+ this.getSettingMode() + " "
+				+ this.message;
+		if( this.storedValue != null )
+			retour += " storedValue=" + this.storedValue;
+
+		return retour;
 	}
-	
-	
+
+
 	public String getExpressionResult()
 	{
 		return result;
 	}
-	
+
 	public double getNumExpressionResult()
 	{
 		return Double.valueOf(result);
 	}
-	
+
 	public String getExpression() {
 		return expression;
 	}
-	
+
 	@Override
 	protected void setInitMessage() {
 		if(expression==null || expression.isEmpty())
@@ -555,7 +546,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			this.completeMessage("Nothing found");
 			break;
 		}
-		
+
 	}
 
 	/*
@@ -656,7 +647,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setNotSet() {
 		this.settingMode = ColumnSetMode.NOT_SET;
-		
+
 	}
 
 	@Override
@@ -711,252 +702,313 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public String getUcd() {
 		return this.singleSetter.getUcd();
 	}
-	
+
 	@Override
 	public AttributeHandler getAssociateAtttribute() {
 		return this.singleSetter.getAssociateAtttribute();
 	}
-//	public static void main(String args[])
-//	{
-//		//Tests
-//		
-//		Map<String,AttributeHandler> mapTest = new TreeMap<String,AttributeHandler>();
-//		AttributeHandler ah1 = new AttributeHandler();
-//		AttributeHandler ah2 = new AttributeHandler();
-//		AttributeHandler ah3 = new AttributeHandler();
-//		AttributeHandler ah4 = new AttributeHandler();
-//		AttributeHandler ah5 = new AttributeHandler();
-//		ah1.setNameattr("_tmin");
-//		ah1.setValue("11/20/1858"); //=3
-//		
-//		ah2.setNameattr("_emax");
-//		ah2.setNameorg("EMAX");
-//		ah2.setValue("10");
-//		
-//		ah3.setNameattr("_emin");
-//		ah3.setValue("2");
-//		
-//		ah4.setNameattr("_tmax");
-//		ah4.setValue("11/22/1858");//=5
-//		
-//		ah5.setNameattr("_emin59");
-//		ah5.setValue("1");
-//		
-//		//Test calcul constante
-//		String expression = "42";
-//		ColumnExpressionSetter ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul d'une valeur constante seule");
-//		System.out.println("---- Résultat souhaité : "+expression);
-//		try {
-//			ces.calculateExpression(expression);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//
-//		
-//		//Test calcul d'une opération de constante
-//		expression = "6*7";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul d'une opération de constante");
-//		System.out.println("---- Résultat souhaité : 42");
-//		try {
-//			ces.calculateExpression(expression);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		
-//		//Test opération de keywords
-//		mapTest.put("_emax", ah2);
-//		mapTest.put("_emin", ah3);
-//		mapTest.put("_emin59", ah5);
-//		expression = "EMAX*_emin+_emin59";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul d'une opération de keywords");
-//		System.out.println("---- Résultat souhaité : 21");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//
-//	
-//		//Test opération de fonctions avec arguments constants
-//		expression = "MJD(11/22/1858) - MJD(11/19/1858)";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul de fonctions avec arguments contants");
-//		System.out.println("---- Résultat souhaité : 3");
-//		try {
-//			ces.calculateExpression(expression);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//
-//		//Test opération de fonctions avec arguments variables
-//		mapTest.clear();
-//		mapTest.put("_tmin", ah1);
-//		mapTest.put("_tmax", ah4);
-//		expression = "80/ (MJD(_tmin) + MJD(_tmax))";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul de fonctions avec arguments variables");
-//		System.out.println("---- Résultat souhaité : 10");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//
-//		
-//		//Test Appel fonction expression vide
-//		expression = "";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul expression vide");
-//		System.out.println("---- Résultat souhaité : Exception");
-//		try {
-//			ces.calculateExpression(expression);
-//		} catch (Exception e1) {
-//
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);		
-//		System.out.println();
-//
-//		
-//		//Test Appel fonction expression vide
-//		expression = null;
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul expression null");
-//		System.out.println("---- Résultat souhaité : Exception");
-//		try {
-//			ces.calculateExpression(expression);
-//		} catch (Exception e1) {
-//
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		//Test calcul expression de constante avec map remplie
-//		expression = "(5+2)*6";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul expression de constante avec map remplie");
-//		System.out.println("---- Résultat souhaité : 42");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		//Test calcul expression de keywords avec map vide
-//		mapTest.clear();
-//		expression = "_emin+_emax";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul expression de keyword avec map vide");
-//		System.out.println("---- Résultat souhaité : Exception");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		
-//		//Test calcul expression de keywords avec map null
-//		mapTest=null;
-//		expression = "_emin+_emax";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test de calcul expression de keyword avec map null");
-//		System.out.println("---- Résultat souhaité : Exception");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//
-//
-//		System.out.println();
-//		mapTest = new TreeMap<String,AttributeHandler>();
-//
-//		mapTest.put("_emax", ah2);
-//		mapTest.put("_emin", ah3);
-//		expression = "EMAX*_emin";
-//		ces = new ColumnExpressionSetter();
-//		System.out.println("Test Passage expression Wrapper");
-//		System.out.println("---- Résultat souhaité : 20");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//
-//		
-//
-//		System.out.println();
-//		mapTest = new TreeMap<String,AttributeHandler>();
-//
-//		mapTest.put("_emax", ah2);
-//		mapTest.put("_emin", ah3);
-//		expression = "EMAX*_emin";
-//		System.out.println("Test Passage expression Wrapper");
-//		System.out.println("---- Résultat should be the same");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		
-//		
-//		mapTest.clear();
-//		mapTest.put("_emax", ah2);
-//		mapTest.put("_emin59", ah5);
-//		expression = "EMAX+_emin59";
-//		System.out.println("Result should be different");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		
-//		expression="toRadian(180)+toRadian(90)";
-//		System.out.println("Result =3.14...");
-//		try {
-//			ces.calculateExpression(expression,null);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//		
-//		mapTest.put("_emax", ah2);
-//		mapTest.put("_emin", ah3);
-//		expression="toRadian(10) + _emax + convert(_emin,mm,m)";
-//		System.out.println("Result =12.17...");
-//		try {
-//			ces.calculateExpression(expression,mapTest);
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		System.out.println(ces);
-//		System.out.println();
-//	}
+	//	public static void main(String args[])
+	//	{
+	//		//Tests
+	//		
+	//		Map<String,AttributeHandler> mapTest = new TreeMap<String,AttributeHandler>();
+	//		AttributeHandler ah1 = new AttributeHandler();
+	//		AttributeHandler ah2 = new AttributeHandler();
+	//		AttributeHandler ah3 = new AttributeHandler();
+	//		AttributeHandler ah4 = new AttributeHandler();
+	//		AttributeHandler ah5 = new AttributeHandler();
+	//		ah1.setNameattr("_tmin");
+	//		ah1.setValue("11/20/1858"); //=3
+	//		
+	//		ah2.setNameattr("_emax");
+	//		ah2.setNameorg("EMAX");
+	//		ah2.setValue("10");
+	//		
+	//		ah3.setNameattr("_emin");
+	//		ah3.setValue("2");
+	//		
+	//		ah4.setNameattr("_tmax");
+	//		ah4.setValue("11/22/1858");//=5
+	//		
+	//		ah5.setNameattr("_emin59");
+	//		ah5.setValue("1");
+	//		
+	//		//Test calcul constante
+	//		String expression = "42";
+	//		ColumnExpressionSetter ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul d'une valeur constante seule");
+	//		System.out.println("---- Résultat souhaité : "+expression);
+	//		try {
+	//			ces.calculateExpression(expression);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//
+	//		
+	//		//Test calcul d'une opération de constante
+	//		expression = "6*7";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul d'une opération de constante");
+	//		System.out.println("---- Résultat souhaité : 42");
+	//		try {
+	//			ces.calculateExpression(expression);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		
+	//		//Test opération de keywords
+	//		mapTest.put("_emax", ah2);
+	//		mapTest.put("_emin", ah3);
+	//		mapTest.put("_emin59", ah5);
+	//		expression = "EMAX*_emin+_emin59";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul d'une opération de keywords");
+	//		System.out.println("---- Résultat souhaité : 21");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//
+	//	
+	//		//Test opération de fonctions avec arguments constants
+	//		expression = "MJD(11/22/1858) - MJD(11/19/1858)";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul de fonctions avec arguments contants");
+	//		System.out.println("---- Résultat souhaité : 3");
+	//		try {
+	//			ces.calculateExpression(expression);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//
+	//		//Test opération de fonctions avec arguments variables
+	//		mapTest.clear();
+	//		mapTest.put("_tmin", ah1);
+	//		mapTest.put("_tmax", ah4);
+	//		expression = "80/ (MJD(_tmin) + MJD(_tmax))";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul de fonctions avec arguments variables");
+	//		System.out.println("---- Résultat souhaité : 10");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//
+	//		
+	//		//Test Appel fonction expression vide
+	//		expression = "";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul expression vide");
+	//		System.out.println("---- Résultat souhaité : Exception");
+	//		try {
+	//			ces.calculateExpression(expression);
+	//		} catch (Exception e1) {
+	//
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);		
+	//		System.out.println();
+	//
+	//		
+	//		//Test Appel fonction expression vide
+	//		expression = null;
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul expression null");
+	//		System.out.println("---- Résultat souhaité : Exception");
+	//		try {
+	//			ces.calculateExpression(expression);
+	//		} catch (Exception e1) {
+	//
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		//Test calcul expression de constante avec map remplie
+	//		expression = "(5+2)*6";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul expression de constante avec map remplie");
+	//		System.out.println("---- Résultat souhaité : 42");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		//Test calcul expression de keywords avec map vide
+	//		mapTest.clear();
+	//		expression = "_emin+_emax";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul expression de keyword avec map vide");
+	//		System.out.println("---- Résultat souhaité : Exception");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		
+	//		//Test calcul expression de keywords avec map null
+	//		mapTest=null;
+	//		expression = "_emin+_emax";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test de calcul expression de keyword avec map null");
+	//		System.out.println("---- Résultat souhaité : Exception");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//
+	//
+	//		System.out.println();
+	//		mapTest = new TreeMap<String,AttributeHandler>();
+	//
+	//		mapTest.put("_emax", ah2);
+	//		mapTest.put("_emin", ah3);
+	//		expression = "EMAX*_emin";
+	//		ces = new ColumnExpressionSetter();
+	//		System.out.println("Test Passage expression Wrapper");
+	//		System.out.println("---- Résultat souhaité : 20");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//
+	//		
+	//
+	//		System.out.println();
+	//		mapTest = new TreeMap<String,AttributeHandler>();
+	//
+	//		mapTest.put("_emax", ah2);
+	//		mapTest.put("_emin", ah3);
+	//		expression = "EMAX*_emin";
+	//		System.out.println("Test Passage expression Wrapper");
+	//		System.out.println("---- Résultat should be the same");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		
+	//		
+	//		mapTest.clear();
+	//		mapTest.put("_emax", ah2);
+	//		mapTest.put("_emin59", ah5);
+	//		expression = "EMAX+_emin59";
+	//		System.out.println("Result should be different");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		
+	//		expression="toRadian(180)+toRadian(90)";
+	//		System.out.println("Result =3.14...");
+	//		try {
+	//			ces.calculateExpression(expression,null);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//		
+	//		mapTest.put("_emax", ah2);
+	//		mapTest.put("_emin", ah3);
+	//		expression="toRadian(10) + _emax + convert(_emin,mm,m)";
+	//		System.out.println("Result =12.17...");
+	//		try {
+	//			ces.calculateExpression(expression,mapTest);
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//		}
+	//		System.out.println(ces);
+	//		System.out.println();
+	//	}
+
+	public static void main(String[] args) throws Exception {
+		AttributeHandler ah1 = new AttributeHandler();
+		AttributeHandler ah2 = new AttributeHandler();
+		AttributeHandler ah3 = new AttributeHandler();
+		AttributeHandler ah4 = new AttributeHandler();
+		AttributeHandler ah5 = new AttributeHandler();
+		ah1.setNameorg("TMIN");
+		ah1.setNameattr("_tmin");
+		ah1.setValue("11/20/1858"); //=3
+
+		ah2.setNameattr("_emax");
+		ah2.setNameorg("EMAX");
+		ah2.setValue("10");
+
+		ah3.setNameorg("EMIN");
+		ah3.setNameattr("_emin");
+		ah3.setValue("2");
+
+		ah4.setNameorg("TMAX");
+		ah4.setNameattr("_tmax");
+		ah4.setValue("11/22/1858");//=5
+
+		ah5.setNameorg("EMIN59");
+		ah5.setNameattr("_emin59");
+		ah5.setValue("1");
+		Map<String,AttributeHandler> mapTest = new TreeMap<String,AttributeHandler>();		
+		mapTest.put(ah1.getNameorg(), ah1);
+		mapTest.put(ah2.getNameorg(), ah2);
+		mapTest.put(ah3.getNameorg(), ah3);
+		mapTest.put(ah4.getNameorg(), ah4);
+		mapTest.put(ah5.getNameorg(), ah5);
+
+		ColumnExpressionSetter ces;
+
+		for( String exp: new String[]{ 
+				"strcat('1', '2')",
+				"strcat(_emin59, '2')" ,
+				"12" ,
+				"2*12" ,
+				"2*12 + EMIN59" ,
+				"2*12 + MJD(_tmax)" ,
+				"log(2*12) + MJD(_tmax)" ,
+				"log(EMIN) + MJD(_tmax)" ,
+				"log(EMIN) + MJD('11/22/1858')" ,
+				"MJD(TMAX) - MJD(_tmin)" ,
+				"MJD(TMAX) - MJD('11/22/1858')" ,
+				"MJD('11/22/1858')" ,
+				"MJD('11/20/1858') - MJD('11/22/1858')" ,
+		}) {
+			System.out.println("*****Expr: " + exp);
+			ces = new ColumnExpressionSetter(exp);
+			System.out.println(" compiled: " + ces);
+			ces.calculateExpression(mapTest);
+			System.out.println(" computed: " + ces);
+			if( ces.notSet() ) break;
+			ces.calculateExpression(mapTest);
+			System.out.println(" computed: " + ces);
+			if( ces.notSet() ) break;
+		}
+	}
 }
