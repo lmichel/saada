@@ -449,6 +449,10 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public String getCollname(){
 		return this.collname;
 	}
+	
+	public boolean isNamedLike(String name) {
+		return (this.nameattr.equals(name) || this.nameorg.equals(name));
+	}
 	/*
 	 * The following accessor give the existance of a valid value pfor the field
 	 * Lately added must be inserted within the code by opportunity
