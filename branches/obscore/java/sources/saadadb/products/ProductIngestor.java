@@ -297,8 +297,8 @@ class ProductIngestor {
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
 			} catch( Exception e ) {
-				e.printStackTrace();
-				System.exit(1);
+//				e.printStackTrace();
+//				System.exit(1);
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
 				this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
 				this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
@@ -596,6 +596,9 @@ class ProductIngestor {
 	 * @throws FatalException
 	 */
 	protected void setField(String fieldName, ColumnSetter ah_ref) throws FatalException{
+		if(ah_ref.notSet() ){
+			return;
+		}
 		String value = ah_ref.getValue();
 		Field f=null;
 		try {

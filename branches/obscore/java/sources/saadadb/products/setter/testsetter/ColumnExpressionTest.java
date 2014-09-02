@@ -58,11 +58,12 @@ public class ColumnExpressionTest {
 
 		if (attributes==null || attributes.isEmpty())
 		{
-			ces.calculateExpression(expr);
+			ces.setExpression(expr);
 		}
 		else
 		{
-			ces.calculateExpression(expr, attributes);
+			ces.setExpression(expr);
+			ces.calculateExpression(attributes);
 		}
 	}
 	

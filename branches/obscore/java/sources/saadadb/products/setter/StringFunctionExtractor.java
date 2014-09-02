@@ -1,13 +1,11 @@
 package saadadb.products.setter;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.objecthunter.exp4j.function.Function;
 import saadadb.util.RegExp;
 
 /**
@@ -21,10 +19,18 @@ public class StringFunctionExtractor {
 	protected String expression;
 	protected boolean functionFound =false;
 	protected Map<String,StringFunctionDescriptor> splitedFunctionsMap;
-
+	/**
+	 * true if the expression only contains one string expression
+	 */
+	protected boolean singleStringExpression = false;
+	
 	public StringFunctionExtractor(String expr)
 	{
 		expression=expr;
+		stringFunctionList=new TreeMap<String,String>();
+		splitedFunctionsMap=new TreeMap<String,StringFunctionDescriptor>();
+		this.extractStringFunction();
+		this.splitFunction();
 	}
 
 	/**
@@ -53,9 +59,15 @@ public class StringFunctionExtractor {
 			{
 				functionFound=true;
 				i++;
-				expression=expression.replace(matcher.group(), key+i+"@");
+				System.out.println("@@@@@@@@@ 1 " + expression);
+				expression=expression.replace(matcher.group(), key+i+"@").trim();;
+				System.out.println("@@@@@@@@@ 2 " +expression);
 				stringFunctionList.put(key+i+"@", matcher.group());
 			}
+		}
+		if( i == 1 && this.expression.startsWith("@")  && this.expression.endsWith("@")) {
+			System.out.println("single");
+			this.singleStringExpression = true;
 		}
 	}
 	
@@ -115,5 +127,39 @@ public class StringFunctionExtractor {
 		splitFunction();
 		return functionFound;
 	}
+	
+	/**
+	 * @return
+	 */
+	public boolean isSingleStringExpression() {
+		return this.singleStringExpression;
+	}
 
+	public boolean hasStringFunctions() {
+		return (this.splitedFunctionsMap.size() != 0);
+	}
+	
+	public boolean useKeywords() {
+		for( StringFunctionDescriptor s: this.splitedFunctionsMap.values() ){
+			if( s.useKeywords()) {
+				return true;
+			}
+		}
+		return  false;
+	}
+	
+	public String toString() {
+		String retour = "expr=" + this.expression + " Fcts:[";
+		for( Entry<String, StringFunctionDescriptor>e: this.splitedFunctionsMap.entrySet() ){
+			retour += e.getKey() + ":" + e.getValue() + " ";
+		}
+		retour += "]";
+		return retour;
+	}
+	public static void main(String[] args) {
+		StringFunctionExtractor s = new StringFunctionExtractor("strcat(_tmin, 'eeee', _tmax)");
+		s.extractStringFunction();
+		s.splitFunction();
+		System.out.println(s);
+	}
 }

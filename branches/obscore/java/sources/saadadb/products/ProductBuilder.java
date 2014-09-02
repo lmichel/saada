@@ -34,9 +34,8 @@ import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpatialResolutionUnitRef;
-import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnExpressionSetter;
-import saadadb.query.parser.PositionParser;
+import saadadb.products.setter.ColumnSetter;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -422,19 +421,19 @@ public class ProductBuilder {
 		if( columnMapping.byValue() ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
 			//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
-			ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			ColumnExpressionSetter retour ;
 			//On calcule l'expression à partir de la valeur de l'ah
 			if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-				retour.calculateExpression(cmah.getValue());
-			else
-				retour.calculateExpression(columnMapping.getExpression());
+				retour = new ColumnExpressionSetter(cmah);
+			else 
+				retour = new ColumnExpressionSetter(columnMapping.getExpression());
 			retour.completeMessage("Using user mapping");
 			return retour;
 
 			//Expression case
 		} else if( columnMapping.byAttribute() || columnMapping.byExpression() ){
 			boolean ahfound=false;
-			ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			ColumnExpressionSetter retour;
 			
 			//When there is only one ah 
 			if(cmah!=null)
@@ -450,12 +449,13 @@ public class ProductBuilder {
 
 						if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
 						{
-							retour.calculateExpression(cmah);
+							retour = new ColumnExpressionSetter(cmah);
 						}
 						else
 						{
 							//temp.put(cmah.getNameattr(), cmah);
-							retour.calculateExpression(columnMapping.getExpression(),temp);
+							retour = new ColumnExpressionSetter(columnMapping.getExpression());
+							retour.calculateExpression(temp);
 						}
 						retour.completeMessage("Using user mapping");
 						return retour;
@@ -498,7 +498,8 @@ public class ProductBuilder {
 
 			}
 			//if we found the expression AND the ah, we calculate the expression
-			retour.calculateExpression(columnMapping.getExpression(),temp);
+			retour = new ColumnExpressionSetter(columnMapping.getExpression());
+			retour.calculateExpression(temp);
 			
 			retour.completeMessage("Using user mapping");
 			return retour;
@@ -551,7 +552,7 @@ public class ProductBuilder {
 	protected void mapCollectionAttributes() throws Exception {
 		if( this.productAttributeHandler != null ) {
 			System.out.println("@@@@@@@@@@@ MAP " + this.getClass().getName());
-			(new Exception()).printStackTrace();
+			//(new Exception()).printStackTrace();
 			this.mapObservationAxe();
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
@@ -624,8 +625,7 @@ public class ProductBuilder {
 		 */
 		if( this.obs_collectionSetter.notSet() ){
 			//this.obs_collectionSetter = new ColumnExpressionSetter(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()), false);
-			this.obs_collectionSetter = new ColumnExpressionSetter();
-			((ColumnExpressionSetter)(this.obs_collectionSetter)).calculateExpression(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()));
+			this.obs_collectionSetter = new ColumnExpressionSetter(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()));
 
 		}
 		if( this.target_nameSetter == null) {
@@ -802,6 +802,7 @@ public class ProductBuilder {
 		case LAST:
 			PriorityMessage.last("Time");
 			ColumnExpressionSetter cs = this.quantityDetector.getTMax();
+			System.out.println(cs);
 			this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
@@ -823,8 +824,7 @@ public class ProductBuilder {
 //			this.t_minSetter = new ColumnExpressionSetter();
 //			this.t_minSetter.setByValue(String.valueOf(v), false);
 			String v =Double.parseDouble(this.t_maxSetter.getValue()) +"-"+ (Double.parseDouble(this.t_exptimeSetter.getValue())/86400);
-			this.t_minSetter = new ColumnExpressionSetter();
-			((ColumnExpressionSetter)(t_exptimeSetter)).calculateExpression(v);
+			this.t_minSetter = new ColumnExpressionSetter(v);
 			this.t_minSetter.completeMessage("Computed from t_max and t_exptime");				
 		} else if( !this.t_minSetter.notSet() && this.t_maxSetter.notSet() && !this.t_exptimeSetter.notSet() ) {
 //			double v = Double.parseDouble(this.t_minSetter.getValue()) + Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
@@ -832,8 +832,7 @@ public class ProductBuilder {
 //			this.t_maxSetter.setByValue(String.valueOf(v), false);
 //			this.t_minSetter.setByValue(String.valueOf(v), false);
 			String v =Double.parseDouble(this.t_minSetter.getValue()) +"+"+ (Double.parseDouble(this.t_exptimeSetter.getValue())/86400);
-			this.t_minSetter = new ColumnExpressionSetter();
-			((ColumnExpressionSetter)(t_exptimeSetter)).calculateExpression(v);
+			this.t_minSetter = new ColumnExpressionSetter(v);
 			this.t_maxSetter.completeMessage("Computed from t_min and t_exptime");	
 		} else if( !this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && this.t_exptimeSetter.notSet() ) {
 //			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_minSetter.getValue());
@@ -842,8 +841,7 @@ public class ProductBuilder {
 //			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
 //			this.t_exptimeSetter.setUnit("s");
 			String v =Double.toString(Double.parseDouble(this.t_maxSetter.getValue())) +"-"+Double.toString(Double.parseDouble(this.t_minSetter.getValue()));
-			this.t_exptimeSetter = new ColumnExpressionSetter();
-			((ColumnExpressionSetter)(t_exptimeSetter)).calculateExpression(v);
+			this.t_exptimeSetter = new ColumnExpressionSetter(v);
 			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
 			this.t_exptimeSetter.setUnit("s");
 		}
@@ -974,7 +972,6 @@ public class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionCooSysAttributes() throws Exception {
-		String msg = "";
 		switch(this.spaceMappingPriority) {
 		case ONLY :
 			PriorityMessage.only("Coo system");
@@ -984,7 +981,6 @@ public class ProductBuilder {
 			PriorityMessage.first("Coo system");
 			if( !this.mapCollectionCooSysAttributesFromMapping() ) {
 				this.mapCollectionCooSysAttributesAuto();
-				msg = " (auto.detection) ";
 			}			
 			break;
 		case LAST :
@@ -993,12 +989,10 @@ public class ProductBuilder {
 				this.mapCollectionCooSysAttributesFromMapping();
 			}			
 			else {
-				msg = " (auto.detection) ";
 			}
 			break;
 		default:
 			this.mapCollectionCooSysAttributesAuto();
-			msg = " (auto.detection) ";
 		}
 		//		/*
 		//		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
@@ -1170,7 +1164,6 @@ public class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionPoserrorAttributes() throws Exception {
-		String msg="";
 		switch( this.spaceMappingPriority) {
 		case ONLY:
 			PriorityMessage.only("Pos error");
@@ -1180,7 +1173,6 @@ public class ProductBuilder {
 			PriorityMessage.first("Pos error");
 			if( !this.mapCollectionPoserrorAttributesFromMapping() ) {
 				this.mapCollectionPoserrorAttributesAuto();
-				msg = " (auto. detection) ";
 			}			
 			break;
 		case LAST:
@@ -1188,12 +1180,10 @@ public class ProductBuilder {
 			if( !this.mapCollectionPoserrorAttributesAuto()) {
 				this.mapCollectionPoserrorAttributesFromMapping();
 			}	 else {
-				msg = " (auto. detection) ";
 			}
 			break;
 		default: 
 			this.mapCollectionPoserrorAttributesAuto();
-			msg = " (auto. detection) ";
 		}
 
 		/*
@@ -1229,7 +1219,9 @@ public class ProductBuilder {
 				this.mapping.getSpaceAxisMapping().setErrorUnit(unit_read);
 			}
 			break;
+			default:
 		}
+		
 	}
 
 	/**

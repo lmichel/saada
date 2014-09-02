@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import saadadb.enums.ColumnSetMode;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.DataFile;
@@ -120,8 +119,8 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter();
-				setter.calculateExpression(ah);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah);
+				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
