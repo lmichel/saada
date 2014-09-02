@@ -43,6 +43,7 @@ public class DateUtils {
 	 * @throws Exception
 	 */
 	public static double getFMJD(String input) throws Exception {
+		try {
 	    Astrotime af = new Astrotime();
 		if( input.matches(RegExp.FITS_FLOAT_VAL) ) {
 			af.set(Double.parseDouble(input));
@@ -53,6 +54,9 @@ public class DateUtils {
 		} else {
 			af.set(input);
 			return af.getMJD();
+		}
+		} catch(Exception e){
+			return SaadaConstant.LONG;
 		}
 	}
 }
