@@ -165,6 +165,7 @@ public class SaadaDBConnector extends DefaultHandler {
 				else if( this.coord_sys.equals("Galactic") ) {
 					this.astroframe = new Galactic();
 				}
+				rs.close();
 				return;
 			}
 			FatalException.throwNewException(SaadaException.DB_ERROR, "Cannot read SQL table <saadadb>");
