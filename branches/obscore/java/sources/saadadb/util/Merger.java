@@ -18,21 +18,29 @@ public class Merger {
 	 * @return
 	 */
 	public final static String getMergedArray(String[] array) {
+		return getMergedArray(", ", array);
+	}
+	/**
+	 * @param separator
+	 * @param array
+	 * @return
+	 */
+	public final static String getMergedArray(String separator, String[] array) {
 		if( array == null ) {
 			return "";
 		}
 		else {
-			String retour ="";
+			StringBuffer retour = new StringBuffer();
 			for( int i=0 ; i<array.length ; i++) {
 				if( array[i] == null || array[i].trim().length() == 0 ) {
 					continue;
 				}
 				if( retour.length() > 0 ) {
-					retour += ", ";
+					retour.append(separator);
 				}
-				retour += array[i];
+				retour.append(array[i]);
 			}
-			return retour;
+			return retour.toString();
 		}
 	}
 	/**
