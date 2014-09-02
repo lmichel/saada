@@ -3,6 +3,7 @@ package saadadb.dataloader.mapping;
 import java.text.ParseException;
 
 import saadadb.command.ArgsParser;
+import saadadb.enums.MappingMode;
 import saadadb.exceptions.FatalException;
 import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
@@ -29,16 +30,26 @@ public class TimeMapping extends AxisMapping {
 			}
 		}
 		if( (s = ap.getTmax(entryMode)) != null  ){
+			ColumnMapping cm = null;
 			try {
-				if(s.contains("'"))
-				{
-					s=DateUtils.getMJD(s);
+				cm = new ColumnMapping(null, s, "t_max");
+				if( cm.byValue()) {
+					cm.setExpression(DateUtils.getMJD(cm.getExpression()));
 				}
-				this.columnMapping.put("t_min", new ColumnMapping(null, s, "t_min"));
+				this.columnMapping.put("t_max",cm);
+				System.out.println(cm);
+//				if( )
+//				
+//				if(s.contains("'"))
+//				{
+//					s=DateUtils.getMJD(s);
+//				}
+//				this.columnMapping.put("t_max", new ColumnMapping(null, s, "t_max"));
 //				String v = DateUtils.getMJD(s);
 //				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
+				cm = new ColumnMapping(MappingMode.NOMAPPING, null, null, null);
 			}
 		}
 		if( (s = ap.getExpTime(entryMode)) != null  ){
