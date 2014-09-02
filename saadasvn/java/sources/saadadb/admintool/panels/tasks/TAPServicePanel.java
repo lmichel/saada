@@ -147,6 +147,7 @@ public class TAPServicePanel extends TaskPanel {
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
 	public void setDataTreePath(DataTreePath dataTreePath) {
+		this.activate(true);
 //		if( itemSelector != null ) {
 //			try {
 //				itemSelector.loadCapabilities();

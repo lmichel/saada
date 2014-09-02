@@ -1,9 +1,11 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -78,12 +80,15 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	public static void dropPublishedSchema(String schemaName) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Drop tables of  schema " + schemaName);
 		SQLQuery sq = new SQLQuery();
+		ArrayList<String> tempo = new ArrayList<String>();
 		ResultSet rs = sq.run("SELECT table_name  FROM " + tableName + " WHERE  schema_name = '" + schemaName + "'");
 		while( rs.next() ) {
-			Table_Tap_Schema_Tables.dropPublishedTable(rs.getString(1));
+			tempo.add(rs.getString(1));
 		}
 		sq.close();
-
+		for( String s: tempo) {
+			Table_Tap_Schema_Tables.dropPublishedTable(s);
+		}
 		SQLTable.addQueryToTransaction("DELETE FROM " + tableName + " WHERE schema_name = '" + schemaName + "'");		
 	}
 

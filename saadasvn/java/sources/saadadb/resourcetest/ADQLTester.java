@@ -38,7 +38,7 @@ public class ADQLTester {
 //		AdqlQuery exec = new AdqlQuery();
 //		exec.
 //		exec.
-		
+		for( int i=0 ; i<100 ; i++ )
 		TAPToolBox.executeTAPQuery(queryStr, true, "votable", -1, "/tmp", "reportNameRoot.xml");
 		Database.close();
 		System.exit(1);

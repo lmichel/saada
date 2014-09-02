@@ -144,6 +144,7 @@ public class TransactionMaker {
 				stmt.close();
 				Messenger.printMsg(Messenger.TRACE, "Rollback");
 				connection.rollBack();
+				Database.giveAdminConnection();
 			} catch (Exception e) { }
 			unlock();
 			checkBatchError(be);
@@ -154,6 +155,7 @@ public class TransactionMaker {
 				stmt.close();
 				Messenger.printMsg(Messenger.TRACE, "Rollback");
 				connection.rollBack();
+				Database.giveAdminConnection();
 			} catch (Exception e2) { }
 			unlock();
 			Messenger.printMsg(Messenger.ERROR, "on query : " + last_q);

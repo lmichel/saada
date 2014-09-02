@@ -96,6 +96,7 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 		SQLQuery sq = new SQLQuery();
 		ResultSet rs = sq.run("SELECT schema_name FROM " + qtableName + " WHERE schema_name = '" + schema + "' LIMIT 1");
 		while (rs.next()) {
+			sq.close();
 			return true;
 		}
 		sq.close();
