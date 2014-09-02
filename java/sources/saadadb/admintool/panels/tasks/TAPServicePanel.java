@@ -1,16 +1,13 @@
 package saadadb.admintool.panels.tasks;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -18,7 +15,6 @@ import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.ThreadSaveTAPCapabilities;
 import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.SQLJTable;
-import saadadb.admintool.components.SaveButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.XMLButton;
 import saadadb.admintool.components.voresources.VOServiceItemSelector;
@@ -146,7 +142,9 @@ public class TAPServicePanel extends TaskPanel {
 	/* (non-Javadoc)
 	 * @see saadadb.admintool.panels.AdminPanel#setDataTreePath(saadadb.admintool.utils.DataTreePath)
 	 */
-	public void setDataTreePath(DataTreePath dataTreePath) {
+	public void setDataTreePath(DataTreePath dataTreePath) {		
+		this.activate(true);
+
 //		if( itemSelector != null ) {
 //			try {
 //				itemSelector.loadCapabilities();
