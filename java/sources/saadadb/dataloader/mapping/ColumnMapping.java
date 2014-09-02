@@ -207,40 +207,40 @@ public class ColumnMapping {
 	}
 	
 	
-	
-	/**
-	 * this constructor handle the expression case
-	 * @param unit
-	 * @param values = list of attributes handler
-	 * @param expression = expression containing constants and attributes handler
-	 * @throws FatalException
-	 */
-	ColumnMapping(String unit, String[] values, String expression, String label ) throws FatalException{
-		this.label = label;
-		this.mappingMode = (expression == null)? MappingMode.NOMAPPING:  MappingMode.EXPRESSION;
-		this.expression=expression;
-		if(values!=null)
-			for( String s: values ) {
-				AttributeHandler ah = new AttributeHandler();
-				ah.setUnit(unit);	
-				String v;
-				if( (v = this.isConstant(s)) != null ) {
-					ah.setNameattr(ColumnMapping.NUMERIC);
-					ah.setNameorg(ColumnMapping.NUMERIC);
-					ah.setAsConstant();
-					ah.setValue(v);					
-				} else {
-//					if( s.matches(".*['\"]+.*" )) {
-//						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + s);					
-//					}
-//					this.mappingMode = MappingMode.ATTRIBUTE;
-					ah.setNameattr(s);
-					ah.setNameorg(s);
-				}
-				this.attributeHandlers.add(ah);
-				System.out.println(this);
-			}
-	}
+//	
+//	/**
+//	 * this constructor handle the expression case
+//	 * @param unit
+//	 * @param values = list of attributes handler
+//	 * @param expression = expression containing constants and attributes handler
+//	 * @throws FatalException
+//	 */
+//	ColumnMapping(String unit, String[] values, String expression, String label ) throws FatalException{
+//		this.label = label;
+//		this.mappingMode = (expression == null)? MappingMode.NOMAPPING:  MappingMode.EXPRESSION;
+//		this.expression=expression;
+//		if(values!=null)
+//			for( String s: values ) {
+//				AttributeHandler ah = new AttributeHandler();
+//				ah.setUnit(unit);	
+//				String v;
+//				if( (v = this.isConstant(s)) != null ) {
+//					ah.setNameattr(ColumnMapping.NUMERIC);
+//					ah.setNameorg(ColumnMapping.NUMERIC);
+//					ah.setAsConstant();
+//					ah.setValue(v);					
+//				} else {
+////					if( s.matches(".*['\"]+.*" )) {
+////						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Wrong parameter " + s);					
+////					}
+////					this.mappingMode = MappingMode.ATTRIBUTE;
+//					ah.setNameattr(s);
+//					ah.setNameorg(s);
+//				}
+//				this.attributeHandlers.add(ah);
+//				System.out.println(this);
+//			}
+//	}
 
 	private String isConstant(String val){
 		Matcher m = constPattern.matcher(val.trim());

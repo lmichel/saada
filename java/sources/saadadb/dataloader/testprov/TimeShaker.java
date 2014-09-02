@@ -54,7 +54,9 @@ public class TimeShaker extends ParamShaker{
 	TimeShaker() throws Exception{
 		super();
 		this.paramsOfInterest = new HashSet<String>();
-		this.paramsOfInterest.add("o_ucd");
+		this.paramsOfInterest.add("t_min");
+		this.paramsOfInterest.add("t_max");
+		this.paramsOfInterest.add("t_exptime");
 	}
 
 	/* (non-Javadoc)
@@ -151,11 +153,15 @@ public class TimeShaker extends ParamShaker{
 	 * @throws FatalException 
 	 */
 	public static void main(String[] args) throws Exception {
+		try {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		TimeShaker sp = new TimeShaker();
 		sp.processAll();
 		sp.showReport();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		Database.close();
 	}
 
