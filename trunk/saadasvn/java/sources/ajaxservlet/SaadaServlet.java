@@ -245,6 +245,7 @@ public class SaadaServlet extends HttpServlet {
 			bos.write(b, 0, len);
 		}				
 		bos.flush();
+		fl.close();
 	}
 
 
@@ -267,17 +268,15 @@ public class SaadaServlet extends HttpServlet {
 		response.setHeader("Cache-Control", "no-cache" );
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "dump resource " + urlPath);
-		Scanner s = new Scanner(new FileInputStream(f));
-		PrintWriter out = response.getWriter();
-		try {
-			while (s.hasNextLine()){
-				String l = s.nextLine();
-				out.print(l);
-			}
-		} finally{
-			out.flush();
-			s.close();
-		}
+		BufferedInputStream fl = new BufferedInputStream(new FileInputStream(f));
+		byte b[] = new byte[1000000];
+		int len = 0;
+		BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
+		while ((len = fl.read(b)) != -1) {
+			bos.write(b, 0, len);
+		}				
+		bos.flush();
+		fl.close();
 	}
 
 	/**
