@@ -79,10 +79,10 @@ public class ProductBuilder {
 	 * Observation Axis
 	 */
 	protected List<AttributeHandler> name_components;
-	protected ColumnSetter obs_collectionSetter=new ColumnExpressionSetter();
-	protected ColumnSetter target_nameSetter=new ColumnExpressionSetter();
-	protected ColumnSetter facility_nameSetter=new ColumnExpressionSetter();
-	protected ColumnSetter instrument_nameSetter=new ColumnExpressionSetter();
+	protected ColumnExpressionSetter obs_collectionSetter=new ColumnExpressionSetter();
+	protected ColumnExpressionSetter target_nameSetter=new ColumnExpressionSetter();
+	protected ColumnExpressionSetter facility_nameSetter=new ColumnExpressionSetter();
+	protected ColumnExpressionSetter instrument_nameSetter=new ColumnExpressionSetter();
 	protected PriorityMode observationMappingPriority = PriorityMode.LAST;
 	/*
 	 * Space Axis
@@ -454,8 +454,8 @@ public class ProductBuilder {
 						else
 						{
 							//temp.put(cmah.getNameattr(), cmah);
-							retour = new ColumnExpressionSetter(columnMapping.getExpression());
-							retour.calculateExpression(temp);
+							retour = new ColumnExpressionSetter(columnMapping.getExpression(), temp);
+							retour.calculateExpression();
 						}
 						retour.completeMessage("Using user mapping");
 						return retour;
@@ -498,8 +498,8 @@ public class ProductBuilder {
 
 			}
 			//if we found the expression AND the ah, we calculate the expression
-			retour = new ColumnExpressionSetter(columnMapping.getExpression());
-			retour.calculateExpression(temp);
+			retour = new ColumnExpressionSetter(columnMapping.getExpression(), temp);
+			retour.calculateExpression();
 			
 			retour.completeMessage("Using user mapping");
 			return retour;
@@ -557,7 +557,10 @@ public class ProductBuilder {
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
 			this.mapTimeAxe();
+
 			this.mapObservableAxe();
+			System.exit(1);
+
 			this.mapIgnoredAndExtendedAttributes();
 			System.out.println("@@@@@@@@@@@ OVER " + this.getClass().getName());
 		}
@@ -626,7 +629,6 @@ public class ProductBuilder {
 		if( this.obs_collectionSetter.notSet() ){
 			//this.obs_collectionSetter = new ColumnExpressionSetter(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()), false);
 			this.obs_collectionSetter = new ColumnExpressionSetter(this.mapping.getCollection() + "_" + Category.explain(this.mapping.getCategory()));
-
 		}
 		if( this.target_nameSetter == null) {
 			this.target_nameSetter =  new ColumnExpressionSetter();
@@ -802,18 +804,19 @@ public class ProductBuilder {
 		case LAST:
 			PriorityMessage.last("Time");
 			ColumnExpressionSetter cs = this.quantityDetector.getTMax();
-			System.out.println(cs);
-			this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
-			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
+			if( !cs.notSet() ){
+				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+			} else 	if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander(mapping.getColumnMapping("t_max"));
 			}
 			cs = this.quantityDetector.getTMin();
-			this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
-			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
+			if( !cs.notSet() ){
+				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+			} else if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander(mapping.getColumnMapping("t_min"));
 			}
 			this.t_exptimeSetter = this.quantityDetector.getExpTime();
-			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
+			if( cs.notSet() &&!this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
 				this.t_exptimeSetter = getMappedAttributeHander(mapping.getColumnMapping("t_exptime"));
 			}
 			break;
@@ -832,7 +835,7 @@ public class ProductBuilder {
 //			this.t_maxSetter.setByValue(String.valueOf(v), false);
 //			this.t_minSetter.setByValue(String.valueOf(v), false);
 			String v =Double.parseDouble(this.t_minSetter.getValue()) +"+"+ (Double.parseDouble(this.t_exptimeSetter.getValue())/86400);
-			this.t_minSetter = new ColumnExpressionSetter(v);
+			this.t_maxSetter = new ColumnExpressionSetter(v);
 			this.t_maxSetter.completeMessage("Computed from t_min and t_exptime");	
 		} else if( !this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && this.t_exptimeSetter.notSet() ) {
 //			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_minSetter.getValue());
@@ -1300,8 +1303,6 @@ public class ProductBuilder {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Try to find the position in keywords");
 		this.setQuantityDetector();
-		System.out.println(this.productAttributeHandler.get("_ra_pnt"));
-		System.out.println(this.productAttributeHandler.get("RA_PNT"));
 		if( this.quantityDetector.arePosColFound() ) {
 			if( this.astroframeSetter.notSet() ){
 				this.astroframeSetter = this.quantityDetector.getFrame();
