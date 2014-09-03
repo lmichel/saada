@@ -102,6 +102,7 @@ public class ProductListReport {
 						System.out.println(" ");
 
 					}
+					break;
 					
 				}
 //				if( cpt > MAX ) break;
