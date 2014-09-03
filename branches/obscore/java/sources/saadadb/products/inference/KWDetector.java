@@ -120,6 +120,7 @@ public abstract class KWDetector {
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah);
+				setter.completeMessage("kw " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
 		}
@@ -156,6 +157,8 @@ public abstract class KWDetector {
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					retour.add(new ColumnExpressionSetter(ah1));
 					retour.add(new ColumnExpressionSetter(ah2));
+					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by UCD");
+					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by UCD");
 					return retour;
 				} else {
 					ah1 = null;
@@ -181,7 +184,9 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				return new ColumnExpressionSetter(ah);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah);
+				setter.completeMessage("kw " + ah.getNameorg() + " detected by name");
+				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -216,6 +221,8 @@ public abstract class KWDetector {
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
 					retour.add(new ColumnExpressionSetter(ah1));
 					retour.add(new ColumnExpressionSetter(ah2));
+					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by name");
+					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by name");
 					return retour;
 				} else {
 					ah1 = null;
@@ -243,7 +250,9 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
-				return new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				setter.completeMessage("col " + ah.getNameorg() + " detected by UCD");
+				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
@@ -279,6 +288,8 @@ public abstract class KWDetector {
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					retour.add(new ColumnExpressionSetter(ah1));
 					retour.add(new ColumnExpressionSetter(ah2));
+					retour.get(0).completeMessage("col " + ah1.getNameorg() + " detected by UCD");
+					retour.get(1).completeMessage("col " + ah2.getNameorg() + " detected by UCD");
 					return retour;
 				} else {
 					ah1 = null;
@@ -306,7 +317,9 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 //				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				return new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				setter.completeMessage("col " + ah.getNameorg() + " detected by name");
+				return setter;
 
 			}
 		}
@@ -329,7 +342,9 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 //				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				return new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				setter.completeMessage("col " + ah.getNameorg() + " detected by description");
+				return setter;
 
 			}
 		}
