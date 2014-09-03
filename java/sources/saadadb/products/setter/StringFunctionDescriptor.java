@@ -47,6 +47,22 @@ public class StringFunctionDescriptor {
 		return false;
 	}
 	
+	/**
+	 * Returns the value of the function if all parameters are constants
+	 * @return
+	 * @throws Exception
+	 */
+	public String execute() throws Exception {
+		if( this.useKeywords()){
+			return null;
+		} else {		
+			return DictionaryStringFunction.exec(this.functionName, this.getUnquotedArguments());
+		}
+	}
+	
+	/**
+	 * @return
+	 */
 	public String[] getUnquotedArguments() {
 		String[] retour = new String[this.functionArguments.length];
 		for( int i=0 ; i<retour.length ; i++) {
