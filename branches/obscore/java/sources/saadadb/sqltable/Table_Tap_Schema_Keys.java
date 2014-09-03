@@ -4,6 +4,7 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import saadadb.database.Database;
@@ -112,10 +113,14 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 		String fn = schemaName + "." + table;
 		SQLQuery sq = new SQLQuery();
 		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + fn + "' OR target_table = '" + fn + "'" );
+		ArrayList<String> tempo = new ArrayList<String>();
 		while( rs.next() ) {
-			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
+			tempo.add(rs.getString(1));
 		}
 		sq.close();
+		for( String s: tempo) {
+			Table_Tap_Schema_Key_Columns.dropPublishedKey(s);
+		}		
 		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + fn + "' OR target_table = '" + fn + "'");		
 	}
 
@@ -127,11 +132,14 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 		Messenger.printMsg(Messenger.TRACE, "Drop key of  table " + stable);
 		SQLQuery sq = new SQLQuery();
 		ResultSet rs = sq.run("SELECT key_id FROM " + qtableName + " WHERE  from_table = '" + stable + "' OR target_table = '" + stable + "'" );
+		ArrayList<String> tempo = new ArrayList<String>();
 		while( rs.next() ) {
-			Table_Tap_Schema_Key_Columns.dropPublishedKey(rs.getString(1));
+			tempo.add(rs.getString(1));
 		}
 		sq.close();
+		for( String s: tempo) {
+			Table_Tap_Schema_Key_Columns.dropPublishedKey(s);
+		}		
 		SQLTable.addQueryToTransaction("DELETE FROM " + qtableName + " WHERE  from_table = '" + stable + "' OR target_table = '" + stable + "'");		
-	}
-
+	}	
 }
