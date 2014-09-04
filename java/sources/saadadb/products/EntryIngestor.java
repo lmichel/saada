@@ -290,21 +290,21 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected String getInstanceName(String suffix) {
 		String name = "";
-		if( this.product.name_components != null ) {
-			int cpt = 0;
-			for( AttributeHandler ah: this.product.name_components ) {
-				String v = ah.getValue();
-				if( v != null && v.length() > 0 ) {
-					if( cpt > 0 ) {
-						name += " " +v;
-					} else {
-						name += v;					
-					}
-					cpt++;
-				}
-			}
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
-		}
+//		if( this.product.name_components != null ) {
+//			int cpt = 0;
+//			for( AttributeHandler ah: this.product.name_components ) {
+//				String v = ah.getValue();
+//				if( v != null && v.length() > 0 ) {
+//					if( cpt > 0 ) {
+//						name += " " +v;
+//					} else {
+//						name += v;					
+//					}
+//					cpt++;
+//				}
+//			}
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
+//		}
 		/*
 		 * If no name has been set right now, put the position after collection.class
 		 * Take the suffix is there is no position
@@ -350,7 +350,8 @@ public final class EntryIngestor extends ProductIngestor {
 		for( int i=0 ; i<num_ext_att.length ; i++ ) {
 			num_ext_att[i] = -1;
 		}
-		num_name_att = new int[this.product.name_components.size()];
+		//num_name_att = new int[this.product.name_components.size()];
+		num_name_att = new int[8];
 		for( int i=0 ; i<num_name_att.length ; i++ ) {
 			num_name_att[i] = -1;
 		}
@@ -438,21 +439,21 @@ public final class EntryIngestor extends ProductIngestor {
 					extpos++;
 				}
 			}
-			if( this.product.name_components != null ) {
-				int namepos=0;
-				for( AttributeHandler nah: this.product.name_components ) {
-					if( nah.getNameattr().equals(nameField)) {
-						num_name_att[namepos] = index_pos_col[num_att_read];	
-						nmsg += "(" + nah.getNameattr() + " col#" + num_att_read + ") ";
-					}
-					namepos++;
-				}
-			}									
+//			if( this.product.name_components != null ) {
+//				int namepos=0;
+//				for( AttributeHandler nah: this.product.name_components ) {
+//					if( nah.getNameattr().equals(nameField)) {
+//						num_name_att[namepos] = index_pos_col[num_att_read];	
+//						nmsg += "(" + nah.getNameattr() + " col#" + num_att_read + ") ";
+//					}
+//					namepos++;
+//				}
+//			}									
 			num_att_read++;
 		}
-		if( this.product.name_components != null ) {
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,nmsg);
-		}
+//		if( this.product.name_components != null ) {
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,nmsg);
+//		}
 		if( this.product.extended_attributesSetter != null ) {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,emsg);
 		}

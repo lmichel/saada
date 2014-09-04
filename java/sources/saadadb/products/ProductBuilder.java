@@ -655,7 +655,6 @@ public class ProductBuilder {
 		 * Uses the config first
 		 */
 		ColumnMapping cm = this.mapping.getObservationAxisMapping().getColumnMapping("obs_id");
-		System.out.println(cm);
 		String expression = "";
 		if(  !cm.notMapped()) {
 			for( AttributeHandler ah: cm.getHandlers()) {

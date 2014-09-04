@@ -119,7 +119,7 @@ public class EntryBuilder extends ProductBuilder {
 
 			} // first line processing
 			line++;
-			/* make the next line readout */
+			/* next line readout */
 			this.productIngestor.bindInstanceToFile(entryInstance);
 			/*
 			 * Build the SQL query for business table
