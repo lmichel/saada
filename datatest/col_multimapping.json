@@ -1,0 +1,20 @@
+
+{
+"parameters": [
+	"-category=misc" ,
+	"-collection=FOO",
+	"-name=A,B,C"	,
+	"-spccolumn=eMin,eMax"	
+],
+"fields": {
+    "header": [	["A", "double", "", "", "valA"],
+                ["B", "String", "", "", "valB"],
+                ["Z", "String", "", "", "valZ"],
+                ["C", "String", "", "", "valC"],
+ 				["eMin", "double", "KeV", "em.wl;stat.min", "1."],
+				["eMax", "double", "KeV", "em.wl;stat.max", "2."]
+              ]
+		,
+    "columns": []
+    }
+}
