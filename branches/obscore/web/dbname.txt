@@ -1,12 +1,12 @@
 # This file can be put at the webapp root to indicate the saadadb name of the current application
 #saadadbname=saadasvn
-saadadbname=SaadaObscore
+saadadbname=Obscore
 #saadadbname=BENCH2_0_MSQL
 #saadadbname=SQLITE
-#urlroot=http://saada.unistra.fr/saadasvn
-urlroot=http://obs-he-lm:8888/Obscore
+#urlroot=http://saada.unistra.fr/Saada
+urlroot=http://obs-he-lm:8080/SaadaObscore
 #securedownload=true
 #saadadbroot=/Users/laurentmichel/Desktop/DossierBoston/saadadbs/AJAX
-debug=on
+debug=off
 logfile=none
 #logfile=default
