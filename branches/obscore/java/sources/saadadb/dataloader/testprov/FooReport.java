@@ -73,11 +73,13 @@ public class FooReport {
 		if( fn.charAt(0) != File.separatorChar ){
 			ffn = Database.getRoot_dir() + File.separator + "datatest" + File.separator + fn;
 			if( !(new File(ffn)).exists() ) {
-				ffn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
-				if( !(new File(fn)).exists() ) {
+				System.out.println(ffn + " does not exist 1");
+				ffn = ffn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
+				if( !(new File(ffn)).exists() ) {
+					System.out.println(ffn + " does not exist 2");
 					ffn = "/Users/laurentmichel/Documents/workspace/SaadaObscore/datatest/" + fn;
 					if( !(new File(ffn)).exists() ) {
-						System.out.println(ffn + " does not exist");
+						System.out.println(ffn + " does not exist 3");
 						System.exit(1);
 					}
 					System.out.println(ffn);

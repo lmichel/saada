@@ -78,7 +78,8 @@ public class ProductBuilder {
 	/*
 	 * Observation Axis
 	 */
-	protected List<AttributeHandler> name_components;
+	//protected List<AttributeHandler> name_components;
+	protected ColumnExpressionSetter obs_idSetter=new ColumnExpressionSetter();
 	protected ColumnExpressionSetter obs_collectionSetter=new ColumnExpressionSetter();
 	protected ColumnExpressionSetter target_nameSetter=new ColumnExpressionSetter();
 	protected ColumnExpressionSetter facility_nameSetter=new ColumnExpressionSetter();
@@ -125,7 +126,7 @@ public class ProductBuilder {
 	/* map: name of the collection attribute => attribute handler of the current product*/
 	protected Map<String,ColumnExpressionSetter> extended_attributesSetter;
 	protected List<AttributeHandler> ignored_attributesSetter;
-	
+
 
 
 	//	protected ColumnSetter system_attribute;
@@ -434,7 +435,7 @@ public class ProductBuilder {
 		} else if( columnMapping.byAttribute() || columnMapping.byExpression() ){
 			boolean ahfound=false;
 			ColumnExpressionSetter retour;
-			
+
 			//When there is only one ah 
 			if(cmah!=null)
 			{
@@ -500,41 +501,41 @@ public class ProductBuilder {
 			//if we found the expression AND the ah, we calculate the expression
 			retour = new ColumnExpressionSetter(columnMapping.getExpression(), temp);
 			retour.calculateExpression();
-			
+
 			retour.completeMessage("Using user mapping");
 			return retour;
 		}
 		else{
-	
-	//		} else if( columnMapping.byExpression() ){
-	//			for( AttributeHandler ah: this.productAttributeHandler.values()) {
-	//				String keyorg  = ah.getNameorg();
-	//				String keyattr = ah.getNameattr();
-//				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
-//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-//					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
-////					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-////					retour.calculateExpression(cmah);
-//					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-//					if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-//					{
-//						retour.calculateExpression(cmah);
-//					}
-//					else
-//					{
-//						temp.put(cmah.getNameattr(), cmah);
-//						retour.calculateExpression(columnMapping.getExpression(),temp);
-//					}
-//					retour.completeMessage("Using user mapping");
-//					return retour;
-//				}
-//			}
-//		}
-			
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
-		//retour.completeMessage("Not found by mapping");
-		return retour;
+
+			//		} else if( columnMapping.byExpression() ){
+			//			for( AttributeHandler ah: this.productAttributeHandler.values()) {
+			//				String keyorg  = ah.getNameorg();
+			//				String keyattr = ah.getNameattr();
+			//				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
+			//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
+			//					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
+			////					ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			////					retour.calculateExpression(cmah);
+			//					ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			//					if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
+			//					{
+			//						retour.calculateExpression(cmah);
+			//					}
+			//					else
+			//					{
+			//						temp.put(cmah.getNameattr(), cmah);
+			//						retour.calculateExpression(columnMapping.getExpression(),temp);
+			//					}
+			//					retour.completeMessage("Using user mapping");
+			//					return retour;
+			//				}
+			//			}
+			//		}
+
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
+			ColumnExpressionSetter retour = new ColumnExpressionSetter();
+			//retour.completeMessage("Not found by mapping");
+			return retour;
 		}
 	}
 
@@ -557,10 +558,7 @@ public class ProductBuilder {
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
 			this.mapTimeAxe();
-
 			this.mapObservableAxe();
-			System.exit(1);
-
 			this.mapIgnoredAndExtendedAttributes();
 			System.out.println("@@@@@@@@@@@ OVER " + this.getClass().getName());
 		}
@@ -657,56 +655,38 @@ public class ProductBuilder {
 		 * Uses the config first
 		 */
 		ColumnMapping cm = this.mapping.getObservationAxisMapping().getColumnMapping("obs_id");
-		this.name_components = new ArrayList<AttributeHandler>();
+		System.out.println(cm);
+		String expression = "";
 		if(  !cm.notMapped()) {
 			for( AttributeHandler ah: cm.getHandlers()) {
-				/*
-				 * If name component is a constant (enclosed in " or '),
-				 * an attribute hndler is created. Otherwise the product
-				 * attribute handler matching the component is added to 
-				 * component list
-				 */
-				if( ah.isConstantValue() ) {
-					this.name_components.add(ah);					
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Constant string <" + ah.getValue() + "> added to name components");
-				}
-				/*
-				 * flatfiles have no tableAttributeHandler
-				 */
-				else if( this.productAttributeHandler != null ){
-					for( AttributeHandler ahp: this.productAttributeHandler.values()) {
-						if( ah.getNameorg().equals(ahp.getNameorg()) || ah.getNameorg().equals(ahp.getNameorg())) {
-							this.name_components.add(ah);					
-							if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Attribute <"+ ah.getNameorg() + "> added to name components ");
-						}
-					}
-				}
+				if( expression.length() > 0 ) expression += ",";
+				if( ah.getNameorg().equals(ColumnMapping.NUMERIC)) expression += ah.getValue();
+				else  expression += ah.getNameorg();
 			}
+			expression = "strcat(" + expression + ")";
+			this.obs_idSetter = new ColumnExpressionSetter(expression, this.productAttributeHandler);
+			this.obs_idSetter.calculateExpression();
 		} else {
-			this.name_components = new ArrayList<AttributeHandler>();
-			String obsid="";
 			ColumnExpressionSetter cs;
 			if( !(cs = quantityDetector.getFacilityName()).notSet() ) {
-				obsid += cs.getValue();
+				expression += cs.getValue();
 			}
 			if( !(cs = quantityDetector.getTargetName()).notSet() ){
-				if( obsid.length() >= 0 ) obsid += " [";
-				obsid += cs.getValue() + "]";
+				if( expression.length() >= 0 ) expression += " [";
+				expression += cs.getValue() + "]";
 			}
 			AttributeHandler ah = new AttributeHandler();
-			if( obsid.length() >= 0 ) {
+			if( expression.length() >= 0 ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Build with facility_name and target_name");
-				ah.setAsConstant();
-				ah.setValue(obsid);
-				ah.setNameorg(cs.getAttNameOrg());
-				ah.setNameattr(cs.getAttNameAtt());
+					Messenger.printMsg(Messenger.DEBUG, "Build the obs_id with both facility_name and target_name");
 			} else {
-				ah.setValue(this.dataFile.getName());
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Build the obs_id with the filename");
+				expression = this.dataFile.getName();
+				this.obs_idSetter = new ColumnExpressionSetter(expression);
 			}
-			this.name_components.add(ah);
-			Messenger.printMsg(Messenger.TRACE, "Take <" + ah.getValue() + "> as name");
 		}
+		Messenger.printMsg(Messenger.TRACE, "Take <" + expression + "> as name");
 	}
 
 	/**
@@ -823,28 +803,28 @@ public class ProductBuilder {
 		}
 
 		if( this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && !this.t_exptimeSetter.notSet() ) {
-//			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
-//			this.t_minSetter = new ColumnExpressionSetter();
-//			this.t_minSetter.setByValue(String.valueOf(v), false);
+			//			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
+			//			this.t_minSetter = new ColumnExpressionSetter();
+			//			this.t_minSetter.setByValue(String.valueOf(v), false);
 			String v =Double.parseDouble(this.t_maxSetter.getValue()) +"-"+ (Double.parseDouble(this.t_exptimeSetter.getValue())/86400);
 			this.t_minSetter = new ColumnExpressionSetter(v);
 			this.t_minSetter.completeMessage("Computed from t_max and t_exptime");				
 		} else if( !this.t_minSetter.notSet() && this.t_maxSetter.notSet() && !this.t_exptimeSetter.notSet() ) {
-//			double v = Double.parseDouble(this.t_minSetter.getValue()) + Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
-//			this.t_maxSetter = new ColumnExpressionSetter();
-//			this.t_maxSetter.setByValue(String.valueOf(v), false);
-//			this.t_minSetter.setByValue(String.valueOf(v), false);
+			//			double v = Double.parseDouble(this.t_minSetter.getValue()) + Double.parseDouble(this.t_exptimeSetter.getValue())/86400;
+			//			this.t_maxSetter = new ColumnExpressionSetter();
+			//			this.t_maxSetter.setByValue(String.valueOf(v), false);
+			//			this.t_minSetter.setByValue(String.valueOf(v), false);
 			String v =Double.parseDouble(this.t_minSetter.getValue()) +"+"+ (Double.parseDouble(this.t_exptimeSetter.getValue())/86400);
 			this.t_maxSetter = new ColumnExpressionSetter(v);
 			this.t_maxSetter.completeMessage("Computed from t_min and t_exptime");	
 		} else if( !this.t_minSetter.notSet() && !this.t_maxSetter.notSet() && this.t_exptimeSetter.notSet() ) {
-//			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_minSetter.getValue());
-//			this.t_exptimeSetter = new ColumnExpressionSetter();
-//			this.t_exptimeSetter.setByValue(String.valueOf(v), false);
-//			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
-//			this.t_exptimeSetter.setUnit("s");
+			//			double v = Double.parseDouble(this.t_maxSetter.getValue()) - Double.parseDouble(this.t_minSetter.getValue());
+			//			this.t_exptimeSetter = new ColumnExpressionSetter();
+			//			this.t_exptimeSetter.setByValue(String.valueOf(v), false);
+			//			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
+			//			this.t_exptimeSetter.setUnit("s");
 			String v =Double.toString(Double.parseDouble(this.t_maxSetter.getValue())) +"-"+Double.toString(Double.parseDouble(this.t_minSetter.getValue()));
-			this.t_exptimeSetter = new ColumnExpressionSetter(v);
+			this.t_exptimeSetter = new ColumnExpressionSetter(v, null);
 			this.t_exptimeSetter.completeMessage("Computed from t_min and t_max");	
 			this.t_exptimeSetter.setUnit("s");
 		}
@@ -1222,9 +1202,9 @@ public class ProductBuilder {
 				this.mapping.getSpaceAxisMapping().setErrorUnit(unit_read);
 			}
 			break;
-			default:
+		default:
 		}
-		
+
 	}
 
 	/**
@@ -1835,9 +1815,6 @@ public class ProductBuilder {
 		System.out.println("ra_attribute       : " + s_raSetter);
 		System.out.println("dec_attribute      : " + s_decSetter);
 		System.out.println("name_components    : ");
-		for(AttributeHandler ah:  name_components) {
-			System.out.println("  " + ah);
-		}
 		System.out.println("ext att handlers   :");
 		for(ColumnExpressionSetter ah:  extended_attributesSetter.values()) {
 			System.out.println("  " + ah);
