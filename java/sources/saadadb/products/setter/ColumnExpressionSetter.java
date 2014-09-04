@@ -56,7 +56,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * A ColumnSingleSetter used for the abstract methods from ColumnSetter and when mode=ByValue
 	 */
-	private ColumnSingleSetter singleSetter;
+	//private ColumnSingleSetter singleSetter;
 
 	/**
 	 * The List of all numeric function used in the expression
@@ -71,6 +71,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	private StringFunctionExtractor stringFunctionExtractor;
 	private NumericFunctionExtractor numericFunctionExtractor;
 	private AttributeHandler singleAttributeHandler;
+	private boolean singleStringExpression = false;
+	private String unit="";
+	private String ucd="";
 
 	private INIT computingMode;
 	enum INIT{
@@ -108,7 +111,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		//expression=expr;
-		this.singleSetter = new ColumnSingleSetter(attr);
 		this.exprAttributes= new ArrayList<AttributeHandler>();
 		this.setExpression(attr.getNameorg());
 		this.singleAttributeHandler = attr;
@@ -151,7 +153,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public ColumnExpressionSetter()	{
 		super();
 		this.settingMode = ColumnSetMode.NOT_SET;
-		this.singleSetter = new ColumnSingleSetter();
 	}
 
 	/**
@@ -164,6 +165,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		}
 		this.stringFunctionExtractor = new StringFunctionExtractor(expression);
 		if( this.stringFunctionExtractor.isSingleStringExpression() ) {
+			this.singleStringExpression = true;
 			this.wrapper = null;
 			this.expression = this.stringFunctionExtractor.expression;		
 			if( this.useKeywords() ) {
@@ -203,7 +205,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 */
 	public void calculateExpression() throws Exception{
 		if( this.computingMode == INIT.CONSTANT_VALUE){
-			
+
 		}
 		try {
 			if( this.settingMode == ColumnSetMode.BY_KEYWORD){
@@ -217,21 +219,26 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 					System.out.println("evl string");
 					this.execStringFunction();
 				}
-				System.out.println("compute expression");
-//				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-//				this.exprAttributes = ahExtractor.extractAH();
-//				this.expression=ahExtractor.expression;
-				if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
-					System.out.println("new expression");
-					this.lastExpressionEvaluated = this.expression.trim();
-					this.wrapper = new ExpressionWrapper(this.expression, this.exprAttributes, this.numericFunctionList);
-					this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
-					this.result=wrapper.getStringValue();
-					if( this.exprAttributes.size() == 0 && !(this.stringFunctionExtractor != null && this.stringFunctionExtractor.useKeywords()) ){
-						this.settingMode = ColumnSetMode.BY_VALUE;
-					} 
+				if( !this.singleStringExpression ){
+
+					System.out.println("compute expression");
+					//				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+					//				this.exprAttributes = ahExtractor.extractAH();
+					//				this.expression=ahExtractor.expression;
+					if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
+						System.out.println("new expression");
+						this.lastExpressionEvaluated = this.expression.trim();
+						this.wrapper = new ExpressionWrapper(this.expression, this.exprAttributes, this.numericFunctionList);
+						this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
+						this.result=wrapper.getStringValue();
+						if( this.exprAttributes.size() == 0 && !(this.stringFunctionExtractor != null && this.stringFunctionExtractor.useKeywords()) ){
+							this.settingMode = ColumnSetMode.BY_VALUE;
+						} 
+					} else {
+						System.out.println("same expression");
+					}
 				} else {
-					System.out.println("same expression");
+					this.result = this.expression;					
 				}
 			} else {
 				this.result = this.expression;
@@ -261,22 +268,23 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				if( this.stringFunctionExtractor!= null ){
 					System.out.println("evl string");
 					this.execStringFunction(attributes);
-				}
-				System.out.println("compute expression");
-				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
-				this.exprAttributes = ahExtractor.extractAH();
-				this.expression=ahExtractor.expression;
-				if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
-					System.out.println("new expression");
-					this.lastExpressionEvaluated = this.expression.trim();
-					this.wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
-					this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
-					this.result=wrapper.getStringValue();
-					if( this.exprAttributes.size() == 0 && !(this.stringFunctionExtractor != null && this.stringFunctionExtractor.useKeywords()) ){
-						this.settingMode = ColumnSetMode.BY_VALUE;
-					} 
-				} else {
-					System.out.println("same expression");
+				} else if( !this.singleStringExpression ){
+					System.out.println("compute expression");
+					AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
+					this.exprAttributes = ahExtractor.extractAH();
+					this.expression=ahExtractor.expression;
+					if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
+						System.out.println("new expression");
+						this.lastExpressionEvaluated = this.expression.trim();
+						this.wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
+						this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
+						this.result=wrapper.getStringValue();
+						if( this.exprAttributes.size() == 0 && !(this.stringFunctionExtractor != null && this.stringFunctionExtractor.useKeywords()) ){
+							this.settingMode = ColumnSetMode.BY_VALUE;
+						} 
+					} else {
+						System.out.println("same expression");
+					}
 				}
 			} else {
 				this.result = this.expression;
@@ -342,7 +350,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			this.expression=this.expression.replace(e.getKey(), DictionaryStringFunction.exec(e.getValue().functionName, values));	
 		}		
 	}
-	
+
 	/**
 	 * Compute the string function after the the AH used by them have been extracted.
 	 * Update the expression with the results of this computation
@@ -668,7 +676,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			return;
 		switch(this.settingMode){
 		case BY_EXPRESSION:
-			this.completeMessage("expression <"+this.singleSetter.getAssociateAtttribute().getValue()+">");
+			this.completeMessage("expression <"+this.expression+">");
 		case BY_VALUE:
 			this.completeMessage("value <" +this.result+">");
 			break;
@@ -689,90 +697,121 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setByValue(String value, boolean fromMapping) {
 		this.settingMode=ColumnSetMode.BY_VALUE;
-		result = value;
-		this.singleSetter.setByValue(value, fromMapping);	
-
+		this.result = this.expression = value;	
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByValue(double value, boolean fromMapping) {
 		this.settingMode=ColumnSetMode.BY_VALUE;
-		this.singleSetter.setByValue(value, fromMapping);
-		result=Double.toString(value);
-
+		this.result = this.expression = String.valueOf(value);;	
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByKeyword(boolean fromMapping) {
-		this.singleSetter.setByKeyword(fromMapping);
+		this.settingMode = ColumnSetMode.BY_KEYWORD;
+		this.completeMessage("keyword <" + this.singleAttributeHandler.getNameorg()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByKeyword(String value, boolean fromMapping) {
-		this.singleSetter.setByKeyword(value, fromMapping);
-		//result=value;
+		this.settingMode = ColumnSetMode.BY_KEYWORD;
+		this.result = this.expression = value;	
+		this.completeMessage("keyword <" + this.singleAttributeHandler.getNameorg()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByKeyword(double value, boolean fromMapping) {
-		this.singleSetter.setByKeyword(value, fromMapping);
-		//result=Double.toString(value);
+		this.settingMode = ColumnSetMode.BY_KEYWORD;
+		this.result = this.expression = String.valueOf(value);;	
+		this.completeMessage("keyword <" + this.singleAttributeHandler.getNameorg()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByWCS(String value, boolean fromMapping) {
-		this.singleSetter.setByWCS(value, fromMapping);
-		result=value;
-		this.settingMode=ColumnSetMode.BY_WCS;
+		this.settingMode = ColumnSetMode.BY_WCS;
+		this.result = this.expression = value;	
+		this.completeMessage("WCS value <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit() +">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByWCS(double value, boolean fromMapping) {
-		this.singleSetter.setByWCS(value, fromMapping);		
-		result=Double.toString(value);
-		this.settingMode=ColumnSetMode.BY_WCS;
+		this.settingMode = ColumnSetMode.BY_WCS;
+		this.result = this.expression = String.valueOf(value);;	
+		this.completeMessage("WCS value <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit() +">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByPixels(String value, boolean fromMapping) {
-		this.singleSetter.setByPixels(value, fromMapping);
-		result=value;
-		this.settingMode=ColumnSetMode.BY_PIXELS;
+		this.settingMode = ColumnSetMode.BY_PIXELS;
+		this.result = this.expression = value;	
+		this.completeMessage("pixel value <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByPixels(double value, boolean fromMapping) {
-		this.singleSetter.setByPixels(value, fromMapping);
-		result=Double.toString(value);
-		this.settingMode=ColumnSetMode.BY_PIXELS;	
+		this.settingMode = ColumnSetMode.BY_PIXELS;
+		this.result = this.expression = String.valueOf(value);;	
+		this.completeMessage("pixel value <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByTableColumn(String value, boolean fromMapping) {
-		this.singleSetter.setByTableColumn(value, fromMapping);
-		result=value;
-		this.settingMode=ColumnSetMode.BY_TABLE_COLUMN;
+		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
+		this.result = this.expression = value;	
+		this.completeMessage("content of the column <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setByTabeColumn(double value, boolean fromMapping) {
-		this.singleSetter.setByTabeColumn(value, fromMapping);
-		result=Double.toString(value);
-		this.settingMode=ColumnSetMode.BY_TABLE_COLUMN;	
+		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
+		this.result = this.expression = String.valueOf(value);;	
+		this.completeMessage("content of the column <" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">");
+		if( fromMapping  ) {
+			this.completeMessage("user mapping");
+		}
 	}
 
 	@Override
 	public void setBySaada() {
-		this.singleSetter.setBySaada();
-		this.settingMode=ColumnSetMode.BY_SAADA;
-
+		this.settingMode = ColumnSetMode.BY_SAADA;
+		this.result = this.expression = null;
 	}
 
 	@Override
 	public void setValue(double value, String unit) {
-		this.settingMode=ColumnSetMode.BY_VALUE;
-		this.singleSetter.setValue(value, unit);
-		result=String.valueOf(value);
+		this.storedValue = this.result = this.expression = String.valueOf(value);;	
+		this.setUnit(unit);
+		this.storedValue = value;
 	}
 
 	@Override
@@ -783,20 +822,18 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public void setValue(String value) {
-		this.singleSetter.setValue(value);
 		this.result=value;
 	}
 
 	@Override
 	public void setValue(double value) {
-		this.settingMode=ColumnSetMode.BY_VALUE;
-		this.singleSetter.setValue(value);
-		result=String.valueOf(value);	
+
+		this.result=String.valueOf(value);	
 	}
 
 	@Override
 	public void setUnit(String unit) {
-		this.singleSetter.setUnit(unit);	
+		this.unit = unit;	
 	}
 
 	@Override
@@ -811,32 +848,32 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public String getComment() {
-		return this.singleSetter.getComment();
+		return this.message.toString();
 	}
 
 	@Override
 	public String getAttNameOrg() {
-		return this.singleSetter.getAttNameOrg();
+		return this.singleAttributeHandler.getNameorg();
 	}
 
 	@Override
 	public String getAttNameAtt() {
-		return this.singleSetter.getAttNameAtt();
+		return this.singleAttributeHandler.getNameattr();
 	}
 
 	@Override
 	public String getUnit() {
-		return this.singleSetter.getUnit();
+		return this.unit;
 	}
 
 	@Override
 	public String getUcd() {
-		return this.singleSetter.getUcd();
+		return this.ucd;
 	}
 
 	@Override
 	public AttributeHandler getAssociateAtttribute() {
-		return this.singleSetter.getAssociateAtttribute();
+		return this.singleAttributeHandler.getAssociateAtttribute();
 	}
 	//	public static void main(String args[])
 	//	{
@@ -1115,19 +1152,19 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		mapTest.put(ah5.getNameorg(), ah5);
 
 		ColumnExpressionSetter ces;
-/*
+		/*
 CONSTANT_VALUE,
 CONSTANT_EXPRESSION,
 SINGLE_ATTRIBUTE,
 MULTI_ATTRIBUTE,
-*/		
+		 */		
 
 		System.out.println("----------- case CONSTANT_VALUE -------------------");
 		ces = new ColumnExpressionSetter("ah4");
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
-		
+
 		System.out.println("----------- case CONSTANT_EXPRESSION -------------------");
 		ces = new ColumnExpressionSetter("strcat('1', '2')", null);
 		System.out.println(" compiled: " + ces);
@@ -1149,6 +1186,7 @@ MULTI_ATTRIBUTE,
 		for( String exp: new String[]{ 
 				"strcat('1', '2')",
 				"strcat(_emin59, '2')" ,
+				"strcat(_emin59, _tmax)" ,
 				"12" ,
 				"2*12" ,
 				"2*12 + EMIN59" ,

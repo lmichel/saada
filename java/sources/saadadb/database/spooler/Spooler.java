@@ -10,6 +10,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.resourcetest.SpoolerTester;
+import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
 /**
@@ -46,7 +47,7 @@ public class Spooler {
 	/**
 	 * Period of the main loop of the thread  controlling the consistency of the connection list (ms)
 	 */
-	public static final int CHECK_PERIOD = 60;
+	public static final int CHECK_PERIOD = 200;
 	/**
 	 * Period of the spooler reporting (active in debug mode) (multiple of CHECK_PERIOD)
 	 */
@@ -71,7 +72,8 @@ public class Spooler {
 	private int maxConnections;
 	private boolean spoolerIsRunning=false;
 	private boolean checkerIsRunning=false;
-
+	private boolean adminMode = false;
+	
 	/*************************************************************************
 	 * Singleton pattern:
 	 */
@@ -212,6 +214,7 @@ public class Spooler {
 		DatabaseConnection retour;
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Get connection " + Spooler.getSpooler());
+		//Messenger.printStackTop();
 		while( (retour = this.getFirstFreeConnection()) == null ) {
 			Thread.sleep(WAIT_DELAY);
 		}
@@ -224,22 +227,28 @@ public class Spooler {
 	public DatabaseConnection getAdminConnection() throws Exception {
 		if( !this.spoolerIsRunning ) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get a connection from a spooler which is not running");
-		} else if( this.adminConnection == null) {
+		} else if( !this.adminMode) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this + "Attempt to get an admin connection while the admin mode hasn't been set.");
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Get admin connection " + Spooler.getSpooler());
-			while( !this.adminConnection.isFree()  ) {
+			/*
+			 * This loop lust be out of sync in order to let the ListChecker thread updating the connection.
+			 * That is why the admin connection can be null.
+			 */
+			while( this.adminConnection == null || !this.adminConnection.isFree()  ) {
 				Thread.sleep(WAIT_DELAY);
 			}
-			/*
-			 * With SQLITE it is always better to close and reopen the connection in order to allow it to get the "write_lock" locking level, 
-			 * which is necessary to modify the DB schema.
-			 */
-			if( !Database.getWrapper().supportDropTableInTransaction() ) {
-				this.adminConnection.reconnect();
+			synchronized (this) {				
+				/*
+				 * With SQLITE it is always better to close and reopen the connection in order to allow it to get the "write_lock" locking level, 
+				 * which is necessary to modify the DB schema.
+				 */
+				if( !Database.getWrapper().supportDropTableInTransaction() ) {
+					this.adminConnection.reconnect();
+				}
+				return this.adminConnection;		
 			}
-			return this.adminConnection;		
 		}
 		return null;	
 	}
@@ -249,9 +258,11 @@ public class Spooler {
 	 * @param connectionReference
 	 * @throws SQLException
 	 */
-	public void give(DatabaseConnection connectionReference) throws SQLException{
+	public void give(DatabaseConnection connectionReference) throws Exception{
 		if(connectionReference != null ) {
 			connectionReference.give();
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Give connection " + Spooler.getSpooler());
 		}
 	}
 	/**
@@ -293,6 +304,7 @@ public class Spooler {
 	 */
 	private void openAdminConnection() throws Exception{
 		if( this.adminConnection == null ) {
+			this.adminMode = true;
 			if( Database.getWrapper().supportConcurrentAccess() ) {
 				this.adminConnection = new DatabaseAdminConnection(-1, this.adminPassword);
 			} else {
@@ -429,5 +441,26 @@ public class Spooler {
 				Messenger.printMsg(Messenger.DEBUG, "ListChecker stopping");
 			checkerIsRunning = false;			
 		}
+	}
+
+	public static void main(String[] string) throws Exception {
+		Database.init("Obscore");
+		Messenger.debug_mode = true;
+		Database.setAdminMode(null);
+		while(1 == 1) {
+			System.out.println("0");
+			DatabaseConnection c = Spooler.getSpooler().getConnection();
+			c.close();
+//			System.out.println("1");
+//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
+//			System.out.println("2");
+//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
+			SQLTable.beginTransaction();
+			Thread.sleep(100);
+			SQLTable.commitTransaction();
+			Thread.sleep(1000);
+			System.out.println("=============");
+		}
+		//Database.close();
 	}
 }

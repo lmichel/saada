@@ -24,7 +24,6 @@ import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.Table_Saada_Loaded_File;
-import saadadb.unit.Converter;
 import saadadb.unit.Unit;
 import saadadb.util.CopyFile;
 import saadadb.util.Messenger;
@@ -142,9 +141,10 @@ class ProductIngestor {
 	/**
 	 * Set instance name mapping rule and with the file name if not set
 	 * Set product url and date of loading
+	 * @throws Exception 
 	 * @throws AbortException 
 	 */
-	protected void setObservationFields() throws SaadaException {
+	protected void setObservationFields() throws Exception {
 		this.saadaInstance.obs_id  = this.getInstanceName(null);
 		this.saadaInstance.setAccess_url(this.saadaInstance.getDownloadURL(false));	
 		this.saadaInstance.setAccess_format(this.product.mimeType);
@@ -162,40 +162,45 @@ class ProductIngestor {
 	 * filename followerd with the suffix
 	 * @param line 
 	 * @return
+	 * @throws Exception 
 	 */
-	protected String getInstanceName(String suffix) {
-		String name = "";
-		if( this.product.name_components != null ) {
-			int cpt = 0;
-			for( AttributeHandler ah: this.product.name_components ) {
-				String v = ah.getValue();
-				if( v != null && v.length() > 0 ) {
-					if( cpt > 0 ) {
-						name += " " +v;
-					} else {
-						name += v;					
-					}
-					cpt++;
-				}
-			}
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
-		}
-		/*
-		 * If no name has been set right now, put the filename.
-		 * That is better than an empty name
-		 */
-		if( name == null || name.length() == 0 ) {
-			name = this.product.getName();
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
-
-			if( suffix == null ) {
-				name =  name.trim().replaceAll("'", "");
-			} else {
-				name = name.trim().replaceAll("'", "") + "_" + suffix;			
-			}
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
-		}
-		return name;
+	protected String getInstanceName(String suffix) throws Exception {
+		this.product.obs_idSetter.calculateExpression();
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + this.product.obs_idSetter.getValue() + ">");
+		return this.product.obs_idSetter.getValue() ;
+//		
+//		String name = "";
+//		if( this.product.name_components != null ) {
+//			int cpt = 0;
+//			for( AttributeHandler ah: this.product.name_components ) {
+//				String v = ah.getValue();
+//				if( v != null && v.length() > 0 ) {
+//					if( cpt > 0 ) {
+//						name += " " +v;
+//					} else {
+//						name += v;					
+//					}
+//					cpt++;
+//				}
+//			}
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
+//		}
+//		/*
+//		 * If no name has been set right now, put the filename.
+//		 * That is better than an empty name
+//		 */
+//		if( name == null || name.length() == 0 ) {
+//			name = this.product.getName();
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
+//
+//			if( suffix == null ) {
+//				name =  name.trim().replaceAll("'", "");
+//			} else {
+//				name = name.trim().replaceAll("'", "") + "_" + suffix;			
+//			}
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
+//		}
+//		return name;
 	}
 
 	/*
