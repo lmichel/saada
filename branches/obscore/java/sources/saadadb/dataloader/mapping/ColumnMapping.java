@@ -202,7 +202,6 @@ public class ColumnMapping {
 				ah.setNameorg(s);
 			}
 			this.attributeHandlers.add(ah);
-			System.out.println(this);
 		}
 	}
 	

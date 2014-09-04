@@ -184,7 +184,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			if( this.stringFunctionExtractor.splitedFunctionsMap.size() == 0 ){
 				this.stringFunctionExtractor = null;
 			} 
-			System.out.println("expr " + this.expression );
 			this.settingMode = ColumnSetMode.BY_EXPRESSION;
 			if( this.stringFunctionExtractor  != null && !this.stringFunctionExtractor.useKeywords() ){
 				for(Entry<String,StringFunctionDescriptor> e : stringFunctionExtractor.splitedFunctionsMap.entrySet()) {
@@ -209,24 +208,18 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		}
 		try {
 			if( this.settingMode == ColumnSetMode.BY_KEYWORD){
-				System.out.println("by kw");
 				this.result=this.singleAttributeHandler.getValue();				
 			} else 	if( this.settingMode == ColumnSetMode.BY_VALUE || this.settingMode == ColumnSetMode.NOT_SET){
-				System.out.println("by value");
 				return;
 			} else if( this.settingMode == ColumnSetMode.BY_EXPRESSION ){
 				if( this.stringFunctionExtractor!= null ){
-					System.out.println("evl string");
 					this.execStringFunction();
 				}
 				if( !this.singleStringExpression ){
-
-					System.out.println("compute expression");
 					//				AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
 					//				this.exprAttributes = ahExtractor.extractAH();
 					//				this.expression=ahExtractor.expression;
 					if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
-						System.out.println("new expression");
 						this.lastExpressionEvaluated = this.expression.trim();
 						this.wrapper = new ExpressionWrapper(this.expression, this.exprAttributes, this.numericFunctionList);
 						this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
@@ -235,15 +228,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 							this.settingMode = ColumnSetMode.BY_VALUE;
 						} 
 					} else {
-						System.out.println("same expression");
 					}
 				} else {
 					this.result = this.expression;					
 				}
 			} else {
 				this.result = this.expression;
-				System.out.println("stringMode");
-
 			}
 		} catch (Exception e) {
 			this.result = SaadaConstant.STRING;
@@ -259,22 +249,17 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	private void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception{
 		try {
 			if( this.settingMode == ColumnSetMode.BY_KEYWORD){
-				System.out.println("by kw");
 				this.result=this.singleAttributeHandler.getValue();				
 			} else 	if( this.settingMode == ColumnSetMode.BY_VALUE || this.settingMode == ColumnSetMode.NOT_SET){
-				System.out.println("by value");
 				return;
 			} else if( this.settingMode == ColumnSetMode.BY_EXPRESSION ){
 				if( this.stringFunctionExtractor!= null ){
-					System.out.println("evl string");
 					this.execStringFunction(attributes);
 				} else if( !this.singleStringExpression ){
-					System.out.println("compute expression");
 					AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
 					this.exprAttributes = ahExtractor.extractAH();
 					this.expression=ahExtractor.expression;
 					if( !this.expression.trim().equals(this.lastExpressionEvaluated)) {
-						System.out.println("new expression");
 						this.lastExpressionEvaluated = this.expression.trim();
 						this.wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
 						this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
@@ -283,13 +268,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 							this.settingMode = ColumnSetMode.BY_VALUE;
 						} 
 					} else {
-						System.out.println("same expression");
 					}
 				}
 			} else {
 				this.result = this.expression;
-				System.out.println("stringMode");
-
 			}
 		} catch (Exception e) {
 			this.result = SaadaConstant.STRING;
@@ -304,7 +286,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * 
 	 */
 	private void execStringFunction(Map<String,AttributeHandler> attributes) throws Exception {
-		System.out.println("string expression");
 		//We're getting back the new expression (with flags)
 		this.expression=this.stringFunctionExtractor.expression;
 		//for each function
@@ -357,7 +338,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @throws Exception
 	 */
 	private void execStringFunction() throws Exception {
-		System.out.println("string expression");
 		//We're getting back the new expression (with flags)
 		this.expression=this.stringFunctionExtractor.expression;
 		//for each function

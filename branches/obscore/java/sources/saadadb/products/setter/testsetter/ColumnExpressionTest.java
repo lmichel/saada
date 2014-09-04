@@ -55,16 +55,8 @@ public class ColumnExpressionTest {
 	 */
 	public void testColumnSetterWith(String expr,Map<String,AttributeHandler> attributes) throws Exception
 	{
-
-		if (attributes==null || attributes.isEmpty())
-		{
-			ces.setExpression(expr);
-		}
-		else
-		{
-			ces.setExpression(expr);
-			ces.calculateExpression(attributes);
-		}
+			ces.calculateExpression();
+		
 	}
 	
 	/**
