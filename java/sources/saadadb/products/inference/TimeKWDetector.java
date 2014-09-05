@@ -29,7 +29,7 @@ public class TimeKWDetector extends KWDetector {
 		try{
 			double d= Double.parseDouble(retour.getValue());
 			
-			ColumnExpressionSetter ref = this.searchByName(RegExp.TIME_REF_KW);
+			ColumnExpressionSetter ref = this.searchByName("timeref", RegExp.TIME_REF_KW);
 			if( !ref.notSet() ) {
 				double v = Double.parseDouble(ref.getValue());
 				retour.completeMessage("Taken MJDREF as time ref (" + v + ")");
@@ -46,15 +46,15 @@ public class TimeKWDetector extends KWDetector {
 	public ColumnExpressionSetter getTMin() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the date start");
-		ColumnExpressionSetter retour =  this.search(RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
+		ColumnExpressionSetter retour =  this.search("t_min", RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
 		if( retour.notSet() ) {
-			ColumnExpressionSetter year = this.searchByName("YEAR");
-			ColumnExpressionSetter month = this.searchByName("MONTH");
-			ColumnExpressionSetter day = this.searchByName("DAY");
+			ColumnExpressionSetter year = this.searchByName("year", "YEAR");
+			ColumnExpressionSetter month = this.searchByName("month", "MONTH");
+			ColumnExpressionSetter day = this.searchByName("day", "DAY");
 			if( !year.notSet() && !month.notSet() && !day.notSet() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No date found but YEAR/MONTH/DAY");
-				retour = new ColumnExpressionSetter();
+				retour = new ColumnExpressionSetter("t_min");
 				retour.setByValue(year.getValue() + "-" + month.getValue()  + "-" + day.getValue() , false);
 				retour.completeMessage("Build from YEAR/MONTH/DAY keywords");
 			} 
@@ -66,7 +66,7 @@ public class TimeKWDetector extends KWDetector {
 	public ColumnExpressionSetter getTMax() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the date end");
-		ColumnExpressionSetter retour =  this.search(RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
+		ColumnExpressionSetter retour =  this.search("t_max", RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
 		if( !retour.notSet() ){
 			this.addTimeRef(retour);
 		}
@@ -75,7 +75,7 @@ public class TimeKWDetector extends KWDetector {
 	public ColumnExpressionSetter getExpTime() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the exposure time");
-		return this.search(RegExp.EXPOSURE_TIME_UCD, RegExp.EXPOSURE_TIME_KW);
+		return this.search("t_exptime", RegExp.EXPOSURE_TIME_UCD, RegExp.EXPOSURE_TIME_KW);
 	}
 	public ColumnExpressionSetter getExposureName(){
 		return null;

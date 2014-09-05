@@ -22,9 +22,9 @@ public class ObservableKWDetector extends KWDetector {
 	/**
 	 * Quantities are bound each to other. they are set together and returned by accessors
 	 */
-	private ColumnExpressionSetter ucd=new ColumnExpressionSetter();
-	private ColumnExpressionSetter unit=new ColumnExpressionSetter();
-	private ColumnExpressionSetter calib=new ColumnExpressionSetter();;
+	private ColumnExpressionSetter ucd=new ColumnExpressionSetter("o_ucd");
+	private ColumnExpressionSetter unit=new ColumnExpressionSetter("o_unit");
+	private ColumnExpressionSetter calib=new ColumnExpressionSetter("o_calib_status");
 	private boolean commentSearched = false;
 	private boolean keywordsSearched = false;
 	private boolean columnsSearched = false;
@@ -150,7 +150,7 @@ public class ObservableKWDetector extends KWDetector {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Search observable quantities in keywords");
 		this.keywordsSearched = true;
-		this.unit = this.searchByName(RegExp.OBSERVABLE_UNIT_KW);
+		this.unit = this.searchByName("_o_unit", RegExp.OBSERVABLE_UNIT_KW);
 		if( !this.unit.notSet() ){
 			this.calib.setByValue( "2", false);
 			this.calib.completeMessage("Infered from detected units");

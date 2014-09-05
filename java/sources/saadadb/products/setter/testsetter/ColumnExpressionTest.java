@@ -22,7 +22,7 @@ public class ColumnExpressionTest {
 	 */
 	public ColumnExpressionTest()
 	{
-		ces = new ColumnExpressionSetter();
+		ces = new ColumnExpressionSetter("test");
 		mapTest = new TreeMap<String,AttributeHandler>();
 		AttributeHandler ah1 = new AttributeHandler();
 		AttributeHandler ah2 = new AttributeHandler();

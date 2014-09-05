@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.enums.PriorityMode;
@@ -209,7 +208,7 @@ public class EnergyKWDetector extends KWDetector {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Check if a column can be a flux");
 				ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
 				if( !ah.notSet()  ){
-					AttributeHandler na = this.tableAttributeHandler.get("_naxis2");
+					AttributeHandler na = this.tableAttributeHandler.get("naxis2");
 					if( na == null ) {
 						Messenger.printMsg(Messenger.TRACE, "No NAXIS2 key found: product format look suspect");
 						return false;
@@ -233,19 +232,19 @@ public class EnergyKWDetector extends KWDetector {
 		boolean findMax = false;
 
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates by UCDs or UTypes ");
-		ColumnExpressionSetter ah = this.searchByUcd(RegExp.SPEC_MIN_UCD);
-		if( !ah.notSet() ){
-			spectralCoordinate.setOrgMin(Double.parseDouble(ah.getValue()));
-			this.detectionMessage = ah.message.toString();
+		ColumnExpressionSetter colSetter = this.searchByUcd("em_min", RegExp.SPEC_MIN_UCD);
+		if( !colSetter.notSet() ){
+			spectralCoordinate.setOrgMin(Double.parseDouble(colSetter.getValue()));
+			this.detectionMessage = colSetter.message.toString();
 			findMin = true;
-			this.readUnit = ah.getUnit();
+			this.readUnit = colSetter.getUnit();
 		}
-		ah = this.searchByUcd(RegExp.SPEC_MAX_UCD);
-		if( !ah.notSet() ){
-			spectralCoordinate.setOrgMax(Double.parseDouble(ah.getValue()));
-			this.detectionMessage += ah.message.toString();
+		colSetter = this.searchByUcd("em_max", RegExp.SPEC_MAX_UCD);
+		if( !colSetter.notSet() ){
+			spectralCoordinate.setOrgMax(Double.parseDouble(colSetter.getValue()));
+			this.detectionMessage += colSetter.message.toString();
 			findMax = true;
-			if( this.readUnit == null || this.readUnit.length() == 0) this.readUnit = ah.getUnit();
+			if( this.readUnit == null || this.readUnit.length() == 0) this.readUnit = colSetter.getUnit();
 		}
 
 		if ( this.entryAttributeHandler != null && (!findMax  || !findMin) ){
@@ -254,10 +253,10 @@ public class EnergyKWDetector extends KWDetector {
 			 */	
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinates found in header UCDs or UTypes: explore column definitions");
 			findMin = false;
-			ah = this.searchColumnsByUcd(RegExp.SPEC_BAND_UCD);
-			if( !ah.notSet() ){
-				this.setMinMaxValues(this.productFile.getExtrema(ah.getAttNameOrg()));
-				if( this.readUnit == null || this.readUnit.length() == 0)  this.readUnit = ah.getUnit();
+			colSetter = this.searchColumnsByUcd("range", RegExp.SPEC_BAND_UCD);
+			if( !colSetter.notSet() ){
+				this.setMinMaxValues(this.productFile.getExtrema(colSetter.getAttNameOrg()));
+				if( this.readUnit == null || this.readUnit.length() == 0)  this.readUnit = colSetter.getUnit();
 				findMin = true;
 			}
 			return findMin;
@@ -288,23 +287,24 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws FatalException
 	 */
 	public ColumnExpressionSetter getResPower() throws Exception{
+		String fn = "em_res_power";
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the resolution power");
-		ColumnExpressionSetter retour =  this.search(RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+		ColumnExpressionSetter retour =  this.search(fn, RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
 		if( retour.notSet() ) {
 			if( spectralCoordinate == null ){
 				this.mapCollectionSpectralCoordinateAuto();
 			}
 			if( spectralCoordinate.getNbBins() != SaadaConstant.INT 
 					&&  this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE &&  this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE) {
-				retour =  new ColumnExpressionSetter();
+				retour =  new ColumnExpressionSetter(fn);
 				double v     = ((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMin())/2.);
 				double delta = ((this.spectralCoordinate.getOrgMax() - this.spectralCoordinate.getOrgMin())/spectralCoordinate.getNbBins());
 				retour.setByValue(Double.toString(v/delta), false);
 				retour.completeMessage("Computed from both range and bin number ("+ spectralCoordinate.getNbBins() + ")");
 				return retour;
 			} 
-			return  new ColumnExpressionSetter();
+			return  new ColumnExpressionSetter(fn);
 
 		} else {
 			return retour;
@@ -331,7 +331,7 @@ public class EnergyKWDetector extends KWDetector {
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
 		}
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+		ColumnExpressionSetter retour = new ColumnExpressionSetter("x_unit_org");
 		if( this.spectralCoordinate.getMappedUnit() != null ){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getMappedUnit()), false);
 			retour.completeMessage(this.spectralCoordinate.detectionMessage);
@@ -346,7 +346,7 @@ public class EnergyKWDetector extends KWDetector {
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
 		}
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_max");
 		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMax())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
 			retour.completeMessage(this.detectionMessage);	
@@ -361,7 +361,7 @@ public class EnergyKWDetector extends KWDetector {
 		if( spectralCoordinate == null ){
 			this.mapCollectionSpectralCoordinateAuto();
 		}
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_min");
 		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMin())){
 			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
 			retour.completeMessage(this.detectionMessage);	

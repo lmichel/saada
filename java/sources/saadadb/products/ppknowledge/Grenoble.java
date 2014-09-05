@@ -47,7 +47,7 @@ public class Grenoble extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getEMin: read knowledge base");
 			retour = getValue("RESTFREQ") + getValue("CRVAL1") + (0 - getValue("CRPIX1"))*getValue("CDELT1");
-			ColumnExpressionSetter cs = new ColumnExpressionSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_min");
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base");
@@ -55,7 +55,7 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnExpressionSetter(e.getMessage());
+			return  new ColumnExpressionSetter("em_min", e.getMessage());
 		}
 	}
 	@Override
@@ -65,7 +65,7 @@ public class Grenoble extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getEMax: read knowledge base");
 			retour = getValue("RESTFREQ") + getValue("CRVAL1") + (getValue("NAXIS1") - getValue("CRPIX1"))*getValue("CDELT1");
-			ColumnExpressionSetter cs = new ColumnExpressionSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_max");
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base");
@@ -73,7 +73,7 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnExpressionSetter(e.getMessage());
+			return  new ColumnExpressionSetter("em_max", e.getMessage());
 		}
 	}
 	@Override
@@ -94,7 +94,7 @@ public class Grenoble extends PipelineParser {
 			retour += getValue("RESTFREQ") + getValue("CRVAL1") + (0 - getValue("CRPIX1"))*getValue("CDELT1");
 			retour /= 2*getValue("CDELT1");
 			retour = Math.abs(retour);
-			ColumnExpressionSetter cs = new ColumnExpressionSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_res_power");
 			cs.setUnit("");
 			cs.setByWCS(String.valueOf(retour), false);
 			cs.completeMessage("Issued from the knowledge base F/CDELT");
@@ -102,7 +102,7 @@ public class Grenoble extends PipelineParser {
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnExpressionSetter(e.getMessage());
+			return  new ColumnExpressionSetter("em_res_power", e.getMessage());
 		}
 	}
 
@@ -114,12 +114,12 @@ public class Grenoble extends PipelineParser {
 		try { 
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
-			ColumnExpressionSetter cs = new ColumnExpressionSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
 			cs.setByWCS(getStringValue("DATE-OBS"), false);
 			cs.completeMessage("Issued from the knowledge base");
 			return cs;
 		} catch (Exception e) {
-			return  new ColumnExpressionSetter(e.getMessage());
+			return  new ColumnExpressionSetter("t_min", e.getMessage());
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class Grenoble extends PipelineParser {
 	public ColumnExpressionSetter getUnitName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
-		ColumnExpressionSetter cs = new ColumnExpressionSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter("t_max");
 		cs.setByValue("count", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;
@@ -142,7 +142,7 @@ public class Grenoble extends PipelineParser {
 	public ColumnExpressionSetter getUcdName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
-		ColumnExpressionSetter cs = new ColumnExpressionSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter("o_ucd");
 		cs.setByValue("phot.count", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;
@@ -154,7 +154,7 @@ public class Grenoble extends PipelineParser {
 	public ColumnExpressionSetter getCalibStatus() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getCalibStatus: read knowledge base");
-		ColumnExpressionSetter cs = new ColumnExpressionSetter();
+		ColumnExpressionSetter cs = new ColumnExpressionSetter("o_calib_status");
 		cs.setByValue("2", false);
 		cs.completeMessage("Issued from the knowledge base");
 		return cs;

@@ -26,7 +26,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * the value affected to the column but which can be saved as a string within the  AttributeHandler
 	 */
 	public Object storedValue;
-	
+
 	/**
 	 * Constructor: instance must always have a not null attribute handler
 	 * Make the setter as NOT_SET
@@ -45,7 +45,7 @@ public abstract class ColumnSetter implements Cloneable {
 		this.settingMode = setMode;
 		this.setInitMessage();
 	}	
-	
+
 	/**
 	 * Use of boolean flags instead of free text in order to make sure that messages are always the same.
 	 * @param attributeHandler
@@ -97,80 +97,80 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param value
 	 */
 	public abstract void setByValue(String value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (numeric) and set the BY_VALUE mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByValue(double value, boolean fromMapping);
-	
+
 	/**
 	 * @param keyword
 	 */
 	public abstract void setByKeyword(boolean fromMapping);
-	
+
 	/**
 	 * Set the value (STring) and set the BY_WCS mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByKeyword(String value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (numeric) and set the BY_WCS mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByKeyword(double value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (STring) and set the BY_WCS mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByWCS(String value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (numeric) and set the BY_WCS mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByWCS(double value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (STring) and set the BY_PIXEL mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract 	void setByPixels(String value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (numeric) and set the BY_PIXEL mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByPixels(double value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (STring) and set the BY_PIXEL mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByTableColumn(String value, boolean fromMapping);
-	
+
 	/**
 	 * Set the value (numeric) and set the BY_PIXEL mode
 	 * @param value
 	 * @param fromMapping
 	 */
 	public abstract void setByTabeColumn(double value, boolean fromMapping);
-	
+
 	/**
 	 * 
 	 */
 	public abstract void setBySaada();
-	
+
 	/**
 	 * Stores value/unit within the attribute handler without changing the mode.
 	 * storedValue is also set with value
@@ -178,17 +178,17 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param unit
 	 */
 	public abstract void setValue(double value, String unit);
-	
+
 	/**
 	 * 
 	 */
 	public abstract void setNotSet();
-	
+
 	/**
 	 * Set also the BY_VALUE mode
 	 */
 	public abstract void setValue(String value);
-	
+
 	/**
 	 * Set the value as a string  into the AttributeHandler and keep the double value as the storedValue
 	public void setValue(double value, String unit){
@@ -199,8 +199,8 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param value
 	 */
 	public abstract void setValue(double value);
-	
-	
+
+
 	/*
 	 * getters for the mode used to set the attribute
 	 */
@@ -238,22 +238,22 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public abstract double getNumValue();
-	
+
 	/**
 	 * @return
 	 */
 	public abstract String getComment() ;
-	
+
 	/**
 	 * @return
 	 */
 	public abstract String getAttNameOrg() ;
-	
+
 	/**
 	 * @return
 	 */
 	public abstract String getAttNameAtt() ;
-	
+
 	/**
 	 * @return
 	 */
@@ -262,32 +262,32 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public abstract AttributeHandler getAssociateAtttribute() ;
-	
+
 	/**
 	 * @return
 	 */
 	public abstract String getUcd();
-	
+
 	/**
 	 * @return
 	 */
 	public String getMessage() {
 		return this.message.toString();
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public ColumnSetMode getSettingMode() {
 		return settingMode;
-//		return (settingMode == ColumnSetMode.BY_KEYWORD)? "BY_KEYWORD" :
-//			   (settingMode == ColumnSetMode.BY_PIXELS)? "BY_PIXELS" :
-//			   (settingMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_TABLE_COLUMN" :
-//			   (settingMode == ColumnSetMode.BY_VALUE)? "BY_VALUE" :
-//			   (settingMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
-//			   (settingMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
+		//		return (settingMode == ColumnSetMode.BY_KEYWORD)? "BY_KEYWORD" :
+		//			   (settingMode == ColumnSetMode.BY_PIXELS)? "BY_PIXELS" :
+		//			   (settingMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_TABLE_COLUMN" :
+		//			   (settingMode == ColumnSetMode.BY_VALUE)? "BY_VALUE" :
+		//			   (settingMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
+		//			   (settingMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
 	}
-	
+
 	/**
 	 * Returns a clone of the current instance but with value/unit changed
 	 * and a message mentioning the conversion 
@@ -306,5 +306,32 @@ public abstract class ColumnSetter implements Cloneable {
 			return null;
 		}
 	}
+	public ColumnSetter getConverted(String value, String unit, boolean addMessage) {
+		ColumnSetter retour;
+		try {
+			retour = (ColumnSetter) this.clone();
+			if( addMessage ) retour.completeMessage(" Converted to " +  value + unit);
+			retour.setValue(value);
+			retour.setUnit(unit);
+			return retour;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
+
+	public void setConverted(double value, String unit, boolean addMessage) {
+		if( addMessage ) this.completeMessage(" Converted to " +  value + unit);
+		this.setValue(value, unit);
+	}
+	public void setConverted(String value, String unit, boolean addMessage) {
+		if( addMessage ) this.completeMessage(" Converted to " +  value + unit);
+		this.setValue(value);
+		this.setUnit(unit);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public void calculateExpression() throws Exception{}
 
 }
