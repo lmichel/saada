@@ -241,6 +241,8 @@ public class EntryBuilder extends ProductBuilder {
 		this.productIngestor.bindInstanceToFile(this.productIngestor.saadaInstance);
 		SaadaInstance si = this.productIngestor.saadaInstance;
 
+		retour.put("entry.obs_id", obs_idSetter);
+		this.obs_idSetter.storedValue = si.obs_id;
 		retour.put("entry.target_name", target_nameSetter);
 		this.target_nameSetter.storedValue = si.target_name;
 		retour.put("entry.facility_name", facility_nameSetter);

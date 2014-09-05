@@ -12,6 +12,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.util.RegExp;
 
 /**
+ * Expression quoted : constant value, expression to be computed otherwise
  * @author michel
  * @version $Id$
  *
@@ -241,6 +242,11 @@ public class ColumnMapping {
 //			}
 //	}
 
+	/**
+	 * return true if the value is quoted or if it is a number
+	 * @param val
+	 * @return
+	 */
 	private String isConstant(String val){
 		Matcher m = constPattern.matcher(val.trim());
 		if( m.find() && m.groupCount() == 1 ) {

@@ -21,11 +21,13 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.unit.Unit;
 import saadadb.util.CopyFile;
+import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
@@ -38,7 +40,7 @@ import cds.astro.Astroframe;
  * @author michel
  * @version $Id$
  */
-class ProductIngestor {
+public class ProductIngestor {
 	protected SaadaInstance saadaInstance;
 	protected ProductBuilder product;
 	/** allows the ColumnSetter to append messages after conversion */
@@ -275,7 +277,7 @@ class ProductIngestor {
 				double dec = converted_coord[1];
 				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString(), addMEssage);
 				this.product.s_decSetter =  this.product.s_decSetter.getConverted(dec, Database.getAstroframe().toString(), addMEssage);
-				if( this.product.s_regionSetter.storedValue  != null ) {
+				if( !this.product.s_regionSetter.notSet() ) {
 					String stc = "Polygon " + Database.getAstroframe();
 					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
 					for( int i=0 ; i<(pts.length/2) ; i++ ) {
@@ -302,11 +304,10 @@ class ProductIngestor {
 					if( number == 0 ) Messenger.printMsg(Messenger.WARNING, "Coordinates can not be set");
 				}
 			} catch( Exception e ) {
-//				e.printStackTrace();
-//				System.exit(1);
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the position " + e.getMessage());
 				this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
 				this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
+				this.product.s_regionSetter.completeMessage("Conv failed " + e.getMessage());
 				this.saadaInstance.s_ra = Double.POSITIVE_INFINITY;
 				this.saadaInstance.s_dec = Double.POSITIVE_INFINITY;					
 			}
@@ -325,8 +326,6 @@ class ProductIngestor {
 					}
 				}
 			} catch( Exception e ) {
-				e.printStackTrace();
-				System.exit(1);
 				Messenger.printMsg(Messenger.TRACE, "Error while converting the FoV " + e.getMessage());
 				this.product.s_fovSetter.completeMessage("Conv failed " + e.getMessage());
 				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
@@ -384,12 +383,42 @@ class ProductIngestor {
 	 */
 
 	/**
-	 * @throws SaadaException
+	 * @throws Exception 
 	 */
-	protected void setTimeFields() throws SaadaException {
-		setField("t_min"    , this.product.t_minSetter);
-		setField("t_max"    , this.product.t_maxSetter);
-		setField("t_exptime", this.product.t_exptimeSetter);
+	protected void setTimeFields() throws Exception {
+		ColumnSetter t_min = this.product.t_minSetter;
+		ColumnSetter t_max = this.product.t_maxSetter;
+		ColumnSetter t_exptime = this.product.t_exptimeSetter;
+
+		if( !t_min.notSet() ) {
+			t_min.storedValue = DateUtils.getMJD(t_min.getValue());
+			t_min.setConverted(DateUtils.getMJD(t_min.getValue()), "mjd", true);
+		}
+		if( !t_max.notSet() ) {
+			t_max.storedValue = DateUtils.getMJD(t_max.getValue());
+			t_max.setConverted(DateUtils.getMJD(t_max.getValue()), "mjd", true);
+		}
+		
+		if( t_min.notSet() && !t_max.notSet() && !t_exptime.notSet() ) {
+			String v =Double.parseDouble(t_max.getValue()) +"-"+ (Double.parseDouble(t_exptime.getValue())/86400);
+			this.product.t_minSetter = new ColumnExpressionSetter("t_min", v);
+			t_min = this.product.t_minSetter;
+			t_min.completeMessage("Computed from t_max and t_exptime");				
+		} else if( !t_min.notSet() && t_max.notSet() && !t_exptime.notSet() ) {
+			String v =Double.parseDouble(t_min.getValue()) +"+"+ (Double.parseDouble(t_exptime.getValue())/86400);
+			this.product.t_maxSetter = new ColumnExpressionSetter("t_max", v);
+			t_max.completeMessage("Computed from t_min and t_exptime");	
+			t_max = this.product.t_maxSetter;
+		} else if( !t_min.notSet() && !t_max.notSet() && t_exptime.notSet() ) {
+			String expr = "3600*24*(" + t_max.getValue() + "-" + t_min.getValue() + ")";
+			this.product.t_exptimeSetter = new ColumnExpressionSetter("t_exptime", expr, null);
+			t_exptime = this.product.t_exptimeSetter;
+			t_exptime.completeMessage("Computed from t_min and t_max");	
+			t_exptime.setUnit("s");
+		}
+		setField("t_min"    , t_min);
+		setField("t_max"    , t_max);
+		setField("t_exptime", t_exptime);
 	}
 
 	/*
@@ -597,23 +626,25 @@ class ProductIngestor {
 	/**
 	 * Set the saada instance's field "fieldName" with the value read in ah_ref
 	 * @param fieldName
-	 * @param ah_ref
+	 * @param columnSetter
 	 * @throws FatalException
 	 */
-	protected void setField(String fieldName, ColumnSetter ah_ref) throws FatalException{
-		if(ah_ref.notSet() ){
+	protected void setField(String fieldName, ColumnSetter columnSetter) throws FatalException{
+		if(columnSetter.notSet() ){
 			return;
 		}
-		String value = ah_ref.getValue();
-		Field f=null;
+		String value = "";
 		try {
+			columnSetter.calculateExpression();
+			value = columnSetter.getValue();
+			Field f=null;
 			f = saadaInstance.getClass().getField(fieldName);
 			this.saadaInstance.setInField(f, value);
 			if( Messenger.debug_mode ) {
-				if( ah_ref.byKeyword()) {
+				if( columnSetter.byKeyword()) {
 					Messenger.printMsg(Messenger.DEBUG,
 							"Attribute " + fieldName 
-							+ " set with the KW  <" + ah_ref.getAttNameOrg()
+							+ " set with the KW  <" + columnSetter.getAttNameOrg()
 							+ "=" + value + ">");
 				} else {
 					Messenger.printMsg(Messenger.DEBUG,
@@ -625,10 +656,13 @@ class ProductIngestor {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
-					+ " can not be set with the KW  <" + ah_ref.getAttNameOrg()
+					+ " can not be set with the KW  <" + columnSetter.getAttNameOrg()
 					+ "=" + value + ">");
 		}
 	}
 
+	public void showCollectionValues() throws Exception {
+		
+	}
 
 }

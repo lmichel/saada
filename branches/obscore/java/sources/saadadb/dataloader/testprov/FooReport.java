@@ -3,6 +3,7 @@ package saadadb.dataloader.testprov;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
@@ -98,7 +100,7 @@ public class FooReport {
 			params.add(iterator.next());  
 		}  
 		this.ap = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new FooProduct(this.jsonAhs, 0);
+		this.fooProduct = new FooProduct(this.jsonAhs, 3);
 
 	}	
 	FooReport(String[] args) throws Exception{
@@ -143,19 +145,15 @@ public class FooReport {
 			if( !ah.notSet() ) 
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
-
 		}
-		if( er != null ){
-			System.out.println("      -- Entry Field values");	
-			for( java.util.Map.Entry<String, ColumnSetter> e:er.entrySet()){
-				System.out.print(String.format("%20s",e.getKey()) + "     ");
-				ColumnSetter ah = e.getValue();
-				System.out.print(ah.getSettingMode() + " " + ah.message);
-				if( !ah.notSet() ) 
-					System.out.print(" storedValue=" + ah.storedValue);
-				System.out.println("");
-
-			}
+		
+		TableBuilder tb = (TableBuilder) product;
+		EntryBuilder eb = tb.getEntry();
+		System.out.println(product.getNRows());
+		Enumeration e = eb.elements();
+		while( eb.productIngestor.hasMoreElements()){
+			eb.productIngestor.bindInstanceToFile(null);
+			eb.productIngestor.showCollectionValues();
 		}
 	}
 

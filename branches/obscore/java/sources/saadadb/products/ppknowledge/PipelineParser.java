@@ -51,9 +51,9 @@ public abstract class PipelineParser {
 	protected ColumnExpressionSetter getColmumnSetter(String key){
 		AttributeHandler ah = this.getAttributeHandler(key);
 		if( ah == null ){
-			return new ColumnExpressionSetter();
+			return new ColumnExpressionSetter(key);
 		} else {
-			ColumnExpressionSetter cs = new ColumnExpressionSetter();
+			ColumnExpressionSetter cs = new ColumnExpressionSetter(key);
 			cs.setByWCS(ah.getValue(), false);
 			cs.setUnit(ah.getUnit());
 			cs.completeMessage("Issued from the knowledge base");
@@ -91,81 +91,81 @@ public abstract class PipelineParser {
 	 * Observation axis
 	 */
 	public ColumnExpressionSetter getCollectionName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("obs_collection");
 	}
 	public ColumnExpressionSetter getTargetName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("target_name");
 	}
 	public ColumnExpressionSetter getFacilityName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("facility_name");
 	}
 	public ColumnExpressionSetter getExposureName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("exposure_name");
 	}
 	public ColumnExpressionSetter getInstrumentName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("instrument_name");
 	}
 	public ColumnExpressionSetter getObsIdComponents() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("obs_id");
 	}
 	/*
 	 * space axis
 	 */
 	public ColumnExpressionSetter getFrame() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("astroframe");
 	}
 	public ColumnExpressionSetter getAscension() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("s_ra");
 	}
 	public ColumnExpressionSetter getDeclination() {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("s_dec");
 	}
 	public ColumnExpressionSetter getSpatialError() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("s_resolution");
 	}
 	public ColumnExpressionSetter getfov() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("s_fov");
 	}
 	public ColumnExpressionSetter getRegion() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("s_region");
 	}
 	/*
 	 * Energy axis
 	 */
 	public ColumnExpressionSetter getEMin() throws SaadaException, Exception {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("em_min");
 	}
 	public ColumnExpressionSetter getEMax() throws SaadaException, Exception {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("em_max");
 	}
 	public ColumnExpressionSetter getEUnit() throws SaadaException, Exception {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("x_unit_org");
 	}
 	public ColumnExpressionSetter getResPower() throws SaadaException, Exception {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("em_res_power");
 	}
 	/*
 	 * time axis
 	 */
 	public ColumnExpressionSetter getTMin() throws SaadaException, Exception {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("t_min");
 	}
 	public ColumnExpressionSetter getTMax() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("t_max");
 	}
 	public ColumnExpressionSetter getExpTime() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("t_exptime");
 	}
 	/*
 	 * Observable axis
 	 */
 	public ColumnExpressionSetter getUnitName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("o_unit");
 	}
 	public ColumnExpressionSetter getCalibStatus() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("o_calib_status");
 	}
 	public ColumnExpressionSetter getUcdName() throws SaadaException {
-		return new ColumnExpressionSetter();
+		return new ColumnExpressionSetter("o_ucd");
 	}
 }

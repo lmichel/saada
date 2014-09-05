@@ -74,6 +74,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	private boolean singleStringExpression = false;
 	private String unit="";
 	private String ucd="";
+	public final String fieldName;
 
 	private INIT computingMode;
 	enum INIT{
@@ -87,12 +88,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param constantValue
 	 * @throws Exception 
 	 */
-	public ColumnExpressionSetter(String constantValue) throws Exception	{
+	public ColumnExpressionSetter(String fieldName, String constantValue) throws Exception	{
 		super();
 		if( constantValue == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		//expression=expr;
+		this.fieldName = fieldName;
 		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.expression = this.result = constantValue;
 		this.computingMode = INIT.CONSTANT_VALUE;
@@ -104,13 +106,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param attr
 	 * @throws Exception
 	 */
-	public ColumnExpressionSetter(AttributeHandler attr) throws Exception {
+	public ColumnExpressionSetter(String fieldName, AttributeHandler attr) throws Exception {
 		super();
 		this.settingMode = ColumnSetMode.NOT_SET;
 		if( attr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
 		//expression=expr;
+		this.fieldName = fieldName;
 		this.exprAttributes= new ArrayList<AttributeHandler>();
 		this.setExpression(attr.getNameorg());
 		this.singleAttributeHandler = attr;
@@ -125,13 +128,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param attributes map of the AH possibly used by the expression
 	 * @throws Exception
 	 */
-	public ColumnExpressionSetter(String expression, Map<String,AttributeHandler> attributes) throws Exception{
+	public ColumnExpressionSetter(String fieldName, String expression, Map<String,AttributeHandler> attributes) throws Exception{
 		super();
 		if( attributes == null ){
 			this.computingMode = INIT.CONSTANT_EXPRESSION;
 		} else {
 			this.computingMode = INIT.MULTI_ATTRIBUTE;
 		}
+		this.fieldName = fieldName;
 		this.setExpression(expression);
 		this.calculateExpression(attributes);
 	}
@@ -141,8 +145,8 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param attr
 	 * @throws Exception
 	 */
-	public ColumnExpressionSetter(AttributeHandler attr, ColumnSetMode mode) throws Exception {
-		this(attr);
+	public ColumnExpressionSetter(String fieldName, AttributeHandler attr, ColumnSetMode mode) throws Exception {
+		this(fieldName, attr);
 		this.settingMode = mode;
 	}
 
@@ -150,8 +154,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * Override the auto-mode détection
 	 */
-	public ColumnExpressionSetter()	{
+	public ColumnExpressionSetter(String fieldName )	{
 		super();
+		this.fieldName = fieldName;
 		this.settingMode = ColumnSetMode.NOT_SET;
 	}
 
@@ -198,10 +203,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		}
 	}
 
-	/**
-	 * @param attributes
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see saadadb.products.setter.ColumnSetter#calculateExpression()
 	 */
+	@Override
 	public void calculateExpression() throws Exception{
 		if( this.computingMode == INIT.CONSTANT_VALUE){
 
@@ -622,7 +627,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	//
 	public String toString(){
 
-		String retour =  "(" + this.expression + ")=" +result
+		String retour =  this.fieldName + " (" + this.expression + ")=" +result
 				+ " [";
 		for( AttributeHandler ah: this.exprAttributes) {
 			retour += ah.getNameorg() + " ";
@@ -833,12 +838,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public String getAttNameOrg() {
-		return this.singleAttributeHandler.getNameorg();
+		return this.fieldName;
 	}
 
 	@Override
 	public String getAttNameAtt() {
-		return this.singleAttributeHandler.getNameattr();
+		return this.fieldName;
 	}
 
 	@Override
@@ -1105,6 +1110,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		AttributeHandler ah3 = new AttributeHandler();
 		AttributeHandler ah4 = new AttributeHandler();
 		AttributeHandler ah5 = new AttributeHandler();
+		AttributeHandler ah6 = new AttributeHandler();
 		ah1.setNameorg("TMIN");
 		ah1.setNameattr("_tmin");
 		ah1.setValue("11/20/1858"); //=3
@@ -1120,6 +1126,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		ah4.setNameorg("TMAX");
 		ah4.setNameattr("_tmax");
 		ah4.setValue("11/22/1858");//=5
+		
+		ah6.setNameorg("Temps");
+		ah6.setNameattr("_temps");
+		ah6.setValue("2014-02-13");//=5
 
 		ah5.setNameorg("EMIN59");
 		ah5.setNameattr("_emin59");
@@ -1130,6 +1140,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		mapTest.put(ah3.getNameorg(), ah3);
 		mapTest.put(ah4.getNameorg(), ah4);
 		mapTest.put(ah5.getNameorg(), ah5);
+		mapTest.put(ah5.getNameorg(), ah6);
 
 		ColumnExpressionSetter ces;
 		/*
@@ -1140,24 +1151,32 @@ MULTI_ATTRIBUTE,
 		 */		
 
 		System.out.println("----------- case CONSTANT_VALUE -------------------");
-		ces = new ColumnExpressionSetter("ah4");
+		ces = new ColumnExpressionSetter("name","2014-02-13");
+		System.out.println(" compiled: " + ces);
+		ces.calculateExpression();
+		System.out.println(" comptued: " + ces);
+		ces = new ColumnExpressionSetter("name","ah4");
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
 
 		System.out.println("----------- case CONSTANT_EXPRESSION -------------------");
-		ces = new ColumnExpressionSetter("strcat('1', '2')", null);
+		ces = new ColumnExpressionSetter("name", "strcat('1', '2')", null);
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
 
-		ces = new ColumnExpressionSetter("12+ strcat('1', '2')", null);
+		ces = new ColumnExpressionSetter("name","12+ strcat('1', '2')", null);
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
 
 		System.out.println("----------- case SINGLE_ATTRIBUTE -------------------");
-		ces = new ColumnExpressionSetter(ah4);
+		ces = new ColumnExpressionSetter("name",ah4);
+		System.out.println(" compiled: " + ces);
+		ces.calculateExpression();
+		System.out.println(" comptued: " + ces);
+		ces = new ColumnExpressionSetter("name",ah6);
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
@@ -1180,7 +1199,7 @@ MULTI_ATTRIBUTE,
 				"MJD('11/20/1858') - MJD('11/22/1858')" ,
 		}) {
 			System.out.println("*****Expr: " + exp);
-			ces = new ColumnExpressionSetter(exp, mapTest);
+			ces = new ColumnExpressionSetter("name",exp, mapTest);
 			System.out.println(" compiled: " + ces);
 			ces.calculateExpression(mapTest);
 			System.out.println(" computed: " + ces);

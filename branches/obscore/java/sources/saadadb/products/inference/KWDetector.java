@@ -49,67 +49,71 @@ public abstract class KWDetector {
 
 	/**
 	 * Incorporate both search be UCD (first) and by column name in the table AttributeHandlers
-	 * @param ucd_regexp regular expression to be applied to the UCDs
-	 * @param colname_regexp regular expression to be applied to the column name
+	 * @param fieldName
+	 * @param ucd_regexp
+	 * @param colname_regexp
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	protected  ColumnExpressionSetter search(String ucd_regexp, String colname_regexp) throws Exception{
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+	protected  ColumnExpressionSetter search(String fieldName, String ucd_regexp, String colname_regexp) throws Exception{
+		ColumnExpressionSetter retour = new ColumnExpressionSetter(fieldName);
 		if(ucd_regexp!= null ){
-			retour = this.searchByUcd(ucd_regexp);
+			retour = this.searchByUcd(fieldName, ucd_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
-			retour = this.searchByName(colname_regexp);
+			retour = this.searchByName(fieldName, colname_regexp);
 		}
 		return retour;
 	}
 	
 	/**
 	 * Incorporate both search be UCD (first) and by column name in the entrty AttributeHandlers
+	 * @param fieldName
 	 * @param ucd_regexp regular expression to be applied to the UCDs
 	 * @param colname_regexp regular expression to be applied to the column name
 	 * @return
 	 * @throws Exception 
 	 */
-	protected  ColumnExpressionSetter searchColumns(String ucd_regexp, String colname_regexp) throws Exception{
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+	protected  ColumnExpressionSetter searchColumns(String fieldName, String ucd_regexp, String colname_regexp) throws Exception{
+		ColumnExpressionSetter retour = new ColumnExpressionSetter(fieldName);
 		if(ucd_regexp != null ){
-			retour = this.searchColumnsByUcd(ucd_regexp);
+			retour = this.searchColumnsByUcd(fieldName, ucd_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
-			retour =  this.searchColumnsByName(colname_regexp);
+			retour =  this.searchColumnsByName(fieldName, colname_regexp);
 		}
 		return retour;
 	}
 	/**
 	 * Incorporate  search be UCD (first) then by column name and then by description in the entry AttributeHandlers
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @param colname_regexp
 	 * @param desc_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected  ColumnExpressionSetter searchColumns(String ucd_regexp, String colname_regexp, String desc_regexp) throws Exception{
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+	protected  ColumnExpressionSetter searchColumns(String fieldName, String ucd_regexp, String colname_regexp, String desc_regexp) throws Exception{
+		ColumnExpressionSetter retour = new ColumnExpressionSetter(fieldName);
 		if(ucd_regexp != null ){
-			retour = this.searchColumnsByUcd(ucd_regexp);
+			retour = this.searchColumnsByUcd(fieldName, ucd_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
-			retour =  this.searchColumnsByName(colname_regexp);
+			retour =  this.searchColumnsByName(fieldName, colname_regexp);
 		}
 		if( retour.notSet() && colname_regexp != null){
-			retour =  this.searchColumnsByDescription(desc_regexp);
+			retour =  this.searchColumnsByDescription(fieldName, desc_regexp);
 		}
 		return retour;
 	}
 	/**
 	 * Search the first attribute handler with an UCD matching ucd_regexp
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected ColumnExpressionSetter searchByUcd(String ucd_regexp) throws Exception {
+	protected ColumnExpressionSetter searchByUcd(String fieldName, String ucd_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search by UCD /" + ucd_regexp + "/";
@@ -119,24 +123,26 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah);
 				setter.completeMessage("kw " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return notSetColumnSetter();
+		return notSetColumnSetter(fieldName);
 	}
 	
 	/**
 	 * Search the 2 attribute handlers with a UCD matching respectively ucd1_regexp and String ucd2_regexp
+	 * @param fieldName1
 	 * @param ucd1_regexp
+	 * @param fieldName2
 	 * @param ucd2_regexp
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	protected List<ColumnExpressionSetter> searchByUcd(String ucd1_regexp, String ucd2_regexp) throws Exception {
+	protected List<ColumnExpressionSetter> searchByUcd(String fieldName1, String ucd1_regexp, String fieldName2, String ucd2_regexp) throws Exception {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
@@ -155,8 +161,8 @@ public abstract class KWDetector {
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
 //					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
-					retour.add(new ColumnExpressionSetter(ah1));
-					retour.add(new ColumnExpressionSetter(ah2));
+					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
+					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
 					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by UCD");
 					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by UCD");
 					return retour;
@@ -172,11 +178,12 @@ public abstract class KWDetector {
 
 	/**
 	 * Search the first attribute handler with a name matching colname_regexp
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected ColumnExpressionSetter searchByName(String colname_regexp) throws Exception {
+	protected ColumnExpressionSetter searchByName(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAME /" + colname_regexp + "/";
@@ -184,23 +191,25 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah);
 				setter.completeMessage("kw " + ah.getNameorg() + " detected by name");
 				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return notSetColumnSetter();
+		return notSetColumnSetter(fieldName);
 	}
 	/**
 	 * Search the 2 attribute handlers with a name matching respectively colname1_regexp and String colname2_regexp
+	 * @param fieldName1
 	 * @param colname1_regexp
+	 * @param fieldName2
 	 * @param colname2_regexp
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	protected List<ColumnExpressionSetter> searchByName(String colname1_regexp, String colname2_regexp) throws Exception {
+	protected List<ColumnExpressionSetter> searchByName(String fieldName1, String colname1_regexp, String fieldName2, String colname2_regexp) throws Exception {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
@@ -219,8 +228,8 @@ public abstract class KWDetector {
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
 //					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, false));
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
-					retour.add(new ColumnExpressionSetter(ah1));
-					retour.add(new ColumnExpressionSetter(ah2));
+					retour.add(new ColumnExpressionSetter(fieldName1,ah1));
+					retour.add(new ColumnExpressionSetter(fieldName2,ah2));
 					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by name");
 					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by name");
 					return retour;
@@ -236,11 +245,12 @@ public abstract class KWDetector {
 
 	/**
 	 * Search the first entry attribute handler with an UCD matching ucd_regexp
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected ColumnExpressionSetter searchColumnsByUcd(String ucd_regexp) throws Exception {
+	protected ColumnExpressionSetter searchColumnsByUcd(String fieldName, String ucd_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg =  "Search column by UCD /" + ucd_regexp + "/";
@@ -250,24 +260,26 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
-		return notSetColumnSetter();
+		return notSetColumnSetter(fieldName);
 	}
 
 	/**
 	 * Search the 2 colmuns attribute handlers with a UCD matching respectively ucd1_regexp and String ucd2_regexp
+	 * @param fieldName1
 	 * @param ucd1_regexp
+	 * @param fieldName2
 	 * @param ucd2_regexp
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
-	protected List<ColumnExpressionSetter> searchColumnByUcd(String ucd1_regexp, String ucd2_regexp) throws Exception {
+	protected List<ColumnExpressionSetter> searchColumnByUcd(String fieldName1, String ucd1_regexp, String fieldName2,String ucd2_regexp) throws Exception {
 		String msg = "";
 		AttributeHandler ah1 =  null;
 		AttributeHandler ah2 =  null;
@@ -286,8 +298,8 @@ public abstract class KWDetector {
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
 //					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
 //					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
-					retour.add(new ColumnExpressionSetter(ah1));
-					retour.add(new ColumnExpressionSetter(ah2));
+					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
+					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
 					retour.get(0).completeMessage("col " + ah1.getNameorg() + " detected by UCD");
 					retour.get(1).completeMessage("col " + ah2.getNameorg() + " detected by UCD");
 					return retour;
@@ -304,11 +316,12 @@ public abstract class KWDetector {
 	
 	/**
 	 * Search the first entry attribute handler with a name matching colname_regexp
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected ColumnExpressionSetter searchColumnsByName(String colname_regexp) throws Exception {
+	protected ColumnExpressionSetter searchColumnsByName(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search column by NAME /" + colname_regexp + "/";
@@ -317,7 +330,7 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 //				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by name");
 				return setter;
 
@@ -325,15 +338,16 @@ public abstract class KWDetector {
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found" );
-		return notSetColumnSetter();
+		return notSetColumnSetter(fieldName);
 	}
 	/**
 	 * Search the first entry attribute handler with a description matching colname_regexp
+	 * @param fieldName
 	 * @param ucd_regexp
 	 * @return
 	 * @throws Exception 
 	 */
-	protected ColumnExpressionSetter searchColumnsByDescription(String colname_regexp) throws Exception {
+	protected ColumnExpressionSetter searchColumnsByDescription(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
 			msg = "Search column by DESCRIPTION /" + colname_regexp + "/";
@@ -342,7 +356,7 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 //				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by description");
 				return setter;
 
@@ -350,15 +364,16 @@ public abstract class KWDetector {
 		}
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found" );
-		return notSetColumnSetter();
+		return notSetColumnSetter(fieldName);
 	}
 
 	/**
 	 * Builsd the ColumnSetter to return when no va;lue has been found
+	 * @param fieldName
 	 * @return
 	 */
-	private ColumnExpressionSetter notSetColumnSetter(){
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+	private ColumnExpressionSetter notSetColumnSetter(String fieldName){
+		ColumnExpressionSetter retour = new ColumnExpressionSetter(fieldName);
 		//retour.completeMessage("Nothing found");
 		retour.setNotSet();
 		return retour;

@@ -63,11 +63,11 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_cunit" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcuni" + axe_num)) != null ) {
 				//this.CUNIT[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-				this.CUNIT[axe] = new ColumnExpressionSetter(ah);
+				this.CUNIT[axe] = new ColumnExpressionSetter("cunit" + axe, ah);
 
 			} else {
 				//kwset_ok = false;
-				this.CUNIT[axe] = new ColumnExpressionSetter();
+				this.CUNIT[axe] = new ColumnExpressionSetter("cunit" + axe);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CUNIT" + axe_num + " or TCUNI" + axe_num + " (look in comment later)");
 			}
@@ -75,10 +75,10 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_ctype" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tctyp" +  axe_num)) != null ) {
 				//this.CTYPE[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-				this.CTYPE[axe] = new ColumnExpressionSetter(ah);
+				this.CTYPE[axe] = new ColumnExpressionSetter("ctype" + axe, ah);
 			} else {
 				//kwset_ok = false;
-				this.CTYPE[axe] = new ColumnExpressionSetter();
+				this.CTYPE[axe] = new ColumnExpressionSetter("ctype" + axe);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CTYPE" + axe_num + " or TCTYP" + axe_num);
 			}
@@ -86,32 +86,32 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
 				//this.CRVAL[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
-				this.CRVAL[axe] = new ColumnExpressionSetter(ah);;
+				this.CRVAL[axe] = new ColumnExpressionSetter("crval" + axe + ah);;
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnExpressionSetter cd = new ColumnExpressionSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter("crval" + axe);
 				cd.setByValue("0",false);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRVAL = 0");
 				this.CRVAL[axe] = cd;
 			} else{
 				kwset_ok = false;
-				this.CRVAL[axe] = new ColumnExpressionSetter();
+				this.CRVAL[axe] = new ColumnExpressionSetter("crval" + axe);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRVAL" + axe_num  + " or TCRVL" + axe_num);
 			}
 
 			if( (ah = this.attributesList.get("_crpix" + axe_num)) != null ) {
 				//this.CRPIX[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
-				this.CRPIX[axe] = new ColumnExpressionSetter(ah);
+				this.CRPIX[axe] = new ColumnExpressionSetter("crpix" + axe, ah);
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnExpressionSetter cd = new ColumnExpressionSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter("crpix" + axe);
 				cd.setByValue("1",false);
 				this.CRPIX[axe] = cd;
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CRPIX = 1");
 			} else{
 				kwset_ok = false;
-				this.CRPIX[axe] = new ColumnExpressionSetter();
+				this.CRPIX[axe] = new ColumnExpressionSetter("crpix" + axe);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CRPIX" + axe_num );
 			}
@@ -120,17 +120,17 @@ public class WCSModel {
 					(ah = this.attributesList.get("_tcdlt" + axe_num)) != null ) {
 
 				//this.CDELT[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
-				this.CDELT[axe] = new ColumnExpressionSetter(ah);
+				this.CDELT[axe] = new ColumnExpressionSetter("cdelt" + axe, ah);
 
 			} else if( this.NAXISi[axe] == 1 ){
-				ColumnExpressionSetter cd = new ColumnExpressionSetter();
+				ColumnExpressionSetter cd = new ColumnExpressionSetter("cdelt" + axe);
 				cd.setByValue("1",false);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "axe " + axe_num + " is one pixel width, take  CDELT = 1");
 				this.CDELT[axe] = cd;
 			} else {
 				kwset_ok = false;
-				this.CDELT[axe] = new ColumnExpressionSetter();
+				this.CDELT[axe] = new ColumnExpressionSetter("cdelt" + axe);
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No WCS keywords CDELT" + axe_num  + " or TCDLT" + axe_num );
 			}
@@ -140,7 +140,7 @@ public class WCSModel {
 				if( (ah = this.attributesList.get("_pc" + axe_num + "_" + axe2_num)) != null || 
 						(ah = this.attributesList.get("_cd" + axe_num + "_" + axe2_num)) != null ) {
 					//this.CD[(NAXIS*axe) + axe2] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-					this.CD[(NAXIS*axe) + axe2] = new ColumnExpressionSetter(ah);
+					this.CD[(NAXIS*axe) + axe2] = new ColumnExpressionSetter("cd" + ((NAXIS*axe) + axe2), ah);
 
 
 				}else{
@@ -153,7 +153,7 @@ public class WCSModel {
 			for( int axe2=0 ; axe2<NAXIS ; axe2++ ) {
 				String u = this.watInfos.getUnit(axe2);
 				if( u.length() > 0 ) {
-					this.CUNIT[axe2] = new ColumnExpressionSetter();
+					this.CUNIT[axe2] = new ColumnExpressionSetter("cunit" + axe2);
 					this.CUNIT[axe2].setByValue(u, false);
 					this.CUNIT[axe2].completeMessage("Read in WAT keywords");
 				}
@@ -196,7 +196,7 @@ public class WCSModel {
 			this.NAXISi[i]  =  SaadaConstant.INT;
 		}
 		for( int i=0 ; i< (NAXIS*NAXIS) ; i++ ){
-			this.CD[i] = new ColumnExpressionSetter();
+			this.CD[i] = new ColumnExpressionSetter("cd_" + i);
 			this.matrix[i] = SaadaConstant.DOUBLE;
 		}
 
@@ -725,7 +725,7 @@ public class WCSModel {
 	 * @return
 	 */
 	private ColumnExpressionSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
-		ColumnExpressionSetter asc=new ColumnExpressionSetter(), dec=new ColumnExpressionSetter();
+		ColumnExpressionSetter asc=new ColumnExpressionSetter("s_ra"), dec=new ColumnExpressionSetter("s_dec");
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
@@ -768,7 +768,7 @@ public class WCSModel {
 	 */
 	private ColumnExpressionSetter getResolution(String ascPrefix, String decPrefix) {
 		double r1 = SaadaConstant.DOUBLE, r2 = SaadaConstant.DOUBLE;
-		ColumnExpressionSetter retour = new ColumnExpressionSetter();
+		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_res_power");
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
@@ -820,7 +820,7 @@ public class WCSModel {
 	 * @return
 	 */
 	private ColumnExpressionSetter[] getPixelRange(String ctypePrefix){
-		ColumnExpressionSetter[] retour = new ColumnExpressionSetter[]{new ColumnExpressionSetter(), new ColumnExpressionSetter()};;
+		ColumnExpressionSetter[] retour = new ColumnExpressionSetter[]{new ColumnExpressionSetter("pix_min"), new ColumnExpressionSetter("pix_max")};;
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
 			if( this.CTYPE[axe].getValue().startsWith(ctypePrefix) ) {
 				try {

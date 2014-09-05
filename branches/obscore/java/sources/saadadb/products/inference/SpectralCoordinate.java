@@ -280,7 +280,7 @@ public class SpectralCoordinate{
 			vTypeNew = ur.type;
 			unitNew = ur.unit;
 		}else{
-			new Exception().printStackTrace();
+			if( Messenger.debug_mode ) Messenger.printStackTop();
 			Messenger.printMsg(Messenger.ERROR, "No new valid unit <"+unitNew+"> set for the SaadaDB");
 			return SaadaConstant.DOUBLE;
 		}
@@ -291,7 +291,7 @@ public class SpectralCoordinate{
 			try{
 				return convertValue(value, unitOrg, unitNew);
 			}catch(Exception e){
-				e.printStackTrace();
+				if( Messenger.debug_mode ) Messenger.printStackTop();
 				Messenger.printMsg(Messenger.ERROR, "Can not convert <"+unitOrg+"> into <"+unitNew+">");
 				return SaadaConstant.DOUBLE;
 			}

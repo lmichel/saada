@@ -3,6 +3,7 @@
  */
 package saadadb.products;
 
+import java.lang.reflect.Field;
 import java.util.Enumeration;
 
 import saadadb.collection.Category;
@@ -129,12 +130,13 @@ public final class EntryIngestor extends ProductIngestor {
 		}
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#bindInstanceToFile(saadadb.collection.obscoremin.SaadaInstance, long)
 	 */
 	@Override
 	public void bindInstanceToFile(SaadaInstance si) throws Exception {
+		if( si == null) si = this.saadaInstance;
 		this.nextElement();
 		if( si != null ) this.saadaInstance = si;
 		if( this.product.metaclass != null && ! this.firstCall) {
@@ -166,12 +168,10 @@ public final class EntryIngestor extends ProductIngestor {
 		 * Set first raws values in the attribute handlers
 		 * can be used for reporting
 		 */
-		if( this.lineNumber == 0 ) {
-			int cpt = 0;
-			for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
-				ah.setValue(this.values[cpt].toString());
-				cpt++;
-			}
+		int cpt = 0;
+		for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
+			ah.setValue(this.values[cpt].toString());
+			cpt++;
 		}
 		this.lineNumber++;
 	}
@@ -188,7 +188,6 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setObservationFields() throws SaadaException {
-		this.saadaInstance.obs_id  = this.getInstanceName(null);
 		setField("target_name"    , this.product.target_nameSetter);
 		setField("instrument_name", this.product.instrument_nameSetter);
 		setField("facility_name"  , this.product.facility_nameSetter);
@@ -237,19 +236,19 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected void setTimeFields() throws SaadaException {
 		try {
-		if( this.values != null ){
-			if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() ) {
-				this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
-				this.product.t_maxSetter = this.product.t_maxSetter.getConverted(DateUtils.getFMJD(this.product.t_maxSetter.getValue()), "mjd", addMEssage);
+			if( this.values != null ){
+				if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() ) {
+					this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
+					this.product.t_maxSetter = this.product.t_maxSetter.getConverted(DateUtils.getFMJD(this.product.t_maxSetter.getValue()), "mjd", addMEssage);
+				}
+				if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() ){
+					this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
+					this.product.t_minSetter = this.product.t_minSetter.getConverted(DateUtils.getFMJD(this.product.t_minSetter.getValue()), "mjd", addMEssage);
+				}
+				if( this.num_col_t_exptime != -1 && this.product.t_exptimeSetter.byKeyword())
+					this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);
 			}
-			if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() ){
-				this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
-				this.product.t_minSetter = this.product.t_minSetter.getConverted(DateUtils.getFMJD(this.product.t_minSetter.getValue()), "mjd", addMEssage);
-			}
-			if( this.num_col_t_exptime != -1 && this.product.t_exptimeSetter.byKeyword())
-				this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);
-		}
-		super.setTimeFields();
+			super.setTimeFields();
 		} catch (Exception e) {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
@@ -289,29 +288,15 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected String getInstanceName(String suffix) {
-		String name = "";
-//		if( this.product.name_components != null ) {
-//			int cpt = 0;
-//			for( AttributeHandler ah: this.product.name_components ) {
-//				String v = ah.getValue();
-//				if( v != null && v.length() > 0 ) {
-//					if( cpt > 0 ) {
-//						name += " " +v;
-//					} else {
-//						name += v;					
-//					}
-//					cpt++;
-//				}
-//			}
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Instance name <" + name + ">");
-//		}
+
 		/*
 		 * If no name has been set right now, put the position after collection.class
 		 * Take the suffix is there is no position
 		 */
-		if( name == null || name.length() == 0 ) {
+		System.out.println( this.product.obs_idSetter);
+		if( this.product.obs_idSetter.notSet()) {
 			EntrySaada es= (EntrySaada) this.saadaInstance;
-			name = SaadaOID.getCollectionName(es.oidsaada) + "-" + SaadaOID.getClassName(es.oidsaada);
+			String name = SaadaOID.getCollectionName(es.oidsaada) + "-" + SaadaOID.getClassName(es.oidsaada);
 			double ra =  es.s_ra;
 			double dec = es.s_dec;
 			if( ra != SaadaConstant.DOUBLE && dec != SaadaConstant.DOUBLE ) {
@@ -321,9 +306,11 @@ public final class EntryIngestor extends ProductIngestor {
 			} else {
 				name +=  suffix;
 			}
+			System.out.println("@@@@@@@@@@ " + name);
+			this.product.obs_idSetter.setValue(name);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name  <"+ name + ">");
 		}
-		return name;
+		return this.product.obs_idSetter.getValue();
 	}
 
 	/**
@@ -439,24 +426,31 @@ public final class EntryIngestor extends ProductIngestor {
 					extpos++;
 				}
 			}
-//			if( this.product.name_components != null ) {
-//				int namepos=0;
-//				for( AttributeHandler nah: this.product.name_components ) {
-//					if( nah.getNameattr().equals(nameField)) {
-//						num_name_att[namepos] = index_pos_col[num_att_read];	
-//						nmsg += "(" + nah.getNameattr() + " col#" + num_att_read + ") ";
-//					}
-//					namepos++;
-//				}
-//			}									
+			//			if( this.product.name_components != null ) {
+			//				int namepos=0;
+			//				for( AttributeHandler nah: this.product.name_components ) {
+			//					if( nah.getNameattr().equals(nameField)) {
+			//						num_name_att[namepos] = index_pos_col[num_att_read];	
+			//						nmsg += "(" + nah.getNameattr() + " col#" + num_att_read + ") ";
+			//					}
+			//					namepos++;
+			//				}
+			//			}									
 			num_att_read++;
 		}
-//		if( this.product.name_components != null ) {
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,nmsg);
-//		}
+		//		if( this.product.name_components != null ) {
+		//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,nmsg);
+		//		}
 		if( this.product.extended_attributesSetter != null ) {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,emsg);
 		}
+	}
+
+	public void showCollectionValues() throws Exception {
+		for( Field f: EntrySaada.class.getFields() ) {
+			System.out.print(f.get(this.saadaInstance).toString() + "|");
+		}
+		System.out.println();
 	}
 
 }

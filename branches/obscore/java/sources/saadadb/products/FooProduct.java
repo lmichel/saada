@@ -86,6 +86,9 @@ public class FooProduct implements DataFile {
 		if( this.entryAttributeHandlers == null ) return null;
 		List<String> retour = new ArrayList<String>();
 		for( AttributeHandler ah: this.entryAttributeHandlers.values()){
+			String v = ah.getValue();
+			if( ah.getType().equals("String") ) v = v+pointer;
+			else if( !ah.getType().equals("double") ) v = Double.toString(Double.parseDouble(v) + pointer);
 			retour.add(ah.getValue());
 		}
 		pointer ++;
