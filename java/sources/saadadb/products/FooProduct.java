@@ -88,8 +88,8 @@ public class FooProduct implements DataFile {
 		for( AttributeHandler ah: this.entryAttributeHandlers.values()){
 			String v = ah.getValue();
 			if( ah.getType().equals("String") ) v = v+pointer;
-			else if( !ah.getType().equals("double") ) v = Double.toString(Double.parseDouble(v) + pointer);
-			retour.add(ah.getValue());
+			else if( ah.getType().equals("double") ) v = Double.toString(Double.parseDouble(v) + pointer);
+			retour.add(v);
 		}
 		pointer ++;
 		return retour.toArray(new String[0]);
