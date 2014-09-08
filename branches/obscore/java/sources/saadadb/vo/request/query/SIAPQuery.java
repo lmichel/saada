@@ -112,7 +112,7 @@ public class SIAPQuery extends VOQuery {
 		value = this.queryParams.get("intersect");
 		if( value == null ) {
 			intersect = I_OVERLAPS;
-			protocolParams.put("intersect", "OVERLPAS");
+			protocolParams.put("intersect", "OVERLAPS");
 		}	
 		else {
 			protocolParams.put("intersect", value);
