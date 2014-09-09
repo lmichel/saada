@@ -19,6 +19,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.EntryBuilder;
+import saadadb.products.EntryIngestor;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
@@ -151,7 +152,12 @@ public class FooReport {
 		EntryBuilder eb = tb.getEntry();
 		System.out.println(product.getNRows());
 		Enumeration e = eb.elements();
+		int line = 0;
 		while( eb.productIngestor.hasMoreElements()){
+			if( line == 0 ) {
+				((EntryIngestor) eb.productIngestor).mapIndirectionTables();
+				line++;
+			}
 			eb.productIngestor.bindInstanceToFile(null);
 			eb.productIngestor.showCollectionValues();
 		}
