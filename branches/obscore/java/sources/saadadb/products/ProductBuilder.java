@@ -121,6 +121,11 @@ public class ProductBuilder {
 	protected ColumnSetter o_unitSetter=new ColumnExpressionSetter("o_unit");
 	protected ColumnSetter o_calib_statusSetter=new ColumnExpressionSetter("o_calib_status");
 	protected PriorityMode observableMappingPriority = PriorityMode.LAST;
+	/*
+	 * Polarization axis
+	 */
+	protected ColumnSetter pol_statesSetter=new ColumnExpressionSetter("pol_states");
+	protected PriorityMode polarizationMappingPriority = PriorityMode.LAST;
 	/**
 	 * Manage all tools used to detect quantities in keywords
 	 */
@@ -563,6 +568,7 @@ public class ProductBuilder {
 			this.mapTimeAxe();
 			//System.exit(1);
 			this.mapObservableAxe();
+			this.mapPolarizationAxe();
 			this.mapIgnoredAndExtendedAttributes();
 			System.out.println("@@@@@@@@@@@ OVER " + this.getClass().getName());
 		}
@@ -870,6 +876,37 @@ public class ProductBuilder {
 		traceReportOnAttRef(this.o_calib_statusSetter);
 	}
 
+
+	protected void mapPolarizationAxe() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Map Polarization Axe");
+		AxisMapping mapping = this.mapping.getPolarizationAxisMapping();
+		this.setQuantityDetector();
+
+		switch(this.observableMappingPriority){
+		case ONLY:			
+			PriorityMessage.only("Observable");
+			this.pol_statesSetter = this.getMappedAttributeHander("pol_states", mapping.getColumnMapping("pol_states"));
+			break;
+
+		case FIRST:
+			PriorityMessage.first("Observable");
+			this.pol_statesSetter = this.getMappedAttributeHander("pol_states", mapping.getColumnMapping("pol_states"));
+			if( !this.isAttributeHandlerMapped(this.pol_statesSetter) ) {
+				this.pol_statesSetter = this.quantityDetector.getPolarizationStates();
+			}
+			break;
+
+		case LAST:
+			PriorityMessage.last("Observable");
+			this.pol_statesSetter = this.quantityDetector.getPolarizationStates();
+			if( !this.isAttributeHandlerMapped(this.pol_statesSetter) ) {
+				this.pol_statesSetter = this.getMappedAttributeHander("pol_states", mapping.getColumnMapping("pol_states"));
+			}
+			break;
+		}
+
+		traceReportOnAttRef( this.pol_statesSetter);
+	}
 
 	/**
 	 * @throws Exception
@@ -1741,6 +1778,9 @@ public class ProductBuilder {
 		this.o_unitSetter.storedValue = si.getO_unit();
 		retour.put("o_calib_status", o_calib_statusSetter);
 		this.o_calib_statusSetter.storedValue = si.getO_calib_status();
+
+		retour.put("pol_states", pol_statesSetter);
+		this.pol_statesSetter.storedValue = si.pol_states;
 
 		for( ColumnExpressionSetter eah: this.extended_attributesSetter.values()){
 			retour.put(eah.getAttNameOrg(), eah);      	

@@ -77,6 +77,7 @@ public class ProductIngestor {
 		this.setEnergyFields();		
 		this.setTimeFields();
 		this.setObservableFields();
+		this.setPolarizationFields();
 		this.loadAttrExtends();
 		this.setBusinessFields();
 	}
@@ -95,6 +96,7 @@ public class ProductIngestor {
 		this.setEnergyFields();		
 		this.setTimeFields();
 		this.setObservableFields();
+		this.setPolarizationFields();
 		this.loadAttrExtends();
 	}
 
@@ -246,26 +248,8 @@ public class ProductIngestor {
 			try {
 				Astrocoo acoo;
 				/*
-				 * Convert coordinates
+				 * Convert astroframe
 				 */
-				if( this.product.s_raSetter.byValue() ) {
-					this.product.s_raSetter.setValue(this.product.s_raSetter.getValue().replaceAll("'", ""));
-				}
-				if( this.product.s_raSetter.byKeyword() && this.product.s_raSetter.getComment().matches(".*(?i)(hour).*")) {
-					try {
-						this.product.s_raSetter = this.product.s_raSetter.getConverted(Double.parseDouble(
-								this.product.s_raSetter.getValue())*15, "deg", addMEssage);
-						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "RA in hours (" +  this.product.s_raSetter.getComment() + "): convert in deg");
-					} catch(Exception e){
-						this.product.s_raSetter = new ColumnSingleSetter();
-						this.product.s_raSetter.completeMessage("cannot convert " + this.product.s_raSetter.getValue() + " from hours to deg");
-					}
-				}
-				if( this.product.s_decSetter.byValue() ) {
-					this.product.s_decSetter.setValue(this.product.s_decSetter.getValue().replaceAll("'", ""));
-				}
-
 				Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
 				if( this.product.s_raSetter == this.product.s_decSetter) {
 					acoo= new Astrocoo(af ,this.product.s_raSetter.getValue() ) ;
@@ -277,6 +261,9 @@ public class ProductIngestor {
 				double dec = converted_coord[1];
 				this.product.s_raSetter =  this.product.s_raSetter.getConverted(ra, Database.getAstroframe().toString(), addMEssage);
 				this.product.s_decSetter =  this.product.s_decSetter.getConverted(dec, Database.getAstroframe().toString(), addMEssage);
+				/*
+				 * Process Region
+				 */
 				if( !this.product.s_regionSetter.notSet() ) {
 					String stc = "Polygon " + Database.getAstroframe();
 					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
@@ -487,6 +474,13 @@ public class ProductIngestor {
 		this.saadaInstance.setO_ucd(this.product.o_ucdSetter.getValue());
 		this.saadaInstance.setO_unit(this.product.o_unitSetter.getValue());
 		this.saadaInstance.setO_calib_status(this.product.o_calib_statusSetter.getValue());	
+	}
+	/*
+	 * polarization axis
+	 */
+	protected void setPolarizationFields() throws SaadaException {
+		setField("pol_states"    , this.product.pol_statesSetter);
+		this.saadaInstance.pol_states = this.product.pol_statesSetter.getValue();
 	}
 	/*
 	 * 

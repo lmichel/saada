@@ -1,5 +1,6 @@
 package saadadb.products.inference;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -703,10 +704,20 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return the ascension_kw
 	 * @throws SaadaException 
 	 */
-	public ColumnExpressionSetter getAscension() throws SaadaException {
-		if( this.arePosColFound() )
+	public ColumnExpressionSetter getAscension() throws Exception {
+		if( this.arePosColFound() ) {
+			AttributeHandler ah;
+			if( ascension_kw.byKeyword() && (ah = ascension_kw.getSingleAttributeHandler()) != null ) {
+				if( ah.getComment().matches(".*(?i)(hour).*")) {
+					Map<String , AttributeHandler> m = new  LinkedHashMap<String, AttributeHandler>();
+					m.put(ah.getNameattr(), ah);
+					this.ascension_kw = new ColumnExpressionSetter("s_ra", "15*" + ah.getNameorg(), m);
+					this.ascension_kw.completeMessage("RA in hours (" +  ah.getComment() + "): convert in deg");
+
+				}
+			}
 			return ascension_kw;
-		else 
+		} else 
 			return null;
 	}
 

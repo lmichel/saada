@@ -172,7 +172,7 @@ public final class EntryIngestor extends ProductIngestor {
 		for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
 			ah.setValue(this.values[cpt].toString());
 			cpt++;
-			if( ah.getNameorg().equals("RA") ) System.out.println(ah.getType() + " @@@@v "+ ah.getValue());
+			if( ah.getNameorg().equals("RA") ) Messenger.printLocatedMsg(ah.getType() + " @@@@v "+ ah.getValue());
 		}
 		this.lineNumber++;
 	}
@@ -199,18 +199,18 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setPositionFields(int number) throws Exception {
-		System.out.println("### " +this.num_col_ra);
-		System.out.println("### " + this.values[this.num_col_ra]);
-		if( this.values != null ){
-			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
-				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
-			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
-				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
-			if( this.num_col_fov != -1 && this.product.s_fovSetter.byKeyword())
-				this.product.s_fovSetter.setValue(this.values[this.num_col_fov].toString());
-			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
-				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
-		}
+//		System.out.println("### " +this.num_col_ra);
+//		System.out.println("### " + this.values[this.num_col_ra]);
+//		if( this.values != null ){
+//			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
+//				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
+//			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
+//				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
+//			if( this.num_col_fov != -1 && this.product.s_fovSetter.byKeyword())
+//				this.product.s_fovSetter.setValue(this.values[this.num_col_fov].toString());
+//			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
+//				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
+//		}
 		super.setPositionFields(number);
 		/*
 		 * Belongs to the obseravtion axis but needs the coordinates

@@ -174,4 +174,10 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getUcdName() throws SaadaException {
 		return new ColumnExpressionSetter("o_ucd");
 	}
+	/*
+	 * Polarization axis
+	 */
+	public ColumnExpressionSetter getPolarizationStates() {
+		return new ColumnExpressionSetter("polStates");
+	}
 }

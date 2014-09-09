@@ -25,13 +25,11 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * The expression to evaluate 
 	 */
 	private String expression;
-
 	/**
 	 * The last expression evaluated
 	 */
 
 	private String lastExpressionEvaluated;
-
 	/**
 	 * The wrapper used to evaluate the expression
 	 */
@@ -41,18 +39,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * The list of attributes used in the ExpressionWrapper
 	 */
 	private List<AttributeHandler> exprAttributes = new ArrayList<AttributeHandler>();;
-
-
 	/**
 	 * The list of attribute being String functions arguments (names of AH)
 	 */
 	private List<AttributeHandler> stringFunctionArgumentsList = new ArrayList<AttributeHandler>();
-
 	/**
 	 * The result of the expression
 	 */
 	private String result="NotSet";
-
 	/**
 	 * A ColumnSingleSetter used for the abstract methods from ColumnSetter and when mode=ByValue
 	 */
@@ -112,7 +106,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		if( attr == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		//expression=expr;
 		this.fieldName = fieldName;
 		this.exprAttributes= new ArrayList<AttributeHandler>();
 		this.setExpression(attr.getNameorg());
@@ -655,6 +648,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		return expression;
 	}
 
+	public AttributeHandler getSingleAttributeHandler() {
+		return this.singleAttributeHandler;
+	}
 	@Override
 	protected void setInitMessage() {
 		if(expression==null || expression.isEmpty())

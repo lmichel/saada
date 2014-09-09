@@ -12,6 +12,7 @@ import saadadb.products.DataFile;
 import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
 import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.products.setter.ColumnSetter;
 
 public class QuantityDetector {
 	private final PipelineParser pipelineParser;
@@ -21,6 +22,7 @@ public class QuantityDetector {
 	private final EnergyKWDetector energyKWDetector;
 	private final SpaceKWDetector spaceKWDetector;
 	private final ObservationKWDetector observationKWDetector;
+	private final PolarizationKWDetector polarizationKWDetector;
 	private final ProductMapping productMapping;
 	public String detectionMessage;
 
@@ -34,6 +36,7 @@ public class QuantityDetector {
 		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, comments, productMapping);
 		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, comments);
 		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -50,6 +53,7 @@ public class QuantityDetector {
 		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments, productMapping, productFile);
 		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -116,7 +120,7 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("astroframe"): retour;
 	}
-	public ColumnExpressionSetter getAscension()  throws SaadaException{
+	public ColumnExpressionSetter getAscension()  throws Exception{
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getAscension()).notSet() ){
 			return this.spaceKWDetector.getAscension();
@@ -261,7 +265,7 @@ public class QuantityDetector {
 			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
 				if( this.getEUnit().notSet()) {
 					retour.setByValue("0", false);
-					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
+					retour.completeMessage("Value taken by default since the dispersion axis is not set");
 				} else if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
 					retour.setByValue("1", false);
 					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
@@ -272,6 +276,13 @@ public class QuantityDetector {
 			}
 		} 
 		return (retour == null)?new ColumnExpressionSetter("o_calib_status"): retour;
+	}
+	public ColumnSetter getPolarizationStates() throws Exception {
+		ColumnExpressionSetter retour = null;
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getPolarizationStates()).notSet() ){
+			return this.polarizationKWDetector.getPolarizationStates();
+		} 
+		return (retour == null)?new ColumnExpressionSetter("t_exptime"): retour;
 	}
 
 
