@@ -28,6 +28,22 @@ public class Grenoble extends PipelineParser {
 		return this.getColmumnSetter("OBJECT");
 	}
 	@Override
+	public ColumnExpressionSetter getCalibLevel() throws Exception {
+		int retour = SaadaConstant.INT;
+		try { 
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "getCalibLevel: read knowledge base");
+			retour = 3;
+			ColumnExpressionSetter cs = new ColumnExpressionSetter("calib_level");
+			cs.setByWCS(String.valueOf(retour), false);
+			cs.completeMessage("Issued from the knowledge base");
+			cs.storedValue = 3;
+			return cs;
+		} catch (Exception e) {
+			return  new ColumnExpressionSetter("calib_level", e.getMessage());
+		}
+	}
+	@Override
 	public ColumnExpressionSetter getFacilityName() throws SaadaException {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getFacilityName: read knowledge base");

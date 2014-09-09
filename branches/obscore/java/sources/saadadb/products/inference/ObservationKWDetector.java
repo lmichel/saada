@@ -39,4 +39,14 @@ public class ObservationKWDetector extends KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, "Search for an instrument_name");
 		return this.search("instrument_name", RegExp.INSTRUMENT_UCD, RegExp.INSTRUMENT_KW);
 	}
+	public ColumnExpressionSetter getObsPublisherDid() throws Exception{
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search for an obs_publisher_did: no automatic detection availbale");
+		return new ColumnExpressionSetter("instrument_name");
+	}
+	public ColumnExpressionSetter getCalibLevel() throws Exception{
+		if( Messenger.debug_mode ) 
+			Messenger.printMsg(Messenger.DEBUG, "Search for an calib_level: no automatic detection availbale");
+		return new ColumnExpressionSetter("calib_level");
+	}
 }

@@ -81,6 +81,8 @@ public class ProductBuilder {
 	//protected List<AttributeHandler> name_components;
 	protected ColumnExpressionSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
 	protected ColumnExpressionSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
+	protected ColumnExpressionSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
+	protected ColumnExpressionSetter calib_levelSetter=new ColumnExpressionSetter("calib_level");
 	protected ColumnExpressionSetter target_nameSetter=new ColumnExpressionSetter("target_name");
 	protected ColumnExpressionSetter facility_nameSetter=new ColumnExpressionSetter("facility_name");
 	protected ColumnExpressionSetter instrument_nameSetter=new ColumnExpressionSetter("instrument_name");
@@ -579,6 +581,8 @@ public class ProductBuilder {
 		case ONLY:	
 			PriorityMessage.only("Observation");
 			this.obs_collectionSetter = getMappedAttributeHander("obs_collection", mapping.getColumnMapping("obs_collection"));
+			this.obs_publisher_didSetter = getMappedAttributeHander("obs_publisher_did", mapping.getColumnMapping("obs_publisher_did"));
+			this.calib_levelSetter = getMappedAttributeHander("calib_level", mapping.getColumnMapping("calib_level"));
 			this.target_nameSetter = getMappedAttributeHander("target_name", mapping.getColumnMapping("target_name"));
 			this.facility_nameSetter = getMappedAttributeHander("facility_name", mapping.getColumnMapping("facility_name"));
 			this.instrument_nameSetter = getMappedAttributeHander("instrument_name", mapping.getColumnMapping("instrument_name"));
@@ -589,6 +593,14 @@ public class ProductBuilder {
 			this.obs_collectionSetter = getMappedAttributeHander("obs_collection", mapping.getColumnMapping("obs_collection"));
 			if( !this.isAttributeHandlerMapped(this.obs_collectionSetter) ) {
 				this.obs_collectionSetter = this.quantityDetector.getCollectionName();
+			} 
+			this.obs_publisher_didSetter = getMappedAttributeHander("obs_publisher_did", mapping.getColumnMapping("obs_publisher_did"));
+			if( !this.isAttributeHandlerMapped(this.obs_publisher_didSetter) ) {
+				this.obs_publisher_didSetter = this.quantityDetector.getObsPublisherDid();
+			} 
+			this.calib_levelSetter = getMappedAttributeHander("calib_level", mapping.getColumnMapping("calib_level"));
+			if( !this.isAttributeHandlerMapped(this.obs_publisher_didSetter) ) {
+				this.calib_levelSetter = this.quantityDetector.getCalibLevel();
 			} 
 			this.target_nameSetter = getMappedAttributeHander("target_name", mapping.getColumnMapping("target_name"));
 			if( !this.isAttributeHandlerMapped(this.target_nameSetter) ) {
@@ -1682,6 +1694,10 @@ public class ProductBuilder {
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_id", obs_idSetter);
 		this.obs_idSetter.storedValue = si.obs_id;
+		retour.put("obs_publisher_did", obs_publisher_didSetter);
+		this.obs_publisher_didSetter.storedValue = si.getObs_publisher_did();
+		retour.put("calib_level", calib_levelSetter);
+		this.calib_levelSetter.storedValue = si.getCalib_level();
 		retour.put("obs_collection", obs_collectionSetter);
 		this.obs_collectionSetter.storedValue = si.getObs_collection();
 		retour.put("target_name", target_nameSetter);

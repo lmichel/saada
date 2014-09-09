@@ -4,6 +4,7 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -25,8 +26,10 @@ public class FileRef extends SaadaInstance {
     public String access_url = saadadb.util.SaadaConstant.STRING;
 	public String access_format = saadadb.util.SaadaConstant.STRING;
 	public long access_estsize = saadadb.util.SaadaConstant.LONG;
+	public int calib_level = saadadb.util.SaadaConstant.INT;
+	public String obs_publisher_did = saadadb.util.SaadaConstant.STRING;
+	public String data_product_type = saadadb.util.SaadaConstant.STRING;
 	public String obs_collection = saadadb.util.SaadaConstant.STRING;
-	public int calib_status = saadadb.util.SaadaConstant.INT;
 
 	/*
 	 * Space Axe
@@ -97,6 +100,20 @@ public class FileRef extends SaadaInstance {
 	@Override
 	public String getObs_collection()throws SaadaException {
 		return this.obs_collection;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getObs_publisher_did()
+	 */
+	@Override
+	public String getObs_publisher_did() {
+		return this.obs_publisher_did;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.collection.obscoremin.SaadaInstance#getCalib_level()
+	 */
+	@Override
+	public int getCalib_level() {
+		return this.calib_level;
 	}
 
     /* (non-Javadoc)

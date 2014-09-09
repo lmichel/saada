@@ -93,6 +93,12 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getCollectionName() throws SaadaException {
 		return new ColumnExpressionSetter("obs_collection");
 	}
+	public ColumnExpressionSetter getObsPublisherDid() throws SaadaException {
+		return new ColumnExpressionSetter("obs_publisher_did");
+	}
+	public ColumnExpressionSetter getCalibLevel() throws SaadaException, Exception {
+		return new ColumnExpressionSetter("calib_level");
+	}
 	public ColumnExpressionSetter getTargetName() throws SaadaException {
 		return new ColumnExpressionSetter("target_name");
 	}
