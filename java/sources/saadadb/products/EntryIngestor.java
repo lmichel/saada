@@ -172,6 +172,7 @@ public final class EntryIngestor extends ProductIngestor {
 		for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
 			ah.setValue(this.values[cpt].toString());
 			cpt++;
+			if( ah.getNameorg().equals("RA") ) System.out.println(ah.getType() + " @@@@v "+ ah.getValue());
 		}
 		this.lineNumber++;
 	}
@@ -198,6 +199,8 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setPositionFields(int number) throws Exception {
+		System.out.println("### " +this.num_col_ra);
+		System.out.println("### " + this.values[this.num_col_ra]);
 		if( this.values != null ){
 			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
 				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
@@ -316,7 +319,7 @@ public final class EntryIngestor extends ProductIngestor {
 	/**
 	 * 
 	 */
-	protected void mapIndirectionTables() {
+	public void mapIndirectionTables() {
 		//AttributeHandler[] saada_ah = this.product.metaclass.getClassAttributes();
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Map the indirection tables for the entry table");
@@ -383,6 +386,7 @@ public final class EntryIngestor extends ProductIngestor {
 			 * map collection attributes
 			 */
 			String nameField = attribute.getNameattr();
+			System.out.println(this.product.s_raSetter.getAttNameAtt() + " " +nameField );
 			if( this.product.s_raSetter != null && nameField.equals(this.product.s_raSetter.getAttNameAtt()) ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "RA col (" + nameField + ") read in column #" + num_att_read);
 				num_col_ra = index_pos_col[num_att_read];
