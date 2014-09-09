@@ -64,6 +64,20 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
 	}
+	public ColumnExpressionSetter getObsPublisherDid() throws Exception{
+		ColumnExpressionSetter retour = null;
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getObsPublisherDid()).notSet() ){
+			return this.observationKWDetector.getObsPublisherDid();
+		} 
+		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
+	}
+	public ColumnExpressionSetter getCalibLevel() throws Exception{
+		ColumnExpressionSetter retour = null;
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibLevel()).notSet() ){
+			return this.observationKWDetector.getCalibLevel();
+		} 
+		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
+	}
 	public ColumnExpressionSetter getTargetName() throws Exception{
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTargetName()).notSet() ){

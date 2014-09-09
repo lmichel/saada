@@ -23,6 +23,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.util.SaadaConstant;
 
 /**
  * Check the command line parameters
@@ -59,6 +60,8 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-facility")      ; allowedArgs.add("-entry.facility") ;
 		allowedArgs.add("-instrument")    ; allowedArgs.add("-entry.instrument") ;
 		allowedArgs.add("-target")        ; allowedArgs.add("-entry.target") ;
+		allowedArgs.add("-caliblevel") ;
+		allowedArgs.add("-publisherdid") ;
 		/*
 		 * Space Axe
 		 */
@@ -95,7 +98,7 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-eignore") ; allowedArgs.add("-entry.ignore") ;
 		allowedArgs.add("-ukw") ;
 		allowedArgs.add("-eukw") ;allowedArgs.add("-entry.ukw") ;
-		
+
 		allowedArgs.add("-empty") ;
 		allowedArgs.add("-remove") ;
 		allowedArgs.add("-index") ;
@@ -150,7 +153,7 @@ public class ArgsParser implements Serializable{
 				if( arg.startsWith("-") ) {
 					int pos = arg.indexOf('=');
 					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
-					    (pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
+							(pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
 						msg += " <" + arg + ">";
 						if( pos >=0 ) System.out.println(arg.substring(0, pos));
 					}
@@ -166,7 +169,7 @@ public class ArgsParser implements Serializable{
 		}
 
 	}
-	
+
 	/**
 	 * We build the ArgsParser by loading the parameters from the specified file
 	 * @param conf_path
@@ -177,7 +180,7 @@ public class ArgsParser implements Serializable{
 		ArrayList<String> argsArray = new ArrayList<String>();
 		String[] args;
 		FileReader fr;
-		
+
 		fr = new FileReader(conf_path);
 		BufferedReader br = new BufferedReader(fr); 
 		//ObjectInputStream in = new ObjectInputStream(fis);
@@ -187,7 +190,7 @@ public class ArgsParser implements Serializable{
 		}
 		br.close();
 		args = argsArray.toArray(new String[argsArray.size()]);
-		
+
 		if( args == null || args.length == 0 ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameters given");
 		}
@@ -199,7 +202,7 @@ public class ArgsParser implements Serializable{
 				if( arg.startsWith("-") ) {
 					int pos = arg.indexOf('=');
 					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
-					    (pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
+							(pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
 						msg += " <" + arg + ">";
 						if( pos >=0 ) System.out.println(arg.substring(0, pos));
 					}
@@ -215,8 +218,8 @@ public class ArgsParser implements Serializable{
 		}
 
 	}
-	
-	
+
+
 
 	/**
 	 * Return the last parameter, supposed to be the last
@@ -430,6 +433,10 @@ public class ArgsParser implements Serializable{
 		}
 		return PriorityMode.LAST;		
 	}
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String[] getNameComponents(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && (args[i].startsWith("-name") || args[i].startsWith("-obsid")) ){
@@ -441,6 +448,10 @@ public class ArgsParser implements Serializable{
 		}
 		return new String[0];
 	}	
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String getObscollection(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-obscollection")  ){
@@ -452,6 +463,10 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String getFacility(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-facility")  ){
@@ -463,6 +478,10 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String getInstrument(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-instrument")  ){
@@ -474,6 +493,10 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String getTarget(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-target")  ){
@@ -485,6 +508,53 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
+	/**
+	 * @return
+	 */
+	public String getPublisherdid() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if(  args[i].startsWith("-publisherdid")  ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	/**
+	 * @return
+	 */
+	public String getProductType() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if(  args[i].startsWith("-producttype")  ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public int getCalibLevel() throws FatalException {
+		int retour ;
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i].startsWith("-caliblevel")  ){
+				String vs = getArgsValue(args[i]);
+				try {
+					retour =  Integer.parseInt(vs);
+					if( retour < 0 || retour > 3 ) {
+						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, vs + ": Wrong value for parameter <-caliblevel> must be 0, 1, 2 or 3");						
+					} else {
+						return retour;
+					}
+				} catch (Exception e){
+					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, vs + ": Wrong value for parameter <-caliblevel> must be 0, 1, 2 or 3");	
+				}
+			}
+		}
+		return SaadaConstant.INT;
+	}	
+
 	/*
 	 * TIME
 	 */
@@ -532,7 +602,7 @@ public class ArgsParser implements Serializable{
 	/*
 	 * TIME
 	 */
-	
+
 	public PriorityMode getObservableMappingPriority() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-observablemapping")) {
@@ -575,7 +645,7 @@ public class ArgsParser implements Serializable{
 		}
 		return null;
 	}	
-	
+
 	/**
 	 * returns a table with all ignored attributes -ignore=att1,att2,.....
 	 * @return
@@ -1047,8 +1117,7 @@ public class ArgsParser implements Serializable{
 				String param = getArgsValue(args[i]);
 				if( param.matches(RegExp.URL)) {
 					return param;
-				}
-				else {
+				} else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "url <" + param + "> badly formed");
 				}
 			}
@@ -1067,8 +1136,7 @@ public class ArgsParser implements Serializable{
 				File f = (new File(param));
 				if( f.exists() && f.isDirectory() ) {
 					return param;
-				}
-				else {
+				} else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot access to directory <" + param + ">");
 				}
 			}
@@ -1087,8 +1155,7 @@ public class ArgsParser implements Serializable{
 				File f = (new File(param));
 				if( f.exists() && f.isDirectory() ) {
 					return param;
-				}
-				else {
+				} else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot access to directory <" + param + ">");
 				}
 			}
@@ -1106,8 +1173,7 @@ public class ArgsParser implements Serializable{
 				String param = getArgsValue(args[i]);
 				if( param.matches(RegExp.DBNAME)) {
 					return param;
-				}
-				else {
+				} else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "SaadaDB name <" + param + "> badly formed");
 				}
 			}
@@ -1532,7 +1598,7 @@ public class ArgsParser implements Serializable{
 	public  void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws SaadaException
