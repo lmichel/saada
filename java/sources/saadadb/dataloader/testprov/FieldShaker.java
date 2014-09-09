@@ -65,11 +65,9 @@ import saadadb.util.Messenger;
  * @author michel
  * @version $Id$
  */
-public abstract class FieldShaker {
-	/** JSON template: set in sublcasses*/
-	protected static Map<String, String> TEMPLATE ;
+public class FieldShaker {
 	/** Saada data product built with the JSON object */
-	protected static Map<String, FooProduct>  fooProducts;
+	protected Map<String, FooProduct>  fooProducts;
 	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
 	/** Test report, one entry er test, and several  lines par entry*/
@@ -106,7 +104,6 @@ public abstract class FieldShaker {
 		}
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn));  
-		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
 		/*
 		 * Extract data loader params
 		 */
@@ -117,217 +114,19 @@ public abstract class FieldShaker {
 			params.add(iterator.next());  
 		}  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-
+		/*
+		 * Extract fields sets
+		 */
 		JSONArray cases = (JSONArray) jsonObject.get("cases");  
-
-		try {
-			this.reports = new LinkedHashMap<String, List<String>>();
-			for( Entry<String, String> e: TEMPLATE.entrySet()) {
-				JSONObject jsonObject = (JSONObject) parser.parse(e.getValue());
-				this.fooProducts.put(e.getKey()
-						, new FooProduct((JSONObject) ((JSONObject)(parser.parse(e.getValue())).get("fields"), 0));
-				this.reports.put(e.getKey(), new ArrayList<String>());
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-			System.exit(1);
+		Iterator<JSONObject> jit = parameters.iterator();  
+		while (jit.hasNext()) {  
+			JSONObject o = jit.next();
+			String name = (String) o.get("name");
+			this.fooProducts.put(name, new FooProduct((JSONObject) o.get("fields"), 0));
+			this.reports.put(name, new ArrayList<String>());
 		}  
 	}
 
-	/**
-	 * @param param starts  with '-'
-	 * @param value
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	protected void setArgParam(String param, String value) throws Exception{
-		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
-		List<String> params = new ArrayList<String>();
-		for( int i=0 ; i<jsa.size() ; i++ ){
-			String s = (String) jsa.get(i);
-			if( s.startsWith(param) ) {
-				s = param + "=" + value;
-				jsa.set(i, s);
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Set  " +s);
-				break;
-			}
-		}	
-		for( int i=0 ; i<jsa.size() ; i++ ){
-			params.add((String) jsa.get(i));
-		}	
-		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		
-	}
-
-	/**
-	 * Change the parameters for the field "name"
-	 * only non nul parameters are set
-	 * @param name
-	 * @param type
-	 * @param unit
-	 * @param ucd
-	 * @param value
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	protected void setField(String name, String type, String unit, String ucd, String value) throws Exception{
-		JSONObject jso = (JSONObject) jsonObject.get("fields");
-		JSONArray jsa = (JSONArray) jso.get("header");
-		for( int i=0 ; i<jsa.size() ; i++ ){
-			JSONArray jsah = (JSONArray) jsa.get(i);
-			if( ((String)(jsah.get(0))).equals(name) ) {
-				if( type != null) jsah.set(1, type);
-				if( unit != null) jsah.set(2, unit);
-				if( ucd != null) jsah.set(3, ucd);
-				if( value != null) jsah.set(4, value);
-				Messenger.printMsg(Messenger.TRACE, "Attribute " + name + " changed");
-				break;
-			}
-		}
-		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
-		//throw new Exception("Param " + name + " not found" );
-	}
-
-	/**
-	 * Build the productBuilder from the JSON object
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	protected void readJson() throws Exception {
-		JSONParser parser = new JSONParser();  
-		jsonObject = (JSONObject)parser.parse(TEMPLATE);
-		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
-		Iterator<String> iterator = parameters.iterator();  
-		List<String> params = new ArrayList<String>();
-		while (iterator.hasNext()) {  
-			params.add(iterator.next());  
-		}  
-		params.add(Database.getDbname());  
-		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
-	}
-
-	/**
-	 * Priority first, good mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithGoodMParams() throws Exception{
-		readJson();
-		setFirst();	
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithGoodMParams", this.currentReport);
-	}
-	/**
-	 * Priority first, good inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithGoodIParams() throws Exception{
-		readJson();
-		setFirst();	
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithGoodIParams", this.currentReport);
-	}
-	/**
-	 * Priority first, wrong mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithWrongMParams() throws Exception{
-		readJson();
-		setFirst();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithWrongMParams", this.currentReport);
-	}
-	/**
-	 * Priority first, wrong inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithWrongIParams() throws Exception{
-		readJson();
-		setFirst();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithWrongIParams", this.currentReport);
-	}
-	/**
-	 * Priority first, partially wrong mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithPWrongMParams() throws Exception{
-		readJson();
-		setFirst();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithPWrongMParams", this.currentReport);
-	}
-	/**
-	 * Priority first, partially wrong inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runFirstWithPWrongIParams() throws Exception{
-		readJson();
-		setFirst();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("FirstWithPWrongIParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, good mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithGoodMParams() throws Exception{
-		readJson();
-		setLast();		
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithGoodMParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, good inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithGoodIParams() throws Exception{
-		readJson();
-		setLast();	
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithGoodIParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, wrong mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithWrongMParams() throws Exception{
-		readJson();
-		setLast();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithWrongMParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, wrong inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithWrongIParams() throws Exception{
-		readJson();
-		setLast();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithWrongIParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, partially wrong mapped parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithPWrongMParams() throws Exception{
-		readJson();
-		setLast();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithPWrongMParams", this.currentReport);
-	}
-	/**
-	 * Priority Last, partially wrong inferred parameters
-	 * @throws Exception 
-	 */
-	protected void runLastWithPWrongIParams() throws Exception{
-		readJson();
-		setLast();
-		this.currentReport = new ArrayList<String>();
-		this.reports.put("LastWithPWrongIParams", this.currentReport);
-	}
 
 	/**
 	 * run the mapping on the current product and stores the result within the report
@@ -383,6 +182,28 @@ public abstract class FieldShaker {
 			for( String s: entry.getValue()){
 				System.out.println("  " + s);
 			}
+		}
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try {
+			ArgsParser ap = new ArgsParser(args);			
+			Database.init(ap.getDBName());
+			FieldShaker fr;
+			String fn = ap.getFilename();
+			System.out.println(fn);
+			fr = new FieldShaker(new ArgsParser(args).getFilename());
+			fr.processAll();
+			fr.showReport();
+			System.exit(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			System.exit(1);
 		}
 	}
 }
