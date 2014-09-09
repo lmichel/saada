@@ -273,13 +273,23 @@ public class Messenger implements Serializable{
 	 * Print out the top of the stack without the 2 first lines (getStackTrace and this.printStackTop)
 	 */
 	public static void printStackTop() {
-      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-      for(int i=2; i<elements.length; i++) {
-          System.out.println(elements[i]);
-          if( i>5)break;
-      }
-	}
-	
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; i++) {
+	          System.out.println(elements[i]);
+	          if( i>5)break;
+	      }
+		}
+
+	public static void printLocatedMsg(String msg) {
+		String message = msg;
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; i++) {
+	          message += " (" + elements[i] + ")";
+	          break;
+	      }
+	      printMsg(DEBUG, message);
+		}
+
 	/**
 	 * @param level
 	 * @param msg

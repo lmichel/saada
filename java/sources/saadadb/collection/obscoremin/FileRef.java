@@ -26,7 +26,7 @@ public class FileRef extends SaadaInstance {
     public String access_url = saadadb.util.SaadaConstant.STRING;
 	public String access_format = saadadb.util.SaadaConstant.STRING;
 	public long access_estsize = saadadb.util.SaadaConstant.LONG;
-	public int calib_level = saadadb.util.SaadaConstant.INT;
+	public int calib_level = saadadb.util.SaadaConstant.INT; // 0 -> 3
 	public String obs_publisher_did = saadadb.util.SaadaConstant.STRING;
 	public String obs_collection = saadadb.util.SaadaConstant.STRING;
 

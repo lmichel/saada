@@ -92,6 +92,11 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-ounit")        ;allowedArgs.add("-entry.ounit") ;
 		allowedArgs.add("-ocalibstatus") ;allowedArgs.add("-entry.ocalibstatus") ;
 		/*
+		 * Polarization axis
+		 */
+		allowedArgs.add("-polarmapping") ;
+		allowedArgs.add("-polarstats") ;allowedArgs.add("-entry.polarstats") ;
+		/*
 		 * Other Axe
 		 */
 		allowedArgs.add("-ignore") ;
@@ -600,9 +605,8 @@ public class ArgsParser implements Serializable{
 		return null;
 	}
 	/*
-	 * TIME
+	 * Observable
 	 */
-
 	public PriorityMode getObservableMappingPriority() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-observablemapping")) {
@@ -611,7 +615,6 @@ public class ArgsParser implements Serializable{
 		}
 		return PriorityMode.LAST;		
 	}
-
 	public String getOucd(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-oucd")  ){
@@ -640,6 +643,28 @@ public class ArgsParser implements Serializable{
 				return getArgsValue(args[i]);
 			}
 			if( entry && args[i].startsWith("-entry.ocalibstatus") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+	/*
+	 * Polarization
+	 */
+	public PriorityMode getPolarMappingPriority() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-polarmapping")) {
+				return  getPriority(args[i]);
+			}
+		}
+		return PriorityMode.LAST;		
+	}
+	public String getPolarStates(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-polarstates")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.polarstates") ){
 				return getArgsValue(args[i]);
 			}
 		}

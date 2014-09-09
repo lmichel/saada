@@ -1,6 +1,5 @@
 package saadadb.dataloader.mapping;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,6 +181,9 @@ public class ProductMapping {
     }
     public AxisMapping getObservableAxisMapping() throws FatalException {
     	return stoeMapping.getAxisMapping(Axis.OBSERVABLE);
+    }
+    public AxisMapping getPolarizationAxisMapping() throws FatalException {
+    	return stoeMapping.getAxisMapping(Axis.POLARIZATION);
     }
     public AxisMapping getExtenedAttMapping() throws FatalException {
     	return stoeMapping.getAxisMapping(Axis.EXTENDEDATT);

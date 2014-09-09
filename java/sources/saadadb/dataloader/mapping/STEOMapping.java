@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
-import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Merger;
@@ -36,6 +35,7 @@ public class STEOMapping {
 		this.axeMapping.put(Axis.ENERGY     , new EnergyMapping(ap, entryMode));
 		this.axeMapping.put(Axis.OBSERVATION, new ObservationMapping(ap, entryMode));
 		this.axeMapping.put(Axis.OBSERVABLE , new ObservableMapping(ap, entryMode));
+		this.axeMapping.put(Axis.POLARIZATION , new PolarMapping(ap, entryMode));
 		this.category = Category.getCategory(ap.getCategory());
 		this.axeMapping.put(Axis.EXTENDEDATT, new ExtendedAttMapping(ap, entryMode));
 		this.collection = ap.getCollection();
