@@ -26,6 +26,8 @@ public class FileRef extends SaadaInstance {
 	public String access_format = saadadb.util.SaadaConstant.STRING;
 	public long access_estsize = saadadb.util.SaadaConstant.LONG;
 	public String obs_collection = saadadb.util.SaadaConstant.STRING;
+	public int calib_status = saadadb.util.SaadaConstant.INT;
+
 	/*
 	 * Space Axe
 	 */	
