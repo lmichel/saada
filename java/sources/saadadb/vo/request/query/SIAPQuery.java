@@ -190,7 +190,7 @@ public class SIAPQuery extends VOQuery {
 	 * @see saadadb.vo.request.query.VOQuery#close()
 	 */
 	public void close() throws QueryException {
-		this.resultSet.close();
+		//this.resultSet.close();
 		this.resultSet = null;
 
 	}
