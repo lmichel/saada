@@ -78,13 +78,13 @@ public class SiapVotableFormator extends VotableFormator {
 			String utype = sf.getUtype();
 			String id = sf.getId();
 			cdata = false;
-			if( ucd.equals("Target.Pos")) {
+			if( ucd.equalsIgnoreCase("Target.Pos")) {
 				val = obj.s_ra + " " + obj.s_dec;
 			}
-			else if( utype.equals("Char.SpatialAxis.Coverage.Location.Value")) {
+			else if( utype.equalsIgnoreCase("Char.SpatialAxis.Coverage.Location.Value")) {
 				val = obj.s_ra + " " + obj.s_dec;
 			}
-			else if( utype.equals("Access.Reference") || ucd.equalsIgnoreCase("VOX:Image_AccessReference") ) {
+			else if( utype.equalsIgnoreCase("Access.Reference") || ucd.equalsIgnoreCase("VOX:Image_AccessReference") ) {
 				String format = this.getProtocolParam("format");
 				cdata = true;
 				if( "text/html".equals(format)) {
@@ -93,25 +93,25 @@ public class SiapVotableFormator extends VotableFormator {
 					val = download_url;
 				}
 			}
-			else if( ucd.equals("VOX:Image_FileSize") ) {
+			else if( ucd.equalsIgnoreCase("VOX:Image_FileSize") ) {
 				val = String.valueOf(((new File(obj.getRepository_location())).length()));					
 			}
-			else if( ucd.equals("VOX:STC_CoordRefFrame") ) {
+			else if( ucd.equalsIgnoreCase("VOX:STC_CoordRefFrame") ) {
 				try {
 					val = obj.getFieldString("_radecsys");
 				} catch(Exception e) {
 					val = "";
 				}
 			}
-			else if( utype.equals("Access.Format") || ucd.equalsIgnoreCase("VOX:Image_Format") ) {
+			else if( utype.equalsIgnoreCase("Access.Format") || ucd.equalsIgnoreCase("VOX:Image_Format") ) {
 				cdata = true;
 				val = obj.getMimeType();
 			}
-			else if( utype.equals("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
+			else if( utype.equalsIgnoreCase("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
 				cdata = true;
 				val = obj.obs_id;
 			}
-			else if( id.equals("LinktoPixels")) {
+			else if( id.equalsIgnoreCase("LinktoPixels")) {
 				cdata = true;
 				val = obj.getURL(true);
 			}
@@ -131,20 +131,63 @@ public class SiapVotableFormator extends VotableFormator {
 				val = (obj.s_fov / obj.naxis1) + " "
 				+ (obj.s_fov / obj.naxis2);
 			}
-			else if( ucd.equals("VOX:WCS_CoordProjection") ) {
+			else if( ucd.equalsIgnoreCase("VOX:WCS_CoordProjection") ) {
 				val = obj.ctype1_csa;
 				// RA---TAN -> TAN e.g.
 				if( val != null && val.length() > 3 ) {
 					val = val.substring(val.length() - 3);
 				}
 			}
-			else if( ucd.equals("VOX:WCS_CoordRefValue") ) {
+			else if( ucd.equalsIgnoreCase("VOX:WCS_CoordRefValue") ) {
 				val = obj.crval1_csa + " " + obj.crval2_csa;
 			}
-			else if( ucd.equals("VOX:WCS_CDMatrix") ) {
+			else if( ucd.equalsIgnoreCase("VOX:WCS_CDMatrix") ) {
 				val = obj.cd1_1_csa + " " + obj.cd1_2_csa + " " + obj.cd2_1_csa + " " + obj.cd2_2_csa;
 			}
-
+			else if(ucd.equalsIgnoreCase("INST_ID")){
+				val= obj.instrument_name;
+			}
+			else if(ucd.equalsIgnoreCase("VOX_STC_CoordEquinox")){
+				try {
+					val = obj.getFieldString("_equinox");
+				} catch(Exception e) {
+					val = "";
+				}	
+			}
+			else if(ucd.equalsIgnoreCase("CoordRefPixel")){
+				val = obj.crpix1_csa + " "+obj.crpix2_csa;
+			}
+			else if(ucd.equalsIgnoreCase("VOX:BandPass_RefValue")){
+				val = String.valueOf((obj.em_max+obj.em_max)/2);
+			}
+			else if(ucd.equalsIgnoreCase("VOX:BandPass_HiLimit")){
+				val = String.valueOf(obj.em_max);
+			}
+			else if(ucd.equalsIgnoreCase("VOX:BandPass_LoLimit")){
+				val = String.valueOf(obj.em_min);
+			}
+			else if(ucd.equalsIgnoreCase("VOX.Image_AccessReference")){
+				val = obj.access_url;
+			}
+			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
+				//TODO Image_AccessRefTTL
+			}
+			else if(ucd.equalsIgnoreCase("VOX:Image_FileSize")){
+				val = String.valueOf(obj.access_estsize);
+			}
+			else if(ucd.equalsIgnoreCase("VOX:BandPass_ID")){
+				//TODO ADD BandPass_ID
+			}
+			else if (ucd.equalsIgnoreCase("VOX:BandPass_Unit")){
+				//TODO Add BandPass_Unit
+			}
+			else if (ucd.equalsIgnoreCase("VOX:ImageMJDateObs")){
+				val =String.valueOf(obj.t_min);
+			}
+			else if (ucd.equalsIgnoreCase("VOX:Image_PixFlag")){
+				val = "C";
+			}
+			
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first
 			 */
