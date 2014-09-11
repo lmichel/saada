@@ -486,8 +486,8 @@ abstract public class DbmsWrapper {
 		return "boxoverlaps(" + ra  
 		+ ", " + dec 
 		+ ", " + size 
-		+ ", " + prefix + "pos_ra_csa"
-		+ ", " + prefix + "pos_dec_csa"
+		+ ", " + prefix + "s_ra"
+		+ ", " + prefix + "s_dec"
 		+ ", " + prefix + "size_alpha_csa"
 		+ ", " + prefix + "size_delta_csa)";
 	}
@@ -503,7 +503,7 @@ abstract public class DbmsWrapper {
 	 * @return
 	 */
 	static public String getImageCoverConstraint(String prefix, double ra, double  dec, double size_ra, double size_dec ) {
-		return "boxcovers(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "pos_ra_csa," + prefix + "pos_dec_csa, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
+		return "boxcovers(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "s_ra," + prefix + "s_dec, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
 	}
 
 	/**
@@ -516,7 +516,7 @@ abstract public class DbmsWrapper {
 	 * @return
 	 */
 	static public String getImageCenterConstraint(String prefix, double ra, double  dec, double size_ra, double size_dec ) {
-		return "boxcenter(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "pos_ra_csa," + prefix + "pos_dec_csa, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
+		return "boxcenter(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "s_ra," + prefix + "s_dec, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
 	}
 	/**
 	 * The candidate image is entirely enclosed by the ROI
@@ -529,7 +529,7 @@ abstract public class DbmsWrapper {
 	 * @return
 	 */
 	static public String getImageEnclosedConstraint(String prefix, double ra, double  dec, double size_ra ) {
-		return "boxenclosed(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "pos_ra_csa," + prefix + "pos_dec_csa, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
+		return "boxenclosed(" + ra + "," + dec + "," + size_ra  + ", " + prefix + "s_ra," + prefix + "s_dec, " + prefix + "size_alpha_csa,"+ prefix + "size_delta_csa)";
 	}
 	/**
 	 * @param prefix
@@ -548,6 +548,7 @@ abstract public class DbmsWrapper {
 		double x1 = Math.cos(Math.toRadians(dec))*Math.cos(Math.toRadians(asc));
 		double y1 = Math.cos(Math.toRadians(dec))*Math.sin(Math.toRadians(asc));
 		double z1 = Math.sin(Math.toRadians(dec));
+		//TODO pos_x_csa and pos_y_csa are commented in SaadaInstance.java
 		String D = " degrees((2*asin( sqrt("
 			+   " ("+x1+"-"+alias+"pos_x_csa)*("+x1+"-"+alias+"pos_x_csa)"
 			+   "+("+y1+"-"+alias+"pos_y_csa)*("+y1+"-"+alias+"pos_y_csa)"
@@ -644,10 +645,10 @@ abstract public class DbmsWrapper {
 		//			if( ra_min > 360 ) ra_min = ra_min - 360;
 		//			double dec_min = dec -  size;
 		//			double dec_max = dec +  size;
-		//			B = "(" + prefix + ".pos_ra_csa > " + ra_min + " AND " + prefix + ".pos_ra_csa < " + ra_max 
-		//			+ " AND " + prefix + ".pos_dec_csa > " + dec_min + " AND " + prefix + ".pos_dec_csa < " + dec_max + ")";
+		//			B = "(" + prefix + ".s_ra > " + ra_min + " AND " + prefix + ".s_ra < " + ra_max 
+		//			+ " AND " + prefix + ".s_dec > " + dec_min + " AND " + prefix + ".s_dec < " + dec_max + ")";
 		//		}
-		B = "isinbox(" + asc + ", " + dec + ", " + size  + ", " + size + ", " + alias + "pos_ra_csa" + ", " + alias + "pos_dec_csa) ";
+		B = "isinbox(" + asc + ", " + dec + ", " + size  + ", " + size + ", " + alias + "s_ra" + ", " + alias + "s_dec) ";
 		/*
 		 * Compute the BQoc constraint
 		 */
@@ -715,7 +716,7 @@ abstract public class DbmsWrapper {
 	 * @throws NumberFormatException 
 	 */
 	static public String getADQLIsInCircleConstraint(String asc, String dec, String circleAsc, String circleDec, String radius) throws Exception {
-		if( asc.equalsIgnoreCase("pos_ra_csa") && asc.equalsIgnoreCase("pos_dec_csa") ) {
+		if( asc.equalsIgnoreCase("s_ra") && asc.equalsIgnoreCase("s_dec") ) {
 			return getIsInCircleConstraint("", Double.parseDouble(circleAsc), Double.parseDouble(circleDec), Double.parseDouble(radius));
 		}	
 
