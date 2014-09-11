@@ -280,6 +280,15 @@ public class Messenger implements Serializable{
 	      }
 		}
 
+	public static void printStackTop(String additionnalMessage) {
+		System.out.println(additionnalMessage);
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; i++) {
+	          System.out.println(elements[i]);
+	          if( i>7)break;
+	      }
+	      System.out.println("");
+		}
 	public static void printLocatedMsg(String msg) {
 		String message = msg;
 	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
