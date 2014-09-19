@@ -26,20 +26,13 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.setter.ColumnSetter;
-import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 
 /**
- * Superclass of test for the fields attached to one axis.
- * Take a JSON object as input, and modify it as long as the priority during test
- * There 12 tests: 
- * 	2 priority level LAST/FIRST 
- * 		good mapped parameters, good inferred parameters 
- * 		wrong mapped parameters, wrong inferred parameters 
- * 		partially wrong mapped parameters, partially wrong inferred parameters 
- * 
-  		TEMPLATE = "{"
-
+ * Superclass for testing different formats of fields
+ * Should be parametred in auto dectection
+ * The input JSON files gives a set of KWs set with different way to encode values
+ {
 			"parameters": [ 
 				"-category=misc" , 
 				"-collection=XMM", 
@@ -48,26 +41,31 @@ import saadadb.util.Messenger;
 				"-posmapping=first" , 
 				"-position=alpha,delta"  "
 				"-system='FK5'"  "
-			], "
+			], 
 			"cases": [ {"name" : name,
-			            "fields": [ "
+			            "header": [ "
 			                       ["RA"        , "double", "deg"   , ""              , "10"], "
 							       ["DEC"       , "double", "deg"   , ""              , "+20"] "
-			             ["alpha"       , "double", "deg"   , ""              , "-10"], "
-							["delta"       , "double", "deg"   , ""              , "-20"] "
-					]"
-					,"
-			    "columns": []"
-			    }"
-			}";
-
+					               ],
+				         "columns": []               
+					    },
+                      {"name" : name,
+			            "header": [ "
+			                       ["RA"        , "double", "deg"   , ""              , "10"], "
+							       ["DEC"       , "double", "deg"   , ""              , "+20"] "
+					               ],					               
+				         "columns": []               
+					    }
+ 					]
+			    }
+			}
  * 
  * @author michel
  * @version $Id$
  */
-public class FieldShaker {
+public abstract class FieldShaker {
 	/** Saada data product built with the JSON object */
-	protected Map<String, FooProduct>  fooProducts;
+	protected  Map<String, FooProduct>  fooProducts;
 	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
 	/** Test report, one entry er test, and several  lines par entry*/
@@ -75,12 +73,13 @@ public class FieldShaker {
 	/** pointer on the retpor current of the current test*/ 
 	protected List<String> currentReport;
 	protected FooProduct currentProduct;
-	/** List of Obscore fields of interest: theu are reported */
+	/** List of Obscore fields of interest: they are reported */
 	protected Set<String> paramsOfInterest;
 
 	/**
 	 * @throws Exception
 	 */
+	@SuppressWarnings("rawtypes")
 	FieldShaker(String jsonFilename) throws Exception{
 		String fn = jsonFilename.replace("json:", "");
 		String ffn = "";
@@ -108,6 +107,7 @@ public class FieldShaker {
 		 * Extract data loader params
 		 */
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
+		@SuppressWarnings("unchecked")
 		Iterator<String> iterator = parameters.iterator();  
 		List<String> params = new ArrayList<String>();
 		while (iterator.hasNext()) {  
@@ -115,18 +115,24 @@ public class FieldShaker {
 		}  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 		/*
-		 * Extract fields sets
+		 * Extraction des differents cas
 		 */
+		this.fooProducts = new LinkedHashMap<String, FooProduct>();
+		this.reports = new LinkedHashMap<String, List<String>>();
 		JSONArray cases = (JSONArray) jsonObject.get("cases");  
-		Iterator<JSONObject> jit = parameters.iterator();  
-		while (jit.hasNext()) {  
-			JSONObject o = jit.next();
-			String name = (String) o.get("name");
-			this.fooProducts.put(name, new FooProduct((JSONObject) o.get("fields"), 0));
-			this.reports.put(name, new ArrayList<String>());
+		Iterator casesIt = cases.iterator();  
+		try {
+			while (casesIt.hasNext()) { 
+				JSONObject cas = (JSONObject) casesIt.next();
+				String casName = (String) cas.get("name");
+				this.fooProducts.put(casName, new FooProduct(cas, 0));
+				this.reports.put(casName, new ArrayList<String>());
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}  
 	}
-
 
 	/**
 	 * run the mapping on the current product and stores the result within the report
@@ -182,28 +188,6 @@ public class FieldShaker {
 			for( String s: entry.getValue()){
 				System.out.println("  " + s);
 			}
-		}
-	}
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		try {
-			ArgsParser ap = new ArgsParser(args);			
-			Database.init(ap.getDBName());
-			FieldShaker fr;
-			String fn = ap.getFilename();
-			System.out.println(fn);
-			fr = new FieldShaker(new ArgsParser(args).getFilename());
-			fr.processAll();
-			fr.showReport();
-			System.exit(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			System.exit(1);
 		}
 	}
 }
