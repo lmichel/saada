@@ -1,0 +1,24 @@
+ {
+"parameters": [ 
+				"-category=misc" , 
+				"-collection=XMM", 
+				"-filename=obscore", 
+				"-repository=no", 
+				"-posmapping=first" , 
+				"-position=alpha,delta"  ,
+				"-system='FK5'"  
+			], 
+"cases": [ {"name" : "standard",
+            "header": [  ["RA"        , "double", "deg"   , ""              , "10"], 
+						 ["DEC"       , "double", "deg"   , ""              , "+20"] 
+					  ],
+	         "columns": []               
+		    },
+            {"name" : "name",
+            "header": [ ["RA"        , "double", "deg"   , ""              , "10"], 
+						["DEC"       , "double", "deg"   , ""              , "+20"] 
+					  ],					               
+	         "columns": []               
+		    }
+		]
+}			
