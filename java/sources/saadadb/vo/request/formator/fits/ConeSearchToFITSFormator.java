@@ -12,6 +12,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
 
 /**
  * @author laurent
@@ -26,7 +27,9 @@ public class ConeSearchToFITSFormator extends FitsFormator {
 	public ConeSearchToFITSFormator() throws QueryException {
 		setDataModel("CS");
 		limit = 100000;
-		protocolName = "CS1.0";
+		protocolN= "CS";
+		protocolV ="1.0";
+		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV, this.protocolN));
 	}
 
 

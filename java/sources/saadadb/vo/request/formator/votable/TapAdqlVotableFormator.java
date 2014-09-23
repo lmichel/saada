@@ -37,8 +37,9 @@ public class TapAdqlVotableFormator extends VotableFormator {
 
 	public TapAdqlVotableFormator() throws QueryException {
 		limit = 10000;
-		protocolName = "TAP1.0";
-		this.infoMap.put("LANGUAGE", "ADQL");
+		protocolN = "TAP";
+		protocolV ="1.0";
+		this.infoMap.put("LANGUAGE", new infoEntry("ADQL", null));
 
 	}
 	public void setAdqlResultSet(ADQLResultSet adqlResultSet){
@@ -47,7 +48,8 @@ public class TapAdqlVotableFormator extends VotableFormator {
 
 	public void setAdqlQuery(SaadaADQLQuery adqlQuery) {
 		this.adqlQuery = adqlQuery;
-		this.infoMap.put("QUERY", "<![CDATA["+adqlQuery+"]]>");
+		//TODO this.infoMap.put("QUERY", new infoEntry("<![CDATA["+adqlQuery+"]]>",null));
+		this.infoMap.put("QUERY", new infoEntry(null,"<![CDATA["+adqlQuery+"]]>"));
 	}
 
 

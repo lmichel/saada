@@ -12,6 +12,8 @@ import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.ImageUtils;
+import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
+import cds.savot.model.InfoSet;
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
@@ -29,7 +31,9 @@ public class SiapVotableFormator extends VotableFormator {
 	public SiapVotableFormator() throws QueryException {
 		setDataModel("SIA");
 		limit = 100;
-		protocolName = "SIAP1.0";
+		protocolN = "SIAP";
+		protocolV="1.0";
+		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV, this.protocolN));
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#supportResponseInRelation()
@@ -147,7 +151,7 @@ public class SiapVotableFormator extends VotableFormator {
 			else if(ucd.equalsIgnoreCase("INST_ID")){
 				val= obj.instrument_name;
 			}
-			else if(ucd.equalsIgnoreCase("VOX_STC_CoordEquinox")){
+			else if(ucd.equalsIgnoreCase("VOX:STC_CoordEquinox")){
 				try {
 					val = obj.getFieldString("_equinox");
 				} catch(Exception e) {
@@ -166,7 +170,7 @@ public class SiapVotableFormator extends VotableFormator {
 			else if(ucd.equalsIgnoreCase("VOX:BandPass_LoLimit")){
 				val = String.valueOf(obj.em_min);
 			}
-			else if(ucd.equalsIgnoreCase("VOX.Image_AccessReference")){
+			else if(ucd.equalsIgnoreCase("VOX:Image_AccessReference")){
 				val = obj.access_url;
 			}
 			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){

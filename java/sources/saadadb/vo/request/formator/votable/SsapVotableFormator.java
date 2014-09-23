@@ -22,7 +22,10 @@ public class SsapVotableFormator extends VotableFormator {
 	public SsapVotableFormator() throws QueryException {
 		setDataModel("SSA");
 		limit = 100;
-		protocolName = "SSAP1.0";
+		protocolN= "SSAP";
+		protocolV ="1.1";
+		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV, this.protocolN));
+		
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#supportResponseInRelation()
@@ -45,9 +48,9 @@ public class SsapVotableFormator extends VotableFormator {
 			SavotField sf = (SavotField)f;
 			String utype = sf.getUtype();
 			String id = sf.getId();
-			String val;
+			String val ="";
 			boolean cdata = false;
-			//			System.out.println("Utype " + utype );
+						//System.out.println("Utype " + utype );
 			if( utype.equals("Target.Pos")) {
 				val = obj.s_ra + " " + obj.s_dec;
 			}
@@ -94,6 +97,76 @@ public class SsapVotableFormator extends VotableFormator {
 			else if( utype.endsWith("Access.Format")) {
 				val = obj.getMimeType();
 				cdata = true;
+			}
+			else if (utype.endsWith("Access.Size")){
+				val=String.valueOf(obj.access_estsize);
+			}
+			else if(utype.endsWith("DataID.Creator")){
+				//FIND CREATOR DID
+			}
+			else if(utype.endsWith("DataID.Collection")){
+				val = obj.obs_collection;
+			}
+			else if(utype.endsWith("DataID.DataSource")){
+			//TODO DataID.DataSource
+			}
+			else if(utype.endsWith("DataID.CreationType")){
+			//TODO DataID.CreationType
+			}
+			else if(utype.endsWith("Curation.Reference")){
+			//TODO Curation.Reference
+			}
+			else if(utype.endsWith("Char.SpatialAxis.Accuracy.StatError")){
+			//TODO Accuracy.StatError
+			}
+			else if (utype.endsWith("Char.SpatialAxis.Calibration")){
+				//TODO Char.SpatialAxis.Calibration
+			}
+			else if (utype.endsWith("Char.SpatialAxis.Resolution")){
+				//TODO Char.SpatialAxis.Resolution
+			}
+			else if(utype.endsWith("Char.SpatialAxis.Coverage.Bounds.Extent")){
+				//TODO Char.SpatialAxis.Coverage.Bounds.Extent
+			}
+			else if(utype.endsWith("Char.SpectralAxis.Ucd")){
+				//TODO Char.SpectralAxis.Ucd
+			}
+			else if (utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Start")){
+				//TODO Verif
+				val = String.valueOf(obj.em_min);
+			}
+			else if (utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Stop")){
+				val = String.valueOf(obj.em_max);
+			}
+			else if (utype.endsWith("Char.SpectralAxis.Calibration")){
+				//TODO Char.SpectralAxis.Calibration
+			}
+			else if (utype.endsWith("Char.SpectralAxis.Resolution")){
+				//TODO Char.SpectralAxis.Resolution
+			}
+			else if (utype.endsWith("Char.TimeAxis.Coverage.Location.Value")){
+				//TODO Char.TimeAxis.Coverage.Location.Value
+			}
+			else if(utype.endsWith("Char.TimeAxis.Coverage.Bounds.Extent")){
+				//TODO Char.TimeAxis.Coverage.Bounds.Extent
+			}
+			else if(utype.endsWith("Query.Score")){
+				//TODO Query.Score
+			}
+			else if (utype.endsWith("CoordSys.SpaceFrame.Name")){
+				//TODO CoordSys.SpaceFrame.Name
+			}
+			else if (utype.endsWith("Char.FluxAxis.Ucd")){
+				//TODO Char.FluxAxis.Ucd
+			}
+			else if (utype.endsWith("Char.FluxAxis.Calibration")){
+				//TODO Char.FluxAxis.Calibration
+			}
+			else if (utype.endsWith("Target.Name")){
+				val = obj.target_name;
+			}
+			else if(utype.endsWith("Curation.PublisherDID")){
+				val=obj.getObs_publisher_did();
 			}
 			else if( utype.endsWith("DataID.Title")) {
 				val = obj.obs_id;

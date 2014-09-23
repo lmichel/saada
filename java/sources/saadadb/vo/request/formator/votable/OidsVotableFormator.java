@@ -22,7 +22,7 @@ public class OidsVotableFormator extends SaadaqlVotableFormator {
 
 	public OidsVotableFormator() throws QueryException {
 		limit = 100000;
-		protocolName = "Native Saada";
+		protocolN = "Native Saada";
 	}
 
 	/* (non-Javadoc)
