@@ -26,9 +26,10 @@ import adqlParser.SaadaADQLQuery;
  */
 public abstract class QueryResultFormator implements Formator{
 	protected  Set<String>        relationsToInclude = new LinkedHashSet<String>();
-	protected boolean hasExtensions = false; // short cut to avoid to chacke at any time the size of relationsToInclude
+	protected boolean hasExtensions = false; // short cut to avoid to check at any time the size of relationsToInclude
 	protected Map<String, String> protocolParams;
-	protected String 			  protocolName;	
+	protected String 			  protocolN;	
+	protected String 			  protocolV;	
 	protected String              defaultSuffix;
 	protected ArrayList<Long>     oids;
 	protected int                 resultSize;
@@ -38,7 +39,37 @@ public abstract class QueryResultFormator implements Formator{
 	protected VOResource		  dataModel;
 	protected int 				  limit = -1;	
 
-	protected LinkedHashMap<String, String> infoMap = new LinkedHashMap<String, String>();
+	public class infoEntry{
+		
+		private String value;
+		private String description;
+		
+		/**
+		 * Container that regroups Value and Description fields to be stored in a Map
+		 * @param value
+		 * @param description
+		 */
+		public infoEntry(String value, String description) {
+			super();
+			this.value = value;
+			this.description = description;
+		}
+		
+		
+		public String getValue() {
+			return value;
+		}
+		public void setValue(String value) {
+			this.value = value;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+	}
+	protected LinkedHashMap<String, infoEntry> infoMap = new LinkedHashMap<String, infoEntry>();
 
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#includeRelationInResponse(java.lang.String)
