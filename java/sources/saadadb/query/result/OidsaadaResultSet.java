@@ -38,11 +38,12 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 	 * @param sqlQuery
 	 * @param patternKeySet
 	 * @param limit
-	 * @throws QueryException 
+	 * @throws Exception 
 	 */
-	public OidsaadaResultSet(String sqlQuery, KeyIndex patternKeySet, int limit, boolean with_computed_column) throws QueryException {
+	public OidsaadaResultSet(String sqlQuery, KeyIndex patternKeySet, int limit, boolean with_computed_column) throws Exception {
 		super(null, sqlQuery, patternKeySet, limit, SaadaConstant.INT);
 		withComputedColumns = with_computed_column ;
+		this.init();
 	}
 
 	/**
