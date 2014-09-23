@@ -139,8 +139,8 @@ public class DefineType {
 			collection_ucds.put("date_load" , "time.processing");
 			collection_ucds.put("product_url_csa", "meta.file"); 
 			collection_ucds.put("nb_rows_csa"    , "meta.number");
-			collection_ucds.put("pos_ra_csa"     , "pos.eq.ra;meta.main");
-			collection_ucds.put("pos_dec_csa"    , "pos.eq.dec;meta.main");
+			//collection_ucds.put("pos_ra_csa"     , "pos.eq.ra;meta.main");
+			//collection_ucds.put("pos_dec_csa"    , "pos.eq.dec;meta.main");
 			collection_ucds.put("error_maj_csa"   , "stat.error;phys.size");
 			collection_ucds.put("error_min_csa"   , "stat.error;phys.size");
 			collection_ucds.put("error_angle_csa"  , "stat.error;pos.posAng");
