@@ -9,6 +9,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
@@ -27,7 +28,9 @@ public class ConeSearchVotableFormator extends VotableFormator{
 	public ConeSearchVotableFormator() throws QueryException {
 		setDataModel("CS");
 		limit = 10000;
-		protocolName = "CS1.0";
+		protocolN= "CS";
+		protocolV ="1.0";
+		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV, this.protocolN));
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#supportResponseInRelation()

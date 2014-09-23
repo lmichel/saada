@@ -31,7 +31,7 @@ public class SaadaqlVotableFormator extends VotableFormator {
 
 	public SaadaqlVotableFormator() throws QueryException {
 		limit = 100000;
-		protocolName = "Native Saada";
+		protocolN = "Native Saada";
 	}
 
 	/* (non-Javadoc)
