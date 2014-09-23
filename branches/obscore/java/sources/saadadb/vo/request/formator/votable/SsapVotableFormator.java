@@ -6,9 +6,11 @@ import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.result.SaadaInstanceResultSet;
+import saadadb.util.DateUtils;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
@@ -87,8 +89,11 @@ public class SsapVotableFormator extends VotableFormator {
 					val = "";
 				}
 			}
-			else if( utype.endsWith("Access.Size")) {
+			else if( utype.endsWith("Access.Size")) { //????????
 				val = Long.toString(obj.getFileSize()/1024) ;
+			} 
+			else if (utype.endsWith("Access.Size")){ //????????
+				val=String.valueOf(obj.access_estsize);
 			}
 			else if( utype.endsWith("Access.Reference")) {
 				val = obj.getDownloadURL(true) ;
@@ -98,11 +103,12 @@ public class SsapVotableFormator extends VotableFormator {
 				val = obj.getMimeType();
 				cdata = true;
 			}
-			else if (utype.endsWith("Access.Size")){
-				val=String.valueOf(obj.access_estsize);
-			}
+
 			else if(utype.endsWith("DataID.Creator")){
-				//FIND CREATOR DID
+				//FIND CREATOR 
+			}
+			else if(utype.endsWith("DataID.CreatorDID")){
+				//FIND CREATORDID
 			}
 			else if(utype.endsWith("DataID.Collection")){
 				val = obj.obs_collection;
@@ -113,20 +119,24 @@ public class SsapVotableFormator extends VotableFormator {
 			else if(utype.endsWith("DataID.CreationType")){
 			//TODO DataID.CreationType
 			}
+			else if(utype.endsWith("Dataset.DataModel")){
+				val = "ivo://ivoa.net/std/ObsCore-1.0";
+				}
 			else if(utype.endsWith("Curation.Reference")){
-			//TODO Curation.Reference
+			//TODO Curation.Reference		
 			}
 			else if(utype.endsWith("Char.SpatialAxis.Accuracy.StatError")){
 			//TODO Accuracy.StatError
+				
 			}
 			else if (utype.endsWith("Char.SpatialAxis.Calibration")){
-				//TODO Char.SpatialAxis.Calibration
+				val = String.valueOf(obj.calib_level);
 			}
 			else if (utype.endsWith("Char.SpatialAxis.Resolution")){
-				//TODO Char.SpatialAxis.Resolution
+				val = String.valueOf(obj.s_resolution);
 			}
 			else if(utype.endsWith("Char.SpatialAxis.Coverage.Bounds.Extent")){
-				//TODO Char.SpatialAxis.Coverage.Bounds.Extent
+				val = String.valueOf(obj.s_fov);
 			}
 			else if(utype.endsWith("Char.SpectralAxis.Ucd")){
 				//TODO Char.SpectralAxis.Ucd
@@ -139,31 +149,38 @@ public class SsapVotableFormator extends VotableFormator {
 				val = String.valueOf(obj.em_max);
 			}
 			else if (utype.endsWith("Char.SpectralAxis.Calibration")){
-				//TODO Char.SpectralAxis.Calibration
+				val = String.valueOf(obj.calib_level);
 			}
 			else if (utype.endsWith("Char.SpectralAxis.Resolution")){
 				//TODO Char.SpectralAxis.Resolution
 			}
 			else if (utype.endsWith("Char.TimeAxis.Coverage.Location.Value")){
-				//TODO Char.TimeAxis.Coverage.Location.Value
+				val = DateUtils.getMJD(String.valueOf(obj.t_exptime/2));//VERIFY VALUE
 			}
 			else if(utype.endsWith("Char.TimeAxis.Coverage.Bounds.Extent")){
-				//TODO Char.TimeAxis.Coverage.Bounds.Extent
+				val = String.valueOf(obj.t_max-obj.t_min);
+			}
+			else if(utype.endsWith("Char.TimeAxis.Coverage.Bounds.Start")){
+				val = String.valueOf(obj.t_min);
+			}
+			else if(utype.endsWith("Char.TimeAxis.Coverage.Bounds.Stop")){
+				val = String.valueOf(obj.t_max);
 			}
 			else if(utype.endsWith("Query.Score")){
 				//TODO Query.Score
 			}
 			else if (utype.endsWith("CoordSys.SpaceFrame.Name")){
-				//TODO CoordSys.SpaceFrame.Name
+				val = Database.getAstroframe().name; //TODO CHECK!
 			}
 			else if (utype.endsWith("Char.FluxAxis.Ucd")){
-				//TODO Char.FluxAxis.Ucd
+				val = obj.o_ucd;
 			}
 			else if (utype.endsWith("Char.FluxAxis.Calibration")){
-				//TODO Char.FluxAxis.Calibration
+				val = obj.o_calib_status;
 			}
 			else if (utype.endsWith("Target.Name")){
 				val = obj.target_name;
+				
 			}
 			else if(utype.endsWith("Curation.PublisherDID")){
 				val=obj.getObs_publisher_did();
@@ -177,14 +194,8 @@ public class SsapVotableFormator extends VotableFormator {
 				cdata = true;
 			}
 			else {
-				AttributeHandler ah  = obj.getFieldByUtype(sf.getUtype(), false);
-				if( ah == null ) {
-					val = "";					
-				}
-				else {
-					Object v = obj.getFieldValue(ah.getNameattr());
-					val = (v.toString());						
-				}
+				val = lookForAMatch(obj, sf);
+				
 			}
 			if( obj.getClass().getName().endsWith("EpicSrcSpect")  ){
 					String vxmm = getXMMData(utype, obj);
@@ -259,6 +270,30 @@ public class SsapVotableFormator extends VotableFormator {
 		writer.writeParam(paramSet);		
 	}
 	
+	/**
+	 * (should)Performs a search in the extended attributes
+	 * @param obj
+	 * @param sf
+	 * @return
+	 * @throws Exception
+	 */
+	protected String lookForAMatch(SpectrumSaada obj, SavotField sf) throws Exception{
+	
+		/*
+		 * TODO Should performs a search in the extended attributes
+		 */
+		String val;
+		AttributeHandler ah  = obj.getFieldByUtype(sf.getUtype(), false);
+		if( ah == null ) {
+			val = "";					
+		}
+		else {
+			Object v = obj.getFieldValue(ah.getNameattr());
+			val = (v.toString());						
+		}
+		
+		return val;
+	}
 	/* Just to remind
 	 * @param utype
 	 * @param sp
