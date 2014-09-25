@@ -154,7 +154,6 @@ public class SsapVotableFormator extends VotableFormator {
 			// TODO Char.SpectralAxis.Ucd
 			// }
 			else if (utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Start")) {
-				// TODO Verif
 				val = String.valueOf(obj.em_min);
 			} else if (utype.endsWith("Char.SpectralAxis.Coverage.Bounds.Stop")) {
 				val = String.valueOf(obj.em_max);

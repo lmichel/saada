@@ -56,6 +56,7 @@ public class SiapVotableFormator extends VotableFormator {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.votable.VOTableFormator#writeDMData(saadadb.collection.SaadaInstance)
 	 */
+	@Override
 	protected void writeRowData(SaadaInstance si) throws Exception {
 		ImageSaada obj = (ImageSaada)( si) ;
 		String download_url;
@@ -82,6 +83,7 @@ public class SiapVotableFormator extends VotableFormator {
 			String ucd = sf.getUcd();
 			String utype = sf.getUtype();
 			String id = sf.getId();
+			System.out.println(sf.getName());
 			cdata = false;
 			if( ucd.equalsIgnoreCase("Target.Pos")) {
 				val = obj.s_ra + " " + obj.s_dec;
@@ -174,18 +176,18 @@ public class SiapVotableFormator extends VotableFormator {
 			else if(ucd.equalsIgnoreCase("VOX:Image_AccessReference")){
 				val = obj.access_url;
 			}
-			//else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
-				//TODO Image_AccessRefTTL
-			//}
+			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
+				val = "86400";
+			}
 			else if(ucd.equalsIgnoreCase("VOX:Image_FileSize")){
 				val = String.valueOf(obj.access_estsize);
 			}
 			//else if(ucd.equalsIgnoreCase("VOX:BandPass_ID")){
 				//TODO ADD BandPass_ID
 			//}
-			else if (ucd.equalsIgnoreCase("VOX:BandPass_Unit")){
+			//else if (ucd.equalsIgnoreCase("VOX:BandPass_Unit")){
 				//TODO Add BandPass_Unit
-			}
+			//}
 			else if (ucd.equalsIgnoreCase("VOX:ImageMJDateObs")){
 				val =String.valueOf(obj.t_min);
 			}
@@ -196,10 +198,16 @@ public class SiapVotableFormator extends VotableFormator {
 				//Tries to find a match in its extended attributes
 				val = lookForAMatch(obj, sf);
 			}
+			if( cdata ) {
+				addCDataTD(val);
+			} else {
+				addTD(val);
+			}
+		
 		}
 	}
 			
-			/*
+			/*//Old
 			 * Utypes have an higher priority than UCDs: there are checked first
 			 */
 		/*	else if( utype != null && utype.length() > 0 ){
