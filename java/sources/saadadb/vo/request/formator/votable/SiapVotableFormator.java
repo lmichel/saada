@@ -3,6 +3,7 @@ package saadadb.vo.request.formator.votable;
 import java.io.File;
 import java.util.Date;
 
+import saadadb.collection.Category;
 import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
@@ -153,7 +154,7 @@ public class SiapVotableFormator extends VotableFormator {
 			}
 			else if(ucd.equalsIgnoreCase("VOX:STC_CoordEquinox")){
 				try {
-					val = obj.getFieldString("_equinox");
+					val = String.valueOf(Database.getAstroframe().getEpoch());
 				} catch(Exception e) {
 					val = "";
 				}	
@@ -162,7 +163,7 @@ public class SiapVotableFormator extends VotableFormator {
 				val = obj.crpix1_csa + " "+obj.crpix2_csa;
 			}
 			else if(ucd.equalsIgnoreCase("VOX:BandPass_RefValue")){
-				val = String.valueOf((obj.em_max+obj.em_max)/2);
+				val = String.valueOf((obj.em_min+obj.em_max)/2);
 			}
 			else if(ucd.equalsIgnoreCase("VOX:BandPass_HiLimit")){
 				val = String.valueOf(obj.em_max);
@@ -173,15 +174,15 @@ public class SiapVotableFormator extends VotableFormator {
 			else if(ucd.equalsIgnoreCase("VOX:Image_AccessReference")){
 				val = obj.access_url;
 			}
-			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
+			//else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
 				//TODO Image_AccessRefTTL
-			}
+			//}
 			else if(ucd.equalsIgnoreCase("VOX:Image_FileSize")){
 				val = String.valueOf(obj.access_estsize);
 			}
-			else if(ucd.equalsIgnoreCase("VOX:BandPass_ID")){
+			//else if(ucd.equalsIgnoreCase("VOX:BandPass_ID")){
 				//TODO ADD BandPass_ID
-			}
+			//}
 			else if (ucd.equalsIgnoreCase("VOX:BandPass_Unit")){
 				//TODO Add BandPass_Unit
 			}
@@ -191,11 +192,17 @@ public class SiapVotableFormator extends VotableFormator {
 			else if (ucd.equalsIgnoreCase("VOX:Image_PixFlag")){
 				val = "C";
 			}
+			else {
+				//Tries to find a match in its extended attributes
+				val = lookForAMatch(obj, sf);
+			}
+		}
+	}
 			
 			/*
 			 * Utypes have an higher priority than UCDs: there are checked first
 			 */
-			else if( utype != null && utype.length() > 0 ){
+		/*	else if( utype != null && utype.length() > 0 ){
 				AttributeHandler ah  = obj.getFieldByUtype(sf.getUtype(), false);
 				if( ah == null ) {
 					val = "";					
@@ -229,7 +236,13 @@ public class SiapVotableFormator extends VotableFormator {
 			}
 		}
 	}
-
+*/
+	
+	
+	@Override
+	protected AttributeHandler getAttr_extended(String name) throws Exception{
+		return Database.getCachemeta().getAtt_extend_image(name);
+	}
 	/**
 	 * @param utype
 	 * @param sp
