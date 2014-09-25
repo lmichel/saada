@@ -205,6 +205,9 @@ public abstract class VotableFormator extends QueryResultFormator {
 			throws Exception {
 
 		String retour = "";
+		if(Messenger.debug_mode){
+			Messenger.printMsg(Messenger.DEBUG, "Trying to find "+sf.getName()+"\tIn the extended attributes");
+		}
 		// Get an AttributeHandler which name match sf.getName() or null if
 		// there is none
 		AttributeHandler hdlr = this.getAttr_extended(sf.getName());
@@ -213,6 +216,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 			// If there is a match, try to get its value
 			Object value = obj.getFieldValue(hdlr.getNameattr());
 			if (value != null) {
+				//if(Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG,sf.getName()+" Found");
 				// Check if the attributeHandler has a unit
 				if (!hdlr.getUnit().isEmpty()) {
 					// if yes, compare it to the Savotfield
