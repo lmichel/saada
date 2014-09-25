@@ -7,9 +7,12 @@ import java.util.Map.Entry;
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.SaadaQLResultSet;
@@ -79,13 +82,13 @@ public abstract class VotableFormator extends QueryResultFormator {
 			SavotInfo info = new SavotInfo();
 			info.setName(e.getKey());
 			infoEntry val = e.getValue();
-//Set value & description
-			if(val.getValue() != null)
+			// Set value & description
+			if (val.getValue() != null)
 				info.setValue(val.getValue());
-			
+
 			if (val.getDescription() != null)
 				info.setContent(val.getDescription());
-			
+
 			infoSet.addItem(info);
 		}
 		this.writer.writeInfo(infoSet);
@@ -184,6 +187,69 @@ public abstract class VotableFormator extends QueryResultFormator {
 		writer.enableAttributeEntities(false);
 		writer.enableElementEntities(false);
 		writer.initStream(this.responseFilePath);
+	}
+
+	/**
+	 * Looks if SavotField sf's name exists in the extended attributes of the
+	 * right category. If yes, it will get and return its value after checking
+	 * the units consistency
+	 * 
+	 * @param obj
+	 * @param sf
+	 * @param category
+	 *            The category to look in
+	 * @return
+	 * @throws Exception
+	 */
+	protected String lookForAMatch(SaadaInstance obj, SavotField sf)
+			throws Exception {
+
+		String retour = "";
+		// Get an AttributeHandler which name match sf.getName() or null if
+		// there is none
+		AttributeHandler hdlr = this.getAttr_extended(sf.getName());
+
+		if (hdlr != null) {
+			// If there is a match, try to get its value
+			Object value = obj.getFieldValue(hdlr.getNameattr());
+			if (value != null) {
+				// Check if the attributeHandler has a unit
+				if (!hdlr.getUnit().isEmpty()) {
+					// if yes, compare it to the Savotfield
+					if (!hdlr.getUnit().equals(sf.getUnit())) {
+						// If the units don't match, print a debug message
+						if (Messenger.debug_mode) {
+							Messenger.printMsg(Messenger.DEBUG,
+									"Unit '" + hdlr.getUnit()
+											+ "' of extended attribute '"
+											+ hdlr.getNameattr()
+											+ "' doesn't match with unit '"
+											+ sf.getUnit() + "'");
+							// TODO ADD a unit conversion system
+						}
+					}
+
+				}
+				retour = value.toString();
+			}
+		}
+
+		return retour;
+	}
+
+	/*
+	 * To be overridden by child
+	 */
+	/**
+	 *(To be overridden by child)
+	 *Returns an AttributeHandler if a match is found in its extended attributes
+	 *or null if none
+	 * @param name Name of the attribute to look for
+	 * @return
+	 * @throws Exception
+	 */
+	protected AttributeHandler getAttr_extended(String name) throws Exception {
+		return null;
 	}
 
 	/*
@@ -315,7 +381,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		if (this.hasExtensions == true)
 			resource.setUtype("this.vores_type");
 		writer.writeResourceBegin(resource);
-		//writer.writeDescription(this.protocolN);
+		// writer.writeDescription(this.protocolN);
 
 	}
 
@@ -354,6 +420,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		writer.writeTableDataEnd();
 		writer.writeDataEnd();
 	}
+
 	/**
 	 * Add to current row data taken on the object si
 	 * 
