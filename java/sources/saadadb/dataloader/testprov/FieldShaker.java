@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.exceptions.FatalException;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
@@ -63,7 +65,7 @@ import saadadb.util.Messenger;
  * @author michel
  * @version $Id$
  */
-public abstract class FieldShaker {
+public class FieldShaker {
 	/** Saada data product built with the JSON object */
 	protected  Map<String, FooProduct>  fooProducts;
 	/** Current args parser read into the JSON modified during the test */
@@ -102,13 +104,22 @@ public abstract class FieldShaker {
 			ffn = jsonFilename;
 		}
 		JSONParser parser = new JSONParser();  
-		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn));  
+		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn)); 
+		/*
+		 * 
+		 */
+		JSONArray jfields = (JSONArray) jsonObject.get("fields");  
+		this.paramsOfInterest = new TreeSet<String>();
+		Iterator<String> iterator = jfields.iterator();  
+		while (iterator.hasNext()) {  
+			this.paramsOfInterest.add(iterator.next());  
+		}  
+
 		/*
 		 * Extract data loader params
 		 */
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
-		@SuppressWarnings("unchecked")
-		Iterator<String> iterator = parameters.iterator();  
+		iterator = parameters.iterator();  
 		List<String> params = new ArrayList<String>();
 		while (iterator.hasNext()) {  
 			params.add(iterator.next());  
@@ -156,6 +167,7 @@ public abstract class FieldShaker {
 		Map<String, ColumnSetter> er = product.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
+			System.out.println("aaaaaaaaaa");
 			if( this.paramsOfInterest.contains(e.getKey())) {
 				String str = "";
 				str = String.format("%20s",e.getKey()) + "     ";
@@ -176,7 +188,9 @@ public abstract class FieldShaker {
 		Messenger.debug_mode = true;
 		for( String key: this.fooProducts.keySet() ) {
 			this.process(key);
+			System.out.println("bbbb");
 		}
+		System.out.println("ccccccc");
 	}
 
 	/**
@@ -190,4 +204,17 @@ public abstract class FieldShaker {
 			}
 		}
 	}
+	/**
+	 * @param args
+	 * @throws FatalException 
+	 */
+	public static void main(String[] args) throws Exception {
+		ArgsParser ap = new ArgsParser(args);
+		Database.init(ap.getDBName());
+		FieldShaker ps = 	(new FieldShaker(ap.getFilename()));
+		ps.processAll();
+		ps.showReport();
+		Database.close();
+	}
+
 }
