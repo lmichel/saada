@@ -86,12 +86,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param constantValue
 	 * @throws Exception 
 	 */
-	public ColumnExpressionSetter(String fieldName, String constantValue, boolean arithmeticExpression) throws Exception	{
+	public ColumnExpressionSetter(String fieldName, String constantValue) throws Exception	{
 		super();
 		if( constantValue == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
-		//expression=expr;
+		this.arithmeticExpression = false;
 		this.fieldName = fieldName;
 		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.expression = this.result = constantValue;
@@ -102,6 +102,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * Constructor with only one ah.
 	 * The expression is set with the name of the attribute handler/ Its value will be taker as setter value
 	 * @param attr
+	 * @param arithmeticExpression allows or not the expression to be computed
 	 * @throws Exception
 	 */
 	public ColumnExpressionSetter(String fieldName, AttributeHandler attr, boolean arithmeticExpression) throws Exception {
@@ -712,7 +713,7 @@ MULTI_ATTRIBUTE,
 		 */		
 
 		System.out.println("----------- case CONSTANT_VALUE -------------------");
-		ces = new ColumnExpressionSetter("name","2014-02-13", mapTest, false);
+		ces = new ColumnExpressionSetter("name","2014-02-13", false);
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
