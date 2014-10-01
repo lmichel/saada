@@ -510,13 +510,7 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_entry(String name) throws FatalException {
 		AttributeHandler ret =  (this.att_extend_entry.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "ENTRY extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
-		}
 	}
 
 	/**
@@ -531,13 +525,7 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_image(String name) throws FatalException{
 		AttributeHandler ret =  (this.att_extend_image.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "IMAGE extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
-		}
 	}
 
 
@@ -553,13 +541,7 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_misc(String name) throws FatalException{
 		AttributeHandler ret =  (this.att_extend_misc.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "MISC extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
-		}
 	}
 
 	/**
@@ -575,14 +557,8 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_spectra(String name) throws FatalException {
 		AttributeHandler ret =  (this.att_extend_spectra.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "SPECTRA extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
 		}
-	}
 
 	/**
 	 * @return Returns the att_extend_table_names.
@@ -597,13 +573,7 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_table(String name) throws FatalException {
 		AttributeHandler ret =  (this.att_extend_table.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "Table extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
-		}
 	}
 	/**
 	 * @return Returns the att_extend_table_names.
@@ -618,13 +588,7 @@ public class CacheMeta {
 	 */
 	public AttributeHandler getAtt_extend_flatfile(String name) throws FatalException {
 		AttributeHandler ret =  (this.att_extend_flatfile.get(name));
-		if( ret == null ) {
-			FatalException.throwNewException(SaadaException.METADATA_ERROR, "Flatfile extended attribute <" + name + "> doesn't exist");
-			return null;
-		}
-		else {
 			return ret;
-		}
 	}
 
 

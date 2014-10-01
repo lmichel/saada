@@ -12,6 +12,7 @@ import java.sql.Statement;
 
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
+import saadadb.util.Messenger;
 
 /*
  * Wrapper for JDBC connection {@link Spooler}
@@ -93,7 +94,7 @@ public class DatabaseConnection {
 	 * @throws SQLException
 	 */
 	protected void give() throws SQLException {
-		if( statement != null ) {
+		if( statement != null ) {		
 			this.statement.close();
 		}
 		if( this.mode == LARGE_QUERY)  {

@@ -1,11 +1,11 @@
 package saadadb.products.setter;
 
 import saadadb.dataloader.mapping.ColumnMapping;
-import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
  * This classs contains both the mapping of a column and the way it has be done.

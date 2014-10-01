@@ -185,6 +185,7 @@ public class Spooler {
 	 * @throws SQLException
 	 */
 	public void close() throws Exception {
+		
 		this.spoolerIsRunning = false;
 		int cpt = 0;
 		while( this.checkerIsRunning && cpt < 15) {

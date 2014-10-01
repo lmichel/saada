@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -93,9 +94,10 @@ public abstract class SaadaInstance implements DMInterface {
 	public double s_ra = saadadb.util.SaadaConstant.DOUBLE;
 	public double s_dec = saadadb.util.SaadaConstant.DOUBLE;
 	public long   healpix_csa=SaadaConstant.LONG;
-//	public double pos_x_csa=SaadaConstant.DOUBLE ;
-//	public double pos_y_csa=SaadaConstant.DOUBLE ;
-//	public double pos_z_csa=SaadaConstant.DOUBLE ;
+	//TODO REPLACE pos_xyz_csa
+	public double pos_x_csa=SaadaConstant.DOUBLE ;
+	public double pos_y_csa=SaadaConstant.DOUBLE ;
+	public double pos_z_csa=SaadaConstant.DOUBLE ;
 	/*
 	 * Major axis of the error ellipse
 	 */
@@ -388,6 +390,46 @@ public abstract class SaadaInstance implements DMInterface {
 		return contentsignature;
 	}
 
+	//TODO Complete with description
+	public AttributeHandler FillAttrWithValue(AttributeHandler handlerToFill) throws Exception {
+		AttributeHandler attr = handlerToFill;
+		Object val = this.getFieldValue(attr.getNameattr());
+		if(val == null) {
+			attr.setValue("");	
+		}
+		else {
+			attr.setValue(val.toString());  
+		}
+		return attr;
+	}
+	
+	
+	@SuppressWarnings("rawtypes")
+	public LinkedHashMap<String, AttributeHandler> FillMapAttrWithValues(LinkedHashMap<String, AttributeHandler> toFill) throws Exception{
+	/*
+	 * For each AttributeHandler contained in toFill, the method FillAttrWithValue is called
+	 * A new map similar to toFill (same Keys)is created and filled with the AttributeHandlers returned by FillAttrWithValue 
+	 */
+		
+		Iterator i;
+		LinkedHashMap<String, AttributeHandler> attrMap = new LinkedHashMap<String, AttributeHandler>();
+		i = toFill.keySet().iterator();
+		String key;
+		AttributeHandler tmp;
+		//Browse the Map
+		while(i.hasNext()) {
+			key = (String)i.next();
+			//Fill the value of the AttributeHandler
+			tmp =  FillAttrWithValue(toFill.get(key)) ;
+			//add the new attributehandler to the map
+			attrMap.put(key, tmp);
+		}
+		
+		key = null;
+		tmp = null;
+		
+		return attrMap;
+	}
 	/**
 	 * @return
 	 */

@@ -13,7 +13,6 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
-import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -30,6 +29,7 @@ import saadadb.util.CopyFile;
 import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.RepositoryMode;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 
@@ -285,6 +285,11 @@ public class ProductIngestor {
 					this.saadaInstance.s_dec = dec;
 				if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
 					this.saadaInstance.calculSky_pixel_csa();
+					if( !Double.isNaN(ra) && !Double.isNaN(dec) ){
+						this.saadaInstance.pos_x_csa =Math.cos(Math.toRadians(this.saadaInstance.s_dec)) * Math.cos(Math.toRadians(this.saadaInstance.s_ra));
+						this.saadaInstance.pos_y_csa =Math.cos(Math.toRadians(this.saadaInstance.s_dec)) * Math.sin(Math.toRadians(this.saadaInstance.s_ra));
+						this.saadaInstance.pos_z_csa =Math.sin(Math.toRadians(this.saadaInstance.s_dec));
+					}
 				} else {
 					this.product.s_raSetter.completeMessage("Cannot be converted, wrong value?");
 					this.product.s_decSetter.completeMessage("Cannot be converted, wrong value?");

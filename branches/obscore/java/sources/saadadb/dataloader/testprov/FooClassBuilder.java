@@ -20,7 +20,6 @@ import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.dataloader.SchemaFusionMapper;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
@@ -36,6 +35,7 @@ import saadadb.products.validation.ObscoreKWSet;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 /**
  * JSON format

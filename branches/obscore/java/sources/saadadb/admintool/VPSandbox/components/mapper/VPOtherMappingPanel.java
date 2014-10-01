@@ -16,8 +16,8 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.enums.DataMapLevel;
 import saadadb.meta.AttributeHandler;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 /**
  * Represent the Extended attributes axis/subpanel in the filter form

@@ -4,7 +4,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.tree.TreePath;
 
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 
 public class AppendMappingTextField extends MappingTextField {

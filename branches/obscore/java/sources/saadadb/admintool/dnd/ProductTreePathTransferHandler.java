@@ -11,8 +11,8 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.components.voresources.VOServiceList;
 import saadadb.admintool.components.voresources.VOServiceListItem;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.enums.DataMapLevel;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 
 /**

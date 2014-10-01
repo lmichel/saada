@@ -22,7 +22,7 @@ public class SsapRequestTester {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		Messenger.debug_mode = false;
+		Messenger.debug_mode = true;
 		Database.init(args[args.length - 1]);
 		LinkedHashMap<String, String> pmap = new LinkedHashMap<String, String>();
 		Messenger.printMsg(Messenger.TRACE, "Parameters:");
@@ -34,7 +34,8 @@ public class SsapRequestTester {
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
-		SSAPRequest request = new SSAPRequest("NoSession", "/home/michel/Desktop");
+	//	SSAPRequest request = new SSAPRequest("NoSession", "/home/michel/Desktop");
+		SSAPRequest request = new SSAPRequest("NoSession", "/home/hahn/Desktop");
 		request.addFormator("votable");
 		request.setResponseFilePath("SSAP");
 		request.processRequest(pmap);

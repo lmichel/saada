@@ -6,7 +6,7 @@ package saadadb.products.inference;
 import java.util.HashSet;
 import java.util.Set;
 
-import saadadb.enums.DispersionType;
+import saadadb.vocabulary.enums.DispersionType;
 
 /**
  * Simple set of valid units for the spatial resolution

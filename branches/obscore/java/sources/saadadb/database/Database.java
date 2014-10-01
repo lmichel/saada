@@ -9,12 +9,10 @@ import java.sql.ResultSet;
 import saadadb.cache.CacheManager;
 import saadadb.cache.CacheManagerRelationIndex;
 import saadadb.cache.CacheMeta;
-
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;
-import saadadb.enums.DispersionType;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
@@ -26,6 +24,7 @@ import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.Version;
+import saadadb.vocabulary.enums.DispersionType;
 import cds.astro.Astroframe;
 import cds.astro.Qbox;
 

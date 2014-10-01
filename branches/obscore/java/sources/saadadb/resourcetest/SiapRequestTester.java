@@ -29,7 +29,7 @@ public class SiapRequestTester {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		Messenger.debug_mode = false;
+		Messenger.debug_mode = true;
 		Database.init(args[args.length - 1]);
 		LinkedHashMap<String, String> pmap = new LinkedHashMap<String, String>();
 		Messenger.printMsg(Messenger.TRACE, "Parameters:");
@@ -41,7 +41,9 @@ public class SiapRequestTester {
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
-		SIAPRequest request = new SIAPRequest("NoSession", "/home/michel/Desktop");
+		//TODO Change ile PATH
+		//SIAPRequest request = new SIAPRequest("NoSession", "/home/michel/Desktop");
+		SIAPRequest request = new SIAPRequest("NoSession", "/home/hahn/Desktop");
 		request.addFormator("votable");
 		request.setResponseFilePath("SIAP");
 		request.processRequest(pmap);

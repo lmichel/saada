@@ -11,7 +11,7 @@ import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 /**
  * This class inherit of IgnoredMappingPanel and represent the subpanel in the case where the category=TABLE

@@ -2,13 +2,13 @@ package saadadb.products.inference;
 
 import java.util.Map;
 
-import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 /** * @version $Id$
 

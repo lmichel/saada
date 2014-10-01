@@ -15,10 +15,12 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.UTypeHandler;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
+import saadadb.vocabulary.KeyMapper;
 import cds.savot.model.CoosysSet;
 import cds.savot.model.FieldRefSet;
 import cds.savot.model.FieldSet;
@@ -205,8 +207,10 @@ public abstract class VotableFormator extends QueryResultFormator {
 			throws Exception {
 
 		String retour = "";
-		if(Messenger.debug_mode){
-			Messenger.printMsg(Messenger.DEBUG, "Trying to find "+sf.getName()+"\tIn the extended attributes");
+		if (Messenger.debug_mode) {
+			Messenger.printMsg(Messenger.DEBUG,
+					"Trying to find " + sf.getName()
+							+ "\tIn the extended attributes");
 		}
 		// Get an AttributeHandler which name match sf.getName() or null if
 		// there is none
@@ -216,8 +220,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 			// If there is a match, try to get its value
 			Object value = obj.getFieldValue(hdlr.getNameattr());
 			if (value != null) {
-				//if(Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG,sf.getName()+" Found");
+				// if(Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, sf.getName() + " Found");
 				// Check if the attributeHandler has a unit
 				if (!hdlr.getUnit().isEmpty()) {
 					// if yes, compare it to the Savotfield
@@ -246,10 +250,11 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * To be overridden by child
 	 */
 	/**
-	 *(To be overridden by child)
-	 *Returns an AttributeHandler if a match is found in its extended attributes
-	 *or null if none
-	 * @param name Name of the attribute to look for
+	 * (To be overridden by child) Returns an AttributeHandler if a match is
+	 * found in its extended attributes or null if none
+	 * 
+	 * @param name
+	 *            Name of the attribute to look for
 	 * @return
 	 * @throws Exception
 	 */
@@ -432,7 +437,43 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param obj
 	 * @throws Exception
 	 */
-	abstract protected void writeRowData(SaadaInstance obj) throws Exception;
+	// abstract protected void writeRowData(SaadaInstance obj) throws Exception;
+	protected void writeRowData(SaadaInstance obj) throws Exception {
+
+		KeyMapper mapper = new KeyMapper(obj);
+		AttributeHandler tmp = new AttributeHandler();
+		for (Object f : dataModelFieldSet.getItems()) {
+			SavotField sf = (SavotField) f;
+			String ucd = sf.getUcd();
+			String utype = sf.getUtype();
+			String name = sf.getName();
+			//String id = sf.getId();
+			String val = "";
+			boolean cdata = false;
+			System.out.println("Utype " + utype);
+			tmp = mapper.search(ucd, utype, name);
+
+			if (tmp != null) {
+				val = tmp.getValue();
+				System.out.println("Value: "+val);
+				//Use sf get get the type of the value as the KeyMapper and ColumnExpressionSetter classes don't provide it
+				//TODO provide Type Information
+				if (sf.getType().equalsIgnoreCase("string")
+						|| sf.getType().equalsIgnoreCase("char")) {
+					cdata =true;	
+				}
+			}
+			else {
+				val = lookForAMatch(obj, sf);
+			}
+			
+			if (cdata) {
+				addCDataTD(val);
+			} else {
+				addTD(val);
+			}
+		}
+	}
 
 	/**
 	 * *************************************************************************

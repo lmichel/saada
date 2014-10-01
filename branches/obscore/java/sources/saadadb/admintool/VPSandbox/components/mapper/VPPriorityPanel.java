@@ -9,7 +9,7 @@ import javax.swing.JRadioButton;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.enums.PriorityMode;
+import saadadb.vocabulary.enums.PriorityMode;
 
 /**
  * Represent a priority

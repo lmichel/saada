@@ -13,7 +13,6 @@ import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -29,6 +28,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 /**
  * @author michel
@@ -285,6 +285,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.currentClass.getName() + " -1 " + busdumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE saada_loaded_file -1 " + loadedfile);
+		
+		
 		SQLTable.commitTransaction();
 
 		/*

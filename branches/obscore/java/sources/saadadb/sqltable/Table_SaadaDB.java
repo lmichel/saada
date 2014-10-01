@@ -6,12 +6,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 import saadadb.database.Database;
-import saadadb.enums.DispersionType;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DispersionType;
 
 
 public class Table_SaadaDB extends SQLTable {

@@ -9,9 +9,9 @@ import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 
 public class SQLImporter extends SaadaProcess {

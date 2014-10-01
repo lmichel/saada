@@ -29,8 +29,6 @@ import nom.tam.util.Cursor;
 import saadadb.collection.Category;
 import saadadb.dataloader.mapping.EntryMapping;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.DataFileExtensionType;
-import saadadb.enums.ExtensionSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -43,6 +41,8 @@ import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 import saadadb.util.TileRiceDecompressor;
+import saadadb.vocabulary.enums.DataFileExtensionType;
+import saadadb.vocabulary.enums.ExtensionSetMode;
 
 /**
  * @author laurent MICHEL

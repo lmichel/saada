@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
  * Do search operations in a set of keyword.

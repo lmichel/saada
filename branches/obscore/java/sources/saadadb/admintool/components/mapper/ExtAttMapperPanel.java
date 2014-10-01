@@ -14,7 +14,7 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 public class ExtAttMapperPanel extends MappingPanel {
 	public final ReplaceMappingTextField[] mappingTextFields;

@@ -6,7 +6,7 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.collection.Category;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 
 public class ExtMappingTextField extends MappingTextField {

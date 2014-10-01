@@ -5,8 +5,8 @@ package saadadb.products;
 
 import java.util.List;
 
-import saadadb.enums.DataFileExtensionType;
 import saadadb.meta.AttributeHandler;
+import saadadb.vocabulary.enums.DataFileExtensionType;
 
 /**
  * Class used to map the extensions accessible within a data product;

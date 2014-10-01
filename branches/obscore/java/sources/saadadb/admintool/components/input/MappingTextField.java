@@ -12,7 +12,7 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
 import saadadb.admintool.dnd.TreepathDropableTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 /**
  * Modifié Valentin Pertuy 26/06/2014

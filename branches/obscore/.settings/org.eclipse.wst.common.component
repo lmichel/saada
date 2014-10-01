@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="saadaObscore">
+        <wb-resource deploy-path="/" source-path="/web" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
+        <dependent-module archiveName="saadaObscoregenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/hahn/Documents/saadaTp/saadaObscore/web/WEB-INF/lib/saadaObscoregenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="saadaObscore"/>
+        <property name="java-output-path" value="/saadaObscore/build/classes"/>
+    </wb-module>
+</project-modules>

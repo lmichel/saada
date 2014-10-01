@@ -1,8 +1,6 @@
 package saadadb.dataloader.mapping;
 
 import saadadb.command.ArgsParser;
-import saadadb.enums.MappingMode;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -10,6 +8,8 @@ import saadadb.prdconfiguration.CoordSystem;
 import saadadb.products.ProductBuilder;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.MappingMode;
+import saadadb.vocabulary.enums.PriorityMode;
 
 public class SpaceMapping extends AxisMapping {
     private CoordSystem coordSystem = new CoordSystem();

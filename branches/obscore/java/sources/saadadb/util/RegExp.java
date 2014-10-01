@@ -63,6 +63,7 @@ public class RegExp {
 	public static final String FITS_FLOAT_DN     = "(?:\\.[0-9]+)";
 	public static final String FITS_FLOAT_ND     = "(?:[0-9]+\\.)";
 
+
     /*
      * Float regex must be classed from the most complex to the simplest in order
      * not to loose part of the number with capturing groups
@@ -82,6 +83,8 @@ public class RegExp {
     + FITS_FLOAT_DN     + "|" 
     + FITS_FLOAT_ND     + "|"
     + "(?:[0-9]+))";
+	
+
 	/*
 	 * Query parsing et autres cochonneries
 	 */

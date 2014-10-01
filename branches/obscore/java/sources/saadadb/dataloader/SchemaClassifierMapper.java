@@ -7,7 +7,6 @@ import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -18,6 +17,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 /**
  * @author michel
  * @version $Id$

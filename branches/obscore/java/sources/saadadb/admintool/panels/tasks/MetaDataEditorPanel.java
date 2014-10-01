@@ -103,7 +103,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 					tableClass = SQLJTable.CLASS_PANEL;
 				}
 				else if( dataTreePath.isCategoryLevel() ) {
-					sqlQuery= "select  name_attr, type_attr, name_origin, ucd, comment from saada_metacoll_" 
+					sqlQuery= "select  name_attr, type_attr, name_origin, ucd, utype, comment from saada_metacoll_" 
 						+ dataTreePath.category.toLowerCase()
 						+ " order by pk";
 				}

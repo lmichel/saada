@@ -5,8 +5,6 @@ import java.util.List;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
-import saadadb.enums.ClassifierMode;
-import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -18,6 +16,8 @@ import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.vocabulary.enums.ClassifierMode;
+import saadadb.vocabulary.enums.RepositoryMode;
 
 public class ProductMapping {
 	public final String name;

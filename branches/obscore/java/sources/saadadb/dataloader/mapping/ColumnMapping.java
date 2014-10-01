@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.enums.MappingMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.MappingMode;
 
 /**
  * Expression quoted : constant value, expression to be computed otherwise

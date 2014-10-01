@@ -83,10 +83,10 @@ public class SiapVotableFormator extends VotableFormator {
 			String ucd = sf.getUcd();
 			String utype = sf.getUtype();
 			String id = sf.getId();
-			System.out.println(sf.getName());
+			System.out.println(sf.getName()+" UCD: "+sf.getUcd());
 			cdata = false;
 			if( ucd.equalsIgnoreCase("Target.Pos")) {
-				val = obj.s_ra + " " + obj.s_dec;
+				val = obj.s_ra + " " + obj.s_dec;	
 			}
 			else if( utype.equalsIgnoreCase("Char.SpatialAxis.Coverage.Location.Value")) {
 				val = obj.s_ra + " " + obj.s_dec;
@@ -152,6 +152,7 @@ public class SiapVotableFormator extends VotableFormator {
 				val = obj.cd1_1_csa + " " + obj.cd1_2_csa + " " + obj.cd2_1_csa + " " + obj.cd2_2_csa;
 			}
 			else if(ucd.equalsIgnoreCase("INST_ID")){
+				cdata =true;
 				val= obj.instrument_name;
 			}
 			else if(ucd.equalsIgnoreCase("VOX:STC_CoordEquinox")){
@@ -161,7 +162,7 @@ public class SiapVotableFormator extends VotableFormator {
 					val = "";
 				}	
 			}
-			else if(ucd.equalsIgnoreCase("CoordRefPixel")){
+			else if(ucd.equalsIgnoreCase("VOX:WCS_CoordRefPixel")){
 				val = obj.crpix1_csa + " "+obj.crpix2_csa;
 			}
 			else if(ucd.equalsIgnoreCase("VOX:BandPass_RefValue")){
@@ -174,6 +175,7 @@ public class SiapVotableFormator extends VotableFormator {
 				val = String.valueOf(obj.em_min);
 			}
 			else if(ucd.equalsIgnoreCase("VOX:Image_AccessReference")){
+				cdata=true;
 				val = obj.access_url;
 			}
 			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
@@ -191,13 +193,15 @@ public class SiapVotableFormator extends VotableFormator {
 			else if (ucd.equalsIgnoreCase("VOX:ImageMJDateObs")){
 				val =String.valueOf(obj.t_min);
 			}
-			else if (ucd.equalsIgnoreCase("VOX:Image_PixFlag")){
+			else if (ucd.equalsIgnoreCase("VOX:Image_PixFlags")){
 				val = "C";
 			}
 			else {
 				//Tries to find a match in its extended attributes
 				val = lookForAMatch(obj, sf);
 			}
+			
+			//Add CDATA encapsulation if needed
 			if( cdata ) {
 				addCDataTD(val);
 			} else {

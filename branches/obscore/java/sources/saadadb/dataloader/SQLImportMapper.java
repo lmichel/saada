@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -19,6 +18,7 @@ import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 public class SQLImportMapper extends SchemaMapper {
 	private String tableName;

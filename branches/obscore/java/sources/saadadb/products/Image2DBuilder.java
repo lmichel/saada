@@ -11,7 +11,6 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -21,6 +20,7 @@ import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.PriorityMode;
 
 /**
  * This class redefines method specific in 2D images during their collection
