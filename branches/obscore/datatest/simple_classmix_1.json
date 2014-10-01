@@ -3,7 +3,8 @@
 "parameters": [
 	"-category=misc" ,
 	"-collection=FOO",
-	"-classfusion=classFusion"	
+	"-classfusion=classFusion"	,
+	"-repository=no"
 ],
 "fields": {
     "header": [	["A", "double", "", "", "1.0"],
