@@ -1,0 +1,32 @@
+{
+"parameters": [
+	"-category=table" ,
+	"-collection=XMM",
+	"-filename=obscore",
+	"-repository=no",
+	"-spcmapping=first" ,
+	"-spcunit=keV",
+	"-timemapping=only" 	,	
+	"-tmin='11 03 2013'" 	,	
+	"-tmax='12 03 2013'"	,
+	"-debug=on"
+],
+"fields": {
+     "header": [["RA", "double", "", "", "23.67"],
+				["DEC", "double", "", "", "-56.9"],
+				["eMin", "double", "KeV", "em.wl;stat.min", "1."],
+				["eMax", "double", "KeV", "em.wl;stat.max", "2."],
+				["obsStart", "String", "", "", "2014-02-12"],
+				["obsEnd", "String", "", "", "2014-02-13"],
+				["collection", "String", "", "", "3XMM"],
+				["target", "String", "", "", "M33"],
+				["instrume", "String", "", "", "MOS1"],
+				["facility", "String", "", "", "XMM"]
+		]
+		,
+    "columns": [["RA", "double", "", "", "10"],
+                ["DEC", "double", "", "", "45"],
+                ["NAME", "String", "", "", "lui"],
+        ]
+    }
+}
