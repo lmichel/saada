@@ -95,7 +95,7 @@ public class TransactionMaker {
 			 * Require explicit locks everywhere even in SELECT
 			 */
 			queries.add( new QueryString(Database.getWrapper().unlockTables(), null));
-			System.out.println(Spooler.getSpooler());			
+			System.out.println(Spooler.getSpooler());
 			connection = Spooler.getSpooler().getAdminConnection();
 			connection.getConnection().setAutoCommit(false);
 			stmt = connection.getStatement(); 
@@ -109,14 +109,13 @@ public class TransactionMaker {
 					String[] fs = q.split(" ");
 					last_q  = q; 
 					if( Database.getWrapper().tsvLoadNotSupported() ) {
-						Database.getWrapper().storeTable(connection, fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;		
+						Database.getWrapper().storeTable(connection, fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;			
 					} else {
 						String[] stqs = Database.getWrapper().getStoreTable(fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim());
 						for(String stq: stqs ) {
 							if (Messenger.debug_mode)
 								Messenger.printMsg(Messenger.DEBUG, "LOADTSVTABLE: run: " + stq);
 							last_q = stq;
-
 							execStatement(stmt, stq);
 						}
 					}
