@@ -32,8 +32,12 @@ public class Merger {
 		else {
 			StringBuffer retour = new StringBuffer();
 			for( int i=0 ; i<array.length ; i++) {
-				if( array[i] == null || array[i].trim().length() == 0 ) {
+				if( array[i] == null  ) {
 					continue;
+				}
+				String ta =  array[i].trim();
+				if( ta.length() == 0 ) {
+					ta = array[i];
 				}
 				if( retour.length() > 0 ) {
 					retour.append(separator);
