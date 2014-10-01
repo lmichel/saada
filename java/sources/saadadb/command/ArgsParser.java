@@ -14,9 +14,6 @@ import java.util.TreeSet;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
-import saadadb.enums.PriorityMode;
-import saadadb.enums.RepositoryMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -24,6 +21,9 @@ import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ClassifierMode;
+import saadadb.vocabulary.enums.PriorityMode;
+import saadadb.vocabulary.enums.RepositoryMode;
 
 /**
  * Check the command line parameters
@@ -76,7 +76,10 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-spcmapping") ;
 		allowedArgs.add("-spcunit")    ;allowedArgs.add("-entry.spcunit") ;
 		allowedArgs.add("-spccolumn")  ;allowedArgs.add("-entry.spccolumn") ;
+		allowedArgs.add("-emin")		;allowedArgs.add("-entry.emin");
+		allowedArgs.add("-emax")		;allowedArgs.add("-entry.emax");
 		allowedArgs.add("-spcrespower");allowedArgs.add("-entry.spcrespower") ;
+		
 		/*
 		 * Time Axe
 		 */
@@ -933,6 +936,37 @@ public class ArgsParser implements Serializable{
 		}
 		return null;		
 	}
+	/**
+	 * returns the start in spectral coordinates
+	 * @return
+	 */
+	public String getEmin(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i] .startsWith("-emin")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.emin")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+	/**
+	 * returns the end in spectral coordinates
+	 * @return
+	 */
+	public String getEmax(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i] .startsWith("-emax")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.emax")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the spectral coordinate column -spccolumn=....
 	 * @return

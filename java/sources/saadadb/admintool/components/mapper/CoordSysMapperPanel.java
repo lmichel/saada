@@ -16,7 +16,7 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 public class CoordSysMapperPanel extends PriorityPanel {
 	private JComboBox coosysCombo = new JComboBox(new String[]{"ICRS", "FK5,J2000", "Galactic", "Ecliptic"});

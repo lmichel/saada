@@ -528,6 +528,7 @@ public class Query extends Query_Report{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");
 			OidsaadaResultSet result = this.getOids(sql_query, epopTab);
+			
 			this.isDone();
 			Database.getCacheindex().freeIndexes(this.index_owner_key);
 			time.stop();
@@ -664,7 +665,7 @@ public class Query extends Query_Report{
 
 
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");
+				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");	
 			SaadaInstanceResultSet result = this.getInstances(si, sql_query, epopTab);
 			this.isDone();
 			Database.getCacheindex().freeIndexes(this.index_owner_key);

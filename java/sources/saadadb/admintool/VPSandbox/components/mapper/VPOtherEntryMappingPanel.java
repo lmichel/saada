@@ -17,8 +17,8 @@ import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.enums.DataMapLevel;
 import saadadb.meta.AttributeHandler;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 /**
  * This class inherit of OtherMappingPanel and represent the subpanel in the case where the category=TABLE

@@ -10,12 +10,12 @@ import java.util.Set;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 
 
@@ -61,7 +61,7 @@ public class MetaClass extends MetaObject{
 		else  this.mapping_type = ClassifierMode.CLASS_FUSION;
 		this.id = rs.getInt("cclass_id");
 		this.category = cat;
-		this.collection_id = rs.getInt("ccollection_id");
+		this.collection_id = rs.getInt("ccollection_id"); //TODO "ccollection_id mispelled?
 		this.collection_name = collName;
 		this.signature = rs.getString("signature");
 		this.associate_class = rs.getString("associate_class");

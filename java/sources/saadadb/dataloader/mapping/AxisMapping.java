@@ -6,10 +6,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import saadadb.command.ArgsParser;
-import saadadb.enums.MappingMode;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.products.ProductBuilder;
+import saadadb.vocabulary.enums.MappingMode;
+import saadadb.vocabulary.enums.PriorityMode;
 
 /**
  * Super class of the the classes handling the loader config for one axe (STOE)

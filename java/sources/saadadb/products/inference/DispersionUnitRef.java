@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import saadadb.enums.DispersionType;
+import saadadb.vocabulary.enums.DispersionType;
 
 /**
  * @author laurentmichel

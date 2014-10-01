@@ -16,9 +16,9 @@ import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 public class DispersionMapperPanel extends PriorityPanel {
 	protected ReplaceMappingTextField spec_field;

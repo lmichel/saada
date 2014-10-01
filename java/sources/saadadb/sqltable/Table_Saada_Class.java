@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 public abstract  class Table_Saada_Class extends SQLTable {
 

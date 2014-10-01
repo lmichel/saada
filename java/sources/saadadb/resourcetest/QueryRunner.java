@@ -27,11 +27,12 @@ public class QueryRunner {
 	public static void main(String[] args) {
 		ArgsParser ap;
 		try {
+			Messenger.debug_mode =true;
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			String query = ap.getQuery();
 			Connection large_connection = DriverManager.getConnection(Database.getConnector().getJdbc_url(),Database.getConnector().getJdbc_reader(), Database.getConnector().getJdbc_reader_password());
-//			 _stmts.executeUpdate("pragma cache_size=4000"); 
+			//			 _stmts.executeUpdate("pragma cache_size=4000"); 
 //			 _stmts.executeUpdate("pragma page_size=4096"); 
 			 large_connection.close();
 
@@ -52,7 +53,7 @@ public class QueryRunner {
 //			Messenger.printMsg(Messenger.TRACE, "Declared size " + srs.getSize() );
 			int cpt = 0;
 			Set<AttributeHandler>constrained_attr =  q.buildListAttrHandPrinc();				
-			while( ors.next()) {
+			while(ors.next()) {
 				//System.out.println(ors.getOId());
 				cpt++;
 				SaadaInstance si = Database.getCache().getObject(ors.getOId());		

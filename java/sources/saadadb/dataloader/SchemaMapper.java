@@ -9,7 +9,6 @@ import java.util.TreeSet;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -28,6 +27,7 @@ import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 
 /**

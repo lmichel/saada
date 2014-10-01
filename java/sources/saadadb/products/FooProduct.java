@@ -10,7 +10,6 @@ import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.DataFileExtensionType;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -18,6 +17,7 @@ import saadadb.products.inference.QuantityDetector;
 import saadadb.products.validation.JsonKWSet;
 import saadadb.products.validation.KeywordsBuilder;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DataFileExtensionType;
 
 public class FooProduct implements DataFile {
 	private int pointer = 0;

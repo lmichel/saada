@@ -11,7 +11,6 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
-import saadadb.enums.ClassifierMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -21,6 +20,7 @@ import saadadb.products.FitsDataFile;
 import saadadb.products.VOTableDataFile;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 
 /**
@@ -41,6 +41,7 @@ public class Loader extends SaadaProcess {
 	 * @param args
 	 */
 	public static void main(String[] args){
+		Messenger.debug_mode =true;
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			String config=null;

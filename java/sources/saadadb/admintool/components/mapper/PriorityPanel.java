@@ -4,7 +4,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.enums.PriorityMode;
+import saadadb.vocabulary.enums.PriorityMode;
 
 public abstract class PriorityPanel extends MappingPanel {
 

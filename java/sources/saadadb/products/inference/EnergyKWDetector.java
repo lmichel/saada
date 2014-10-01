@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -18,6 +17,7 @@ import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.PriorityMode;
 
 /**
  * The detection of the energy range is tricky. Even in self-detection mode it can use mapping parameters such as unit. 

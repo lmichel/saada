@@ -11,7 +11,7 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 public class VPIgnoredMappingPanel extends VPAxisPanel {
 	

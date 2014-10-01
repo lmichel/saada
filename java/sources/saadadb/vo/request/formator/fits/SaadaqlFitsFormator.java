@@ -17,7 +17,7 @@ public class SaadaqlFitsFormator extends FitsFormator {
 
 	public SaadaqlFitsFormator() throws QueryException {
 		limit = 100000;
-		protocolName = "Native Saada";
+		protocolN = "Native Saada";
 	}
 
 	/* (non-Javadoc)

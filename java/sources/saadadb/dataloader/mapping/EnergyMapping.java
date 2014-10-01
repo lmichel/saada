@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import saadadb.command.ArgsParser;
-import saadadb.enums.MappingMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.MappingMode;
 
 public class EnergyMapping extends AxisMapping {
 	/**

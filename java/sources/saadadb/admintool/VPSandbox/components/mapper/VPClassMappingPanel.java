@@ -17,10 +17,10 @@ import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.util.RegExp;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 
 /**

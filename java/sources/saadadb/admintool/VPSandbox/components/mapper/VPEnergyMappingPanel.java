@@ -11,8 +11,8 @@ import saadadb.admintool.components.input.AppendMappingTextField;
 import saadadb.admintool.components.input.ReplaceMappingTextField;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.command.ArgsParser;
-import saadadb.enums.DataMapLevel;
 import saadadb.exceptions.FatalException;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 /**
  * Represent the Energy axis/subpanel in the filter form

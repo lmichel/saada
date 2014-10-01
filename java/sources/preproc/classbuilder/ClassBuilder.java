@@ -7,11 +7,11 @@ import saadadb.database.Database;
 import saadadb.dataloader.SchemaClassifierMapper;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ClassifierMode;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.ClassifierMode;
 
 public class ClassBuilder {
 

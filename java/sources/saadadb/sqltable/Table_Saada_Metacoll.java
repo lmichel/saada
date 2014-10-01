@@ -43,7 +43,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 	 */
 	public static void addCollection(String coll_name, int num_coll) throws FatalException {
 		for( int i=1 ; i<Category.NB_CAT ; i++ ) {
-			addCollectionForCategory(coll_name, num_coll, i);
+			addCollectionForCategory(coll_name, i);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 	 * @param str_cat
 	 * @throws FatalException 
 	 */
-	private static void addCollectionForCategory(String coll_name, int num_coll,  int cat) throws FatalException {
+	private static void addCollectionForCategory(String coll_name,  int cat) throws FatalException {
 		try {
 			String str_cat = Category.NAMES[cat].toLowerCase();
 			//  data table for that collection/category
@@ -239,14 +239,14 @@ public class Table_Saada_Metacoll extends SQLTable {
 						, meta_table_name
 						, new String[]{"ass_error"}
 				, new String[]{meta_table_name + ".pk"}
-				, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_ra_csa'") );
+				, "a.name_attr = 'error_ra_csa' " + " AND " + meta_table_name + ".name_attr = 's_ra'") );
 				SQLTable.addQueryToTransaction(Database.getWrapper().getUpdateWithJoin(meta_table_name
 						, meta_table_name + " as a"
 						, "a.name_coll = " + meta_table_name  + ".name_coll" 
 						, meta_table_name
 						, new String[]{"ass_error"}
 				, new String[]{meta_table_name + ".pk"}
-				, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 'pos_dec_csa'") );
+				, "a.name_attr = 'error_dec_csa' " + " AND " + meta_table_name + ".name_attr = 's_dec'") );
 			}
 			break;
 		}
@@ -309,6 +309,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 				ah.setUcd(DefineType.getCollection_ucds().get(fname));
 				ah.setUnit(DefineType.getCollection_units().get(fname));
 				ah.setComment("Attribute managed by Saada");
+				ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
 				ah.setLevel('N');						
 			} 
 			/*
@@ -371,8 +372,27 @@ public class Table_Saada_Metacoll extends SQLTable {
 	}
 
 	public static void main(String[] args ) throws Exception{
-		Database.init("Obscore");
+//		Database.init("Obscore");
+//		SQLTable.beginTransaction();
+//		buildCollectionDump(Category.TABLE, "/dev/null");
+		Messenger.debug_mode =true;
+		Database.init("saadaObscore");
+		Database.setAdminMode(null);
 		SQLTable.beginTransaction();
-		buildCollectionDump(Category.TABLE, "/dev/null");
+		//dropTable("VizierData_IMAGE");
+		dropTable("VizierData_SPECTRUM");
+		SQLTable.commitTransaction();
+		Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		SQLTable.beginTransaction();
+		
+		//SQLTable.addQueryToTransaction("DELETE FROM saada_metacoll_image");
+		SQLTable.addQueryToTransaction("DELETE FROM saada_metacoll_spectrum");
+		SQLTable.commitTransaction();
+		Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		
+		SQLTable.beginTransaction();
+		addCollectionForCategory("VizierData", Category.SPECTRUM);
+		SQLTable.commitTransaction();
+		Database.close();
 	}
 }

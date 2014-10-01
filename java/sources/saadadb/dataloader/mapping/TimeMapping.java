@@ -3,10 +3,10 @@ package saadadb.dataloader.mapping;
 import java.text.ParseException;
 
 import saadadb.command.ArgsParser;
-import saadadb.enums.MappingMode;
 import saadadb.exceptions.FatalException;
 import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.MappingMode;
 
 public class TimeMapping extends AxisMapping {
 

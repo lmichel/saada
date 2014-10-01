@@ -11,8 +11,6 @@ import java.util.Vector;
 
 import saadadb.collection.Category;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.DataFileExtensionType;
-import saadadb.enums.ExtensionSetMode;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -22,6 +20,8 @@ import saadadb.util.ChangeKey;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.DataFileExtensionType;
+import saadadb.vocabulary.enums.ExtensionSetMode;
 import cds.astro.Astrocoo;
 import cds.savot.binary.DataBinaryReader;
 import cds.savot.model.FieldSet;

@@ -12,7 +12,6 @@ import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
-import saadadb.enums.ColumnSetMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -24,6 +23,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 
 /**

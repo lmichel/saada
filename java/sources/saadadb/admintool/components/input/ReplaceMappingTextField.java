@@ -3,7 +3,7 @@ package saadadb.admintool.components.input;
 import javax.swing.ButtonGroup;
 
 import saadadb.admintool.panels.editors.MappingKWPanel;
-import saadadb.enums.DataMapLevel;
+import saadadb.vocabulary.enums.DataMapLevel;
 
 
 public class ReplaceMappingTextField extends MappingTextField {

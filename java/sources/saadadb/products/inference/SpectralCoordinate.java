@@ -5,13 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import saadadb.database.Database;
-import saadadb.enums.DispersionType;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.DispersionType;
 import cds.astro.Unit;
 
 /**

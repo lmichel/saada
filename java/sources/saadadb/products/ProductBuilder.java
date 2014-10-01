@@ -21,8 +21,6 @@ import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.enums.ColumnSetMode;
-import saadadb.enums.PriorityMode;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
@@ -41,6 +39,8 @@ import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ColumnSetMode;
+import saadadb.vocabulary.enums.PriorityMode;
 import cds.astro.Astroframe;
 import cds.astro.FK4;
 import cds.astro.FK5;
@@ -169,7 +169,7 @@ public class ProductBuilder {
 			this.bindDataFile(file);
 			this.mapCollectionAttributes();
 		} catch (SaadaException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);

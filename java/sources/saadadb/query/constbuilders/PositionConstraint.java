@@ -48,7 +48,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 		this.coordEquinox = cE ;
 		this.coordSystem  = cS ;
 		this.computeRaDecR();		
-		this.sqlcolnames = new String[]{"pos_ra_csa", "pos_dec_csa"};
+		this.sqlcolnames = new String[]{"s_ra", "s_dec"};
 		this.where = this.computeSqlConstraint("");
 	}
 

@@ -3,9 +3,9 @@ package saadadb.products.setter.testsetter;
 import java.util.Map;
 import java.util.TreeMap;
 
-import saadadb.enums.ColumnSetMode;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
  * Test class for the ColumnExpressionSetter

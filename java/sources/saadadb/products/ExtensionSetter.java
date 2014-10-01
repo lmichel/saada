@@ -1,6 +1,6 @@
 package saadadb.products;
 
-import saadadb.enums.ExtensionSetMode;
+import saadadb.vocabulary.enums.ExtensionSetMode;
 
 
 /**

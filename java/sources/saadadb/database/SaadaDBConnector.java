@@ -12,10 +12,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import saadadb.enums.DispersionType;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DispersionType;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteConfig.SynchronousMode;
 
-
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.database.spooler.DatabaseConnection;
@@ -106,6 +105,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			 * Used in dev mode to avoid jar building at any time
 			 * The C library is supposed to be named libSQLITEProc.so
 			 */
+			//TODO SQLITEWRAPPER, getExtensionFilePatch() ---> CHANGE ROOT DIR?
 			String root_dir = "/Users/laurentmichel/Documents/workspace/SQLITEProc/Debug/";
 			//root_dir = "/home/michel/workspace/SQLITEProc/Debug/";
 			root_dir  += HardwareDescriptor.getArchDependentLibName("libSQLITEProc");
