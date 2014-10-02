@@ -8,7 +8,6 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
-import saadadb.vocabulary.enums.ColumnSetMode;
 
 /** * @version $Id$
 
@@ -86,7 +85,7 @@ public class WCSModel {
 			if( (ah = this.attributesList.get("_crval" + axe_num)) != null || 
 					(ah = this.attributesList.get("_tcrvl" + axe_num)) != null ) {
 				//this.CRVAL[axe] = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);;
-				this.CRVAL[axe] = new ColumnExpressionSetter("crval" + axe + ah);;
+				this.CRVAL[axe] = new ColumnExpressionSetter("crval" + axe , ah);;
 			} else if( this.NAXISi[axe] == 1 ){
 				ColumnExpressionSetter cd = new ColumnExpressionSetter("crval" + axe);
 				cd.setByValue("0",false);
@@ -727,11 +726,13 @@ public class WCSModel {
 	private ColumnExpressionSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
 		ColumnExpressionSetter asc=new ColumnExpressionSetter("s_ra"), dec=new ColumnExpressionSetter("s_dec");
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
+			System.out.println("@@@@@@@@@@@ " + this.CTYPE[axe].getValue() + " " + ascPrefix + " " + decPrefix);
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
 					asc.setByWCS(this.CRVAL[axe].getValue(), false);
 					asc.completeMessage("Center asc axe #" + axe);
 				} catch (Exception e) {
+					asc.setNotSet();
 					asc.completeMessage(e.getMessage());
 				}
 			}
@@ -740,6 +741,7 @@ public class WCSModel {
 					dec.setByWCS(this.CRVAL[axe].getValue(), false);
 					dec.completeMessage("Center dec axe #" + axe);
 				} catch (Exception e) {
+					asc.setNotSet();
 					dec.completeMessage(e.getMessage());
 				}
 			}
@@ -829,7 +831,7 @@ public class WCSModel {
 					retour[1].setByWCS(String.valueOf(this.getMaxValue( axe)), false);
 					retour[1].completeMessage("max of WCS axis #" + axe);
 					return retour;
-				} catch (Exception e) {	}
+				} catch (Exception e) {	e.printStackTrace();}
 			}
 		}
 		return retour;
