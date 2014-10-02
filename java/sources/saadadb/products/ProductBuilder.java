@@ -410,18 +410,13 @@ public class ProductBuilder {
 		List<AttributeHandler> cmlah = columnMapping.getHandlers();
 		AttributeHandler cmah=null;
 		TreeMap<String,AttributeHandler> temp=null;
-		System.out.println(columnMapping);
 		//We check if we have one or several ah
-		if(cmlah!=null)
-		{
-			if(cmlah.size()==1 && columnMapping.byValue())
-			{
+		if(cmlah!=null)	{
+			if(cmlah.size()==1 && columnMapping.byValue())	{
 				cmah = cmlah.get(0);
-			}
-			else{
+			}else{
 				temp=new TreeMap<String,AttributeHandler>();
-				for(AttributeHandler ah:cmlah)
-				{
+				for(AttributeHandler ah:cmlah){
 					temp.put(ah.getNameattr(), ah);
 				}
 			}
@@ -463,7 +458,7 @@ public class ProductBuilder {
 						else
 						{
 							//temp.put(cmah.getNameattr(), cmah);
-							retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp);
+							retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp, true);
 							retour.calculateExpression();
 						}
 						retour.completeMessage("Using user mapping");
@@ -507,7 +502,7 @@ public class ProductBuilder {
 
 			}
 			//if we found the expression AND the ah, we calculate the expression
-			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp);
+			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp, true);
 			retour.calculateExpression();
 
 			retour.completeMessage("Using user mapping");
@@ -684,7 +679,7 @@ public class ProductBuilder {
 				else  expression += ah.getNameorg();
 			}
 			expression = "strcat(" + expression + ")";
-			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression, this.productAttributeHandler);
+			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression, this.productAttributeHandler, false);
 			this.obs_idSetter.calculateExpression();
 		} else {
 			ColumnExpressionSetter cs;
@@ -786,13 +781,13 @@ public class ProductBuilder {
 			PriorityMessage.first("Time");
 			this.t_maxSetter = this.getMappedAttributeHander("t_max", mapping.getColumnMapping("t_max"));
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
-				ColumnExpressionSetter cs = this.quantityDetector.getTMax();
-				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+				this.t_maxSetter = this.quantityDetector.getTMax();
+				this.t_maxSetter.setConvertedValue(DateUtils.getFMJD(this.t_maxSetter.getValue()), "String", "mjd", true);
 			}
 			this.t_minSetter = getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
-				ColumnExpressionSetter cs = this.quantityDetector.getTMin();
-				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+				this.t_minSetter = this.quantityDetector.getTMin();
+				this.t_minSetter.setConvertedValue(DateUtils.getFMJD(this.t_minSetter.getValue()), "String", "mjd", true);
 			}
 			this.t_exptimeSetter = getMappedAttributeHander("t_exptime", mapping.getColumnMapping("t_exptime"));
 			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
@@ -804,13 +799,13 @@ public class ProductBuilder {
 			PriorityMessage.last("Time");
 			ColumnExpressionSetter cs = this.quantityDetector.getTMax();
 			if( !cs.notSet() ){
-				this.t_maxSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+				this.t_maxSetter = cs.setConvertedValue(DateUtils.getFMJD(cs.getValue()), "String", "mjd", true);
 			} else 	if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander("t_max", mapping.getColumnMapping("t_max"));
 			}
 			cs = this.quantityDetector.getTMin();
 			if( !cs.notSet() ){
-				this.t_minSetter = cs.getConverted(DateUtils.getFMJD(cs.getValue()), "mjd", true);
+				this.t_minSetter = cs.setConvertedValue(DateUtils.getFMJD(cs.getValue()), "String", "mjd", true);
 			} else if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			}
@@ -1795,7 +1790,7 @@ public class ProductBuilder {
 				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
 				ah.setComment("Computed internally by Saada");		
 				//ColumnExpressionSetter cs = new ColumnExpressionSetter(ah, ColumnSetMode.BY_SAADA);
-				ColumnExpressionSetter cs = new ColumnExpressionSetter(fname, ah,ColumnSetMode.BY_SAADA);
+				ColumnExpressionSetter cs = new ColumnExpressionSetter(fname, ah,ColumnSetMode.BY_SAADA, true);
 
 				cs.storedValue = ah.getValue();
 				retour.put(fname, cs);
