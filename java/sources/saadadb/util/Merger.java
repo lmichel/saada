@@ -46,7 +46,6 @@ public class Merger {
 				retour.append(array[i]);
 			}
 
-			System.out.println("getMergedArray: "+retour);
 			return retour.toString();
 		}
 	}
