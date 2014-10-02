@@ -95,7 +95,14 @@ public class DictionaryStringFunction {
 	}
 	public static final String STRCAT(String[] strings) throws Exception
 	{
-		return Merger.getMergedArray("", strings);
+		/* 
+		 * Do  not use Merger because it must ignore empty trimed string string (SQL query generation)
+		 */
+		StringBuffer retour = new StringBuffer();
+		for( String s: strings){
+			retour.append(s);
+		}
+		return retour.toString();
 	}
 
 	public static final String MJD(String args) throws Exception
