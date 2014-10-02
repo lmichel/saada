@@ -181,6 +181,7 @@ public class Merger {
 				//@@@ parenthesis removed
 				retour += "\n" + e.getValue().getSQL(builders) + "\n   " ;
 			}
+			
 			retour =  "SELECT "+ select + " FROM (\n" + retour  + "\n) AS tcoll";
 		}
 		/*
