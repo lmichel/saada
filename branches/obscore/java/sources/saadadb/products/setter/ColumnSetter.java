@@ -183,6 +183,10 @@ public abstract class ColumnSetter implements Cloneable {
 	 * 
 	 */
 	public abstract void setNotSet();
+	/**
+	 * 
+	 */
+	public abstract void setNotSet(String message);
 
 	/**
 	 * Set also the BY_VALUE mode
@@ -295,38 +299,56 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param unit
 	 * @return
 	 */
-	public ColumnSetter getConverted(double value, String unit, boolean addMessage) {
-		ColumnSetter retour;
-		try {
-			retour = (ColumnSetter) this.clone();
-			if( addMessage ) retour.completeMessage(" Converted to " +  value + unit);
-			retour.setValue(value, unit);
-			return retour;
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
-	public ColumnSetter getConverted(String value, String unit, boolean addMessage) {
-		ColumnSetter retour;
-		try {
-			retour = (ColumnSetter) this.clone();
-			if( addMessage ) retour.completeMessage(" Converted to " +  value + unit);
-			retour.setValue(value);
-			retour.setUnit(unit);
-			return retour;
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
-	}
+//	public ColumnSetter getConverted(double value, String unitOrg, String unitDest, boolean addMessage) {
+//		ColumnSetter retour;
+//		try {
+//			retour = (ColumnSetter) this.clone();
+//			if( addMessage ) retour.completeMessage(" Converted from " + unitOrg + " to "  + unitDest);
+//			retour.setValue(value, unitDest);
+//			return retour;
+//		} catch (CloneNotSupportedException e) {
+//			return null;
+//		}
+//	}
+//	public ColumnSetter getConverted(String value, String unitOrg, String unitDest, boolean addMessage) {
+//		ColumnSetter retour;
+//		try {
+//			retour = (ColumnSetter) this.clone();
+//			if( addMessage ) retour.completeMessage(" Converted from " + unitOrg + " to "  + unitDest);
+//			retour.setValue(value);
+//			retour.setUnit(unitDest);
+//			return retour;
+//		} catch (CloneNotSupportedException e) {
+//			return null;
+//		}
+//	}
 
-	public void setConverted(double value, String unit, boolean addMessage) {
-		if( addMessage ) this.completeMessage(" Converted to " +  value + unit);
-		this.setValue(value, unit);
+	/**
+	 * Set value to the instance value with on demand a message mentioning the conversion
+	 * @param value   converted value
+	 * @param unitOrg original unit of the value
+	 * @param unitDest converted unit
+	 * @param addMessage Ask for logging the action
+	 * @return
+	 */
+	public ColumnSetter setConvertedValue(double value, String unitOrg, String unitDest, boolean addMessage) {
+		if( addMessage ) this.completeMessage("Converted from " + unitOrg + " to "  + unitDest);
+		this.setValue(value, unitDest);
+		return this;
 	}
-	public void setConverted(String value, String unit, boolean addMessage) {
-		if( addMessage ) this.completeMessage(" Converted to " +  value + unit);
+	/**
+	 * Set value to the instance value with on demand a message mentioning the conversion
+	 * @param value   converted value
+	 * @param unitOrg original unit of the value
+	 * @param unitDest converted unit
+	 * @param addMessage Ask for logging the action
+	 * @return
+	 */
+	public ColumnSetter setConvertedValue(String value, String unitOrg, String unitDest, boolean addMessage) {
+		if( addMessage ) this.completeMessage("Converted from " + unitOrg + " to "  + unitDest);
 		this.setValue(value);
-		this.setUnit(unit);
+		this.setUnit(unitDest);
+		return this;
 	}
 
 	/**
