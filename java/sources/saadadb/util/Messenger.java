@@ -280,6 +280,10 @@ public class Messenger implements Serializable{
 	      }
 		}
 
+	/**
+	 * Print out a stdout message with 7 top lines of the stack trace
+	 * @param msg
+	 */
 	public static void printStackTop(String additionnalMessage) {
 		System.out.println(additionnalMessage);
 	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
@@ -289,11 +293,15 @@ public class Messenger implements Serializable{
 	      }
 	      System.out.println("");
 		}
+	/**
+	 * Print out a debug message with location in the code
+	 * @param msg
+	 */
 	public static void printLocatedMsg(String msg) {
 		String message = msg;
 	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 	      for(int i=2; i<elements.length; i++) {
-	          message += " (" + elements[i] + ")";
+	          message += " " + elements[i] + "";
 	          break;
 	      }
 	      printMsg(DEBUG, message);
