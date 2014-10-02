@@ -74,6 +74,8 @@ public class SpaceKWDetector extends KWDetector{
 		/*
 		 * Search first an explicit mention of Frame
 		 */
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look in KW");
 		this.frameSetter = new ColumnExpressionSetter("astroframe");
 		ColumnExpressionSetter ah = search("astroframe", "pos.frame", RegExp.FITS_COOSYS_KW);
 		Astroframe frame = null;
@@ -130,6 +132,9 @@ public class SpaceKWDetector extends KWDetector{
 		 * Then look at the WCS projection
 		 */
 		if( (status & FRAME_FOUND) == 0 ) {
+			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@ ");
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Look  in WCS KW");
 			if( this.wcsModel == null ) {
 				try {
 					this.wcsModel = new WCSModel(tableAttributeHandler);
@@ -165,6 +170,9 @@ public class SpaceKWDetector extends KWDetector{
 					}
 					this.frameSetter.setByWCS("", false);
 				}			
+			} else {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
 			}
 		}
 		if( (status & FRAME_FOUND) != 0 ) {
@@ -281,12 +289,14 @@ public class SpaceKWDetector extends KWDetector{
 				ah.setValue(fov);
 				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov = new ColumnExpressionSetter("s_fov", ah);
-				this.fov.completeMessage("smaller image size taken (height)");							
+				this.fov.completeMessage("smaller image size taken (height)");	
+				this.fov.setUnit("deg");
 			} else {
 				ah.setValue(fov);
 				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov = new ColumnExpressionSetter("s_fov", ah);
 				this.fov.completeMessage("smaller image size taken (width)");														
+				this.fov.setUnit("deg");
 			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take " +fov + " as fov");				
