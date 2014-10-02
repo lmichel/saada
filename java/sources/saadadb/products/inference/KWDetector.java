@@ -3,6 +3,8 @@ package saadadb.products.inference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -65,7 +67,7 @@ public abstract class KWDetector {
 		}
 		return retour;
 	}
-	
+
 	/**
 	 * Incorporate both search be UCD (first) and by column name in the entrty AttributeHandlers
 	 * @param fieldName
@@ -132,7 +134,7 @@ public abstract class KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, msg + " Not found");
 		return notSetColumnSetter(fieldName);
 	}
-	
+
 	/**
 	 * Search the 2 attribute handlers with a UCD matching respectively ucd1_regexp and String ucd2_regexp
 	 * @param fieldName1
@@ -159,8 +161,8 @@ public abstract class KWDetector {
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-//					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
-//					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
+					//					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
+					//					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
 					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by UCD");
@@ -217,24 +219,22 @@ public abstract class KWDetector {
 		if( Messenger.debug_mode ) 
 			msg = "Search by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
-			if( ah.getNameorg().matches(colname1_regexp) || ah.getNameattr().matches(colname1_regexp)){
+			if( ah.isNameMatch(colname1_regexp)){
 				ah1 = ah;
-				continue;
+				break;
 			}
-			if( ah1 != null ) {
-				if( ah.getNameorg().matches(colname2_regexp) || ah.getNameattr().matches(colname2_regexp)){
+		}
+		if( ah1 != null ) {
+			for( AttributeHandler ah: this.tableAttributeHandler.values()) {
+				if( ah.isNameMatch(colname2_regexp)){
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-//					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, false));
-//					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, false));
 					retour.add(new ColumnExpressionSetter(fieldName1,ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2,ah2));
 					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by name");
 					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by name");
 					return retour;
-				} else {
-					ah1 = null;
 				}
 			}
 		}
@@ -260,7 +260,7 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
@@ -291,20 +291,18 @@ public abstract class KWDetector {
 				ah1 = ah;
 				continue;
 			}
-			if( ah1 != null ) {
+		}
+		if( ah1 != null ) {
+			for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 				if( ah.getUcd().matches(ucd2_regexp)){
 					ah2 = ah;
 					if( Messenger.debug_mode ) 
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
-//					retour.add(new ColumnExpressionSetter(ah1, ColumnSetMode.BY_KEYWORD, false, true));
-//					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
 					retour.get(0).completeMessage("col " + ah1.getNameorg() + " detected by UCD");
 					retour.get(1).completeMessage("col " + ah2.getNameorg() + " detected by UCD");
 					return retour;
-				} else {
-					ah1 = null;
 				}
 			}
 		}
@@ -313,7 +311,7 @@ public abstract class KWDetector {
 		return retour;
 	}
 
-	
+
 	/**
 	 * Search the first entry attribute handler with a name matching colname_regexp
 	 * @param fieldName
@@ -329,8 +327,8 @@ public abstract class KWDetector {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
+				//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by name");
 				return setter;
 
@@ -355,8 +353,8 @@ public abstract class KWDetector {
 			if( ah.getComment().matches(colname_regexp) ){
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
-//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
-				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN);
+				//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
+				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
 				setter.completeMessage("col " + ah.getNameorg() + " detected by description");
 				return setter;
 
