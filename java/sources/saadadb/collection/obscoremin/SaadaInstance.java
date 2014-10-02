@@ -133,13 +133,13 @@ public abstract class SaadaInstance implements DMInterface {
 	public SaadaInstance() {
 	}
 
+	/**
+	 * used by the cache  
+	 */
 	public void markAsLoaded() {
 		this.loaded = true;
 	}
 
-	public boolean isLoaded(){
-		return loaded;
-	}
 	/**
 	 * Returns a list of all public fields of the hierarchy: those which are persistent in Saada
 	 * Here is an issue: The collection of fields returned by reflexion is not ordered. We need however to keep the field order to build the SWQL tables.
