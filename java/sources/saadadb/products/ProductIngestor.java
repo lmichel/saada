@@ -191,7 +191,7 @@ public class ProductIngestor {
 	/************************************************************************************************************************
 	 * 
 	 * Set Fields attached to the Space Axe
-	 * Actions are split in multiple methods in order to prevents the Entry ingestion to redo all the analysis for each row
+	 * Actions are split in multiple methods in order to prevent the Entry ingestion to re-do all the analysis for each row
 	 *
 	 */
 
@@ -230,6 +230,9 @@ public class ProductIngestor {
 		}
 	} //if position mapped
 
+	/**
+	 * @param message
+	 */
 	protected void setPositionFieldsInError(String message) {
 		this.product.s_raSetter.setNotSet(message);
 		this.product.s_decSetter.setNotSet(message);
@@ -246,6 +249,9 @@ public class ProductIngestor {
 		this.saadaInstance.setS_fov(Double.NaN);		
 		this.saadaInstance.setS_region(SaadaConstant.STRING);		
 	}
+	/**
+	 * Take the position as it is
+	 */
 	protected void setUnconvertedCoordinatesAndRegion() {
 		String stc = "Polygon " + Database.getAstroframe();
 		if( !this.product.s_regionSetter.notSet() ) {
@@ -259,6 +265,9 @@ public class ProductIngestor {
 		this.product.s_regionSetter.setValue(stc);
 	}
 	
+	/**
+	 * Convert the coords and region before to store it
+	 */
 	protected void setConvertedCoordinatesAndRegion() {
 		try {
 			Astrocoo acoo;
@@ -300,6 +309,9 @@ public class ProductIngestor {
 		}
 	}
 
+	/**
+	 * Compute the cartesian coordinates
+	 */
 	protected void setXYZfields() {
 		if( !Double.isNaN(this.saadaInstance.s_ra) && !Double.isNaN(this.saadaInstance.s_dec) ){
 			this.saadaInstance.calculSky_pixel_csa();
@@ -309,8 +321,9 @@ public class ProductIngestor {
 		}
 	}
 	
-	
-
+	/**
+	 * Set the fiedl of view
+	 */
 	protected void setFoVFields() {
 		try {
 			if(this.product.s_fovSetter.notSet())
@@ -368,7 +381,9 @@ public class ProductIngestor {
 			if( this.numberOfCall == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	
 	}
-	/*
+	
+	
+	/********************************************************************************
 	 * Set Time field
 	 */
 
