@@ -300,7 +300,7 @@ public class Messenger implements Serializable{
 	public static void printLocatedMsg(String msg) {
 		String message = msg;
 	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-	      for(int i=2; i<elements.length; i++) {
+	      for(int i=2; i<elements.length; ) {
 	          message += " " + elements[i] + "";
 	          break;
 	      }
