@@ -32,18 +32,21 @@ public class Merger {
 		else {
 			StringBuffer retour = new StringBuffer();
 			for( int i=0 ; i<array.length ; i++) {
-				if( array[i] == null  ) {
+				if( array[i] == null || array[i].trim().length() == 0 ) {
 					continue;
 				}
-				String ta =  array[i].trim();
-				if( ta.length() == 0 ) {
-					ta = array[i];
-				}
+				/*
+				 * Don't check//allow  white space here, it'll add a " , " to the query 
+				 * e.g SELECT oidsaada,
+   						FROM VizierData_IMAGE [.....]
+				 */
 				if( retour.length() > 0 ) {
 					retour.append(separator);
 				}
 				retour.append(array[i]);
 			}
+
+			System.out.println("getMergedArray: "+retour);
 			return retour.toString();
 		}
 	}
