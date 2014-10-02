@@ -24,6 +24,7 @@ import cds.astro.FK5;
  * @author michel
  * @version $Id$
  * 02/2014: Do the conversion only if the given frame differs from the this of the DB
+ * 10/2014: set a text report
  */
 public class PositionParser {
 	private String position;
@@ -36,6 +37,7 @@ public class PositionParser {
 	private static Pattern p = Pattern.compile(RegExp.POSITION_COORDINATE);	
 	private Astroframe astroframe;
 	private String arg;
+	private String report="";
 	
 	/**
 	 * @param position
@@ -93,6 +95,7 @@ public class PositionParser {
 				Astrocoo acoo = new Astrocoo(this.astroframe,this.position);
 				this.ra = acoo.getLon();
 				this.dec = acoo.getLat();
+				this.report = "Converted from sexadecimal";
 			} catch (Exception e) {
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "'" + this.arg + "' Position format not recognized");				
 			}
@@ -132,6 +135,7 @@ public class PositionParser {
 			this.format = NAME;        	
 			String ResolveName = this.resolvesName();
 			if (ResolveName != null ){
+				this.report = "Resolved by Sesam";
 				this.position = ResolveName.trim();
 				/*
 				 * Sezam returns FK5/J2000 coordinates, but input coordinates can be expressed 
@@ -298,6 +302,13 @@ public class PositionParser {
 	 */
 	public String getPosition() {
 		return position;
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getReport() {
+		return this.report;
 	}
 
 }
