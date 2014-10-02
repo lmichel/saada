@@ -2,23 +2,50 @@
 "parameters": [ 
 				"-category=misc" , 
 				"-collection=XMM", 
-				"-filename=obscore", 
 				"-repository=no", 
-				"-posmapping=first" , 
-				"-position=alpha,delta"  ,
-				"-system='FK5'"  
 			], 
-"cases": [ {"name" : "standard",
-            "header": [  ["RA"        , "double", "deg"   , ""              , "10"], 
-						 ["DEC"       , "double", "deg"   , ""              , "+20"] 
+"fields": ["s_ra",  "s_dec", "s_region", "s_resolution", "s_fov"],
+"cases": [ 
+            {"name" : "standard",
+            "header": [  ["RA"        , "double", "deg"   , "" ,  "10"], 
+						 ["DEC"       , "double", "deg"   , "" ,  "+20"] 
 					  ],
 	         "columns": []               
 		    },
-            {"name" : "name",
-            "header": [ ["RA"        , "double", "deg"   , ""              , "10"], 
-						["DEC"       , "double", "deg"   , ""              , "+20"] 
+            {"name" : "galactic",
+            "header": [ ["GLAT"        , "double", "deg"   , "" ,  "10"], 
+						["GLON"       , "double", "deg"   , "" ,  "+20"] 
 					  ],					               
 	         "columns": []               
 		    }
+            {"name" : "objName",
+            "header": [  ["RA"        , "double", "deg"   , "" ,  "M31"], 
+						 ["DEC"       , "double", "deg"   , "" ,  ""] 
+					  ],
+	         "columns": []               
+		    },
+           {"name" : "HMS",
+            "header": [  ["RA"        , "double", "deg"   , "" ,  "00 42 44.330"], 
+						 ["DEC"       , "double", "deg"   , "" ,  "+41 16 07.50"] 
+					  ],
+	         "columns": []               
+		    },
+          {"name" : "WCS",
+            "header": [ ["NAXIS"         , "int", ""   , ""                 , "2"], 
+                        ["NAXIS1"        , "int", ""   , ""                 , "648"], 
+           			    ["NAXIS2"        , "int", ""   , ""                 , "648"],
+           			    ["CRPIX1"        , "double", ""   , "" ,  "3.24506256109476E+02"], 
+                        ["CRPIX2"        , "double", ""   , "" ,  "3.24506256109476E+02"], 
+                        ["CRVAL1"        , "double", ""   , "" ,  "1.85081166666667E+02"], 
+                        ["CRVAL2"        , "double", ""   , "" ,  "6.66125000000000E+00"],
+                        ["CTYPE1"        , "String", ""   , "" ,  "RA---TAN"],
+                        ["CTYPE2"        , "String", ""   , "" ,  "DEC--TAN"],
+                        ["CUNIT1"        , "String", ""   , "" ,  "deg"],
+                        ["CUNIT2"        , "String", ""   , "" ,  "deg"],
+                        ["CROTA2"        , "double", ""   , "" ,  "0.00000000000000E+00"],
+                        ["CDELT1"        , "double", ""   , "" ,  "-1.11111111111111E-03"],
+                        ["CDELT2"        , "double", ""   , "" ,  "1.11111111111111E-03"]
+                       ]
+            }
 		]
 }			
