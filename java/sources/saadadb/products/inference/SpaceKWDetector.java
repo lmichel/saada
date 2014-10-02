@@ -437,6 +437,8 @@ public class SpaceKWDetector extends KWDetector{
 				return;
 			}
 			PositionParser pp = new PositionParser(this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue());
+			this.ascension_kw.completeMessage(pp.getReport());
+			this.declination_kw.completeMessage(pp.getReport());
 			this.ascension_kw.setValue(pp.getRa());
 			this.declination_kw.setValue(pp.getDec());
 		} catch (QueryException e) {
@@ -711,9 +713,8 @@ public class SpaceKWDetector extends KWDetector{
 				if( ah.getComment().matches(".*(?i)(hour).*")) {
 					Map<String , AttributeHandler> m = new  LinkedHashMap<String, AttributeHandler>();
 					m.put(ah.getNameattr(), ah);
-					this.ascension_kw = new ColumnExpressionSetter("s_ra", "15*" + ah.getNameorg(), m);
+					this.ascension_kw = new ColumnExpressionSetter("s_ra", "15*" + ah.getNameorg(), m, true);
 					this.ascension_kw.completeMessage("RA in hours (" +  ah.getComment() + "): convert in deg");
-
 				}
 			}
 			return ascension_kw;
