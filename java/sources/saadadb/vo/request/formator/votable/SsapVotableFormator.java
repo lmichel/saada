@@ -74,7 +74,7 @@ public class SsapVotableFormator extends VotableFormator {
 			map.put("EMIN", col.getAttribute_handlers_spectrum().get("e_min"));
 			map.put("EMAX", col.getAttribute_handlers_spectrum().get("e_max"));
 
-			ColumnExpressionSetter ces = new ColumnExpressionSetter("test","(EMIN+EMAX)/2", map);
+			ColumnExpressionSetter ces = new ColumnExpressionSetter("test","(EMIN+EMAX)/2", map, true);
 			ces.calculateExpression();
 			System.out.println(ces);
 
