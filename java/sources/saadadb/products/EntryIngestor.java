@@ -19,6 +19,7 @@ import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
+import cds.astro.Astroframe;
 
 /**
  * @author michel
@@ -149,6 +150,7 @@ public final class EntryIngestor extends ProductIngestor {
 		this.setEnergyFields();		
 		this.setTimeFields();
 		this.loadAttrExtends();
+		this.numberOfCall++;
 	}
 
 	/* (non-Javadoc)
@@ -177,12 +179,6 @@ public final class EntryIngestor extends ProductIngestor {
 		this.lineNumber++;
 	}
 
-	/**
-	 * @throws Exception
-	 */
-	protected void setSpaceFields() throws Exception {
-		this.setPositionFields((int) this.lineNumber);
-	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductIngestor#setObservationFields()
@@ -198,7 +194,8 @@ public final class EntryIngestor extends ProductIngestor {
 	 * @see saadadb.products.ProductIngestor#setPositionFields(int)
 	 */
 	@Override
-	protected void setPositionFields(int number) throws Exception {
+	protected void setSpaceFields() throws Exception {
+		System.out.println("couco");
 //		System.out.println("### " +this.num_col_ra);
 //		System.out.println("### " + this.values[this.num_col_ra]);
 //		if( this.values != null ){
@@ -211,7 +208,42 @@ public final class EntryIngestor extends ProductIngestor {
 //			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
 //				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
 //		}
-		super.setPositionFields(number);
+		if( this.numberOfCall == 0 ){
+			super.setSpaceFields();
+		} else {
+			this.product.s_raSetter.calculateExpression();
+			if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
+				try {
+					Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
+					String stc = "Polygon " + Database.getAstroframe();
+					/*
+					 * Convert astroframe if different from this of the database
+					 */
+					if( this.taskMap.convertUnits) {
+						this.taskMap.convertUnits = true;
+						this.setConvertedCoordinatesAndRegion();
+						/*
+						 * no conversion required, just take the values
+						 */
+					} else {
+						this.setUnconvertedCoordinatesAndRegion();
+					}
+					this.setXYZfields();
+					this.setFoVFields();
+					this.setPosErrorFields();
+				} catch( Exception e ) {
+					e.printStackTrace();
+					this.setPositionFieldsInError("Error while setting the position " + e.getMessage());
+				}
+
+			} else {
+				this.setPositionFieldsInError("Coord conv failed: no frame");
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
+			}
+System.out.println(this.product.s_raSetter);
+		}
+		
 		/*
 		 * Belongs to the obseravtion axis but needs the coordinates
 		 */
@@ -242,11 +274,11 @@ public final class EntryIngestor extends ProductIngestor {
 			if( this.values != null ){
 				if( this.num_col_t_max != -1 && this.product.t_maxSetter.byKeyword() ) {
 					this.product.t_maxSetter.setByValue(this.values[this.num_col_t_max].toString(), true);
-					this.product.t_maxSetter = this.product.t_maxSetter.getConverted(DateUtils.getFMJD(this.product.t_maxSetter.getValue()), "mjd", addMEssage);
+					this.product.t_maxSetter = this.product.t_maxSetter.setConvertedValue(DateUtils.getFMJD(this.product.t_maxSetter.getValue()), "String", "mjd", addMEssage);
 				}
 				if( this.num_col_t_min != -1&& this.product.t_minSetter.byKeyword() ){
 					this.product.t_minSetter.setByValue(this.values[this.num_col_t_min].toString(), true);
-					this.product.t_minSetter = this.product.t_minSetter.getConverted(DateUtils.getFMJD(this.product.t_minSetter.getValue()), "mjd", addMEssage);
+					this.product.t_minSetter = this.product.t_minSetter.setConvertedValue(DateUtils.getFMJD(this.product.t_minSetter.getValue()), "String", "mjd", addMEssage);
 				}
 				if( this.num_col_t_exptime != -1 && this.product.t_exptimeSetter.byKeyword())
 					this.product.t_exptimeSetter.setByValue(this.values[this.num_col_t_exptime].toString(), true);

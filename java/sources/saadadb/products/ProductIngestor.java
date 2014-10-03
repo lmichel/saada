@@ -200,6 +200,7 @@ public class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setSpaceFields() throws Exception {
+		System.out.println(this.product.s_raSetter);
 		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
 			try {
 				Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
@@ -220,6 +221,7 @@ public class ProductIngestor {
 				this.setFoVFields();
 				this.setPosErrorFields();
 			} catch( Exception e ) {
+				e.printStackTrace();
 				this.setPositionFieldsInError("Error while setting the position " + e.getMessage());
 			}
 
