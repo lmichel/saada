@@ -1,31 +1,20 @@
 package saadadb.vo.request.query;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.junit.experimental.runners.Enclosed;
-
-import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.executor.Query;
 import saadadb.query.parser.PositionParser;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
-import saadadb.util.SaadaConstant;
 import saadadb.vo.PseudoTableParser;
 import saadadb.vo.request.query.pql.PQLBandParser;
 import saadadb.vo.request.query.pql.PQLParamParser;
 import saadadb.vo.request.query.pql.PQLTimeParser;
-import saadadb.util.DateUtils;
 
 /**
  * @author laurent
