@@ -453,8 +453,13 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public boolean isNamedLike(String name) {
 		return (this.nameattr.equals(name) || this.nameorg.equals(name));
 	}
+	
+	public boolean isNameMatch(String regex) {
+		return (this.nameattr.matches(regex) || this.nameorg.matches(regex));
+	}
+	
 	/*
-	 * The following accessor give the existance of a valid value pfor the field
+	 * The following accessors give the existence of a valid value for the field
 	 * Lately added must be inserted within the code by opportunity
 	 */
 	/**
