@@ -60,22 +60,22 @@ public class KeyMapper {
 		AttributeHandler tmp = new AttributeHandler();
 		Boolean matchFound =false;
 		
-		if(fUtype != null && matchFound == false) {
+		if(!fUtype.isEmpty() && matchFound == false) {
 			tmp = searchByUtype(fUtype);
 			if(tmp != null) {
 				matchFound =true;
 				System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ KeyMapper just found a match by Utype");
-		}
+			}
 		}
 		
-		else if(fUcd != null && matchFound == false) {
+		else if(!fUcd.isEmpty()  && matchFound == false) {
 			tmp = searchByUcd(fUcd);
 			if(tmp != null) {
 				matchFound =true;
 				System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ KeyMapper just found a match by Ucd");
 		}
 }
-		else if (fName != null && matchFound ==false) {
+		else if (!fName.isEmpty()  && matchFound ==false) {
 			tmp = searchByName(fName);
 			if(tmp != null) {
 				matchFound = true;
@@ -98,6 +98,7 @@ public class KeyMapper {
 		initUtypeMap();
 		initUcdMap();
 		initnameMap();
+		initialized =true;
 	}
 	
 	protected String removePrefix(String value) {
@@ -106,6 +107,7 @@ public class KeyMapper {
 		//TODO Finish
 			result = result.replace("ssa:", "");
 			result = result.replace("sia:", "");
+			result = result.replace("vox:", "");
 			result = result.replace("obscore:", "");
 			result = result.replace("vs:", "");
 			result = result.replace("vr:", "");
@@ -207,7 +209,6 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 	tmp.setNameorg(expKey);
 	tmp.setValue(expsetter.getExpressionResult());
 	tmp.setUnit(expsetter.getUnit());
-	
 	return tmp;
 }
 	/*
@@ -233,48 +234,35 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 		putNewExpression("access_format", colAttr.get("access_format"));
 		putNewExpression("access_size", colAttr.get("access_estsize"));
 		putNewExpression("dataid_title", colAttr.get("obs_id"));
-		//putNewExpression("char_spa_cov_loc_val","s_ra s_dec");
-		//putNewExpression(", attributeHandler);
-//		ColumnExpressionSetter accessRef = new ColumnExpressionSetter("access_ref","THISISJUSTATEST");
-//		expressionSttrMap.put("access_ref", accessRef);
+		putNewExpression("char_spa_cov_loc_val","strcat(s_ra,' ',s_dec)",colAttr,false);
+		putNewExpression("char_spa_cov_bou_ext",colAttr.get("s_fov"));
+		putNewExpression("calib_level", colAttr.get("calib_level"));
+		putNewExpression("char_spa_res", colAttr.get("s_resolution"));
+		putNewExpression("char_spect_cov_bou_val", "(em_min+em_max)/2", colAttr,true);
+		putNewExpression("char_spect_cov_bou_ext", "em_max-em_min",colAttr,true);
+		putNewExpression("em_min", colAttr.get("em_min"));
+		putNewExpression("em_max", colAttr.get("em_max"));
+		putNewExpression("char_tim_cov_loc_val", "((t_max-t_min)/86400)/2",colAttr,true);
+		putNewExpression("char_tim_cov_bou_ext", "t_max-t_min",colAttr,true);
+		putNewExpression("coord_spaceframe_name", Database.getAstroframe().name);
+		putNewExpression("o_ucd", colAttr.get("o_ucd"));
 		
-		/*ColumnExpressionSetter accessFormat = new ColumnExpressionSetter("access_format",ColAttr.get("access_format"));
-		expressionSttrMap.put("access_format", accessFormat);
-		
-		ColumnExpressionSetter accessSize = new ColumnExpressionSetter("access_size", ColAttr.get("access_estsize"));
-		
-		ColumnExpressionSetter texptime = new ColumnExpressionSetter("t_exptime", "((t_max - t_min)/86400)", ColAttr);
-		texptime.setUnit("s");
-		expressionSttrMap.put("t_exptime", texptime);
-		
-		ColumnExpressionSetter char_TimCovBouExt = new ColumnExpressionSetter("Char_TimCovBouExt".toLowerCase(),"t_max-t_min",ColAttr);
-		expressionSttrMap.put("char_timcovbouex", char_TimCovBouExt);*/
-		
-		//ColumnExpressionSetter access_right  = new ColumnExpressionSetter("access_right",ColAttr.get("access_right"));
-		// ====================================== How To
-		// ==========================================
-		// 1. Create the ColumnexpressionSetter
-		// 2. Fill the map with the created columnExpressionSetters
-
-		// EXAMPLE\\
-
-		// Creates a ColumnexpressionSetter of name and fieldName "example" that
-		// will finds the value of AttributeHandler EXAMPLE in ColAttr
-		// And which would return the value of EXAMPLE -1 when computed:
-		// 1. ColumnExpressionSetter example = new
-		// ColumnExpressionSetter("example","EXAMPLE-1", ColAttr);
-		// 1.1 Set a unit for this field
-		//	example.setUnit(unit);
-		// 2. expressionSttrMap.put("example", example);
-
-		// Creates a ColumnexpressionSetter of name and fieldName "secondExple"
-		// that will return the constant value "MyTelescopeName"
-		// When Computed:
-		// 1. ColumnExpressionSetter secondExple = new
-		// ColumnExpressionSetter("secondExple","MyTelescopeName");
-		// 2. expressionSttrMap.put("secondExple", secondExple);
-
-		//\\//\\
+		putNewExpression("image_format", saada.getMimeType());
+		putNewExpression("instrument_id", colAttr.get("instrument_name"));
+		putNewExpression("s_ra", colAttr.get("s_ra"));
+		putNewExpression("s_dec", colAttr.get("s_dec"));
+		putNewExpression("image_naxis", "strcat(naxis1,' ',naxis2)",colAttr,false);
+		putNewExpression("image_naxes", "2");
+		putNewExpression("image_scale", getImageScale(colAttr));
+		putNewExpression("t_min", colAttr.get("t_min"));
+		putNewExpression("t_max", colAttr.get("t_max"));
+		putNewExpression("coord_ref_frame", getSaadaInstanceField("_radesys"));
+		putNewExpression("coord_equi", String.valueOf(Database.getAstroframe().getEpoch()));
+	//	putNewExpression("coord_projection", getCoordProjection());
+		putNewExpression("coord_ref_pixel", "strcat(crpix1_csa,' ',crpix2_csa)", colAttr, false);
+		putNewExpression("coord_ref_value", "strcat(crval1_csa,' ',crval2_csa)", colAttr, false);
+	putNewExpression("cdmatrix", "strcat(cd1_1_csa,' ',cd1_2_csa,' ',cd2_1_csa,' ',cd2_2_csa)", colAttr, false);
+	putNewExpression("image_pixflags", "C");
 	}
 /**
  * 
@@ -282,10 +270,25 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 	protected void initUtypeMap() {
 		// TODO Fill the utypeMap with its content
 		utypeMap = new LinkedHashMap<String, String>();
-		
 		utypeMap.put("access.reference", "access_ref");
-		utypeMap.put("char.timeaxis.coverage.location.value", "t_exptime");
-		utypeMap.put("char.timeaxis.coverage.bounds.extent", "char_timcovbouex");
+		utypeMap.put("access.format","access_format");
+		utypeMap.put("access.size", "access_size");
+		utypeMap.put("dataid.title", "dataid_title");
+		utypeMap.put("char.spatialaxis.coverage.location.value", "char_spa_cov_loc_val");
+		utypeMap.put("char.spatialaxis.coverage.bounds.extent", "char_spa_cov_bou_ext");
+		utypeMap.put("char.spatialaxis.calibration", "calib_level");
+		utypeMap.put("char.spatialaxis.resolution", "char_spa_res");
+		utypeMap.put("char.spectralaxis.coverage.location.value", "char_spect_cov_bou_val");
+		utypeMap.put("char.spectralaxis.coverage.bounds.extent", "char_spect_cov_bou_ext");
+		utypeMap.put("char.spectralaxis.coverage.bounds.start", "em_min");
+		utypeMap.put("char.spectralaxis.coverage.bounds.stop", "em_max");
+		utypeMap.put("char.spectralaxis.calibration", "calib_level");
+		utypeMap.put("char.timeaxis.coverage.location.value", "char_tim_cov_loc_val");
+		utypeMap.put("char.timeaxis.coverage.bounds.extent", "char_tim_cov_bou_ext");
+		utypeMap.put("coordsys.spaceframe.name", "coord_spaceframe_name");
+		utypeMap.put("char.fluxaxis.ucd","o_ucd");
+		utypeMap.put("char.fluxaxis.calibration", "calib_level");
+
 		// create a mapping between a Utype and its corresponding
 		// ColumnExpressionSetter by mapping a utype (a key of utypeMap) and
 		// a ColumExpressionSetter (a key in expressionStrrMap)
@@ -297,6 +300,29 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 	protected void initUcdMap() {
 		// TODO Fill the ucdMap with its content
 		ucdMap = new LinkedHashMap<String, String>();
+		
+
+		ucdMap.put("image_format", "image_format");
+		ucdMap.put("image_AccessReference", "access_reference");
+		ucdMap.put("Image_FileSize", "access_size");
+		ucdMap.put("inst_id", "instrument_id");
+		ucdMap.put("POS_EQ_RA_MAIN".toLowerCase(), "s_ra");
+		ucdMap.put("POS_EQ_DEC_MAIN".toLowerCase(), "s_dec");
+		ucdMap.put("image_naxis", "image_naxis");
+		ucdMap.put("image_naxes", "image_naxes");
+		ucdMap.put("image_scale", "image_scale");
+		ucdMap.put("image_title", "dataid_title");
+		ucdMap.put("image_dateobs", "t_min");
+		ucdMap.put("stc_coordrefframe","coord_ref_frame");
+		ucdMap.put("stc_coordequinox", "coord_equi");
+	//	ucdMap.put("wcs_coordprojection","coord_projection");
+		ucdMap.put("wcs_coordrefpixel", "coord_ref_pixel");
+		ucdMap.put("wcs_coordrefvalue", "coord_ref_value");
+		ucdMap.put("wcs_cdmatrix", "cdmatrix");
+		ucdMap.put("wcs_image_pixflags", "image_pixflags");
+		ucdMap.put("bandpass_refvalue", "char_spect_cov_bou_val");
+		ucdMap.put("bandpass_hilimit", "em_max");
+		ucdMap.put("bandpass_lolimit", "em_min");
 	}
 /**
  * 
@@ -306,32 +332,65 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 		nameMap = new LinkedHashMap<String, String>();
 
 	}
+	
+	protected String getImageScale(LinkedHashMap<String, AttributeHandler> attrMap) throws Exception {
+		String axis1;
+		String axis2;
+		ColumnExpressionSetter tmp = new ColumnExpressionSetter("tmp", "s_fov/naxis1", attrMap, true);
+		tmp.calculateExpression();
+		axis1 = tmp.getExpressionResult();
+		tmp = new ColumnExpressionSetter("tmp", "s_fov/naxis2", attrMap, true);
+		tmp.calculateExpression();
+		axis2 = tmp.getExpressionResult();
+		System.out.println("computeImageScale result: "+axis1+" "+axis2);
+		return axis1+" "+axis2;
+	}
+	
+/*	protected  String getCoordProjection() {
+		//TODO Avoid cast to ImageSaada
+		String val = saada.ctype1_csa.toString();
+		// RA---TAN -> TAN e.g.
+		if( val != null && val.length() > 3 ) {
+			val = val.substring(val.length() - 3);
+		}
+		return val;
+	}*/
+	protected String getSaadaInstanceField(String field) {
+		String val;
+		
+		try {
+			val = saada.getFieldString(field);
+		} catch(Exception e) {
+			val = "";
+		}
+		return val;
+	}
 /**
  * Returns an LinkedHashMap of AttributeHandler of the category for the collection given by collectionName
  * @return
+ * @throws Exception 
  * @throws FatalException 
  */
-	
 	@SuppressWarnings("static-access")
 	protected  LinkedHashMap<String, AttributeHandler> getCollectionAttr() throws FatalException{
 		
 		int category = SaadaOID.getCategoryNum(saada.oidsaada);
 		int collectionNum = SaadaOID.getCollectionNum(saada.oidsaada);
 		switch(category) {
-		case Category.SPECTRUM : return Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_spectrum();
-		case Category.IMAGE : return Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_image();
+		case Category.SPECTRUM : System.out.println("Loading spectrum atributes handlers");return Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_spectrum();
+		case Category.IMAGE : System.out.println("Loading image atributes handlers");return Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_image();
 		}
 		//TODO should throws an exception if null?
 		return null;
 	}
 
 	protected void putNewExpression(String fieldName, String constantValue) throws Exception {
-		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, constantValue));
+		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, constantValue,false));
 	}
 	protected void putNewExpression(String fieldName, AttributeHandler attributeHandler) throws Exception {
-		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, attributeHandler));
+		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, attributeHandler,false));
 	}
-	protected void putNewExpression(String fieldName, String expression, LinkedHashMap<String, AttributeHandler> attrMap) throws Exception {
-		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, expression, attrMap, true));
+	protected void putNewExpression(String fieldName, String expression, LinkedHashMap<String, AttributeHandler> attrMap, Boolean arithmeticExpression) throws Exception {
+		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, expression, attrMap,arithmeticExpression));
 	}
 }
