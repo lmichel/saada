@@ -31,19 +31,16 @@ import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
 
 /**
- * Superclass for testing different formats of fields
+ * class  testing different formats of fields
  * Should be parametred in auto dectection
  * The input JSON files gives a set of KWs set with different way to encode values
  {
 			"parameters": [ 
 				"-category=misc" , 
 				"-collection=XMM", 
-				"-filename=obscore", 
-				"-repository=no", 
-				"-posmapping=first" , 
-				"-position=alpha,delta"  "
-				"-system='FK5'"  "
+				"-repository=no"
 			], 
+            "fields": ["s_ra",  "s_dec"],
 			"cases": [ {"name" : name,
 			            "header": [ "
 			                       ["RA"        , "double", "deg"   , ""              , "10"], "
@@ -167,14 +164,13 @@ public class FieldShaker {
 		Map<String, ColumnSetter> er = product.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
-			System.out.println("aaaaaaaaaa");
 			if( this.paramsOfInterest.contains(e.getKey())) {
 				String str = "";
 				str = String.format("%20s",e.getKey()) + "     ";
 				ColumnSetter ah = e.getValue();
 				str += ah.getSettingMode() + " " + ah.message;
 				if( !ah.notSet() ) 
-					str += " storedValue=" + ah.storedValue;
+					str += " storedValue=" + ah.storedValue + ((ah.getUnit() != null)? ah.getUnit(): "");
 				this.currentReport.add(str);
 			}
 		}
@@ -187,10 +183,9 @@ public class FieldShaker {
 	protected void processAll() throws Exception {
 		Messenger.debug_mode = true;
 		for( String key: this.fooProducts.keySet() ) {
+			Messenger.printMsg(Messenger.TRACE, "************ Processing " + key);
 			this.process(key);
-			System.out.println("bbbb");
 		}
-		System.out.println("ccccccc");
 	}
 
 	/**
@@ -208,12 +203,16 @@ public class FieldShaker {
 	 * @param args
 	 * @throws FatalException 
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
+		try {
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		FieldShaker ps = 	(new FieldShaker(ap.getFilename()));
 		ps.processAll();
 		ps.showReport();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 		Database.close();
 	}
 
