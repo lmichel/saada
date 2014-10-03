@@ -332,6 +332,6 @@ protected AttributeHandler buildAttribute(String expKey) throws Exception {
 		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, attributeHandler));
 	}
 	protected void putNewExpression(String fieldName, String expression, LinkedHashMap<String, AttributeHandler> attrMap) throws Exception {
-		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, expression, attrMap));
+		expressionSttrMap.put(fieldName, new ColumnExpressionSetter(fieldName, expression, attrMap, true));
 	}
 }
