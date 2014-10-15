@@ -76,7 +76,7 @@ public class FooClassBuilder {
 	FooProduct[] fooProduct;
 
 	@SuppressWarnings({ "unchecked" })
-	FooClassBuilder(String[] jsonFilenames) throws Exception{
+	public FooClassBuilder(String[] jsonFilenames) throws Exception{
 		this.jsonAhs = new JSONObject[jsonFilenames.length];
 		this.fooProduct = new FooProduct[jsonFilenames.length];
 		for( int i=0 ; i<jsonFilenames.length ; i++ ){
@@ -84,7 +84,7 @@ public class FooClassBuilder {
 			if( fn.charAt(0) != File.separatorChar ){
 				fn = Database.getRoot_dir() + File.separator + "datatest" + File.separator + fn;
 				if( !(new File(fn)).exists() ) {
-					fn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/michel/workspace/SaadaObscore/datatest/");
+					fn = fn.replace(Database.getRoot_dir() + File.separator + "datatest" + File.separator, "/home/hahn/workspace/saadaObscore/datatest/");
 				}
 			}
 			JSONParser parser = new JSONParser();  
@@ -127,7 +127,7 @@ public class FooClassBuilder {
 	/**
 	 * @throws Exception
 	 */
-	private void process() throws Exception {
+	public void process() throws Exception {
 		cleanDatabase(); 
 		for( int i=0 ; i<this.fooProduct.length ; i++ ){
 			System.out.println(i + "-------------------------------------------------------------");
