@@ -150,7 +150,7 @@ public class Image2DBuilder extends ProductBuilder {
 	public void bindDataFile(DataFile dataFile) throws Exception{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder");
-		this.dataFile = dataFile;
+		if( dataFile != null ) this.dataFile = dataFile;
 		if( this.dataFile instanceof FitsDataFile ) {
 			this.mimeType = "application/fits";
 		} else if( this.dataFile instanceof VOTableDataFile ) {
