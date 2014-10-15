@@ -1,19 +1,19 @@
 
 {
 "parameters": [
-	"-category=misc" ,
+	"-category=image" ,
 	"-collection=FOO",
 	"-classfusion=classFusion"	,
 	"-repository=no"
 ],
 "fields": {
  "header": [
-["SIMPLE, "boolean", "", "", "T"],
-["BITPIX, "int", "", "", "32"], 
-["NAXIS, "int", "", "", "2"], 
-["NAXIS1, "int", "", "", "648"], 
-["NAXIS2 , "int", "", "", "648"],
-["BUNIT, "string", "", "", "Primary Array"],      
+["SIMPLE", "boolean", "", "", "T"],
+["BITPIX", "int", "", "", "32"], 
+["NAXIS", "int", "", "", "2"], 
+["NAXIS1", "int", "", "", "648"], 
+["NAXIS2" , "int", "", "", "648"],
+["BUNIT", "string", "", "", "Primary Array"],      
 ["INSTRUME", "string", "", "", "EPIC"],
 ["DATAMODE", "string", "", "", "IMAGING"],
 ["TELESCOP", "string", "", "", "XMM"],
