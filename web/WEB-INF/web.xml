@@ -164,6 +164,16 @@
     <servlet-name>SiaService</servlet-name>
     <url-pattern>/siaservice</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <description></description>
+    <display-name>Sia2Service</display-name>
+    <servlet-name>Sia2Service</servlet-name>
+    <servlet-class>ajaxservlet.Sia2Service</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SiaService</servlet-name>
+    <url-pattern>/siaservice</url-pattern>
+  </servlet-mapping>
   <servlet>
     <description></description>
     <display-name>GetQueryReport</display-name>
