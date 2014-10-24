@@ -4,7 +4,6 @@ import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
