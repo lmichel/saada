@@ -1,20 +1,31 @@
 package saadadb.vo.request.query;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.junit.experimental.runners.Enclosed;
+
+import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.executor.Query;
 import saadadb.query.parser.PositionParser;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
 import saadadb.vo.PseudoTableParser;
 import saadadb.vo.request.query.pql.PQLBandParser;
 import saadadb.vo.request.query.pql.PQLParamParser;
 import saadadb.vo.request.query.pql.PQLTimeParser;
+import saadadb.vocabulary.RegExp;
+import saadadb.util.DateUtils;
 
 /**
  * @author laurent
@@ -56,7 +67,7 @@ public class SSAPQuery extends VOQuery {
 	@Override
 	public void buildQuery() throws Exception {
 		double size = -1.0;
-		Boolean saadatributeAdded = false;
+		Boolean saadattributeAdded = false;
 		String cooPos = "", cooSys = "";
 		/*
 		 * Mandatory param
@@ -135,11 +146,11 @@ public class SSAPQuery extends VOQuery {
 		 */
 		if (value != null) {
 			try {
-				if (!saadatributeAdded) {
+				if (!saadattributeAdded) {
 
 					queryString += "\nWhereAttributeSaada{"
 							+ getBandQueryPart(value);
-					saadatributeAdded = true;
+					saadattributeAdded = true;
 
 				} else {
 					queryString += " AND " + getBandQueryPart(value);
@@ -158,10 +169,10 @@ public class SSAPQuery extends VOQuery {
 		 */
 		if (value != null) {
 			try {
-				if (!saadatributeAdded) {
+				if (!saadattributeAdded) {
 					queryString += "\nWhereAttributeSaada{"
 							+ getTimeQueryPart(value);
-					saadatributeAdded = true;
+					saadattributeAdded = true;
 				} else {
 					queryString += " AND " + getTimeQueryPart(value);
 				}
@@ -174,10 +185,10 @@ public class SSAPQuery extends VOQuery {
 		// min SPECTRAL RESOLVING POWER parameter
 		value = this.queryParams.get("specrp");
 		if (value != null) {
-			if (!saadatributeAdded) {
+			if (!saadattributeAdded) {
 				queryString += "\nWhereAttributeSaada{"
 						+ getSpecRPQueryPart(value);
-				saadatributeAdded = true;
+				saadattributeAdded = true;
 			} else {
 				queryString += " AND " + getSpecRPQueryPart(value);
 			}
@@ -202,10 +213,10 @@ public class SSAPQuery extends VOQuery {
 		// TARGETNAME parameter
 		value = this.queryParams.get("targetname");
 		if (value != null) {
-			if (!saadatributeAdded) {
+			if (!saadattributeAdded) {
 				queryString += "\nWhereAttributeSaada{"
 						+ getTargetNameQueryPart(value);
-				saadatributeAdded = true;
+				saadattributeAdded = true;
 			} else {
 				queryString += " AND " + getTargetNameQueryPart(value);
 			}
@@ -213,10 +224,10 @@ public class SSAPQuery extends VOQuery {
 		// PUBLISHER_DID parameter
 		value = this.queryParams.get("pubdid");
 		if (value != null) {
-			if (!saadatributeAdded) {
+			if (!saadattributeAdded) {
 				queryString += "\nWhereAttributeSaada{"
 						+ getPubDIDQueryPart(value);
-				saadatributeAdded = true;
+				saadattributeAdded = true;
 			} else {
 				queryString += " AND " + getPubDIDQueryPart(value);
 			}
@@ -224,7 +235,7 @@ public class SSAPQuery extends VOQuery {
 
 		// Close the WhereAttributeSaada part, don't perform searches that
 		// require a "WhereAttributeSaada{...}" after this
-		if (saadatributeAdded) {
+		if (saadattributeAdded) {
 			queryString += "}";
 		}
 		// ===========================================================================
@@ -409,16 +420,7 @@ public class SSAPQuery extends VOQuery {
 		return retour;
 	}
 
-	/**
-	 * Encapsulates the value with ( ) to avoid weird things with AND/OR
-	 * Statements in queries
-	 * 
-	 * @param value
-	 * @return
-	 */
-	private String encapsulateQueryPart(String value) {
-		return "(" + value + ")";
-	}
+
 
 	/*
 	 * //DEBUG Purpose only
