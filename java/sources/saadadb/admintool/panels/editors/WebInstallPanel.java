@@ -13,7 +13,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
@@ -32,7 +31,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 /**

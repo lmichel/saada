@@ -16,7 +16,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Metacoll;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * Manager adding a new extended attribute to a given category

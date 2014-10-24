@@ -10,7 +10,7 @@ import nom.tam.fits.FitsException;
 import nom.tam.fits.TableHDU;
 import saadadb.database.Database;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class EPICSpectraBiner {
 

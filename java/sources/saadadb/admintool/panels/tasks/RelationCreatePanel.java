@@ -38,7 +38,7 @@ import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /** * @version $Id$
  * 

@@ -11,7 +11,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import cds.astro.Astroframe;
 import cds.astro.Ecliptic;
 import cds.astro.FK4;

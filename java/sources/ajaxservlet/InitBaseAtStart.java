@@ -17,7 +17,7 @@ import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.Spooler;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * Listener invoked by Tomcat at starting time and at shutdown time.

@@ -216,7 +216,7 @@ public class SsapVotableFormator extends VotableFormator {
 //
 //			} else if (utype.endsWith("Curation.PublisherDID")) {
 //				cdata = true;
-//				val = obj.getObs_publisher_did();
+//			val = obj.getObs_publisher_did();
 //			} else if (utype.endsWith("DataID.Title")) {
 //				val = obj.obs_id;
 //				cdata = true;

@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import cds.astro.Astrocoo;
 
 public class DefaultFormats {

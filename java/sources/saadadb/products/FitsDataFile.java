@@ -38,9 +38,9 @@ import saadadb.products.inference.SpaceKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
 import saadadb.util.TileRiceDecompressor;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 import saadadb.vocabulary.enums.ExtensionSetMode;
 

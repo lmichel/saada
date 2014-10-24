@@ -28,8 +28,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.ChangeKey;
 import saadadb.util.ChangeType;
-import saadadb.util.DefineType;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.DefineType;
 
 public class GenerationClassProduct{
 	private static String separ = System.getProperty("file.separator");

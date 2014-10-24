@@ -1,7 +1,7 @@
 package saadadb.query.parser;
 
 import saadadb.collection.Category;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * @author F.X. Pineau

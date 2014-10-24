@@ -9,7 +9,7 @@ import java.util.Vector;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import Zql.ZConstant;
 import Zql.ZExp;
 import Zql.ZExpression;

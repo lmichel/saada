@@ -10,7 +10,7 @@ import net.objecthunter.exp4j.function.Function;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * This class is used to get the numeric Functions used by exp4j

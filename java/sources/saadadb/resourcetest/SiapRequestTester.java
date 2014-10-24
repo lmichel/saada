@@ -35,7 +35,7 @@ public class SiapRequestTester {
 		Messenger.printMsg(Messenger.TRACE, "Parameters:");
 		for( int i=0 ; i<(args.length - 1) ; i++ ) {
 			String[] ps = args[i].split("=");
-			if( ps.length != 2) {
+					if( ps.length != 2) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Param " + args[i] + " badly formed");
 			}
 			pmap.put(ps[0], ps[1]);

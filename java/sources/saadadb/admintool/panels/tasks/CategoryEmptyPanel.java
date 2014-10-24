@@ -25,7 +25,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.MetaCollection;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 /**

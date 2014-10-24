@@ -33,6 +33,7 @@ public class SQLLargeQuery extends SQLQuery {
 		Exception te=null;
 		try {
 			_stmts = databaseConnection.getLargeStatement();
+			
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select large query: " + this.query);
 			long start = System.currentTimeMillis();
 			resultset = _stmts.executeQuery(query); 

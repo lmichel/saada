@@ -85,7 +85,7 @@ public class ConeSearchVotableFormator extends VotableFormator{
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.votable.VOTableFormator#writeDMData(saadadb.collection.SaadaInstance)
 	 */
-	protected void writeRowData(SaadaInstance si) throws Exception {
+/*	protected void writeRowData(SaadaInstance si) throws Exception {
 		EntrySaada obj = (EntrySaada)( si) ;
 		for( Object f: dataModelFieldSet.getItems()) {
 			SavotField sf = (SavotField)f;
@@ -122,9 +122,9 @@ public class ConeSearchVotableFormator extends VotableFormator{
 			else if( ucd.equalsIgnoreCase("meta.title") ){
 				addTD(obj.obs_id);
 			}
-			/*
-			 * Utypes have an higher priority than UCDs: there are checked first
-			 */
+			
+			 // Utypes have an higher priority than UCDs: there are checked first
+			 
 			else if( utype != null && utype.length() > 0 ){
 				AttributeHandler ah  = obj.getFieldByUtype(sf.getUtype(), false);
 				if( ah == null ) {
@@ -157,7 +157,7 @@ public class ConeSearchVotableFormator extends VotableFormator{
 			}
 		}
 	}
-
+*/
 	@Override
 	protected void writeProtocolParamDescription() throws IOException {
 		ParamSet paramSet = new ParamSet();

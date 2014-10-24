@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.database.Repository;
-import saadadb.util.RegExp;
 import saadadb.vo.request.formator.QueryResultFormator;
 import saadadb.vo.tap.TAPToolBox.TAPParameters;
+import saadadb.vocabulary.RegExp;
 import uws.UWSException;
 import uws.UWSToolBox;
 import uws.job.AbstractJob;

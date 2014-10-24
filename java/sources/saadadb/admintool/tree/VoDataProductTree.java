@@ -29,7 +29,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.FitsDataFile;
 import saadadb.products.DataFile;
 import saadadb.products.VOTableDataFile;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * @author laurent

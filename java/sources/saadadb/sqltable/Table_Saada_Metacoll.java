@@ -17,8 +17,8 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.DefineType;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.DefineType;
 
 public class Table_Saada_Metacoll extends SQLTable {
 	/**

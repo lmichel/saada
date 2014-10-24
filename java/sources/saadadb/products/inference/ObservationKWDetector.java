@@ -6,7 +6,7 @@ import java.util.Map;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class ObservationKWDetector extends KWDetector {
 

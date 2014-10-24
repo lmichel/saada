@@ -17,7 +17,7 @@ import saadadb.meta.MetaClass;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.parser.UnitHandler;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class ClassQNode extends QNode{
 	private  MetaClass metaclass = null;

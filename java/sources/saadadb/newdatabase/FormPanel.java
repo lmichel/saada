@@ -50,7 +50,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.util.HostAddress;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 /**

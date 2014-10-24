@@ -24,7 +24,7 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 /**

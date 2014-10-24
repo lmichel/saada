@@ -15,7 +15,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.inference.Coord;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 import cds.astro.FK5;

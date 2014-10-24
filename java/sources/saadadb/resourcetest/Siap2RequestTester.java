@@ -6,20 +6,24 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
-import saadadb.vo.request.ConeSearchRequest;
+import saadadb.vo.request.SIAP2Request;
+import saadadb.vo.request.SIAPRequest;
 
 /**
- * Run a CS quey
- * Take CS params as args:
- * pos       : RA DEC
- * size      : SR
+ * Run a SIAP quey
+ * Take SIAP params as args:
+ * pos       : 
+ * size      : ra,dec (degree)
+ * format    : METADATA ALL GRAPHIC image/fits image/png image/jpeg text/html 
+ * intersect : COVERS ENCLOSED CENTERS OVERLAPS
+ * mode      : cutout
  * in addition with
  * collection: 
  * filename  : response path
  * @author laurent
  *
  */
-public class ConeSearchRequestTester {
+public class Siap2RequestTester {
 
 	/**
 	 * @param args
@@ -32,17 +36,19 @@ public class ConeSearchRequestTester {
 		Messenger.printMsg(Messenger.TRACE, "Parameters:");
 		for( int i=0 ; i<(args.length - 1) ; i++ ) {
 			String[] ps = args[i].split("=");
-			if( ps.length != 2) {
+					if( ps.length != 2) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Param " + args[i] + " badly formed");
 			}
 			pmap.put(ps[0], ps[1]);
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
-		ConeSearchRequest request = new ConeSearchRequest("NoSession", "/home/hahn/Desktop");
-		//request.addFormator("votable");
+		//TODO Change ile PATH
+		//SIAPRequest request = new SIAPRequest("NoSession", "/home/michel/Desktop");
+		SIAP2Request request = new SIAP2Request("NoSession", "/home/hahn/Desktop");
 		request.addFormator("votable");
-		request.setResponseFilePath("CS");
+		request.setResponseFilePath("SIAP2");
 		request.processRequest(pmap);
 		Database.close();
+
 	}
 }

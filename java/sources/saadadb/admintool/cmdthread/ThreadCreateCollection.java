@@ -21,7 +21,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class ThreadCreateCollection extends CmdThread {
 	protected String name;

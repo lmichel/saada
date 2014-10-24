@@ -7,12 +7,12 @@ import java.io.File;
 import java.io.IOException;
 
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * Manage the name of the vignette file attached to one product file
  * The vignette file is searched in a directory given to the constructor. 
- * Its is supposed to have the same name as this of the product but suffixed with one of {@link saadadb.util.RegExp#PICT_FORMAT}
+ * Its is supposed to have the same name as this of the product but suffixed with one of {@link saadadb.vocabulary.RegExp#PICT_FORMAT}
  * @author michel
  * @version $Id$
  *

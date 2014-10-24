@@ -8,7 +8,7 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
 import saadadb.admintool.components.AdminComponent;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class DialogFileChooser extends JFileChooser {
 	

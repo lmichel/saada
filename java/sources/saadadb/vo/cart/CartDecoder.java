@@ -19,9 +19,9 @@ import saadadb.collection.SaadaOID;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Merger;
-import saadadb.util.RegExp;
 import saadadb.util.zip.ZipEntryRef;
 import saadadb.util.zip.ZipMap;
+import saadadb.vocabulary.RegExp;
 
 
 /**

@@ -4,7 +4,10 @@
 	"-category=image" ,
 	"-collection=FOO",
 	"-classfusion=classFusion"	,
-	"-repository=no"
+	"-repository=no",
+	"-emin=100",
+	"-emax=200"
+	"-spcmapping=only"
 ],
 "fields": {
  "header": [
@@ -14,11 +17,11 @@
 ["NAXIS1", "int", "", "", "648"], 
 ["NAXIS2" , "int", "", "", "648"],
 ["BUNIT", "String", "", "", "Primary Array"],      
-["INSTRUME", "String", "", "", "EPIC"],
+["INSTRUME", "String", "", "", "EPICA"],
 ["DATAMODE", "String", "", "", "IMAGING"],
 ["TELESCOP", "String", "", "", "XMM"],
 ["OBS_ID", "double", "", "", "0105070101"],
-["DATE-OBS", "String", "", "", "2002-07-05T08:33:02"],
+["DATE-OBS", "String", "", "", "2014-07-05T08:33:02"],
 ["DATE-END", "String", "", "", "2002-07-05T11:11:21"],
 ["OBJECT", "String", "", "", "1WGA J1220.3+0641"],
 ["OBSERVER", "String", "", "", "Prof Keith Mason"],

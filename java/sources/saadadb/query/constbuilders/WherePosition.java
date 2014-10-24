@@ -9,7 +9,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.products.inference.Coord;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
  
 /**
  * @author F.X. Pineau

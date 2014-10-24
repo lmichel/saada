@@ -49,7 +49,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 

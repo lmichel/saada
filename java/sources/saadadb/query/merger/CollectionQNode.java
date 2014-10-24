@@ -18,7 +18,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class CollectionQNode extends QNode {
 	private  MetaCollection metacoll= null;

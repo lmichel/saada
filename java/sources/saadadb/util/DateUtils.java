@@ -1,5 +1,6 @@
 package saadadb.util;
 
+import saadadb.vocabulary.RegExp;
 import cds.astro.Astrotime;
 
 /**
