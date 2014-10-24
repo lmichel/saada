@@ -454,7 +454,7 @@ public class AhValueFinder {
 		System.out.println("Expression for extractor: " + query);
 		AttributeHandlerExtractor ahExt = new AttributeHandlerExtractor(query, baseMap);
 		LinkedHashMap<String, AttributeHandler> ahMap = new LinkedHashMap<String, AttributeHandler>();
-		ahMap = ahExt.extractAhMap();
+	//TODO//EXTRACT AH MAP	ahMap = ahExt.extractAH();
 		return ahMap;
 	}
 

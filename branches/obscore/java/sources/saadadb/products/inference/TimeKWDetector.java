@@ -3,7 +3,6 @@ package saadadb.products.inference;
 import java.util.List;
 import java.util.Map;
 
-import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
