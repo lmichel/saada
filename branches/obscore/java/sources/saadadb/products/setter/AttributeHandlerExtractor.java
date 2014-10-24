@@ -1,7 +1,6 @@
 package saadadb.products.setter;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,32 +70,5 @@ public class AttributeHandlerExtractor {
 
 		return extractAttributes;
 	}
-	public LinkedHashMap<String,AttributeHandler> extractAhMap()
-	{
-		Pattern keywordPattern = Pattern.compile(RegExp.KEYWORD);
-		Matcher matcher= keywordPattern.matcher(expression);
-		LinkedHashMap<String, AttributeHandler> map = new LinkedHashMap<String, AttributeHandler>();
-		String extractedString = "";
 
-		//For each extract value of the expression we look if an AttributeHandler correspond
-		while(matcher.find())
-		{
-			extractedString = matcher.group(1).trim();
-			//System.out.println(extractedString);
-			for(Entry<String,AttributeHandler> e:orderedAttributeMap.entrySet())
-			{
-				if((extractedString.equals(e.getValue().getNameattr())) ||(extractedString.equals(e.getValue().getNameorg())))
-				{
-					//We modify the expression if an old value is in it
-					//if(extractedString.equals(e.getValue().getNameorg()))
-						//expression=expression.replace(e.getValue().getNameorg(), e.getValue().getNameattr());
-					map.put(e.getKey(), e.getValue());
-					
-				}
-
-			}
-		}
-
-		return map;
-	}
 }
