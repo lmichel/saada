@@ -7,20 +7,16 @@ import java.util.Map.Entry;
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
-import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaRelation;
 import saadadb.meta.UTypeHandler;
-import saadadb.products.inference.SpectralCoordinate;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.request.formator.QueryResultFormator;
-import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
-import saadadb.vocabulary.KeyMapper;
+import saadadb.vo.request.formator.process.AhValueFinder;
 import cds.savot.model.CoosysSet;
 import cds.savot.model.FieldRefSet;
 import cds.savot.model.FieldSet;
@@ -108,8 +104,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		 */
 		this.writeExtensions();
 		this.writer.writeDocumentEnd();
-		Messenger.printMsg(Messenger.TRACE, "Data written in  "
-				+ this.responseFilePath);
+		Messenger.printMsg(Messenger.TRACE, "Data written in  " + this.responseFilePath);
 	}
 
 	/**
@@ -203,14 +198,11 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @return
 	 * @throws Exception
 	 */
-	protected String lookForAMatch(SaadaInstance obj, SavotField sf)
-			throws Exception {
+	protected String lookForAMatch(SaadaInstance obj, SavotField sf) throws Exception {
 
 		String retour = "";
 		if (Messenger.debug_mode) {
-			Messenger.printMsg(Messenger.DEBUG,
-					"Trying to find " + sf.getName()
-							+ "\tIn the extended attributes");
+			Messenger.printMsg(Messenger.DEBUG, "Trying to find " + sf.getName() + "\tIn the extended attributes");
 		}
 		// Get an AttributeHandler which name match sf.getName() or null if
 		// there is none
@@ -228,12 +220,10 @@ public abstract class VotableFormator extends QueryResultFormator {
 					if (!hdlr.getUnit().equals(sf.getUnit())) {
 						// If the units don't match, print a debug message
 						if (Messenger.debug_mode) {
-							Messenger.printMsg(Messenger.DEBUG,
-									"Unit '" + hdlr.getUnit()
-											+ "' of extended attribute '"
-											+ hdlr.getNameattr()
-											+ "' doesn't match with unit '"
-											+ sf.getUnit() + "'");
+							Messenger.printMsg(
+									Messenger.DEBUG,
+									"Unit '" + hdlr.getUnit() + "' of extended attribute '" + hdlr.getNameattr()
+											+ "' doesn't match with unit '" + sf.getUnit() + "'");
 							// TODO ADD a unit conversion system
 						}
 					}
@@ -246,11 +236,31 @@ public abstract class VotableFormator extends QueryResultFormator {
 		return retour;
 	}
 
+	protected boolean checkIfUnitsMatch(UTypeHandler uh, AttributeHandler ah) {
+		String uHUnit = uh.getUnit().trim().toLowerCase();
+		String aHUnit = ah.getUnit().trim().toLowerCase();
+		if (!uHUnit.isEmpty() && !aHUnit.isEmpty()) {
+			if (!uHUnit.equals(aHUnit)) {
+				if (Messenger.debug_mode) {
+					Messenger.printMsg(Messenger.DEBUG, "Unit '" + aHUnit + "' of returned AttributeHandler '" + ah.getNameattr()
+							+ "' doesn't match with unit '" + uHUnit + "' of "+uh.getNickname());
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+	//	if (Messenger.debug_mode)
+		//	Messenger.printMsg(Messenger.DEBUG, "Either one Unit field of Utypehandler '" + uh.getNickname() + "' and AttributeHandler '"
+		//			+ ah.getNameorg() + "'  is empty");
+		return true;
+	}
+
 	/*
 	 * To be overridden by child
 	 */
 	/**
-	 * (To be overridden by child) Returns an AttributeHandler if a match is
+	 * Returns an AttributeHandler if a match is
 	 * found in its extended attributes or null if none
 	 * 
 	 * @param name
@@ -280,8 +290,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 		for (String group_name : groups) {
 			UTypeHandler[] uths = dataModel.getGroupUtypeHandlers(group_name);
 			for (UTypeHandler uth : uths) {
-				if (uth.getValue().length() == 0
-						|| "null".equalsIgnoreCase(uth.getValue())) {
+				// System.out.println("uth type: "+uth.getType());
+				if (uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue())) {
 					dataModelFieldSet.addItem(uth.getSavotField(cpt++));
 				}
 			}
@@ -299,16 +309,12 @@ public abstract class VotableFormator extends QueryResultFormator {
 			paramSet = new ParamSet();
 			UTypeHandler[] uths = dataModel.getGroupUtypeHandlers(group_name);
 			for (UTypeHandler uth : uths) {
-				if (uth.getValue().length() == 0
-						|| "null".equalsIgnoreCase(uth.getValue())) {
+				if (uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue())) {
 					for (Object f : dataModelFieldSet.getItems()) {
 						sf = (SavotField) f;
-						if (("".equals(uth.getUtype()) || sf.getUtype().equals(
-								uth.getUtype()))
-								&& ("".equals(uth.getUcd()) || sf.getUcd()
-										.equals(uth.getUcd()))
-								&& ("".equals(uth.getNickname()) || sf
-										.getName().equals(uth.getNickname()))) {
+						if (("".equals(uth.getUtype()) || sf.getUtype().equals(uth.getUtype()))
+								&& ("".equals(uth.getUcd()) || sf.getUcd().equals(uth.getUcd()))
+								&& ("".equals(uth.getNickname()) || sf.getName().equals(uth.getNickname()))) {
 							SavotFieldRef fieldRef = new SavotFieldRef();
 							fieldRef.setRef(sf.getRef());
 							fieldRefSet.addItem(fieldRef);
@@ -316,26 +322,22 @@ public abstract class VotableFormator extends QueryResultFormator {
 					}
 				} else if (uth.getUtype().equals("Dataset.Length")) {
 					if (oids != null) {
-						paramSet.addItem(uth.getSavotParam(
-								Integer.toString(oids.size()), ""));
+						paramSet.addItem(uth.getSavotParam(Integer.toString(oids.size()), ""));
 					}
 				} else if (uth.getUtype().equals("Dataset.Size") /*
-																 * not a param:
-																 * defined par
-																 * file ||
-																 * uth.getUtype
-																 * ().equals(
-																 * "Access.Size"
-																 * )
-																 */) {
-					paramSet.addItem(uth.getSavotParam(
-							Integer.toString(oids.size()), ""));
+																	* not a param:
+																	* defined par
+																	* file ||
+																	* uth.getUtype
+																	* ().equals(
+																	* "Access.Size"
+																	* )
+																	*/) {
+					paramSet.addItem(uth.getSavotParam(Integer.toString(oids.size()), ""));
 				} else if (uth.getUtype().equals("CoordSys.SpaceFrame.Name")) {
-					paramSet.addItem(uth.getSavotParam(Database.getCoord_sys(),
-							""));
+					paramSet.addItem(uth.getSavotParam(Database.getCoord_sys(), ""));
 				} else if (uth.getUtype().equals("CoordSys.SpaceFrame.Equinox")) {
-					paramSet.addItem(uth.getSavotParam(
-							Database.getCoord_equi(), ""));
+					paramSet.addItem(uth.getSavotParam(Database.getCoord_equi(), ""));
 				} else {
 					paramSet.addItem(uth.getSavotParam(uth.getValue(), ""));
 				}
@@ -366,10 +368,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 		votable.setVersion("1.1");
 		writer.writeDocumentHead(votable);
 
-		String description = "<![CDATA[\nSaadaDB:\n" + "   name : "
-				+ Database.getDbname() + "\n" + "   url  : "
-				+ Database.getUrl_root() + "\n" + "   date : " + (new Date())
-				+ "\n";
+		String description = "<![CDATA[\nSaadaDB:\n" + "   name : " + Database.getDbname() + "\n" + "   url  : " + Database.getUrl_root()
+				+ "\n" + "   date : " + (new Date()) + "\n";
 
 		description += "Query parameters:\n";
 		for (Entry<String, String> s : this.protocolParams.entrySet()) {
@@ -421,8 +421,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				savotTR.setTDs(tdSet);
 				writer.writeTR(savotTR);
 				if (this.limit > 0 && i >= this.limit) {
-					Messenger.printMsg(Messenger.TRACE, "result truncated to "
-							+ i);
+					Messenger.printMsg(Messenger.TRACE, "result truncated to " + i);
 					break;
 				}
 			}
@@ -437,36 +436,32 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param obj
 	 * @throws Exception
 	 */
+	// original
 	// abstract protected void writeRowData(SaadaInstance obj) throws Exception;
 	protected void writeRowData(SaadaInstance obj) throws Exception {
 
-		KeyMapper mapper = new KeyMapper(obj);
-		AttributeHandler tmp = new AttributeHandler();
+		AttributeHandler aHResult = new AttributeHandler();
+		UTypeHandler uhd;
+		AhValueFinder valueFinder = new AhValueFinder(obj);
+
 		for (Object f : dataModelFieldSet.getItems()) {
 			SavotField sf = (SavotField) f;
-			String ucd = sf.getUcd();
-			String utype = sf.getUtype();
-			String name = sf.getName();
-			//String id = sf.getId();
+			uhd = this.dataModel.getUTypeHandler(sf.getName());
+
 			String val = "";
 			boolean cdata = false;
-			System.out.println("Utype " + utype);
-			tmp = mapper.search(ucd, utype, name);
-
-			if (tmp != null) {
-				val = tmp.getValue();
-				System.out.println("Value: "+val);
-				//Use sf get get the type of the value as the KeyMapper and ColumnExpressionSetter classes don't provide it
-				//TODO provide Type Information
-				if (sf.getType().equalsIgnoreCase("string")
-						|| sf.getType().equalsIgnoreCase("char")) {
-					cdata =true;	
-				}
+			valueFinder.setUtypeHandler(uhd);
+			aHResult = valueFinder.compute();
+			val = aHResult.getValue();
+			// Tests if there is a need for CDATA encapsulation
+			boolean unitOk;
+			//Check if the units are matching
+			unitOk = checkIfUnitsMatch(uhd, aHResult);
+			//If unitOk = false, should proceed to a conversion here
+			System.out.println("=====================================================================Final VALUE: " + aHResult.getValue());
+			if (uhd.getType().equalsIgnoreCase("string") || uhd.getType().equalsIgnoreCase("char") && !val.isEmpty()) {
+				cdata = true;
 			}
-			else {
-				val = lookForAMatch(obj, sf);
-			}
-			
 			if (cdata) {
 				addCDataTD(val);
 			} else {
@@ -477,7 +472,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 
 	/**
 	 * *************************************************************************
-	 * ****************************** Method managing housekeeping data
+	 * ****************************** Method managing housekeeping data ********
 	 */
 
 	/**
@@ -514,8 +509,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param oid
 	 * @throws SaadaException
 	 */
-	protected void writeHouskeepingData(SaadaInstance obj)
-			throws SaadaException {
+	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
 		addTD(Long.toString(obj.oidsaada));
 		addCDataTD(obj.obs_id.replaceAll("#", ""));
 	}
@@ -526,8 +520,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param writer
 	 * @param category
 	 */
-	protected void writeSaadaLinksMetaReferences(String key_field,
-			FieldSet fieldset) {
+	protected void writeSaadaLinksMetaReferences(String key_field, FieldSet fieldset) {
 		SavotField field = new SavotField();
 		// field.setId("LinktoPixels");
 		// field.setDataType("char");
@@ -547,8 +540,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 
 		SavotLink link = new SavotLink();
 		LinkSet links = new LinkSet();
-		link.setHref(Database.getUrl_root() + "/getinstance?oid=${" + key_field
-				+ "}");
+		link.setHref(Database.getUrl_root() + "/getinstance?oid=${" + key_field + "}");
 		links.addItem(link);
 		field = new SavotField();
 		field.setName("Saada Anchor");
@@ -594,8 +586,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 					writer.writeField(fieldSet);
 					GroupSet gs = new GroupSet();
 					SavotGroup sg = new SavotGroup();
-					sg.setDescription("Association through the Saada relationship: "
-							+ relation);
+					sg.setDescription("Association through the Saada relationship: " + relation);
 					/*
 					 * ref to the fieldField: Unique ID identifying the
 					 * association instance
@@ -611,8 +602,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 					ParamSet ps = new ParamSet();
 					SavotParam sp = new SavotParam();
 					sp.setUtype("Association.Type");
-					sp.setValue(Category.explain(Database.getCachemeta()
-							.getRelation(relation).getSecondary_category()));
+					sp.setValue(Category.explain(Database.getCachemeta().getRelation(relation).getSecondary_category()));
 					ps.addItem(sp);
 					sg.setParams(ps);
 					/*
@@ -632,9 +622,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				Messenger.printStackTrace(e);
 				QueryException.throwNewException(
 						SaadaException.METADATA_ERROR,
-						"Getting relations for "
-								+ this.getProtocolParam("collection") + "."
-								+ this.getProtocolParam("collection") + "  "
+						"Getting relations for " + this.getProtocolParam("collection") + "." + this.getProtocolParam("collection") + "  "
 								+ e.getMessage());
 			}
 		}
@@ -672,10 +660,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 					SavotTable ext_table = new SavotTable();
 					ext_table.setName(relation);
 					ext_table.setId(relation);
-					ext_table.setDescription("Saada counterparts of "
-							+ this.protocolParams.get("collection") + "."
-							+ this.protocolParams.get("category")
-							+ " in relation " + relation);
+					ext_table.setDescription("Saada counterparts of " + this.protocolParams.get("collection") + "."
+							+ this.protocolParams.get("category") + " in relation " + relation);
 					writer.writeTableBegin(ext_table);
 					this.writeExtMetaData(relation);
 					this.writeExtData(relation);
@@ -686,10 +672,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 				Messenger.printStackTrace(e);
 				QueryException.throwNewException(
 						SaadaException.METADATA_ERROR,
-						"Getting relation list for "
-								+ this.getProtocolParam("collection") + "."
-								+ this.getProtocolParam("collection") + "  "
-								+ e.getMessage());
+						"Getting relation list for " + this.getProtocolParam("collection") + "." + this.getProtocolParam("collection")
+								+ "  " + e.getMessage());
 			}
 		}
 	}
@@ -699,8 +683,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param category
 	 * @throws SaadaException
 	 */
-	protected void writeExtensions(SaadaQLResultSet rs, int category)
-			throws SaadaException {
+	protected void writeExtensions(SaadaQLResultSet rs, int category) throws SaadaException {
 		if (this.hasExtensions == true) {
 			try {
 				SavotResource res = new SavotResource();
@@ -711,10 +694,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 					SavotTable ext_table = new SavotTable();
 					ext_table.setName(relation);
 					ext_table.setId(relation);
-					ext_table.setDescription("Saada counterparts of "
-							+ this.getProtocolParam("collection") + "."
-							+ this.getProtocolParam("collection")
-							+ " in relation " + relation);
+					ext_table.setDescription("Saada counterparts of " + this.getProtocolParam("collection") + "."
+							+ this.getProtocolParam("collection") + " in relation " + relation);
 					writer.writeTableBegin(ext_table);
 					this.writeExtMetaData(relation);
 					this.writeExtData(relation, rs);
@@ -725,10 +706,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 				Messenger.printStackTrace(e);
 				QueryException.throwNewException(
 						SaadaException.METADATA_ERROR,
-						"Getting relation list for "
-								+ this.getProtocolParam("collection") + "."
-								+ this.getProtocolParam("collection") + "  "
-								+ e.getMessage());
+						"Getting relation list for " + this.getProtocolParam("collection") + "." + this.getProtocolParam("collection")
+								+ "  " + e.getMessage());
 			}
 		}
 	}
@@ -740,12 +719,10 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @throws SaadaException
 	 * @throws IOException
 	 */
-	protected void writeExtMetaData(String relation) throws SaadaException,
-			IOException {
+	protected void writeExtMetaData(String relation) throws SaadaException, IOException {
 		MetaRelation mr = Database.getCachemeta().getRelation(relation);
 		if (mr == null) {
-			Messenger.printMsg(Messenger.ERROR,
-					"Can't found meta data for relation " + relation);
+			Messenger.printMsg(Messenger.ERROR, "Can't found meta data for relation " + relation);
 		} else {
 			FieldSet fieldSet = new FieldSet();
 			SavotField field;
@@ -779,8 +756,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 			 */
 			if (mr.getSecondary_category() != Category.ENTRY) {
 				writeSaadaLinksMetaReferences(relation + "_OID", fieldSet);
-				if (mr.getSecondary_category() == Category.SPECTRUM
-						|| mr.getSecondary_category() == Category.IMAGE) {
+				if (mr.getSecondary_category() == Category.SPECTRUM || mr.getSecondary_category() == Category.IMAGE) {
 
 					field = new SavotField();
 					field.setName("Char_SpaCovLocVal");
@@ -820,8 +796,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @return
 	 * @throws SaadaException
 	 */
-	private GroupSet writeSaadaReferencesGroup(MetaRelation relation)
-			throws SaadaException {
+	private GroupSet writeSaadaReferencesGroup(MetaRelation relation) throws SaadaException {
 		GroupSet gs = new GroupSet();
 		ParamSet ps = new ParamSet();
 		SavotGroup sg = new SavotGroup();
@@ -862,8 +837,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		writer.writeDataBegin();
 		writer.writeTableDataBegin();
 		for (long oid : oids) {
-			SaadaInstance obj = (SaadaInstance) Database.getCache().getObject(
-					oid);
+			SaadaInstance obj = (SaadaInstance) Database.getCache().getObject(oid);
 			SaadaLink[] links = obj.getStartingLinks(relation);
 			if (links.length == 0) {
 				continue;
@@ -871,8 +845,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 			int sec_cat = mr.getSecondary_category();
 
 			for (int k = 0; k < links.length; k++) {
-				SaadaInstance counterpart = Database.getCache().getObject(
-						links[k].getEndindOID());
+				SaadaInstance counterpart = Database.getCache().getObject(links[k].getEndindOID());
 				SavotTR savotTR = new SavotTR();
 				tdSet = new TDSet();
 				// Access.format
@@ -883,8 +856,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				}
 				// Access.reference
 				if (sec_cat == Category.ENTRY) {
-					addCDataTD(Database.getUrl_root() + "/conesearch?relation="
-							+ relation + "&primoid=" + oid);
+					addCDataTD(Database.getUrl_root() + "/conesearch?relation=" + relation + "&primoid=" + oid);
 				} else {
 					addCDataTD(counterpart.getDownloadURL(true));
 				}
@@ -911,8 +883,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				// Links for Aladin
 				addTD("SaadaDB Anchor");
 				// qualifiers
-				if (mr.getSecondary_category() == Category.ENTRY
-						|| mr.getSecondary_category() == Category.SPECTRUM
+				if (mr.getSecondary_category() == Category.ENTRY || mr.getSecondary_category() == Category.SPECTRUM
 						|| mr.getSecondary_category() == Category.IMAGE) {
 					addTD(obj.s_ra + " " + obj.s_dec);
 				}
@@ -933,8 +904,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @param rs
 	 * @throws Exception
 	 */
-	protected void writeExtData(String relation, SaadaQLResultSet rs)
-			throws Exception {
+	protected void writeExtData(String relation, SaadaQLResultSet rs) throws Exception {
 		MetaRelation mr = Database.getCachemeta().getRelation(relation);
 		String[] qn = mr.getQualifier_names().toArray(new String[0]);
 
@@ -942,8 +912,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		writer.writeTableDataBegin();
 		while (rs.next()) {
 			long oid = rs.getOid();
-			SaadaInstance obj = (SaadaInstance) Database.getCache().getObject(
-					oid);
+			SaadaInstance obj = (SaadaInstance) Database.getCache().getObject(oid);
 			SaadaLink[] links = obj.getStartingLinks(relation);
 			if (links.length == 0) {
 				continue;
@@ -951,8 +920,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 			int sec_cat = mr.getSecondary_category();
 
 			for (int k = 0; k < links.length; k++) {
-				SaadaInstance counterpart = Database.getCache().getObject(
-						links[k].getEndindOID());
+				SaadaInstance counterpart = Database.getCache().getObject(links[k].getEndindOID());
 				SavotTR savotTR = new SavotTR();
 				tdSet = new TDSet();
 				// Access.format
@@ -963,8 +931,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				}
 				// Access.reference
 				if (sec_cat == Category.ENTRY) {
-					addCDataTD(Database.getUrl_root() + "/conesearch?relation="
-							+ relation + "&primoid=" + oid);
+					addCDataTD(Database.getUrl_root() + "/conesearch?relation=" + relation + "&primoid=" + oid);
 				} else {
 					addCDataTD(counterpart.getDownloadURL(true));
 				}
@@ -991,8 +958,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				// Links for Aladin
 				addTD("SaadaDB Anchor");
 				// qualifiers
-				if (mr.getSecondary_category() == Category.ENTRY
-						|| mr.getSecondary_category() == Category.SPECTRUM
+				if (mr.getSecondary_category() == Category.ENTRY || mr.getSecondary_category() == Category.SPECTRUM
 						|| mr.getSecondary_category() == Category.IMAGE) {
 					addTD(obj.s_ra + " " + obj.s_dec);
 				}
@@ -1044,8 +1010,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 	protected void addValTD(Object val) {
 		if (val != null) {
 			String sval = val.toString();
-			if (!(sval.equals("Infinity") || sval.equals("NaN") || sval
-					.equals("2147483647"))) {
+			if (!(sval.equals("Infinity") || sval.equals("NaN") || sval.equals("2147483647"))) {
 				addCDataTD(sval.replaceAll("#", ""));
 			} else {
 				addTD("");
@@ -1075,11 +1040,9 @@ public abstract class VotableFormator extends QueryResultFormator {
 
 			boolean controlCharacter = ch < 32;
 			boolean unicodeButNotAscii = ch > 126;
-			boolean characterWithSpecialMeaningInXML = ch == '"' || ch == '<'
-					|| ch == '&' || ch == '>';
+			boolean characterWithSpecialMeaningInXML = ch == '"' || ch == '<' || ch == '&' || ch == '>';
 
-			if (characterWithSpecialMeaningInXML || unicodeButNotAscii
-					|| controlCharacter) {
+			if (characterWithSpecialMeaningInXML || unicodeButNotAscii || controlCharacter) {
 				stringBuffer.append("&#" + (int) ch + ";");
 				anyCharactersProtected = true;
 			} else {

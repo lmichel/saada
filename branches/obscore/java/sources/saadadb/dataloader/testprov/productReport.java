@@ -18,7 +18,7 @@ import saadadb.products.TableBuilder;
 import saadadb.products.VOTableDataFile;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class productReport {
 

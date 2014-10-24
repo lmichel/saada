@@ -14,8 +14,8 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.input.NodeNameTextField;
 import saadadb.admintool.panels.editors.MappingKWPanel;
 import saadadb.admintool.utils.HelpDesk;
-import saadadb.util.DefineType;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.DefineType;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
 import saadadb.vocabulary.enums.MappingMode;
 

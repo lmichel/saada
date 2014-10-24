@@ -19,7 +19,7 @@ import saadadb.products.DataFile;
 import saadadb.products.FitsDataFile;
 import saadadb.products.VOTableDataFile;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
 import saadadb.dataloader.mapping.ProductMapping;
 

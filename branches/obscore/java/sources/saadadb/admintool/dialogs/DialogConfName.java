@@ -14,7 +14,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 public class DialogConfName extends JDialog implements ActionListener, PropertyChangeListener {

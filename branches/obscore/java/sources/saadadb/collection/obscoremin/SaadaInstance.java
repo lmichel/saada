@@ -54,11 +54,11 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.ChangeType;
 import saadadb.util.DateUtils;
-import saadadb.util.DefineType;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.DefineType;
+import saadadb.vocabulary.RegExp;
 
 /**
  * @author michel
@@ -391,7 +391,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	//TODO Complete with description
-	public AttributeHandler FillAttrWithValue(AttributeHandler handlerToFill) throws Exception {
+	public AttributeHandler fillAttrWithValue(AttributeHandler handlerToFill) throws Exception {
 		AttributeHandler attr = handlerToFill;
 		Object val = this.getFieldValue(attr.getNameattr());
 		if(val == null) {
@@ -405,7 +405,7 @@ public abstract class SaadaInstance implements DMInterface {
 	
 	
 	@SuppressWarnings("rawtypes")
-	public LinkedHashMap<String, AttributeHandler> FillMapAttrWithValues(LinkedHashMap<String, AttributeHandler> toFill) throws Exception{
+	public LinkedHashMap<String, AttributeHandler> fillMapAttrWithValues(LinkedHashMap<String, AttributeHandler> toFill) throws Exception{
 	/*
 	 * For each AttributeHandler contained in toFill, the method FillAttrWithValue is called
 	 * A new map similar to toFill (same Keys)is created and filled with the AttributeHandlers returned by FillAttrWithValue 
@@ -420,7 +420,7 @@ public abstract class SaadaInstance implements DMInterface {
 		while(i.hasNext()) {
 			key = (String)i.next();
 			//Fill the value of the AttributeHandler
-			tmp =  FillAttrWithValue(toFill.get(key)) ;
+			tmp =  fillAttrWithValue(toFill.get(key)) ;
 			//add the new attributehandler to the map
 			attrMap.put(key, tmp);
 		}

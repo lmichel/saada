@@ -171,8 +171,8 @@
     <servlet-class>ajaxservlet.Sia2Service</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>SiaService</servlet-name>
-    <url-pattern>/siaservice</url-pattern>
+    <servlet-name>Sia2Service</servlet-name>
+    <url-pattern>/sia2service</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>

@@ -7,8 +7,8 @@ import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 
 public class TimeKWDetector extends KWDetector {
 	private double timeref = SaadaConstant.DOUBLE;

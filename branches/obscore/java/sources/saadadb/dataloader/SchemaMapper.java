@@ -26,7 +26,7 @@ import saadadb.sqltable.Table_Saada_Class;
 import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
 
 

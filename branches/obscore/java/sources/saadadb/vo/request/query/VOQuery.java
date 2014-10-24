@@ -125,5 +125,14 @@ public abstract class VOQuery {
 	 */
 	abstract public void runQuery() throws Exception;
 
-
+	/**
+	 * Encapsulates the value with ( ) to avoid weird things with AND/OR
+	 * Statements in queries
+	 * 
+	 * @param value
+	 * @return
+	 */
+	protected String encapsulateQueryPart(String value) {
+		return "(" + value + ")";
+	}
 }

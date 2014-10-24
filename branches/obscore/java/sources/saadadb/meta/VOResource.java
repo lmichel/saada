@@ -121,7 +121,7 @@ public class VOResource {
 			}
 			TDSet tds = currentTR.getTDSet();
 			List<SavotTD> tdv = tds.getItems();
-			if( tdv.size() != 11 ) {
+			if( tdv.size() != 12 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return;
 			}

@@ -1,7 +1,7 @@
 package saadadb.prdconfiguration;
 
-import saadadb.util.DefineType;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.DefineType;
 import saadadb.vocabulary.enums.PriorityMode;
 
 /**

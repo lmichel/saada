@@ -13,7 +13,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.constbuilders.SaadaQLConstraint;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 public abstract class QNode {

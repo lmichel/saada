@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * Extract String functions from an expression

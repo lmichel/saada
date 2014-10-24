@@ -23,7 +23,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class ThreadMangeExtAttr extends CmdThread {
 	protected String command;

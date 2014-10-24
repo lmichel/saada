@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * Tranforms a pseudotable VO in a list of collection and a list of classes

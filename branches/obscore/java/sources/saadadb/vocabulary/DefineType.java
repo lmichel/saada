@@ -1,4 +1,4 @@
-package saadadb.util;  
+package saadadb.vocabulary;  
 
 import java.io.File;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
+import saadadb.util.Messenger;
 
 /**This class defines all standard integers allowing the use of a switch/case.
  * Attention: All methods are statics, and this class must be initialized before every use (methods "initTypeMapping" and "initFieldsNames").
@@ -395,6 +396,7 @@ public class DefineType {
 			coll_sdm_utypes.put("o_calib_status","Char.ObservableAxis.calibStatus");
 			coll_sdm_utypes.put("o_stat_error","Char.ObservableAxis.Accuracy.StatError.refval.value");
 			coll_sdm_utypes.put("proposal_id","Provenance.Proposal.identifier");
+			coll_sdm_utypes.put("instrument_name", "Provenance.ObsConfig.instrument.name");
 			
 
 			

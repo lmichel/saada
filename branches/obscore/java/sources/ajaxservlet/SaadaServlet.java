@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import saadadb.database.Database;
 import saadadb.database.spooler.Spooler;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import ajaxservlet.formator.DefaultPreviews;
 import ajaxservlet.json.JsonUtils;
 

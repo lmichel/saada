@@ -19,7 +19,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.DataMapLevel;
 
 

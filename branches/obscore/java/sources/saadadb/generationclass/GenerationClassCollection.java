@@ -17,8 +17,8 @@ import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Repository;
 import saadadb.database.SaadaDBConnector;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.DefineType;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.DefineType;
 
 /** 
  * @author michel

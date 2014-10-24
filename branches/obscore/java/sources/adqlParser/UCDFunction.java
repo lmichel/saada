@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import saadadb.exceptions.QueryException;
 import saadadb.query.parser.UnitHandler;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import adqlParser.parser.ParseException;
 import adqlParser.parser.SQLTranslator;
 import adqlParser.query.ADQLColumn;

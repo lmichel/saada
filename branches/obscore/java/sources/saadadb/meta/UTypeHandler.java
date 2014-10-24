@@ -26,6 +26,7 @@ public class UTypeHandler {
 	private int arraysize;
 	private String comment;
 	private boolean hidden=false;
+	private String expression;
 
 	/** * @version $Id$
 
@@ -42,6 +43,7 @@ public class UTypeHandler {
 		this.arraysize = -1;
 		this.value = "";
 		this.unit = "";
+		this.expression="";
 	}
 
 	/**
@@ -64,7 +66,9 @@ public class UTypeHandler {
 		this.value     = "";
 		this.unit      = ah.getUnit();
 		this.comment   = ah.getComment();
-		this.requ_level  = MANDATORY; 
+		this.requ_level  = MANDATORY;
+		//TODO UtypeHandler(AttributeHandler) -> this.expression=""??
+		this.expression="";
 	}
 
 	/**
@@ -87,6 +91,7 @@ public class UTypeHandler {
 		case 2: this.requ_level  = RECOMMENDED; break;
 		default: this.requ_level = OPTIONAL; break;
 		}
+		this.expression= std.get(11).getContent();
 	}
 
 	/**
@@ -118,8 +123,9 @@ public class UTypeHandler {
 	 * @param type
 	 * @param arraysize
 	 * @param comment
+	 * @param expression
 	 */
-	public UTypeHandler(String nickname, String utype, String ucd, String requ_level, String type, int arraysize, String unit, String comment){
+	public UTypeHandler(String nickname, String utype, String ucd, String requ_level, String type, int arraysize, String unit, String comment, String expression){
 		this.utype = utype;
 		this.ucd = ucd;
 		this.setReqLevel(requ_level);
@@ -128,6 +134,7 @@ public class UTypeHandler {
 		this.unit = unit;
 		this.comment = comment;
 		this.encodeName(nickname);
+		this.expression =expression;
 	}
 
 	/**
@@ -139,8 +146,9 @@ public class UTypeHandler {
 	 * @param hidden
 	 * @param value
 	 * @param comment
+	 * @param expression
 	 */
-	public UTypeHandler(String nickname, String utype, String ucd, String type, int arraysize, boolean hidden, String value, String comment){
+	public UTypeHandler(String nickname, String utype, String ucd, String type, int arraysize, boolean hidden, String value, String comment,String expression){
 		this.utype = utype;
 		this.ucd = ucd;
 		this.value = value;
@@ -149,7 +157,10 @@ public class UTypeHandler {
 		this.comment = comment;
 		this.hidden = hidden;
 		this.encodeName(nickname);
+		this.expression =expression;
 	}
+
+	
 
 	/**
 	 * Parameters in the same order than Jaiwon XLS sheet
@@ -275,6 +286,8 @@ public class UTypeHandler {
 		/*
 		 * Patch before the DM can handle units
 		 */
+		//TODO TO REMOVE
+		/*
 		if( "Char.TimeAxis.Coverage.Bounds.Extent".equals(this.utype)) {
 			field.setUnit("s");
 		}
@@ -283,7 +296,7 @@ public class UTypeHandler {
 		}
 		else if( "Access.Size".equals(this.utype)) {
 			field.setUnit("kb");
-		}
+		}*/
 		return field;
 	}
 	
@@ -319,7 +332,16 @@ public class UTypeHandler {
 	public int getArraysize() {
 		return arraysize;
 	}
+	public String getExpression() {
+		return expression;
+	}
 
+	/**
+	 * @param expression
+	 */
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
 	/**
 	 * @return Returns the comment.
 	 */
@@ -463,7 +485,8 @@ public class UTypeHandler {
 		+ "\nunit: " + type
 		+ "\narraysize: " + arraysize
 		+ "\ncomment: " + comment
-		+ "\nhidden: " + hidden;
+		+ "\nhidden: " + hidden
+		+ "\nexpression: "+expression;
 	}
 
 }

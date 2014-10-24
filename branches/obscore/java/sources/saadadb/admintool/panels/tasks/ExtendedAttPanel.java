@@ -39,7 +39,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 
 @SuppressWarnings("serial")

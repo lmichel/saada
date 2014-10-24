@@ -15,8 +15,8 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.PriorityMode;
 
 /**

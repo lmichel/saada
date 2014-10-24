@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.MappingMode;
 
 /**

@@ -26,14 +26,14 @@ import cds.savot.model.SavotValues;
  * @author laurent
  * @version 07/2011
  */
-public class SiapVotableFormator extends VotableFormator {
+public class Siap2VotableFormator extends VotableFormator {
 
 
-	public SiapVotableFormator() throws QueryException {
+	public Siap2VotableFormator() throws QueryException {
 		setDataModel("SIA");
 		limit = 100;
 		protocolN = "SIAP";
-		protocolV="1.0";
+		protocolV="2.0";
 		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV, this.protocolN));
 	}
 	/* (non-Javadoc)

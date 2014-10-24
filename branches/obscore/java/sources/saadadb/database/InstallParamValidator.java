@@ -5,7 +5,7 @@ import java.io.File;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * @author michel

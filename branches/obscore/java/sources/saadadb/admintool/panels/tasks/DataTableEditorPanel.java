@@ -36,7 +36,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 public class DataTableEditorPanel extends TaskPanel
 {

@@ -1,6 +1,30 @@
-/**
- * 
- */
+ /******************************************************************************
+  *  This file is part of SAADA 1.7.0
+  *
+  *  SAADA is free software; you can redistribute it and/or modify
+  *   it under the terms of the GNU General Public License as published by
+  *  the Free Software Foundation; either version 2 of the License, or
+  *  (at your option) any later version.
+  *
+  *  SAADA is distributed in the hope that it will be useful,
+  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *  GNU General Public License for more details.
+  *
+  *  You should have received a copy of the GNU General Public License
+  *  along with SAADA; if not, write to the Free Software
+  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  *  
+  *  (c) Copyright 2003, 2013 L. MICHEL, H. NGUYEN NGOC, F.X. PINEEAU 
+  *                           CNES/Universite Louis Pasteur/CNRS
+  * 
+  *  FITSWCS  (c) Copyright 1996 Raymond L. Plante Mark Calabretta Jef Poskanser
+  *           (c) Copyright 1991 1996 Free Software Foundation Inc.       
+  *  Sezam    (c) Copyright 2002-2003 Andre Schaaff Universite Louis Pasteur / CNRS
+  *  FITS tam (c) Copyright 1997-2008: Thomas McGlynn 1997-2007.
+  *  Axis     (c) Copyright 2001,2004 The Apache Software Foundation.
+  *  CDS      (c) Copyright 1999-2007 - Universite Louis Pasteur / CNRS
+  ******************************************************************************/
 package saadadb.vo.tap;
 
 import java.sql.ResultSet;
@@ -15,6 +39,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -366,37 +391,51 @@ public class TapServiceManager extends EntityManager {
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 				+ "     xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">\n");
+              /*
+                 * Loop on schemas
+                 */
+                SQLQuery qschema = new SQLQuery();
+                ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
+                ArrayList<String> snl = new ArrayList<String>();
+                ArrayList<String> sdl = new ArrayList<String>();
+                while(rs_schema.next()) {
+                        snl.add(rs_schema.getString(1));
+                        sdl.add(rs_schema.getString(2));
+                }
+                qschema.close();
+                for( int i=0 ; i<snl.size() ; i++ ) {
+                        String schema_name = snl.get(i);
+                        String schema_desc = sdl.get(i);
+                        retour.append("<schema>\n");
+                        retour.append("    <name>" + schema_name + "</name>\n");
+                        if( schema_desc != null && schema_desc.length() > 0)
+                                retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
+                        /*
+                         * Loop on tables
+                         */
+                        SQLQuery qtables= new SQLQuery();
+                        ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
+                                        + " WHERE schema_name = '" + schema_name + "'");
+                        ArrayList<String> tnl = new ArrayList<String>();
+                        ArrayList<String> tnd = new ArrayList<String>();
+                        ArrayList<String> tnt = new ArrayList<String>();
+                        while(rs_tables.next()) {
+                                tnl.add(rs_tables.getString(1));
+                                tnd.add(rs_tables.getString(2));
+                                tnt.add(rs_tables.getString(3));
+                        }
+                        qtables.close();
+                        for( int j=0 ; j<tnt.size() ; j++ ) {
+                                String table_name = tnl.get(j);
+                                String table_desc = tnd.get(j);
+                                String table_type = tnt.get(j);
+                                retour .append(getXMLTable(table_name, table_desc, table_type));
+                        }
+                        retour.append("</schema>\n");
+                }
 
-		/*
-		 * Loop on schemas
-		 */
-		SQLQuery qschema = new SQLQuery();
-		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
-		while(rs_schema.next()) {
-			String schema_name = rs_schema.getString(1);
-			String schema_desc = rs_schema.getString(2);
-			retour.append("<schema>\n");
-			retour.append("    <name>" + schema_name + "</name>\n");
-			if( schema_desc != null && schema_desc.length() > 0)			
-				retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
-			/*
-			 * Loop on tables
-			 */
-			SQLQuery qtables= new SQLQuery();
-			ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName 
-					+ " WHERE schema_name = '" + schema_name + "'");
-			while(rs_tables.next()) {
-				String table_name = rs_tables.getString(1);
-				String table_desc = rs_tables.getString(2);
-				String table_type = rs_tables.getString(3);
-				retour .append(getXMLTable(table_name, table_desc, table_type));
-			}
-			qtables.close();
-			retour.append("</schema>\n");
-		}
-		retour.append("</vosi:tableset>\n");
-		qschema.close();
-		return retour;
+                retour.append("</vosi:tableset>\n");
+                return retour;
 	}
 
 	/**

@@ -17,7 +17,7 @@ import saadadb.query.region.triangule.Point;
 import saadadb.query.region.triangule.Polygone;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
-import saadadb.util.RegExp;
+import saadadb.vocabulary.RegExp;
 
 /**
  * @author michel
