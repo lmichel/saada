@@ -3,7 +3,7 @@
  xmlns="http://www.ivoa.net/xml/VOTable/v1.2">
 <!--
  !  VOTable written by STIL version 3.0-6 (uk.ac.starlink.votable.VOTableWriter)
- !  at 2014-09-10T09:53:21
+ !  at 2014-09-25T13:11:18
  !-->
 <RESOURCE>
 <TABLE name="Results" nrows="26">
@@ -17,26 +17,30 @@
 <FIELD datatype="int" name="arraysize">
 <VALUES null='-2147483648'/>
 </FIELD>
+<FIELD arraysize="*" datatype="char" name="unit"/>
 <FIELD datatype="boolean" name="hidden"/>
 <FIELD arraysize="*" datatype="char" name="default_value"/>
 <FIELD arraysize="*" datatype="char" name="desciption"/>
 <FIELD arraysize="*" datatype="char" name="requ_level">
 <DESCRIPTION>MAN=1 REC=2 OPT=3</DESCRIPTION>
 </FIELD>
+<FIELD arraysize="*" datatype="char" name="expression"/>
 <DATA>
 <TABLEDATA>
-  <TR>
+<!-- Access --> 
+ <TR>
     <TD>Access</TD>
     <TD>Format</TD>
     <TD>VOX:Image_Format</TD>
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>File content format</TD>
     <TD>3</TD>
+    <TD>access_format</TD>
   </TR>
   <TR>
     <TD>Access</TD>
@@ -45,245 +49,100 @@
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>URL used to access (download) dataset</TD>
     <TD>3</TD>
+<TD>access_url</TD>
   </TR>
-  <TR>
-    <TD>Dataset</TD>
-    <TD>Dataset_Dat</TD>
-    <TD></TD>
-    <TD>Dataset.DataModel</TD>
-    <TD>char</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD>SIAP 1.0</TD>
-    <TD></TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
+   <TR>
     <TD>Access</TD>
     <TD>Access_TTL</TD>
     <TD>VOX:Image_AccessRefTTL</TD>
     <TD></TD>
     <TD>int</TD>
     <TD>1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD>86400</TD>
     <TD>Minimum time to live in seconds of the access reference </TD>
-    <TD>3</TD>
+    <TD>1</TD>
+<TD></TD>
   </TR>
-  <TR>
+ <TR>
+    <TD>Access</TD>
+    <TD>Image_Size</TD>
+    <TD>VOX:Image_FileSize</TD>
+    <TD></TD>
+    <TD>int</TD>
+    <TD>1</TD>
+    <TD>kbytes</TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Size of the image in kilo bytes</TD>
+    <TD>2</TD>
+<TD>access_estsize</TD>
+  </TR>
+<!-- Dataset -->
+ <TR>
+    <TD>Dataset</TD>
+    <TD>Dataset_Dat</TD>
+    <TD></TD>
+    <TD>Dataset.DataModel</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD>SIAP 1.0</TD>
+    <TD></TD>
+    <TD>3</TD>
+<TD></TD>
+  </TR>
+<!-- Observation -->
+   <TR>
     <TD>Char.Observation</TD>
     <TD>Instrument_ID</TD>
     <TD>INST_ID</TD>
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Name of the instrument used for this observation</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+<TD>instrument_name</TD>
   </TR>
-  <TR>
+<!-- Curation -->
+ <TR>
     <TD>Curation</TD>
     <TD>Curation_Pub</TD>
     <TD>meta.curation</TD>
     <TD>Curation.Publisher</TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD>SaadaDB Instance</TD>
     <TD></TD>
     <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>RA</TD>
-    <TD>POS_EQ_RA_MAIN</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>1</TD>
 <TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Central right ascension, ICRS</TD>
-    <TD>3</TD>
   </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>DEC</TD>
-    <TD>POS_EQ_DEC_MAIN</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Central declination, ICRS</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Naxes</TD>
-    <TD>VOX:Image_Naxes</TD>
-    <TD></TD>
-    <TD>int</TD>
-    <TD>1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD></TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Naxis</TD>
-    <TD>VOX:Image_Naxis</TD>
-    <TD></TD>
-    <TD>int</TD>
-    <TD>2</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD></TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Scale</TD>
-    <TD>VOX:Image_Scale</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>2</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Scale in degrees per pixel of each image axis</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Observation_ID</TD>
-    <TD>VOX:Image_Title</TD>
-    <TD></TD>
-    <TD>char</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Observation name</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>MJ_DateObs</TD>
-    <TD>VOX:Image_MJDateObs</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Start time in MJD</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Coord_Ref_Frame</TD>
-    <TD>VOX:STC_CoordRefFrame</TD>
-    <TD></TD>
-    <TD>char</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Coordinate system reference frame</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Coord_Equi</TD>
-    <TD>VOX:STC_CoordEquinox</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Equinox of the coordinate system</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Coord_Proj</TD>
-    <TD>VOX:WCS_CoordProjection</TD>
-    <TD></TD>
-    <TD>char</TD>
-    <TD>3</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Celestial projection</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Coord_Ref_Pixel</TD>
-    <TD>VOX:WCS_CoordRefPixel</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Image pixel coordinate</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>Coord_Ref_value</TD>
-    <TD>VOX:WCS_CoordRefValue</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>World coordinate of the WCS reference pixel</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Char.Image</TD>
-    <TD>CD_Matrix</TD>
-    <TD>VOX:WCS_CDMatrix</TD>
-    <TD></TD>
-    <TD>double</TD>
-    <TD>-1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>WCS CD matrix</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
+<!-- Energy -->
+ <TR>
     <TD>Char.Energy</TD>
-    <TD>Bandpass_ID</TD>
+    <TD>BandPass_ID</TD>
     <TD>VOX:BandPass_ID</TD>
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Name of the bandpass</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+    <TD></TD>
   </TR>
   <TR>
     <TD>Char.Energy</TD>
@@ -292,11 +151,12 @@
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Unit used to represent spectral values</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+<TD></TD>
   </TR>
   <TR>
     <TD>Char.Energy</TD>
@@ -305,11 +165,12 @@
     <TD></TD>
     <TD>double</TD>
     <TD>1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+<TD></TD>
   </TR>
   <TR>
     <TD>Char.Energy</TD>
@@ -318,11 +179,12 @@
     <TD></TD>
     <TD>double</TD>
     <TD>1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Upper limit of the bandpass</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+<TD></TD>
   </TR>
   <TR>
     <TD>Char.Energy</TD>
@@ -331,37 +193,210 @@
     <TD></TD>
     <TD>double</TD>
     <TD>1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Lower limit of the bandpass</TD>
+    <TD>2</TD>
+<TD></TD>
+  </TR>
+<!-- Image -->
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>RA</TD>
+    <TD>POS_EQ_RA_MAIN</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Central right ascension, ICRS</TD>
     <TD>3</TD>
+<TD>s_ra</TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>DEC</TD>
+    <TD>POS_EQ_DEC_MAIN</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD>deg</TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Central declination, ICRS</TD>
+    <TD>3</TD>
+<TD>s_dec</TD>
   </TR>
   <TR>
     <TD>Char.Image</TD>
-    <TD>Image_PixFlag</TD>
+    <TD>Naxes</TD>
+    <TD>VOX:Image_Naxes</TD>
+    <TD></TD>
+    <TD>int</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD>3</TD>
+<TD>2;arithmetic=false</TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>Naxis</TD>
+    <TD>VOX:Image_Naxis</TD>
+    <TD></TD>
+    <TD>int</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD>3</TD>
+<TD>strcat(naxis1,' ',naxis2)</TD>
+  </TR>
+<TR>
+    <TD>Char.Image</TD>
+    <TD>Scale</TD>
+    <TD>VOX:Image_Scale</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Scale in degrees per pixel of each image axis</TD>
+    <TD>3</TD>
+<TD></TD>
+  </TR>
+<TR>
+    <TD>Char.Image</TD>
+    <TD>Observation_ID</TD>
+    <TD>VOX:Image_Title</TD>
+    <TD></TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Observation name</TD>
+    <TD>3</TD>
+<TD>obs_id</TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>MJ_DateObs</TD>
+    <TD>VOX:Image_MJDateObs</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Start time in MJD</TD>
+    <TD>2</TD>
+<TD>t_min</TD>
+ </TR>
+  <TR>
+    <TD>Char.Image</TD>
+    <TD>Coord_Ref_Frame</TD>
+    <TD>VOX:STC_CoordRefFrame</TD>
+    <TD></TD>
+    <TD>char</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Coordinate system reference frame</TD>
+    <TD>2</TD>
+<TD></TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>Coord_Equi</TD>
+    <TD>VOX:STC_CoordEquinox</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Equinox of the coordinate system</TD>
+    <TD>1</TD>
+<TD></TD>
+  </TR>
+  <TR>
+    <TD>Char.Image</TD>
+    <TD>Coord_Proj</TD>
+    <TD>VOX:WCS_CoordProjection</TD>
+    <TD></TD>
+    <TD>char</TD>
+    <TD>3</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Celestial projection</TD>
+    <TD>2</TD>
+<TD></TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>Coord_Ref_Pixel</TD>
+    <TD>VOX:WCS_CoordRefPixel</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>Image pixel coordinate</TD>
+    <TD>2</TD>
+<TD>strcat(crpix1_csa,' ',crpix2_csa)</TD>
+  </TR>
+  <TR>
+    <TD>Char.Image</TD>
+    <TD>Coord_Ref_value</TD>
+    <TD>VOX:WCS_CoordRefValue</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>World coordinate of the WCS reference pixel</TD>
+    <TD>2</TD>
+<TD>strcat(crval1_csa,' ',crval2_csa)</TD>
+  </TR>
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>CD_Matrix</TD>
+    <TD>VOX:WCS_CDMatrix</TD>
+    <TD></TD>
+    <TD>double</TD>
+    <TD>-1</TD>
+    <TD></TD>
+    <TD>F</TD>
+    <TD></TD>
+    <TD>WCS CD matrix</TD>
+    <TD>2</TD>
+<TD>strcat(cd1_1_csa,' ',cd1_2_csa,' ',cd2_1_csa,' ',cd2_2_csa)</TD>
+  </TR>
+ 
+ <TR>
+    <TD>Char.Image</TD>
+    <TD>Image_PixFlags</TD>
     <TD>VOX:Image_PixFlags</TD>
     <TD></TD>
     <TD>char</TD>
     <TD>-1</TD>
-<TD></TD>
+    <TD></TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Type of procesing done by the image service</TD>
-    <TD>3</TD>
-  </TR>
-  <TR>
-    <TD>Access</TD>
-    <TD>Image_Size</TD>
-    <TD>VOX:Image_FileSize</TD>
-    <TD></TD>
-    <TD>int</TD>
-    <TD>1</TD>
-<TD></TD>
-    <TD>F</TD>
-    <TD></TD>
-    <TD>Size of the image in kilo bytes</TD>
-    <TD>3</TD>
+    <TD>2</TD>
+<TD>C;arithmetic=false</TD>
   </TR>
 </TABLEDATA>
 </DATA>

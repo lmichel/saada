@@ -18,8 +18,10 @@
   <FIELD name="requ_level"     datatype="char" arraysize="*">
     <DESCRIPTION>MAN=1 REC=2 OPT=3</DESCRIPTION>
   </FIELD>
+<FIELD name="expression"     datatype="char" arraysize="*"/>
   <DATA>
   <TABLEDATA>
+<!-- DataID -->
     <TR>
      <TD>DataID</TD>
      <TD>unique_id</TD>
@@ -28,10 +30,11 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD></TD>
      <TD></TD>
      <TD>1</TD>
+<TD>oidsaada</TD>
     </TR>
     <TR>
      <TD>DataID</TD>
@@ -41,11 +44,12 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD></TD>
      <TD></TD>
      <TD>1</TD>
-    </TR>
+<TD>obs_id</TD>    
+</TR>
     <TR>
      <TD>DataID</TD>
      <TD>DataID_Tit</TD>
@@ -54,11 +58,13 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD></TD>
      <TD></TD>
      <TD>3</TD>
+<TD>obs_id</TD>
     </TR>
+<!-- DataSet -->
     <TR>
      <TD>Dataset</TD>
      <TD>Dataset_Dat</TD>
@@ -67,10 +73,11 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD>CS 1.0</TD>
      <TD></TD>
      <TD>3</TD>
+<TD></TD>
     </TR>
     <TR>
      <TD>Dataset</TD>
@@ -80,11 +87,13 @@
      <TD>long</TD>
      <TD>1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD>x</TD>
      <TD></TD>
      <TD>3</TD>
+<TD></TD>
     </TR>
+<!-- Curation -->
     <TR>
      <TD>Curation</TD>
      <TD>Curation_Pub</TD>
@@ -93,11 +102,13 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>false</TD>
+     <TD>false</TD>
      <TD>SaadaDB Instance</TD>
      <TD></TD>
      <TD>3</TD>
+<TD></TD>
     </TR>
+<!-- Char.ConeSearch -->
     <TR>
      <TD>char.ConeSearch</TD>
      <TD>urlCS</TD>
@@ -106,10 +117,11 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>true</TD>
+     <TD>true</TD>
      <TD></TD>
      <TD>Requested by Aladin to handle assoc.</TD>
      <TD>3</TD>
+<TD></TD>
     </TR>
     <TR>
      <TD>char.ConsSearch</TD>
@@ -119,36 +131,39 @@
      <TD>char</TD>
      <TD>-1</TD>
      <TD></TD>
-	 <TD>true</TD>
+     <TD>true</TD>
      <TD></TD>
      <TD>Requested by Aladin to handle assoc.</TD>
      <TD>3</TD>
+<TD></TD>
     </TR>
     <TR>
      <TD>char.ConsSearch</TD>
      <TD>RA</TD>
-     <TD>pos.eq.ra;meta.main</TD>
+     <TD>POS_EQ_RA_MAIN</TD>
      <TD></TD>
      <TD>double</TD>
      <TD>1</TD>
-     <TD></TD>
-	 <TD>false</TD>
+     <TD>deg</TD>
+     <TD>false</TD>
      <TD></TD>
      <TD></TD>
      <TD>3</TD>
+<TD>s_ra</TD>
     </TR>
     <TR>
      <TD>char.ConsSearch</TD>
      <TD>DEC</TD>
-     <TD>pos.eq.dec;meta.main</TD>
+     <TD>POS_EQ_DEC_MAIN</TD>
      <TD></TD>
      <TD>double</TD>
      <TD>1</TD>
-     <TD></TD>
-	 <TD>false</TD>
+     <TD>deg</TD>
+     <TD>false</TD>
      <TD></TD>
      <TD></TD>
      <TD>3</TD>
+<TD>s_dec</TD>
     </TR>
    </TABLEDATA>
   </DATA>
