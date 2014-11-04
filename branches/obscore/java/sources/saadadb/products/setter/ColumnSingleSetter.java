@@ -405,4 +405,9 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 			retour += " storedValue=" + this.storedValue;
 		return retour;
 	}
+	@Override
+	public void setNotSet(String message) {
+		// TODO Auto-generated method stub
+		
+	}
 }
