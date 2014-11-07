@@ -86,17 +86,6 @@ public class RegExp {
 	
 
 	/*
-	 * Query parsing et autres cochonneries
-	 */
-	public static final String ONE_COORDINATE = "[+-]?(?:(?:\\.[0-9]+)|(?:[0-9]+\\.?[0-9]*))(?:[eE][+-]?[0-9]+)?";
-	public static final String POSITION_COORDINATE = "^(" + ONE_COORDINATE + ")((?:[+-]|(?:[,:;\\s]+[+-]?))" +  ONE_COORDINATE + ")$";
-
-	/*
-	 * Special keyword detection
-	 */
-	public static final String RA_KW  = "(_*ra)|(_*ra.?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj)";
-	public static final String DEC_KW = "(_*de)|(_*dec)|(_*dec.?(2000)?)|(_*de.?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj)";
-	/*
 	 * Spectral axis column names			
 	 */
 	public static final String SPEC_AXIS_KW      = "(?i)((channel)|(wavelength)|(freq)|(frequency)|(spectral_value))";
@@ -179,7 +168,7 @@ public class RegExp {
 	public static final String DEC_UCD      = "(?i)((POS_EQ_DEC)|(pos\\.eq\\.dec))";
 
 	public static final String FK5_RA_KW        = "(?i)((_*ra)|(_*ra[^b]?(2000)?)|(_*ra.?[^(dec)]?)|(_*ra.?obj))";
-	public static final String FK5_DEC_KW       = "(?i)((_*de)|(_*dec)|(_*dec[^b]?(2000)?)|(_*de[^b]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
+	public static final String FK5_DEC_KW       = "(?i)((_*dec)|(_*de[^A-Za-z])|(_*dec[^b]?(2000)?)|(_*de[^b]?(2000)?)|(_*dec.?[^(ra)]?)|(_*dec.?obj)|(_*de.?obj))";
 
 	public static final String FK4_RA_KW        = "(?i)(_*ra[^(dec)]*b1950)";
 	public static final String FK4_DEC_KW       = "(?i)(_*de[^(ra)]*b1950)";
@@ -201,7 +190,12 @@ public class RegExp {
 	public static final String GALACTIC_RA_KW        = "(?i)(_glon)";
 	public static final String GALACTIC_DEC_KW       = "(?i)(_glat)";
 
-	public static final String FITS_COOSYS_KW   = "(?i)((COORDS)|(COO.*SYS)|(RADECSYS)|(SYSTEM))";
+	public static final String FITS_COOSYS_KW    = "(?i)((COORDS)|(COO.*SYS)|(RADECSYS)|(SYSTEM))";
+	public static final String FITS_COOSYS_UCD   = "(?i)(pos.frame)";
+	public static final String FITS_EQUINOX_KW   = "(?i)(EQUINOX)";
+	public static final String FITS_EQUINOX_UCD  = "(?i)(time.equinox)";
+	public static final String FITS_EPOCH_KW     = "(?i)(EPOCH)";
+	public static final String FITS_EPOCH_UCD    = "(?i)(time.epoch)";
 	/** http://www.aanda.org/articles/aa/full/2006/05/aa3818-05/table1.html */
 	public static final String FITS_CTYPE_SPECT = "(?i)(((FREQ)|(ENER)|(WAVN)|(VRAD)|(WAVE)|(VOPT)|(ZOPT)|(AWAV)|(VELO)|(BETA)).*)";
 	public static final String FITS_CTYPE_ASC   = "(?i)(((RA--)|(GLON)|(ELON)).*)";
@@ -229,16 +223,4 @@ public class RegExp {
 	//the above line has been modified on monday 13/10/14. this is the original: public static final String KEYWORD = "([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\\)\\s\\*\\-\\+,]+)|$)";//"([[_][a-z][A-Z][0-9]]+[^(])[ +-/\\*)]";
 	// 	([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\)\s\*-\+]+)|$)
 	
-	public static void main(String[] args) {
-		String ra = "__raj2000";
-		System.out.println(ra.matches(RegExp.RA_KW));
-		String dec = "__decj2000";
-		System.out.println(dec.matches(RegExp.DEC_KW));
-		String fits = "SW_HD117555_057_A.1.ms.fits";
-		System.out.println(fits.matches(RegExp.FITS_FILE));
-		System.out.println("SpectralAxis.cov.bounds.extent#stc:double1Type".matches(RegExp.UTYPE));
-		System.out.println("SpectralAxis.cov.bounds.extent;stc:double1Type".matches(RegExp.UTYPE));
-		System.out.println("SpectralAxis.cov.bounds.extentstcdouble1Type".matches(RegExp.UTYPE));
-		System.out.println("0.2".matches(RegExp.NUMERIC));
-	}
 }
