@@ -367,36 +367,51 @@ public class TapServiceManager extends EntityManager {
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 				+ "     xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">\n");
-		/*
-		 * Loop on schemas
-		 */
-		SQLQuery qschema = new SQLQuery();
-		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
-		while(rs_schema.next()) {
-			String schema_name = rs_schema.getString(1);
-			String schema_desc = rs_schema.getString(2);
-			retour.append("<schema>\n");
-			retour.append("    <name>" + schema_name + "</name>\n");
-			if( schema_desc != null && schema_desc.length() > 0)			
-				retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
-			/*
-			 * Loop on tables
-			 */
-			SQLQuery qtables= new SQLQuery();
-			ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName 
-					+ " WHERE schema_name = '" + schema_name + "'");
-			while(rs_tables.next()) {
-				String table_name = rs_tables.getString(1);
-				String table_desc = rs_tables.getString(2);
-				String table_type = rs_tables.getString(3);
-				retour .append(getXMLTable(table_name, table_desc, table_type));
-			}
-			qtables.close();
-			retour.append("</schema>\n");
-		}
-		retour.append("</vosi:tableset>\n");
-		qschema.close();
-		return retour;
+              /*
+                 * Loop on schemas
+                 */
+                SQLQuery qschema = new SQLQuery();
+                ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
+                ArrayList<String> snl = new ArrayList<String>();
+                ArrayList<String> sdl = new ArrayList<String>();
+                while(rs_schema.next()) {
+                        snl.add(rs_schema.getString(1));
+                        sdl.add(rs_schema.getString(2));
+                }
+                qschema.close();
+                for( int i=0 ; i<snl.size() ; i++ ) {
+                        String schema_name = snl.get(i);
+                        String schema_desc = sdl.get(i);
+                        retour.append("<schema>\n");
+                        retour.append("    <name>" + schema_name + "</name>\n");
+                        if( schema_desc != null && schema_desc.length() > 0)
+                                retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
+                        /*
+                         * Loop on tables
+                         */
+                        SQLQuery qtables= new SQLQuery();
+                        ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
+                                        + " WHERE schema_name = '" + schema_name + "'");
+                        ArrayList<String> tnl = new ArrayList<String>();
+                        ArrayList<String> tnd = new ArrayList<String>();
+                        ArrayList<String> tnt = new ArrayList<String>();
+                        while(rs_tables.next()) {
+                                tnl.add(rs_tables.getString(1));
+                                tnd.add(rs_tables.getString(2));
+                                tnt.add(rs_tables.getString(3));
+                        }
+                        qtables.close();
+                        for( int j=0 ; j<tnt.size() ; j++ ) {
+                                String table_name = tnl.get(j);
+                                String table_desc = tnd.get(j);
+                                String table_type = tnt.get(j);
+                                retour .append(getXMLTable(table_name, table_desc, table_type));
+                        }
+                        retour.append("</schema>\n");
+                }
+
+                retour.append("</vosi:tableset>\n");
+                return retour;
 	}
 
 	/**
