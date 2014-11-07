@@ -21,7 +21,7 @@ public class AntDesk {
 				, "the installation location"
 				, "This file must be modified by hand if the SaadaDB is moved or other Java tools are used"
 				, "-->"
-				, "<property file=\"" + Database.getUrl_root() + "/bin/saadadb.properties\"/>"
+				, "<property file=\"" + Database.getRoot_dir() + "/bin/saadadb.properties\"/>"
 				, "<property name=\"jvm_initial_size\" value=\"-Xms64m\" />"
 				, "<property name=\"jvm_max_size\"     value=\"-Xmx1024m\" />"
 				, "<!--"
