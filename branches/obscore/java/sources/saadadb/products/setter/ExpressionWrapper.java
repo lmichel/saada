@@ -115,8 +115,8 @@ public class ExpressionWrapper {
 				for(AttributeHandler ah:this.attributeHandlers)
 				{
 					//We check if the variable exist in the expression before any link
-					//if(this.expression.contains(ah.getNameattr()))
-					this.exp4jExpression.variable(ah.getNameattr(), Double.valueOf(ah.getValue()));
+					//if(this.expression.contains(ah.getDbName()))
+					this.exp4jExpression.variable(ah.getDbName(), Double.valueOf(ah.getValue()));
 				}
 			}
 			
