@@ -1,23 +1,27 @@
 package saadadb.products.inference;
 
+import hecds.wcs.Modeler;
+import hecds.wcs.types.AxeType;
+
 import java.util.List;
 import java.util.Map;
 
+import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
+import saadadb.util.SaadaConstant;
 
 public class TimeKWDetector extends KWDetector {
 	private double timeref = SaadaConstant.DOUBLE;
 	
-	public TimeKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler);
+	public TimeKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) {
+		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.TIME));
 	}
 	public TimeKWDetector(Map<String, AttributeHandler> tableAttributeHandler
-			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler, entryAttributeHandler);
+			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) {
+		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.TIME));
 	}
 
 	/**
