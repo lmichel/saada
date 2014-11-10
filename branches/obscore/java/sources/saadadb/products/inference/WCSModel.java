@@ -444,7 +444,7 @@ public class WCSModel {
 	}
 
 	/**
-	 * Set the default porjection on all axes not droped to real word
+	 * Set the default projection on all axes not droped to real word
 	 * @throws Exception
 	 */
 	public void projectAllAxesToRealWord() throws Exception {
