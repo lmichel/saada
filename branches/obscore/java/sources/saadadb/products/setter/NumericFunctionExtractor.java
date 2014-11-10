@@ -1,5 +1,4 @@
 package saadadb.products.setter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -98,9 +97,9 @@ public class NumericFunctionExtractor {
 				{
 					for(AttributeHandler ah :exprAttributes)
 					{
-						if(functionArgs[i].trim().equals(ah.getNameattr()) || functionArgs[i].trim().equals(ah.getNameorg()))
+						if(functionArgs[i].trim().equals(ah.getDbName()) || functionArgs[i].trim().equals(ah.getName()))
 						{
-							functionArgs[i]=ah.getNameattr();//getValue();
+							functionArgs[i]=ah.getDbName();//getValue();
 							ahToConvert=ah;
 							break;
 						}
@@ -117,7 +116,7 @@ public class NumericFunctionExtractor {
 				if((ahToConvert.getUnit()!=null) && (!ahToConvert.getUnit().isEmpty()))
 					 result=DictionaryNumericFunction.convert(functionArgs[0], ahToConvert.getUnit(), functionArgs[1]);
 				else
-					IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "The keyword ("+ ahToConvert.getNameattr()+") to convert have no defined unit");
+					IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "The keyword ("+ ahToConvert.getDbName()+") to convert have no defined unit");
 			}
 			expression=expression.replace(function, result);
 		}
