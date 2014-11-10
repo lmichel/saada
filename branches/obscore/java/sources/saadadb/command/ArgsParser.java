@@ -269,7 +269,7 @@ public class ArgsParser implements Serializable{
 	public String getNumber() throws FatalException  {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-number")) {
-				return this.matches(getArgsValue(args[i]), "-number", RegExp.CATEGORY);
+				return getArgsValue(args[i]);
 			}
 		}
 		return null;
