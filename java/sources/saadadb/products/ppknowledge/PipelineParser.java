@@ -147,6 +147,9 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getEUnit() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("x_unit_org");
 	}
+	public ColumnExpressionSetter getEBins() throws SaadaException, Exception {
+		return new ColumnExpressionSetter("em_bins");
+	}
 	public ColumnExpressionSetter getResPower() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("em_res_power");
 	}

@@ -217,6 +217,14 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("x_unit_org"): retour;
 	}
+	public ColumnExpressionSetter getEbins() throws Exception{
+		ColumnExpressionSetter retour = null;
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEBins()).notSet() ){
+			return this.energyKWDetector.getEBins();
+		} 
+		return (retour == null)?new ColumnExpressionSetter("em_bins"): retour;
+	}
+	
 	//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
 	//		try  {
 	//			return this.energyKWDetector.getSpectralCoordinate();
