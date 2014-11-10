@@ -1,5 +1,11 @@
 package saadadb.products.inference;
 
+import hecds.LibLog;
+import hecds.wcs.Modeler;
+import hecds.wcs.descriptors.CardDescriptor;
+import hecds.wcs.descriptors.CardMap;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +19,7 @@ import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
+import saadadb.util.MessengerLogger;
 
 public class QuantityDetector {
 	private final PipelineParser pipelineParser;
@@ -25,18 +32,29 @@ public class QuantityDetector {
 	private final PolarizationKWDetector polarizationKWDetector;
 	private final ProductMapping productMapping;
 	public String detectionMessage;
+	protected Modeler wcsModeler;
 
 	/**
 	 * @param tableAttributeHandlers
 	 * @throws SaadaException 
 	 */
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers, List<String> comments, ProductMapping productMapping) throws SaadaException {
-		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, comments);
-		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, comments);						
-		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, comments, productMapping);
-		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, comments);
-		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, comments);
-		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, comments);
+		/*
+		 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
+		 */
+		try {
+			CardMap cm = new CardMap(new HashSet<CardDescriptor>(tableAttributeHandlers.values()));
+			LibLog.setLogger(new MessengerLogger());
+			this.wcsModeler = new Modeler(cm);	
+		} catch (Exception e) {
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+		}
+		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, comments);
+		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, wcsModeler, comments);						
+		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, wcsModeler, comments, productMapping);
+		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, wcsModeler, comments);
+		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -48,12 +66,12 @@ public class QuantityDetector {
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
 			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments
 			, ProductMapping productMapping, DataFile productFile) throws SaadaException {
-		this.observableKWDetector  = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.timeKWDetector        = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.energyKWDetector      = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments, productMapping, productFile);
-		this.spaceKWDetector       = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.observationKWDetector = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, comments);
+		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments);
+		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments, productMapping, productFile);
+		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments);
+		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -262,18 +280,19 @@ public class QuantityDetector {
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
-			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
-				if( this.getEUnit().notSet()) {
-					retour.setByValue("0", false);
-					retour.completeMessage("Value taken by default since the dispersion axis is not set");
-				} else if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
-					retour.setByValue("1", false);
-					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
-				} else {
-					retour.setByValue("2", false);
-					retour.completeMessage("Value taken by default since the dispersion axis is set");
-				}
-			}
+//			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
+//				System.out.println(this.getEUnit());
+//				if( this.getEUnit().notSet()) {
+//					retour.setByValue("0", false);
+//					retour.completeMessage("Value taken by default since the dispersion axis is not set");
+//				} else if( this.getEUnit().getValue().equalsIgnoreCase("channels")) {
+//					retour.setByValue("1", false);
+//					retour.completeMessage("Value taken by default since the dispersion axis is set but not calibrated");
+//				} else {
+//					retour.setByValue("2", false);
+//					retour.completeMessage("Value taken by default since the dispersion axis is set");
+//				}
+//			}
 		} 
 		return (retour == null)?new ColumnExpressionSetter("o_calib_status"): retour;
 	}
