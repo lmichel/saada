@@ -1,5 +1,8 @@
 package saadadb.products.inference;
 
+import hecds.wcs.Modeler;
+import hecds.wcs.types.AxeType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,13 +23,13 @@ public class PolarizationKWDetector extends KWDetector {
 	 */
 	private ColumnExpressionSetter states=new ColumnExpressionSetter("pol_states");
 	
-	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler);
+	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) {
+		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler
-			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler, entryAttributeHandler);
+			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) {
+		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	
