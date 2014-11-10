@@ -225,15 +225,6 @@ public class QuantityDetector {
 		return (retour == null)?new ColumnExpressionSetter("em_bins"): retour;
 	}
 	
-	//	public SpectralCoordinate getSpectralCoordinate() throws SaadaException {
-	//		try  {
-	//			return this.energyKWDetector.getSpectralCoordinate();
-	//		} catch (Exception e) {
-	//			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, e);
-	//			return null;
-	//		}
-	//	}
-
 	/*
 	 * Time axis
 	 */
