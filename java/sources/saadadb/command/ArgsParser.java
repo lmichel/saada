@@ -80,7 +80,8 @@ public class ArgsParser implements Serializable{
 		allowedArgs.add("-emax")	   ;allowedArgs.add("-entry.emax");
 		allowedArgs.add("-ebins")      ;allowedArgs.add("-entry.ebins") ;
 		allowedArgs.add("-emax")	   ;allowedArgs.add("-entry.emax");
-		
+		allowedArgs.add("-spcrespower");allowedArgs.add("-entry.spcrespower");
+
 		/*
 		 * Time Axe
 		 */
@@ -988,9 +989,12 @@ public class ArgsParser implements Serializable{
 	 * Returns the spectral coordinate column -spccolumn=....
 	 * @return
 	 */
-	public String getSpectralResPower() {
+	public String getSpectralResPower(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-spcrespower")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.spcrespower")) {
 				return getArgsValue(args[i]);
 			}
 		}
