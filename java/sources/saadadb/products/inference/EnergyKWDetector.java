@@ -54,6 +54,7 @@ public class EnergyKWDetector extends KWDetector {
 	private ColumnExpressionSetter em_maxSetter;
 	private ColumnExpressionSetter x_unit_orgSetter;
 	private ColumnExpressionSetter em_res_powerSetter;
+	private ColumnExpressionSetter em_binsSetter;
 
 	/**
 	 * @param tableAttributeHandler
@@ -66,7 +67,7 @@ public class EnergyKWDetector extends KWDetector {
 		this.setUnitMode(productMapping);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
 		this.mapCollectionSpectralCoordinateAuto();
-		}
+	}
 	/**
 	 * @param tableAttributeHandler
 	 * @param entryAttributeHandler
@@ -209,8 +210,9 @@ public class EnergyKWDetector extends KWDetector {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for spectral coodinate in WCS");
 		if( this.projection.isUsable()){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found spectral coodinate in WCS");
-			this.em_minSetter= new ColumnWcsSetter("em_min", "WCS.getMin(1)", this.projection);
-			this.em_maxSetter= new ColumnWcsSetter("em_max", "WCS.getMax(1)", this.projection);
+			this.em_minSetter     = new ColumnWcsSetter("em_min"    , "WCS.getMin(1)", this.projection);
+			this.em_maxSetter     = new ColumnWcsSetter("em_max"    , "WCS.getMax(1)", this.projection);
+			this.em_binsSetter    = new ColumnWcsSetter("em_bins"   , "WCS.getNaxis(1)", this.projection);
 			this.x_unit_orgSetter = new ColumnWcsSetter("x_unit_org", "WCS.getUnit(1)", this.projection);
 			this.x_unit_orgSetter.calculateExpression();
 			/*
@@ -243,10 +245,12 @@ public class EnergyKWDetector extends KWDetector {
 			ColumnExpressionSetter ah = this.searchColumns(null, RegExp.SPEC_AXIS_KW, RegExp.SPEC_AXIS_DESC);
 			if( !ah.notSet()  ){
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ ah.getAttNameOrg());
-				this.em_minSetter = new ColumnRowSetter("em_min", "Colmun.getMinValue(" + ah.getAttNameOrg() + ")");
+				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + ah.getAttNameOrg() + ")");
 				this.em_minSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
-				this.em_maxSetter = new ColumnRowSetter("em_max", "Colmun.getMaxValue(" + ah.getAttNameOrg() + ")");
-				this.em_maxSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
+				this.em_maxSetter = new ColumnRowSetter("em_max", "C.getMaxValue(" + ah.getAttNameOrg() + ")");
+				this.em_maxSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");			
+				this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + ah.getAttNameOrg() + ")");			
+				this.em_binsSetter.completeMessage("Take the row number");	
 				/*
 				 * In this case the column is taken from metadata. Metadata are supposed to be the same for all products
 				 * using this instance, so we can set it as a constant 
@@ -268,8 +272,10 @@ public class EnergyKWDetector extends KWDetector {
 				if( !ah.notSet()  ){
 					this.em_minSetter = new ColumnExpressionSetter("em_min", "0");
 					this.em_minSetter.completeMessage("Row number taken as dispersion axe");
-					this.em_maxSetter = new ColumnRowSetter("em_max", "Colmun.getNbRows(" + ah.getAttNameOrg() + ")");				
+					this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getNbRows(" + ah.getAttNameOrg() + ")");				
 					this.em_maxSetter.completeMessage("Row number taken as dispersion axe");
+					this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + ah.getAttNameOrg() + ")");			
+					this.em_binsSetter.completeMessage("Take the row number");	
 					this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
 					this.x_unit_orgSetter.setByValue("channel", false);
 					this.x_unit_orgSetter.completeMessage("Row number as dispersion: take channel as unit");
@@ -282,44 +288,34 @@ public class EnergyKWDetector extends KWDetector {
 	}
 
 	/**
+	 * Look for keywords giving the spectral range.
+	 * The unit detection is not required by this method to succeed
 	 * @return
 	 * @throws Exception 
 	 */
 	private boolean findSpectralCoordinateInKeywords() throws Exception{
-		boolean findMin = false;
-		boolean findMax = false;
-
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates by UCDs or UTypes ");
-		ColumnExpressionSetter colSetter = this.searchByUcd("em_min", RegExp.SPEC_MIN_UCD);
-		if( !colSetter.notSet() ){
-			spectralCoordinate.setOrgMin(Double.parseDouble(colSetter.getValue()));
-			this.detectionMessage = colSetter.message.toString();
-			findMin = true;
-			this.readUnit = colSetter.getUnit();
-		}
-		colSetter = this.searchByUcd("em_max", RegExp.SPEC_MAX_UCD);
-		if( !colSetter.notSet() ){
-			spectralCoordinate.setOrgMax(Double.parseDouble(colSetter.getValue()));
-			this.detectionMessage += colSetter.message.toString();
-			findMax = true;
-			if( this.readUnit == null || this.readUnit.length() == 0) this.readUnit = colSetter.getUnit();
-		}
-
-		if ( this.entryAttributeHandler != null && (!findMax  || !findMin) ){
-			/*
-			 * If no range set in params, try to find it out from fields
-			 */	
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No Spectral coordinates found in header UCDs or UTypes: explore column definitions");
-			findMin = false;
-			colSetter = this.searchColumnsByUcd("range", RegExp.SPEC_BAND_UCD);
-			if( !colSetter.notSet() ){
-				this.setMinMaxValues(this.productFile.getExtrema(colSetter.getAttNameOrg()));
-				if( this.readUnit == null || this.readUnit.length() == 0)  this.readUnit = colSetter.getUnit();
-				findMin = true;
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates by UCDs or keyword ");
+		this.em_minSetter = this.search("em_min", RegExp.SPEC_MIN_UCD, RegExp.SPEC_MIN_KW);
+		this.em_minSetter = this.search("em_max", RegExp.SPEC_MAX_UCD, RegExp.SPEC_MAX_KW);
+		this.em_res_powerSetter = this.search("em_res_power", RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+		if( !this.em_minSetter.notSet() && !this.em_maxSetter.notSet() ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Spectral range found in keywords");
+			String u;
+			if( (u = this.em_minSetter.getUnit()) != null && u.length() > 0 ){
+				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", u);
+			} else if( (u = this.em_maxSetter.getUnit()) != null && u.length() > 0 ){
+				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", u);
+			} else {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "");
+				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
 			}
-			return findMin;
+			return true;
 		}
-		return (findMax & findMax);
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Spectral range not found in keywords");
+		return false;
 	}
 
 
@@ -328,29 +324,37 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws FatalException
 	 */
 	public ColumnExpressionSetter getResPower() throws Exception{
-		return (this.em_res_powerSetter == null)? new ColumnExpressionSetter("eunit"): this.em_res_powerSetter;
-//		String fn = "em_res_power";
-//		if( Messenger.debug_mode ) 
-//			Messenger.printMsg(Messenger.DEBUG, "Search for the resolution power");
-//		ColumnExpressionSetter retour =  this.search(fn, RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
-//		if( retour.notSet() ) {
-//			if( spectralCoordinate == null ){
-//				this.mapCollectionSpectralCoordinateAuto();
-//			}
-//			if( spectralCoordinate.getNbBins() != SaadaConstant.INT 
-//					&&  this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE &&  this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE) {
-//				retour =  new ColumnExpressionSetter(fn);
-//				double v     = ((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMin())/2.);
-//				double delta = ((this.spectralCoordinate.getOrgMax() - this.spectralCoordinate.getOrgMin())/spectralCoordinate.getNbBins());
-//				retour.setByValue(Double.toString(v/delta), false);
-//				retour.completeMessage("Computed from both range and bin number ("+ spectralCoordinate.getNbBins() + ")");
-//				return retour;
-//			} 
-//			return  new ColumnExpressionSetter(fn);
-//
-//		} else {
-//			return retour;
-//		}
+		return (this.em_res_powerSetter == null)? new ColumnExpressionSetter("em_res_power"): this.em_res_powerSetter;
+		//		String fn = "em_res_power";
+		//		if( Messenger.debug_mode ) 
+		//			Messenger.printMsg(Messenger.DEBUG, "Search for the resolution power");
+		//		ColumnExpressionSetter retour =  this.search(fn, RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
+		//		if( retour.notSet() ) {
+		//			if( spectralCoordinate == null ){
+		//				this.mapCollectionSpectralCoordinateAuto();
+		//			}
+		//			if( spectralCoordinate.getNbBins() != SaadaConstant.INT 
+		//					&&  this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE &&  this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE) {
+		//				retour =  new ColumnExpressionSetter(fn);
+		//				double v     = ((this.spectralCoordinate.getOrgMax() + this.spectralCoordinate.getOrgMin())/2.);
+		//				double delta = ((this.spectralCoordinate.getOrgMax() - this.spectralCoordinate.getOrgMin())/spectralCoordinate.getNbBins());
+		//				retour.setByValue(Double.toString(v/delta), false);
+		//				retour.completeMessage("Computed from both range and bin number ("+ spectralCoordinate.getNbBins() + ")");
+		//				return retour;
+		//			} 
+		//			return  new ColumnExpressionSetter(fn);
+		//
+		//		} else {
+		//			return retour;
+		//		}
+	}
+	/**
+	 * return the number of channels or bins
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getEBins() throws Exception{
+		return (this.em_binsSetter == null)? new ColumnExpressionSetter("em_bins"): this.em_binsSetter;
 	}
 
 	/**
@@ -359,15 +363,15 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getEUnit() throws SaadaException{
 		return (this.x_unit_orgSetter == null)? new ColumnExpressionSetter("x_unit_org"): this.x_unit_orgSetter;
-//		if( spectralCoordinate == null ){
-//			this.mapCollectionSpectralCoordinateAuto();
-//		}
-//		ColumnExpressionSetter retour = new ColumnExpressionSetter("x_unit_org");
-//		if( this.spectralCoordinate.getMappedUnit() != null ){
-//			retour.setByValue(String.valueOf(this.spectralCoordinate.getMappedUnit()), false);
-//			retour.completeMessage(this.spectralCoordinate.detectionMessage);
-//		}
-//		return retour;
+		//		if( spectralCoordinate == null ){
+		//			this.mapCollectionSpectralCoordinateAuto();
+		//		}
+		//		ColumnExpressionSetter retour = new ColumnExpressionSetter("x_unit_org");
+		//		if( this.spectralCoordinate.getMappedUnit() != null ){
+		//			retour.setByValue(String.valueOf(this.spectralCoordinate.getMappedUnit()), false);
+		//			retour.completeMessage(this.spectralCoordinate.detectionMessage);
+		//		}
+		//		return retour;
 	}
 	/**
 	 * @return
@@ -375,15 +379,15 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getEMax() throws SaadaException{
 		return (this.em_maxSetter == null)? new ColumnExpressionSetter("emax"): this.em_maxSetter;
-//		if( spectralCoordinate == null ){
-//			this.mapCollectionSpectralCoordinateAuto();
-//		}
-//		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_max");
-//		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMax())){
-//			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
-//			retour.completeMessage(this.detectionMessage);	
-//		}
-//		return retour;
+		//		if( spectralCoordinate == null ){
+		//			this.mapCollectionSpectralCoordinateAuto();
+		//		}
+		//		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_max");
+		//		if( this.spectralCoordinate.getOrgMax() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMax())){
+		//			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMax()), false);
+		//			retour.completeMessage(this.detectionMessage);	
+		//		}
+		//		return retour;
 	}
 	/**
 	 * @return
@@ -391,14 +395,14 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getEMin() throws SaadaException {
 		return (this.em_minSetter == null)? new ColumnExpressionSetter("emin"): this.em_minSetter;
-//		if( spectralCoordinate == null ){
-//			this.mapCollectionSpectralCoordinateAuto();
-//		}
-//		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_min");
-//		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMin())){
-//			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
-//			retour.completeMessage(this.detectionMessage);	
-//		}
-//		return retour;
+		//		if( spectralCoordinate == null ){
+		//			this.mapCollectionSpectralCoordinateAuto();
+		//		}
+		//		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_min");
+		//		if( this.spectralCoordinate.getOrgMin() != SaadaConstant.DOUBLE && !Double.isNaN(this.spectralCoordinate.getOrgMin())){
+		//			retour.setByValue(String.valueOf(this.spectralCoordinate.getOrgMin()), false);
+		//			retour.completeMessage(this.detectionMessage);	
+		//		}
+		//		return retour;
 	}
 }
