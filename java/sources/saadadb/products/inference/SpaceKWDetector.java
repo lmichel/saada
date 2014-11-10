@@ -1,5 +1,8 @@
 package saadadb.products.inference;
 
+import hecds.wcs.Modeler;
+import hecds.wcs.types.AxeType;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +12,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.query.parser.PositionParser;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
@@ -23,7 +27,8 @@ import cds.astro.ICRS;
  * @author michel
  * @version $Id$
  *
- * 03/2012 Regulr expression pushed to {@link RegExp} to be used by the VO stuff
+ * 03/2014 Regular expression pushed to {@link RegExp} to be used by the VO stuff
+ * 10/2014 use of the WCS modeler
  */
 public class SpaceKWDetector extends KWDetector{
 	private ColumnExpressionSetter ascension_kw;
@@ -40,18 +45,18 @@ public class SpaceKWDetector extends KWDetector{
 	public static final int WCS_KW_FOUND = 4;
 	public static final int ERR_KW_FOUND = 8;
 	private int status=0;
-	private WCSModel wcsModel;
+	//private WCSModel wcsModel;
 	private boolean isInit = false;
 	private boolean errorSearched = false;
+	private Astroframe frame = null;
 
 
 	/**
 	 * @param tableAttributeHandler
 	 * @throws SaadaException 
 	 */
-	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) throws SaadaException {
-		super(tableAttributeHandler);
-
+	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
+		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
 	}
 
 	/**
@@ -59,12 +64,12 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws SaadaException 
 	 */
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler
-			, Map<String, AttributeHandler> columnsAttributeHandler, List<String> comments) throws SaadaException {
-		super(tableAttributeHandler, columnsAttributeHandler);
-
+			, Map<String, AttributeHandler> columnsAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
+		super(tableAttributeHandler, columnsAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
 	}
 
 	/**
+	 * Search first by WCS, then by KW and finally by equinox
 	 * @throws Exception
 	 */
 	private void searchFrame() throws Exception {
@@ -75,44 +80,50 @@ public class SpaceKWDetector extends KWDetector{
 		 * Search first an explicit mention of Frame
 		 */
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Look in KW");
+			Messenger.printMsg(Messenger.DEBUG, "Look for astro frame in KW");
 		this.frameSetter = new ColumnExpressionSetter("astroframe");
-		ColumnExpressionSetter ah = search("astroframe", "pos.frame", RegExp.FITS_COOSYS_KW);
-		Astroframe frame = null;
-		String message="";
-		if( ah != null ) {
-			if( ah.getValue().toLowerCase().matches(RegExp.ECL_SYSTEM)) {
-				frame = new Ecliptic();
-				message = "Take <" + frame + "> as frame (read in " + ah.getAttNameOrg() + ")";
+		/*
+		 * look first in WCS
+		 */
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Look  in WCS KW");
+		if( this.projection != null && this.projection.isUsable() ){
+			this.frameSetter    = new ColumnWcsSetter("astroframe", "WCS.getAstroFrame()", projection);
+			this.ascension_kw   = new ColumnWcsSetter("s_ra", "WCS.getCenter(1)", projection);
+			this.declination_kw = new ColumnWcsSetter("s_dec", "WCS.getCenter(2)", projection);
+			this.status |= FRAME_FOUND;		
+			this.status |= POS_KW_FOUND;
+		} else {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
+		}
+		if( (status & FRAME_FOUND) == 0 ) {
+			ColumnExpressionSetter ah = search("astroframe", RegExp.FITS_COOSYS_UCD, RegExp.FITS_COOSYS_KW);
+			ColumnExpressionSetter ahEq = search("equinox" , RegExp.FITS_EQUINOX_UCD, RegExp.FITS_EQUINOX_KW);
+			ColumnExpressionSetter ahEp = search("epoch"   , RegExp.FITS_EPOCH_UCD, RegExp.FITS_EPOCH_KW);
+
+			String message= "";
+			if( !ah.notSet()) {
+				String sframe=ah.getSingleAttributeHandler().getNameorg();
+				if( !ahEq.notSet()){
+					sframe += "," + ahEq.getSingleAttributeHandler().getNameorg();
+					if( !ahEp.notSet()){
+						sframe += "," + ahEp.getSingleAttributeHandler().getNameorg();
+					}
+				}					
+				this.frameSetter = new ColumnExpressionSetter("astroframe", "getCoosys(" + sframe + ")", this.tableAttributeHandler, false);
 				status |= FRAME_FOUND;
-				this.frameSetter = ah;
-			} else if( ah.getValue().matches(RegExp.FK5_SYSTEM)) {
-				frame = new FK5();
-				message = "Take <" + frame + "> as frame (read in " + ah.getAttNameOrg() + ")";
-				status |= FRAME_FOUND;
-				this.frameSetter = ah;
-			} else if( ah.getValue().matches(RegExp.FK4_SYSTEM)) {
-				frame = new FK4();
-				message = "Take <" + frame + "> as frame (read in " + ah.getAttNameOrg() + ")";
-				status |= FRAME_FOUND;
-				this.frameSetter = ah;
-			} else if( ah.getValue().toLowerCase().matches(RegExp.GALACTIC_SYSTEM)) {
-				frame = new Galactic();
-				message = "Take <" + frame + "> as frame (read in " + ah.getAttNameOrg() + ")";
-				status |= FRAME_FOUND;
-				this.frameSetter = ah;
-			} else if( ah.getValue().toLowerCase().matches(RegExp.ICRS_SYSTEM)) {
-				frame = new ICRS();
-				message = "Take <" + frame + "> as frame (read in " + ah.getAttNameOrg() + ")";
-				status |= FRAME_FOUND;
-				this.frameSetter = ah;
-			}
+				Messenger.printLocatedMsg("@@@@@@@@@@@ " + this.frameSetter.toString());
+			} 
+
+
 		}
 		/*
 		 * Then look at EQUINOX KW
 		 */
 		if( (status & FRAME_FOUND) == 0 ) {
-			ah = searchByName("astroframe", RegExp.FITS_EQUINOX);		
+			ColumnExpressionSetter ah = searchByName("astroframe", RegExp.FITS_EQUINOX);		
+			String message="";
 			if( !ah.notSet() ) {
 				float val = Float.parseFloat(ah.getValue());
 				if( val == 1950.f) {
@@ -128,64 +139,6 @@ public class SpaceKWDetector extends KWDetector{
 				}
 			}
 		}
-		/*
-		 * Then look at the WCS projection
-		 */
-		if( (status & FRAME_FOUND) == 0 ) {
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@ ");
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Look  in WCS KW");
-			if( this.wcsModel == null ) {
-				try {
-					this.wcsModel = new WCSModel(tableAttributeHandler);
-				} catch (Exception e) {if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, e.toString());
-				return;
-				}
-			}
-			if( this.wcsModel.isKwset_ok() ){
-				ColumnExpressionSetter[] center;
-				center = this.wcsModel.getGlonlatCenter();
-				if( !center[0].notSet() && !center[1].notSet()) {
-					frame = new Galactic();
-					message = "Take <" + frame + "> as frame (infered from WCS)";
-					status |= FRAME_FOUND;
-					this.frameSetter.setByWCS("", false);
-				}
-				if( (status & FRAME_FOUND) == 0 ) {
-					center = this.wcsModel.getElonlatCenter();
-					if( !center[0].notSet() && !center[1].notSet()) {
-						frame = new Ecliptic();
-						message = "Take <" + frame + "> as frame (infered from WCS)";
-						status |= FRAME_FOUND;
-					}
-					this.frameSetter.setByWCS("", false);
-				}			
-				if( (status & FRAME_FOUND) == 0 ) {
-					center = this.wcsModel.getRadecCenter();
-					if( !center[0].notSet() && !center[1].notSet()) {
-						frame = new ICRS();
-						message = "Take <" + frame + "> as frame (infered from WCS: RA/DEC without equinox considered as ICRS)";
-						status |= FRAME_FOUND;
-					}
-					this.frameSetter.setByWCS("", false);
-				}			
-			} else {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
-			}
-		}
-		if( (status & FRAME_FOUND) != 0 ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " + frame + " found");
-			this.frameSetter.completeMessage(message);
-			this.frameSetter.storedValue = frame;
-			this.frameSetter.byWcs();
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, message);
-		}	else {
-			this.frameSetter.completeMessage("No frame found");
-		}
 	}
 
 	/**
@@ -196,6 +149,20 @@ public class SpaceKWDetector extends KWDetector{
 			if( this.isInit )
 				return;
 			this.searchFrame();
+			if( (this.status & FRAME_FOUND) != 0 && (this.status & POS_KW_FOUND) == 0) {
+				String exp = this.frameSetter.getExpression();
+				if( exp.startsWith("FK4") ){
+					this.lookForFK4Keywords();
+				} else if( exp.startsWith("FK5")  ){
+					this.lookForFK5Keywords();
+				} if( exp.startsWith("ICRS")  ){
+					this.lookForICRSKeywords();
+				} if( exp.startsWith("Galactic")  ){
+					this.lookForGalacticKeywords();
+				} if( exp.startsWith("Ecliptic")  ){
+					this.lookForEclpiticKeywords();
+				}
+			}
 			if( (status & FRAME_FOUND) == 0 ) {
 				detectKeywordsandInferFrame();				
 				if( (status & POS_KW_FOUND) == 0) {
@@ -203,19 +170,19 @@ public class SpaceKWDetector extends KWDetector{
 						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
 				}
 			} 
-			if( (status & FRAME_FOUND) == 0 ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");				
-			} else  if( (status & POS_KW_FOUND) == 0 ) {
-				lookForAstrometryInWCS();
-				if( (status & POS_KW_FOUND) == 0 ) {
-					detectKeywordsandInferFrame();				
-				}
-				if( (status & POS_KW_FOUND) == 0) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
-				}	
-			}
+//			if( (status & FRAME_FOUND) == 0 ) {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");				
+//			} else  if( (status & POS_KW_FOUND) == 0 ) {
+//				lookForAstrometryInWCS();
+//				if( (status & POS_KW_FOUND) == 0 ) {
+//					detectKeywordsandInferFrame();				
+//				}
+//				if( (status & POS_KW_FOUND) == 0) {
+//					if (Messenger.debug_mode)
+//						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
+//				}	
+//			}
 			if( (status & FRAME_FOUND) != 0 && (status & POS_KW_FOUND) != 0) {
 				this.lookForError();							
 			}
@@ -229,46 +196,51 @@ public class SpaceKWDetector extends KWDetector{
 	 * Look for the position in WCS keywords
 	 * @throws Exception 
 	 */
-	private void lookForAstrometryInWCS() throws Exception {
+	private void lookForAstrometryInWCSXXX() throws Exception {
 		if( (this.status & WCS_KW_FOUND) != 0 )
 			return;
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Searching spatial coordinates in WCS keywords");
 
-		if( this.wcsModel == null )
-			this.wcsModel = new WCSModel(tableAttributeHandler);
-		if( this.wcsModel.isKwset_ok() ){
-			ColumnExpressionSetter[] center ;
+		if( this.projection != null &&  this.projection.isUsable() ){
+
 			ColumnExpressionSetter[] 	ascRange ;
 			ColumnExpressionSetter[] 	decRange ;
 			ColumnExpressionSetter  	resolution ;
-			center = this.wcsModel.getRadecCenter();
-			if( center[0].notSet() || center[1].notSet()  )  {
-				center = this.wcsModel.getGlonlatCenter();
-				if( center[0].notSet() || center[1].notSet()  )  {
-					center = this.wcsModel.getElonlatCenter();
-					if( center[0].notSet() || center[1].notSet()  )  {
-						Messenger.printMsg(Messenger.TRACE, "WCS projection not valid: can't find the center of the image");
-						return;
-					} else {
-						ascRange   = this.wcsModel.getElonRange();
-						decRange   = this.wcsModel.getElatRange();
-						resolution = this.wcsModel.getElonlatResolution();
-					}
-				} else {						
-					ascRange   = this.wcsModel.getGlonRange();
-					decRange   = this.wcsModel.getGlatRange();
-					resolution = this.wcsModel.getGlonlatResolution();
-				}	
-			}	else {
-				ascRange   = this.wcsModel.getRaRange();
-				decRange   = this.wcsModel.getDecRange();					
-				resolution = this.wcsModel.getRadecResolution();
-			}
-			this.ascension_kw = center[0];
-			this.declination_kw = center[1];
+			//			center = this.wcsModel.getRadecCenter();
+			//			if( center[0].notSet() || center[1].notSet()  )  {
+			//				center = this.wcsModel.getGlonlatCenter();
+			//				if( center[0].notSet() || center[1].notSet()  )  {
+			//					center = this.wcsModel.getElonlatCenter();
+			//					if( center[0].notSet() || center[1].notSet()  )  {
+			//						Messenger.printMsg(Messenger.TRACE, "WCS projection not valid: can't find the center of the image");
+			//						return;
+			//					} else {
+			//						ascRange   = this.wcsModel.getElonRange();
+			//						decRange   = this.wcsModel.getElatRange();
+			//						resolution = this.wcsModel.getElonlatResolution();
+			//					}
+			//				} else {						
+			//					ascRange   = this.wcsModel.getGlonRange();
+			//					decRange   = this.wcsModel.getGlatRange();
+			//					resolution = this.wcsModel.getGlonlatResolution();
+			//				}	
+			//			}	else {
+			//				ascRange   = this.wcsModel.getRaRange();
+			//				decRange   = this.wcsModel.getDecRange();					
+			//				resolution = this.wcsModel.getRadecResolution();
+			//			}
+			ascRange = new ColumnExpressionSetter[]{
+					new ColumnWcsSetter("ra_min", "WCD.getMin(1)", projection),
+					new ColumnWcsSetter("ra_max", "WCD.getMax(1)", projection),
+			};
+			decRange = new ColumnExpressionSetter[]{
+					new ColumnWcsSetter("dec_min", "WCD.getMin(2)", projection),
+					new ColumnWcsSetter("dec_max", "WCD.getMax(2)", projection)
+			};
+			resolution = new ColumnWcsSetter("s_resol", "WCD.getResolution()", projection);
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " + center[0].getValue() + " " + center[1].getValue() + " as image center");				
+				Messenger.printMsg(Messenger.DEBUG, "Take " + this.ascension_kw.getValue() + " " + this.declination_kw.getValue() + " as image center");				
 			this.err_maj = resolution;
 			this.err_min = resolution;
 			this.err_angle = new ColumnExpressionSetter("err_angle");
@@ -334,7 +306,7 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		try{
 			this.errorSearched = true;
-			this.lookForAstrometryInWCS();
+			//this.lookForAstrometryInWCS();
 			this.lookForError();	
 		} catch (Exception e) {}
 
@@ -458,7 +430,7 @@ public class SpaceKWDetector extends KWDetector{
 		}
 	}
 
-	
+
 	/**
 	 * Look for position keywords by using UCDs. To be valid, keywords must have an associate AH named COOSYS.
 	 * Both COOSYS must have the same valid value.
@@ -490,7 +462,7 @@ public class SpaceKWDetector extends KWDetector{
 			ascension_kw = posKW.get(0);
 			declination_kw = posKW.get(1);
 		}
-		
+
 		if( ascension_kw == null || declination_kw == null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "not found");
@@ -503,7 +475,7 @@ public class SpaceKWDetector extends KWDetector{
 		AttributeHandler raCoosys;
 		AttributeHandler decCoosys;
 		if( (raCoosys  = ascension_kw.getAssociateAtttribute()) != null && "COOSYS".equals(raCoosys.getNameorg()) &&
-			(decCoosys = declination_kw.getAssociateAtttribute()) != null && "COOSYS".equals(decCoosys.getNameorg())){
+				(decCoosys = declination_kw.getAssociateAtttribute()) != null && "COOSYS".equals(decCoosys.getNameorg())){
 			String cooString = raCoosys.getValue();
 			if( cooString.equals(decCoosys.getValue()) ) {
 				if( cooString.matches(RegExp.ICRS_SYSTEM)) {
@@ -533,10 +505,10 @@ public class SpaceKWDetector extends KWDetector{
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG,  "Fing position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
 								+ " tagged with coosys " + cooString);					this.status |= FRAME_FOUND;		
-					this.frameSetter = new ColumnExpressionSetter("astroframe");
-					this.frameSetter.setByValue("", false);
-					this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenced by position keywords)");
-					this.frameSetter.storedValue = frame;
+								this.frameSetter = new ColumnExpressionSetter("astroframe");
+								this.frameSetter.setByValue("", false);
+								this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenced by position keywords)");
+								this.frameSetter.storedValue = frame;
 				}
 			} else {
 				Messenger.printMsg(Messenger.TRACE, "Position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
@@ -606,7 +578,7 @@ public class SpaceKWDetector extends KWDetector{
 			return;
 		}
 	}
-	
+
 	/**
 	 * @throws Exception 
 	 * 
