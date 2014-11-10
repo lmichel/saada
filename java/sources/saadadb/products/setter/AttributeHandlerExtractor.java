@@ -32,7 +32,7 @@ public class AttributeHandlerExtractor {
 		if(attributesHandler != null) {
 			for(Entry<String,AttributeHandler> e:attributesHandler.entrySet())
 			{
-				orderedAttributeMap.put(10000-e.getValue().getNameattr().length()+e.getValue().getNameattr(), e.getValue());
+				orderedAttributeMap.put(10000-e.getValue().getDbName().length()+e.getValue().getName(), e.getValue());
 			}
 		}
 
@@ -57,11 +57,11 @@ public class AttributeHandlerExtractor {
 			//System.out.println(extractedString);
 			for(Entry<String,AttributeHandler> e:orderedAttributeMap.entrySet())
 			{
-				if((extractedString.equals(e.getValue().getNameattr())) ||(extractedString.equals(e.getValue().getNameorg())))
+				if((extractedString.equals(e.getValue().getDbName())) ||(extractedString.equals(e.getValue().getName())))
 				{
 					//We modify the expression if an old value is in it
-					if(extractedString.equals(e.getValue().getNameorg()))
-						expression=expression.replace(e.getValue().getNameorg(), e.getValue().getNameattr());
+					if(extractedString.equals(e.getValue().getName()))
+						expression=expression.replace(e.getValue().getName(), e.getValue().getDbName());
 					extractAttributes.add(e.getValue());
 				}
 
