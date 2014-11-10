@@ -19,6 +19,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.inference.CooSysResolver;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.setter.ColumnExpressionSetter;
@@ -33,6 +34,11 @@ import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.RepositoryMode;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
+import cds.astro.Ecliptic;
+import cds.astro.FK4;
+import cds.astro.FK5;
+import cds.astro.Galactic;
+import cds.astro.ICRS;
 
 /**
  * Contains all the logic of the product storing.
@@ -85,6 +91,7 @@ public class ProductIngestor {
 					Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
 		}
+		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnergyFields();		
@@ -105,6 +112,7 @@ public class ProductIngestor {
 		if( si != null ) this.saadaInstance = si;
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Set fields of the Saada instance");
+		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnergyFields();		
@@ -200,11 +208,11 @@ public class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setSpaceFields() throws Exception {
-		System.out.println(this.product.s_raSetter);
 		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
 			try {
-				Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
-				String stc = "Polygon " + Database.getAstroframe();
+				this.product.astroframeSetter.calculateExpression();
+				String af = this.product.astroframeSetter.getValue();
+				Messenger.printLocatedMsg(this.product.astroframeSetter + " " +Database.getAstroframe().toString());
 				/*
 				 * Convert astroframe if different from this of the database
 				 */
@@ -266,42 +274,50 @@ public class ProductIngestor {
 		this.saadaInstance.s_dec = Double.parseDouble(this.product.s_decSetter.getValue());
 		this.product.s_regionSetter.setValue(stc);
 	}
-	
+
 	/**
 	 * Convert the coords and region before to store it
 	 */
 	protected void setConvertedCoordinatesAndRegion() {
 		try {
 			Astrocoo acoo;
-			Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
-			String stc = "Polygon " + Database.getAstroframe();
-			double ra ;
-			double dec;
-			if( this.product.s_raSetter == this.product.s_decSetter) {
-				acoo= new Astrocoo(af ,this.product.s_raSetter.getValue() ) ;
-			} else {
-				acoo= new Astrocoo(af, this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue()) ;
-			}
-			double converted_coord[] = Coord.convert(af, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
-			ra = converted_coord[0];
-			dec = converted_coord[1];
-			this.product.s_raSetter.setConvertedValue(ra, 	af.toString(), Database.getAstroframe().toString(), addMEssage);
-			this.product.s_decSetter.setConvertedValue(dec, af.toString(), Database.getAstroframe().toString(), addMEssage);
-			this.saadaInstance.s_ra = ra;
-			this.saadaInstance.s_dec = dec;
-			/*
-			 * convert the region polygon
-			 */
-			if( !this.product.s_regionSetter.notSet() ) {
-				double[] pts = (double[]) this.product.s_regionSetter.storedValue;
-				for( int i=0 ; i<(pts.length/2) ; i++ ) {
-					converted_coord = Coord.convert(af, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
-					stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
+			Astroframe af = new CooSysResolver(this.product.astroframeSetter.getValue()).getCooSys();
+			if( af != null ) {
+				String stc = "Polygon " + Database.getAstroframe();
+				double ra ;
+				double dec;
+				if( this.product.s_raSetter == this.product.s_decSetter) {
+					acoo= new Astrocoo(af ,this.product.s_raSetter.getValue() ) ;
+				} else {
+					acoo= new Astrocoo(af, this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue()) ;
 				}
-				this.product.s_regionSetter.setValue(stc);
-				this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+				double converted_coord[] = Coord.convert(af, new double[]{acoo.getLon(), acoo.getLat()}, Database.getAstroframe());
+				ra = converted_coord[0];
+				dec = converted_coord[1];
+				this.product.s_raSetter.setConvertedValue(ra, 	af.toString(), Database.getAstroframe().toString(), addMEssage);
+				this.product.s_decSetter.setConvertedValue(dec, af.toString(), Database.getAstroframe().toString(), addMEssage);
+				this.saadaInstance.s_ra = ra;
+				this.saadaInstance.s_dec = dec;
+				/*
+				 * convert the region polygon
+				 */
+				if( !this.product.s_regionSetter.notSet() ) {
+					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
+					for( int i=0 ; i<(pts.length/2) ; i++ ) {
+						converted_coord = Coord.convert(af, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
+						stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
+					}
+					this.product.s_regionSetter.setValue(stc);
+					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+				}
+			} else {
+				this.product.s_raSetter.completeMessage("Conv failed: no astroframe");
+				this.product.s_decSetter.completeMessage("Conv failed: no astroframe");
+				this.product.s_regionSetter.completeMessage("Conv failed: no astroframe");
+				this.saadaInstance.s_ra = Double.NaN;
+				this.saadaInstance.s_dec = Double.NaN;									
 			}
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			Messenger.printMsg(Messenger.TRACE, "Error while setting the position " + e.getMessage());
 			this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
 			this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
@@ -322,7 +338,7 @@ public class ProductIngestor {
 			this.saadaInstance.pos_z_csa =Math.sin(Math.toRadians(this.saadaInstance.s_dec));
 		}
 	}
-	
+
 	/**
 	 * Set the fiedl of view
 	 */
@@ -383,8 +399,8 @@ public class ProductIngestor {
 			if( this.numberOfCall == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	
 	}
-	
-	
+
+
 	/********************************************************************************
 	 * Set Time field
 	 */
@@ -649,7 +665,6 @@ public class ProductIngestor {
 		}
 		String value = "";
 		try {
-			columnSetter.calculateExpression();
 			value = columnSetter.getValue();
 			Field f=null;
 			f = saadaInstance.getClass().getField(fieldName);

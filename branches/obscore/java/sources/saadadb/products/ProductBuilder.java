@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -37,8 +39,8 @@ import saadadb.products.setter.ColumnSetter;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
+import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 import saadadb.vocabulary.enums.PriorityMode;
 import cds.astro.Astroframe;
@@ -79,13 +81,13 @@ public class ProductBuilder {
 	 * Observation Axis
 	 */
 	//protected List<AttributeHandler> name_components;
-	protected ColumnExpressionSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
-	protected ColumnExpressionSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
-	protected ColumnExpressionSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
-	protected ColumnExpressionSetter calib_levelSetter=new ColumnExpressionSetter("calib_level");
-	protected ColumnExpressionSetter target_nameSetter=new ColumnExpressionSetter("target_name");
-	protected ColumnExpressionSetter facility_nameSetter=new ColumnExpressionSetter("facility_name");
-	protected ColumnExpressionSetter instrument_nameSetter=new ColumnExpressionSetter("instrument_name");
+	protected ColumnSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
+	protected ColumnSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
+	protected ColumnSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
+	protected ColumnSetter calib_levelSetter=new ColumnExpressionSetter("calib_level");
+	protected ColumnSetter target_nameSetter=new ColumnExpressionSetter("target_name");
+	protected ColumnSetter facility_nameSetter=new ColumnExpressionSetter("facility_name");
+	protected ColumnSetter instrument_nameSetter=new ColumnExpressionSetter("instrument_name");
 	protected PriorityMode observationMappingPriority = PriorityMode.LAST;
 	/*
 	 * Space Axis
@@ -345,6 +347,36 @@ public class ProductBuilder {
 	}
 
 
+	/**
+	 * Compute all columns setter expressions
+	 * @throws Exception
+	 */
+	protected void calculateAllExpressions() throws Exception {
+	
+		this.obs_idSetter.calculateExpression();
+		this.obs_collectionSetter.calculateExpression();
+		this.obs_publisher_didSetter.calculateExpression();
+		this.calib_levelSetter.calculateExpression();
+		this.target_nameSetter.calculateExpression();
+		this.facility_nameSetter.calculateExpression();
+		this.instrument_nameSetter.calculateExpression();
+		this.s_resolutionSetter.calculateExpression();
+		this.s_raSetter.calculateExpression();
+		this.s_decSetter.calculateExpression();
+		this.s_fovSetter.calculateExpression();
+		this.s_regionSetter.calculateExpression();
+		this.em_minSetter.calculateExpression(this.dataFile);
+		this.em_maxSetter.calculateExpression(this.dataFile);
+		this.em_res_powerSetter.calculateExpression(this.dataFile);
+		this.x_unit_orgSetter.calculateExpression(this.dataFile);
+		this.t_minSetter.calculateExpression();
+		this.t_maxSetter.calculateExpression();
+		this.t_exptimeSetter.calculateExpression();
+		this.o_ucdSetter.calculateExpression();
+		this.o_unitSetter.calculateExpression();
+		this.o_calib_statusSetter.calculateExpression();
+		this.pol_statesSetter.calculateExpression();
+	}
 	/**
 	 * Can be overloaded to use another ingestor
 	 * @throws Exception
@@ -1766,7 +1798,7 @@ public class ProductBuilder {
 		this.t_minSetter.storedValue = si.t_min;
 		retour.put("t_exptime", t_exptimeSetter);
 		this.t_exptimeSetter.storedValue = si.t_exptime;
-		
+
 		retour.put("o_ucd", o_ucdSetter);
 		this.o_ucdSetter.storedValue = si.getO_ucd();
 		retour.put("o_unit", o_unitSetter);
@@ -1813,6 +1845,43 @@ public class ProductBuilder {
 	}
 
 
+	/**
+	 * Write in directory a report of the mapped product 
+	 * The report name is the same as this of the data file, suffixed with ".report"
+	 * The report file contain a list of the read keywords followed by the mapping into the collection model
+	 * @param directory
+	 */
+	public void writeCompleteReport(String directory) throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".report");
+		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
+		fw.write("========= " + this.dataFile.getName() + "\n");
+		fw.write("========= AH read\n");
+		for( AttributeHandler ah: this.getProductAttributeHandler().values()) {
+			fw.write(ah + "\n");
+		}
+		fw.write("========= Loaded extensions\n");
+		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
+			fw.write(es + "\n");
+		}
+		Map<String, ColumnSetter> r = this.getReport();
+		fw.write("========= Field Values\n");
+		for( Entry<String, ColumnSetter> e:r.entrySet()){
+			//System.out.print(String.format("%20s",e.getKey()) + "     ");
+			fw.write(String.format("%20s",e.getKey()) + "     ");;
+			ColumnSetter ah = e.getValue();
+			//System.out.print(ah.getSettingMode() + " " + ah.message);
+			fw.write(ah.getSettingMode() + " " + ah.message + " ");
+			if( !ah.notSet() ) 
+			{
+				//System.out.print(" storedValue=" + ah.storedValue);
+				fw.write("storedValue=" + ah.storedValue+" \n");
+			} else {
+					fw.write("\n");
+
+			}
+		}
+		fw.close();
+	}
 	/**
 	 * @param ap
 	 * @param attributes
