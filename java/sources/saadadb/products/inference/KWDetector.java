@@ -1,5 +1,7 @@
 package saadadb.products.inference;
 
+import hecds.wcs.transformations.Projection;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +9,7 @@ import java.util.Map;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.DataFile;
+import saadadb.products.ProductBuilder;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
@@ -14,37 +17,50 @@ import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
  * Do search operations in a set of keyword.
+ * The role of these classes (see subclasses) is not to select keywords. 
+ * They must neither do any computation, nor build computed expression setter. Al these operation must be achieved at the Ingestor level
+ * in order to take into account possible modifications of the AH values.
+ * In fact the keyword detector is called once at the creation time of the {@link ProductBuilder}, but the same builder can be  used to 
+ * load several data sets (table entries e.g.) 
+ *  
  * @author michel
  * @version $Id$
  */
 public abstract class KWDetector {
 	protected Map<String, AttributeHandler> tableAttributeHandler;
 	protected Map<String, AttributeHandler> entryAttributeHandler;
+	/**
+	 * WCS projection
+	 */
+	protected final Projection projection;
 
 	/**
 	 * @param tableAttributeHandler
 	 */
-	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler) {
+	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler, Projection projection) {
 		this.tableAttributeHandler = tableAttributeHandler;
+		this.projection = projection;
 	}
 	/**
 	 * @param tableAttributeHandler
 	 * @param entryAttributeHandler
 	 */
-	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler) {
+	public KWDetector(Map<String, AttributeHandler> tableAttributeHandler, Map<String, AttributeHandler> entryAttributeHandler, Projection projection) {
 		this.tableAttributeHandler = tableAttributeHandler;
 		this.entryAttributeHandler = entryAttributeHandler;
+		this.projection = projection;
 	}
 	/**
 	 * Take the WK map from a data file
 	 * @param productFile
 	 * @throws SaadaException
 	 */
-	public KWDetector(DataFile productFile) throws SaadaException {
+	public KWDetector(DataFile productFile, Projection projection) throws SaadaException {
 		if( productFile != null ) {
 			this.tableAttributeHandler = productFile.getAttributeHandler();
 			this.entryAttributeHandler =  productFile.getEntryAttributeHandler();
 		}
+		this.projection = projection;
 	}
 
 	/**

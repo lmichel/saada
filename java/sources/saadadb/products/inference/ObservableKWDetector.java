@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
@@ -29,12 +30,12 @@ public class ObservableKWDetector extends KWDetector {
 	private boolean columnsSearched = false;
 
 	public ObservableKWDetector(Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler);
+		super(tableAttributeHandler, null);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	public ObservableKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler, entryAttributeHandler);
+		super(tableAttributeHandler, entryAttributeHandler, null);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
 	}
 	
