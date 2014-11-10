@@ -1,5 +1,7 @@
 package saadadb.meta;
 
+import hecds.wcs.descriptors.CardDescriptor;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,8 +24,8 @@ import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
+import saadadb.util.SaadaConstant;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 
@@ -35,7 +37,7 @@ import cds.savot.model.SavotParam;
  * 03/1014: Accessors give the existence of a valid value for the field unit value, ucd and utype
 
  */
-public class AttributeHandler implements Serializable , Cloneable{
+public class AttributeHandler implements Serializable , Cloneable, CardDescriptor{
 	static final DecimalFormat exp =  new DecimalFormat("0.00E00");
 	static final  DecimalFormat deux = new DecimalFormat("0.000");
 
@@ -138,12 +140,12 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public AttributeHandler(HeaderCard card) {
 		String strcard = card.toString().trim();
 		String regexp = "^" + RegExp.FITS_KEYWORD 
-		+ "((?:"  + RegExp.FITS_STR_VAL 
-		+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
-		+ ")|(?:" + RegExp.FITS_FLOAT_VAL
-		+ ")|(?:" + RegExp.FITS_INT_VAL
-		+ "))\\s*"
-		+ "((?:"  + RegExp.FITS_COMMENT + ")?)";
+				+ "((?:"  + RegExp.FITS_STR_VAL 
+				+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
+				+ ")|(?:" + RegExp.FITS_FLOAT_VAL
+				+ ")|(?:" + RegExp.FITS_INT_VAL
+				+ "))\\s*"
+				+ "((?:"  + RegExp.FITS_COMMENT + ")?)";
 		/*
 		 * Preliminary test to discard trivial bad cards
 		 * save time and avoid un-relevant messages
@@ -399,10 +401,10 @@ public class AttributeHandler implements Serializable , Cloneable{
 		this.numValue = SaadaConstant.DOUBLE;
 	}
 	public void setValue(double value){
-			this.numValue = value;
+		this.numValue = value;
 		this.value = String.valueOf(value);
 	}
-	
+
 
 	public String getNameorg(){
 		return this.nameorg;
@@ -449,15 +451,15 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public String getCollname(){
 		return this.collname;
 	}
-	
+
 	public boolean isNamedLike(String name) {
 		return (this.nameattr.equals(name) || this.nameorg.equals(name));
 	}
-	
+
 	public boolean isNameMatch(String regex) {
 		return (this.nameattr.matches(regex) || this.nameorg.matches(regex));
 	}
-	
+
 	/*
 	 * The following accessors give the existence of a valid value for the field
 	 * Lately added must be inserted within the code by opportunity
@@ -486,7 +488,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public boolean hasValue() {
 		return !(this.value == null || this.value.length() == 0);
 	}
-	
+
 	/**
 	 * Used to populate the meta category tables {@link Table_Saada_Metacat}
 	 * @param subkey
@@ -494,24 +496,24 @@ public class AttributeHandler implements Serializable , Cloneable{
 	 * @throws FatalException
 	 */
 	public String getDumpLine(int subkey) throws FatalException {
-			
+
 		return  subkey
-		+ "\t"  + this.level
-		+ "\t"  + this.classid
-		+ "\t"  + this.classname
-		+ "\t" + this.nameattr
-		+ "\t" + this.type
-		+ "\t" + Database.getWrapper().getEscapeQuote(this.nameorg)
-		+ "\t" + this.ucd
-		+ "\t" + this.utype
-		+ "\t" + this.vo_dm
-		+ "\t"  + "null"
-		+ "\t"   + Database.getWrapper().getBooleanAsString(this.queriable)
-		+ "\t"  + this.unit
-		+ "\t" + this.comment.replaceAll("'", "")
-		+ "\t" + this.collname 
-		+ "\t"   + this.collid 
-		+ "\t"  + this.format ;
+				+ "\t"  + this.level
+				+ "\t"  + this.classid
+				+ "\t"  + this.classname
+				+ "\t" + this.nameattr
+				+ "\t" + this.type
+				+ "\t" + Database.getWrapper().getEscapeQuote(this.nameorg)
+				+ "\t" + this.ucd
+				+ "\t" + this.utype
+				+ "\t" + this.vo_dm
+				+ "\t"  + "null"
+				+ "\t"   + Database.getWrapper().getBooleanAsString(this.queriable)
+				+ "\t"  + this.unit
+				+ "\t" + this.comment.replaceAll("'", "")
+				+ "\t" + this.collname 
+				+ "\t"   + this.collid 
+				+ "\t"  + this.format ;
 	}
 
 	/**
@@ -521,23 +523,23 @@ public class AttributeHandler implements Serializable , Cloneable{
 	 */
 	public String getInsertValues(int subkey) throws FatalException {
 		return  "( " + Database.getWrapper().getInsertAutoincrementStatement()
-		+ ", '"  + this.level
-		+ "', "  + this.classid
-		+ ", '"  + this.classname
-		+ "', '" + this.nameattr
-		+ "', '" + this.type
-		+ "', '" + Database.getWrapper().getEscapeQuote(this.nameorg)
-		+ "', '" + this.ucd
-		+ "', '" + this.utype
-		+ "', '" + this.vo_dm
-		+ "', "  + "null"
-		+ ", "   + Database.getWrapper().getBooleanAsString(this.queriable)
-		+ ", '"  + this.unit
-		+ "', '" + this.comment.replaceAll("'", "")
-		+ "', '" + this.collname 
-		+ "',"   + this.collid 
-		+ ", '"  + this.format 
-		+ "')";
+				+ ", '"  + this.level
+				+ "', "  + this.classid
+				+ ", '"  + this.classname
+				+ "', '" + this.nameattr
+				+ "', '" + this.type
+				+ "', '" + Database.getWrapper().getEscapeQuote(this.nameorg)
+				+ "', '" + this.ucd
+				+ "', '" + this.utype
+				+ "', '" + this.vo_dm
+				+ "', "  + "null"
+				+ ", "   + Database.getWrapper().getBooleanAsString(this.queriable)
+				+ ", '"  + this.unit
+				+ "', '" + this.comment.replaceAll("'", "")
+				+ "', '" + this.collname 
+				+ "',"   + this.collid 
+				+ ", '"  + this.format 
+				+ "')";
 	}
 
 	public static String getInsertStatement() {
@@ -676,7 +678,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 			 */
 			else if( this.format.startsWith("http://")) {
 				return "<A HREF=\"" + this.format.replaceAll("\\$", URLEncoder.encode(value.toString(), "iso-8859-1"))
-				+ "\">" + value + "</A>";
+						+ "\">" + value + "</A>";
 			}
 			else {
 				return this.format.replaceAll("\\$", URLEncoder.encode(value.toString(), "iso-8859-1"));
@@ -763,7 +765,7 @@ public class AttributeHandler implements Serializable , Cloneable{
 		}
 		query.close();
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -781,7 +783,43 @@ public class AttributeHandler implements Serializable , Cloneable{
 	public String toString() {
 		return this.nameorg + "(" + this.nameattr + "," + this.type + "," + this.unit + ","+ this.ucd + ","+ this.utype+ "," + this.value+ "," + this.comment + ")";
 	}
-}
 
+	/*
+	 * CardDescriptor implementation
+	 */
+	@Override
+	public String getName() {
+		return this.getNameorg();
+	}
+
+	@Override
+	public String getDbName() {
+		return this.getNameattr();
+	}
+
+	@Override
+	public String getDescription() {
+		return this.getComment();
+	}
+
+	@Override
+	public double getDoubleValue() throws Exception {
+		if( this.type.equals("double") || this.type.equals("float")|| this.type.equals("int")|| this.type.equals("short")){
+			return Double.parseDouble(this.value);
+		}
+		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert a " + this.type + " in double");
+		return SaadaConstant.DOUBLE;
+	}
+
+	@Override
+	public int geIntValue() throws Exception {
+		if( this.type.equals("int")|| this.type.equals("short")){
+			return Integer.parseInt(this.value);
+		}
+		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert a " + this.type + " in integer");
+		return SaadaConstant.INT;
+	}
+
+}
 
 
