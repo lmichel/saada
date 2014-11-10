@@ -60,7 +60,7 @@ public class ProductListReport {
 
 			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
-			int MAX = 1;
+			int MAX = Integer.parseInt(ap.getNumber());
 			for( File f: files) {
 				if( cpt == MAX ) {
 					ProductBuilder product = null;
@@ -113,13 +113,12 @@ public class ProductListReport {
 //					
 				}
 //				if( cpt > MAX ) break;
-//				//cpt++;
+				cpt++;
 				log+="\n";
 				System.out.println(log);
 					
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			Database.close();
