@@ -1,6 +1,7 @@
 package saadadb.products.setter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -24,29 +25,29 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * The expression to evaluate 
 	 */
-	private String expression;
+	protected String expression;
 	/**
 	 * The last expression evaluated
 	 */
 
-	private String lastExpressionEvaluated;
+	protected String lastExpressionEvaluated;
 	/**
 	 * The wrapper used to evaluate the expression
 	 */
-	private ExpressionWrapper wrapper;
+	protected ExpressionWrapper wrapper;
 
 	/**
 	 * The list of attributes used in the ExpressionWrapper
 	 */
-	private List<AttributeHandler> exprAttributes = new ArrayList<AttributeHandler>();;
+	protected List<AttributeHandler> exprAttributes = new ArrayList<AttributeHandler>();;
 	/**
 	 * The list of attribute being String functions arguments (names of AH)
 	 */
-	private List<AttributeHandler> stringFunctionArgumentsList = new ArrayList<AttributeHandler>();
+	protected List<AttributeHandler> stringFunctionArgumentsList = new ArrayList<AttributeHandler>();
 	/**
 	 * The result of the expression
 	 */
-	private String result="NotSet";
+	protected String result="NotSet";
 	/**
 	 * A ColumnSingleSetter used for the abstract methods from ColumnSetter and when mode=ByValue
 	 */
@@ -55,31 +56,32 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	/**
 	 * The List of all numeric function used in the expression
 	 */
-	private ArrayList<Function> numericFunctionList;
+	protected ArrayList<Function> numericFunctionList;
 
 	//	/**
 	//	 * Boolean indicating if we've override the automatic detection of settingmode
 	//	 */
 	//	private boolean columnModeForced=false;
 
-	private StringFunctionExtractor stringFunctionExtractor;
-	private NumericFunctionExtractor numericFunctionExtractor;
-	private AttributeHandler singleAttributeHandler;
-	private boolean singleStringExpression = false;
+	protected StringFunctionExtractor stringFunctionExtractor;
+	protected NumericFunctionExtractor numericFunctionExtractor;
+	protected AttributeHandler singleAttributeHandler;
+	protected boolean singleStringExpression = false;
 	/**
 	 * If false, no call of exp4j 
 	 */
-	private boolean arithmeticExpression = true; 
-	private String unit="";
-	private String ucd="";
+	protected boolean arithmeticExpression = true; 
+	protected String unit="";
+	protected String ucd="";
 	public final String fieldName;
 
-	private INIT computingMode;
+	protected INIT computingMode;
 	enum INIT{
 		CONSTANT_VALUE,
 		CONSTANT_EXPRESSION,
 		SINGLE_ATTRIBUTE,
 		MULTI_ATTRIBUTE,
+		WSC_AXE
 	};
 	/**
 	 * Constructor without keyword. The expression is considered as constant
@@ -118,7 +120,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.singleAttributeHandler = attr;
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.computingMode = INIT.SINGLE_ATTRIBUTE;
-		this.calculateExpression(null);
+		this.calculateExpressionFromAttributes(null);
 	}
 	/**
 	 * Constructor with only one ah.
@@ -140,7 +142,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.singleAttributeHandler = attr;
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.computingMode = INIT.SINGLE_ATTRIBUTE;
-		this.calculateExpression(null);
+		this.calculateExpressionFromAttributes(null);
 	}
 
 	/**
@@ -159,7 +161,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		}
 		this.fieldName = fieldName;
 		this.setExpression(expression);
-		this.calculateExpression(attributes);
+		this.calculateExpressionFromAttributes(attributes);
 	}
 
 	/**
@@ -179,14 +181,29 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public ColumnExpressionSetter(String fieldName )	{
 		super();
 		this.fieldName = fieldName;
-		this.settingMode = ColumnSetMode.NOT_SET;
+		this.settingMode = ColumnSetMode.NOT_SET;			
+		this.computingMode = INIT.MULTI_ATTRIBUTE;
 	}
 
+	/**
+	 * Switches the column setter in expression mode
+	 * @param expression: Setter's expression
+	 * @throws Exception
+	 */
+	public void switchToExpression(String expression) throws Exception {
+		this.computingMode = INIT.MULTI_ATTRIBUTE;
+		this.settingMode = ColumnSetMode.BY_EXPRESSION;
+		Map<String, AttributeHandler> lah= new LinkedHashMap<String, AttributeHandler>();
+		lah.put(this.singleAttributeHandler.getNameattr(), this.singleAttributeHandler);
+		this.setExpression(expression);
+		this.calculateExpressionFromAttributes(lah);
+	}
+	
 	/**
 	 * @param expression
 	 * @throws Exception
 	 */
-	private void setExpression(String expression) throws Exception{
+	protected void setExpression(String expression) throws Exception{
 		if( expression == null ){
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Column setter cannot be set with a null expression");
 		}
@@ -264,6 +281,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				this.result = this.expression;
 			}
 		} catch (Exception e) {
+			System.out.println(this.singleAttributeHandler);
+			System.out.println(this.stringFunctionExtractor);
+			e.printStackTrace();
 			this.result = SaadaConstant.STRING;
 			this.settingMode = ColumnSetMode.NOT_SET;
 			this.completeMessage("exp failed: " + e.getMessage());
@@ -274,7 +294,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @param attributes
 	 * @throws Exception
 	 */
-	private void calculateExpression(Map<String,AttributeHandler> attributes) throws Exception{
+	private void calculateExpressionFromAttributes(Map<String,AttributeHandler> attributes) throws Exception{
 		try {
 			if( this.settingMode == ColumnSetMode.BY_KEYWORD){
 				this.result=this.singleAttributeHandler.getValue();				
@@ -803,10 +823,10 @@ MULTI_ATTRIBUTE,
 			System.out.println("*****Expr: " + exp);
 			ces = new ColumnExpressionSetter("name",exp, mapTest, false);
 			System.out.println(" compiled: " + ces);
-			ces.calculateExpression(mapTest);
+			ces.calculateExpressionFromAttributes(mapTest);
 			System.out.println(" computed: " + ces);
 			if( ces.notSet() ) break;
-			ces.calculateExpression(mapTest);
+			ces.calculateExpressionFromAttributes(mapTest);
 			System.out.println(" computed: " + ces);
 			if( ces.notSet() ) break;
 		}

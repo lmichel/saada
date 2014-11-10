@@ -1,9 +1,11 @@
 package saadadb.products.setter;
 
+import hecds.wcs.descriptors.CardDescriptor;
 import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.DataFile;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
@@ -265,7 +267,7 @@ public abstract class ColumnSetter implements Cloneable {
 	/**
 	 * @return
 	 */
-	public abstract AttributeHandler getAssociateAtttribute() ;
+	public abstract CardDescriptor getAssociateAtttribute() ;
 
 	/**
 	 * @return
@@ -355,5 +357,17 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @throws Exception
 	 */
 	public void calculateExpression() throws Exception{}
+	
+	/**
+	 * In some cases the AHs are not enough to compute an expression (table columns e.g.)
+	 * The values must  be taken from the {@link DataFile}
+	 * By default the dataFile param is ignored this method is overloaded in subclasses needing 
+	 * to access data provided the the dataFile 
+	 * @param datafile
+	 * @throws Exception
+	 */
+	public void  calculateExpression(DataFile datafile)throws Exception{
+		this.calculateExpression();
+	}
 
 }
