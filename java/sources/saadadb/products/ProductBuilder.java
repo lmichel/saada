@@ -35,6 +35,7 @@ import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpatialResolutionUnitRef;
 import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
@@ -105,6 +106,7 @@ public class ProductBuilder {
 	 */
 	protected ColumnSetter em_minSetter=new ColumnExpressionSetter("em_min");
 	protected ColumnSetter em_maxSetter=new ColumnExpressionSetter("em_max");
+	protected ColumnSetter em_binsSetter=new ColumnExpressionSetter("em_bins");
 	protected ColumnSetter em_res_powerSetter=new ColumnExpressionSetter("em_res_power");
 	//	private SpectralCoordinate spectralCoordinate;
 	protected ColumnSetter x_unit_orgSetter=new ColumnExpressionSetter("x_unit_org");
@@ -367,6 +369,7 @@ public class ProductBuilder {
 		this.s_regionSetter.calculateExpression();
 		this.em_minSetter.calculateExpression(this.dataFile);
 		this.em_maxSetter.calculateExpression(this.dataFile);
+		this.em_binsSetter.calculateExpression(this.dataFile);
 		this.em_res_powerSetter.calculateExpression(this.dataFile);
 		this.x_unit_orgSetter.calculateExpression(this.dataFile);
 		this.t_minSetter.calculateExpression();
@@ -760,6 +763,9 @@ public class ProductBuilder {
 			if( this.em_res_powerSetter.notSet()  ) {
 				this.em_res_powerSetter = this.quantityDetector.getResPower();
 			}
+			if( this.em_binsSetter.notSet()  ) {
+				this.em_binsSetter = this.quantityDetector.getEbins();
+			}
 			break;
 
 		case LAST:
@@ -769,6 +775,7 @@ public class ProductBuilder {
 			ColumnExpressionSetter qdMax = this.quantityDetector.getEMax();
 			ColumnExpressionSetter qdUnit = this.quantityDetector.getEUnit();
 			ColumnExpressionSetter qdRPow= this.quantityDetector.getResPower();
+			ColumnExpressionSetter qdBins= this.quantityDetector.getEbins();
 			if( qdMin.notSet() || qdMax.notSet() ) {
 				this.em_minSetter = this.quantityDetector.getEMin();
 				this.em_maxSetter = this.quantityDetector.getEMax();				
@@ -785,6 +792,11 @@ public class ProductBuilder {
 				this.em_res_powerSetter = this.quantityDetector.getResPower();
 			} else {
 				this.em_res_powerSetter = qdRPow;
+			}
+			if( qdBins.notSet()  ) {
+				this.em_binsSetter = this.quantityDetector.getEbins();
+			} else {
+				this.em_binsSetter = qdBins;
 			}
 		}
 		this.traceReportOnAttRef(this.x_unit_orgSetter);
@@ -1268,6 +1280,7 @@ public class ProductBuilder {
 
 		this.x_unit_orgSetter   = this.getMappedAttributeHander("x_unit_org", mapping.getColumnMapping("x_unit_org_csa"));
 		this.em_res_powerSetter = this.getMappedAttributeHander("em_res_power", mapping.getColumnMapping("em_res_power"));
+		this.em_binsSetter = this.getMappedAttributeHander("em_bins", mapping.getColumnMapping("em_bins"));
 		this.em_minSetter = new ColumnExpressionSetter("em_min");
 		this.em_maxSetter = new ColumnExpressionSetter("em_max");
 
@@ -1292,34 +1305,48 @@ public class ProductBuilder {
 					Messenger.printMsg(Messenger.TRACE, "spectral coord. <" + sc_col.getValue() + "> can not be interptreted");						
 					return;
 				}
-			}
-		/*
-		 * If no range set in params, find it out from table columns
-		 */	
-		String mappedName = sc_col.getAttributeHandler().getNameorg();
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
-		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
-			String key = ah.getNameorg();
-			if(key.equals(mappedName) ){
-				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
-				/*
-				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
-				 * the unit found in the column description is taken
-				 */
-				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-					//this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit(), true);
-					this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit());
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
-				} else {
-					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
-					return;
+			} if( sc_col.byAttribute() ) {
+				String col =  sc_col.getValue();
+				Messenger.printMsg(Messenger.TRACE, "Take mapped column " + col + " as spectral dispersion");
+				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + col + ")");
+				this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getAxValue(" + col + ")");
+				this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + col + ")");	
+				if( this.x_unit_orgSetter.notSet()) {
+					AttributeHandler ah ;
+					if( (ah = this.dataFile.getEntryAttributeHandler().get(col) ) != null ) {
+						this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", ah.getUnit());						
+					}
 				}
-				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-				return;
+				
 			}
-		}
-		return ;	
+
+//		/*
+//		 * If no range set in params, find it out from table columns
+//		 */	
+//		String mappedName = sc_col.getAttributeHandler().getNameorg();
+//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
+//		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
+//			String key = ah.getNameorg();
+//			if(key.equals(mappedName) ){
+//				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
+//				/*
+//				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
+//				 * the unit found in the column description is taken
+//				 */
+//				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
+//					//this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit(), true);
+//					this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit());
+//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
+//				} else {
+//					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
+//					return;
+//				}
+//				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+//				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+//				return;
+//			}
+//		}
+//		return ;	
 	}
 
 	/**

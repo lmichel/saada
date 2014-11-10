@@ -444,7 +444,7 @@ public class ProductIngestor {
 		setField("t_exptime", t_exptime);
 	}
 
-	/*
+	/*******************************************************************************************
 	 * 
 	 * Set Energy fields
 	 * 
@@ -458,21 +458,31 @@ public class ProductIngestor {
 		ColumnSetter qdMin = this.product.em_minSetter;
 		ColumnSetter qdMax = this.product.em_maxSetter;
 		ColumnSetter qdUnit = this.product.x_unit_orgSetter;
-		if( !qdMin.notSet() && !qdMax.notSet() &&!qdUnit.notSet() ){
-			SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
-			spectralCoordinate.setMappedUnit(qdUnit.getValue());
-			spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
-			spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
-			if( !spectralCoordinate.convert() ) {
-				this.product.em_minSetter = new ColumnSingleSetter();
-				this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
-				this.product.em_maxSetter = new ColumnSingleSetter();
-				this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
-				this.product.em_res_powerSetter =  new ColumnSingleSetter();
-			} else {
-				this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
-				this.product.em_maxSetter.setConvertedValue(spectralCoordinate.getConvertedMax(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
+		if( !qdMin.notSet() && !qdMax.notSet() ) {
+			if( !qdUnit.notSet() ){
+
+				SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
+				spectralCoordinate.setMappedUnit(qdUnit.getValue());
+				spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
+				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
+				if( !spectralCoordinate.convert() ) {
+					this.product.em_minSetter = new ColumnSingleSetter();
+					this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
+					this.product.em_maxSetter = new ColumnSingleSetter();
+					this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
+					this.product.em_res_powerSetter =  new ColumnSingleSetter();
+				} else {
+					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
+					this.product.em_maxSetter.setConvertedValue(spectralCoordinate.getConvertedMax(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
+				}
 			}
+			if( !this.product.em_binsSetter.notSet() && this.product.em_res_powerSetter.notSet() ) {
+				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
+				double v2  =  (this.product.em_minSetter.getNumValue() - this.product.em_maxSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
+				this.product.em_res_powerSetter.setValue(v1/v2);
+				this.product.em_res_powerSetter.completeMessage("Computed from em_min, em_max and em_bns");
+			}
+			
 		}
 		setField("em_min"    , this.product.em_minSetter);
 		setField("em_max"    , this.product.em_maxSetter);
