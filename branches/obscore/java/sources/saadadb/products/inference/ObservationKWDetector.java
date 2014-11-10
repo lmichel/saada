@@ -12,11 +12,11 @@ public class ObservationKWDetector extends KWDetector {
 
 	public ObservationKWDetector(
 			Map<String, AttributeHandler> tableAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler);
+		super(tableAttributeHandler, null);
 	}
 	public ObservationKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> entryAttributeHandler, List<String> comments) {
-		super(tableAttributeHandler, entryAttributeHandler);
+		super(tableAttributeHandler, entryAttributeHandler, null);
 	}
 	
 	public ColumnExpressionSetter getCollectionName() throws Exception{
