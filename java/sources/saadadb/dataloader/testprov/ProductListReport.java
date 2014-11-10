@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
@@ -76,43 +78,45 @@ public class ProductListReport {
 							, new ProductMapping("mapping", ap));
 					break;
 					}
-				//	product.initProductFile();
-					Map<String, ColumnSetter> r = product.getReport();
-					//System.out.println("======== " + f);	
-					log+="======== " + f+"\n";
-					//System.out.println("      -- Loaded extensions");
-					log+="      -- Loaded extensions\n";
-					for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
-						//System.out.println(es);
-						log+=es;
-					}
-					//System.out.println("      -- Field values");
-					log+="      -- Field values\n";
-					for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
-						//System.out.print(String.format("%20s",e.getKey()) + "     ");
-						log+=String.format("%20s",e.getKey()) + "     ";
-						ColumnSetter ah = e.getValue();
-						//System.out.print(ah.getSettingMode() + " " + ah.message);
-						log+=ah.getSettingMode() + " " + ah.message;
-						if( !ah.notSet() ) 
-						{
-							//System.out.print(" storedValue=" + ah.storedValue);
-							log+="storedValue=" + ah.storedValue+" \n";
-						}
-						System.out.println(" ");
-
-					}
+					product.writeCompleteReport(f.getParent() + "/report/");
 					break;
-					
+//				//	product.initProductFile();
+//					for( AttributeHandler ah: product.getProductAttributeHandler().values()) {
+//						System.out.println(ah);
+//					}
+//					Map<String, ColumnSetter> r = product.getReport();
+//					//System.out.println("======== " + f);	
+//					log+="======== " + f+"\n";
+//					//System.out.println("      -- Loaded extensions");
+//					log+="      -- Loaded extensions\n";
+//					for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
+//						//System.out.println(es);
+//						log+=es;
+//					}
+//					//System.out.println("      -- Field values");
+//					log+="      -- Field values\n";
+//					for( Entry<String, ColumnSetter> e:r.entrySet()){
+//						//System.out.print(String.format("%20s",e.getKey()) + "     ");
+//						log+=String.format("%20s",e.getKey()) + "     ";
+//						ColumnSetter ah = e.getValue();
+//						//System.out.print(ah.getSettingMode() + " " + ah.message);
+//						log+=ah.getSettingMode() + " " + ah.message;
+//						if( !ah.notSet() ) 
+//						{
+//							//System.out.print(" storedValue=" + ah.storedValue);
+//							log+="storedValue=" + ah.storedValue+" \n";
+//						}
+//						System.out.println(log);
+//
+//					}
+//					break;
+//					
 				}
 //				if( cpt > MAX ) break;
 //				//cpt++;
 				log+="\n";
-				PrintWriter out = new PrintWriter("/home/pertuy/echantillonTest1.txt");
-				out.print(log);
-				out.close();
 				System.out.println(log);
-				
+					
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
