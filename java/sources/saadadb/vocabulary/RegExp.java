@@ -84,6 +84,11 @@ public class RegExp {
     + FITS_FLOAT_ND     + "|"
     + "(?:[0-9]+))";
 	
+	/*
+	 * Query parsing et autres cochonneries
+	 */
+	public static final String ONE_COORDINATE = "[+-]?(?:(?:\\.[0-9]+)|(?:[0-9]+\\.?[0-9]*))(?:[eE][+-]?[0-9]+)?";
+	public static final String POSITION_COORDINATE = "^(" + ONE_COORDINATE + ")((?:[+-]|(?:[,:;\\s]+[+-]?))" +  ONE_COORDINATE + ")$";
 
 	/*
 	 * Spectral axis column names			
