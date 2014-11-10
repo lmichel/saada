@@ -1,5 +1,8 @@
 package saadadb.products.inference;
 
+import hecds.wcs.descriptors.WcsAxeDescriptor;
+import hecds.wcs.transformations.Projection;
+
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -512,108 +515,89 @@ public class SpectralCoordinate{
 	 * @return
 	 * @throws Exception 
 	 */
-	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler) throws Exception{
-		int dispersionAxeNum = 0;
-		this.attributesList = tableAttributeHandler;
-		WCSModel wm = null;
-		try {
-			wm = new WCSModel(tableAttributeHandler);
-		} catch (Exception e) {
-			return false;
-		}
-		if( !wm.isKwset_ok() ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "WCS readout failed");
-			return false;
-		}
-		String unitOrg = this.mappedUnit;
-		wm.projectAllAxesToRealWord();
-		if( !wm.isKwset_ok() ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Cannot achieve the WCS projection");
-			return false;
-		}
-		/*
-		 * A dispersion axe is found but unit can be not set or not valid
-		 * In this case, we take unit given by the configuration
-		 */
-		int dan;
-		if( (dan = wm.getDispersionAxe()) != SaadaConstant.INT) {
-			dispersionAxeNum = dan; 
-			this.nbBins = wm.getNAXISi(dan);
-			DispersionUnitRef unit_class = DispersionUnitRef.getUniRef(wm.getCUNIT(dispersionAxeNum));
-			if(unit_class == null) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
-			} else  {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Take " + unit_class.unit  + " as unit");
-				this.mappedUnit = unit_class.unit;
-			}
-			this.detectionMessage = wm.detectionMessage;
-		}
-		/*
-		 * No dispersion axe: we consider the longer one as a good candidate
-		 */
-		else {
-			this.mappedUnit = null;
-			return false;
-/*			int old_max = 0;
-			for( int axe=0 ; axe<wm.getNAXIS() ; axe++) {
-				if( wm.getNAXISi(axe) > old_max ) {
-					old_max = wm.getNAXISi(axe);
-					dispersionAxeNum = axe;
-					this.nbBins = wm.getNAXISi(axe);
-				}
-				AttributeHandler ah;
-				if( (ah = attributesList.get(ChangeKey.changeKey("DISPERS").toLowerCase())) != null || 
-						(ah = attributesList.get(ChangeKey.changeKey("DISP").toLowerCase())) != null ) {		
-
-					String dispers = ah.getValue();	
-					
-					 * Dispersion is often a string from which we attempt to extract the unit 
-					 
-					Matcher m   = (Pattern.compile("[^\\s]*\\/[^\\s,\\']*")).matcher(dispers);
-					while( m.find() ) {
-						String disp_unit = m.group(0);
-						unitOrg = disp_unit.substring(0, disp_unit.indexOf("/"));
-						
-						 * "Angtroem" is often written like "Ampere"
-						 
-						if( unitOrg.equals("A") ) {
-							unitOrg = "Angstrom";
-						}
-
-						UnitRef unit_class = UnitRef.getUniRef(unitOrg);
-						if(unit_class == null) {
-							if (Messenger.debug_mode)
-								Messenger.printMsg(Messenger.DEBUG, "Can not get unit from DISPERS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
-						} else  {
-							this.mappedUnit = unit_class.unit;
-						}
-						this.detectionMessage = "DISP(ERS) keyword found expressed in " 
-							+  m.group(0) + ": try to take " + this.mappedUnit + " as dispersion unit";
-						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, this.detectionMessage);
-					}
-				}
-			}			
-*/		}
-		this.orgMin = wm.getMinValue(dispersionAxeNum);
-		this.orgMax = wm.getMaxValue(dispersionAxeNum);
-		ColumnExpressionSetter[]cs = wm.getRadecCenter();
-		if( !cs[0].notSet())
-			this.raWCSCenter = Double.parseDouble(cs[0].getValue());
-		if( !cs[1].notSet())
-			this.decWCSCenter = Double.parseDouble(cs[1].getValue());
-		return true;
-//		if( this.convert(this.mappedUnit,this.orgMin, this.orgMax ) ) {
-//			Messenger.printMsg(Messenger.TRACE, this.getRange());
-//			return true;
-//		} else {
-//			this.detectionMessage = "";
+	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler, Projection projection) throws Exception{
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEB");
+		WcsAxeDescriptor wcsAxeDescriptor = projection.descriptor.getWcsAxeDescriptor(1);
+		this.nbBins = wcsAxeDescriptor.getNaxis();		
+		this.orgMax = projection.getMax(1);
+		this.orgMin = projection.getMin(1);
+//		this.raWCSCenter = projection.g;
+//		if( !cs[1].notSet())
+//			this.decWCSCenter = Double.parseDouble(cs[1].getValue());
+//
+//		
+//		DispersionUnitRef unit_class = DispersionUnitRef.getUniRef(wcsAxeDescriptor.unit);
+//		if(unit_class == null) {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
+//		} else  {
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Take " + unit_class.unit  + " as unit");
+//			this.mappedUnit = unit_class.unit;
+//		}
+//
+//		ColumnExpressionSetter[]cs = wm.getRadecCenter();
+//		if( !cs[0].notSet())
+//			this.raWCSCenter = Double.parseDouble(cs[0].getValue());
+//		if( !cs[1].notSet())
+//			this.decWCSCenter = Double.parseDouble(cs[1].getValue());
+//		return true;
+//
+//		ValueRange vr = projection.get
+//		int dispersionAxeNum = 0;
+//		this.attributesList = tableAttributeHandler;
+//		WCSModel wm = null;
+//		try {
+//			wm = new WCSModel(tableAttributeHandler);
+//		} catch (Exception e) {
 //			return false;
 //		}
+//		if( !wm.isKwset_ok() ){
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "WCS readout failed");
+//			return false;
+//		}
+//		wm.projectAllAxesToRealWord();
+//		if( !wm.isKwset_ok() ){
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Cannot achieve the WCS projection");
+//			return false;
+//		}
+//		/*
+//		 * A dispersion axe is found but unit can be not set or not valid
+//		 * In this case, we take unit given by the configuration
+//		 */
+//		int dan;
+//		if( (dan = wm.getDispersionAxe()) != SaadaConstant.INT) {
+//			dispersionAxeNum = dan; 
+//			this.nbBins = wm.getNAXISi(dan);
+//			DispersionUnitRef unit_class = DispersionUnitRef.getUniRef(wm.getCUNIT(dispersionAxeNum));
+//			if(unit_class == null) {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Can not get unit from WCS keywords: Use " + this.mappedUnit + " as unit (given by the configuration)");
+//			} else  {
+//				if (Messenger.debug_mode)
+//					Messenger.printMsg(Messenger.DEBUG, "Take " + unit_class.unit  + " as unit");
+//				this.mappedUnit = unit_class.unit;
+//			}
+//			this.detectionMessage = wm.detectionMessage;
+//			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ FIN");
+//		}
+//		/*
+//		 * No dispersion axe: we consider the longer one as a good candidate
+//		 */
+//		else {
+//			this.mappedUnit = null;
+//			return false;
+//		}
+//		this.orgMin = wm.getMinValue(dispersionAxeNum);
+//		this.orgMax = wm.getMaxValue(dispersionAxeNum);
+//		ColumnExpressionSetter[]cs = wm.getRadecCenter();
+//		if( !cs[0].notSet())
+//			this.raWCSCenter = Double.parseDouble(cs[0].getValue());
+//		if( !cs[1].notSet())
+//			this.decWCSCenter = Double.parseDouble(cs[1].getValue());
+		return true;
 	}
 
 	/**
