@@ -41,6 +41,7 @@ public class ArgsParser implements Serializable{
 	static {
 		allowedArgs = new TreeSet<String>();
 		allowedArgs.add("-debug") ;
+		allowedArgs.add("-number") ;
 		allowedArgs.add("-classifier") ;
 		allowedArgs.add("-coldef") ;
 		allowedArgs.add("-classfusion") ;
@@ -259,6 +260,22 @@ public class ArgsParser implements Serializable{
 		}
 		return ClassifierMode.NOCLASSIFICATION;
 	}
+	
+	/**
+	 * Return the -number parameter. This parameter is fo a genral purpose
+	 * @return
+	 * @throws FatalException 
+	 */
+	public String getNumber() throws FatalException  {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-number")) {
+				return this.matches(getArgsValue(args[i]), "-number", RegExp.CATEGORY);
+			}
+		}
+		return null;
+	}
+	
+
 
 	/**
 	 * Returns the class name given as value of the class mapping type parameter
