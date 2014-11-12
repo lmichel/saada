@@ -1,6 +1,10 @@
 package saadadb.vo.request.formator.process;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import saadadb.collection.Category;
@@ -48,7 +52,7 @@ public class AhValueFinder {
 	}
 
 	protected void init() {
-	
+
 		colAttrMap = new LinkedHashMap<String, AttributeHandler>();
 		needToRebuiltColAttrMap = true;
 	}
@@ -113,8 +117,14 @@ public class AhValueFinder {
 
 				// Analyse the expression to get a map of the Used AH
 				LinkedHashMap<String, AttributeHandler> usedAh = new LinkedHashMap<String, AttributeHandler>();
-				usedAh.putAll(buildAhMapforExpression(possibleAh));
-
+				// usedAh.putAll(buildAhMapforExpression(possibleAh));
+				ArrayList<AttributeHandler> ahList = buildAhMapforExpression(possibleAh);
+				Iterator<AttributeHandler> it = ahList.iterator();
+				while(it.hasNext()) {
+					AttributeHandler tmp = it.next();
+					usedAh.put(tmp.getNameattr(), tmp);
+					System.out.println(("..."));
+				}
 				// if the used ahmap is empty -> then it s an exception
 				if (usedAh == null || usedAh.size() == 0) {
 					// Throws an exception, something is not normal
@@ -160,32 +170,29 @@ public class AhValueFinder {
 				// we create the appropriate ColumnExpression Setter
 				if (canCompute) {
 					if (isASimpleMapping) {
-						//The try/catch is here because we have no way to know for sure that the values are suitable for the CES
+						// The try/catch is here because we have no way to know for sure that the values are suitable for the CES
 						try {
 							ces = new ColumnExpressionSetter(currentUh.getNickname(), simpleMappingAh, arithmetic);
 							ces.calculateExpression();
 							value = ces.getExpressionResult();
-						}
-						catch(Exception e) {
+						} catch (Exception e) {
 							value = "";
 						}
-						
-						//Creates an Ah similar to mapped ah so a unit check can be performed later
+
+						// Creates an Ah similar to mapped ah so a unit check can be performed later
 						return buildAttributeHandlerFromAh(simpleMappingAh, value);
-						
-					} else { //else, it's not a simple mapping
-						//The try/catch is here because we have no way to know for sure that the values are suitable for the CES
+
+					} else { // else, it's not a simple mapping
+						// The try/catch is here because we have no way to know for sure that the values are suitable for the CES
 						try {
 							ces = new ColumnExpressionSetter(currentUh.getNickname(), query, usedAh, arithmetic);
 							ces.calculateExpression();
 							value = ces.getExpressionResult();
-						}
-						catch(Exception e) {
+						} catch (Exception e) {
 							value = "";
 						}
 						return buildAttributeHandlerFromCurrentUh(value);
 					}
-
 
 				} else {
 					value = "";
@@ -228,7 +235,7 @@ public class AhValueFinder {
 				if (matched) {
 					value = fillAhWithValue(tmpCurrentAh).getValue();
 					System.out.println("The manual search found a match for ucd/utype <" + ucd + "/" + utype + ">: " + value);
-					//Creates an Ah similar to tmpCurrentAh so a unit check can be performed later
+					// Creates an Ah similar to tmpCurrentAh so a unit check can be performed later
 					return buildAttributeHandlerFromAh(tmpCurrentAh, value);
 				} else {
 					System.out.println("No AttributeHandler has been found for ucd/utype: <" + ucd + "/" + utype + ">");
@@ -240,7 +247,6 @@ public class AhValueFinder {
 		}
 		return buildAttributeHandlerFromCurrentUh(value);
 	}
-
 
 	/**
 	 * Fills the given attribute handler with its value and returns it
@@ -332,11 +338,11 @@ public class AhValueFinder {
 				return "";
 			}
 		}
-/* 
- * 
- * Energy Axe requires specials actions to convert values from database unit to meters
- * 
- * */
+		/* 
+		 * 
+		 * Energy Axe requires specials actions to convert values from database unit to meters
+		 * 
+		 * */
 
 		if (cUtype.equalsIgnoreCase("Char.SpectralAxis.Coverage.Location.Value")) {
 			String val;
@@ -383,7 +389,7 @@ public class AhValueFinder {
 			return val;
 		}
 
-		if (cUtype.equalsIgnoreCase("Char.SpectralAxis.Coverage.Bounds.Start")||cUcd.equalsIgnoreCase("VOX:BandPass_LoLimit")) {
+		if (cUtype.equalsIgnoreCase("Char.SpectralAxis.Coverage.Bounds.Start") || cUcd.equalsIgnoreCase("VOX:BandPass_LoLimit")) {
 			String val;
 			try {
 				double em_min = Double.parseDouble(fillAhWithValue(getAllPossibleAH().get("em_min")).getValue());
@@ -398,10 +404,10 @@ public class AhValueFinder {
 			}
 			return val;
 		}
-		if (cUtype.equalsIgnoreCase("Char.SpectralAxis.Coverage.Bounds.Stop")||cUcd.equalsIgnoreCase("BandPass_HiLimit")) {
+		if (cUtype.equalsIgnoreCase("Char.SpectralAxis.Coverage.Bounds.Stop") || cUcd.equalsIgnoreCase("BandPass_HiLimit")) {
 			String val;
 			try {
-				double em_max= Double.parseDouble(fillAhWithValue(getAllPossibleAH().get("em_max")).getValue());
+				double em_max = Double.parseDouble(fillAhWithValue(getAllPossibleAH().get("em_max")).getValue());
 				double v1 = SpectralCoordinate.convertSaada(Database.getSpect_unit(), "m", em_max);
 				if (Double.isNaN(v1)) {
 					val = "";
@@ -413,7 +419,7 @@ public class AhValueFinder {
 			}
 			return val;
 		}
-		if(cUcd.equalsIgnoreCase("BandPass_RefValue")) {
+		if (cUcd.equalsIgnoreCase("BandPass_RefValue")) {
 			String val;
 			try {
 				double em_min = Double.parseDouble(fillAhWithValue(getAllPossibleAH().get("em_min")).getValue());
@@ -424,7 +430,7 @@ public class AhValueFinder {
 					return "";
 				}
 
-				double v = (v1+v2)/2;
+				double v = (v1 + v2) / 2;
 
 				if (v < 0)
 					v *= -1.;
@@ -435,7 +441,7 @@ public class AhValueFinder {
 			}
 			return val;
 		}
-		
+
 		if (cUtype.equalsIgnoreCase("CoordSys.SpaceFrame.Name")) {
 			return Database.getAstroframe().name;
 		}
@@ -450,12 +456,13 @@ public class AhValueFinder {
 	 *            Must be a map containing all the AH that can be used in the expression.
 	 * @return
 	 */
-	protected LinkedHashMap<String, AttributeHandler> buildAhMapforExpression(LinkedHashMap<String, AttributeHandler> baseMap) {
+	protected ArrayList<AttributeHandler> buildAhMapforExpression(LinkedHashMap<String, AttributeHandler> baseMap) {
 		System.out.println("Expression for extractor: " + query);
 		AttributeHandlerExtractor ahExt = new AttributeHandlerExtractor(query, baseMap);
-		LinkedHashMap<String, AttributeHandler> ahMap = new LinkedHashMap<String, AttributeHandler>();
-	//TODO//EXTRACT AH MAP	ahMap = ahExt.extractAH();
-		return ahMap;
+		List<AttributeHandler> ahMap = new LinkedList<AttributeHandler>();
+
+		ahMap = ahExt.extractAH();
+		return (ArrayList)ahMap;
 	}
 
 	/**
@@ -471,6 +478,7 @@ public class AhValueFinder {
 		result.setValue(value);
 		return result;
 	}
+
 	/**
 	 * creates an AttributeHandler similar to the given AttributeHandler and assigns it the given value
 	 * 
@@ -484,6 +492,7 @@ public class AhValueFinder {
 		result.setValue(value);
 		return result;
 	}
+
 	/**
 	 * Build an HashMap containing all possible AttributeHandlers for these parameters
 	 * 
@@ -629,12 +638,12 @@ public class AhValueFinder {
 	public void setUtypeHandler(UTypeHandler uh) throws Exception {
 		System.out.println("New UtypeHandler set : " + uh.getNickname());
 		this.currentUh = uh;
-		//resetDefaultParams();
+		// resetDefaultParams();
 		extractor = new Extractor();
 		extractor.setExpression(currentUh.getExpression());
 		arithmetic = extractor.getArithmetic();
 		query = extractor.getQuery();
-		//extract();
+		// extract();
 	}
 
 	public static void main(String[] args) throws Exception {
