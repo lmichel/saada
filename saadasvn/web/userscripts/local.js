@@ -49,4 +49,4 @@
  * 
  */
 // Uncomment to enable feature 
-PeerCartClient = 'http://xcatdb.u-strasbg.fr/saadasvn/cartclient';
+//PeerCartClient = 'http://xcatdb.u-strasbg.fr/saadasvn/cartclient';
