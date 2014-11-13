@@ -21,7 +21,7 @@ import saadadb.util.Messenger;
  */
 public class FlatFile extends Product {
 
-	public FlatFile(File file, ConfigurationDefaultHandler conf) {
+	public FlatFile(DataResourcePointer file, ConfigurationDefaultHandler conf) {
 		super(file, conf);
 	}
 
@@ -42,7 +42,7 @@ public class FlatFile extends Product {
 		 * No class for flatfiles => not business attribute, just the collection
 		 */
 		this.saadainstance.storeCollection();
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.file.getName() + "> complete");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.file.getName() + "> complete");
 	
 	}
 	/**
@@ -55,7 +55,7 @@ public class FlatFile extends Product {
 	public void loadProductFile(ConfigurationDefaultHandler configuration) throws IgnoreException{
 		this.configuration = configuration;
 		
-			Messenger.printMsg(Messenger.TRACE, "Make a AnyTable instance with file <"  + this.file.getName() + ">");
+			Messenger.printMsg(Messenger.TRACE, "Make a AnyTable instance with file <"  + this.dataPointer.file.getName() + ">");
 			this.productFile = new AnyFile(this);
 			this.tableAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 	}
@@ -82,9 +82,9 @@ public class FlatFile extends Product {
 	 * @param si
 	 * @throws AbortException 
 	 */
-	public void bindInstanceToFile(SaadaInstance si, File file) throws AbortException {
+	public void bindInstanceToFile(SaadaInstance si, DataResourcePointer file) throws AbortException {
 		this.saadainstance = si;
-		this.file = file;
+		this.dataPointer = file;
 		this.productFile = new AnyFile(this);
 		this.setBasicCollectionFields();
 		this.loadAttrExtends();

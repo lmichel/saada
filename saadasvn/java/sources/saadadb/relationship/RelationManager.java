@@ -449,7 +449,7 @@ public class RelationManager extends  EntityManager {
 
 
 	/**
-	 * @param name
+	 * @param nameFile
 	 * @param class_id
 	 * @throws Exception
 	 */
@@ -472,7 +472,7 @@ public class RelationManager extends  EntityManager {
 
 
 	/**
-	 * @param name
+	 * @param nameFile
 	 * @param class_id
 	 * @throws Exception
 	 */
@@ -508,7 +508,7 @@ public class RelationManager extends  EntityManager {
 
 	/**
 	 * Removee the relation
-	 * @param name
+	 * @param nameFile
 	 * @param comment
 	 * @throws Exception 
 	 * @throws AbortException 

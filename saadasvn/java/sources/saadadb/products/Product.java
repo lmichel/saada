@@ -60,7 +60,7 @@ public class Product /*extends File*/ {
 	 * It is used to encapsulate java.io.File methods
 	 * Data are handled by the Product file implementation "productFile"
 	 */
-	protected File file;
+	protected DataResourcePointer dataPointer;
 	protected ProductFile productFile;
 	
 	protected  ConfigurationDefaultHandler configuration;
@@ -94,8 +94,8 @@ public class Product /*extends File*/ {
 	 * @param fileName -- The file name of the product
 	 * @param tabArg -- the arguments of the product (collection_name, product_category, extension_name)
 	 */
-	public Product(File file, ConfigurationDefaultHandler conf){		
-		this.file = file;
+	public Product(DataResourcePointer file, ConfigurationDefaultHandler conf){		
+		this.dataPointer = file;
 		this.configuration = conf;
 	}
 	
@@ -299,7 +299,7 @@ public class Product /*extends File*/ {
 		 */
 		this.storeCopyFileInRepository();
 		this.saadainstance.store();
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.file.getName() + "> complete");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.nameOrg + "> complete");
 	}
 
 	/**
@@ -336,16 +336,21 @@ public class Product /*extends File*/ {
 		 */
 		this.storeCopyFileInRepository(loadedfilewriter);
 		this.saadainstance.store(colwriter, buswriter);
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.file.getName() + "> complete");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.nameOrg + "> complete");
 	}
 	
 	/**
-	 * Copy the product file into the repository with the name given as parameter
-	 * @param rep_name
+	 * Copy the product file into the repository 
 	 * @throws Exception
 	 */
 	public void storeCopyFileInRepository() throws Exception {
 		String repname = "";
+		if( this.dataPointer.isURL){
+			this.dataPointer.cleanUp();
+			this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);		
+			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.nameOrg);
+			return;
+		}
 		/*
 		 * In these case, the input file is copied or moved to the repository.
 		 * product_url_csa is set with the file name
@@ -357,11 +362,11 @@ public class Product /*extends File*/ {
 						+ separ + this.getConfiguration().getCollectionName() 
 						+ separ + Category.explain(this.getConfiguration().getCategorySaada()) 
 						+ separ;
-			CopyFile.copy(this.file.getAbsolutePath(), reportFile + repname);
+			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), reportFile + repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.file.getAbsolutePath() + ">");
-				this.file.delete();
+					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.dataPointer.file.getAbsolutePath() + ">");
+				this.dataPointer.file.delete();
 			}
 		}
 		/*
@@ -369,19 +374,26 @@ public class Product /*extends File*/ {
 		 * Product_url_csa is set with the absolute path
 		 */
 		else if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.KEEP ) {
-			repname = this.file.getAbsolutePath();
+			repname = this.dataPointer.file.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this, repname);
 		}
 		this.saadainstance.setProduct_url_csa(repname);
 	}
 
 	/**
-	 * Copy the product file into the repository with the name given as parameter
-	 * @param rep_name
+	 * Copy the product file into the repository and append the query updating the  
+	 * Table_Saada_Loaded_File table to loadedfilewriter
+	 * @param loadedfilewriter
 	 * @throws Exception
 	 */
 	public void storeCopyFileInRepository(BufferedWriter loadedfilewriter) throws Exception {
 		String repname = "";
+		if( this.dataPointer.isURL){
+			this.dataPointer.cleanUp();
+			this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);		
+			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.nameOrg, loadedfilewriter);
+			return;
+		}
 		/*
 		 * In these case, the input file is copied or moved to the repository.
 		 * product_url_csa is set with the file name
@@ -393,11 +405,11 @@ public class Product /*extends File*/ {
 						+ separ + this.getConfiguration().getCollectionName() 
 						+ separ + Category.explain(this.getConfiguration().getCategorySaada()) 
 						+ separ;
-			CopyFile.copy(this.file.getAbsolutePath(), reportFile + repname);
+			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), reportFile + repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.file.getAbsolutePath() + ">");
-				this.file.delete();
+					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.dataPointer.file.getAbsolutePath() + ">");
+				this.dataPointer.file.delete();
 			}
 		}
 		/*
@@ -405,7 +417,7 @@ public class Product /*extends File*/ {
 		 * Product_url_csa is set with the absolute path
 		 */
 		else if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.KEEP ) {
-			repname = this.file.getAbsolutePath();
+			repname = this.dataPointer.file.getAbsolutePath();
 			Table_Saada_Loaded_File.recordLoadedFile(this, repname, loadedfilewriter);
 		}
 		this.saadainstance.setProduct_url_csa(repname);
@@ -603,7 +615,7 @@ public class Product /*extends File*/ {
 				}
 			} else
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.file.getName() + "> matches field <"+ this.saadainstance.getClass().getName() + "." + keyObj + ">");	
+					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.dataPointer.file.getName() + "> matches field <"+ this.saadainstance.getClass().getName() + "." + keyObj + ">");	
 		}
 		this.saadainstance.computeContentSignature(md5Value);
 	}
@@ -615,7 +627,7 @@ public class Product /*extends File*/ {
 	 */
 	protected void setBasicCollectionFields() throws AbortException {
 		this.saadainstance.setNameSaada(this.getInstanceName(null));
-		this.saadainstance.setProduct_url_csa(this.file.getName());	
+		this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);	
 		this.saadainstance.setDateLoad(new java.util.Date().getTime());
 	}
 	
@@ -646,15 +658,16 @@ public class Product /*extends File*/ {
 		 * That is better than an empty name
 		 */
 		if( name == null || name.length() == 0 ) {
-			name = this.file.getName();
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
-			
-			if( suffix == null ) {
-				name =  name.trim().replaceAll("'", "");
-			}
-			else {
-				name = name.trim().replaceAll("'", "") + "_" + suffix;			
-			}
+			name = this.dataPointer.getObjectName(suffix);
+//			name = this.dataPointer.getName();
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
+//			
+//			if( suffix == null ) {
+//				name = name.trim().replaceAll("'", "");
+//			}
+//			else {
+//				name = name.trim().replaceAll("'", "") + "_" + suffix;			
+//			}
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name (file name) <"+ name + ">");
 		}
 		return name;
@@ -685,7 +698,7 @@ public class Product /*extends File*/ {
 	 */
 	public void loadProductFile(ConfigurationDefaultHandler configuration) throws IgnoreException{
 		this.configuration = configuration;
-		String filename = this.file.getName();
+		String filename = this.dataPointer.file.getName();
 		boolean try_votable = false;
 		try {
 			this.productFile = new FitsProduct(this);			
@@ -1482,9 +1495,9 @@ public class Product /*extends File*/ {
 	 * @throws IOException
 	 * @throws SaadaException
 	 */
-	public void mergeProductFormat(File file_to_merge) throws FitsException, IOException, SaadaException {
+	public void mergeProductFormat(DataResourcePointer file_to_merge) throws FitsException, IOException, SaadaException {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Merge format with file <" + file_to_merge.getName() + ">");
+			Messenger.printMsg(Messenger.DEBUG, "Merge format with file <" + file_to_merge.file.getName() + ">");
 		
 		/*
 		 * Build a new set of attribute handlers from the product given as a parameter
@@ -1559,20 +1572,20 @@ public class Product /*extends File*/ {
 	 * @return
 	 */
 	public String getName() {
-		return this.file.getName();
+		return this.dataPointer.nameOrg;
 	}
 	
 	
 	public CharSequence getCanonicalPath() throws IOException {
-		return this.file.getCanonicalPath();
+		return this.dataPointer.file.getCanonicalPath();
 	}
 	
 	
 	public String getParent() {
-		return this.file.getParent();
+		return this.dataPointer.file.getParent();
 	}
 	
 	public String toString() {
-		return this.file.getAbsolutePath();
+		return this.dataPointer.file.getAbsolutePath();
 	}
 }

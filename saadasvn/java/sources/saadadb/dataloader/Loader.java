@@ -14,6 +14,7 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
 import sun.security.pkcs.ParsingException;
@@ -29,7 +30,7 @@ public class Loader extends SaadaProcess {
 	 * COnfiguration used by  the current loading session
 	 */
 	private ConfigurationDefaultHandler configuration;
-	private ArrayList<File> file_to_load = null;
+	private ArrayList<DataResourcePointer> filesToLoad = null;
 	
 	private ArgsParser tabArg;
 	/**
@@ -116,13 +117,13 @@ public class Loader extends SaadaProcess {
 		 * Build the list of product files possibly loaded
 		 */
 		/*
-		 * The file to load list can be set by the GUI via the setFile_to_load method.
+		 * The file_to_load list can be set by the GUI via the setFile_to_load method.
 		 * In that case we don't set this list again
 		 */
-		if( this.file_to_load == null ) {
+		if( this.filesToLoad == null ) {
 			setCandidateFileList();
 		}
-		if( file_to_load.size() == 0 ) {
+		if( filesToLoad.size() == 0 ) {
 			return;
 		}
 		String typeMapping = configuration.getTypeMapping().getTypeMapping();
@@ -137,17 +138,17 @@ public class Loader extends SaadaProcess {
 		 * Flatfiles have no class, they can be loaded by burst
 		 */
 		if( configuration.getCategorySaada() == Category.FLATFILE ) {
-			(new FlatFileMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();						
+			(new FlatFileMapper(this, filesToLoad, this.configuration, build_index)).ingestProductSet();						
 		} else if (typeMapping.equals("MAPPING_USER_SAADA")) {
 			/*
 			 * Load all products in one step
 			 */
 			if( configuration.getCategorySaada() != Category.FLATFILE &&
 					configuration.getCategorySaada() != Category.TABLE	) {
-				(new SchemaFusionMapper(this, file_to_load, this.configuration, build_index)).ingestProductSetByBurst();			
+				(new SchemaFusionMapper(this, filesToLoad, this.configuration, build_index)).ingestProductSetByBurst();			
 
 			} else {
-				(new SchemaFusionMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();			
+				(new SchemaFusionMapper(this, filesToLoad, this.configuration, build_index)).ingestProductSet();			
 			}
 		}else if (typeMapping.equals("MAPPING_1_1_SAADA")){
 			/*
@@ -158,7 +159,7 @@ public class Loader extends SaadaProcess {
 			 * Load products one by one and 
 			 */
 
-			(new SchemaClassifierMapper(this, file_to_load, this.configuration, build_index)).ingestProductSet();
+			(new SchemaClassifierMapper(this, filesToLoad, this.configuration, build_index)).ingestProductSet();
 		}
 	}
 	
@@ -167,62 +168,82 @@ public class Loader extends SaadaProcess {
 	 * @throws AbortException 
 	 */
 	public void setCandidateFileList() throws AbortException {
-		this.file_to_load = new ArrayList<File>();
+		this.filesToLoad = new ArrayList<DataResourcePointer>();
 		String filename = this.tabArg.getFilename();
 		String filter = this.tabArg.getFilter();
 		if( filename ==  null || filename.equals("")) {
 			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "A file (or dir) name must be specified");
 		}
-		File requested_file = new File(filename);
-		
-		if( !requested_file.exists()  ) {
+		DataResourcePointer requested_file = null;
+		try {
+			requested_file = new DataResourcePointer(filename);
+		} catch(Exception e){
+			AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
+		}
+		if( requested_file.isURL) {
+			this.filesToLoad.add(requested_file);
+			Messenger.printMsg(Messenger.TRACE, "One unique URL to process <" + requested_file.nameOrg + ">");							
+			
+		} else 	if( !requested_file.file.exists()  ) {
 			try {
 				/*
 				 * Just to see if the file is a double symbolic link
 				 */
-				if( !(new File(requested_file.getCanonicalPath())).exists() ) {
-					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");	
-				}
-				else {
+				if( !(new File(requested_file.file.getCanonicalPath())).exists() ) {
+					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");	
+				} else {
+					// Something missing here?
 					return;
 				}
 			} catch (Exception e) {
 			}
-			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");							
+			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");							
 		}
 		/*
 		 * "filename" is a directory 
 		 */ 
-		else if( requested_file.isDirectory() ) {
-			String[] dir_content = requested_file.list();
-			this.file_to_load = new ArrayList<File>(dir_content.length);
+		else if( requested_file.file.isDirectory() ) {
+			String[] dir_content = requested_file.file.list();
+			this.filesToLoad = new ArrayList<DataResourcePointer>(dir_content.length);
 			if( dir_content.length == 0 ) {
-				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
+				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.file.getAbsolutePath() + "> is empty");		
 				return;
 			}
-			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.getAbsolutePath() + ">");							
+			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.file.getAbsolutePath() + ">");							
 			int cpt = 0;
 			for( int i=0 ; i<dir_content.length ; i++ ) {	
-				File candidate_file = new File(requested_file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+				DataResourcePointer candidate_file=null;
+				try {
+				candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+				} catch(Exception e){
+					AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
+				}
+				/*
+				 * Takes all URLs.  If it does not work, an exception is risen
+				 */
+				if( candidate_file.isURL ){
+					this.filesToLoad.add(candidate_file);
+					cpt++;				
+				}
 				/*
 				 * Do not proceed recursively: just files are taken
 				 */
-				if( !candidate_file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
-					this.file_to_load.add(candidate_file);
+				else if( !candidate_file.file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
+					this.filesToLoad.add(candidate_file);
 					cpt++;
 				}
 				if( (cpt% 5000) == 0 ){
 					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.length + " file validated (" + (i+1-cpt) + " rejected)");
 				}
 			}
-			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.getAbsolutePath() + ">");
+			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.nameOrg + ">");
 		}
 		/*
 		 *  "filename" is a single file to load
 		 */
 		else {
-			this.file_to_load.add(requested_file);
-			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.getAbsolutePath() + ">");							
+			this.filesToLoad.add(requested_file);
+			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.nameOrg + ">");							
 		}
 		
 	}
@@ -293,16 +314,21 @@ public class Loader extends SaadaProcess {
 	 * @param file_to_load The file_to_load to set.
 	 * @throws AbortException 
 	 */
-	public void setFile_to_load(ArrayList<String> file_to_load) throws AbortException {
+	public void setFilesToLoad(ArrayList<String> file_to_load) throws AbortException {
 		String base_dir = this.tabArg.getFilename();
-		this.file_to_load = new ArrayList<File>();
+		this.filesToLoad = new ArrayList<DataResourcePointer>();
 		for( String f: file_to_load) {
-			File cf = new File(base_dir + Database.getSepar() + f);
-			if( cf.exists() && !cf.isDirectory() ) {
-				this.file_to_load.add(cf);
+			DataResourcePointer cf = null;
+			
+			try {
+				cf =new DataResourcePointer(base_dir + Database.getSepar() + f);
+			} catch(Exception e){
+				AbortException.throwNewException(SaadaException.MISSING_FILE, "Cannot access " + cf.nameOrg + ": " + e.getMessage());				
 			}
-			else {
-				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.getAbsolutePath() + "> does not exist or is not a file");
+			if( cf.isURL  || (cf.file.exists() && !cf.file.isDirectory()) ) {
+				this.filesToLoad.add(cf);
+			} else {
+				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.nameOrg + "> does not exist or is not a file");
 			}
 		}
 	}

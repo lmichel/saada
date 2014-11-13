@@ -44,7 +44,7 @@ public class Spectrum extends Product {
 	 * @throws AbortException 
 	 * @throws SaadaException 
 	 */
-	public Spectrum(File file, ConfigurationDefaultHandler conf) throws IgnoreException{		
+	public Spectrum(DataResourcePointer file, ConfigurationDefaultHandler conf) throws IgnoreException{		
 		super(file, conf);
 		spectralCoordinate = new SpectralCoordinate();
 		if(!spectralCoordinate.isConfigurationValid(1
@@ -250,7 +250,7 @@ public class Spectrum extends Product {
 	 * @throws Exception 
 	 */
 	public boolean findSpectralCoordinateInPixels() throws Exception {
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in pixel <"+this.file.getName()+">");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in pixel <"+this.dataPointer.file.getName()+">");
 		double[] ext = this.productFile.getExtrema(null);
 		if( ext != null ) {
 			if (Messenger.debug_mode)
@@ -276,7 +276,7 @@ public class Spectrum extends Product {
 	 * @throws Exception 
 	 */
 	public boolean findSpectralCoordinateByWCS() throws Exception{
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in WCS keywords <" +this.file.getName()+">");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in WCS keywords <" +this.dataPointer.file.getName()+">");
 		return  spectralCoordinate.convertWCS(this.tableAttributeHandler, ((MappingSpectrum)(this.configuration.getMapping())).getAbcisseUnit());
 	}
 	
@@ -286,7 +286,7 @@ public class Spectrum extends Product {
 	 */
 	public boolean findSpectralCoordinateByKW() throws Exception{
 		
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in KWs <"+this.file.getName()+">");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in KWs <"+this.dataPointer.file.getName()+">");
 		spectralCoordinate.setOrgUnit(SaadaConstant.STRING);				
 		
 		/*
@@ -320,7 +320,7 @@ public class Spectrum extends Product {
 		boolean findMin = false;
 		boolean findMax = false;
 		
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate by UCDs or UTypes <"+this.file.getName() + ">");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate by UCDs or UTypes <"+this.dataPointer.file.getName() + ">");
 		Iterator<String> it = this.tableAttributeHandler.keySet().iterator();
 		String unit = "";
 		while( it.hasNext()) {
@@ -405,7 +405,7 @@ public class Spectrum extends Product {
 //			sp = new Spectrum(new File("/tmpx/lmichel/SW_HD117555_057_A.1.ms.fits"), new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})));
 //			sp.loadProductFile(new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})));
 //			sp.findSpectralCoordinateByWCS();
-			sp = new Spectrum(new File("/home/michel/Desktop/MGC29864B.fit"), new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})));
+			sp = new Spectrum(new DataResourcePointer("/home/michel/Desktop/MGC29864B.fit"), new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})));
 			sp.loadProductFile(new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})));
 			Messenger.debug_mode = true;
 			sp.findSpectralCoordinateByWCS();

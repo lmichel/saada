@@ -557,7 +557,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 
 	/**
-	 * @param name
+	 * @param nameFile
 	 * @return
 	 * @throws Exception 
 	 */
@@ -607,7 +607,7 @@ public abstract class SaadaInstance implements DMInterface {
 		}
 	}
 	/**
-	 * @param name
+	 * @param nameFile
 	 * @return
 	 * @throws Exception 
 	 */
@@ -744,7 +744,7 @@ public abstract class SaadaInstance implements DMInterface {
 	}
 	/**
 	 * Return the value of the first field having the requested UCD
-	 * @param name
+	 * @param nameFile
 	 * @return
 	 * @throws NoSuchFieldException 
 	 * @throws IllegalAccessException 
@@ -1263,6 +1263,13 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public String getDownloadURL(boolean full_path) throws FatalException {
 		String retour;
+		String puc;
+		/*
+		 * UrL case: no use of the download servlet
+		 */
+		if( (puc = this.getProduct_url_csa()).matches(RegExp.URL) ) {
+			return puc;
+		}
 		retour = "download?oid=" + this.oidsaada;
 		if( full_path ) {
 			return Database.getUrl_root() + "/" + retour;

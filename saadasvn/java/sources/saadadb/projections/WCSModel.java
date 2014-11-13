@@ -9,6 +9,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.prdconfiguration.ConfigurationSpectrum;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.Spectrum;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -535,7 +536,7 @@ public class WCSModel {
 			ArgsParser ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			Spectrum sp ;
-			sp = new Spectrum(new File("/home/michel/Desktop/MGC29864B.fit"), new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})));
+			sp = new Spectrum(new DataResourcePointer("/home/michel/Desktop/MGC29864B.fit"), new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=nm"})));
 			sp.loadProductFile(new ConfigurationSpectrum("", new ArgsParser(new String[]{"-collection=Collection0", "-spcmapping=first", "-spcunit=Angstrom"})));
 			Messenger.debug_mode = true;
 			WCSModel wm = new WCSModel(sp.getTableAttributeHandler());

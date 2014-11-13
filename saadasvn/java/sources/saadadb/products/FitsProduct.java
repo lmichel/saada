@@ -676,9 +676,9 @@ public class FitsProduct extends File implements ProductFile{
 	 */
 	public FitsProduct(Product product) throws Exception {
 
-		super(product.file.getAbsolutePath());
+		super(product.dataPointer.nameFile);
 		this.product = product;
-		this.fits_data = new Fits(product.file.getCanonicalPath());
+		this.fits_data = new Fits(product.dataPointer.nameFile);
 		try {
 			this.first_header = fits_data.getHDU(0);
 		} catch (PaddingException e) {

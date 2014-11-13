@@ -61,7 +61,7 @@ public class ThreadLoadData extends CmdThread {
 		try {
 			Loader loader = new Loader(ap.getArgs());
 			if( fileList != null && fileList.size() > 0 ) {
-				loader.setFile_to_load(fileList);
+				loader.setFilesToLoad(fileList);
 			}
 			loader.load();
 			Database.getCachemeta().reloadGraphical(frame, true);

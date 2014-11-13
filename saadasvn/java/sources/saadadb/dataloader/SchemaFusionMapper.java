@@ -12,7 +12,6 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -21,6 +20,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.Entry;
 import saadadb.products.Product;
 import saadadb.products.Table;
@@ -34,12 +34,7 @@ import saadadb.util.Messenger;
  */
 public class SchemaFusionMapper extends SchemaMapper {
 
-	/** * @version $Id$
-
-	 * @param handler 
-	 * @param configuration
-	 */
-	public SchemaFusionMapper(Loader loader, ArrayList<File> prdvect_list, ConfigurationDefaultHandler handler, boolean build_index) {
+	public SchemaFusionMapper(Loader loader, ArrayList<DataResourcePointer> prdvect_list, ConfigurationDefaultHandler handler, boolean build_index) {
 		super(loader, prdvect_list, handler, build_index);
 		Messenger.setMaxProgress((2*prdvect_list.size()) + 2);
 	}
@@ -64,8 +59,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 */
 		this.current_prd = null;
 		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
-			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + file.getName() + "> ");
+			DataResourcePointer file = this.products.get(i);
+			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + file.nameOrg + "> ");
 			if( this.current_prd == null ) {
 				this.current_prd = this.configuration.getNewProductInstance(file);
 				/*
@@ -173,7 +168,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.dropTableIndex(this.current_class.getName(), null);
 
 		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
+			DataResourcePointer file = this.products.get(i);
 			this.current_prd = this.configuration.getNewProductInstance(file);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
 			if( this.entry_mapper != null ) {	
@@ -253,7 +248,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		BufferedWriter loadedtmpfile = new BufferedWriter(new FileWriter(loadedfile));
 
 		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
+			DataResourcePointer file = this.products.get(i);
 			this.current_prd = this.configuration.getNewProductInstance(file);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.current_prd.getName() +  ">");
 			if( this.entry_mapper != null ) {	
