@@ -326,8 +326,7 @@ jQuery.extend({
 				dataType: "xml",
 				error: function(xmljob, textStatus, errorThrown) {
 					Modalinfo.info("Error: " + textStatus);
-				},
-				dataType: "xml"
+				}
 			});
 		}
 		this.checkZipCompleted = function(jobid) {
