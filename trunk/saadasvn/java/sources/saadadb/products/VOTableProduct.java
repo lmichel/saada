@@ -531,7 +531,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 */
 	public VOTableProduct(String filename) throws Exception{
 		super(filename);
-		this.product = new Product(new File(filename), null);
+		this.product = new Product(new DataResourcePointer(filename), null);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
 		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	
 		currentTR = parser.getNextTR();       
@@ -552,7 +552,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 */
 	public VOTableProduct(Product product) throws Exception{
 		
-		super(product.file.getAbsolutePath());
+		super(product.dataPointer.nameFile);
 		this.product = product;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
 		parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);		

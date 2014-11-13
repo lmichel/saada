@@ -1125,7 +1125,7 @@ public class Image2DCoordinate{
 		while( srs.next()) {
 			is = (ImageSaada) Database.getCache().getObject(srs.getOid());
 			cdh = is.getLoaderConfig();		
-			Image2D img  = new Image2D(new File("/data/repository/MUSE/VariabilityCube/IMAGE/inst1.little_var.fits"),null);
+			Image2D img  = new Image2D(new DataResourcePointer("/data/repository/MUSE/VariabilityCube/IMAGE/inst1.little_var.fits"),null);
 			img.loadProductFile(cdh);
 			LinkedHashMap<String, AttributeHandler> ahs = img.tableAttributeHandler;
 			Image2DCoordinate i2c = new Image2DCoordinate();

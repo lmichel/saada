@@ -13,6 +13,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.Entry;
 import saadadb.products.Product;
 import saadadb.products.Table;
@@ -29,7 +30,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	 * @param handler 
 	 * @param configuration
 	 */
-	public SchemaClassifierMapper(Loader loader, ArrayList<File> prdvect_list, ConfigurationDefaultHandler handler, boolean build_index) {
+	public SchemaClassifierMapper(Loader loader, ArrayList<DataResourcePointer> prdvect_list, ConfigurationDefaultHandler handler, boolean build_index) {
 		super(loader, prdvect_list, handler, build_index);
 		if( prdvect_list != null )
 			Messenger.setMaxProgress(prdvect_list.size() + 2);
@@ -58,7 +59,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		SQLTable.beginTransaction();
 SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(configuration.getCollectionName(), configuration.getCategorySaada()), this.loader);
 		for( int i=0 ; i<this.products.size()	 ; i++) {
-			File file = this.products.get(i);
+			DataResourcePointer file = this.products.get(i);
 			/*
 			 * Build the Saada Product instance
 			 */

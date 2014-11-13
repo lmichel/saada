@@ -39,7 +39,7 @@ public class Image2D extends Product {
 	/**
 	 * @param fileName
 	 */
-	public Image2D(File file, ConfigurationDefaultHandler conf){		
+	public Image2D(DataResourcePointer file, ConfigurationDefaultHandler conf){		
 		super(file, conf);
 		if( conf != null )
 		this.load_vignette = conf.load_vignette;
@@ -136,7 +136,7 @@ public class Image2D extends Product {
 		} catch( Exception e ) {
 			Messenger.printMsg(Messenger.WARNING, "Can't create image vignette");
 		}
-		Messenger.printMsg(Messenger.TRACE, "Processing file <" + this.file.getName() + "> complete");
+		Messenger.printMsg(Messenger.TRACE, "Processing file <" + this.dataPointer.file.getName() + "> complete");
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class Image2D extends Product {
 		}
 		catch(Exception ef) {
 			ef.printStackTrace();
-			String filename = this.file.getName();
+			String filename = this.dataPointer.file.getName();
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + filename + ">  :" + ef + ". It cannot be loaded as an image.");			
 		}
 		this.setFmtsignature();
@@ -221,8 +221,8 @@ public class Image2D extends Product {
 	public static void main(String[] args)  {
 		Database.init("ThreeXMM");
 		//Image2D img = new Image2D(new File("/data/MUSE/Scene_fusion_01.fits"), null);
-		Image2D img = new Image2D(new File("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz"), null);
 		try {
+			Image2D img = new Image2D(new DataResourcePointer("/data/3xmm/data_test/EpicObsImage/P0300520301EPX000OIMAGE8000.FIT.gz"), null);
 			img.initProductFile(new ConfigurationImage("", new ArgsParser(new String[]{"-debug", "-system='Ecliptic'", "-collection=qwerty"})));
 			//			img.setWcsFields();
 

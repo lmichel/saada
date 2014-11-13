@@ -20,7 +20,7 @@ public class AnyFile extends File implements ProductFile {
 	}
 
 	public AnyFile(Product product) {
-		super(product.file.getAbsolutePath());
+		super(product.dataPointer.file.getAbsolutePath());
 	}
 
 	/* (non-Javadoc)

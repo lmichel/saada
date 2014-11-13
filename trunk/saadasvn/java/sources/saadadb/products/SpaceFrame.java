@@ -488,11 +488,11 @@ public class SpaceFrame {
 			Messenger.debug_mode = false;
 			Database.init("DEVBENCH1_5_1");
 			ArgsParser ap = new ArgsParser(new String[]{"-collection=qq", "-category=MISC"});
-			Misc img = new Misc(new File("/home/michel/Desktop/vizier_votable.ecl.vot"), ap.getConfiguration());
+			Misc img = new Misc(new DataResourcePointer("/home/michel/Desktop/vizier_votable.ecl.vot"), ap.getConfiguration());
 			Messenger.debug_mode = true;
 			img.loadProductFile(ap.getConfiguration());
 			ap = new ArgsParser(new String[]{"-collection=qq", "-category=IMAGE"});
-			Image2D img2 = new Image2D(new File("/home/michel/Desktop/fsky090101_cps.fits"), ap.getConfiguration());
+			Image2D img2 = new Image2D(new DataResourcePointer("/home/michel/Desktop/fsky090101_cps.fits"), ap.getConfiguration());
 			Messenger.debug_mode = true;
 			img2.loadProductFile(ap.getConfiguration());
 		} catch (Exception e) {

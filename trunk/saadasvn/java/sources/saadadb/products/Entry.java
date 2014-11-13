@@ -48,7 +48,7 @@ public class Entry extends Product {
 	 *            The entries table.
 	 */
 	public Entry(Table table) {
-		super(table.file, ((ConfigurationTable)(table.getConfiguration())).getConfigurationEntry());
+		super(table.dataPointer, ((ConfigurationTable)(table.getConfiguration())).getConfigurationEntry());
 		this.table = table;
 	}
 
@@ -518,7 +518,7 @@ public class Entry extends Product {
 		 * Take the suffix is there is no position
 		 */
 		if( name == null || name.length() == 0 ) {
-			name = this.file.getName();
+			name = this.dataPointer.getObjectName(null);
 			EntrySaada es= (EntrySaada) this.saadainstance;
 			name = SaadaOID.getCollectionName(es.getOid()) + "-" + SaadaOID.getClassName(es.getOid());
 			double ra =  es.getPos_ra_csa();

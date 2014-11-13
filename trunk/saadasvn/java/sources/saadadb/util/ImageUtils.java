@@ -34,6 +34,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.prdconfiguration.ConfigurationImage;
 import saadadb.products.Coord;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.FitsProduct;
 import saadadb.products.Image2D;
 import saadadb.products.Image2DCoordinate;
@@ -446,7 +447,7 @@ public abstract class ImageUtils {
 	 * @throws Exception 
 	 */
 	static public void buildTileFile(double ra, double dec, double box_size_ra, double box_size_dec, String source_file, ConfigurationDefaultHandler cdh, String dest_file) throws Exception{
-		File sf = new File(source_file);
+		DataResourcePointer sf = new DataResourcePointer(source_file);
 		Image2D img  = new Image2D(sf,null);
 		img.loadProductFile(cdh);
 		LinkedHashMap<String, AttributeHandler> ahs = img.tableAttributeHandler;
@@ -584,7 +585,7 @@ public abstract class ImageUtils {
 				hdrn.addValue(key, value , ah.getComment());
 			}			
 		}
-		hdrn.addValue("SRCFILE", sf.getName(), "File the tile were extracted from");
+		hdrn.addValue("SRCFILE", sf.nameOrg, "File the tile were extracted from");
 		FileOutputStream d1 = new FileOutputStream(dest_file);
 		BufferedOutputStream d2 = new BufferedOutputStream(d1);
 		DataOutputStream d3 = new DataOutputStream(d2);

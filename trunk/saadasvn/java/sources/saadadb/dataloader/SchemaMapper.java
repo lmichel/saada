@@ -16,6 +16,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.Entry;
 import saadadb.products.Product;
 import saadadb.sqltable.SQLQuery;
@@ -32,7 +33,7 @@ public abstract class SchemaMapper {
 	protected ConfigurationDefaultHandler configuration;
 	private static String class_location;
 	private static String package_name;
-	protected ArrayList<File> products;
+	protected ArrayList<DataResourcePointer> products;
 	protected Product current_prd;
 	protected MetaClass current_class;
 	protected SchemaMapper entry_mapper = null;
@@ -57,7 +58,7 @@ public abstract class SchemaMapper {
 	 * @param products
 	 * @param handler
 	 */
-	public SchemaMapper(Loader loader, ArrayList<File> products, ConfigurationDefaultHandler handler, boolean build_index) {
+	public SchemaMapper(Loader loader, ArrayList<DataResourcePointer> products, ConfigurationDefaultHandler handler, boolean build_index) {
 		this.loader = loader;
 		this.configuration = handler;
 		this.products = products;

@@ -38,7 +38,7 @@ vvvvv * @version $Id$
 	 * @param fileName
 	 * @param tabArg
 	 */
-	public Table(File file, ConfigurationDefaultHandler conf){
+	public Table(DataResourcePointer file, ConfigurationDefaultHandler conf){
 	
 		super(file, conf);
 		this.entry = new Entry(this);
@@ -116,9 +116,9 @@ vvvvv * @version $Id$
     /* (non-Javadoc)
      * @see saadadb.products.Product#mergeProductFormat(java.io.File)
      */
-    public void mergeProductFormat(File file_to_merge) throws FitsException, IOException, SaadaException {
+    public void mergeProductFormat(DataResourcePointer file_to_merge) throws FitsException, IOException, SaadaException {
     	if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Merge TABLE format with file <" + file_to_merge.getName() + ">");
+			Messenger.printMsg(Messenger.DEBUG, "Merge TABLE format with file <" + file_to_merge.file.getName() + ">");
     	/*
          * Store the current set of attribute handlers
          */
@@ -128,7 +128,7 @@ vvvvv * @version $Id$
         /*
          * Build a new set of attribute handlers from the product given as a parameter
          */
-        String filename = file_to_merge.getName().toLowerCase();
+        String filename = file_to_merge.file.getName().toLowerCase();
         Product prd_to_merge = this.configuration.getNewProductInstance(file_to_merge);
         prd_to_merge.configuration = this.configuration;
         
@@ -182,7 +182,7 @@ vvvvv * @version $Id$
          * Merge old a new sets of entry attribute handlers
          */
     	if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Merge ENTRY format with file <" + file_to_merge.getName() + ">");
+			Messenger.printMsg(Messenger.DEBUG, "Merge ENTRY format with file <" + file_to_merge.file.getName() + ">");
         tableAttributeHandler_org = this.getEntry().getTableAttributeHandler();
         Entry entry_to_merge = ((Table)(prd_to_merge)).getEntry();
         entry_to_merge.tableAttributeHandler = new LinkedHashMap<String, AttributeHandler>();

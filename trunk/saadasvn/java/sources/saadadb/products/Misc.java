@@ -22,7 +22,7 @@ public class Misc extends Product{
 						 * 
 						 *#######################################################*/
 
-	public Misc(File file, ConfigurationDefaultHandler conf){	
+	public Misc(DataResourcePointer file, ConfigurationDefaultHandler conf){	
 		super(file, conf);
 	}
 	

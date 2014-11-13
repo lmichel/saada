@@ -16,6 +16,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
 import saadadb.prdconfiguration.ConfigurationDefaultHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.FlatFile;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -30,7 +31,7 @@ import saadadb.util.Messenger;
 public class FlatFileMapper extends SchemaMapper {
 
 
-	public FlatFileMapper(Loader loader, ArrayList<File> products,
+	public FlatFileMapper(Loader loader, ArrayList<DataResourcePointer> products,
 			ConfigurationDefaultHandler handler, boolean build_index) {
 		super(loader, products, handler, build_index);
 		Messenger.setMaxProgress(-1);
@@ -64,7 +65,7 @@ public class FlatFileMapper extends SchemaMapper {
 			 */
 			long oid = SaadaOID.newFlatFileOid(this.configuration.getCollectionName());
 			int line=0;
-			for( File file: this.products) {
+			for( DataResourcePointer file: this.products) {
 				si.setOid(oid++);
 				ffp.bindInstanceToFile(si, file);
 				ffp.storeCopyFileInRepository();

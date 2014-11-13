@@ -17,6 +17,7 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.FlatFile;
 import saadadb.products.Image2D;
 import saadadb.products.Misc;
@@ -506,7 +507,7 @@ public abstract class ConfigurationDefaultHandler extends DefaultHandler{
 	 * @throws SaadaException
 	 * @throws AbortException 
 	 */
-	public  Product getNewProductInstance(File file) throws IgnoreException {
+	public  Product getNewProductInstance(DataResourcePointer file) throws IgnoreException {
 		switch( this.categorySaada ) {
 		case Category.TABLE: return new Table(file, this) ;
 		case Category.MISC : return new Misc(file, this) ;

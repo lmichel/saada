@@ -19,6 +19,7 @@ import nom.tam.util.BufferedDataOutputStream;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.DataResourcePointer;
 import saadadb.products.FitsProduct;
 import saadadb.products.Image2D;
 import saadadb.util.Messenger;
@@ -94,7 +95,7 @@ public class ImageFootprint {
 			this.outFile = this.outFiles.get(num);
 			Messenger.printMsg(Messenger.TRACE, "Process " + this.inputFile);
 
-			File input = new File(this.inputFile);
+			DataResourcePointer input = new DataResourcePointer(this.inputFile);
 			Image2D img  = new Image2D(input,null);
 			FitsProduct inputFits = new FitsProduct(img);
 			this.ahs = img.getTableAttributeHandler();
