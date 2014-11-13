@@ -99,7 +99,7 @@ jQuery.extend({
 			else if( op == 'BETWEEN' || op == '][' || op == ']=[' || op == '[]' || op == '[=]') {
 				var words = opd.split(' ') ;
 				if( words.length != 3 || !/and/i.test(words[1]) ||
-						words[0].length == 00 || words[2].length == 00 ||
+						words[0].length == 0 || words[2].length == 0 ||
 						isNaN(words[0]) || isNaN(words[2]) ) {
 					that.notifyTypomsg(1, 'Operand must have the form "num1 and num2" with operator "' + op + '"');
 					return 0 ;
@@ -156,7 +156,7 @@ jQuery.extend({
 			else if( op == 'BETWEEN' || op == '][' || op == ']=[' || op == '[]' || op == '[=]') {
 				var words = opd.split(' ') ;
 				if( words.length != 3 || !/and/i.test(words[1]) ||
-						words[0].length == 00 || words[2].length == 00  ) {
+						words[0].length == 0 || words[2].length == 0  ) {
 					words = opd.match(/('.*')\s+(and)\s+('.*')/i);
 					if( words == null  ||  words.length != 4 ) {
 						that.notifyTypomsg(1, 'Operand must have the form "val1 AND val2" with operator "' + op + '"');
