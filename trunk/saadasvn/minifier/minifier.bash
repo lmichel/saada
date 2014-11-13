@@ -18,6 +18,7 @@ packedCSS=$outputDir/packedCSS.css    # name of the file containing the packed C
 packedJS=$outputDir/packedJS.js       # name of the file containing the packed JS
 imageDir="../web/images"      # Directory from where the 3XMM images must be copied 
 imageOutput="../web/min/images" # Directory where the 3XMM images must be copied 
+iconsOutput="../web/min/icons" 
 #
 # List of jsresources JS objects
 # MVC template for names:
@@ -131,6 +132,9 @@ packCSS "../web/saadajsbasics/styleimports/"\
 	                  "datatable.css"\
 	                  "simplemodal.css"    
 
+packCSS "../web/saadajsbasics/styles/"\
+	                   "basics.css"    
+
 	
 packCSS "../web/styles"\
     "global.css" \
@@ -206,6 +210,7 @@ pack
 echo "=========== Copy images"
 cp $imageDir/*    $imageOutput"/" || exit 1
 
+cp ../web/saadajsbasics/icons/* $iconsOutput
 echo "=========== Packing is over"
 exit
 
