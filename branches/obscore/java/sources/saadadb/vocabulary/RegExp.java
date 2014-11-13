@@ -98,7 +98,9 @@ public class RegExp {
 	public static final String SPEC_FLUX_KW      = "(?i)((flux)|(count[s]?))";
 	public static final String SPEC_FLUX_DESC    = "(?i)(.*\\s((flux)|(count[s]?)))";
 	public static final String SPEC_MIN_UCD      = "(?i)((em\\.wl;stat\\.min)|(sed:SpectralMinimumWavelength))";
+	public static final String SPEC_MIN_KW       = "(?i)((lam\\.min)|(lambda1))";
 	public static final String SPEC_MAX_UCD      = "(?i)((em\\.wl;stat\\.max)|(sed:SpectralMaximumWavelength))";
+	public static final String SPEC_MAX_KW       = "(?i)((lam\\.max)|(lambda2))";
 	public static final String SPEC_BAND_UCD     = "(?i)(em\\.wl)";
 	public static final String SPEC_RESPOWER_UCD = "(?i)((instr\\.dispersion)|(spect\\.resolution))";
 	public static final String SPEC_RESPOWER_KW  = "(?i)((power)|(res)|(spres)|(r))";
