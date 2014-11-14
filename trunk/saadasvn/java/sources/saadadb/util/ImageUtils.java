@@ -585,7 +585,7 @@ public abstract class ImageUtils {
 				hdrn.addValue(key, value , ah.getComment());
 			}			
 		}
-		hdrn.addValue("SRCFILE", sf.nameOrg, "File the tile were extracted from");
+		hdrn.addValue("SRCFILE", sf.inputFileName, "File the tile were extracted from");
 		FileOutputStream d1 = new FileOutputStream(dest_file);
 		BufferedOutputStream d2 = new BufferedOutputStream(d1);
 		DataOutputStream d3 = new DataOutputStream(d2);

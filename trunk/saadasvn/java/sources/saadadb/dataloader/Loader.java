@@ -182,7 +182,7 @@ public class Loader extends SaadaProcess {
 		}
 		if( requested_file.isURL) {
 			this.filesToLoad.add(requested_file);
-			Messenger.printMsg(Messenger.TRACE, "One unique URL to process <" + requested_file.nameOrg + ">");							
+			Messenger.printMsg(Messenger.TRACE, "One unique URL to process <" + requested_file.inputFileName + ">");							
 			
 		} else 	if( !requested_file.file.exists()  ) {
 			try {
@@ -236,14 +236,14 @@ public class Loader extends SaadaProcess {
 					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.length + " file validated (" + (i+1-cpt) + " rejected)");
 				}
 			}
-			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.nameOrg + ">");
+			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.inputFileName + ">");
 		}
 		/*
 		 *  "filename" is a single file to load
 		 */
 		else {
 			this.filesToLoad.add(requested_file);
-			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.nameOrg + ">");							
+			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.inputFileName + ">");							
 		}
 		
 	}
@@ -323,12 +323,12 @@ public class Loader extends SaadaProcess {
 			try {
 				cf =new DataResourcePointer(base_dir + Database.getSepar() + f);
 			} catch(Exception e){
-				AbortException.throwNewException(SaadaException.MISSING_FILE, "Cannot access " + cf.nameOrg + ": " + e.getMessage());				
+				AbortException.throwNewException(SaadaException.MISSING_FILE, "Cannot access " + cf.inputFileName + ": " + e.getMessage());				
 			}
 			if( cf.isURL  || (cf.file.exists() && !cf.file.isDirectory()) ) {
 				this.filesToLoad.add(cf);
 			} else {
-				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.nameOrg + "> does not exist or is not a file");
+				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.inputFileName + "> does not exist or is not a file");
 			}
 		}
 	}
