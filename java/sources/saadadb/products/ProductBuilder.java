@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -372,9 +373,11 @@ public class ProductBuilder {
 		this.em_binsSetter.calculateExpression(this.dataFile);
 		this.em_res_powerSetter.calculateExpression(this.dataFile);
 		this.x_unit_orgSetter.calculateExpression(this.dataFile);
-		this.t_minSetter.calculateExpression();
-		this.t_maxSetter.calculateExpression();
-		this.t_exptimeSetter.calculateExpression();
+		System.out.println("1 " + this.t_minSetter);
+		this.t_minSetter.calculateExpression(this.dataFile);
+		System.out.println("2 " + this.t_minSetter);
+		this.t_maxSetter.calculateExpression(this.dataFile);
+		this.t_exptimeSetter.calculateExpression(this.dataFile);
 		this.o_ucdSetter.calculateExpression();
 		this.o_unitSetter.calculateExpression();
 		this.o_calib_statusSetter.calculateExpression();
@@ -826,12 +829,10 @@ public class ProductBuilder {
 			this.t_maxSetter = this.getMappedAttributeHander("t_max", mapping.getColumnMapping("t_max"));
 			if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = this.quantityDetector.getTMax();
-				this.t_maxSetter.setConvertedValue(DateUtils.getFMJD(this.t_maxSetter.getValue()), "String", "mjd", true);
 			}
 			this.t_minSetter = getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = this.quantityDetector.getTMin();
-				this.t_minSetter.setConvertedValue(DateUtils.getFMJD(this.t_minSetter.getValue()), "String", "mjd", true);
 			}
 			this.t_exptimeSetter = getMappedAttributeHander("t_exptime", mapping.getColumnMapping("t_exptime"));
 			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
@@ -843,13 +844,13 @@ public class ProductBuilder {
 			PriorityMessage.last("Time");
 			ColumnExpressionSetter cs = this.quantityDetector.getTMax();
 			if( !cs.notSet() ){
-				this.t_maxSetter = cs.setConvertedValue(DateUtils.getFMJD(cs.getValue()), "String", "mjd", true);
+				this.t_maxSetter = cs;
 			} else 	if( !this.isAttributeHandlerMapped(this.t_maxSetter) ) {
 				this.t_maxSetter = getMappedAttributeHander("t_max", mapping.getColumnMapping("t_max"));
 			}
 			cs = this.quantityDetector.getTMin();
 			if( !cs.notSet() ){
-				this.t_minSetter = cs.setConvertedValue(DateUtils.getFMJD(cs.getValue()), "String", "mjd", true);
+				this.t_minSetter = cs;
 			} else if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			}
@@ -1511,22 +1512,8 @@ public class ProductBuilder {
 			this.s_resolutionSetter = new ColumnExpressionSetter("s_resolution");
 			return false;
 		} else {
-			/*
-			 * If no value: probably a table entry: no check 
-			 */
-			if( this.s_resolutionSetter.getValue().length() > 0 ) {
-				try {
-					Double.parseDouble(this.s_resolutionSetter.getValue());
-				} catch (Exception e) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, this.s_resolutionSetter.getValue() + " is not a valid value for the spatial resolution");		
-					this.s_resolutionSetter = new ColumnExpressionSetter("s_resolution");
-					return false;
-				}
-			}
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Position error OK");
-			this.s_resolutionSetter.completeMessage("orgVal:" + this.s_resolutionSetter.getValue() + this.s_resolutionSetter.getUnit());
 			return true;
 		} 
 	}
@@ -1881,17 +1868,20 @@ public class ProductBuilder {
 	public void writeCompleteReport(String directory) throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".report");
 		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
-		fw.write("========= " + this.dataFile.getName() + "\n");
-		fw.write("========= AH read\n");
+		fw.write("====================================================\n");
+		fw.write("    " + this.dataFile.getName() + "\n");
+		fw.write("    " + (new Date()) + "\n");
+		fw.write("====================================================\n");
+		fw.write("\n========= Keywords read\n");
 		for( AttributeHandler ah: this.getProductAttributeHandler().values()) {
 			fw.write(ah + "\n");
 		}
-		fw.write("========= Loaded extensions\n");
+		fw.write("\n========= Loaded extensions\n");
 		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
 			fw.write(es + "\n");
 		}
 		Map<String, ColumnSetter> r = this.getReport();
-		fw.write("========= Field Values\n");
+		fw.write("\n========= Mapping report\n");
 		for( Entry<String, ColumnSetter> e:r.entrySet()){
 			//System.out.print(String.format("%20s",e.getKey()) + "     ");
 			fw.write(String.format("%20s",e.getKey()) + "     ");;

@@ -19,6 +19,7 @@ import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
+import saadadb.util.Messenger;
 import saadadb.util.MessengerLogger;
 
 public class QuantityDetector {
@@ -43,18 +44,19 @@ public class QuantityDetector {
 		 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 		 */
 		try {
-			CardMap cm = new CardMap(new HashSet<CardDescriptor>(tableAttributeHandlers.values()));
-			LibLog.setLogger(new MessengerLogger());
-			this.wcsModeler = new Modeler(cm);	
+			this.setWcsModeler(tableAttributeHandlers);	
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		} catch (Exception e) {
+			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}
 		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, comments);
-		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, wcsModeler, comments);						
-		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, wcsModeler, comments, productMapping);
-		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, wcsModeler, comments);
+		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers,this.wcsModeler, comments);						
+		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, this.wcsModeler, comments, productMapping);
+		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, this.wcsModeler, comments);
 		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, comments);
-		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, wcsModeler, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers,this.wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers);
 		this.productMapping = productMapping;
 	}
@@ -66,16 +68,36 @@ public class QuantityDetector {
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
 			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments
 			, ProductMapping productMapping, DataFile productFile) throws SaadaException {
+		/*
+		 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
+		 */
+		try {
+			this.setWcsModeler(tableAttributeHandlers);	
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+		}
 		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments);
-		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments, productMapping, productFile);
-		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, wcsModeler, comments);
+		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments);
+		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments, productMapping, productFile);
+		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments);
 		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
-		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, wcsModeler, comments);
+		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, this.wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
 		this.productMapping = productMapping;
 	}
 
+	/**
+	 * @param tableAttributeHandlers
+	 * @throws Exception
+	 */
+	private void setWcsModeler(Map<String, AttributeHandler> tableAttributeHandlers) throws Exception{
+		CardMap cm = new CardMap(new HashSet<CardDescriptor>(tableAttributeHandlers.values()));
+		LibLog.setLogger(new MessengerLogger());
+		this.wcsModeler = new Modeler(cm);			
+	}
 	/*
 	 * Observation axis
 	 */

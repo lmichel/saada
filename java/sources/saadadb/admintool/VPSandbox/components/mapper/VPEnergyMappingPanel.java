@@ -116,14 +116,14 @@ public class VPEnergyMappingPanel extends VPAxisPriorityPanel {
 			spcRange.setEnable(true);
 		}
 		
-		spcResPower.setText(ap.getSpectralResPower());
+		spcResPower.setText(ap.getSpectralResPower(false));
 		spcRange.setText(ap.getSpectralColumn(),ap.getSpectralUnit());
 		
 	}
 
 	@Override
 	public boolean fieldsEmpty(ArgsParser ap) {
-		return ap.getSpectralResPower()==null && ap.getSpectralColumn()==null && ap.getSpectralUnit()==null;
+		return ap.getSpectralResPower(false)==null && ap.getSpectralColumn()==null && ap.getSpectralUnit()==null;
 	}
 
 }

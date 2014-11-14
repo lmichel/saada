@@ -108,7 +108,7 @@ public class RegExp {
 	 * TIme axis column names
 	 */
 	public static final String TIME_REF_KW       = "(?i)(mjdref)";
-	public static final String TIME_START_KW     = "(?i)((tstart)|(obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(mjd(.*obs)?))";
+	public static final String TIME_START_KW     = "(?i)((tstart)|(obs.*start)|(obs.*date)|(date.*obs)|(start.*date)|(mjd(.*obs)?)|(time))";
 	public static final String TIME_START_UCD    = "(?i)(time.start;obs)";
 	public static final String TIME_END_KW       = "(?i)((tstop)|(obs.*end)|(end.*obs)|(end.*date)|(date.*end))";
 	public static final String TIME_END_UCD      = "(?i)(time.end;obs)";

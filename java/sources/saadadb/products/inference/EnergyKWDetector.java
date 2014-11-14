@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -18,11 +17,10 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
-import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.PriorityMode;
 
 /**
@@ -125,29 +123,28 @@ public class EnergyKWDetector extends KWDetector {
 			if( this.findSpectralCoordinateByWCS() || this.findSpectralCoordinateInKeywords() ||  this.findSpectralCoordinateInColumns() ) {
 				return true;
 			}
-
-			spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
-			boolean retour = ( this.findSpectralCoordinateInKeywords() ||  this.findSpectralCoordinateInColumns() || this.findSpectralCoordinateByWCS() ||
-					this.findSpectralCoordinateInPixels());
-			if( this.priority == PriorityMode.LAST ) {
-				if( this.readUnit == null || this.readUnit.length() == 0) {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
-					spectralCoordinate.setMappedUnit(this.defaultUnit);
-				} else {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
-					spectralCoordinate.setMappedUnit(this.readUnit);
-				}
-			}
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Detected range " + spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
-			return retour;
+//
+//			spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
+//			boolean retour = ( this.findSpectralCoordinateInKeywords() ||  this.findSpectralCoordinateInColumns() || this.findSpectralCoordinateByWCS() ||
+//					this.findSpectralCoordinateInPixels());
+//			if( this.priority == PriorityMode.LAST ) {
+//				if( this.readUnit == null || this.readUnit.length() == 0) {
+//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
+//					spectralCoordinate.setMappedUnit(this.defaultUnit);
+//				} else {
+//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
+//					spectralCoordinate.setMappedUnit(this.readUnit);
+//				}
+//			}
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Detected range " + spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
+//			return retour;
 		} catch (SaadaException e) {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
-			return false;
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -207,7 +204,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws Exception 
 	 */
 	private boolean findSpectralCoordinateByWCS() throws Exception{
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for spectral coodinate in WCS");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for spectral coordinate in WCS");
 		if( this.projection.isUsable()){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found spectral coodinate in WCS");
 			this.em_minSetter     = new ColumnWcsSetter("em_min"    , "WCS.getMin(1)", this.projection);
@@ -247,7 +244,7 @@ public class EnergyKWDetector extends KWDetector {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ ah.getAttNameOrg());
 				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + ah.getAttNameOrg() + ")");
 				this.em_minSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
-				this.em_maxSetter = new ColumnRowSetter("em_max", "C.getMaxValue(" + ah.getAttNameOrg() + ")");
+				this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getMaxValue(" + ah.getAttNameOrg() + ")");
 				this.em_maxSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");			
 				this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + ah.getAttNameOrg() + ")");			
 				this.em_binsSetter.completeMessage("Take the row number");	
