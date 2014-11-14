@@ -60,7 +60,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		this.current_prd = null;
 		for( int i=0 ; i<this.products.size()	 ; i++) {
 			DataResourcePointer file = this.products.get(i);
-			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + file.nameOrg + "> ");
+			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + file.inputFileName + "> ");
 			if( this.current_prd == null ) {
 				this.current_prd = this.configuration.getNewProductInstance(file);
 				/*

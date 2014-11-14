@@ -299,7 +299,7 @@ public class Product /*extends File*/ {
 		 */
 		this.storeCopyFileInRepository();
 		this.saadainstance.store();
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.nameOrg + "> complete");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.inputFileName + "> complete");
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class Product /*extends File*/ {
 		 */
 		this.storeCopyFileInRepository(loadedfilewriter);
 		this.saadainstance.store(colwriter, buswriter);
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.nameOrg + "> complete");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.dataPointer.inputFileName + "> complete");
 	}
 	
 	/**
@@ -347,8 +347,8 @@ public class Product /*extends File*/ {
 		String repname = "";
 		if( this.dataPointer.isURL){
 			this.dataPointer.cleanUp();
-			this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);		
-			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.nameOrg);
+			this.saadainstance.setProduct_url_csa(this.dataPointer.inputFileName);		
+			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.inputFileName);
 			return;
 		}
 		/*
@@ -390,8 +390,8 @@ public class Product /*extends File*/ {
 		String repname = "";
 		if( this.dataPointer.isURL){
 			this.dataPointer.cleanUp();
-			this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);		
-			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.nameOrg, loadedfilewriter);
+			this.saadainstance.setProduct_url_csa(this.dataPointer.inputFileName);		
+			Table_Saada_Loaded_File.recordLoadedFile(this, this.dataPointer.inputFileName, loadedfilewriter);
 			return;
 		}
 		/*
@@ -627,7 +627,7 @@ public class Product /*extends File*/ {
 	 */
 	protected void setBasicCollectionFields() throws AbortException {
 		this.saadainstance.setNameSaada(this.getInstanceName(null));
-		this.saadainstance.setProduct_url_csa(this.dataPointer.nameOrg);	
+		this.saadainstance.setProduct_url_csa(this.dataPointer.inputFileName);	
 		this.saadainstance.setDateLoad(new java.util.Date().getTime());
 	}
 	
@@ -1572,7 +1572,7 @@ public class Product /*extends File*/ {
 	 * @return
 	 */
 	public String getName() {
-		return this.dataPointer.nameOrg;
+		return this.dataPointer.inputFileName;
 	}
 	
 	
