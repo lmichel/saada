@@ -100,7 +100,7 @@ public class SQLTableProduct implements DataFile {
 
 
 	@Override
-	public double[] getExtrema(String key) throws Exception {
+	public Object[] getExtrema(String key) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

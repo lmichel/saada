@@ -487,11 +487,11 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 	 * @see saadadb.products.ProductFile#getRow(int)
 	 */
 	@Override
-	public double[] getExtrema(String keyOrg) throws Exception {
+	public Object[] getExtrema(String keyOrg) throws Exception {
 		if( this.dataExtension == null || keyOrg == null ) {
 			return null;
 		}
-		double[] retour = new double[3];
+		Object[] retour = new Object[3];
 		/*
 		 * Identify the column number matching keyOrg
 		 */
@@ -505,18 +505,18 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 				double nbLine = 0;
 				boolean numeric = true;
 				while( this.hasMoreElements()){
-					double val = SaadaConstant.DOUBLE;
+					Object val = null;
 					String sv = ((Object[])(this.nextElement()))[i] .toString();
 					try {
 						if( numeric ) {
-							val = Double.parseDouble( sv );
+							val =  sv ;
 							if( nbLine == 0 ){
 								retour[0] = val;
 								retour[1] = val;						
 							}
-							if( val < retour[0] ) {
+							if( sv.compareTo(retour[0].toString()) < 0 ) {
 								retour[0] = val;
-							} else if( val > retour[1] ) {
+							} else if( sv.compareTo(retour[1].toString()) > 0 ) {
 								retour[1] = val;
 							}
 						}
@@ -934,7 +934,7 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 			}
 
 			for( AttributeHandler ah: fp.dataExtension.attributeHandlers ){
-				double[] a = fp.getExtrema(ah.getNameorg());
+				Object[] a = fp.getExtrema(ah.getNameorg());
 				System.out.println(a[0] + " " + a[1] + " "  + a[2]);
 			}
 		} catch (Exception e) {

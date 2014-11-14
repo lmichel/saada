@@ -39,7 +39,7 @@ public interface DataFile extends Enumeration{
  	 * @return min,max,nbpoints
  	 * @throws Exception
  	 */
- 	public double[] getExtrema(String keyOrg) throws Exception ;
+ 	public Object[] getExtrema(String keyOrg) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.
      * If there is no table for this product format, this method will return 0.

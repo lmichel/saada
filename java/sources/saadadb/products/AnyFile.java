@@ -55,7 +55,7 @@ public class AnyFile extends File implements DataFile {
 		return null;
 	}
 
-	public double[] getExtrema(String key) {
+	public Object[] getExtrema(String key) {
 		return null;
 	}
 
