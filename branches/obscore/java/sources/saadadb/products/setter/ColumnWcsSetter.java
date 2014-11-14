@@ -3,7 +3,11 @@
  */
 package saadadb.products.setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import hecds.wcs.transformations.Projection;
+import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.vocabulary.enums.ColumnSetMode;
@@ -93,6 +97,32 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			break;
 		case "getUnit(2)":
 			this.result = this.projection.descriptor.getWcsAxeDescriptor(2).unit;
+			break;
+		case "getAstroFrame()":
+			this.result = this.projection.descriptor.getCoosys();
+			break;
+		case "getWorldPixelSize()":
+			this.result = String.valueOf(this.projection.getWorldPixelSize());
+			break;
+			/*
+			 * The region is stored as a string in the value field and as a List<Double> in the storedValue field
+			 * That is not the standard purpose of storedValue but that avoids useless conversion String <> List
+			 * There is no way to detect this behavior from the API. Just  remind it.
+			 */
+		case "getWorldPixelRegion()":
+			List<List<Double>> tempo = this.projection.getWorldBoundaries();
+			StringBuffer sb = new StringBuffer();
+			List<Double> sv = new ArrayList<Double>();
+			for( List<Double> cl: tempo){
+				for( Double ci: cl){
+					sb.append(Double.toString(ci));
+					sb.append(" ");
+					sv.add(ci);
+				}
+				this.result = sb.toString();	
+			}
+			this.storedValue = sv;
+					
 			break;
 		default:
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS expression " + this.expression  + " not undestoodo");	

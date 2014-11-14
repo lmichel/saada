@@ -211,12 +211,11 @@ public class ProductIngestor {
 		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
 			try {
 				this.product.astroframeSetter.calculateExpression();
-				String af = this.product.astroframeSetter.getValue();
-				Messenger.printLocatedMsg(this.product.astroframeSetter + " " +Database.getAstroframe().toString());
 				/*
 				 * Convert astroframe if different from this of the database
 				 */
-				if( !af.toString().equals(Database.getAstroframe().toString())) {
+				Astroframe x = new CooSysResolver(this.product.astroframeSetter.getValue()).getCooSys();
+				if( !CooSysResolver.isSameAsDatabaseFrame(x) ) {
 					this.taskMap.convertUnits = true;
 					this.setConvertedCoordinatesAndRegion();
 					/*
@@ -263,16 +262,13 @@ public class ProductIngestor {
 	 * Take the position as it is
 	 */
 	protected void setUnconvertedCoordinatesAndRegion() {
-		String stc = "Polygon " + Database.getAstroframe();
+
 		if( !this.product.s_regionSetter.notSet() ) {
-			double[] pts = (double[]) this.product.s_regionSetter.storedValue;
-			for( int i=0 ; i<(pts.length/2) ; i++ ) {
-				stc += " " + pts[2*i] + " " + pts[(2*i) + 1] + " " ;
-			}	
+			this.product.s_regionSetter.setValue("Polygon " + Database.getAstroframe() + " " + this.product.s_regionSetter.getValue());
+			this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 		}
 		this.saadaInstance.s_ra = Double.parseDouble(this.product.s_raSetter.getValue());
 		this.saadaInstance.s_dec = Double.parseDouble(this.product.s_decSetter.getValue());
-		this.product.s_regionSetter.setValue(stc);
 	}
 
 	/**
@@ -302,13 +298,14 @@ public class ProductIngestor {
 				 * convert the region polygon
 				 */
 				if( !this.product.s_regionSetter.notSet() ) {
-					double[] pts = (double[]) this.product.s_regionSetter.storedValue;
-					for( int i=0 ; i<(pts.length/2) ; i++ ) {
-						converted_coord = Coord.convert(af, new double[]{pts[2*i], pts[(2*i) + 1]}, Database.getAstroframe());
+					List<Double> pts = (List<Double>) this.product.s_regionSetter.storedValue;
+					for( int i=0 ; i<(pts.size()/2) ; i++ ) {
+						converted_coord = Coord.convert(af, new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
 						stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
 					}
 					this.product.s_regionSetter.setValue(stc);
-					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());
+					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());			
+					this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 				}
 			} else {
 				this.product.s_raSetter.completeMessage("Conv failed: no astroframe");
@@ -347,14 +344,19 @@ public class ProductIngestor {
 			if(this.product.s_fovSetter.notSet())
 				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 			else {
+				System.out.println(this.product.s_fovSetter);
 				String unit;
 				if( (unit = this.product.s_fovSetter.getUnit()).length() > 0 ) {
 					if( "deg".equals(unit )) {
 						this.saadaInstance.setS_fov(Double.parseDouble(this.product.s_fovSetter.getValue()));
 					} else {
-						fovUnitConverter.convertFrom(new Unit(this.product.s_fovSetter.getValue() + this.product.s_fovSetter.getUnit()));
-						this.saadaInstance.setS_fov(fovUnitConverter.value);
+						this.fovUnitConverter.convertFrom(new Unit(this.product.s_fovSetter.getValue() + this.product.s_fovSetter.getUnit()));
+						this.product.s_fovSetter.setConvertedValue(this.fovUnitConverter.value, unit, this.fovUnitConverter.getUnit(), true);
+						this.saadaInstance.setS_fov(this.fovUnitConverter.value);
 					}
+				} else {
+					this.product.s_fovSetter.setNotSet("No unit given: cannnot make a conversion in deg");
+					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
 				}
 			}
 		} catch( Exception e ) {
@@ -371,7 +373,7 @@ public class ProductIngestor {
 	 */
 	protected void setPosErrorFields() throws Exception {
 		String error_unit = this.product.s_resolutionSetter.getUnit();
-		if( this.product.s_resolutionSetter != null &&  error_unit != null ){
+		if( !this.product.s_resolutionSetter.notSet() &&  error_unit != null ){
 			double maj_err=0, convert = -1;
 			/*
 			 * Errors are always stored in arcsec in Saada
@@ -390,11 +392,10 @@ public class ProductIngestor {
 			/*
 			 * Position errors are the same on both axes by default
 			 */
-			if( !this.product.s_resolutionSetter.notSet() ) {
-				maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
-				this.product.s_resolutionSetter.setConvertedValue(maj_err, error_unit, "arcsec", addMEssage);
-				this.saadaInstance.s_resolution = maj_err;
-			} 
+			maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
+			this.product.s_resolutionSetter.completeMessage("orgVal:" + this.product.s_resolutionSetter.getValue() + this.product.s_resolutionSetter.getUnit());
+			this.product.s_resolutionSetter.setConvertedValue(maj_err, error_unit, "arcsec", addMEssage);
+			this.saadaInstance.s_resolution = maj_err;
 		} else {
 			if( this.numberOfCall == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 		}// if error mapped 	
@@ -414,6 +415,7 @@ public class ProductIngestor {
 		ColumnSetter t_exptime = this.product.t_exptimeSetter;
 
 		if( !t_min.notSet() ) {
+			System.out.println(t_min);
 			t_min.storedValue = DateUtils.getMJD(t_min.getValue());
 			t_min.setConvertedValue(DateUtils.getMJD(t_min.getValue()), "String", "mjd", true);
 		}
@@ -478,11 +480,10 @@ public class ProductIngestor {
 			}
 			if( !this.product.em_binsSetter.notSet() && this.product.em_res_powerSetter.notSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
-				double v2  =  (this.product.em_minSetter.getNumValue() - this.product.em_maxSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
-				this.product.em_res_powerSetter.setValue(v1/v2);
-				this.product.em_res_powerSetter.completeMessage("Computed from em_min, em_max and em_bns");
-			}
-			
+				double v2  =  (this.product.em_maxSetter.getNumValue() - this.product.em_minSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
+				this.product.em_res_powerSetter.setByValue(v1/v2, false);
+				this.product.em_res_powerSetter.completeMessage("Computed from em_min, em_max and em_bins");
+			}	
 		}
 		setField("em_min"    , this.product.em_minSetter);
 		setField("em_max"    , this.product.em_maxSetter);

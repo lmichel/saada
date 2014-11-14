@@ -34,5 +34,11 @@ public class MessengerLogger implements Logger {
 	public void locatedMsg(String msg) {
 		Messenger.printLocatedMsg(msg.toString());
 	}
+	
+	@Override
+	public void printStackTrace(Exception e) {
+		Messenger.printStackTrace(e);
+	}
+
 
 }

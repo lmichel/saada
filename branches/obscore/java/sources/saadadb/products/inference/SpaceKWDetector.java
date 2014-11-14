@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -34,7 +35,7 @@ public class SpaceKWDetector extends KWDetector{
 	private ColumnExpressionSetter ascension_kw;
 	private ColumnExpressionSetter declination_kw;
 	private ColumnExpressionSetter err_min = new  ColumnExpressionSetter("err_min");
-	private ColumnExpressionSetter err_maj= new  ColumnExpressionSetter("err_max");
+	private ColumnExpressionSetter err_maj= new  ColumnExpressionSetter("s_resolution");
 	private ColumnExpressionSetter err_angle= new  ColumnExpressionSetter("err_angle");
 	private ColumnExpressionSetter fov;
 	private ColumnExpressionSetter region;
@@ -86,13 +87,21 @@ public class SpaceKWDetector extends KWDetector{
 		 * look first in WCS
 		 */
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Look  in WCS KW");
+			Messenger.printMsg(Messenger.DEBUG, "Look in WCS KW");
 		if( this.projection != null && this.projection.isUsable() ){
 			this.frameSetter    = new ColumnWcsSetter("astroframe", "WCS.getAstroFrame()", projection);
 			this.ascension_kw   = new ColumnWcsSetter("s_ra", "WCS.getCenter(1)", projection);
 			this.declination_kw = new ColumnWcsSetter("s_dec", "WCS.getCenter(2)", projection);
+			this.err_maj = new ColumnWcsSetter("s_resolution", "WCS.getWorldPixelSize()", projection);
+			this.err_maj.setUnit("deg");
 			this.status |= FRAME_FOUND;		
 			this.status |= POS_KW_FOUND;
+			/*
+			 * The region is stored as a string in the value field and as a List<Double> in the storedValue field
+			 * That is not the standard purpose of storedValue but that avoids useless conversion String <> List
+			 * There is no way to detect this behavior from the API. Just  remind it.
+			 */
+			this.region = new ColumnWcsSetter("s_region", "WCS.getWorldPixelRegion()", projection);
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
@@ -113,7 +122,6 @@ public class SpaceKWDetector extends KWDetector{
 				}					
 				this.frameSetter = new ColumnExpressionSetter("astroframe", "getCoosys(" + sframe + ")", this.tableAttributeHandler, false);
 				status |= FRAME_FOUND;
-				Messenger.printLocatedMsg("@@@@@@@@@@@ " + this.frameSetter.toString());
 			} 
 
 
@@ -184,7 +192,7 @@ public class SpaceKWDetector extends KWDetector{
 //				}	
 //			}
 			if( (status & FRAME_FOUND) != 0 && (status & POS_KW_FOUND) != 0) {
-				this.lookForError();							
+				//this.lookForError();							
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -732,8 +740,7 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	public ColumnExpressionSetter getSpatialError() throws SaadaException{
-		this.searchError();
-		return err_maj;
+		return (this.err_maj == null)? new ColumnExpressionSetter("s_resolution"): this.err_maj;
 	}
 	/**
 	 * @return

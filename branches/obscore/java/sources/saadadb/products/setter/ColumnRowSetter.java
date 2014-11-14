@@ -65,14 +65,14 @@ public final class ColumnRowSetter extends ColumnExpressionSetter {
 	public void calculateExpression(DataFile dataFile) throws Exception{
 		if( dataFile != null ) {
 			
-			double[] extrema = dataFile.getExtrema(this.colName);
+			Object[] extrema = dataFile.getExtrema(this.colName);
 			if( extrema == null ){
 				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot get extrema of column " + this.colName + " for product " + dataFile);				
 			}
 			switch( this.funcName ) {
-			case "getMinValue": this.result = String.valueOf(extrema[0]);break;
-			case "getMaxValue": this.result = String.valueOf(extrema[1]);break;
-			case "getNbPoints": this.result = String.valueOf(extrema[2]);break;
+			case "getMinValue": this.result = extrema[0].toString();break;
+			case "getMaxValue": this.result = extrema[1].toString();break;
+			case "getNbPoints": this.result = extrema[2].toString();break;
 			default: IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER,  this.funcName + " not understood for a row column setter");
 			}
 		}
