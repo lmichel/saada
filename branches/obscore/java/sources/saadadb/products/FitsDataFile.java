@@ -1299,7 +1299,7 @@ public class FitsDataFile extends File implements DataFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getColumnValues(java.lang.String)
 	 */
-	public double[] getExtrema(String key)  {
+	public Object[] getExtrema(String key)  {
 		try {
 			/*
 			 * This method can be called by Spectrum findSpectralCoordinateInPixels before the spectrum extension is found
@@ -1313,7 +1313,7 @@ public class FitsDataFile extends File implements DataFile{
 			 */
 			if( good_header instanceof nom.tam.fits.ImageHDU ) {
 				if( ((ImageHDU)good_header).getAxes().length == 1 ) {
-					return new double[]{0, (double)(((ImageHDU)good_header).getAxes()[0]), (double)(((ImageHDU)good_header).getAxes()[0])};					
+					return new Double[]{0.0, (double)(((ImageHDU)good_header).getAxes()[0]), (double)(((ImageHDU)good_header).getAxes()[0])};					
 				}
 				/*
 				 * The largest size is supposed to contain data
@@ -1322,9 +1322,9 @@ public class FitsDataFile extends File implements DataFile{
 					double min1 = (double)(((ImageHDU)good_header).getAxes()[0]);
 					double min2 = (double)(((ImageHDU)good_header).getAxes()[1]);
 					if( min1 > min2 ) {
-						return new double[]{0, min1, min1};						
+						return new Double[]{0.0, min1, min1};						
 					} else {
-						return new double[]{0, min2, min2};						
+						return new Double[]{0.0, min2, min2};						
 					}
 				}
 			}
@@ -1335,7 +1335,7 @@ public class FitsDataFile extends File implements DataFile{
 				return null;
 			}
 			Object o;
-			double[] retour = new double[3];
+			Double[] retour = new Double[3];
 			initEnumeration();
 			o =  tableEnumeration.getColumn(key);
 			/*
@@ -1358,7 +1358,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				}
 				else if( column_class.equals("[D") ) {
 					double too[] = (double[])(o);					
@@ -1375,7 +1375,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				}
 				else if( column_class.equals("[I") ) {
 					int too[] = (int[])(o);					
@@ -1392,7 +1392,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				}
 				else if( column_class.equals("[S") ) {
 					short too[] = (short[])(o);					
@@ -1409,7 +1409,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				}
 				else if( column_class.equals("[java.lang.String") ) {
 					String too[] = (String[])(o);					
@@ -1426,7 +1426,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				}
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Extrema: " + retour[0] + " " + retour[1]);
 				return retour;
@@ -1455,7 +1455,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				} else if( to[0].getClass().getName().equals("[D") ) {
 					double too[] = (double[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1471,7 +1471,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				} else if( to[0].getClass().getName().equals("[I") ) {
 					int too[] = (int[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1487,7 +1487,7 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				} else if( to[0].getClass().getName().equals("[S") ) {
 					short too[] = (short[])(to[0]);					
 					for( int i=0 ; i<too.length ; i++ ) {
@@ -1503,23 +1503,24 @@ public class FitsDataFile extends File implements DataFile{
 							retour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				} else if( to[0].getClass().getName().equals("[java.lang.String") ) {
-					String too[] = (String[])(to[0]);					
+					String too[] = (String[])(to[0]);	
+					String[] sretour = new String[3];
 					for( int i=0 ; i<too.length ; i++ ) {
 						if( i == 0 ) {
-							retour[0] = Double.parseDouble(too[0]);
-							retour[1] = Double.parseDouble(too[0]);
+							sretour[0] = too[0];
+							sretour[1] = too[0];
 						}
-						double val = Double.parseDouble(too[i]);
-						if( val < retour[0] ) {
-							retour[0] = val;
+						String val = too[i];
+						if( sretour[0].compareTo(val) < 0) {
+							sretour[0] = val;
 						}
-						if( val > retour[1] ) {
-							retour[1] = val;
+						if( sretour[1].compareTo(val) < 0 ) {
+							sretour[1] = val;
 						}						
 					}
-					retour[2] = too.length;
+					retour[2] = (double) too.length;
 				} else {
 					IgnoreException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Type " + to[0].getClass().getName() + " not suported to read column extrema");
 					return null;
@@ -1554,7 +1555,7 @@ public class FitsDataFile extends File implements DataFile{
 					if( val > retour[1] ) {
 						retour[1] = val;
 					}						
-					retour[2] = ((Object[])(to[i])).length;
+					retour[2] = (double) ((Object[])(to[i])).length;
 				}				
 			}
 			return retour;

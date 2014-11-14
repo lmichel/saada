@@ -102,10 +102,10 @@ public class FooProduct implements DataFile {
 		return null;
 	}
 
-	public double[] getExtrema(String key) throws Exception {
+	public Object[] getExtrema(String key) throws Exception {
 		if( this.entryAttributeHandlers.get(key) != null ) {
-			double v = Double.parseDouble(this.entryAttributeHandlers.get(key).getValue());
-			return new double[]{v,v};
+			Object v = this.entryAttributeHandlers.get(key).getValue();
+			return new Object[]{v,v};
 		}
 		return null;
 	}
