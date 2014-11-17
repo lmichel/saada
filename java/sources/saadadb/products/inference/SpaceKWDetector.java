@@ -112,11 +112,11 @@ public class SpaceKWDetector extends KWDetector{
 			ColumnExpressionSetter ahEp = search("epoch"   , RegExp.FITS_EPOCH_UCD, RegExp.FITS_EPOCH_KW);
 
 			String message= "";
-			if( !ah.notSet()) {
+			if( !ah.isNotSet()) {
 				String sframe=ah.getSingleAttributeHandler().getNameorg();
-				if( !ahEq.notSet()){
+				if( !ahEq.isNotSet()){
 					sframe += "," + ahEq.getSingleAttributeHandler().getNameorg();
-					if( !ahEp.notSet()){
+					if( !ahEp.isNotSet()){
 						sframe += "," + ahEp.getSingleAttributeHandler().getNameorg();
 					}
 				}					
@@ -132,7 +132,7 @@ public class SpaceKWDetector extends KWDetector{
 		if( (status & FRAME_FOUND) == 0 ) {
 			ColumnExpressionSetter ah = searchByName("astroframe", RegExp.FITS_EQUINOX);		
 			String message="";
-			if( !ah.notSet() ) {
+			if( !ah.isNotSet() ) {
 				float val = Float.parseFloat(ah.getValue());
 				if( val == 1950.f) {
 					frame = new FK4();
@@ -333,7 +333,7 @@ public class SpaceKWDetector extends KWDetector{
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for positional error keywords");		
 		this.err_min = this.search("err_min", RegExp.ERROR_UCD, RegExp.ERROR_KW);
-		if( !this.err_min .notSet() ) {
+		if( !this.err_min .isNotSet() ) {
 			this.err_maj = this.err_min;
 		} else {
 			this.err_maj = this.search("err_maj", RegExp.ERROR_MAJ_UCD, RegExp.ERROR_MAJ_KW);		
@@ -345,12 +345,12 @@ public class SpaceKWDetector extends KWDetector{
 			if( this.err_maj == null && this.err_min != null) this.err_maj = this.err_min;
 			if( this.err_min == null && this.err_maj != null) this.err_min = this.err_maj;
 
-			if( this.err_maj.notSet() && eM != null ) {
+			if( this.err_maj.isNotSet() && eM != null ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Keep WCS error values");
 				this.err_maj = eM;
 				this.err_min = em;
-				if( this.err_angle.notSet() && ea != null ) {
+				if( this.err_angle.isNotSet() && ea != null ) {
 					this.err_angle = ea;
 				}
 			}
@@ -752,7 +752,7 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.fov == null ){
 			this.fov = this.search("s_fov", RegExp.FOV_UCD, RegExp.FOV_KW);
 		}	
-		if( this.fov.notSet() && (this.status & POS_KW_FOUND) != 0){
+		if( this.fov.isNotSet() && (this.status & POS_KW_FOUND) != 0){
 			AttributeHandler ah = new AttributeHandler();
 			ah.setNameattr("s_fov");
 			ah.setNameorg("s_fov");

@@ -240,7 +240,7 @@ public class EnergyKWDetector extends KWDetector {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the columns");
 		if( this.entryAttributeHandler != null ){
 			ColumnExpressionSetter ah = this.searchColumns(null, RegExp.SPEC_AXIS_KW, RegExp.SPEC_AXIS_DESC);
-			if( !ah.notSet()  ){
+			if( !ah.isNotSet()  ){
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ ah.getAttNameOrg());
 				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + ah.getAttNameOrg() + ")");
 				this.em_minSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
@@ -266,7 +266,7 @@ public class EnergyKWDetector extends KWDetector {
 			else {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Check if a column can be a flux");
 				ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
-				if( !ah.notSet()  ){
+				if( !ah.isNotSet()  ){
 					this.em_minSetter = new ColumnExpressionSetter("em_min", "0");
 					this.em_minSetter.completeMessage("Row number taken as dispersion axe");
 					this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getNbRows(" + ah.getAttNameOrg() + ")");				
@@ -295,7 +295,7 @@ public class EnergyKWDetector extends KWDetector {
 		this.em_minSetter = this.search("em_min", RegExp.SPEC_MIN_UCD, RegExp.SPEC_MIN_KW);
 		this.em_minSetter = this.search("em_max", RegExp.SPEC_MAX_UCD, RegExp.SPEC_MAX_KW);
 		this.em_res_powerSetter = this.search("em_res_power", RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
-		if( !this.em_minSetter.notSet() && !this.em_maxSetter.notSet() ){
+		if( !this.em_minSetter.isNotSet() && !this.em_maxSetter.isNotSet() ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Spectral range found in keywords");
 			String u;

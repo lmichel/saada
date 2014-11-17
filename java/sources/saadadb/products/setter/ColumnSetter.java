@@ -228,8 +228,11 @@ public abstract class ColumnSetter implements Cloneable {
 	public boolean bySaada() {
 		return (this.settingMode == ColumnSetMode.BY_SAADA);
 	}
-	public boolean notSet() {
+	public boolean isNotSet() {
 		return (this.settingMode == ColumnSetMode.NOT_SET);
+	}
+	public boolean isSet() {
+		return !(this.settingMode == ColumnSetMode.NOT_SET);
 	}
 	public abstract void setUnit(String unit) ;
 	/**

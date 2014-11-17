@@ -208,7 +208,7 @@ public class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setSpaceFields() throws Exception {
-		if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
+		if( !this.product.astroframeSetter.isNotSet() && !this.product.s_raSetter.isNotSet() && !this.product.s_decSetter.isNotSet()) {
 			try {
 				this.product.astroframeSetter.calculateExpression();
 				/*
@@ -263,7 +263,7 @@ public class ProductIngestor {
 	 */
 	protected void setUnconvertedCoordinatesAndRegion() {
 
-		if( !this.product.s_regionSetter.notSet() ) {
+		if( !this.product.s_regionSetter.isNotSet() ) {
 			this.product.s_regionSetter.setValue("Polygon " + Database.getAstroframe() + " " + this.product.s_regionSetter.getValue());
 			this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 		}
@@ -297,7 +297,7 @@ public class ProductIngestor {
 				/*
 				 * convert the region polygon
 				 */
-				if( !this.product.s_regionSetter.notSet() ) {
+				if( !this.product.s_regionSetter.isNotSet() ) {
 					List<Double> pts = (List<Double>) this.product.s_regionSetter.storedValue;
 					for( int i=0 ; i<(pts.size()/2) ; i++ ) {
 						converted_coord = Coord.convert(af, new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
@@ -341,7 +341,7 @@ public class ProductIngestor {
 	 */
 	protected void setFoVFields() {
 		try {
-			if(this.product.s_fovSetter.notSet())
+			if(this.product.s_fovSetter.isNotSet())
 				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 			else {
 				System.out.println(this.product.s_fovSetter);
@@ -373,7 +373,7 @@ public class ProductIngestor {
 	 */
 	protected void setPosErrorFields() throws Exception {
 		String error_unit = this.product.s_resolutionSetter.getUnit();
-		if( !this.product.s_resolutionSetter.notSet() &&  error_unit != null ){
+		if( !this.product.s_resolutionSetter.isNotSet() &&  error_unit != null ){
 			double maj_err=0, convert = -1;
 			/*
 			 * Errors are always stored in arcsec in Saada
@@ -414,30 +414,29 @@ public class ProductIngestor {
 		ColumnSetter t_max = this.product.t_maxSetter;
 		ColumnSetter t_exptime = this.product.t_exptimeSetter;
 
-		if( !t_min.notSet() ) {
-			System.out.println(t_min);
+		if( !t_min.isNotSet() ) {
 			t_min.storedValue = DateUtils.getMJD(t_min.getValue());
 			t_min.setConvertedValue(DateUtils.getMJD(t_min.getValue()), "String", "mjd", true);
 		}
-		if( !t_max.notSet() ) {
+		if( !t_max.isNotSet() ) {
 			t_max.storedValue = DateUtils.getMJD(t_max.getValue());
 			t_max.setConvertedValue(DateUtils.getMJD(t_max.getValue()), "String", "mjd", true);
 		}
 
-		if( t_min.notSet() && !t_max.notSet() && !t_exptime.notSet() ) {
-			String v =Double.parseDouble(t_max.getValue()) +"-"+ (Double.parseDouble(t_exptime.getValue())/86400);
-			this.product.t_minSetter = new ColumnExpressionSetter("t_min", v);
-			t_min = this.product.t_minSetter;
-			t_min.completeMessage("Computed from t_max and t_exptime");				
-		} else if( !t_min.notSet() && t_max.notSet() && !t_exptime.notSet() ) {
-			String v =Double.parseDouble(t_min.getValue()) +"+"+ (Double.parseDouble(t_exptime.getValue())/86400);
-			this.product.t_maxSetter = new ColumnExpressionSetter("t_max", v);
+		if( t_min.isNotSet() && !t_max.isNotSet() && !t_exptime.isNotSet() ) {
+			double v =Double.parseDouble(t_max.getValue()) - (Double.parseDouble(t_exptime.getValue())/86400);
+			t_min.storedValue = v;
+			t_min.completeMessage("Computed from t_max and t_exptime");	
+			t_min.setByValue(v, false);
+		} else if( !t_min.isNotSet() && t_max.isNotSet() && !t_exptime.isNotSet() ) {
+			double v = Double.parseDouble(t_min.getValue()) + (Double.parseDouble(t_exptime.getValue())/86400);
+			t_max.storedValue = v;
 			t_max.completeMessage("Computed from t_min and t_exptime");	
-			t_max = this.product.t_maxSetter;
-		} else if( !t_min.notSet() && !t_max.notSet() && t_exptime.notSet() ) {
-			String expr = "3600*24*(" + t_max.getValue() + "-" + t_min.getValue() + ")";
-			this.product.t_exptimeSetter = new ColumnExpressionSetter("t_exptime", expr, null, true);
-			t_exptime = this.product.t_exptimeSetter;
+			t_max.setByValue(v, false);
+		} else if( !t_min.isNotSet() && !t_max.isNotSet() && t_exptime.isNotSet() ) {
+			double v = 3600*24*( Double.parseDouble(t_max.getValue()) - Double.parseDouble(t_min.getValue())  );
+			t_max.storedValue = v;
+			t_max.setByValue(v, false);
 			t_exptime.completeMessage("Computed from t_min and t_max");	
 			t_exptime.setUnit("s");
 		}
@@ -460,8 +459,8 @@ public class ProductIngestor {
 		ColumnSetter qdMin = this.product.em_minSetter;
 		ColumnSetter qdMax = this.product.em_maxSetter;
 		ColumnSetter qdUnit = this.product.x_unit_orgSetter;
-		if( !qdMin.notSet() && !qdMax.notSet() ) {
-			if( !qdUnit.notSet() ){
+		if( !qdMin.isNotSet() && !qdMax.isNotSet() ) {
+			if( !qdUnit.isNotSet() ){
 
 				SpectralCoordinate spectralCoordinate = new SpectralCoordinate();
 				spectralCoordinate.setMappedUnit(qdUnit.getValue());
@@ -478,7 +477,7 @@ public class ProductIngestor {
 					this.product.em_maxSetter.setConvertedValue(spectralCoordinate.getConvertedMax(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 				}
 			}
-			if( !this.product.em_binsSetter.notSet() && this.product.em_res_powerSetter.notSet() ) {
+			if( !this.product.em_binsSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
 				double v2  =  (this.product.em_maxSetter.getNumValue() - this.product.em_minSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
 				this.product.em_res_powerSetter.setByValue(v1/v2, false);
@@ -671,7 +670,7 @@ public class ProductIngestor {
 	 * @throws FatalException
 	 */
 	protected void setField(String fieldName, ColumnSetter columnSetter) throws FatalException{
-		if(columnSetter.notSet() ){
+		if(columnSetter.isNotSet() ){
 			return;
 		}
 		String value = "";

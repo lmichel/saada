@@ -234,7 +234,7 @@ public class WCSModel {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take CDELT[i,j] keyword as projection matrix");
 			for( int axe=0 ; axe<this.NAXIS ; axe++) {
-				if( this.CDELT[axe].notSet()) {
+				if( this.CDELT[axe].isNotSet()) {
 					IgnoreException.throwNewException(SaadaException.WCS_ERROR, "CDLET" + (axe+1) + "not set: Can not compute the projection matrix");
 
 				}
@@ -260,7 +260,7 @@ public class WCSModel {
 				/*
 				 * Diagonal elements are required at least
 				 */
-				if( this.getCD(axe, axe).notSet()) {
+				if( this.getCD(axe, axe).isNotSet()) {
 					IgnoreException.throwNewException(SaadaException.WCS_ERROR, "CD" + (axe+1) + "_" + (axe+1) + "not set: Can not compute the projection matrix");
 
 				}
@@ -268,7 +268,7 @@ public class WCSModel {
 				 * Cross elements are taken as 0 when not defined
 				 */
 				for( int axe2=0 ; axe2<this.NAXIS ; axe2++) {
-					if( this.getCD(axe, axe2).notSet() ) {
+					if( this.getCD(axe, axe2).isNotSet() ) {
 						this.setMatrix(axe, axe2, 0);
 					} else {
 						this.setMatrix(axe, axe2, this.getCD(axe, axe2));						
@@ -308,7 +308,7 @@ public class WCSModel {
 	 */
 	private static boolean hasNotSetElements(ColumnExpressionSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
-			if( array[axe].notSet()) {
+			if( array[axe].isNotSet()) {
 				return true;
 			}
 		}
@@ -321,7 +321,7 @@ public class WCSModel {
 	 */
 	private static boolean hasSetElements(ColumnExpressionSetter[] array) throws Exception {
 		for( int axe=0 ; axe<array.length ; axe++) {
-			if( !array[axe].notSet() ) {
+			if( !array[axe].isNotSet() ) {
 				return true;
 			}
 		}
@@ -414,7 +414,7 @@ public class WCSModel {
 	 * @throws Exception
 	 */
 	public boolean isAxeProjectedToRealWord(int axe) throws Exception {
-		if( !this.CRPIX[axe].notSet() && !this.CRVAL[axe].notSet() && this.getMatrix(axe, axe) != SaadaConstant.DOUBLE) {
+		if( !this.CRPIX[axe].isNotSet() && !this.CRVAL[axe].isNotSet() && this.getMatrix(axe, axe) != SaadaConstant.DOUBLE) {
 			return true;
 		}
 		else {

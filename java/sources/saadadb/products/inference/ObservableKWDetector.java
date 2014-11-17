@@ -45,10 +45,10 @@ public class ObservableKWDetector extends KWDetector {
 	 */
 	private void search() throws Exception {
 		this.searchInkeywords();
-		if( this.unit.notSet()){
+		if( this.unit.isNotSet()){
 			this.searchInComments();
 		}
-		if( this.unit.notSet()){
+		if( this.unit.isNotSet()){
 			this.searchInColumns();
 		}
 	}
@@ -65,7 +65,7 @@ public class ObservableKWDetector extends KWDetector {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinate in the column names");
 		if( this.entryAttributeHandler != null ){
 			ColumnExpressionSetter ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
-			if( !ah.notSet()  ){
+			if( !ah.isNotSet()  ){
 				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
 					this.unit.setByTableColumn(ah.getUnit(), false);
 					this.unit.completeMessage("Taken from description of column " + ah.getAttNameOrg());
@@ -83,7 +83,7 @@ public class ObservableKWDetector extends KWDetector {
 					this.ucd.setByTableColumn("phot.count", false);
 					this.ucd.completeMessage("Infered from unit");					
 				}
-				if( !this.unit.notSet() && !this.unit.getValue().matches("(?i)(.*count.*)") ) {
+				if( !this.unit.isNotSet() && !this.unit.getValue().matches("(?i)(.*count.*)") ) {
 					this.calib.setByValue("2", false);
 					this.calib.completeMessage("Infered from both ucd and unit");
 				} else {
@@ -151,7 +151,7 @@ public class ObservableKWDetector extends KWDetector {
 			Messenger.printMsg(Messenger.DEBUG, "Search observable quantities in keywords");
 		this.keywordsSearched = true;
 		this.unit = this.searchByName("_o_unit", RegExp.OBSERVABLE_UNIT_KW);
-		if( !this.unit.notSet() ){
+		if( !this.unit.isNotSet() ){
 			this.calib.setByValue( "2", false);
 			this.calib.completeMessage("Infered from detected units");
 

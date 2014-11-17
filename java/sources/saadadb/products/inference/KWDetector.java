@@ -76,7 +76,7 @@ public abstract class KWDetector {
 		if(ucd_regexp!= null ){
 			retour = this.searchByUcd(fieldName, ucd_regexp);
 		}
-		if( retour.notSet() && colname_regexp != null){
+		if( retour.isNotSet() && colname_regexp != null){
 			retour = this.searchByName(fieldName, colname_regexp);
 		}
 		return retour;
@@ -95,7 +95,7 @@ public abstract class KWDetector {
 		if(ucd_regexp != null ){
 			retour = this.searchColumnsByUcd(fieldName, ucd_regexp);
 		}
-		if( retour.notSet() && colname_regexp != null){
+		if( retour.isNotSet() && colname_regexp != null){
 			retour =  this.searchColumnsByName(fieldName, colname_regexp);
 		}
 		return retour;
@@ -114,10 +114,10 @@ public abstract class KWDetector {
 		if(ucd_regexp != null ){
 			retour = this.searchColumnsByUcd(fieldName, ucd_regexp);
 		}
-		if( retour.notSet() && colname_regexp != null){
+		if( retour.isNotSet() && colname_regexp != null){
 			retour =  this.searchColumnsByName(fieldName, colname_regexp);
 		}
-		if( retour.notSet() && colname_regexp != null){
+		if( retour.isNotSet() && colname_regexp != null){
 			retour =  this.searchColumnsByDescription(fieldName, desc_regexp);
 		}
 		return retour;
