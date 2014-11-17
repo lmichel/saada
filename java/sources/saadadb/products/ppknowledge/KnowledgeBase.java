@@ -27,7 +27,7 @@ public class KnowledgeBase {
 		pipelineIdentifiers.add("ORIGIN");
 
 		parserMap = new LinkedHashMap<PipelineKey, Class>();
-		parserMap.put(new PipelineKey("ORIGIN", ".*Grenoble.*"), Grenoble.class);
+		parserMap.put(new PipelineKey("ORIGIN", ".*GrenobleOut.*"), Grenoble.class);
 	}
 	/**
 	 * @param attributesHandlers

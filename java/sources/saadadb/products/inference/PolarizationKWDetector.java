@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
 
 /**
@@ -21,28 +24,58 @@ public class PolarizationKWDetector extends KWDetector {
 	/**
 	 * Quantities are bound each to other. they are set together and returned by accessors
 	 */
-	private ColumnExpressionSetter states=new ColumnExpressionSetter("pol_states");
+	private ColumnExpressionSetter polStateSetter=new ColumnExpressionSetter("pol_states");
 	
-	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) {
+	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
+		this.mapPolarization();
 	}
 	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler
-			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) {
+			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
+		this.mapPolarization();
 	}
 	
+	private boolean mapPolarization() throws SaadaException {	
+		try {
+			if( this.findPolarizationByWCS()  ) {
+				return true;
+			}
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
+		return false;
+	}
 
+	
+	/**
+	 * Ask the WCS projection for spectral coordinates
+	 * @return true if the dispersion has been found
+	 * @throws Exception 
+	 */
+	private boolean findPolarizationByWCS() throws Exception{
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for polarization in WCS");
+		if( this.projection.isUsable()){
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found polarization in WCS");
+			this.polStateSetter     = new ColumnWcsSetter("pol_states"    , "WCS.getStokes()", this.projection);
+			return true;
+		} else {
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No polarization coordinate found in WCS");
+			return false;
+		}
+	}
 
 	/**
 	 * @return
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getPolarizationStates() throws Exception{
-		if( Messenger.debug_mode ) 
-			Messenger.printMsg(Messenger.DEBUG, "Search for the pol states: not implemented yet");
-		return states;
+		return (this.polStateSetter == null)? new ColumnExpressionSetter("pol_states"): this.polStateSetter;
 	}
 
 }

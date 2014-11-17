@@ -65,6 +65,7 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 	 * @see saadadb.products.setter.ColumnExpressionSetter#calculateExpression()
 	 */
 	public void calculateExpression() throws Exception{
+
 		String ef = this.expression.replace(Prefix,  "");
 		this.projection.setValues();
 		switch( ef ) {
@@ -122,11 +123,29 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 				this.result = sb.toString();	
 			}
 			this.storedValue = sv;
-					
+
 			break;
-		default:
+		case "getStokes()":
+			int st = (int) this.projection.getCenter(1);
+			switch (st) {
+			case 1 : this.result = "I"; break;// Standard Stokes unpolarized
+			case 2 : this.result = "Q"; break;//  Standard Stokes linear
+			case 3 : this.result = "U"; break;//  Standard Stokes linear
+			case 4 : this.result = "V"; break;//  Standard Stokes circular
+			case -1: this.result = "RR"; break;//  Right-right circular
+			case -2: this.result = "LL"; break;//  Left-left circular
+			case -3: this.result = "RL"; break;//  Right-left cross-circular
+			case -4: this.result = "LR"; break;//  Left-right cross-circular
+			case -5: this.result = "XX"; break;//  X parallel linear
+			case -6: this.result = "YY"; break;//  Y parallel linear
+			case -7: this.result = "XY"; break;//  XY cross linear
+			case -8: this.result = "YX"; break;//  YX cross linear
+			default: this.result = "I"; break;// Standard Stokes unpolarized
+			}
+			break;
+		default: 
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS expression " + this.expression  + " not undestoodo");	
-		}
+		}     
 	}
 
 }
