@@ -169,7 +169,7 @@ public class FieldShaker {
 				str = String.format("%20s",e.getKey()) + "     ";
 				ColumnSetter ah = e.getValue();
 				str += ah.getSettingMode() + " " + ah.message;
-				if( !ah.notSet() ) 
+				if( !ah.isNotSet() ) 
 					str += " storedValue=" + ah.storedValue + ((ah.getUnit() != null)? ah.getUnit(): "");
 				this.currentReport.add(str);
 			}
