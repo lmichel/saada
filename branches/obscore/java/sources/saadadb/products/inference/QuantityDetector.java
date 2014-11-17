@@ -103,49 +103,49 @@ public class QuantityDetector {
 	 */
 	public ColumnExpressionSetter getCollectionName() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCollectionName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCollectionName()).isNotSet() ){
 			return this.observationKWDetector.getCollectionName();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
 	}
 	public ColumnExpressionSetter getObsPublisherDid() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getObsPublisherDid()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getObsPublisherDid()).isNotSet() ){
 			return this.observationKWDetector.getObsPublisherDid();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
 	}
 	public ColumnExpressionSetter getCalibLevel() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibLevel()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibLevel()).isNotSet() ){
 			return this.observationKWDetector.getCalibLevel();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("obs_collection"): retour;
 	}
 	public ColumnExpressionSetter getTargetName() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTargetName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTargetName()).isNotSet() ){
 			return this.observationKWDetector.getTargetName();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("target_name"): retour;
 	}
 	public ColumnExpressionSetter getFacilityName() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFacilityName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFacilityName()).isNotSet() ){
 			return this.observationKWDetector.getFacilityName();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("facility_name"): retour;
 	}
 	public ColumnExpressionSetter getInstrumentName() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getInstrumentName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getInstrumentName()).isNotSet() ){
 			return this.observationKWDetector.getInstrumentName();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("instrument_name"): retour;
 	}
 	public ColumnExpressionSetter getExposureName()throws SaadaException{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExposureName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExposureName()).isNotSet() ){
 			return this.timeKWDetector.getExposureName();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("exposure_name"): retour;
@@ -155,42 +155,42 @@ public class QuantityDetector {
 	 */	
 	public ColumnExpressionSetter getFrame()  throws SaadaException{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFrame()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getFrame()).isNotSet() ){
 			return this.spaceKWDetector.getFrame();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("astroframe"): retour;
 	}
 	public ColumnExpressionSetter getAscension()  throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getAscension()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getAscension()).isNotSet() ){
 			return this.spaceKWDetector.getAscension();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_ra"): retour;
 	}
 	public ColumnExpressionSetter getDeclination()  throws SaadaException{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getDeclination()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getDeclination()).isNotSet() ){
 			return this.spaceKWDetector.getDeclination();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_dec"): retour;
 	}
 	public ColumnExpressionSetter getSpatialError() throws SaadaException{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialError()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialError()).isNotSet() ){
 			return this.spaceKWDetector.getSpatialError();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_resolution"): retour;
 	}
 	public ColumnExpressionSetter getfov() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getfov()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getfov()).isNotSet() ){
 			return this.spaceKWDetector.getfov();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_fov"): retour;
 	}
 	public ColumnExpressionSetter getRegion() throws SaadaException{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getRegion()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getRegion()).isNotSet() ){
 			return this.spaceKWDetector.getRegion();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_region"): retour;
@@ -208,7 +208,7 @@ public class QuantityDetector {
 	 */
 	public ColumnExpressionSetter getResPower() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getResPower()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getResPower()).isNotSet() ){
 			try {
 				return this.energyKWDetector.getResPower();
 			} catch (Exception e) {
@@ -220,28 +220,28 @@ public class QuantityDetector {
 	}
 	public ColumnExpressionSetter getEMin() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMin()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMin()).isNotSet() ){
 			return this.energyKWDetector.getEMin();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("em_min"): retour;
 	}
 	public ColumnExpressionSetter getEMax() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMax()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEMax()).isNotSet() ){
 			return this.energyKWDetector.getEMax();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("em_max"): retour;
 	}
 	public ColumnExpressionSetter getEUnit() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEUnit()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEUnit()).isNotSet() ){
 			return this.energyKWDetector.getEUnit();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("x_unit_org"): retour;
 	}
 	public ColumnExpressionSetter getEbins() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEBins()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEBins()).isNotSet() ){
 			return this.energyKWDetector.getEBins();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("em_bins"): retour;
@@ -252,21 +252,21 @@ public class QuantityDetector {
 	 */
 	public ColumnExpressionSetter getTMin() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMin()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMin()).isNotSet() ){
 			return this.timeKWDetector.getTMin();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("t_min"): retour;
 	}
 	public ColumnExpressionSetter getTMax() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMax()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTMax()).isNotSet() ){
 			return this.timeKWDetector.getTMax();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("t_max"): retour;
 	}
 	public ColumnExpressionSetter getExpTime() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExpTime()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getExpTime()).isNotSet() ){
 			return this.timeKWDetector.getExpTime();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("t_exptime"): retour;
@@ -276,9 +276,9 @@ public class QuantityDetector {
 	 */
 	public ColumnExpressionSetter getObservableUcd() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUcdName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUcdName()).isNotSet() ){
 			retour = this.observableKWDetector.getUcdName();
-			if( retour.notSet() && !getEMin().notSet() && !getEMax().notSet() ) {
+			if( retour.isNotSet() && !getEMin().isNotSet() && !getEMax().isNotSet() ) {
 				retour.setByValue("phot.count", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
@@ -287,9 +287,9 @@ public class QuantityDetector {
 	}
 	public ColumnExpressionSetter getObservableUnit() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getUnitName()).isNotSet() ){
 			retour = this.observableKWDetector.getUnitName();
-			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet()) {
+			if( retour.isNotSet() &&  !getEMin().isNotSet() && !getEMax().isNotSet()) {
 				retour.setByValue("counts", false);
 				retour.completeMessage("Value taken by default since the dispersion axis is set");
 			}
@@ -299,7 +299,7 @@ public class QuantityDetector {
 	}
 	public ColumnExpressionSetter getCalibStatus() throws Exception{
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getCalibStatus()).isNotSet() ){
 			retour = this.observableKWDetector.getCalibStatus();
 //			if( retour.notSet() &&  !getEMin().notSet() && !getEMax().notSet() ) {
 //				System.out.println(this.getEUnit());
@@ -319,7 +319,7 @@ public class QuantityDetector {
 	}
 	public ColumnSetter getPolarizationStates() throws Exception {
 		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getPolarizationStates()).notSet() ){
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getPolarizationStates()).isNotSet() ){
 			return this.polarizationKWDetector.getPolarizationStates();
 		} 
 		return (retour == null)?new ColumnExpressionSetter("t_exptime"): retour;

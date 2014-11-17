@@ -6,6 +6,7 @@ import hecds.wcs.types.AxeType;
 import java.util.List;
 import java.util.Map;
 
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -14,6 +15,7 @@ import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
+import saadadb.util.RegExpMatcher;
 import saadadb.vocabulary.RegExp;
 import saadadb.util.SaadaConstant;
 
@@ -92,11 +94,11 @@ public class TimeKWDetector extends KWDetector {
 	private boolean findTimeRangeInKeywords() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching time coordinates by UCDs or keyword ");
 		this.tminSetter =  this.search("t_min", RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
-		if( this.tminSetter.notSet() ) {
+		if( this.tminSetter.isNotSet() ) {
 			ColumnExpressionSetter year = this.searchByName("year", "YEAR");
 			ColumnExpressionSetter month = this.searchByName("month", "MONTH");
 			ColumnExpressionSetter day = this.searchByName("day", "DAY");
-			if( !year.notSet() && !month.notSet() && !day.notSet() ) {
+			if( !year.isNotSet() && !month.isNotSet() && !day.isNotSet() ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No date found but YEAR/MONTH/DAY");
 				this.tminSetter = new ColumnExpressionSetter("t_min", "strcat(" 
@@ -106,19 +108,19 @@ public class TimeKWDetector extends KWDetector {
 				this.tminSetter.completeMessage("Build from YEAR/MONTH/DAY keywords");
 			} 
 		} else {
-			this.addTimeRef(this.tminSetter);
+			this.searchTimeRef(this.tminSetter);
 		}
 
 		this.tmaxSetter =  this.search("t_max", RegExp.TIME_END_UCD, RegExp.TIME_END_KW);
-		if( !this.tmaxSetter.notSet() ){
-			this.addTimeRef(this.tmaxSetter);
+		if( !this.tmaxSetter.isNotSet() ){
+			this.searchTimeRef(this.tmaxSetter);
 		}
 		this.exptimeSetter =  this.search("t_exptime", RegExp.EXPOSURE_TIME_UCD, RegExp.EXPOSURE_TIME_KW);
 
 		int cpt = 0;
-		if( !this.tminSetter.notSet() ) cpt++;
-		if( !this.tmaxSetter.notSet() ) cpt++;
-		if( !this.exptimeSetter.notSet() ) cpt++;
+		if( !this.tminSetter.isNotSet() ) cpt++;
+		if( !this.tmaxSetter.isNotSet() ) cpt++;
+		if( !this.exptimeSetter.isNotSet() ) cpt++;
 		return (cpt >= 2);
 	}
 
@@ -133,16 +135,30 @@ public class TimeKWDetector extends KWDetector {
 		 */	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching time coordinate in the columns");
 		if( this.entryAttributeHandler != null ){
-			ColumnExpressionSetter ah = this.searchColumns(null, RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
-			if( !ah.notSet()  ){
+			ColumnExpressionSetter timeSetter = this.searchColumns(null, RegExp.TIME_START_UCD, RegExp.TIME_START_KW);
+			if( !timeSetter.isNotSet()  ){
 				/*
 				 * If a column has been found, the expression is the column name.
 				 */
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ ah.getExpression());
-				this.tminSetter = new ColumnRowSetter("t_min", "Column.getMinValue(" + ah.getExpression() + ")");
-				this.tminSetter.completeMessage("Column "+ ah.getExpression() + " taken as time axe");
-				this.tmaxSetter = new ColumnRowSetter("t_max", "Column.getMaxValue(" + ah.getExpression() + ")");
-				this.tmaxSetter.completeMessage("Column "+ ah.getExpression() + " taken as time axe");
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ timeSetter.getExpression());
+				TimeRef tr = this.searchTimeRef(timeSetter);
+				String expression = tr.getTimeRef();
+				if( tr.convFactor != null ){
+					expression +=  "Column.getMinValue(" + timeSetter.getExpression() + ")" + tr.convFactor;
+				} else {
+					this.tminSetter = new ColumnExpressionSetter("t_min");
+					this.tminSetter.completeMessage("Cannot interpret the data format in column " + timeSetter.getExpression());
+					this.tminSetter = new ColumnExpressionSetter("t_min");
+					this.tminSetter.completeMessage("Cannot interpret the data format in column " + timeSetter.getExpression());
+					return false;
+				}	
+				String message = "Take the expression result (" + expression + ")";
+				this.tminSetter = new ColumnRowSetter("t_min", expression);
+				this.tminSetter.completeMessage(message);
+				
+				expression =  tr.getTimeRef() + "Column.getMaxValue(" + timeSetter.getExpression() + ")" + tr.convFactor;
+				this.tmaxSetter = new ColumnRowSetter("t_max", expression);
+				this.tmaxSetter.completeMessage(message);
 				return true;
 			} 				
 		}
@@ -153,18 +169,40 @@ public class TimeKWDetector extends KWDetector {
 	 * @param retour
 	 * @throws Exception 
 	 */
-	private void addTimeRef(ColumnExpressionSetter retour) throws Exception{
-		try{
-			double d= Double.parseDouble(retour.getValue());
-
-			ColumnExpressionSetter ref = this.searchByName("timeref", RegExp.TIME_REF_KW);
-			if( !ref.notSet() ) {
-				double v = Double.parseDouble(ref.getValue());
-				retour.completeMessage("Taken MJDREF as time ref (" + v + ")");
-				v += d/(24*3600);
-				retour.setValue(String.valueOf(v));
+	private TimeRef searchTimeRef(ColumnExpressionSetter timeSetter) throws Exception{
+		TimeRef retour = new TimeRef();
+		if( timeSetter.isNotSet() ){
+			return retour;
+		}
+		/*
+		 * We suppose that timeRef is in MJD
+		 */
+		ColumnExpressionSetter ref = this.searchByName("timeref", RegExp.TIME_REF_KW);
+		String comment = timeSetter.getSingleAttributeHandler().getComment();
+		if( !ref.isNotSet() ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "take KW " + ref.getSingleAttributeHandler().getNameorg() + " as time reference");
+			retour.timeRef = ref.getSingleAttributeHandler().getNameorg();
+		} else {
+			RegExpMatcher rem = new RegExpMatcher(".*([0-9]{4}).*", 1);
+			List<String> ls = rem.getMatches(comment);
+			if( ls != null ) {
+				retour.timeRef = "MJD('01-01-"  + ls.get(0) + "')";
 			}
-		} catch (NumberFormatException e) {	}
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "take " + retour.timeRef + " as time reference (infered from KW desc '" + comment+ "')");
+		}
+
+
+		RegExpMatcher rem = new RegExpMatcher(".*(?i)((?:seconds)|(?:hours)|(?:minutes)).*" , 1);
+		
+		List<String> ls = rem.getMatches(comment);
+		if( ls != null ) {
+			retour.convFactor(ls.get(0));
+		}
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "take " + retour.convFactor + " as time conversion factor (infered from KW desc '" + comment+ "')");		
+		return retour;
 	}
 
 	/**
@@ -175,7 +213,7 @@ public class TimeKWDetector extends KWDetector {
 		System.out.println(this.tminSetter);
 		return (this.tminSetter == null)? new ColumnExpressionSetter("t_min"): this.tminSetter;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Exception
@@ -195,6 +233,33 @@ public class TimeKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getExposureName(){
 		return null;
+	}
+
+	/**
+	 * @author michel
+	 * @version $Id$
+	 */
+	class TimeRef{
+		String timeRef = null;
+		String convFactor  = null;
+
+		void convFactor(String unit){
+			if( unit.equalsIgnoreCase("seconds")) {
+				convFactor = "/86400";
+			} else if( unit.equalsIgnoreCase("minutes")) {
+				convFactor = "/14400";
+			} else if( unit.equalsIgnoreCase("hours")) {
+				convFactor ="/24";
+			} else if( unit.equalsIgnoreCase("days")) {
+				convFactor = "";
+			} else {
+				convFactor = null;
+			}
+		}
+		
+		String getTimeRef() {
+			return (this.timeRef == null || this.timeRef.length() == 0 )?"": (this.timeRef + " + ");
+		}
 	}
 
 }

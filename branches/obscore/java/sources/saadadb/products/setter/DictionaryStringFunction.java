@@ -30,7 +30,7 @@ public class DictionaryStringFunction {
 	public static TreeMap<String,String> index;
 	static{
 		index = new TreeMap<String,String>();
-		index.put(MJD,"Convert a date (MM-DD-YYYY or MM/DD/YYYY or MM DD YYYY) in Modified Julien Days" );
+		index.put(MJD,"Convert a date (MM-DD-YYYY or MM/DD/YYYY or MM DD YYYY or YYYY/MM/DD) in Modified Julien Days" );
 		index.put(LOWERCASE, "Convert the String into lowercase characters");
 		index.put(UPPERCASE, "Convert the String into uppercase characters");
 		index.put(SUBSTRING, "Returns a new string that is a substring of this string. "
@@ -155,6 +155,8 @@ public class DictionaryStringFunction {
 	{
 		try {
 			System.out.println(exec("toLower",new String[]{"HELLO WORLD"}));
+			System.out.println(exec("MJD",new String[]{"2014-06-12"}));
+			System.out.println(exec("MJD",new String[]{"2014-12-06"}));
 			System.out.println(exec("MJD",new String[]{"12-06-2014"}));
 			System.out.println(exec("MJD",new String[]{"plop"}));
 

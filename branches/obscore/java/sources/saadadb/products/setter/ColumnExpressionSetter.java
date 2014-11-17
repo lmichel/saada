@@ -825,10 +825,10 @@ MULTI_ATTRIBUTE,
 			System.out.println(" compiled: " + ces);
 			ces.calculateExpressionFromAttributes(mapTest);
 			System.out.println(" computed: " + ces);
-			if( ces.notSet() ) break;
+			if( ces.isNotSet() ) break;
 			ces.calculateExpressionFromAttributes(mapTest);
 			System.out.println(" computed: " + ces);
-			if( ces.notSet() ) break;
+			if( ces.isNotSet() ) break;
 		}
 	}
 

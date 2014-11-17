@@ -212,7 +212,7 @@ public final class EntryIngestor extends ProductIngestor {
 			super.setSpaceFields();
 		} else {
 			this.product.s_raSetter.calculateExpression();
-			if( !this.product.astroframeSetter.notSet() && !this.product.s_raSetter.notSet() && !this.product.s_decSetter.notSet()) {
+			if( !this.product.astroframeSetter.isNotSet() && !this.product.s_raSetter.isNotSet() && !this.product.s_decSetter.isNotSet()) {
 				try {
 					Astroframe af = (Astroframe)(this.product.astroframeSetter.storedValue);
 					String stc = "Polygon " + Database.getAstroframe();
@@ -329,7 +329,7 @@ System.out.println(this.product.s_raSetter);
 		 * Take the suffix is there is no position
 		 */
 		System.out.println( this.product.obs_idSetter);
-		if( this.product.obs_idSetter.notSet()) {
+		if( this.product.obs_idSetter.isNotSet()) {
 			EntrySaada es= (EntrySaada) this.saadaInstance;
 			String name = SaadaOID.getCollectionName(es.oidsaada) + "-" + SaadaOID.getClassName(es.oidsaada);
 			double ra =  es.s_ra;
