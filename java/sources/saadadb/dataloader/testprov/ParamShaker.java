@@ -317,7 +317,7 @@ public abstract class ParamShaker {
 				str = String.format("%20s",e.getKey()) + "     ";
 				ColumnSetter ah = e.getValue();
 				str += ah.getSettingMode() + " " + ah.message;
-				if( !ah.notSet() ) 
+				if( !ah.isNotSet() ) 
 					str += " storedValue=" + ah.storedValue;
 				this.currentReport.add(str);
 			}

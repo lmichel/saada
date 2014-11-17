@@ -143,7 +143,7 @@ public class FooReport {
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
 			System.out.print(ah.getSettingMode() + " " + ah.message);
-			if( !ah.notSet() ) 
+			if( !ah.isNotSet() ) 
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
 		}
