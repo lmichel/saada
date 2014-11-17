@@ -222,7 +222,7 @@ public class EnergyKWDetector extends KWDetector {
 			}
 			return true;
 		} else {
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No spectral coodinate found in WCS");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No spectral coordinate found in WCS");
 			return false;
 		}
 	}
