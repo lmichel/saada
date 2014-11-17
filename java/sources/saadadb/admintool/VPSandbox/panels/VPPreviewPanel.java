@@ -138,7 +138,7 @@ public class VPPreviewPanel extends JPanel {
 			ColumnSetter ah = e.getValue();
 			temp[1]=ah.getSettingMode().toString();
 			temp[2]=ah.getMessage();
-			if( !ah.notSet() ) 
+			if( !ah.isNotSet() ) 
 				temp[0]=ah.storedValue.toString();
 			loadedValuesList.put(e.getKey(),temp);
 
