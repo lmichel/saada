@@ -123,7 +123,14 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 				this.result = sb.toString();	
 			}
 			this.storedValue = sv;
-
+			break;
+		case "getFieldOfView()":
+			double c1 = this.projection.getCenter(1);
+			double c2 = this.projection.getCenter(2);
+			double d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c1);
+			double d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
+			this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
+			this.unit = "deg";
 			break;
 		case "getStokes()":
 			int st = (int) this.projection.getCenter(1);
@@ -142,10 +149,16 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			case -8: this.result = "YX"; break;//  YX cross linear
 			default: this.result = "I"; break;// Standard Stokes unpolarized
 			}
+			this.completeMessage("Taken from WCS pixel_value=" + st);
 			break;
 		default: 
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS expression " + this.expression  + " not undestoodo");	
 		}     
+		if( this.result == null ){
+			this.settingMode = ColumnSetMode.NOT_SET;
+			this.completeMessage("Expression [" + this.expression + "] return null");				
+		}
+
 	}
 
 }

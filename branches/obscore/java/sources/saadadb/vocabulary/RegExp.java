@@ -114,6 +114,7 @@ public class RegExp {
 	public static final String TIME_END_UCD      = "(?i)(time.end;obs)";
 	public static final String EXPOSURE_TIME_KW  = "(?i)((exptime)|(texp)|(obs.*time)|(time.*obs))";
 	public static final String EXPOSURE_TIME_UCD = "(?i)(time.duration;obs.exposure)";	
+	public static final String NUMERIC_TIME_UNIT = "(?i)((?:seconds)|(?:hours)|(?:minutes))";
 	/*
 	 * URL
 	 */

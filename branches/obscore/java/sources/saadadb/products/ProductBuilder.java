@@ -20,6 +20,7 @@ import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
+import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -363,10 +364,16 @@ public class ProductBuilder {
 		this.target_nameSetter.calculateExpression();
 		this.facility_nameSetter.calculateExpression();
 		this.instrument_nameSetter.calculateExpression();
+		System.out.println("1 " + this.astroframeSetter);
+		this.astroframeSetter.calculateExpression();
+		System.out.println("2 " + this.astroframeSetter);
+		//Database.exit();
 		this.s_resolutionSetter.calculateExpression();
 		this.s_raSetter.calculateExpression();
 		this.s_decSetter.calculateExpression();
+		System.out.println("1 " + this.s_fovSetter);
 		this.s_fovSetter.calculateExpression();
+		System.out.println("2 " + this.s_fovSetter);
 		this.s_regionSetter.calculateExpression();
 		this.em_minSetter.calculateExpression(this.dataFile);
 		this.em_maxSetter.calculateExpression(this.dataFile);
@@ -1865,7 +1872,7 @@ public class ProductBuilder {
 	 * @param directory
 	 */
 	public void writeCompleteReport(String directory) throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".report");
+		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".txt");
 		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
 		fw.write("====================================================\n");
 		fw.write("    " + this.dataFile.getName() + "\n");

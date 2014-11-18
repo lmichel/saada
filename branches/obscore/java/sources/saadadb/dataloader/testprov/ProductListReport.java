@@ -58,11 +58,13 @@ public class ProductListReport {
 				
 //			}
 
-			System.out.println(ap.getFilename() + " " + new File(ap.getFilename()).exists());
 			int cpt = 1;
 			int MAX = Integer.parseInt(ap.getNumber());
 			for( File f: files) {
+				if( f.isDirectory() )
+					continue;
 				if( cpt == MAX ) {
+					System.out.println(f + " " + f.exists());
 					ProductBuilder product = null;
 					switch( Category.getCategory(ap.getCategory()) ) {
 					case Category.TABLE: product = new TableBuilder((new FitsDataFile(f.getAbsolutePath()))
@@ -80,43 +82,8 @@ public class ProductListReport {
 					}
 					product.writeCompleteReport(f.getParent() + "/report/");
 					break;
-//				//	product.initProductFile();
-//					for( AttributeHandler ah: product.getProductAttributeHandler().values()) {
-//						System.out.println(ah);
-//					}
-//					Map<String, ColumnSetter> r = product.getReport();
-//					//System.out.println("======== " + f);	
-//					log+="======== " + f+"\n";
-//					//System.out.println("      -- Loaded extensions");
-//					log+="      -- Loaded extensions\n";
-//					for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
-//						//System.out.println(es);
-//						log+=es;
-//					}
-//					//System.out.println("      -- Field values");
-//					log+="      -- Field values\n";
-//					for( Entry<String, ColumnSetter> e:r.entrySet()){
-//						//System.out.print(String.format("%20s",e.getKey()) + "     ");
-//						log+=String.format("%20s",e.getKey()) + "     ";
-//						ColumnSetter ah = e.getValue();
-//						//System.out.print(ah.getSettingMode() + " " + ah.message);
-//						log+=ah.getSettingMode() + " " + ah.message;
-//						if( !ah.notSet() ) 
-//						{
-//							//System.out.print(" storedValue=" + ah.storedValue);
-//							log+="storedValue=" + ah.storedValue+" \n";
-//						}
-//						System.out.println(log);
-//
-//					}
-//					break;
-//					
 				}
-//				if( cpt > MAX ) break;
 				cpt++;
-				log+="\n";
-				System.out.println(log);
-					
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

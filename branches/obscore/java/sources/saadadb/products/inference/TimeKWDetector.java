@@ -102,9 +102,9 @@ public class TimeKWDetector extends KWDetector {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No date found but YEAR/MONTH/DAY");
 				this.tminSetter = new ColumnExpressionSetter("t_min", "strcat(" 
-						+ year.getSingleAttributeHandler().getNameorg() + "," + "-"
-						+ month.getSingleAttributeHandler().getNameorg() + "," + "-"
-						+ day.getSingleAttributeHandler().getNameorg() + "," , this.tableAttributeHandler, false);
+						+ year.getSingleAttributeHandler().getNameorg() + "," + "'-'" + ","
+						+ month.getSingleAttributeHandler().getNameorg() + "," + "'-'" + ","
+						+ day.getSingleAttributeHandler().getNameorg() + ")" , this.tableAttributeHandler, false);
 				this.tminSetter.completeMessage("Build from YEAR/MONTH/DAY keywords");
 			} 
 		} else {

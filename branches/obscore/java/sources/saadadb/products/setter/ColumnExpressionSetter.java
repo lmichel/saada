@@ -280,10 +280,11 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			} else {
 				this.result = this.expression;
 			}
+			if( this.result == null ){
+				this.settingMode = ColumnSetMode.NOT_SET;
+				this.completeMessage("Expression [" + this.expression + "] return null");				
+			}
 		} catch (Exception e) {
-			System.out.println(this.singleAttributeHandler);
-			System.out.println(this.stringFunctionExtractor);
-			e.printStackTrace();
 			this.result = SaadaConstant.STRING;
 			this.settingMode = ColumnSetMode.NOT_SET;
 			this.completeMessage("exp failed: " + e.getMessage());
