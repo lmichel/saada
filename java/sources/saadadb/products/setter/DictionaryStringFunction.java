@@ -138,6 +138,10 @@ public class DictionaryStringFunction {
 			sys =  "Galactic";
 		} else if( sys.toLowerCase().matches(RegExp.ICRS_SYSTEM)) {
 			sys =  "ICRS";
+		} else  if( sys.matches(".*2000.*")) {
+			sys =  "FK5";			
+		} else  if( sys.matches(".*1950.*")) {
+			sys =  "FK4";			
 		}
 		fls.add(sys);
 		if( args.length > 1 ){

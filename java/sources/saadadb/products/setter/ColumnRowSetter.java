@@ -110,6 +110,10 @@ public final class ColumnRowSetter extends ColumnExpressionSetter {
 		ces.setExpression(this.expression.replace(colExpr, "'" + colValue + "'"));
 		ces.calculateExpression();
 		this.result = ces.getValue();
+		if( this.result == null ){
+			this.settingMode = ColumnSetMode.NOT_SET;
+			this.completeMessage("Expression [" + this.expression + "] return null");				
+		}
 		
 	}
 	/* (non-Javadoc)

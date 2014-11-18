@@ -210,12 +210,15 @@ public class ProductIngestor {
 	protected void setSpaceFields() throws Exception {
 		if( !this.product.astroframeSetter.isNotSet() && !this.product.s_raSetter.isNotSet() && !this.product.s_decSetter.isNotSet()) {
 			try {
-				this.product.astroframeSetter.calculateExpression();
 				/*
 				 * Convert astroframe if different from this of the database
 				 */
 				Astroframe x = new CooSysResolver(this.product.astroframeSetter.getValue()).getCooSys();
-				if( !CooSysResolver.isSameAsDatabaseFrame(x) ) {
+				if( x == null ){
+					Messenger.printMsg(Messenger.TRACE, "Invalid coosys:" + this.product.astroframeSetter.getValue());
+					this.setPositionFieldsInError("Invalid coosys:" + this.product.astroframeSetter.getValue());
+					} 
+				else if( !CooSysResolver.isSameAsDatabaseFrame(x) ) {
 					this.taskMap.convertUnits = true;
 					this.setConvertedCoordinatesAndRegion();
 					/*
@@ -344,7 +347,6 @@ public class ProductIngestor {
 			if(this.product.s_fovSetter.isNotSet())
 				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 			else {
-				System.out.println(this.product.s_fovSetter);
 				String unit;
 				if( (unit = this.product.s_fovSetter.getUnit()).length() > 0 ) {
 					if( "deg".equals(unit )) {
@@ -476,6 +478,12 @@ public class ProductIngestor {
 					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 					this.product.em_maxSetter.setConvertedValue(spectralCoordinate.getConvertedMax(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 				}
+			} else {
+				this.product.em_minSetter = new ColumnSingleSetter();
+				this.product.em_minSetter.completeMessage("No unit given, can not achieve the conversion ");
+				this.product.em_maxSetter = new ColumnSingleSetter();
+				this.product.em_maxSetter.completeMessage("No unit given, can not achieve the conversion ");
+				this.product.em_res_powerSetter =  new ColumnSingleSetter();				
 			}
 			if( !this.product.em_binsSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
@@ -486,6 +494,13 @@ public class ProductIngestor {
 		}
 		setField("em_min"    , this.product.em_minSetter);
 		setField("em_max"    , this.product.em_maxSetter);
+		if(this.saadaInstance.em_max < this.saadaInstance.em_min){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Reorder em_minj and em_max");
+			double t = this.saadaInstance.em_max;
+			this.saadaInstance.em_max = this.saadaInstance.em_min;
+			this.saadaInstance.em_min = t;
+		}
 		setField("em_res_power", this.product.em_res_powerSetter);
 	}
 

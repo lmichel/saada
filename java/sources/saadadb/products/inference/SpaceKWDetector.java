@@ -102,6 +102,7 @@ public class SpaceKWDetector extends KWDetector{
 			 * There is no way to detect this behavior from the API. Just  remind it.
 			 */
 			this.region = new ColumnWcsSetter("s_region", "WCS.getWorldPixelRegion()", projection);
+			this.fov = new ColumnWcsSetter("s_fov", "WCS.getFieldOfView()", projection);
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
@@ -112,17 +113,23 @@ public class SpaceKWDetector extends KWDetector{
 			ColumnExpressionSetter ahEp = search("epoch"   , RegExp.FITS_EPOCH_UCD, RegExp.FITS_EPOCH_KW);
 
 			String message= "";
-			if( !ah.isNotSet()) {
+			if( ah.isSet()) {
 				String sframe=ah.getSingleAttributeHandler().getNameorg();
-				if( !ahEq.isNotSet()){
+				if( ahEq.isSet()){
 					sframe += "," + ahEq.getSingleAttributeHandler().getNameorg();
-					if( !ahEp.isNotSet()){
+					if( ahEp.isSet()){
 						sframe += "," + ahEp.getSingleAttributeHandler().getNameorg();
 					}
 				}					
 				this.frameSetter = new ColumnExpressionSetter("astroframe", "getCoosys(" + sframe + ")", this.tableAttributeHandler, false);
 				status |= FRAME_FOUND;
-			} 
+				/*
+				 * coosys can be infered from equinox 2000 => FK5 e.g. 
+				 */
+			} else if(  ahEq.isSet() ) {
+				this.frameSetter = new ColumnExpressionSetter("astroframe", "getCoosys(" + ahEq.getSingleAttributeHandler().getNameorg() + ")", this.tableAttributeHandler, false);
+				status |= FRAME_FOUND;			
+			}
 
 
 		}
@@ -159,9 +166,9 @@ public class SpaceKWDetector extends KWDetector{
 			this.searchFrame();
 			if( (this.status & FRAME_FOUND) != 0 && (this.status & POS_KW_FOUND) == 0) {
 				String exp = this.frameSetter.getExpression();
-				if( exp.startsWith("FK4") ){
+				if( exp.startsWith("FK4") || exp.startsWith("1950") || exp.startsWith("B1950")){
 					this.lookForFK4Keywords();
-				} else if( exp.startsWith("FK5")  ){
+				} else if( exp.startsWith("FK5")  || exp.startsWith("2000") || exp.startsWith("J2000")){
 					this.lookForFK5Keywords();
 				} if( exp.startsWith("ICRS")  ){
 					this.lookForICRSKeywords();
@@ -747,21 +754,8 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getfov() throws Exception{
-		// fov = Diameter (bounds) of the covered region in deg
-		this.init();
 		if( this.fov == null ){
-			this.fov = this.search("s_fov", RegExp.FOV_UCD, RegExp.FOV_KW);
-		}	
-		if( this.fov.isNotSet() && (this.status & POS_KW_FOUND) != 0){
-			AttributeHandler ah = new AttributeHandler();
-			ah.setNameattr("s_fov");
-			ah.setNameorg("s_fov");
-			ah.setUnit("deg");
-			ah.setUtype("Char.SpatialAxis.Coverage.Bounds.Extent.diameter");
-			ah.setValue("0");
-			//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_VALUE);
-			this.fov = new ColumnExpressionSetter("s_fov", ah);
-			this.fov.completeMessage("Default value");														
+			return new ColumnExpressionSetter("s_fov");
 		}
 		return fov;		
 	}
