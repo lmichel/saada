@@ -20,7 +20,6 @@ import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
-import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -39,11 +38,10 @@ import saadadb.products.inference.SpatialResolutionUnitRef;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnSetter;
-import saadadb.util.DateUtils;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ColumnSetMode;
 import saadadb.vocabulary.enums.PriorityMode;
 import cds.astro.Astroframe;
@@ -964,19 +962,14 @@ public class ProductBuilder {
 		 * Coo sys done in 2nd: can use position mapping to detect the coord system
 		 */
 		this.mapCollectionCooSysAttributes();
-		/*
-		 * Don't map position if there is no astroframe
-		 */
-		//if( this.astroframe != null || this.system_attribute != null) {
 		this.mapCollectionPosAttributes();
 		this.mapCollectionPoserrorAttributes();
-		//}
 		traceReportOnAttRef(astroframeSetter);
 		traceReportOnAttRef(s_raSetter);
 		traceReportOnAttRef(s_decSetter);
-		traceReportOnAttRef( s_regionSetter);
+		traceReportOnAttRef(s_regionSetter);
 		traceReportOnAttRef(s_fovSetter);
-		traceReportOnAttRef( s_resolutionSetter);
+		traceReportOnAttRef(s_resolutionSetter);
 	}
 
 	/**
@@ -1046,35 +1039,6 @@ public class ProductBuilder {
 		default:
 			this.mapCollectionCooSysAttributesAuto();
 		}
-		//		/*
-		//		 * If the mapping given in ONLY mode is wrong, we don't use any default coord sys.
-		//		 */
-		//		if( this.astroframe == null && this.system_attribute == null ) {
-		//			if( this.mapping.getSpaceAxisMapping().mappingOnly() ) {
-		//				this.s_raSetter = new ColumnSetter();
-		//				this.s_decSetter = new ColumnSetter();
-		//				Messenger.printMsg(Messenger.WARNING, "No coord system " + msg + " found: position won't be set");
-		//			}
-		//			else {
-		//				this.astroframe = new ICRS();
-		//				Messenger.printMsg(Messenger.TRACE, "Product coordinate system taken (default value) <" + this.astroframe +  "> ");
-		//			}
-		//		}
-		//		/*
-		//		 * The following test suit is just made to display proper messages
-		//		 */
-		//		else if( this.astroframe != null) {
-		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" + this.astroframe + "> ");
-		//		} else if( this.equinox_attribute != null ) {
-		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken " + msg + "<" 
-		//					+ this.system_attribute.message + " "
-		//					+ this.equinox_attribute.message
-		//					+ "> ");
-		//		} else{
-		//			Messenger.printMsg(Messenger.TRACE, "Product coordinate System taken  " + msg + "<" 
-		//					+ this.system_attribute.message
-		//					+ "> ");
-		//		} 		
 	}
 
 	/**
@@ -1871,13 +1835,17 @@ public class ProductBuilder {
 	 * The report file contain a list of the read keywords followed by the mapping into the collection model
 	 * @param directory
 	 */
-	public void writeCompleteReport(String directory) throws Exception{
+	public void writeCompleteReport(String directory, ArgsParser ap) throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".txt");
 		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
 		fw.write("====================================================\n");
 		fw.write("    " + this.dataFile.getName() + "\n");
 		fw.write("    " + (new Date()) + "\n");
 		fw.write("====================================================\n");
+		if( ap != null ){
+			fw.write("\n========= User parameters\n");
+			fw.write(ap.toString() +"\n");
+		}
 		fw.write("\n========= Keywords read\n");
 		for( AttributeHandler ah: this.getProductAttributeHandler().values()) {
 			fw.write(ah + "\n");
