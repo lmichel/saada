@@ -17,6 +17,8 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.SaadaException;
 import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
@@ -24,7 +26,6 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.setter.ColumnSetter;
-import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.util.Messenger;
 
 /**
@@ -53,6 +54,8 @@ public abstract class ParamShaker {
 	protected Map<String, List<String>> report;
 	/** pointer on the retpor current of the current test*/ 
 	protected List<String> currentReport;
+	/** regexp filtering the tests to be run (null = run all) */
+	private String itemToProcess;
 
 	/**
 	 * @throws Exception
@@ -120,7 +123,7 @@ public abstract class ParamShaker {
 			params.add((String) jsa.get(i));
 		}	
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		
+
 	}
 
 	/**
@@ -323,25 +326,71 @@ public abstract class ParamShaker {
 			}
 		}
 	}
-
+	/**
+	 * @param item
+	 */
+	protected void setItemToProcess(String item){
+		this.itemToProcess = item;
+	}
 	/**
 	 * Process all test
 	 * @throws Exception
 	 */
 	protected void processAll() throws Exception {
 		Messenger.debug_mode = true;
-		runFirstWithGoodMParams();
-//		runFirstWithGoodIParams();
-//		runFirstWithWrongMParams();
-//		runFirstWithWrongIParams();
-//		runFirstWithPWrongMParams();
-//		runFirstWithPWrongIParams();
-//		runLastWithGoodMParams();
-//		runLastWithGoodIParams();
-//		runLastWithWrongMParams();
-//		runLastWithWrongIParams();
-//		runLastWithPWrongMParams();
-//		runLastWithPWrongIParams();
+		boolean itemFound = false;
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithGoodMParams")) {
+			itemFound = true;
+			this.runFirstWithGoodMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithGoodIParams")) {
+			itemFound = true;
+			this.runFirstWithGoodIParams();
+		}
+		if( this.itemToProcess == null ||  this.itemToProcess.matches("FirstWithWrongMParams")) {
+			itemFound = true;
+			this.runFirstWithWrongMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithWrongIParams")) {
+			itemFound = true;
+			this.runFirstWithWrongIParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithPWrongMParams")) {
+			itemFound = true;
+			this.runFirstWithPWrongMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithPWrongIParams")) {
+			itemFound = true;
+			this.runFirstWithPWrongIParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithGoodMParams")) {
+			itemFound = true;
+			this.runLastWithGoodMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithGoodIParams")) {
+			itemFound = true;
+			this.runLastWithGoodIParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithWrongMParams")) {
+			itemFound = true;
+			this.runLastWithWrongMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithWrongIParams")) {
+			itemFound = true;
+			this.runLastWithWrongIParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithPWrongMParams")) {
+			itemFound = true;
+			this.runLastWithPWrongMParams();
+		} 
+		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("LastWithPWrongIParams")) {
+			itemFound = true;
+			this.runLastWithPWrongIParams();
+		} 
+
+		if( this.itemToProcess != null && !itemFound){
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "no item named " + this.itemToProcess);
+		}
 	}
 
 	/**

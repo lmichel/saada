@@ -92,7 +92,7 @@ public class FieldShaker {
 					ffn = "/Users/laurentmichel/Documents/workspace/SaadaObscore/datatest/" + fn;
 					if( !(new File(ffn)).exists() ) {
 						System.out.println(ffn + " does not exist 3");
-						System.exit(1);
+						Database.exit();
 					}
 					System.out.println(ffn);
 				}
@@ -138,7 +138,7 @@ public class FieldShaker {
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
-			System.exit(1);
+			Database.exit();
 		}  
 	}
 
@@ -213,7 +213,7 @@ public class FieldShaker {
 		} catch(Exception e){
 			e.printStackTrace();
 		}
-		Database.close();
+		Database.exit();
 	}
 
 }

@@ -27,9 +27,10 @@ public class TimeShaker extends ParamShaker{
 			+ "	\"-posmapping=first\" , \n"
 			+ "	\"-position=RA,DEC\" , \n"
 			+ "	\"-spcunit=keV\", \n"
-			+ "	\"-timemapping=only\" 	,	 \n"
+			+ "	\"-timemapping=first\" 	,	 \n"
 			+ "	\"-tmin='11 03 2013'\" 	,	 \n"
 			+ "	\"-tmax='11 04 2013'\"	 \n"
+		//	+ "	\"-exptime='1700'\"	 \n"
 			+ "	\"-oucd=pow(RA)+pow('10')+eMin\"	 \n"
 			+ "], \n"
 			+ "\"fields\": { \n"
@@ -38,8 +39,9 @@ public class TimeShaker extends ParamShaker{
 			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"-56.9\"], \n"
 			+ "				[\"eMin\"      , \"double\", \"KeV\"   , \"em.wl;stat.min\", \"1.\"], \n"
 			+ "				[\"eMax\"      , \"double\", \"KeV\"   , \"em.wl;stat.max\", \"2.\"], \n"
-			+ "				[\"obsStart\"  , \"\"      , \"\"      , \"\"              , \"2014-02-12\"], \n"
-			+ "				[\"obsEnd\"    , \"\"      , \"\"      , \"\"              , \"2014-02-13\"], \n"
+			+ "				[\"obsStart\"  , \"\"      , \"\"      , \"\"              , \"2013-11-04\"], \n"
+			+ "				[\"obsEnd\"    , \"\"      , \"\"      , \"\"              , \"2013-11-05\"], \n"
+			+ "				[\"exptime\"    , \"\"      , \"\"      , \"\"              , \"1000\"], \n"
 			+ "				[\"collection\", \"\"      , \"string\", \"\"              , \"3XMM\"], \n"
 			+ "				[\"target\"    , \"\"      , \"string\", \"\"              , \"M33\"], \n"
 			+ "				[\"instrume\"  , \"\"      , \"string\", \"\"              , \"MOS1\"], \n"
@@ -79,7 +81,9 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runFirstWithWrongMParams() throws Exception{
 		super.runFirstWithWrongMParams();
-		this.setArgParam("-position", "a,b");
+		this.setArgParam("-tmin", "a,b");
+		this.setArgParam("-tmax", "c");
+		this.setArgParam("-exptime", "'doudo");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -87,9 +91,9 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runFirstWithWrongIParams() throws Exception{
 		super.runFirstWithWrongIParams();
-		this.setArgParam("-position", "RA,DEC");
-		this.setField("RA", null, null, null, "");
-		this.setField("DEC", null, null, null, "");
+		this.setArgParam("-tmin", "'11 03 2013'");
+		this.setField("obsStart", null, null, null, "");
+		this.setField("obsEnd", null, null, null, "");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -97,6 +101,7 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runFirstWithPWrongMParams() throws Exception{
 		super.runFirstWithPWrongMParams();
+		this.setArgParam("-tmin", "a,b");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -104,6 +109,7 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runFirstWithPWrongIParams() throws Exception{
 		super.runFirstWithPWrongIParams();
+		this.setField("obsStart", null, null, null, "");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -125,6 +131,9 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runLastWithWrongMParams() throws Exception{
 		super.runLastWithWrongMParams();
+		this.setArgParam("-tmin", "a,b");
+		this.setArgParam("-tmax", "c");
+		this.setArgParam("-exptime", "'doudo");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -132,6 +141,8 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runLastWithWrongIParams() throws Exception{
 		super.runLastWithWrongIParams();
+		this.setField("obsStart", null, null, null, "sssss");
+		this.setField("obsEnd", null, null, null, "");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -139,6 +150,7 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongMParams() throws Exception{
 		super.runLastWithPWrongMParams();
+		this.setArgParam("-tmin", "a,b");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -146,6 +158,7 @@ public class TimeShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongIParams() throws Exception{
 		super.runLastWithPWrongIParams();
+		this.setField("obsStart", null, null, null, "sssss");
 		this.process();
 	}
 	/**
@@ -157,6 +170,7 @@ public class TimeShaker extends ParamShaker{
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		TimeShaker sp = new TimeShaker();
+		sp.setItemToProcess(ap.getNumber());
 		sp.processAll();
 		sp.showReport();
 		} catch(Exception e){
