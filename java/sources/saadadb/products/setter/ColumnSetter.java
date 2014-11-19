@@ -189,6 +189,12 @@ public abstract class ColumnSetter implements Cloneable {
 	 * 
 	 */
 	public abstract void setNotSet(String message);
+	
+	/**
+	 * @param message
+	 * @param e
+	 */
+	public abstract void setNotSet(String message, Exception e);
 
 	/**
 	 * Set also the BY_VALUE mode
