@@ -432,6 +432,7 @@ public class Database {
 	 */
 	public static void exit(){
 		Messenger.printMsg(Messenger.ERROR, "Exit on API request");
+		Messenger.printStackTrace(new Exception());
 		Database.close();
 		System.exit(1);
 	}
