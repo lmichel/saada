@@ -4,12 +4,19 @@ import java.text.ParseException;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
-import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.enums.MappingMode;
 
+/**
+ * @author michel
+ * @version $Id$
+ */
 public class TimeMapping extends AxisMapping {
 
+	/**
+	 * @param ap
+	 * @param entryMode
+	 * @throws FatalException
+	 */
 	TimeMapping(ArgsParser ap, boolean entryMode) throws FatalException {
 		super(ap, new String[]{"t_min", "t_max", "t_exptime"}, entryMode);
 		String s;
@@ -40,6 +47,11 @@ public class TimeMapping extends AxisMapping {
 		this.completeColumns();
 	}
 
+	/**
+	 * @param args
+	 * @throws ParseException
+	 * @throws FatalException
+	 */
 	public static void main(String[] args) throws ParseException, FatalException{
 		TimeMapping tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=\'12/12/2012\'", "eeeee"}), false);
 		System.out.println(tm);
