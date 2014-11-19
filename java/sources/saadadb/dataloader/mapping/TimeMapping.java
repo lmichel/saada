@@ -15,41 +15,22 @@ public class TimeMapping extends AxisMapping {
 		String s;
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
-				if((s.startsWith("'") && s.endsWith("'")))
-				{
-					//s=DateUtils.getMJD(s);
+				if((s.startsWith("'") && s.endsWith("'"))) {
 					this.columnMapping.put("t_min", new ColumnMapping(null,s, "t_min"));
-
 				}
 				this.columnMapping.put("t_min", new ColumnMapping(null, s, "t_min"));
-
-				//String v = DateUtils.getMJD(s);
-				//this.columnMapping.put("t_min", new ColumnMapping(null, "'" + v + "'", "t_min"));
 			} catch (Exception e) {
 				Messenger.printMsg(Messenger.WARNING, "t_min: Cannot parse the date " + s  + ": ignored");
 			}
 		}
 		if( (s = ap.getTmax(entryMode)) != null  ){
-			ColumnMapping cm = null;
 			try {
-				cm = new ColumnMapping(null, s, "t_max");
-				if( cm.byValue()) {
-					cm.setExpression(DateUtils.getMJD(cm.getExpression()));
+				if((s.startsWith("'") && s.endsWith("'"))) {
+					this.columnMapping.put("t_max", new ColumnMapping(null,s, "t_max"));
 				}
-				this.columnMapping.put("t_max",cm);
-				System.out.println(cm);
-//				if( )
-//				
-//				if(s.contains("'"))
-//				{
-//					s=DateUtils.getMJD(s);
-//				}
-//				this.columnMapping.put("t_max", new ColumnMapping(null, s, "t_max"));
-//				String v = DateUtils.getMJD(s);
-//				this.columnMapping.put("t_max", new ColumnMapping(null, "'" +v + "'", "t_max"));
+				this.columnMapping.put("t_max", new ColumnMapping(null, s, "t_max"));
 			} catch (Exception e) {
-				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date <" + s  + ">: ignored");
-				cm = new ColumnMapping(MappingMode.NOMAPPING, null, null, null);
+				Messenger.printMsg(Messenger.WARNING, "t_max: Cannot parse the date " + s  + ": ignored");
 			}
 		}
 		if( (s = ap.getExpTime(entryMode)) != null  ){
