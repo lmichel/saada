@@ -665,6 +665,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public void setNotSet() {
 		this.settingMode = ColumnSetMode.NOT_SET;
 	}
+	
+	@Override
+	public void setNotSet(String message, Exception e){
+		this.settingMode = ColumnSetMode.NOT_SET;
+		this.completeMessage(message + ":" + e.getMessage());		
+	}
+
 	@Override
 	public void setNotSet(String message) {
 		this.settingMode = ColumnSetMode.NOT_SET;

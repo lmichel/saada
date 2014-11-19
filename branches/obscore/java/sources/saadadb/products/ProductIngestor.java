@@ -6,7 +6,6 @@ package saadadb.products;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.CooSysResolver;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
-import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.Table_Saada_Loaded_File;
@@ -34,11 +32,6 @@ import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.RepositoryMode;
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
-import cds.astro.Ecliptic;
-import cds.astro.FK4;
-import cds.astro.FK5;
-import cds.astro.Galactic;
-import cds.astro.ICRS;
 
 /**
  * Contains all the logic of the product storing.
@@ -217,7 +210,7 @@ public class ProductIngestor {
 				if( x == null ){
 					Messenger.printMsg(Messenger.TRACE, "Invalid coosys:" + this.product.astroframeSetter.getValue());
 					this.setPositionFieldsInError("Invalid coosys:" + this.product.astroframeSetter.getValue());
-					} 
+				} 
 				else if( !CooSysResolver.isSameAsDatabaseFrame(x) ) {
 					this.taskMap.convertUnits = true;
 					this.setConvertedCoordinatesAndRegion();
@@ -417,30 +410,51 @@ public class ProductIngestor {
 		ColumnSetter t_exptime = this.product.t_exptimeSetter;
 
 		if( !t_min.isNotSet() ) {
-			t_min.storedValue = DateUtils.getMJD(t_min.getValue());
-			t_min.setConvertedValue(DateUtils.getMJD(t_min.getValue()), "String", "mjd", true);
+			try {
+				t_min.storedValue = DateUtils.getMJD(t_min.getValue());
+				t_min.setConvertedValue(DateUtils.getMJD(t_min.getValue()), "String", "mjd", true);
+			} catch (Exception e){
+				t_min.setNotSet("Conv to MJD failed",e);
+			}
 		}
 		if( !t_max.isNotSet() ) {
-			t_max.storedValue = DateUtils.getMJD(t_max.getValue());
-			t_max.setConvertedValue(DateUtils.getMJD(t_max.getValue()), "String", "mjd", true);
+			try {
+				t_max.storedValue = DateUtils.getMJD(t_max.getValue());
+				t_max.setConvertedValue(DateUtils.getMJD(t_max.getValue()), "String", "mjd", true);
+			} catch (Exception e){
+				t_max.setNotSet("Conv to MJD failed", e);
+			}
 		}
 
+		double v;
 		if( t_min.isNotSet() && !t_max.isNotSet() && !t_exptime.isNotSet() ) {
-			double v =Double.parseDouble(t_max.getValue()) - (Double.parseDouble(t_exptime.getValue())/86400);
-			t_min.storedValue = v;
-			t_min.completeMessage("Computed from t_max and t_exptime");	
-			t_min.setByValue(v, false);
+			try {
+				v =Double.parseDouble(t_max.getValue()) - (Double.parseDouble(t_exptime.getValue())/86400);
+				t_min.storedValue = v;
+				t_min.completeMessage("Computed from t_max and t_exptime");	
+				t_min.setByValue(v, false);
+			} catch (Exception e){
+				t_min.setNotSet("Computation from t_max and t_exptime failed", e);
+			}
 		} else if( !t_min.isNotSet() && t_max.isNotSet() && !t_exptime.isNotSet() ) {
-			double v = Double.parseDouble(t_min.getValue()) + (Double.parseDouble(t_exptime.getValue())/86400);
-			t_max.storedValue = v;
-			t_max.completeMessage("Computed from t_min and t_exptime");	
-			t_max.setByValue(v, false);
+			try {
+				v = Double.parseDouble(t_min.getValue()) + (Double.parseDouble(t_exptime.getValue())/86400);
+				t_max.storedValue = v;
+				t_max.completeMessage("Computed from t_min and t_exptime");	
+				t_max.setByValue(v, false);
+			} catch (Exception e){
+				t_max.setNotSet("Computation from t_min and t_exptime failed", e);
+			}
 		} else if( !t_min.isNotSet() && !t_max.isNotSet() && t_exptime.isNotSet() ) {
-			double v = 3600*24*( Double.parseDouble(t_max.getValue()) - Double.parseDouble(t_min.getValue())  );
-			t_max.storedValue = v;
-			t_max.setByValue(v, false);
-			t_exptime.completeMessage("Computed from t_min and t_max");	
-			t_exptime.setUnit("s");
+			try {
+				v = 3600*24*( Double.parseDouble(t_max.getValue()) - Double.parseDouble(t_min.getValue())  );
+				t_exptime.storedValue = v;
+				t_exptime.setByValue(v, false);
+				t_exptime.completeMessage("Computed from t_min and t_max");	
+				t_exptime.setUnit("s");
+			} catch (Exception e){
+				t_exptime.setNotSet("Computation from t_max and t_min failed", e);
+			}
 		}
 		setField("t_min"    , t_min);
 		setField("t_max"    , t_max);

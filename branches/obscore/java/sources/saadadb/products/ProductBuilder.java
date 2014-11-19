@@ -282,8 +282,6 @@ public class ProductBuilder {
 	}
 
 
-
-
 	/*************************************************
 	 * Initialization of the product
 	 *************************************************/
@@ -450,28 +448,27 @@ public class ProductBuilder {
 	 * @throws Exception 
 	 */
 	protected ColumnExpressionSetter getMappedAttributeHander(String colmunName, ColumnMapping columnMapping) throws Exception {
-		List<AttributeHandler> cmlah = columnMapping.getHandlers();
-		AttributeHandler cmah=null;
-		TreeMap<String,AttributeHandler> temp=null;
+		List<AttributeHandler> mappingHandlers = columnMapping.getHandlers();
+		AttributeHandler mappingSingleHandler=null;
+		TreeMap<String,AttributeHandler> mappingHandlerMap=null;
 		//We check if we have one or several ah
-		if(cmlah!=null)	{
-			if(cmlah.size()==1 && columnMapping.byValue())	{
-				cmah = cmlah.get(0);
-			}else{
-				temp=new TreeMap<String,AttributeHandler>();
-				for(AttributeHandler ah:cmlah){
-					temp.put(ah.getNameattr(), ah);
+		if(mappingHandlers!=null)	{
+			if(mappingHandlers.size()==1 && columnMapping.byValue())	{
+				mappingSingleHandler = mappingHandlers.get(0);
+			} else{
+				mappingHandlerMap=new TreeMap<String,AttributeHandler>();
+				for(AttributeHandler ah:mappingHandlers){
+					mappingHandlerMap.put(ah.getNameattr(), ah);
 				}
 			}
 		}
 
 		if( columnMapping.byValue() ){
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, columnMapping.label + ": take constant value <" + columnMapping.getValue()+ ">");
-			//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_VALUE, true, false);
 			ColumnExpressionSetter retour ;
 			//On calcule l'expression à partir de la valeur de l'ah
 			if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-				retour = new ColumnExpressionSetter(colmunName, cmah);
+				retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
 			else 
 				retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression());
 			retour.completeMessage("Using user mapping");
@@ -483,25 +480,19 @@ public class ProductBuilder {
 			ColumnExpressionSetter retour;
 
 			//When there is only one ah 
-			if(cmah!=null)
-			{
+			if(mappingSingleHandler!=null) {
 				for( AttributeHandler ah: this.productAttributeHandler.values()) {
 					String keyorg  = ah.getNameorg();
 					String keyattr = ah.getNameattr();
 
-					if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
+					if( (keyorg.equals(mappingSingleHandler.getNameorg()) || keyattr.equals(mappingSingleHandler.getNameattr())) ) {
 						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-						//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
 						retour = new ColumnExpressionSetter(colmunName);
 
-						if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-						{
-							retour = new ColumnExpressionSetter(colmunName, cmah);
-						}
-						else
-						{
-							//temp.put(cmah.getNameattr(), cmah);
-							retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp, true);
+						if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty()) {
+							retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
+						} else {
+							retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), mappingHandlerMap, true);
 							retour.calculateExpression();
 						}
 						retour.completeMessage("Using user mapping");
@@ -509,75 +500,53 @@ public class ProductBuilder {
 					}
 
 				}
-			}
-			else
-			{
-				//several ah
+			} else {
 				retour = new ColumnExpressionSetter(colmunName);
-				if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-				{
-					IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The expression of the columnMapping : "+columnMapping.label+"is empty or null");
+				if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty()) {
+					String msg = "The expression of the columnMapping : "+columnMapping.label+"is empty or null (looks like ian onternal error).";
+					Messenger.printMsg(Messenger.ERROR, msg);
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeMessage(msg);
+					return retour;
 				}
 				//for every ah contained by the columnMapping
-				for(AttributeHandler ahc : cmlah)
-				{
+				ArrayList<String> ma = new ArrayList<String>();
+				boolean mah=true;
+				for(AttributeHandler ahc : mappingHandlers) {
 					String keyorg  = ahc.getNameorg();
 					String keyattr = ahc.getNameattr();
 					ahfound=false;
 					//Plusieurs attributHandlers
-					for( AttributeHandler ah: this.productAttributeHandler.values()) 
-					{
-						if(keyorg.equals(ah.getNameorg()) || (keyattr.equals(ah.getNameattr())))
-						{
+					for( AttributeHandler ah: this.productAttributeHandler.values())  {
+						if( ah.isNamedLike(keyattr)) {
 							ahfound=true;
 							ahc.setValue(ah.getValue());
+							ma.add(ah.getNameorg());
 							break;
 						}
 					}
-					//If no corresponding ah have been found
-					if(!ahfound)
-					{
-						IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "One or Several attributes handler of the columnMapping : "+columnMapping.label+" are missing");
+					if(! ahfound){
+						mah = false; 
+						ma.add(ahc.getNameorg());
 					}
-
+				}			
+				//If no corresponding ah have been found
+				if(!mah) {
+					String msg = "One or Several attributes "+ma+" referenced by the setter of the column " + colmunName + " are missing";
+					Messenger.printMsg(Messenger.TRACE, msg);
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeMessage(msg);
+					return retour;
 				}
-				//if the attributes of the columnMapping doesn't exist we stop here
 
+				//if the attributes of the columnMapping doesn't exist we stop here
 			}
 			//if we found the expression AND the ah, we calculate the expression
-			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), temp, true);
-			retour.calculateExpression();
-
+			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), mappingHandlerMap, true);
+		//	retour.calculateExpression();
 			retour.completeMessage("Using user mapping");
 			return retour;
-		}
-		else{
-
-			//		} else if( columnMapping.byExpression() ){
-			//			for( AttributeHandler ah: this.productAttributeHandler.values()) {
-			//				String keyorg  = ah.getNameorg();
-			//				String keyattr = ah.getNameattr();
-			//				if( (keyorg.equals(cmah.getNameorg()) || keyattr.equals(cmah.getNameattr())) ) {
-			//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
-			//					//ColumnExpressionSetter retour = new ColumnExpressionSetter(cmah, ColumnSetMode.BY_KEYWORD, true, false);
-			////					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-			////					retour.calculateExpression(cmah);
-			//					ColumnExpressionSetter retour = new ColumnExpressionSetter();
-			//					if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty())
-			//					{
-			//						retour.calculateExpression(cmah);
-			//					}
-			//					else
-			//					{
-			//						temp.put(cmah.getNameattr(), cmah);
-			//						retour.calculateExpression(columnMapping.getExpression(),temp);
-			//					}
-			//					retour.completeMessage("Using user mapping");
-			//					return retour;
-			//				}
-			//			}
-			//		}
-
+		} else{
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  "No mapping for " + columnMapping.label );
 			ColumnExpressionSetter retour = new ColumnExpressionSetter(colmunName);
 			//retour.completeMessage("Not found by mapping");
@@ -590,7 +559,7 @@ public class ProductBuilder {
 	 * @return
 	 */
 	protected boolean isAttributeHandlerMapped(ColumnSetter ah) {
-		return (ah != null && !ah.isNotSet());
+		return (ah != null && ah.isSet());
 	}
 	/**
 	 * @throws Exception 

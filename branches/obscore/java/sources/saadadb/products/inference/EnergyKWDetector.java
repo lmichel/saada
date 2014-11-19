@@ -293,7 +293,7 @@ public class EnergyKWDetector extends KWDetector {
 	private boolean findSpectralCoordinateInKeywords() throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching spectral coordinates by UCDs or keyword ");
 		this.em_minSetter = this.search("em_min", RegExp.SPEC_MIN_UCD, RegExp.SPEC_MIN_KW);
-		this.em_minSetter = this.search("em_max", RegExp.SPEC_MAX_UCD, RegExp.SPEC_MAX_KW);
+		this.em_maxSetter = this.search("em_max", RegExp.SPEC_MAX_UCD, RegExp.SPEC_MAX_KW);
 		this.em_res_powerSetter = this.search("em_res_power", RegExp.SPEC_RESPOWER_UCD, RegExp.SPEC_RESPOWER_KW);
 		if( !this.em_minSetter.isNotSet() && !this.em_maxSetter.isNotSet() ){
 			if (Messenger.debug_mode)

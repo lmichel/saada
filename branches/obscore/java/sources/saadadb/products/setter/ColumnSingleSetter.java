@@ -308,6 +308,14 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 		this.attributeHandler.setUnit(unit);
 		this.storedValue = value;
 	}
+
+	@Override
+	public void setNotSet(String message, Exception e){
+		this.settingMode = ColumnSetMode.NOT_SET;
+		this.attributeHandler.setValue(null);
+		this.settingMode = ColumnSetMode.NOT_SET;
+		this.completeMessage(message + ":" + e.getMessage());		
+	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.setter.ColumnSetter#setNotSet()
 	 */
