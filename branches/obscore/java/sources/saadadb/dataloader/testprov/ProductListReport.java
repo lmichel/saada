@@ -80,7 +80,7 @@ public class ProductListReport {
 							, new ProductMapping("mapping", ap));
 					break;
 					}
-					product.writeCompleteReport(f.getParent() + "/report/");
+					product.writeCompleteReport(f.getParent() + "/report/", ap);
 					break;
 				}
 				cpt++;
