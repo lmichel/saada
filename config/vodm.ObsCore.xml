@@ -16,6 +16,8 @@
  <FIELD name="default_value" datatype="char" arraysize="*" />
  <FIELD name="desciption" datatype="char" arraysize="*" />
  <FIELD name="requ_level" datatype="char" arraysize="*">
+ <FIELD arraysize="*" datatype="char" name="expression"/>
+
    <DESCRIPTION>MAN=1 REC=2 OPT=3</DESCRIPTION>
  </FIELD>
  <DATA>
@@ -33,6 +35,7 @@
     <TD>null</TD>
     <TD>see proposal</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>Observation</TD>
@@ -46,6 +49,7 @@
     <TD>null</TD>
     <TD>Calibration status of the observation: in {0, 1, 2, 3}</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- Target -->
    <TR>
@@ -60,7 +64,8 @@
     <TD>null</TD>
     <TD>object of interest</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>Target</TD>
     <TD>target_class</TD>
@@ -73,6 +78,7 @@
     <TD>null</TD>
     <TD>Class of the Target object as in SSA</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- Data description -->
    <TR>
@@ -87,7 +93,8 @@
     <TD>null</TD>
     <TD>internal ID given by the service</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>DataID</TD>
     <TD>obs_collection</TD>
@@ -100,6 +107,7 @@
     <TD>null</TD>
     <TD>Name of the data collection</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>DataID</TD>
@@ -113,7 +121,8 @@
     <TD>null</TD>
     <TD>Name of the creator of the data</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
 <!-- Curation -->
   <TR>
     <TD>Curation</TD>
@@ -127,6 +136,7 @@
     <TD>null</TD>
     <TD>Data set ID given by the publisher.</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>Curation</TD>
@@ -140,6 +150,7 @@
     <TD>null</TD>
     <TD>Service bibliographic reference</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>Curation</TD>
@@ -153,6 +164,7 @@
     <TD>null</TD>
     <TD>Public/Reserved/Proprietary/</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- ACCESS -->
    <TR>
@@ -167,7 +179,8 @@
     <TD>null</TD>
     <TD>URL used to access dataset</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>Access</TD>
     <TD>access_format</TD>
@@ -180,7 +193,8 @@
     <TD>null</TD>
     <TD>URL used to access dataset</TD>
     <TD>1</TD>
-   </TR>
+    <TD></TD>
+  </TR>
   <TR>
     <TD>Access</TD>
     <TD>access_estsize</TD>
@@ -193,7 +207,8 @@
     <TD>null</TD>
     <TD>in kB</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>Access</TD>
     <TD>DataLink</TD>
@@ -206,6 +221,7 @@
     <TD>null</TD>
     <TD>DataLink Anchor</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- SPATIAL -->
   <TR>
@@ -220,6 +236,7 @@
     <TD>null</TD>
     <TD>Central Spatial Position in ICRS</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpatialAxis</TD>
@@ -233,7 +250,8 @@
     <TD>null</TD>
     <TD>Central Spatial Position in ICRS</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_fov</TD>
@@ -246,6 +264,7 @@
     <TD>null</TD>
     <TD>Estimated size of the covered region as the diameter of a containing circle</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpatialAxis</TD>
@@ -259,7 +278,8 @@
     <TD>null</TD>
     <TD>Region covered in STC or ADQL</TD>
     <TD>1</TD>
-   </TR>
+    <TD></TD>
+  </TR>
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_resolution</TD>
@@ -272,7 +292,8 @@
     <TD>null</TD>
     <TD>Spatial resolution of data</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_ucd</TD>
@@ -285,6 +306,7 @@
     <TD>null</TD>
     <TD>Ucd for the nature of the spatial axis (pos or u,v data)</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- TIME -->
    <TR>
@@ -299,6 +321,7 @@
     <TD>null</TD>
     <TD>Start time in MJD</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>TimeAxis</TD>
@@ -312,6 +335,7 @@
     <TD>null</TD>
     <TD>Stop time</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>TimeAxis</TD>
@@ -325,6 +349,7 @@
     <TD>null</TD>
     <TD>Total exposure time</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>TimeAxis</TD>
@@ -338,6 +363,7 @@
     <TD>null</TD>
     <TD>Temporal resolution FWHM</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>TimeAxis</TD>
@@ -351,6 +377,7 @@
     <TD>null</TD>
     <TD>Type of coord calibration</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>TimeAxis</TD>
@@ -364,7 +391,8 @@
     <TD>null</TD>
     <TD>Time coord statistical error</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
 <!-- SPECTRAL-->
   <TR>
     <TD>SpectralAxis</TD>
@@ -378,6 +406,7 @@
     <TD>null</TD>
     <TD>Units along  the spectral axis</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -391,6 +420,7 @@
     <TD>null</TD>
     <TD>start in spectral coordinates</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -404,6 +434,7 @@
     <TD>null</TD>
     <TD>stop in spectral coordinates</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -417,6 +448,7 @@
     <TD>null</TD>
     <TD>Value of the resolution power along the SpectralAxis.</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -430,6 +462,7 @@
     <TD>null</TD>
     <TD>Resolution power min value on spectral axis</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -443,6 +476,7 @@
     <TD>null</TD>
     <TD>Resolution power max value on spectral axis</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -456,6 +490,7 @@
     <TD>null</TD>
     <TD>Value of Resolution along the SpectralAxis</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>SpectralAxis</TD>
@@ -469,6 +504,7 @@
     <TD>null</TD>
     <TD>Spectral coord statistical error</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
 <!-- Observable-->
    <TR>
@@ -483,7 +519,8 @@
     <TD>null</TD>
     <TD>Nature of the observable axis; necessary for polarision data or any kind of flux. Values in { phot.flux, phot.flux.density, phot.count, phot.mag }</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
    <TR>
     <TD>ObservableAxis</TD>
     <TD>o_calib_status</TD>
@@ -496,6 +533,7 @@
     <TD>null</TD>
     <TD>Level of calibration for the observable coord</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>ObservableAxis</TD>
@@ -509,7 +547,8 @@
     <TD>null</TD>
     <TD>Observable statistical error</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
 
 <!-- POLARIZATION -->
    <TR>
@@ -524,7 +563,8 @@
     <TD>null</TD>
     <TD>List of polarization states measured in this data set</TD>
     <TD>1</TD>
-   </TR>
+     <TD></TD>
+  </TR>
 <!-- Provenance -->
    <TR>
     <TD>Provenance</TD>
@@ -538,6 +578,7 @@
     <TD>null</TD>
     <TD>[from the VODataService Standard]</TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
    <TR>
     <TD>Provenance</TD>
@@ -551,6 +592,7 @@
     <TD>null</TD>
     <TD>The name of the instrument used for the observation </TD>
     <TD>1</TD>
+    <TD></TD>
    </TR>
   </TABLEDATA>
  </DATA>
