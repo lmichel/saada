@@ -23,7 +23,7 @@ public class Table_Saada_Business extends SQLTable {
 	@SuppressWarnings("rawtypes")
 	public static void createBusinessTable(String tableName, Class cls) throws Exception{
 		
-		String sql = "oidsaada int8, namesaada " 
+		String sql = "oidsaada int8, obs_id " 
 			+ Database.getWrapper().getIndexableTextType() 
 			+ " NULL, md5keysaada " 
 			+ Database.getWrapper().getIndexableTextType() 
@@ -68,7 +68,7 @@ public class Table_Saada_Business extends SQLTable {
 		 * Build the query creating the new table setting a NULL value for the column not existing
 		 * in th old table.
 		 */
-		String sql = "oidsaada int8, namesaada " 
+		String sql = "oidsaada int8, obs_id " 
 			+ Database.getWrapper().getIndexableTextType() 
 			+ " NULL, md5keysaada " 
 			+ Database.getWrapper().getIndexableTextType() 
@@ -84,7 +84,7 @@ public class Table_Saada_Business extends SQLTable {
 		SQLTable.addQueryToTransaction("DROP TABLE IF EXISTS " + tmpTable ) ;
 		SQLTable.createTable(tmpTable, sql, "oidsaada", false);
 		 
-		sql = "INSERT INTO " +  tmpTable + " SELECT oidsaada, namesaada, md5keysaada " ;
+		sql = "INSERT INTO " +  tmpTable + " SELECT oidsaada, obs_id, md5keysaada " ;
 		for (AttributeHandler ah: mapAh.values()) {
 			sql += ", " + ((colorg.contains(ah.getNameattr()))? ah.getNameattr(): "NULL");
 		}
