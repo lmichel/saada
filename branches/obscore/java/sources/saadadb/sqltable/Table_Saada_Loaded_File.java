@@ -119,9 +119,9 @@ public class Table_Saada_Loaded_File {
 			+ coll_name + "\t"
 			+ class_name + "\t"
 			+ category + "\t"
-			+ cdh.getSignature() + "','" 
-			+ cdh.getSignatureWithoutColl() + "','"
-			+ prd.getContentSignature() + "')";
+			+ cdh.getSignature() + "'\t'" 
+			+ cdh.getSignatureWithoutColl() + "'\t'"
+			+ prd.getContentSignature() + "')\n";
 		loadedfilewriter.write(sql);
 
 		return repository_name;
