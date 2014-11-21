@@ -8,6 +8,7 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.HeaderRef;
 import saadadb.products.DataFile;
 import saadadb.products.FlatFileBuilder;
@@ -242,18 +243,20 @@ public class ProductMapping {
 		sb.append("\n");
 		return sb.toString();
 	}
+
 	/**
-	 * @param file
+	 * @param dataFile  dataFile used to setup the Builder
+	 * @param metaClass {@link MetaClass} attached the data
 	 * @return
-	 * @throws IgnoreException
+	 * @throws SaadaException
 	 */
-	public  ProductBuilder getNewProductBuilderInstance(DataFile file) throws SaadaException {
+	public  ProductBuilder getNewProductBuilderInstance(DataFile dataFile, MetaClass metaClass) throws SaadaException {
 		switch( this.category ) {
-		case Category.TABLE: return new TableBuilder(file, this) ;
-		case Category.MISC : return new MiscBuilder(file, this) ;
-		case Category.SPECTRUM : return new SpectrumBuilder(file, this) ;
-		case Category.IMAGE : return new Image2DBuilder(file, this) ;
-		case Category.FLATFILE : return new FlatFileBuilder(file, this) ;
+		case Category.TABLE: return new TableBuilder(dataFile, this, metaClass) ;
+		case Category.MISC : return new MiscBuilder(dataFile, this, metaClass) ;
+		case Category.SPECTRUM : return new SpectrumBuilder(dataFile, this, metaClass) ;
+		case Category.IMAGE : return new Image2DBuilder(dataFile, this, metaClass) ;
+		case Category.FLATFILE : return new FlatFileBuilder(dataFile, this) ;
 		default: IgnoreException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Can't handle product category <" + Category.explain(this.category) + ">");
 		return null;
 		}
