@@ -1357,7 +1357,7 @@ public class ArgsParser implements Serializable{
 	 * Switch on debug mode is the arg debug is found
 	 */
 	public void setDebugMode() {
-		//Messenger.debug_mode = false;		
+		Messenger.debug_mode = false;		
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-debug")) {
 				String param = getArgsValue(args[i]);
@@ -1393,7 +1393,7 @@ public class ArgsParser implements Serializable{
 	public void setSilentMode() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-silent")) {
-				Messenger.debug_mode = false;
+				Messenger.switchDebugOff();
 				Messenger.silent_mode = true;
 				Messenger.printMsg(Messenger.TRACE, "Silent mode on");
 				return;
