@@ -31,8 +31,8 @@ public class TableBuilder extends ProductBuilder {
 	 * @param conf
 	 * @throws FatalException
 	 */
-	public TableBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
-		super(productFile, conf);
+	public TableBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+		super(productFile, conf, metaClass);
 		this.entryBuilder = new EntryBuilder(this);
 		this.entryBuilder.bindDataFile(productFile);
 	}
@@ -42,8 +42,8 @@ public class TableBuilder extends ProductBuilder {
 	 * @param tabArg
 	 * @throws FatalException 
 	 */
-	public TableBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
-		super(file, mapping);
+	public TableBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{	
+		super(file, mapping, metaClass);
 		System.out.println("@@@@@@@@@@@@@ build entry");
 		/*
 		 * this entry mapping must be set explicitely here because it it attempted once within the entry constructor (super()
@@ -112,19 +112,20 @@ public class TableBuilder extends ProductBuilder {
 	 * @see saadadb.products.ProductBuilder#loadValue()
 	 */
 	@Override
-	public void loadValue() throws Exception  {
+	public void loadProduct() throws Exception  {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Load table header");
-		super.loadValue();
+		super.loadProduct();
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Load entries ");
-		this.entryBuilder.loadValue();
+		this.entryBuilder.loadProduct();
 	}
 
 	/**
 	 * @return Returns the metaclass.
+	 * @throws IgnoreException 
 	 */
-	public void setMetaclass(MetaClass mc) {
+	public void setMetaclass(MetaClass mc) throws IgnoreException {
 		super.setMetaclass(mc);
 	}
 
@@ -145,7 +146,7 @@ public class TableBuilder extends ProductBuilder {
 		/*
 		 * Build a new set of attribute handlers from the product given as a parameter
 		 */
-		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge);
+		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge, this.metaClass);
 		prd_to_merge.mapping = this.mapping;
 
 		try {

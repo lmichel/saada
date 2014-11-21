@@ -76,35 +76,27 @@ public class ProductIngestor {
 		/*
 		 * Build the Saada instance
 		 */
-		if( this.product.metaclass != null ) {
-			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaclass.getName()).newInstance();
-			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaclass.getName());
+		if( this.product.metaClass != null ) {
+			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(
 					Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
-			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
 		}
-		this.product.calculateAllExpressions();
-		this.setObservationFields();
-		this.setSpaceFields();
-		this.setEnergyFields();		
-		this.setTimeFields();
-		this.setObservableFields();
-		this.setPolarizationFields();
-		this.loadAttrExtends();
-		//this.setBusinessFields();
 		this.numberOfCall++;
 	}
 
 	/**
-	 * Used by FLatFileMapper to load flafiles by burst using a single instance of the this class
 	 * @param si
 	 * @throws Exception
 	 */
-	public void bindInstanceToFile(SaadaInstance si) throws Exception {
-		if( si != null ) this.saadaInstance = si;
+	public void bindInstanceToFile() throws Exception {
+		if( this.product.metaClass != null ) {
+			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaClass.getName());
+		} else {
+			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
+		}
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Set fields of the Saada instance");
+			Messenger.printMsg(Messenger.DEBUG, "Set ths fields of the Saada instance");
 		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
@@ -112,6 +104,7 @@ public class ProductIngestor {
 		this.setTimeFields();
 		this.setObservableFields();
 		this.setPolarizationFields();
+		this.setBusinessFields();
 		this.loadAttrExtends();
 	}
 
