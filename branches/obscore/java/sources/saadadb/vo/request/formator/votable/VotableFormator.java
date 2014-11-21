@@ -744,7 +744,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 			fieldSet.addItem(field);
 
 			field = new SavotField();
-			field.setId("namesaada");
+			field.setId("obs_id");
 			field.setDataType("char");
 			field.setArraySize("*");
 			field.setUcd("meta.title");
