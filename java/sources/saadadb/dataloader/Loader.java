@@ -11,8 +11,8 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.SaadaProcess;
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
-import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.AnyFile;
 import saadadb.products.DataFile;
@@ -21,7 +21,6 @@ import saadadb.products.VOTableDataFile;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
-import saadadb.dataloader.mapping.ProductMapping;
 
 /**
  * Entry point for loading data files. Get the list of files, build the appropriate {@link SchemaMapper} and run it
@@ -103,7 +102,7 @@ public class Loader extends SaadaProcess {
 
 		if( debug ) {
 			this.tabArg.addDebugMode(true);
-			Messenger.debug_mode = true;
+			Messenger.switchDebugOn();
 		}
 	}
 	/**
@@ -301,7 +300,7 @@ public class Loader extends SaadaProcess {
 	 * @param file_to_load The file_to_load to set.
 	 * @throws AbortException 
 	 */
-	public void setFile_to_load(ArrayList<String> file_to_load) throws Exception {
+	public void setFileToLoad(ArrayList<String> file_to_load) throws Exception {
 		String base_dir = this.tabArg.getFilename();
 		this.filesToBeLoaded = new ArrayList<DataFile>();
 		for( String f: file_to_load) {
