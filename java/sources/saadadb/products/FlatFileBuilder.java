@@ -16,18 +16,18 @@ import saadadb.meta.MetaClass;
 public class FlatFileBuilder extends ProductBuilder {
 
 	public FlatFileBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
-		super(productFile, conf);
+		super(productFile, conf, null);
 	}
 
 	public FlatFileBuilder(DataFile file, ProductMapping conf) throws SaadaException {
-		super(file, conf);
+		super(file, conf, null);
 	}
 	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#setMetaclass(saadadb.meta.MetaClass)
 	 */
 	public void setMetaclass(MetaClass mc) {
-		metaclass = null;
+		metaClass = null;
 	}
 
 	
@@ -42,7 +42,7 @@ public class FlatFileBuilder extends ProductBuilder {
 		if( this.productIngestor == null ){
 			this.productIngestor = new ProductIngestor(this);
 		}
-		this.productIngestor.bindInstanceToFile(si);
+		this.productIngestor.bindInstanceToFile();
 	}
 	
 
