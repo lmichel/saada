@@ -1,5 +1,10 @@
 package saadadb.products;
 
+import hecds.LibLog;
+import hecds.wcs.Modeler;
+import hecds.wcs.descriptors.CardDescriptor;
+import hecds.wcs.descriptors.CardMap;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +46,7 @@ import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
+import saadadb.util.MessengerLogger;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ColumnSetMode;
@@ -146,11 +153,12 @@ public class ProductBuilder {
 
 	/** The file type ("FITS" or "VO") * */
 	protected String typeFile;
-	protected MetaClass metaclass;
+	protected MetaClass metaClass;
 	public ProductIngestor productIngestor;	
 	/** sed by subclasses */
 	protected Image2DCoordinate wcs;
 
+	protected Modeler wcsModeler;
 
 	/**
 	 * Constructor. This is a product constructor for the new loader.
@@ -158,8 +166,8 @@ public class ProductBuilder {
 	 * @param conf
 	 * @throws FatalException 
 	 */
-	public ProductBuilder(DataFile file, ProductMapping conf) throws SaadaException{		
-		Messenger.printMsg(Messenger.TRACE, "New Builder for " + file.getName());
+	public ProductBuilder(DataFile dataFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{		
+		Messenger.printMsg(Messenger.TRACE, "New Builder for " + dataFile.getName());
 		this.mapping = conf;
 		/*
 		 * priority ref copied for convenience
@@ -168,18 +176,15 @@ public class ProductBuilder {
 		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
 		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
-
+		this.metaClass = metaClass;
+		this.dataFile = dataFile;
 		try {
-			this.bindDataFile(file);
-			this.mapCollectionAttributes();
-		} catch (SaadaException e) {
-			e.printStackTrace();
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
-		} catch (Exception e) {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+			} catch (Exception e) {
 			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
-		}	
-
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -196,9 +201,16 @@ public class ProductBuilder {
 	 */
 	protected void setQuantityDetector() throws Exception {
 		if( this.quantityDetector == null) {
+			/*
+			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
+			 */
+			CardMap cm = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
+			LibLog.setLogger(new MessengerLogger());
+			System.out.println("@@@@@@@@@@@@@ setQuantityDetector " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+			this.wcsModeler = new Modeler(cm);			
 			// unit tst purpose
 			if(this.dataFile == null ) {
-				this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping);
+				this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
 			} else {
 				this.quantityDetector = this.dataFile.getQuantityDetector(this.mapping);
 			}
@@ -314,8 +326,26 @@ public class ProductBuilder {
 		} else if( this.dataFile instanceof VOTableDataFile ) {
 			this.mimeType = "application/x-votable+xml";
 		}
+		this.setProductIngestor();
+		if( this.productAttributeHandler != null )
+		System.out.println("@@@@@@@@@@@@@ bindDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.dataFile.bindBuilder(this);
+		if( this.productAttributeHandler != null )
+		System.out.println("@@@@@@@@@@@@@ bindDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.setFmtsignature();
+	}
+	
+	/**
+	 * @param dataFile
+	 * @throws Exception
+	 */
+	public void mapDataFile(DataFile dataFile) throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
+		System.out.println("@@@@@@@@@@@@@ mapDataFile1 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.bindDataFile(dataFile);
+		System.out.println("@@@@@@@@@@@@@ mapDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.mapCollectionAttributes();
+		System.out.println("@@@@@@@@@@@@@ mapDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 	}
 
 
@@ -352,7 +382,7 @@ public class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void calculateAllExpressions() throws Exception {
-	
+		this.wcsModeler.updateValues();
 		this.obs_idSetter.calculateExpression();
 		this.obs_collectionSetter.calculateExpression();
 		this.obs_publisher_didSetter.calculateExpression();
@@ -360,25 +390,23 @@ public class ProductBuilder {
 		this.target_nameSetter.calculateExpression();
 		this.facility_nameSetter.calculateExpression();
 		this.instrument_nameSetter.calculateExpression();
-		System.out.println("1 " + this.astroframeSetter);
 		this.astroframeSetter.calculateExpression();
-		System.out.println("2 " + this.astroframeSetter);
-		//Database.exit();
 		this.s_resolutionSetter.calculateExpression();
+
+		System.out.println("@@@@@@@@@@@@@ builder1 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+
+		System.out.println("1 " + this.s_raSetter);
 		this.s_raSetter.calculateExpression();
+		System.out.println("2 " + this.s_raSetter);
 		this.s_decSetter.calculateExpression();
-		System.out.println("1 " + this.s_fovSetter);
 		this.s_fovSetter.calculateExpression();
-		System.out.println("2 " + this.s_fovSetter);
 		this.s_regionSetter.calculateExpression();
 		this.em_minSetter.calculateExpression(this.dataFile);
 		this.em_maxSetter.calculateExpression(this.dataFile);
 		this.em_binsSetter.calculateExpression(this.dataFile);
 		this.em_res_powerSetter.calculateExpression(this.dataFile);
 		this.x_unit_orgSetter.calculateExpression(this.dataFile);
-		System.out.println("1 " + this.t_minSetter);
 		this.t_minSetter.calculateExpression(this.dataFile);
-		System.out.println("2 " + this.t_minSetter);
 		this.t_maxSetter.calculateExpression(this.dataFile);
 		this.t_exptimeSetter.calculateExpression(this.dataFile);
 		this.o_ucdSetter.calculateExpression();
@@ -405,8 +433,10 @@ public class ProductBuilder {
 	 * @param saada_class
 	 * @throws Exception
 	 */
-	public void loadValue() throws Exception  {
-		this.setProductIngestor();
+	public void loadProduct() throws Exception  {
+		System.out.println("@@@@@@@@@@@@@ loadProduct " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.dataFile.updateAttributeHandlerValues();
+		this.productIngestor.bindInstanceToFile();
 		this.productIngestor.loadValue();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.getName() + "> complete");
 	}
@@ -418,11 +448,15 @@ public class ProductBuilder {
 	 * @param buswfriter: file where are store class level attributes
 	 * @throws Exception
 	 */
-	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
-		this.setProductIngestor();
+	public void loadProduct(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
+		System.out.println("@@@@@@@@@@@@@ loadProduct " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.dataFile.updateAttributeHandlerValues();
+		this.productIngestor.bindInstanceToFile();
 		this.productIngestor.loadValue(colwriter, buswriter, loadedfilewriter);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Processing file <" + this.getName() + "> complete");
 	}
+
+	// TODO to be removed when flatfile will use the algo as others files
 	/**
 	 * @throws Exception 
 	 * 
@@ -543,7 +577,7 @@ public class ProductBuilder {
 			}
 			//if we found the expression AND the ah, we calculate the expression
 			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), mappingHandlerMap, true);
-		//	retour.calculateExpression();
+			//	retour.calculateExpression();
 			retour.completeMessage("Using user mapping");
 			return retour;
 		} else{
@@ -1258,36 +1292,36 @@ public class ProductBuilder {
 						this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", ah.getUnit());						
 					}
 				}
-				
+
 			}
 
-//		/*
-//		 * If no range set in params, find it out from table columns
-//		 */	
-//		String mappedName = sc_col.getAttributeHandler().getNameorg();
-//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
-//		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
-//			String key = ah.getNameorg();
-//			if(key.equals(mappedName) ){
-//				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
-//				/*
-//				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
-//				 * the unit found in the column description is taken
-//				 */
-//				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-//					//this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit(), true);
-//					this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit());
-//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
-//				} else {
-//					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
-//					return;
-//				}
-//				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-//				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-//				return;
-//			}
-//		}
-//		return ;	
+			//		/*
+			//		 * If no range set in params, find it out from table columns
+			//		 */	
+			//		String mappedName = sc_col.getAttributeHandler().getNameorg();
+			//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
+			//		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
+			//			String key = ah.getNameorg();
+			//			if(key.equals(mappedName) ){
+			//				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
+			//				/*
+			//				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
+			//				 * the unit found in the column description is taken
+			//				 */
+			//				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
+			//					//this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit(), true);
+			//					this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit());
+			//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
+			//				} else {
+			//					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
+			//					return;
+			//				}
+			//				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+			//				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
+			//				return;
+			//			}
+			//		}
+			//		return ;	
 	}
 
 	/**
@@ -1527,15 +1561,20 @@ public class ProductBuilder {
 
 	/**
 	 * @return Returns the metaclass.
+	 * @param metaClass
+	 * @throws IgnoreException if mc is null
 	 */
-	public void setMetaclass(MetaClass mc) {
-		metaclass = mc;
+	public void setMetaclass(MetaClass metaClass) throws IgnoreException {
+		if( metaClass == null ){
+			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Attempt to set the builder with a null data class");
+		}
+		this.metaClass = metaClass;
 	}
 	/**
 	 * @return Returns the metaclass.
 	 */
 	public MetaClass getMetaclass() {
-		return metaclass;
+		return this.metaClass;
 	}
 	/*
 	 * Format merging with an existingt class
@@ -1553,7 +1592,7 @@ public class ProductBuilder {
 		/*
 		 * Build a new set of attribute handlers from the product given as a parameter
 		 */
-		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge);
+		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge, this.metaClass);
 		prd_to_merge.mapping = this.mapping;
 
 		try {
@@ -1836,7 +1875,7 @@ public class ProductBuilder {
 				//System.out.print(" storedValue=" + ah.storedValue);
 				fw.write("storedValue=" + ah.storedValue+" \n");
 			} else {
-					fw.write("\n");
+				fw.write("\n");
 
 			}
 		}
