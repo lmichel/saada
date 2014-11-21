@@ -37,7 +37,7 @@ public class QueryPatternTester {
 		            + "  matchPattern {\n"
 		            + "   PatternTesteur,\n"
 		            + "   Cardinality @1 \n"
-		            + "   AssObjAttSaada{ namesaada like 'classe_s1%' }\n"
+		            + "   AssObjAttSaada{ obs_id like 'classe_s1%' }\n"
 		            + "  }\n"
 		            + " }\n");
 			qs.addParam("@1", new String[]{"= 0", "= 1", "!= 0", "< 2", "<= 4", "[] (0,4)", "[=] (1,3)", "> 15", ">= 16", "][ (2,8)", "]=[ (1,9)", "< 0", "> 9"/**/});
@@ -72,7 +72,7 @@ public class QueryPatternTester {
 		            + "  matchPattern {\n"
 		            + "   PatternTesteur,\n"
 		            + "   Cardinality @1 \n"
-		            + "   AssObjAttSaada{ namesaada like 'classe_s1%' }\n"
+		            + "   AssObjAttSaada{ obs_id like 'classe_s1%' }\n"
 		            + "   Qualifier{ card > 0 }\n"
 		            + "   @2\n"
 		            + "  }\n"
@@ -112,7 +112,7 @@ public class QueryPatternTester {
 //		            + "   Qualifier { q2 < 0 }\n"
 		            + "   AssObjAttClass{ _s1_card = 2 },\n"
 		            + "   AssObjClass{classe_s1Entry},\n"
-		            + "   AssObjAttSaada{ namesaada like 'classe_s1  2%' }\n"
+		            + "   AssObjAttSaada{ obs_id like 'classe_s1  2%' }\n"
 		            + "  }\n"
 		            + " }\n");
 			qs.addParam("@1", new String[]{"= 2", "= 0", "!= 0", "< 2", "<= 4", "[] (0,4)", "[=] (1,3)", "> 8", ">= 9", "][ (2,8)", "]=[ (1,9)", "< 0", "> 18"/**/});
@@ -204,7 +204,7 @@ public class QueryPatternTester {
 								Set<SaadaLink> mcp = si.getCounterpartsMatchingQuery(rel_name, e.getValue());
 								for( SaadaLink sl:mcp ) {
 									long cpoid = sl.getEndindOID();
-									System.out.print("      Name <" + Database.getCache().getObject(cpoid).getFieldValue("namesaada") + ">");
+									System.out.print("      Name <" + Database.getCache().getObject(cpoid).getFieldValue("obs_id") + ">");
 									for( String q: e.getValue().getQualif_query().keySet()) {
 										System.out.print(" " + q + "=" + sl.getQualifierValue(q) );
 									}

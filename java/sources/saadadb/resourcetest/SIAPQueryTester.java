@@ -69,7 +69,7 @@ public class SIAPQueryTester {
 		deux.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		un.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
 		SQLTable.addQueryToTransaction("DELETE FROM " + collection_table);
-		SQLTable.addQueryToTransaction(Database.getWrapper().getInsertStatement(collection_table, new String[]{"oidsaada", "namesaada", "pos_ra_csa" , "pos_dec_csa" , "size_alpha_csa" , "size_delta_csa"},
+		SQLTable.addQueryToTransaction(Database.getWrapper().getInsertStatement(collection_table, new String[]{"oidsaada", "obs_id", "pos_ra_csa" , "pos_dec_csa" , "size_alpha_csa" , "size_delta_csa"},
 				new String[] {"0", "'imageTestSiap'", Double.toString(ra), Double.toString(dec), Double.toString(size_ra), Double.toString(size_dec)}));
 
 		String q = "Select corner00_dec(" + this.dec + " , " + this.size_dec 
@@ -196,13 +196,13 @@ public class SIAPQueryTester {
 		while( true ) {
 			boolean found = false;
 			SQLQuery squery = new SQLQuery();
-			ResultSet rs = squery.run("Select namesaada from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
+			ResultSet rs = squery.run("Select obs_id from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
 			while( rs.next() ) {
 				found = true;
 				at_least_one = true;
 			}
 			squery.close();
-			//			System.out.println("Select namesaada from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
+			//			System.out.println("Select obs_id from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
 			//			squery = new SQLQuery();
 			//			rs = squery.run("Select distancedegree(pos_ra_csa, pos_dec_csa, " +  ra_box + " , " + dec_box + ") from " + collection_table);
 			//			while( rs.next() ) {
@@ -241,7 +241,7 @@ public class SIAPQueryTester {
 		while( true ) {
 			boolean found = false;
 			SQLQuery squery = new SQLQuery();
-			ResultSet rs = squery.run("Select namesaada from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
+			ResultSet rs = squery.run("Select obs_id from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
 			while( rs.next() ) {
 				found = true;
 				at_least_one = true;
@@ -285,7 +285,7 @@ public class SIAPQueryTester {
 			while( true ) {
 				boolean found = false;
 				SQLQuery squery = new SQLQuery();
-				ResultSet rs = squery.run("Select namesaada from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
+				ResultSet rs = squery.run("Select obs_id from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
 				while( rs.next() ) {
 					found = true;
 					at_least_one = true;
@@ -316,7 +316,7 @@ public class SIAPQueryTester {
 			while( true ) {
 				boolean found = false;
 				SQLQuery squery = new SQLQuery();
-				ResultSet rs = squery.run("Select namesaada from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
+				ResultSet rs = squery.run("Select obs_id from " + collection_table + " as i WHERE " + getConstraint(mode, "i.", ra_box, dec_box, size_ra_box, size_dec_box));
 				while( rs.next() ) {
 					found = true;
 					at_least_one = true;
