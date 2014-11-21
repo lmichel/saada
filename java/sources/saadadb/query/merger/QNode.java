@@ -198,7 +198,7 @@ public abstract class QNode {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(QNode.insertAlias("WHERE ( namesaada - 2*(_z)) > 0 + R_MAG", new String[]{"_z"}, "POUET"));
+		System.out.println(QNode.insertAlias("WHERE ( obs_id - 2*(_z)) > 0 + R_MAG", new String[]{"_z"}, "POUET"));
 	}
 	public void insertAliases() {
 		this.where = insertAlias(this.where, new String[]{"_qwery"}, this.name);

@@ -26,7 +26,7 @@ public final class OrderBy{
 	public static final int ON_COLL  = 2;
 	public static final int BOTH     = 3;//for oidsaada, md5keysaada, ..;
 	
-    public  static final String[] specialKey = {"oidsaada","namesaada"};
+    public  static final String[] specialKey = {"oidsaada","obs_id"};
 	private static final String regex = SaadaQLRegex.ORDER_BY + SaadaQLRegex.ReqWS + "(" + SaadaQLRegex.ATTRIBUTE + ")(" + SaadaQLRegex.ORDER_BY_OPTION + ")";//"(\\s+"+option+")?" ;
 	private static final Pattern pattern = Pattern.compile(regex);
 	
