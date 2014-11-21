@@ -254,7 +254,7 @@ public class DataTableEditorPanel extends TaskPanel
 				 * Remove hidden columns (not managed yet)
 				 */
 				rejected_class_clos = SQLTable.getColumnsExceptsThose(dataTreePath.classe
-						, new String[]{"oidsaada", "namesaada"});
+						, new String[]{"oidsaada", "obs_id"});
 			} catch (FatalException e) {
 				Messenger.trapFatalException(e);
 			}
