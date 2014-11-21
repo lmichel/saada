@@ -39,6 +39,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -295,8 +296,7 @@ public class TapServiceManager extends EntityManager {
 					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Table " + table + " already published in the TAP service");
 				}
 				mah.put("oidsaada", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("oidsaada"));
-				// TODO to be made compliant with obs_id
-				//mah.put("obs_id", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("namesaada"));
+				mah.put("obs_id", Database.getCachemeta().getCollection(mc.getCollection_name()).getAttribute_handlers(mc.getCategory()).get("obs_id"));
 				mah.putAll(mc.getAttributes_handlers());
 			} else {
 				int pos = table.lastIndexOf("_");
