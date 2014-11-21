@@ -305,7 +305,7 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	@Override
 	public void setValue(double value, String unit){
 		this.attributeHandler.setValue(value);
-		this.attributeHandler.setUnit(unit);
+	//	this.attributeHandler.setUnit(unit);
 		this.storedValue = value;
 	}
 
