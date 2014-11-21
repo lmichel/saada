@@ -35,7 +35,7 @@ public class QueryTester {
 	            + "  matchPattern {\n"
 	            + "   PatternTesteur,\n"
 	            + "   Cardinality @1 \n"
-	            + "   AssObjAttSaada{ namesaada like 'classe_s1%' }\n"
+	            + "   AssObjAttSaada{ obs_id like 'classe_s1%' }\n"
 	            + "  }\n"
 	            + " }\n");
 		qs.addParam("@1", new String[]{"= 0", "= 1", "!= 0", "< 2", "<= 4", "[] (0,4)", "[=] (1,3)", "> 15", ">= 16", "][ (2,8)", "]=[ (1,9)", "< 0", "> 9"/**/});
@@ -70,7 +70,7 @@ public class QueryTester {
 	            + "  matchPattern {\n"
 	            + "   PatternTesteur,\n"
 	            + "   Cardinality @1 \n"
-	            + "   AssObjAttSaada{ namesaada like 'classe_s1%' }\n"
+	            + "   AssObjAttSaada{ obs_id like 'classe_s1%' }\n"
 	            + "   Qualifier{ card > 0 }\n"
 	            + "   @2\n"
 	            + "  }\n"
@@ -110,7 +110,7 @@ public class QueryTester {
 //	            + "   Qualifier { q2 < 0 }\n"
 	            + "   AssObjAttClass{ _s1_card = 2 },\n"
 	            + "   AssObjClass{classe_s1Entry},\n"
-	            + "   AssObjAttSaada{ namesaada like 'classe_s1  2%' }\n"
+	            + "   AssObjAttSaada{ obs_id like 'classe_s1  2%' }\n"
 	            + "  }\n"
 	            + " }\n");
 		qs.addParam("@1", new String[]{"= 2", "= 0", "!= 0", "< 2", "<= 4", "[] (0,4)", "[=] (1,3)", "> 8", ">= 9", "][ (2,8)", "]=[ (1,9)", "< 0", "> 18"/**/});
@@ -183,36 +183,36 @@ public class QueryTester {
 
 		queries[0] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 
 		queries[1] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\"=\", 0, 0)} }";
 		queries[2] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[3] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\"=\", 2, 0)} }";
 		queries[4] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\">\", 0, 0)} }";
 		queries[5] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\">=\", 2, 0)} }";
 		queries[6] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RX J105350.7+572515' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RX J105350.7+572515' \")\n"
 			+ "               Cardinality(\"[]\", 1, 2)} }";
 		queries[7] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")} }";
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")} }";
 		return queries;
 	}
 
@@ -256,29 +256,29 @@ public class QueryTester {
 
 		queries[0] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")\n"
 			+ "               Cardinality(\"=\", 0, 0)} }";
 		queries[1] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[2] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjAttClass(\" _nref = 1 \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[3] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjAttClass(\" _nref > 1 \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[4] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjAttClass(\" _nref = 1 \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")} }";
 		return queries;
@@ -337,22 +337,22 @@ public class QueryTester {
 
 		queries[0] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"<\", 10, 0)\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[1] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"=\", 1000, 0)\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[2] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"=\", 1000, 0)\n"
 			+ "               Cardinality(\"=\", 0, 0)} }";
 		queries[3] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"=\", 1000, 0)\n"
 			+ "               Cardinality(\"!=\", 0, 0)} }";
 		return queries;
@@ -362,13 +362,13 @@ public class QueryTester {
 
 		queries[0] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada = 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id = 'RDS 128E' \")\n"
 			+ "               AssObjClass(\"SimbadEntry\")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"<\", 10, 0)\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
 		queries[1] = "Select ENTRY From CatalogueEntry In CATALOGUE \n"
 			+ "WhereRelation{ matchPattern { \"CatSrcToArchSrc\"\n"
-			+ "               AssObjAttSaada(\" nameSaada != 'RDS 128E' \")\n"
+			+ "               AssObjAttSaada(\" obs_id != 'RDS 128E' \")\n"
 			+ "               AssObjClass(\"SimbadEntry\", \"NedEntry\")\n"
 			+ "               Qualifier(\"d_epic_cat\", \"<\", 10, 0)\n"
 			+ "               Cardinality(\"=\", 1, 0)} }";
@@ -497,7 +497,7 @@ public class QueryTester {
 		            + "   Cardinality = 0 \n"
 		            + "   AssObjAttClass{ _filename like '%XRBC%' },\n"
 		            + "   AssObjClass{MidasSpectra},\n"
-		            + "   AssObjAttSaada{ namesaada is not null }\n"
+		            + "   AssObjAttSaada{ obs_id is not null }\n"
 		            + "  }\n"
 		            + " }\n";
 		queries[0] = "Select ENTRY From * In SelectedXGPS\n"
@@ -505,7 +505,7 @@ public class QueryTester {
             + "  matchPattern {\n"
             + "   Selected_Candidate_Spectra,\n"
             + "   Cardinality = 0 \n"
-            + "   AssObjAttSaada{ namesaada like 'fe%' }\n"
+            + "   AssObjAttSaada{ obs_id like 'fe%' }\n"
             + "  }\n"
             + " }\n";
 		queries[0] = "Select ENTRY From * In SelectedXGPS\n"
@@ -544,7 +544,7 @@ public class QueryTester {
             + "   Qualifier { q2 < 0 }\n"
             + "   AssObjAttClass{ _filename like '%XRBC%' },\n"
             + "   AssObjClass{MidasSpectra},\n"
-            + "   AssObjAttSaada{ namesaada like 'fe%' }\n"
+            + "   AssObjAttSaada{ obs_id like 'fe%' }\n"
             + "  }\n"
             + " }\n";
 		return queries;

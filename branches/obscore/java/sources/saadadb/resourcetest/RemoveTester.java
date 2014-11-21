@@ -28,7 +28,7 @@ public class RemoveTester {
 		int t0 = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);
 		ProductManager pm = new ProductManager();
 		SQLTable.beginTransaction();
-		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{namesaada='prd_0'}", "-noindex"}));
+		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{obs_id='prd_0'}", "-noindex"}));
 		SQLTable.commitTransaction();
 		int t1 = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);
 		if( 3*t1 != 2*t0 ) {
@@ -52,7 +52,7 @@ public class RemoveTester {
 		int e0 = Database.getCachemeta().getCollection("Starting").getSize(Category.ENTRY);
 		ProductManager pm = new ProductManager();
 		SQLTable.beginTransaction();
-		pm.remove(new ArgsParser(new String[]{"-remove=Select TABLE From * In Starting WhereAttributeSaada{namesaada='prd_0'}"
+		pm.remove(new ArgsParser(new String[]{"-remove=Select TABLE From * In Starting WhereAttributeSaada{obs_id='prd_0'}"
 				, "-noindex"}));
 		SQLTable.commitTransaction();
 		
@@ -77,7 +77,7 @@ public class RemoveTester {
 		int e0 = Database.getCachemeta().getCollection("Starting").getSize(Category.ENTRY);
 		ProductManager pm = new ProductManager();
 		SQLTable.beginTransaction();
-		pm.remove(new ArgsParser(new String[]{"-remove=Select ENTRY From * In Starting WhereAttributeSaada{namesaada LIKE 'prd_% 1 %'}"
+		pm.remove(new ArgsParser(new String[]{"-remove=Select ENTRY From * In Starting WhereAttributeSaada{obs_id LIKE 'prd_% 1 %'}"
 				, "-noindex"}));
 		SQLTable.commitTransaction();
 		
@@ -136,7 +136,7 @@ public class RemoveTester {
 				"-from=Starting_misc",
 				"-to=Ending_misc",
 				"-query=INSERT INTO MiscToMisc (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.namesaada = p.namesaada"
+				+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.obs_id = p.obs_id"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
@@ -158,8 +158,8 @@ public class RemoveTester {
 				"-from=Starting_misc",
 				"-to=Ending_ENTRY",
 				"-query=INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada " 
-				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")"
+				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.obs_id " 
+				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.obs_id","'.*'") + ")"
 				}));
 		rm.populate(null);
 		SQLTable.commitTransaction();
@@ -172,7 +172,7 @@ public class RemoveTester {
 		Database.getCachemeta().reload(true);
 		ProductManager pm = new ProductManager();
 		SQLTable.beginTransaction();
-		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{namesaada='prd_0'}", "-noindex", "-links=follow"}));
+		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{obs_id='prd_0'}", "-noindex", "-links=follow"}));
 		SQLTable.commitTransaction();
 
 		int fstartsize = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);
@@ -252,7 +252,7 @@ public class RemoveTester {
 		at.setProperty("from", "Starting_misc");
 		at.setProperty("to", "Ending_misc");
 		at.setProperty("query", "INSERT INTO MiscToMisc (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-			                  	+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.namesaada = p.namesaada");
+			                  	+ "FROM Starting_misc AS p, Ending_misc AS s WHERE s.obs_id = p.obs_id");
 		at.execute(true);
 		at = new AntTarget("relation.populate", "Populate relation MiscToMisc");
 		at.setProperty("name", "MiscToMisc");
@@ -274,8 +274,8 @@ public class RemoveTester {
 		at.setProperty("from", "Starting_misc");
 		at.setProperty("to", "Ending_ENTRY");
 		at.setProperty("query", "INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada "
-				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")");
+				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.obs_id "
+				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.obs_id","'.*'") + ")");
 		at.execute(true);
 		at = new AntTarget("relation.populate", "Populate relation MiscToEntry");
 		at.setProperty("name", "MiscToEntry");
@@ -289,7 +289,7 @@ public class RemoveTester {
 		 * remove products
 		 */
 		at = new AntTarget("product.remove", "Remove products");
-		at.setProperty("remove", "Select MISC From * In Starting WhereAttributeSaada{namesaada='prd_0'}");
+		at.setProperty("remove", "Select MISC From * In Starting WhereAttributeSaada{obs_id='prd_0'}");
 		at.setProperty("debug", "on");
 		at.setProperty("noindex", "true");
 		at.setProperty("links", "follow");
@@ -304,8 +304,8 @@ public class RemoveTester {
 //				"-from=Starting_misc",
 //				"-to=Ending_ENTRY",
 //				"-query=INSERT INTO MiscToEntry (oidprimary, oidsecondary) SELECT p.oidsaada, s.oidsaada "
-//				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.namesaada " 
-//				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.namesaada","'.*'") + ")"
+//				+ "FROM Starting_misc AS p, Ending_entry AS s WHERE s.obs_id " 
+//				+ Database.getWrapper().getRegexpOp() +  " (" + Database.getWrapper().getStrcatOp("p.obs_id","'.*'") + ")"
 //				}));
 //		rm.populate(null);
 //		SQLTable.commitTransaction();
@@ -318,7 +318,7 @@ public class RemoveTester {
 //		Database.getCachemeta().reload(true);
 //		ProductManager pm = new ProductManager();
 //		SQLTable.beginTransaction();
-//		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{namesaada='prd_0'}", "-noindex", "-links=follow"}));
+//		pm.remove(new ArgsParser(new String[]{"-remove=Select MISC From * In Starting WhereAttributeSaada{obs_id='prd_0'}", "-noindex", "-links=follow"}));
 //		SQLTable.commitTransaction();
 
 		int fstartsize = Database.getCachemeta().getCollection("Starting").getSize(Category.MISC);

@@ -69,7 +69,7 @@ public class QueryRunner {
 					for( SaadaLink sl:mcp ) {
 						long cpoid = sl.getEndindOID();
 						SaadaInstance cp = Database.getCache().getObject(cpoid);
-						System.out.print("      Name <" + cp.getFieldValue("namesaada") + "> " + cp.getFieldValueByUCD("meta.record", false));
+						System.out.print("      Name <" + cp.getFieldValue("obs_id") + "> " + cp.getFieldValueByUCD("meta.record", false));
 						for( String q2: cp_val.getQualif_query().keySet()) {
 							System.out.print(" " + q2 + "=" + sl.getQualifierValue(q2) );
 						}
