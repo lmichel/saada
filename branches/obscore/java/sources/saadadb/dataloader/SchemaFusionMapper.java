@@ -64,7 +64,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			DataFile dataFile = this.dataFiles.get(i);
 			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + dataFile.getName() + "> ");
 			if( this.currentProductBuilder == null ) {
-				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(dataFile);
+				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(dataFile, this.currentClass);
 				/*
 				 * Discard file non matching the configuration
 				 */
@@ -170,7 +170,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
 			DataFile file = this.dataFiles.get(i);
-			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);
+			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
 			if( this.entryMapper != null ) {	
 				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
@@ -222,6 +222,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 	 */
 	public void ingestProductSetByBurst() throws Exception {
 		/*
+		 * Loading table in burst mode could overload the machine: loading all entries of all tables on one shoot
+		 */
+		if( this.entryMapper != null ) {	
+			AbortException.throwNewException(SaadaException.USER_ABORT, "Ingestion in burst mode is not supported for TABLE");			
+		}
+		/*
 		 * Update or build the class modeling the set of products to load
 		 */
 		SQLTable.beginTransaction();
@@ -247,17 +253,30 @@ public class SchemaFusionMapper extends SchemaMapper {
 		BufferedWriter  coltmpfile = new BufferedWriter(new FileWriter(coldumpfile));
 		String        loadedfile   = Repository.getTmpPath() + Database.getSepar()  + "saada_loaded_file.psql";
 		BufferedWriter loadedtmpfile = new BufferedWriter(new FileWriter(loadedfile));
-
+System.out.println("===========================================================");
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
 			DataFile file = this.dataFiles.get(i);
-			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);
-			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
-			if( this.entryMapper != null ) {	
-				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
-				this.entryMapper.setProduct(entr);
+			if( i>1 ) {
+				System.out.println("@@@@@@@@@@@@@ BREAK");
+				break;
 			}
+			/*
+			 * Instantiate the builder at the first loop. The collection attribute mapping is done here
+			 * It will be applied for all data products
+			 */
+			if( i == 0 ){
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used far the whole data burst");
+				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
+				this.currentProductBuilder.setMetaclass(this.currentClass);
+				System.out.println("========= NEW PORDUCT OK");
+			}	
+			this.currentProductBuilder.mapDataFile(file);
+			System.out.println("========= BIND PORDUCT OK");
+		
 			try {
-				this.currentProductBuilder.initProductFile();
+				Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  "> in data class " + this.currentClass);
+				this.currentProductBuilder.loadProduct(coltmpfile, bustmpfile, loadedtmpfile);
 			} catch(IgnoreException e){
 				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
 					AbortException.throwNewException(SaadaException.USER_ABORT, e);
@@ -266,11 +285,6 @@ public class SchemaFusionMapper extends SchemaMapper {
 					continue;
 				}
 			}
-			/*
-			 * Must not be used with table (entry wouln't be loaded)
-			 */
-			this.currentProductBuilder.setMetaclass(this.currentClass);
-			this.currentProductBuilder.loadValue(coltmpfile, bustmpfile, loadedtmpfile);
 			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
@@ -285,8 +299,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.currentClass.getName() + " -1 " + busdumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE saada_loaded_file -1 " + loadedfile);
-		
-		
+
+
 		SQLTable.commitTransaction();
 
 		/*
@@ -357,8 +371,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 					modified = true;
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Column <" + nah.getNameattr() + "> of type \"" + nah.getType() + "\" added to table/class <" + mc.getName() + "> ");
-//					SQLTable.addQueryToTransaction(Database.getWrapper().addColumn(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
-//							, mc.getName());
+					//					SQLTable.addQueryToTransaction(Database.getWrapper().addColumn(mc.getName(), nah.getNameattr(), Database.getWrapper().getSQLTypeFromJava(nah.getType()))
+					//							, mc.getName());
 				}
 				/*
 				 * Attribute exist but type has been changed
