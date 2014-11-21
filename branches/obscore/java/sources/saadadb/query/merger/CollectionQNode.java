@@ -343,7 +343,7 @@ public class CollectionQNode extends QNode {
 			where_class = "\n   WHERE "  +where_class;
 		}
 		where_class = insertAlias(where_class, cqn.getBusinessAttributesHandlers().keySet().toArray(new String[0]), cqn.name)	;
-		where_class = insertAlias(where_class, new String[]{"oidsaada", "namesaada"}, cqn.name)	;
+		where_class = insertAlias(where_class, new String[]{"oidsaada", "obs_id"}, cqn.name)	;
 		return "  SELECT " + saadadb.util.Merger.getMergedArray(new String[]{"oidsaada", select_class}) 
 		+  "\n   FROM " + cqn.name + " " + where_class ;
 	}

@@ -47,7 +47,7 @@ public class SetOfSelectedColumns {
 		else if( sqlcolname.startsWith("_")  ) {
 			select_class.put(result_column_name, coldef);
 		}
-		else if( sqlcolname.equals("namesaada") ) {
+		else if( sqlcolname.equals("obs_id") ) {
 			select_either.put(result_column_name, coldef);
 		}
 		else {
