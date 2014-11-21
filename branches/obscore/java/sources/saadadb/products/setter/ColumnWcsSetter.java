@@ -3,11 +3,11 @@
  */
 package saadadb.products.setter;
 
+import hecds.wcs.transformations.Projection;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import hecds.wcs.transformations.Projection;
-import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.vocabulary.enums.ColumnSetMode;
@@ -38,10 +38,10 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 	public ColumnWcsSetter(String fieldName, String expression, Projection projection) throws Exception	{
 		super(fieldName, expression /* as constantValue */);
 		if( expression == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS column setter cannot be set with a null expression");
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Field " + this.fieldName + ": WCS column setter cannot be set with a null expression");
 		}
 		if( projection == null ){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS column setter cannot be set with a null axe model");
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Field " + this.fieldName + ": WCS column setter cannot be set with a null axe model");
 		}
 		this.settingMode = ColumnSetMode.BY_WCS;
 		this.result = null;
@@ -57,7 +57,7 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 		this.expression = expression;
 		this.result = null;
 		if( !this.expression .startsWith(Prefix)){
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "The expression of a WCS column setter must start with 'WCS.'");
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Field " + this.fieldName + ": The expression of a WCS column setter must start with 'WCS.' for field " + this.fieldName);
 		}
 	}	
 
@@ -67,7 +67,6 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 	public void calculateExpression() throws Exception{
 
 		String ef = this.expression.replace(Prefix,  "");
-		this.projection.setValues();
 		switch( ef ) {
 		case "getMin(1)":
 			this.result = String.valueOf(this.projection.getMin(1));
@@ -152,13 +151,12 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			this.completeMessage("Taken from WCS pixel_value=" + st);
 			break;
 		default: 
-			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "WCS expression " + this.expression  + " not undestoodo");	
+			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Field " + this.fieldName + ": WCS expression " + this.expression  + " not undestood");	
 		}     
 		if( this.result == null ){
 			this.settingMode = ColumnSetMode.NOT_SET;
 			this.completeMessage("Expression [" + this.expression + "] return null");				
 		}
-
 	}
 
 }
