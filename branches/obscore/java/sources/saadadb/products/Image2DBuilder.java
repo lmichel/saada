@@ -16,6 +16,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
+import saadadb.meta.MetaClass;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.util.ImageUtils;
@@ -30,6 +31,10 @@ import saadadb.vocabulary.enums.PriorityMode;
  * @version 2.0init
  * @since 2.0
  */
+/**
+ * @author michel
+ * @version $Id$
+ */
 public class Image2DBuilder extends ProductBuilder {
 	boolean load_vignette = true;
 	/** * @version $Id$
@@ -41,42 +46,45 @@ public class Image2DBuilder extends ProductBuilder {
 	/**
 	 * @param productFile
 	 * @param conf
-	 * @throws FatalException
+	 * @param metaClass
+	 * @throws SaadaException
 	 */
-	public Image2DBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
-		super(productFile, conf);
+	public Image2DBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+		super(productFile, conf, metaClass);
 	}
 
 	/**
-	 * @param fileName
-	 * @throws FatalException 
+	 * @param file
+	 * @param mapping
+	 * @param metaClass
+	 * @throws SaadaException
 	 */
-	public Image2DBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
-		super(file, mapping);
+	public Image2DBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{		
+		super(file, mapping, metaClass);
 		if( mapping != null )
 		this.load_vignette = !mapping.noVignette();
 	}
 	
 	
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#setProductIngestor()
-	 */
-	@Override
-	protected void setProductIngestor() throws Exception{
-		if( this.productIngestor == null ){
-			try{
-				this.wcs = new Image2DCoordinate();
-				this.wcs.setImage2DCoordinate(this.productAttributeHandler);
-				Messenger.printMsg(Messenger.TRACE, "Valid WCS keywords found");
-			}catch(Exception e){
-				this.wcs = null;
-				Messenger.printStackTrace(e);
-				Messenger.printMsg(Messenger.WARNING, "No valid WCS keywords found: " + e.getMessage() + ": Coordinate and image size will not be set.");
-				Messenger.printMsg(Messenger.WARNING, "No position found: Position will not be set for this product");
-			}
-			this.productIngestor = new ImageIngestor(this);
-		}		
-	}
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.ProductBuilder#setProductIngestor()
+//	 */
+//	@Override
+//	protected void setProductIngestor() throws Exception{
+//		if( this.productIngestor == null ){
+//			try{
+//				this.wcs = new Image2DCoordinate();
+//				this.wcs.setImage2DCoordinate(this.productAttributeHandler);
+//				Messenger.printMsg(Messenger.TRACE, "Valid WCS keywords found");
+//			}catch(Exception e){
+//				this.wcs = null;
+//				Messenger.printStackTrace(e);
+//				Messenger.printMsg(Messenger.WARNING, "No valid WCS keywords found: " + e.getMessage() + ": Coordinate and image size will not be set.");
+//				Messenger.printMsg(Messenger.WARNING, "No position found: Position will not be set for this product");
+//			}
+//			this.productIngestor = new ImageIngestor(this);
+//		}		
+//	}
 
 	/**
 	
@@ -88,8 +96,8 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @throws Exception
 	 */
 	@Override
-	public void loadValue() throws Exception  {
-		super.loadValue();
+	public void loadProduct() throws Exception  {
+		super.loadProduct();
 		try {
 			this.createVignette();
 		} catch( Exception e ) {
@@ -106,9 +114,9 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @throws Exception
 	 */
 	@Override
-	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
+	public void loadProduct(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
 
-		super.loadValue(colwriter, buswriter, loadedfilewriter);
+		super.loadProduct(colwriter, buswriter, loadedfilewriter);
 		if( load_vignette ) {
 			try {
 				this.createVignette();
@@ -141,23 +149,6 @@ public class Image2DBuilder extends ProductBuilder {
 		+ separ + this.getName() + ".jpg";
 		ImageUtils.createImage(namefilejpeg, (FitsDataFile) this.dataFile, 400);
 		this.productIngestor.saadaInstance.setVignetteFile();
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
-	 */
-	@Override
-	public void bindDataFile(DataFile dataFile) throws Exception{
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder");
-		if( dataFile != null ) this.dataFile = dataFile;
-		if( this.dataFile instanceof FitsDataFile ) {
-			this.mimeType = "application/fits";
-		} else if( this.dataFile instanceof VOTableDataFile ) {
-			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "An image cannot be a VOTable");
-		}
-		this.dataFile.bindBuilder(this);
-		this.setFmtsignature();
 	}
 
 }
