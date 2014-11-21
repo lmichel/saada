@@ -91,6 +91,7 @@ public class FitsDataFile extends File implements DataFile{
 
 		//See the super class "File"(package java.io)
 		super(name);
+		System.out.println("@@@@@@ FITS Const 1");
 		//Initialzes the current file name
 		this.productBuilder = product;
 		this.fits_data = new Fits(getCanonicalPath()); 
@@ -102,6 +103,7 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public FitsDataFile(String name) throws Exception {
 		super(name);
+		System.out.println("@@@@@@ FITS Const 2");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
 		this.fits_data = new Fits(name);
@@ -113,6 +115,7 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public FitsDataFile(ProductBuilder product) throws Exception {
 		super(product.dataFile.getAbsolutePath());
+		System.out.println("@@@@@@ FITS Const 3");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "reading FIST file " + product.getName());
 		this.productBuilder = product;
@@ -191,54 +194,13 @@ public class FitsDataFile extends File implements DataFile{
 			this.setFirstGoodHeader(product);
 			Messenger.printMsg(Messenger.TRACE, "The first  "
 					+  Category.explain(product.mapping.getCategory())
-				///	+ this.productBuilder.getClass().getName()
+					///	+ this.productBuilder.getClass().getName()
 					+ " extension is #"+this.getGood_header_number());				
 		}
-
-
-		//				if( ext_num >= 0  && (bHDU = fits_data.getHDU(ext_num)) != null ) {
-		//					if( this.checkExtensionCategory(bHDU, this.getProductCategory() ) ) {
-		//						String msg = "Required extension : "+product.mapping.getExtension()+" found (number: " + ext_num + ")";
-		//						this.extensionSetter = new ExtensionSetter(ext_num
-		//								, ExtensionSetMode.GIVEN
-		//								, msg);
-		//						this.good_header = bHDU;
-		//						Messenger.printMsg(Messenger.TRACE, msg);
-		//					}
-		//					/*
-		//					 * If no BINTABLE has been found for spectra, we try to find out a one-row image
-		//					 */
-		//					else if( product.getMapping().getCategory() == Category.SPECTRUM ) {
-		//						if( (bHDU = fits_data.getHDU(ext_num))  != null &&  checkExtensionCategory(bHDU, Category.IMAGE) ) {
-		//							//if( image.getAxes().length == 1 ) {
-		//							this.good_header = bHDU;
-		//							String msg = "Take pixels of image HDU# " + ext_num +  " as spectral chanels";
-		//							this.extensionSetter = new ExtensionSetter(ext_num
-		//									, ExtensionSetMode.DETECTED
-		//									, msg);
-		//							Messenger.printMsg(Messenger.TRACE, msg);
-		//							//return;
-		//							//}
-		//						} else {
-		//							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+product.mapping.getExtension() + " has a wrong type: " + bHDU.getClass().getName());
-		//						}
-		//					} else {
-		//						IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+product.mapping.getExtension() + " has a wrong type");
-		//					}
-		//				} else {
-		//					IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+product.mapping.getExtension() + " not found");
-		//				}
-		//			} else {										//else, the extension name is undefined
-		//				this.setFirstGoodHeader(product);
-		//				Messenger.printMsg(Messenger.TRACE, "The first extension possibly a(n) "
-		//						//+  Category.explain(product.getConfiguration().getCategorySaada())
-		//						+ this.product.getClass().getName()
-		//						+ " is #"+this.getGood_header_number());
-		//			}
 		if( this.productBuilder.mapping != null )
 			this.productBuilder.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
-		this.productBuilder.productAttributeHandler = this.getAttributeHandler();
+		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
 	}
 
@@ -246,6 +208,8 @@ public class FitsDataFile extends File implements DataFile{
 	 * @see saadadb.products.DataFile#(saadadb.products.ProductBuilder)
 	 */
 	public void bindBuilder(ProductBuilder builder) throws Exception{
+		System.out.println("@@@@@@@@@ FITS BndBuilder");
+		Messenger.printStackTrace(new Exception());
 		this.productBuilder = builder;
 		try {
 			this.first_header = fits_data.getHDU(0);
@@ -328,13 +292,14 @@ public class FitsDataFile extends File implements DataFile{
 		if( this.productBuilder.mapping != null )
 			this.productBuilder.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
-		this.productBuilder.productAttributeHandler = this.getAttributeHandler();
+		this.updateAttributeHandlerValues();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#closeStream()
 	 */
+	@Override
 	public void closeStream() {
 		if( this.fits_data != null && this.fits_data.getStream() != null) {
 			try {
@@ -345,6 +310,37 @@ public class FitsDataFile extends File implements DataFile{
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.DataFile#updateAttributeHandlerValues()
+	 */
+	@Override
+	public void updateAttributeHandlerValues() throws Exception{
+		this.mapAttributeHandler();
+		if( this.productBuilder.productAttributeHandler == null ){
+			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
+		} else {
+			for( AttributeHandler ah: this.productBuilder.productAttributeHandler.values()){
+				ah.setValue("");
+			}
+		}
+
+		for( Entry<String, AttributeHandler> eah: this.attributeHandlers.entrySet()){
+			AttributeHandler localAh = eah.getValue();
+			String localKey = eah.getKey();
+			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
+
+			if( builderAh == null ){
+				//System.out.println("add value of " + localKey);
+				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
+			} else {
+				//System.out.println("change value of " + localKey);
+				builderAh.setValue(localAh.getValue());
+				if( builderAh.getNameattr().equals("_crval1")){
+					System.out.println("@@@@@@@@@@@@@ updateAttributeHandlerValues " + builderAh + " " + System.identityHashCode(builderAh));
+				}
+			}
+		}
+	}
 
 	/**
 	 * Build an attributeHandler map the columns definition of the extension # hduNum
@@ -443,9 +439,9 @@ public class FitsDataFile extends File implements DataFile{
 				//Sets the unit of this entry to this field in the attribute object
 				attribute.setUnit(unitValue);				
 				attribute.setComment(cardType.getComment());
-//				if(!unitComment.equals("no Comment")){
-//					attribute.setComment(unitComment);
-//				}
+				//				if(!unitComment.equals("no Comment")){
+				//					attribute.setComment(unitComment);
+				//				}
 				//Initiazes the reality format of this entry
 				format = table.getColumnFormat(j);
 				int javatypecode = JavaTypeUtility.convertFitsFormatToJavaType(format, isascii);
@@ -816,7 +812,7 @@ public class FitsDataFile extends File implements DataFile{
 		default:
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Unknow category" + category);
 		}
-		
+
 		if( dfe != null ){
 			this.good_header = fits_data.getHDU(dfe.tableNum);
 			String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.tableNum +  " as data extension for " + Category.explain(category);
@@ -921,8 +917,8 @@ public class FitsDataFile extends File implements DataFile{
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Return the category of the FITS extension matching the product category
 	 * @return
@@ -986,6 +982,7 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws FatalException 
 	 */
 	private void mapAttributeHandler() {
+		System.out.println("@@@@@@@@@ Fits mapAttributeHandler");
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		/*boolean findRA = false;
 		 boolean findDEC = false;*/
@@ -1025,6 +1022,7 @@ public class FitsDataFile extends File implements DataFile{
 						&& (name_org.startsWith("TFORM") || name_org.startsWith("TUNIT") || name_org.startsWith("TDISP") || name_org.startsWith("TRUEN")) ) {
 					continue;
 				} else {
+					System.out.println("@@@@@@@@@ B");
 					/*
 					 * attribute read from the Xtension must squash former attribute with the same name
 					 * They are not considered as duplicated. (EXTENSION, BITPIX...)
@@ -1032,9 +1030,14 @@ public class FitsDataFile extends File implements DataFile{
 					this.attributeHandlers.put(attribute.getNameattr(), attribute);
 					attribute.setCollname(this.productBuilder.mapping.getCollection());				
 					this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
+
+					if( attribute.getNameattr().equals("_crval1")) {
+						System.out.println("@@@@@@@@@@@@@ FITS1 " + attribute + System.identityHashCode(attribute));
+					}
 				}
 			}
 		}
+		System.out.println("@@@@@@@@@ Fits mapAttributeHandler FINI");
 	}
 
 	/**
@@ -1042,6 +1045,7 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public void addFirstHDU() {
 
+		System.out.println(" addFirstHDU" + this.attributeHandlers.size());
 		Header header = this.first_header.getHeader();
 		Cursor it = header.iterator();
 		List<String> kWIgnored = (this.productBuilder.mapping != null)?this.productBuilder.mapping.getIgnoredAttributes()
@@ -1087,10 +1091,14 @@ public class FitsDataFile extends File implements DataFile{
 				if( this.productBuilder.mapping != null )
 					attribute.setCollname(this.productBuilder.mapping.getCollection());				
 				this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
+				if( attribute.getNameattr().equals("_crval1")) {
+					System.out.println("@@@@@@@@@@@@@ FITS11 " + attribute + System.identityHashCode(attribute));
+				}
 			}
-			//this.attMd5Tree.put(md5Key, md5Type);
 		}
+		//this.attMd5Tree.put(md5Key, md5Type);
 	}
+
 
 	/**
 	 * @return Returns the good_header.
@@ -1691,13 +1699,19 @@ public class FitsDataFile extends File implements DataFile{
 	}
 
 	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#getAttributeHandler()
+	 * @see saadadb.products.DataFile#getAttributeHandler()
 	 */
-	public Map<String, AttributeHandler> getAttributeHandler() {
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() {
 		if( this.attributeHandlers == null ){
 			this.mapAttributeHandler();
 		}
-		return this.attributeHandlers;
+		Map<String, AttributeHandler> mah = this.attributeHandlers;
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		for( Entry<String, AttributeHandler > e: mah.entrySet()){
+			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
+		}
+		System.out.println("COPY " + retour.get("_crval1") + " " +System.identityHashCode( retour.get("_crval1")));
+		return retour;
 	}
 
 	/* (non-Javadoc)
@@ -1712,16 +1726,28 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
+		TableBuilder tb;
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping);			
-		} else if( this.getEntryAttributeHandler().size() > 0  ){
+			return new QuantityDetector(this.getEntryAttributeHandler()
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);			
+		} else if( this.productBuilder instanceof TableBuilder  ){
+			tb = (TableBuilder) this.productBuilder;
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);
+				Messenger.printMsg(Messenger.DEBUG, "Table columns taken in account");
+			return  new QuantityDetector(this.productBuilder.productAttributeHandler
+					, tb.entryBuilder.productAttributeHandler
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);
 		} else {
-			return new QuantityDetector(this.getAttributeHandler(), this.comments, productMapping);
+			return new QuantityDetector(this.productBuilder.productAttributeHandler
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);
 		}		
 	}
 	/* (non-Javadoc)
