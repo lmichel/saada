@@ -6,6 +6,7 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.MetaClass;
 
 /**
  * @author michel
@@ -13,16 +14,24 @@ import saadadb.exceptions.SaadaException;
  */
 public class SpectrumBuilder extends ProductBuilder {
 
-	public SpectrumBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
-		super(productFile, conf);
+	/**
+	 * @param productFile
+	 * @param conf
+	 * @param metaClass
+	 * @throws SaadaException
+	 */
+	public SpectrumBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+		super(productFile, conf, metaClass);
 	}
 
+
 	/**
-	 * @param fileName
-	 * @throws AbortException 
-	 * @throws SaadaException 
+	 * @param file
+	 * @param mapping
+	 * @param metaClass
+	 * @throws SaadaException
 	 */
-	public SpectrumBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
-		super(file, mapping);
+	public SpectrumBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{		
+		super(file, mapping, metaClass);
 	}
 }
