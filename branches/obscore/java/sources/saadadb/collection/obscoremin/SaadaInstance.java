@@ -911,7 +911,7 @@ public abstract class SaadaInstance implements DMInterface {
 				nametable.length());
 		Class cls = this.getClass();
 		Field fieldlist[] = cls.getDeclaredFields();
-		String attr = "oidsaada,namesaada,md5keysaada";
+		String attr = "oidsaada,obs_id,md5keysaada";
 		for (int i = 0; i < fieldlist.length; i++) {
 			attr += "," + fieldlist[i].getName();
 		}
@@ -942,9 +942,8 @@ public abstract class SaadaInstance implements DMInterface {
 				nametable.length());
 		Class cls = this.getClass();
 		Field fieldlist[] = cls.getDeclaredFields();
-		String file_bus_sql = "" + this.obs_id + "\t"
-		+ this.contentsignature;
-
+		String file_bus_sql = this.oidsaada + "\t" + this.obs_id + "\t" + this.contentsignature;
+System.out.println(cls + " " + fieldlist.length);
 		for( int i=0 ; i<fieldlist.length ; i++  ) {
 			Field field = fieldlist[i];
 			file_bus_sql += "\t";
