@@ -1,5 +1,7 @@
 package saadadb.products.setter;
 
+import java.awt.event.InvocationEvent;
+
 import hecds.wcs.descriptors.CardDescriptor;
 import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
