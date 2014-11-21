@@ -26,6 +26,14 @@ import saadadb.products.inference.QuantityDetector;
  *@since 2.0
  *@see Enumeration
  */
+/**
+ * @author michel
+ * @version $Id$
+ */
+/**
+ * @author michel
+ * @version $Id$
+ */
 @SuppressWarnings("rawtypes")
 public interface DataFile extends Enumeration{
     /**Returns the value corresponding finded in the product file to the key word in parameter.
@@ -83,7 +91,7 @@ public interface DataFile extends Enumeration{
 	 * Returns the map of the attribute handlers modeling the KW of all headers loaded
 	 * @return
 	 */
-	public Map<String, AttributeHandler> getAttributeHandler() throws SaadaException ;
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException ;
 	/**
 	 * Return a lis of comments which can be used to do the automatic mapping
 	 * @return
@@ -137,6 +145,11 @@ public interface DataFile extends Enumeration{
 	 * @param builder
 	 */
 	public void bindBuilder(ProductBuilder builder) throws Exception;
+	/**
+	 * Set the builder's attribute handlers with the values read in the product file
+	 * @throws Exception
+	 */
+	public void updateAttributeHandlerValues() throws Exception;
 	/**
 	 * Returns the list of the loaded extension with the reason why they have been taken
 	 * @return
