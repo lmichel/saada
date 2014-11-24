@@ -1,6 +1,3 @@
-/*
- * This package is (probably) temporary
- */
 package saadadb.admintool.VPSandbox.panels.editors;
 
 import java.awt.GridBagConstraints;
