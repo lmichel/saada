@@ -161,8 +161,7 @@ public class SQLTableProduct implements DataFile {
 	}
 
 	@Override
-	public Map<String, AttributeHandler> getAttributeHandler()
-			throws SaadaException {
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -228,6 +227,12 @@ public class SQLTableProduct implements DataFile {
 	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updateAttributeHandlerValues() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 

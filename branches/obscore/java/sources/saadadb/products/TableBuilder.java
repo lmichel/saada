@@ -37,6 +37,11 @@ public class TableBuilder extends ProductBuilder {
 		this.entryBuilder.bindDataFile(productFile);
 	}
 
+	public TableBuilder(DataFile file, ProductMapping conf) throws SaadaException{	
+		super(file, conf, null);
+		this.entryBuilder = new EntryBuilder(this);
+		this.entryBuilder.bindDataFile(file);
+	}
 	/**
 	 * @param fileName
 	 * @param tabArg

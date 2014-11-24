@@ -209,7 +209,6 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public void bindBuilder(ProductBuilder builder) throws Exception{
 		System.out.println("@@@@@@@@@ FITS BndBuilder");
-		Messenger.printStackTrace(new Exception());
 		this.productBuilder = builder;
 		try {
 			this.first_header = fits_data.getHDU(0);
@@ -335,9 +334,6 @@ public class FitsDataFile extends File implements DataFile{
 			} else {
 				//System.out.println("change value of " + localKey);
 				builderAh.setValue(localAh.getValue());
-				if( builderAh.getNameattr().equals("_crval1")){
-					System.out.println("@@@@@@@@@@@@@ updateAttributeHandlerValues " + builderAh + " " + System.identityHashCode(builderAh));
-				}
 			}
 		}
 	}
@@ -1022,7 +1018,6 @@ public class FitsDataFile extends File implements DataFile{
 						&& (name_org.startsWith("TFORM") || name_org.startsWith("TUNIT") || name_org.startsWith("TDISP") || name_org.startsWith("TRUEN")) ) {
 					continue;
 				} else {
-					System.out.println("@@@@@@@@@ B");
 					/*
 					 * attribute read from the Xtension must squash former attribute with the same name
 					 * They are not considered as duplicated. (EXTENSION, BITPIX...)
@@ -1030,10 +1025,6 @@ public class FitsDataFile extends File implements DataFile{
 					this.attributeHandlers.put(attribute.getNameattr(), attribute);
 					attribute.setCollname(this.productBuilder.mapping.getCollection());				
 					this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
-
-					if( attribute.getNameattr().equals("_crval1")) {
-						System.out.println("@@@@@@@@@@@@@ FITS1 " + attribute + System.identityHashCode(attribute));
-					}
 				}
 			}
 		}
@@ -1701,7 +1692,8 @@ public class FitsDataFile extends File implements DataFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#getAttributeHandler()
 	 */
-	public Map<String, AttributeHandler> getAttributeHandlerCopy() {
+	@Override
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
 		if( this.attributeHandlers == null ){
 			this.mapAttributeHandler();
 		}

@@ -64,6 +64,11 @@ public class Image2DBuilder extends ProductBuilder {
 		if( mapping != null )
 		this.load_vignette = !mapping.noVignette();
 	}
+	public Image2DBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
+		super(file, mapping, null);
+		if( mapping != null )
+		this.load_vignette = !mapping.noVignette();
+	}
 	
 	
 //	/* (non-Javadoc)

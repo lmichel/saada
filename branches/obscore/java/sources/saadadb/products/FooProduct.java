@@ -140,7 +140,7 @@ public class FooProduct implements DataFile {
 		return this.entryAttributeHandlers;
 	}
 	@Override
-	public Map<String, AttributeHandler> getAttributeHandler()
+	public Map<String, AttributeHandler> getAttributeHandlerCopy()
 			throws SaadaException {
 		return this.attributeHandlers;
 	}
@@ -170,7 +170,7 @@ public class FooProduct implements DataFile {
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception {
 		this.productBuilder = builder;
-		this.productBuilder.productAttributeHandler = this.getAttributeHandler();		
+		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();		
 	}
 
 	@Override
@@ -204,13 +204,13 @@ public class FooProduct implements DataFile {
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping);			
+			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);			
 		} else if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);
+			return  new QuantityDetector(this.getAttributeHandlerCopy(), this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);
 		} else {
-			return new QuantityDetector(this.getAttributeHandler(), this.comments, productMapping);
+			return new QuantityDetector(this.getAttributeHandlerCopy(), this.comments, productMapping, this.productBuilder.wcsModeler);
 		}		
 	}
 
@@ -218,6 +218,12 @@ public class FooProduct implements DataFile {
 	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
 		return new ArrayList<String>();
+	}
+
+	@Override
+	public void updateAttributeHandlerValues() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

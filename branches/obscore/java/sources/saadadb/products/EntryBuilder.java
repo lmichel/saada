@@ -44,7 +44,7 @@ public class EntryBuilder extends ProductBuilder {
 	 * @throws FatalException 
 	 */
 	public EntryBuilder(TableBuilder table) throws SaadaException {
-		super(table.dataFile, table.mapping.getEntryMapping());
+		super(table.dataFile, table.mapping.getEntryMapping(), null);
 		this.table = table;
 		/*
 		 * This operation is done in super(...) then before this table is set.
@@ -75,7 +75,7 @@ public class EntryBuilder extends ProductBuilder {
 	 * @see saadadb.products.ProductBuilder#loadValue()
 	 */
 	@Override
-	public void loadValue() throws Exception {
+	public void loadProduct() throws Exception {
 		// Initializes the lines meter at 0
 		int line = 0;
 		// A java type of a attribute
@@ -95,7 +95,7 @@ public class EntryBuilder extends ProductBuilder {
 		BufferedWriter bustmpfile  = new BufferedWriter(new FileWriter(busdumpfile));
 		String         coldumpfile = Repository.getTmpPath() + Database.getSepar()  + "col" + time_tag + ".psql";
 		BufferedWriter coltmpfile  = new BufferedWriter(new FileWriter(coldumpfile));
-		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaclass.getCollection_name()
+		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaClass.getCollection_name()
 				, Category.TABLE);
 		this.setProductIngestor();		
 		/** Keep a ref on the casted ingestor */
@@ -120,7 +120,7 @@ public class EntryBuilder extends ProductBuilder {
 			} // first line processing
 			line++;
 			/* next line readout */
-			this.productIngestor.bindInstanceToFile(entryInstance);
+			this.productIngestor.bindInstanceToFile();
 			/*
 			 * Build the SQL query for business table
 			 */
@@ -171,7 +171,7 @@ public class EntryBuilder extends ProductBuilder {
 			Messenger.printMsg(Messenger.TRACE,
 					+ line + ((table_size <= 0 )?"":("/" + table_size))
 					+ " Entries read: copy the dump files into the database"); 
-			SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.metaclass.getName() + " -1 " + busdumpfile);
+			SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.metaClass.getName() + " -1 " + busdumpfile);
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Business attributes copied");
 			String ecoll_table =Database.getCachemeta().getCollectionTableName(entryInstance.getCollection().getName()
@@ -238,7 +238,7 @@ public class EntryBuilder extends ProductBuilder {
 		this.setProductIngestor();
 		((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
 		this.dataFile.hasMoreElements();
-		this.productIngestor.bindInstanceToFile(this.productIngestor.saadaInstance);
+		this.productIngestor.bindInstanceToFile();
 		SaadaInstance si = this.productIngestor.saadaInstance;
 
 		retour.put("entry.obs_id", obs_idSetter);
@@ -304,7 +304,7 @@ public class EntryBuilder extends ProductBuilder {
 		this.setProductIngestor();
 		if( this.productIngestor.hasMoreElements() ) {
 			((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
-			this.productIngestor.bindInstanceToFile(null);
+			this.productIngestor.bindInstanceToFile();
 		}
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
