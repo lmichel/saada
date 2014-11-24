@@ -707,14 +707,9 @@ public class MappingKWPanel extends EditPanel {
 							ap.setName(name);
 						}
 						else {
-							ap.setName(name);
-							this.setConfName(name);
-							fos = new FileOutputStream(SaadaDB.getRoot_dir() 
+							ap.save(SaadaDB.getRoot_dir() 
 									+ Database.getSepar() + "config" 
 									+ Database.getSepar() + prefix + "." + name + ".config");
-							out = new ObjectOutputStream(fos);
-							out.writeObject(ap);
-							out.close();				
 							if( this.ancestor.equals(DATA_LOADER)) {
 								if (rootFrame.getActivePanel() instanceof DataLoaderPanel)
 								{
@@ -741,35 +736,13 @@ public class MappingKWPanel extends EditPanel {
 	}
 
 	/**
-	 * @param conf_path
-	 */
-	public void loadConfFile(String conf_path) {
-		ArgsParser ap = null;
-		if( conf_path.length() != 0 ) {
-
-			try {
-				FileInputStream fis = new FileInputStream(conf_path);
-				ObjectInputStream in = new ObjectInputStream(fis);
-				ap = (ArgsParser)in.readObject();
-				in.close();
-				loadConfig(ap);
-			} catch(Exception ex) {
-				Messenger.printStackTrace(ex);
-				showFatalError(rootFrame, ex);
-				return;
-			}				
-		}
-	}
-
-	/**
 	 * 
 	 */
 	public void save() {
 		if( confName==null || "Default".equals(confName) || confName.equals("") || confName.equalsIgnoreCase("null") ) {
 			this.rename();
 			Messenger.printMsg(Messenger.DEBUG, "Premier IF Save MPKWPanel");
-}
-		else if( !this.hasChanged() ){
+        } else if( !this.hasChanged() ){
 			if( this.ancestor.equals(DATA_LOADER)) {
 				rootFrame.activePanel(DATA_LOADER);
 				((DataLoaderPanel)(rootFrame.getActivePanel())).setConfig(confName); 
@@ -785,12 +758,15 @@ public class MappingKWPanel extends EditPanel {
 			ObjectOutputStream out = null;
 			try {
 				String prefix = Category.explain(this.category);
-				fos = new FileOutputStream(SaadaDB.getRoot_dir() 
+//				fos = new FileOutputStream(SaadaDB.getRoot_dir() 
+//						+ Database.getSepar() + "config" 
+//						+ Database.getSepar() + prefix + "." + confName + ".config");
+//				out = new ObjectOutputStream(fos);
+//				out.writeObject(ap);
+//				out.close();
+				ap.save(SaadaDB.getRoot_dir() 
 						+ Database.getSepar() + "config" 
 						+ Database.getSepar() + prefix + "." + confName + ".config");
-				out = new ObjectOutputStream(fos);
-				out.writeObject(ap);
-				out.close();
 				this.last_saved  = ap.toString();
 				if( this.ancestor.equals(DATA_LOADER)) {
 					rootFrame.activePanel(DATA_LOADER);
