@@ -194,7 +194,15 @@ public class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setSpaceFields() throws Exception {
-		if( !this.product.astroframeSetter.isNotSet() && !this.product.s_raSetter.isNotSet() && !this.product.s_decSetter.isNotSet()) {
+		if( this.product.s_raSetter.isNotSet() || this.product.s_decSetter.isNotSet()) {
+			this.setPositionFieldsInError("Coordinates not set");
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Coordinates are not set");
+		} else if( this.product.astroframeSetter.isNotSet() ) {
+			this.setPositionFieldsInError("Coord conv failed: no frame");
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Cannot set coordinates since there is no frame");
+		} else {
 			try {
 				/*
 				 * Convert astroframe if different from this of the database
@@ -221,11 +229,7 @@ public class ProductIngestor {
 				this.setPositionFieldsInError("Error while setting the position " + e.getMessage());
 			}
 
-		} else {
-			this.setPositionFieldsInError("Coord conv failed: no frame");
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
-		}
+		} 
 	} //if position mapped
 
 	/**

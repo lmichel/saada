@@ -25,7 +25,11 @@ public class MiscBuilder extends ProductBuilder{
 		super(file, mapping, metaClass );
 	}
 	
-	public MiscBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+	public MiscBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
+		super(file, mapping, null );
+	}
+	
+   public MiscBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
 	}
 

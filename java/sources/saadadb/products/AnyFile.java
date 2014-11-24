@@ -107,7 +107,7 @@ public class AnyFile extends File implements DataFile {
 	}
 
 	@Override
-	public Map<String, AttributeHandler> getAttributeHandler()
+	public Map<String, AttributeHandler> getAttributeHandlerCopy()
 			throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
@@ -141,13 +141,19 @@ public class AnyFile extends File implements DataFile {
 
 	@Override
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		return new QuantityDetector( new LinkedHashMap<String, AttributeHandler>(), this.comments, productMapping);
+		return new QuantityDetector( new LinkedHashMap<String, AttributeHandler>(), this.comments, productMapping, null);
 	}
 
 	@Override
 	public List<String> getComments() throws SaadaException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updateAttributeHandlerValues() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 

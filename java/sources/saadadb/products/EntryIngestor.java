@@ -122,9 +122,9 @@ public final class EntryIngestor extends ProductIngestor {
 		/*
 		 * Build the Saada instance
 		 */
-		if( this.product.metaclass != null ) {
-			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaclass.getName()).newInstance();
-			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaclass.getName());
+		if( this.product.metaClass != null ) {
+			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
+			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaClass.getName());
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
@@ -136,12 +136,10 @@ public final class EntryIngestor extends ProductIngestor {
 	 * @see saadadb.products.ProductIngestor#bindInstanceToFile(saadadb.collection.obscoremin.SaadaInstance, long)
 	 */
 	@Override
-	public void bindInstanceToFile(SaadaInstance si) throws Exception {
-		if( si == null) si = this.saadaInstance;
+	public void bindInstanceToFile() throws Exception {
 		this.nextElement();
-		if( si != null ) this.saadaInstance = si;
-		if( this.product.metaclass != null && ! this.firstCall) {
-			this.saadaInstance.oidsaada = SaadaOID.newOid(this.product.metaclass.getName());
+		if( this.product.metaClass != null && ! this.firstCall) {
+			this.saadaInstance.oidsaada = SaadaOID.newOid(this.product.metaClass.getName());
 		} else {
 			this.firstCall = false;
 		}
@@ -356,10 +354,10 @@ System.out.println(this.product.s_raSetter);
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Map the indirection tables for the entry table");
 		AttributeHandler[] saada_ah ;
-		if(this.product.metaclass == null  ) {
+		if(this.product.metaClass == null  ) {
 			saada_ah = this.product.productAttributeHandler.values().toArray(new AttributeHandler[0]);			
 		} else {
-			saada_ah = this.product.metaclass.getClassAttributes();
+			saada_ah = this.product.metaClass.getClassAttributes();
 		}
 		int num_att_read=0;
 		nb_bus_att    = saada_ah.length;

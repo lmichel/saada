@@ -34,4 +34,7 @@ public class SpectrumBuilder extends ProductBuilder {
 	public SpectrumBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{		
 		super(file, mapping, metaClass);
 	}
+	public SpectrumBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
+		super(file, mapping, null);
+	}
 }

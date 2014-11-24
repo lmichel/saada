@@ -206,7 +206,6 @@ public class ProductBuilder {
 			 */
 			CardMap cm = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
 			LibLog.setLogger(new MessengerLogger());
-			System.out.println("@@@@@@@@@@@@@ setQuantityDetector " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 			this.wcsModeler = new Modeler(cm);			
 			// unit tst purpose
 			if(this.dataFile == null ) {
@@ -346,6 +345,15 @@ public class ProductBuilder {
 		System.out.println("@@@@@@@@@@@@@ mapDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.mapCollectionAttributes();
 		System.out.println("@@@@@@@@@@@@@ mapDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+	}
+	
+	public void mapDataFile() throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
+		System.out.println("@@@@@@@@@@@@@ mapDataFile1 (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.bindDataFile(this.dataFile);
+		System.out.println("@@@@@@@@@@@@@ mapDataFile2  (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		this.mapCollectionAttributes();
+		System.out.println("@@@@@@@@@@@@@ mapDataFile3  (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 	}
 
 
@@ -1845,6 +1853,9 @@ public class ProductBuilder {
 	 */
 	public void writeCompleteReport(String directory, ArgsParser ap) throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".txt");
+		this.dataFile.updateAttributeHandlerValues();
+		this.productIngestor.bindInstanceToFile();
+
 		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
 		fw.write("====================================================\n");
 		fw.write("    " + this.dataFile.getName() + "\n");
@@ -1852,7 +1863,7 @@ public class ProductBuilder {
 		fw.write("====================================================\n");
 		if( ap != null ){
 			fw.write("\n========= User parameters\n");
-			fw.write(ap.toString() +"\n");
+			fw.write(ap.toString().replace("-", "\n    -") +"\n");
 		}
 		fw.write("\n========= Keywords read\n");
 		for( AttributeHandler ah: this.getProductAttributeHandler().values()) {

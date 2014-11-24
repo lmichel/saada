@@ -735,7 +735,8 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 	 * @see saadadb.products.DataFile#getAttributeHandler()
 	 */
 	@Override
-	public Map<String, AttributeHandler> getAttributeHandler() throws SaadaException {
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException {
+		// TODO make a copy
 		if( this.headerExtension == null ) {
 			this.selectResourceAndTable(null);
 		}
@@ -847,13 +848,13 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping);			
+			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);			
 		} else if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandler(), this.getEntryAttributeHandler(), this.comments, productMapping, this);
+			return  new QuantityDetector(this.getAttributeHandlerCopy(), this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);
 		} else {
-			return new QuantityDetector(this.getAttributeHandler(), this.comments, productMapping);
+			return new QuantityDetector(this.getAttributeHandlerCopy(), this.comments, productMapping, this.productBuilder.wcsModeler);
 		}		
 	}
 
@@ -873,7 +874,7 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		//		if( this.productBuilder.mapping != null )
 		//			this.productBuilder.mapping.getHeaderRef().setNumber(this.goodResourceNum);	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
-		this.productBuilder.productAttributeHandler = this.getAttributeHandler();
+		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");	
 	}
 
@@ -940,5 +941,13 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 		}
+	}
+
+
+
+	@Override
+	public void updateAttributeHandlerValues() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }
