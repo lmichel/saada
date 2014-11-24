@@ -42,7 +42,6 @@ import saadadb.vocabulary.enums.PriorityMode;
  */
 public class EnergyKWDetector extends KWDetector {
 	private SpectralCoordinate spectralCoordinate;
-	private DataFile productFile;
 	private PriorityMode priority;
 	private String defaultUnit;
 	private String readUnit;
@@ -54,6 +53,7 @@ public class EnergyKWDetector extends KWDetector {
 	private ColumnExpressionSetter em_res_powerSetter;
 	private ColumnExpressionSetter em_binsSetter;
 
+
 	/**
 	 * @param tableAttributeHandler
 	 * @param comments
@@ -64,23 +64,21 @@ public class EnergyKWDetector extends KWDetector {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.SPECTRAL));
 		this.setUnitMode(productMapping);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
-		this.mapCollectionSpectralCoordinateAuto();
 	}
+
 	/**
 	 * @param tableAttributeHandler
 	 * @param entryAttributeHandler
+	 * @param wcsModeler
 	 * @param comments
 	 * @param productMapping
-	 * @param productFile   : used to get the ra,age of columns values
 	 * @throws SaadaException
 	 */
 	public EnergyKWDetector(Map<String, AttributeHandler> tableAttributeHandler
-			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments, ProductMapping productMapping, DataFile productFile)throws SaadaException {
+			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments, ProductMapping productMapping)throws SaadaException {
 		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.SPECTRAL));
 		this.setUnitMode(productMapping);
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
-		this.productFile = productFile;
-		this.mapCollectionSpectralCoordinateAuto();
 	}
 	/**
 	 * @param priority
@@ -118,33 +116,22 @@ public class EnergyKWDetector extends KWDetector {
 	 * @return
 	 * @throws Exception
 	 */
-	private boolean mapCollectionSpectralCoordinateAuto() throws SaadaException {	
+	private void detectAxeParams() throws SaadaException {	
+		if( isMapped ){
+			return;
+		}
+		this.isMapped = true;
 		try {
 			if( this.findSpectralCoordinateByWCS() || this.findSpectralCoordinateInKeywords() ||  this.findSpectralCoordinateInColumns() ) {
-				return true;
+				return;
 			}
-//
-//			spectralCoordinate = new SpectralCoordinate(Database.getSpect_unit());
-//			boolean retour = ( this.findSpectralCoordinateInKeywords() ||  this.findSpectralCoordinateInColumns() || this.findSpectralCoordinateByWCS() ||
-//					this.findSpectralCoordinateInPixels());
-//			if( this.priority == PriorityMode.LAST ) {
-//				if( this.readUnit == null || this.readUnit.length() == 0) {
-//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the mapped unit <" + this.defaultUnit + ">");
-//					spectralCoordinate.setMappedUnit(this.defaultUnit);
-//				} else {
-//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Take the detected unit <" + this.readUnit + ">");
-//					spectralCoordinate.setMappedUnit(this.readUnit);
-//				}
-//			}
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Detected range " + spectralCoordinate.getOrgMin() + " " + spectralCoordinate.getOrgMax() + " " + spectralCoordinate.getMappedUnit());
-//			return retour;
 		} catch (SaadaException e) {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
-		return false;
+		return ;
 	}
 
 	/**
@@ -321,6 +308,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws FatalException
 	 */
 	public ColumnExpressionSetter getResPower() throws Exception{
+		this.detectAxeParams();
 		return (this.em_res_powerSetter == null)? new ColumnExpressionSetter("em_res_power"): this.em_res_powerSetter;
 		//		String fn = "em_res_power";
 		//		if( Messenger.debug_mode ) 
@@ -351,6 +339,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws Exception
 	 */
 	public ColumnExpressionSetter getEBins() throws Exception{
+		this.detectAxeParams();
 		return (this.em_binsSetter == null)? new ColumnExpressionSetter("em_bins"): this.em_binsSetter;
 	}
 
@@ -359,6 +348,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws SaadaException
 	 */
 	public ColumnExpressionSetter getEUnit() throws SaadaException{
+		this.detectAxeParams();
 		return (this.x_unit_orgSetter == null)? new ColumnExpressionSetter("x_unit_org"): this.x_unit_orgSetter;
 		//		if( spectralCoordinate == null ){
 		//			this.mapCollectionSpectralCoordinateAuto();
@@ -375,6 +365,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws SaadaException
 	 */
 	public ColumnExpressionSetter getEMax() throws SaadaException{
+		this.detectAxeParams();
 		return (this.em_maxSetter == null)? new ColumnExpressionSetter("emax"): this.em_maxSetter;
 		//		if( spectralCoordinate == null ){
 		//			this.mapCollectionSpectralCoordinateAuto();
@@ -391,6 +382,7 @@ public class EnergyKWDetector extends KWDetector {
 	 * @throws SaadaException
 	 */
 	public ColumnExpressionSetter getEMin() throws SaadaException {
+		this.detectAxeParams();
 		return (this.em_minSetter == null)? new ColumnExpressionSetter("emin"): this.em_minSetter;
 		//		if( spectralCoordinate == null ){
 		//			this.mapCollectionSpectralCoordinateAuto();

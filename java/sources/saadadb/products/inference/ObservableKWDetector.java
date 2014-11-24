@@ -43,7 +43,12 @@ public class ObservableKWDetector extends KWDetector {
 	 * DO a global search in metatdata: first in keyword a,d then in infos and comments
 	 * @throws Exception 
 	 */
-	private void search() throws Exception {
+	private void detectAxeParams() throws Exception {
+		if( isMapped ){
+			return;
+		}
+		this.isMapped = true;
+
 		this.searchInkeywords();
 		if( this.unit.isNotSet()){
 			this.searchInComments();
@@ -180,7 +185,7 @@ public class ObservableKWDetector extends KWDetector {
 	public ColumnExpressionSetter getUcdName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
-		this.search() ;
+		this.detectAxeParams() ;
 		return this.ucd;
 	}
 
@@ -191,7 +196,7 @@ public class ObservableKWDetector extends KWDetector {
 	public ColumnExpressionSetter getUnitName() throws Exception{
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable Unit");
-		this.search() ;
+		this.detectAxeParams() ;
 		return this.unit;
 	}
 	public ColumnExpressionSetter getCalibStatus() throws Exception{
@@ -201,7 +206,7 @@ public class ObservableKWDetector extends KWDetector {
 		//		Level 3: Enhanced data products like mosaics, resampled or drizzled images, or heavily processed survey fields. Level 3 data products may represent the combination of data from multiple primary observations.		
 		if( Messenger.debug_mode ) 
 			Messenger.printMsg(Messenger.DEBUG, "Search for the Observable calib status");
-		this.search() ;
+		this.detectAxeParams() ;
 		return this.calib;
 	}
 

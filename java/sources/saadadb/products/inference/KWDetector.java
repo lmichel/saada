@@ -33,6 +33,7 @@ public abstract class KWDetector {
 	 * WCS projection
 	 */
 	protected final Projection projection;
+	protected boolean isMapped = false;
 
 	/**
 	 * @param tableAttributeHandler
@@ -57,12 +58,13 @@ public abstract class KWDetector {
 	 */
 	public KWDetector(DataFile productFile, Projection projection) throws SaadaException {
 		if( productFile != null ) {
-			this.tableAttributeHandler = productFile.getAttributeHandler();
+			this.tableAttributeHandler = productFile.getAttributeHandlerCopy();
 			this.entryAttributeHandler =  productFile.getEntryAttributeHandler();
 		}
 		this.projection = projection;
 	}
 
+	
 	/**
 	 * Incorporate both search be UCD (first) and by column name in the table AttributeHandlers
 	 * @param fieldName

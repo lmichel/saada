@@ -39,18 +39,11 @@ public class QuantityDetector {
 	 * @param tableAttributeHandlers
 	 * @throws SaadaException 
 	 */
-	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers, List<String> comments, ProductMapping productMapping) throws SaadaException {
-		/*
-		 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
-		 */
-		try {
-			this.setWcsModeler(tableAttributeHandlers);	
-		} catch (SaadaException e) {
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		}
+	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
+			, List<String> comments
+			, ProductMapping productMapping
+			, Modeler wcsModeler) throws SaadaException {
+		this.wcsModeler = wcsModeler;
 		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, comments);
 		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers,this.wcsModeler, comments);						
 		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, this.wcsModeler, comments, productMapping);
@@ -66,22 +59,15 @@ public class QuantityDetector {
 	 * @throws SaadaException 
 	 */
 	public QuantityDetector(Map<String, AttributeHandler> tableAttributeHandlers
-			, Map<String, AttributeHandler> entryAttributeHandlers, List<String> comments
-			, ProductMapping productMapping, DataFile productFile) throws SaadaException {
-		/*
-		 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
-		 */
-		try {
-			this.setWcsModeler(tableAttributeHandlers);	
-		} catch (SaadaException e) {
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, e);
-		}
+			, Map<String, AttributeHandler> entryAttributeHandlers
+			, List<String> comments
+			, ProductMapping productMapping
+			, Modeler wcsModeler) throws SaadaException {
+
+		this.wcsModeler = wcsModeler;
 		this.observableKWDetector   = new ObservableKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.timeKWDetector         = new TimeKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments);
-		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments, productMapping, productFile);
+		this.energyKWDetector       = new EnergyKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments, productMapping);
 		this.spaceKWDetector        = new SpaceKWDetector(tableAttributeHandlers, entryAttributeHandlers, this.wcsModeler, comments);
 		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, this.wcsModeler, comments);
@@ -89,15 +75,6 @@ public class QuantityDetector {
 		this.productMapping = productMapping;
 	}
 
-	/**
-	 * @param tableAttributeHandlers
-	 * @throws Exception
-	 */
-	private void setWcsModeler(Map<String, AttributeHandler> tableAttributeHandlers) throws Exception{
-		CardMap cm = new CardMap(new HashSet<CardDescriptor>(tableAttributeHandlers.values()));
-		LibLog.setLogger(new MessengerLogger());
-		this.wcsModeler = new Modeler(cm);			
-	}
 	/*
 	 * Observation axis
 	 */
