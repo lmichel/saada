@@ -29,19 +29,24 @@ public class PolarizationKWDetector extends KWDetector {
 	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
-		this.mapPolarization();
 	}
 	public PolarizationKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.POLARIZATION));
 		this.comments = (comments == null)? new ArrayList<String>(): comments;
-		this.mapPolarization();
 	}
 	
-	private boolean mapPolarization() throws SaadaException {	
+	/**
+	 * @throws SaadaException
+	 */
+	private void detectAxeParams() throws SaadaException {	
+		if( isMapped ){
+			return;
+		}
+		this.isMapped = true;
 		try {
 			if( this.findPolarizationByWCS()  ) {
-				return true;
+				return;
 			}
 		} catch (SaadaException e) {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
@@ -49,7 +54,7 @@ public class PolarizationKWDetector extends KWDetector {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
-		return false;
+		return;
 	}
 
 	
@@ -75,6 +80,7 @@ public class PolarizationKWDetector extends KWDetector {
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getPolarizationStates() throws Exception{
+		this.detectAxeParams();
 		return (this.polStateSetter == null)? new ColumnExpressionSetter("pol_states"): this.polStateSetter;
 	}
 

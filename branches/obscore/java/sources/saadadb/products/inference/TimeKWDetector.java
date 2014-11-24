@@ -6,8 +6,6 @@ import hecds.wcs.types.AxeType;
 import java.util.List;
 import java.util.Map;
 
-import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -17,10 +15,8 @@ import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
 import saadadb.util.RegExpMatcher;
 import saadadb.vocabulary.RegExp;
-import saadadb.util.SaadaConstant;
 
 public class TimeKWDetector extends KWDetector {
-	private double timeref = SaadaConstant.DOUBLE;
 	private ColumnExpressionSetter tminSetter;
 	private ColumnExpressionSetter tmaxSetter;
 	private ColumnExpressionSetter exptimeSetter;
@@ -33,7 +29,6 @@ public class TimeKWDetector extends KWDetector {
 	 */
 	public TimeKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.TIME));
-		this.mapCollectionSpectralCoordinateAuto();
 	}
 	/**
 	 * @param tableAttributeHandler
@@ -45,7 +40,6 @@ public class TimeKWDetector extends KWDetector {
 	public TimeKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> entryAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, entryAttributeHandler, wcsModeler.getProjection(AxeType.TIME));
-		this.mapCollectionSpectralCoordinateAuto();
 	}
 
 
@@ -53,10 +47,14 @@ public class TimeKWDetector extends KWDetector {
 	 * @return
 	 * @throws SaadaException
 	 */
-	private boolean mapCollectionSpectralCoordinateAuto() throws SaadaException {	
+	private void detectAxeParams() throws SaadaException {	
+		if( isMapped ){
+			return;
+		}
+		this.isMapped = true;
 		try {
 			if( this.findTimeRangeByWCS() ||  this.findTimeRangeInColumns() || this.findTimeRangeInKeywords()  ) {
-				return true;
+				return;
 			}
 		} catch (SaadaException e) {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
@@ -64,7 +62,7 @@ public class TimeKWDetector extends KWDetector {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
-		return false;
+		return;
 	}
 
 	/**
@@ -210,6 +208,7 @@ public class TimeKWDetector extends KWDetector {
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getTMin() throws Exception{
+		this.detectAxeParams();
 		System.out.println(this.tminSetter);
 		return (this.tminSetter == null)? new ColumnExpressionSetter("t_min"): this.tminSetter;
 	}
@@ -219,6 +218,7 @@ public class TimeKWDetector extends KWDetector {
 	 * @throws Exception
 	 */
 	public ColumnExpressionSetter getTMax() throws Exception{
+		this.detectAxeParams();
 		return (this.tmaxSetter == null)? new ColumnExpressionSetter("t_max"): this.tmaxSetter;
 	}
 	/**
@@ -226,12 +226,15 @@ public class TimeKWDetector extends KWDetector {
 	 * @throws Exception
 	 */
 	public ColumnExpressionSetter getExpTime() throws Exception{
+		this.detectAxeParams();
 		return (this.exptimeSetter == null)? new ColumnExpressionSetter("t_exptime"): this.exptimeSetter;
 	}
 	/**
 	 * @return
+	 * @throws SaadaException 
 	 */
-	public ColumnExpressionSetter getExposureName(){
+	public ColumnExpressionSetter getExposureName() throws SaadaException{
+		this.detectAxeParams();
 		return null;
 	}
 
