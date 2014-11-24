@@ -1,9 +1,11 @@
 package saadadb.command;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1745,4 +1747,39 @@ public class ArgsParser implements Serializable{
 		return retour;
 	}
 
+	/**
+	 * Write the args in an ASCII file, one param per line
+	 * @param fullPath  full pathname of the file
+	 * @throws Exception
+	 */
+	public void save(String fullPath)throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Save ArgsParser in " + fullPath);
+		FileWriter fw = new FileWriter(fullPath);
+		BufferedWriter bw = new BufferedWriter(fw); 
+		for( String str: args){
+			bw.write(str + "\n");
+		}
+		bw.close();
+	}
+	
+	/**
+	 * Read the fullPath file and built an new ArgsParser instance
+	 * This is a low level function, no format checking is done
+	 * @param fullPath full pathname of the file
+	 * @return the new ArgsParser instance 
+	 * @throws Exception
+	 */
+	public static ArgsParser load(String fullPath) throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Load ArgsParser from " + fullPath);
+		ArrayList<String> args = new ArrayList<String>();
+		FileReader fr = new FileReader(fullPath);
+		BufferedReader br = new BufferedReader(fr); 
+		String s;
+		while((s = br.readLine()) != null) {
+			args.add(s.trim());
+		}
+		br.close();
+		return new ArgsParser(args.toArray(new String[args.size()]));
+		
+	}
 }
