@@ -231,7 +231,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * Update or build the class modeling the set of products to load
 		 */
 		SQLTable.beginTransaction();
-		makeClassFusion();
+		this.makeClassFusion();
 		SQLTable.commitTransaction();
 
 		/*
@@ -256,10 +256,10 @@ public class SchemaFusionMapper extends SchemaMapper {
 System.out.println("===========================================================");
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
 			DataFile file = this.dataFiles.get(i);
-			if( i>1 ) {
-				System.out.println("@@@@@@@@@@@@@ BREAK");
-				break;
-			}
+//			if( i>1 ) {
+//				System.out.println("@@@@@@@@@@@@@ BREAK");
+//				break;
+//			}
 			/*
 			 * Instantiate the builder at the first loop. The collection attribute mapping is done here
 			 * It will be applied for all data products

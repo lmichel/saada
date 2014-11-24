@@ -181,7 +181,6 @@ public class FieldShaker {
 	 * @throws Exception
 	 */
 	protected void processAll() throws Exception {
-		Messenger.debug_mode = true;
 		for( String key: this.fooProducts.keySet() ) {
 			Messenger.printMsg(Messenger.TRACE, "************ Processing " + key);
 			this.process(key);

@@ -12,6 +12,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.DataFile;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
@@ -66,20 +67,19 @@ public class ProductListReport {
 				if( cpt == MAX ) {
 					System.out.println(f + " " + f.exists());
 					ProductBuilder product = null;
+					DataFile df = new FitsDataFile(f.getAbsolutePath());
 					switch( Category.getCategory(ap.getCategory()) ) {
-					case Category.TABLE: product = new TableBuilder((new FitsDataFile(f.getAbsolutePath()))
+					case Category.TABLE: product = new TableBuilder(df
 							, new ProductMapping("mapping", ap));
 					break;
-					case Category.MISC : product = new MiscBuilder((new FitsDataFile(f.getAbsolutePath()))
-							, new ProductMapping("mapping", ap));
+					case Category.MISC : product = new MiscBuilder(df, new ProductMapping("mapping", ap));
 					break;
-					case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(f.getAbsolutePath()))
-							, new ProductMapping("mapping", ap));
+					case Category.SPECTRUM: product = new SpectrumBuilder(df, new ProductMapping("mapping", ap));
 					break;
-					case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(f.getAbsolutePath()))
-							, new ProductMapping("mapping", ap));
+					case Category.IMAGE: product = new Image2DBuilder(df, new ProductMapping("mapping", ap));
 					break;
 					}
+					product.mapDataFile();
 					product.writeCompleteReport(f.getParent() + "/report/", ap);
 					break;
 				}

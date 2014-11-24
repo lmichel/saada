@@ -311,6 +311,7 @@ public abstract class ParamShaker {
 		case Category.IMAGE: product = new Image2DBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
 		break;
 		}
+		product.mapDataFile(this.fooProduct);
 		Map<String, ColumnSetter> r = product.getReport();
 		Map<String, ColumnSetter> er = product.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
@@ -337,7 +338,6 @@ public abstract class ParamShaker {
 	 * @throws Exception
 	 */
 	protected void processAll() throws Exception {
-		Messenger.debug_mode = true;
 		boolean itemFound = false;
 		if( this.itemToProcess == null ||  this.itemToProcess.endsWith("FirstWithGoodMParams")) {
 			itemFound = true;
