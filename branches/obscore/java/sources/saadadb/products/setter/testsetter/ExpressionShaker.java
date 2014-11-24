@@ -73,7 +73,7 @@ public class ExpressionShaker {
 	{
 		List<AttributeHandler> values = new ArrayList<AttributeHandler>();
 		Map<String,AttributeHandler> mah;
-		mah=fooProduct.getAttributeHandler();
+		mah=fooProduct.getAttributeHandlerCopy();
 		values.add(mah.get("_emin"));
 		values.add(mah.get("_emax"));
 		report.add("-ValidKeywordTest result : "+keywordsTest("(_emin+_emax)/2+10",values));
@@ -160,7 +160,7 @@ public class ExpressionShaker {
 	{
 		List<AttributeHandler> values = new ArrayList<AttributeHandler>();
 		Map<String,AttributeHandler> mah;
-		mah=fooProduct.getAttributeHandler();
+		mah=fooProduct.getAttributeHandlerCopy();
 		values.add(mah.get("_emin"));
 		//values.add(mah.get("_emax"));
 		report.add("-MissingKeywordsTest result : "+keywordsTest("(_emin+_emax)/2+10",values));
@@ -174,7 +174,7 @@ public class ExpressionShaker {
 	{
 		List<AttributeHandler> values = new ArrayList<AttributeHandler>();
 		Map<String,AttributeHandler> mah;
-		mah=fooProduct.getAttributeHandler();
+		mah=fooProduct.getAttributeHandlerCopy();
 		values.add(mah.get("_emin"));
 		values.add(mah.get("_emax"));
 		report.add("-TooMuchAttributesTest result : "+keywordsTest("_emax/2+10",values));	
@@ -203,7 +203,7 @@ public class ExpressionShaker {
 	{
 		List<AttributeHandler> values = new ArrayList<AttributeHandler>();
 		Map<String,AttributeHandler> mah;
-		mah=fooProduct.getAttributeHandler();
+		mah=fooProduct.getAttributeHandlerCopy();
 		values.add(mah.get("_ra"));
 		report.add("-TooMuchAttributesTest result : "+keywordsTest("_ra/2+10",values));	
 	}
