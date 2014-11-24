@@ -315,7 +315,7 @@ public class Database {
 			ResultSet rs = squery.run(sql);
 			if (rs.next()) {
 				obj.oidsaada = rs.getLong("oidsaada");
-				obj.obs_id = rs.getString("namesaada").trim();
+				obj.obs_id = rs.getString("obs_id").trim();
 				String sm = rs.getString("md5keysaada");
 				/*
 				 * ObsCOre obj have no MD5
