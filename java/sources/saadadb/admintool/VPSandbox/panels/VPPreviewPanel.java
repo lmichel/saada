@@ -115,16 +115,16 @@ public class VPPreviewPanel extends JPanel {
 		ProductBuilder product = null;
 		switch( Category.getCategory(ap.getCategory()) ) {
 		case Category.TABLE: product = new TableBuilder((new FitsDataFile(file.getAbsolutePath()))
-				, new ProductMapping("mapping", ap));
+				, new ProductMapping("mapping", ap), null);
 				break;
 		case Category.MISC : product = new MiscBuilder((new FitsDataFile(file.getAbsolutePath()))
-				, new ProductMapping("mapping", ap));
+				, new ProductMapping("mapping", ap), null);
 				break;
 		case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(file.getAbsolutePath()))
-				, new ProductMapping("mapping", ap));
+				, new ProductMapping("mapping", ap), null);
 				break;
 		case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(file.getAbsolutePath()))
-				, new ProductMapping("mapping", ap));
+				, new ProductMapping("mapping", ap), null);
 				break;
 		}
 		Map<String, ColumnSetter> r = product.getReport();
