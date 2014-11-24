@@ -54,6 +54,9 @@ public class LoaderConfigChooser extends JPanel {
 	private JButton editConf = new JButton("Edit Selected Filter");
 	private JButton newConf = new JButton("New Loader Filter");
 
+	/**
+	 * @param taskPanel
+	 */
 	public LoaderConfigChooser(AdminPanel taskPanel) {
 		this.taskPanel = taskPanel;
 		this.confList.setVisibleRowCount(15);
@@ -144,22 +147,7 @@ public class LoaderConfigChooser extends JPanel {
 					argsParser = null;
 					if( !filterName.equals("Default") ) {
 						try {
-							ArrayList<String> args = new ArrayList<String>();
-							FileReader fr = new FileReader(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
-							BufferedReader br = new BufferedReader(fr); 
-							//ObjectInputStream in = new ObjectInputStream(fis);
-							String s;
-							while((s = br.readLine()) != null) {
-								args.add(s);
-							}
-							br.close();
-							argsParser = new ArgsParser(args.toArray(new String[args.size()]));
-							//in.close();
-							
-							//FileInputStream fis = new FileInputStream(CONF_DIR + File.separator + category + "."  + filterName + ".config" );
-							//ObjectInputStream in = new ObjectInputStream(fis);
-//							argsParser = (ArgsParser)in.readObject();
-//							in.close();
+							argsParser = ArgsParser.load(CONF_DIR + File.separator + category + "."  + filterName + ".config");
 						} catch(Exception ex) {
 							AdminComponent.showFatalError(LoaderConfigChooser.this.taskPanel.rootFrame, ex);
 							return;
