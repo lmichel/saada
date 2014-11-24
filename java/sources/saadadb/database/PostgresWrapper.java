@@ -682,9 +682,9 @@ public class PostgresWrapper extends DbmsWrapper {
 	public Map<String, String> getConditionHelp(){
 		Map<String, String> helpItems = new LinkedHashMap<String, String>();
 		helpItems.put("- Join Operator Templates -", "");
-		helpItems.put("Partial comparison of names", "substr(p.namesaada, 1, 5) = substr(s.namesaada, 1, 5) ");
+		helpItems.put("Partial comparison of names", "substr(p.obs_id, 1, 5) = substr(s.obs_id, 1, 5) ");
 		helpItems.put("Row number equality"        , "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
-		helpItems.put("Regular expression op", "p.namesaada " + this.getRegexpOp() + " 'RegExp'");
+		helpItems.put("Regular expression op", "p.obs_id " + this.getRegexpOp() + " 'RegExp'");
 		helpItems.put("Same sky pixel", "p.sky_pixel_csa = s.sky_pixel_csa");
 		return helpItems;
 	}
