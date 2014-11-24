@@ -122,6 +122,16 @@ public class Messenger implements Serializable{
 	public static PrintStream getOutput() {
 		return output;
 	}
+	
+	/**
+	 * @return
+	 */
+	public static boolean isDebugOn(){
+		return debug_mode;
+	}
+	/**
+	 * 
+	 */
 	public static void switchDebugOn() {
 		Messenger.printMsg(Messenger.TRACE, "Debug mode on");
 		Messenger.debug_mode = true;
