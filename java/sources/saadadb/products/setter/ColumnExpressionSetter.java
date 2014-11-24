@@ -657,7 +657,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setValue(double value, String unit) {
 		this.storedValue = this.result = String.valueOf(value);;	
-		this.setUnit(unit);
+	//	this.setUnit(unit);
 		this.storedValue = value;
 	}
 

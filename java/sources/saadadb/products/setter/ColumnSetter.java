@@ -360,7 +360,7 @@ public abstract class ColumnSetter implements Cloneable {
 	public ColumnSetter setConvertedValue(String value, String unitOrg, String unitDest, boolean addMessage) {
 		if( addMessage ) this.completeMessage("Converted from " + unitOrg + " to "  + unitDest);
 		this.setValue(value);
-		this.setUnit(unitDest);
+		//this.setUnit(unitDest);
 		return this;
 	}
 
