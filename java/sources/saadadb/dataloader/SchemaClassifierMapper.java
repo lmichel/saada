@@ -64,7 +64,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			 * Build the Saada Product instance
 			 */
 			try {
-				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file);				
+				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);				
 				Messenger.printMsg(Messenger.TRACE, "Build the Saada instance modeling <" + currentProductBuilder.getName()+ ">");
 				//this.currentProductBuilder.initProductFile();
 			} catch(IgnoreException e) {

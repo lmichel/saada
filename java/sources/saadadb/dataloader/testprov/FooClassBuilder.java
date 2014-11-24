@@ -151,7 +151,7 @@ public class FooClassBuilder {
 			Database.cachemeta.reload(true);
 			product.setMetaclass(Database.getCachemeta().getClass(ap.getClassName()));
 			SQLTable.beginTransaction();
-			product.loadValue();
+			product.loadProduct();
 			SQLTable.commitTransaction();
 		}
 		DatabaseConnection connection =  Database.getConnection();

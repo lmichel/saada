@@ -49,7 +49,7 @@ public class FlatFileMapper extends SchemaMapper {
 			@SuppressWarnings("rawtypes")
 			Class                  cls = SaadaClassReloader.forGeneratedName("FLATFILEUserColl");
 			SaadaInstance           si = (SaadaInstance) cls.newInstance();
-			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductBuilderInstance(this.dataFiles.get(0)));
+			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductBuilderInstance(this.dataFiles.get(0), null));
 			Collection<AttributeHandler> it  = MetaCollection.getAttribute_handlers_flatfile().values(); 
 
 			ffp.mapIgnoredAndExtendedAttributes();

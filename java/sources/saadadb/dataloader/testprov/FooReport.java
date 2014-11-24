@@ -158,7 +158,7 @@ public class FooReport {
 				((EntryIngestor) eb.productIngestor).mapIndirectionTables();
 				line++;
 			}
-			eb.productIngestor.bindInstanceToFile(null);
+			eb.productIngestor.bindInstanceToFile();
 			eb.productIngestor.showCollectionValues();
 		}
 	}

@@ -33,7 +33,7 @@ public class LoadSpecgtrum {
 					, "Obscore"});
 
 			ProductBuilder product = new ProductBuilder(new FitsDataFile("/home/michel/Desktop/ADASS2008/data_sample/EPIC Spectra/P0205010201PNS003SRSPEC0003.FIT")
-			, new ProductMapping("mapping", ap));
+			, new ProductMapping("mapping", ap), null);
 			product.initProductFile();
 			product.printReport();
 			System.exit(1);
