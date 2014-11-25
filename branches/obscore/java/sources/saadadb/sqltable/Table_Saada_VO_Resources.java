@@ -23,9 +23,9 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	 */
 	public static  void createTable(SaadaDBConnector connector) throws Exception {
 		SQLTable.createTable("saada_vo_resources", "pk " + Database.getWrapper().getSerialToken() 
-				+ ", resource text, field_group text, nickname text , utype text, ucd text, type text, expression " 
-				+ Database.getWrapper().getIndexableTextType() + " DEFAULT 'char', arraysize " 
+				+ ", resource text, field_group text, nickname text , utype text, ucd text, type text DEFAULT 'char', arraysize " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '*', hidden boolean DEFAULT false, value " 
+				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '', expression " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '', description " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT ''"
 				, "pk"
@@ -165,55 +165,51 @@ public class Table_Saada_VO_Resources extends SQLTable {
 		+ ", '" + group + "'";
 		if( uth.getNickname() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getNickname()) + "'";
-		}
-		else {
+		} else {
 			query += ", null";
-		}		
+		}
+		
 		if( uth.getUtype() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getUtype()) + "'";
-		}
-		else {
+		} else {
 			query += ", null";
 		}
+		
 		if( uth.getUcd() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getUcd()) + "'";
-		}
-		else {
+		} else {
 			query += ", null";
 		}
+		
 		if( uth.getType() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getType()) + "'";
-		}
-		else {
+		} else {
 			query += ", null";
 		}
+		
 		if( uth.getArraysize() == -1 ) {
 			query += ", '*'";
-		}
-		else {
+		} else {
 			query += ", '" +  uth.getArraysize() + "'";
 		} 		
 		query += ", " +  Database.getWrapper().getBooleanAsString(uth.isHidden());		
 		if( uth.getValue() != null ) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getValue()) + "'";
-		}
-		else {
+		} else {
 			query += ", ''";
 
 		}
-		if( uth.getComment() != null ) {
-			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getComment()) + "'";
-		}
-		else {
-			query += ", ''";
-
-		}
-		//TODO ADD support  to the new field "expression"
 		if(uth.getExpression() != null) {
 			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getExpression()) + "'";
-		}
-		else {
+		} else {
 			query += ", ''";
+		}
+
+		if( uth.getComment() != null ) {
+			query += ", '" +  Database.getWrapper().getEscapeQuote(uth.getComment()) + "'";
+		} else {
+			query += ", ''";
+
 		}
 		SQLTable.addQueryToTransaction(query + ")", "saada_vo_resources");
 	}
