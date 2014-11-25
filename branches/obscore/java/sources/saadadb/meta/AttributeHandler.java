@@ -507,7 +507,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				+ "\t" + this.ucd
 				+ "\t" + this.utype
 				+ "\t" + this.vo_dm
-				+ "\t"  + "null"
+				+ "\t-1" 
 				+ "\t"   + Database.getWrapper().getBooleanAsString(this.queriable)
 				+ "\t"  + this.unit
 				+ "\t" + this.comment.replaceAll("'", "")
