@@ -16,9 +16,12 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.DataFile;
 import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
+import saadadb.products.datafile.AnyFile;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
@@ -41,7 +44,7 @@ public abstract class SchemaMapper {
 	protected ProductMapping mapping;
 	private static String class_location;
 	private static String package_name;
-	protected List<DataFile> dataFiles;
+	protected List<String> dataFiles;
 	protected ProductBuilder currentProductBuilder;
 	protected MetaClass currentClass;
 	protected SchemaMapper entryMapper = null;
@@ -65,7 +68,7 @@ public abstract class SchemaMapper {
 	 * @param products
 	 * @param handler
 	 */
-	public SchemaMapper(Loader loader, List<DataFile> products, ProductMapping mapping) {
+	public SchemaMapper(Loader loader, List<String> products, ProductMapping mapping) {
 		this.loader = loader;
 		this.mapping = mapping;
 		this.dataFiles = products;
@@ -339,7 +342,27 @@ public abstract class SchemaMapper {
 		return this.currentClass;
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	protected void updateSchemaForProduct() throws Exception {
 		FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "schemaMapper.updateSchemaForProduct should never be invoked");
 	}
+	
+	/**
+	 * Create an appropriate DataFile from the file name 
+	 * @param fullPath
+	 * @return the datafile
+	 * @throws Exception
+	 */
+	protected DataFile getDataFileInstance(String fullPath) throws Exception {
+		if( fullPath.matches(RegExp.FITS_FILE) ) {
+			return(new FitsDataFile(fullPath));
+		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
+			return(new VOTableDataFile(fullPath));
+		} else {
+			return(new AnyFile(fullPath));
+		}		
+	}
+
 }
