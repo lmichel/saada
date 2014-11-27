@@ -12,7 +12,10 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.setter.ColumnSetter;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.util.Messenger;
 
 /**
@@ -24,7 +27,7 @@ public class TableBuilder extends ProductBuilder {
 	private static final long serialVersionUID = 1L;
 	/** The identification number of this table in data base* */
 	protected long oid;
-	protected EntryBuilder entryBuilder;
+	public EntryBuilder entryBuilder;
 
 	/**
 	 * @param productFile
@@ -221,34 +224,6 @@ public class TableBuilder extends ProductBuilder {
 			}
 		}
 		this.entryBuilder.setFmtsignature();   
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#getEntryReport()
-	 */
-	@Override
-	public Map<String, ColumnSetter> getEntryReport() throws Exception {
-		return this.entryBuilder.getReport();
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#getReport()
-	 */
-	@Override
-	public Map<String, ColumnSetter> getReport() throws Exception {
-		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-		retour = super.getReport();
-		retour.putAll(this.entryBuilder.getReport());
-		return retour;
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#printReport()
-	 */
-	@Override
-	public void printReport() throws Exception {
-		super.printReport();
-		this.entryBuilder.printReport();
 	}
 
 }
