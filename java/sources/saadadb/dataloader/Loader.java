@@ -14,10 +14,10 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.AnyFile;
-import saadadb.products.DataFile;
-import saadadb.products.FitsDataFile;
-import saadadb.products.VOTableDataFile;
+import saadadb.products.datafile.AnyFile;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
@@ -33,7 +33,7 @@ public class Loader extends SaadaProcess {
 	 * COnfiguration used by  the current loading session
 	 */
 	private ProductMapping productMapping;
-	private ArrayList<DataFile> filesToBeLoaded = null;
+	private ArrayList<String> filesToBeLoaded = null;
 
 	private ArgsParser tabArg;
 	/**
@@ -162,7 +162,7 @@ public class Loader extends SaadaProcess {
 	 * @throws AbortException 
 	 */
 	public void setCandidateFileList() throws Exception {
-		this.filesToBeLoaded = new ArrayList<DataFile>();
+		this.filesToBeLoaded = new ArrayList<String>();
 		String filename = this.tabArg.getFilename();
 		String filter = this.tabArg.getFilter();
 		if( filename ==  null || filename.equals("")) {
@@ -188,7 +188,7 @@ public class Loader extends SaadaProcess {
 		 */ 
 		else if( requested_file.isDirectory() ) {
 			String[] dir_content = requested_file.list();
-			this.filesToBeLoaded = new ArrayList<DataFile>(dir_content.length);
+			this.filesToBeLoaded = new ArrayList<String>(dir_content.length);
 			if( dir_content.length == 0 ) {
 				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
 				return;
@@ -228,11 +228,11 @@ public class Loader extends SaadaProcess {
 	 */
 	private void addDataFile(String fullPath) throws Exception {
 		if( fullPath.matches(RegExp.FITS_FILE) ) {
-			this.filesToBeLoaded.add(new FitsDataFile(fullPath));
+			this.filesToBeLoaded.add(fullPath);
 		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
-			this.filesToBeLoaded.add(new VOTableDataFile(fullPath));
+			this.filesToBeLoaded.add(fullPath);
 		} else {
-			this.filesToBeLoaded.add(new AnyFile(fullPath));
+			this.filesToBeLoaded.add(fullPath);
 		}		
 	}
 
@@ -302,7 +302,7 @@ public class Loader extends SaadaProcess {
 	 */
 	public void setFileToLoad(ArrayList<String> file_to_load) throws Exception {
 		String base_dir = this.tabArg.getFilename();
-		this.filesToBeLoaded = new ArrayList<DataFile>();
+		this.filesToBeLoaded = new ArrayList<String>();
 		for( String f: file_to_load) {
 			File cf = new File(base_dir + Database.getSepar() + f);
 			if( cf.exists() && !cf.isDirectory() ) {

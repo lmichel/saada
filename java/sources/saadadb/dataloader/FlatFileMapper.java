@@ -16,8 +16,8 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
-import saadadb.products.DataFile;
 import saadadb.products.FlatFileBuilder;
+import saadadb.products.datafile.DataFile;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 
@@ -31,7 +31,7 @@ import saadadb.util.Messenger;
 public class FlatFileMapper extends SchemaMapper {
 
 
-	public FlatFileMapper(Loader loader, List<DataFile> products,
+	public FlatFileMapper(Loader loader, List<String> products,
 			ProductMapping productMapping) {
 		super(loader, products, productMapping);
 		Messenger.setMaxProgress(-1);
@@ -49,7 +49,7 @@ public class FlatFileMapper extends SchemaMapper {
 			@SuppressWarnings("rawtypes")
 			Class                  cls = SaadaClassReloader.forGeneratedName("FLATFILEUserColl");
 			SaadaInstance           si = (SaadaInstance) cls.newInstance();
-			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductBuilderInstance(this.dataFiles.get(0), null));
+			FlatFileBuilder               ffp = (FlatFileBuilder)(this.mapping.getNewProductBuilderInstance(this.getDataFileInstance(this.dataFiles.get(0)), null));
 			Collection<AttributeHandler> it  = MetaCollection.getAttribute_handlers_flatfile().values(); 
 
 			ffp.mapIgnoredAndExtendedAttributes();
@@ -64,7 +64,8 @@ public class FlatFileMapper extends SchemaMapper {
 			 */
 			long oid = SaadaOID.newFlatFileOid(this.mapping.getCollection());
 			int line=0;
-			for( DataFile file: this.dataFiles) {
+			for( String fn: this.dataFiles) {
+				DataFile file = this.getDataFileInstance(fn);
 				si.oidsaada = oid++;
 				ffp.bindInstanceToFile(si, file);
 				ffp.storeCopyFileInRepository();

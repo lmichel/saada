@@ -20,10 +20,10 @@ import saadadb.generationclass.GenerationClassProduct;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
-import saadadb.products.DataFile;
 import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.DataFile;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.Table_Saada_Metacat;
@@ -36,7 +36,7 @@ import saadadb.vocabulary.enums.ClassifierMode;
  */
 public class SchemaFusionMapper extends SchemaMapper {
 
-	public SchemaFusionMapper(Loader loader, ArrayList<DataFile> dataFiles, ProductMapping mapping) {
+	public SchemaFusionMapper(Loader loader, ArrayList<String> dataFiles, ProductMapping mapping) {
 		super(loader, dataFiles, mapping);
 		Messenger.setMaxProgress((2*dataFiles.size()) + 2);
 	}
@@ -61,7 +61,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 */
 		this.currentProductBuilder = null;
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
-			DataFile dataFile = this.dataFiles.get(i);
+			DataFile dataFile = getDataFileInstance(this.dataFiles.get(i));
 			Messenger.printMsg(Messenger.TRACE, "Update class for product <" + dataFile.getName() + "> ");
 			if( this.currentProductBuilder == null ) {
 				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(dataFile, this.currentClass);
@@ -114,7 +114,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.createClassFromProduct(ClassifierMode.CLASS_FUSION);		
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
 				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
 				this.entryMapper.currentClass = this.entryMapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
@@ -129,7 +129,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			this.updateSchemaForProduct();
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
-				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
 				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
 				this.entryMapper.updateSchemaForProduct();	
 				SQLTable.beginTransaction();
@@ -169,11 +169,11 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.dropTableIndex(this.currentClass.getName(), null);
 
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
-			DataFile file = this.dataFiles.get(i);
+			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
 			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
 			if( this.entryMapper != null ) {	
-				EntryBuilder entr = ((TableBuilder) currentProductBuilder).getEntry();
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
 				this.entryMapper.setProduct(entr);
 			}
 			try {
@@ -255,7 +255,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		BufferedWriter loadedtmpfile = new BufferedWriter(new FileWriter(loadedfile));
 System.out.println("===========================================================");
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
-			DataFile file = this.dataFiles.get(i);
+			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
 //			if( i>1 ) {
 //				System.out.println("@@@@@@@@@@@@@ BREAK");
 //				break;
@@ -266,7 +266,7 @@ System.out.println("==========================================================="
 			 */
 			if( i == 0 ){
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used far the whole data burst");
+					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used for the whole data burst");
 				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 				this.currentProductBuilder.setMetaclass(this.currentClass);
 				System.out.println("========= NEW PORDUCT OK");
