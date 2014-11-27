@@ -62,7 +62,7 @@ public class EnergyMapping extends AxisMapping {
 						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The spectral range <" + sc_col + "> requires 2 values");
 					}
 				} else {
-					this.columnMapping.put("dispertion_column", new ColumnMapping(MappingMode.ATTRIBUTE, null, sc_col, "dispertion_column"));
+					this.columnMapping.put("dispertion_column", new ColumnMapping(MappingMode.KEYWORD, null, sc_col, "dispertion_column"));
 				}	
 			}
 		}

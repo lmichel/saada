@@ -297,44 +297,8 @@ public abstract class ColumnSetter implements Cloneable {
 	 */
 	public ColumnSetMode getSettingMode() {
 		return settingMode;
-		//		return (settingMode == ColumnSetMode.BY_KEYWORD)? "BY_KEYWORD" :
-		//			   (settingMode == ColumnSetMode.BY_PIXELS)? "BY_PIXELS" :
-		//			   (settingMode == ColumnSetMode.BY_TABLE_COLUMN)? "BY_TABLE_COLUMN" :
-		//			   (settingMode == ColumnSetMode.BY_VALUE)? "BY_VALUE" :
-		//			   (settingMode == ColumnSetMode.BY_SAADA)? "BY_SAADA" :
-		//			   (settingMode == ColumnSetMode.BY_WCS)? "BY_WCS" : "NOT_SET";
 	}
 
-	/**
-	 * Returns a clone of the current instance but with value/unit changed
-	 * and a message mentioning the conversion 
-	 * @param value
-	 * @param unit
-	 * @return
-	 */
-//	public ColumnSetter getConverted(double value, String unitOrg, String unitDest, boolean addMessage) {
-//		ColumnSetter retour;
-//		try {
-//			retour = (ColumnSetter) this.clone();
-//			if( addMessage ) retour.completeMessage(" Converted from " + unitOrg + " to "  + unitDest);
-//			retour.setValue(value, unitDest);
-//			return retour;
-//		} catch (CloneNotSupportedException e) {
-//			return null;
-//		}
-//	}
-//	public ColumnSetter getConverted(String value, String unitOrg, String unitDest, boolean addMessage) {
-//		ColumnSetter retour;
-//		try {
-//			retour = (ColumnSetter) this.clone();
-//			if( addMessage ) retour.completeMessage(" Converted from " + unitOrg + " to "  + unitDest);
-//			retour.setValue(value);
-//			retour.setUnit(unitDest);
-//			return retour;
-//		} catch (CloneNotSupportedException e) {
-//			return null;
-//		}
-//	}
 
 	/**
 	 * Set value to the instance value with on demand a message mentioning the conversion
@@ -345,7 +309,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public ColumnSetter setConvertedValue(double value, String unitOrg, String unitDest, boolean addMessage) {
-		if( addMessage ) this.completeMessage("Converted from " + unitOrg + " to "  + unitDest);
+		if( addMessage ) this.replaceMessageTail("Converted", "Converted from " + unitOrg + " to "  + unitDest);
 		this.setValue(value, unitDest);
 		return this;
 	}
@@ -358,12 +322,25 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public ColumnSetter setConvertedValue(String value, String unitOrg, String unitDest, boolean addMessage) {
-		if( addMessage ) this.completeMessage("Converted from " + unitOrg + " to "  + unitDest);
+		if( addMessage ) this.replaceMessageTail("Converted", "Converted from " + unitOrg + " to "  + unitDest);
 		this.setValue(value);
 		//this.setUnit(unitDest);
 		return this;
 	}
 
+	/**
+	 * Replace the tail of the instance message, starting with marker with message
+	 * @param marker
+	 * @param message
+	 */
+	private void replaceMessageTail(String marker, String message){
+		int pos = this.message.indexOf(marker);
+		if( pos == -1){
+			this.completeMessage(message);
+		} else {
+			this.message.replace(pos,  this.message.length(), message);
+		}
+	}
 	/**
 	 * @throws Exception
 	 */

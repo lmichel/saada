@@ -181,7 +181,7 @@ public class ProductBuilder {
 		try {
 			this.bindDataFile(dataFile);
 			this.setQuantityDetector();
-			} catch (Exception e) {
+		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
@@ -327,13 +327,13 @@ public class ProductBuilder {
 		}
 		this.setProductIngestor();
 		if( this.productAttributeHandler != null )
-		System.out.println("@@@@@@@@@@@@@ bindDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+			System.out.println("@@@@@@@@@@@@@ bindDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.dataFile.bindBuilder(this);
 		if( this.productAttributeHandler != null )
-		System.out.println("@@@@@@@@@@@@@ bindDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+			System.out.println("@@@@@@@@@@@@@ bindDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.setFmtsignature();
 	}
-	
+
 	/**
 	 * @param dataFile
 	 * @throws Exception
@@ -346,7 +346,7 @@ public class ProductBuilder {
 		this.mapCollectionAttributes();
 		System.out.println("@@@@@@@@@@@@@ mapDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 	}
-	
+
 	public void mapDataFile() throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
 		System.out.println("@@@@@@@@@@@@@ mapDataFile1 (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
@@ -517,10 +517,17 @@ public class ProductBuilder {
 			return retour;
 
 			//Expression case
-		} else if( columnMapping.byAttribute() || columnMapping.byExpression() ){
+		} else if( columnMapping.byKeyword() || columnMapping.byExpression() ){
 			boolean ahfound=false;
 			ColumnExpressionSetter retour;
-
+			String expression = columnMapping.getExpression();
+			if(expression.startsWith("WCS.")){
+				Messenger.printMsg(Messenger.TRACE,  colmunName + ": WCS mapping cannot be set by the user mapping ");
+				retour = new ColumnExpressionSetter(colmunName);
+				retour.completeMessage("WCS mapping cannot be set by the user mapping ");
+			} else if( expression.startsWith("Column.") ){
+				retour = new ColumnRowSetter(colmunName, expression) ;
+			}
 			//When there is only one ah 
 			if(mappingSingleHandler!=null) {
 				for( AttributeHandler ah: this.productAttributeHandler.values()) {
@@ -531,11 +538,11 @@ public class ProductBuilder {
 						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,  columnMapping.label +  ": take keyword <" + ah.getNameorg() + ">");
 						retour = new ColumnExpressionSetter(colmunName);
 
-						if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty()) {
+						if(columnMapping.getExpression()==null || expression.isEmpty()) {
 							retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
 						} else {
-							retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), mappingHandlerMap, true);
-							retour.calculateExpression();
+							retour = new ColumnExpressionSetter(colmunName, expression, mappingHandlerMap, true);
+							//retour.calculateExpression();
 						}
 						retour.completeMessage("Using user mapping");
 						return retour;
@@ -545,7 +552,7 @@ public class ProductBuilder {
 			} else {
 				retour = new ColumnExpressionSetter(colmunName);
 				if(columnMapping.getExpression()==null || columnMapping.getExpression().isEmpty()) {
-					String msg = "The expression of the columnMapping : "+columnMapping.label+"is empty or null (looks like ian onternal error).";
+					String msg = "The expression of the columnMapping : "+ columnMapping.label + "is empty or null (looks like an internal error).";
 					Messenger.printMsg(Messenger.ERROR, msg);
 					retour = new ColumnExpressionSetter(colmunName);
 					retour.completeMessage(msg);
@@ -555,7 +562,6 @@ public class ProductBuilder {
 				ArrayList<String> ma = new ArrayList<String>();
 				boolean mah=true;
 				for(AttributeHandler ahc : mappingHandlers) {
-					String keyorg  = ahc.getNameorg();
 					String keyattr = ahc.getNameattr();
 					ahfound=false;
 					//Plusieurs attributHandlers
@@ -1288,7 +1294,7 @@ public class ProductBuilder {
 					Messenger.printMsg(Messenger.TRACE, "spectral coord. <" + sc_col.getValue() + "> can not be interptreted");						
 					return;
 				}
-			} if( sc_col.byAttribute() ) {
+			} if( sc_col.byKeyword() ) {
 				String col =  sc_col.getValue();
 				Messenger.printMsg(Messenger.TRACE, "Take mapped column " + col + " as spectral dispersion");
 				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + col + ")");
@@ -1302,34 +1308,6 @@ public class ProductBuilder {
 				}
 
 			}
-
-			//		/*
-			//		 * If no range set in params, find it out from table columns
-			//		 */	
-			//		String mappedName = sc_col.getAttributeHandler().getNameorg();
-			//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Checking if column <" + mappedName + "> exists" );
-			//		for( AttributeHandler ah : this.dataFile.getEntryAttributeHandler().values() ) {
-			//			String key = ah.getNameorg();
-			//			if(key.equals(mappedName) ){
-			//				Messenger.printMsg(Messenger.TRACE, "Spectral dispersion column <" + mappedName + "> found");
-			//				/*
-			//				 * Although the mapping priority is ONLY, if no unit is given in mapping, 
-			//				 * the unit found in the column description is taken
-			//				 */
-			//				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
-			//					//this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit(), true);
-			//					this.x_unit_orgSetter = new ColumnExpressionSetter(ah.getUnit());
-			//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "spectral coord. unit <" + ah.getUnit() + "> taken from column  description");
-			//				} else {
-			//					Messenger.printMsg(Messenger.WARNING, "spectral coord. unit found neither in column description nor in mapping");		
-			//					return;
-			//				}
-			//				this.em_minSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-			//				this.em_maxSetter.setByKeyword(Double.toString(this.dataFile.getExtrema(key)[0]), true);
-			//				return;
-			//			}
-			//		}
-			//		return ;	
 	}
 
 	/**
@@ -1754,7 +1732,9 @@ public class ProductBuilder {
 	 * @throws Exception
 	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
-		this.setProductIngestor();
+		//this.setProductIngestor();
+		this.dataFile.updateAttributeHandlerValues();
+		this.productIngestor.bindInstanceToFile();
 		SaadaInstance si = this.productIngestor.saadaInstance;
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_id", obs_idSetter);

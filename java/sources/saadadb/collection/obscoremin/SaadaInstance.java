@@ -943,7 +943,6 @@ public abstract class SaadaInstance implements DMInterface {
 		Class cls = this.getClass();
 		Field fieldlist[] = cls.getDeclaredFields();
 		String file_bus_sql = this.oidsaada + "\t" + this.obs_id + "\t" + this.contentsignature;
-System.out.println(cls + " " + fieldlist.length);
 		for( int i=0 ; i<fieldlist.length ; i++  ) {
 			Field field = fieldlist[i];
 			file_bus_sql += "\t";

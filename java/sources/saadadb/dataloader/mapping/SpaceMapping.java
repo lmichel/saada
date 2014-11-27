@@ -68,12 +68,12 @@ public class SpaceMapping extends AxisMapping {
 					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getRa()), ""));
 					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.VALUE, "deg", Double.toString(pp.getDec()), ""));
 				} else {
-					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0], ""));
-					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1], ""));
+					this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.KEYWORD, "deg", tabRa_dec[0], ""));
+					this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.KEYWORD, "deg", tabRa_dec[1], ""));
 				}
 			} catch(QueryException e) {
-				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[0], ""));
-				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.ATTRIBUTE, "deg", tabRa_dec[1], ""));
+				this.columnMapping.put("s_ra", new ColumnMapping(MappingMode.KEYWORD, "deg", tabRa_dec[0], ""));
+				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.KEYWORD, "deg", tabRa_dec[1], ""));
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public class SpaceMapping extends AxisMapping {
 				av= av.substring(1, av.length() -1);
 				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, av, "s_resolution"));				
 			} else {
-				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.ATTRIBUTE, this.errorUnit, av, "s_resolution"));				
+				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.KEYWORD, this.errorUnit, av, "s_resolution"));				
 			}
 		}
 	}
