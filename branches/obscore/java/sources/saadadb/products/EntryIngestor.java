@@ -118,6 +118,10 @@ public final class EntryIngestor extends ProductIngestor {
 		this.addMEssage = false;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductIngestor#buildInstance()
+	 */
+	@Override
 	protected void buildInstance() throws Exception {
 		/*
 		 * Build the Saada instance
@@ -125,6 +129,7 @@ public final class EntryIngestor extends ProductIngestor {
 		if( this.product.metaClass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
 			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaClass.getName());
+			this.buildOrderedBusinessAttributeList();
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
@@ -143,6 +148,7 @@ public final class EntryIngestor extends ProductIngestor {
 		} else {
 			this.firstCall = false;
 		}
+		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnergyFields();		

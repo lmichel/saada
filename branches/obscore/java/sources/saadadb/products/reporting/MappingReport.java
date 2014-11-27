@@ -20,13 +20,18 @@ import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
-public final class MappingReport {
+/**
+ * Class taking in charge the reporting about the data mapping
+ * Purpose: splitting the builder code 
+ * @author michel
+ * @version $Id$
+ */
+public class MappingReport {
 	public ProductBuilder builder;
 	
 	public MappingReport(ProductBuilder builder){
 		this.builder = builder;
 	}
-
 
 	/**
 	 * Print out the report
