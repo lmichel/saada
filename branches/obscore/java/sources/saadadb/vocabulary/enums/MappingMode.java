@@ -15,9 +15,9 @@ public enum MappingMode {
 	 */
 	VALUE, 
 	/**
-	 * The mapping rule returns an attribute name from whoch the value must be taken
+	 * The mapping rule returns an attribute name from which the value must be taken
 	 */
-	ATTRIBUTE,
+	KEYWORD,
 	/**
 	 * The mapping rule returns a SQL statement (not used yet)
 	 */

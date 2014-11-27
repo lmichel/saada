@@ -59,7 +59,19 @@ public class TimeMapping extends AxisMapping {
 		System.out.println(tm);
 		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin='10'+emax", "eeeee"}), false);
 		System.out.println(tm);
-		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=t_max-t_exptime", "eeeee"}), false);
+		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=t_max-t_exptime", "-exptime=1000"}), false);
 		System.out.println(tm);
+		tm = new TimeMapping(new ArgsParser(new String[]{"-tmin=WCS.getMin(1)", "-tmax=Column.getMin(RA)"}), false);
+		System.out.println(tm);
+		
+		StringBuffer message = new StringBuffer("eaze zaezae Converte dsqdsqdsqdsq qdqds");
+		int pos = message.indexOf("Conv");
+		if( pos == -1){
+			message.append("Conv2");
+		} else {
+			message.replace(pos, message.length(), "Conv2");
+		}
+
+		System.out.println(message);
 	}
 }

@@ -1,13 +1,13 @@
-/**
- * 
- */
 package saadadb.products;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
@@ -58,6 +58,10 @@ public class ProductIngestor {
 		public boolean convertUnits = false;
 	}
 	protected TaskMap taskMap = new TaskMap();
+	/**
+	 * Copy of AHs will be used to build the SQL line corresponding to one row.
+	 */
+	protected List<AttributeHandler> orderedBusinessAttributes;
 
 	/**
 	 * @param product
@@ -76,8 +80,16 @@ public class ProductIngestor {
 		/*
 		 * Build the Saada instance
 		 */
+		this.orderedBusinessAttributes = new ArrayList<AttributeHandler>();
 		if( this.product.metaClass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
+			/*
+			 * This copy of AHs will be used to build the SQL line corresponding to one row.
+			 */
+			HashMap<String, AttributeHandler> hm = this.product.metaClass.getAttributes_handlers();
+			for( Entry<String, AttributeHandler> e: hm.entrySet()){
+				this.orderedBusinessAttributes.add((AttributeHandler)(e.getValue().clone()));
+			}
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(
 					Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
@@ -273,7 +285,7 @@ public class ProductIngestor {
 			Astroframe af = new CooSysResolver(this.product.astroframeSetter.getValue()).getCooSys();
 			if( af != null ) {
 				String stc = "Polygon " + Database.getAstroframe();
-				double ra ;
+				double ra;
 				double dec;
 				if( this.product.s_raSetter == this.product.s_decSetter) {
 					acoo= new Astrocoo(af ,this.product.s_raSetter.getValue() ) ;
@@ -588,6 +600,12 @@ public class ProductIngestor {
 	 * @param buswfriter: file where are store class level attributes
 	 * @throws Exception
 	 */
+	/**
+	 * @param colwriter
+	 * @param buswriter
+	 * @param loadedfilewriter
+	 * @throws Exception
+	 */
 	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this.product) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
@@ -597,7 +615,43 @@ public class ProductIngestor {
 					+ Database.getName() + ">");	
 		}
 		this.storeCopyFileInRepository(loadedfilewriter);
-		this.saadaInstance.store(colwriter, buswriter);
+		//this.saadaInstance.store(colwriter, buswriter);
+		this.saadaInstance.storeCollection(colwriter);
+		/*
+		 * The SQL line for business attribute is build without passing by the instance? 
+		 * That avoids a double cast on the values
+		 */
+		for(AttributeHandler ah: this.orderedBusinessAttributes) {
+			AttributeHandler pah = this.product.productAttributeHandler.get(ah.getNameattr());
+			if( pah != null ) {
+				ah.setValue(pah.getValue());
+			} else {
+				ah.setValue("NULL");
+			}
+		}
+		String file_bus_sql = this.saadaInstance.oidsaada + "\t" + this.saadaInstance.obs_id + "\t" + this.saadaInstance.contentsignature;
+		for(AttributeHandler ah: this.orderedBusinessAttributes) {
+			file_bus_sql += "\t";
+			String val = ah.getValue().toString();
+			/*
+			 * "NULL and "2147483647" matches util.SaadaConstant.INT/STRING 
+			 * which belong to default values applied for Saada objects
+			 */
+			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") || 
+					val.equalsIgnoreCase("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
+				file_bus_sql +=Database.getWrapper().getAsciiNull();
+			} else {
+				String type = ah.getType().toString();
+				if( type.equals("char") || type.endsWith("String") ) {
+					file_bus_sql += val.replaceAll("'", "");
+				} else if( type.equals("boolean")  ) {
+					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
+				} else {
+					file_bus_sql +=  val;
+				}
+			}
+		}
+		buswriter.write(file_bus_sql + "\n");
 	}
 
 	/*
