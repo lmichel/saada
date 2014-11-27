@@ -37,6 +37,9 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.CoordSystem;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
@@ -72,16 +75,16 @@ public class ProductBuilder {
 	/**
 	 * Data product to load
 	 */
-	protected DataFile dataFile;
+	public DataFile dataFile;
 	protected String mimeType;
 	/**
 	 * loader mapping
 	 */
-	protected ProductMapping mapping;
+	public ProductMapping mapping;
 
 	/**The list which maps attribute names formated in the standard of Saada (keys) to their objects modeling attribute informations (values)**/
-	protected Map<String, AttributeHandler> productAttributeHandler;
-	protected String fmtsignature;
+	public Map<String, AttributeHandler> productAttributeHandler;
+	public String fmtsignature;
 	/*
 	 * references of attributes handlers used to map the collection level
 	 */
@@ -89,60 +92,60 @@ public class ProductBuilder {
 	 * Observation Axis
 	 */
 	//protected List<AttributeHandler> name_components;
-	protected ColumnSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
-	protected ColumnSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
-	protected ColumnSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
-	protected ColumnSetter calib_levelSetter=new ColumnExpressionSetter("calib_level");
-	protected ColumnSetter target_nameSetter=new ColumnExpressionSetter("target_name");
-	protected ColumnSetter facility_nameSetter=new ColumnExpressionSetter("facility_name");
-	protected ColumnSetter instrument_nameSetter=new ColumnExpressionSetter("instrument_name");
-	protected PriorityMode observationMappingPriority = PriorityMode.LAST;
+	public ColumnSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
+	public ColumnSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
+	public ColumnSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
+	public ColumnSetter calib_levelSetter=new ColumnExpressionSetter("calib_level");
+	public ColumnSetter target_nameSetter=new ColumnExpressionSetter("target_name");
+	public ColumnSetter facility_nameSetter=new ColumnExpressionSetter("facility_name");
+	public ColumnSetter instrument_nameSetter=new ColumnExpressionSetter("instrument_name");
+	public PriorityMode observationMappingPriority = PriorityMode.LAST;
 	/*
 	 * Space Axis
 	 */
-	protected ColumnSetter s_resolutionSetter=new ColumnExpressionSetter("s_resolution");
-	protected ColumnSetter s_raSetter=new ColumnExpressionSetter("s_ra");
-	protected ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
-	protected ColumnSetter s_fovSetter=new ColumnExpressionSetter("s_fov");
-	protected ColumnSetter s_regionSetter=new ColumnExpressionSetter("s_region");
-	protected ColumnSetter astroframeSetter;
-	protected PriorityMode spaceMappingPriority = PriorityMode.LAST;
+	public ColumnSetter s_resolutionSetter=new ColumnExpressionSetter("s_resolution");
+	public ColumnSetter s_raSetter=new ColumnExpressionSetter("s_ra");
+	public ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
+	public ColumnSetter s_fovSetter=new ColumnExpressionSetter("s_fov");
+	public ColumnSetter s_regionSetter=new ColumnExpressionSetter("s_region");
+	public ColumnSetter astroframeSetter;
+	public PriorityMode spaceMappingPriority = PriorityMode.LAST;
 
 	/*
 	 * Energy Axis
 	 */
-	protected ColumnSetter em_minSetter=new ColumnExpressionSetter("em_min");
-	protected ColumnSetter em_maxSetter=new ColumnExpressionSetter("em_max");
-	protected ColumnSetter em_binsSetter=new ColumnExpressionSetter("em_bins");
-	protected ColumnSetter em_res_powerSetter=new ColumnExpressionSetter("em_res_power");
+	public ColumnSetter em_minSetter=new ColumnExpressionSetter("em_min");
+	public ColumnSetter em_maxSetter=new ColumnExpressionSetter("em_max");
+	public ColumnSetter em_binsSetter=new ColumnExpressionSetter("em_bins");
+	public ColumnSetter em_res_powerSetter=new ColumnExpressionSetter("em_res_power");
 	//	private SpectralCoordinate spectralCoordinate;
-	protected ColumnSetter x_unit_orgSetter=new ColumnExpressionSetter("x_unit_org");
-	protected PriorityMode energyMappingPriority = PriorityMode.LAST;
+	public ColumnSetter x_unit_orgSetter=new ColumnExpressionSetter("x_unit_org");
+	public PriorityMode energyMappingPriority = PriorityMode.LAST;
 	/*
 	 * Time Axis
 	 */
-	protected ColumnSetter t_minSetter=new ColumnExpressionSetter("t_min");
-	protected ColumnSetter t_maxSetter=new ColumnExpressionSetter("t_max");
-	protected ColumnSetter t_exptimeSetter=new ColumnExpressionSetter("t_exptime");
-	protected PriorityMode timeMappingPriority = PriorityMode.LAST;
+	public ColumnSetter t_minSetter=new ColumnExpressionSetter("t_min");
+	public ColumnSetter t_maxSetter=new ColumnExpressionSetter("t_max");
+	public ColumnSetter t_exptimeSetter=new ColumnExpressionSetter("t_exptime");
+	public PriorityMode timeMappingPriority = PriorityMode.LAST;
 	/*
 	 * Observable Axis
 	 */
-	protected ColumnSetter o_ucdSetter=new ColumnExpressionSetter("o_ucd");
-	protected ColumnSetter o_unitSetter=new ColumnExpressionSetter("o_unit");
-	protected ColumnSetter o_calib_statusSetter=new ColumnExpressionSetter("o_calib_status");
-	protected PriorityMode observableMappingPriority = PriorityMode.LAST;
+	public ColumnSetter o_ucdSetter=new ColumnExpressionSetter("o_ucd");
+	public ColumnSetter o_unitSetter=new ColumnExpressionSetter("o_unit");
+	public ColumnSetter o_calib_statusSetter=new ColumnExpressionSetter("o_calib_status");
+	public PriorityMode observableMappingPriority = PriorityMode.LAST;
 	/*
 	 * Polarization axis
 	 */
-	protected ColumnSetter pol_statesSetter=new ColumnExpressionSetter("pol_states");
-	protected PriorityMode polarizationMappingPriority = PriorityMode.LAST;
+	public ColumnSetter pol_statesSetter=new ColumnExpressionSetter("pol_states");
+	public PriorityMode polarizationMappingPriority = PriorityMode.LAST;
 	/**
 	 * Manage all tools used to detect quantities in keywords
 	 */
-	protected QuantityDetector quantityDetector=null;
+	public QuantityDetector quantityDetector=null;
 	/* map: name of the collection attribute => attribute handler of the current product*/
-	protected Map<String,ColumnExpressionSetter> extended_attributesSetter;
+	public Map<String,ColumnExpressionSetter> extended_attributesSetter;
 	protected List<AttributeHandler> ignored_attributesSetter;
 
 
@@ -158,7 +161,7 @@ public class ProductBuilder {
 	/** sed by subclasses */
 	protected Image2DCoordinate wcs;
 
-	protected Modeler wcsModeler;
+	public Modeler wcsModeler;
 
 	/**
 	 * Constructor. This is a product constructor for the new loader.
@@ -1711,203 +1714,5 @@ public class ProductBuilder {
 		return msg;	
 	}
 
-	/**
-	 * @return
-	 */
-	public List<ExtensionSetter> getReportOnLoadedExtension() {
-		return this.dataFile.reportOnLoadedExtension();
-	}
-	/**
-	 * Build a map with all collection level value of the current instance.
-	 * Values are stored in AttributeHandler having the mapping mode into the comment field
-	 * @throws Exception
-	 */
-	public Map<String, ColumnSetter> getEntryReport() throws Exception {
-		return null;
-	}
 
-	/**
-	 * Build a map with all collection level value of the current instance.
-	 * Values are stored in AttributeHandler having the mapping mode into the comment field
-	 * @throws Exception
-	 */
-	public Map<String, ColumnSetter> getReport() throws Exception {
-		//this.setProductIngestor();
-		this.dataFile.updateAttributeHandlerValues();
-		this.productIngestor.bindInstanceToFile();
-		SaadaInstance si = this.productIngestor.saadaInstance;
-		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-		retour.put("obs_id", obs_idSetter);
-		this.obs_idSetter.storedValue = si.obs_id;
-		retour.put("obs_publisher_did", obs_publisher_didSetter);
-		this.obs_publisher_didSetter.storedValue = si.getObs_publisher_did();
-		retour.put("calib_level", calib_levelSetter);
-		this.calib_levelSetter.storedValue = si.getCalib_level();
-		retour.put("obs_collection", obs_collectionSetter);
-		this.obs_collectionSetter.storedValue = si.getObs_collection();
-		retour.put("target_name", target_nameSetter);
-		this.target_nameSetter.storedValue = si.target_name;
-		retour.put("facility_name", facility_nameSetter);
-		this.facility_nameSetter.storedValue = si.facility_name;
-		retour.put("instrument_name", instrument_nameSetter);
-		this.instrument_nameSetter.storedValue = si.instrument_name;
-
-		retour.put("s_ra", s_raSetter);
-		this.s_raSetter.storedValue = si.s_ra;
-		retour.put("s_dec", s_decSetter);
-		this.s_decSetter.storedValue = si.s_dec;
-		retour.put("s_resolution",s_resolutionSetter);
-		this.s_resolutionSetter.storedValue = si.s_resolution;
-		retour.put("s_fov", s_fovSetter);
-		this.s_fovSetter.storedValue = si.getS_fov();
-		retour.put("s_region", s_regionSetter);
-		this.s_regionSetter.storedValue = si.getS_region();
-
-		retour.put("em_min", em_minSetter);
-		this.em_minSetter.storedValue = si.em_min;
-		retour.put("em_max", em_maxSetter);
-		this.em_maxSetter.storedValue = si.em_max;
-		retour.put("em_res_power", em_res_powerSetter);
-		this.em_res_powerSetter.storedValue = si.em_res_power;
-		retour.put("x_unit_org", x_unit_orgSetter);
-		this.x_unit_orgSetter.storedValue = this.x_unit_orgSetter.getValue();
-
-		retour.put("t_min", t_minSetter);
-		this.t_minSetter.storedValue = si.t_min;
-		retour.put("t_max", t_maxSetter);
-		this.t_maxSetter.storedValue = si.t_max;
-		retour.put("t_exptime", t_exptimeSetter);
-		this.t_exptimeSetter.storedValue = si.t_exptime;
-
-		retour.put("o_ucd", o_ucdSetter);
-		this.o_ucdSetter.storedValue = si.getO_ucd();
-		retour.put("o_unit", o_unitSetter);
-		this.o_unitSetter.storedValue = si.getO_unit();
-		retour.put("o_calib_status", o_calib_statusSetter);
-		this.o_calib_statusSetter.storedValue = si.getO_calib_status();
-
-		retour.put("pol_states", pol_statesSetter);
-		this.pol_statesSetter.storedValue = si.pol_states;
-
-		for( ColumnExpressionSetter eah: this.extended_attributesSetter.values()){
-			retour.put(eah.getAttNameOrg(), eah);      	
-		}
-
-		for( Field f: si.getCollLevelPersisentFields() ){
-			String fname = f.getName();
-			if( retour.get(fname) == null ){
-				AttributeHandler ah = new AttributeHandler();
-				ah.setNameattr(fname); ah.setNameorg(fname); 
-				Object o = si.getFieldValue(fname);
-				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
-				ah.setComment("Computed internally by Saada");		
-				//ColumnExpressionSetter cs = new ColumnExpressionSetter(ah, ColumnSetMode.BY_SAADA);
-				ColumnExpressionSetter cs = new ColumnExpressionSetter(fname, ah,ColumnSetMode.BY_SAADA, true);
-
-				cs.storedValue = ah.getValue();
-				retour.put(fname, cs);
-			}
-		}
-		return retour;
-	}
-
-	/**
-	 * Print out the report
-	 * @throws Exception
-	 */
-	public void printReport() throws Exception {
-		for( java.util.Map.Entry<String, ColumnSetter> e: this.getReport().entrySet()){
-			System.out.print(e.getKey() + "=");
-			ColumnSetter ah = e.getValue();
-			System.out.print(ah.getValue());
-			System.out.println(" <" + ah.getComment() + ">");
-		}
-	}
-
-
-	/**
-	 * Write in directory a report of the mapped product 
-	 * The report name is the same as this of the data file, suffixed with ".report"
-	 * The report file contain a list of the read keywords followed by the mapping into the collection model
-	 * @param directory
-	 */
-	public void writeCompleteReport(String directory, ArgsParser ap) throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.dataFile.getName() + ".txt");
-		this.dataFile.updateAttributeHandlerValues();
-		this.productIngestor.bindInstanceToFile();
-
-		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.dataFile.getName() + ".report");
-		fw.write("====================================================\n");
-		fw.write("    " + this.dataFile.getName() + "\n");
-		fw.write("    " + (new Date()) + "\n");
-		fw.write("====================================================\n");
-		if( ap != null ){
-			fw.write("\n========= User parameters\n");
-			fw.write(ap.toString().replace("-", "\n    -") +"\n");
-		}
-		fw.write("\n========= Keywords read\n");
-		for( AttributeHandler ah: this.getProductAttributeHandler().values()) {
-			fw.write(ah + "\n");
-		}
-		fw.write("\n========= Loaded extensions\n");
-		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
-			fw.write(es + "\n");
-		}
-		Map<String, ColumnSetter> r = this.getReport();
-		fw.write("\n========= Mapping report\n");
-		for( Entry<String, ColumnSetter> e:r.entrySet()){
-			//System.out.print(String.format("%20s",e.getKey()) + "     ");
-			fw.write(String.format("%20s",e.getKey()) + "     ");;
-			ColumnSetter ah = e.getValue();
-			//System.out.print(ah.getSettingMode() + " " + ah.message);
-			fw.write(ah.getSettingMode() + " " + ah.message + " ");
-			if( !ah.isNotSet() ) 
-			{
-				//System.out.print(" storedValue=" + ah.storedValue);
-				fw.write("storedValue=" + ah.storedValue+" \n");
-			} else {
-				fw.write("\n");
-
-			}
-		}
-		fw.close();
-	}
-	/**
-	 * @param ap
-	 * @param attributes
-	 * @throws Exception
-	 */
-	public void testMapping(ArgsParser ap, String[][] attributes) throws Exception {
-		this.mapping = ap.getProductMapping();
-		System.out.println("Mapping            : " + this.mapping);
-		this.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		for(int i = 0; i < attributes.length; i++ ) {
-			AttributeHandler ah = new AttributeHandler();
-			ah.setNameattr(attributes[i][0]);
-			ah.setNameorg(attributes[i][0]);
-			ah.setUcd(attributes[i][1]);
-			ah.setUnit(attributes[i][2]);
-			this.productAttributeHandler.put(attributes[i][0], ah);
-		}
-		this.mapCollectionAttributes();
-		System.out.println("prod att handlers  :");
-		for(AttributeHandler ah:  productAttributeHandler.values()) {
-			System.out.println("  " + ah);
-		}
-
-		System.out.println("s_resolution       : " + s_resolutionSetter);
-		System.out.println("ra_attribute       : " + s_raSetter);
-		System.out.println("dec_attribute      : " + s_decSetter);
-		System.out.println("name_components    : ");
-		System.out.println("ext att handlers   :");
-		for(ColumnExpressionSetter ah:  extended_attributesSetter.values()) {
-			System.out.println("  " + ah);
-		}
-		System.out.println("ignored att        : ");
-		for(AttributeHandler ah:  ignored_attributesSetter) {
-			System.out.println("  " + ah);
-		}
-		System.out.println("Astroframe         : " + astroframeSetter);
-
-	}
 }
