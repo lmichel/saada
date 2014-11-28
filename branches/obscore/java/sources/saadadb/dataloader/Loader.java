@@ -14,10 +14,6 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.datafile.AnyFile;
-import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.FitsDataFile;
-import saadadb.products.datafile.VOTableDataFile;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
@@ -144,16 +140,16 @@ public class Loader extends SaadaProcess {
 			 */
 			if( productMapping.getCategory() != Category.FLATFILE &&
 					productMapping.getCategory() != Category.TABLE	) {
-				(new SchemaFusionMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSetByBurst();			
+				(new SchemaFusionMapper(this, this.filesToBeLoaded, this.productMapping)).ingestProductSetByBurst();			
 
 			} else {
-				(new SchemaFusionMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSet();			
+				(new SchemaFusionMapper(this, this.filesToBeLoaded, this.productMapping)).ingestProductSet();			
 			}
 		} else if (classifierMode == ClassifierMode.CLASSIFIER){
 			/*
 			 * Load products one by one and 
 			 */
-			(new SchemaClassifierMapper(this, filesToBeLoaded, this.productMapping)).ingestProductSet();
+			(new SchemaClassifierMapper(this, this.filesToBeLoaded, this.productMapping)).ingestProductSet();
 		}
 	}
 
@@ -197,7 +193,7 @@ public class Loader extends SaadaProcess {
 			int cpt = 0;
 			for( int i=0 ; i<dir_content.length ; i++ ) {
 				String fullPath = requested_file.getAbsolutePath() + File.separator + dir_content[i];
-			//	File candidate_file = new File(requested_file.getAbsolutePath() + File.separator + dir_content[i]);
+				//	File candidate_file = new File(requested_file.getAbsolutePath() + File.separator + dir_content[i]);
 				/*
 				 * Do not proceed recursively: just files are taken
 				 */
@@ -220,7 +216,7 @@ public class Loader extends SaadaProcess {
 		}
 
 	}
-	
+
 	/**
 	 * Create an appropriate DataFile from the file name and push it in the lits of files to be loaded
 	 * @param fullPath
@@ -306,9 +302,13 @@ public class Loader extends SaadaProcess {
 		for( String f: file_to_load) {
 			File cf = new File(base_dir + Database.getSepar() + f);
 			if( cf.exists() && !cf.isDirectory() ) {
-				this.addDataFile(base_dir + Database.getSepar() + f);
-			}
-			else {
+				if( this.tabArg.getCategory() == Category.explain(Category.FLATFILE )||
+				f.matches(RegExp.FITS_FILE) || f.matches(RegExp.VOTABLE_FILE)) {
+					this.addDataFile(base_dir + Database.getSepar() + f);
+				} else {
+					Messenger.printMsg(Messenger.TRACE, f + ": cannot be loaded because it does not lok like a datafile (FITS or VOTable)");
+				}
+			} else {
 				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.getAbsolutePath() + "> does not exist or is not a file");
 			}
 		}
