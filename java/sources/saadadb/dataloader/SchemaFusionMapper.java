@@ -1,11 +1,11 @@
 package saadadb.dataloader;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import saadadb.collection.Category;
@@ -36,7 +36,7 @@ import saadadb.vocabulary.enums.ClassifierMode;
  */
 public class SchemaFusionMapper extends SchemaMapper {
 
-	public SchemaFusionMapper(Loader loader, ArrayList<String> dataFiles, ProductMapping mapping) {
+	public SchemaFusionMapper(Loader loader, List<String> dataFiles, ProductMapping mapping) {
 		super(loader, dataFiles, mapping);
 		Messenger.setMaxProgress((2*dataFiles.size()) + 2);
 	}
@@ -149,7 +149,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * Update or build the class modeling the set of products to load
 		 */
 		SQLTable.beginTransaction();
-		makeClassFusion();
+		this.makeClassFusion();
 		SQLTable.commitTransaction();
 
 		/*
@@ -237,6 +237,15 @@ public class SchemaFusionMapper extends SchemaMapper {
 		/*
 		 * Ingest all files
 		 */
+		
+		this.storeAllDataFiles() ;
+	}
+	
+	/**
+	 * @throws Exception
+	 */
+	protected void storeAllDataFiles() throws Exception {
+	
 		Messenger.printMsg(Messenger.TRACE, "Start to ingest data in blob mode");
 		this.currentProductBuilder = null;
 		/*
