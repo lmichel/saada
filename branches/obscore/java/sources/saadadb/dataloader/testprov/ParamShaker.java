@@ -19,12 +19,13 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.FooProduct;
+import saadadb.products.reporting.MappingReport;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
 
@@ -312,8 +313,9 @@ public abstract class ParamShaker {
 		break;
 		}
 		product.mapDataFile(this.fooProduct);
-		Map<String, ColumnSetter> r = product.getReport();
-		Map<String, ColumnSetter> er = product.getEntryReport();
+		MappingReport mr = new MappingReport(product);
+		Map<String, ColumnSetter> r = mr.getReport();
+		Map<String, ColumnSetter> er = mr.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			if( this.paramsOfInterest.contains(e.getKey())) {

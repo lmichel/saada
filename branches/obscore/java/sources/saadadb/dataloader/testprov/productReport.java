@@ -7,15 +7,16 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.products.DataFile;
 import saadadb.products.ExtensionSetter;
-import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.VOTableDataFile;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
+import saadadb.products.reporting.MappingReport;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.vocabulary.RegExp;
@@ -42,8 +43,7 @@ public class productReport {
 			}
 			switch (Category.getCategory(ap.getCategory())) {
 			case Category.TABLE:
-				product = new TableBuilder(df,
-						new ProductMapping("mapping", ap));
+				product = new TableBuilder(df,new ProductMapping("mapping", ap));
 				break;
 			case Category.MISC:
 				product = new MiscBuilder(df, new ProductMapping("mapping", ap));
@@ -57,10 +57,11 @@ public class productReport {
 						ap));
 				break;
 			}
-			Map<String, ColumnSetter> r = product.getReport();
+			MappingReport mr = new MappingReport(product);
+			Map<String, ColumnSetter> r = mr.getReport();
 			System.out.println("======== " + ap.getFilename());
 			System.out.println("      -- Loaded extensions");
-			for (ExtensionSetter es : product.getReportOnLoadedExtension()) {
+			for (ExtensionSetter es : mr.getReportOnLoadedExtension()) {
 				System.out.println(es);
 			}
 			System.out.println("      -- Field values");
