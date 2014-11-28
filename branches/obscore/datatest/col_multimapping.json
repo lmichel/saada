@@ -3,9 +3,11 @@
 "parameters": [
 	"-category=misc" ,
 	"-collection=FOO",
-	"-name=A,B,C"	,
+	"-name=strcat(A,B,C)"	,
 	"-spccolumn=eMin,eMax"	
-],
+	"-spcunit='keV'"	
+	]
+,
 "fields": {
     "header": [	["A", "double", "", "", "valA"],
                 ["B", "String", "", "", "valB"],
