@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,12 +22,14 @@ import saadadb.exceptions.SaadaException;
 import saadadb.products.EntryBuilder;
 import saadadb.products.EntryIngestor;
 import saadadb.products.ExtensionSetter;
-import saadadb.products.FooProduct;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.FooProduct;
+import saadadb.products.reporting.MappingReport;
+import saadadb.products.reporting.TableMappingReport;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.products.validation.ObscoreKWSet;
@@ -119,27 +122,29 @@ public class FooReport {
 	 */
 	private void process() throws Exception {
 		ProductBuilder product = null;
+		MappingReport mr = new MappingReport(product);
 		switch( Category.getCategory(ap.getCategory()) ) {
 		case Category.TABLE: product = new TableBuilder(this.fooProduct, new ProductMapping("mapping", this.ap));
-		break;
+		mr = new TableMappingReport((TableBuilder) product);break;
 		case Category.MISC : product = new MiscBuilder(this.fooProduct, new ProductMapping("mapping", this.ap));
-		break;
+		mr = new MappingReport(product);break;
 		case Category.SPECTRUM: product = new SpectrumBuilder(this.fooProduct, new ProductMapping("mapping", this.ap));
-		break;
+		mr = new MappingReport(product);break;
 		case Category.IMAGE: product = new Image2DBuilder(this.fooProduct, new ProductMapping("mapping", this.ap));
-		break;
+		mr = new MappingReport(product);break;
 		}
-		Map<String, ColumnSetter> r = product.getReport();
-		Map<String, ColumnSetter> er = product.getEntryReport();
+		product.mapDataFile();
+		Map<String, ColumnSetter> r = mr.getReport();
+		Map<String, ColumnSetter> er = mr.getEntryReport();
 		System.out.println(this.ap);
 
 		System.out.println("======== ");	
 		System.out.println("      -- Loaded extensions");	
-		for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
+		for( ExtensionSetter es: mr.getReportOnLoadedExtension()) {
 			System.out.println(es);
 		}
 		System.out.println("      -- Field values");	
-		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
+		for( Entry<String, ColumnSetter> e:r.entrySet()){
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
 			System.out.print(ah.getSettingMode() + " " + ah.message);
@@ -147,20 +152,31 @@ public class FooReport {
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
 		}
-		
-		TableBuilder tb = (TableBuilder) product;
-		EntryBuilder eb = tb.getEntry();
-		System.out.println(product.getNRows());
-		Enumeration e = eb.elements();
-		int line = 0;
-		while( eb.productIngestor.hasMoreElements()){
-			if( line == 0 ) {
-				((EntryIngestor) eb.productIngestor).mapIndirectionTables();
-				line++;
+		if (er != null ){
+			System.out.println("      -- Columns values");	
+			for( Entry<String, ColumnSetter> e:er.entrySet()){
+				System.out.print(String.format("%20s",e.getKey()) + "     ");
+				ColumnSetter ah = e.getValue();
+				System.out.print(ah.getSettingMode() + " " + ah.message);
+				if( !ah.isNotSet() ) 
+					System.out.print(" storedValue=" + ah.storedValue);
+				System.out.println("");
 			}
-			eb.productIngestor.bindInstanceToFile();
-			eb.productIngestor.showCollectionValues();
 		}
+
+		//		TableBuilder tb = (TableBuilder) product;
+		//		EntryBuilder eb = tb.entryBuilder;
+		//		System.out.println(product.getNRows());
+		//		Enumeration e = eb.elements();
+		//		int line = 0;
+		//		while( eb.productIngestor.hasMoreElements()){
+		//			if( line == 0 ) {
+		//				((EntryIngestor) eb.productIngestor).mapIndirectionTables();
+		//				line++;
+		//			}
+		//			eb.productIngestor.bindInstanceToFile();
+		//			eb.productIngestor.showCollectionValues();
+		//		}
 	}
 
 	/**

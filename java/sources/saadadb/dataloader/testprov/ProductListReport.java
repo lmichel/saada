@@ -12,14 +12,15 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
 import saadadb.products.ExtensionSetter;
-import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.reporting.MappingReport;
 import saadadb.products.setter.ColumnSetter;
 
 public class ProductListReport {
@@ -64,13 +65,12 @@ public class ProductListReport {
 			for( File f: files) {
 				if( f.isDirectory() )
 					continue;
-				if( cpt == MAX ) {
+				if( MAX == -1 || cpt == MAX ) {
 					System.out.println(f + " " + f.exists());
 					ProductBuilder product = null;
 					DataFile df = new FitsDataFile(f.getAbsolutePath());
 					switch( Category.getCategory(ap.getCategory()) ) {
-					case Category.TABLE: product = new TableBuilder(df
-							, new ProductMapping("mapping", ap));
+					case Category.TABLE: //product = new TableBuilder(df, new ProductMapping("mapping", ap));
 					break;
 					case Category.MISC : product = new MiscBuilder(df, new ProductMapping("mapping", ap));
 					break;
@@ -80,8 +80,8 @@ public class ProductListReport {
 					break;
 					}
 					product.mapDataFile();
-					product.writeCompleteReport(f.getParent() + "/report/", ap);
-					break;
+					(new MappingReport(product)).writeCompleteReport(f.getParent() + "/report/", ap);
+					if( MAX != -1 ) break;
 				}
 				cpt++;
 			}
