@@ -26,9 +26,9 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.collection.Category;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FitsDataFile;
-import saadadb.products.DataFile;
-import saadadb.products.VOTableDataFile;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.vocabulary.RegExp;
 
 /**

@@ -19,12 +19,12 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.products.ExtensionSetter;
-import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.setter.ColumnSetter;
 
 /**
