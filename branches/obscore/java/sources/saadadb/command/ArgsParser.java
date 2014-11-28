@@ -481,6 +481,22 @@ public class ArgsParser implements Serializable{
 	 * @param entry
 	 * @return
 	 */
+	public String getObsid(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-name")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.name") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}	
+
+	/**
+	 * @param entry
+	 * @return
+	 */
 	public String getObscollection(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-obscollection")  ){
