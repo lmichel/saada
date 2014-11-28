@@ -10,11 +10,11 @@ public class ObservationMapping extends AxisMapping {
 	ObservationMapping(ArgsParser ap, boolean entryMode) throws FatalException {
 		super(ap, new String[]{"obs_id", "calib_level", "obs_publisher_did", "obs_collection", "data_product_type", "facility_name", "instrument_name", "target_name"}, entryMode);
 		this.priority = PriorityMode.ONLY;
-		String[] ss;
-		if( (ss = ap.getNameComponents(entryMode)).length != 0  ){
-			this.columnMapping.put("obs_id", new ColumnMapping(null, ss, "obs_id"));
-		}
 		String s;
+		String[] ss;
+		if( (s = ap.getObsid(entryMode)) != null  ){
+			this.columnMapping.put("obs_id", new ColumnMapping(null, s, "obs_id"));
+		}
 		if( (s = ap.getObscollection(entryMode)) != null  ){
 			this.columnMapping.put("obs_collection", new ColumnMapping(null, s, "obs_collection"));
 		} 
