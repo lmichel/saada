@@ -109,6 +109,7 @@ public class TransactionMaker {
 					String[] fs = q.split(" ");
 					last_q  = q; 
 					if( Database.getWrapper().tsvLoadNotSupported() ) {
+						// params: connection, tableName, ncols, tableFile
 						Database.getWrapper().storeTable(connection, fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim()) ;			
 					} else {
 						String[] stqs = Database.getWrapper().getStoreTable(fs[1].trim(), Integer.parseInt(fs[2].trim()), fs[3].trim());
