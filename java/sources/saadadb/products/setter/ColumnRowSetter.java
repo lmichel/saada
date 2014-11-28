@@ -7,7 +7,7 @@ import java.util.List;
 
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.DataFile;
+import saadadb.products.datafile.DataFile;
 import saadadb.util.RegExpMatcher;
 import saadadb.vocabulary.enums.ColumnSetMode;
 

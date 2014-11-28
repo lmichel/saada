@@ -25,7 +25,7 @@ public class ExtensionSetter {
 	 * @param setMode
 	 * @param message
 	 */
-	ExtensionSetter(String goodHeaderId,  ExtensionSetMode setMode, String message){
+	public ExtensionSetter(String goodHeaderId,  ExtensionSetMode setMode, String message){
 		this.goodHeaderId = goodHeaderId;
 		int v=0;
 		try {
@@ -40,7 +40,7 @@ public class ExtensionSetter {
 	 * @param setMode
 	 * @param message
 	 */
-	ExtensionSetter(int goodHeaderNumber,  ExtensionSetMode setMode, String message){
+	public ExtensionSetter(int goodHeaderNumber,  ExtensionSetMode setMode, String message){
 		this.goodHeaderId = String.valueOf(goodHeaderNumber);
 		this.goodHeaderNumber = goodHeaderNumber;
 		this.setMode = setMode;

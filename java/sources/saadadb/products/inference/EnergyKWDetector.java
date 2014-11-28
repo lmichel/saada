@@ -14,7 +14,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
+import saadadb.products.datafile.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnWcsSetter;

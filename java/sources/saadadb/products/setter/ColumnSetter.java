@@ -7,7 +7,7 @@ import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
+import saadadb.products.datafile.DataFile;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
@@ -214,6 +214,12 @@ public abstract class ColumnSetter implements Cloneable {
 	 */
 	public abstract void setValue(double value);
 
+	/**
+	 * @return
+	 */
+	public String getExpression() {
+		return null;
+	}
 
 	/*
 	 * getters for the mode used to set the attribute

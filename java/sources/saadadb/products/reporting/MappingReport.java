@@ -14,6 +14,7 @@ import saadadb.command.ArgsParser;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
+import saadadb.products.datafile.FooProduct;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
@@ -54,9 +55,26 @@ public class MappingReport {
 	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		//this.builder.setProductIngestor();
+		
+		FooProduct fp = (FooProduct) this.builder.dataFile;
+		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
+			System.out.println("I " + eah);
+		}
+		
 		this.builder.dataFile.updateAttributeHandlerValues();
+		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
+			System.out.println("II " + eah);
+		}
 		this.builder.productIngestor.bindInstanceToFile();
+		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
+			System.out.println("III " + eah);
+		}
+		for( Entry<String, AttributeHandler> eah: this.builder.productAttributeHandler.entrySet()){
+			System.out.println("III+" + eah);
+		}
+		System.out.println(this.builder.productIngestor.getClass());
 		SaadaInstance si = this.builder.productIngestor.saadaInstance;
+		
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_id", this.builder.obs_idSetter);
 		this.builder.obs_idSetter.storedValue = si.obs_id;
@@ -83,6 +101,8 @@ public class MappingReport {
 		this.builder.s_fovSetter.storedValue = si.getS_fov();
 		retour.put("s_region", this.builder.s_regionSetter);
 		this.builder.s_regionSetter.storedValue = si.getS_region();
+		retour.put("system", this.builder.astroframeSetter);
+		this.builder.astroframeSetter.calculateExpression();
 
 		retour.put("em_min", this.builder.em_minSetter);
 		this.builder.em_minSetter.storedValue = si.em_min;

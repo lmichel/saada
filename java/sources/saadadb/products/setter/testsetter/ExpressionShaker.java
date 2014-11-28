@@ -11,7 +11,7 @@ import org.json.simple.parser.JSONParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FooProduct;
+import saadadb.products.datafile.FooProduct;
 import saadadb.products.setter.ExpressionWrapper;
 /**
  * Test the ExpressionWrapper
