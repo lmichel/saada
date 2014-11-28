@@ -10,13 +10,13 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.HeaderRef;
-import saadadb.products.DataFile;
 import saadadb.products.FlatFileBuilder;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
+import saadadb.products.datafile.DataFile;
 import saadadb.vocabulary.enums.ClassifierMode;
 import saadadb.vocabulary.enums.RepositoryMode;
 
@@ -250,7 +250,7 @@ public class ProductMapping {
 	 * @return
 	 * @throws SaadaException
 	 */
-	public  ProductBuilder getNewProductBuilderInstance(DataFile dataFile, MetaClass metaClass) throws SaadaException {
+	public  ProductBuilder getNewProductBuilderInstance(DataFile dataFile, MetaClass metaClass) throws Exception {
 		switch( this.category ) {
 		case Category.TABLE: return new TableBuilder(dataFile, this, metaClass) ;
 		case Category.MISC : return new MiscBuilder(dataFile, this, metaClass) ;
