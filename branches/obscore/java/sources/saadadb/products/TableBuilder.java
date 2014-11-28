@@ -30,91 +30,58 @@ public class TableBuilder extends ProductBuilder {
 	public EntryBuilder entryBuilder;
 
 	/**
-	 * @param productFile
-	 * @param conf
-	 * @throws FatalException
-	 */
-	public TableBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
-		super(productFile, conf, metaClass);
-		this.entryBuilder = new EntryBuilder(this);
-		this.entryBuilder.bindDataFile(productFile);
-	}
-
-	public TableBuilder(DataFile file, ProductMapping conf) throws SaadaException{	
-		super(file, conf, null);
-		this.entryBuilder = new EntryBuilder(this);
-		this.entryBuilder.bindDataFile(file);
-	}
-	/**
 	 * @param fileName
 	 * @param tabArg
 	 * @throws FatalException 
 	 */
-	public TableBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{	
+	public TableBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws Exception{	
 		super(file, mapping, metaClass);
 		System.out.println("@@@@@@@@@@@@@ build entry");
-		/*
-		 * this entry mapping must be set explicitely here because it it attempted once within the entry constructor (super()
-		 * Before the table is set
-		 */
-		try {
-			this.entryBuilder = new EntryBuilder(this);
-			this.entryBuilder.bindDataFile(file);
-//			this.entryBuilder.mapCollectionAttributes();
-//			this.entryBuilder.setFmtsignature();
 
-		} catch (SaadaException e) {
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
-		}	
-
+		this.entryBuilder = new EntryBuilder(this);
+//		this.entryBuilder.setProductIngestor();
+//		this.entryBuilder.bindDataFile(file);
 	}	
-	/**
-	 * @return Returns the entry.
-	 */
-	public EntryBuilder getEntry() {
-		return entryBuilder;
-	}
+	public TableBuilder(DataFile file, ProductMapping mapping) throws Exception{	
+		super(file, mapping, null);
+		System.out.println("@@@@@@@@@@@@@ build entry");
 
+		this.entryBuilder = new EntryBuilder(this);
+//		this.entryBuilder.setProductIngestor();
+//		this.entryBuilder.bindDataFile(file);
+	}	
 
-	/*
-	 * Returns the identification number of this table in data base. @return
-	 * long The identification number of this table in data base.
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getTableOid()
 	 */
+	@Override
 	public long getTableOid() {
 		return oid;
 	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.Product#initProductFile(java.lang.String, saadadb.prdconfiguration.Configuration)
-	 */
-	@Override
-	public void initProductFile() throws SaadaException{
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Init TABLE instance");
-		super.initProductFile();
-		/*
-		 * this.entry.loadProductFile already done in loadProductFile(...)
-		 */
-		try {
-			//Messenger.printMsg(Messenger.TRACE, "Map entry attributes");
-			System.out.println(" ENTRY initProductFile @@@@@@@@@@@@@@@@@@@@@@@@@@@");
-			this.entryBuilder.initProductFile();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.MAPPING_FAILURE, e);
-		}	
-
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
-	 */
-	@Override
-	public void bindDataFile(DataFile dataFile) throws Exception{
-		super.bindDataFile(dataFile);
-	}
+//
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.Product#initProductFile(java.lang.String, saadadb.prdconfiguration.Configuration)
+//	 */
+//	@Override
+//	public void initProductFile() throws SaadaException{
+//		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Init TABLE instance");
+//		super.initProductFile();
+//		this.entryBuilder.initProductFile();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
+//	 */
+//	@Override
+//	public void bindDataFile(DataFile dataFile) throws Exception{
+//		super.bindDataFile(dataFile);
+//		/*
+//		 * Case when the method is called by the superclass constructor
+//		 */
+//		if( this.entryBuilder != null ){
+//			this.entryBuilder.bindDataFile(dataFile);
+//		}
+//	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#loadValue()
@@ -129,14 +96,44 @@ public class TableBuilder extends ProductBuilder {
 		this.entryBuilder.loadProduct();
 	}
 
-	/**
-	 * @return Returns the metaclass.
-	 * @throws IgnoreException 
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#mapDataFile(saadadb.products.datafile.DataFile)
 	 */
-	public void setMetaclass(MetaClass mc) throws IgnoreException {
-		super.setMetaclass(mc);
+	@Override
+	public void mapDataFile(DataFile dataFile) throws Exception{
+		super.mapDataFile(dataFile);
+		this.entryBuilder.mapDataFile(dataFile);
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#mapDataFile()
+	 */
+	@Override
+	public void mapDataFile() throws Exception{
+		super.mapDataFile();
+		this.entryBuilder.mapDataFile();
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#calculateAllExpressions()
+	 */
+	@Override
+	protected void calculateAllExpressions() throws Exception {
+		super.calculateAllExpressions();
+		this.entryBuilder.calculateAllExpressions();
+	}
+
+	protected void setProductIngestor() throws Exception{
+		super.setProductIngestor();
+		/*
+		 * Case when the method is called by the superclass constructor
+		 */
+		if( this.entryBuilder != null ){
+			this.entryBuilder.setProductIngestor();
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.Product#mergeProductFormat(java.io.File)
@@ -208,8 +205,8 @@ public class TableBuilder extends ProductBuilder {
 		 */
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Merge ENTRY format with file <" + file_to_merge.getName() + ">");
-		tableAttributeHandler_org = this.getEntry().getProductAttributeHandler();
-		EntryBuilder entry_to_merge = ((TableBuilder)(prd_to_merge)).getEntry();
+		tableAttributeHandler_org = this.entryBuilder.getProductAttributeHandler();
+		EntryBuilder entry_to_merge = ((TableBuilder)(prd_to_merge)).entryBuilder;
 		entry_to_merge.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 		entry_to_merge.productAttributeHandler = prd_to_merge.dataFile.getEntryAttributeHandler();
 

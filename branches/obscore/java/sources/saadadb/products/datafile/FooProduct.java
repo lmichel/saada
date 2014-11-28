@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.simple.JSONObject;
 
@@ -24,7 +25,7 @@ import saadadb.vocabulary.enums.DataFileExtensionType;
 public class FooProduct implements DataFile {
 	private int pointer = 0;
 	private int size = 0;
-	private Map<String, AttributeHandler> attributeHandlers = null;
+	public Map<String, AttributeHandler> attributeHandlers = null;
 	private Map<String, AttributeHandler> entryAttributeHandlers = null;
 	protected Map<String, DataFileExtension> productMap;
 	private ProductBuilder productBuilder;
@@ -144,7 +145,12 @@ public class FooProduct implements DataFile {
 	@Override
 	public Map<String, AttributeHandler> getAttributeHandlerCopy()
 			throws SaadaException {
-		return this.attributeHandlers;
+		Map<String, AttributeHandler> mah = this.attributeHandlers;
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		for( Entry<String, AttributeHandler > e: mah.entrySet()){
+			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
+		}
+		return retour;
 	}
 
 
@@ -205,7 +211,6 @@ public class FooProduct implements DataFile {
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
 			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);			
 		} else if( this.getEntryAttributeHandler().size() > 0  ){
 			if (Messenger.debug_mode)
@@ -213,7 +218,8 @@ public class FooProduct implements DataFile {
 			return  new QuantityDetector(this.getAttributeHandlerCopy(), this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);
 		} else {
 			return new QuantityDetector(this.getAttributeHandlerCopy(), this.comments, productMapping, this.productBuilder.wcsModeler);
-		}		
+		}
+		return null;		
 	}
 
 	@Override
@@ -224,8 +230,27 @@ public class FooProduct implements DataFile {
 
 	@Override
 	public void updateAttributeHandlerValues() throws Exception {
-		// TODO Auto-generated method stub
-		
+		if( this.productBuilder.productAttributeHandler == null ){
+			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
+		} else {
+			for( AttributeHandler ah: this.productBuilder.productAttributeHandler.values()){
+				ah.setValue("");
+			}
+		}
+
+		for( Entry<String, AttributeHandler> eah: this.attributeHandlers.entrySet()){
+			AttributeHandler localAh = eah.getValue();
+			String localKey = eah.getKey();
+			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
+System.out.println("locam " + localAh);
+			if( builderAh == null ){
+				//System.out.println("add value of " + localKey);
+				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
+			} else {
+				//System.out.println("change value of " + localKey);
+				builderAh.setValue(localAh.getValue());
+			}
+		}
 	}
 	
 	

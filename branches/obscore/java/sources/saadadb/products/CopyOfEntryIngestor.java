@@ -25,7 +25,7 @@ import cds.astro.Astroframe;
  * @author michel
  * @version $Id$
  */
-public final class EntryIngestor extends ProductIngestor {
+public final class CopyOfEntryIngestor extends ProductIngestor {
 	/**
 	 *  Position of the extended attributes .
 	 * index in the array: num of the attribute
@@ -99,7 +99,7 @@ public final class EntryIngestor extends ProductIngestor {
 	/**
 	 * the same for all row
 	 */
-	//private long oidTable;
+	private long oidTable;
 	/**
 	 * oidsaada must be incremented when false;
 	 */
@@ -110,18 +110,14 @@ public final class EntryIngestor extends ProductIngestor {
 	 * @param product
 	 * @throws Exception
 	 */
-	EntryIngestor(EntryBuilder product) throws Exception {
+	CopyOfEntryIngestor(EntryBuilder product) throws Exception {
 		super(product);
-		this.enumerateRow = product.elements();
-//		this.oidTable = product.productIngestor.saadaInstance.oidsaada;
-//		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
+		this.enumerateRow = product.table.elements();
+		this.oidTable = product.table.productIngestor.saadaInstance.oidsaada;
+		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
 		this.addMEssage = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductIngestor#buildInstance()
-	 */
-	@Override
 	protected void buildInstance() throws Exception {
 		/*
 		 * Build the Saada instance
@@ -129,7 +125,6 @@ public final class EntryIngestor extends ProductIngestor {
 		if( this.product.metaClass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
 			this.saadaInstance.oidsaada =  SaadaOID.newOid(this.product.metaClass.getName());
-			this.buildOrderedBusinessAttributeList();
 		} else {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
@@ -148,7 +143,6 @@ public final class EntryIngestor extends ProductIngestor {
 		} else {
 			this.firstCall = false;
 		}
-		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
 		this.setEnergyFields();		

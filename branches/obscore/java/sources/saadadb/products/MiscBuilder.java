@@ -6,6 +6,8 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FooProduct;
 
 /**This class redefines method specific in miscs during their collection load.
  *@author Millan Patrick

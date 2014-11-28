@@ -41,7 +41,7 @@ import cds.astro.Astroframe;
  * @version $Id$
  */
 public class ProductIngestor {
-	protected SaadaInstance saadaInstance;
+	public SaadaInstance saadaInstance;
 	protected ProductBuilder product;
 	/** allows the ColumnSetter to append messages after conversion */
 	protected boolean addMEssage = true;	
@@ -78,23 +78,30 @@ public class ProductIngestor {
 	 */
 	protected void buildInstance() throws Exception {
 		/*
-		 * Build the Saada instance
+		 * Build the Saada instance if there is a metaclass
+		 * TODO check whether the metaclass=null case is still used somewhere out of the FlatFile
 		 */
-		this.orderedBusinessAttributes = new ArrayList<AttributeHandler>();
 		if( this.product.metaClass != null ) {
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(this.product.metaClass.getName()).newInstance();
-			/*
-			 * This copy of AHs will be used to build the SQL line corresponding to one row.
-			 */
-			HashMap<String, AttributeHandler> hm = this.product.metaClass.getAttributes_handlers();
-			for( Entry<String, AttributeHandler> e: hm.entrySet()){
-				this.orderedBusinessAttributes.add((AttributeHandler)(e.getValue().clone()));
-			}
+			this.buildOrderedBusinessAttributeList();
 		} else {
+			this.orderedBusinessAttributes = new ArrayList<AttributeHandler>();
 			this.saadaInstance = (SaadaInstance) SaadaClassReloader.forGeneratedName(
 					Category.explain(this.product.mapping.getCategory()) + "UserColl").newInstance();
 		}
 		this.numberOfCall++;
+	}
+	
+	/**
+	 * This copy of AHs will be used to build the SQL line corresponding to one row.
+	 * This data indirection structure is overloaded for table entries
+	 */
+	protected void buildOrderedBusinessAttributeList(){
+		this.orderedBusinessAttributes = new ArrayList<AttributeHandler>();
+		HashMap<String, AttributeHandler> hm = this.product.metaClass.getAttributes_handlers();
+		for( Entry<String, AttributeHandler> e: hm.entrySet()){
+			this.orderedBusinessAttributes.add((AttributeHandler)(e.getValue().clone()));
+		}		
 	}
 
 	/**
@@ -108,7 +115,7 @@ public class ProductIngestor {
 			this.saadaInstance.oidsaada = SaadaConstant.LONG;	
 		}
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Set ths fields of the Saada instance");
+			Messenger.printMsg(Messenger.DEBUG, "Set the fields of the Saada instance");
 		this.product.calculateAllExpressions();
 		this.setObservationFields();
 		this.setSpaceFields();
@@ -211,7 +218,7 @@ public class ProductIngestor {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Coordinates are not set");
 		} else if( this.product.astroframeSetter.isNotSet() ) {
-			this.setPositionFieldsInError("Coord conv failed: no frame");
+			this.setPositionFieldsInError("Coordinate conversion failed: no frame");
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Cannot set coordinates since there is no frame");
 		} else {

@@ -29,7 +29,7 @@ public class TableMappingReport extends MappingReport{
 	 */
 	@Override
 	public Map<String, ColumnSetter> getEntryReport() throws Exception {
-		return this.entryBuilder.getReport();
+		return new MappingReport(this.entryBuilder).getReport();
 	}
 
 	/* (non-Javadoc)
@@ -39,7 +39,7 @@ public class TableMappingReport extends MappingReport{
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour = super.getReport();
-		retour.putAll(this.entryBuilder.getReport());
+		retour.putAll(new MappingReport(this.entryBuilder).getReport());
 		return retour;
 	}
 

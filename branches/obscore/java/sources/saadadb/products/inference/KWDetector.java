@@ -8,8 +8,8 @@ import java.util.Map;
 
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
 import saadadb.products.ProductBuilder;
+import saadadb.products.datafile.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;

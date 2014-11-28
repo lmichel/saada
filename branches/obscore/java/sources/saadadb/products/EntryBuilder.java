@@ -16,6 +16,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.datafile.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
@@ -33,7 +34,8 @@ import saadadb.vocabulary.enums.ColumnSetMode;
 public class EntryBuilder extends ProductBuilder {
 	private static final long serialVersionUID = 1L;
 	/** The entries table * */
-	protected TableBuilder table;
+
+	//protected TableBuilder table;
 
 	/**
 	 * Constructor. Alias of the constructor Entry(String fileName, String
@@ -45,13 +47,14 @@ public class EntryBuilder extends ProductBuilder {
 	 */
 	public EntryBuilder(TableBuilder table) throws SaadaException {
 		super(table.dataFile, table.mapping.getEntryMapping(), null);
-		this.table = table;
+		//this.table = table;
 		/*
 		 * This operation is done in super(...) then before this table is set.
 		 * SO we do it again
 		 */
 		try {
-			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
+			this.setQuantityDetector();
+			this.productAttributeHandler = this.dataFile.getEntryAttributeHandler();
 			this.dataFile = table.dataFile;
 			this.mapCollectionAttributes();
 			this.setFmtsignature();
@@ -71,11 +74,8 @@ public class EntryBuilder extends ProductBuilder {
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#loadValue()
-	 */
-	@Override
-	public void loadProduct() throws Exception {
+
+	public void loadProduct(long tableOid) throws Exception {
 		// Initializes the lines meter at 0
 		int line = 0;
 		// A java type of a attribute
@@ -88,7 +88,7 @@ public class EntryBuilder extends ProductBuilder {
 		//Enumeration enumerateRow = table.elements();
 		//Object[]  values        = new Object[0];
 		//@@@@@@ int nb_bus_att          = -1;
-		int table_size = table.getNRows();
+		int table_size = this.getNRows();
 		//boolean vectfieldexist = false;
 		long time_tag = (new Date()).getTime();
 		String         busdumpfile = Repository.getTmpPath() + Database.getSepar()  + "bus" + time_tag + ".psql";
@@ -182,7 +182,7 @@ public class EntryBuilder extends ProductBuilder {
 				Messenger.printMsg(Messenger.DEBUG, "Collection attributes copied");
 			SQLTable.addQueryToTransaction("Update " + tcoll_table
 					+ " Set nb_rows_csa=" + line
-					+ " Where oidsaada=" + table.getTableOid()
+					+ " Where oidsaada=" + tableOid
 					, tcoll_table);
 		} else {
 			Messenger.printMsg(Messenger.TRACE,
@@ -190,7 +190,7 @@ public class EntryBuilder extends ProductBuilder {
 					+ " 0  Entry read");
 
 			SQLTable.addQueryToTransaction("Update " + tcoll_table
-					+ " Set nb_rows_csa=" + line + " Where oidsaada=" + table.getTableOid()
+					+ " Set nb_rows_csa=" + line + " Where oidsaada=" + tableOid
 					, tcoll_table);			
 		}
 		//		(new File(coldumpfile)).delete();
@@ -198,14 +198,6 @@ public class EntryBuilder extends ProductBuilder {
 	}
 
 
-
-	/**
-
-	 * @return Returns the table.
-	 */
-	public TableBuilder getTable() {
-		return table;
-	}
 
 	/* ######################################################
 	 * 
@@ -218,183 +210,10 @@ public class EntryBuilder extends ProductBuilder {
 	 */
 	@Override
 	public void bindDataFile(DataFile dataFile) throws SaadaException {
-		/*
-		 * This operation van be done in super(...) then before this table is set.
-		 */
-		if( this.table != null ) {
-			this.dataFile = dataFile;
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
-			this.productAttributeHandler = this.table.dataFile.getEntryAttributeHandler();
-			this.setFmtsignature();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#getReport()
-	 */
-	@Override
-	public Map<String, ColumnSetter> getReport() throws Exception {
-		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-		this.setProductIngestor();
-		((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
-		this.dataFile.hasMoreElements();
-		this.productIngestor.bindInstanceToFile();
-		SaadaInstance si = this.productIngestor.saadaInstance;
-
-		retour.put("entry.obs_id", obs_idSetter);
-		this.obs_idSetter.storedValue = si.obs_id;
-		retour.put("entry.target_name", target_nameSetter);
-		this.target_nameSetter.storedValue = si.target_name;
-		retour.put("entry.facility_name", facility_nameSetter);
-		this.facility_nameSetter.storedValue = si.facility_name;
-		retour.put("entry.instrument_name", instrument_nameSetter);
-		this.instrument_nameSetter.storedValue = si.instrument_name;
-
-		retour.put("entry.s_ra", s_raSetter);
-		this.s_raSetter.storedValue = si.s_ra;
-		retour.put("entry.s_dec", s_decSetter);
-		this.s_decSetter.storedValue = si.s_dec;
-		retour.put("entry.s_resolution",s_resolutionSetter);
-		this.s_resolutionSetter.storedValue = si.s_resolution;
-		retour.put("entry.s_fov", s_fovSetter);
-		this.s_fovSetter.storedValue = si.getS_fov();
-		retour.put("entry.s_region", s_regionSetter);
-		this.s_regionSetter.storedValue = si.getS_region();
-
-		retour.put("entry.em_min", em_minSetter);
-		this.em_minSetter.storedValue = si.em_min;
-		retour.put("entry.em_max", em_maxSetter);
-		this.em_maxSetter.storedValue = si.em_max;
-		retour.put("entry.em_res_power", em_res_powerSetter);
-		this.em_res_powerSetter.storedValue = si.em_res_power;
-		retour.put("entry.x_unit_org", x_unit_orgSetter);
-		this.x_unit_orgSetter.storedValue = this.x_unit_orgSetter.getValue();
-
-		retour.put("entry.t_max", t_maxSetter);
-		this.t_maxSetter.storedValue = si.t_max;
-		retour.put("entry.t_min", t_minSetter);
-		this.t_minSetter.storedValue = si.t_min;
-		retour.put("entry.t_exptime", t_exptimeSetter);
-		this.t_exptimeSetter.storedValue = si.t_exptime;
-
-		for( ColumnExpressionSetter eah: this.extended_attributesSetter.values()){
-			retour.put("entry." + eah.getAttNameOrg(), eah);     
-		}
-
-		for( Field f: si.getCollLevelPersisentFields() ){
-			String fname = f.getName();
-			if( retour.get("entry." + fname) == null ){
-			AttributeHandler ah = new AttributeHandler();
-				ah.setNameattr(fname); ah.setNameorg(fname); 
-				Object o = si.getFieldValue(fname);
-				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
-				ah.setComment("Computed internally by Saada");		
-				ColumnSingleSetter cs = new ColumnSingleSetter(ah, ColumnSetMode.BY_SAADA);
-				cs.storedValue = ah.getValue();
-				retour.put("entry." + fname, cs);
-			}
-		}
-		return retour;
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductBuilder#getReport()
-	 */
-	public Map<String, ColumnSingleSetter> getReportXX() throws Exception {
-		this.setProductIngestor();
-		if( this.productIngestor.hasMoreElements() ) {
-			((EntryIngestor)(this.productIngestor)).mapIndirectionTables();
-			this.productIngestor.bindInstanceToFile();
-		}
-		SaadaInstance si = this.productIngestor.saadaInstance;
-		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
-		AttributeHandler ah = new AttributeHandler();
-		ah.setNameattr("obs_collection"); ah.setNameorg("obs_collection"); 
-		ah.setValue(si.getFieldValue("obs_collection").toString());
-		ah.setComment(this.getReportOnAttRef("obs_collection", obs_collectionSetter));
-		retour.put("obs_collection", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("target_name"); ah.setNameorg("target_name"); 
-		ah.setValue(si.getFieldValue("target_name").toString());
-		ah.setComment(this.getReportOnAttRef("target_name", target_nameSetter));
-		retour.put("target_name", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("facility_name"); ah.setNameorg("facility_name"); 
-		ah.setValue(si.getFieldValue("facility_name").toString());
-		ah.setComment(this.getReportOnAttRef("facility_name", facility_nameSetter));
-		retour.put("facility_name", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("instrument_name"); ah.setNameorg("instrument_name"); 
-		ah.setValue(si.getFieldValue("instrument_name").toString());
-		ah.setComment(this.getReportOnAttRef("instrument_name", instrument_nameSetter));
-		retour.put("instrument_name", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("s_ra"); ah.setNameorg("s_ra"); 
-		ah.setValue(si.getFieldValue("s_ra").toString());
-		ah.setComment(this.getReportOnAttRef("s_ra", s_raSetter));
-		retour.put("s_ra", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("s_dec"); ah.setNameorg("s_dec"); 
-		ah.setValue(si.getFieldValue("s_dec").toString());
-		ah.setComment(this.getReportOnAttRef("s_dec", s_decSetter));
-		retour.put("s_dec", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("s_resolution"); ah.setNameorg("s_resolution"); 
-		ah.setValue(si.getFieldValue("s_resolution").toString());
-		ah.setComment(this.getReportOnAttRef("s_resolution", s_resolutionSetter));
-		retour.put("error_maj_csa", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("em_min"); ah.setNameorg("em_min"); 
-		ah.setValue(si.getFieldValue("em_min").toString());
-		ah.setComment(this.getReportOnAttRef("em_min", em_minSetter));
-		retour.put("em_min", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("em_max"); ah.setNameorg("em_max"); 
-		ah.setValue(si.getFieldValue("em_max").toString());
-		ah.setComment(this.getReportOnAttRef("em_max", em_maxSetter));
-		retour.put("em_max", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("t_max"); ah.setNameorg("t_max"); 
-		ah.setValue(si.getFieldValue("t_max").toString());
-		ah.setComment(this.getReportOnAttRef("t_max", t_maxSetter));
-		retour.put("t_max", ah);
-
-		ah = new AttributeHandler();
-		ah.setNameattr("t_min"); ah.setNameorg("t_min"); 
-		ah.setValue(si.getFieldValue("t_min").toString());
-		ah.setComment(this.getReportOnAttRef("t_min", t_minSetter));
-		retour.put("t_min", ah);
-
-		//		for( AttributeHandler eah: this.extended_attributes_ref.values()){
-		//			ah = new AttributeHandler();
-		//			String ahname = eah.getNameattr();
-		//			ah.setNameattr(ahname); ah.setNameorg(ahname); 
-		//			ah.setValue(si.getFieldValue(ahname).toString());
-		//			ah.setComment(this.getReportOnAttRef(ahname, eah));
-		//			retour.put(ahname, ah);      	
-		//		}
-
-		for( Field f: si.getCollLevelPersisentFields() ){
-			String fname = f.getName();
-			if( retour.get(fname) == null ){
-				ah = new AttributeHandler();
-				ah.setNameattr(fname); ah.setNameorg(fname); 
-				Object o = si.getFieldValue(fname);
-				ah.setValue((o == null)? SaadaConstant.STRING:o.toString());
-				ah.setComment("Computed internally by Saada");				
-				retour.put(fname, ah);
-			}
-		}
-		return null;
+		this.dataFile = dataFile;
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
+		this.productAttributeHandler = this.dataFile.getEntryAttributeHandler();
+		this.setFmtsignature();
 	}
 
 }

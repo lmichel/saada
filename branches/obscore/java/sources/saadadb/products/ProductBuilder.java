@@ -7,25 +7,19 @@ import hecds.wcs.descriptors.CardMap;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
-import saadadb.collection.obscoremin.SaadaInstance;
-import saadadb.command.ArgsParser;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -52,7 +46,6 @@ import saadadb.util.Messenger;
 import saadadb.util.MessengerLogger;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
-import saadadb.vocabulary.enums.ColumnSetMode;
 import saadadb.vocabulary.enums.PriorityMode;
 import cds.astro.Astroframe;
 import cds.astro.FK4;
@@ -91,7 +84,6 @@ public class ProductBuilder {
 	/*
 	 * Observation Axis
 	 */
-	//protected List<AttributeHandler> name_components;
 	public ColumnSetter obs_idSetter=new ColumnExpressionSetter("obs_id");
 	public ColumnSetter obs_collectionSetter=new ColumnExpressionSetter("obs_collection");
 	public ColumnSetter obs_publisher_didSetter=new ColumnExpressionSetter("obs_publisher_did");
@@ -108,7 +100,7 @@ public class ProductBuilder {
 	public ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
 	public ColumnSetter s_fovSetter=new ColumnExpressionSetter("s_fov");
 	public ColumnSetter s_regionSetter=new ColumnExpressionSetter("s_region");
-	public ColumnSetter astroframeSetter;
+	public ColumnSetter astroframeSetter=new ColumnExpressionSetter("astroframe");
 	public PriorityMode spaceMappingPriority = PriorityMode.LAST;
 
 	/*
@@ -145,9 +137,8 @@ public class ProductBuilder {
 	 */
 	public QuantityDetector quantityDetector=null;
 	/* map: name of the collection attribute => attribute handler of the current product*/
-	public Map<String,ColumnExpressionSetter> extended_attributesSetter;
-	protected List<AttributeHandler> ignored_attributesSetter;
-
+	public Map<String,ColumnExpressionSetter> extended_attributesSetter = new LinkedHashMap<String, ColumnExpressionSetter>();
+	protected List<AttributeHandler> ignored_attributesSetter= new ArrayList<AttributeHandler>();
 
 
 	//	protected ColumnSetter system_attribute;
@@ -160,7 +151,6 @@ public class ProductBuilder {
 	public ProductIngestor productIngestor;	
 	/** sed by subclasses */
 	protected Image2DCoordinate wcs;
-
 	public Modeler wcsModeler;
 
 	/**
@@ -221,8 +211,8 @@ public class ProductBuilder {
 
 	/**
 	 * Returns the list which maps attribute names formated in the standard of
-	 * Saada (keys) to their objects modelling attribute informations (values).
-	 * Generally the object modelling attribute informations is a
+	 * Saada (keys) to their objects modeling attribute informations (values).
+	 * Generally the object modeling attribute informations is a
 	 * AttributeHandler. This method contrary in the method getKW() does not
 	 * model the list in memory. So that this one does not return null, it is
 	 * beforehand necessary to have already created the list with the other
@@ -295,7 +285,13 @@ public class ProductBuilder {
 		return dataFile.getNRows();
 	}
 
-
+	/**
+	 * Used by sub classes
+	 * @return
+	 */
+	public long getTableOid() {
+		return SaadaConstant.INT;
+	}
 	/*************************************************
 	 * Initialization of the product
 	 *************************************************/
@@ -722,9 +718,7 @@ public class ProductBuilder {
 		traceReportOnAttRef(this.instrument_nameSetter);
 	}
 	/**
-	 * Set attributes used to build nstance names.
-	 * Take attributes defined into the configuration if defined. 
-	 * Otherwise take attribute with UCD = meta.id;meta.main or meta.id; 
+	 * Set attributes used to build instance names.
 	 * @throws Exception 
 	 * @throws FatalException 
 	 */
@@ -733,18 +727,10 @@ public class ProductBuilder {
 		/*
 		 * Uses the config first
 		 */
-		ColumnMapping cm = this.mapping.getObservationAxisMapping().getColumnMapping("obs_id");
-		String expression = "";
-		if(  !cm.notMapped()) {
-			for( AttributeHandler ah: cm.getHandlers()) {
-				if( expression.length() > 0 ) expression += ",";
-				if( ah.getNameorg().equals(ColumnMapping.NUMERIC)) expression += ah.getValue();
-				else  expression += ah.getNameorg();
-			}
-			expression = "strcat(" + expression + ")";
-			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression, this.productAttributeHandler, false);
-			this.obs_idSetter.calculateExpression();
-		} else {
+		this.obs_idSetter = this.getMappedAttributeHander("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
+
+		if( this.obs_idSetter.isNotSet() ) {
+			String expression = "";
 			ColumnExpressionSetter cs;
 			if( !(cs = quantityDetector.getFacilityName()).isNotSet() ) {
 				expression += cs.getValue();
@@ -763,7 +749,7 @@ public class ProductBuilder {
 			}
 			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);
 		}
-		Messenger.printMsg(Messenger.TRACE, "Take <" + expression + "> as name");
+		this.traceReportOnAttRef(this.obs_idSetter);
 	}
 
 	/**
@@ -772,6 +758,7 @@ public class ProductBuilder {
 	protected void mapEnergyAxe() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Map Energy Axe");
 		this.setQuantityDetector();
+		AxisMapping mapping = this.mapping.getEnergyAxisMapping();
 		switch(this.energyMappingPriority){
 		case ONLY:		
 			PriorityMessage.only("Energy");
@@ -798,31 +785,31 @@ public class ProductBuilder {
 
 		case LAST:
 			PriorityMessage.last("Energy");
-			this.mapCollectionSpectralCoordinateFromMapping();
+		//	this.mapCollectionSpectralCoordinateFromMapping();
 			ColumnExpressionSetter qdMin = this.quantityDetector.getEMin();
 			ColumnExpressionSetter qdMax = this.quantityDetector.getEMax();
 			ColumnExpressionSetter qdUnit = this.quantityDetector.getEUnit();
 			ColumnExpressionSetter qdRPow= this.quantityDetector.getResPower();
 			ColumnExpressionSetter qdBins= this.quantityDetector.getEbins();
 			if( qdMin.isNotSet() || qdMax.isNotSet() ) {
-				this.em_minSetter = this.quantityDetector.getEMin();
-				this.em_maxSetter = this.quantityDetector.getEMax();				
+				this.em_minSetter = this.getMappedAttributeHander("em_min", mapping.getColumnMapping("em_min"));
+				this.em_maxSetter = this.getMappedAttributeHander("em_max", mapping.getColumnMapping("em_max"));			
 			} else {
 				this.em_minSetter = qdMin;
 				this.em_maxSetter = qdMax;				
 			}
 			if( qdUnit.isNotSet()  ) {
-				this.x_unit_orgSetter = this.quantityDetector.getEUnit();
+				this.x_unit_orgSetter = this.getMappedAttributeHander("x_unit_org", mapping.getColumnMapping("x_unit_org"));
 			} else {
 				this.x_unit_orgSetter = qdUnit;
 			}
 			if( qdRPow.isNotSet()  ) {
-				this.em_res_powerSetter = this.quantityDetector.getResPower();
+				this.em_res_powerSetter = this.getMappedAttributeHander("em_respower", mapping.getColumnMapping("em_res_power"));
 			} else {
 				this.em_res_powerSetter = qdRPow;
 			}
 			if( qdBins.isNotSet()  ) {
-				this.em_binsSetter = this.quantityDetector.getEbins();
+				this.em_binsSetter = this.getMappedAttributeHander("em_bins", mapping.getColumnMapping("em_bins"));
 			} else {
 				this.em_binsSetter = qdBins;
 			}
@@ -1000,8 +987,6 @@ public class ProductBuilder {
 	public void mapIgnoredAndExtendedAttributes () throws Exception {
 		//LinkedHashMap<String, String> mapped_extend_att = this.mapping.getExtenedAttMapping().getClass() getAttrExt();
 		Set<String> extendedAtt = this.mapping.getExtenedAttMapping().getColmunSet();
-		this.extended_attributesSetter = new LinkedHashMap<String, ColumnExpressionSetter>();
-		this.ignored_attributesSetter  = new ArrayList<AttributeHandler>();
 		/*
 		 * Ignored attribute are discarded on the fly when data files are readout.
 		 * (see FITSProduct and VOProduct 
@@ -1270,7 +1255,7 @@ public class ProductBuilder {
 		AxisMapping mapping     = this.mapping.getEnergyAxisMapping();
 		ColumnMapping sc_col    = mapping.getColumnMapping("dispertion_column");
 
-		this.x_unit_orgSetter   = this.getMappedAttributeHander("x_unit_org", mapping.getColumnMapping("x_unit_org_csa"));
+		this.x_unit_orgSetter   = this.getMappedAttributeHander("x_unit_org", mapping.getColumnMapping("x_unit_org"));
 		this.em_res_powerSetter = this.getMappedAttributeHander("em_res_power", mapping.getColumnMapping("em_res_power"));
 		this.em_binsSetter = this.getMappedAttributeHander("em_bins", mapping.getColumnMapping("em_bins"));
 		this.em_minSetter = new ColumnExpressionSetter("em_min");
@@ -1574,7 +1559,7 @@ public class ProductBuilder {
 	 * @throws IOException
 	 * @throws SaadaException
 	 */
-	public void mergeProductFormat(DataFile file_to_merge) throws FitsException, IOException, SaadaException {
+	public void mergeProductFormat(DataFile file_to_merge) throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Merge format with file <" + file_to_merge.getName() + ">");
 

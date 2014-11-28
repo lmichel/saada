@@ -194,5 +194,15 @@ public class StringFunctionExtractor {
 		
 		s = new StringFunctionExtractor("MJD('11/20/1858') - MJD('11/22/1858')");
 		System.out.println(s);	
+		
+		s = new StringFunctionExtractor("strcat(A, B, C)");
+		System.out.println(s);	
+		for(Entry<String,StringFunctionDescriptor> e : s.splitedFunctionsMap.entrySet()){
+			System.out.println(" - " + e);
+			String[] ags = e.getValue().functionArguments;
+			for( String sr: ags){
+				System.out.println("   ." + sr);
+			}
+		}
 	}
 }

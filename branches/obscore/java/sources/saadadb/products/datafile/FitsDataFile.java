@@ -364,7 +364,7 @@ public class FitsDataFile extends File implements DataFile{
 			EntryMapping entryconf = null;
 			List<String> kWIgnored = null;
 			/*
-			 * kWIgnored are porcessed in the case of a table loading but the method can bu called in others contexts such as the
+			 * kWIgnored are porcessed in the case of a table loading but the method can be called in others contexts such as the
 			 * Spectrum coordinate detection
 			 */
 			if( this.productBuilder != null && this.productBuilder.mapping.getCategory() == Category.TABLE  ) {
