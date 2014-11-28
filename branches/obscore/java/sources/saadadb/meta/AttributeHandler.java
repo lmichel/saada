@@ -18,7 +18,7 @@ import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.VOTableDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.ChangeKey;
