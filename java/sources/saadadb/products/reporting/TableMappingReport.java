@@ -1,8 +1,9 @@
 package saadadb.products.reporting;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import saadadb.meta.AttributeHandler;
 import saadadb.products.EntryBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.setter.ColumnSetter;
@@ -37,9 +38,18 @@ public class TableMappingReport extends MappingReport{
 	 */
 	@Override
 	public Map<String, ColumnSetter> getReport() throws Exception {
-		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
-		retour = super.getReport();
-		retour.putAll(new MappingReport(this.entryBuilder).getReport());
+		System.out.println( entryBuilder.hashCode() + " " + entryBuilder.productAttributeHandler.hashCode());
+		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
+			System.out.println("getReport1 " + eah);
+		}
+		Map<String, ColumnSetter> retour = super.getReport();
+		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
+			System.out.println("getReport2 " + eah);
+		}
+		Map<String, ColumnSetter> em = getEntryReport();
+		for( Entry<String, ColumnSetter>e: em.entrySet()){
+			retour.put("entry." + e.getKey(), e.getValue());
+		}
 		return retour;
 	}
 
