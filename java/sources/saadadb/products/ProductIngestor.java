@@ -244,7 +244,7 @@ public class ProductIngestor {
 				this.setFoVFields();
 				this.setPosErrorFields();
 			} catch( Exception e ) {
-				e.printStackTrace();
+				//e.printStackTrace();
 				this.setPositionFieldsInError("Error while setting the position " + e.getMessage());
 			}
 

@@ -4,10 +4,12 @@ import java.io.File;
 
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FooProduct;
+import saadadb.util.Messenger;
 
 /**This class redefines method specific in miscs during their collection load.
  *@author Millan Patrick
@@ -17,22 +19,37 @@ import saadadb.products.datafile.FooProduct;
 public class MiscBuilder extends ProductBuilder{
 	private static final long serialVersionUID = 1L;
 
-						/* ######################################################
-						 * 
-						 * ATTRIBUTES, CONSTRUCTOR AND METHODE FOR THE NEW LOADER
-						 * 
-						 *#######################################################*/
-
 	public MiscBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{	
 		super(file, mapping, metaClass );
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 	
 	public MiscBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
 		super(file, mapping, null );
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 	
    public MiscBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 
 }

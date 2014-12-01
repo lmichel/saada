@@ -113,8 +113,8 @@ public final class EntryIngestor extends ProductIngestor {
 	EntryIngestor(EntryBuilder product) throws Exception {
 		super(product);
 		this.enumerateRow = product.elements();
-//		this.oidTable = product.productIngestor.saadaInstance.oidsaada;
-//		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
+		//		this.oidTable = product.productIngestor.saadaInstance.oidsaada;
+		//		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
 		this.addMEssage = false;
 	}
 
@@ -175,10 +175,11 @@ public final class EntryIngestor extends ProductIngestor {
 		 * can be used for reporting
 		 */
 		int cpt = 0;
+		System.out.println(this.product.getClass());
 		for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
+			System.out.println(ah);
 			ah.setValue(this.values[cpt].toString());
 			cpt++;
-			if( ah.getNameorg().equals("RA") ) Messenger.printLocatedMsg(ah.getType() + " @@@@v "+ ah.getValue());
 		}
 		this.lineNumber++;
 	}
@@ -189,9 +190,16 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setObservationFields() throws SaadaException {
+
+		this.saadaInstance.obs_id  = this.getInstanceName(null);
+		this.saadaInstance.setAccess_url(this.saadaInstance.getDownloadURL(false));	
+		this.saadaInstance.setAccess_format(this.product.mimeType);
+		this.saadaInstance.setDate_load(new java.util.Date().getTime());
+		this.saadaInstance.setAccess_estsize(this.product.length());
 		setField("target_name"    , this.product.target_nameSetter);
 		setField("instrument_name", this.product.instrument_nameSetter);
 		setField("facility_name"  , this.product.facility_nameSetter);
+		setField("obs_collection" , this.product.obs_collectionSetter);
 	}
 
 	/* (non-Javadoc)
@@ -200,18 +208,18 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected void setSpaceFields() throws Exception {
 		System.out.println("couco");
-//		System.out.println("### " +this.num_col_ra);
-//		System.out.println("### " + this.values[this.num_col_ra]);
-//		if( this.values != null ){
-//			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
-//				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
-//			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
-//				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
-//			if( this.num_col_fov != -1 && this.product.s_fovSetter.byKeyword())
-//				this.product.s_fovSetter.setValue(this.values[this.num_col_fov].toString());
-//			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
-//				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
-//		}
+		//		System.out.println("### " +this.num_col_ra);
+		//		System.out.println("### " + this.values[this.num_col_ra]);
+		//		if( this.values != null ){
+		//			if( this.num_col_ra != -1 && this.product.s_raSetter.byKeyword())
+		//				this.product.s_raSetter.setValue(this.values[this.num_col_ra].toString());
+		//			if( this.num_col_dec != -1 && this.product.s_decSetter.byKeyword())
+		//				this.product.s_decSetter.setValue(this.values[this.num_col_dec].toString());
+		//			if( this.num_col_fov != -1 && this.product.s_fovSetter.byKeyword())
+		//				this.product.s_fovSetter.setValue(this.values[this.num_col_fov].toString());
+		//			if( this.num_col_err != -1 && this.product.s_resolutionSetter.byKeyword())
+		//				this.product.s_resolutionSetter.setValue(this.values[this.num_col_err].toString());
+		//		}
 		if( this.numberOfCall == 0 ){
 			super.setSpaceFields();
 		} else {
@@ -245,9 +253,9 @@ public final class EntryIngestor extends ProductIngestor {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
 			}
-System.out.println(this.product.s_raSetter);
+			System.out.println(this.product.s_raSetter);
 		}
-		
+
 		/*
 		 * Belongs to the obseravtion axis but needs the coordinates
 		 */
