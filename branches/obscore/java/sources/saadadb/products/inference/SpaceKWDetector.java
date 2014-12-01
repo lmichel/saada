@@ -412,7 +412,7 @@ public class SpaceKWDetector extends KWDetector{
 						Messenger.printMsg(Messenger.DEBUG, "Take " + frame + " infered from position keywords");
 					this.status |= FRAME_FOUND;		
 					this.frameSetter = new ColumnExpressionSetter("astroframe");
-					this.frameSetter.setByValue("", false);
+					this.frameSetter.setByValue(frame.toString(), false);
 					this.frameSetter.completeMessage("Take <" + frame + "> as frame (infered from the name of the position keywords)");
 					this.frameSetter.storedValue = frame;
 				} else {

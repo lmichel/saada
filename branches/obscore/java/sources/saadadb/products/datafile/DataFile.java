@@ -16,6 +16,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.ProductBuilder;
@@ -234,11 +235,17 @@ public abstract class DataFile implements Enumeration {
 	 * Returns the map of the attribute handlers modeling the columns of te data tables
 	 * @return
 	 */
-	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException  {
+	public Map<String, AttributeHandler> getEntryAttributeHandlerCopy() throws SaadaException  {
 		if( this.entryAttributeHandlers == null ){
 			this.mapEntryAttributeHandler();
 		}
-		return this.entryAttributeHandlers;
+		Map<String, AttributeHandler> mah = this.entryAttributeHandlers;
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		for( Entry<String, AttributeHandler > e: mah.entrySet()){
+			System.out.println("DATAFILE " + e.getValue());
+			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
+		}
+		return retour;
 	}
 	/**
 	 * Returns the map of the attribute handlers modeling the KW of all headers loaded
@@ -273,8 +280,8 @@ public abstract class DataFile implements Enumeration {
 		TableBuilder tb;
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler()
+				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandlerCopy().size() + " table columns taken in account");
+			return new QuantityDetector(this.getEntryAttributeHandlerCopy()
 					, this.comments
 					, productMapping
 					, this.productBuilder.wcsModeler);			
@@ -315,20 +322,45 @@ public abstract class DataFile implements Enumeration {
 			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
 
 			if( builderAh == null ){
+				System.out.println("ADD " + localAh.clone());
 				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
 			} else {
 				builderAh.setValue(localAh.getValue());
 			}
 		}
-
 	}
 	
-	
+	/**
+	 * Set the builder's attribute handlers with the values read in the table columns of the product file
+	 * @throws Exception
+	 */
+	public void updateEntryAttributeHandlerValues(EntryBuilder entryBuilder) throws Exception {
+		//this.mapAttributeHandler();
+		if( entryBuilder.productAttributeHandler == null ){
+			entryBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
+		} else {
+			for( AttributeHandler ah: entryBuilder.productAttributeHandler.values()){
+				ah.setValue("");
+			}
+		}
+
+		for( Entry<String, AttributeHandler> eah: this.entryAttributeHandlers.entrySet()){
+			AttributeHandler localAh = eah.getValue();
+			String localKey = eah.getKey();
+			AttributeHandler builderAh = entryBuilder.productAttributeHandler.get(localKey);
+
+			if( builderAh == null ){
+				System.out.println("ENTRY ADD " + localAh.clone());
+				entryBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
+			} else {
+				builderAh.setValue(localAh.getValue());
+			}
+		}
+	}
+
 	/*******************************
 	 * Abstract methods
 	 */
-
-	
 	/**
 	 * Returns a map with all extension detected within the data product
 	 * @return
@@ -346,10 +378,17 @@ public abstract class DataFile implements Enumeration {
 	public abstract void mapEntryAttributeHandler() throws IgnoreException ;
 
 	/**
-	 * Connect the DataFile with the ProductBuilder
+	 * Connect the DataFile with the ProductBuilder. The header AHs of the DataFile are copied here to the Builder
 	 * @param builder
 	 */
 	public abstract void bindBuilder(ProductBuilder builder) throws Exception;
+
+	/**
+	 * Connect the DataFile with the ProductBuilder. The table AHs of the DataFile table are copied here to the Builder
+	 * The builder is not referenced by the DataFile since it just deal with a part of the product.
+	 * @param builder
+	 */
+	public abstract void bindEntryBuilder(ProductBuilder builder) throws Exception;
 	/**Returns the value corresponding finded in the product file to the key word in parameter.
      *@param String The key word.
      *@return String The value corresponding to this key word, if he exists, else null.
