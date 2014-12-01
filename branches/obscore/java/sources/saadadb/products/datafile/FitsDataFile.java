@@ -55,22 +55,21 @@ import saadadb.vocabulary.enums.ExtensionSetMode;
 
  * 06/2011: Returns table rows a an array with the right type taken from the TFORM 
  *          keyword instead of using the reflexion of on data itself (fails on NULL value)
- * 02/2014  Make it working with a {@link ProductBuilder} without configuaration, so that the code 
+ * 02/2014  Make it working with a {@link ProductBuilder} without configuration, so that the code 
  *          can be used out of a DB context
  */
 
-public class FitsDataFile extends File implements DataFile{
+public final class FitsDataFile extends FSDataFile{
 
 	private static final long serialVersionUID = 1L;
-
 	private TableHDU tableEnumeration;
 	private int nextIndex = 0;
 	private int nb_rows = 0;
-	protected Fits fits_data=null;
+	protected Fits fitsData=null;
 	//	protected int good_header_number;
 	protected ExtensionSetter  extensionSetter = new ExtensionSetter();
-	protected BasicHDU good_header;
-	protected BasicHDU first_header;
+	protected BasicHDU goodHeader;
+	protected BasicHDU firstHeader;
 
 	private String ra="";
 
@@ -93,13 +92,10 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws FitsException 
 	 */
 	public FitsDataFile(String name, ProductBuilder product) throws Exception{
-
-		//See the super class "File"(package java.io)
 		super(name);
 		System.out.println("@@@@@@ FITS Const 1");
-		//Initialzes the current file name
 		this.productBuilder = product;
-		this.fits_data = new Fits(getCanonicalPath()); 
+		this.fitsData = new Fits(getCanonicalPath()); 
 		this.getProductMap();
 	}
 	/**
@@ -111,7 +107,7 @@ public class FitsDataFile extends File implements DataFile{
 		System.out.println("@@@@@@ FITS Const 2");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
-		this.fits_data = new Fits(name);
+		this.fitsData = new Fits(name);
 		this.getProductMap();	
 	}
 	/**
@@ -120,17 +116,16 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public FitsDataFile(ProductBuilder product) throws Exception {
 		super(product.dataFile.getAbsolutePath());
-		System.out.println("@@@@@@ FITS Const 3");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "reading FIST file " + product.getName());
 		this.productBuilder = product;
-		this.fits_data = new Fits(product.dataFile.getCanonicalPath());
+		this.fitsData = new Fits(product.dataFile.getCanonicalPath());
 		this.getProductMap();
 		try {
-			this.first_header = fits_data.getHDU(0);
+			this.firstHeader = fitsData.getHDU(0);
 		} catch (PaddingException e) {
-			fits_data.addHDU(e.getTruncatedHDU());
-			this.first_header = fits_data.getHDU(0);
+			this.fitsData.addHDU(e.getTruncatedHDU());
+			this.firstHeader = this.fitsData.getHDU(0);
 			Messenger.printMsg(Messenger.WARNING, e.getMessage());
 		}
 
@@ -177,10 +172,10 @@ public class FitsDataFile extends File implements DataFile{
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
-							this.good_header = bHDU;
+							this.goodHeader = bHDU;
 							Messenger.printMsg(Messenger.TRACE, msg);							
 						} else if( product.getMapping().getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
-							this.good_header = bHDU;
+							this.goodHeader = bHDU;
 							String msg = "Take" + dfe.getSType()+ " HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.DETECTED
@@ -216,10 +211,10 @@ public class FitsDataFile extends File implements DataFile{
 		System.out.println("@@@@@@@@@ FITS BndBuilder");
 		this.productBuilder = builder;
 		try {
-			this.first_header = fits_data.getHDU(0);
+			this.firstHeader = fitsData.getHDU(0);
 		} catch (PaddingException e) {
-			fits_data.addHDU(e.getTruncatedHDU());
-			this.first_header = fits_data.getHDU(0);
+			fitsData.addHDU(e.getTruncatedHDU());
+			this.firstHeader = fitsData.getHDU(0);
 			Messenger.printMsg(Messenger.WARNING, e.getMessage());
 		}
 
@@ -266,10 +261,10 @@ public class FitsDataFile extends File implements DataFile{
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
-							this.good_header = bHDU;
+							this.goodHeader = bHDU;
 							Messenger.printMsg(Messenger.TRACE, msg);							
 						} else if( this.productBuilder.getMapping().getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
-							this.good_header = bHDU;
+							this.goodHeader = bHDU;
 							String msg = "Take " + dfe.getSType() + "  HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.DETECTED
@@ -305,43 +300,15 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	@Override
 	public void closeStream() {
-		if( this.fits_data != null && this.fits_data.getStream() != null) {
+		if( this.fitsData != null && this.fitsData.getStream() != null) {
 			try {
-				this.fits_data.getStream().close();
+				this.fitsData.getStream().close();
 			} catch (IOException e) {
 				Messenger.printMsg(Messenger.WARNING, "Closing stream of " + this.productBuilder.getName() +  " " + e.getMessage());
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#updateAttributeHandlerValues()
-	 */
-	@Override
-	public void updateAttributeHandlerValues() throws Exception{
-		this.mapAttributeHandler();
-		if( this.productBuilder.productAttributeHandler == null ){
-			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		} else {
-			for( AttributeHandler ah: this.productBuilder.productAttributeHandler.values()){
-				ah.setValue("");
-			}
-		}
-
-		for( Entry<String, AttributeHandler> eah: this.attributeHandlers.entrySet()){
-			AttributeHandler localAh = eah.getValue();
-			String localKey = eah.getKey();
-			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
-
-			if( builderAh == null ){
-				//System.out.println("add value of " + localKey);
-				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
-			} else {
-				//System.out.println("change value of " + localKey);
-				builderAh.setValue(localAh.getValue());
-			}
-		}
-	}
 
 	/**
 	 * Build an attributeHandler map the columns definition of the extension # hduNum
@@ -352,7 +319,7 @@ public class FitsDataFile extends File implements DataFile{
 	private Map<String, AttributeHandler> getEntryAttributeHandler(int hduNum) throws IgnoreException {
 		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		try {
-			BasicHDU bHDU = fits_data.getHDU(hduNum);
+			BasicHDU bHDU = fitsData.getHDU(hduNum);
 			if(  !(bHDU instanceof  nom.tam.fits.TableHDU) ){
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No column names for a " + bHDU.getClass().getName());
 				return retour;  		
@@ -461,11 +428,12 @@ public class FitsDataFile extends File implements DataFile{
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWEntry(java.util.LinkedHashMap)
 	 */
-	private void mapEntryAttributeHandler() throws IgnoreException {
+	@Override
+	public void mapEntryAttributeHandler() throws IgnoreException {
 		int hduNum = this.extensionSetter.getGoodHeaderNumber();
 		this.entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		try {
-			BasicHDU bHDU = fits_data.getHDU(hduNum);
+			BasicHDU bHDU = fitsData.getHDU(hduNum);
 			if(  !(bHDU instanceof  nom.tam.fits.TableHDU) ){
 				IgnoreException.throwNewException(SaadaException.FITS_FORMAT, "No column names for a " + bHDU.getClass().getName());
 			}
@@ -592,7 +560,7 @@ public class FitsDataFile extends File implements DataFile{
 		try {
 			//The initilization in this method allows not to overload the computer memory and to provoke an memory exception
 			//by modelling wrongly these data (as in the global header).
-			return ((TableHDU)this.fits_data.getHDU(numHDU)).getRow(index);
+			return ((TableHDU)this.fitsData.getHDU(numHDU)).getRow(index);
 		} catch(Exception e) {
 			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
 			return null;
@@ -759,7 +727,7 @@ public class FitsDataFile extends File implements DataFile{
 
 		//The initilization in this method allows not to overload the computer memory and to provoke an memory exception
 		//by modelling wrongly these data (as in the global header).
-		return ((TableHDU)this.fits_data.getHDU(numHDU)).getNCols();
+		return ((TableHDU)this.fitsData.getHDU(numHDU)).getNCols();
 
 	}
 	/**Tests if the product files contains the key word in parameter.
@@ -769,7 +737,7 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws FitsException 
 	 */
 	public boolean hasValuedKW(String key) throws FitsException, IOException{
-		return this.fits_data.readHDU().getHeader().containsKey(key);
+		return this.fitsData.readHDU().getHeader().containsKey(key);
 	}
 
 
@@ -786,7 +754,7 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws FitsException 
 	 */
 	public Image getBitMapImage() throws FitsException, IOException{
-		ImageHDU himage = (ImageHDU)this.fits_data.getHDU(this.productBuilder.mapping.getHeaderRef().getNumber());
+		ImageHDU himage = (ImageHDU)this.fitsData.getHDU(this.productBuilder.mapping.getHeaderRef().getNumber());
 		int[] size = himage.getAxes();
 		int ww = size[0];
 		int hh = size[1];
@@ -839,7 +807,7 @@ public class FitsDataFile extends File implements DataFile{
 	public int getHeaderNumber(String extName) throws FitsException, IOException, IgnoreException{		
 		BasicHDU bHDU=null;
 		int i=1;
-		while( (bHDU = fits_data.getHDU(i)) != null ) {
+		while( (bHDU = fitsData.getHDU(i)) != null ) {
 			//for(int i=1; i<size && !findGoodExt; i++){	//loop that scan all extension to find the good one
 			Header header = bHDU.getHeader();
 			Cursor it = header.iterator();
@@ -910,7 +878,7 @@ public class FitsDataFile extends File implements DataFile{
 		}
 
 		if( dfe != null ){
-			this.good_header = fits_data.getHDU(dfe.tableNum);
+			this.goodHeader = fitsData.getHDU(dfe.tableNum);
 			String msg = "Take " + dfe.getSType() + " of HDU# " + dfe.tableNum +  " as data extension for " + Category.explain(category);
 			this.extensionSetter = new ExtensionSetter(dfe.tableNum
 					, ExtensionSetMode.DETECTED
@@ -922,158 +890,16 @@ public class FitsDataFile extends File implements DataFile{
 		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}
 
-	/**
-	 * Returns the first extension possibly spectra data
-	 * @return
+
+
+
+
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#mapAttributeHandler()
 	 */
-	private DataFileExtension getFirstSpectralExtension() {
-		/*
-		 * Look first for an extension named SPECRUM
-		 */
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( (dfe.isImage() || dfe.isDataTable()) && dfe.tableName.equalsIgnoreCase("spectrum")) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Take " + dfe + " as spectrum extension because it is named SPECTRUM");
-				return dfe;
-			}
-		}
-		/*
-		 * then Look at images
-		 */
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( dfe.isImage() ) {
-				for( AttributeHandler ah: dfe.attributeHandlers ) {
-					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT)){
-						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has spectral WCS");
-						return dfe;
-					}
-				}
-			}
-		}
-		/*
-		 * else take the first table
-		 */
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( dfe.isDataTable() ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table: taken as spectra data");
-				return dfe;				
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the first extension possibly spectra data
-	 * @return
-	 */
-	private DataFileExtension getFirstTableExtension() {
-		/*
-		 * else take the first table
-		 */
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( dfe.isDataTable() ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table");
-				return dfe;				
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the first extension possibly image data
-	 * @return
-	 */
-	private DataFileExtension getFirstImageExtension() {
-		/*
-		 * Look  at images
-		 */
-		for( DataFileExtension dfe: this.productMap.values() ) {
-			if( dfe.isImage() ) {
-				boolean foundAsc = false;
-				boolean foundDec = false;
-				for( AttributeHandler ah: dfe.attributeHandlers ) {
-					if( ah.getNameorg().startsWith("CTYP") ) {
-						if( !foundAsc && ah.getValue().matches(RegExp.FITS_CTYPE_ASC)){
-							foundAsc = true;
-						}
-						if( !foundDec && ah.getValue().matches(RegExp.FITS_CTYPE_DEC)){
-							foundDec = true;
-						}
-					}
-					if( foundAsc && foundDec ) {
-						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has image WCS (both coords found)");
-						return dfe;					
-					}					
-				}
-			}
-		}
-		return null;
-	}
-
-
-	/**
-	 * Return the category of the FITS extension matching the product category
-	 * @return
-	 * @throws FatalException 
-	 */
-	private int getProductCategory() {
-		if( productBuilder == null ){
-			return Category.UNKNOWN;
-		} else if( productBuilder.getMapping() != null) {
-			return productBuilder.mapping.getCategory();
-		} else if( productBuilder instanceof Image2DBuilder) {
-			return Category.IMAGE;
-		} else if( productBuilder instanceof SpectrumBuilder) {
-			return Category.SPECTRUM;
-		}  else if( productBuilder instanceof TableBuilder) {
-			return Category.TABLE;
-		} else {
-			return Category.MISC;
-		}
-	}
-
-	/**
-	 * @param hdu
-	 * @param category
-	 * @return
-	 */
-	private boolean checkExtensionCategory(DataFileExtension hdu, int category) {
-		if( hdu   != null) {
-			/*
-			 * If there is no specified category (BINTABLE or IMAGE) any extension 
-			 * can be taken. That is the case for MISC products
-			 */
-			if( category == Category.UNKNOWN ) {
-				return true;
-			}
-			/*
-			 * 1st HDU can be seen as a 0x0 pixel image: Must look for the first not empty image
-			 */
-			else if( category == Category.IMAGE && hdu.isImage() ){
-				return true;
-			}					
-			else if( category == Category.TABLE && hdu.isDataTable() ){
-				return true;
-			}
-			/*
-			 * With V2 datamodel, the dataloader must be enabled to detect the energy range even for misc
-			 */
-			else if( (category == Category.SPECTRUM || category == Category.MISC  ) && hdu.isDataTable() ) {
-				return true;
-			}
-		}
-		return false;		
-	}
-
-
-	/**
-	 * Construct the local AH map from the keywords read in the file. This map is ordered as the keywords
-	 */
-	private void mapAttributeHandler() {
+	@Override
+	public  void mapAttributeHandler() {
 		System.out.println("@@@@@@@@@ Fits mapAttributeHandler");
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		this.addFirstHDU();
@@ -1083,8 +909,8 @@ public class FitsDataFile extends File implements DataFile{
 		List<String> kWIgnored = (this.productBuilder.mapping != null)? this.productBuilder.mapping.getIgnoredAttributes()
 				: new ArrayList<String>();
 
-		if( this.good_header != null && this.good_header != this.first_header) {
-			Cursor it = this.good_header.getHeader().iterator();
+		if( this.goodHeader != null && this.goodHeader != this.firstHeader) {
+			Cursor it = this.goodHeader.getHeader().iterator();
 
 			while( it.hasNext() ){
 
@@ -1131,7 +957,7 @@ public class FitsDataFile extends File implements DataFile{
 	public void addFirstHDU() {
 
 		System.out.println(" addFirstHDU" + this.attributeHandlers.size());
-		Header header = this.first_header.getHeader();
+		Header header = this.firstHeader.getHeader();
 		Cursor it = header.iterator();
 		List<String> kWIgnored = (this.productBuilder.mapping != null)?this.productBuilder.mapping.getIgnoredAttributes()
 				: new ArrayList<String>();
@@ -1189,7 +1015,7 @@ public class FitsDataFile extends File implements DataFile{
 	 * @return Returns the good_header.
 	 */
 	public BasicHDU getGood_header() {
-		return good_header;
+		return goodHeader;
 	}
 
 	/**
@@ -1265,14 +1091,14 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public int[] getImageSize() throws IgnoreException, FitsException {
 		int[] retour = new int[2];
-		if( FitsDataFile.isImage(this.good_header)) {
-			int[] size=  ((ImageHDU)this.good_header).getAxes();				
+		if( FitsDataFile.isImage(this.goodHeader)) {
+			int[] size=  ((ImageHDU)this.goodHeader).getAxes();				
 			retour[0] = size[size.length - 1];
 			retour[1] = size[size.length - 2];
 			return retour;
 		}
-		else if( FitsDataFile.isTileCompressedImage(this.good_header) ) {
-			BasicHDU imghdu = (BasicHDU)this.good_header;
+		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
+			BasicHDU imghdu = (BasicHDU)this.goodHeader;
 			retour[0] = imghdu.getHeader().getIntValue("ZNAXIS1");
 			retour[1] = imghdu.getHeader().getIntValue("ZNAXIS2");
 			return retour;
@@ -1284,12 +1110,12 @@ public class FitsDataFile extends File implements DataFile{
 	}
 
 	public int getBitPIx() throws FitsException, IgnoreException {
-		if( FitsDataFile.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
+		if( FitsDataFile.isImage(this.goodHeader)) {
+			ImageHDU himage = ((ImageHDU)this.goodHeader);
 			return  himage.getBitPix() ;
 		}
-		else if( FitsDataFile.isTileCompressedImage(this.good_header) ) {
-			return  ((BasicHDU)this.good_header).getHeader().getIntValue("ZBITPIX");
+		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
+			return  ((BasicHDU)this.goodHeader).getHeader().getIntValue("ZBITPIX");
 		}
 		else {
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Unknown image format" );
@@ -1305,11 +1131,11 @@ public class FitsDataFile extends File implements DataFile{
 	 * @throws Exception
 	 */
 	public Object getImagePixels(int[] corner, int[] size) throws Exception{
-		if( FitsDataFile.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
+		if( FitsDataFile.isImage(this.goodHeader)) {
+			ImageHDU himage = ((ImageHDU)this.goodHeader);
 			return   himage.getTiler().getTile(corner, size);
 		}
-		else if( FitsDataFile.isTileCompressedImage(this.good_header) ) {
+		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
 			IgnoreException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "Can not generate vignette fo tile compressed images" );
 		}
 		else {
@@ -1324,15 +1150,15 @@ public class FitsDataFile extends File implements DataFile{
 	public Object getImagePixels() throws Exception {
 		int size[] ;
 		int ww, hh;
-		if( FitsDataFile.isImage(this.good_header)) {
-			ImageHDU himage = ((ImageHDU)this.good_header);
+		if( FitsDataFile.isImage(this.goodHeader)) {
+			ImageHDU himage = ((ImageHDU)this.goodHeader);
 			size = himage.getAxes();
 			ww = size[size.length - 1];
 			hh = size[size.length - 2];
 			return himage.getTiler().getTile(new int[size.length], size);
 		}
-		else if( FitsDataFile.isTileCompressedImage(this.good_header) ) {
-			BasicHDU imghdu = (BasicHDU)this.good_header;
+		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
+			BasicHDU imghdu = (BasicHDU)this.goodHeader;
 			int tile = imghdu.getHeader().getIntValue("ZTILE1");
 			size = this.getImageSize();
 			ww = size[0];
@@ -1348,7 +1174,7 @@ public class FitsDataFile extends File implements DataFile{
 			byte [] buf = new byte[pcount];
 			int offset=0;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			this.good_header.getData().write(new BufferedDataOutputStream(baos));
+			this.goodHeader.getData().write(new BufferedDataOutputStream(baos));
 			table = baos.toByteArray();
 
 			for( int i=0 ; i<pcount ; i++ ) {
@@ -1397,23 +1223,23 @@ public class FitsDataFile extends File implements DataFile{
 			/*
 			 * This method can be called by Spectrum findSpectralCoordinateInPixels before the spectrum extension is found
 			 */
-			if( good_header == null ) {
+			if( goodHeader == null ) {
 				return null;
 			}
 			/*
 			 * Spectral data can be stored in image pixels. In this case extrem values are given by
 			 * number of pixels in the first dimension
 			 */
-			if( good_header instanceof nom.tam.fits.ImageHDU ) {
-				if( ((ImageHDU)good_header).getAxes().length == 1 ) {
-					return new Double[]{0.0, (double)(((ImageHDU)good_header).getAxes()[0]), (double)(((ImageHDU)good_header).getAxes()[0])};					
+			if( goodHeader instanceof nom.tam.fits.ImageHDU ) {
+				if( ((ImageHDU)goodHeader).getAxes().length == 1 ) {
+					return new Double[]{0.0, (double)(((ImageHDU)goodHeader).getAxes()[0]), (double)(((ImageHDU)goodHeader).getAxes()[0])};					
 				}
 				/*
 				 * The largest size is supposed to contain data
 				 */
 				else {
-					double min1 = (double)(((ImageHDU)good_header).getAxes()[0]);
-					double min2 = (double)(((ImageHDU)good_header).getAxes()[1]);
+					double min1 = (double)(((ImageHDU)goodHeader).getAxes()[0]);
+					double min2 = (double)(((ImageHDU)goodHeader).getAxes()[1]);
 					if( min1 > min2 ) {
 						return new Double[]{0.0, min1, min1};						
 					} else {
@@ -1682,7 +1508,7 @@ public class FitsDataFile extends File implements DataFile{
 		try {
 			//The initilization in this method allows not to overload the computer memory and to provoke an memory exception
 			//by modelling wrongly these data (as in the global header).
-			return ((TableHDU)this.fits_data.getHDU(1)).getNCols();
+			return ((TableHDU)this.fitsData.getHDU(1)).getNCols();
 		} catch(Exception e) {
 			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
 			return SaadaConstant.INT;
@@ -1703,8 +1529,8 @@ public class FitsDataFile extends File implements DataFile{
 			nextIndex = 0;
 			//Initializes the TableHDU for the enumeration:
 			//The first HDU (in the current Fits file) corresponding to the first Table HDU
-			tableEnumeration = (TableHDU)this.fits_data.getHDU(this.extensionSetter.goodHeaderNumber);
-			nb_rows = ((TableHDU)this.fits_data.getHDU(this.extensionSetter.goodHeaderNumber)).getNRows();
+			tableEnumeration = (TableHDU)this.fitsData.getHDU(this.extensionSetter.goodHeaderNumber);
+			nb_rows = ((TableHDU)this.fitsData.getHDU(this.extensionSetter.goodHeaderNumber)).getNRows();
 			/*
 			 * Format of all columns are stored to do correct casting when reading lines
 			 * 		Binary		ASCII
@@ -1721,7 +1547,7 @@ public class FitsDataFile extends File implements DataFile{
 			 * C	Complex
 			 * M	Comp Double
 			 */
-			TableHDU table = (TableHDU)(this.good_header);
+			TableHDU table = (TableHDU)(this.goodHeader);
 			colform = new int[table.getNCols()];
 			boolean isascii = isASCIITable(table);
 			for(int j = 0; j < table.getNCols(); j++){
@@ -1745,10 +1571,10 @@ public class FitsDataFile extends File implements DataFile{
 	 */
 	public String getKWValueQuickly(String key){
 		HeaderCard card;
-		if( (card = this.first_header.getHeader().findCard(key)) != null ) {
+		if( (card = this.firstHeader.getHeader().findCard(key)) != null ) {
 			return card.getValue();			
 		}
-		else  if( this.good_header != null && (card = this.good_header.getHeader().findCard(key)) != null ) {
+		else  if( this.goodHeader != null && (card = this.goodHeader.getHeader().findCard(key)) != null ) {
 			return card.getValue();
 		}
 		/*
@@ -1773,69 +1599,8 @@ public class FitsDataFile extends File implements DataFile{
 	}
 
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.ProductFile#getEntryAttributeHandler()
-	 */
-	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException {
-		if( this.entryAttributeHandlers == null ){
-			this.mapEntryAttributeHandler();
-		}
-		return this.entryAttributeHandlers;
-	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getAttributeHandler()
-	 */
-	@Override
-	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
-		if( this.attributeHandlers == null ){
-			this.mapAttributeHandler();
-		}
-		Map<String, AttributeHandler> mah = this.attributeHandlers;
-		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
-		for( Entry<String, AttributeHandler > e: mah.entrySet()){
-			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
-		}
-		System.out.println("COPY " + retour.get("_crval1") + " " +System.identityHashCode( retour.get("_crval1")));
-		return retour;
-	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getComments()
-	 */
-	public List<String> getComments() {
-		return this .comments;
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getQuantityDetector(saadadb.dataloader.mapping.ProductMapping)
-	 */
-	@Override
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
-		TableBuilder tb;
-		if( productMapping.getCategory() == Category.ENTRY ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler()
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);			
-		} else if( this.productBuilder instanceof TableBuilder  ){
-			tb = (TableBuilder) this.productBuilder;
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Table columns taken in account");
-			return  new QuantityDetector(this.productBuilder.productAttributeHandler
-					, tb.entryBuilder.productAttributeHandler
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);
-		} else {
-			return new QuantityDetector(this.productBuilder.productAttributeHandler
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);
-		}		
-	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#getMap()
 	 */
@@ -1849,9 +1614,9 @@ public class FitsDataFile extends File implements DataFile{
 			/*
 			 * Some file crash javafits when running the while loop
 			 */
-			for( int i=0 ; i<=fits_data.getNumberOfHDUs() ; i++ ) {
+			for( int i=0 ; i<=fitsData.getNumberOfHDUs() ; i++ ) {
 				//while( (bHDU = fits_data.getHDU(i))  != null) {
-				bHDU = fits_data.getHDU(i);
+				bHDU = fitsData.getHDU(i);
 				if( bHDU == null ) {
 					break;
 					//IgnoreException.throwNewException(SaadaException.FITS_FORMAT, "Cannnot read FITS header");
@@ -1859,15 +1624,15 @@ public class FitsDataFile extends File implements DataFile{
 				ArrayList<AttributeHandler> attrs = new ArrayList<AttributeHandler>();
 				DataFileExtensionType ext_type = DataFileExtensionType.BASIC;
 				String ext_name = "primary";
-				this.good_header = bHDU;
-				Iterator it = this.good_header.getHeader().iterator();
-				if( isTileCompressedImage(this.good_header)) {
+				this.goodHeader = bHDU;
+				Iterator it = this.goodHeader.getHeader().iterator();
+				if( isTileCompressedImage(this.goodHeader)) {
 					ext_type = DataFileExtensionType.TILE_COMPRESSED_IMAGE;
-				} else if( isBinTable(this.good_header)) {
+				} else if( isBinTable(this.goodHeader)) {
 					ext_type = DataFileExtensionType.BINTABLE;
-				} else if( isASCIITable(this.good_header)) {
+				} else if( isASCIITable(this.goodHeader)) {
 					ext_type = DataFileExtensionType.ASCIITABLE;
-				} else if( isImage(this.good_header)) {
+				} else if( isImage(this.goodHeader)) {
 					ext_type = DataFileExtensionType.IMAGE;
 				}
 				while( it.hasNext()) {
@@ -1899,41 +1664,6 @@ public class FitsDataFile extends File implements DataFile{
 		return this.productMap;
 	}
 
-	/**
-	 * Returns a map of the current product
-	 * @param category
-	 * @return
-	 * @throws FitsException
-	 * @throws IOException
-	 */
-	@SuppressWarnings("rawtypes")
-	public LinkedHashMap<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
-		try {
-			//int i=0;
-			BasicHDU bHDU = null;
-			LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
-			Map<String, DataFileExtension> mapOrg = this.getProductMap();
-			boolean taken = false;
-			for( Entry<String, DataFileExtension> entry : mapOrg.entrySet()) {
-				DataFileExtension extension = entry.getValue();
-				if( category == Category.UNKNOWN || checkExtensionCategory(extension, category) ) {
-					retour.put(entry.getKey(), extension.attributeHandlers);
-					taken = true;
-				} else {
-					taken = false;
-				}
-				if( taken && extension.isDataTable() ) {
-					retour.put(entry.getKey(), extension.attributeHandlers);
-				}
-			}
-			return retour;
-		} catch(Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
-			return null;
-		}
-	}
-
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#reportOnLoadedExtension()
@@ -1944,51 +1674,30 @@ public class FitsDataFile extends File implements DataFile{
 		return retour;
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args ) {
-		try {
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/pop_1_9_kroupa_1e3_Z0.02.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/fuse.fits", null);
-			FitsDataFile fp = new FitsDataFile("/home/michel/Desktop/xe001.fits", null);
-			//			FitsProduct fp = new FitsProduct("/home/michel/Desktop/SSA.xml", null);
-			//			ImageHDU himage = (ImageHDU)fp.fits_data.getHDU(0);
-			//			int[] size = himage.getAxes();
-			//			System.out.println(size.length + " " + size[0]);
-			//System.exit(1);
-			//			ImageHDU bHDU = (ImageHDU) fp.fits_data.getHDU(0);
-			//			System.out.println(bHDU.getAxes()[0] + " " + bHDU.isData());
-			//		
-			//			ImageHDU.
-			//			System.out.println(bHDU.getClass().getName());
-			//			System.exit(1);
-			//			Fits f = new Fits("/home/michel/Desktop/tile_eso.fit");
-			//			BinaryTableHDU t = (BinaryTableHDU) f.getHDU(1);
-			//			byte[] buf = new byte[4300000];
-			//			ArrayDataInput arg0 = new BufferedDataInputStream(new ByteArrayInputStream(buf));
-			//			t.readData(arg0);
-			//			arg0.close();
-			//			for( int i=0 ; i<buf.length ; i++ ) {
-			//				if( buf[i] != 0 )
-			//					System.out.println(buf[i]);
-			//			}
-			//			System.exit(1);
-			LinkedHashMap<String, List<AttributeHandler>> retour = fp.getProductMap(Category.UNKNOWN);
-			for( String en: retour.keySet() ) {
-				System.out.println(en);
-				for( AttributeHandler ah: retour.get(en)) {
-					System.out.println("   -" + ah.getNameorg() + " = " + ah.getValue());
-				}
-			}
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-		}
-
-
+	@Override
+	public String getCanonicalPath() throws IOException {
+		return this.file.getCanonicalPath();
 	}
-
-
+	@Override
+	public String getAbsolutePath() {
+		return this.file.getAbsolutePath();
+	}
+	@Override
+	public String getParent() {
+		return  this.file.getParent();
+	}
+	@Override
+	public long length() {
+		return this.file.length();
+	}
+	@Override
+	public boolean delete() {
+		return this.file.delete();
+	}
+	@Override
+	public String getName() {
+		return this.file.getName();
+	}
 }
 
 

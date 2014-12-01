@@ -1,6 +1,7 @@
 package saadadb.products.datafile;
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,18 +17,24 @@ import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 
 /**
+ * Class modeling data files without data (flatfiles e.g.)
  * @author laurentmichel
- * * @version $Id$
-
+ * @version $Id$
  */
-public class AnyFile extends File implements DataFile {
+public class AnyFile extends FSDataFile {
 
-	private List<String> comments = new ArrayList<String>();
 
+	/**
+	 * @param parent
+	 * @param child
+	 */
 	public AnyFile(File parent, String child) {
 		super(parent, child);
 	}
 	
+	/**
+	 * @param fileName
+	 */
 	public AnyFile(String fileName) {
 		super(fileName);
 	}
@@ -130,33 +137,24 @@ public class AnyFile extends File implements DataFile {
 
 	@Override
 	public List<ExtensionSetter> reportOnLoadedExtension() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Map<String, List<AttributeHandler>> getProductMap(int category)
-			throws IgnoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		return new QuantityDetector( new LinkedHashMap<String, AttributeHandler>(), this.comments, productMapping, null);
-	}
-
-	@Override
-	public List<String> getComments() throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void updateAttributeHandlerValues() throws Exception {
+	public void mapAttributeHandler() throws IgnoreException {
 		// TODO Auto-generated method stub
 		
 	}
 
+	@Override
+	public void mapEntryAttributeHandler() throws IgnoreException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
+	
 
 }
