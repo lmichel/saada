@@ -48,7 +48,7 @@ import cds.savot.pull.SavotPullParser;
  * @version $Id$
  */
 @SuppressWarnings("deprecation")
-public class VOTableDataFile extends File implements DataFile {
+public class VOTableDataFile extends FSDataFile {
 
 	private static final long serialVersionUID = 1L;
 	/*
@@ -65,21 +65,8 @@ public class VOTableDataFile extends File implements DataFile {
 	/*
 	 * High level field
 	 */
-	/** global map of the product */
-	protected Map<String, DataFileExtension> productMap;
 	/** report on the selection of the extension */
 	protected ExtensionSetter  extensionSetter = new ExtensionSetter();
-	/** ref on the attached builder */
-	private ProductBuilder productBuilder;
-	/** Comment read within the header */
-	private List<String> comments = new ArrayList<String>();
-	/*
-	 * Internal descriptors
-	 */
-	/** AttributeHandler of the header of the selected table */
-	private Map<String, AttributeHandler> attributeHandlers = null;
-	/** AttributeHandler of the data table of the selected table */
-	private Map<String, AttributeHandler> entryAttributeHandlers = null;	
 	/** Pseudo AHs containing info possibly referenced by fields */
 	private Map<String, AttributeHandler> idForRef = new LinkedHashMap<String, AttributeHandler>();
 
@@ -751,36 +738,6 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		return this.attributeHandlers;
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getProductMap(int)
-	 */
-	@Override
-	public Map<String, List<AttributeHandler>> getProductMap(int category)
-	throws IgnoreException {
-		try {
-			LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
-			Map<String, DataFileExtension> mapOrg = this.getProductMap();
-			boolean taken = false;
-			for( Entry<String, DataFileExtension> entry : mapOrg.entrySet()) {
-				DataFileExtension extension = entry.getValue();
-				if( category == Category.TABLE /* || checkExtensionCategory(extension, category)*/ ) {
-					retour.put(entry.getKey(), extension.attributeHandlers);
-					taken = true;
-				} else {
-					taken = false;
-				}
-				if( taken && extension.isDataTable() ) {
-					retour.put(entry.getKey(), extension.attributeHandlers);
-				}
-			}
-			return retour;
-		} catch(Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
-			return null;
-		}
-	}
-
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#getProductMap()
@@ -890,65 +847,22 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		return retour;
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getComments()
-	 */
-	@Override
-	public List<String> getComments() throws SaadaException {
-		return this.comments;
-	}
-
-	public static void main(String[] args ) {
-		try {
-			Messenger.debug_mode = true;
-			VOTableDataFile fp = new VOTableDataFile(args[0]);
-			Map<String, List<AttributeHandler>> retour = fp.getProductMap(Category.TABLE);
-			for( String en: retour.keySet() ) {
-				System.out.println(en);
-				for( AttributeHandler ah: retour.get(en)) {
-					System.out.println("   -" + ah.getNameorg() + " = " + ah.getValue());
-				}
-			}
-			fp.selectResourceAndTable(null);
-			System.out.println(fp.headerExtension);
-			System.out.println(fp.dataExtension);
-			fp.initEnumeration();
-			//			while (fp.hasMoreElements()) {
-			//				System.out.println(fp.savotTR.getTDSet().getItemCount());
-			//			}
-
-			//			fp.selectResourceAndTable("#2.3");
-			//			System.out.println(fp.headerExtension);
-			//			System.out.println(fp.dataExtension);
-			//			fp.initEnumeration();
-			//			while (fp.hasMoreElements()) {
-			//				System.out.println(fp.savotTR.getTDSet().getItemCount());
-			//			}
-			//
-			//			fp.selectResourceAndTable("II_86_suppl");
-			//			System.out.println(fp.headerExtension);
-			//			System.out.println(fp.dataExtension);		
-			while (fp.hasMoreElements()) {
-				Object[] v =  (Object[]) fp.nextElement();
-				for( Object o: v){
-					System.out.print(o + "\t");
-				}
-				System.out.println();
-			}
-
-			for( AttributeHandler ah: fp.dataExtension.attributeHandlers ){
-				Object[] a = fp.getExtrema(ah.getNameorg());
-				System.out.println(a[0] + " " + a[1] + " "  + a[2]);
-			}
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-		}
-	}
-
 
 
 	@Override
 	public void updateAttributeHandlerValues() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mapAttributeHandler() throws IgnoreException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mapEntryAttributeHandler() throws IgnoreException {
 		// TODO Auto-generated method stub
 		
 	}

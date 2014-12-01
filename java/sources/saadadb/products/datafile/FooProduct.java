@@ -9,27 +9,22 @@ import java.util.Map.Entry;
 
 import org.json.simple.JSONObject;
 
-import saadadb.collection.Category;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
-import saadadb.products.inference.QuantityDetector;
 import saadadb.products.validation.JsonKWSet;
 import saadadb.products.validation.KeywordsBuilder;
-import saadadb.util.Messenger;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 
-public class FooProduct implements DataFile {
+/**
+ * @author michel
+ * @version $Id$
+ */
+public class FooProduct extends DataFile {
 	private int pointer = 0;
 	private int size = 0;
-	public Map<String, AttributeHandler> attributeHandlers = null;
-	private Map<String, AttributeHandler> entryAttributeHandlers = null;
-	protected Map<String, DataFileExtension> productMap;
-	private ProductBuilder productBuilder;
-	private List<String> comments = new ArrayList<String>();
 
 	/**
 	 * Json format
@@ -154,14 +149,14 @@ public class FooProduct implements DataFile {
 	}
 
 
-	@Override
-	public Map<String, List<AttributeHandler>> getProductMap(int category)
-			throws IgnoreException {
-		LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
-		retour .put("HEADER", new ArrayList<AttributeHandler>(attributeHandlers.values()));
-		retour .put("TABLE", new ArrayList<AttributeHandler>(entryAttributeHandlers.values()));
-		return retour;
-	}
+//	@Override
+//	public abstract Map<String, DataFileExtension> getProductMap() throws Exception;
+//			throws IgnoreException {
+//		LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
+//		retour .put("HEADER", new ArrayList<AttributeHandler>(attributeHandlers.values()));
+//		retour .put("TABLE", new ArrayList<AttributeHandler>(entryAttributeHandlers.values()));
+//		return retour;
+//	}
 
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
@@ -203,56 +198,13 @@ public class FooProduct implements DataFile {
 
 	@Override
 	public boolean delete() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		if( productMapping.getCategory() == Category.ENTRY ) {
-			if (Messenger.debug_mode)
-			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);			
-		} else if( this.getEntryAttributeHandler().size() > 0  ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandlerCopy(), this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);
-		} else {
-			return new QuantityDetector(this.getAttributeHandlerCopy(), this.comments, productMapping, this.productBuilder.wcsModeler);
-		}
-		return null;		
-	}
+	public void mapAttributeHandler() throws IgnoreException {}
 
 	@Override
-	public List<String> getComments() throws SaadaException {
-		// TODO Auto-generated method stub
-		return new ArrayList<String>();
-	}
-
-	@Override
-	public void updateAttributeHandlerValues() throws Exception {
-		if( this.productBuilder.productAttributeHandler == null ){
-			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		} else {
-			for( AttributeHandler ah: this.productBuilder.productAttributeHandler.values()){
-				ah.setValue("");
-			}
-		}
-
-		for( Entry<String, AttributeHandler> eah: this.attributeHandlers.entrySet()){
-			AttributeHandler localAh = eah.getValue();
-			String localKey = eah.getKey();
-			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
-System.out.println("locam " + localAh);
-			if( builderAh == null ){
-				//System.out.println("add value of " + localKey);
-				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
-			} else {
-				//System.out.println("change value of " + localKey);
-				builderAh.setValue(localAh.getValue());
-			}
-		}
-	}
-	
-	
+	public void mapEntryAttributeHandler() throws IgnoreException {}
 
 }

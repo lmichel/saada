@@ -1,55 +1,367 @@
 package saadadb.products.datafile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import nom.tam.fits.FitsException;
+import saadadb.collection.Category;
 import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
+import saadadb.products.Image2DBuilder;
 import saadadb.products.ProductBuilder;
+import saadadb.products.SpectrumBuilder;
+import saadadb.products.TableBuilder;
 import saadadb.products.inference.QuantityDetector;
-/**v * @version $Id$
-
- * Interface for the specification of a product file.
- * An object that implements the ProductFile interface can be used in a standard way in all the Saada application.
- * This interface extends the Enumeration interface.
- * For the record, an object that implements the Enumeration interface generates a series of elements, one at a time.
- * Successive calls to the nextElement method return successive elements of the series.
- * This enumeration is necessary for the reading of entries table, she returns one objects row for one table row (one object equals one rows box).
- * She has to allow a reading of the information in stream mode.
- *@author Millan Patrick
- *@version 2.0
- *@since 2.0
- *@see Enumeration
- */
-/**
- * @author michel
- * @version $Id$
- */
+import saadadb.util.Messenger;
+import saadadb.vocabulary.RegExp;
 /**
  * @author michel
  * @version $Id$
  */
 @SuppressWarnings("rawtypes")
-public interface DataFile extends Enumeration{
-    /**Returns the value corresponding finded in the product file to the key word in parameter.
+public abstract class DataFile implements Enumeration {
+	/**
+	 * Map if the header attribute handler, key are database names (name attr)
+	 * Contains only the keys selected by the builder
+	 */
+	public Map<String, AttributeHandler> attributeHandlers = null;
+	/**
+	 * Map if the table columns attribute handlers, key are database names (name attr)
+	 * Contains only the keys selected by the builder
+	 */
+	public Map<String, AttributeHandler> entryAttributeHandlers = null;
+	/**
+	 * Complete map of the product.
+	 */
+	public Map<String, DataFileExtension> productMap;
+	/**
+	 * Reference on the product builder using this datafile
+	 */
+	public ProductBuilder productBuilder;
+	/**
+	 * In case of
+	 */
+	public List<String> comments = new ArrayList<String>();
+
+	
+	/**
+	 * Returns the first extension possibly spectra data
+	 * @return
+	 */
+	public DataFileExtension getFirstTableExtension() {
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isDataTable() ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table");
+				return dfe;				
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the category of the FITS extension matching the product category
+	 * @return
+	 * @throws FatalException 
+	 */
+	public int getProductCategory() {
+		if( productBuilder == null ){
+			return Category.UNKNOWN;
+		} else if( productBuilder.getMapping() != null) {
+			return productBuilder.mapping.getCategory();
+		} else if( productBuilder instanceof Image2DBuilder) {
+			return Category.IMAGE;
+		} else if( productBuilder instanceof SpectrumBuilder) {
+			return Category.SPECTRUM;
+		}  else if( productBuilder instanceof TableBuilder) {
+			return Category.TABLE;
+		} else {
+			return Category.MISC;
+		}
+	}
+
+	/**
+	 * Returns the first extension possibly image data
+	 * @return
+	 */
+	public DataFileExtension getFirstImageExtension() {
+		/*
+		 * Look  at images
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isImage() ) {
+				boolean foundAsc = false;
+				boolean foundDec = false;
+				for( AttributeHandler ah: dfe.attributeHandlers ) {
+					if( ah.getNameorg().startsWith("CTYP") ) {
+						if( !foundAsc && ah.getValue().matches(RegExp.FITS_CTYPE_ASC)){
+							foundAsc = true;
+						}
+						if( !foundDec && ah.getValue().matches(RegExp.FITS_CTYPE_DEC)){
+							foundDec = true;
+						}
+					}
+					if( foundAsc && foundDec ) {
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has image WCS (both coords found)");
+						return dfe;					
+					}					
+				}
+			}
+		}
+		return null;
+	}
+
+	
+	/**
+	 * Returns the first extension possibly spectra data
+	 * @return
+	 */
+	public DataFileExtension getFirstSpectralExtension() {
+		/*
+		 * Look first for an extension named SPECRUM
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( (dfe.isImage() || dfe.isDataTable()) && dfe.tableName.equalsIgnoreCase("spectrum")) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Take " + dfe + " as spectrum extension because it is named SPECTRUM");
+				return dfe;
+			}
+		}
+		/*
+		 * then Look at images
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isImage() ) {
+				for( AttributeHandler ah: dfe.attributeHandlers ) {
+					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT)){
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has spectral WCS");
+						return dfe;
+					}
+				}
+			}
+		}
+		/*
+		 * else take the first table
+		 */
+		for( DataFileExtension dfe: this.productMap.values() ) {
+			if( dfe.isDataTable() ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a table: taken as spectra data");
+				return dfe;				
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a map of the current product
+	 * @param category
+	 * @return
+	 * @throws FitsException
+	 * @throws IOException
+	 */
+	public LinkedHashMap<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
+		try {
+			LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
+			Map<String, DataFileExtension> mapOrg = this.getProductMap();
+			boolean taken = false;
+			for( Entry<String, DataFileExtension> entry : mapOrg.entrySet()) {
+				DataFileExtension extension = entry.getValue();
+				if( category == Category.UNKNOWN || checkExtensionCategory(extension, category) ) {
+					retour.put(entry.getKey(), extension.attributeHandlers);
+					taken = true;
+				} else {
+					taken = false;
+				}
+				if( taken && extension.isDataTable() ) {
+					retour.put(entry.getKey(), extension.attributeHandlers);
+				}
+			}
+			return retour;
+		} catch(Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
+			return null;
+		}
+	}
+	/**
+	 * return true if the hdu type is compliant with the category
+	 * @param hdu
+	 * @param category
+	 * @return
+	 */
+	public boolean checkExtensionCategory(DataFileExtension hdu, int category) {
+		if( hdu   != null) {
+			/*
+			 * If there is no specified category (BINTABLE or IMAGE) any extension 
+			 * can be taken. That is the case for MISC products
+			 */
+			if( category == Category.UNKNOWN ) {
+				return true;
+			}
+			/*
+			 * 1st HDU can be seen as a 0x0 pixel image: Must look for the first not empty image
+			 */
+			else if( category == Category.IMAGE && hdu.isImage() ){
+				return true;
+			}					
+			else if( category == Category.TABLE && hdu.isDataTable() ){
+				return true;
+			}
+			/*
+			 * With V2 datamodel, the dataloader must be enabled to detect the energy range even for misc
+			 */
+			else if( (category == Category.SPECTRUM || category == Category.MISC  ) && hdu.isDataTable() ) {
+				return true;
+			}
+		}
+		return false;		
+	}
+
+	/**
+	 * Returns the map of the attribute handlers modeling the columns of te data tables
+	 * @return
+	 */
+	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException  {
+		if( this.entryAttributeHandlers == null ){
+			this.mapEntryAttributeHandler();
+		}
+		return this.entryAttributeHandlers;
+	}
+	/**
+	 * Returns the map of the attribute handlers modeling the KW of all headers loaded
+	 * @return
+	 */
+	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
+		if( this.attributeHandlers == null ){
+			this.mapAttributeHandler();
+		}
+		Map<String, AttributeHandler> mah = this.attributeHandlers;
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		for( Entry<String, AttributeHandler > e: mah.entrySet()){
+			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
+		}
+		return retour;
+	}
+	/**
+	 * Return a list of comments which can be used to do the automatic mapping
+	 * @return
+	 * @throws SaadaException
+	 */
+	public List<String> getComments() {
+		return this.comments;
+	}
+
+	/**
+	 * @return
+	 * @throws SaadaException
+	 * @throws Exception 
+	 */
+	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
+		TableBuilder tb;
+		if( productMapping.getCategory() == Category.ENTRY ) {
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
+			return new QuantityDetector(this.getEntryAttributeHandler()
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);			
+		} else if( this.productBuilder instanceof TableBuilder  ){
+			tb = (TableBuilder) this.productBuilder;
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Table columns taken in account");
+			return  new QuantityDetector(this.productBuilder.productAttributeHandler
+					, tb.entryBuilder.productAttributeHandler
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);
+		} else {
+			return new QuantityDetector(this.productBuilder.productAttributeHandler
+					, this.comments
+					, productMapping
+					, this.productBuilder.wcsModeler);
+		}		
+	}
+
+	/**
+	 * Set the builder's attribute handlers with the values read in the product file
+	 * @throws Exception
+	 */
+	public void updateAttributeHandlerValues() throws Exception {
+		this.mapAttributeHandler();
+		if( this.productBuilder.productAttributeHandler == null ){
+			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
+		} else {
+			for( AttributeHandler ah: this.productBuilder.productAttributeHandler.values()){
+				ah.setValue("");
+			}
+		}
+
+		for( Entry<String, AttributeHandler> eah: this.attributeHandlers.entrySet()){
+			AttributeHandler localAh = eah.getValue();
+			String localKey = eah.getKey();
+			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
+
+			if( builderAh == null ){
+				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
+			} else {
+				builderAh.setValue(localAh.getValue());
+			}
+		}
+
+	}
+	
+	
+	/*******************************
+	 * Abstract methods
+	 */
+
+	
+	/**
+	 * Returns a map with all extension detected within the data product
+	 * @return
+	 * @throws Exception 
+	 */
+	public abstract Map<String, DataFileExtension> getProductMap() throws Exception;
+	
+	/**
+	 * Construct the local AH map from the keywords read in the file. This map is ordered as the keywords
+	 */
+	public abstract void mapAttributeHandler() throws IgnoreException ;
+	/**
+	 * Construct the local AH map from the tabel columns. This map is ordered as the keywords
+	 */
+	public abstract void mapEntryAttributeHandler() throws IgnoreException ;
+
+	/**
+	 * Connect the DataFile with the ProductBuilder
+	 * @param builder
+	 */
+	public abstract void bindBuilder(ProductBuilder builder) throws Exception;
+	/**Returns the value corresponding finded in the product file to the key word in parameter.
      *@param String The key word.
      *@return String The value corresponding to this key word, if he exists, else null.
      */
-    public String getKWValueQuickly(String key);
+    public abstract String getKWValueQuickly(String key);
    
  	/**
  	 * @param key  column name as it is in the file
  	 * @return min,max,nbpoints
  	 * @throws Exception
  	 */
- 	public Object[] getExtrema(String keyOrg) throws Exception ;
+ 	public abstract Object[] getExtrema(String keyOrg) throws Exception ;
     /**In case of the product can have table:
      * Returns the row number in the table.
      * If there is no table for this product format, this method will return 0.
@@ -57,7 +369,7 @@ public interface DataFile extends Enumeration{
      * @throws IOException 
      * @throws FitsException 
      */
-    public int getNRows() throws IgnoreException;
+    public abstract int getNRows() throws IgnoreException;
 
     /**In case of the product can have table:
      * Returns the column number in the table.
@@ -67,7 +379,7 @@ public interface DataFile extends Enumeration{
      * @throws IOException 
      * @throws FitsException 
      */
-    public int getNCols() throws IgnoreException;
+    public abstract int getNCols() throws IgnoreException;
     /**In case of the product can have table:
      * Initializes the enumeration of table rows (essential in stream mode).
      * This method is necessary in the class Product (package saadadb.products) for return a initialized enumeration:
@@ -76,120 +388,51 @@ public interface DataFile extends Enumeration{
      * @throws IOException 
      * @throws FitsException 
      */
-    public void initEnumeration() throws IgnoreException;
-	public void closeStream() throws QueryException;
-    /**
-     * Builds a map of the product attribute 
-     * key = HDU
-     * value = attribute handlers
-     */
-	public Map<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException ;
+    public abstract  void initEnumeration() throws IgnoreException;
 	/**
-	 * Returns the map of the attribute handlers modeling the columns of te data tables
-	 * @return
+	 * Close the data stream
+	 * @throws QueryException
 	 */
-	public Map<String, AttributeHandler> getEntryAttributeHandler() throws SaadaException ;
-	/**
-	 * Returns the map of the attribute handlers modeling the KW of all headers loaded
-	 * @return
-	 */
-	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException ;
-	/**
-	 * Return a lis of comments which can be used to do the automatic mapping
-	 * @return
-	 * @throws SaadaException
-	 */
-	public List<String> getComments() throws SaadaException ;
-//	/**
-//	 * Returns an instance of the detector of keywords covering the observation axis
-//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-//	 */
-//	public ObservationKWDetector getObservationKWDetector(boolean entryMode) throws SaadaException;
-//	/**
-//	 * Returns an instance of the detector of keywords covering the space axis
-//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-//	 */
-//	public SpaceKWDetector getSpaceKWDetector(boolean entryMode) throws SaadaException;
-//	/**
-//	 * Returns an instance of the detector of keywords covering the energy axis
-//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-//	 * @param entryMode
-//	 * @param priority
-//	 * @param defaultUnit
-//	 * @return
-//	 * @throws SaadaException
-//	 */
-//	public EnergyKWDetector getEnergyKWDetector(boolean entryMode, PriorityMode priority, String defaultUnit) throws SaadaException;
-//	/**
-//	 * Returns an instance of the detector of keywords covering the time axis
-//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-//	 */
-//	public TimeKWDetector getTimeKWDetector(boolean entryMode) throws SaadaException;
-//	/**
-//	 * Returns an instance of the detector of keywords covering the observable axis
-//	 * This instance is built by the ProcutFile because it could add to it some data which are not in the keywords
-//	 */
-//	public ObservableKWDetector getObservableKWDetector(boolean entryMode) throws SaadaException;
-	/**
-	 * @return
-	 * @throws SaadaException
-	 * @throws Exception 
-	 */
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception;
-	/**
-	 * Returns a map with all extension detected within the data product
-	 * @return
-	 * @throws Exception 
-	 */
-	public Map<String, DataFileExtension> getProductMap() throws Exception;
-	/**
-	 * Connect the DataFile with the ProductBuilder
-	 * @param builder
-	 */
-	public void bindBuilder(ProductBuilder builder) throws Exception;
-	/**
-	 * Set the builder's attribute handlers with the values read in the product file
-	 * @throws Exception
-	 */
-	public void updateAttributeHandlerValues() throws Exception;
+	public abstract void closeStream() throws QueryException;
+ 	
 	/**
 	 * Returns the list of the loaded extension with the reason why they have been taken
 	 * @return
 	 */
-	public List<ExtensionSetter> reportOnLoadedExtension() ;	
+	public abstract List<ExtensionSetter> reportOnLoadedExtension() ;	
 	/**
 	 * Method overloading a File accessors
 	 * @return
 	 * @throws IOException
 	 */
-	public String getCanonicalPath() throws IOException ;
+	public abstract String getCanonicalPath() throws IOException ;
 	/**
 	 * Method overloading a File accessor
 	 * @return
 	 * @throws IOException
 	 */
-	public String getAbsolutePath();
+	public abstract String getAbsolutePath();
 	/**
 	 * Method overloading a File accessor
 	 * @return
 	 */
-	public String getParent() ;
+	public abstract String getParent() ;
 	/**
 	 * Method overloading a File accessor
 	 * @return
 	 */
-	public long length() ;
+	public abstract long length() ;
 	/**
 	 * Method overloading a File accessor
 	 * @return
 	 */
-	public boolean delete() ;
+	public abstract boolean delete() ;
 
 	/**
 	 * Method overloading a File accessor
 	 * @return
 	 */
-	public String getName();
+	public abstract String getName();
 
 
  }
