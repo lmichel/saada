@@ -14,6 +14,7 @@ import saadadb.command.ArgsParser;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
+import saadadb.products.TableBuilder;
 import saadadb.products.datafile.FooProduct;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
@@ -55,24 +56,37 @@ public class MappingReport {
 	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		//this.builder.setProductIngestor();
+		System.out.println("=====GET REPORT =======\n" + this.builder.getClass());
+		System.out.println(this.builder.productIngestor.getClass());
 		
-		FooProduct fp = (FooProduct) this.builder.dataFile;
-		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
-			System.out.println("I " + eah);
+//		FooProduct fp = (FooProduct) this.builder.dataFile;
+//		for( Entry<String, AttributeHandler> eah: this.builder.productAttributeHandler.entrySet()){
+//			System.out.println("III" + eah);
+//		}
+		if( this.builder instanceof TableBuilder) {
+			TableBuilder tb = (TableBuilder) this.builder;
+			System.out.println( tb.entryBuilder.hashCode() + " " + tb.entryBuilder.productAttributeHandler.hashCode()+ " " + tb.productAttributeHandler.hashCode());
+			for( Entry<String, AttributeHandler> eah: tb.entryBuilder.productAttributeHandler.entrySet()){
+				System.out.println("getReport3 " + eah);
+			}
 		}
-		
-		this.builder.dataFile.updateAttributeHandlerValues();
-		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
-			System.out.println("II " + eah);
+		this.builder.updateAttributeHandlerValues();
+		if( this.builder instanceof TableBuilder) {
+			TableBuilder tb = (TableBuilder) this.builder;
+			for( Entry<String, AttributeHandler> eah: tb.entryBuilder.productAttributeHandler.entrySet()){
+				System.out.println("getReport4 " + eah);
+			}
 		}
 		this.builder.productIngestor.bindInstanceToFile();
-		for( Entry<String, AttributeHandler> eah: fp.attributeHandlers.entrySet()){
-			System.out.println("III " + eah);
+		if( this.builder instanceof TableBuilder) {
+			TableBuilder tb = (TableBuilder) this.builder;
+			for( Entry<String, AttributeHandler> eah: tb.entryBuilder.productAttributeHandler.entrySet()){
+				System.out.println("getReport5 " + eah);
+			}
 		}
 		for( Entry<String, AttributeHandler> eah: this.builder.productAttributeHandler.entrySet()){
 			System.out.println("III+" + eah);
 		}
-		System.out.println(this.builder.productIngestor.getClass());
 		SaadaInstance si = this.builder.productIngestor.saadaInstance;
 		
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
