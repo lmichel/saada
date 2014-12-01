@@ -132,31 +132,7 @@ public class FooProduct extends DataFile {
 	public String getName() {
 		return "Foo";
 	}
-	@Override
-	public Map<String, AttributeHandler> getEntryAttributeHandler()
-			throws SaadaException {
-		return this.entryAttributeHandlers;
-	}
-	@Override
-	public Map<String, AttributeHandler> getAttributeHandlerCopy()
-			throws SaadaException {
-		Map<String, AttributeHandler> mah = this.attributeHandlers;
-		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
-		for( Entry<String, AttributeHandler > e: mah.entrySet()){
-			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
-		}
-		return retour;
-	}
 
-
-//	@Override
-//	public abstract Map<String, DataFileExtension> getProductMap() throws Exception;
-//			throws IgnoreException {
-//		LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
-//		retour .put("HEADER", new ArrayList<AttributeHandler>(attributeHandlers.values()));
-//		retour .put("TABLE", new ArrayList<AttributeHandler>(entryAttributeHandlers.values()));
-//		return retour;
-//	}
 
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
@@ -174,6 +150,11 @@ public class FooProduct extends DataFile {
 	public void bindBuilder(ProductBuilder builder) throws Exception {
 		this.productBuilder = builder;
 		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();		
+	}
+	@Override
+	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
+		//this.productBuilder = builder;
+		builder.productAttributeHandler = this.getEntryAttributeHandlerCopy();		
 	}
 
 	@Override

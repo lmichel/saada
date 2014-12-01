@@ -59,7 +59,7 @@ public abstract class KWDetector {
 	public KWDetector(DataFile productFile, Projection projection) throws SaadaException {
 		if( productFile != null ) {
 			this.tableAttributeHandler = productFile.getAttributeHandlerCopy();
-			this.entryAttributeHandler =  productFile.getEntryAttributeHandler();
+			this.entryAttributeHandler =  productFile.getEntryAttributeHandlerCopy();
 		}
 		this.projection = projection;
 	}
