@@ -19,6 +19,7 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
 import saadadb.products.EntryBuilder;
 import saadadb.products.EntryIngestor;
 import saadadb.products.ExtensionSetter;
@@ -134,8 +135,11 @@ public class FooReport {
 		mr = new MappingReport(product);break;
 		}
 		product.mapDataFile();
+		for( Entry<String, AttributeHandler> eah: ((TableBuilder)product).entryBuilder.productAttributeHandler.entrySet()){
+			System.out.println("main " + eah);
+		}
 		Map<String, ColumnSetter> r = mr.getReport();
-		Map<String, ColumnSetter> er = mr.getEntryReport();
+		//Map<String, ColumnSetter> er = mr.getEntryReport();
 		System.out.println(this.ap);
 
 		System.out.println("======== ");	
@@ -152,16 +156,6 @@ public class FooReport {
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
 		}
-		if (er != null ){
-			System.out.println("      -- Columns values");	
-			for( Entry<String, ColumnSetter> e:er.entrySet()){
-				System.out.print(String.format("%20s",e.getKey()) + "     ");
-				ColumnSetter ah = e.getValue();
-				System.out.print(ah.getSettingMode() + " " + ah.message);
-				if( !ah.isNotSet() ) 
-					System.out.print(" storedValue=" + ah.storedValue);
-				System.out.println("");
-			}
 		}
 
 		//		TableBuilder tb = (TableBuilder) product;
@@ -177,7 +171,7 @@ public class FooReport {
 		//			eb.productIngestor.bindInstanceToFile();
 		//			eb.productIngestor.showCollectionValues();
 		//		}
-	}
+//	}
 
 	/**
 	 * @param args
