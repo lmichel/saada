@@ -2,29 +2,23 @@ package saadadb.products;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.lang.reflect.Field;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.EntrySaada;
-import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
-import saadadb.products.setter.ColumnExpressionSetter;
-import saadadb.products.setter.ColumnSetter;
-import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
-import saadadb.vocabulary.enums.ColumnSetMode;
 
 
 /**
@@ -33,41 +27,23 @@ import saadadb.vocabulary.enums.ColumnSetMode;
  */
 public class EntryBuilder extends ProductBuilder {
 	private static final long serialVersionUID = 1L;
-	/** The entries table * */
-
-	//protected TableBuilder table;
+	public MetaClass tableClass;
 
 	/**
-	 * Constructor. Alias of the constructor Entry(String fileName, String
-	 * typeFile) with a table object
+	 * Constructor.
 	 * 
-	 * @param TableBuilder
-	 *            The entries table.
-	 * @throws FatalException 
+	 * @param TableBuilder  The entries table.
+	 * @throws SaadaException if something goes wrong
 	 */
 	public EntryBuilder(TableBuilder table) throws SaadaException {
 		super(table.dataFile, table.mapping.getEntryMapping(), null);
-		//this.table = table;
-		/*
-		 * This operation is done in super(...) then before this table is set.
-		 * SO we do it again
-		 */
-		try {
-			this.setQuantityDetector();
-			this.productAttributeHandler = this.dataFile.getEntryAttributeHandler();
-			this.dataFile = table.dataFile;
-			this.mapCollectionAttributes();
-			this.setFmtsignature();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
-		}
 	}
-
-	/**
-	 * Can be overloaded to use another ingestor
-	 * @throws Exception
+	
+	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#setProductIngestor()
 	 */
+	@Override
 	protected void setProductIngestor() throws Exception{
 		if( this.productIngestor == null ){
 			this.productIngestor = new EntryIngestor(this);
@@ -209,11 +185,27 @@ public class EntryBuilder extends ProductBuilder {
 	 * @see saadadb.products.Product#loadProductFile(saadadb.prdconfiguration.ConfigurationDefaultHandler)
 	 */
 	@Override
-	public void bindDataFile(DataFile dataFile) throws SaadaException {
-		this.dataFile = dataFile;
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Start ENTRY mapping");
-		this.productAttributeHandler = this.dataFile.getEntryAttributeHandler();
-		this.setFmtsignature();
+	public void bindDataFile(DataFile dataFile) throws Exception {
+//		System.out.println("@@@@@@@@@@@ ENTREY bindDataFile");
+//		if (Messenger.debug_mode)
+//			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder (table entries)");
+//		if( dataFile != null)	this.dataFile = dataFile;
+//		if( this.dataFile instanceof FitsDataFile ) {
+//			this.mimeType = "application/fits";
+//		} else if( this.dataFile instanceof VOTableDataFile ) {
+//			this.mimeType = "application/x-votable+xml";
+//		}
+//		this.setProductIngestor();
+		this.dataFile.bindEntryBuilder(this);
+//		this.setFmtsignature();
+	}
+
+	/**
+	 * Update the vlaues of the local AHs with those read within the data file
+	 * @throws Exception
+	 */
+	public void updateAttributeHandlerValues() throws Exception {
+		this.dataFile.updateEntryAttributeHandlerValues(this);
 	}
 
 }

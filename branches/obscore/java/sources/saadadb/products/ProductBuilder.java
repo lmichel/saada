@@ -20,6 +20,7 @@ import java.util.TreeMap;
 
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
+import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -62,7 +63,7 @@ import cds.astro.ICRS;
  * @author michel
  * @version $Id$
  */
-public class ProductBuilder {
+public abstract class ProductBuilder {
 	private static final long serialVersionUID = 1L;
 	protected static String separ = System.getProperty("file.separator");
 	/**
@@ -171,13 +172,6 @@ public class ProductBuilder {
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
 		this.metaClass = metaClass;
 		this.dataFile = dataFile;
-		try {
-			this.bindDataFile(dataFile);
-			this.setQuantityDetector();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -325,11 +319,7 @@ public class ProductBuilder {
 			this.mimeType = "application/x-votable+xml";
 		}
 		this.setProductIngestor();
-		if( this.productAttributeHandler != null )
-			System.out.println("@@@@@@@@@@@@@ bindDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.dataFile.bindBuilder(this);
-		if( this.productAttributeHandler != null )
-			System.out.println("@@@@@@@@@@@@@ bindDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.setFmtsignature();
 	}
 
@@ -339,23 +329,27 @@ public class ProductBuilder {
 	 */
 	public void mapDataFile(DataFile dataFile) throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
-		System.out.println("@@@@@@@@@@@@@ mapDataFile1 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.bindDataFile(dataFile);
-		System.out.println("@@@@@@@@@@@@@ mapDataFile2 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.mapCollectionAttributes();
-		System.out.println("@@@@@@@@@@@@@ mapDataFile3 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 	}
 
 	public void mapDataFile() throws Exception{
 		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
-		System.out.println("@@@@@@@@@@@@@ mapDataFile1 (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		System.out.println("@@@@@@@@@@@@@@@@ mapDataFile " +this.getClass());
+		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
 		this.bindDataFile(this.dataFile);
-		System.out.println("@@@@@@@@@@@@@ mapDataFile2  (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
 		this.mapCollectionAttributes();
-		System.out.println("@@@@@@@@@@@@@ mapDataFile3  (this.dataFile)" + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
 	}
 
-
+	/**
+	 * Update the vlaues of the local AHs with those read within the data file
+	 * @throws Exception
+	 */
+	public void updateAttributeHandlerValues() throws Exception {
+		this.dataFile.updateAttributeHandlerValues();
+	}
 	/**
 	 * Compute the MD key of the format read in the tabel of attribte handler.
 	 * The key is independent from the attribute order
@@ -399,8 +393,6 @@ public class ProductBuilder {
 		this.instrument_nameSetter.calculateExpression();
 		this.astroframeSetter.calculateExpression();
 		this.s_resolutionSetter.calculateExpression();
-
-		System.out.println("@@@@@@@@@@@@@ builder1 " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 
 		System.out.println("1 " + this.s_raSetter);
 		this.s_raSetter.calculateExpression();
@@ -1290,7 +1282,7 @@ public class ProductBuilder {
 				this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + col + ")");	
 				if( this.x_unit_orgSetter.isNotSet()) {
 					AttributeHandler ah ;
-					if( (ah = this.dataFile.getEntryAttributeHandler().get(col) ) != null ) {
+					if( (ah = this.dataFile.getEntryAttributeHandlerCopy().get(col) ) != null ) {
 						this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", ah.getUnit());						
 					}
 				}

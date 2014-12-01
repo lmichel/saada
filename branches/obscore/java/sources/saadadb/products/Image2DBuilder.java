@@ -54,6 +54,13 @@ public class Image2DBuilder extends ProductBuilder {
 	 */
 	public Image2DBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 
 	/**
@@ -66,11 +73,25 @@ public class Image2DBuilder extends ProductBuilder {
 		super(file, mapping, metaClass);
 		if( mapping != null )
 		this.load_vignette = !mapping.noVignette();
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 	public Image2DBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
 		super(file, mapping, null);
 		if( mapping != null )
 		this.load_vignette = !mapping.noVignette();
+		try {
+			this.bindDataFile(dataFile);
+			this.setQuantityDetector();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
+		}
 	}
 	
 	
