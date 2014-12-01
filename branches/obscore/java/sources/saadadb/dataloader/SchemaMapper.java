@@ -305,7 +305,7 @@ public abstract class SchemaMapper {
 			 */
 			if( mapping.getCategory() == Category.ENTRY ) {
 				EntryBuilder entry = (EntryBuilder)this.currentProductBuilder;
-				String table_class_name = entry.getTable().getMetaclass().getName();
+				String table_class_name = entry.tableClass.getName();
 				Table_Saada_Class.setAssociateClass(class_name
 						, mapping.getCollection() 
 						, Category.ENTRY
