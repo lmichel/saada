@@ -6,12 +6,12 @@
 	"-classfusion=classFusion"	,
 	"-repository=no"
 ],
-"fields": {
+"data": {
     "header": [	["A", "double", "", "", "1.0"],
                 ["B", "String", "", "", "B"],
                 ["C", "String", "", "", "C"]
               ]
 		,
-    "columns": []
+    "table": {}
     }
 }

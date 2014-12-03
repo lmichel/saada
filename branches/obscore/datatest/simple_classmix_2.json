@@ -5,12 +5,12 @@
 	"-collection=FOO",
 	"-classfusion=classFusion"	
 ],
-"fields": {
+"data": {
     "header": [	["A", "String", "", "", "A"],
                 ["Z", "String", "", "", "Z"],
                 ["C", "String", "", "", "C"]
               ]
 		,
-    "columns": []
+    "table": {}
     }
 }
