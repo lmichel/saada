@@ -24,12 +24,13 @@
 				["facility", "String", "", "", "XMM"]
 		]
 		,
-    "table": {header: [["RA2000", "double", "", "", "10."],
+    "table": {"header": [["RA2000", "double", "", "", "10."],
                        ["DEC", "double", "", "", "45"],
                        ["TARGET", "String", "", "", "lui"]
                       ]
                       ,
-             data: [[ "10.", "45", "lui"],
+             "data": [[ "10.", "45", "lui"],
                     [ "12.", "46", "moi"]]
+          }
     }
 }

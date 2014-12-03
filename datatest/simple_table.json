@@ -11,7 +11,7 @@
 	"-tmax=12 03 2013"	,
 	"-debug=on"
 ],
-"fields": {
+"data": {
      "header": [	["RA", "double", "", "", "23.67"],
 				["DEC", "double", "", "", "-56.9"],
 				["eMin", "double", "KeV", "em.wl;stat.min", "1."],
