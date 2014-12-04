@@ -24,7 +24,7 @@ import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.reporting.MappingReport;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
@@ -46,7 +46,7 @@ public abstract class ParamShaker {
 	/** JSON instance of the product in the current state */
 	protected static JSONObject jsonObject;
 	/** Saada data product built with the JSON object */
-	protected FooProduct fooProduct;
+	protected JsonDataFile fooProduct;
 	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
 	/** List of Obscore fields of interest: theu are reported */
@@ -139,7 +139,7 @@ public abstract class ParamShaker {
 	 */
 	@SuppressWarnings("unchecked")
 	protected void setField(String name, String type, String unit, String ucd, String value) throws Exception{
-		JSONObject jso = (JSONObject) jsonObject.get("fields");
+		JSONObject jso = (JSONObject) jsonObject.get("data");
 		JSONArray jsa = (JSONArray) jso.get("header");
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			JSONArray jsah = (JSONArray) jsa.get(i);
@@ -152,7 +152,7 @@ public abstract class ParamShaker {
 				break;
 			}
 		}
-		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
+		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0);
 		//throw new Exception("Param " + name + " not found" );
 	}
 
@@ -172,7 +172,7 @@ public abstract class ParamShaker {
 		}  
 		params.add(Database.getDbname());  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new FooProduct((JSONObject) jsonObject.get("fields"), 0);
+		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0);
 	}
 
 	/**

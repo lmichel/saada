@@ -1,6 +1,8 @@
 package saadadb.products.setter;
 
 import java.awt.event.InvocationEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import hecds.wcs.descriptors.CardDescriptor;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -218,6 +220,14 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public String getExpression() {
+		return null;
+	}
+
+	/**
+	 * Relevant only for ExpresionSetter
+	 * @return
+	 */
+	public List<AttributeHandler> getExprAttributes() {
 		return null;
 	}
 

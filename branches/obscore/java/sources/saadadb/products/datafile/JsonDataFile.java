@@ -29,14 +29,21 @@ public class JsonDataFile extends DataFile {
 	private int pointer = 0;
 	private int size = 0;
 	private File file;
+	public List<Object[]> tableData;
 
 	/**
 	 * Json format
-	  {
-      header: [[name, type, unit, ucd, value (optional)],......]
-      columns: [[name, type, unit, ucd, value (optional)],......]
-      }
-
+"data": {
+     "header": [["RA", "double", "", "", "23.67"],
+				.......
+		]
+		,
+    "table": {header: [["RA2000", "double", "", "", "10."],.......
+                      ]
+                      ,
+             data: [[ "10.", "45", "lui"],
+                    ......]
+    }
 	 * @param jsonObject
 	 * @param size
 	 * @throws Exception
@@ -46,9 +53,9 @@ public class JsonDataFile extends DataFile {
 		JSONParser parser = new JSONParser();  
 		this.file = new File(jsonFileName);
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(this.file));  
-		this.init(JsonKWSet.getInstance((JSONObject) jsonObject.get("fields")), size);
+		this.init(JsonKWSet.getInstance((JSONObject) jsonObject.get("data")), size);
 	}
-	
+
 	/**
 	 * @param jsonObject
 	 * @param size
@@ -57,7 +64,7 @@ public class JsonDataFile extends DataFile {
 	public JsonDataFile(JSONObject jsonObject, int size) throws Exception {
 		this(JsonKWSet.getInstance(jsonObject), size);
 	}
-	
+
 	/**
 	 * @param keyWordBuilder
 	 * @param size
@@ -65,7 +72,7 @@ public class JsonDataFile extends DataFile {
 	public JsonDataFile(KeywordsBuilder keyWordBuilder, int size) {
 		this.init(keyWordBuilder, size);
 	}
-	
+
 	/**
 	 * @param keyWordBuilder
 	 * @param size
@@ -80,6 +87,7 @@ public class JsonDataFile extends DataFile {
 			this.attributeHandlers.put(ah.getNameattr(), ah);
 			lst.add(ah);
 		}
+		this.tableData = keyWordBuilder.tableData;
 		this.productMap.put("#0 Header", new DataFileExtension(0, "1stHDU", DataFileExtensionType.BASIC, lst));
 
 		if( keyWordBuilder.columnKWs != null) { 
@@ -91,40 +99,48 @@ public class JsonDataFile extends DataFile {
 			this.productMap.put("#0 Data", new DataFileExtension(0, "1stHDU Data", DataFileExtensionType.ASCIITABLE, lst));
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#closeStream()
 	 */
-	public void closeStream() {
-	}
-	
+	public void closeStream() {}
+
+	/* (non-Javadoc)
+	 * @see java.util.Enumeration#hasMoreElements()
+	 */
+	@Override
 	public boolean hasMoreElements() {
-		return (pointer < size);
+		System.out.println("HAS MOOOOOORE" + pointer);
+		return (this.tableData != null && this.pointer < this.tableData.size());
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Enumeration#nextElement()
 	 */
+	@Override
 	public Object nextElement() throws NumberFormatException, NullPointerException{
-		if( this.entryAttributeHandlers == null ) return null;
-		List<String> retour = new ArrayList<String>();
-		for( AttributeHandler ah: this.entryAttributeHandlers.values()){
-			String v = ah.getValue();
-			if( ah.getType().equals("String") ) v = v+pointer;
-			else if( ah.getType().equals("double") ) v = Double.toString(Double.parseDouble(v) + pointer);
-			retour.add(v);
+		System.out.println("NEXTTT" + pointer);
+		if( this.entryAttributeHandlers == null || this.tableData == null || this.pointer >= this.tableData.size()) {
+			Messenger.printMsg(Messenger.TRACE, "Attempt to read a data row out of range (pointer=" + pointer + " data size=" + this.tableData.size() + ")");
+			return null;
 		}
-		pointer ++;
-		return retour.toArray(new String[0]);
+		Object retour = this.tableData.get(pointer);
+		this.pointer ++;
+		return retour;
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#getKWValueQuickly(java.lang.String)
 	 */
+	@Override
 	public String getKWValueQuickly(String key) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getExtrema(java.lang.String)
+	 */
+	@Override
 	public Object[] getExtrema(String key) throws Exception {
 		if( this.entryAttributeHandlers.get(key) != null ) {
 			Object v = this.entryAttributeHandlers.get(key).getValue();
@@ -133,18 +149,38 @@ public class JsonDataFile extends DataFile {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getNRows()
+	 */
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getNRows()
+	 */
+	@Override
 	public int getNRows() throws IgnoreException {
 		return size;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getNCols()
+	 */
+	@Override
 	public int getNCols() throws IgnoreException {
 		return entryAttributeHandlers.size();
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#initEnumeration()
+	 */
+	@Override
 	public void initEnumeration() throws IgnoreException {
 		this.pointer = 0;
 	}
 
+	/**
+	 * @param category
+	 * @return
+	 * @throws IgnoreException
+	 */
 	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(
 			String category) throws IgnoreException {
 		LinkedHashMap<String, ArrayList<AttributeHandler>> retour = new LinkedHashMap<String, ArrayList<AttributeHandler>>();
@@ -175,9 +211,11 @@ public class JsonDataFile extends DataFile {
 	@Override
 	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
 		//this.productBuilder = builder;
+		(new Exception()).printStackTrace();
+
 		builder.productAttributeHandler = this.getEntryAttributeHandlerCopy();		
 	}
-	
+
 	@Override
 	public String getName() {
 		return (this.file != null)? this.file.getName():  "no file";
@@ -193,7 +231,7 @@ public class JsonDataFile extends DataFile {
 	public String getAbsolutePath() {
 		return (this.file != null)? this.file.getAbsolutePath():  "no file";
 	}
-	
+
 	@Override
 	public String getParent() {
 		return (this.file != null)? this.file.getParent():  "no file";

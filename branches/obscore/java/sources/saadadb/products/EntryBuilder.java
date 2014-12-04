@@ -16,6 +16,9 @@ import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.datafile.VOTableDataFile;
+import saadadb.products.mergeandcast.ClassMerger;
+import saadadb.products.mergeandcast.DownCasting;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
@@ -38,8 +41,8 @@ public class EntryBuilder extends ProductBuilder {
 	public EntryBuilder(TableBuilder table) throws SaadaException {
 		super(table.dataFile, table.mapping.getEntryMapping(), null);
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#setProductIngestor()
 	 */
@@ -50,8 +53,51 @@ public class EntryBuilder extends ProductBuilder {
 		}		
 	}
 
-
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#loadProduct()
+	 */
+	public void loadProduct() throws Exception {
+		IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Method loadProduct() must never be used with entris");
+	}
+	/**
+	 * @param tableOid
+	 * @throws Exception
+	 */
 	public void loadProduct(long tableOid) throws Exception {
+		long time_tag = (new Date()).getTime();
+		String         busdumpfile = Repository.getTmpPath() + Database.getSepar()  + "bus" + time_tag + ".psql";
+		BufferedWriter bustmpfile  = new BufferedWriter(new FileWriter(busdumpfile));
+		String         coldumpfile = Repository.getTmpPath() + Database.getSepar()  + "col" + time_tag + ".psql";
+		BufferedWriter coltmpfile  = new BufferedWriter(new FileWriter(coldumpfile));
+		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaClass.getCollection_name(), Category.TABLE);
+		while (this.productIngestor.hasMoreElements()) {
+			/*
+			 * Data row is read by updateEntryAttributeHandlerValues()
+			 */
+			this.dataFile.updateEntryAttributeHandlerValues(this);
+			this.productIngestor.bindInstanceToFile();
+			System.out.print(this.productIngestor.saadaInstance.oidsaada + " " + this.productIngestor.saadaInstance.obs_id + " " );
+			for( AttributeHandler ah: this.dataFile.entryAttributeHandlers.values()){
+				System.out.print( ClassMerger.getCastedSQLValue(ah, ah.getType()) + " " );
+			}
+			System.out.println("");
+		}
+
+	}
+	
+	/**
+	 * The name must be recomputed for each entry. No default value computed here
+	 */
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#mapInstanceName()
+	 */
+	@Override
+	public void mapInstanceName() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Building the name");
+		this.obs_idSetter = this.getMappedAttributeHander("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
+	}
+	
+	public void loadProductXX(long tableOid) throws Exception {
 		// Initializes the lines meter at 0
 		int line = 0;
 		// A java type of a attribute
@@ -186,18 +232,7 @@ public class EntryBuilder extends ProductBuilder {
 	 */
 	@Override
 	public void bindDataFile(DataFile dataFile) throws Exception {
-//		System.out.println("@@@@@@@@@@@ ENTREY bindDataFile");
-//		if (Messenger.debug_mode)
-//			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder (table entries)");
-//		if( dataFile != null)	this.dataFile = dataFile;
-//		if( this.dataFile instanceof FitsDataFile ) {
-//			this.mimeType = "application/fits";
-//		} else if( this.dataFile instanceof VOTableDataFile ) {
-//			this.mimeType = "application/x-votable+xml";
-//		}
-//		this.setProductIngestor();
 		this.dataFile.bindEntryBuilder(this);
-//		this.setFmtsignature();
 	}
 
 	/**

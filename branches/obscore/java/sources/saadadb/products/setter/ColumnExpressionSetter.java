@@ -733,7 +733,16 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public AttributeHandler getAssociateAtttribute() {
 		return this.singleAttributeHandler.getAssociateAtttribute();
 	}
-
+	
+	@Override
+	public List<AttributeHandler> getExprAttributes() {
+		return this.exprAttributes;
+	}
+	
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		AttributeHandler ah1 = new AttributeHandler();
 		AttributeHandler ah2 = new AttributeHandler();
@@ -835,7 +844,6 @@ MULTI_ATTRIBUTE,
 			System.out.println(" computed: " + ces);
 			if( ces.isNotSet() ) break;
 			ces.calculateExpressionFromAttributes(mapTest);
-			System.out.println(" computed: " + ces);
 			if( ces.isNotSet() ) break;
 		}
 	}

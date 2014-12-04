@@ -23,6 +23,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.inference.QuantityDetector;
+import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 /**
@@ -54,7 +55,7 @@ public abstract class DataFile implements Enumeration {
 	 */
 	public List<String> comments = new ArrayList<String>();
 
-	
+
 	/**
 	 * Returns the first extension possibly spectra data
 	 * @return
@@ -123,7 +124,7 @@ public abstract class DataFile implements Enumeration {
 		return null;
 	}
 
-	
+
 	/**
 	 * Returns the first extension possibly spectra data
 	 * @return
@@ -245,6 +246,7 @@ public abstract class DataFile implements Enumeration {
 			System.out.println("DATAFILE " + e.getValue());
 			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
 		}
+		(new Exception()).printStackTrace();
 		return retour;
 	}
 	/**
@@ -279,16 +281,17 @@ public abstract class DataFile implements Enumeration {
 	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
 		TableBuilder tb;
 		if( productMapping.getCategory() == Category.ENTRY ) {
+			tb = (TableBuilder) this.productBuilder;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandlerCopy().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandlerCopy()
+			return new QuantityDetector(tb.entryBuilder.productAttributeHandler
 					, this.comments
 					, productMapping
 					, this.productBuilder.wcsModeler);			
 		} else if( this.productBuilder instanceof TableBuilder  ){
 			tb = (TableBuilder) this.productBuilder;
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Table columns taken in account");
+				Messenger.printMsg(Messenger.DEBUG, this.entryAttributeHandlers.size() + " columns taken in account");
 			return  new QuantityDetector(this.productBuilder.productAttributeHandler
 					, tb.entryBuilder.productAttributeHandler
 					, this.comments
@@ -329,7 +332,7 @@ public abstract class DataFile implements Enumeration {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the builder's attribute handlers with the values read in the table columns of the product file
 	 * @throws Exception
@@ -344,17 +347,32 @@ public abstract class DataFile implements Enumeration {
 			}
 		}
 
-		for( Entry<String, AttributeHandler> eah: this.entryAttributeHandlers.entrySet()){
-			AttributeHandler localAh = eah.getValue();
-			String localKey = eah.getKey();
-			AttributeHandler builderAh = entryBuilder.productAttributeHandler.get(localKey);
-
-			if( builderAh == null ){
-				System.out.println("ENTRY ADD " + localAh.clone());
-				entryBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
-			} else {
-				builderAh.setValue(localAh.getValue());
+		Object[] rowData = (Object[]) this.nextElement();
+		if( rowData != null ){
+			int cpt = 0;
+			for( AttributeHandler ah: this.entryAttributeHandlers.values()){
+				System.out.println("@@@@@@@@@@@@@@ " + rowData[cpt]);
+				ah.setValue(rowData[cpt].toString());
+				cpt++;
 			}
+
+			for( Entry<String, AttributeHandler> eah: this.entryAttributeHandlers.entrySet()){
+				AttributeHandler localAh = eah.getValue();
+				String localKey = eah.getKey();
+				AttributeHandler builderAh = entryBuilder.productAttributeHandler.get(localKey);
+
+				if( builderAh == null ){
+					System.out.println("ENTRY ADD " + localAh.clone());
+					entryBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
+				} else {
+					builderAh.setValue(localAh.getValue());
+					System.out.println("@@@@@@@@@@@@@ " + builderAh + " " + builderAh.hashCode());
+
+				}
+			}
+			System.out.println("@@@@@@@@@@@@@ " 
+			        + ((ColumnExpressionSetter)(entryBuilder.s_raSetter)).getSingleAttributeHandler() 
+					+ ((ColumnExpressionSetter)(entryBuilder.s_raSetter)).getSingleAttributeHandler().hashCode());
 		}
 	}
 
@@ -367,7 +385,7 @@ public abstract class DataFile implements Enumeration {
 	 * @throws Exception 
 	 */
 	public abstract Map<String, DataFileExtension> getProductMap() throws Exception;
-	
+
 	/**
 	 * Construct the local AH map from the keywords read in the file. This map is ordered as the keywords
 	 */
@@ -390,50 +408,50 @@ public abstract class DataFile implements Enumeration {
 	 */
 	public abstract void bindEntryBuilder(ProductBuilder builder) throws Exception;
 	/**Returns the value corresponding finded in the product file to the key word in parameter.
-     *@param String The key word.
-     *@return String The value corresponding to this key word, if he exists, else null.
-     */
-    public abstract String getKWValueQuickly(String key);
-   
- 	/**
- 	 * @param key  column name as it is in the file
- 	 * @return min,max,nbpoints
- 	 * @throws Exception
- 	 */
- 	public abstract Object[] getExtrema(String keyOrg) throws Exception ;
-    /**In case of the product can have table:
-     * Returns the row number in the table.
-     * If there is no table for this product format, this method will return 0.
-     *@return int The row number in the table.
-     * @throws IOException 
-     * @throws FitsException 
-     */
-    public abstract int getNRows() throws IgnoreException;
+	 *@param String The key word.
+	 *@return String The value corresponding to this key word, if he exists, else null.
+	 */
+	public abstract String getKWValueQuickly(String key);
 
-    /**In case of the product can have table:
-     * Returns the column number in the table.
-     * If there is no table for this product format, this method will return 0.
-     *@param numHDU The n'th table Header.
-     *@return int The column number in the table.
-     * @throws IOException 
-     * @throws FitsException 
-     */
-    public abstract int getNCols() throws IgnoreException;
-    /**In case of the product can have table:
-     * Initializes the enumeration of table rows (essential in stream mode).
-     * This method is necessary in the class Product (package saadadb.products) for return a initialized enumeration:
-     * See method elements() in class Product (she returns a Enumeration).
-     *@return void.
-     * @throws IOException 
-     * @throws FitsException 
-     */
-    public abstract  void initEnumeration() throws IgnoreException;
+	/**
+	 * @param key  column name as it is in the file
+	 * @return min,max,nbpoints
+	 * @throws Exception
+	 */
+	public abstract Object[] getExtrema(String keyOrg) throws Exception ;
+	/**In case of the product can have table:
+	 * Returns the row number in the table.
+	 * If there is no table for this product format, this method will return 0.
+	 *@return int The row number in the table.
+	 * @throws IOException 
+	 * @throws FitsException 
+	 */
+	public abstract int getNRows() throws IgnoreException;
+
+	/**In case of the product can have table:
+	 * Returns the column number in the table.
+	 * If there is no table for this product format, this method will return 0.
+	 *@param numHDU The n'th table Header.
+	 *@return int The column number in the table.
+	 * @throws IOException 
+	 * @throws FitsException 
+	 */
+	public abstract int getNCols() throws IgnoreException;
+	/**In case of the product can have table:
+	 * Initializes the enumeration of table rows (essential in stream mode).
+	 * This method is necessary in the class Product (package saadadb.products) for return a initialized enumeration:
+	 * See method elements() in class Product (she returns a Enumeration).
+	 *@return void.
+	 * @throws IOException 
+	 * @throws FitsException 
+	 */
+	public abstract  void initEnumeration() throws IgnoreException;
 	/**
 	 * Close the data stream
 	 * @throws QueryException
 	 */
 	public abstract void closeStream() throws QueryException;
- 	
+
 	/**
 	 * Returns the list of the loaded extension with the reason why they have been taken
 	 * @return
@@ -474,5 +492,5 @@ public abstract class DataFile implements Enumeration {
 	public abstract String getName();
 
 
- }
-  
+}
+

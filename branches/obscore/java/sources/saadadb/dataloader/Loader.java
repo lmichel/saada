@@ -32,6 +32,55 @@ public class Loader extends SaadaProcess {
 	private ArrayList<String> filesToBeLoaded = null;
 
 	private ArgsParser tabArg;
+	
+	/**
+	 * Creator: init the loader and the database
+	 * @param args array of parameters
+	 * @throws Exception 
+	 */
+	public Loader(String[] args) throws Exception {
+		super(0);
+		boolean debug = false;
+		if( Messenger.debug_mode ) {
+			debug = true;
+		}
+		this.tabArg = new ArgsParser(args);
+		this.setTabArg();
+		Database.init(this.tabArg.getDBName());
+		if( !Database.getConnector().isAdmin_mode() ) {
+			Database.setAdminMode(this.tabArg.getPassword());
+		}
+
+		if( debug ) {
+			this.tabArg.addDebugMode(true);
+			Messenger.switchDebugOn();
+		}
+	}
+	
+	/**
+	 * Creator init the loader and the database
+	 * @param args parser object
+	 * @throws Exception 
+	 */
+	public Loader(ArgsParser args) throws Exception {
+		super(0);
+		boolean debug = false;
+		if( Messenger.debug_mode ) {
+			debug = true;
+		}
+		this.tabArg = args;
+		this.setTabArg();
+		Database.init(this.tabArg.getDBName());
+		if( !Database.getConnector().isAdmin_mode() ) {
+			Database.setAdminMode(this.tabArg.getPassword());
+		}
+
+		if( debug ) {
+			this.tabArg.addDebugMode(true);
+			Messenger.switchDebugOn();
+		}
+	}
+
 	/**
 	 * @param args
 	 */
@@ -76,31 +125,7 @@ public class Loader extends SaadaProcess {
 		System.exit(1);		
 	}
 
-	/**
-	 * Creator init the loader and the database
-	 * @param args
-	 * @throws ParsingException
-	 * @throws Exception 
-	 * @throws SQLException 
-	 */
-	public Loader(String[] args) throws Exception {
-		super(0);
-		boolean debug = false;
-		if( Messenger.debug_mode ) {
-			debug = true;
-		}
-		this.tabArg = new ArgsParser(args);
-		this.setTabArg();
-		Database.init(this.tabArg.getDBName());
-		if( !Database.getConnector().isAdmin_mode() ) {
-			Database.setAdminMode(this.tabArg.getPassword());
-		}
 
-		if( debug ) {
-			this.tabArg.addDebugMode(true);
-			Messenger.switchDebugOn();
-		}
-	}
 	/**
 	 * @param args
 	 * @return
@@ -162,7 +187,8 @@ public class Loader extends SaadaProcess {
 		String filename = this.tabArg.getFilename();
 		String filter = this.tabArg.getFilter();
 		if( filename ==  null || filename.equals("")) {
-			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "A file (or dir) name must be specified");
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER
+					, "A file (or dir) name must be specified");
 		}
 		File requested_file = new File(filename);
 
@@ -172,12 +198,14 @@ public class Loader extends SaadaProcess {
 				 * Just to see if the file is a double symbolic link
 				 */
 				if( !(new File(requested_file.getCanonicalPath())).exists() ) {
-					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");	
+					AbortException.throwNewException(SaadaException.MISSING_FILE
+							, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");	
 				} else {
 					return;
 				}
 			} catch (Exception e) {}
-			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");							
+			AbortException.throwNewException(SaadaException.MISSING_FILE
+					, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");							
 		}
 		/*
 		 * "filename" is a directory 

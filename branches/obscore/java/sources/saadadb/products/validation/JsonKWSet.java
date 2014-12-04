@@ -5,10 +5,17 @@ import org.json.simple.JSONObject;
 
 /**
  * Format of the JSONObject
-  	{
-    header: [[name, unit, ucd, value (optional)],......]
-     columns: [[name, unit, ucd, value (optional)],......]
-     }
+  {
+     "header": [["RA", "double", "", "", "23.67"],
+				.......
+		]
+		,
+    "table": {header: [["RA2000", "double", "", "", "10."],.......
+                      ]
+                      ,
+             data: [[ "10.", "45", "lui"],
+                    ......]
+    }
 
  * @author michel
  * @version $Id$

@@ -891,10 +891,11 @@ public class SQLiteWrapper extends DbmsWrapper {
 				QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line + " number of values (" + fs.length + ") does not match the number of columns (" +  nb_col + ")");
 			}
 			for( int i=0 ; i< nb_col; i++ ) {
-				if( "null".equals(fs[i]) )
+				String v = fs[i].trim();
+				if( "null".equals(v) )
 					prep.setObject(i+1, null);
 				else
-					prep.setObject(i+1, fs[i]);
+					prep.setObject(i+1, v);
 			}
 			prep.addBatch();
 			if( (line%5000) == 0  )  {

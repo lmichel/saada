@@ -39,6 +39,7 @@ public class RegExp {
 	 */
 	public static final String FITS_FILE    = "(?i)(.*(\\.((((fit)|(fits))(\\.gz)?)|((ftz)|(fgz)))))$";
 	public static final String VOTABLE_FILE = "(?i)(.*(\\.((vot)|(votable)|(xml))(\\.gz)?))$";
+	public static final String JSON_FILE = "(?i)(.*\\.json)$";
 	public static final String IMAGE_FILE   = "(?i)(.*(\\.(((gif)|(jpeg)|(jpg)|(png)|(tiff)|(bmp))))$";
 	public static final String[] PICT_FORMAT  = new String[]{"jpg",  "gif", "jpeg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
 

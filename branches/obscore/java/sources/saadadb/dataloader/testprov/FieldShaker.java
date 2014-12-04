@@ -26,7 +26,7 @@ import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.reporting.MappingReport;
 import saadadb.products.reporting.TableMappingReport;
 import saadadb.products.setter.ColumnSetter;
@@ -66,14 +66,14 @@ import saadadb.util.Messenger;
  */
 public class FieldShaker {
 	/** Saada data product built with the JSON object */
-	protected  Map<String, FooProduct>  fooProducts;
+	protected  Map<String, JsonDataFile>  fooProducts;
 	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
 	/** Test report, one entry er test, and several  lines par entry*/
 	protected Map<String, List<String>> reports;
 	/** pointer on the retpor current of the current test*/ 
 	protected List<String> currentReport;
-	protected FooProduct currentProduct;
+	protected JsonDataFile currentProduct;
 	/** List of Obscore fields of interest: they are reported */
 	protected Set<String> paramsOfInterest;
 
@@ -127,7 +127,7 @@ public class FieldShaker {
 		/*
 		 * Extraction des differents cas
 		 */
-		this.fooProducts = new LinkedHashMap<String, FooProduct>();
+		this.fooProducts = new LinkedHashMap<String, JsonDataFile>();
 		this.reports = new LinkedHashMap<String, List<String>>();
 		JSONArray cases = (JSONArray) jsonObject.get("cases");  
 		Iterator casesIt = cases.iterator();  
@@ -135,7 +135,7 @@ public class FieldShaker {
 			while (casesIt.hasNext()) { 
 				JSONObject cas = (JSONObject) casesIt.next();
 				String casName = (String) cas.get("name");
-				this.fooProducts.put(casName, new FooProduct(cas, 0));
+				this.fooProducts.put(casName, new JsonDataFile(cas, 0));
 				this.reports.put(casName, new ArrayList<String>());
 			}
 		} catch (ParseException e) {
