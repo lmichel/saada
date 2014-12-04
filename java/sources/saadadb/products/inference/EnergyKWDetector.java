@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.datafile.DataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnWcsSetter;
@@ -88,7 +88,8 @@ public class EnergyKWDetector extends KWDetector {
 	private void setUnitMode(ProductMapping productMapping) throws FatalException{
 		if( productMapping == null ) return ;
 		this.priority = productMapping.getEnergyAxisMapping().getPriority();
-		this.defaultUnit = productMapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa").getValue();
+		ColumnMapping cm = productMapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa");
+		this.defaultUnit = (cm == null)? "":cm.getValue();
 		switch (this.priority) {
 		case ONLY:
 			// Consider the default unit as this read

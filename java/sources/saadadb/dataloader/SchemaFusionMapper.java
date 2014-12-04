@@ -24,6 +24,7 @@ import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.datafile.DataFile;
+import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Business;
 import saadadb.sqltable.Table_Saada_Metacat;
@@ -86,7 +87,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				 * AbortException rose of file type not recognized
 				 */
 				try {
-					this.currentProductBuilder.mergeProductFormat(dataFile);
+					new ClassMerger(this.currentProductBuilder).mergeProductFormat(dataFile);
 				} catch(Exception e){	
 					Messenger.printMsg(Messenger.ERROR, e.toString());
 					this.dataFiles.remove(i);
@@ -100,7 +101,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			if( (i % 1000) == 0 ) {
 				System.gc();
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}
 		if( this.dataFiles.size() == 0 ) {
@@ -115,11 +116,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
 				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
+				System.out.println("@@@@@@@@@@@@ makeClassFusion " + entr.productAttributeHandler);
 				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
 				this.entryMapper.currentClass = this.entryMapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}
 		/*
@@ -134,7 +136,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				this.entryMapper.updateSchemaForProduct();	
 				SQLTable.beginTransaction();
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}
 	}
@@ -151,7 +153,16 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.beginTransaction();
 		this.makeClassFusion();
 		SQLTable.commitTransaction();
+		/*
+		 * Ingest all files
+		 */
+		this.storeAllDataFiles();
+	}	
 
+	/**
+	 * @throws Exception
+	 */
+	public void storeAllDataFiles() throws Exception {
 		/*
 		 * Ingest all files
 		 */
@@ -172,21 +183,24 @@ public class SchemaFusionMapper extends SchemaMapper {
 			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
 			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 			Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  ">");
+			this.currentProductBuilder.setMetaclass(this.currentClass);
+			this.currentProductBuilder.mapDataFile(file);
 			if( this.entryMapper != null ) {	
 				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
 				this.entryMapper.setProduct(entr);
+				this.entryMapper.currentProductBuilder.setMetaclass(this.entryMapper.currentClass);
 			}
-			try {
-				this.currentProductBuilder.initProductFile();
-			} catch(IgnoreException e){
-				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
-					AbortException.throwNewException(SaadaException.USER_ABORT, e);
-					return;
-				}
-				else {
-					continue;
-				}
-			}
+//			try {
+//			//	this.currentProductBuilder.initProductFile();
+//			} catch(IgnoreException e){
+//				if( Messenger.trapIgnoreException(e) == Messenger.ABORT ) {
+//					AbortException.throwNewException(SaadaException.USER_ABORT, e);
+//					return;
+//				}
+//				else {
+//					continue;
+//				}
+//			}
 
 			this.loadProduct();	
 			if( (i%commit_frequency) == 0 ) {
@@ -195,7 +209,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				Database.gc();
 				SQLTable.beginTransaction();				
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}
 		/*
@@ -209,7 +223,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entryMapper.mapping.getCollection() , this.entryMapper.mapping.getCategory()), this.loader);
 				SQLTable.indexTable(this.entryMapper.currentClass.getName(), this.loader);			
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}
 		SQLTable.commitTransaction();
@@ -238,13 +252,13 @@ public class SchemaFusionMapper extends SchemaMapper {
 		 * Ingest all files
 		 */
 		
-		this.storeAllDataFiles() ;
+		this.storeAllDataFilesByBurst() ;
 	}
 	
 	/**
 	 * @throws Exception
 	 */
-	protected void storeAllDataFiles() throws Exception {
+	protected void storeAllDataFilesByBurst() throws Exception {
 	
 		Messenger.printMsg(Messenger.TRACE, "Start to ingest data in blob mode");
 		this.currentProductBuilder = null;
@@ -295,7 +309,7 @@ System.out.println("==========================================================="
 				}
 			}
 			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}	
 		loadedtmpfile.close();
@@ -320,12 +334,12 @@ System.out.println("==========================================================="
 
 			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection() ,mapping.getCategory()), this.loader);
 			SQLTable.indexTable(this.currentClass.getName(), this.loader);
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			if( this.entryMapper != null ) {
 				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(this.entryMapper.mapping.getCollection() , this.entryMapper.mapping.getCategory()), this.loader);
 				SQLTable.indexTable(this.entryMapper.currentClass.getName(), this.loader);			
 			}
-			this.loader.processUserRequest();
+			this.processUserRequest();
 			Messenger.incrementeProgress();
 			SQLTable.commitTransaction();
 		}
@@ -360,7 +374,7 @@ System.out.println("==========================================================="
 			for( int i=0 ; i<ahs.length ; i++ ) {
 				org_ah.put(ahs[i].getNameattr(), ahs[i]);
 			}
-			this.currentProductBuilder.mergeAttributeHandlers(org_ah);
+			new ClassMerger(this.currentProductBuilder).mergeAttributeHandlers(org_ah);
 
 			Map<String, AttributeHandler> new_ah = this.currentProductBuilder.getProductAttributeHandler();
 			Iterator<AttributeHandler> it = new_ah.values().iterator();

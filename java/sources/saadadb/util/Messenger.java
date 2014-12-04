@@ -18,7 +18,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.dialogs.AbortExceptionDialog;
 import saadadb.admintool.dialogs.FatalExceptionDialog;

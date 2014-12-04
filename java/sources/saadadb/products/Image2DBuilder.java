@@ -19,7 +19,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.Image2DCoordinate;
 import saadadb.util.ImageUtils;
@@ -52,7 +52,7 @@ public class Image2DBuilder extends ProductBuilder {
 	 * @param metaClass
 	 * @throws SaadaException
 	 */
-	public Image2DBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+	public Image2DBuilder(JsonDataFile productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
 		try {
 			this.bindDataFile(dataFile);

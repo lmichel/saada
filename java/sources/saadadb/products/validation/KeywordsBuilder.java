@@ -20,6 +20,7 @@ public abstract class KeywordsBuilder {
 
 	public List<AttributeHandler> headerKWs;
 	public List<AttributeHandler> columnKWs;
+	public List<Object[]> tableData;
 	
 	
 	/**
@@ -28,28 +29,28 @@ public abstract class KeywordsBuilder {
 	public KeywordsBuilder() throws Exception {
 		this.headerKWs = null;
 		this.columnKWs = null;
+		this.tableData =null;
 	}
-	public KeywordsBuilder(String[][] ahDef) throws Exception {
-		this.headerKWs = buildAttributeHandler(ahDef);
-		this.columnKWs = null;
-	}
-	public KeywordsBuilder(String[][] hahDef, String[][] cahDef) throws Exception {
-		this.headerKWs = buildAttributeHandler(hahDef);
-		this.columnKWs = buildAttributeHandler(hahDef);
-	}
+
 	/**
 	 * Format of the JSONObject
   	  {
-      header: [[name, unit, ucd, value (optional)],......]
-      columns: [[name, unit, ucd, value (optional)],......]
+     "header": [["RA", "double", "", "", "23.67"],
+				....... ] ,
+    "table": {"header": [["RA2000", "double", "", "", "10."],....... ] ,
+             "data": [[ "10.", "45", "lui"], ......]}
+    }
       }
 	 * @param jsonObject
 	 * @throws Exception
 	 */
 	public KeywordsBuilder(JSONObject jsonObject) throws Exception {
 		this.headerKWs = buildAttributeHandler((JSONArray) jsonObject.get("header"));
-		this.columnKWs = buildAttributeHandler((JSONArray) jsonObject.get("columns"));
+		JSONObject table = (JSONObject) jsonObject.get("table");
+		this.columnKWs = buildAttributeHandler((JSONArray) table.get("header"));
+		this.tableData = buildTableData((JSONArray) table.get("data"));
 	}
+	
 	/**
 	 * Buid an AH list for a 2dim array of strings;
 	 * 0: name, 1: unit; 2: ucd, 3(optional): value
@@ -103,7 +104,22 @@ public abstract class KeywordsBuilder {
 		}
 		return retour;
 	}
-	
+	public static  List<Object[]> buildTableData(JSONArray  dataArray) throws Exception {
+		if(dataArray == null){
+			return null;
+		}
+		Iterator<Object> it =  dataArray.iterator();
+		List<Object[]> retour = new ArrayList<Object[]>();
+		while( it.hasNext()){
+			JSONArray jsonRow = (JSONArray) it.next();
+			Object[] row = new Object[jsonRow.size()];
+			for( int i=0 ; i< row.length  ; i++ ){
+				row[i] = jsonRow.get(i);
+			}
+			retour.add(row);
+		}
+		return retour;
+	}
 	/**
 	 * @param list
 	 * @return

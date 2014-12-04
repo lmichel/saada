@@ -28,7 +28,7 @@ public class PositionShaker extends ParamShaker{
 			+ "	\"-position=alpha,delta\"  \n"
 			+ "	\"-system='FK5'\"  \n"
 			+ "], \n"
-			+ "\"fields\": { \n"
+			+ "\"data\": { \n"
 			+ "    \"header\": [\n"
 			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"10\"], \n"
 			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"+20\"] \n"
@@ -36,7 +36,7 @@ public class PositionShaker extends ParamShaker{
 			+ "				[\"delta\"       , \"double\", \"deg\"   , \"\"              , \"-20\"] \n"
 			+ "		]\n"
 			+ "		,\n"
-			+ "    \"columns\": []\n"
+			+ "    \"table\": {}\n"
 			+ "    }\n"
 			+ "}\n";
 	}

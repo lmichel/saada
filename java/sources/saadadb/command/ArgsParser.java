@@ -3,15 +3,20 @@ package saadadb.command;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -32,7 +37,7 @@ import saadadb.vocabulary.enums.RepositoryMode;
  * @author michel
  *
  */
-public class ArgsParser implements Serializable{
+public final class ArgsParser implements Serializable{
 	/**
 	 * 
 	 */
@@ -1797,5 +1802,53 @@ public class ArgsParser implements Serializable{
 		br.close();
 		return new ArgsParser(args.toArray(new String[args.size()]));
 		
+	}
+	
+	/**
+	 * Extract the parameters from fileName an return a new instance of ArgsParser
+	 * Parameters must be like
+	  "parameters": [
+		"-category=misc" ,
+		"-collection=FOO",
+		"-name=strcat(A,B,C)"	,
+		"-spccolumn=eMin,eMax"	
+		"-spcunit='keV'"	
+		]
+	 * @param fileName Json filename
+	 * @param dbName database name to be appended to the args
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArgsParser getArgsParserFromJson(String fileName, String dbName) throws Exception{
+		JSONParser parser = new JSONParser();  
+		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(fileName));  
+		return getArgsParserFromJson((JSONArray) jsonObject.get("parameters"), fileName, dbName);  
+	}
+	/**
+	 * Extract the parameters from JSON array an return a new instance of ArgsParser
+     * Json array must be like 
+       [
+		"-category=misc" ,
+		"-collection=FOO",
+		"-name=strcat(A,B,C)"	,
+		"-spccolumn=eMin,eMax"	
+		"-spcunit='keV'"	
+		]
+
+	 * @param parameters
+	 * @param fileName Json filename
+	 * @param dbName database name to be appended to the args
+	 * @return
+	 * @throws Exception
+	 */
+	public static ArgsParser getArgsParserFromJson(JSONArray parameters, String fileName,String dbName) throws Exception{
+		List<String> params = new ArrayList<String>();
+		Iterator<String> iterator = parameters.iterator();  
+		while (iterator.hasNext()) {  
+			params.add(iterator.next());  
+		}  
+		params.add("-filename=" + fileName);
+		params.add(dbName);
+		return new ArgsParser(params.toArray(new String[0]));
 	}
 }

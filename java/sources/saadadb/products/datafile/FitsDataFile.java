@@ -74,16 +74,7 @@ public final class FitsDataFile extends FSDataFile{
 	private String ra="";
 
 	private String fmtsignature;
-	private ProductBuilder productBuilder;
 	protected SpaceKWDetector space_frame;
-
-	protected Map<String, DataFileExtension> productMap;
-
-	private Map<String, AttributeHandler> attributeHandlers = null;
-	private Map<String, AttributeHandler> entryAttributeHandlers = null;
-	/** Comment read within the header and the extension */
-	private List<String> comments = new ArrayList<String>();
-
 	private int[] colform ;
 
 	/**Constructor (constructor of the super class "File").
@@ -1697,6 +1688,11 @@ public final class FitsDataFile extends FSDataFile{
 	@Override
 	public String getName() {
 		return this.file.getName();
+	}
+	@Override
+	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

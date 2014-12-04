@@ -1,20 +1,14 @@
 package saadadb.products.datafile;
-import java.awt.Image;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.database.Database;
 import saadadb.exceptions.IgnoreException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
-import saadadb.products.inference.QuantityDetector;
-import saadadb.products.inference.SpaceKWDetector;
 
 /**
  * Class modeling data files without data (flatfiles e.g.)
@@ -30,6 +24,7 @@ public class AnyFile extends FSDataFile {
 	 */
 	public AnyFile(File parent, String child) {
 		super(parent, child);
+		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 	}
 	
 	/**
@@ -37,6 +32,7 @@ public class AnyFile extends FSDataFile {
 	 */
 	public AnyFile(String fileName) {
 		super(fileName);
+		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 	}
 
 
@@ -49,79 +45,67 @@ public class AnyFile extends FSDataFile {
 		return null;
 	}
 
-	public Map getTableEntry() {
-		return null;
-	}
 
-	public void setKWEntry(Map<String, AttributeHandler> tah) throws IgnoreException {
-	}
-
-	public Image getSpectraImage() {
-		return null;
-	}
-
-	public Object[] getRow(int index) throws IgnoreException {
-		return null;
-	}
-
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getExtrema(java.lang.String)
+	 */
 	public Object[] getExtrema(String key) {
 		return null;
 	}
 
-	public Object[] getRow(int index, int numHDU) throws IgnoreException {
-		return null;
-	}
-
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getNRows()
+	 */
 	public int getNRows() throws IgnoreException {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#getNCols()
+	 */
 	public int getNCols() throws IgnoreException {
 		return 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#initEnumeration()
+	 */
 	public void initEnumeration() throws IgnoreException {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Enumeration#hasMoreElements()
+	 */
 	public boolean hasMoreElements() {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.Enumeration#nextElement()
+	 */
 	public Object nextElement() {
 		return null;
 	}
 
-	public LinkedHashMap<String, ArrayList<AttributeHandler>> getProductMap(String category) throws IgnoreException {
-		return null;
-	}
 
-	public SpaceKWDetector getSpaceFrame() {
-		return null;
-	}
-
-	public void setSpaceFrame() {
-		
-	}
-
-	public void setSpaceFrameForTable() throws IgnoreException {
-		
+	@Override
+	public void bindBuilder(ProductBuilder builder) throws Exception {
+		this.productBuilder = builder;
+		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();	
 	}
 
 	@Override
-	public Map<String, AttributeHandler> getEntryAttributeHandler()
-			throws SaadaException {
-		// TODO Auto-generated method stub
+	public List<ExtensionSetter> reportOnLoadedExtension() {
 		return null;
 	}
+
 
 	@Override
-	public Map<String, AttributeHandler> getAttributeHandlerCopy()
-			throws SaadaException {
+	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
-
 
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
@@ -130,31 +114,16 @@ public class AnyFile extends FSDataFile {
 	}
 
 	@Override
-	public void bindBuilder(ProductBuilder builder) throws Exception {
-		builder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
-		
-	}
-
-	@Override
-	public List<ExtensionSetter> reportOnLoadedExtension() {
-		return null;
-	}
-
-	@Override
 	public void mapAttributeHandler() throws IgnoreException {
-		// TODO Auto-generated method stub
+		this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 		
 	}
 
 	@Override
 	public void mapEntryAttributeHandler() throws IgnoreException {
-		// TODO Auto-generated method stub
-		
+		this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
 	}
 
 
-
-
-	
 
 }

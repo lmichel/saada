@@ -11,7 +11,7 @@ import org.json.simple.parser.JSONParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.setter.ExpressionWrapper;
 /**
  * Test the ExpressionWrapper
@@ -20,7 +20,7 @@ import saadadb.products.setter.ExpressionWrapper;
  */
 public class ExpressionShaker {
 	private JSONObject jsonAhs;
-	private FooProduct fooProduct;
+	private JsonDataFile fooProduct;
 	ExpressionWrapper wrapper;
 	ArrayList<String> report;
 	
@@ -35,7 +35,7 @@ public class ExpressionShaker {
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(path));  
 		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
-		this.fooProduct = new FooProduct(this.jsonAhs, 0);
+		this.fooProduct = new JsonDataFile(this.jsonAhs, 0);
 
 	}
 	

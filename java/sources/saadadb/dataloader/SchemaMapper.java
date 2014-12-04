@@ -21,6 +21,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.datafile.AnyFile;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.datafile.VOTableDataFile;
 import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
@@ -326,6 +327,10 @@ public abstract class SchemaMapper {
 			// products with identical type
 			// Updates the UCD tables in current data base for the products list
 			uth.updateUCDTable(class_id);
+			if( !Database.getWrapper().supportDropTableInTransaction()){
+				SQLTable.commitTransaction();
+				SQLTable.beginTransaction();
+			}
 			SQLTable.commitTransaction();
 			dontforgettoreopentransaction = true;
 		} catch(Exception e) {
@@ -360,9 +365,24 @@ public abstract class SchemaMapper {
 			return(new FitsDataFile(fullPath));
 		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
 			return(new VOTableDataFile(fullPath));
+		} else if( fullPath.matches(RegExp.JSON_FILE) ) {
+			return(new JsonDataFile(fullPath));
 		} else {
 			return(new AnyFile(fullPath));
 		}		
+	}
+	
+	/**
+	 * @return
+	 */
+	public MetaClass getCurrentClass(){
+		return this.currentClass;
+	}
+	/**
+	 * @throws AbortException
+	 */
+	protected void processUserRequest() throws AbortException {
+	 if( this.loader != null ) this.loader.processUserRequest();
 	}
 
 }

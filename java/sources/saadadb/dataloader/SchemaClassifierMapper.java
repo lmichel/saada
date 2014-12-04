@@ -9,7 +9,9 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.MetaClass;
+import saadadb.products.EntryBuilder;
 import saadadb.products.ProductBuilder;
+import saadadb.products.TableBuilder;
 import saadadb.products.datafile.DataFile;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
@@ -28,6 +30,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	class DataPacket {
 		public List<String> fileList = new ArrayList<String>();
 		public MetaClass classe;
+		public MetaClass entryClasse;
 	}
 	private Map<String, DataPacket> dataPackets;
 	/**
@@ -51,23 +54,33 @@ public class SchemaClassifierMapper extends SchemaMapper {
 	/* (non-Javadoc)
 	 * @see saadadb.dataloader.SchemaMapper#ingestProductSet()
 	 */
-	 @Override
-	 public void ingestProductSet() throws Exception{
-		 /*
-		  * Build the per class map of the product to be ingested
-		  * Classes are created on the fly to avoid an extra DataFile instanciation 
-		  */
+	@Override
+	public void ingestProductSet() throws Exception{
+		/*
+		 * Build the per class map of the product to be ingested
+		 * Classes are created on the fly to avoid an extra DataFile instanciation 
+		 */
 		dataPackets = new LinkedHashMap<String, SchemaClassifierMapper.DataPacket>();
 		for( String fn: this.dataFiles) {
 			DataFile file = this.getDataFileInstance(fn);
 			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);	
+			if( mapping.getCategory() == Category.TABLE ) {
+				this.entryMapper = new SchemaClassifierMapper(this.loader, ((TableBuilder)this.currentProductBuilder).entryBuilder);
+			}
 			String signature = this.currentProductBuilder.getFmtsignature();
+			if( mapping.getCategory() == Category.TABLE ) {
+				signature += this.entryMapper.currentProductBuilder.getFmtsignature();
+			}			
 			DataPacket dp;
 			if( (dp = this.dataPackets.get(signature)) == null ) {
 				dp = new DataPacket();
 				this.dataPackets.put(signature, dp);
 				SQLTable.beginTransaction();
 				this.updateSchemaForProduct();
+				if( mapping.getCategory() == Category.TABLE ) {
+					this.entryMapper.updateSchemaForProduct();
+					dp.entryClasse = this.entryMapper.currentClass;
+				}
 				SQLTable.commitTransaction();
 				dp.classe = this.currentClass;
 			}
@@ -81,120 +94,128 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			SchemaFusionMapper sfm = new SchemaFusionMapper(this.loader, dp.fileList, this.mapping);
 			sfm.currentClass = dp.classe;
 			sfm.mustIndex = this.mustIndex;
-			sfm.storeAllDataFiles();		
+			if( mapping.getCategory() == Category.TABLE ) {
+				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
+				sfm.entryMapper = new SchemaFusionMapper(this.loader, entr);
+				sfm.entryMapper.currentClass = dp.entryClasse;	
+				sfm.storeAllDataFiles();
+
+			} else {
+				sfm.storeAllDataFilesByBurst();
+			}
 			cpt++;
 			this.loader.processUserRequest();
 
 		}
 	}
-//	/**
-//	 * @param dataFiles
-//	 * @param mapping
-//	 * @throws Exception
-//	 */
-//	@Override
-//	public void ingestProductSetXX() throws Exception {
-//
-//		//requested_classname = this.standardizeName("Cl");
-//		//System.out.println("Requested " + requested_classname);
-//		/*
-//		 * Drop SQL indexes
-//		 */
-//		Messenger.printMsg(Messenger.TRACE, "Ingesting the product set");
-//		SQLTable.beginTransaction();
-//		SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
-//		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
-//			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
-//			if( i==0 ) {			
-//				if (Messenger.debug_mode)
-//					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used for the whole data set");
-//				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);			
-//				this.currentProductBuilder.setMetaclass(this.currentClass);
-//			}
-//			this.currentProductBuilder.mapDataFile(file);
-//			/*
-//			 * Only AbortException are caught, because they don't stop the process
-//			 */
-//			//try {
-//			this.ingestCurrentProduct();
-//			//} catch( AbortException e) {
-//			//	SQLTable.beginTransaction();				
-//			//}
-//
-//			if( i > 0 && (i%100) == 0 ) {
-//				SQLTable.commitTransaction();	
-//				Database.gc();
-//				SQLTable.beginTransaction();
-//			}
-//			this.loader.processUserRequest();
-//			Messenger.incrementeProgress();
-//		}
-//		/*
-//		 * Re-create SQL indexes 
-//		 */
-//		if( this.mustIndex ) {
-//			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
-//			for( String cti: classesToBeIndexed) {
-//				SQLTable.indexTable(cti, this.loader);			
-//			}
-//			if( this.entryMapper != null ) {
-//				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), this.entryMapper.mapping.getCategory()), this.loader);
-//				for( String cti: this.entryMapper.classesToBeIndexed) {
-//					this.loader.processUserRequest();
-//					SQLTable.indexTable(cti, this.loader);			
-//				}			
-//			}
-//			Messenger.incrementeProgress();
-//		}
-//		SQLTable.commitTransaction();	
-//	}	
-//	/**
-//	 * @throws IOException 
-//	 * @throws FitsException 
-//	 * @throws Exception 
-//	 * 
-//	 */
-//	protected void ingestCurrentProduct() throws Exception {
-//		/*
-//		 * Products not matching the configare rejected
-//		 */
-//		if( !this.mapping.isProductValid(currentProductBuilder) ) {
-//			Messenger.printMsg(Messenger.TRACE, "<" + currentProductBuilder.getName()+ "> rejected");	
-//			return;
-//		}
-//
-//		/*
-//		 * No schema update for flatfile: no need to generate classes because product content
-//		 * is not read
-//		 */
-//		if( mapping.getCategory() != Category.FLATFILE ) {
-//			/*
-//			 * Create misssing class and load the product
-//			 */
-//			this.updateSchemaForProduct();
-//			/*
-//			 * Transaction is closed when a class is created
-//			 */
-//			//SQLTable.beginTransaction();
-//			/*
-//			 * build table entry class  if any
-//			 */
-//			if( mapping.getCategory() == Category.TABLE) {
-//				Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
-//				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
-//				this.entryMapper = new SchemaClassifierMapper(this.loader, entr);
-//				this.entryMapper.updateSchemaForProduct();
-//				/*
-//				 * Transaction is closed when a class is created
-//				 */
-//				//SQLTable.beginTransaction();
-//			}
-//		}
-//		/*
-//		 * Store product
-//		 */
-//		this.loadProduct();
-//	}
+	//	/**
+	//	 * @param dataFiles
+	//	 * @param mapping
+	//	 * @throws Exception
+	//	 */
+	//	@Override
+	//	public void ingestProductSetXX() throws Exception {
+	//
+	//		//requested_classname = this.standardizeName("Cl");
+	//		//System.out.println("Requested " + requested_classname);
+	//		/*
+	//		 * Drop SQL indexes
+	//		 */
+	//		Messenger.printMsg(Messenger.TRACE, "Ingesting the product set");
+	//		SQLTable.beginTransaction();
+	//		SQLTable.dropTableIndex(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
+	//		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
+	//			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
+	//			if( i==0 ) {			
+	//				if (Messenger.debug_mode)
+	//					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used for the whole data set");
+	//				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);			
+	//				this.currentProductBuilder.setMetaclass(this.currentClass);
+	//			}
+	//			this.currentProductBuilder.mapDataFile(file);
+	//			/*
+	//			 * Only AbortException are caught, because they don't stop the process
+	//			 */
+	//			//try {
+	//			this.ingestCurrentProduct();
+	//			//} catch( AbortException e) {
+	//			//	SQLTable.beginTransaction();				
+	//			//}
+	//
+	//			if( i > 0 && (i%100) == 0 ) {
+	//				SQLTable.commitTransaction();	
+	//				Database.gc();
+	//				SQLTable.beginTransaction();
+	//			}
+	//			this.loader.processUserRequest();
+	//			Messenger.incrementeProgress();
+	//		}
+	//		/*
+	//		 * Re-create SQL indexes 
+	//		 */
+	//		if( this.mustIndex ) {
+	//			SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), mapping.getCategory()), this.loader);
+	//			for( String cti: classesToBeIndexed) {
+	//				SQLTable.indexTable(cti, this.loader);			
+	//			}
+	//			if( this.entryMapper != null ) {
+	//				SQLTable.indexTable(Database.getWrapper().getCollectionTableName(mapping.getCollection(), this.entryMapper.mapping.getCategory()), this.loader);
+	//				for( String cti: this.entryMapper.classesToBeIndexed) {
+	//					this.loader.processUserRequest();
+	//					SQLTable.indexTable(cti, this.loader);			
+	//				}			
+	//			}
+	//			Messenger.incrementeProgress();
+	//		}
+	//		SQLTable.commitTransaction();	
+	//	}	
+	//	/**
+	//	 * @throws IOException 
+	//	 * @throws FitsException 
+	//	 * @throws Exception 
+	//	 * 
+	//	 */
+	//	protected void ingestCurrentProduct() throws Exception {
+	//		/*
+	//		 * Products not matching the configare rejected
+	//		 */
+	//		if( !this.mapping.isProductValid(currentProductBuilder) ) {
+	//			Messenger.printMsg(Messenger.TRACE, "<" + currentProductBuilder.getName()+ "> rejected");	
+	//			return;
+	//		}
+	//
+	//		/*
+	//		 * No schema update for flatfile: no need to generate classes because product content
+	//		 * is not read
+	//		 */
+	//		if( mapping.getCategory() != Category.FLATFILE ) {
+	//			/*
+	//			 * Create misssing class and load the product
+	//			 */
+	//			this.updateSchemaForProduct();
+	//			/*
+	//			 * Transaction is closed when a class is created
+	//			 */
+	//			//SQLTable.beginTransaction();
+	//			/*
+	//			 * build table entry class  if any
+	//			 */
+	//			if( mapping.getCategory() == Category.TABLE) {
+	//				Messenger.printMsg(Messenger.TRACE, "Check schema for entries");
+	//				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
+	//				this.entryMapper = new SchemaClassifierMapper(this.loader, entr);
+	//				this.entryMapper.updateSchemaForProduct();
+	//				/*
+	//				 * Transaction is closed when a class is created
+	//				 */
+	//				//SQLTable.beginTransaction();
+	//			}
+	//		}
+	//		/*
+	//		 * Store product
+	//		 */
+	//		this.loadProduct();
+	//	}
 
 	/**
 	 * @param product

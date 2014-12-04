@@ -18,9 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
-import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -147,8 +145,8 @@ public abstract class ProductBuilder {
 	//	protected ColumnSetter astroframeSetter;
 
 	/** The file type ("FITS" or "VO") * */
-	protected String typeFile;
-	protected MetaClass metaClass;
+	public String typeFile;
+	public MetaClass metaClass;
 	public ProductIngestor productIngestor;	
 	/** sed by subclasses */
 	protected Image2DCoordinate wcs;
@@ -328,19 +326,18 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void mapDataFile(DataFile dataFile) throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
-		this.bindDataFile(dataFile);
+		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
+	//	this.bindDataFile(dataFile);
 		this.mapCollectionAttributes();
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public void mapDataFile() throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Map the data file " + this.getName());
+		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
 		System.out.println("@@@@@@@@@@@@@@@@ mapDataFile " +this.getClass());
-		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
-		this.bindDataFile(this.dataFile);
-		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
 		this.mapCollectionAttributes();
-		for( AttributeHandler ah: this.productAttributeHandler.values() ) System.out.println(ah);
 	}
 
 	/**
@@ -394,9 +391,9 @@ public abstract class ProductBuilder {
 		this.astroframeSetter.calculateExpression();
 		this.s_resolutionSetter.calculateExpression();
 
-		System.out.println("1 " + this.s_raSetter);
+		System.out.println("1 " + this + " " + this.s_raSetter);
 		this.s_raSetter.calculateExpression();
-		System.out.println("2 " + this.s_raSetter);
+		System.out.println("2 "  + this + " " + this.s_raSetter);
 		this.s_decSetter.calculateExpression();
 		this.s_fovSetter.calculateExpression();
 		this.s_regionSetter.calculateExpression();
@@ -441,7 +438,7 @@ public abstract class ProductBuilder {
 	}
 
 	/**
-	 * Stores the saada instance as a row in anASCII file used later to lot a bunch of product in one shot
+	 * Stores the saada instance as a row in an ASCII file used later to lot a bunch of product in one shot
 	 * Check the uniqueness (with a warning) of the product in debug mode. 
 	 * @param colwriter : file where are store collection level attributes
 	 * @param buswfriter: file where are store class level attributes
@@ -965,6 +962,14 @@ public abstract class ProductBuilder {
 		this.mapCollectionPoserrorAttributes();
 		traceReportOnAttRef(astroframeSetter);
 		traceReportOnAttRef(s_raSetter);
+		for (String s : this.productAttributeHandler.keySet()) System.out.println(s);
+		for (AttributeHandler a : this.productAttributeHandler.values()) System.out.println(a);
+		if( this instanceof EntryBuilder)
+		System.out.println("@@@@@@@@@@@@@ " 
+		        + ((ColumnExpressionSetter)(this.s_raSetter)).getSingleAttributeHandler()  + " " 
+				+ ((ColumnExpressionSetter)(this.s_raSetter)).getSingleAttributeHandler().hashCode() + " AH" 
+				+ this.productAttributeHandler.get("_ra2000").hashCode()
+				);
 		traceReportOnAttRef(s_decSetter);
 		traceReportOnAttRef(s_regionSetter);
 		traceReportOnAttRef(s_fovSetter);
@@ -1529,8 +1534,9 @@ public abstract class ProductBuilder {
 	 * @return Returns the metaclass.
 	 * @param metaClass
 	 * @throws IgnoreException if mc is null
+	 * @throws Exception 
 	 */
-	public void setMetaclass(MetaClass metaClass) throws IgnoreException {
+	public void setMetaclass(MetaClass metaClass) throws IgnoreException, Exception {
 		if( metaClass == null ){
 			IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Attempt to set the builder with a null data class");
 		}
@@ -1541,64 +1547,6 @@ public abstract class ProductBuilder {
 	 */
 	public MetaClass getMetaclass() {
 		return this.metaClass;
-	}
-	/*
-	 * Format merging with an existingt class
-	 */
-	/**
-	 * @param file_to_merge
-	 * @throws FitsException
-	 * @throws IOException
-	 * @throws SaadaException
-	 */
-	public void mergeProductFormat(DataFile file_to_merge) throws Exception {
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Merge format with file <" + file_to_merge.getName() + ">");
-
-		/*
-		 * Build a new set of attribute handlers from the product given as a parameter
-		 */
-		ProductBuilder prd_to_merge = this.mapping.getNewProductBuilderInstance(file_to_merge, this.metaClass);
-		prd_to_merge.mapping = this.mapping;
-
-		try {
-			prd_to_merge.dataFile = new FitsDataFile(prd_to_merge);		
-			this.typeFile = "FITS";
-		} catch(Exception ef) {
-			try {
-				prd_to_merge.dataFile = new VOTableDataFile(prd_to_merge);
-				this.typeFile = "VO";
-			} catch(Exception ev) {
-				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + file_to_merge + "> neither FITS nor VOTable");			
-			}
-		}
-		this.mergeAttributeHandlers(prd_to_merge.getProductAttributeHandler());
-		prd_to_merge.close();
-	}
-
-	/**
-	 * @param ah_to_merge
-	 * @throws FatalException 
-	 */
-	public void mergeAttributeHandlers(Map<String, AttributeHandler>ah_to_merge) throws SaadaException {
-		/*
-		 * Merge old a new sets of attribute handlers
-		 */
-		Iterator<AttributeHandler> it = ah_to_merge.values().iterator();
-		while( it.hasNext()) {
-			AttributeHandler new_att = it.next();
-			AttributeHandler old_att = null;
-			if( (old_att = this.productAttributeHandler.get(new_att.getNameorg())) != null ||
-					(old_att = this.productAttributeHandler.get(new_att.getNameattr())) != null	) {
-				old_att.mergeAttribute(new_att);
-			}
-			else {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Add attribute <" + new_att.getNameorg() + ">");
-				this.productAttributeHandler.put(new_att.getNameorg(), new_att);
-			}
-		}
-		this.setFmtsignature();
 	}
 
 	/*
@@ -1627,7 +1575,7 @@ public abstract class ProductBuilder {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return  (this.dataFile == null)? "Foo product foo/Foo": this.dataFile.getAbsolutePath().toString();
+		return  this.getClass().getName() + " " + ((this.dataFile == null)? "Foo product foo/Foo": this.dataFile.getAbsolutePath().toString());
 	}
 	/**
 	 * @return

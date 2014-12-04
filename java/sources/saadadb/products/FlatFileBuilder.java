@@ -9,7 +9,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 
 /** 
  * @version $Id$
@@ -17,7 +17,7 @@ import saadadb.products.datafile.FooProduct;
  */
 public class FlatFileBuilder extends ProductBuilder {
 
-	public FlatFileBuilder(FooProduct productFile, ProductMapping conf) throws SaadaException{	
+	public FlatFileBuilder(JsonDataFile productFile, ProductMapping conf) throws SaadaException{	
 		super(productFile, conf, null);
 	}
 

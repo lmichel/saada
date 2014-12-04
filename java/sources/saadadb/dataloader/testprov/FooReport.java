@@ -3,7 +3,6 @@ package saadadb.dataloader.testprov;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,23 +16,17 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.EntryBuilder;
-import saadadb.products.EntryIngestor;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.reporting.MappingReport;
 import saadadb.products.reporting.TableMappingReport;
 import saadadb.products.setter.ColumnSetter;
-import saadadb.products.setter.ColumnSingleSetter;
-import saadadb.products.validation.ObscoreKWSet;
 
 /**
  * JSON format
@@ -71,7 +64,7 @@ import saadadb.products.validation.ObscoreKWSet;
 public class FooReport {
 	private ArgsParser ap ;
 	JSONObject jsonAhs;
-	FooProduct fooProduct;
+	JsonDataFile fooProduct;
 
 	@SuppressWarnings({ "unchecked" })
 	FooReport(String jsonFilename) throws Exception{
@@ -97,7 +90,7 @@ public class FooReport {
 		}
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(ffn));  
-		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
+		this.jsonAhs = (JSONObject) jsonObject.get("data");  
 		JSONArray parameters = (JSONArray) jsonObject.get("parameters");  
 		Iterator<String> iterator = parameters.iterator();  
 		List<String> params = new ArrayList<String>();
@@ -105,18 +98,9 @@ public class FooReport {
 			params.add(iterator.next());  
 		}  
 		this.ap = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new FooProduct(this.jsonAhs, 3);
+		this.fooProduct = new JsonDataFile(ffn);
 
 	}	
-	FooReport(String[] args) throws Exception{
-		this.ap = new ArgsParser(args);
-		String fn = this.ap.getFilename();
-		if( fn.equalsIgnoreCase("obscore")){
-			this.fooProduct = new FooProduct(ObscoreKWSet.getInstance(null), 0);
-		} else {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Unknown foo type");
-		}
-	}
 
 	/**
 	 * @throws Exception

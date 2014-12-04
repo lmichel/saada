@@ -9,7 +9,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.util.Messenger;
 
 /**
@@ -24,7 +24,7 @@ public class SpectrumBuilder extends ProductBuilder {
 	 * @param metaClass
 	 * @throws SaadaException
 	 */
-	public SpectrumBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+	public SpectrumBuilder(JsonDataFile productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
 		try {
 			this.bindDataFile(dataFile);

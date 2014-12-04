@@ -8,7 +8,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.FooProduct;
+import saadadb.products.datafile.JsonDataFile;
 import saadadb.util.Messenger;
 
 /**This class redefines method specific in miscs during their collection load.
@@ -22,7 +22,8 @@ public class MiscBuilder extends ProductBuilder{
 	public MiscBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{	
 		super(file, mapping, metaClass );
 		try {
-			this.bindDataFile(dataFile);
+			this.mapDataFile(dataFile);
+			this.dataFile.mapAttributeHandler();
 			this.setQuantityDetector();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -33,7 +34,7 @@ public class MiscBuilder extends ProductBuilder{
 	public MiscBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
 		super(file, mapping, null );
 		try {
-			this.bindDataFile(dataFile);
+			this.mapDataFile(dataFile);
 			this.setQuantityDetector();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -41,7 +42,7 @@ public class MiscBuilder extends ProductBuilder{
 		}
 	}
 	
-   public MiscBuilder(FooProduct productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
+   public MiscBuilder(JsonDataFile productFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{	
 		super(productFile, conf, metaClass);
 		try {
 			this.bindDataFile(dataFile);

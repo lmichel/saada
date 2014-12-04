@@ -46,7 +46,7 @@ public class TableMappingReport extends MappingReport{
 		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
 			System.out.println("getReport2 " + eah);
 		}
-		Map<String, ColumnSetter> em = getEntryReport();
+		Map<String, ColumnSetter> em = this.getEntryReport();
 		for( Entry<String, ColumnSetter>e: em.entrySet()){
 			retour.put("entry." + e.getKey(), e.getValue());
 		}
