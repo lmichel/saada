@@ -8,7 +8,7 @@
 	"-spcunit='keV'"	
 	]
 ,
-"fields": {
+"data": {
     "header": [	["A", "double", "", "", "valA"],
                 ["B", "String", "", "", "valB"],
                 ["Z", "String", "", "", "valZ"],
@@ -17,6 +17,6 @@
 				["eMax", "double", "KeV", "em.wl;stat.max", "2."]
               ]
 		,
-    "columns": []
+    "table": {}
     }
 }

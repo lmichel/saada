@@ -1,8 +1,7 @@
 {
 "parameters": [
 	"-category=table" ,
-	"-collection=XMM",
-	"-filename=obscore",
+	"-collection=Foo",
 	"-repository=no",
 	"-spcmapping=first" ,
 	"-spcunit=keV",
@@ -22,15 +21,14 @@
 				["target", "String", "", "", "M33"],
 				["instrume", "String", "", "", "MOS1"],
 				["facility", "String", "", "", "XMM"]
-		]
-		,
-    "table": {"header": [["RA2000", "double", "", "", "10."],
-                       ["DEC", "double", "", "", "45"],
-                       ["TARGET", "String", "", "", "lui"]
+		       ] ,
+     "table": {"header": [["RA2000", "double", "", "", ""],
+                       ["DEC2000", "double", "", "", ""],
+                       ["TARGET", "String", "", "", ""]
                       ]
                       ,
-             "data": [[ "10.", "45", "lui"],
-                    [ "12.", "46", "moi"]]
+             "data": [[ "9.", "42", "elle"],[ "10.", "45", "lui2"],
+                      [ "12.", "46", "moi"]]
           }
     }
 }
