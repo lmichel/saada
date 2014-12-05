@@ -108,7 +108,7 @@ public final class FitsDataFile extends FSDataFile{
 	public FitsDataFile(ProductBuilder product) throws Exception {
 		super(product.dataFile.getAbsolutePath());
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "reading FIST file " + product.getName());
+			Messenger.printMsg(Messenger.DEBUG, "reading FIT file " + product.getName());
 		this.productBuilder = product;
 		this.fitsData = new Fits(product.dataFile.getCanonicalPath());
 		this.getProductMap();
@@ -196,8 +196,9 @@ public final class FitsDataFile extends FSDataFile{
 	}
 
 	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#(saadadb.products.ProductBuilder)
+	 * @see saadadb.products.datafile.DataFile#bindBuilder(saadadb.products.ProductBuilder)
 	 */
+	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception{
 		System.out.println("@@@@@@@@@ FITS BndBuilder");
 		this.productBuilder = builder;
@@ -1552,6 +1553,7 @@ public final class FitsDataFile extends FSDataFile{
 			}
 
 		} catch(Exception e) {
+			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FITS_FORMAT, e);
 		}
 
@@ -1689,11 +1691,7 @@ public final class FitsDataFile extends FSDataFile{
 	public String getName() {
 		return this.file.getName();
 	}
-	@Override
-	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+
 }
 
 

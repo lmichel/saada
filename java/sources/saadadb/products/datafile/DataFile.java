@@ -282,16 +282,16 @@ public abstract class DataFile implements Enumeration {
 		TableBuilder tb;
 		if( productMapping.getCategory() == Category.ENTRY ) {
 			tb = (TableBuilder) this.productBuilder;
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandlerCopy().size() + " table columns taken in account");
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandlerCopy().size() + " table columns taken in account");
 			return new QuantityDetector(tb.entryBuilder.productAttributeHandler
 					, this.comments
 					, productMapping
 					, this.productBuilder.wcsModeler);			
 		} else if( this.productBuilder instanceof TableBuilder  ){
 			tb = (TableBuilder) this.productBuilder;
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, this.entryAttributeHandlers.size() + " columns taken in account");
+//			if (Messenger.debug_mode)
+//				Messenger.printMsg(Messenger.DEBUG, this.entryAttributeHandlers.size() + " columns taken in account");
 			return  new QuantityDetector(this.productBuilder.productAttributeHandler
 					, tb.entryBuilder.productAttributeHandler
 					, this.comments
@@ -351,7 +351,6 @@ public abstract class DataFile implements Enumeration {
 		if( rowData != null ){
 			int cpt = 0;
 			for( AttributeHandler ah: this.entryAttributeHandlers.values()){
-				System.out.println("@@@@@@@@@@@@@@ " + rowData[cpt]);
 				ah.setValue(rowData[cpt].toString());
 				cpt++;
 			}
@@ -362,17 +361,12 @@ public abstract class DataFile implements Enumeration {
 				AttributeHandler builderAh = entryBuilder.productAttributeHandler.get(localKey);
 
 				if( builderAh == null ){
-					System.out.println("ENTRY ADD " + localAh.clone());
 					entryBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
 				} else {
 					builderAh.setValue(localAh.getValue());
-					System.out.println("@@@@@@@@@@@@@ " + builderAh + " " + builderAh.hashCode());
 
 				}
 			}
-			System.out.println("@@@@@@@@@@@@@ " 
-			        + ((ColumnExpressionSetter)(entryBuilder.s_raSetter)).getSingleAttributeHandler() 
-					+ ((ColumnExpressionSetter)(entryBuilder.s_raSetter)).getSingleAttributeHandler().hashCode());
 		}
 	}
 
@@ -406,7 +400,9 @@ public abstract class DataFile implements Enumeration {
 	 * The builder is not referenced by the DataFile since it just deal with a part of the product.
 	 * @param builder
 	 */
-	public abstract void bindEntryBuilder(ProductBuilder builder) throws Exception;
+	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
+		builder.productAttributeHandler = this.getEntryAttributeHandlerCopy();			
+	}
 	/**Returns the value corresponding finded in the product file to the key word in parameter.
 	 *@param String The key word.
 	 *@return String The value corresponding to this key word, if he exists, else null.

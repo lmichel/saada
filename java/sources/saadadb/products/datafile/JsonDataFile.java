@@ -18,6 +18,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.validation.JsonKWSet;
 import saadadb.products.validation.KeywordsBuilder;
 import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 
 /**
@@ -110,7 +111,6 @@ public class JsonDataFile extends DataFile {
 	 */
 	@Override
 	public boolean hasMoreElements() {
-		System.out.println("HAS MOOOOOORE" + pointer);
 		return (this.tableData != null && this.pointer < this.tableData.size());
 	}
 
@@ -119,7 +119,6 @@ public class JsonDataFile extends DataFile {
 	 */
 	@Override
 	public Object nextElement() throws NumberFormatException, NullPointerException{
-		System.out.println("NEXTTT" + pointer);
 		if( this.entryAttributeHandlers == null || this.tableData == null || this.pointer >= this.tableData.size()) {
 			Messenger.printMsg(Messenger.TRACE, "Attempt to read a data row out of range (pointer=" + pointer + " data size=" + this.tableData.size() + ")");
 			return null;
@@ -157,7 +156,7 @@ public class JsonDataFile extends DataFile {
 	 */
 	@Override
 	public int getNRows() throws IgnoreException {
-		return size;
+		return (this.tableData != null)?this.tableData.size(): SaadaConstant.INT;
 	}
 
 	/* (non-Javadoc)
@@ -207,13 +206,6 @@ public class JsonDataFile extends DataFile {
 	public void bindBuilder(ProductBuilder builder) throws Exception {
 		this.productBuilder = builder;
 		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();		
-	}
-	@Override
-	public void bindEntryBuilder(ProductBuilder builder) throws Exception {
-		//this.productBuilder = builder;
-		(new Exception()).printStackTrace();
-
-		builder.productAttributeHandler = this.getEntryAttributeHandlerCopy();		
 	}
 
 	@Override

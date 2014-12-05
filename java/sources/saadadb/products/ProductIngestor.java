@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -23,6 +25,7 @@ import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.unit.Unit;
 import saadadb.util.CopyFile;
@@ -91,7 +94,7 @@ public class ProductIngestor {
 		}
 		this.numberOfCall++;
 	}
-	
+
 	/**
 	 * This copy of AHs will be used to build the SQL line corresponding to one row.
 	 * This data indirection structure is overloaded for table entries
@@ -105,7 +108,9 @@ public class ProductIngestor {
 	}
 
 	/**
-	 * @param si
+	 * Compute all expressions of the related {@link ProductBuilder}, and set the 
+	 * collection level fields of the local instance. These fields values are sued to populate
+	 * the collection level of the data.
 	 * @throws Exception
 	 */
 	public void bindInstanceToFile() throws Exception {
@@ -123,7 +128,7 @@ public class ProductIngestor {
 		this.setTimeFields();
 		this.setObservableFields();
 		this.setPolarizationFields();
-		this.setBusinessFields();
+		this.setContentSignature();
 		this.loadAttrExtends();
 	}
 
@@ -141,24 +146,24 @@ public class ProductIngestor {
 	 * Checks for each field if a type conversion must be done
 	 * @throws Exception
 	 */
-	protected void setBusinessFields() throws Exception {
-		List<Field> fld = this.saadaInstance.getClassLevelPersisentFields();
-		Map<String, AttributeHandler> tableAttributeHandler  = this.product.getProductAttributeHandler();
-
+	protected void setContentSignature() throws Exception {
 		String md5Value = "";
-
-		for (Field f: fld ) {
-			String keyObj = f.getName();
-			if (tableAttributeHandler.containsKey(keyObj)) {
-				AttributeHandler attr = tableAttributeHandler.get(keyObj);
-				String value = attr.getValue();
-				if (value != null) {
-					md5Value += value;
-					this.saadaInstance.setInField(f, value);
-				}
-			} else
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
+		if( this.product.metaClass != null ) {
+			String[] fn = this.product.metaClass.getAttribute_names();
+			Map<String, AttributeHandler> tableAttributeHandler  = this.product.getProductAttributeHandler();
+			for (String s : fn ) {
+				String keyObj = s;
+				if (tableAttributeHandler.containsKey(keyObj)) {
+					AttributeHandler attr = tableAttributeHandler.get(keyObj);
+					String value = attr.getValue();
+					if (value != null) {
+						md5Value += value;
+						// no longer used since business fields are loaded from an ASCII file
+						//this.saadaInstance.setInField(f, value);
+					}
+				} else if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
+			}
 		}
 		this.saadaInstance.computeContentSignature(md5Value);
 	}
@@ -582,6 +587,8 @@ public class ProductIngestor {
 	/**
 	 * Stores the saada instance within the DB
 	 * Check the uniqueness (with a warning) of the product in debug mode. 
+	 * This method is supposed to be used to load one product. It uses however
+	 * ASCII file having in mind to get rid of generated classes
 	 * @param saada_class
 	 * @throws Exception
 	 */
@@ -593,11 +600,23 @@ public class ProductIngestor {
 					+ this.saadaInstance.contentsignature + "> exists in the data base <"
 					+ Database.getName() + ">");	
 		}
+		String         ecoll_table = Database.getCachemeta().getCollectionTableName(this.product.metaClass.getCollection_name(), this.product.metaClass.getCategory());
+		String        busdumpfile  = Repository.getTmpPath() + Database.getSepar()  + this.product.metaClass.getName() +  ".psql";
+		BufferedWriter  busLevelWriter = new BufferedWriter(new FileWriter(busdumpfile));
+		String        coldumpfile  = Repository.getTmpPath() + Database.getSepar()  + ecoll_table +  ".psql";
+		BufferedWriter  colLevelWriter = new BufferedWriter(new FileWriter(coldumpfile));
+		String        loadedfile   = Repository.getTmpPath() + Database.getSepar()  + "saada_loaded_file.psql";
+		BufferedWriter loadedFileWriter = new BufferedWriter(new FileWriter(loadedfile));
+		this.loadValue(colLevelWriter,busLevelWriter, loadedFileWriter);
+		busLevelWriter.close();
+		colLevelWriter.close();
+		loadedFileWriter.close();
 		/*
-		 * Store the Saada instance
+		 * Store the dump table
 		 */
-		this.storeCopyFileInRepository();
-		this.saadaInstance.store();
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " +  this.product.metaClass.getName() + " -1 " + busdumpfile);
+		SQLTable.addQueryToTransaction("LOADTSVTABLE saada_loaded_file -1 " + loadedfile);
 	}
 
 	/**

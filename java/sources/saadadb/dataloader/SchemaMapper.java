@@ -96,6 +96,7 @@ public abstract class SchemaMapper {
 			if( this.entryMapper != null ) {
 				this.entryMapper.currentProductBuilder.setMetaclass(this.entryMapper.currentClass);
 			}
+			this.currentProductBuilder.mapDataFile();
 			this.currentProductBuilder.loadProduct();
 			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
 

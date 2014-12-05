@@ -726,7 +726,6 @@ public class WCSModel {
 	private ColumnExpressionSetter[] getCenterCoords(String ascPrefix, String decPrefix) {
 		ColumnExpressionSetter asc=new ColumnExpressionSetter("s_ra"), dec=new ColumnExpressionSetter("s_dec");
 		for( int axe=0 ; axe<this.NAXIS ; axe++) {
-			System.out.println("@@@@@@@@@@@ " + this.CTYPE[axe].getValue() + " " + ascPrefix + " " + decPrefix);
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
 					asc.setByWCS(this.CRVAL[axe].getValue(), false);
