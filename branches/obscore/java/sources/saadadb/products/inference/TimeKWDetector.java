@@ -209,7 +209,6 @@ public class TimeKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getTMin() throws Exception{
 		this.detectAxeParams();
-		System.out.println(this.tminSetter);
 		return (this.tminSetter == null)? new ColumnExpressionSetter("t_min"): this.tminSetter;
 	}
 

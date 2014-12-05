@@ -390,10 +390,7 @@ public abstract class ProductBuilder {
 		this.instrument_nameSetter.calculateExpression();
 		this.astroframeSetter.calculateExpression();
 		this.s_resolutionSetter.calculateExpression();
-
-		System.out.println("1 " + this + " " + this.s_raSetter);
 		this.s_raSetter.calculateExpression();
-		System.out.println("2 "  + this + " " + this.s_raSetter);
 		this.s_decSetter.calculateExpression();
 		this.s_fovSetter.calculateExpression();
 		this.s_regionSetter.calculateExpression();
@@ -430,7 +427,6 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void loadProduct() throws Exception  {
-		System.out.println("@@@@@@@@@@@@@ loadProduct " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
 		this.dataFile.updateAttributeHandlerValues();
 		this.productIngestor.bindInstanceToFile();
 		this.productIngestor.loadValue();
@@ -962,14 +958,6 @@ public abstract class ProductBuilder {
 		this.mapCollectionPoserrorAttributes();
 		traceReportOnAttRef(astroframeSetter);
 		traceReportOnAttRef(s_raSetter);
-		for (String s : this.productAttributeHandler.keySet()) System.out.println(s);
-		for (AttributeHandler a : this.productAttributeHandler.values()) System.out.println(a);
-		if( this instanceof EntryBuilder)
-		System.out.println("@@@@@@@@@@@@@ " 
-		        + ((ColumnExpressionSetter)(this.s_raSetter)).getSingleAttributeHandler()  + " " 
-				+ ((ColumnExpressionSetter)(this.s_raSetter)).getSingleAttributeHandler().hashCode() + " AH" 
-				+ this.productAttributeHandler.get("_ra2000").hashCode()
-				);
 		traceReportOnAttRef(s_decSetter);
 		traceReportOnAttRef(s_regionSetter);
 		traceReportOnAttRef(s_fovSetter);

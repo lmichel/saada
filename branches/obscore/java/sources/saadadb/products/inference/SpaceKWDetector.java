@@ -59,7 +59,6 @@ public class SpaceKWDetector extends KWDetector{
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
 		if( tableAttributeHandler.get("_ra2000") != null) {
-		System.out.println("@@@@@ SpaceKWDetector " + tableAttributeHandler.get("_ra2000").hashCode());
 		}
 	}
 

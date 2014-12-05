@@ -49,7 +49,8 @@ public class TableBuilder extends ProductBuilder {
 			this.entryBuilder.dataFile = this.dataFile;
 			// Set the ENTRY AHs with the columns headers of the data file
 			this.dataFile.bindEntryBuilder(this.entryBuilder);
-			// The entry builder rus its own Quantity detector
+			this.entryBuilder.setProductIngestor();
+			// The entry builder uses its own Quantity detector
 			this.setQuantityDetector();
 			// And it does its own mapping
 			this.entryBuilder.mapCollectionAttributes();
@@ -102,7 +103,14 @@ public class TableBuilder extends ProductBuilder {
 	public void setMetaclass(MetaClass metaClass) throws Exception {
 		super.setMetaclass(metaClass);
 		this.entryBuilder.tableClass = metaClass;
-		//this.entryBuilder.setMetaclass(Database.getCachemeta().getClass(metaClass.getAssociate_class()));
+		MetaClass eClass = null;
+		/*
+		 * The entry class can not be set at the first call of the method 
+		 */
+		try {
+			eClass = Database.getCachemeta().getClass(metaClass.getAssociate_class());
+			this.entryBuilder.setMetaclass(eClass);
+		} catch(Exception e){}
 	}
 
 
@@ -161,9 +169,9 @@ public class TableBuilder extends ProductBuilder {
 		/*
 		 * Case when the method is called by the superclass constructor
 		 */
-		if( this.entryBuilder != null ){
-			this.entryBuilder.setProductIngestor();
-		}
+//		if( this.entryBuilder != null ){
+//			this.entryBuilder.setProductIngestor();
+//		}
 	}
 
 //	/* (non-Javadoc)

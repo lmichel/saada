@@ -4,7 +4,9 @@
 package saadadb.products;
 
 import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.Enumeration;
 
 import saadadb.collection.Category;
@@ -12,12 +14,16 @@ import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.DateUtils;
+import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
@@ -155,7 +161,7 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	public void bindInstanceToFile() throws Exception {
 		//this.nextElement();
-		if( this.product.metaClass != null && ! this.firstCall) {
+		if( this.product.metaClass != null ) {
 			this.saadaInstance.oidsaada = SaadaOID.newOid(this.product.metaClass.getName());
 		} else {
 			this.firstCall = false;
@@ -166,6 +172,7 @@ public final class EntryIngestor extends ProductIngestor {
 		this.setEnergyFields();		
 		this.setTimeFields();
 		this.loadAttrExtends();
+		this.setContentSignature();
 		this.numberOfCall++;
 	}
 
@@ -188,9 +195,7 @@ public final class EntryIngestor extends ProductIngestor {
 		 * can be used for reporting
 		 */
 		int cpt = 0;
-		System.out.println(this.product.getClass());
 		for( AttributeHandler ah: this.product.productAttributeHandler.values()) {
-			System.out.println(ah);
 			ah.setValue(this.values[cpt].toString());
 			cpt++;
 		}
@@ -220,7 +225,6 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void setSpaceFields() throws Exception {
-		System.out.println("couco");
 		//		System.out.println("### " +this.num_col_ra);
 		//		System.out.println("### " + this.values[this.num_col_ra]);
 		//		if( this.values != null ){
@@ -266,11 +270,10 @@ public final class EntryIngestor extends ProductIngestor {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Cannot convert position since there is no frame");
 			}
-			System.out.println(this.product.s_raSetter);
 		}
 
 		/*
-		 * Belongs to the obseravtion axis but needs the coordinates
+		 * Belongs to the observation axis but needs the coordinates
 		 */
 		this.saadaInstance.obs_id = this.getInstanceName("#" + this.lineNumber);
 	}
@@ -348,12 +351,10 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected String getInstanceName(String suffix) {
-
 		/*
 		 * If no name has been set right now, put the position after collection.class
 		 * Take the suffix is there is no position
 		 */
-		System.out.println( this.product.obs_idSetter);
 		if( this.product.obs_idSetter.isNotSet()) {
 			String name = SaadaOID.getCollectionName(this.saadaInstance.oidsaada) + "-" + SaadaOID.getClassName(this.saadaInstance.oidsaada);
 			double ra =  this.saadaInstance.s_ra;
@@ -365,7 +366,6 @@ public final class EntryIngestor extends ProductIngestor {
 			} else {
 				name +=  suffix;
 			}
-			System.out.println("@@@@@@@@@@ " + name);
 			this.product.obs_idSetter.setValue(name);
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG,"Default instance name  <"+ name + ">");
 		}
@@ -377,8 +377,10 @@ public final class EntryIngestor extends ProductIngestor {
 	@Override
 	protected void buildOrderedBusinessAttributeList(){
 		this.busIndirectionTable = new int[this.product.metaClass.getAttributes_handlers().size()];
+		this.busReverseIndirectionTable = new int[this.product.metaClass.getAttributes_handlers().size()];
 		for( int i=0 ; i<this.busIndirectionTable.length ; i++ ){
 			this.busIndirectionTable[i] = -1;
+			this.busReverseIndirectionTable[i] = -1;
 		}
 		int classCpt = 0 ;
 		for( AttributeHandler ah:  this.product.metaClass.getAttributes_handlers().values() ){
@@ -387,6 +389,7 @@ public final class EntryIngestor extends ProductIngestor {
 			for( AttributeHandler ah2: this.product.dataFile.entryAttributeHandlers.values()){
 				if( ah2.getNameattr().equals(na)){
 					this.busIndirectionTable[readCpt] = classCpt;
+					this.busReverseIndirectionTable[classCpt] = readCpt;
 					break;
 				}
 				readCpt++;
@@ -536,13 +539,52 @@ public final class EntryIngestor extends ProductIngestor {
 		System.out.println();
 	}
 
+	
+	
+	/**
+	 * @throws Exception
+	 */
+	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception {
+		EntryBuilder product = (EntryBuilder) this.product;
+		DataFile dataFile = product.dataFile;
+		this.buildOrderedBusinessAttributeList();
+		String[] rowData = new String[dataFile.entryAttributeHandlers.size() + 3];
+		((EntrySaada)(this.saadaInstance)).oidtable = product.oidTable;
+		int numRow = 0;
+		while (this.hasMoreElements()) {
+			for( int i=0 ; i<rowData.length ; i++) rowData[i] = null;
+			/*
+			 * Data row is read by updateEntryAttributeHandlerValues()
+			 */
+			dataFile.updateEntryAttributeHandlerValues(product);
+			this.bindInstanceToFile();
+			rowData[0] = String.valueOf(this.saadaInstance.oidsaada);
+			rowData[1] = this.saadaInstance.obs_id;
+			rowData[2] = this.saadaInstance.contentsignature;
+			int cpt = 0;
+			for( AttributeHandler ah: dataFile.entryAttributeHandlers.values()){
+				int index = this.busReverseIndirectionTable[cpt];
+				rowData[index + 3] =  ClassMerger.getCastedSQLValue(ah, ah.getType());
+				cpt++;
+			}
+			buswriter.write(Merger.getMergedArray("\t", rowData) + "\n");
+			this.saadaInstance.storeCollection(colwriter);
+			numRow ++;
+			if( numRow % 1000 == 0 ){
+				Messenger.printMsg(Messenger.TRACE, numRow + "/" + dataFile.getNRows() + " rows read");				
+			}
+		}
+		Messenger.printMsg(Messenger.TRACE, numRow + "/" + dataFile.getNRows() + " rows read");
+
+	}
+
 	/**
 	 * @param colwriter
 	 * @param buswriter
 	 * @param loadedfilewriter
 	 * @throws Exception
 	 */
-	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
+	public void loadValueXXX(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
 		if( Messenger.debug_mode == true && Table_Saada_Loaded_File.productAlreadyExistsInDB(this.product) ) {
 			Messenger.printMsg(Messenger.WARNING, " The object <"
 					+ this.saadaInstance.obs_id+ "> in Collection <"

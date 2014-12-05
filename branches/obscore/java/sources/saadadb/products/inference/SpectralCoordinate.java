@@ -516,7 +516,6 @@ public class SpectralCoordinate{
 	 * @throws Exception 
 	 */
 	public boolean convertWCS(Map<String, AttributeHandler> tableAttributeHandler, Projection projection) throws Exception{
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEB");
 		WcsAxeDescriptor wcsAxeDescriptor = projection.descriptor.getWcsAxeDescriptor(1);
 		this.nbBins = wcsAxeDescriptor.getNaxis();		
 		this.orgMax = projection.getMax(1);

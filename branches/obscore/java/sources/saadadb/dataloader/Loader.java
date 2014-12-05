@@ -331,10 +331,10 @@ public class Loader extends SaadaProcess {
 			File cf = new File(base_dir + Database.getSepar() + f);
 			if( cf.exists() && !cf.isDirectory() ) {
 				if( this.tabArg.getCategory() == Category.explain(Category.FLATFILE )||
-				f.matches(RegExp.FITS_FILE) || f.matches(RegExp.VOTABLE_FILE)) {
+				f.matches(RegExp.FITS_FILE) || f.matches(RegExp.VOTABLE_FILE) || f.matches(RegExp.JSON_FILE)) {
 					this.addDataFile(base_dir + Database.getSepar() + f);
 				} else {
-					Messenger.printMsg(Messenger.TRACE, f + ": cannot be loaded because it does not lok like a datafile (FITS or VOTable)");
+					Messenger.printMsg(Messenger.TRACE, f + ": cannot be loaded because it does not look like a datafile (FITS or VOTable or JSON)");
 				}
 			} else {
 				AbortException.throwNewException(SaadaException.MISSING_FILE, "<" + cf.getAbsolutePath() + "> does not exist or is not a file");

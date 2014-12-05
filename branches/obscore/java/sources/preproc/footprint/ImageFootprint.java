@@ -19,8 +19,8 @@ import nom.tam.util.BufferedDataOutputStream;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.FitsDataFile;
 import saadadb.products.Image2DBuilder;
+import saadadb.products.datafile.FitsDataFile;
 import saadadb.util.Messenger;
 
 /**

@@ -31,7 +31,7 @@ import saadadb.util.Messenger;
 public class EntryBuilder extends ProductBuilder {
 	private static final long serialVersionUID = 1L;
 	public MetaClass tableClass;
-
+	public long oidTable;
 	/**
 	 * Constructor.
 	 * 
@@ -60,29 +60,22 @@ public class EntryBuilder extends ProductBuilder {
 		IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Method loadProduct() must never be used with entris");
 	}
 	/**
-	 * @param tableOid
+	 * @param tableOid oid of the table
 	 * @throws Exception
 	 */
 	public void loadProduct(long tableOid) throws Exception {
-		long time_tag = (new Date()).getTime();
-		String         busdumpfile = Repository.getTmpPath() + Database.getSepar()  + "bus" + time_tag + ".psql";
-		BufferedWriter bustmpfile  = new BufferedWriter(new FileWriter(busdumpfile));
-		String         coldumpfile = Repository.getTmpPath() + Database.getSepar()  + "col" + time_tag + ".psql";
-		BufferedWriter coltmpfile  = new BufferedWriter(new FileWriter(coldumpfile));
-		String tcoll_table = Database.getCachemeta().getCollectionTableName(this.metaClass.getCollection_name(), Category.TABLE);
-		while (this.productIngestor.hasMoreElements()) {
-			/*
-			 * Data row is read by updateEntryAttributeHandlerValues()
-			 */
-			this.dataFile.updateEntryAttributeHandlerValues(this);
-			this.productIngestor.bindInstanceToFile();
-			System.out.print(this.productIngestor.saadaInstance.oidsaada + " " + this.productIngestor.saadaInstance.obs_id + " " );
-			for( AttributeHandler ah: this.dataFile.entryAttributeHandlers.values()){
-				System.out.print( ClassMerger.getCastedSQLValue(ah, ah.getType()) + " " );
-			}
-			System.out.println("");
-		}
-
+		this.oidTable = tableOid;
+		String        busdumpfile  = Repository.getTmpPath() + Database.getSepar()  + this.metaClass.getName() +  ".psql";
+		BufferedWriter  bustmpfile = new BufferedWriter(new FileWriter(busdumpfile));
+		String         ecoll_table = Database.getCachemeta().getCollectionTableName(this.mapping.getCollection(), this.mapping.getCategory());
+		String        coldumpfile  = Repository.getTmpPath() + Database.getSepar()  + ecoll_table +  ".psql";
+		BufferedWriter  coltmpfile = new BufferedWriter(new FileWriter(coldumpfile));
+		this.productIngestor.loadValue(coltmpfile, bustmpfile, null);
+		Messenger.printMsg(Messenger.TRACE, "Store data into the DB");
+		bustmpfile.close();
+		coltmpfile.close();
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.metaClass.getName() + " -1 " + busdumpfile);
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
 	}
 	
 	/**
