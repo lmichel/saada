@@ -9,21 +9,14 @@ import java.io.IOException;
  * @version $Id$
  */
 public abstract class FSDataFile extends DataFile{
-	public File file;
+	public DataResourcePointer file;
 
 	/**
-	 * @param parent
-	 * @param child
-	 */
-	public FSDataFile(File parent, String child) {
-		this.file = new File(parent, child);
-	}
-	
-	/**
 	 * @param fileName
+	 * @throws Exception 
 	 */
-	public FSDataFile(String fileName) {
-		this.file = new File(fileName);
+	public FSDataFile(String fileName) throws Exception {
+		this.file = new DataResourcePointer(fileName);
 	}
 
 	@Override
