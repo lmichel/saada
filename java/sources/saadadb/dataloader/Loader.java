@@ -14,6 +14,7 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.products.datafile.DataResourcePointer;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ClassifierMode;
@@ -187,62 +188,80 @@ public class Loader extends SaadaProcess {
 		String filename = this.tabArg.getFilename();
 		String filter = this.tabArg.getFilter();
 		if( filename ==  null || filename.equals("")) {
-			AbortException.throwNewException(SaadaException.WRONG_PARAMETER
-					, "A file (or dir) name must be specified");
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "A file (or dir) name must be specified");
 		}
-		File requested_file = new File(filename);
-
-		if( !requested_file.exists()  ) {
+		DataResourcePointer requested_file = null;
+		try {
+			requested_file = new DataResourcePointer(filename);
+		} catch(Exception e){
+			Messenger.printStackTrace(e);
+			AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
+		}
+		if( requested_file.isURL) {
+			this.filesToBeLoaded.add(requested_file.getAbsolutePath());
+			Messenger.printMsg(Messenger.TRACE, "One unique URL to process <" + requested_file.inputFileName + ">");							
+			
+		} else 	if( !requested_file.file.exists()  ) {
 			try {
 				/*
 				 * Just to see if the file is a double symbolic link
 				 */
-				if( !(new File(requested_file.getCanonicalPath())).exists() ) {
-					AbortException.throwNewException(SaadaException.MISSING_FILE
-							, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");	
+				if( !(new File(requested_file.file.getCanonicalPath())).exists() ) {
+					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");	
 				} else {
+					// Something missing here?
 					return;
 				}
-			} catch (Exception e) {}
-			AbortException.throwNewException(SaadaException.MISSING_FILE
-					, "file or directory <" + requested_file.getAbsolutePath() + "> doesn't exist");							
+			} catch (Exception e) {
+			}
+			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");							
 		}
 		/*
 		 * "filename" is a directory 
 		 */ 
-		else if( requested_file.isDirectory() ) {
-			String[] dir_content = requested_file.list();
+		else if( requested_file.file.isDirectory() ) {
+			String[] dir_content = requested_file.file.list();
 			this.filesToBeLoaded = new ArrayList<String>(dir_content.length);
 			if( dir_content.length == 0 ) {
-				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.getAbsolutePath() + "> is empty");		
+				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.file.getAbsolutePath() + "> is empty");		
 				return;
 			}
-			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.getAbsolutePath() + ">");							
+			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.file.getAbsolutePath() + ">");							
 			int cpt = 0;
-			for( int i=0 ; i<dir_content.length ; i++ ) {
-				String fullPath = requested_file.getAbsolutePath() + File.separator + dir_content[i];
-				//	File candidate_file = new File(requested_file.getAbsolutePath() + File.separator + dir_content[i]);
+			for( int i=0 ; i<dir_content.length ; i++ ) {	
+				DataResourcePointer candidate_file=null;
+				try {
+				candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+				} catch(Exception e){
+					AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
+				}
+				/*
+				 * Takes all URLs.  If it does not work, an exception is risen
+				 */
+				if( candidate_file.isURL ){
+					this.filesToBeLoaded.add(candidate_file.getAbsolutePath());
+					cpt++;				
+				}
 				/*
 				 * Do not proceed recursively: just files are taken
 				 */
-				if( !(new File(fullPath)).isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
-					this.addDataFile(fullPath);
+				else if( !candidate_file.file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
+					this.filesToBeLoaded.add(candidate_file.getAbsolutePath());
 					cpt++;
 				}
 				if( (cpt% 5000) == 0 ){
 					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.length + " file validated (" + (i+1-cpt) + " rejected)");
 				}
 			}
-			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.getAbsolutePath() + ">");
+			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.inputFileName + ">");
 		}
 		/*
 		 *  "filename" is a single file to load
 		 */
 		else {
-			this.addDataFile(filename);
-			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.getAbsolutePath() + ">");							
+			this.filesToBeLoaded.add(requested_file.getAbsolutePath());
+			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.inputFileName + ">");							
 		}
-
 	}
 
 	/**

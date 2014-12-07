@@ -55,6 +55,9 @@ public class RegExpMatcher {
 	 *         if their number is greater or equals to expectedMatches. return null otherwise
 	 */
 	public  List<String> getMatchesAndMore(String string){
+		if( string == null ){
+			return null;
+		}
 		Matcher matcher = pattern.matcher(string);
 		if ( matcher.matches() && matcher.groupCount() >= this.expectedMatches) {
 			List<String>	retour = new ArrayList<String>();

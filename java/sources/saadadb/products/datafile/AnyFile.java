@@ -19,18 +19,10 @@ public class AnyFile extends FSDataFile {
 
 
 	/**
-	 * @param parent
-	 * @param child
-	 */
-	public AnyFile(File parent, String child) {
-		super(parent, child);
-		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
-	}
-	
-	/**
 	 * @param fileName
+	 * @throws Exception 
 	 */
-	public AnyFile(String fileName) {
+	public AnyFile(String fileName) throws Exception {
 		super(fileName);
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 	}
