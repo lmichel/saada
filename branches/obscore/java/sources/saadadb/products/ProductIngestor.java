@@ -429,6 +429,7 @@ public class ProductIngestor {
 		ColumnSetter t_min = this.product.t_minSetter;
 		ColumnSetter t_max = this.product.t_maxSetter;
 		ColumnSetter t_exptime = this.product.t_exptimeSetter;
+		ColumnSetter t_resolution = this.product.t_resolutionSetter;
 
 		if( !t_min.isNotSet() ) {
 			try {
@@ -449,7 +450,6 @@ public class ProductIngestor {
 
 		if( t_exptime.isSet()){
 			String v = DateUtils.getDuration(t_exptime.getValue());
-			System.out.println("@@@@@@@@@@@@@ " + v);
 			if( v != null ) {
 				t_exptime.setValue(v);
 			} else {
@@ -489,6 +489,7 @@ public class ProductIngestor {
 		setField("t_min"    , t_min);
 		setField("t_max"    , t_max);
 		setField("t_exptime", t_exptime);
+		setField("t_resolution", t_resolution);
 	}
 
 	/*******************************************************************************************
