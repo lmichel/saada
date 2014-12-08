@@ -78,6 +78,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-position")     ;allowedArgs.add("-entry.position") ;
 		allowedArgs.add("-poserror")     ;allowedArgs.add("-entry.poserror") ;
 		allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
+		allowedArgs.add("-sresol")       ;allowedArgs.add("-entry.sresol") ;
 		/*
 		 * Energy Axe
 		 */
@@ -650,7 +651,7 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
-	public String getTresol(boolean entry) {
+	public String getTResol(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( !entry && args[i].startsWith("-tresol")  ){
 				return getArgsValue(args[i]);
@@ -945,6 +946,17 @@ public final class ArgsParser implements Serializable{
 				return getArgsValue(args[i]);
 			}
 			if( entry && args[i] .startsWith("-entry.poserrorunit")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+	public String getSResol(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i] .startsWith("-sresol")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i] .startsWith("-entry.sresol")) {
 				return getArgsValue(args[i]);
 			}
 		}
