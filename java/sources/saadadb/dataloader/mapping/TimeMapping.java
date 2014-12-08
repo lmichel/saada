@@ -18,7 +18,7 @@ public class TimeMapping extends AxisMapping {
 	 * @throws FatalException
 	 */
 	TimeMapping(ArgsParser ap, boolean entryMode) throws FatalException {
-		super(ap, new String[]{"t_min", "t_max", "t_exptime"}, entryMode);
+		super(ap, new String[]{"t_min", "t_max", "t_exptime", "t_resolution"}, entryMode);
 		String s;
 		if( (s = ap.getTmin(entryMode)) != null  ){
 			try {
@@ -42,6 +42,9 @@ public class TimeMapping extends AxisMapping {
 		}
 		if( (s = ap.getExpTime(entryMode)) != null  ){
 			this.columnMapping.put("t_exptime", new ColumnMapping(null, s, "t_exptime"));
+		} 
+		if( (s = ap.getTresol(entryMode)) != null  ){
+			this.columnMapping.put("t_resolution", new ColumnMapping(null, s, "t_resolution"));
 		} 
 		this.priority = ap.getTimeMappingPriority();
 		this.completeColumns();
