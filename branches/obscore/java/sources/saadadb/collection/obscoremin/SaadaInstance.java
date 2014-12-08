@@ -116,6 +116,7 @@ public abstract class SaadaInstance implements DMInterface {
 	public double t_min = saadadb.util.SaadaConstant.DOUBLE;
 	public double t_max = saadadb.util.SaadaConstant.DOUBLE;
 	public double t_exptime = saadadb.util.SaadaConstant.DOUBLE;	
+	public double t_resolution = saadadb.util.SaadaConstant.DOUBLE;	
 
 	/*
 	 * Energy Axe
