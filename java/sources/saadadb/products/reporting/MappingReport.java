@@ -104,6 +104,8 @@ public class MappingReport {
 		this.builder.t_maxSetter.storedValue = si.t_max;
 		retour.put("t_exptime", this.builder.t_exptimeSetter);
 		this.builder.t_exptimeSetter.storedValue = si.t_exptime;
+		retour.put("t_resolution", this.builder.t_resolutionSetter);
+		this.builder.t_resolutionSetter.storedValue = si.t_resolution;
 
 		retour.put("o_ucd", this.builder.o_ucdSetter);
 		this.builder.o_ucdSetter.storedValue = si.getO_ucd();

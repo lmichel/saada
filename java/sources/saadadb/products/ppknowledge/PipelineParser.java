@@ -165,6 +165,10 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getExpTime() throws SaadaException {
 		return new ColumnExpressionSetter("t_exptime");
 	}
+	public ColumnExpressionSetter getTResolution() {
+		return new ColumnExpressionSetter("t_resolution");
+	}
+
 	/*
 	 * Observable axis
 	 */
