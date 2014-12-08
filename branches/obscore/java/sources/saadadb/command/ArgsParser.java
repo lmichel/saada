@@ -78,7 +78,8 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-position")     ;allowedArgs.add("-entry.position") ;
 		allowedArgs.add("-poserror")     ;allowedArgs.add("-entry.poserror") ;
 		allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
-		allowedArgs.add("-sresol")       ;allowedArgs.add("-entry.sresol") ;
+		allowedArgs.add("-sfov");
+		allowedArgs.add("-sregion");
 		/*
 		 * Energy Axe
 		 */
@@ -927,10 +928,10 @@ public final class ArgsParser implements Serializable{
 	 */
 	public String getPoserrorMapping(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-poserror=")) {
+			if( !entry && (args[i] .startsWith("-poserror=") || args[i] .startsWith("-sresol=")) ) {
 				return getArgsValue(args[i]);
 			}
-			if( entry && args[i] .startsWith("-entry.poserror=")) {
+			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresol="))) {
 				return getArgsValue(args[i]);
 			}
 		}
@@ -951,12 +952,17 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
-	public String getSResol(boolean entry) {
+	public String getSFov() {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-sresol")) {
+			if( args[i] .startsWith("-sfov")) {
 				return getArgsValue(args[i]);
 			}
-			if( entry && args[i] .startsWith("-entry.sresol")) {
+		}
+		return null;
+	}
+	public String getSRegion() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-sregion")) {
 				return getArgsValue(args[i]);
 			}
 		}
