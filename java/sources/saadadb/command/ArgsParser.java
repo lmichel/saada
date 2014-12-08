@@ -97,6 +97,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-tmin")      ;allowedArgs.add("-entry.tmin") ;
 		allowedArgs.add("-tmax")      ;allowedArgs.add("-entry.tmax") ;
 		allowedArgs.add("-exptime")   ;allowedArgs.add("-entry.exptime") ;
+		allowedArgs.add("-tresol")    ;allowedArgs.add("-entry.tresol") ;
 		/*
 		 * Observable Axe
 		 */
@@ -644,6 +645,17 @@ public final class ArgsParser implements Serializable{
 				return getArgsValue(args[i]);
 			}
 			if( entry && args[i].startsWith("-entry.exptime") ){
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+	public String getTresol(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry && args[i].startsWith("-tresol")  ){
+				return getArgsValue(args[i]);
+			}
+			if( entry && args[i].startsWith("-entry.tresol") ){
 				return getArgsValue(args[i]);
 			}
 		}
