@@ -118,6 +118,7 @@ public abstract class ProductBuilder {
 	public ColumnSetter t_minSetter=new ColumnExpressionSetter("t_min");
 	public ColumnSetter t_maxSetter=new ColumnExpressionSetter("t_max");
 	public ColumnSetter t_exptimeSetter=new ColumnExpressionSetter("t_exptime");
+	public ColumnSetter t_resolutionSetter=new ColumnExpressionSetter("t_resolution");
 	public PriorityMode timeMappingPriority = PriorityMode.LAST;
 	/*
 	 * Observable Axis
@@ -402,6 +403,7 @@ public abstract class ProductBuilder {
 		this.t_minSetter.calculateExpression(this.dataFile);
 		this.t_maxSetter.calculateExpression(this.dataFile);
 		this.t_exptimeSetter.calculateExpression(this.dataFile);
+		this.t_resolutionSetter.calculateExpression(this.dataFile);
 		this.o_ucdSetter.calculateExpression();
 		this.o_unitSetter.calculateExpression();
 		this.o_calib_statusSetter.calculateExpression();
@@ -819,6 +821,7 @@ public abstract class ProductBuilder {
 			this.t_maxSetter = this.getMappedAttributeHander("t_max", mapping.getColumnMapping("t_max"));
 			this.t_minSetter = this.getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			this.t_exptimeSetter = this.getMappedAttributeHander("t_exptime", mapping.getColumnMapping("t_exptime"));
+			this.t_resolutionSetter = this.getMappedAttributeHander("t_resolution", mapping.getColumnMapping("t_resolution"));
 			break;
 
 		case FIRST:
@@ -834,6 +837,10 @@ public abstract class ProductBuilder {
 			this.t_exptimeSetter = getMappedAttributeHander("t_exptime", mapping.getColumnMapping("t_exptime"));
 			if( !this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
 				this.t_exptimeSetter = this.quantityDetector.getExpTime();
+			}
+			this.t_resolutionSetter = getMappedAttributeHander("t_resolution", mapping.getColumnMapping("t_resolution"));
+			if( !this.isAttributeHandlerMapped(this.t_resolutionSetter) ) {
+				this.t_resolutionSetter = this.quantityDetector.getTResolution();
 			}
 			break;
 
@@ -851,15 +858,24 @@ public abstract class ProductBuilder {
 			} else if( !this.isAttributeHandlerMapped(this.t_minSetter)) {
 				this.t_minSetter = getMappedAttributeHander("t_min", mapping.getColumnMapping("t_min"));
 			}
-			this.t_exptimeSetter = this.quantityDetector.getExpTime();
-			if( cs.isNotSet() &&!this.isAttributeHandlerMapped(this.t_exptimeSetter) ) {
+			cs = this.quantityDetector.getExpTime();
+			if( cs.isSet() ){
+				this.t_exptimeSetter = cs;
+			} else if( !this.isAttributeHandlerMapped(this.t_exptimeSetter)) {
 				this.t_exptimeSetter = getMappedAttributeHander("t_exptime", mapping.getColumnMapping("t_exptime"));
+			}
+			cs = this.quantityDetector.getTResolution();
+			if( cs.isSet() ){
+				this.t_resolutionSetter = cs;
+			} else if( !this.isAttributeHandlerMapped(this.t_resolutionSetter)) {
+				this.t_resolutionSetter = getMappedAttributeHander("t_resolution", mapping.getColumnMapping("t_resolution"));
 			}
 			break;
 		}
 		traceReportOnAttRef(this.t_minSetter);
 		traceReportOnAttRef(this.t_maxSetter);
 		traceReportOnAttRef(this.t_exptimeSetter);
+		traceReportOnAttRef(this.t_resolutionSetter);
 	}
 
 	protected void mapObservableAxe() throws Exception {
