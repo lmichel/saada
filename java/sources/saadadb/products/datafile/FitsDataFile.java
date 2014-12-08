@@ -242,21 +242,25 @@ public final class FitsDataFile extends FSDataFile{
 			 * Once the extension found, we need to check that it has the good category
 			 * a BINTABLE for spectra and tables...
 			 */
-			BasicHDU bHDU = null;
 			if(  ext_num >= 0 ) {
 				boolean found = false;
 				for( DataFileExtension dfe: this.productMap.values()){
-					if( dfe.tableNum == ext_num && !dfe.isDataTable() ) {
+					if( dfe.tableNum == ext_num  ) {
 						found = true;
-						if(checkExtensionCategory(dfe, this.getProductCategory()) ){
+						/**
+						 * TABLE_COLUMNS extension reserved to access table data
+						 */
+						if( dfe.type == DataFileExtensionType.TABLE_COLUMNS){
+							continue;
+						} else 	if( this.checkExtensionCategory(dfe, this.getProductCategory()) ){
 							String msg = "Required extension : "+this.productBuilder.mapping.getExtension()+" found (number: " + ext_num + ")";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
-							this.goodHeader = bHDU;
+							this.goodHeader = (BasicHDU) dfe.resource;
 							Messenger.printMsg(Messenger.TRACE, msg);							
 						} else if( this.productBuilder.getMapping().getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
-							this.goodHeader = bHDU;
+							this.goodHeader = (BasicHDU) dfe.resource;
 							String msg = "Take " + dfe.getSType() + "  HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.DETECTED
@@ -264,7 +268,7 @@ public final class FitsDataFile extends FSDataFile{
 							Messenger.printMsg(Messenger.TRACE, msg);
 						} else {
 							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE
-									, "Required extension : "+this.productBuilder.mapping.getExtension() + " has a wrong type: " + bHDU.getClass().getName());
+									, "Required extension : "+this.productBuilder.mapping.getExtension() + " has a wrong type: " + dfe.type);
 						}
 					} 
 				}
@@ -819,16 +823,12 @@ public final class FitsDataFile extends FSDataFile{
 		return -1;
 	}
 
+
 	/**
 	 * @param product
-	 * @return
-	 * @throws IOException 
-	 * @throws FitsException 
-	 * @throws SaadaException 
-	 * @throws IOException 
-	 * @throws FitsException 
+	 * @throws Exception
 	 */
-	public void setFirstGoodHeader(ProductBuilder product) throws SaadaException, FitsException, IOException{
+	public void setFirstGoodHeader(ProductBuilder product) throws Exception{
 		/*
 		 * Extension containing ENTRIES are handled by the table product, not by the ENTRY product
 		 * Should never occur
@@ -922,8 +922,7 @@ public final class FitsDataFile extends FSDataFile{
 					continue;
 				}
 				/*
-				 * We do not store full coloumn description for table
-				 * The the column name.
+				 * We do not store full column description for table
 				 * Column description is reported into the entry class
 				 */
 				else if( cat_prd == Category.TABLE 
@@ -994,9 +993,6 @@ public final class FitsDataFile extends FSDataFile{
 				if( this.productBuilder.mapping != null )
 					attribute.setCollname(this.productBuilder.mapping.getCollection());				
 				this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
-				if( attribute.getNameattr().equals("_crval1")) {
-					System.out.println("@@@@@@@@@@@@@ FITS11 " + attribute + System.identityHashCode(attribute));
-				}
 			}
 		}
 		//this.attMd5Tree.put(md5Key, md5Type);
@@ -1643,13 +1639,17 @@ public final class FitsDataFile extends FSDataFile{
 					}
 					attrs.add(attribute);
 				}
-				this.productMap.put("#" + i + " " + ext_name + " (" + ext_type + ")", new DataFileExtension(i, ext_name, ext_type, attrs));
+				this.productMap.put("#" + i + " " + ext_name + " (" + ext_type + ")", new DataFileExtension(i, ext_name, ext_type, bHDU,attrs));
+				/*
+				 * In case of table, the column meta data are stored into a specific DataFileExtension of type TABLE_COLUMNS
+				 */
 				if( ext_type == DataFileExtensionType.BINTABLE || ext_type  == DataFileExtensionType.ASCIITABLE ) {
 					Map<String, AttributeHandler> tahe = new LinkedHashMap<String, AttributeHandler>();
 					//tahe = this.getEntryAttributeHandler();
 					tahe = this.getEntryAttributeHandler(i);
 					attrs = new ArrayList<AttributeHandler>(tahe.values());					
-					this.productMap.put("#" + i + " " + ext_name + " (" + ext_type + " COLUMNS)", new DataFileExtension(i, ext_name, DataFileExtensionType.TABLE_COLUMNS, attrs));
+					this.productMap.put("#" + i + " " + ext_name + " (" + ext_type + " COLUMNS)"
+							, new DataFileExtension(i, ext_name, DataFileExtensionType.TABLE_COLUMNS, bHDU, attrs));
 				}
 				//i++;			
 			}

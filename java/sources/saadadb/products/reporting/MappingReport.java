@@ -56,40 +56,8 @@ public class MappingReport {
 	 * @throws Exception
 	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
-		//this.builder.setProductIngestor();
-		System.out.println("=====GET REPORT =======\n" + this.builder.getClass());
-		System.out.println(this.builder.productIngestor.getClass());
-
-		//		FooProduct fp = (FooProduct) this.builder.dataFile;
-		//		for( Entry<String, AttributeHandler> eah: this.builder.productAttributeHandler.entrySet()){
-		//			System.out.println("III" + eah);
-		//		}
-		if( this.builder instanceof EntryBuilder) {
-			EntryBuilder tb = (EntryBuilder) this.builder;
-			System.out.println( tb.hashCode() + " " + tb.productAttributeHandler.hashCode()+ " " + tb.productAttributeHandler.hashCode());
-			for( Entry<String, AttributeHandler> eah: tb.productAttributeHandler.entrySet()){
-				System.out.println("getReport3 " + eah);
-			}
-		}
 		this.builder.updateAttributeHandlerValues();
-		if( this.builder instanceof EntryBuilder) {
-			EntryBuilder tb = (EntryBuilder) this.builder;
-			for( Entry<String, AttributeHandler> eah: tb.productAttributeHandler.entrySet()){
-				System.out.println("getReport4 " + eah);
-			}
-		}
 		this.builder.productIngestor.bindInstanceToFile();
-		if( this.builder instanceof EntryBuilder) {
-			EntryBuilder tb = (EntryBuilder) this.builder;
-			for( Entry<String, AttributeHandler> eah: tb.productAttributeHandler.entrySet()){
-				System.out.println("getReport5 " + eah);
-			}
-		}
-		if( this.builder instanceof EntryBuilder) {
-			for( Entry<String, AttributeHandler> eah: this.builder.productAttributeHandler.entrySet()){
-				System.out.println("III+" + eah);
-			}
-		}
 		SaadaInstance si = this.builder.productIngestor.saadaInstance;
 
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
@@ -176,11 +144,12 @@ public class MappingReport {
 	 * @param directory
 	 */
 	public void writeCompleteReport(String directory, ArgsParser ap) throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Write report in " + directory + + File.separatorChar + this.builder.dataFile.getName() + ".txt");
+		String reportName = directory +  File.separator + this.builder.dataFile.getName() + ".txt";
+		Messenger.printMsg(Messenger.TRACE, "Write report in " + reportName);
 		this.builder.dataFile.updateAttributeHandlerValues();
 		this.builder.productIngestor.bindInstanceToFile();
 
-		FileWriter fw = new FileWriter(directory + + File.separatorChar + this.builder.dataFile.getName() + ".report");
+		FileWriter fw = new FileWriter(reportName);
 		fw.write("====================================================\n");
 		fw.write("    " + this.builder.dataFile.getName() + "\n");
 		fw.write("    " + (new Date()) + "\n");

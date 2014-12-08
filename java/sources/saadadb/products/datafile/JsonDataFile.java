@@ -89,7 +89,7 @@ public class JsonDataFile extends DataFile {
 			lst.add(ah);
 		}
 		this.tableData = keyWordBuilder.tableData;
-		this.productMap.put("#0 Header", new DataFileExtension(0, "1stHDU", DataFileExtensionType.BASIC, lst));
+		this.productMap.put("#0 Header", new DataFileExtension(0, "1stHDU", DataFileExtensionType.BASIC, null, lst));
 
 		if( keyWordBuilder.columnKWs != null) { 
 			lst = new ArrayList<AttributeHandler>();
@@ -97,7 +97,7 @@ public class JsonDataFile extends DataFile {
 				this.entryAttributeHandlers.put(ah.getNameattr(), ah);
 				lst.add(ah);
 			}		
-			this.productMap.put("#0 Data", new DataFileExtension(0, "1stHDU Data", DataFileExtensionType.ASCIITABLE, lst));
+			this.productMap.put("#0 Data", new DataFileExtension(0, "1stHDU Data", DataFileExtensionType.ASCIITABLE, null, lst));
 		}
 	}
 

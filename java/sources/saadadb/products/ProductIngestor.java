@@ -447,6 +447,15 @@ public class ProductIngestor {
 			}
 		}
 
+		if( t_exptime.isSet()){
+			String v = DateUtils.getDuration(t_exptime.getValue());
+			System.out.println("@@@@@@@@@@@@@ " + v);
+			if( v != null ) {
+				t_exptime.setValue(v);
+			} else {
+				t_exptime.setNotSet();
+			}
+		}
 		double v;
 		if( t_min.isNotSet() && !t_max.isNotSet() && !t_exptime.isNotSet() ) {
 			try {
@@ -798,7 +807,7 @@ public class ProductIngestor {
 				}
 			}
 		} catch (NoSuchFieldException e) {
-			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this.saadaInstance.getClassName() + " " + e.getMessage());
 		} catch (Exception e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
 					+ " can not be set with the KW  <" + columnSetter.getAttNameOrg()

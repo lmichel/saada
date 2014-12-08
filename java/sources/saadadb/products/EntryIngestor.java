@@ -217,7 +217,7 @@ public final class EntryIngestor extends ProductIngestor {
 		setField("target_name"    , this.product.target_nameSetter);
 		setField("instrument_name", this.product.instrument_nameSetter);
 		setField("facility_name"  , this.product.facility_nameSetter);
-		setField("obs_collection" , this.product.obs_collectionSetter);
+		//setField("obs_collection" , this.product.obs_collectionSetter);
 	}
 
 	/* (non-Javadoc)
@@ -567,7 +567,15 @@ public final class EntryIngestor extends ProductIngestor {
 				rowData[index + 3] =  ClassMerger.getCastedSQLValue(ah, ah.getType());
 				cpt++;
 			}
-			buswriter.write(Merger.getMergedArray("\t", rowData) + "\n");
+			StringBuffer sb = new StringBuffer();
+			for( int i=0 ; i<rowData.length ; i++) {
+				if( i > 0 ){
+					sb.append("\t");
+				}
+				sb.append(rowData[i]);
+			}
+			sb.append("\n");
+			buswriter.write(sb.toString());
 			this.saadaInstance.storeCollection(colwriter);
 			numRow ++;
 			if( numRow % 1000 == 0 ){
