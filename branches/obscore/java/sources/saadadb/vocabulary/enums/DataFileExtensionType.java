@@ -7,11 +7,32 @@ package saadadb.vocabulary.enums;
  * @version $Id$
  */
 public enum DataFileExtensionType {
+	/**
+	 * Simple header
+	 */
 	BASIC,
-	TILE_COMPRESSED_IMAGE,
-	BINTABLE,
-	ASCIITABLE,
-	TABLE_COLUMNS,
+	/**
+	 * simple image
+	 */
 	IMAGE,
+	/**
+	 * compressed image
+	 */
+	TILE_COMPRESSED_IMAGE,
+	/**
+	 * Binary table
+	 */
+	BINTABLE,
+	/**
+	 * ascii table
+	 */
+	ASCIITABLE,
+	/**
+	 * Columns description taken as KWs
+	 */
+	TABLE_COLUMNS,
+	/**
+	 * Anything else
+	 */
 	UNSUPPORTED
 }

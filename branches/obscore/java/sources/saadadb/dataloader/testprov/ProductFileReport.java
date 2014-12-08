@@ -42,8 +42,8 @@ public class ProductFileReport {
 			ProductBuilder product = null;
 			DataFile df = new FitsDataFile(drp.getAbsolutePath());
 			switch( Category.getCategory(ap.getCategory()) ) {
-			case Category.TABLE: //product = new TableBuilder(df, new ProductMapping("mapping", ap));
-				break;
+			case Category.TABLE: product = new TableBuilder(df, mapping);
+			break;
 			case Category.MISC : product = new MiscBuilder(df, mapping);
 			break;
 			case Category.SPECTRUM: product = new SpectrumBuilder(df, new ProductMapping("mapping", ap));
@@ -52,8 +52,7 @@ public class ProductFileReport {
 			break;
 			}
 			product.mapDataFile();
-			(new MappingReport(product)).writeCompleteReport(Repository.getTmpPath(), ap);
-
+			(new MappingReport(product)).writeCompleteReport(df.getParent() + File.separator + "report" + File.separator, ap);
 
 		} catch (Exception e) {
 			e.printStackTrace();

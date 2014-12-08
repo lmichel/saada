@@ -1,5 +1,7 @@
 package saadadb.util;
 
+import java.util.List;
+
 import saadadb.vocabulary.RegExp;
 import cds.astro.Astrotime;
 
@@ -59,5 +61,28 @@ public class DateUtils {
 		} catch(Exception e){
 			return SaadaConstant.LONG;
 		}
+	}
+	
+	/**
+	 * The duration is supposed to be a tile in second. It it can be interpreted as a numeric value it is returned without formating
+	 * If not and its format matches {@link RegExp#HMS_DURATION}, the duration is computed and returned as a String
+	 * @param duration input parameter
+	 * @return
+	 */
+	public static String getDuration(String duration){
+		try {
+			double v = Double.parseDouble(duration);
+			return duration;
+		} catch(Exception e){
+			RegExpMatcher rem = new RegExpMatcher(RegExp.HMS_DURATION, 4);
+			List<String> fields = rem.getMatches(duration);
+			if( fields != null ) {
+				double valeur = Double.parseDouble(fields.get(1))*3600 + Double.parseDouble(fields.get(2))*60 + Double.parseDouble(fields.get(3)); 
+				return String.valueOf(valeur);
+			} else {
+				return null;
+			}
+		}
+		
 	}
 }

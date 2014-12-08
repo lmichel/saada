@@ -116,6 +116,7 @@ public class RegExp {
 	public static final String EXPOSURE_TIME_KW  = "(?i)((exptime)|(texp)|(obs.*time)|(time.*obs))";
 	public static final String EXPOSURE_TIME_UCD = "(?i)(time.duration;obs.exposure)";	
 	public static final String NUMERIC_TIME_UNIT = "(?i)((?:seconds)|(?:hours)|(?:minutes))";
+	public static final String HMS_DURATION      = "(?i)(([0-9]+)[h:\\.]([0-9]+)[m:\\.]([0-9]+)s?)";
 	/*
 	 * URL
 	 */
@@ -134,7 +135,7 @@ public class RegExp {
 	/**
 	 * Observation keywords
 	 */
-	public static final String COLLNAME_KW      = "(?i)(collection)";
+	public static final String COLLNAME_KW      = "(?i)((collection)|(obs_id))";
 	public static final String COLLNAME_UCD     = "(?i)(.*obs\\.param;obs.*)";
 	public static final String TARGET_KW        = "(?i)((object)|(target(.*name)?))";
 	public static final String TARGET_UCD       = "(?i)(meta\\.id)";
