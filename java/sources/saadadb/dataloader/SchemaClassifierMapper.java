@@ -27,12 +27,7 @@ import saadadb.vocabulary.enums.ClassifierMode;
 public class SchemaClassifierMapper extends SchemaMapper {
 	private String requested_classname;
 
-	class DataPacket {
-		public List<String> fileList = new ArrayList<String>();
-		public MetaClass classe;
-		public MetaClass entryClasse;
-	}
-	private Map<String, DataPacket> dataPackets;
+	private Map<String, DataFileCluster> dataPackets;
 	/**
 	 * @param handler 
 	 * @param mapping
@@ -50,17 +45,15 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		super(loader, entr);
 		Messenger.setMaxProgress(1 + 1);
 	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.dataloader.SchemaMapper#ingestProductSet()
+	
+	/**
+	 * returns a map of the data files clusters Each cluster contain all files with the same format. 
+	 * The key map is the format signature. The cluster (map value) is contained in a {@linkplain DataFileCluster} 
+	 * @return the cluster map
+	 * @throws Exception
 	 */
-	@Override
-	public void ingestProductSet() throws Exception{
-		/*
-		 * Build the per class map of the product to be ingested
-		 * Classes are created on the fly to avoid an extra DataFile instanciation 
-		 */
-		dataPackets = new LinkedHashMap<String, SchemaClassifierMapper.DataPacket>();
+	public Map<String, DataFileCluster> getProductClusters()  throws Exception{
+		Map<String, DataFileCluster> retour  = new LinkedHashMap<String, DataFileCluster>();
 		for( String fn: this.dataFiles) {
 			DataFile file = this.getDataFileInstance(fn);
 			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);	
@@ -71,9 +64,44 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			if( mapping.getCategory() == Category.TABLE ) {
 				signature += this.entryMapper.currentProductBuilder.getFmtsignature();
 			}			
-			DataPacket dp;
+			DataFileCluster dp;
 			if( (dp = this.dataPackets.get(signature)) == null ) {
-				dp = new DataPacket();
+				dp = new DataFileCluster();
+				this.dataPackets.put(signature, dp);
+				if( mapping.getCategory() == Category.TABLE ) {
+					this.entryMapper.updateSchemaForProduct();
+					dp.entryClasse = this.entryMapper.currentClass;
+				}
+				dp.classe = this.currentClass;
+			}
+			dp.fileList.add(fn);
+		}
+		return retour;
+	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.dataloader.SchemaMapper#ingestProductSet()
+	 */
+	@Override
+	public void ingestProductSet() throws Exception{
+		/*
+		 * Build the per class map of the product to be ingested
+		 * Classes are created on the fly to avoid an extra DataFile instanciation 
+		 */
+		dataPackets = new LinkedHashMap<String, DataFileCluster>();
+		for( String fn: this.dataFiles) {
+			DataFile file = this.getDataFileInstance(fn);
+			this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);	
+			if( mapping.getCategory() == Category.TABLE ) {
+				this.entryMapper = new SchemaClassifierMapper(this.loader, ((TableBuilder)this.currentProductBuilder).entryBuilder);
+			}
+			String signature = this.currentProductBuilder.getFmtsignature();
+			if( mapping.getCategory() == Category.TABLE ) {
+				signature += this.entryMapper.currentProductBuilder.getFmtsignature();
+			}			
+			DataFileCluster dp;
+			if( (dp = this.dataPackets.get(signature)) == null ) {
+				dp = new DataFileCluster();
 				this.dataPackets.put(signature, dp);
 				SQLTable.beginTransaction();
 				this.updateSchemaForProduct();
@@ -90,7 +118,7 @@ public class SchemaClassifierMapper extends SchemaMapper {
 		 * Store files class by class by using a SchemaFusionMapper
 		 */
 		int cpt=0;
-		for( DataPacket dp : this.dataPackets.values()){
+		for( DataFileCluster dp : this.dataPackets.values()){
 			SchemaFusionMapper sfm = new SchemaFusionMapper(this.loader, dp.fileList, this.mapping);
 			sfm.currentClass = dp.classe;
 			sfm.mustIndex = this.mustIndex;
