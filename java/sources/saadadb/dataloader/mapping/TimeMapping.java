@@ -43,7 +43,7 @@ public class TimeMapping extends AxisMapping {
 		if( (s = ap.getExpTime(entryMode)) != null  ){
 			this.columnMapping.put("t_exptime", new ColumnMapping(null, s, "t_exptime"));
 		} 
-		if( (s = ap.getTresol(entryMode)) != null  ){
+		if( (s = ap.getTResol(entryMode)) != null  ){
 			this.columnMapping.put("t_resolution", new ColumnMapping(null, s, "t_resolution"));
 		} 
 		this.priority = ap.getTimeMappingPriority();

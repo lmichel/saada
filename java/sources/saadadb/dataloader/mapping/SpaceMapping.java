@@ -76,6 +76,14 @@ public class SpaceMapping extends AxisMapping {
 				this.columnMapping.put("s_dec", new ColumnMapping(MappingMode.KEYWORD, "deg", tabRa_dec[1], ""));
 			}
 		}
+		String s;
+		if( (s = tabArg.getSFov()) != null  ){
+			this.columnMapping.put("s_fov", new ColumnMapping(null, s, "s_fov"));
+		} 
+		if( (s = tabArg.getSRegion()) != null  ){
+			this.columnMapping.put("s_region", new ColumnMapping(null, s, "s_region"));
+		} 
+
 	}
 	
 	/**
