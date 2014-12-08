@@ -3,8 +3,8 @@ package saadadb.dataloader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
 
 import saadadb.collection.Category;
@@ -124,6 +124,15 @@ public class Loader extends SaadaProcess {
 	public static void usage() {
 		System.out.println("USAGE: jave dataloader.Loader [loader params] [db_name]");
 		System.exit(1);		
+	}
+
+	/**
+	 * Just wrap {@link SchemaClassifierMapper#getProductClusters()} for convenience
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, DataFileCluster> getProductClusters()  throws Exception{
+		return (new SchemaClassifierMapper(this, this.filesToBeLoaded, this.productMapping)).getProductClusters();
 	}
 
 
