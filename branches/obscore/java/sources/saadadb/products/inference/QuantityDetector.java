@@ -248,6 +248,13 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("t_exptime"): retour;
 	}
+	public ColumnExpressionSetter getTResolution() throws Exception{
+		ColumnExpressionSetter retour = null;
+		if( this.pipelineParser == null ||(retour = this.pipelineParser.getTResolution()).isNotSet() ){
+			return this.timeKWDetector.getTResolution();
+		} 
+		return (retour == null)?new ColumnExpressionSetter("t_resolution"): retour;
+	}
 	/*
 	 * Observable axis
 	 */

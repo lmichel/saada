@@ -20,6 +20,7 @@ public class TimeKWDetector extends KWDetector {
 	private ColumnExpressionSetter tminSetter;
 	private ColumnExpressionSetter tmaxSetter;
 	private ColumnExpressionSetter exptimeSetter;
+	private ColumnExpressionSetter tresolSetter;
 
 	/**
 	 * @param tableAttributeHandler
@@ -76,7 +77,8 @@ public class TimeKWDetector extends KWDetector {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found spectral coodinate in WCS");
 			this.tminSetter     = new ColumnWcsSetter("t_min"    , "WCS.getMin(1)", this.projection);
 			this.tminSetter     = new ColumnWcsSetter("t_max"    , "WCS.getMax(1)", this.projection);
-			this.exptimeSetter    = new ColumnWcsSetter("t_exptime"   , "WCS.getNaxis(1)", this.projection);
+			this.exptimeSetter  = new ColumnWcsSetter("t_exptime"   , "WCS.getNaxis(1)", this.projection);
+			this.tresolSetter   = new ColumnWcsSetter("t_resolution", "WCS.getWorldPixelSize()", this.projection);
 			return true;
 		} else {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No time coodinate found in WCS");
@@ -262,6 +264,17 @@ public class TimeKWDetector extends KWDetector {
 		String getTimeRef() {
 			return (this.timeRef == null || this.timeRef.length() == 0 )?"": (this.timeRef + " + ");
 		}
+	}
+
+	public ColumnExpressionSetter getTResolution()throws Exception {
+		/*
+		 * resolution read in keyword is more relevant than the pixel size
+		 */
+		ColumnExpressionSetter retour = this.search("t_resolution", RegExp.TIME_RESOLUTION_UCD, RegExp.TIME_RESOLUTION_KW);
+		if( retour.isSet()){
+			return retour;
+		}
+		return (this.tresolSetter == null)? new ColumnExpressionSetter("t_resolution"): this.tresolSetter;
 	}
 
 }
