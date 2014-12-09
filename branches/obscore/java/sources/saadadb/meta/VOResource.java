@@ -120,17 +120,23 @@ public class VOResource {
 			}
 			TDSet tds = currentTR.getTDSet();
 			List<Object> tdv = tds.getItems();
+			List<SavotTD> stdv = new ArrayList<SavotTD>();
+			for (Object o : tdv) {
+				stdv.add((SavotTD)o);
+			}
 			if( tdv.size() != 12 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return;
 			}
 			String group_name = ((SavotTD)(tdv.get(0))).getContent();
 			Set<UTypeHandler> guth = this.groups.get(group_name);
+			Messenger.printMsg(Messenger.TRACE, "TEST BON CODE");
+			
 			if( guth == null ) {
 				guth = new LinkedHashSet<UTypeHandler>();
 				this.groups.put(group_name, guth);
 			}
-			UTypeHandler uth = new UTypeHandler((AttributeHandler) tdv);
+			UTypeHandler uth = new UTypeHandler(stdv);
 			guth.add(uth);			
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
