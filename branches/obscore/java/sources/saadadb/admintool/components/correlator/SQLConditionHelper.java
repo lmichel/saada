@@ -2,7 +2,6 @@ package saadadb.admintool.components.correlator;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JComboBox;

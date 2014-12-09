@@ -2,8 +2,6 @@ package saadadb.vo.request.query.pql;
 
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
-import saadadb.products.inference.SpectralCoordinate;
-import saadadb.util.DateUtils;
 import saadadb.util.Messenger;
 
 /**

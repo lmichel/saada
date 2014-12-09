@@ -33,13 +33,14 @@ import saadadb.util.Messenger;
 public class PostgresWrapper extends DbmsWrapper {
 	public static final String OLD_QUOTE_SEQUENCE = "\\\\'"; // -> PSQL 8.xx
 	public static final String NEW_QUOTE_SEQUENCE = "''"; // PSQL 9.xx ->
-	public static  String QUOTE_SEQUENCE = null; // -> PSQL 8.xx
+	public static String QUOTE_SEQUENCE = null; // -> PSQL 8.xx
 
-	private PostgresWrapper(String server_or_driver, String port_or_url) throws ClassNotFoundException {
+	private PostgresWrapper(String server_or_driver, String port_or_url)
+			throws ClassNotFoundException {
 		super(false);
 		test_base = "testbasededonnees";
 		test_table = "TableTest";
-		if( server_or_driver.startsWith("org.postgresql.Driver") ) {
+		if (server_or_driver.startsWith("org.postgresql.Driver")) {
 			this.driver = server_or_driver;
 			this.url = port_or_url;
 
@@ -47,25 +48,27 @@ public class PostgresWrapper extends DbmsWrapper {
 			driver = "org.postgresql.Driver";
 			url = "jdbc:postgresql:";
 			Class.forName(driver);
-			if( server_or_driver != null && server_or_driver.length() > 0 ) {
-				url += "//" + server_or_driver ;
-				if( port_or_url != null && port_or_url.length() > 0 ) {
+			if (server_or_driver != null && server_or_driver.length() > 0) {
+				url += "//" + server_or_driver;
+				if (port_or_url != null && port_or_url.length() > 0) {
 					url += ":" + port_or_url;
 				}
 				url += "/";
 			}
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getDBMS()
 	 */
-	public String getDBMS(){
+	public String getDBMS() {
 		return "PostgreSQL";
 	}
 
-	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url) throws ClassNotFoundException {
-		if( wrapper != null ) {
-			return wrapper; 
+	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url)
+			throws ClassNotFoundException {
+		if (wrapper != null) {
+			return wrapper;
 		}
 		return new PostgresWrapper(server_or_url, port_or_url);
 	}
@@ -73,23 +76,31 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	public void createDB(String dbname) throws SQLException, FatalException {
 		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + "> at " + url);
-		Connection admin_connection = DriverManager.getConnection(url +"template1", admin.getName(), admin.getPassword());
-		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+		Connection admin_connection = DriverManager.getConnection(
+				url + "template1",
+				admin.getName(),
+				admin.getPassword());
+		Statement stmt = admin_connection.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_UPDATABLE);
 		try {
 			stmt.executeUpdate("CREATE DATABASE \"" + dbname + "\"");
 			admin_connection.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
+			if (admin_connection != null)
 				admin_connection.close();
-			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
+			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage());
 		}
 	}
 
 	@Override
 	public boolean dbExists(String repository, String dbname) {
 		try {
-			Connection admin_connection = DriverManager.getConnection(url + dbname, admin.getName(), admin.getPassword());
+			Connection admin_connection = DriverManager.getConnection(
+					url + dbname,
+					admin.getName(),
+					admin.getPassword());
 			admin_connection.close();
 		} catch (SQLException e) {
 			return false;
@@ -100,28 +111,34 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	public void dropDB(String repository, String dbname) throws SQLException {
 		Messenger.printMsg(Messenger.TRACE, "Remove database <" + dbname + ">");
-		Connection admin_connection = DriverManager.getConnection(url +"template1", admin.getName(), admin.getPassword());
-		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+		Connection admin_connection = DriverManager.getConnection(
+				url + "template1",
+				admin.getName(),
+				admin.getPassword());
+		Statement stmt = admin_connection.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_UPDATABLE);
 		try {
 			stmt.executeUpdate("DROP DATABASE \"" + dbname + "\"");
 			admin_connection.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			admin_connection.close();
 			throw new SQLException(e.getMessage());
 		}
 	}
-
 
 	/**
 	 * @param conn
 	 * @throws Exception
 	 */
 	public void setLocalBehavior(Connection connection) throws Exception {
-		if( QUOTE_SEQUENCE == null ){
+		if (QUOTE_SEQUENCE == null) {
 			/*
 			 * Set the escape sequence for quotes
 			 */
-			Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+			Statement stmt = connection.createStatement(
+					ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			try {
 				QUOTE_SEQUENCE = NEW_QUOTE_SEQUENCE;
 				String q = "SELECT '" + getEscapeQuote("aaa'bbb") + "'";
@@ -130,19 +147,23 @@ public class PostgresWrapper extends DbmsWrapper {
 				stmt.execute(q);
 				stmt.close();
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
-			} catch(Exception e) {
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE
+							+ " as escape sequence for quotes");
+			} catch (Exception e) {
 				try {
 					QUOTE_SEQUENCE = OLD_QUOTE_SEQUENCE;
-					String q = "SELECT '" + getEscapeQuote("aaa'bbb")+ "'";
+					String q = "SELECT '" + getEscapeQuote("aaa'bbb") + "'";
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Try " + q);
 					stmt.execute(q);
 					stmt.close();
-					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE + " as escape sequence for quotes");
-				} catch(Exception e2) {
-					FatalException.throwNewException(SaadaException.DB_ERROR, "Ca't find a working escape sequence for quotes in PSQL");
-				}				
+					Messenger.printMsg(Messenger.DEBUG, "take " + QUOTE_SEQUENCE
+							+ " as escape sequence for quotes");
+				} catch (Exception e2) {
+					FatalException.throwNewException(
+							SaadaException.DB_ERROR,
+							"Ca't find a working escape sequence for quotes in PSQL");
+				}
 			}
 		}
 	}
@@ -153,12 +174,10 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String[] getStoreTable(String table_name, int ncols, String table_file)  throws Exception {
-		return new String[] {
-				lockTable(table_name),
-				"COPY " +  table_name + " FROM '" + table_file.replaceAll("\\\\", "\\\\\\\\") + "'"};
+	public String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
+		return new String[] { lockTable(table_name),
+				"COPY " + table_name + " FROM '" + table_file.replaceAll("\\\\", "\\\\\\\\") + "'" };
 	}
-
 
 	@Override
 	public String abortTransaction() {
@@ -177,22 +196,20 @@ public class PostgresWrapper extends DbmsWrapper {
 		 */
 		String wt = Merger.getFilteredAndMergedArray(write_table);
 		String rt = Merger.getFilteredAndMergedArray(read_table);
-		if( wt.length() > 0 && rt.length() > 0) {
-			//return "LOCK TABLE " + wt + " ,  " + rt ;
+		if (wt.length() > 0 && rt.length() > 0) {
+			// return "LOCK TABLE " + wt + " ,  " + rt ;
 			return "";
-		}
-		else if( wt.length() > 0 && rt.length() == 0) {
-			//return "LOCK TABLE " + wt;
+		} else if (wt.length() > 0 && rt.length() == 0) {
+			// return "LOCK TABLE " + wt;
 			return "";
-		}
-		else if( wt.length() == 0 && rt.length() > 0) {
-			//return "LOCK TABLE " + rt;
+		} else if (wt.length() == 0 && rt.length() > 0) {
+			// return "LOCK TABLE " + rt;
 			return "";
-		}
-		else {
+		} else {
 			return "";
 		}
 	}
+
 	@Override
 	public String dropTable(String table) {
 		return "DROP TABLE " + table;
@@ -203,6 +220,7 @@ public class PostgresWrapper extends DbmsWrapper {
 		return "GRANT select ON TABLE " + table_name + " TO PUBLIC";
 
 	}
+
 	/**
 	 * On psql, text type can  be indexed or used as primary key. 
 	 * We take it because it has no length limitation
@@ -217,11 +235,10 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getBooleanValue(boolean)
 	 */
 	@Override
-	public  String getBooleanAsString(boolean val){
-		if( val ) {
+	public String getBooleanAsString(boolean val) {
+		if (val) {
 			return "true";
-		}
-		else {
+		} else {
 			return "false";
 		}
 	}
@@ -230,10 +247,9 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getBooleanValue(java.lang.Object)
 	 */
 	public boolean getBooleanValue(Object rsval) {
-		if( "true".equalsIgnoreCase(rsval.toString()) ) {
+		if ("true".equalsIgnoreCase(rsval.toString())) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -244,7 +260,8 @@ public class PostgresWrapper extends DbmsWrapper {
 	public String getStrcatOp(String... args) {
 		String retour = "";
 		for (String arg : args) {
-			if( retour.length() != 0 ) retour += "||" ;
+			if (retour.length() != 0)
+				retour += "||";
 			retour += arg;
 		}
 		return retour;
@@ -254,111 +271,100 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getSQLTypeFromJava(java.lang.String)
 	 */
 	@Override
-	public String getSQLTypeFromJava( String typeJava) throws FatalException {
-		if(typeJava.equals("short")){
+	public String getSQLTypeFromJava(String typeJava) throws FatalException {
+		if (typeJava.equals("short")) {
 			return "int2";
-		}
-		else if(typeJava.equals("class java.lang.Long") || typeJava.equals("long")){
+		} else if (typeJava.equals("class java.lang.Long") || typeJava.equals("long")) {
 			return "int8";
-		}
-		else if(typeJava.equals("class java.lang.Integer") || typeJava.equals("int")){
+		} else if (typeJava.equals("class java.lang.Integer") || typeJava.equals("int")) {
 			return "int4";
-		}
-		else if(typeJava.equals("class java.lang.Byte")){
+		} else if (typeJava.equals("class java.lang.Byte")) {
 			return "smallint";
-		}
-		else if(typeJava.equals("class java.lang.Character")){
+		} else if (typeJava.equals("class java.lang.Character")) {
 			return "Character";
-		}
-		else if(typeJava.equals("char")){
+		} else if (typeJava.equals("char")) {
 			return "character(1)";
-		}
-		else if(typeJava.equals("boolean")){
+		} else if (typeJava.equals("boolean")) {
 			return "boolean";
-		}
-		else if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
+		} else if (typeJava.equals("class java.lang.Double") || typeJava.equals("double")) {
 			return "float8";
-		}
-		else if(typeJava.indexOf("String")>=0){
+		} else if (typeJava.indexOf("String") >= 0) {
 			return "text";
-		}
-		else if(typeJava.indexOf("Date")>=0){
+		} else if (typeJava.indexOf("Date") >= 0) {
 			return "date";
-		}
-		else if(typeJava.equals("float") || typeJava.equals("class java.lang.Float")){
+		} else if (typeJava.equals("float") || typeJava.equals("class java.lang.Float")) {
 			return "float4";
-		}
-		else if(typeJava.equals("byte")){
+		} else if (typeJava.equals("byte")) {
 			return "smallint";
 		}
-		FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeJava + " JAVA type");
-		return "";    	
+		FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert "
+				+ typeJava + " JAVA type");
+		return "";
 	}
-
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getJavaTypeFromSQL(java.lang.String)
 	 */
 	@Override
-	public String getJavaTypeFromSQL( String typeSQL) throws FatalException {
-		if(typeSQL.equals("int2")){
+	public String getJavaTypeFromSQL(String typeSQL) throws FatalException {
+		if (typeSQL.equals("int2")) {
 			return "short";
-		}
-		else if(typeSQL.equals("int8")){
+		} else if (typeSQL.equals("int8")) {
 			return "long";
-		}
-		else if(typeSQL.equals("int") || typeSQL.equals("int4")){
+		} else if (typeSQL.equals("int") || typeSQL.equals("int4")) {
 			return "int";
-		}
-		else if(typeSQL.equals("smallint")){
+		} else if (typeSQL.equals("smallint")) {
 			return "byte";
-		}
-		else if(typeSQL.equals("character") || typeSQL.equals("character(1)") || typeSQL.equals("bpchar")){
+		} else if (typeSQL.equals("character") || typeSQL.equals("character(1)")
+				|| typeSQL.equals("bpchar")) {
 			return "char";
-		}
-		else if(typeSQL.equals("bool")){
+		} else if (typeSQL.equals("bool")) {
 			return "boolean";
-		}
-		else if(typeSQL.equals("float8") || typeSQL.equals("numeric")){
+		} else if (typeSQL.equals("float8") || typeSQL.equals("numeric")) {
 			return "double";
-		}
-		else if(typeSQL.equals("text") || typeSQL.startsWith("character(")){
+		} else if (typeSQL.equals("text") || typeSQL.startsWith("character(")) {
 			return "String";
-		}
-		else if(typeSQL.equals("date")){
+		} else if (typeSQL.equals("date")) {
 			return "Date";
-		}
-		else if(typeSQL.equals("float4")){
+		} else if (typeSQL.equals("float4")) {
 			return "float";
-		}
-		else {
+		} else {
 			return "String";
 		}
-		//FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeSQL + " SQL type");
-		//return "";    	
+		// FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeSQL + " SQL type");
+		// return "";
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getUpdateWithJoin(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getUpdateWithJoin(String table_to_update, String table_to_join, String join_criteria, String key_alias, String[] keys, String[] values, String select_criteria) {
-		String set_to_update  = "";
-		for( int i=0 ; i<keys.length ; i++ ) {
-			if( i > 0 ) {
+	public String getUpdateWithJoin(
+			String table_to_update,
+			String table_to_join,
+			String join_criteria,
+			String key_alias,
+			String[] keys,
+			String[] values,
+			String select_criteria) {
+		String set_to_update = "";
+		for (int i = 0; i < keys.length; i++) {
+			if (i > 0) {
 				set_to_update += ", ";
 			}
 			set_to_update += keys[i] + " = " + values[i];
 		}
-		//e.g.:  UPDATE saada_metacoll_table   SET ass_error = a.pk   FROM saada_metacoll_table a  WHERE a.name_coll = saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa'    AND saada_metacoll_table.name_attr = 'pos_ra_csa';
-		return "UPDATE " + table_to_update  + " SET " + set_to_update  + " FROM " + table_to_join + " WHERE " + join_criteria + " AND " + select_criteria;
+		// e.g.: UPDATE saada_metacoll_table SET ass_error = a.pk FROM saada_metacoll_table a WHERE a.name_coll =
+		// saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 'pos_ra_csa';
+		return "UPDATE " + table_to_update + " SET " + set_to_update + " FROM " + table_to_join
+				+ " WHERE " + join_criteria + " AND " + select_criteria;
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getRegexpOp()
 	 */
 	@Override
-	public String getRegexpOp(){
+	public String getRegexpOp() {
 		return "~";
 	}
 
@@ -366,8 +372,9 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getInsertStaement(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getInsertStatement(String where, String[] fields, String[] values){
-		return "INSERT INTO " + where + " (" + Merger.getMergedArray(fields) + ") VALUES (" + Merger.getMergedArray(values) + ")";
+	public String getInsertStatement(String where, String[] fields, String[] values) {
+		return "INSERT INTO " + where + " (" + Merger.getMergedArray(fields) + ") VALUES ("
+				+ Merger.getMergedArray(values) + ")";
 	}
 
 	@Override
@@ -375,49 +382,55 @@ public class PostgresWrapper extends DbmsWrapper {
 		String sqlCreateTable = "";
 		// sybase and psql
 		sqlCreateTable = " oidprimary  int8, oidsecondary int8 ";
-		for( String q: relation_conf.getQualifier().keySet()) {
-			sqlCreateTable = sqlCreateTable
-			+ ","
-			+ q
-			+ "  double precision";
-		}		
-		SQLTable.createTable(relation_conf.getNameRelation().toLowerCase(),sqlCreateTable , null, true);
+		for (String q : relation_conf.getQualifier().keySet()) {
+			sqlCreateTable = sqlCreateTable + "," + q + "  double precision";
+		}
+		SQLTable.createTable(
+				relation_conf.getNameRelation().toLowerCase(),
+				sqlCreateTable,
+				null,
+				true);
 	}
 
 	@Override
-	public void setClassColumns(String relationName) throws AbortException{}
+	public void setClassColumns(String relationName) throws AbortException {
+	}
 
 	@Override
-	public void suspendRelationTriggger(String relationName) throws AbortException{}
+	public void suspendRelationTriggger(String relationName) throws AbortException {
+	}
 
 	@Override
 	public String getSecondaryClassRelationshipIndex(String relationName) {
-		return "CREATE INDEX " + relationName.toLowerCase() + "_secoid_class ON "
-		+ relationName + " ( ((oidsecondary>>32) & 65535::bigint) )";
+		return "CREATE INDEX " + relationName.toLowerCase() + "_secoid_class ON " + relationName
+				+ " ( ((oidsecondary>>32) & 65535::bigint) )";
 	}
 
 	@Override
 	public String getPrimaryClassRelationshipIndex(String relationName) {
-		return "CREATE INDEX " + relationName.toLowerCase()+ "_primoid_class ON "
-		+ relationName + " ( ((oidprimary>>32) & 65535::bigint) )";
+		return "CREATE INDEX " + relationName.toLowerCase() + "_primoid_class ON " + relationName
+				+ " ( ((oidprimary>>32) & 65535::bigint) )";
 	}
+
 	@Override
-	public String getPrimaryClassColumn(){
+	public String getPrimaryClassColumn() {
 		return "((oidprimary>>32) & 65535::bigint)";
 	}
+
 	@Override
-	public String getSecondaryClassColumn(){
+	public String getSecondaryClassColumn() {
 		return "((oidsecondary>>32) & 65535::bigint)";
 	}
 
 	@Override
-	public boolean tableExist(DatabaseConnection connection, String searched_table) throws Exception {
+	public boolean tableExist(DatabaseConnection connection, String searched_table)
+			throws Exception {
 		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables = dm.getTables(null, "public", null, null);
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
-			if (searched_table.equalsIgnoreCase(tableName.toLowerCase()) 
-					||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName.toLowerCase()))) {
+			if (searched_table.equalsIgnoreCase(tableName.toLowerCase())
+					|| searched_table.equalsIgnoreCase(getQuotedEntity(tableName.toLowerCase()))) {
 				rsTables.close();
 				return true;
 			}
@@ -427,10 +440,12 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table) throws Exception{
-		if( !tableExist(connection, searched_table)) {
+	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table)
+			throws Exception {
+		if (!tableExist(connection, searched_table)) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
+				Messenger
+						.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 			return null;
 		}
 		DatabaseMetaData dm = connection.getMetaData();
@@ -438,30 +453,38 @@ public class PostgresWrapper extends DbmsWrapper {
 		while (rsTables.next()) {
 			String tableName = rsTables.getString("TABLE_NAME");
 			if (searched_table.equalsIgnoreCase(tableName.toLowerCase())) {
-				return dm.getColumns(null, null, tableName,null);
+				return dm.getColumns(null, null, tableName, null);
 			}
 		}
 		rsTables.close();
 		return null;
 
-
 	}
 
 	@Override
-	public Map<String, String> getExistingIndex(DatabaseConnection connection, String searched_table) throws FatalException {
+	public
+			Map<String, String>
+			getExistingIndex(DatabaseConnection connection, String searched_table)
+					throws FatalException {
 		try {
-			if( !tableExist(connection, searched_table)) {
+			if (!tableExist(connection, searched_table)) {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
+					Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table
+							+ "> does not exist");
 				return null;
 			}
 			DatabaseMetaData dm = connection.getMetaData();
-			ResultSet resultat = dm.getIndexInfo(null, null, searched_table.toLowerCase(), false, false);
+			ResultSet resultat = dm.getIndexInfo(
+					null,
+					null,
+					searched_table.toLowerCase(),
+					false,
+					false);
 			HashMap<String, String> retour = new HashMap<String, String>();
 			while (resultat.next()) {
 				String col = resultat.getObject("COLUMN_NAME").toString();
 				String iname = resultat.getObject("INDEX_NAME").toString();
-				if( iname != null && col != null ) {
+				if (iname != null && col != null) {
 					retour.put(iname, col);
 				}
 			}
@@ -472,6 +495,7 @@ public class PostgresWrapper extends DbmsWrapper {
 			return null;
 		}
 	}
+
 	@Override
 	public String getExceptStatement(String key) {
 		return " EXCEPT ";
@@ -479,17 +503,16 @@ public class PostgresWrapper extends DbmsWrapper {
 
 	@Override
 	public String getDropIndexStatement(String table_name, String index_name) {
-		return "DROP INDEX " + index_name ;
+		return "DROP INDEX " + index_name;
 	}
 
 	@Override
-	public  String getCollectionTableName(String coll_name, int cat) throws FatalException {
+	public String getCollectionTableName(String coll_name, int cat) throws FatalException {
 		return coll_name + "_" + Category.explain(cat);
-	}	
-
+	}
 
 	@Override
-	public  String getGlobalAlias(String alias) {
+	public String getGlobalAlias(String alias) {
 		return "AS " + alias;
 	}
 
@@ -497,7 +520,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getEscapeQuote(java.lang.String)
 	 */
 	public String getEscapeQuote(String val) {
-		if( val != null ) {
+		if (val != null) {
 			return val.replaceAll("'", QUOTE_SEQUENCE);
 		} else {
 			return "";
@@ -506,59 +529,68 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public  String castToString(String token){
+	public String castToString(String token) {
 		return token + "::text";
 	}
+
 	@Override
 	public String getTempodbName(String dbname) {
 		return dbname;
 	}
+
 	@Override
-	public String getTempoTableName(String table_name) throws FatalException{
-		return  table_name;
+	public String getTempoTableName(String table_name) throws FatalException {
+		return table_name;
 	}
 
 	@Override
-	public String getCreateTempoTable(String table_name, String fmt) throws FatalException{
+	public String getCreateTempoTable(String table_name, String fmt) throws FatalException {
 		return "CREATE TEMPORARY TABLE " + table_name + " " + fmt + " ON COMMIT DROP";
 	}
 
 	@Override
-	public  String[] changeColumnType(DatabaseConnection connection, String table, String column, String type) {
-		return new String[]{"ALTER TABLE " + table + " ALTER COLUMN  " + column + " TYPE " + type};
+	public String[] changeColumnType(
+			DatabaseConnection connection,
+			String table,
+			String column,
+			String type) {
+		return new String[] { "ALTER TABLE " + table + " ALTER COLUMN  " + column + " TYPE " + type };
 
 	}
+
 	@Override
-	public  String[] addColumn(String table, String column, String type) {
-		return new String[]{"ALTER TABLE " + table + " ADD COLUMN  " + column + "  " + type};
+	public String[] addColumn(String table, String column, String type) {
+		return new String[] { "ALTER TABLE " + table + " ADD COLUMN  " + column + "  " + type };
 	}
+
 	@Override
-	public  String renameColumn(String table, String column, String newName) throws QueryException {
+	public String renameColumn(String table, String column, String newName) throws QueryException {
 		return "ALTER TABLE " + table + " RENAME COLUMN  " + column + " TO " + newName;
 	}
+
 	@Override
-	public String getDropTempoTable(String table_name) throws FatalException{
+	public String getDropTempoTable(String table_name) throws FatalException {
 		return "";
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#createCorner11_ra()
 	 */
-	public  String dropProcedure(String proc_name) {
+	public String dropProcedure(String proc_name) {
 		return "DROP FUNCTION " + proc_name;
-	}	
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinDelete(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public String getNullLeftJoinDelete(String leftTable, String leftKey, String rightTable, String rightKey) throws FatalException {		
-		return "DELETE FROM " + leftTable + " l"
-		+ " WHERE NOT EXISTS ("
-		+ " SELECT r." + rightKey + " FROM " + rightTable + " r " 
-		+ " WHERE r." + rightKey + " = l." + leftKey
-		+ ")";
+	public String getNullLeftJoinDelete(
+			String leftTable,
+			String leftKey,
+			String rightTable,
+			String rightKey) throws FatalException {
+		return "DELETE FROM " + leftTable + " l" + " WHERE NOT EXISTS (" + " SELECT r." + rightKey
+				+ " FROM " + rightTable + " r " + " WHERE r." + rightKey + " = l." + leftKey + ")";
 	}
-
 
 	/**
 	 * @throws Exception
@@ -566,8 +598,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	@Override
 	protected void installLanguage() throws Exception {
 		SQLTable.addQueryToTransaction("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
-				+ " RETURNS VOID \n"
-				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
+				+ " RETURNS VOID \n" + " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
 		SQLTable.commitTransaction();
 		SQLTable.beginTransaction();
 		/*
@@ -576,15 +607,9 @@ public class PostgresWrapper extends DbmsWrapper {
 		 * the admin privilege
 		 */
 		Statement _stmts = Database.getAdminConnection().getStatement();
-		_stmts.executeQuery("SELECT \n"
-				+ " CASE \n"
-				+ " WHEN EXISTS( \n"
-				+ "     SELECT 1 \n"
-				+ "     FROM pg_catalog.pg_language \n"
-				+ "    WHERE lanname='plpgsql' \n"
-				+ " ) \n"
-				+ " THEN NULL \n"
-				+ " ELSE make_plpgsql() END; \n");
+		_stmts.executeQuery("SELECT \n" + " CASE \n" + " WHEN EXISTS( \n" + "     SELECT 1 \n"
+				+ "     FROM pg_catalog.pg_language \n" + "    WHERE lanname='plpgsql' \n"
+				+ " ) \n" + " THEN NULL \n" + " ELSE make_plpgsql() END; \n");
 		Database.giveAdminConnection();
 		SQLTable.addQueryToTransaction("DROP FUNCTION make_plpgsql();");
 	}
@@ -593,21 +618,14 @@ public class PostgresWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#installLanguage(java.sql.Statement)
 	 */
 	protected void installLanguage(Statement stmt) throws Exception {
-		stmt.executeUpdate("CREATE OR REPLACE FUNCTION make_plpgsql() \n"
-				+ " RETURNS VOID \n"
+		stmt.executeUpdate("CREATE OR REPLACE FUNCTION make_plpgsql() \n" + " RETURNS VOID \n"
 				+ " 	AS $$ CREATE LANGUAGE plpgsql $$ LANGUAGE SQL;\n");
 		/* 
 		 * Cannot make a SELECT in an update statement
 		 */
-		stmt.execute("SELECT \n"
-				+ " CASE \n"
-				+ " WHEN EXISTS( \n"
-				+ "     SELECT 1 \n"
-				+ "     FROM pg_catalog.pg_language \n"
-				+ "    WHERE lanname='plpgsql' \n"
-				+ " ) \n"
-				+ " THEN NULL \n"
-				+ " ELSE make_plpgsql() END; \n");
+		stmt.execute("SELECT \n" + " CASE \n" + " WHEN EXISTS( \n" + "     SELECT 1 \n"
+				+ "     FROM pg_catalog.pg_language \n" + "    WHERE lanname='plpgsql' \n"
+				+ " ) \n" + " THEN NULL \n" + " ELSE make_plpgsql() END; \n");
 		stmt.executeUpdate("DROP FUNCTION make_plpgsql();");
 	}
 
@@ -616,56 +634,37 @@ public class PostgresWrapper extends DbmsWrapper {
 	 */
 	@Override
 	protected File getProcBaseRef() throws Exception {
-		String base_dir = System.getProperty("user.home") 
-		+ Database.getSepar() 
-		+ "Documents" 
-		+ Database.getSepar() 
-		+ "workspace" 
-		+ Database.getSepar() 
-		+ "SaadaObscore"
-		+ Database.getSepar() 
-		+ "sqlprocs" 
-		+ Database.getSepar() 
-		+ "postgresql" ;
+		String base_dir = System.getProperty("user.home") + Database.getSepar() + "Documents"
+				+ Database.getSepar() + "workspace" + Database.getSepar() + "SaadaObscore"
+				+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "postgresql";
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-		File bf = new File(base_dir) ;
+		File bf = new File(base_dir);
 		/*
 		 * Try first to look in the ECLIPSE workspace for dev. convenience
 		 */
-		if( !(bf.exists() && bf.isDirectory()) ) {
-			base_dir = Database.getRoot_dir()
-			+ Database.getSepar() 
-			+ "sqlprocs" 
-			+ Database.getSepar() 
-			+ "postgresql" ;
+		if (!(bf.exists() && bf.isDirectory())) {
+			base_dir = Database.getRoot_dir() + Database.getSepar() + "sqlprocs"
+					+ Database.getSepar() + "postgresql";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-			bf = new File(base_dir) ;
-			if( !(bf.exists() && bf.isDirectory()) ) {
-				base_dir = NewSaadaDB.SAADA_HOME
-				+ Database.getSepar() 
-				+ "dbtemplate" 
-				+ Database.getSepar() 
-				+ "sqlprocs" 
-				+ Database.getSepar() 
-				+ "postgresql" ;
+			bf = new File(base_dir);
+			if (!(bf.exists() && bf.isDirectory())) {
+				base_dir = NewSaadaDB.SAADA_HOME + Database.getSepar() + "dbtemplate"
+						+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "postgresql";
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-				bf = new File(base_dir) ;
-				if( !(bf.exists() && bf.isDirectory()) ) {		
-					base_dir = NewSaadaDBTool.saada_home
-					+ Database.getSepar() 
-					+ "dbtemplate" 
-					+ Database.getSepar() 
-					+ "sqlprocs" 
-					+ Database.getSepar() 
-					+ "postgresql" ;
+				bf = new File(base_dir);
+				if (!(bf.exists() && bf.isDirectory())) {
+					base_dir = NewSaadaDBTool.saada_home + Database.getSepar() + "dbtemplate"
+							+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "postgresql";
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-					bf = new File(base_dir) ;
-					if( !(bf.exists() && bf.isDirectory()) ) {		
-						FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can not access SQL procedure directory " + bf.getAbsolutePath());
+					bf = new File(base_dir);
+					if (!(bf.exists() && bf.isDirectory())) {
+						FatalException.throwNewException(
+								SaadaException.FILE_ACCESS,
+								"Can not access SQL procedure directory " + bf.getAbsolutePath());
 					}
 				}
 			}
@@ -679,12 +678,14 @@ public class PostgresWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getConditionHelp()
 	 */
-	public Map<String, String> getConditionHelp(){
+	public Map<String, String> getConditionHelp() {
 		Map<String, String> helpItems = new LinkedHashMap<String, String>();
 		helpItems.put("- Join Operator Templates -", "");
-		helpItems.put("Partial comparison of names", "substr(p.obs_id, 1, 5) = substr(s.obs_id, 1, 5) ");
-		helpItems.put("Row number equality"        , "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
-		helpItems.put("Regular expression op", "p.obs_id " + this.getRegexpOp() + " 'RegExp'");
+		helpItems.put(
+				"Partial comparison of names",
+				"substr(p.namesaada, 1, 5) = substr(s.namesaada, 1, 5) ");
+		helpItems.put("Row number equality", "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
+		helpItems.put("Regular expression op", "p.namesaada " + this.getRegexpOp() + " 'RegExp'");
 		helpItems.put("Same sky pixel", "p.sky_pixel_csa = s.sky_pixel_csa");
 		return helpItems;
 	}
@@ -693,15 +694,50 @@ public class PostgresWrapper extends DbmsWrapper {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Messenger.debug_mode = true;
-			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("localhost", "5432"); 
+			DbmsWrapper dbmswrapper = PostgresWrapper.getWrapper("localhost", "5432");
 			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
-		//	dbmswrapper.checkAdminPrivileges("/tmp", false);
+			// dbmswrapper.checkAdminPrivileges("/tmp", false);
 			dbmswrapper.checkAdminPrivileges(false);
 			dbmswrapper.setReaderAuth("reader", "");
 			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			System.err.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getDBTypeFromVOTableType(
+			String datatype,
+			int arraySize,
+			int NO_SIZE,
+			int STAR_SIZE) {
+		datatype = (datatype == null) ? null : datatype.trim().toLowerCase();
+
+		if (datatype == null || datatype.isEmpty()) {
+			return "VARCHAR";
+		}
+
+		if (datatype.equals("short"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT2" : "BYTEA";
+		else if (datatype.equals("int"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT4" : "BYTEA";
+		else if (datatype.equals("long"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT8" : "BYTEA";
+		else if (datatype.equals("float"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "FLOAT4" : "BYTEA";
+		else if (datatype.equals("double"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "FLOAT8" : "BYTEA";
+		else if (datatype.equals("boolean"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "BOOL" : "BYTEA";
+		else if (datatype.equals("char"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "CHAR(1)"
+					: ((arraySize == STAR_SIZE) ? "VARCHAR" : ("VARCHAR(" + arraySize + ")"));
+		else if (datatype.equals("unsignedbyte"))
+			return "BYTEA";
+		else {
+			Messenger.printMsg(Messenger.WARNING, "Unknown datatype '" + datatype + "'");
+			return datatype;
 		}
 	}
 }

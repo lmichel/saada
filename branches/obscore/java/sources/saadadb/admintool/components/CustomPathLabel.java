@@ -6,10 +6,8 @@ import java.awt.Panel;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.util.Messenger;
 
 public class CustomPathLabel extends Panel 
 {

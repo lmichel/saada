@@ -3,7 +3,6 @@ package saadadb.resourcetest;
 import saadadb.collection.Category;
 import saadadb.collection.ProductManager;
 import saadadb.command.ArgsParser;
-import saadadb.command.ManageRelation;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -11,7 +10,6 @@ import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.AntTarget;
 import saadadb.util.DataGenerator;
-import saadadb.util.Messenger;
 
 public class RemoveTester {
 

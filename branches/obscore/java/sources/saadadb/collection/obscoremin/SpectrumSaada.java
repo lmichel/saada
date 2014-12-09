@@ -7,7 +7,6 @@ package saadadb.collection.obscoremin;
 * @author NGUYEN Ngoc Hoan
 * @version 1.0
 */
-import saadadb.util.SaadaConstant;
 
 public class SpectrumSaada extends FileRef{
 	/*

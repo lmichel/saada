@@ -20,7 +20,6 @@ import saadadb.admintool.components.input.StringInput;
 import saadadb.admintool.panels.EditPanel;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
-import saadadb.admintool.utils.WebsiteChecker;
 import saadadb.database.Database;
 import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
@@ -28,7 +27,6 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
-import saadadb.util.Messenger;
 
 
 /**

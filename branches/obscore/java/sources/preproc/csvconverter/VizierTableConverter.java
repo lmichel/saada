@@ -15,7 +15,6 @@ import cds.savot.model.SavotTD;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
-
 /**
  * Convert an CSV Vizier ASACII table into a VOTable
  * ASCII file format should look like that

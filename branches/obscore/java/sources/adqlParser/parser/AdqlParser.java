@@ -438,44 +438,53 @@ public class AdqlParser implements AdqlParserConstants {
 	 * @throws Exception
 	 */
 	public static final void main(String[] args) throws Exception {
-		final String USAGE = "Usage:\u005cn\u005ctAdqlParser [-debug] -url http://...\u005cn\u005ctAdqlParser [-debug] -file /home/...\u005cn\u005ctAdqlParser [-debug] -query\u005cnIMPORTANT: the query must be finished by a ; !";
-
-		AdqlParser parser;
-		int indParam = 0;
-		boolean debug = false;
-
-		// debug ?
-				if (args.length > 0 && args[indParam].equalsIgnoreCase("-debug")){
-					debug = true;
-					indParam++;
-				}
-
-				// Parameters reading:
-				if (args.length == indParam+1 && args[indParam].equalsIgnoreCase("-query"))
-					parser = new AdqlParser(System.in);
-				else if (args.length < indParam+2){
-					System.err.println("Parameters missing !\u005cn"+USAGE);
-					return;
-				}else{
-					if (args[indParam].equalsIgnoreCase("-url"))
-						parser = new AdqlParser((new java.net.URL(args[indParam+1])).openStream());
-					else if (args[indParam].equalsIgnoreCase("-file"))
-						parser = new AdqlParser(new FileReader(args[indParam+1]));
-					else{
-						System.err.println("Wrong parameters !\u005cn"+USAGE);
-						return;
-					}
-				}
-
-				// Query parsing:
-				try{
-					parser.setDebug(debug);
-					ADQLQuery q = parser.parseQuery();
-					System.out.println("\u005cn### CORRECT SYNTAX ###\u005cn");
-					System.out.println("### SQL translation ###\u005cn"+q.toSQL()+"\u005cn#######################");
-				}catch(ParseException pe){
-					System.err.println("### BAD SYNTAX ###\u005cn"+pe.getMessage());
-				}
+//		final String USAGE = "Usage:\u005cn\u005ctAdqlParser [-debug] -url http://...\u005cn\u005ctAdqlParser [-debug] -file /home/...\u005cn\u005ctAdqlParser [-debug] -query\u005cnIMPORTANT: the query must be finished by a ; !";
+//
+//		AdqlParser parser;
+//		int indParam = 0;
+//		boolean debug = false;
+//
+//		// debug ?
+//				if (args.length > 0 && args[indParam].equalsIgnoreCase("-debug")){
+//					debug = true;
+//					indParam++;
+//				}
+//
+//				// Parameters reading:
+//				if (args.length == indParam+1 && args[indParam].equalsIgnoreCase("-query"))
+//					parser = new AdqlParser(System.in);
+//				else if (args.length < indParam+2){
+//					System.err.println("Parameters missing !\u005cn"+USAGE);
+//					return;
+//				}else{
+//					if (args[indParam].equalsIgnoreCase("-url"))
+//						parser = new AdqlParser((new java.net.URL(args[indParam+1])).openStream());
+//					else if (args[indParam].equalsIgnoreCase("-file"))
+//						parser = new AdqlParser(new FileReader(args[indParam+1]));
+//					else{
+//						System.err.println("Wrong parameters !\u005cn"+USAGE);
+//						return;
+//					}
+//				}
+//
+//				// Query parsing:
+//				try{
+//					parser.setDebug(debug);
+//					ADQLQuery q = parser.parseQuery();
+//					System.out.println("\u005cn### CORRECT SYNTAX ###\u005cn");
+//					System.out.println("### SQL translation ###\u005cn"+q.toSQL()+"\u005cn#######################");
+//				}catch(ParseException pe){
+//					System.err.println("### BAD SYNTAX ###\u005cn"+pe.getMessage());
+//				}
+		Database.init("saadaObscore");
+		String query = "SELECT * FROM tap_schema.truc.test WHERE CONTAINS(POINT('ICRS', ra, dec), CIRCLE('ICRS', 13, 2, 10)) = 1";
+	AdqlParser parser = new AdqlParser();
+	parser.setDebug(false);
+ADQLQuery adqlQuery = parser.parseQuery(query);
+String result = adqlQuery.toSQL(new SQLTranslator());
+System.out.println(result);
+	Database.close();
+	
 	}
 
 	/* ########## */
@@ -1027,17 +1036,24 @@ public class AdqlParser implements AdqlParserConstants {
 		trace_call("TableName");
 		try {
 			String table="";
+			
 			table = Identifier();
+			System.out.println("#TableName#1 table"+table);
 			switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
 			case DOT:
 				jj_consume_token(DOT);
 				//table = Identifier();
+				//TODO Patch created to allow the parser to work with Saada
 				String id = Identifier();
+				System.out.println("#TableName#1 id "+id);
 				if( Database.getCachemeta().collectionExists(table) || table.equalsIgnoreCase("ivoa")|| table.equalsIgnoreCase("tap_schema")) {
 					table = id; 
+					System.out.println("#TableName#1 patch new table "+table);
 				} else {
 					table += "."+id;
+					System.out.println("#TableName#1 new table "+table);
 				}
+				//\\//
 				break;
 			default:
 				jj_la1[25] = jj_gen;
@@ -1047,12 +1063,17 @@ public class AdqlParser implements AdqlParserConstants {
 			case DOT:
 				jj_consume_token(DOT);
 				//table = Identifier();
+				//TODO Patch created to allow the parser to work with Saada
 				String id = Identifier();
+				System.out.println("#TableName#2 id "+id);
 				if( Database.getCachemeta().collectionExists(table) || table.equalsIgnoreCase("ivoa")|| table.equalsIgnoreCase("tap_schema")) {
 					table = id; 
+					System.out.println("#TableName#2 patch table "+table);
 				} else {
 					table += "."+id;
+					System.out.println("#Tablename#2 new table "+table);
 				}
+				//\\//
 				break;
 			default:
 				jj_la1[26] = jj_gen;
@@ -1070,14 +1091,18 @@ public class AdqlParser implements AdqlParserConstants {
 		try {
 			String col1="", col2 = null;
 			col1 = Identifier();
+			System.out.println("#ColumnReference col1 "+col1);
 			switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
 			case DOT:
 				jj_consume_token(DOT);
 				col2 = TableName();
+				System.out.println("#ColumnReference col2 "+col2);
 				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa")) {
 					col1 = col2; 
+					System.out.println("#ColumnReference Patch : new col 1 "+col1);
 				} else {
 					col1 += "."+col2;
+					System.out.println("#ColumnReference new col1 "+col1);
 				}
 				//@@@@@@@@@@@@@ col1 += "."+col2;
 				//col1 = col2;

@@ -21,7 +21,6 @@ import saadadb.admintool.components.RunTaskButton;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.input.FreeTextField;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;

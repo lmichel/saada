@@ -3,10 +3,7 @@ package saadadb.vo.request.query;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
@@ -91,7 +88,8 @@ public class AdqlQuery extends VOQuery {
 //		try {
 			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
 			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryString).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
-			parse.enable_tracing();
+			//parse.enable_tracing();
+			parse.disable_tracing();
 			adqlQuery = (SaadaADQLQuery)parse.Query();
 			
 //			if (adqlQuery.getLimit() > -1)

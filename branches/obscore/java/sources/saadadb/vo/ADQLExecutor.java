@@ -1,8 +1,6 @@
 package saadadb.vo;
 
 import java.io.ByteArrayInputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;

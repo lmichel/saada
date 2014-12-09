@@ -7,7 +7,6 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.voresources.VOServiceItemSelector;
 import saadadb.admintool.panels.AdminPanel;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;

@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.components.ToolBarPanel;
 import saadadb.admintool.components.VOResourceChooser;
 import saadadb.admintool.panels.EditPanel;

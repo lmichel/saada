@@ -18,7 +18,6 @@ import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
-import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
 
 

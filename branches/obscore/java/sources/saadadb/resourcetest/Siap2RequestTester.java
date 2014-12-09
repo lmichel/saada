@@ -7,7 +7,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.vo.request.SIAP2Request;
-import saadadb.vo.request.SIAPRequest;
 
 /**
  * Run a SIAP quey

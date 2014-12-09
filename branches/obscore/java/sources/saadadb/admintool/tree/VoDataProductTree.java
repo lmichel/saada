@@ -14,7 +14,6 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +25,9 @@ import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.collection.Category;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.FitsDataFile;
-import saadadb.products.datafile.VOTableDataFile;
+import saadadb.products.DataFile;
+import saadadb.products.FitsDataFile;
+import saadadb.products.VOTableDataFile;
 import saadadb.vocabulary.RegExp;
 
 /**

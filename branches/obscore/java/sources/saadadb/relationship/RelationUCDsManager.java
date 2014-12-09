@@ -13,8 +13,8 @@ import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.parser.UnitHandler;
+import saadadb.unit.Unit;
 import saadadb.util.Messenger;
-import cds.astro.Unit;
 
 /**
  * @author laurentmichel

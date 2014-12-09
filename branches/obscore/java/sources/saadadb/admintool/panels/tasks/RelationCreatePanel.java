@@ -37,7 +37,6 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.sqltable.SQLTable;
-import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 
 /** * @version $Id$

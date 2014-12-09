@@ -2,25 +2,14 @@ package saadadb.vo.request.formator.votable;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import saadadb.collection.Category;
-import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.collection.obscoremin.SpectrumSaada;
-import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaCollection;
-import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.query.result.SaadaInstanceResultSet;
-import saadadb.util.DateUtils;
-import saadadb.util.Messenger;
-import cds.savot.binary.DataBinaryReader;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;

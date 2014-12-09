@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hecds.wcs.descriptors.CardDescriptor;
-import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
-import saadadb.meta.AttributeHandler;
 import saadadb.products.datafile.DataFile;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;

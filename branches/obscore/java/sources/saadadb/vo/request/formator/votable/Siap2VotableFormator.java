@@ -1,23 +1,12 @@
 package saadadb.vo.request.formator.votable;
 
-import java.io.File;
-import java.util.Date;
-
-import saadadb.collection.Category;
 import saadadb.collection.obscoremin.ImageSaada;
-import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
-import saadadb.database.Repository;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
-import saadadb.util.ImageUtils;
-import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
-import cds.savot.model.InfoSet;
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
-import cds.savot.model.SavotField;
 import cds.savot.model.SavotOption;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotValues;

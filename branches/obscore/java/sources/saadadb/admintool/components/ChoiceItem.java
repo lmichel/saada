@@ -17,7 +17,6 @@ import javax.swing.border.EmptyBorder;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.utils.RGBGrayFilter;
-import saadadb.util.Messenger;
 
 /**
  * @author laurent

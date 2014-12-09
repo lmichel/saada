@@ -1,6 +1,5 @@
 package preproc.xid;
 
-import java.sql.PreparedStatement;
 import java.util.Date;
 
 import saadadb.collection.obscoremin.EntrySaada;

@@ -5,7 +5,6 @@ package saadadb.query.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.OrderByConstraint;

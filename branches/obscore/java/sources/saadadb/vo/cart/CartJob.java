@@ -14,7 +14,6 @@ import saadadb.util.WorkDirectory;
 import saadadb.vo.request.CartRequest;
 import uws.UWSException;
 import uws.UWSToolBox;
-import uws.job.AbstractJob;
 import uws.job.ErrorType;
 import uws.job.Result;
 import ajaxservlet.accounting.UserAccount;

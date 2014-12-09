@@ -304,7 +304,7 @@ public class AhValueFinder {
 			}
 		}
 		if (cUcd.equalsIgnoreCase("STC_CoordEquinox")) {
-			return String.valueOf(Database.getAstroframe().getEpoch());
+			return String.valueOf(Database.getAstroframe().epoch);
 		}
 		if (cUcd.equalsIgnoreCase("WCS_CoordProjection")) {
 			String val;

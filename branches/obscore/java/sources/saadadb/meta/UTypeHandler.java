@@ -3,7 +3,6 @@ package saadadb.meta;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Vector;
 
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;

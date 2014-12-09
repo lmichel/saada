@@ -1,7 +1,6 @@
 package saadadb.sqltable;
 
 import java.sql.ResultSet;
-import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;

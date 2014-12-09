@@ -63,6 +63,7 @@ package saadadb.products.inference;
 //Pour toute autre utilisation contactez le titulaire des droits.
 //
 
+
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -75,7 +76,6 @@ import cds.astro.FK4;
 import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
-
 /** * @version $Id$
 
  * Manipulation des coordonnees

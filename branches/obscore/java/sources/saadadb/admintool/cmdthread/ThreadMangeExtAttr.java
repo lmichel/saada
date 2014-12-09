@@ -6,16 +6,11 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.swing.JTree;
 import javax.swing.SwingUtilities;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.utils.AntDesk;
-import saadadb.admintool.utils.DataTreePath;
-import saadadb.collection.CollectionManager;
 import saadadb.command.ArgsParser;
 import saadadb.configuration.ExtendAttributeManager;
 import saadadb.database.Database;
@@ -23,7 +18,6 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.RegExp;
 
 public class ThreadMangeExtAttr extends CmdThread {
 	protected String command;

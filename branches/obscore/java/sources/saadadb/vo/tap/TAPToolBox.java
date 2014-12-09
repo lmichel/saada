@@ -1,6 +1,5 @@
 package saadadb.vo.tap;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,12 +26,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
-import saadadb.vo.ADQLExecutor;
-import saadadb.vo.SaadaQLExecutor;
-import saadadb.vo.request.formator.json.TapAdqlJsonFormator;
-import saadadb.vo.request.formator.votable.TapAdqlVotableFormator;
 import saadadb.vo.request.TapAdqlRequest;
-import uws.job.AbstractJob;
 
 /**
  * This class gathers some useful functions to build a TAP service.<BR />

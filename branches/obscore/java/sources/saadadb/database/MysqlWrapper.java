@@ -1,6 +1,5 @@
 package saadadb.database;
 
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -48,18 +47,17 @@ public class MysqlWrapper extends DbmsWrapper {
 		super(false);
 		test_base = "testbasededonnees";
 		test_table = "TableTest";
-		if( server_or_driver.startsWith("com.mysql.jdbc.Driver") ) {
+		if (server_or_driver.startsWith("com.mysql.jdbc.Driver")) {
 			this.driver = server_or_driver;
 			this.url = port_or_url;
 
-		}
-		else {
+		} else {
 			driver = "com.mysql.jdbc.Driver";
 			url = "jdbc:mysql:";
 			Class.forName(driver);
-			if( server_or_driver != null && server_or_driver.length() > 0 ) {
-				url += "//" + server_or_driver ;
-				if( port_or_url != null && port_or_url.length() > 0 ) {
+			if (server_or_driver != null && server_or_driver.length() > 0) {
+				url += "//" + server_or_driver;
+				if (port_or_url != null && port_or_url.length() > 0) {
 					url += ":" + port_or_url;
 				}
 				url += "/";
@@ -70,52 +68,67 @@ public class MysqlWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getDBMS()
 	 */
-	public String getDBMS(){
+	public String getDBMS() {
 		return "MySQL";
 	}
 
-	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url) throws ClassNotFoundException {
-		if( wrapper != null ) {
-			return wrapper; 
+	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url)
+			throws ClassNotFoundException {
+		if (wrapper != null) {
+			return wrapper;
 		}
 		return new MysqlWrapper(server_or_url, port_or_url);
 	}
-
 
 	@Override
 	public void createDB(String dbname) throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Create database <" + dbname + "> at " + url);
 
-		Connection admin_connection = getConnection(url +"mysql", admin.getName(), admin.getPassword());
-		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+		Connection admin_connection = getConnection(
+				url + "mysql",
+				admin.getName(),
+				admin.getPassword());
+		Statement stmt = admin_connection.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_UPDATABLE);
 		try {
-			stmt.executeUpdate("CREATE DATABASE " + dbname );
-			if( reader != null && !reader.getName().equals(admin.getName()))  {
-				Messenger.printMsg(Messenger.TRACE, "Grant select for " +  reader.getName() + "@localhost" );
-				stmt.executeUpdate("grant select on " +  dbname + ".* to " + reader.getName() + "@localhost" );
+			stmt.executeUpdate("CREATE DATABASE " + dbname);
+			if (reader != null && !reader.getName().equals(admin.getName())) {
+				Messenger.printMsg(Messenger.TRACE, "Grant select for " + reader.getName()
+						+ "@localhost");
+				stmt.executeUpdate("grant select on " + dbname + ".* to " + reader.getName()
+						+ "@localhost");
 			}
 			/*
 			 * A second DB must be created in order to allow the reader to use temporary table without
 			 * risk of database alteration
 			 * http://dev.mysql.com/doc/refman/5.0/en/privileges-provided.html
 			 */
-			stmt.executeUpdate("CREATE DATABASE " + getTempodbName(dbname) );
-			if( reader != null && !reader.getName().equals(admin.getName()))  {
-				stmt.executeUpdate("grant SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, LOCK TABLES on " +  getTempodbName(dbname) + ".* to " + reader.getName()+ "@localhost" );
+			stmt.executeUpdate("CREATE DATABASE " + getTempodbName(dbname));
+			if (reader != null && !reader.getName().equals(admin.getName())) {
+				stmt
+						.executeUpdate("grant SELECT, INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, LOCK TABLES on "
+								+ getTempodbName(dbname)
+								+ ".* to "
+								+ reader.getName()
+								+ "@localhost");
 			}
 			admin_connection.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			Messenger.printStackTrace(e);
-			if( admin_connection != null )
+			if (admin_connection != null)
 				admin_connection.close();
-			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage()) ;
+			FatalException.throwNewException(SaadaException.DB_ERROR, e.getMessage());
 		}
 	}
 
 	@Override
 	public boolean dbExists(String repository, String dbname) {
 		try {
-			Connection admin_connection = DriverManager.getConnection(url + dbname, admin.getName(), admin.getPassword());
+			Connection admin_connection = DriverManager.getConnection(
+					url + dbname,
+					admin.getName(),
+					admin.getPassword());
 			admin_connection.close();
 		} catch (SQLException e) {
 			return false;
@@ -126,19 +139,22 @@ public class MysqlWrapper extends DbmsWrapper {
 	@Override
 	public void dropDB(String repository, String dbname) throws SQLException {
 		Messenger.printMsg(Messenger.TRACE, "Remove database <" + dbname + ">");
-		Connection admin_connection = DriverManager.getConnection(url +"mysql", admin.getName(), admin.getPassword());
-		Statement stmt = admin_connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE)	;
+		Connection admin_connection = DriverManager.getConnection(
+				url + "mysql",
+				admin.getName(),
+				admin.getPassword());
+		Statement stmt = admin_connection.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE,
+				ResultSet.CONCUR_UPDATABLE);
 		try {
 			stmt.executeUpdate("DROP DATABASE " + dbname + "");
 			stmt.executeUpdate("DROP DATABASE " + getTempodbName(dbname) + "");
 			admin_connection.close();
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			admin_connection.close();
 			throw new SQLException(e.getMessage());
 		}
 	}
-
-
 
 	@Override
 	public void cleanUp() throws SQLException {
@@ -154,17 +170,15 @@ public class MysqlWrapper extends DbmsWrapper {
 		return "?autoReconnect=true";
 	}
 
-
 	@Override
 	public String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
-		return  new String[] {
-				//"LOCK TABLE " + table_name + " WRITE",
+		return new String[] {
+				// "LOCK TABLE " + table_name + " WRITE",
 				"ALTER TABLE " + table_name + " DISABLE KEYS",
-				"LOAD DATA INFILE '" + table_file.replaceAll("\\\\", "\\\\\\\\") + "' INTO TABLE "  +  table_name,
-				"ALTER TABLE " + table_name + " ENABLE KEYS"};
+				"LOAD DATA INFILE '" + table_file.replaceAll("\\\\", "\\\\\\\\") + "' INTO TABLE "
+						+ table_name, "ALTER TABLE " + table_name + " ENABLE KEYS" };
 
 	}
-
 
 	@Override
 	public String abortTransaction() {
@@ -173,31 +187,32 @@ public class MysqlWrapper extends DbmsWrapper {
 
 	@Override
 	public String lockTable(String table) {
-		//return "LOCK TABLE " + table + " WRITE";
+		// return "LOCK TABLE " + table + " WRITE";
 		return "";
 	}
+
 	@Override
 	public String grantSelectToPublic(String table_name) {
 		/*
 		 * MySQL does not support grant to public before 5.2
 		 */
-		if( this.reader != null ) {
+		if (this.reader != null) {
 			return "GRANT select ON TABLE " + table_name + " TO '" + this.reader.getName() + "'";
-		}
-		else {
+		} else {
 			return "";
 		}
 	}
+
 	@Override
 	public String lockTables(String[] write_table, String[] read_table) throws Exception {
 		String wt = "";
-		if(write_table != null ) {
-			for( int i=0 ; i<write_table.length ; i++) {
+		if (write_table != null) {
+			for (int i = 0; i < write_table.length; i++) {
 				String tn = write_table[i].trim();
-				if( tn.length() == 0 /*||  can be an alias !tableExist(tn) */ ) {
+				if (tn.length() == 0 /*||  can be an alias !tableExist(tn) */) {
 					continue;
 				}
-				if( i > 0 ) {
+				if (i > 0) {
 					wt += ", ";
 				}
 				wt += tn + " WRITE";
@@ -205,30 +220,30 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 
 		String rt = "";
-		if(read_table != null ) {
-			for( int i=0 ; i<read_table.length ; i++) {
+		if (read_table != null) {
+			for (int i = 0; i < read_table.length; i++) {
 				String tn = read_table[i].trim();
-				if( tn.length() == 0 /* can be an alias || !tableExist(tn) */) {
+				if (tn.length() == 0 /* can be an alias || !tableExist(tn) */) {
 					continue;
 				}
-				if( i > 0 ) {
+				if (i > 0) {
 					rt += ", ";
 				}
 				rt += tn + " READ";
 			}
 		}
-		//		if( wt.length() > 0 && rt.length() > 0) {
-		//			return "LOCK TABLES " + wt + ",  " + rt ;
-		//		}
-		//		else if( wt.length() > 0 && rt.length() == 0) {
-		//			return "LOCK TABLES " + wt;
-		//		}
-		//		else if( wt.length() == 0 && rt.length() > 0) {
-		//			return "LOCK TABLES " + rt;
-		//		}
-		//		else {
-		//			return "";
-		//		}
+		// if( wt.length() > 0 && rt.length() > 0) {
+		// return "LOCK TABLES " + wt + ",  " + rt ;
+		// }
+		// else if( wt.length() > 0 && rt.length() == 0) {
+		// return "LOCK TABLES " + wt;
+		// }
+		// else if( wt.length() == 0 && rt.length() > 0) {
+		// return "LOCK TABLES " + rt;
+		// }
+		// else {
+		// return "";
+		// }
 		return "";
 	}
 
@@ -251,11 +266,10 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getBooleanValue(boolean)
 	 */
 	@Override
-	public  String getBooleanAsString(boolean val){
-		if( val ) {
+	public String getBooleanAsString(boolean val) {
+		if (val) {
 			return "1";
-		}
-		else {
+		} else {
 			return "0";
 		}
 	}
@@ -264,10 +278,9 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getBooleanValue(java.lang.Object)
 	 */
 	public boolean getBooleanValue(Object rsval) {
-		if( "1".equalsIgnoreCase(rsval.toString()) ) {
+		if ("1".equalsIgnoreCase(rsval.toString())) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -276,118 +289,112 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getUpdateWithJoin(java.lang.String, java.lang.String, java.lang.String, java.lang.String[], java.lang.String[], java.lang.String)
 	 */
 	@Override
-	public String getUpdateWithJoin(String table_to_update, String table_to_join, String join_criteria, String key_alias, String[] keys, String[] values, String select_criteria) {
-		String set_to_update  = "";
+	public String getUpdateWithJoin(
+			String table_to_update,
+			String table_to_join,
+			String join_criteria,
+			String key_alias,
+			String[] keys,
+			String[] values,
+			String select_criteria) {
+		String set_to_update = "";
 		String ka = "";
-		if( key_alias != null && key_alias.length() > 0 ) {
+		if (key_alias != null && key_alias.length() > 0) {
 			ka = key_alias + ".";
 		}
-		for( int i=0 ; i<keys.length ; i++ ) {
-			if( i > 0 ) {
+		for (int i = 0; i < keys.length; i++) {
+			if (i > 0) {
 				set_to_update += ", ";
 			}
 			set_to_update += ka + keys[i] + " = " + values[i];
 		}
-		//e.g.: "UPDATE saada_metacoll_table  JOIN saada_metacoll_table as a ON a.name_coll = saada_metacoll_table.name_coll  SET saada_metacoll_table.ass_error = a.pk  WHERE a.name_attr = 'error_ra_csa'    AND saada_metacoll_table.name_attr = 'pos_ra_csa';
-		return "UPDATE " + table_to_update + "  JOIN " +  table_to_join + " ON " + join_criteria  + " SET " + set_to_update  + " WHERE " + select_criteria;
+		// e.g.: "UPDATE saada_metacoll_table JOIN saada_metacoll_table as a ON a.name_coll = saada_metacoll_table.name_coll SET
+		// saada_metacoll_table.ass_error = a.pk WHERE a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 'pos_ra_csa';
+		return "UPDATE " + table_to_update + "  JOIN " + table_to_join + " ON " + join_criteria
+				+ " SET " + set_to_update + " WHERE " + select_criteria;
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getSQLTypeFromJava(java.lang.String)
 	 */
 	@Override
-	public String getSQLTypeFromJava( String typeJava) throws FatalException {
-		if(typeJava.equals("short")){
+	public String getSQLTypeFromJava(String typeJava) throws FatalException {
+		if (typeJava.equals("short")) {
 			return "int2";
-		}
-		else if(typeJava.equals("class java.lang.Long") || typeJava.equals("long")){
+		} else if (typeJava.equals("class java.lang.Long") || typeJava.equals("long")) {
 			return "int8";
-		}
-		else if(typeJava.equals("class java.lang.Integer") || typeJava.equals("int")){
+		} else if (typeJava.equals("class java.lang.Integer") || typeJava.equals("int")) {
 			return "int4";
-		}
-		else if(typeJava.equals("class java.lang.Byte")){
+		} else if (typeJava.equals("class java.lang.Byte")) {
 			return "smallint";
-		}
-		else if(typeJava.equals("class java.lang.Character")){
+		} else if (typeJava.equals("class java.lang.Character")) {
 			return "Character";
-		}
-		else if(typeJava.equals("char")){
+		} else if (typeJava.equals("char")) {
 			return "character(1)";
-		}
-		else if(typeJava.equals("boolean")){
+		} else if (typeJava.equals("boolean")) {
 			return "boolean";
-		}
-		else if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
+		} else if (typeJava.equals("class java.lang.Double") || typeJava.equals("double")) {
 			return "double precision";
-		}
-		else if(typeJava.indexOf("String")>=0){
+		} else if (typeJava.indexOf("String") >= 0) {
 			return "varchar(255)";
-		}
-		else if(typeJava.indexOf("Date")>=0){
+		} else if (typeJava.indexOf("Date") >= 0) {
 			return "date";
-		}
-		else if(typeJava.equals("float")){
+		} else if (typeJava.equals("float")) {
 			return "float4";
-		}
-		else if(typeJava.equals("byte") || typeJava.equals("class java.lang.Float")){
+		} else if (typeJava.equals("byte") || typeJava.equals("class java.lang.Float")) {
 			return "smallint";
 		}
-		FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeJava + " JAVA type");
-		return "";    	
+		FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert "
+				+ typeJava + " JAVA type");
+		return "";
 	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getSQLTypeFromJava(java.lang.String)
 	 */
 	@Override
-	public String getJavaTypeFromSQL( String typeSQL) throws FatalException {
-		if(typeSQL.equalsIgnoreCase("smallint") || typeSQL.equalsIgnoreCase("int2")){
+	public String getJavaTypeFromSQL(String typeSQL) throws FatalException {
+		if (typeSQL.equalsIgnoreCase("smallint") || typeSQL.equalsIgnoreCase("int2")) {
 			return "short";
-		}
-		else if(typeSQL.equalsIgnoreCase("int8") || typeSQL.equalsIgnoreCase("bigint")){
+		} else if (typeSQL.equalsIgnoreCase("int8") || typeSQL.equalsIgnoreCase("bigint")) {
 			return "long";
-		}
-		else if(typeSQL.equalsIgnoreCase("int")|| typeSQL.equalsIgnoreCase("int4")){
+		} else if (typeSQL.equalsIgnoreCase("int") || typeSQL.equalsIgnoreCase("int4")) {
 			return "int";
 		}
 		/*
 		 * Mysql stores boolean as bytes: can be confusing but no workaround yet
 		 */
-		else if(typeSQL.equalsIgnoreCase("tinyint")){
+		else if (typeSQL.equalsIgnoreCase("tinyint")) {
 			return "boolean";
-		}
-		else if(typeSQL.equalsIgnoreCase("char")|| typeSQL.equalsIgnoreCase("character")|| typeSQL.equalsIgnoreCase("character(1)")){
+		} else if (typeSQL.equalsIgnoreCase("char") || typeSQL.equalsIgnoreCase("character")
+				|| typeSQL.equalsIgnoreCase("character(1)")) {
 			return "char";
-		}
-		else if(typeSQL.equalsIgnoreCase("boolean")){
+		} else if (typeSQL.equalsIgnoreCase("boolean")) {
 			return "boolean";
-		}
-		else if(typeSQL.equalsIgnoreCase("double precision")|| typeSQL.equalsIgnoreCase("float8")|| typeSQL.equalsIgnoreCase("double")
-				|| typeSQL.equalsIgnoreCase("decimal") || typeSQL.equalsIgnoreCase("numeric")){
+		} else if (typeSQL.equalsIgnoreCase("double precision")
+				|| typeSQL.equalsIgnoreCase("float8") || typeSQL.equalsIgnoreCase("double")
+				|| typeSQL.equalsIgnoreCase("decimal") || typeSQL.equalsIgnoreCase("numeric")) {
 			return "double";
-		}
-		else if(typeSQL.equalsIgnoreCase("text")  || typeSQL.startsWith("character(")|| typeSQL.equalsIgnoreCase("varchar") || typeSQL.equalsIgnoreCase("varbinary") ){
+		} else if (typeSQL.equalsIgnoreCase("text") || typeSQL.startsWith("character(")
+				|| typeSQL.equalsIgnoreCase("varchar") || typeSQL.equalsIgnoreCase("varbinary")) {
+			return "String";
+		} else if (typeSQL.equalsIgnoreCase("date")) {
+			return "Date";
+		} else if (typeSQL.equalsIgnoreCase("float") || typeSQL.equalsIgnoreCase("float4")) {
+			return "float";
+		} else {
 			return "String";
 		}
-		else if(typeSQL.equalsIgnoreCase("date")){
-			return "Date";
-		}
-		else if(typeSQL.equalsIgnoreCase("float") || typeSQL.equalsIgnoreCase("float4")){
-			return "float";
-		}
-		else {
-			return "String";			
-		}
-		//		FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeSQL + " SQL type");
-		//		return "";    	
+		// FatalException.throwNewException(SaadaException.UNSUPPORTED_TYPE, "Cannot convert " + typeSQL + " SQL type");
+		// return "";
 	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getUserTable()
 	 */
 	@Override
 	public String[] getUserTables() {
-		return new String[]{"mysql.user", "mysql.tables_priv"};
+		return new String[] { "mysql.user", "mysql.tables_priv" };
 	}
 
 	/* (non-Javadoc)
@@ -402,7 +409,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getRegexpOp()
 	 */
 	@Override
-	public String getRegexpOp(){
+	public String getRegexpOp() {
 		return "REGEXP";
 	}
 
@@ -412,10 +419,11 @@ public class MysqlWrapper extends DbmsWrapper {
 	public String getStrcatOp(String... args) {
 		String retour = "";
 		for (String arg : args) {
-			if( retour.length() != 0 ) retour += "," ;
+			if (retour.length() != 0)
+				retour += ",";
 			retour += arg;
 		}
-		return  "CONCAT(" +retour + ")";
+		return "CONCAT(" + retour + ")";
 	}
 
 	/* (non-Javadoc)
@@ -429,10 +437,10 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getInsertStaement(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String getInsertStatement(String where, String[] fields, String[] values){
+	public String getInsertStatement(String where, String[] fields, String[] values) {
 		String retour = "INSERT " + where + " SET ";
-		for( int i=0 ; i<fields.length ; i++ ) {
-			if( i > 0 ) {
+		for (int i = 0; i < fields.length; i++) {
+			if (i > 0) {
 				retour += ", ";
 			}
 			retour += fields[i] + " = " + values[i];
@@ -440,88 +448,96 @@ public class MysqlWrapper extends DbmsWrapper {
 		return retour;
 	}
 
-
-
 	@Override
 	public void createRelationshipTable(RelationConf relation_conf) throws SaadaException {
 		String sqlCreateTable = "";
 		sqlCreateTable = " oidprimary  int8, oidsecondary int8, primaryclass int4 , secondaryclass int4";
-		for( String q: relation_conf.getQualifier().keySet()) {
-			sqlCreateTable = sqlCreateTable
-			+ ","
-			+ q
-			+ "  double precision";
+		for (String q : relation_conf.getQualifier().keySet()) {
+			sqlCreateTable = sqlCreateTable + "," + q + "  double precision";
 		}
 
 		/*
 		 * According to the Mysql release, create trigger requires or refuses a lock in a transaction.
 		 */
-		SQLTable.createTable(relation_conf.getNameRelation(),sqlCreateTable , null, true);
-		SQLTable.addQueryToTransaction("CREATE TRIGGER " + relation_conf.getNameRelation() + "_secclass  \n"
-				+ "BEFORE INSERT ON " + relation_conf.getNameRelation() +"\n"
-				+ "FOR EACH ROW \n"
-				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)");
+		SQLTable.createTable(relation_conf.getNameRelation(), sqlCreateTable, null, true);
+		SQLTable
+				.addQueryToTransaction("CREATE TRIGGER "
+						+ relation_conf.getNameRelation()
+						+ "_secclass  \n"
+						+ "BEFORE INSERT ON "
+						+ relation_conf.getNameRelation()
+						+ "\n"
+						+ "FOR EACH ROW \n"
+						+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)");
 	}
 
 	@Override
 	public void suspendRelationTriggger(String relationName) throws AbortException {
-		SQLTable.addQueryToTransaction("DROP TRIGGER " +  relationName + "_secclass");
+		SQLTable.addQueryToTransaction("DROP TRIGGER " + relationName + "_secclass");
 	}
 
 	@Override
-	public void setClassColumns(String relationName) throws AbortException{
-		SQLTable.addQueryToTransaction("UPDATE " + relationName + " SET primaryclass   = ((oidprimary>>32)  & 65535);");
-		SQLTable.addQueryToTransaction("UPDATE " + relationName + " SET secondaryclass = ((oidsecondary>>32) & 65535);");
+	public void setClassColumns(String relationName) throws AbortException {
+		SQLTable.addQueryToTransaction("UPDATE " + relationName
+				+ " SET primaryclass   = ((oidprimary>>32)  & 65535);");
+		SQLTable.addQueryToTransaction("UPDATE " + relationName
+				+ " SET secondaryclass = ((oidsecondary>>32) & 65535);");
 
-		SQLTable.addQueryToTransaction("CREATE TRIGGER " + relationName + "_secclass  \n"
-				+ "BEFORE INSERT ON " + relationName + "\n"
-				+ "FOR EACH ROW \n"
-				+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)" );
+		SQLTable
+				.addQueryToTransaction("CREATE TRIGGER "
+						+ relationName
+						+ "_secclass  \n"
+						+ "BEFORE INSERT ON "
+						+ relationName
+						+ "\n"
+						+ "FOR EACH ROW \n"
+						+ "SET NEW.secondaryclass = ((new.oidsecondary>>32) & 65535), NEW.primaryclass = ((new.oidprimary>>32) & 65535)");
 	}
 
 	@Override
 	public String getSecondaryClassRelationshipIndex(String relationName) {
-		return "CREATE INDEX " + relationName.toLowerCase()+ "_secoid_class ON "
-		+ relationName + " ( secondaryclass )";
+		return "CREATE INDEX " + relationName.toLowerCase() + "_secoid_class ON " + relationName
+				+ " ( secondaryclass )";
 	}
 
 	@Override
 	public String getPrimaryClassRelationshipIndex(String relationName) {
-		return "CREATE INDEX " + relationName.toLowerCase()+ "_primoid_class ON "
-		+ relationName + " ( primaryclass )";
-	}
-	
-	@Override
-	public String [] getPrimaryRelationshipIndex(String relationName) {
-		return new String[]{
-				"ALTER TABLE " + relationName + " ROW_FORMAT=FIXED", 
-				"CREATE INDEX " + relationName + "_oidprimary ON " + relationName + "(oidprimary)"
-				};
+		return "CREATE INDEX " + relationName.toLowerCase() + "_primoid_class ON " + relationName
+				+ " ( primaryclass )";
 	}
 
 	@Override
-	public String getPrimaryClassColumn(){
+	public String[] getPrimaryRelationshipIndex(String relationName) {
+		return new String[] { "ALTER TABLE " + relationName + " ROW_FORMAT=FIXED",
+				"CREATE INDEX " + relationName + "_oidprimary ON " + relationName + "(oidprimary)" };
+	}
+
+	@Override
+	public String getPrimaryClassColumn() {
 		return "primaryclass";
 	}
+
 	@Override
-	public String getSecondaryClassColumn(){
+	public String getSecondaryClassColumn() {
 		return "secondaryclass";
 	}
 
 	@Override
-	public boolean tableExist(DatabaseConnection connection, String searched_table) throws Exception {
+	public boolean tableExist(DatabaseConnection connection, String searched_table)
+			throws Exception {
 		String[] sc = searched_table.split("\\.");
-		DatabaseMetaData dm= connection.getMetaData();;
+		DatabaseMetaData dm = connection.getMetaData();
+		;
 		ResultSet rsTables;
 		/*
 		 * one field: Should be in the main databae
 		 */
-		if( sc.length == 1 ) {
+		if (sc.length == 1) {
 			rsTables = dm.getTables(null, null, null, null);
 			while (rsTables.next()) {
 				String tableName = rsTables.getString("TABLE_NAME");
-				if (searched_table.equalsIgnoreCase(tableName) 
-						||  searched_table.equalsIgnoreCase(getQuotedEntity(tableName) ) ) {
+				if (searched_table.equalsIgnoreCase(tableName)
+						|| searched_table.equalsIgnoreCase(getQuotedEntity(tableName))) {
 					rsTables.close();
 					return true;
 				}
@@ -545,48 +561,53 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table) throws Exception{
-		if( !tableExist(connection, searched_table)) {
+	public ResultSet getTableColumns(DatabaseConnection connection, String searched_table)
+			throws Exception {
+		if (!tableExist(connection, searched_table)) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
+				Messenger
+						.printMsg(Messenger.DEBUG, "Table <" + searched_table + "> does not exist");
 			return null;
 		}
 		DatabaseMetaData dm = connection.getMetaData();
 		ResultSet rsTables;
 		String[] sc = searched_table.split("\\.");
-		if( sc.length == 1 ) {
+		if (sc.length == 1) {
 			rsTables = dm.getTables(null, null, searched_table, null);
 			while (rsTables.next()) {
 				String tableName = rsTables.getString("TABLE_NAME");
 				if (searched_table.equalsIgnoreCase(tableName)) {
-					return dm.getColumns(null, null, tableName,null);
+					return dm.getColumns(null, null, tableName, null);
 				}
 			}
 			return null;
-		}
-		else {
+		} else {
 			rsTables = dm.getTables(sc[0], null, sc[1], null);
 			while (rsTables.next()) {
 				String tableName = rsTables.getString("TABLE_NAME");
 				if (sc[1].equalsIgnoreCase(tableName)) {
-					return dm.getColumns(sc[0], null, sc[1],null);
+					return dm.getColumns(sc[0], null, sc[1], null);
 				}
 			}
-			return null;			
+			return null;
 		}
 	}
 
 	@Override
-	public Map<String, String> getExistingIndex(DatabaseConnection connection, String searched_table) throws FatalException {
+	public
+			Map<String, String>
+			getExistingIndex(DatabaseConnection connection, String searched_table)
+					throws FatalException {
 		try {
-			if( !tableExist(connection, searched_table)) {
-				Messenger.printMsg(Messenger.WARNING, "Table <" + searched_table + "> does not exist");
+			if (!tableExist(connection, searched_table)) {
+				Messenger.printMsg(Messenger.WARNING, "Table <" + searched_table
+						+ "> does not exist");
 				return null;
 			}
 			DatabaseMetaData dm = connection.getMetaData();
 			ResultSet resultat;
 			String[] sc = searched_table.split("\\.");
-			if( sc.length == 1 ) {
+			if (sc.length == 1) {
 				resultat = dm.getIndexInfo(null, null, searched_table, false, false);
 				HashMap<String, String> retour = new HashMap<String, String>();
 				while (resultat.next()) {
@@ -596,7 +617,7 @@ public class MysqlWrapper extends DbmsWrapper {
 					 * With mysql, PRIMARY constraints are stored as index but can not be removed.
 					 * So we prefer hide them
 					 */
-					if( iname != null && col != null /*&& !iname.equals("PRIMARY")*/ ) {
+					if (iname != null && col != null /*&& !iname.equals("PRIMARY")*/) {
 						retour.put(iname.toString(), col);
 					}
 				}
@@ -612,12 +633,12 @@ public class MysqlWrapper extends DbmsWrapper {
 					 * With mysql, PRIMARY constraints are stored as index but can not be removed.
 					 * So we prefer hide them
 					 */
-					if( iname != null && col != null /*&& !iname.equals("PRIMARY") */) {
+					if (iname != null && col != null /*&& !iname.equals("PRIMARY") */) {
 						retour.put(iname.toString(), col);
 					}
 				}
 				resultat.close();
-				return retour;				
+				return retour;
 			}
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -634,71 +655,81 @@ public class MysqlWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getNullLeftJoinSelect(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public String getNullLeftJoinSelect(String table1, String key1, String table2, String key2) throws FatalException {		
-		return "SELECT  " + key1 + " FROM " + table1 + " l"
-		+ " LEFT JOIN " + table2 + " r"
-		+ " ON l." + key1 + " = r." + key2 
-		+ " WHERE r." + key2 + " IS NULL";
+	public String getNullLeftJoinSelect(String table1, String key1, String table2, String key2)
+			throws FatalException {
+		return "SELECT  " + key1 + " FROM " + table1 + " l" + " LEFT JOIN " + table2 + " r"
+				+ " ON l." + key1 + " = r." + key2 + " WHERE r." + key2 + " IS NULL";
 	}
 
 	@Override
 	public String getDropIndexStatement(String table_name, String index_name) {
 		return "DROP INDEX " + index_name + " ON " + table_name;
 	}
+
 	@Override
-	public  String getCollectionTableName(String coll_name, int cat) throws FatalException {
+	public String getCollectionTableName(String coll_name, int cat) throws FatalException {
 		return coll_name + "_" + Category.explain(cat).toLowerCase();
 	}
+
 	@Override
-	public  String getGlobalAlias(String alias) {
-		//Mysql wants no alias after USING(oidsaada)
+	public String getGlobalAlias(String alias) {
+		// Mysql wants no alias after USING(oidsaada)
 		return "";
 	}
+
 	@Override
-	public  String castToString(String token){
-		//return "CAST(" + token + " AS VARCHAR)";
-		return token ;
+	public String castToString(String token) {
+		// return "CAST(" + token + " AS VARCHAR)";
+		return token;
 	}
 
 	@Override
 	public String getTempodbName(String dbname) {
 		return dbname + "_tempo";
 	}
+
 	@Override
-	public String getTempoTableName(String table_name) throws FatalException{
+	public String getTempoTableName(String table_name) throws FatalException {
 		return Database.getTempodbName() + "." + table_name;
 	}
 
 	@Override
-	public String getCreateTempoTable(String table_name, String fmt) throws FatalException{
+	public String getCreateTempoTable(String table_name, String fmt) throws FatalException {
 		recorded_tmptbl.add(table_name);
 		return "CREATE TABLE " + Database.getTempodbName() + "." + table_name + " " + fmt;
 	}
 
 	@Override
-	public String getDropTempoTable(String table_name) throws FatalException{
-		return "DROP TABLE IF EXISTS " + Database.getTempodbName() + "." + table_name ;
+	public String getDropTempoTable(String table_name) throws FatalException {
+		return "DROP TABLE IF EXISTS " + Database.getTempodbName() + "." + table_name;
 	}
+
 	@Override
-	public  String[] changeColumnType(DatabaseConnection connection, String table, String column, String type) {
-		return new String[] {"ALTER TABLE " + table + " MODIFY  " + column + " " + type};
+	public String[] changeColumnType(
+			DatabaseConnection connection,
+			String table,
+			String column,
+			String type) {
+		return new String[] { "ALTER TABLE " + table + " MODIFY  " + column + " " + type };
 
 	}
+
 	@Override
-	public  String[] addColumn(String table, String column, String type) {
-		return new String[] {"ALTER TABLE " + table + " ADD  COLUMN " + column + " " + type};
+	public String[] addColumn(String table, String column, String type) {
+		return new String[] { "ALTER TABLE " + table + " ADD  COLUMN " + column + " " + type };
 	}
+
 	@Override
-	public  String renameColumn(String table, String column, String newName) throws Exception {
+	public String renameColumn(String table, String column, String newName) throws Exception {
 		/*
 		 * MySQL requires to give the type of the column even if it is the same.
 		 */
 		SQLQuery q = new SQLQuery("select * from " + table + " limit 1");
-		ResultSetMetaData rsmd = q.run().getMetaData();		
+		ResultSetMetaData rsmd = q.run().getMetaData();
 		String type = "";
 		int NumOfCol = rsmd.getColumnCount();
-		for(int i=1;i<=NumOfCol;i++) {
-			if( rsmd.getColumnName(i).equalsIgnoreCase(column)) {
+		for (int i = 1; i <= NumOfCol; i++) {
+			if (rsmd.getColumnName(i).equalsIgnoreCase(column)) {
 				type = rsmd.getColumnTypeName(i);
 			}
 		}
@@ -716,56 +747,42 @@ public class MysqlWrapper extends DbmsWrapper {
 	 */
 	@Override
 	protected File getProcBaseRef() throws Exception {
-		String base_dir = System.getProperty("user.home") 
-		+ Database.getSepar() 
-		+ "workspace" 
-		+ Database.getSepar() 
-		+ "Saada1.7"
-		+ Database.getSepar() 
-		+ "sqlprocs" 
-		+ Database.getSepar() 
-		+ "mysql" ;
+		String base_dir = System.getProperty("user.home") + Database.getSepar() + "workspace"
+				+ Database.getSepar() + "Saada1.7" + Database.getSepar() + "sqlprocs"
+				+ Database.getSepar() + "mysql";
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-		File bf = new File(base_dir) ;
+		File bf = new File(base_dir);
 		/*
 		 * Try first to look in the ECLIPSE workspace for dev. convenience
 		 */
-		if( !(bf.exists() && bf.isDirectory()) ) {
-			base_dir = Database.getRoot_dir()
-			+ Database.getSepar() 
-			+ "sqlprocs" 
-			+ Database.getSepar() 
-			+ "mysql" ;
+		if (!(bf.exists() && bf.isDirectory())) {
+			base_dir = Database.getRoot_dir() + Database.getSepar() + "sqlprocs"
+					+ Database.getSepar() + "mysql";
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-			bf = new File(base_dir) ;
-			if( !(bf.exists() && bf.isDirectory()) ) {
-				base_dir = NewSaadaDB.SAADA_HOME
-				+ Database.getSepar() 
-				+ "dbtemplate" 
-				+ Database.getSepar() 
-				+ "sqlprocs" 
-				+ Database.getSepar() 
-				+ "mysql" ;
+			bf = new File(base_dir);
+			if (!(bf.exists() && bf.isDirectory())) {
+				base_dir = NewSaadaDB.SAADA_HOME + Database.getSepar() + "dbtemplate"
+						+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "mysql";
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-				Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir " + base_dir);
-				bf = new File(base_dir) ;
-				if( !(bf.exists() && bf.isDirectory()) ) {		
-					base_dir = NewSaadaDBTool.saada_home
-					+ Database.getSepar() 
-					+ "dbtemplate" 
-					+ Database.getSepar() 
-					+ "sqlprocs" 
-					+ Database.getSepar() 
-					+ "mysql" ;
+				Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir "
+						+ base_dir);
+				bf = new File(base_dir);
+				if (!(bf.exists() && bf.isDirectory())) {
+					base_dir = NewSaadaDBTool.saada_home + Database.getSepar() + "dbtemplate"
+							+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "mysql";
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Look for SQL procs in " + base_dir);
-					Messenger.printMsg(Messenger.TRACE, "No SQL procedure found try SAADA install dir " + base_dir);
-					bf = new File(base_dir) ;
-					if( !(bf.exists() && bf.isDirectory()) ) {		
-						FatalException.throwNewException(SaadaException.FILE_ACCESS, "Can not access SQL procedure directory");
+					Messenger.printMsg(
+							Messenger.TRACE,
+							"No SQL procedure found try SAADA install dir " + base_dir);
+					bf = new File(base_dir);
+					if (!(bf.exists() && bf.isDirectory())) {
+						FatalException.throwNewException(
+								SaadaException.FILE_ACCESS,
+								"Can not access SQL procedure directory");
 					}
 				}
 			}
@@ -778,10 +795,11 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#removeProc()
 	 */
 	protected String[] removeProc() throws Exception {
-		SQLQuery sq = new SQLQuery("SHOW FUNCTION STATUS WHERE Db = '" + Database.getConnector().getDbname() + "'");
+		SQLQuery sq = new SQLQuery("SHOW FUNCTION STATUS WHERE Db = '"
+				+ Database.getConnector().getDbname() + "'");
 		ResultSet rs = sq.run();
 		ArrayList<String> retour = new ArrayList<String>();
-		while( rs.next() ) {
+		while (rs.next()) {
 			retour.add("DROP FUNCTION " + rs.getString("Name"));
 		}
 		sq.close();
@@ -791,12 +809,14 @@ public class MysqlWrapper extends DbmsWrapper {
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getConditionHelp()
 	 */
-	public Map<String, String> getConditionHelp(){
+	public Map<String, String> getConditionHelp() {
 		Map<String, String> helpItems = new LinkedHashMap<String, String>();
 		helpItems.put("- Join Operator Templates -", "");
-		helpItems.put("Partial comparison of names", "substr(p.obs_id, 1, 5) = substr(s.obs_id, 1, 5) ");
-		helpItems.put("Row number equality"        , "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
-		helpItems.put("Regular expression op", "p.obs_id " + this.getRegexpOp() + " 'RegExp'");
+		helpItems.put(
+				"Partial comparison of names",
+				"substr(p.namesaada, 1, 5) = substr(s.namesaada, 1, 5) ");
+		helpItems.put("Row number equality", "(p.oidsaada >> 32) = (s.oidsaada >> 32)");
+		helpItems.put("Regular expression op", "p.namesaada " + this.getRegexpOp() + " 'RegExp'");
 		helpItems.put("Same sky pixel", "p.sky_pixel_csa = s.sky_pixel_csa");
 		return helpItems;
 	}
@@ -805,7 +825,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		try {
 			ArgsParser ap = new ArgsParser(args);
 			Messenger.debug_mode = true;
-			DbmsWrapper dbmswrapper = MysqlWrapper.getWrapper("localhost", ""); 
+			DbmsWrapper dbmswrapper = MysqlWrapper.getWrapper("localhost", "");
 			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
 			dbmswrapper.checkAdminPrivileges("/tmp", false);
 			dbmswrapper.setReaderAuth("reader", "");
@@ -816,5 +836,40 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 	}
 
+	@Override
+	public String getDBTypeFromVOTableType(
+			String datatype,
+			int arraySize,
+			int NO_SIZE,
+			int STAR_SIZE) {
+
+		datatype = (datatype == null) ? null : datatype.trim().toLowerCase();
+
+		if (datatype == null || datatype.isEmpty()) {
+			return "VARCHAR(255)";
+		}
+
+		if (datatype.equals("short"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "SMALLINT" : "VARBINARY(255)";
+		else if (datatype.equals("int"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "INTEGER" : "VARBINARY(255)";
+		else if (datatype.equals("long"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "BIGINT" : "VARBINARY(255)";
+		else if (datatype.equals("float"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "FLOAT" : "VARBINARY(255)";
+		else if (datatype.equals("double"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT" : "VARBINARY(255)";
+		else if (datatype.equals("boolean"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "BOOL" : "VARBINARY(255)";
+		else if (datatype.equals("char"))
+			return (arraySize == 1 || arraySize == NO_SIZE) ? "CHAR"
+					: ((arraySize == STAR_SIZE) ? "VARCHAR(255)" : ("VARCHAR(" + arraySize + ")"));
+		else if (datatype.equals("unsignedbyte"))
+			return "VARBINARY(255)";
+		else {
+			Messenger.printMsg(Messenger.WARNING, "Unknown datatype '" + datatype + "'");
+			return datatype;
+		}
+	}
 
 }

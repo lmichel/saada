@@ -43,7 +43,6 @@ import saadadb.admintool.tree.VoDataProductTree;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.newdatabase.NewSaadaDBTool;
 import saadadb.util.Messenger;
 import saadadb.util.WorkDirectory;
 import saadadb.vocabulary.RegExp;

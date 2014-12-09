@@ -34,7 +34,6 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.HelpDesk;
 import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.sqltable.SQLQuery;
 
 

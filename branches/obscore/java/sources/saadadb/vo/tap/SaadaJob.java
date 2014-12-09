@@ -15,7 +15,6 @@ import saadadb.vo.tap.TAPToolBox.TAPParameters;
 import saadadb.vocabulary.RegExp;
 import uws.UWSException;
 import uws.UWSToolBox;
-import uws.job.AbstractJob;
 import uws.job.ErrorSummary;
 import uws.job.ErrorType;
 import uws.job.Result;

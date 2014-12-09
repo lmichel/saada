@@ -234,6 +234,7 @@
     <servlet-name>ConeSearch</servlet-name>
     <url-pattern>/conesearch</url-pattern>
   </servlet-mapping>
+<!--
   <servlet>
     <display-name>TAPService</display-name>
     <servlet-name>TAPService</servlet-name>
@@ -304,6 +305,7 @@
     <servlet-name>TAPCapabilities</servlet-name>
     <url-pattern>/tap/capabilities</url-pattern>
   </servlet-mapping>
+  -->
   <servlet>
     <description></description>
     <display-name>SiteDesc</display-name>
@@ -315,6 +317,7 @@
     <servlet-name>SiteDesc</servlet-name>
     <url-pattern>/sitedesc</url-pattern>
   </servlet-mapping>
+  
   <servlet>
     <description></description>
     <display-name>JSAttributeHandlers</display-name>
@@ -475,4 +478,16 @@
     <servlet-name>GetVersion</servlet-name>
     <url-pattern>/getversion</url-pattern>
   </servlet-mapping>
+  <!-- DEBUG / TESTS -->
+   <servlet>
+    <description></description>
+    <display-name>taptest</display-name>
+    <servlet-name>TapTest</servlet-name>
+    <servlet-class>ajaxservlet.TapTest</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TapTest</servlet-name>
+    <url-pattern>/taptest/*</url-pattern>
+  </servlet-mapping>
+   <!-- END OF DEBUG/TEST -->
 </web-app>

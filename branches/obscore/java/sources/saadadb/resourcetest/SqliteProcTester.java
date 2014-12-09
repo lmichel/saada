@@ -2,10 +2,7 @@ package saadadb.resourcetest;
 
 import java.util.LinkedHashMap;
 
-import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.vo.request.SaadaqlRequest;
 

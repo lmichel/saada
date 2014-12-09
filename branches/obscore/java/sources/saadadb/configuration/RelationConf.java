@@ -7,23 +7,9 @@ package saadadb.configuration;
  * @author XXXX
  * @version 00000001
  */
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;

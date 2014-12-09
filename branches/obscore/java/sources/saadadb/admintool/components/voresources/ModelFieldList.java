@@ -30,7 +30,6 @@ import saadadb.admintool.utils.ObsCoreDesk;
 import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;

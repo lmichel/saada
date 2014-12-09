@@ -12,7 +12,6 @@ import java.sql.Statement;
 
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
-import saadadb.util.Messenger;
 
 /*
  * Wrapper for JDBC connection {@link Spooler}

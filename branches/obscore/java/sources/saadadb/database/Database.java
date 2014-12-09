@@ -25,8 +25,6 @@ import saadadb.util.Messenger;
 import saadadb.util.Version;
 import saadadb.vocabulary.DefineType;
 import saadadb.vocabulary.enums.DispersionType;
-import cds.astro.Astroframe;
-import cds.astro.Qbox;
 
 /**
  * @author michel
@@ -63,7 +61,7 @@ public class Database {
 				cacheindex = new CacheManagerRelationIndex(20, Repository.getIndexrelationsPath() + Database.getSepar());
 				cachemeta = new CacheMeta();
 				cache = new CacheManager();
-				Qbox.setLevel(10);
+				cds.astro.Qbox.setLevel(10);
 				DefineType.init();
 			}catch(Exception e){
 				Messenger.printStackTrace(e);
@@ -231,7 +229,7 @@ public class Database {
 			return connector.getCoord_sys();
 		}
 	}
-	public static Astroframe getAstroframe() {
+	public static cds.astro.Astroframe getAstroframe() {
 		return  (connector == null)? null : connector.getAstroframe();
 	}
 	public static String getDbname() {

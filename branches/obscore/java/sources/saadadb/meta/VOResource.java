@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Vector;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -120,7 +119,7 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			List<SavotTD> tdv = tds.getItems();
+			List<Object> tdv = tds.getItems();
 			if( tdv.size() != 12 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return;
@@ -131,7 +130,7 @@ public class VOResource {
 				guth = new LinkedHashSet<UTypeHandler>();
 				this.groups.put(group_name, guth);
 			}
-			UTypeHandler uth = new UTypeHandler(tdv);
+			UTypeHandler uth = new UTypeHandler((AttributeHandler) tdv);
 			guth.add(uth);			
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
@@ -592,13 +591,13 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			List<SavotTD> tdv = tds.getItems();
+			List<Object> tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return null;
 			}
-			if((tdv.get(1)).getContent().length() > 1 )
-			retour.put((tdv.get(0)).getContent(),(tdv.get(1)).getContent());
+			if(((SavotTD) tdv.get(1)).getContent().length() > 1 )
+			retour.put(((SavotTD) tdv.get(0)).getContent(),((SavotTD) tdv.get(1)).getContent());
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
 		return retour;

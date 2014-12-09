@@ -10,8 +10,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
@@ -828,7 +826,18 @@ abstract public class DbmsWrapper {
 	 */
 	public abstract String getJavaTypeFromSQL( String type) throws FatalException ;
 
-
+	/**
+	 * Retuns the Database column type for the given VOtable type from the given parameters
+	 * NOTE : The parameters NO_SIZE and STAR_SIZE allow the detection of specials case of the arraySize parameter
+	 * arraySizz not set and Arraysize(*)
+	 * @param type
+	 * @param arraySize
+	 * @param NO_SIZE  The value corresponding to an undefined size
+	 * @param STAR_SIZE The value corresponding to the star (*)
+	 * @return
+	 */
+public abstract String getDBTypeFromVOTableType(String dataType, final int arraySize, final int NO_SIZE, final int STAR_SIZE);
+	
 	/**
 	 * Query example PSQL
 	 * UPDATE table_to_update 

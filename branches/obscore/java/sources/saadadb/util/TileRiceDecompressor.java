@@ -15,8 +15,8 @@ public class TileRiceDecompressor {
 	}
 
 	static final public int getInt(byte[] t,int i) {
-		return (((int)t[i])<<24) | ((((int)t[i+1])&0xFF)<<16)
-		| ((((int)t[i+2])&0xFF)<<8) | ((int)t[i+3])&0xFF;
+		return ((t[i])<<24) | (((t[i+1])&0xFF)<<16)
+		| (((t[i+2])&0xFF)<<8) | (t[i+3])&0xFF;
 	}
 
 	static final protected void setPixVal(byte[] t,int bitpix,int i,int c) {
@@ -31,11 +31,11 @@ public class TileRiceDecompressor {
 		setInt(t,i,c);
 		break;
 		case -32: i*=4;
-		c=Float.floatToIntBits((float)c);
+		c=Float.floatToIntBits(c);
 		setInt(t,i,c);
 		break;
 		case -64: i*=8;
-		long c1 = (long)Double.doubleToLongBits(c);
+		long c1 = Double.doubleToLongBits(c);
 		c = (int)(0xFFFFFFFFL & (c1>>>32));
 		setInt(t,i,c);
 		c = (int)(0xFFFFFFFFL & c1);
@@ -107,21 +107,21 @@ public class TileRiceDecompressor {
 
 		 //			      lastpix = getInt(buf,pos+=4);
 		 lastpix = 0;      
-		 bytevalue = 0xFF & (int)buf[pos++];
+		 bytevalue = 0xFF & buf[pos++];
 		 lastpix = lastpix | (bytevalue<<24);
-		 bytevalue = 0xFF & (int)buf[pos++];
+		 bytevalue = 0xFF & buf[pos++];
 		 lastpix = lastpix | (bytevalue<<16);
-		 bytevalue = 0xFF & (int)buf[pos++];
+		 bytevalue = 0xFF & buf[pos++];
 		 lastpix = lastpix | (bytevalue<<8);
-		 bytevalue = 0xFF & (int)buf[pos++];
+		 bytevalue = 0xFF & buf[pos++];
 		 lastpix = lastpix | bytevalue;
-		 b = 0xFF & (int)buf[pos++];         /* bit buffer           */
+		 b = 0xFF & buf[pos++];         /* bit buffer           */
 		 nbits = 8;                 /* number of bits remaining in b    */
 		 for (i = 0; i<nx; ) {
 			 /* get the FS value from first fsbits */
 			 nbits -= fsbits;
 			 while (nbits < 0) {
-				 b = (b<<8) | (0xFF & (int)buf[pos++]);
+				 b = (b<<8) | (0xFF & buf[pos++]);
 				 nbits += 8;
 			 }
 
@@ -139,11 +139,11 @@ public class TileRiceDecompressor {
 					 k = bbits - nbits;
 					 diff = b<<k;
 					 for (k -= 8; k >= 0; k -= 8) {
-						 b = 0xFF & (int)buf[pos++];
+						 b = 0xFF & buf[pos++];
 						 diff |= b<<k;
 					 }
 					 if (nbits>0) {
-						 b = 0xFF & (int)buf[pos++];
+						 b = 0xFF & buf[pos++];
 						 diff |= b>>>(-k);
 					 b &= (1<<nbits)-1;
 					 } else {
@@ -169,7 +169,7 @@ public class TileRiceDecompressor {
 					 /* count number of leading zeros */
 					 while (b == 0) {
 						 nbits += 8;
-						 b = 0xFF & (int)buf[pos++];
+						 b = 0xFF & buf[pos++];
 					 }
 					 nzero = nbits - nonzero_count[b];
 					 nbits -= nzero+1;
@@ -178,7 +178,7 @@ public class TileRiceDecompressor {
 					 /* get the FS trailing bits */
 					 nbits -= fs;
 					 while (nbits < 0) {
-						 b = (b<<8) | (0xFF & (int)buf[pos++]);
+						 b = (b<<8) | (0xFF & buf[pos++]);
 						 nbits += 8;
 					 }
 					 diff = (nzero<<fs) | (b>>>nbits);

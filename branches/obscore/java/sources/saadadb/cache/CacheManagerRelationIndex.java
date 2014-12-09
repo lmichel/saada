@@ -7,7 +7,6 @@ import java.util.Set;
 
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.MetaRelation;
 import saadadb.relationship.DoubleCPIndex;

@@ -46,7 +46,7 @@ public class PositionParser {
 	public PositionParser(String position) throws QueryException {
 		this.position = position.trim();
 		this.arg = position.trim();
-		this.astroframe = Database.getAstroframe();
+		this.astroframe = (Astroframe) Database.getAstroframe();
 		this.checkPrintable();
 		this.setFormat();
 	}
