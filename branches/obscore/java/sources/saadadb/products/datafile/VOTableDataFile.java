@@ -702,41 +702,6 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		return (this.dataExtension != null )? this.dataExtension.attributeHandlers.size(): SaadaConstant.INT;
 	}
 
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getEntryAttributeHandler()
-	 */
-	@Override
-	public Map<String, AttributeHandler> getEntryAttributeHandler()
-	throws SaadaException {
-		if( this.headerExtension == null ) {
-			this.selectResourceAndTable(null);
-		}
-		if( this.entryAttributeHandlers == null ){
-			this.entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
-			for( AttributeHandler ah: this.dataExtension.attributeHandlers ) {
-				this.entryAttributeHandlers.put(ah.getNameattr(), ah);
-			}
-		}
-		return this.entryAttributeHandlers;
-	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getAttributeHandler()
-	 */
-	@Override
-	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException {
-		// TODO make a copy
-		if( this.headerExtension == null ) {
-			this.selectResourceAndTable(null);
-		}
-		if( this.attributeHandlers == null ){
-			this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
-			for( AttributeHandler ah: this.headerExtension.attributeHandlers ) {
-				this.attributeHandlers.put(ah.getNameattr(), ah);
-			}
-		}
-		return this.attributeHandlers;
-	}
 
 
 	/* (non-Javadoc)
@@ -798,25 +763,6 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		}
 		return this.productMap;
 	}
-
-	/* (non-Javadoc)
-	 * @see saadadb.products.DataFile#getQuantityDetector(saadadb.dataloader.mapping.ProductMapping)
-	 */
-	@Override
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		if( productMapping.getCategory() == Category.ENTRY ) {
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return new QuantityDetector(this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);			
-		} else if( this.getEntryAttributeHandler().size() > 0  ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, this.getEntryAttributeHandler().size() + " table columns taken in account");
-			return  new QuantityDetector(this.getAttributeHandlerCopy(), this.getEntryAttributeHandler(), this.comments, productMapping, this.productBuilder.wcsModeler);
-		} else {
-			return new QuantityDetector(this.getAttributeHandlerCopy(), this.comments, productMapping, this.productBuilder.wcsModeler);
-		}		
-	}
-
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.DataFile#bindBuilder(saadadb.products.ProductBuilder)
