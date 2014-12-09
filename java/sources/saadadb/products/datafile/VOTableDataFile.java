@@ -1,6 +1,5 @@
 package saadadb.products.datafile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,15 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import saadadb.collection.Category;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
-import saadadb.products.inference.QuantityDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -738,8 +734,8 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 					tahe.putAll(this.readParams(savotTable));
 					this.searchForCooSysInParams(tahe);
 					attrs = new ArrayList<AttributeHandler>(tahe.values());					
-					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId()+ " (" + DataFileExtensionType.TABLE_COLUMNS + ")"
-							, new DataFileExtension(rCpt, savotResource.getId(), tCpt, savotTable.getName(), DataFileExtensionType.TABLE_COLUMNS, attrs));    	
+					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId()+ " (" + det + ")"
+							           , new DataFileExtension(rCpt, savotResource.getId(), tCpt, savotTable.getName(), det, attrs));    	
 					FieldSet fields = savotTable.getFields();
 					attrs = new ArrayList<AttributeHandler>();					
 					for( int i=0 ; i<fields.getItemCount() ; i++ ) {
@@ -753,8 +749,8 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 								Messenger.printMsg(Messenger.DEBUG, "Bind column " + att.getNameorg() + " with " + assAh);
 						}
 					}
-					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId() + " (" + det + ")"
-							, new DataFileExtension(rCpt, savotResource.getId(), tCpt,savotTable.getName(),det,attrs));
+					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId() + " (" + DataFileExtensionType.TABLE_COLUMNS + ")"
+							, new DataFileExtension(rCpt, savotResource.getId(), tCpt,savotTable.getName(),DataFileExtensionType.TABLE_COLUMNS,attrs));
 					tCpt++;
 				}
 				rCpt++;
