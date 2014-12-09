@@ -1,9 +1,7 @@
 package saadadb.configuration; 
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;

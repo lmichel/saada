@@ -4,12 +4,10 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.CollapsiblePanel;
 import saadadb.admintool.components.RelationshipChooser;
 import saadadb.admintool.panels.tasks.RelationPopulatePanel;
 import saadadb.admintool.utils.DataTreePath;
-import saadadb.admintool.utils.HelpDesk;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.FatalException;
 

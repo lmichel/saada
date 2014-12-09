@@ -8,9 +8,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
-import saadadb.exceptions.QueryException;
 import saadadb.sqltable.SQLQuery;
-import saadadb.sqltable.Table_Saada_Relation;
 import saadadb.util.SaadaConstant;
 
 public class MetaRelation extends MetaObject {

@@ -1,7 +1,5 @@
 package saadadb.collection;
 
-import org.apache.tools.ant.util.regexp.Regexp;
-
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;

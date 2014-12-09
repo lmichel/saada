@@ -1,11 +1,10 @@
 package saadadb.query.region.request;
 
+import healpix.tools.SpatialVector;
 import saadadb.util.Messenger;
 import cds.astro.Astroframe;
-import cds.astro.ICRS;
 import cds.astro.Galactic;
-import healpix.tools.SpatialVector;
-
+import cds.astro.ICRS;
 /**
  * Class abstract representing to treat
  * @author jremy

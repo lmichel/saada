@@ -6,8 +6,6 @@ import java.sql.Statement;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
-import saadadb.vo.tap.TAPToolBox;
 
 
 public class ADQLFormatorTester {

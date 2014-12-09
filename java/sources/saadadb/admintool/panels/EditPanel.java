@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.RenameButton;
 import saadadb.admintool.components.SaveButton;
-import saadadb.admintool.components.SwitchButtonWIP;
 
 @SuppressWarnings("serial")
 public abstract class EditPanel extends AdminPanel{

@@ -2,7 +2,6 @@ package saadadb.sqltable;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.List;
 

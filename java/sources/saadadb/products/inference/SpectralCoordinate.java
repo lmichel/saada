@@ -4,18 +4,13 @@ import hecds.wcs.descriptors.WcsAxeDescriptor;
 import hecds.wcs.transformations.Projection;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.setter.ColumnExpressionSetter;
-import saadadb.products.setter.ColumnSingleSetter;
-import saadadb.util.ChangeKey;
+import saadadb.unit.Unit;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.DispersionType;
-import cds.astro.Unit;
 
 /**
  * @author michel

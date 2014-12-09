@@ -12,7 +12,6 @@ import saadadb.admintool.components.voresources.VOServiceList;
 import saadadb.admintool.components.voresources.VOServiceListItem;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.enums.DataMapLevel;
 
 
 /**

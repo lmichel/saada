@@ -5,7 +5,6 @@ import healpix.tools.SpatialVector;
 import java.util.ArrayList;
 
 import saadadb.query.region.triangule.utils.Util;
-
 import cds.astro.Astrocoo;
 import cds.astro.Astroframe;
 

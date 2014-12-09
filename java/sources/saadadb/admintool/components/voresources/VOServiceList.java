@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.ProductTreePathTransferHandler;
-import saadadb.admintool.panels.AdminPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;

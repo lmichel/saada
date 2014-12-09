@@ -1,5 +1,6 @@
 package saadadb.products.inference;
 
+
 import saadadb.database.Database;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -10,7 +11,6 @@ import cds.astro.FK4;
 import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
-
 /**
  * Simple utility transforming a CooSys descriptor as it is returned by the {@link QuantityDetector} in an
  * {@link Astroframe} instances.

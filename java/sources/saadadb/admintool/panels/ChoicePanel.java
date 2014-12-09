@@ -1,9 +1,7 @@
 package saadadb.admintool.panels;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -19,7 +17,6 @@ import javax.swing.JPanel;
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.components.ComponentTitledBorder;
-import saadadb.util.Messenger;
 
 /**
  * Super class of all panels showing a set of functions as clickable icons.

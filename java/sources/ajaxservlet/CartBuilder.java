@@ -13,8 +13,6 @@ import saadadb.util.Messenger;
 import saadadb.vo.cart.CartJob;
 import uws.UWSException;
 import uws.job.JobList;
-import uws.service.BasicUWS;
-import uws.service.QueuedBasicUWS;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
 import ajaxservlet.accounting.UserTrap;

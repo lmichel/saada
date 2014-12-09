@@ -1,7 +1,5 @@
 package saadadb.collection.obscoremin;
 
-import saadadb.exceptions.AbortException;
-import saadadb.exceptions.SaadaException;
 
 
 /**

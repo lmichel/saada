@@ -21,12 +21,10 @@ import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.utils.DataTreePath;
 import saadadb.admintool.utils.MyGBC;
 import saadadb.collection.Category;
-import saadadb.command.ArgsParser;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap.TapServiceManager;
 
 
 public class SAPServicePanel extends TaskPanel {

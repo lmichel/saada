@@ -12,8 +12,6 @@ import saadadb.util.Messenger;
 import saadadb.vo.tap.SaadaJob;
 import uws.UWSException;
 import uws.job.JobList;
-import uws.service.BasicUWS;
-import uws.service.QueuedBasicUWS;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
 
@@ -25,10 +23,11 @@ import uws.service.UserIdentifier;
 public class TAPASync extends SaadaServlet {
 	private static final long serialVersionUID = 1L;
 	
-	protected BasicUWS<SaadaJob> uws = null;
+	protected QueuedBasicUWS<SaadaJob> uws = null;
 
 	@Override
 	public void init(ServletConfig conf) throws ServletException {
+		
 		super.init(conf);
 		try{
 			// 2 jobs tournent en meme temps

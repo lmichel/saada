@@ -1,5 +1,7 @@
 package saadadb.database;
 
+
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,7 +24,6 @@ import cds.astro.FK4;
 import cds.astro.FK5;
 import cds.astro.Galactic;
 import cds.astro.ICRS;
-
 /**
  * @author michel
  * * @version $Id$

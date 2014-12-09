@@ -14,7 +14,6 @@ import saadadb.meta.VOResource;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Saada_VO_DMVIew;
-import saadadb.sqltable.Table_Tap_Schema_Tables;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
 import saadadb.vo.tap.DmServiceManager;

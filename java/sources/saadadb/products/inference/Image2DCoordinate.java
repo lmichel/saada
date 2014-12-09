@@ -1,5 +1,6 @@
 package saadadb.products.inference;
 
+
 import java.util.Map;
 
 import saadadb.meta.AttributeHandler;

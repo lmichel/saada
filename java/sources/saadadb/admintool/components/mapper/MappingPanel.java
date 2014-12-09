@@ -5,7 +5,6 @@ package saadadb.admintool.components.mapper;
 
 import java.awt.Color;
 
-import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 import saadadb.admintool.components.AdminComponent;

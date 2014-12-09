@@ -4,7 +4,6 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.util.SaadaConstant;
 
 /**
  * @author michel

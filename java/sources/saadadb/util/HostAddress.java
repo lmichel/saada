@@ -18,9 +18,9 @@ public class HostAddress {
 			 */
 			Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
 			while(e.hasMoreElements()) {
-				Enumeration<InetAddress> e2 = ((NetworkInterface) e.nextElement()).getInetAddresses();
+				Enumeration<InetAddress> e2 = e.nextElement().getInetAddresses();
 				while( e2.hasMoreElements() ) {
-					InetAddress ip = (InetAddress) e2.nextElement();
+					InetAddress ip = e2.nextElement();
 					if(!ip.isLoopbackAddress() && !ip.isLinkLocalAddress()) {
 						String retour = ip.getCanonicalHostName();
 						// Filter IPV6 address (e.g. 2002:824f:8099:d:216:ecff:fe92:873c%2)

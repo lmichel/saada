@@ -21,24 +21,27 @@ public class SQLLargeQuery extends SQLQuery {
 	public SQLLargeQuery() throws QueryException {
 		super();
 	}
+
 	/**
 	 * @param query
 	 * @throws QueryException
 	 */
 	public SQLLargeQuery(String query) throws QueryException {
 		super(query);
-	}	
+	}
 
-	public ResultSet run() throws  QueryException {
-		Exception te=null;
+	public ResultSet run() throws QueryException {
+		Exception te = null;
 		try {
 			_stmts = databaseConnection.getLargeStatement();
-			
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Select large query: " + this.query);
-			long start = System.currentTimeMillis();
-			resultset = _stmts.executeQuery(query); 
+
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Done in " + ((System.currentTimeMillis()-start)/1000F) + " sec");
+				Messenger.printMsg(Messenger.DEBUG, "Select large query: " + this.query);
+			long start = System.currentTimeMillis();
+			resultset = _stmts.executeQuery(query);
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Done in "
+						+ ((System.currentTimeMillis() - start) / 1000F) + " sec");
 			return resultset;
 
 		} catch (SaadaException e) {
@@ -47,10 +50,34 @@ public class SQLLargeQuery extends SQLQuery {
 			QueryException.throwNewException(SaadaException.DB_ERROR, te);
 		} catch (Exception e) {
 			te = e;
+			e.printStackTrace();
 			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
 			this.close();
 			QueryException.throwNewException(SaadaException.DB_ERROR, te);
 		}
 		return null;
+	}
+
+	public int runUpdate(String query) throws QueryException {
+		Exception te = null;
+		try {
+			int result;
+			_stmts = databaseConnection.getLargeStatement();
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "UPDATE large query: " + this.query);
+			long start = System.currentTimeMillis();
+			result = _stmts.executeUpdate(query);
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Done in "
+						+ ((System.currentTimeMillis() - start) / 1000F) + " sec");
+			return result;
+		} catch (Exception e) {
+			te = e;
+			Messenger.printMsg(Messenger.ERROR, "Query: " + query);
+			this.close();
+			QueryException.throwNewException(SaadaException.DB_ERROR, te);
+		}
+
+		return -1;
 	}
 }

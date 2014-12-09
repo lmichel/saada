@@ -24,8 +24,8 @@ import saadadb.sqltable.Table_Saada_Metacat;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.RegExp;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 

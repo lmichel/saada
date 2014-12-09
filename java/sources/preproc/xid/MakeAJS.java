@@ -17,7 +17,6 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
-import saadadb.vo.request.formator.votable.ConeSearchVotableFormator;
 import ajaxservlet.formator.DefaultFormats;
 
 public class MakeAJS {

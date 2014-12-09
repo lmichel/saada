@@ -2,9 +2,7 @@ package saadadb.vo.request;
 
 import saadadb.exceptions.QueryException;
 import saadadb.vo.request.formator.votable.Siap2VotableFormator;
-import saadadb.vo.request.formator.votable.SiapVotableFormator;
 import saadadb.vo.request.query.SIAP2Query;
-import saadadb.vo.request.query.SIAPQuery;
 
 /**
  * Translate SIAP parameters in a SAADAQL query and run it

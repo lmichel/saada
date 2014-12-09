@@ -8,7 +8,6 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
-import saadadb.exceptions.SaadaException;
 
 
 /**

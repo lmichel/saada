@@ -12,7 +12,6 @@ import saadadb.util.Messenger;
 import saadadb.vo.request.ZipRequest;
 import uws.UWSException;
 import uws.UWSToolBox;
-import uws.job.AbstractJob;
 import uws.job.ErrorType;
 import uws.job.Result;
 

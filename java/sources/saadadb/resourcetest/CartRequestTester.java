@@ -6,7 +6,6 @@ package saadadb.resourcetest;
 import java.util.LinkedHashMap;
 
 import saadadb.database.Database;
-import saadadb.exceptions.QueryException;
 import saadadb.util.Messenger;
 import saadadb.vo.request.CartRequest;
 

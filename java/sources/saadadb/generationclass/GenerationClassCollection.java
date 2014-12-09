@@ -9,7 +9,6 @@ package saadadb.generationclass;
  */
 import java.io.File;
 import java.io.FileWriter;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import saadadb.collection.Category;

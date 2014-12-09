@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.panels.TaskPanel;
 import saadadb.admintool.windows.TextSaver;
-import saadadb.util.Messenger;
 
 /**
  * Opens q windows withe the XML ant task for the current thread

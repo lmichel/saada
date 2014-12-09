@@ -43,7 +43,7 @@ public class CopyFile{
     
     public static void main(String args[]){
 	try {
-	    (new CopyFile()).copy(args[0],args[1]);
+	    CopyFile.copy(args[0],args[1]);
 	}
 	catch(Exception e){
 	    Messenger.printStackTrace(e);

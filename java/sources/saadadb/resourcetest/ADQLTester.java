@@ -1,18 +1,11 @@
 package saadadb.resourcetest;
 
-import java.io.ByteArrayInputStream;
-
-import adqlParser.SaadaADQLQuery;
-import adqlParser.SaadaDBConsistency;
-import adqlParser.SaadaQueryBuilderTools;
-import adqlParser.parser.AdqlParser;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.database.Repository;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.vo.ADQLExecutor;
-import saadadb.vo.request.query.AdqlQuery;
 import saadadb.vo.tap.TAPToolBox;
+import adqlParser.parser.AdqlParser;
 
 public class ADQLTester {
 

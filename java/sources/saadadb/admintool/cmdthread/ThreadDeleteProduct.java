@@ -12,7 +12,6 @@ import javax.swing.SwingUtilities;
 
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.components.AdminComponent;
-import saadadb.admintool.components.SQLJTable;
 import saadadb.admintool.panels.tasks.DataTableEditorPanel;
 import saadadb.admintool.utils.AntDesk;
 import saadadb.collection.ProductManager;
@@ -21,7 +20,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
-import saadadb.util.Messenger;
 
 /** * @version $Id$
 

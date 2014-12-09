@@ -1,7 +1,6 @@
 package saadadb.sqltable;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
@@ -11,7 +10,6 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.enums.DispersionType;
 
 
 public class Table_SaadaDB extends SQLTable {

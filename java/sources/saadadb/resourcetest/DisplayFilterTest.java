@@ -1,7 +1,5 @@
 package saadadb.resourcetest;
 
-import java.io.File;
-
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import ajaxservlet.formator.DynamicClassDisplayFilter;

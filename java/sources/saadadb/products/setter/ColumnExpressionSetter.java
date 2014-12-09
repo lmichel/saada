@@ -8,11 +8,11 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import net.objecthunter.exp4j.function.Function;
-import saadadb.vocabulary.enums.ColumnSetMode;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
  * The columnSetter used when a field must be evaluate by an expression

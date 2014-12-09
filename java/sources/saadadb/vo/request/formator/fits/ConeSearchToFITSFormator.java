@@ -12,7 +12,6 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
-import saadadb.vo.request.formator.QueryResultFormator.infoEntry;
 
 /**
  * @author laurent

@@ -7,7 +7,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import saadadb.admintool.AdminTool;
-import saadadb.admintool.VPSandbox.panels.editors.VPSTOEPanel;
 import saadadb.admintool.panels.AdminPanel;
 import saadadb.util.Messenger;
 
