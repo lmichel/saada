@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import nom.tam.fits.FitsException;
 import saadadb.collection.Category;
+import saadadb.dataloader.mapping.EntryMapping;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -23,9 +24,9 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.inference.QuantityDetector;
-import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
+
 /**
  * @author michel
  * @version $Id$
@@ -54,7 +55,33 @@ public abstract class DataFile implements Enumeration {
 	 * In case of
 	 */
 	public List<String> comments = new ArrayList<String>();
-
+	/**
+	 * List of RegExp filtering  the accepted attributes
+	 */
+	private List<String> attributeFilter;
+	/**
+	 * List of RegExp filtering  the rejected attributes
+	 */
+	private List<String> ignoredAttribute;
+	/**
+	 * List of RegExp filtering  the rejected column names
+	 */
+	private List<String> ignoredEntryAttribute;
+	/**
+	 * List of RegExp filtering  the accepted column names
+	 */
+	private List<String>  entryAttributeFilter;
+	/**
+	 * 
+	 */
+	protected ProductMapping productMapping;
+	
+	/**
+	 * @param productMapping
+	 */
+	DataFile(ProductMapping productMapping){
+		this.setMapping(productMapping);
+	}
 
 	/**
 	 * Returns the first extension possibly spectra data
@@ -273,38 +300,7 @@ public abstract class DataFile implements Enumeration {
 		return this.comments;
 	}
 
-	/**
-	 * @return
-	 * @throws SaadaException
-	 * @throws Exception 
-	 */
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws Exception{
-		TableBuilder tb;
-		if( productMapping.getCategory() == Category.ENTRY ) {
-			tb = (TableBuilder) this.productBuilder;
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, "Only the " + this.getEntryAttributeHandlerCopy().size() + " table columns taken in account");
-			return new QuantityDetector(tb.entryBuilder.productAttributeHandler
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);			
-		} else if( this.productBuilder instanceof TableBuilder  ){
-			tb = (TableBuilder) this.productBuilder;
-//			if (Messenger.debug_mode)
-//				Messenger.printMsg(Messenger.DEBUG, this.entryAttributeHandlers.size() + " columns taken in account");
-			return  new QuantityDetector(this.productBuilder.productAttributeHandler
-					, tb.entryBuilder.productAttributeHandler
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);
-		} else {
-			return new QuantityDetector(this.productBuilder.productAttributeHandler
-					, this.comments
-					, productMapping
-					, this.productBuilder.wcsModeler);
-		}		
-	}
-
+	
 	/**
 	 * Set the builder's attribute handlers with the values read in the product file
 	 * @throws Exception
@@ -370,6 +366,107 @@ public abstract class DataFile implements Enumeration {
 		}
 	}
 
+	/**
+	 * Check if the cards pass the filters given by the mapping.
+	 * If a card matches one expression of the attribute filters, 
+	 * it is taken, if not and if it matches one of the ignored attributes 
+	 * it is rejected otherwise is is accepted 
+	 * @param cardName
+	 * @return
+	 */
+	protected boolean isCardAccepted(String cardName){
+		for(String regex : this .attributeFilter){
+			if( cardName.matches(regex)){
+				return true;
+			} 
+		}
+		if( this .attributeFilter.size() > 0 ){
+			return false;
+		}
+
+		for(String regex : this.ignoredAttribute){
+			if( cardName.matches(regex)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check if the cards pass the filters given by the mapping.
+	 * If a card matches one expression of the attribute filters, 
+	 * it is taken, if not and if it matches one of the ignored attributes 
+	 * it is rejected otherwise is is accepted 
+	 * @param cardName
+	 * @return
+	 */
+	protected boolean isCardAccepted(AttributeHandler card){
+		return this.isCardAccepted(card.getNameorg());
+	}
+
+	/**
+	 * Check if the cards pass the  column name filters given by the mapping.
+	 * If a card matches one expression of the attribute filters, 
+	 * it is taken, if not and if it matches one of the ignored attributes 
+	 * it is rejected otherwise is is accepted 
+	 * @param cardName
+	 * @return
+	 */
+	protected boolean isEntryCardAccepted(String cardName){
+		for(String regex : this.entryAttributeFilter){
+			if( cardName.matches(regex)){
+				return true;
+			} 
+		}
+		if( this .entryAttributeFilter.size() > 0 ){
+			return false;
+		}
+		for(String regex : this.ignoredEntryAttribute){
+			if( cardName.matches(regex)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Check if the cards pass the  column name filters given by the mapping.
+	 * If a card matches one expression of the attribute filters, 
+	 * it is taken, if not and if it matches one of the ignored attributes 
+	 * it is rejected otherwise is is accepted 
+	 * @param cardName
+	 * @return
+	 */
+	protected boolean isEntryCardAccepted(AttributeHandler card){
+		return this.isEntryCardAccepted(card.getNameorg());
+	}
+
+	/**
+	 * @param builder
+	 */
+	protected void setBuilder(ProductBuilder builder){
+		System.out.println("SETTTTTTTTTTTTTTTTTTTTTt");
+		this.productBuilder = builder;
+		this.setMapping(builder.mapping);
+	}
+
+	/**
+	 * @param productMapping
+	 */
+	protected void  setMapping(ProductMapping productMapping){
+		this.productMapping = productMapping;
+		List<String> map;
+		map = this.productMapping.getIgnoredAttributes();
+		this.ignoredAttribute = (map != null)? map : new ArrayList<String>();
+		map = this.productMapping.getAttributeFilter();
+		this.attributeFilter  = (map!= null)? map : new ArrayList<String>();
+		
+		EntryMapping eMapping = productMapping.getEntryMapping();
+		map = (eMapping != null)? eMapping.getIgnoredAttributes(): null;
+		this.ignoredEntryAttribute = (map != null)? map	: new ArrayList<String>();
+		map = (eMapping != null)? eMapping.getAttributeFilter(): null;
+		this.entryAttributeFilter  = (map != null)?map: new ArrayList<String>();
+	}
 	/*******************************
 	 * Abstract methods
 	 */
