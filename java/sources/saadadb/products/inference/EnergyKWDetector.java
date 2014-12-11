@@ -45,11 +45,10 @@ public class EnergyKWDetector extends KWDetector {
 	private PriorityMode priority;
 	private String defaultUnit;
 	private String readUnit;
-	public String detectionMessage =""; 
 	public List<String> comments;
 	private ColumnExpressionSetter em_minSetter;
 	private ColumnExpressionSetter em_maxSetter;
-	private ColumnExpressionSetter x_unit_orgSetter;
+	private ColumnExpressionSetter em_unitSetter;
 	private ColumnExpressionSetter em_res_powerSetter;
 	private ColumnExpressionSetter em_binsSetter;
 
@@ -88,7 +87,7 @@ public class EnergyKWDetector extends KWDetector {
 	private void setUnitMode(ProductMapping productMapping) throws FatalException{
 		if( productMapping == null ) return ;
 		this.priority = productMapping.getEnergyAxisMapping().getPriority();
-		ColumnMapping cm = productMapping.getEnergyAxisMapping().getColumnMapping("x_unit_org_csa");
+		ColumnMapping cm = productMapping.getEnergyAxisMapping().getColumnMapping("em_unit_csa");
 		this.defaultUnit = (cm == null)? "":cm.getValue();
 		switch (this.priority) {
 		case ONLY:
@@ -198,15 +197,15 @@ public class EnergyKWDetector extends KWDetector {
 			this.em_minSetter     = new ColumnWcsSetter("em_min"    , "WCS.getMin(1)", this.projection);
 			this.em_maxSetter     = new ColumnWcsSetter("em_max"    , "WCS.getMax(1)", this.projection);
 			this.em_binsSetter    = new ColumnWcsSetter("em_bins"   , "WCS.getNaxis(1)", this.projection);
-			this.x_unit_orgSetter = new ColumnWcsSetter("x_unit_org", "WCS.getUnit(1)", this.projection);
-			this.x_unit_orgSetter.calculateExpression();
+			this.em_unitSetter = new ColumnWcsSetter("em_unit", "WCS.getUnit(1)", this.projection);
+			this.em_unitSetter.calculateExpression();
 			/*
 			 * WCS can be valid but without unit. In this case, unit is set as notSet, in order to be possibly overridden later
 			 */
-			if( this.x_unit_orgSetter.getValue() == null || this.x_unit_orgSetter.getValue().length() == 0) {
+			if( this.em_unitSetter.getValue() == null || this.em_unitSetter.getValue().length() == 0) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "No unit found in WCS");
-				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
+				this.em_unitSetter = new ColumnExpressionSetter("em_unit");
 			}
 			return true;
 		} else {
@@ -231,21 +230,20 @@ public class EnergyKWDetector extends KWDetector {
 			if( !ah.isNotSet()  ){
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Found column "+ ah.getAttNameOrg());
 				this.em_minSetter = new ColumnRowSetter("em_min", "Column.getMinValue(" + ah.getAttNameOrg() + ")");
-				this.em_minSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
+				this.em_minSetter.completeDetectionMsg("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");
 				this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getMaxValue(" + ah.getAttNameOrg() + ")");
-				this.em_maxSetter.completeMessage("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");			
+				this.em_maxSetter.completeDetectionMsg("Column "+ ah.getAttNameOrg() + " taken as dispersion axe");			
 				this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + ah.getAttNameOrg() + ")");			
-				this.em_binsSetter.completeMessage("Take the row number");	
+				this.em_binsSetter.completeDetectionMsg("Take the row number");	
 				/*
 				 * In this case the column is taken from metadata. Metadata are supposed to be the same for all products
 				 * using this instance, so we can set it as a constant 
 				 */
-				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
+				this.em_unitSetter = new ColumnExpressionSetter("em_unit");
 				if( ah.getUnit() != null && ah.getUnit().length() > 0 )  {
-					this.x_unit_orgSetter.setByValue(ah.getUnit(), false);
-					this.x_unit_orgSetter.completeMessage("Unit if the column " + ah.getAttNameOrg());
+					this.em_unitSetter.setByValue(ah.getUnit(), false);
+					this.em_unitSetter.completeDetectionMsg("Unit if the column " + ah.getAttNameOrg());
 				} 
-				this.detectionMessage = ah.message.toString();
 				return true;
 			} 		
 			/*
@@ -256,15 +254,14 @@ public class EnergyKWDetector extends KWDetector {
 				ah = this.searchColumns(null, RegExp.SPEC_FLUX_KW, RegExp.SPEC_FLUX_DESC);
 				if( !ah.isNotSet()  ){
 					this.em_minSetter = new ColumnExpressionSetter("em_min", "0");
-					this.em_minSetter.completeMessage("Row number taken as dispersion axe");
+					this.em_minSetter.completeDetectionMsg("Row number taken as dispersion axe");
 					this.em_maxSetter = new ColumnRowSetter("em_max", "Column.getNbRows(" + ah.getAttNameOrg() + ")");				
-					this.em_maxSetter.completeMessage("Row number taken as dispersion axe");
+					this.em_maxSetter.completeDetectionMsg("Row number taken as dispersion axe");
 					this.em_binsSetter = new ColumnRowSetter("em_bins", "Column.getNbRows(" + ah.getAttNameOrg() + ")");			
-					this.em_binsSetter.completeMessage("Take the row number");	
-					this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
-					this.x_unit_orgSetter.setByValue("channel", false);
-					this.x_unit_orgSetter.completeMessage("Row number as dispersion: take channel as unit");
-					this.detectionMessage = "take row number as dispersion axis";
+					this.em_binsSetter.completeDetectionMsg("Take the row number");	
+					this.em_unitSetter = new ColumnExpressionSetter("em_unit");
+					this.em_unitSetter.setByValue("channel", false);
+					this.em_unitSetter.completeDetectionMsg("Row number as dispersion: take channel as unit");
 					return true;
 				} 		
 			}
@@ -288,13 +285,13 @@ public class EnergyKWDetector extends KWDetector {
 				Messenger.printMsg(Messenger.DEBUG, "Spectral range found in keywords");
 			String u;
 			if( (u = this.em_minSetter.getUnit()) != null && u.length() > 0 ){
-				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", u);
+				this.em_unitSetter = new ColumnExpressionSetter("em_unit", u);
 			} else if( (u = this.em_maxSetter.getUnit()) != null && u.length() > 0 ){
-				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org", u);
+				this.em_unitSetter = new ColumnExpressionSetter("em_unit", u);
 			} else {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "");
-				this.x_unit_orgSetter = new ColumnExpressionSetter("x_unit_org");
+				this.em_unitSetter = new ColumnExpressionSetter("em_unit");
 			}
 			return true;
 		}
@@ -350,11 +347,11 @@ public class EnergyKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getEUnit() throws SaadaException{
 		this.detectAxeParams();
-		return (this.x_unit_orgSetter == null)? new ColumnExpressionSetter("x_unit_org"): this.x_unit_orgSetter;
+		return (this.em_unitSetter == null)? new ColumnExpressionSetter("em_unit"): this.em_unitSetter;
 		//		if( spectralCoordinate == null ){
 		//			this.mapCollectionSpectralCoordinateAuto();
 		//		}
-		//		ColumnExpressionSetter retour = new ColumnExpressionSetter("x_unit_org");
+		//		ColumnExpressionSetter retour = new ColumnExpressionSetter("em_unit");
 		//		if( this.spectralCoordinate.getMappedUnit() != null ){
 		//			retour.setByValue(String.valueOf(this.spectralCoordinate.getMappedUnit()), false);
 		//			retour.completeMessage(this.spectralCoordinate.detectionMessage);

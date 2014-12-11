@@ -1,7 +1,8 @@
 package saadadb.products.datafile;
 
-import java.io.File;
 import java.io.IOException;
+
+import saadadb.dataloader.mapping.ProductMapping;
 
 /**
  * Super class of all types of DataFile being on the file system 
@@ -15,10 +16,11 @@ public abstract class FSDataFile extends DataFile{
 	 * @param fileName
 	 * @throws Exception 
 	 */
-	public FSDataFile(String fileName) throws Exception {
+	public FSDataFile(String fileName, ProductMapping productMapping) throws Exception {
+		super(productMapping);
 		this.file = new DataResourcePointer(fileName);
 	}
-
+	
 	@Override
 	public String getCanonicalPath() throws IOException {
 		return this.file.getCanonicalPath();

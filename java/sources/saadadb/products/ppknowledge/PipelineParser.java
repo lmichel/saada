@@ -56,7 +56,7 @@ public abstract class PipelineParser {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter(key);
 			cs.setByWCS(ah.getValue(), false);
 			cs.setUnit(ah.getUnit());
-			cs.completeMessage("Issued from the knowledge base");
+			cs.completeUserMappingMsg("Issued from the knowledge base");
 			return cs;
 		}
 	}
@@ -145,7 +145,7 @@ public abstract class PipelineParser {
 		return new ColumnExpressionSetter("em_max");
 	}
 	public ColumnExpressionSetter getEUnit() throws SaadaException, Exception {
-		return new ColumnExpressionSetter("x_unit_org");
+		return new ColumnExpressionSetter("em_unit");
 	}
 	public ColumnExpressionSetter getEBins() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("em_bins");

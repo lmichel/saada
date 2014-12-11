@@ -105,7 +105,7 @@ public class TimeKWDetector extends KWDetector {
 						+ year.getSingleAttributeHandler().getNameorg() + "," + "'-'" + ","
 						+ month.getSingleAttributeHandler().getNameorg() + "," + "'-'" + ","
 						+ day.getSingleAttributeHandler().getNameorg() + ")" , this.tableAttributeHandler, false);
-				this.tminSetter.completeMessage("Build from YEAR/MONTH/DAY keywords");
+				this.tminSetter.completeDetectionMsg("Build from YEAR/MONTH/DAY keywords");
 			} 
 		} else {
 			this.searchTimeRef(this.tminSetter);
@@ -147,18 +147,18 @@ public class TimeKWDetector extends KWDetector {
 					expression +=  "Column.getMinValue(" + timeSetter.getExpression() + ")" + tr.convFactor;
 				} else {
 					this.tminSetter = new ColumnExpressionSetter("t_min");
-					this.tminSetter.completeMessage("Cannot interpret the data format in column " + timeSetter.getExpression());
+					this.tminSetter.completeDetectionMsg("Cannot interpret the data format in column " + timeSetter.getExpression());
 					this.tminSetter = new ColumnExpressionSetter("t_min");
-					this.tminSetter.completeMessage("Cannot interpret the data format in column " + timeSetter.getExpression());
+					this.tminSetter.completeDetectionMsg("Cannot interpret the data format in column " + timeSetter.getExpression());
 					return false;
 				}	
 				String message = "Take the expression result (" + expression + ")";
 				this.tminSetter = new ColumnRowSetter("t_min", expression);
-				this.tminSetter.completeMessage(message);
+				this.tminSetter.completeDetectionMsg(message);
 				
 				expression =  tr.getTimeRef() + "Column.getMaxValue(" + timeSetter.getExpression() + ")" + tr.convFactor;
 				this.tmaxSetter = new ColumnRowSetter("t_max", expression);
-				this.tmaxSetter.completeMessage(message);
+				this.tmaxSetter.completeDetectionMsg(message);
 				return true;
 			} 				
 		}

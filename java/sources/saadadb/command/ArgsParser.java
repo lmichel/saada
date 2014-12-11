@@ -117,6 +117,8 @@ public final class ArgsParser implements Serializable{
 		 */
 		allowedArgs.add("-ignore") ;
 		allowedArgs.add("-eignore") ; allowedArgs.add("-entry.ignore") ;
+		allowedArgs.add("-filter") ;
+		allowedArgs.add("-efilter") ; allowedArgs.add("-entry.filter") ;
 		allowedArgs.add("-ukw") ;
 		allowedArgs.add("-eukw") ;allowedArgs.add("-entry.ukw") ;
 
@@ -270,7 +272,7 @@ public final class ArgsParser implements Serializable{
 		}
 		return ClassifierMode.NOCLASSIFICATION;
 	}
-	
+
 	/**
 	 * Return the -number parameter. This parameter is fo a genral purpose
 	 * @return
@@ -284,7 +286,7 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
-	
+
 
 
 	/**
@@ -734,36 +736,40 @@ public final class ArgsParser implements Serializable{
 	 * returns a table with all ignored attributes -ignore=att1,att2,.....
 	 * @return
 	 */
-	public String[] getIgnoredAttributes() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-ignore")) {
-				return getArgsValue(args[i]).split(",");
-			}
-		}
-		return new String[0];
-	}
-
-	/**
-	 * returns a table with all instance ignored entry attributes  -eignore=att1,att2,.....
-	 * @return
-	 */
-	public String[] getEntryIgnoredAttributes() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-eignore") ||  args[i] .startsWith("-entry.ignore")) {
-				return getArgsValue(args[i]).split(",");
-			}
-		}
-		return new String[0];
-	}
-
-	/**
-	 * Switch between entry and product parameters
-	 * @param entry
-	 * @return
-	 */
 	public String[] getIgnoredAttributes(boolean entry) {
-		return (entry)?this.getEntryIgnoredAttributes(): this.getIgnoredAttributes();
-	}	
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( entry){
+				if( args[i] .startsWith("-eignore") ||  args[i] .startsWith("-entry.ignore")) {
+					return getArgsValue(args[i]).split(",");
+				}
+			} else {
+				if( args[i] .startsWith("-ignore")) {
+					return getArgsValue(args[i]).split(",");
+				}
+			}
+		}
+		return new String[0];
+	}
+
+	/**
+	 * Return a list of filters selecting attributes to be loaded
+	 * @return
+	 */
+	public String[] getAttributeFilter(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( entry){
+				if( args[i] .startsWith("-efilter") ||  args[i] .startsWith("-entry.filter")) {
+					return getArgsValue(args[i]).split(",");
+				}
+			} else {
+				if( args[i] .startsWith("-filter")) {
+					return getArgsValue(args[i]).split(",");
+				}
+			}
+		}
+		return new String[0];
+	}
+
 
 	/**
 	 * Returns the attribute mapping the user keyword user_kw: -ukw user_kw=attt ....
@@ -824,13 +830,13 @@ public final class ArgsParser implements Serializable{
 	 * returns a table with all instance name components -system=system,equinox
 	 * @return
 	 */
-	public String[] getCoordinateSystem() {
+	public String getCoordinateSystem() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-system")) {
-				return getArgsValue(args[i]).split(",");
+				return getArgsValue(args[i]);
 			}
 		}
-		return new String[0];
+		return null;
 	}
 
 	/**
@@ -1812,7 +1818,7 @@ public final class ArgsParser implements Serializable{
 		}
 		bw.close();
 	}
-	
+
 	/**
 	 * Read the fullPath file and built an new ArgsParser instance
 	 * This is a low level function, no format checking is done
@@ -1831,9 +1837,9 @@ public final class ArgsParser implements Serializable{
 		}
 		br.close();
 		return new ArgsParser(args.toArray(new String[args.size()]));
-		
+
 	}
-	
+
 	/**
 	 * Extract the parameters from fileName an return a new instance of ArgsParser
 	 * Parameters must be like
@@ -1856,7 +1862,7 @@ public final class ArgsParser implements Serializable{
 	}
 	/**
 	 * Extract the parameters from JSON array an return a new instance of ArgsParser
-     * Json array must be like 
+	 * Json array must be like 
        [
 		"-category=misc" ,
 		"-collection=FOO",

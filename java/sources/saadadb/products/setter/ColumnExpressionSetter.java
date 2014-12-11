@@ -198,7 +198,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.setExpression(expression);
 		this.calculateExpressionFromAttributes(lah);
 	}
-	
+
 	/**
 	 * @param expression
 	 * @throws Exception
@@ -282,12 +282,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			}
 			if( this.result == null ){
 				this.settingMode = ColumnSetMode.NOT_SET;
-				this.completeMessage("Expression [" + this.expression + "] return null");				
+				this.completeUserMappingMsg("Expression [" + this.expression + "] return null");				
 			}
 		} catch (Exception e) {
 			this.result = SaadaConstant.STRING;
 			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeMessage("exp failed: " + e.getMessage());
+			this.completeUserMappingMsg("exp failed: " + e.getMessage());
 		}
 	}
 
@@ -333,7 +333,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			e.printStackTrace();
 			this.result = SaadaConstant.STRING;
 			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeMessage("exp failed: " + e.getMessage());
+			this.completeUserMappingMsg("exp failed: " + e.getMessage());
 		}
 	}
 
@@ -470,17 +470,16 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	 * @return
 	 */
 	public String toString(){
-
-		String retour =  this.fieldName + " (" + this.expression + ")=" + this.result + ((this.unit != null)? this.unit: "")
-				+ " [";
-		for( AttributeHandler ah: this.exprAttributes) {
-			retour += ah.getNameorg() + " ";
+		String retour =  this.fieldName + " ";
+		if( this.expression != null ){
+			retour +=  "(" + this.expression + ")=" + this.result + ((this.unit != null)? this.unit: "")
+					+ " [";
+			for( AttributeHandler ah: this.exprAttributes) {
+				retour += ah.getNameorg() + " ";
+			}
+			retour += "] ";
 		}
-		retour += "] " 
-				+ this.getSettingMode() + " "
-				+ this.message;
-		if( this.storedValue != null )
-			retour += " storedValue=" + this.storedValue;
+		retour += super.toString();
 		return retour;
 	}
 
@@ -508,13 +507,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			return;
 		switch(this.settingMode){
 		case BY_EXPRESSION:
-			this.completeMessage("expression <"+this.expression+">");
+			this.completeUserMappingMsg("expression <"+this.expression+">");
 		case BY_VALUE:
-			this.completeMessage("value <" +this.result+">");
+			this.completeUserMappingMsg("value <" +this.result+">");
 			break;
 
 		default:
-			this.completeMessage("Nothing found");
+			this.completeUserMappingMsg("Nothing found");
 			break;
 		}
 
@@ -531,7 +530,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode=ColumnSetMode.BY_VALUE;
 		this.result = this.expression = value;	
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -540,7 +539,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode=ColumnSetMode.BY_VALUE;
 		this.result = this.expression = String.valueOf(value);;	
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -548,9 +547,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public void setByKeyword(boolean fromMapping) {
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -559,9 +558,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -570,9 +569,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -582,9 +581,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -594,9 +593,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -606,9 +605,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -618,9 +617,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -630,9 +629,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -642,9 +641,9 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeMessage("keyword " + msg);
+		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeMessage("user mapping");
+			this.completeUserMappingMsg("user mapping");
 		}
 	}
 
@@ -657,7 +656,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setValue(double value, String unit) {
 		this.storedValue = this.result = String.valueOf(value);;	
-	//	this.setUnit(unit);
+		//	this.setUnit(unit);
 		this.storedValue = value;
 	}
 
@@ -665,17 +664,17 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public void setNotSet() {
 		this.settingMode = ColumnSetMode.NOT_SET;
 	}
-	
+
 	@Override
 	public void setNotSet(String message, Exception e){
 		this.settingMode = ColumnSetMode.NOT_SET;
-		this.completeMessage(message + ":" + e.getMessage());		
+		this.completeUserMappingMsg(message + ":" + e.getMessage());		
 	}
 
 	@Override
 	public void setNotSet(String message) {
 		this.settingMode = ColumnSetMode.NOT_SET;
-		this.completeMessage(message);
+		this.completeUserMappingMsg(message);
 	}
 
 	@Override
@@ -706,7 +705,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public String getComment() {
-		return this.message.toString();
+		return this.getFullMappingReport();
 	}
 
 	@Override
@@ -733,12 +732,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public AttributeHandler getAssociateAtttribute() {
 		return this.singleAttributeHandler.getAssociateAtttribute();
 	}
-	
+
 	@Override
 	public List<AttributeHandler> getExprAttributes() {
 		return this.exprAttributes;
 	}
-	
+
 	/**
 	 * @param args
 	 * @throws Exception

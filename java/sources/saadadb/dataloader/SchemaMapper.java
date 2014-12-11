@@ -361,15 +361,34 @@ public abstract class SchemaMapper {
 	 * @return the datafile
 	 * @throws Exception
 	 */
-	protected DataFile getDataFileInstance(String fullPath) throws Exception {
+	public DataFile getDataFileInstance(String fullPath) throws Exception {
 		if( fullPath.matches(RegExp.FITS_FILE) ) {
-			return(new FitsDataFile(fullPath));
+			return(new FitsDataFile(fullPath, this.mapping));
 		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
-			return(new VOTableDataFile(fullPath));
+			return(new VOTableDataFile(fullPath, this.mapping));
 		} else if( fullPath.matches(RegExp.JSON_FILE) ) {
-			return(new JsonDataFile(fullPath));
+			return(new JsonDataFile(fullPath, this.mapping));
 		} else {
-			return(new AnyFile(fullPath));
+			return(new AnyFile(fullPath, this.mapping));
+		}		
+	}
+	
+	/**
+	 * Create an appropriate DataFile from the file name 
+	 * @param fullPath
+	 * @param productMapping needed for the data product to build the ma
+	 * @return
+	 * @throws Exception
+	 */
+	public static DataFile getDataFileInstance(String fullPath, ProductMapping productMapping) throws Exception {
+		if( fullPath.matches(RegExp.FITS_FILE) ) {
+			return(new FitsDataFile(fullPath, productMapping));
+		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
+			return(new VOTableDataFile(fullPath, productMapping));
+		} else if( fullPath.matches(RegExp.JSON_FILE) ) {
+			return(new JsonDataFile(fullPath, productMapping));
+		} else {
+			return(new AnyFile(fullPath, productMapping));
 		}		
 	}
 	

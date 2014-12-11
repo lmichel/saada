@@ -142,7 +142,7 @@ public abstract class KWDetector {
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_KEYWORD, false, true);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah);
-				setter.completeMessage("kw " + ah.getNameorg() + " detected by UCD");
+				setter.completeDetectionMsg("kw " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
 		}
@@ -181,8 +181,8 @@ public abstract class KWDetector {
 					//					retour.add(new ColumnExpressionSetter(ah2, ColumnSetMode.BY_KEYWORD, false, true));
 					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
-					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by UCD");
-					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by UCD");
+					retour.get(0).completeDetectionMsg("kw " + ah1.getNameorg() + " detected by UCD");
+					retour.get(1).completeDetectionMsg("kw " + ah2.getNameorg() + " detected by UCD");
 					return retour;
 				} else {
 					ah1 = null;
@@ -210,7 +210,7 @@ public abstract class KWDetector {
 				if( Messenger.debug_mode ) 
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah);
-				setter.completeMessage("kw " + ah.getNameorg() + " detected by name");
+				setter.completeDetectionMsg("kw " + ah.getNameorg() + " detected by name");
 				return setter;
 			}
 		}
@@ -248,8 +248,8 @@ public abstract class KWDetector {
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
 					retour.add(new ColumnExpressionSetter(fieldName1,ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2,ah2));
-					retour.get(0).completeMessage("kw " + ah1.getNameorg() + " detected by name");
-					retour.get(1).completeMessage("kw " + ah2.getNameorg() + " detected by name");
+					retour.get(0).completeDetectionMsg("kw " + ah1.getNameorg() + " detected by name");
+					retour.get(1).completeDetectionMsg("kw " + ah2.getNameorg() + " detected by name");
 					return retour;
 				}
 			}
@@ -277,7 +277,7 @@ public abstract class KWDetector {
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, true);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
-				setter.completeMessage("col " + ah.getNameorg() + " detected by UCD");
+				setter.completeDetectionMsg("col " + ah.getNameorg() + " detected by UCD");
 				return setter;
 			}
 		}
@@ -316,8 +316,8 @@ public abstract class KWDetector {
 						Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah1 + " and " + ah2 );
 					retour.add(new ColumnExpressionSetter(fieldName1, ah1));
 					retour.add(new ColumnExpressionSetter(fieldName2, ah2));
-					retour.get(0).completeMessage("col " + ah1.getNameorg() + " detected by UCD");
-					retour.get(1).completeMessage("col " + ah2.getNameorg() + " detected by UCD");
+					retour.get(0).completeDetectionMsg("col " + ah1.getNameorg() + " detected by UCD");
+					retour.get(1).completeDetectionMsg("col " + ah2.getNameorg() + " detected by UCD");
 					return retour;
 				}
 			}
@@ -345,7 +345,7 @@ public abstract class KWDetector {
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
-				setter.completeMessage("col " + ah.getNameorg() + " detected by name");
+				setter.completeDetectionMsg("col " + ah.getNameorg() + " detected by name");
 				return setter;
 
 			}
@@ -371,7 +371,7 @@ public abstract class KWDetector {
 					Messenger.printMsg(Messenger.DEBUG, msg + " Found: " + ah);
 				//				return new ColumnExpressionSetter(ah, ColumnSetMode.BY_TABLE_COLUMN, false, false);
 				ColumnExpressionSetter setter = new ColumnExpressionSetter(fieldName, ah,ColumnSetMode.BY_TABLE_COLUMN, true);
-				setter.completeMessage("col " + ah.getNameorg() + " detected by description");
+				setter.completeDetectionMsg("col " + ah.getNameorg() + " detected by description");
 				return setter;
 
 			}

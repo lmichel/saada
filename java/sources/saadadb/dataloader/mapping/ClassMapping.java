@@ -15,7 +15,7 @@ public class ClassMapping {
 		if( this.className == null ) {
 			this.className = "";
 		}
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Setting the mapping type for class " + this.className);
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Setting the mapping type for " + ap.getCollection() + "/" + ap.getCategory());
 		this.classifier = (ap.getMappingType() == ClassifierMode.NOCLASSIFICATION)? ClassifierMode.CLASSIFIER: ap.getMappingType();
 	}
 

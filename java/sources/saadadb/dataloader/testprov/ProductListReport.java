@@ -68,15 +68,16 @@ public class ProductListReport {
 				if( MAX == -1 || cpt == MAX ) {
 					System.out.println(f + " " + f.exists());
 					ProductBuilder product = null;
-					DataFile df = new FitsDataFile(f.getAbsolutePath());
+					ProductMapping mapping = new ProductMapping("mapping", ap);
+					DataFile df = new FitsDataFile(f.getAbsolutePath(), mapping);
 					switch( Category.getCategory(ap.getCategory()) ) {
 					case Category.TABLE: //product = new TableBuilder(df, new ProductMapping("mapping", ap));
 					break;
-					case Category.MISC : product = new MiscBuilder(df, new ProductMapping("mapping", ap));
+					case Category.MISC : product = new MiscBuilder(df, mapping);
 					break;
-					case Category.SPECTRUM: product = new SpectrumBuilder(df, new ProductMapping("mapping", ap));
+					case Category.SPECTRUM: product = new SpectrumBuilder(df, mapping);
 					break;
-					case Category.IMAGE: product = new Image2DBuilder(df, new ProductMapping("mapping", ap));
+					case Category.IMAGE: product = new Image2DBuilder(df, mapping);
 					break;
 					}
 					product.mapDataFile();

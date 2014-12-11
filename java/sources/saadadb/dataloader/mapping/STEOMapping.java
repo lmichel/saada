@@ -23,6 +23,7 @@ public class STEOMapping {
 	public final int category;
 	public final String collection;
 	private ArrayList<String> ignoredAttributes;
+	private ArrayList<String> attributeFilter;
 	
 	/**
 	 * @param ap
@@ -48,15 +49,25 @@ public class STEOMapping {
 	 */
 	private void setIgnoredAttributes(ArgsParser ap, boolean entryMode){
 		this.ignoredAttributes   = new ArrayList<String>();
+		this.attributeFilter   = new ArrayList<String>();
 		String[]  tabIgnored = ap.getIgnoredAttributes(entryMode);		
 		for( int j=0; j<tabIgnored.length; j++) {
 			/*
 			 * Ignored attribute can contain UNIX wild cards '*' which must be replaced 
 			 * with RegExp wildcards '.*'
 			 */
-			this.ignoredAttributes.add(tabIgnored[j].trim().replaceAll("\\*", ".*"));
+			this.ignoredAttributes.add(tabIgnored[j].trim().replaceAll("[^\\.]\\*", ".*"));
 		}
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The ignored attributes are : "+ this.ignoredAttributes);    	
+		String[]  tabIfilter = ap.getAttributeFilter(entryMode);		
+		for( int j=0; j<tabIfilter.length; j++) {
+			/*
+			 * Ignored attribute can contain UNIX wild cards '*' which must be replaced 
+			 * with RegExp wildcards '.*'
+			 */
+			this.attributeFilter.add(tabIfilter[j].trim().replaceAll("[^\\.]\\*", ".*"));
+		}
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The attribute filters are : "+ this.attributeFilter);    	
 		
 	}
 	
@@ -65,6 +76,12 @@ public class STEOMapping {
 	 */
 	public List<String> getIgnoredAttributes() {
 		return this.ignoredAttributes;
+	}
+	/**
+	 * @return
+	 */
+	public List<String> getAttributeFilter() {
+		return this.attributeFilter;
 	}
 	/**
 	 * @param axe

@@ -37,7 +37,6 @@ public class ProductMapping {
 	/**
 	 * Available for the dataloader to store column index for any purpose
 	 */
-	public List<Integer> freeIndex = new ArrayList<Integer>(); 
 
    
     public ProductMapping(String name, ArgsParser ap) throws SaadaException {
@@ -192,14 +191,9 @@ public class ProductMapping {
     public List<String>  getIgnoredAttributes() {
     	return this.stoeMapping.getIgnoredAttributes();
     }
-	public boolean isAttributeIgnored(String name){
-		for( String ia: this.stoeMapping.getIgnoredAttributes() ) {
-			if( name.equals(ia)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public List<String>  getAttributeFilter() {
+    	return this.stoeMapping.getAttributeFilter();
+    }
 	
 	/**
 	 * Probably not usefull: just for compat with the Configuration default handler
@@ -208,28 +202,10 @@ public class ProductMapping {
 	public boolean isProductValid(Object prd) {
 		return true;
 	}
-	/**
-	 * Return true if index is in freeIndex
-	 * @param index
-	 * @return
-	 */
-	public boolean hasInFreeIndex(int index){
-		if (index>=0 && index <this.freeIndex.size() ) {
-			for( int i:this.freeIndex) {
-				if( i == index ) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	/**
-	 * @param index
-	 */
-	public void addToFreeIndex(int index){
-		this.freeIndex.add(index);
-	}
     
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this.name);

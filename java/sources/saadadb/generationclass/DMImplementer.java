@@ -7,12 +7,6 @@ import java.io.FileWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import saadadb.database.Database;
-import saadadb.database.Repository;
-import saadadb.exceptions.FatalException;
-import saadadb.exceptions.SaadaException;
-import saadadb.meta.VOResource;
-import saadadb.util.Messenger;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotResource;
@@ -23,6 +17,13 @@ import cds.savot.model.SavotVOTable;
 import cds.savot.model.TDSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
+import saadadb.database.Database;
+import saadadb.database.Repository;
+import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
+import saadadb.meta.VOResource;
+import saadadb.util.Messenger;
+
 
 /**
  * Add DM accessors to a class

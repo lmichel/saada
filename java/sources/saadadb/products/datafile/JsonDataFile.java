@@ -11,6 +11,7 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
@@ -49,7 +50,8 @@ public class JsonDataFile extends DataFile {
 	 * @param size
 	 * @throws Exception
 	 */
-	public JsonDataFile(String jsonFileName) throws Exception {
+	public JsonDataFile(String jsonFileName, ProductMapping productMapping) throws Exception {
+		super(productMapping);
 		Messenger.printMsg(Messenger.TRACE, "Building DataFile from " + jsonFileName);
 		JSONParser parser = new JSONParser();  
 		this.file = new File(jsonFileName);
@@ -71,6 +73,7 @@ public class JsonDataFile extends DataFile {
 	 * @param size
 	 */
 	public JsonDataFile(KeywordsBuilder keyWordBuilder, int size) {
+		super(null);
 		this.init(keyWordBuilder, size);
 	}
 

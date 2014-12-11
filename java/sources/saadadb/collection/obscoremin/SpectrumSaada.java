@@ -21,6 +21,6 @@ public class SpectrumSaada extends FileRef{
 	 */
 //    public double x_min_org_csa  = SaadaConstant.DOUBLE;
 //    public double x_max_org_csa  = SaadaConstant.DOUBLE;
-//    public String x_unit_org_csa = SaadaConstant.STRING;
+//    public String em_unit_csa = SaadaConstant.STRING;
 }
   

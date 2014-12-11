@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -21,7 +22,7 @@ import saadadb.vocabulary.DefineType;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 import saadadb.vocabulary.enums.ExtensionSetMode;
 import cds.astro.Astrocoo;
-import cds.savot.binary.DataBinaryReader;
+import cds.savot.model.DataBinaryReader;
 import cds.savot.model.FieldSet;
 import cds.savot.model.GroupSet;
 import cds.savot.model.ParamSet;
@@ -74,6 +75,8 @@ public class VOTableDataFile extends FSDataFile {
 	private ArrayList<Integer> entryTypeCode;
 	/**array of the data column types (optimization)*/	
 	private ArrayList<String> entryTypeString;
+	
+	private List<Boolean> columnRead;
 	/*
 	 * internal pointer used to read internal data
 	 */
@@ -91,8 +94,8 @@ public class VOTableDataFile extends FSDataFile {
 	 * @param filename
 	 * @throws IgnoreException
 	 */
-	public VOTableDataFile(String filename) throws Exception{
-		super(filename);
+	public VOTableDataFile(String filename, ProductMapping productMapping) throws Exception{
+		super(filename, productMapping);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Modeling the VOTable " + filename);
 		this.parser = new SavotPullParser(getCanonicalPath(), SavotPullEngine.ROWREAD);	    
 		this.voTable = parser.getVOTable();
@@ -105,7 +108,7 @@ public class VOTableDataFile extends FSDataFile {
 	 * @throws AbortException 
 	 */
 	public VOTableDataFile(ProductBuilder product) throws Exception{		
-		super(product.getName());
+		super(product.getName(), product.mapping);
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Modeling the VOTable and binding it with the builder");
 		this.bindBuilder(product);
 	}
@@ -193,6 +196,9 @@ public class VOTableDataFile extends FSDataFile {
 		return standard;
 	}
 
+	/**
+	 * @param infoCooSys
+	 */
 	private void addIdForRef(SavotCoosys infoCooSys ){
 		String system, equinox;
 		system = infoCooSys.getSystem();
@@ -292,7 +298,6 @@ public class VOTableDataFile extends FSDataFile {
 					Messenger.printMsg(Messenger.TRACE, "Param without name or id: ignored");
 				} else {
 					AttributeHandler attributeParam = new AttributeHandler(savotParam);
-					String name = savotParam.getName();
 					retour.put(attributeParam.getNameattr(), attributeParam);
 				}
 			}
@@ -302,7 +307,6 @@ public class VOTableDataFile extends FSDataFile {
 				param = group.getParams();
 				for(int j=0; j<param.getItemCount(); j++){
 					SavotParam savotParam = (SavotParam) param.getItemAt(j);
-
 					AttributeHandler attributeParam = new AttributeHandler(savotParam);
 					String name = savotParam.getName();
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Params from group " + name + " ( " + attributeParam.getNameattr() + ")");
@@ -316,6 +320,8 @@ public class VOTableDataFile extends FSDataFile {
 	}
 
 	/**
+	 * Set fields dataExtension and headerExtension on the productMap entry matching extId
+	 * or the first table is extId not set
 	 * @param extId
 	 * @throws Exception
 	 */
@@ -331,7 +337,7 @@ public class VOTableDataFile extends FSDataFile {
 				String key = e.getKey();
 				DataFileExtension value = e.getValue();
 				if( key.startsWith(extId) || key.matches(".*\\s" + extId + "\\s.*")) {
-					if(value.isDataTable() ) {
+					if(value.type == DataFileExtensionType.TABLE_COLUMNS) {
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "Take data table " + extId + " given by the mapping");
 						this.dataExtension = value;
@@ -358,15 +364,17 @@ public class VOTableDataFile extends FSDataFile {
 			for( Entry<String,DataFileExtension> e: this.productMap.entrySet() ) {
 				String key = e.getKey().split(" ")[0]; //take the first field #a.b
 				DataFileExtension value = e.getValue();
-				if( !value.isDataTable()) {
+				if( value.isDataTable()) {
+					System.out.println("@@@@@@@@@@@@@@@@ HEADER " +  value.attributeHandlers.size() + " " + e.getKey());
 					this.headerExtension = value;
 					this.dataExtension = null;
 					for( Entry<String,DataFileExtension> e2: this.productMap.entrySet() ) {
 						String key2 = e2.getKey().split(" ")[0]; //take the first field #a.b
 						DataFileExtension value2 = e2.getValue();
-						if( value2.isDataTable() && key2.equals(key)) {
+						if( value2.type == DataFileExtensionType.TABLE_COLUMNS && key2.equals(key)) {
 							this.dataExtension = value2;
-							if (Messenger.debug_mode)
+							System.out.println("@@@@@@@@@@@@@@@@ DATA " +  value2.attributeHandlers.size()+ " " + e2.getKey());
+						if (Messenger.debug_mode)
 								Messenger.printMsg(Messenger.DEBUG, "Take table header + data " + key + ", the first available");
 							break;
 						}
@@ -387,7 +395,7 @@ public class VOTableDataFile extends FSDataFile {
 			}	
 		}
 		/*
-		 * Stores te nueric code of the type to speed up the data readout
+		 * Stores the numeric code of the type to speed up the data readout
 		 */
 		this.entryTypeCode = new ArrayList<Integer>();
 		for( AttributeHandler ah: this.dataExtension.attributeHandlers ){
@@ -405,6 +413,10 @@ public class VOTableDataFile extends FSDataFile {
 				, "Given by the mapping");
 	}
 
+	/**
+	 * Locate the binary data table
+	 * @throws IgnoreException
+	 */
 	private void  setPointerOnBinaryData() throws IgnoreException {
 		SavotResource savotResource;
 		int rCpt=1;
@@ -423,8 +435,8 @@ public class VOTableDataFile extends FSDataFile {
 				Messenger.printMsg(Messenger.TRACE, "No table in resource #" + rCpt);
 				continue;
 			}
-System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + " " +  this.dataExtension.tableNum);
-			for( SavotTable savotTable: savotResource.getTables().getItems()) {
+			for( Object object: savotResource.getTables().getItems()) {
+				SavotTable savotTable = (SavotTable) object;
 				if( rCpt == this.dataExtension.resourceNum && tCpt == this.dataExtension.tableNum ) {
 					if( (this.binaryData = savotTable.getData().getBinary()) == null  ) {
 						IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "The table #" + rCpt + " is not binary as declared in the porduct map");
@@ -520,20 +532,16 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		return null;
 	}
 
-
-	/* 
-	 * Does nothing because Savot runs in streamng mode: no rewind possible
-	 * (non-Javadoc)
-	 * @see saadadb.products.ProductFile#initEnumeration()
+	/* (non-Javadoc)
+	 * @see saadadb.products.datafile.DataFile#initEnumeration()
 	 */
 	@Override
-	public void initEnumeration() {
+	public void initEnumeration() throws IgnoreException {
 		if( this.binaryMode ) {
 			try {
 				this.binaryParser = new DataBinaryReader(this.binaryData.getStream(), this.binaryFields, false, this.getParent());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "Cannot create a binary parser");
 			}
 
 		} else {
@@ -567,6 +575,7 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 			}
 		} else {
 			if( (this.savotTR = parser.getNextTR()) != null )  {
+				System.out.println("@@@@@@@@@@@@@@@@@@@@ DDD" + parser.getTableCount());
 				return ( parser.getTableCount() == this.headerExtension.tableNum );
 			} else {
 				return  false;
@@ -582,17 +591,21 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 		Vector<Object> line = new Vector<Object>();
 		if( this.binaryMode ) {
 			for( int f=0 ; f< this.binaryFields.getItemCount() ; f++ ){
+				if( !this.columnRead.get(f)) {
+					continue;
+				}
 				Object o = this.binaryParser.getCellAsString(f);
 				line.add(o);
 			}
 		} else {
 
 			TDSet td = this.savotTR.getTDSet();
-			if( td.getItemCount() != this.dataExtension.attributeHandlers.size()) {
-				throw new NullPointerException("Line #" + this.rowNum + ": More <TD> elements than declared <FIELDS>");
-			}
+			int numColRead=0;
 			for (int k = 0; k < td.getItemCount(); k++) {
-				int typeCode = this.entryTypeCode.get(k);
+				if( !this.columnRead.get(k)) {
+					continue;
+				}
+				int typeCode = this.entryTypeCode.get(numColRead);
 				String tdContent = td.getContent(k).trim();
 				Object obj = null;
 				/*
@@ -620,7 +633,7 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 							obj = new Integer(tdContent);
 						break;
 					case DefineType.FIELD_DOUBLE:
-						String unit = (String) this.entryTypeString.get(k);
+						String unit = (String) this.entryTypeString.get(numColRead);
 						if ( unit.equals("h:m:s") || unit.equals("d:m:s") || unit.equals("hours") /* || tdContent.matches("[^\\s]+[:\\s]+[^\\s]+.*") */) {
 							Astrocoo coord = (Astrocoo) this.productBuilder.astroframeSetter.storedValue;
 							try {
@@ -674,6 +687,8 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 				}
 				line.add(obj);
 				// message += "<"+type+" / "+tdContent+">";
+				numColRead++;
+				
 			}
 		}
 		// Messenger.printMsg(Messenger.TRACE, message);
@@ -712,19 +727,20 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 
 			SavotResource savotResource;
 			ArrayList<AttributeHandler> attrs = new ArrayList<AttributeHandler>();
-			int rCpt=1;
-			int tCpt=1;// tables are tagged without regards for the resource to be usable for the parser
+			int resourceNum=1;
+			int tableNum=1;// tables are tagged without regards for the resource to be usable for the parser
 			while ((savotResource = this.parser.getNextResource()) != null) {
 				if( savotResource.getTables().getItems() == null ) {
-					Messenger.printMsg(Messenger.TRACE, "No table in resource #" + rCpt);
+					Messenger.printMsg(Messenger.TRACE, "No table in resource #" + resourceNum);
 					continue;
 				}
-				for( SavotTable savotTable: savotResource.getTables().getItems()) {
-					DataFileExtensionType det = DataFileExtensionType.UNSUPPORTED;
+				for( Object object: savotResource.getTables().getItems()) {
+					SavotTable savotTable = (SavotTable) object;
+					DataFileExtensionType resourceType = DataFileExtensionType.UNSUPPORTED;
 					if( savotTable.getData().getBinary() != null  ) {
-						det = DataFileExtensionType.BINTABLE;
+						resourceType = DataFileExtensionType.BINTABLE;
 					} else if( savotTable.getData().getTableData() != null  ) {
-						det = DataFileExtensionType.ASCIITABLE;
+						resourceType = DataFileExtensionType.ASCIITABLE;
 					} else {
 						Messenger.printMsg(Messenger.TRACE, "Data format not supported");
 						continue;
@@ -733,15 +749,38 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 					tahe = this.createTableAttributeHandlerFromResourceDesc(savotResource, savotTable);
 					tahe.putAll(this.readParams(savotTable));
 					this.searchForCooSysInParams(tahe);
-					attrs = new ArrayList<AttributeHandler>(tahe.values());					
-					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId()+ " (" + det + ")"
-							           , new DataFileExtension(rCpt, savotResource.getId(), tCpt, savotTable.getName(), det, attrs));    	
+					attrs = new ArrayList<AttributeHandler>();	
+					for( AttributeHandler ah: tahe.values()){
+						if( this.isCardAccepted(ah)){
+							attrs.add(ah);
+						} else {
+							if (Messenger.debug_mode)
+								Messenger.printMsg(Messenger.DEBUG, "Field " + ah + " rejected due to the user mapping");
+						}
+					}
+					String keyPrefix = "#" + resourceNum + "." + tableNum + " " + savotTable.getId();
+					this.productMap.put(keyPrefix + " (" + resourceType + ")"
+							           , new DataFileExtension(resourceNum // resource num
+							        		   , savotResource.getId()     // resource name
+							        		   , tableNum                  // table num
+							        		   , savotTable.getName()      // table name
+							        		   , resourceType              // ext type
+							        		   , attrs                     // ahs 
+							        		   ));    	
 					FieldSet fields = savotTable.getFields();
-					attrs = new ArrayList<AttributeHandler>();					
+					attrs = new ArrayList<AttributeHandler>();	
+					this.columnRead = new ArrayList<Boolean>();
 					for( int i=0 ; i<fields.getItemCount() ; i++ ) {
 						SavotField sf = (SavotField) fields.getItemAt(i);
-						AttributeHandler att = new AttributeHandler(sf);						
-						attrs.add(att);
+						AttributeHandler att = new AttributeHandler(sf);	
+						if( !this.isEntryCardAccepted(att)){
+							if (Messenger.debug_mode)
+								Messenger.printMsg(Messenger.DEBUG, "Column " + att + " rejected due to the user mapping");
+							this.columnRead.add(false);
+							continue;
+						}
+						this.columnRead.add(true);
+					    attrs.add(att);
 						AttributeHandler assAh;
 						if( (assAh = this.idForRef.get(sf.getRef())) != null ) {
 							att.setAssociateAttribute(assAh);
@@ -749,15 +788,21 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 								Messenger.printMsg(Messenger.DEBUG, "Bind column " + att.getNameorg() + " with " + assAh);
 						}
 					}
-					this.productMap.put("#" + rCpt + "." + tCpt + " " + savotTable.getId() + " (" + DataFileExtensionType.TABLE_COLUMNS + ")"
-							, new DataFileExtension(rCpt, savotResource.getId(), tCpt,savotTable.getName(),DataFileExtensionType.TABLE_COLUMNS,attrs));
-					tCpt++;
+					System.out.println(keyPrefix + " (" + DataFileExtensionType.TABLE_COLUMNS + ")");
+					this.productMap.put(keyPrefix + " (" + DataFileExtensionType.TABLE_COLUMNS + ")"
+							, new DataFileExtension(resourceNum
+									, savotResource.getId()
+									, tableNum
+									, savotTable.getName()
+									, DataFileExtensionType.TABLE_COLUMNS
+									, attrs));
+					tableNum++;
 				}
-				rCpt++;
+				resourceNum++;
 
 			}
 		}
-		return this.productMap;
+	return this.productMap;
 	}
 
 	/* (non-Javadoc)
@@ -790,22 +835,19 @@ System.out.println(rCpt + " " + this.dataExtension.resourceNum  + " " +  tCpt + 
 	}
 
 
-
-	@Override
-	public void updateAttributeHandlerValues() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void mapAttributeHandler() throws IgnoreException {
-		// TODO Auto-generated method stub
-		
+		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
+		for( AttributeHandler ah: this.headerExtension.attributeHandlers) {
+			this.attributeHandlers.put(ah.getNameattr(), ah);
+		}
 	}
 
 	@Override
 	public void mapEntryAttributeHandler() throws IgnoreException {
-		// TODO Auto-generated method stub
-		
+		this.entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
+		for( AttributeHandler ah: this.dataExtension.attributeHandlers) {
+			this.entryAttributeHandlers.put(ah.getNameattr(), ah);
+		}
 	}
 }

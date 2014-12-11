@@ -148,14 +148,14 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			case -8: this.result = "YX"; break;//  YX cross linear
 			default: this.result = "I"; break;// Standard Stokes unpolarized
 			}
-			this.completeMessage("Taken from WCS pixel_value=" + st);
+			this.completeUserMappingMsg("Taken from WCS pixel_value=" + st);
 			break;
 		default: 
 			IgnoreException.throwNewException(SaadaException.INTERNAL_ERROR, "Field " + this.fieldName + ": WCS expression " + this.expression  + " not undestood");	
 		}     
 		if( this.result == null ){
 			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeMessage("Expression [" + this.expression + "] return null");				
+			this.completeUserMappingMsg("Expression [" + this.expression + "] return null");				
 		}
 	}
 
