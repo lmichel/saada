@@ -2,6 +2,7 @@ package saadadb.products.reporting;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -12,11 +13,8 @@ import java.util.Map.Entry;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.EntryBuilder;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
-import saadadb.products.TableBuilder;
-import saadadb.products.datafile.JsonDataFile;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
@@ -95,8 +93,8 @@ public class MappingReport {
 		this.builder.em_maxSetter.storedValue = si.em_max;
 		retour.put("em_res_power", this.builder.em_res_powerSetter);
 		this.builder.em_res_powerSetter.storedValue = si.em_res_power;
-		retour.put("x_unit_org", this.builder.x_unit_orgSetter);
-		this.builder.x_unit_orgSetter.storedValue = this.builder.x_unit_orgSetter.getValue();
+		retour.put("em_unit", this.builder.em_unitSetter);
+		this.builder.em_unitSetter.storedValue = this.builder.em_unitSetter.getValue();
 
 		retour.put("t_min", this.builder.t_minSetter);
 		this.builder.t_minSetter.storedValue = si.t_min;
@@ -164,6 +162,7 @@ public class MappingReport {
 		for( AttributeHandler ah: this.builder.getProductAttributeHandler().values()) {
 			fw.write(ah + "\n");
 		}
+		this.wrriteColumnReport(fw);
 		fw.write("\n========= Loaded extensions\n");
 		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
 			fw.write(es + "\n");
@@ -171,23 +170,26 @@ public class MappingReport {
 		Map<String, ColumnSetter> r = this.getReport();
 		fw.write("\n========= Mapping report\n");
 		for( Entry<String, ColumnSetter> e:r.entrySet()){
-			//System.out.print(String.format("%20s",e.getKey()) + "     ");
 			fw.write(String.format("%20s",e.getKey()) + "     ");;
 			ColumnSetter ah = e.getValue();
-			//System.out.print(ah.getSettingMode() + " " + ah.message);
-			fw.write(ah.getSettingMode() + " " + ah.message + " ");
-			if( !ah.isNotSet() ) 
-			{
-				//System.out.print(" storedValue=" + ah.storedValue);
+			fw.write(ah.getFullMappingReport() +  " ");
+			if( !ah.isNotSet() ) {
 				fw.write("storedValue=" + ah.storedValue+" \n");
 			} else {
 				fw.write("\n");
-
 			}
 		}
 		fw.close();
 	}
 
+
+	/**
+	 * @param fw
+	 * @throws IOException 
+	 */
+	protected void wrriteColumnReport(FileWriter fw) throws IOException {}
+	
+	
 
 	/**
 	 * @return

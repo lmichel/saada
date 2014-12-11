@@ -16,9 +16,9 @@ public class EnergyMapping extends AxisMapping {
 	 * @throws SaadaException
 	 */
 	EnergyMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		super(ap, new String[]{"dispertion_column", "x_unit_org", "em_min", "em_max", "em_res_power", "em_bins"}, entryMode);
+		super(ap, new String[]{"dispertion_column", "em_unit", "em_min", "em_max", "em_res_power", "em_bins"}, entryMode);
 		if( ap.getSpectralUnit() != null )  {
-			this.columnMapping.put("x_unit_org_csa", new ColumnMapping(MappingMode.VALUE, null,ap.getSpectralUnit(),"x_unit_org_csa"));
+			this.columnMapping.put("em_unit_csa", new ColumnMapping(MappingMode.VALUE, null,ap.getSpectralUnit(),"em_unit_csa"));
 		}
 		this.mappSpectralRange(ap);
 		this.completeColumns();
@@ -35,7 +35,7 @@ public class EnergyMapping extends AxisMapping {
 		String s;
 		
 		if( (s = tabArg.getSpectralUnit()) != null) {
-			this.columnMapping.put("x_unit_org", new ColumnMapping(null, s, "x_unit_org"));
+			this.columnMapping.put("em_unit", new ColumnMapping(null, s, "em_unit"));
 		}
 		if( (s = tabArg.getSpectralResPower(entryMode)) != null  ){
 			this.columnMapping.put("em_res_power", new ColumnMapping(null, s, "em_res_power"));

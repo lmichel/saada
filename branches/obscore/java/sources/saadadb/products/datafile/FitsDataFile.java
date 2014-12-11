@@ -5,14 +5,12 @@ import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
@@ -34,18 +32,13 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
-import saadadb.products.Image2DBuilder;
 import saadadb.products.ProductBuilder;
-import saadadb.products.SpectrumBuilder;
-import saadadb.products.TableBuilder;
-import saadadb.products.inference.QuantityDetector;
 import saadadb.products.inference.SpaceKWDetector;
 import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import saadadb.util.TileRiceDecompressor;
-import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 import saadadb.vocabulary.enums.ExtensionSetMode;
 
@@ -83,9 +76,9 @@ public final class FitsDataFile extends FSDataFile{
 	 * @throws FitsException 
 	 */
 	public FitsDataFile(String name, ProductBuilder product) throws Exception{
-		super(name);
+		super(name,product.mapping );
 		System.out.println("@@@@@@ FITS Const 1");
-		this.productBuilder = product;
+		this.setBuilder(product);
 		this.fitsData = new Fits(getCanonicalPath()); 
 		this.getProductMap();
 	}
@@ -93,8 +86,8 @@ public final class FitsDataFile extends FSDataFile{
 	 * @param name
 	 * @throws Exception
 	 */
-	public FitsDataFile(String name) throws Exception {
-		super(name);
+	public FitsDataFile(String name, ProductMapping mapping) throws Exception {
+		super(name, mapping);
 		System.out.println("@@@@@@ FITS Const 2");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
@@ -106,10 +99,10 @@ public final class FitsDataFile extends FSDataFile{
 	 * @throws Exception
 	 */
 	public FitsDataFile(ProductBuilder product) throws Exception {
-		super(product.dataFile.getAbsolutePath());
+		super(product.dataFile.getAbsolutePath(),product.mapping);
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "reading FIT file " + product.getName());
-		this.productBuilder = product;
+		this.setBuilder(product);
 		this.fitsData = new Fits(product.dataFile.getCanonicalPath());
 		this.getProductMap();
 		try {
@@ -130,10 +123,8 @@ public final class FitsDataFile extends FSDataFile{
 
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for the extension to use.");
 		//look if the name of the extension to use is defined
-		String ext_name = null;
-		if( product.getMapping() != null ) {
-			ext_name = product.mapping.getExtension();
-		}
+		String ext_name = this.productMapping.getExtension();
+
 		if( ext_name != null && !ext_name.equals("") ){	//if it is defined
 			/*
 			 * Extension is given as a number: check if it exists and if the category is OK
@@ -146,7 +137,7 @@ public final class FitsDataFile extends FSDataFile{
 			 * Extension is given as a name: check if it exists and if the category is OK
 			 */
 			else {
-				ext_num = getHeaderNumber(product.mapping.getExtension());
+				ext_num = getHeaderNumber(this.productMapping.getExtension());
 			}
 			/*
 			 * Once the extension found, we need to check that it has the good category
@@ -159,13 +150,13 @@ public final class FitsDataFile extends FSDataFile{
 					if( dfe.tableNum == ext_num && !dfe.isDataTable() ) {
 						found = true;
 						if(checkExtensionCategory(dfe, this.getProductCategory()) ){
-							String msg = "Required extension : "+product.mapping.getExtension()+" found (number: " + ext_num + ")";
+							String msg = "Required extension : "+ this.productMapping.getExtension()+" found (number: " + ext_num + ")";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
 							this.goodHeader = bHDU;
 							Messenger.printMsg(Messenger.TRACE, msg);							
-						} else if( product.getMapping().getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
+						} else if( this.productMapping.getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
 							this.goodHeader = bHDU;
 							String msg = "Take" + dfe.getSType()+ " HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
@@ -173,23 +164,22 @@ public final class FitsDataFile extends FSDataFile{
 									, msg);
 							Messenger.printMsg(Messenger.TRACE, msg);
 						} else {
-							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+product.mapping.getExtension() + " has a wrong type: " + bHDU.getClass().getName());
+							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+this.productMapping.getExtension() + " has a wrong type: " + bHDU.getClass().getName());
 						}
 					} 
 				}
 				if( !found ) {
-					IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+product.mapping.getExtension() + " not found");
+					IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+ this.productMapping.getExtension() + " not found");
 				}
 			}
 		} else {
 			this.setFirstGoodHeader(product);
 			Messenger.printMsg(Messenger.TRACE, "The first  "
-					+  Category.explain(product.mapping.getCategory())
+					+  Category.explain(this.productMapping.getCategory())
 					///	+ this.productBuilder.getClass().getName()
 					+ " extension is #"+this.getGood_header_number());				
 		}
-		if( this.productBuilder.mapping != null )
-			this.productBuilder.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
+		this.productMapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
 		this.productBuilder.productAttributeHandler = this.getAttributeHandlerCopy();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
@@ -201,7 +191,7 @@ public final class FitsDataFile extends FSDataFile{
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception{
 		System.out.println("@@@@@@@@@ FITS BndBuilder");
-		this.productBuilder = builder;
+		this.setBuilder(builder);
 		try {
 			this.firstHeader = fitsData.getHDU(0);
 		} catch (PaddingException e) {
@@ -221,9 +211,8 @@ public final class FitsDataFile extends FSDataFile{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for the extension to use.");
 		//look if the name of the extension to use is defined
 		String ext_name = null;
-		if( this.productBuilder.getMapping() != null ) {
-			ext_name = this.productBuilder.mapping.getExtension();
-		}
+		ext_name = this.productMapping.getExtension();
+
 		if( ext_name != null && !ext_name.equals("") ){	//if it is defined
 			/*
 			 * Extension is given as a number: check if it exists and if the category is OK
@@ -236,7 +225,7 @@ public final class FitsDataFile extends FSDataFile{
 			 * Extension is given as a name: check if it exists and if the category is OK
 			 */
 			else {
-				ext_num = getHeaderNumber(this.productBuilder.mapping.getExtension());
+				ext_num = getHeaderNumber(this.productMapping.getExtension());
 			}
 			/*
 			 * Once the extension found, we need to check that it has the good category
@@ -253,13 +242,13 @@ public final class FitsDataFile extends FSDataFile{
 						if( dfe.type == DataFileExtensionType.TABLE_COLUMNS){
 							continue;
 						} else 	if( this.checkExtensionCategory(dfe, this.getProductCategory()) ){
-							String msg = "Required extension : "+this.productBuilder.mapping.getExtension()+" found (number: " + ext_num + ")";
+							String msg = "Required extension : "+this.productMapping.getExtension()+" found (number: " + ext_num + ")";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
 							this.goodHeader = (BasicHDU) dfe.resource;
 							Messenger.printMsg(Messenger.TRACE, msg);							
-						} else if( this.productBuilder.getMapping().getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
+						} else if( this.productMapping.getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
 							this.goodHeader = (BasicHDU) dfe.resource;
 							String msg = "Take " + dfe.getSType() + "  HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
@@ -268,24 +257,23 @@ public final class FitsDataFile extends FSDataFile{
 							Messenger.printMsg(Messenger.TRACE, msg);
 						} else {
 							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE
-									, "Required extension : "+this.productBuilder.mapping.getExtension() + " has a wrong type: " + dfe.type);
+									, "Required extension : "+this.productMapping.getExtension() + " has a wrong type: " + dfe.type);
 						}
 					} 
 				}
 				if( !found ) {
 					IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE
-							, "Required extension : "+this.productBuilder.mapping.getExtension() + " not found");
+							, "Required extension : "+this.productMapping.getExtension() + " not found");
 				}
 			}
 		} else {
 			this.setFirstGoodHeader(this.productBuilder);
 			Messenger.printMsg(Messenger.TRACE, "The first  "
-					+  Category.explain(this.productBuilder.mapping.getCategory())
+					+  Category.explain(this.productMapping.getCategory())
 					+ " extension is #"+this.getGood_header_number());				
 		}
 
-		if( this.productBuilder.mapping != null )
-			this.productBuilder.mapping.getHeaderRef().setNumber(this.getGood_header_number());	
+		this.productMapping.getHeaderRef().setNumber(this.getGood_header_number());	
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
 		this.updateAttributeHandlerValues();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The tableAttributeHandler is OK.");
@@ -330,8 +318,8 @@ public final class FitsDataFile extends FSDataFile{
 			 * kWIgnored are porcessed in the case of a table loading but the method can be called in others contexts such as the
 			 * Spectrum coordinate detection
 			 */
-			if( this.productBuilder != null && this.productBuilder.mapping.getCategory() == Category.TABLE  ) {
-				entryconf = this.productBuilder.mapping.getEntryMapping();
+			if( this.productBuilder != null && this.productMapping.getCategory() == Category.TABLE  ) {
+				entryconf = this.productMapping.getEntryMapping();
 				kWIgnored = entryconf.getIgnoredAttributes();
 			}
 			//Creates the new list which maps entry names formated in the standard of Saada to their objects modelling entry informations
@@ -354,6 +342,11 @@ public final class FitsDataFile extends FSDataFile{
 			for(int j = 0; j < table.getNCols(); j++){
 				cardType = tableHeader.findCard("TTYPE"+(j+1));
 				typeValue = cardType.getValue().trim();
+				if( !this.isEntryCardAccepted(typeValue) ){
+					if( Messenger.debug_mode )
+						Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored by user mapping");		
+					continue;
+				}
 				//cardFormat = tableHeader.findCard("TFORM"+(j+1));
 				cardUnit = tableHeader.findCard("TUNIT"+(j+1));
 				//if there is a unit card for this entry, sets comment and unit values (else preserved the default values)
@@ -373,23 +366,6 @@ public final class FitsDataFile extends FSDataFile{
 				attribute = new AttributeHandler();
 				//Sets the original name of this entry to this field in the attribute object
 				attribute.setNameorg(typeValue);
-				if( kWIgnored != null ) {
-					boolean ignore = false;
-					for( String ign: kWIgnored) {
-						if( typeValue.matches(ign)) {
-							if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored (pattern: " + ign + ")");
-							ignore = true;
-							break;
-						}
-					}
-					/*
-					 * Store the number of the ignored columns
-					 */
-					if( entryconf != null && ignore ){
-						entryconf.addToFreeIndex(j);
-						continue;
-					}
-				}
 				//Transforms this original name according to the Saada standard
 				keyChanged = ChangeKey.changeKey(typeValue);
 				keyChanged = ChangeKey.renameDuplicateKey(retour, keyChanged);
@@ -399,7 +375,7 @@ public final class FitsDataFile extends FSDataFile{
 				retour.put(keyChanged, attribute);
 				//Sets the collection name of this entry (of this product)
 				if( this.productBuilder != null)
-					attribute.setCollname(this.productBuilder.mapping.getCollection());
+					attribute.setCollname(this.productMapping.getCollection());
 				//Sets the unit of this entry to this field in the attribute object
 				attribute.setUnit(unitValue);				
 				attribute.setComment(cardType.getComment());
@@ -443,8 +419,8 @@ public final class FitsDataFile extends FSDataFile{
 			 * kWIgnored are porcessed in the case of a table loading but the method can bu called in others contexts such as the
 			 * Spectrum coordinate detection
 			 */
-			if( this.productBuilder != null && this.productBuilder.mapping.getCategory() == Category.TABLE  ) {
-				entryconf = this.productBuilder.mapping.getEntryMapping();
+			if( this.productBuilder != null && this.productMapping.getCategory() == Category.TABLE  ) {
+				entryconf = this.productMapping.getEntryMapping();
 				kWIgnored = entryconf.getIgnoredAttributes();
 			}
 			//Creates the new list which maps entry names formated in the standard of Saada to their objects modelling entry informations
@@ -466,6 +442,11 @@ public final class FitsDataFile extends FSDataFile{
 			for(int j = 0; j < table.getNCols(); j++){
 				cardType = tableHeader.findCard("TTYPE"+(j+1));
 				typeValue = cardType.getValue().trim();
+				if( !this.isEntryCardAccepted(typeValue) ){
+					if( Messenger.debug_mode )
+						Messenger.printMsg(Messenger.DEBUG, "The keyword : "+typeValue+" is ignored by user mapping");		
+					continue;
+				}
 				//cardFormat = tableHeader.findCard("TFORM"+(j+1));
 				cardUnit = tableHeader.findCard("TUNIT"+(j+1));
 				//if there is a unit card for this entry, sets comment and unit values (else preserved the default values)
@@ -479,23 +460,6 @@ public final class FitsDataFile extends FSDataFile{
 				attribute = new AttributeHandler();
 				//Sets the original name of this entry to this field in the attribute object
 				attribute.setNameorg(typeValue);
-				if( kWIgnored != null ) {
-					boolean ignore = false;
-					for( String ign: kWIgnored) {
-						if( typeValue.matches(ign)) {
-							if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored (pattern: " + ign + ")");
-							ignore = true;
-							break;
-						}
-					}
-					/*
-					 * Store the number of the ignored columns
-					 */
-					if( entryconf != null && ignore ){
-						entryconf.addToFreeIndex(j);
-						continue;
-					}
-				}
 				//Transforms this original name according to the Saada standard
 				keyChanged = ChangeKey.changeKey(typeValue);
 				keyChanged = ChangeKey.renameDuplicateKey(this.entryAttributeHandlers, keyChanged);
@@ -505,7 +469,7 @@ public final class FitsDataFile extends FSDataFile{
 				this.entryAttributeHandlers.put(keyChanged, attribute);
 				//Sets the collection name of this entry (of this product)
 				if( this.productBuilder != null)
-					attribute.setCollname(this.productBuilder.mapping.getCollection());
+					attribute.setCollname(this.productMapping.getCollection());
 				//Sets the unit of this entry to this field in the attribute object
 				attribute.setUnit(unitValue);				
 				attribute.setComment(cardType.getComment());
@@ -750,7 +714,7 @@ public final class FitsDataFile extends FSDataFile{
 	 * @throws FitsException 
 	 */
 	public Image getBitMapImage() throws FitsException, IOException{
-		ImageHDU himage = (ImageHDU)this.fitsData.getHDU(this.productBuilder.mapping.getHeaderRef().getNumber());
+		ImageHDU himage = (ImageHDU)this.fitsData.getHDU(this.productMapping.getHeaderRef().getNumber());
 		int[] size = himage.getAxes();
 		int ww = size[0];
 		int hh = size[1];
@@ -833,7 +797,7 @@ public final class FitsDataFile extends FSDataFile{
 		 * Extension containing ENTRIES are handled by the table product, not by the ENTRY product
 		 * Should never occur
 		 */
-		if( product.getMapping() != null && product.mapping.getCategory() == Category.ENTRY ) {
+		if( this.productMapping != null && this.productMapping.getCategory() == Category.ENTRY ) {
 			return;
 		}
 		int category = this.getProductCategory();
@@ -898,9 +862,6 @@ public final class FitsDataFile extends FSDataFile{
 		int cat_prd = -1;
 		cat_prd = getProductCategory();
 
-		List<String> kWIgnored = (this.productBuilder.mapping != null)? this.productBuilder.mapping.getIgnoredAttributes()
-				: new ArrayList<String>();
-
 		if( this.goodHeader != null && this.goodHeader != this.firstHeader) {
 			Cursor it = this.goodHeader.getHeader().iterator();
 
@@ -909,16 +870,12 @@ public final class FitsDataFile extends FSDataFile{
 				HeaderCard hcard = null;
 				hcard = (HeaderCard) it.next();
 				AttributeHandler attribute = new AttributeHandler(hcard);
-				String name_org = attribute.getNameorg();
-				boolean ignore = false;
-				for( String ign: kWIgnored) {
-					if( name_org.matches(ign)) {
-						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+name_org+" is ignored (pattern: " + ign + ")");	
-						ignore = true;
-						break;
-					}
+				if( !this.isCardAccepted(attribute)){
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute +" is ignored by user mapping");	
+					continue;
 				}
-				if( ignore || name_org.length() == 0 ) {
+				String name_org = attribute.getNameorg();
+				if( name_org.length() == 0 ) {
 					continue;
 				}
 				/*
@@ -934,7 +891,7 @@ public final class FitsDataFile extends FSDataFile{
 					 * They are not considered as duplicated. (EXTENSION, BITPIX...)
 					 */
 					this.attributeHandlers.put(attribute.getNameattr(), attribute);
-					attribute.setCollname(this.productBuilder.mapping.getCollection());				
+					attribute.setCollname(this.productMapping.getCollection());				
 					this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
 				}
 			}
@@ -950,8 +907,6 @@ public final class FitsDataFile extends FSDataFile{
 		System.out.println(" addFirstHDU" + this.attributeHandlers.size());
 		Header header = this.firstHeader.getHeader();
 		Cursor it = header.iterator();
-		List<String> kWIgnored = (this.productBuilder.mapping != null)?this.productBuilder.mapping.getIgnoredAttributes()
-				: new ArrayList<String>();
 
 		while(it.hasNext()){
 			HeaderCard hcard = null;
@@ -963,37 +918,27 @@ public final class FitsDataFile extends FSDataFile{
 				continue;
 			} 
 			AttributeHandler attribute = new AttributeHandler(hcard);
+			if( !this.isCardAccepted(attribute)){
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute+" is ignored by user maping");	
+				continue;
+			}	
 			key = attribute.getNameorg();
 			if( attribute.getNameorg().length() == 0 ) {
 				continue;
 			}
-			boolean ignore = false;
-			for( String ign: kWIgnored) {
-				if( key.matches(ign)) {
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+key+" is ignored (pattern: " + ign + ")");	
-					ignore = true;
-					break;
-				}
-			}
-			if( ignore  ){
-				continue;
-			}
 			//if the key is not the last one nor an ignored one nor a FITS comment then we can create and add an attributeHandler corresponding
-			else  {
 
-				//Sets this standardized name of this attribute to this field in the modelling object
-				String value = hcard.getValue();
-				attribute.setValue(value);
+			//Sets this standardized name of this attribute to this field in the modelling object
+			String value = hcard.getValue();
+			attribute.setValue(value);
 
-				String keyChanged = ChangeKey.renameDuplicateKey(this.attributeHandlers, attribute.getNameattr());
-				if( !keyChanged.equals(attribute.getNameattr())) {
-					attribute.setNameattr(keyChanged);
-				}
-				this.attributeHandlers.put(keyChanged, attribute);
-				if( this.productBuilder.mapping != null )
-					attribute.setCollname(this.productBuilder.mapping.getCollection());				
-				this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
+			String keyChanged = ChangeKey.renameDuplicateKey(this.attributeHandlers, attribute.getNameattr());
+			if( !keyChanged.equals(attribute.getNameattr())) {
+				attribute.setNameattr(keyChanged);
 			}
+			this.attributeHandlers.put(keyChanged, attribute);
+			attribute.setCollname(this.productMapping.getCollection());				
+			this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());
 		}
 		//this.attMd5Tree.put(md5Key, md5Type);
 	}

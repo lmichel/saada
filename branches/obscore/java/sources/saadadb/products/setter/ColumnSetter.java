@@ -1,12 +1,23 @@
+/*
+ * This package contains tools shared by both CDS and SSC XMM-Newton projects at
+ * the Strabourg Observatory
+ * It has been built from code taken out either from Aladin or Saada 
+ * in addition with specific developments
+ *
+ * Authors: L. Michel  F.X. Pineau
+ * Copyright 2014 - UDS/CNRS
+ */
 package saadadb.products.setter;
 
-import java.awt.event.InvocationEvent;
-import java.util.ArrayList;
+import hecds.wcs.descriptors.CardDescriptor;
+
 import java.util.List;
 
-import hecds.wcs.descriptors.CardDescriptor;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
+import saadadb.meta.AttributeHandler;
 import saadadb.products.datafile.DataFile;
+import saadadb.products.inference.QuantityDetector;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
@@ -21,9 +32,17 @@ public abstract class ColumnSetter implements Cloneable {
 	 */
 	protected ColumnSetMode settingMode = ColumnSetMode.NOT_SET;
 	/**
-	 * Log of the mapping process
+	 * Log of the auto-detection process (report {@link ProductMapping} action)
 	 */
-	public StringBuffer message = new StringBuffer();
+	public StringBuffer detectionMsg = new StringBuffer();
+	/**
+	 * Log of the mapping process(report {@link QuantityDetector} action)
+	 */
+	public StringBuffer userMappingMsg = new StringBuffer();
+	/**
+	 * Log of the conversion process (report {@link ProductIngestor} action)
+	 */
+	public StringBuffer conversionMsg = new StringBuffer();
 	/**
 	 * Normally used to store the value as it will be put inti the DB, can however to used to store 
 	 * the value affected to the column but which can be saved as a string within the  AttributeHandler
@@ -50,37 +69,24 @@ public abstract class ColumnSetter implements Cloneable {
 	}	
 
 	/**
-	 * Use of boolean flags instead of free text in order to make sure that messages are always the same.
-	 * @param attributeHandler
-	 * @param setMode
-	 * @param fromMapping  column set by a mapping parameter,  byUcd makes no sens when true
-	 * @param byUcd take by name if false
-	 * @throws FatalException 
-	 */
-	public ColumnSetter(ColumnSetMode setMode, boolean fromMapping, boolean byUcd) throws FatalException {
-		this(setMode );
-		this.setMappingMessage(fromMapping);
-	}
-
-	/**
 	 * Basic constructor
 	 */
 	public ColumnSetter(String message) {
 		this.setNotSet();
-		this.completeMessage(message);
+		this.completeUserMappingMsg(message);
 	}
 
 	/**
-	 * Log a standrd message indicating wether the vlue has been set by mapping or bu auto detection
-	 * @param fromMapping
-	 */
-	protected void setMappingMessage( boolean fromMapping) {
-		if( fromMapping ) {
-			this.completeMessage("user-mapping");
-		} else {
-			this.completeMessage("auto-detection");
-		}
-	}
+//	 * Log a standrd message indicating wether the vlue has been set by mapping or bu auto detection
+//	 * @param fromMapping
+//	 */
+//	protected void setMappingMessage( boolean fromMapping) {
+//		if( fromMapping ) {
+//			this.completeUserMappingMsg("user-mapping");
+//		} else {
+//			this.completeUserMappingMsg("auto-detection");
+//		}
+//	}
 	/**
 	 * Starts the log message according the mode used to get the KW value
 	 */
@@ -89,11 +95,56 @@ public abstract class ColumnSetter implements Cloneable {
 	 * add "message" to the mapping log
 	 * @param message
 	 */
-	public void completeMessage(String message){
-		if( this.message.length() > 0 )
-			this.message.append(" ");
-		this.message.append(message);
+	public void completeUserMappingMsg(String message){
+		this.completeMessage(message, this.userMappingMsg);
 	}
+	/**
+	 * Take the mapping message of previousSetter as userv mapping message
+	 * @param previousSetter
+	 */
+	public void completeUserMappingMsg(ColumnSetter previousSetter){
+		this.completeMessage(((previousSetter == null)? "Nou used": previousSetter.getUserMappingMsg())
+				, this.userMappingMsg);
+	}
+	/**
+	 * add "message" to the auto detection log
+	 * @param message
+	 */
+	public void completeDetectionMsg(String message){
+		this.completeMessage(message, this.detectionMsg);
+	}
+	/**
+	 * Take the detection message of previousSetter as userv mapping message
+	 * @param previousSetter
+	 */
+	public void completeDetectionMsg(ColumnSetter previousSetter){
+		this.completeMessage(((previousSetter == null)? "Not used": previousSetter.getUserMappingMsg())
+				, this.detectionMsg);
+	}
+
+	/**
+	 * set "message" to the conversion log
+	 * @param message
+	 */
+	public void completeConversionMsg(String message){
+		this.conversionMsg = new StringBuffer(message);
+	}
+	
+
+	
+	
+	/**
+	 * Appends properly message to storage
+	 * @param message
+	 * @param storage Usually tne of the instance message
+	 */
+	private void completeMessage(String message, StringBuffer storage){
+		if( storage.length() > 0 )
+			storage.append(", ");
+		storage.append(message);
+		
+	}
+	
 	/**
 	 * Set the value (STring) and set the BY_VALUE mode
 	 * @param fromMapping
@@ -301,8 +352,26 @@ public abstract class ColumnSetter implements Cloneable {
 	/**
 	 * @return
 	 */
-	public String getMessage() {
-		return this.message.toString();
+	public String getUserMappingMsg() {
+		return this.userMappingMsg.toString();
+	}
+	
+	/**
+	 * Gets the detection msg.
+	 *
+	 * @return the detection msg
+	 */
+	public String getDetectionMsg() {
+		return this.userMappingMsg.toString();
+	}
+	
+	/**
+	 * Gets the conversion msg.
+	 *
+	 * @return the conversion msg
+	 */
+	public String getConversionMsg() {
+		return this.userMappingMsg.toString();
 	}
 
 	/**
@@ -322,7 +391,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public ColumnSetter setConvertedValue(double value, String unitOrg, String unitDest, boolean addMessage) {
-		if( addMessage ) this.replaceMessageTail("Converted", "Converted from " + unitOrg + " to "  + unitDest);
+		if( addMessage ) this.completeConversionMsg("from " + unitOrg + " to "  + unitDest);
 		this.setValue(value, unitDest);
 		return this;
 	}
@@ -335,25 +404,31 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return
 	 */
 	public ColumnSetter setConvertedValue(String value, String unitOrg, String unitDest, boolean addMessage) {
-		if( addMessage ) this.replaceMessageTail("Converted", "Converted from " + unitOrg + " to "  + unitDest);
+		if( addMessage ) this.completeConversionMsg("from " + unitOrg + " to "  + unitDest);
 		this.setValue(value);
-		//this.setUnit(unitDest);
 		return this;
 	}
-
+	
 	/**
-	 * Replace the tail of the instance message, starting with marker with message
-	 * @param marker
-	 * @param message
+	 * Return a merge of the 3 messages (mapping, detection and conversion
+	 * @return
 	 */
-	private void replaceMessageTail(String marker, String message){
-		int pos = this.message.indexOf(marker);
-		if( pos == -1){
-			this.completeMessage(message);
-		} else {
-			this.message.replace(pos,  this.message.length(), message);
-		}
+	public String getFullMappingReport() {
+		String retour = "USER:" + ((this.userMappingMsg.length() == 0)? "-": this.userMappingMsg.toString())
+			   	     + " DETE:" + ((this.detectionMsg.length() == 0)? "-": this.detectionMsg.toString())
+				     + " CONV:" + ((this.conversionMsg.length() == 0)? "-": this.conversionMsg.toString());
+			return retour;		
 	}
+	/**
+	 * @return
+	 */
+	public String toString(){
+		String retour = this.getSettingMode() + " " + this.getFullMappingReport();
+		if( this.storedValue != null )
+			retour += " storedValue=" + this.storedValue;
+		return retour;
+	}
+
 	/**
 	 * @throws Exception
 	 */

@@ -154,7 +154,7 @@ public class WCSModel {
 				if( u.length() > 0 ) {
 					this.CUNIT[axe2] = new ColumnExpressionSetter("cunit" + axe2);
 					this.CUNIT[axe2].setByValue(u, false);
-					this.CUNIT[axe2].completeMessage("Read in WAT keywords");
+					this.CUNIT[axe2].completeDetectionMsg("Read in WAT keywords");
 				}
 			}
 		}
@@ -553,9 +553,9 @@ public class WCSModel {
 		if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("FREQ") ){// 	Frequency  	Hz
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("Hz");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit Hz");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit Hz");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -564,9 +564,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("ENER") ){//  	Energy 		J
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("J");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit J");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit J");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -575,9 +575,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("WAVN ") ){// 	Wavenumber 	m-1
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("1/m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit 1/m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit 1/m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -586,9 +586,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VRAD") ){//  	Radio velocity 	  m/s-1
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m/s");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m/s");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m/s");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -597,9 +597,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("WAVE") ){//  	Vacuum wavelength 		m
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -608,9 +608,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VOPT") ){//  	Optical velocity 	  s-1
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -619,9 +619,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("ZOPT") ){//  	Redshift 	 	-
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -630,9 +630,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("AWAV") ){//  	Air wavelength  	m
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -641,9 +641,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("VELO") ){//  	Apparent radial velocity 	m /s-1
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -652,9 +652,9 @@ public class WCSModel {
 		else if( this.CTYPE[dispersion_axe_num].getValue() .equalsIgnoreCase("BETA") ){//  	Beta factor v/c	-
 			if( this.CUNIT[dispersion_axe_num].getValue().length() == 0 ) {
 				this.CUNIT[dispersion_axe_num].setValue("m");
-				this.CUNIT[dispersion_axe_num].completeMessage("Take the WCS default unit m");
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Take the WCS default unit m");
 			} else {
-				this.CUNIT[dispersion_axe_num].completeMessage("Unit taken from CUNIT keyword");				
+				this.CUNIT[dispersion_axe_num].completeDetectionMsg("Unit taken from CUNIT keyword");				
 			}
 			this.CTYPE[dispersion_axe_num].byWcs();
 			this.CUNIT[dispersion_axe_num].byWcs();
@@ -729,19 +729,19 @@ public class WCSModel {
 			if( this.CTYPE[axe].getValue().startsWith(ascPrefix) ) {
 				try {
 					asc.setByWCS(this.CRVAL[axe].getValue(), false);
-					asc.completeMessage("Center asc axe #" + axe);
+					asc.completeDetectionMsg("Center asc axe #" + axe);
 				} catch (Exception e) {
 					asc.setNotSet();
-					asc.completeMessage(e.getMessage());
+					asc.completeDetectionMsg(e.getMessage());
 				}
 			}
 			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
 				try {
 					dec.setByWCS(this.CRVAL[axe].getValue(), false);
-					dec.completeMessage("Center dec axe #" + axe);
+					dec.completeDetectionMsg("Center dec axe #" + axe);
 				} catch (Exception e) {
 					asc.setNotSet();
-					dec.completeMessage(e.getMessage());
+					dec.completeDetectionMsg(e.getMessage());
 				}
 			}
 		}		
@@ -780,7 +780,7 @@ public class WCSModel {
 				try {
 					r2 =  Math.abs((this.getMaxValue( axe) - this.getMinValue( axe))/this.NAXISi[axe]);
 				} catch (Exception e) {	
-					retour.completeMessage(e.getMessage());
+					retour.completeDetectionMsg(e.getMessage());
 				}
 			}
 		}
@@ -789,7 +789,7 @@ public class WCSModel {
 			double r = (r1 > r2)?r1: r2;
 			retour.setByWCS(String.valueOf(r), false);
 			retour.setUnit("deg");
-			retour.completeMessage("Range / NAXIS");
+			retour.completeDetectionMsg("Range / NAXIS");
 		}
 		return retour;
 	}
@@ -826,9 +826,9 @@ public class WCSModel {
 			if( this.CTYPE[axe].getValue().startsWith(ctypePrefix) ) {
 				try {
 					retour[0].setByWCS(String.valueOf(this.getMinValue( axe)), false);
-					retour[0].completeMessage("min of WCS axis #" + axe);
+					retour[0].completeDetectionMsg("min of WCS axis #" + axe);
 					retour[1].setByWCS(String.valueOf(this.getMaxValue( axe)), false);
-					retour[1].completeMessage("max of WCS axis #" + axe);
+					retour[1].completeDetectionMsg("max of WCS axis #" + axe);
 					return retour;
 				} catch (Exception e) {	e.printStackTrace();}
 			}

@@ -72,27 +72,27 @@ public class ObservableKWDetector extends KWDetector {
 			if( !ah.isNotSet()  ){
 				if( ah.getUnit() != null && ah.getUnit().length() > 0 ) {
 					this.unit.setByTableColumn(ah.getUnit(), false);
-					this.unit.completeMessage("Taken from description of column " + ah.getAttNameOrg());
+					this.unit.completeDetectionMsg("Taken from description of column " + ah.getAttNameOrg());
 				} else {
 					this.unit.setByTableColumn(ah.getUnit(), false);
-					this.unit.completeMessage("Not unit for column " + ah.getAttNameOrg() + " take counts");					
+					this.unit.completeDetectionMsg("Not unit for column " + ah.getAttNameOrg() + " take counts");					
 				}
 				if( ah.getUcd() != null && ah.getUcd().length() > 0 ) {
 					this.ucd.setByTableColumn(ah.getUcd(), false);
-					this.ucd.completeMessage("Taken from description of column " + ah.getAttNameOrg());
+					this.ucd.completeDetectionMsg("Taken from description of column " + ah.getAttNameOrg());
 				} else if( ah.getUnit() != null && ah.getUnit().length() > 0 ){
 					this.ucd.setByValue("phot.flux", false);
-					this.ucd.completeMessage("Infered from unit");					
+					this.ucd.completeDetectionMsg("Infered from unit");					
 				} else {
 					this.ucd.setByTableColumn("phot.count", false);
-					this.ucd.completeMessage("Infered from unit");					
+					this.ucd.completeDetectionMsg("Infered from unit");					
 				}
 				if( !this.unit.isNotSet() && !this.unit.getValue().matches("(?i)(.*count.*)") ) {
 					this.calib.setByValue("2", false);
-					this.calib.completeMessage("Infered from both ucd and unit");
+					this.calib.completeDetectionMsg("Infered from both ucd and unit");
 				} else {
 					this.calib.setByValue("1", false);
-					this.calib.completeMessage("Infered from both ucd and unit");
+					this.calib.completeDetectionMsg("Infered from both ucd and unit");
 				}
 			}
 		}
@@ -122,23 +122,23 @@ public class ObservableKWDetector extends KWDetector {
 				}
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "find range=" + dim + "pixels unit=" + m.group(2).trim());
 				this.calib.setByValue( "2", false);
-				this.calib.completeMessage("Infered from detected units");
+				this.calib.completeDetectionMsg("Infered from detected units");
 
 				this.ucd.setValue("phot.flux");
-				this.ucd.completeMessage("Infered from detected units");
+				this.ucd.completeDetectionMsg("Infered from detected units");
 				String u = m.group(2).trim();
 				this.unit.setValue(u);
-				this.unit.completeMessage("found in FITS comments or infos");
+				this.unit.completeDetectionMsg("found in FITS comments or infos");
 				if( u.length() > 0 && !u.equalsIgnoreCase("count")) {					
 					this.calib.setByValue( "3", false);
-					this.calib.completeMessage("Infered from detected units");
+					this.calib.completeDetectionMsg("Infered from detected units");
 					this.ucd.setValue("phot.flux");
-					this.ucd.completeMessage("Infered from detected units");
+					this.ucd.completeDetectionMsg("Infered from detected units");
 				} else {
 					this.calib.setByValue( "2", false);
-					this.calib.completeMessage("Infered from detected units");
+					this.calib.completeDetectionMsg("Infered from detected units");
 					this.ucd.setValue("phot.count");
-					this.ucd.completeMessage("Infered from detected units");
+					this.ucd.completeDetectionMsg("Infered from detected units");
 				}
 			}
 		}		
@@ -157,21 +157,21 @@ public class ObservableKWDetector extends KWDetector {
 		this.unit = this.searchByName("_o_unit", RegExp.OBSERVABLE_UNIT_KW);
 		if( !this.unit.isNotSet() ){
 			this.calib.setByValue( "2", false);
-			this.calib.completeMessage("Infered from detected units");
+			this.calib.completeDetectionMsg("Infered from detected units");
 
 			this.ucd.setValue("phot.flux");
-			this.ucd.completeMessage("Infered from detected units");
-			this.unit.completeMessage("found in keywords");
+			this.ucd.completeDetectionMsg("Infered from detected units");
+			this.unit.completeDetectionMsg("found in keywords");
 			if( this.unit.getValue().length() > 0 && !this.unit.getValue().equalsIgnoreCase("count")) {					
 				this.calib.setByValue( "3", false);
-				this.calib.completeMessage("Infered from detected units");
+				this.calib.completeDetectionMsg("Infered from detected units");
 				this.ucd.setValue("phot.flux");
-				this.ucd.completeMessage("Infered from detected units");
+				this.ucd.completeDetectionMsg("Infered from detected units");
 			} else {
 				this.calib.setByValue( "2", false);
-				this.calib.completeMessage("Infered from detected units");
+				this.calib.completeDetectionMsg("Infered from detected units");
 				this.ucd.setValue("phot.count");
-				this.ucd.completeMessage("Infered from detected units");
+				this.ucd.completeDetectionMsg("Infered from detected units");
 			}
 		}
 	}		

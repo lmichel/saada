@@ -64,23 +64,26 @@ public class TableBuilder extends ProductBuilder {
 		super(dataFile, mapping, null);
 		System.out.println("@@@@@@@@@@@@@ build entryé");
 
-		this.entryBuilder = new EntryBuilder(this);		
-		// make sure the datafile has not taken by the EntryBuilder
+		this.entryBuilder = new EntryBuilder(this);
 		this.dataFile = dataFile;
+
 		try {
 			this.bindDataFile(dataFile);
-			this.setQuantityDetector();
+			//this.setQuantityDetector();
 			// Once the tale builder is ready, we can setup the entry builder. That is not done in the EntryBuilder 
 			// constructor because we need both builder to be ready.
 			// Same data file shared by both table and entry Buidlers
 			this.entryBuilder.dataFile = this.dataFile;
 			// Set the ENTRY AHs with the columns headers of the data file
 			this.dataFile.bindEntryBuilder(this.entryBuilder);
-			// The entry builder rus its own Quantity detector
+			this.entryBuilder.setProductIngestor();
+			// The entry builder uses its own Quantity detector
 			this.setQuantityDetector();
 			// And it does its own mapping
 			this.entryBuilder.mapCollectionAttributes();
 			this.entryBuilder.setFmtsignature();
+			this.entryBuilder.setQuantityDetector();
+
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);

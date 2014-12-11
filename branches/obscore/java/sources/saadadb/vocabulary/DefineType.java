@@ -162,7 +162,7 @@ public class DefineType {
 			collection_ucds.put("x_unit_csa", "spect.index;meta.unit");
 			collection_ucds.put("x_min_org_csa", "em.*;stat.min");
 			collection_ucds.put("x_max_org_csa", "em.*;stat.max");
-			collection_ucds.put("x_unit_org_csa", "spect.index;meta.unit");
+			collection_ucds.put("em_unit_csa", "spect.index;meta.unit");
 			//added fields sept 2014
 			collection_ucds.put("dataproduct_type",	"meta.id");
 			collection_ucds.put("calib_level", 	"meta.code;obs.calib");
@@ -256,7 +256,7 @@ public class DefineType {
 		//	collection_name_org.put("x_colname_csa", "Dispersion Column name");
 		//	collection_name_org.put("x_min_org_csa", "Org. Range Start");
 		//	collection_name_org.put("x_max_org_csa", "Org. Range End");
-		//	collection_name_org.put("x_unit_org_csa", "Org. Range Unit");
+		//	collection_name_org.put("em_unit_csa", "Org. Range Unit");
 		//	collection_name_org.put("y_min_csa", "Saada Flux Range Start");
 		//	collection_name_org.put("y_max_csa", "Saada Flux Range End");
 		//	collection_name_org.put("y_unit_csa", "Saada Flux Range Unit");

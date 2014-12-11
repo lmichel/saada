@@ -2,6 +2,8 @@ package saadadb.dataloader.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,10 +23,10 @@ public class ColumnMapping {
 	public static final String NUMERIC = "Numeric";
 	public static final String UNDEFINED = "Undefined";
 	private MappingMode mappingMode = MappingMode.NOMAPPING;
-	private List<AttributeHandler> attributeHandlers =new ArrayList<AttributeHandler>();
+	private Set<AttributeHandler> attributeHandlers =new TreeSet<AttributeHandler>();
 	private static final Pattern constPattern = Pattern.compile("^'(.*)'$");
 	private static final Pattern numPattern = Pattern.compile("^(?:(" + RegExp.NUMERIC + "))$");
-	public final String label; // used for logging
+	public final String message; // used for logging
 	/**
 	 * when mode=keyword or expression
 	 */
@@ -36,32 +38,38 @@ public class ColumnMapping {
 	 * @param value
 	 * @throws FatalException
 	 */
-	ColumnMapping(MappingMode mappingMode, String unit, String value, String label) throws FatalException{
+	ColumnMapping(MappingMode mappingMode, String unit, String value, String message) throws FatalException{
 		this.mappingMode = mappingMode;
-		this.label = label;
+		this.message = message;
 		AttributeHandler ah = new AttributeHandler();
 		if( this.mappingMode == MappingMode.VALUE) {
 			ah.setNameattr(ColumnMapping.NUMERIC);
 			ah.setNameorg(ColumnMapping.NUMERIC);
 			ah.setUnit(unit);
 			ah.setValue(value);
+			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 6" + ah);
 			this.attributeHandlers.add(ah);
 		} else if(this.mappingMode==MappingMode.EXPRESSION || mappingMode==MappingMode.KEYWORD){
 			//We have an expression with ONE keyword.
 			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
 			Matcher m=keywordsPattern.matcher(value);
 			//We search for keywords in the expression, each keyword become an attribute
+			int cpt=1;
+			System.out.println(RegExp.KEYWORD);
 			while(m.find())
 			{
+				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 1" + value +  " " + m.group(1).trim() + " " + m.groupCount());
 				AttributeHandler temp = new AttributeHandler();
 				temp.setNameattr(m.group(1).trim());
 				temp.setNameorg(m.group(1).trim());
 				temp.setUnit(unit);
 				this.attributeHandlers.add(temp);
+				cpt++;
 			}
 			//When we are in "Attribute mode" we consider we're in an expression composed of only one Attribute
 			this.expression=value;
-			this.attributeHandlers.add(ah);
+			//System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 7" + ah);
+			//this.attributeHandlers.add(ah);
 		}else if( this.mappingMode != MappingMode.NOMAPPING) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Mapping mode SQL not suported yet");
 		}
@@ -72,8 +80,8 @@ public class ColumnMapping {
 	 * @param values
 	 * @throws FatalException
 	 */
-	ColumnMapping(String unit, String value, String label) throws FatalException{
-		this.label = label;
+	ColumnMapping(String unit, String value, String message) throws FatalException{
+		this.message = message;
 		AttributeHandler ah = new AttributeHandler();
 		ah.setUnit(unit);	
 		String v;
@@ -83,6 +91,7 @@ public class ColumnMapping {
 			ah.setValue(v);	
 			this.expression=v;
 			this.mappingMode = MappingMode.VALUE;
+			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 8" + ah);
 			this.attributeHandlers.add(ah);
 		} else if( isSingleKeyword(value) ){
 			this.mappingMode = MappingMode.KEYWORD;
@@ -90,6 +99,7 @@ public class ColumnMapping {
 			temp.setNameattr(value);
 			temp.setNameorg(value);
 			temp.setUnit(unit);
+			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 9" + temp);
 			this.attributeHandlers.add(temp);
 			this.expression=value;
 		} else {
@@ -100,6 +110,7 @@ public class ColumnMapping {
 			//We search for keywords in the expression, each keyword become an attribute
 			while(m.find())
 			{
+				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 2" + value +  " " + m.group(1).trim() + " " + m.groupCount());
 				AttributeHandler temp = new AttributeHandler();
 				temp.setNameattr(m.group(1).trim());
 				temp.setNameorg(m.group(1).trim());
@@ -115,8 +126,8 @@ public class ColumnMapping {
 	 * @param values
 	 * @throws FatalException
 	 */
-	ColumnMapping(String unit, String[] values, String label ) throws FatalException{
-		this.label = label;
+	ColumnMapping(String unit, String[] values, String message ) throws FatalException{
+		this.message = message;
 		this.mappingMode = (values == null)? MappingMode.NOMAPPING:  MappingMode.VALUE;
 		for( String s: values ) {
 			AttributeHandler ah = new AttributeHandler();
@@ -133,6 +144,7 @@ public class ColumnMapping {
 				temp.setNameattr(s);
 				temp.setNameorg(s);
 				temp.setUnit(unit);
+				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 4" + temp);
 				this.attributeHandlers.add(temp);
 				this.expression=s;
 			} else {
@@ -143,6 +155,7 @@ public class ColumnMapping {
 				ah.setNameattr(s);
 				ah.setNameorg(s);
 			}
+			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 5" + ah);
 			this.attributeHandlers.add(ah);
 		}
 	}
@@ -198,7 +211,9 @@ public class ColumnMapping {
 		if (mappingMode == MappingMode.NOMAPPING) {
 			return null;
 		} else {
-			return attributeHandlers.get(0);
+			for( AttributeHandler ah: attributeHandlers)
+			return ah;
+			return null;
 		}
 	}
 	/**
@@ -213,7 +228,7 @@ public class ColumnMapping {
 	/**
 	 * @return
 	 */
-	public List<AttributeHandler> getHandlers() {
+	public Set<AttributeHandler> getHandlers() {
 		if (mappingMode == MappingMode.NOMAPPING) {
 			return null;
 		} else {
@@ -226,7 +241,7 @@ public class ColumnMapping {
 	 * @return
 	 */
 	public List<String> getValues() {
-		List<AttributeHandler> ahs = this.getHandlers();
+		Set<AttributeHandler> ahs = this.getHandlers();
 		if( ahs == null ){
 			return null;
 		} else {

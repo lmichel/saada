@@ -214,7 +214,7 @@ public class QuantityDetector {
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getEUnit()).isNotSet() ){
 			return this.energyKWDetector.getEUnit();
 		} 
-		return (retour == null)?new ColumnExpressionSetter("x_unit_org"): retour;
+		return (retour == null)?new ColumnExpressionSetter("em_unit"): retour;
 	}
 	public ColumnExpressionSetter getEbins() throws Exception{
 		ColumnExpressionSetter retour = null;
@@ -264,7 +264,7 @@ public class QuantityDetector {
 			retour = this.observableKWDetector.getUcdName();
 			if( retour.isNotSet() && !getEMin().isNotSet() && !getEMax().isNotSet() ) {
 				retour.setByValue("phot.count", false);
-				retour.completeMessage("Value taken by default since the dispersion axis is set");
+				retour.completeDetectionMsg("Value taken by default since the dispersion axis is set");
 			}
 		} 
 		return (retour == null)?new ColumnExpressionSetter("o_ucd"): retour;
@@ -275,7 +275,7 @@ public class QuantityDetector {
 			retour = this.observableKWDetector.getUnitName();
 			if( retour.isNotSet() &&  !getEMin().isNotSet() && !getEMax().isNotSet()) {
 				retour.setByValue("counts", false);
-				retour.completeMessage("Value taken by default since the dispersion axis is set");
+				retour.completeDetectionMsg("Value taken by default since the dispersion axis is set");
 			}
 		} 
 		return (retour == null)?new ColumnExpressionSetter("o_unit"): retour;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import saadadb.database.Database;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
@@ -22,8 +23,8 @@ public class AnyFile extends FSDataFile {
 	 * @param fileName
 	 * @throws Exception 
 	 */
-	public AnyFile(String fileName) throws Exception {
-		super(fileName);
+	public AnyFile(String fileName, ProductMapping productMapping) throws Exception {
+		super(fileName,productMapping);
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 	}
 

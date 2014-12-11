@@ -321,21 +321,21 @@ public class ProductIngestor {
 						stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
 					}
 					this.product.s_regionSetter.setValue(stc);
-					this.product.s_regionSetter.completeMessage("Converted in " +  Database.getAstroframe());			
+					this.product.s_regionSetter.completeUserMappingMsg("Converted in " +  Database.getAstroframe());			
 					this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 				}
 			} else {
-				this.product.s_raSetter.completeMessage("Conv failed: no astroframe");
-				this.product.s_decSetter.completeMessage("Conv failed: no astroframe");
-				this.product.s_regionSetter.completeMessage("Conv failed: no astroframe");
+				this.product.s_raSetter.completeUserMappingMsg("Conv failed: no astroframe");
+				this.product.s_decSetter.completeUserMappingMsg("Conv failed: no astroframe");
+				this.product.s_regionSetter.completeUserMappingMsg("Conv failed: no astroframe");
 				this.saadaInstance.s_ra = Double.NaN;
 				this.saadaInstance.s_dec = Double.NaN;									
 			}
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.TRACE, "Error while setting the position " + e.getMessage());
-			this.product.s_raSetter.completeMessage("Conv failed " + e.getMessage());
-			this.product.s_decSetter.completeMessage("Conv failed " + e.getMessage());
-			this.product.s_regionSetter.completeMessage("Conv failed " + e.getMessage());
+			this.product.s_raSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
+			this.product.s_decSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
+			this.product.s_regionSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
 			this.saadaInstance.s_ra = Double.NaN;
 			this.saadaInstance.s_dec = Double.NaN;					
 		}
@@ -377,7 +377,7 @@ public class ProductIngestor {
 			}
 		} catch( Exception e ) {
 			Messenger.printMsg(Messenger.TRACE, "Error while converting the FoV " + e.getMessage());
-			this.product.s_fovSetter.completeMessage("FoV conv failed " + e.getMessage());
+			this.product.s_fovSetter.completeUserMappingMsg("FoV conv failed " + e.getMessage());
 			this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
 		}
 	}
@@ -409,7 +409,7 @@ public class ProductIngestor {
 			 * Position errors are the same on both axes by default
 			 */
 			maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
-			this.product.s_resolutionSetter.completeMessage("orgVal:" + this.product.s_resolutionSetter.getValue() + this.product.s_resolutionSetter.getUnit());
+			this.product.s_resolutionSetter.completeUserMappingMsg("orgVal:" + this.product.s_resolutionSetter.getValue() + this.product.s_resolutionSetter.getUnit());
 			this.product.s_resolutionSetter.setConvertedValue(maj_err, error_unit, "arcsec", addMEssage);
 			this.saadaInstance.s_resolution = maj_err;
 		} else {
@@ -461,7 +461,7 @@ public class ProductIngestor {
 			try {
 				v =Double.parseDouble(t_max.getValue()) - (Double.parseDouble(t_exptime.getValue())/86400);
 				t_min.storedValue = v;
-				t_min.completeMessage("Computed from t_max and t_exptime");	
+				t_min.completeUserMappingMsg("Computed from t_max and t_exptime");	
 				t_min.setByValue(v, false);
 			} catch (Exception e){
 				t_min.setNotSet("Computation from t_max and t_exptime failed", e);
@@ -470,7 +470,7 @@ public class ProductIngestor {
 			try {
 				v = Double.parseDouble(t_min.getValue()) + (Double.parseDouble(t_exptime.getValue())/86400);
 				t_max.storedValue = v;
-				t_max.completeMessage("Computed from t_min and t_exptime");	
+				t_max.completeUserMappingMsg("Computed from t_min and t_exptime");	
 				t_max.setByValue(v, false);
 			} catch (Exception e){
 				t_max.setNotSet("Computation from t_min and t_exptime failed", e);
@@ -480,7 +480,7 @@ public class ProductIngestor {
 				v = 3600*24*( Double.parseDouble(t_max.getValue()) - Double.parseDouble(t_min.getValue())  );
 				t_exptime.storedValue = v;
 				t_exptime.setByValue(v, false);
-				t_exptime.completeMessage("Computed from t_min and t_max");	
+				t_exptime.completeUserMappingMsg("Computed from t_min and t_max");	
 				t_exptime.setUnit("s");
 			} catch (Exception e){
 				t_exptime.setNotSet("Computation from t_max and t_min failed", e);
@@ -505,7 +505,7 @@ public class ProductIngestor {
 
 		ColumnSetter qdMin = this.product.em_minSetter;
 		ColumnSetter qdMax = this.product.em_maxSetter;
-		ColumnSetter qdUnit = this.product.x_unit_orgSetter;
+		ColumnSetter qdUnit = this.product.em_unitSetter;
 		if( !qdMin.isNotSet() && !qdMax.isNotSet() ) {
 			if( !qdUnit.isNotSet() ){
 
@@ -515,9 +515,9 @@ public class ProductIngestor {
 				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 				if( !spectralCoordinate.convert() ) {
 					this.product.em_minSetter = new ColumnSingleSetter();
-					this.product.em_minSetter.completeMessage("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
+					this.product.em_minSetter.completeUserMappingMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
 					this.product.em_maxSetter = new ColumnSingleSetter();
-					this.product.em_maxSetter.completeMessage( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
+					this.product.em_maxSetter.completeUserMappingMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
 					this.product.em_res_powerSetter =  new ColumnSingleSetter();
 				} else {
 					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
@@ -525,16 +525,16 @@ public class ProductIngestor {
 				}
 			} else {
 				this.product.em_minSetter = new ColumnSingleSetter();
-				this.product.em_minSetter.completeMessage("No unit given, can not achieve the conversion ");
+				this.product.em_minSetter.completeUserMappingMsg("No unit given, can not achieve the conversion ");
 				this.product.em_maxSetter = new ColumnSingleSetter();
-				this.product.em_maxSetter.completeMessage("No unit given, can not achieve the conversion ");
+				this.product.em_maxSetter.completeUserMappingMsg("No unit given, can not achieve the conversion ");
 				this.product.em_res_powerSetter =  new ColumnSingleSetter();				
 			}
 			if( !this.product.em_binsSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
 				double v2  =  (this.product.em_maxSetter.getNumValue() - this.product.em_minSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
 				this.product.em_res_powerSetter.setByValue(v1/v2, false);
-				this.product.em_res_powerSetter.completeMessage("Computed from em_min, em_max and em_bins");
+				this.product.em_res_powerSetter.completeUserMappingMsg("Computed from em_min, em_max and em_bins");
 			}	
 		}
 		setField("em_min"    , this.product.em_minSetter);

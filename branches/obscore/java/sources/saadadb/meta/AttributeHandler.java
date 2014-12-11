@@ -37,7 +37,7 @@ import cds.savot.model.SavotParam;
  * 03/1014: Accessors give the existence of a valid value for the field unit value, ucd and utype
 
  */
-public class AttributeHandler implements Serializable , Cloneable, CardDescriptor{
+public class AttributeHandler implements Serializable , Cloneable, CardDescriptor, Comparable{
 	static final DecimalFormat exp =  new DecimalFormat("0.00E00");
 	static final  DecimalFormat deux = new DecimalFormat("0.000");
 
@@ -818,6 +818,16 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		}
 		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert a " + this.type + " in integer");
 		return SaadaConstant.INT;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		AttributeHandler ah = (AttributeHandler) o;
+		if(ah.getNameattr().equals(this.getNameattr()) && ah.getNameorg().equals(this.getNameorg())){
+			return 0;
+		} else {
+			return this.nameorg.compareTo(ah.getNameorg());
+		}
 	}
 
 }

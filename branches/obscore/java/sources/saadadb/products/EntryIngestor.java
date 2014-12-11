@@ -133,7 +133,7 @@ public final class EntryIngestor extends ProductIngestor {
 		this.enumerateRow = product.elements();
 		//		this.oidTable = product.productIngestor.saadaInstance.oidsaada;
 		//		((EntrySaada)(this.saadaInstance)).oidtable = this.oidTable;
-		this.addMEssage = false;
+		//this.addMEssage = false;
 	}
 
 	/* (non-Javadoc)
@@ -439,10 +439,10 @@ public final class EntryIngestor extends ProductIngestor {
 			/*
 			 * Columns ignored have been stored in the freeIndex by FitsProduct
 			 */
-			while( this.product.mapping.hasInFreeIndex(read_col)  ) read_col++;
-			index_pos_col[num_att] = read_col;
-			num_att++;
-			read_col++;
+//			while( this.product.mapping.hasInFreeIndex(read_col)  ) read_col++;
+//			index_pos_col[num_att] = read_col;
+//			num_att++;
+//			read_col++;
 		}
 		//System.exit(1);
 		for( AttributeHandler attribute: this.product.productAttributeHandler.values()) { 

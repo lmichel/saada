@@ -25,22 +25,23 @@ import cds.astro.ICRS;
  */
 public final class CooSysResolver {
 	private String[] fields;
+	private String expression;
 
 	/**
 	 * @param expression coosys descriptor e.g. FK5,2000,2007
 	 * @throws Exception
 	 */
 	public CooSysResolver(String expression) throws Exception{
-		fields = expression.split("[,; ']");
+		this.expression = expression.replaceAll("\\(",  ",").replaceAll("\\)","");
+		fields = this.expression.split("[,; ']");
 	}
-
 	/**
 	 * @return the astroframe matching the expression
 	 * @throws Exception if something goes wrong (non numeric parameters e.g.)
 	 */
 	public Astroframe getCooSys() throws Exception{
 		Astroframe retour;
-		double equinox = (fields.length == 1)? SaadaConstant.DOUBLE: Double.parseDouble(fields[1]);
+		double equinox = (fields.length == 1)? SaadaConstant.DOUBLE: Double.parseDouble(fields[1].replaceAll("[JB]", ""));
 		double epoch = (fields.length < 3)? SaadaConstant.DOUBLE: Double.parseDouble(fields[2]);
 		switch(this.fields[0]){
 		case "ICRS": retour = (equinox == SaadaConstant.DOUBLE)?  new ICRS(): new ICRS(equinox);

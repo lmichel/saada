@@ -11,6 +11,7 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
@@ -23,6 +24,7 @@ import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.DataResourcePointer;
 import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.reporting.MappingReport;
+import saadadb.products.reporting.TableMappingReport;
 import saadadb.products.setter.ColumnSetter;
 
 public class ProductFileReport {
@@ -40,19 +42,24 @@ public class ProductFileReport {
 			DataResourcePointer drp = new DataResourcePointer(ap.getFilename());
 
 			ProductBuilder product = null;
-			DataFile df = new FitsDataFile(drp.getAbsolutePath());
+			DataFile df = SchemaMapper.getDataFileInstance(drp.getAbsolutePath(), mapping);
+			MappingReport report = null;
 			switch( Category.getCategory(ap.getCategory()) ) {
 			case Category.TABLE: product = new TableBuilder(df, mapping);
-			break;
+			report = new TableMappingReport((TableBuilder) product);
+		    break;
 			case Category.MISC : product = new MiscBuilder(df, mapping);
+			report = new MappingReport(product);
 			break;
 			case Category.SPECTRUM: product = new SpectrumBuilder(df, new ProductMapping("mapping", ap));
+			report = new MappingReport(product);
 			break;
 			case Category.IMAGE: product = new Image2DBuilder(df, new ProductMapping("mapping", ap));
+			report = new MappingReport(product);
 			break;
 			}
 			product.mapDataFile();
-			(new MappingReport(product)).writeCompleteReport(df.getParent() + File.separator + "report" + File.separator, ap);
+			report.writeCompleteReport(df.getParent() + File.separator + "report" + File.separator, ap);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -56,8 +56,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
-		if( tableAttributeHandler.get("_ra2000") != null) {
-		}
+		System.out.println("@@@@@@@@ SpaceKWDetector1 " + tableAttributeHandler.size());
 	}
 
 	/**
@@ -67,6 +66,7 @@ public class SpaceKWDetector extends KWDetector{
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> columnsAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, columnsAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
+		System.out.println("@@@@@@@@ SpaceKWDetector2 " + tableAttributeHandler.size() + " " +((columnsAttributeHandler != null)? columnsAttributeHandler.size(): "NULL"));
 	}
 
 	/**
@@ -276,13 +276,13 @@ public class SpaceKWDetector extends KWDetector{
 				ah.setValue(fov);
 				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov = new ColumnExpressionSetter("s_fov", ah);
-				this.fov.completeMessage("smaller image size taken (height)");	
+				this.fov.completeDetectionMsg("smaller image size taken (height)");	
 				this.fov.setUnit("deg");
 			} else {
 				ah.setValue(fov);
 				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
 				this.fov = new ColumnExpressionSetter("s_fov", ah);
-				this.fov.completeMessage("smaller image size taken (width)");														
+				this.fov.completeDetectionMsg("smaller image size taken (width)");														
 				this.fov.setUnit("deg");
 			}
 			if (Messenger.debug_mode)
@@ -299,7 +299,7 @@ public class SpaceKWDetector extends KWDetector{
 			pts[6] = raMin; pts[7] = decMin; 
 			//this.region = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
 			this.region = new ColumnExpressionSetter("s_region", ah);
-			this.region.completeMessage("Match the WCS rectangle");			
+			this.region.completeDetectionMsg("Match the WCS rectangle");			
 			this.region.storedValue = pts;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Take " + (pts.length/2)  + " points for the region");
@@ -413,10 +413,10 @@ public class SpaceKWDetector extends KWDetector{
 					this.status |= FRAME_FOUND;		
 					this.frameSetter = new ColumnExpressionSetter("astroframe");
 					this.frameSetter.setByValue(frame.toString(), false);
-					this.frameSetter.completeMessage("Take <" + frame + "> as frame (infered from the name of the position keywords)");
+					this.frameSetter.completeDetectionMsg("Infered from the name of the position keywords");
 					this.frameSetter.storedValue = frame;
 				} else {
-					this.frameSetter.completeMessage("Cannot guess the frame from the  from the name of the position keywords");
+					this.frameSetter.completeDetectionMsg("Cannot guess it from the position keywords");
 				}
 			}
 		}
@@ -434,8 +434,8 @@ public class SpaceKWDetector extends KWDetector{
 				return;
 			}
 			PositionParser pp = new PositionParser(this.ascension_kw.getValue().replaceAll("[+-]", "") + " " + this.declination_kw.getValue());
-			this.ascension_kw.completeMessage(pp.getReport());
-			this.declination_kw.completeMessage(pp.getReport());
+			this.ascension_kw.completeDetectionMsg(pp.getReport());
+			this.declination_kw.completeDetectionMsg(pp.getReport());
 			this.ascension_kw.setValue(pp.getRa());
 			this.declination_kw.setValue(pp.getDec());
 		} catch (QueryException e) {
@@ -518,11 +518,11 @@ public class SpaceKWDetector extends KWDetector{
 				}
 				if( frame != null  ) {
 					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG,  "Fing position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
+						Messenger.printMsg(Messenger.DEBUG,  "Find position keywords " + ascension_kw.getAttNameOrg() + " " + declination_kw.getAttNameOrg()
 								+ " tagged with coosys " + cooString);					this.status |= FRAME_FOUND;		
 								this.frameSetter = new ColumnExpressionSetter("astroframe");
-								this.frameSetter.setByValue("", false);
-								this.frameSetter.completeMessage("Take <" + frame + "> as frame (referenced by position keywords)");
+								this.frameSetter.setByValue(frame.toString(), false);
+								this.frameSetter.completeDetectionMsg("infered from position keywords");
 								this.frameSetter.storedValue = frame;
 				}
 			} else {
@@ -693,7 +693,7 @@ public class SpaceKWDetector extends KWDetector{
 			this.searchFrame();
 		} catch (Exception e) {
 			ColumnExpressionSetter retour = new ColumnExpressionSetter("astroframe");
-			retour.completeMessage(e.getMessage());
+			retour.completeDetectionMsg(e.getMessage());
 			return retour;
 		}
 		return this.frameSetter;
@@ -711,12 +711,12 @@ public class SpaceKWDetector extends KWDetector{
 					Map<String , AttributeHandler> m = new  LinkedHashMap<String, AttributeHandler>();
 					m.put(ah.getNameattr(), ah);
 					this.ascension_kw = new ColumnExpressionSetter("s_ra", "15*" + ah.getNameorg(), m, true);
-					this.ascension_kw.completeMessage("RA in hours (" +  ah.getComment() + "): convert in deg");
+					this.ascension_kw.completeDetectionMsg("RA in hours (" +  ah.getComment() + "): convert in deg");
 				}
 			}
 			return ascension_kw;
 		} else 
-			return null;
+			return new ColumnExpressionSetter("s_ra");
 	}
 
 	/**
@@ -727,7 +727,7 @@ public class SpaceKWDetector extends KWDetector{
 		if( this.arePosColFound() )
 			return declination_kw;
 		else 
-			return null;
+			return new ColumnExpressionSetter("s_dec");
 	}
 
 	public boolean isFrameFound() throws SaadaException {

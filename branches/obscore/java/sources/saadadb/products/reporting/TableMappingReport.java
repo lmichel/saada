@@ -1,5 +1,7 @@
 package saadadb.products.reporting;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,6 +32,8 @@ public class TableMappingReport extends MappingReport{
 	 */
 	@Override
 	public Map<String, ColumnSetter> getEntryReport() throws Exception {
+		this.entryBuilder.elements();
+		this.entryBuilder.dataFile.hasMoreElements();
 		return new MappingReport(this.entryBuilder).getReport();
 	}
 
@@ -61,4 +65,14 @@ public class TableMappingReport extends MappingReport{
 		super.printReport();
 		new MappingReport(this.entryBuilder).printReport();
 	}
+	
+	protected void wrriteColumnReport(FileWriter fw) throws IOException {
+		int cpt=1;
+		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
+			fw.write("COLUMN " + cpt+ " " + eah + "\n");
+			cpt++;
+		}
+		
+	}
+
 }

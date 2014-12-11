@@ -87,7 +87,7 @@ public class EntryBuilder extends ProductBuilder {
 	@Override
 	public void mapInstanceName() throws Exception {
 		Messenger.printMsg(Messenger.TRACE, "Building the name");
-		this.obs_idSetter = this.getMappedAttributeHander("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
+		this.obs_idSetter = this.getSetterForMappedColumn("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
 	}
 	
 	public void loadProductXX(long tableOid) throws Exception {
