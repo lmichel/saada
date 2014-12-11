@@ -184,8 +184,8 @@ public class NativeAttributesProvider {
 //		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
 //			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);
 //		
-//		} else if (attr_name.compareTo("x_unit_org_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_org_csa);
+//		} else if (attr_name.compareTo("em_unit_csa") == 0) {
+//			return DefaultFormats.getString(((SpectrumSaada)saadai).em_unit_csa);
 		}
 		return null;
 	}
