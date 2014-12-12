@@ -274,7 +274,7 @@ public class DefaultFormats {
 		}
 		else sign = "+";
 		if( Double.isInfinite(val) || Double.isNaN(val) ) {
-			return "not set";
+			return SaadaConstant.NOTSET;
 		} else if( val == 0 || (val < -1e-2 || val > 1e-2) ) {
 			return sign + deux.format(val);
 		} else {
