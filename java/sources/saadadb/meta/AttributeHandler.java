@@ -650,13 +650,13 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	 */
 	public Object getFormatedValue(Object value) {
 		if( value == null ) {
-			return "not set";
+			return SaadaConstant.NOTSET;
 		}
 		String strval = value.toString();
 		if( strval.length() == 0 || strval.equals("Infinity") || strval.equals("NaN") || 
 				strval.equals("") || strval.equals("NULL") || strval.equals("2147483647") || 
 				strval.equals("-2147483648") ||  strval.equals("9223372036854775807") ) {
-			return "not set";
+			return SaadaConstant.NOTSET;
 		}
 		try {
 			if( this.format == null || this.format.length() == 0 ) {
