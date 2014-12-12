@@ -4,23 +4,22 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
-import saadadb.products.inference.QuantityDetector;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
-public class SQLTableProduct implements DataFile {
+public class SQLTableProduct extends DataFile {
 	private SQLQuery query;
 	private ResultSet resultSet;
 	private String name;
@@ -33,6 +32,7 @@ public class SQLTableProduct implements DataFile {
 	 * @throws Exception
 	 */
 	SQLTableProduct(String name) throws Exception{
+		super(null);
 //		ResultSet rs = Database.getWrapper().getTableColumns(name);
 //		this.nbCols = rs.getMetaData().getColumnCount();
 //		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
@@ -130,7 +130,7 @@ public class SQLTableProduct implements DataFile {
 	}
 
 	@Override
-	public Map<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
+	public LinkedHashMap<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
 		return null;
 	}
 
@@ -155,12 +155,7 @@ public class SQLTableProduct implements DataFile {
 		Database.close();
 	}
 
-	@Override
-	public Map<String, AttributeHandler> getEntryAttributeHandler()
-			throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 	@Override
 	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
@@ -170,12 +165,6 @@ public class SQLTableProduct implements DataFile {
 
 
 
-
-	@Override
-	public QuantityDetector getQuantityDetector(ProductMapping productMapping) throws SaadaException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
@@ -226,13 +215,19 @@ public class SQLTableProduct implements DataFile {
 	}
 
 	@Override
-	public List<String> getComments() throws SaadaException {
+	public void updateAttributeHandlerValues() throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
-	public void updateAttributeHandlerValues() throws Exception {
+	public void mapAttributeHandler() throws IgnoreException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mapEntryAttributeHandler() throws IgnoreException {
 		// TODO Auto-generated method stub
 		
 	}
