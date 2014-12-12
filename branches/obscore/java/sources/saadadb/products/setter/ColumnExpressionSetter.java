@@ -333,7 +333,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			e.printStackTrace();
 			this.result = SaadaConstant.STRING;
 			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeUserMappingMsg("exp failed: " + e.getMessage());
+			this.completeConversionMsg("exp failed: " + e.getMessage());
 		}
 	}
 

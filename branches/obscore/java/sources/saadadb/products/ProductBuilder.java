@@ -1375,7 +1375,7 @@ public abstract class ProductBuilder {
 			msg += "Taken by WCS";
 			break;
 		default:
-			msg += "not set";	
+			msg += SaadaConstant.NOTSET;
 		}
 		return msg;	
 	}
