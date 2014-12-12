@@ -43,13 +43,13 @@ public class TableMappingReport extends MappingReport{
 	@Override
 	public Map<String, ColumnSetter> getReport() throws Exception {
 		System.out.println( entryBuilder.hashCode() + " " + entryBuilder.productAttributeHandler.hashCode());
-		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
-			System.out.println("getReport1 " + eah);
-		}
+//		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
+//			System.out.println("getReport1 " + eah);
+//		}
 		Map<String, ColumnSetter> retour = super.getReport();
-		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
-			System.out.println("getReport2 " + eah);
-		}
+//		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
+//			System.out.println("getReport2 " + eah);
+//		}
 		Map<String, ColumnSetter> em = this.getEntryReport();
 		for( Entry<String, ColumnSetter>e: em.entrySet()){
 			retour.put("entry." + e.getKey(), e.getValue());
@@ -66,7 +66,10 @@ public class TableMappingReport extends MappingReport{
 		new MappingReport(this.entryBuilder).printReport();
 	}
 	
-	protected void wrriteColumnReport(FileWriter fw) throws IOException {
+	/* (non-Javadoc)
+	 * @see saadadb.products.reporting.MappingReport#writeColumnReport(java.io.FileWriter)
+	 */
+	protected void writeColumnReport(FileWriter fw) throws IOException {
 		int cpt=1;
 		for( Entry<String, AttributeHandler> eah: entryBuilder.productAttributeHandler.entrySet()){
 			fw.write("COLUMN " + cpt+ " " + eah + "\n");

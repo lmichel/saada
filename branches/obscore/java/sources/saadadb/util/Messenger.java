@@ -297,7 +297,7 @@ public class Messenger implements Serializable{
 		System.out.println(additionnalMessage);
 	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 	      for(int i=2; i<elements.length; i++) {
-	          System.out.println(elements[i]);
+	          System.out.println("  " + elements[i]);
 	          if( i>7)break;
 	      }
 	      System.out.println("");

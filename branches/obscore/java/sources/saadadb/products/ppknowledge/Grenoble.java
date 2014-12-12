@@ -36,7 +36,7 @@ public class Grenoble extends PipelineParser {
 			retour = 3;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("calib_level");
 			cs.setByWCS(String.valueOf(retour), false);
-			cs.completeUserMappingMsg("Issued from the knowledge base");
+			cs.completeDetectionMsg("Issued from the knowledge base");
 			cs.storedValue = 3;
 			return cs;
 		} catch (Exception e) {
@@ -66,7 +66,7 @@ public class Grenoble extends PipelineParser {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_min");
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
-			cs.completeUserMappingMsg("Issued from the knowledge base");
+			cs.completeDetectionMsg("Issued from the knowledge base");
 			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
@@ -84,7 +84,7 @@ public class Grenoble extends PipelineParser {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_max");
 			cs.setUnit("Hz");
 			cs.setByWCS(String.valueOf(retour), false);
-			cs.completeUserMappingMsg("Issued from the knowledge base");
+			cs.completeDetectionMsg("Issued from the knowledge base");
 			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
@@ -113,7 +113,7 @@ public class Grenoble extends PipelineParser {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_res_power");
 			cs.setUnit("");
 			cs.setByWCS(String.valueOf(retour), false);
-			cs.completeUserMappingMsg("Issued from the knowledge base F/CDELT");
+			cs.completeDetectionMsg("Issued from the knowledge base F/CDELT");
 			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
@@ -132,7 +132,7 @@ public class Grenoble extends PipelineParser {
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
 			cs.setByWCS(getStringValue("DATE-OBS"), false);
-			cs.completeUserMappingMsg("Issued from the knowledge base");
+			cs.completeDetectionMsg("Issued from the knowledge base");
 			return cs;
 		} catch (Exception e) {
 			return  new ColumnExpressionSetter("t_min", e.getMessage());
@@ -148,7 +148,7 @@ public class Grenoble extends PipelineParser {
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
 		ColumnExpressionSetter cs = new ColumnExpressionSetter("t_max");
 		cs.setByValue("count", false);
-		cs.completeUserMappingMsg("Issued from the knowledge base");
+		cs.completeDetectionMsg("Issued from the knowledge base");
 		return cs;
 	}
 	/* (non-Javadoc)
@@ -160,7 +160,7 @@ public class Grenoble extends PipelineParser {
 			Messenger.printMsg(Messenger.DEBUG, "getUcdName: read knowledge base");
 		ColumnExpressionSetter cs = new ColumnExpressionSetter("o_ucd");
 		cs.setByValue("phot.count", false);
-		cs.completeUserMappingMsg("Issued from the knowledge base");
+		cs.completeDetectionMsg("Issued from the knowledge base");
 		return cs;
 	}
 	/* (non-Javadoc)
@@ -172,7 +172,7 @@ public class Grenoble extends PipelineParser {
 			Messenger.printMsg(Messenger.DEBUG, "getCalibStatus: read knowledge base");
 		ColumnExpressionSetter cs = new ColumnExpressionSetter("o_calib_status");
 		cs.setByValue("2", false);
-		cs.completeUserMappingMsg("Issued from the knowledge base");
+		cs.completeDetectionMsg("Issued from the knowledge base");
 		return cs;
 	}
 }

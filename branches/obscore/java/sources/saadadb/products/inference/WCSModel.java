@@ -143,7 +143,7 @@ public class WCSModel {
 
 
 				}else{
-					this.CD[(NAXIS*axe) + axe2].setNotSet();
+					this.CD[(NAXIS*axe) + axe2].setFailed("");;
 				}
 			}	
 			/*
@@ -731,8 +731,7 @@ public class WCSModel {
 					asc.setByWCS(this.CRVAL[axe].getValue(), false);
 					asc.completeDetectionMsg("Center asc axe #" + axe);
 				} catch (Exception e) {
-					asc.setNotSet();
-					asc.completeDetectionMsg(e.getMessage());
+					asc.setFailed("", e);
 				}
 			}
 			if( this.CTYPE[axe].getValue().startsWith(decPrefix) ) {
@@ -740,8 +739,8 @@ public class WCSModel {
 					dec.setByWCS(this.CRVAL[axe].getValue(), false);
 					dec.completeDetectionMsg("Center dec axe #" + axe);
 				} catch (Exception e) {
-					asc.setNotSet();
-					dec.completeDetectionMsg(e.getMessage());
+					asc.setFailed("", e);
+
 				}
 			}
 		}		

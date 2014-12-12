@@ -738,6 +738,10 @@ public class SpaceKWDetector extends KWDetector{
 		else return false;
 	}
 
+	/**
+	 * @return
+	 * @throws SaadaException
+	 */
 	public boolean arePosColFound() throws SaadaException {
 		this.init();
 		if( (status & POS_KW_FOUND)> 0  ||  (status & WCS_KW_FOUND)> 0  ) {
@@ -746,9 +750,24 @@ public class SpaceKWDetector extends KWDetector{
 		else return false;
 	}
 
+	/**
+	 * @return
+	 * @throws SaadaException
+	 */
 	public ColumnExpressionSetter getSpatialError() throws SaadaException{
 		return (this.err_maj == null)? new ColumnExpressionSetter("s_resolution"): this.err_maj;
 	}
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getSpatialErrorUnit() throws Exception{
+		ColumnExpressionSetter retour = new ColumnExpressionSetter("s_resolution_unit", "arcsec");
+		retour.completeDetectionMsg("Talen by default");
+		return new ColumnExpressionSetter("s_resolution_unit");
+	}
+	
 	/**
 	 * @return
 	 * @throws Exception 

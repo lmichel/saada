@@ -233,6 +233,7 @@ public class EntryBuilder extends ProductBuilder {
 	 * @throws Exception
 	 */
 	public void updateAttributeHandlerValues() throws Exception {
+		System.out.println("@@@@@@@@@@ ENTRY  updateAttributeHandlerValues");
 		this.dataFile.updateEntryAttributeHandlerValues(this);
 	}
 

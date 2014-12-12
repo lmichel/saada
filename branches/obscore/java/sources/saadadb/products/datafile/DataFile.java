@@ -270,7 +270,6 @@ public abstract class DataFile implements Enumeration {
 		Map<String, AttributeHandler> mah = this.entryAttributeHandlers;
 		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		for( Entry<String, AttributeHandler > e: mah.entrySet()){
-			System.out.println("DATAFILE " + e.getValue());
 			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
 		}
 		(new Exception()).printStackTrace();
@@ -306,6 +305,7 @@ public abstract class DataFile implements Enumeration {
 	 * @throws Exception
 	 */
 	public void updateAttributeHandlerValues() throws Exception {
+		Messenger.printStackTop("@@@@@@@@@@ Datafile updateAttributeHandlerValues");
 		this.mapAttributeHandler();
 		if( this.productBuilder.productAttributeHandler == null ){
 			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
@@ -321,7 +321,6 @@ public abstract class DataFile implements Enumeration {
 			AttributeHandler builderAh = this.productBuilder.productAttributeHandler.get(localKey);
 
 			if( builderAh == null ){
-				System.out.println("ADD " + localAh.clone());
 				this.productBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
 			} else {
 				builderAh.setValue(localAh.getValue());
@@ -346,6 +345,7 @@ public abstract class DataFile implements Enumeration {
 		Object[] rowData = (Object[]) this.nextElement();
 		if( rowData != null ){
 			int cpt = 0;
+
 			for( AttributeHandler ah: this.entryAttributeHandlers.values()){
 				ah.setValue(rowData[cpt].toString());
 				cpt++;
@@ -360,9 +360,10 @@ public abstract class DataFile implements Enumeration {
 					entryBuilder.productAttributeHandler.put(localKey, (AttributeHandler)(localAh.clone()));
 				} else {
 					builderAh.setValue(localAh.getValue());
-
 				}
 			}
+		} else {
+			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "NULL row returned in a VOTable");
 		}
 	}
 
@@ -445,7 +446,6 @@ public abstract class DataFile implements Enumeration {
 	 * @param builder
 	 */
 	protected void setBuilder(ProductBuilder builder){
-		System.out.println("SETTTTTTTTTTTTTTTTTTTTTt");
 		this.productBuilder = builder;
 		this.setMapping(builder.mapping);
 	}

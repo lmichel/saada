@@ -388,8 +388,6 @@ public abstract class KWDetector {
 	 */
 	private ColumnExpressionSetter notSetColumnSetter(String fieldName){
 		ColumnExpressionSetter retour = new ColumnExpressionSetter(fieldName);
-		//retour.completeMessage("Nothing found");
-		retour.setNotSet();
 		return retour;
 	}
 

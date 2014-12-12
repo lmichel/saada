@@ -19,7 +19,7 @@ public class SpaceMapping extends AxisMapping {
 	 * @throws SaadaException
 	 */
 	SpaceMapping(ArgsParser ap, boolean entryMode) throws SaadaException {
-		super(ap, new String[]{"s_ra", "s_dec","s_fov","s_region", "s_resolution", "system"}, entryMode);
+		super(ap, new String[]{"s_ra", "s_dec","s_fov","s_region", "s_resolution", "s_resolution_unit", "system"}, entryMode);
 		this.mapCoordSystem(ap);
 		this.mapPosition(ap);
 		this.mapPoserror(ap);
@@ -95,20 +95,23 @@ public class SpaceMapping extends AxisMapping {
 		
 		String av  = tabArg.getPoserrorMapping(this.entryMode);
 		this.errorUnit = tabArg.getPoserrorUnit(this.entryMode);
+		if( this.errorUnit != null ){
+			this.columnMapping.put("s_resolution_unit", new ColumnMapping(null, this.errorUnit, "s_resolution_unit param"));				
+		}
 		/*
 		 * One poserror parameter: error is supposed to be a circle
 		 */
 		if( av != null ) {
-			/*
-			 * Object name can be in '' or in ""
-			 */
-			if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
-				av= av.substring(1, av.length() -1);
-				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, av, "s_resolution param"));				
-			} else {
-				System.out.println(av);
-				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.KEYWORD, this.errorUnit, av, "s_resolution param"));				
-			}
+			this.columnMapping.put("s_resolution", new ColumnMapping(this.errorUnit, av, "s_resolution param"));				
+//			/*
+//			 * Object name can be in '' or in ""
+//			 */
+//			if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
+//				av= av.substring(1, av.length() -1);
+//				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, av, "s_resolution param"));				
+//			} else {
+//				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.KEYWORD, this.errorUnit, av, "s_resolution param"));				
+//			}
 		}
 	}
 	
