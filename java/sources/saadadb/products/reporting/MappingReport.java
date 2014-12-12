@@ -146,8 +146,6 @@ public class MappingReport {
 	public void writeCompleteReport(String directory, ArgsParser ap) throws Exception{
 		String reportName = directory +  File.separator + this.builder.dataFile.getName() + ".txt";
 		Messenger.printMsg(Messenger.TRACE, "Write report in " + reportName);
-		this.builder.dataFile.updateAttributeHandlerValues();
-		this.builder.productIngestor.bindInstanceToFile();
 
 		FileWriter fw = new FileWriter(reportName);
 		fw.write("====================================================\n");
@@ -159,10 +157,12 @@ public class MappingReport {
 			fw.write(ap.toString().replace("-", "\n    -") +"\n");
 		}
 		fw.write("\n========= Keywords read\n");
+		int cpt = 1;
 		for( AttributeHandler ah: this.builder.getProductAttributeHandler().values()) {
-			fw.write(ah + "\n");
+			fw.write("HEADER " + cpt + " " + ah + "\n");
+			cpt++;
 		}
-		this.wrriteColumnReport(fw);
+		this.writeColumnReport(fw);
 		fw.write("\n========= Loaded extensions\n");
 		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
 			fw.write(es + "\n");
@@ -187,7 +187,7 @@ public class MappingReport {
 	 * @param fw
 	 * @throws IOException 
 	 */
-	protected void wrriteColumnReport(FileWriter fw) throws IOException {}
+	protected void writeColumnReport(FileWriter fw) throws IOException {}
 	
 	
 

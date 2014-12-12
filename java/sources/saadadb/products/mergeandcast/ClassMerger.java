@@ -18,6 +18,7 @@ import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.datafile.VOTableDataFile;
 import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
 
 /**
  * Take in charge the operations of data format fusion and data value downcasting
@@ -123,6 +124,12 @@ public class ClassMerger {
 	 */
 	public static String getCastedSQLValue(Object value, DownCasting downCasting) throws Exception{
 		String sValue  = value.toString();
+		if( sValue.equals("Infinity")          || sValue.equals("NaN") || value.equals("") ||
+			sValue.equals(SaadaConstant.NOTSET)|| sValue.equals(SaadaConstant.STRING) ||
+				sValue.equalsIgnoreCase("NULL")|| sValue.equals("2147483647") || sValue.equals("9223372036854775807")) {
+			return Database.getWrapper().getAsciiNull();
+		}
+
 		switch (downCasting) {
 		case NoCast: return sValue;
 		case Int2String:

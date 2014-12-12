@@ -4,9 +4,7 @@
 package saadadb.products;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.lang.reflect.Field;
-import java.util.Date;
 import java.util.Enumeration;
 
 import saadadb.collection.Category;
@@ -14,7 +12,6 @@ import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
-import saadadb.database.Repository;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
@@ -23,7 +20,6 @@ import saadadb.products.datafile.DataFile;
 import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.util.DateUtils;
-import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import cds.astro.Astrocoo;
@@ -124,6 +120,11 @@ public final class EntryIngestor extends ProductIngestor {
 	 * The element value matches  the position of the columns within the SaadaDB 
 	 */
 	private int[] busReverseIndirectionTable;
+	/**
+	 * Data types of the columns within the SaadaDB
+	 */
+	private String[] busTypeTable;
+
 	/**
 	 * @param product
 	 * @throws Exception
@@ -376,8 +377,9 @@ public final class EntryIngestor extends ProductIngestor {
 	 */
 	@Override
 	protected void buildOrderedBusinessAttributeList(){
-		this.busIndirectionTable = new int[this.product.metaClass.getAttributes_handlers().size()];
+		this.busIndirectionTable        = new int[this.product.metaClass.getAttributes_handlers().size()];
 		this.busReverseIndirectionTable = new int[this.product.metaClass.getAttributes_handlers().size()];
+		this.busTypeTable               = new String[this.product.metaClass.getAttributes_handlers().size()];
 		for( int i=0 ; i<this.busIndirectionTable.length ; i++ ){
 			this.busIndirectionTable[i] = -1;
 			this.busReverseIndirectionTable[i] = -1;
@@ -386,6 +388,8 @@ public final class EntryIngestor extends ProductIngestor {
 		for( AttributeHandler ah:  this.product.metaClass.getAttributes_handlers().values() ){
 			int readCpt = 0 ;
 			String na = ah.getNameattr();
+			this. busTypeTable[readCpt] = ah.getType();
+
 			for( AttributeHandler ah2: this.product.dataFile.entryAttributeHandlers.values()){
 				if( ah2.getNameattr().equals(na)){
 					this.busIndirectionTable[readCpt] = classCpt;
@@ -564,7 +568,7 @@ public final class EntryIngestor extends ProductIngestor {
 			int cpt = 0;
 			for( AttributeHandler ah: dataFile.entryAttributeHandlers.values()){
 				int index = this.busReverseIndirectionTable[cpt];
-				rowData[index + 3] =  ClassMerger.getCastedSQLValue(ah, ah.getType());
+				rowData[index + 3] =  ClassMerger.getCastedSQLValue(ah, this.busTypeTable[index + 3]);
 				cpt++;
 			}
 			StringBuffer sb = new StringBuffer();

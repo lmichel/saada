@@ -23,6 +23,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.CooSysResolver;
 import saadadb.products.inference.Coord;
 import saadadb.products.inference.SpectralCoordinate;
+import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.sqltable.SQLTable;
@@ -162,7 +163,7 @@ public class ProductIngestor {
 						//this.saadaInstance.setInField(f, value);
 					}
 				} else if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
+					Messenger.printMsg(Messenger.DEBUG, "No KW in <"+ this.product.getName() + "> matches field <"+ this.saadaInstance.getClass().getName() + "." + keyObj + ">");	
 			}
 		}
 		this.saadaInstance.computeContentSignature(md5Value);
@@ -249,7 +250,7 @@ public class ProductIngestor {
 				this.setFoVFields();
 				this.setPosErrorFields();
 			} catch( Exception e ) {
-				//e.printStackTrace();
+				e.printStackTrace();
 				this.setPositionFieldsInError("Error while setting the position " + e.getMessage());
 			}
 
@@ -260,11 +261,11 @@ public class ProductIngestor {
 	 * @param message
 	 */
 	protected void setPositionFieldsInError(String message) {
-		this.product.s_raSetter.setNotSet(message);
-		this.product.s_decSetter.setNotSet(message);
-		this.product.s_regionSetter.setNotSet(message);
-		this.product.s_fovSetter.setNotSet(message);
-		this.product.s_resolutionSetter.setNotSet(message);
+		this.product.s_raSetter.setFailed(message);
+		this.product.s_decSetter.setFailed(message);
+		this.product.s_regionSetter.setFailed(message);
+		this.product.s_fovSetter.setFailed(message);
+		this.product.s_resolutionSetter.setFailed(message);
 		this.saadaInstance.s_ra = Double.NaN;
 		this.saadaInstance.s_dec = Double.NaN;	
 		this.saadaInstance.pos_x_csa  = Double.NaN;	
@@ -321,21 +322,21 @@ public class ProductIngestor {
 						stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
 					}
 					this.product.s_regionSetter.setValue(stc);
-					this.product.s_regionSetter.completeUserMappingMsg("Converted in " +  Database.getAstroframe());			
+					this.product.s_regionSetter.completeConversionMsg("Converted in " +  Database.getAstroframe());			
 					this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 				}
 			} else {
-				this.product.s_raSetter.completeUserMappingMsg("Conv failed: no astroframe");
-				this.product.s_decSetter.completeUserMappingMsg("Conv failed: no astroframe");
-				this.product.s_regionSetter.completeUserMappingMsg("Conv failed: no astroframe");
+				this.product.s_raSetter.completeConversionMsg("Conv failed: no astroframe");
+				this.product.s_decSetter.completeConversionMsg("Conv failed: no astroframe");
+				this.product.s_regionSetter.completeConversionMsg("Conv failed: no astroframe");
 				this.saadaInstance.s_ra = Double.NaN;
 				this.saadaInstance.s_dec = Double.NaN;									
 			}
 		} catch (Exception e) {
 			Messenger.printMsg(Messenger.TRACE, "Error while setting the position " + e.getMessage());
-			this.product.s_raSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
-			this.product.s_decSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
-			this.product.s_regionSetter.completeUserMappingMsg("Conv failed " + e.getMessage());
+			this.product.s_raSetter.completeConversionMsg("Conv failed " + e.getMessage());
+			this.product.s_decSetter.completeConversionMsg("Conv failed " + e.getMessage());
+			this.product.s_regionSetter.completeConversionMsg("Conv failed " + e.getMessage());
 			this.saadaInstance.s_ra = Double.NaN;
 			this.saadaInstance.s_dec = Double.NaN;					
 		}
@@ -371,13 +372,13 @@ public class ProductIngestor {
 						this.saadaInstance.setS_fov(this.fovUnitConverter.value);
 					}
 				} else {
-					this.product.s_fovSetter.setNotSet("No unit given: cannnot make a conversion in deg");
+					this.product.s_fovSetter.setFailed("No unit given: cannnot make a conversion in deg");
 					this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
 				}
 			}
 		} catch( Exception e ) {
 			Messenger.printMsg(Messenger.TRACE, "Error while converting the FoV " + e.getMessage());
-			this.product.s_fovSetter.completeUserMappingMsg("FoV conv failed " + e.getMessage());
+			this.product.s_fovSetter.completeConversionMsg("FoV conv failed " + e.getMessage());
 			this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);					
 		}
 	}
@@ -388,33 +389,47 @@ public class ProductIngestor {
 	 * @throws Exception
 	 */
 	protected void setPosErrorFields() throws Exception {
-		String error_unit = this.product.s_resolutionSetter.getUnit();
-		if( !this.product.s_resolutionSetter.isNotSet() &&  error_unit != null ){
-			double maj_err=0, convert = -1;
-			/*
-			 * Errors are always stored in arcsec in Saada
-			 * let's make a simple convertion;
-			 * Sometime arcsec/min is written arcsec/mins
-			 */
-			if( error_unit.equals("deg") ) convert = 3600;
-			else if( error_unit.startsWith("arcmin") ) convert = 60.0;
-			else if( error_unit.startsWith("arcsec") ) convert = 1;
-			else if( error_unit.equals("mas") ) convert = 1./1000.;
-			else if( error_unit.equals("uas") ) convert = 1./(1000.*1000.);
-			else {
-				if( this.numberOfCall == 0 ) Messenger.printMsg(Messenger.TRACE, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
-				return ;
+		try {
+			String error_unit = this.product.s_resolution_unitSetter.getValue();
+			if( !this.product.s_resolutionSetter.isNotSet() &&  error_unit != null &&  error_unit.length() > 0){
+				double maj_err=0, convert = -1;
+				/*
+				 * Errors are always stored in arcsec in Saada
+				 * let's make a simple convertion;
+				 * Sometime arcsec/min is written arcsec/mins
+				 */
+				if( error_unit.equals("deg") ) convert = 3600;
+				else if( error_unit.startsWith("arcmin") ) convert = 60.0;
+				else if( error_unit.startsWith("arcsec") ) convert = 1;
+				else if( error_unit.equals("mas") ) convert = 1./1000.;
+				else if( error_unit.equals("uas") ) convert = 1./(1000.*1000.);
+				else {
+					this.product.s_resolutionSetter.completeConversionMsg("Unit <" + error_unit + "> not supported for errors.");
+					Messenger.printMsg(Messenger.TRACE, "Unit <" + error_unit + "> not supported for errors. Error won't be set for this product");
+					return ;
+				}
+				if( convert != 1. ) {
+					/*
+					 * Position errors are the same on both axes by default
+					 */
+					maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
+					this.product.s_resolutionSetter.completeConversionMsg("orgVal:" + this.product.s_resolutionSetter.getValue() + this.product.s_resolutionSetter.getUnit());
+					this.product.s_resolutionSetter.setConvertedValue(maj_err, error_unit, "arcsec", addMEssage);
+					this.saadaInstance.s_resolution = maj_err;
+				} else {
+					this.product.s_resolutionSetter.completeConversionMsg("no convertion");
+					this.saadaInstance.s_resolution = Double.parseDouble(this.product.s_resolutionSetter.getValue());
+				}
+			} else {
+				if( this.numberOfCall == 0 ){
+					this.product.s_resolutionSetter.completeConversionMsg("Position error without unit");
+					Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
+				}
 			}
-			/*
-			 * Position errors are the same on both axes by default
-			 */
-			maj_err = convert*Double.parseDouble(this.product.s_resolutionSetter.getValue());
-			this.product.s_resolutionSetter.completeUserMappingMsg("orgVal:" + this.product.s_resolutionSetter.getValue() + this.product.s_resolutionSetter.getUnit());
-			this.product.s_resolutionSetter.setConvertedValue(maj_err, error_unit, "arcsec", addMEssage);
-			this.saadaInstance.s_resolution = maj_err;
-		} else {
-			if( this.numberOfCall == 0 ) Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
-		}// if error mapped 	
+		} catch(Exception e){
+			this.product.s_resolutionSetter.setFailed("", e);
+			this.saadaInstance.s_resolution = SaadaConstant.DOUBLE;
+		}
 	}
 
 
@@ -436,7 +451,7 @@ public class ProductIngestor {
 				t_min.storedValue = DateUtils.getMJD(t_min.getValue());
 				t_min.setConvertedValue(DateUtils.getMJD(t_min.getValue()), "String", "mjd", true);
 			} catch (Exception e){
-				t_min.setNotSet("Conv to MJD failed",e);
+				t_min.setFailed("Conv to MJD failed",e);
 			}
 		}
 		if( !t_max.isNotSet() ) {
@@ -444,7 +459,7 @@ public class ProductIngestor {
 				t_max.storedValue = DateUtils.getMJD(t_max.getValue());
 				t_max.setConvertedValue(DateUtils.getMJD(t_max.getValue()), "String", "mjd", true);
 			} catch (Exception e){
-				t_max.setNotSet("Conv to MJD failed", e);
+				t_max.setFailed("Conv to MJD failed", e);
 			}
 		}
 
@@ -453,7 +468,7 @@ public class ProductIngestor {
 			if( v != null ) {
 				t_exptime.setValue(v);
 			} else {
-				t_exptime.setNotSet();
+				t_exptime.setFailed("Null value");
 			}
 		}
 		double v;
@@ -461,29 +476,29 @@ public class ProductIngestor {
 			try {
 				v =Double.parseDouble(t_max.getValue()) - (Double.parseDouble(t_exptime.getValue())/86400);
 				t_min.storedValue = v;
-				t_min.completeUserMappingMsg("Computed from t_max and t_exptime");	
+				t_min.completeConversionMsg("Computed from t_max and t_exptime");	
 				t_min.setByValue(v, false);
 			} catch (Exception e){
-				t_min.setNotSet("Computation from t_max and t_exptime failed", e);
+				t_min.setFailed("Computation from t_max and t_exptime failed", e);
 			}
 		} else if( !t_min.isNotSet() && t_max.isNotSet() && !t_exptime.isNotSet() ) {
 			try {
 				v = Double.parseDouble(t_min.getValue()) + (Double.parseDouble(t_exptime.getValue())/86400);
 				t_max.storedValue = v;
-				t_max.completeUserMappingMsg("Computed from t_min and t_exptime");	
+				t_max.completeConversionMsg("Computed from t_min and t_exptime");	
 				t_max.setByValue(v, false);
 			} catch (Exception e){
-				t_max.setNotSet("Computation from t_min and t_exptime failed", e);
+				t_max.setFailed("Computation from t_min and t_exptime failed", e);
 			}
 		} else if( !t_min.isNotSet() && !t_max.isNotSet() && t_exptime.isNotSet() ) {
 			try {
 				v = 3600*24*( Double.parseDouble(t_max.getValue()) - Double.parseDouble(t_min.getValue())  );
 				t_exptime.storedValue = v;
 				t_exptime.setByValue(v, false);
-				t_exptime.completeUserMappingMsg("Computed from t_min and t_max");	
+				t_exptime.completeConversionMsg("Computed from t_min and t_max");	
 				t_exptime.setUnit("s");
 			} catch (Exception e){
-				t_exptime.setNotSet("Computation from t_max and t_min failed", e);
+				t_exptime.setFailed("Computation from t_max and t_min failed", e);
 			}
 		}
 		setField("t_min"    , t_min);
@@ -515,9 +530,9 @@ public class ProductIngestor {
 				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 				if( !spectralCoordinate.convert() ) {
 					this.product.em_minSetter = new ColumnSingleSetter();
-					this.product.em_minSetter.completeUserMappingMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
+					this.product.em_minSetter.completeConversionMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
 					this.product.em_maxSetter = new ColumnSingleSetter();
-					this.product.em_maxSetter.completeUserMappingMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
+					this.product.em_maxSetter.completeConversionMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
 					this.product.em_res_powerSetter =  new ColumnSingleSetter();
 				} else {
 					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
@@ -525,16 +540,16 @@ public class ProductIngestor {
 				}
 			} else {
 				this.product.em_minSetter = new ColumnSingleSetter();
-				this.product.em_minSetter.completeUserMappingMsg("No unit given, can not achieve the conversion ");
+				this.product.em_minSetter.completeConversionMsg("No unit given, can not achieve the conversion ");
 				this.product.em_maxSetter = new ColumnSingleSetter();
-				this.product.em_maxSetter.completeUserMappingMsg("No unit given, can not achieve the conversion ");
+				this.product.em_maxSetter.completeConversionMsg("No unit given, can not achieve the conversion ");
 				this.product.em_res_powerSetter =  new ColumnSingleSetter();				
 			}
 			if( !this.product.em_binsSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
 				double v2  =  (this.product.em_maxSetter.getNumValue() - this.product.em_minSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
 				this.product.em_res_powerSetter.setByValue(v1/v2, false);
-				this.product.em_res_powerSetter.completeUserMappingMsg("Computed from em_min, em_max and em_bins");
+				this.product.em_res_powerSetter.completeConversionMsg("Computed from em_min, em_max and em_bins");
 			}	
 		}
 		setField("em_min"    , this.product.em_minSetter);
@@ -673,19 +688,23 @@ public class ProductIngestor {
 			 * "NULL and "2147483647" matches util.SaadaConstant.INT/STRING 
 			 * which belong to default values applied for Saada objects
 			 */
-			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") || 
-					val.equalsIgnoreCase("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
-				file_bus_sql +=Database.getWrapper().getAsciiNull();
-			} else {
-				String type = ah.getType().toString();
-				if( type.equals("char") || type.endsWith("String") ) {
-					file_bus_sql += val.replaceAll("'", "");
-				} else if( type.equals("boolean")  ) {
-					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
-				} else {
-					file_bus_sql +=  val;
-				}
-			}
+			String type = ah.getType().toString();
+			file_bus_sql =  ClassMerger.getCastedSQLValue(ah, type);
+//
+//			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") 
+//					|| val.equals(SaadaConstant.NOTSET)|| val.equals(SaadaConstant.STRING) ||
+//					val.equalsIgnoreCase("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
+//				file_bus_sql +=Database.getWrapper().getAsciiNull();
+//			} else {
+//				String type = ah.getType().toString();
+//				if( type.equals("char") || type.endsWith("String") ) {
+//					file_bus_sql += val.replaceAll("'", "");
+//				} else if( type.equals("boolean")  ) {
+//					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
+//				} else {
+//					file_bus_sql +=  val;
+//				}
+//			}
 		}
 		buswriter.write(file_bus_sql + "\n");
 	}

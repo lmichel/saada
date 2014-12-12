@@ -575,7 +575,6 @@ public class VOTableDataFile extends FSDataFile {
 			}
 		} else {
 			if( (this.savotTR = parser.getNextTR()) != null )  {
-				System.out.println("@@@@@@@@@@@@@@@@@@@@ DDD" + parser.getTableCount());
 				return ( parser.getTableCount() == this.headerExtension.tableNum );
 			} else {
 				return  false;
@@ -598,7 +597,6 @@ public class VOTableDataFile extends FSDataFile {
 				line.add(o);
 			}
 		} else {
-
 			TDSet td = this.savotTR.getTDSet();
 			int numColRead=0;
 			for (int k = 0; k < td.getItemCount(); k++) {
@@ -721,8 +719,7 @@ public class VOTableDataFile extends FSDataFile {
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
 		if( this.productMap == null ) { 
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Build product map");
+			Messenger.printMsg(Messenger.TRACE, "Build product map");
 			this.productMap = new LinkedHashMap<String, DataFileExtension>();
 
 			SavotResource savotResource;
@@ -735,6 +732,8 @@ public class VOTableDataFile extends FSDataFile {
 					continue;
 				}
 				for( Object object: savotResource.getTables().getItems()) {
+					Messenger.printMsg(Messenger.TRACE, "2" );
+
 					SavotTable savotTable = (SavotTable) object;
 					DataFileExtensionType resourceType = DataFileExtensionType.UNSUPPORTED;
 					if( savotTable.getData().getBinary() != null  ) {
@@ -788,7 +787,6 @@ public class VOTableDataFile extends FSDataFile {
 								Messenger.printMsg(Messenger.DEBUG, "Bind column " + att.getNameorg() + " with " + assAh);
 						}
 					}
-					System.out.println(keyPrefix + " (" + DataFileExtensionType.TABLE_COLUMNS + ")");
 					this.productMap.put(keyPrefix + " (" + DataFileExtensionType.TABLE_COLUMNS + ")"
 							, new DataFileExtension(resourceNum
 									, savotResource.getId()
@@ -802,6 +800,7 @@ public class VOTableDataFile extends FSDataFile {
 
 			}
 		}
+		System.exit(1);
 	return this.productMap;
 	}
 

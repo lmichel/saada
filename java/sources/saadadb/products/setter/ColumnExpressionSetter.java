@@ -261,7 +261,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				}
 				if( !this.singleStringExpression ){
 					if( this.arithmeticExpression ) {
-						if( this.arithmeticExpression && !this.expression.trim().equals(this.lastExpressionEvaluated)) {
+						if( this.arithmeticExpression /** && !this.expression.trim().equals(this.lastExpressionEvaluated) **/) {
 							this.lastExpressionEvaluated = this.expression.trim();
 							this.wrapper = new ExpressionWrapper(this.expression, this.exprAttributes, this.numericFunctionList);
 							this.wrapper.evaluate(this.exprAttributes, this.numericFunctionList);
@@ -281,13 +281,13 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				this.result = this.expression;
 			}
 			if( this.result == null ){
-				this.settingMode = ColumnSetMode.NOT_SET;
-				this.completeUserMappingMsg("Expression [" + this.expression + "] return null");				
+				//this.settingMode = ColumnSetMode.NOT_SET;
+				this.completeConversionMsg("Expression returns null");				
 			}
 		} catch (Exception e) {
 			this.result = SaadaConstant.STRING;
-			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeUserMappingMsg("exp failed: " + e.getMessage());
+			//this.settingMode = ColumnSetMode.NOT_SET;
+			this.completeConversionMsg("Exp failed: " + e.getMessage());
 		}
 	}
 
@@ -331,8 +331,8 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.result = SaadaConstant.STRING;
-			this.settingMode = ColumnSetMode.NOT_SET;
+			this.result = SaadaConstant.NOTSET;
+			//this.settingMode = ColumnSetMode.NOT_SET;
 			this.completeConversionMsg("exp failed: " + e.getMessage());
 		}
 	}
@@ -661,22 +661,33 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	}
 
 	@Override
-	public void setNotSet() {
-		this.settingMode = ColumnSetMode.NOT_SET;
+	public void setFailed(String conversionMessage){
+		this.result =SaadaConstant.NOTSET;
+		this.completeUserMappingMsg(conversionMessage);				
 	}
-
 	@Override
-	public void setNotSet(String message, Exception e){
-		this.settingMode = ColumnSetMode.NOT_SET;
-		this.completeUserMappingMsg(message + ":" + e.getMessage());		
+	public void setFailed(String message, Exception e){
+		this.result =SaadaConstant.NOTSET;
+		this.completeUserMappingMsg(message + ":" + e.getMessage());				
 	}
-
-	@Override
-	public void setNotSet(String message) {
-		this.settingMode = ColumnSetMode.NOT_SET;
-		this.completeUserMappingMsg(message);
-	}
-
+//
+//	@Override
+//	public void setNotSet() {
+//		this.settingMode = ColumnSetMode.NOT_SET;
+//	}
+//
+//	@Override
+//	public void setNotSet(String message, Exception e){
+//		this.settingMode = ColumnSetMode.NOT_SET;
+//		this.completeUserMappingMsg(message + ":" + e.getMessage());		
+//	}
+//
+//	@Override
+//	public void setNotSet(String message) {
+//		this.settingMode = ColumnSetMode.NOT_SET;
+//		this.completeUserMappingMsg(message);
+//	}
+//
 	@Override
 	public void setValue(String value) {
 		this.result=value;

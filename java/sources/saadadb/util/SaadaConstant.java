@@ -9,7 +9,8 @@ package saadadb.util;
  * @version 00000001
  * 
  * 03/2014 use NaN for Float and DOUBLE
- */
+ * 12/2014 NotSet string
+*/
 public class SaadaConstant{
   
   public static final String STRING = "NULL";
@@ -20,5 +21,7 @@ public class SaadaConstant{
   public static final short SHORT = Short.MAX_VALUE;
   public static final byte BYTE = Byte.MAX_VALUE;
   public static final char CHAR = Character.MAX_VALUE;
+  public static final String NOTSET = "NotSet";
+
   }
   

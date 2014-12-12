@@ -4,6 +4,7 @@ import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
@@ -307,19 +308,14 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	}
 
 	@Override
-	public void setNotSet(String message, Exception e){
-		this.settingMode = ColumnSetMode.NOT_SET;
-		this.attributeHandler.setValue(null);
-		this.settingMode = ColumnSetMode.NOT_SET;
-		this.completeUserMappingMsg(message + ":" + e.getMessage());		
+	public void setFailed(String message, Exception e){
+		this.attributeHandler.setValue(SaadaConstant.NOTSET);
+		this.completeConversionMsg(message + ":" + e.getMessage());		
 	}
-	/* (non-Javadoc)
-	 * @see saadadb.products.setter.ColumnSetter#setNotSet()
-	 */
 	@Override
-	public void setNotSet(){
-		this.settingMode = ColumnSetMode.NOT_SET;
-		this.attributeHandler.setValue(null);
+	public void setFailed(String message){
+		this.attributeHandler.setValue(SaadaConstant.NOTSET);
+		this.completeConversionMsg(message);		
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.setter.ColumnSetter#setValue(java.lang.String)
@@ -398,17 +394,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 		return this.attributeHandler.getUcd();
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
 		String retour =  this.attributeHandler + " " + super.toString();
 		return retour;
-	}
-	@Override
-	public void setNotSet(String message) {
-		// TODO Auto-generated method stub
-		
 	}
 }

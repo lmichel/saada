@@ -56,7 +56,7 @@ public abstract class PipelineParser {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter(key);
 			cs.setByWCS(ah.getValue(), false);
 			cs.setUnit(ah.getUnit());
-			cs.completeUserMappingMsg("Issued from the knowledge base");
+			cs.completeDetectionMsg("Issued from the knowledge base");
 			return cs;
 		}
 	}
@@ -128,6 +128,9 @@ public abstract class PipelineParser {
 	}
 	public ColumnExpressionSetter getSpatialError() throws SaadaException {
 		return new ColumnExpressionSetter("s_resolution");
+	}
+	public ColumnExpressionSetter getSpatialErrorUnit() throws SaadaException {
+		return new ColumnExpressionSetter("s_resolution_unit");
 	}
 	public ColumnExpressionSetter getfov() throws SaadaException {
 		return new ColumnExpressionSetter("s_fov");

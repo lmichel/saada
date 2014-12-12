@@ -204,6 +204,9 @@ public class ColumnMapping {
 		return(mappingMode == MappingMode.EXPRESSION);
 	}
 
+	public MappingMode getMode() {
+		return mappingMode;
+	}
 	/**
 	 * @return
 	 */

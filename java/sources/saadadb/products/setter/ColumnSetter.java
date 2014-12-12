@@ -26,6 +26,10 @@ import saadadb.vocabulary.enums.ColumnSetMode;
  * @author michel
  * @version $Id$
  */
+/**
+ * @author michel
+ * @version $Id$
+ */
 public abstract class ColumnSetter implements Cloneable {
 	/**
 	 * Mode used to get the value
@@ -72,7 +76,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * Basic constructor
 	 */
 	public ColumnSetter(String message) {
-		this.setNotSet();
+		this.settingMode = settingMode.NOT_SET;
 		this.completeUserMappingMsg(message);
 	}
 
@@ -234,20 +238,34 @@ public abstract class ColumnSetter implements Cloneable {
 	public abstract void setValue(double value, String unit);
 
 	/**
-	 * 
+	 * A setter must never be set in N OTSET mode since it can be reused elsewhere in the code.
+	 * In case of error we just set the value to NOTSET with a conversion  message
+	 * @param conversionMessage
 	 */
-	public abstract void setNotSet();
+	public abstract void setFailed(String conversionMessage);
 	/**
-	 * 
-	 */
-	public abstract void setNotSet(String message);
-	
-	/**
+	 * A setter must never be set in N OTSET mode since it can be reused elsewhere in the code.
+	 * In case of error we just set the value to NOTSET with a conversion  message
 	 * @param message
 	 * @param e
 	 */
-	public abstract void setNotSet(String message, Exception e);
+	public abstract void setFailed(String message, Exception e);
 
+//	/**
+//	 * 
+//	 */
+//	public abstract void setNotSet();
+//	/**
+//	 * 
+//	 */
+//	public abstract void setNotSet(String message);
+//	
+//	/**
+//	 * @param message
+//	 * @param e
+//	 */
+//	public abstract void setNotSet(String message, Exception e);
+//
 	/**
 	 * Set also the BY_VALUE mode
 	 */
