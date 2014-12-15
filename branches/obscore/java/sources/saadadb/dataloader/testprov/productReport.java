@@ -35,9 +35,9 @@ public class productReport {
 			ProductBuilder product = null;
 			DataFile df;
 			if (ap.getFilename().matches(RegExp.VOTABLE_FILE)) {
-				df = new VOTableDataFile(ap.getFilename());
+				df = new VOTableDataFile(ap.getFilename(), (ProductMapping)null);
 			} else if (ap.getFilename().matches(RegExp.FITS_FILE)) {
-				df = new FitsDataFile(ap.getFilename());
+				df = new FitsDataFile(ap.getFilename(), (ProductMapping)null);
 			} else {
 				throw new Exception("Ni VOTABLE NI FITS");
 			}
@@ -68,7 +68,7 @@ public class productReport {
 			for (java.util.Map.Entry<String, ColumnSetter> e : r.entrySet()) {
 				System.out.print(String.format("%20s", e.getKey()) + "     ");
 				ColumnSetter ah = e.getValue();
-				System.out.print(ah.getSettingMode() + " " + ah.message);
+				System.out.print(ah.getSettingMode() + " " + ah.getFullMappingReport());
 				if (!ah.isNotSet())
 					System.out.print(" storedValue=" + ah.storedValue);
 				System.out.println("");

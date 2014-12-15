@@ -98,7 +98,7 @@ public class FooReport {
 			params.add(iterator.next());  
 		}  
 		this.ap = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new JsonDataFile(ffn);
+		this.fooProduct = new JsonDataFile(ffn, (ProductMapping)null);
 
 	}	
 
@@ -135,7 +135,7 @@ public class FooReport {
 		for( Entry<String, ColumnSetter> e:r.entrySet()){
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
-			System.out.print(ah.getSettingMode() + " " + ah.message);
+			System.out.print(ah.getSettingMode() + " " + ah.getFullMappingReport());
 			if( !ah.isNotSet() ) 
 				System.out.print(" storedValue=" + ah.storedValue);
 			System.out.println("");
