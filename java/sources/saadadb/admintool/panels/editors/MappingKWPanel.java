@@ -560,13 +560,13 @@ public class MappingKWPanel extends EditPanel {
 				 * load ignored attributes
 				 */
 				if( ignoredMapper != null  ) {
-					ignoredMapper.setParams(parser.getIgnoredAttributes());
+					ignoredMapper.setParams(parser.getIgnoredAttributes(false));
 				}
 				/*
 				 * load ignored attributes for entries
 				 */
 				if( e_ignoredMapper != null ) {
-					e_ignoredMapper.setParams(parser.getEntryIgnoredAttributes());
+					e_ignoredMapper.setParams(parser.getIgnoredAttributes(true));
 				}
 				/*
 				 * Load name components

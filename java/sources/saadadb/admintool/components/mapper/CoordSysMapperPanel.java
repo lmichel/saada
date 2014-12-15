@@ -108,7 +108,7 @@ public class CoordSysMapperPanel extends PriorityPanel {
 	 */
 	public void setParams(ArgsParser parser) {
 		setMode(parser.getSysMappingPriority());
-		setText(getMergedComponent(parser.getCoordinateSystem()));	
+		setText("getMergedComponent(parser.getCoordinateSystem())");	
 		setSystem(parser.getSpectralUnit());	
 	}
 
