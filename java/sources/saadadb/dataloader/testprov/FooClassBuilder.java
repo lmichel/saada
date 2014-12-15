@@ -92,7 +92,7 @@ public class FooClassBuilder {
 				this.ap = new ArgsParser(params.toArray(new String[0]));
 			}
 			//this.fooProduct[i] = new FooProduct(this.jsonAhs[i], 0);
-			this.fooProduct[i] = new JsonDataFile(fn);
+			this.fooProduct[i] = new JsonDataFile(fn, (ProductMapping)null);
 		}
 	}	
 
