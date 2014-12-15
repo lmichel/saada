@@ -16,6 +16,7 @@ import nom.tam.fits.Fits;
 import nom.tam.fits.FitsFactory;
 import nom.tam.fits.Header;
 import nom.tam.util.BufferedDataOutputStream;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -93,8 +94,7 @@ public class ImageFootprint {
 			this.inputFile = this.inputFiles.get(num);
 			this.outFile = this.outFiles.get(num);
 			Messenger.printMsg(Messenger.TRACE, "Process " + this.inputFile);
-
-			FitsDataFile input = new FitsDataFile(this.inputFile);
+			FitsDataFile input = new FitsDataFile(this.inputFile, (ProductMapping)null);
 			Image2DBuilder img  = new Image2DBuilder(input,null);
 			FitsDataFile inputFits = new FitsDataFile(img);
 			this.ahs = img.getProductAttributeHandler();
