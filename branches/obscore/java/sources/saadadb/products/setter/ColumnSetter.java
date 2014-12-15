@@ -1,12 +1,3 @@
-/*
- * This package contains tools shared by both CDS and SSC XMM-Newton projects at
- * the Strabourg Observatory
- * It has been built from code taken out either from Aladin or Saada 
- * in addition with specific developments
- *
- * Authors: L. Michel  F.X. Pineau
- * Copyright 2014 - UDS/CNRS
- */
 package saadadb.products.setter;
 
 import hecds.wcs.descriptors.CardDescriptor;
