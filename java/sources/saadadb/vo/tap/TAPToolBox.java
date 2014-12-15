@@ -27,6 +27,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.request.TapAdqlRequest;
+import uws.job.AbstractJob;
 
 /**
  * This class gathers some useful functions to build a TAP service.<BR />

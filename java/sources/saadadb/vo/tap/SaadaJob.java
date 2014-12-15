@@ -15,9 +15,12 @@ import saadadb.vo.tap.TAPToolBox.TAPParameters;
 import saadadb.vocabulary.RegExp;
 import uws.UWSException;
 import uws.UWSToolBox;
+import uws.job.AbstractJob;
 import uws.job.ErrorSummary;
 import uws.job.ErrorType;
 import uws.job.Result;
+import uws.job.serializer.UWSSerializer;
+import uws.job.user.JobOwner;
 
 /**
  * @author Gregory
@@ -130,19 +133,19 @@ public class SaadaJob extends AbstractJob {
 			String errorFileName = "UWSERROR_Job"+getJobId()+"_"+System.currentTimeMillis()+".txt";
 			try{
 				String errorURL = Database.getUrl_root()+"/getproduct?report="+errorFileName;
-				UWSToolBox.publishErrorSummary(this, ue, ErrorType.FATAL, errorURL,Repository.getUserReportsPath(this.owner), errorFileName);
-			}catch(IOException ioe){
+				//UWSToolBox.publishErrorSummary(this, ue, ErrorType.FATAL, errorURL,Repository.getUserReportsPath(this.owner), errorFileName);
+			}catch(Exception ioe){
 				throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, ioe, "Error while writing the error file for the job N°"+getJobId()+" !");
 			}
-		}else
-			UWSToolBox.publishErrorSummary(this, ue.getMessage(), ue.getUWSErrorType());
+		}else {}
+		//	UWSToolBox.publishErrorSummary(this, ue.getMessage(), ue.getUWSErrorType());
 	}
 
 	@Override
 	protected void jobWork() throws UWSException, InterruptedException {
 		try{
 			// Check and get TAP parameters:
-			TAPParameters params = new TAPParameters(this);
+			TAPParameters params =null ;//= new TAPParameters(this);
 			
 			// Check the REQUEST value (only doQuery is supported):
 			if (!params.request.equalsIgnoreCase("doQuery"))
@@ -166,13 +169,13 @@ public class SaadaJob extends AbstractJob {
 				throw new InterruptedException();
 			
 			// Update the job description and status:
-			addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension(params.format)));
+		//	addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension(params.format)));
 			
 			if(params.format.equalsIgnoreCase("json")) {
 				TAPToolBox.executeTAPQuery(params.query, params.lang.equals("SaadaQL"), "votable", params.maxrec, Repository.getUserReportsPath(owner), reportNameRoot);
 				if (thread.isInterrupted())
 					throw new InterruptedException();
-				addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension("votable")));
+			//	addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension("votable")));
 			}
 		}catch(UWSException ue){
 			throw ue;
@@ -181,6 +184,13 @@ public class SaadaJob extends AbstractJob {
 		}catch(Exception ex){
 			throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, ex);
 		}
+	}
+
+	@Override
+	public String serialize(UWSSerializer serializer, JobOwner owner)
+			throws UWSException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
