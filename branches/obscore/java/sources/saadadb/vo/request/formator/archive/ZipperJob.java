@@ -12,8 +12,11 @@ import saadadb.util.Messenger;
 import saadadb.vo.request.ZipRequest;
 import uws.UWSException;
 import uws.UWSToolBox;
+import uws.job.AbstractJob;
 import uws.job.ErrorType;
 import uws.job.Result;
+import uws.job.serializer.UWSSerializer;
+import uws.job.user.JobOwner;
 
 /**
  * AbstractJob implementation to build ZIP archive in asynchronous mode
@@ -53,7 +56,7 @@ public class ZipperJob extends AbstractJob {
 			request.addFormator("zip");
 			request.setResponseFilePath(resultPrefix);
 			request.processRequest(lstParam);
-			addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report=" + resultPrefix + ".zip"));
+			//addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report=" + resultPrefix + ".zip"));
 		}catch(Exception ex){
 			Messenger.printStackTrace(ex);
 			throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, ex);
@@ -77,12 +80,20 @@ public class ZipperJob extends AbstractJob {
 			String errorFileName = "UWSERROR_Job"+getJobId()+"_"+System.currentTimeMillis()+".txt";
 			try{
 				String errorURL = Database.getUrl_root()+"/getproduct?report="+errorFileName;
-				UWSToolBox.publishErrorSummary(this, ue, ErrorType.FATAL, errorURL, this.reportDir, errorFileName);
-			}catch(IOException ioe){
+				//UWSToolBox.publishErrorSummary(this, ue, ErrorType.FATAL, errorURL, this.reportDir, errorFileName);
+			}catch(Exception ioe){
 				throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, ioe, "Error while writing the error file for the job N°"+getJobId()+" !");
 			}
-		}else
-			UWSToolBox.publishErrorSummary(this, ue.getMessage(), ue.getUWSErrorType());
+		}else {}
+			//UWSToolBox.publishErrorSummary(this, ue.getMessage(), ue.getUWSErrorType());
+	}
+
+
+	@Override
+	public String serialize(UWSSerializer serializer, JobOwner owner)
+			throws UWSException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
