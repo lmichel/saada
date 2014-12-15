@@ -12,6 +12,7 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
