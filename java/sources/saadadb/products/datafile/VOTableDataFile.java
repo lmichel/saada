@@ -326,6 +326,7 @@ public class VOTableDataFile extends FSDataFile {
 	 * @throws Exception
 	 */
 	private void selectResourceAndTable(String extId) throws SaadaException {
+		Messenger.locateCode();
 		this.dataExtension = null;
 		this.headerExtension = null;	
 		ExtensionSetMode	esm = ExtensionSetMode.NOT_SET;;
@@ -718,6 +719,7 @@ public class VOTableDataFile extends FSDataFile {
 	 */
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
+		Messenger.locateCode();
 		if( this.productMap == null ) { 
 			Messenger.printMsg(Messenger.TRACE, "Build product map");
 			this.productMap = new LinkedHashMap<String, DataFileExtension>();
@@ -800,7 +802,6 @@ public class VOTableDataFile extends FSDataFile {
 
 			}
 		}
-		System.exit(1);
 	return this.productMap;
 	}
 
@@ -809,6 +810,7 @@ public class VOTableDataFile extends FSDataFile {
 	 */
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception {
+		Messenger.locateCode();
 		this.productBuilder = builder;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Searching for the appropriate resource/table.");
 		String ext_name = null;
@@ -836,6 +838,7 @@ public class VOTableDataFile extends FSDataFile {
 
 	@Override
 	public void mapAttributeHandler() throws IgnoreException {
+		Messenger.locateCode();
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		for( AttributeHandler ah: this.headerExtension.attributeHandlers) {
 			this.attributeHandlers.put(ah.getNameattr(), ah);
@@ -844,6 +847,7 @@ public class VOTableDataFile extends FSDataFile {
 
 	@Override
 	public void mapEntryAttributeHandler() throws IgnoreException {
+		Messenger.locateCode();
 		this.entryAttributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		for( AttributeHandler ah: this.dataExtension.attributeHandlers) {
 			this.entryAttributeHandlers.put(ah.getNameattr(), ah);

@@ -178,8 +178,8 @@ public abstract class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	protected void setQuantityDetector() throws Exception {
+		Messenger.locateCode();
 		if( this.quantityDetector == null) {
-			(new Exception()).printStackTrace();
 			/*
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 			 */
@@ -297,8 +297,7 @@ public abstract class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void bindDataFile(DataFile dataFile) throws Exception{
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Binding data file with the product builder");
+		Messenger.locateCode();
 		if( dataFile != null)	this.dataFile = dataFile;
 		if( this.dataFile instanceof FitsDataFile ) {
 			this.mimeType = "application/fits";
@@ -315,6 +314,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void mapDataFile(DataFile dataFile) throws Exception{
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
 		//	this.bindDataFile(dataFile);
 		this.mapCollectionAttributes();
@@ -324,6 +324,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void mapDataFile() throws Exception{
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
 		System.out.println("@@@@@@@@@@@@@@@@ mapDataFile " +this.getClass());
 		this.mapCollectionAttributes();
@@ -369,7 +370,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void calculateAllExpressions() throws Exception {
-		Messenger.printStackTop("@@@@@@@@@@@ " + this.getClass().getName() + " calculateAllExpressions");
+		Messenger.locateCode();
 		this.wcsModeler.updateValues();
 		this.obs_idSetter.calculateExpression();
 		this.obs_collectionSetter.calculateExpression();
@@ -381,7 +382,7 @@ public abstract class ProductBuilder {
 		this.astroframeSetter.calculateExpression();
 		if( this instanceof EntryBuilder ){
 			String s = "";
-			System.out.println("CHECK " + Integer.toHexString(this.productAttributeHandler.get("_e_d25").hashCode()) + " " + this.productAttributeHandler.get("_e_d25"));
+//			System.out.println("CHECK " + Integer.toHexString(this.productAttributeHandler.get("_e_d25").hashCode()) + " " + this.productAttributeHandler.get("_e_d25"));
 //			for( AttributeHandler ah: this.s_resolutionSetter.getExprAttributes()) 
 //				System.out.println(Integer.toHexString(ah.hashCode()) + " " +  ah);
 		}
@@ -425,6 +426,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void loadProduct() throws Exception  {
+		Messenger.locateCode();
 		this.dataFile.updateAttributeHandlerValues();
 		this.productIngestor.bindInstanceToFile();
 		this.productIngestor.loadValue();
@@ -439,7 +441,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	public void loadProduct(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
-		System.out.println("@@@@@@@@@@@@@ loadProduct " + this.productAttributeHandler.get("_crval1") + " " + System.identityHashCode(this.productAttributeHandler.get("_crval1")));
+		Messenger.locateCode();
 		this.dataFile.updateAttributeHandlerValues();
 		this.productIngestor.bindInstanceToFile();
 		this.productIngestor.loadValue(colwriter, buswriter, loadedfilewriter);
@@ -585,9 +587,9 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionAttributes() throws Exception {
+		Messenger.locateCode();
 		if( this.productAttributeHandler != null ) {
 			Messenger.printMsg(Messenger.TRACE, "Mapping collection attribute (" +  this.getClass().getName() + ")" + this.productAttributeHandler.size());
-			//(new Exception()).printStackTrace();
 			this.mapObservationAxe();
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();

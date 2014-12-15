@@ -290,6 +290,38 @@ public class Messenger implements Serializable{
 		}
 
 	/**
+	 * Print out the top of the stack. Worlk only in dubug mode
+	 */
+	public static void locateCode(){
+		if( debug_mode ){
+			String message = "";
+		      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+		      for(int i=2; i<elements.length; ) {
+		          message += " " + elements[i] + "";
+		          break;
+		      }
+		      printMsg(DEBUG, message);
+		}
+	}
+	/**
+	 * Print out the top of the stack with a additional message. Work only in debug mode
+	 * @param message
+	 */
+	public static void locateCode(String message){
+		/**
+		 * Print out the top of the stack. Worlk only in dubug mode
+		 */
+		if( debug_mode ){
+			String msg = message;
+		      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+		      for(int i=2; i<elements.length; ) {
+		    	  msg += " " + elements[i] + "";
+		          break;
+		      }
+		      printMsg(DEBUG, msg);
+		}
+	}
+	/**
 	 * Print out a stdout message with 7 top lines of the stack trace
 	 * @param msg
 	 */

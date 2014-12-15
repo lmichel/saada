@@ -202,6 +202,7 @@ public abstract class DataFile implements Enumeration {
 	 * @throws IOException
 	 */
 	public LinkedHashMap<String, List<AttributeHandler>> getProductMap(int category) throws IgnoreException {
+		Messenger.locateCode();
 		try {
 			LinkedHashMap<String, List<AttributeHandler>> retour = new LinkedHashMap<String, List<AttributeHandler>>();
 			Map<String, DataFileExtension> mapOrg = this.getProductMap();
@@ -264,6 +265,7 @@ public abstract class DataFile implements Enumeration {
 	 * @return
 	 */
 	public Map<String, AttributeHandler> getEntryAttributeHandlerCopy() throws SaadaException  {
+		Messenger.locateCode();
 		if( this.entryAttributeHandlers == null ){
 			this.mapEntryAttributeHandler();
 		}
@@ -272,7 +274,6 @@ public abstract class DataFile implements Enumeration {
 		for( Entry<String, AttributeHandler > e: mah.entrySet()){
 			retour.put(e.getKey(), (AttributeHandler)(e.getValue().clone()));
 		}
-		(new Exception()).printStackTrace();
 		return retour;
 	}
 	/**
@@ -280,6 +281,7 @@ public abstract class DataFile implements Enumeration {
 	 * @return
 	 */
 	public Map<String, AttributeHandler> getAttributeHandlerCopy() throws SaadaException{
+		Messenger.locateCode();
 		if( this.attributeHandlers == null ){
 			this.mapAttributeHandler();
 		}
@@ -305,7 +307,7 @@ public abstract class DataFile implements Enumeration {
 	 * @throws Exception
 	 */
 	public void updateAttributeHandlerValues() throws Exception {
-		Messenger.printStackTop("@@@@@@@@@@ Datafile updateAttributeHandlerValues");
+		Messenger.locateCode();
 		this.mapAttributeHandler();
 		if( this.productBuilder.productAttributeHandler == null ){
 			this.productBuilder.productAttributeHandler = new LinkedHashMap<String, AttributeHandler>();

@@ -682,14 +682,7 @@ public class ProductIngestor {
 		}
 		String file_bus_sql = this.saadaInstance.oidsaada + "\t" + this.saadaInstance.obs_id + "\t" + this.saadaInstance.contentsignature;
 		for(AttributeHandler ah: this.orderedBusinessAttributes) {
-			file_bus_sql += "\t";
-			String val = ah.getValue().toString();
-			/*
-			 * "NULL and "2147483647" matches util.SaadaConstant.INT/STRING 
-			 * which belong to default values applied for Saada objects
-			 */
-			String type = ah.getType().toString();
-			file_bus_sql =  ClassMerger.getCastedSQLValue(ah, type);
+			file_bus_sql += "\t"  +  ClassMerger.getCastedSQLValue(ah, ah.getType().toString());
 //
 //			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") 
 //					|| val.equals(SaadaConstant.NOTSET)|| val.equals(SaadaConstant.STRING) ||

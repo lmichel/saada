@@ -330,7 +330,6 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				this.result = this.expression;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			this.result = SaadaConstant.NOTSET;
 			//this.settingMode = ColumnSetMode.NOT_SET;
 			this.completeConversionMsg("exp failed: " + e.getMessage());
