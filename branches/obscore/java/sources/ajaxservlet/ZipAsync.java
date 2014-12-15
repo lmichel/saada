@@ -31,13 +31,13 @@ public class ZipAsync extends SaadaServlet  {
 	public void init(ServletConfig conf) throws ServletException {
 		super.init(conf);
 		try {zipUWS = new QueuedBasicUWS<ZipperJob>(ZipperJob.class, 2, "/datapack");
-		zipUWS.setUserIdentifier(new UserIdentifier() {
-			private static final long serialVersionUID = 1L;
-			public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
-				return request.getSession().getId();
-			}
-		});
-		zipUWS.addJobList(new JobList<ZipperJob>("zipper")); 
+//		zipUWS.setUserIdentifier(new UserIdentifier() {
+//			private static final long serialVersionUID = 1L;
+//			public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
+//				return request.getSession().getId();
+//			}
+//		});
+//		zipUWS.addJobList(new JobList<ZipperJob>("zipper")); 
 		}catch(UWSException ex){
 			throw new ServletException(ex);
 		}
