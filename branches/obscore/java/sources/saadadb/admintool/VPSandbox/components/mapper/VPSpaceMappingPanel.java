@@ -170,9 +170,9 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		
 		//We use a StringBuilder to transform the String[] into a simple String
 		StringBuilder builder = new StringBuilder();
-		for(String s : ap.getCoordinateSystem()) {
-		    builder.append(s);
-		}
+//		for(String s : ap.getCoordinateSystem()) {
+//		    builder.append(s);
+//		}
 		//We delete the ' characters for the comboBox to correspond with the String it contains
 		system.setText(builder.toString(), builder.toString().replace("'", ""));
 		
@@ -188,9 +188,9 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 	@Override
 	public boolean fieldsEmpty(ArgsParser ap) {
 		boolean empty=true;
-		for(String s : ap.getCoordinateSystem()) {
-			empty=false;
-		}
+//		for(String s : ap.getCoordinateSystem()) {
+//			empty=false;
+//		}
 		for(String s : ap.getPositionMapping(false)) {
 			empty=false;		
 			}

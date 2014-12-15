@@ -24,6 +24,7 @@ import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.reporting.MappingReport;
 import saadadb.products.setter.ColumnSetter;
 
 /**
@@ -113,30 +114,30 @@ public class VPPreviewPanel extends JPanel {
 		loadedValuesList = new TreeMap<String,String[]>();
 		ProductBuilder product = null;
 		switch( Category.getCategory(ap.getCategory()) ) {
-		case Category.TABLE: product = new TableBuilder((new FitsDataFile(file.getAbsolutePath()))
+		case Category.TABLE: product = new TableBuilder((new FitsDataFile(file.getAbsolutePath(), (ProductMapping)null))
 				, new ProductMapping("mapping", ap), null);
 				break;
-		case Category.MISC : product = new MiscBuilder((new FitsDataFile(file.getAbsolutePath()))
+		case Category.MISC : product = new MiscBuilder((new FitsDataFile(file.getAbsolutePath(), (ProductMapping)null))
 				, new ProductMapping("mapping", ap), null);
 				break;
-		case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(file.getAbsolutePath()))
+		case Category.SPECTRUM: product = new SpectrumBuilder((new FitsDataFile(file.getAbsolutePath(), (ProductMapping)null))
 				, new ProductMapping("mapping", ap), null);
 				break;
-		case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(file.getAbsolutePath()))
+		case Category.IMAGE: product = new Image2DBuilder((new FitsDataFile(file.getAbsolutePath(), (ProductMapping)null))
 				, new ProductMapping("mapping", ap), null);
 				break;
 		}
-		Map<String, ColumnSetter> r = product.getReport();
+		Map<String, ColumnSetter> r = (new MappingReport(product)).getReport();
 
-		for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
-			loadedExtensionsList.add(es.toString());
-		}
+//		for( ExtensionSetter es: product.getReportOnLoadedExtension()) {
+//			loadedExtensionsList.add(es.toString());
+//		}
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			String[] temp = new String[3];
 			System.out.print(String.format("%20s",e.getKey()) + "     ");
 			ColumnSetter ah = e.getValue();
 			temp[1]=ah.getSettingMode().toString();
-			temp[2]=ah.getMessage();
+			//temp[2]=ah.getMessage();
 			if( !ah.isNotSet() ) 
 				temp[0]=ah.storedValue.toString();
 			loadedValuesList.put(e.getKey(),temp);

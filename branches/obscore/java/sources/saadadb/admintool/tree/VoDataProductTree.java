@@ -24,10 +24,11 @@ import javax.swing.tree.TreePath;
 import saadadb.admintool.components.AdminComponent;
 import saadadb.admintool.dnd.TreePathTransferable;
 import saadadb.collection.Category;
+import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.DataFile;
-import saadadb.products.FitsDataFile;
-import saadadb.products.VOTableDataFile;
+import saadadb.products.datafile.DataFile;
+import saadadb.products.datafile.FitsDataFile;
+import saadadb.products.datafile.VOTableDataFile;
 import saadadb.vocabulary.RegExp;
 
 /**
@@ -76,10 +77,10 @@ public class VoDataProductTree extends VoTree implements DragGestureListener,  D
 		ArrayList<String> flat_array = new ArrayList<String>();
 		DataFile prd = null;
 		if( filename.matches(RegExp.FITS_FILE) ) {
-			prd = new FitsDataFile(filename, null);
+			prd = new FitsDataFile(filename, (ProductMapping)null);
 		}
 		else if( filename.matches(RegExp.VOTABLE_FILE) ) {
-			prd = new VOTableDataFile(filename);				
+			prd = new VOTableDataFile(filename, (ProductMapping)null);				
 		}
 		else {
 			AdminComponent.showFatalError(frame, "Type of file <" + filename + "> not recognized");
