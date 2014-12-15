@@ -13,6 +13,8 @@ import saadadb.util.Messenger;
 import saadadb.vo.cart.CartJob;
 import uws.UWSException;
 import uws.job.JobList;
+import uws.service.BasicUWS;
+import uws.service.QueuedBasicUWS;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
 import ajaxservlet.accounting.UserTrap;
@@ -33,13 +35,13 @@ public class CartBuilder extends SaadaServlet {
 		super.init(conf);
 		try {
 			cartUWS = new QueuedBasicUWS<CartJob>(CartJob.class, 2, "/cart");
-			cartUWS.setUserIdentifier(new UserIdentifier() {
-				private static final long serialVersionUID = 1L;
-			public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
-					return request.getSession().getId();
-				}
-			});
-			cartUWS.addJobList(new JobList<CartJob>("zipper")); 
+//			cartUWS.setUserIdentifier(new UserIdentifier() {
+//				private static final long serialVersionUID = 1L;
+//			public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
+//					return request.getSession().getId();
+//				}
+//			});
+//			cartUWS.addJobList(new JobList<CartJob>("zipper")); 
 		}catch(UWSException ex){
 			throw new ServletException(ex);
 		}
