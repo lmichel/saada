@@ -3,7 +3,7 @@
  */
 package saadadb.command;
 
-import saadadb.vo.tap.DmServiceManager;
+import saadadb.vo.tap_old.DmServiceManager;
 
 /**
  * @author laurent

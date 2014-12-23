@@ -14,7 +14,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap_old.TapServiceManager;
 
 /**
  * SAve a list of capabilities: Use of a thread because this operation can take time to set DataLinks

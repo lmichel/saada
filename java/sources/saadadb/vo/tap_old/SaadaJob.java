@@ -1,4 +1,4 @@
-package saadadb.vo.tap;
+package saadadb.vo.tap_old;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.vo.request.formator.QueryResultFormator;
-import saadadb.vo.tap.TAPToolBox.TAPParameters;
+import saadadb.vo.tap_old.TAPToolBox.TAPParameters;
 import saadadb.vocabulary.RegExp;
 import uws.UWSException;
 import uws.UWSToolBox;

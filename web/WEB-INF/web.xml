@@ -481,13 +481,13 @@
   <!-- DEBUG / TESTS -->
    <servlet>
     <description></description>
-    <display-name>taptest</display-name>
-    <servlet-name>TapTest</servlet-name>
-    <servlet-class>ajaxservlet.TapTest</servlet-class>
+    <display-name>TapService</display-name>
+    <servlet-name>TapService</servlet-name>
+    <servlet-class>ajaxservlet.TapService</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>TapTest</servlet-name>
-    <url-pattern>/taptest/*</url-pattern>
+    <servlet-name>TapService</servlet-name>
+    <url-pattern>/tapservice/*</url-pattern>
   </servlet-mapping>
    <!-- END OF DEBUG/TEST -->
 </web-app>

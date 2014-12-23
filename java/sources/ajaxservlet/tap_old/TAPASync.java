@@ -1,4 +1,4 @@
-package ajaxservlet;
+package ajaxservlet.tap_old;
 
 import java.io.IOException;
 
@@ -7,9 +7,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.SaadaServlet;
 import saadadb.database.Database;
 import saadadb.util.Messenger;
-import saadadb.vo.tap.SaadaJob;
+import saadadb.vo.tap_old.SaadaJob;
 import uws.UWSException;
 import uws.job.JobList;
 import uws.service.BasicUWS;

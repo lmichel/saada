@@ -24,6 +24,7 @@ import saadadb.newdatabase.NewSaadaDBTool;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
+import tap.metadata.TAPTypes;
 
 /**
  * @author laurentmichel
@@ -715,26 +716,31 @@ public class PostgresWrapper extends DbmsWrapper {
 		datatype = (datatype == null) ? null : datatype.trim().toLowerCase();
 
 		if (datatype == null || datatype.isEmpty()) {
-			return "VARCHAR";
+			return "VARCHAR(255)";
 		}
-
-		if (datatype.equals("short"))
+//System.out.println("datatype="+datatype+"  arraysize = "+arraySize);
+		if (datatype.equals("short")||datatype.equals("smallint"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT2" : "BYTEA";
-		else if (datatype.equals("int"))
+		else if (datatype.startsWith("int"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT4" : "BYTEA";
 		else if (datatype.equals("long"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "INT8" : "BYTEA";
-		else if (datatype.equals("float"))
+		else if (datatype.equals("float")||datatype.equals("real"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "FLOAT4" : "BYTEA";
 		else if (datatype.equals("double"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "FLOAT8" : "BYTEA";
 		else if (datatype.equals("boolean"))
 			return (arraySize == 1 || arraySize == NO_SIZE) ? "BOOL" : "BYTEA";
-		else if (datatype.equals("char"))
-			return (arraySize == 1 || arraySize == NO_SIZE) ? "CHAR(1)"
-					: ((arraySize == STAR_SIZE) ? "VARCHAR" : ("VARCHAR(" + arraySize + ")"));
-		else if (datatype.equals("unsignedbyte"))
-			return "BYTEA";
+		else if (datatype.equals("char")||datatype.equals("varchar"))
+			return (arraySize == 1) ? "CHAR(1)"
+					: ((arraySize == STAR_SIZE || arraySize == NO_SIZE) ? "VARCHAR(255)" : ("VARCHAR(" + arraySize + ")"));
+		else if (datatype.equals("unsignedbyte")) {
+			return "smallint";
+		}
+		else if (datatype.equals("varbinary")) {
+			return "bytea";
+			//return "BYTEA";
+		}
 		else {
 			Messenger.printMsg(Messenger.WARNING, "Unknown datatype '" + datatype + "'");
 			return datatype;

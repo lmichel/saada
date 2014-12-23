@@ -9,7 +9,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
-import saadadb.vo.tap.TAPToolBox;
+import saadadb.vo.tap_old.TAPToolBox;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;

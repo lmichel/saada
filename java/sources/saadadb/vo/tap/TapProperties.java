@@ -1,4 +1,4 @@
-package saadadb.vo.tap.tap2;
+package saadadb.vo.tap;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +8,10 @@ import java.util.Properties;
 import saadadb.database.Database;
 import saadadb.exceptions.SaadaException;
 
-public class SaadaTapProperties {
+public class TapProperties {
+	/*
+	 * Hard Coded values used in case of the properties file cannot be loaded.
+	 */
 	public static final String 		DEFAULT_PROVIDER_ID = "Saada";
 	public static final String 		DEFAULT_PROVIDER_DESCRIPTION = "Saada's TAP Service";
 	public static final String 		DEFAULT_SERVICE_OUT_LIMIT = "10000";

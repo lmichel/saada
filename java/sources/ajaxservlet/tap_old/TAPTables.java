@@ -1,13 +1,14 @@
 
-package ajaxservlet;
+package ajaxservlet.tap_old;
 
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.SaadaServlet;
 import saadadb.database.Database;
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap_old.TapServiceManager;
 
 /**
  * @author laurent

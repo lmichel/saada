@@ -4,7 +4,7 @@ import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.vo.ADQLExecutor;
-import saadadb.vo.tap.TAPToolBox;
+import saadadb.vo.tap_old.TAPToolBox;
 import adqlParser.parser.AdqlParser;
 
 public class ADQLTester {

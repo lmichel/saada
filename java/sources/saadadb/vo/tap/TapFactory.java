@@ -1,4 +1,4 @@
-package saadadb.vo.tap.tap2;
+package saadadb.vo.tap;
 
 import java.sql.ResultSet;
 
@@ -15,9 +15,9 @@ import adql.parser.QueryChecker;
 import adql.translator.ADQLTranslator;
 import adql.translator.SaadaSQLTranslator;
 
-public class SaadaTapFactory extends AbstractTAPFactory<ResultSet> {
+public class TapFactory extends AbstractTAPFactory<ResultSet> {
 
-	protected SaadaTapFactory(ServiceConnection<ResultSet> service) throws NullPointerException {
+	protected TapFactory(ServiceConnection<ResultSet> service) throws NullPointerException {
 		super(service);
 
 	}
@@ -29,7 +29,7 @@ public class SaadaTapFactory extends AbstractTAPFactory<ResultSet> {
 
 	@Override
 	public DBConnection<ResultSet> createDBConnection(final String jobId) throws TAPException {
-		return new TapSaadaDBConnection(jobId);
+		return new TapDBConnection(jobId);
 	}
 
 	@Override

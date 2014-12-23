@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import saadadb.vo.tap.tap2.TapSaadaServiceConnection;
+import saadadb.vo.tap.TapServiceConnection;
 import tap.TAPException;
 import tap.resource.TAP;
 import uws.UWSException;
 
-public class TapTest extends HttpServlet {
+public class TapService extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TAP<?> tap = null;
 
@@ -21,7 +21,7 @@ public class TapTest extends HttpServlet {
 	public void init(ServletConfig cfg) throws ServletException {
 		super.init();
 		try {
-			TapSaadaServiceConnection connection = new TapSaadaServiceConnection();
+			TapServiceConnection connection = new TapServiceConnection();
 			tap = new TAP(connection);
 			tap.init(cfg);
 		} catch (UWSException e) {

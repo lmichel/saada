@@ -32,7 +32,7 @@ import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
 import saadadb.vo.registry.Record;
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap_old.TapServiceManager;
 
 
 public class TAPServicePanel extends TaskPanel {
