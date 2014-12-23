@@ -9,7 +9,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
-import saadadb.vo.tap.TAPToolBox;
+import saadadb.vo.tap_old.TAPToolBox;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
 import adqlParser.SaadaQueryBuilderTools;
@@ -71,7 +71,7 @@ public class ADQLExecutor {
 			parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryStr).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools((SaadaDBConsistency)dbConsistency));
 			query = (SaadaADQLQuery)parse.Query();
 			query.setMySQLMode(MySQLMode);
-//		parse.setDebug(true);
+		parse.setDebug(false);
 		
 		if (limit > -1)
 			query.setLimit(limit);

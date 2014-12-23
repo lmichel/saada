@@ -16,8 +16,8 @@ import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Saada_VO_DMVIew;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap.DmServiceManager;
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap_old.DmServiceManager;
+import saadadb.vo.tap_old.TapServiceManager;
 
 public class ThreadDmViewPopulate extends CmdThread {
 	private VOResource vor;

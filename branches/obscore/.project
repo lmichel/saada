@@ -27,4 +27,16 @@
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>hecds</name>
+			<type>2</type>
+			<location>/home/hahn/workspace/hecds/src</location>
+		</link>
+		<link>
+			<name>tap</name>
+			<type>2</type>
+			<location>/home/hahn/Documents/saadaTp/saadaObscore/lib/tap1.0/tap1.0_modfied_Saada/src</location>
+		</link>
+	</linkedResources>
 </projectDescription>

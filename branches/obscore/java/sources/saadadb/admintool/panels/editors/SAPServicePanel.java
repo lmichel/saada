@@ -28,7 +28,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap.TapServiceManager;
+import saadadb.vo.tap_old.TapServiceManager;
 
 
 /**

@@ -1,8 +1,9 @@
-package ajaxservlet;
+package ajaxservlet.tap_old;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.SaadaServlet;
 import saadadb.database.Database;
 
 /**

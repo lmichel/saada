@@ -1,4 +1,4 @@
-package ajaxservlet;
+package ajaxservlet.tap_old;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,11 +7,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.SaadaServlet;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.vo.request.formator.QueryResultFormator;
-import saadadb.vo.tap.TAPToolBox;
-import saadadb.vo.tap.TAPToolBox.TAPParameters;
+import saadadb.vo.tap_old.TAPToolBox;
+import saadadb.vo.tap_old.TAPToolBox.TAPParameters;
 
 
 /**

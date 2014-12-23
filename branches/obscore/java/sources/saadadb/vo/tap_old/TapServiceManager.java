@@ -25,7 +25,7 @@
   *  Axis     (c) Copyright 2001,2004 The Apache Software Foundation.
   *  CDS      (c) Copyright 1999-2007 - Universite Louis Pasteur / CNRS
   ******************************************************************************/
-package saadadb.vo.tap;
+package saadadb.vo.tap_old;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;

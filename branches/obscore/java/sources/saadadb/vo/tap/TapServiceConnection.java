@@ -1,4 +1,4 @@
-package saadadb.vo.tap.tap2;
+package saadadb.vo.tap;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -27,17 +27,17 @@ import uws.job.user.JobOwner;
 import uws.service.UWSUrl;
 import uws.service.UserIdentifier;
 
-public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
+public class TapServiceConnection implements ServiceConnection<ResultSet> {
 	private final UserIdentifier identifier;
-	private final SaadaTapFactory tapFactory;
+	private final TapFactory tapFactory;
 	private final TAPFileManager fileManager;
-	private final SaadaTapLog logger;
+	private final TapLog logger;
 	private final ArrayList<String> coordSys;
 	private final ArrayList<OutputFormat<ResultSet>> formats;
 	private final Properties properties;
 	private boolean metaDataAvailable = true;
 
-	public TapSaadaServiceConnection() throws Exception {
+	public TapServiceConnection() throws Exception {
 		// Create a way to identify users (by IP address)
 
 		identifier = new UserIdentifier() {
@@ -59,10 +59,10 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 			}
 
 		};
-		properties = SaadaTapProperties.getProperties();
-		tapFactory = new SaadaTapFactory(this);
+		properties = TapProperties.getProperties();
+		tapFactory = new TapFactory(this);
 		fileManager = new LocalTAPFileManager(new File("/home/hahn/tapfile"));
-		logger = new SaadaTapLog();
+		logger = new TapLog();
 		
 		//Output Formats
 		formats = new ArrayList<OutputFormat<ResultSet>>();
@@ -89,7 +89,7 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	 */
 	@Override
 	public String getProviderName() {
-		return properties.getProperty("provider.id", SaadaTapProperties.DEFAULT_PROVIDER_ID);
+		return properties.getProperty("provider.id", TapProperties.DEFAULT_PROVIDER_ID);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 
 		return properties.getProperty(
 				"provider.description",
-				SaadaTapProperties.DEFAULT_PROVIDER_DESCRIPTION);
+				TapProperties.DEFAULT_PROVIDER_DESCRIPTION);
 	}
 
 	/**
@@ -132,10 +132,10 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	public int[] getRetentionPeriod() {
 		int limit = Integer.parseInt(properties.getProperty(
 				"service.retention.limit",
-				SaadaTapProperties.DEFAULT_SERVICE_RETENTION_LIMIT));
+				TapProperties.DEFAULT_SERVICE_RETENTION_LIMIT));
 		int limitMax = Integer.parseInt(properties.getProperty(
 				"service.retention.limit.max",
-				SaadaTapProperties.DEFAULT_SERVICE_RETENTION_LIMIT_MAX));
+				TapProperties.DEFAULT_SERVICE_RETENTION_LIMIT_MAX));
 		return new int[] { limit, limitMax };
 	}
 
@@ -147,10 +147,10 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	public int[] getExecutionDuration() {
 		int limit = Integer.parseInt(properties.getProperty(
 				"service.execution.limit",
-				SaadaTapProperties.DEFAULT_SERVICE_EXECUTION_LIMIT));
+				TapProperties.DEFAULT_SERVICE_EXECUTION_LIMIT));
 		int limitMax = Integer.parseInt(properties.getProperty(
 				"service.execution.limit.max",
-				SaadaTapProperties.DEFAULT_SERVICE_EXECUTION_LIMIT_MAX));
+				TapProperties.DEFAULT_SERVICE_EXECUTION_LIMIT_MAX));
 		return new int[] { limit, limitMax };
 	}
 
@@ -162,10 +162,10 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	public int[] getOutputLimit() {
 		int limit = Integer.parseInt(properties.getProperty(
 				"service.out.limit",
-				SaadaTapProperties.DEFAULT_SERVICE_OUT_LIMIT));
+				TapProperties.DEFAULT_SERVICE_OUT_LIMIT));
 		int limitMax = Integer.parseInt(properties.getProperty(
 				"service.out.limit.max",
-				SaadaTapProperties.DEFAULT_SERVICE_OUT_LIMIT_MAX));
+				TapProperties.DEFAULT_SERVICE_OUT_LIMIT_MAX));
 		return new int[] { limit, limitMax };
 	}
 
@@ -201,7 +201,7 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	public int[] getUploadLimit() {
 		int limit = Integer.parseInt(properties.getProperty(
 				"service.upload.limit.rows",
-				SaadaTapProperties.DEFAULT_SERVICE_UPLOAD_LIMIT_ROWS));
+				TapProperties.DEFAULT_SERVICE_UPLOAD_LIMIT_ROWS));
 		return new int[] { limit, limit };
 	}
 
@@ -220,7 +220,7 @@ public class TapSaadaServiceConnection implements ServiceConnection<ResultSet> {
 	public int getMaxUploadSize() {
 		int limit = Integer.parseInt(properties.getProperty(
 				"service.upload.limit.size",
-				SaadaTapProperties.DEFAULT_SERVICE_UPLOAD_LIMIT_SIZE));
+				TapProperties.DEFAULT_SERVICE_UPLOAD_LIMIT_SIZE));
 		return limit;
 	}
 
