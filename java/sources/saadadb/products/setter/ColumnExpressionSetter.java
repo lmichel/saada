@@ -546,9 +546,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	public void setByKeyword(boolean fromMapping) {
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -557,9 +558,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -568,9 +570,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? "": "<" + this.singleAttributeHandler.getNameorg()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -580,9 +583,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -592,9 +596,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -604,9 +609,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -616,9 +622,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -628,9 +635,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = value;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -640,9 +648,10 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.result = this.expression = String.valueOf(value);;	
 		String msg = (this.singleAttributeHandler == null)? ""
 				+ "": "<" + this.singleAttributeHandler.getValue()+ this.singleAttributeHandler.getUnit()+ ">";
-		this.completeUserMappingMsg("keyword " + msg);
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 
@@ -662,12 +671,12 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 	@Override
 	public void setFailed(String conversionMessage){
 		this.result =SaadaConstant.NOTSET;
-		this.completeUserMappingMsg(conversionMessage);				
+		this.completeConversionMsg(conversionMessage);				
 	}
 	@Override
 	public void setFailed(String message, Exception e){
 		this.result =SaadaConstant.NOTSET;
-		this.completeUserMappingMsg(message + ":" + e.getMessage());				
+		this.completeConversionMsg(message + ":" + e.getMessage());				
 	}
 //
 //	@Override

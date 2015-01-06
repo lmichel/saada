@@ -112,7 +112,7 @@ public final class ColumnRowSetter extends ColumnExpressionSetter {
 		this.result = ces.getValue();
 		if( this.result == null ){
 			this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeUserMappingMsg("Expression [" + this.expression + "] return null");				
+			this.completeConversionMsg("Expression [" + this.expression + "] return null");				
 		}
 		
 	}

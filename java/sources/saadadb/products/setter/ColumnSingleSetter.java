@@ -96,7 +96,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 */
 	public ColumnSingleSetter(String value, boolean fromMapping, String message) throws FatalException {
 		this(value, fromMapping);
-		this.completeUserMappingMsg(message);
+		if( fromMapping  ) {
+			this.completeUserMappingMsg(message);
+		} else {
+			this.completeDetectionMsg(message);
+		}
 	}
 	/**
 	 * Build an attribute handler carrying the value and put the appropriate messages
@@ -107,7 +111,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	 */
 	public ColumnSingleSetter(double value, boolean fromMapping, String message) throws FatalException {
 		this(value, fromMapping);
-		this.completeUserMappingMsg(message);
+		if( fromMapping  ) {
+			this.completeUserMappingMsg(message);
+		} else {
+			this.completeDetectionMsg(message);
+		}
 	}
 	
 	/**
@@ -165,9 +173,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByValue(String value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		String msg = "value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -177,9 +187,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByValue(double value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_VALUE;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		String msg = "value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -189,9 +201,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByKeyword(String value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("keyword <" + attributeHandler.getNameorg()+ ">");
+        String msg= "keyword <" + attributeHandler.getNameorg()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -201,9 +215,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByKeyword(double value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("keyword <" + attributeHandler.getNameorg()+ ">");
+        String msg= "keyword <" + attributeHandler.getNameorg()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -213,10 +229,13 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByWCS(String value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_WCS;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
+		String msg = "WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
+
 	}
 	/* (non-Javadoc)
 	 * @see saadadb.products.setter.ColumnSetter#setByWCS(double, boolean)
@@ -225,9 +244,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByWCS(double value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_WCS;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">");
+		String msg = "WCS value <" + attributeHandler.getValue()+ attributeHandler.getUnit() +">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -237,9 +258,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByPixels(String value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_PIXELS;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
+		String msg= "pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -249,9 +272,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByPixels(double value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_PIXELS;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("pixel value <" + attributeHandler.getValue()+ attributeHandler.getUnit()+">");
+        String msg= "keyword <" + attributeHandler.getNameorg()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -261,9 +286,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByTableColumn(String value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		String msg = "content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -273,9 +300,11 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	public void setByTabeColumn(double value, boolean fromMapping){
 		this.settingMode = ColumnSetMode.BY_TABLE_COLUMN;
 		this.attributeHandler.setValue(value);
-		this.completeUserMappingMsg("content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">");
+		String msg = "content of the column <" + attributeHandler.getValue()+ attributeHandler.getUnit()+ ">";
 		if( fromMapping  ) {
-			this.completeUserMappingMsg("user mapping");
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
 		}
 	}
 	/* (non-Javadoc)
@@ -292,10 +321,12 @@ public final class ColumnSingleSetter extends ColumnSetter implements Cloneable 
 	@Override
 	public void setByKeyword(boolean fromMapping) {
         this.settingMode = ColumnSetMode.BY_KEYWORD;
-        this.completeUserMappingMsg("keyword <" + attributeHandler.getNameorg()+ ">");
-        if( fromMapping  ) {
-                this.completeUserMappingMsg("user mapping");
-        }
+        String msg= "keyword <" + attributeHandler.getNameorg()+ ">";
+		if( fromMapping  ) {
+			this.completeUserMappingMsg("keyword " + msg);
+		} else {
+			this.completeDetectionMsg("keyword " + msg);
+		}
     }
 	/* (non-Javadoc)
 	 * @see saadadb.products.setter.ColumnSetter#setValue(double, java.lang.String)
