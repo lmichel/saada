@@ -199,14 +199,11 @@ public class EnergyKWDetector extends KWDetector {
 			this.em_binsSetter    = new ColumnWcsSetter("em_bins"   , "WCS.getNaxis(1)", this.projection);
 			this.em_unitSetter = new ColumnWcsSetter("em_unit", "WCS.getUnit(1)", this.projection);
 			this.em_unitSetter.calculateExpression();
-			/*
-			 * WCS can be valid but without unit. In this case, unit is set as notSet, in order to be possibly overridden later
-			 */
-			if( this.em_unitSetter.getValue() == null || this.em_unitSetter.getValue().length() == 0) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "No unit found in WCS");
-				this.em_unitSetter = new ColumnExpressionSetter("em_unit");
-			}
+			String msg = "By WCS " + this.projection.getClass();
+			this.em_minSetter.completeDetectionMsg(msg);
+			this.em_maxSetter.completeDetectionMsg(msg);
+			this.em_binsSetter.completeDetectionMsg(msg);
+			this.em_unitSetter.completeDetectionMsg(msg);
 			return true;
 		} else {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No spectral coordinate found in WCS");
