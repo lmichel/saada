@@ -178,7 +178,6 @@ public abstract class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	protected void setQuantityDetector() throws Exception {
-		Messenger.locateCode();
 		if( this.quantityDetector == null) {
 			/*
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
@@ -484,8 +483,9 @@ public abstract class ProductBuilder {
 		 * (no reference to any AH) 
 		 */
 		} else if( columnMapping.byValue() ){
-			retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression());
-			retour.completeUserMappingMsg("Taken " + columnMapping.getMode());
+			retour = new ColumnExpressionSetter(colmunName, columnMapping.getValue());
+			retour.setUnit(columnMapping.getUnit());
+			retour.completeUserMappingMsg( columnMapping.message + "By " + columnMapping.getMode() + " " + columnMapping.getValue() + columnMapping.getUnit() + " " );
 		return retour;
 		/*
 		 * Mapped either by expression or keyword: use keywords which must be retrieved with the product AHS
@@ -532,7 +532,7 @@ public abstract class ProductBuilder {
 				 * Build a ColumnExpressionSetter using tehe builder AH
 				 */
 				retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
-				retour.completeUserMappingMsg("Taken " + columnMapping.getMode());
+				retour.completeUserMappingMsg(columnMapping.message + "By " + columnMapping.getMode());
 				return retour;
 				/*
 				 * By expression: multiple AHs are used
@@ -563,11 +563,11 @@ public abstract class ProductBuilder {
 					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
-					retour.completeUserMappingMsg("Taken " + columnMapping.getMode());
+					retour.completeUserMappingMsg(columnMapping.message + "By " + columnMapping.getMode());
 				return retour;
 				}
 			} else {
-				FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Ciolumn mapping " + columnMapping + " not understood");									
+				FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column mapping " + columnMapping + " not understood");									
 			}
 		}
 		return null;
@@ -606,6 +606,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void mapObservationAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Observation Axis");
 		AxisMapping mapping = this.mapping.getObservationAxisMapping();
 		this.setQuantityDetector();
@@ -709,6 +710,7 @@ public abstract class ProductBuilder {
 	 * @throws FatalException 
 	 */
 	public void mapInstanceName() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Building the name");
 		/*
 		 * Uses the config first
@@ -735,7 +737,7 @@ public abstract class ProductBuilder {
 			}
 			String message = this.obs_idSetter .getUserMappingMsg();
 			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);
-			this.obs_idSetter.completeUserMappingMsg(message);
+			this.obs_idSetter.completeDetectionMsg(message);
 		}
 		this.traceReportOnAttRef(this.obs_idSetter);
 	}
@@ -744,6 +746,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void mapEnergyAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Energy Axe");
 		this.setQuantityDetector();
 		String message;
@@ -828,6 +831,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void mapTimeAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Time Axe");
 		AxisMapping mapping = this.mapping.getTimeAxisMapping();
 		String message;
@@ -909,6 +913,7 @@ public abstract class ProductBuilder {
 	}
 
 	protected void mapObservableAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Observable Axe");
 		AxisMapping mapping = this.mapping.getObservableAxisMapping();
 		this.setQuantityDetector();
@@ -973,6 +978,7 @@ public abstract class ProductBuilder {
 
 
 	protected void mapPolarizationAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Polarization Axe");
 		AxisMapping mapping = this.mapping.getPolarizationAxisMapping();
 		this.setQuantityDetector();
@@ -1011,6 +1017,7 @@ public abstract class ProductBuilder {
 	 * @throws Exception
 	 */
 	protected void mapSpaceAxe() throws Exception {
+		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, "Map Space Axe");
 		/*
 		 * Coo sys done in 2nd: can use position mapping to detect the coord system
@@ -1033,6 +1040,7 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	public void mapIgnoredAndExtendedAttributes () throws Exception {
+		Messenger.locateCode();
 		//LinkedHashMap<String, String> mapped_extend_att = this.mapping.getExtenedAttMapping().getClass() getAttrExt();
 		Set<String> extendedAtt = this.mapping.getExtenedAttMapping().getColmunSet();
 		/*
@@ -1070,6 +1078,7 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionCooSysAttributes() throws Exception {
+		Messenger.locateCode();
 		AxisMapping mapping = this.mapping.getSpaceAxisMapping();
 		this.setQuantityDetector();
 
@@ -1108,6 +1117,7 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionPosAttributes() throws Exception {
+		Messenger.locateCode();
 		AxisMapping mapping = this.mapping.getSpaceAxisMapping();
 		this.setQuantityDetector();
 
@@ -1184,6 +1194,7 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	protected void mapCollectionPoserrorAttributes() throws Exception {
+		Messenger.locateCode();
 		AxisMapping mapping = this.mapping.getSpaceAxisMapping();
 		this.setQuantityDetector();
 
@@ -1233,8 +1244,7 @@ public abstract class ProductBuilder {
 	 * 
 	 */
 	private void mapCollectionSpectralCoordinateFromMapping() throws Exception {
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "try to map the Energy axis from mapping");
+		Messenger.locateCode();
 		AxisMapping mapping     = this.mapping.getEnergyAxisMapping();
 		ColumnMapping sc_col    = mapping.getColumnMapping("dispertion_column");
 
