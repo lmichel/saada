@@ -77,6 +77,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-system") ;
 		allowedArgs.add("-position")     ;allowedArgs.add("-entry.position") ;
 		allowedArgs.add("-poserror")     ;allowedArgs.add("-entry.poserror") ;
+		allowedArgs.add("-sresolution")  ;allowedArgs.add("-entry.sresolution") ;
 		allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
 		allowedArgs.add("-sfov");
 		allowedArgs.add("-sregion");
@@ -934,10 +935,10 @@ public final class ArgsParser implements Serializable{
 	 */
 	public String getPoserrorMapping(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && (args[i] .startsWith("-poserror=") || args[i] .startsWith("-sresol=")) ) {
+			if( !entry && (args[i] .startsWith("-poserror=") || args[i] .startsWith("-sresolution=")) ) {
 				return getArgsValue(args[i]);
 			}
-			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresol="))) {
+			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresolution="))) {
 				return getArgsValue(args[i]);
 			}
 		}
