@@ -12,7 +12,7 @@ import saadadb.util.Messenger;
 public class PriorityMessage {
 	public final static String FIRST = "Priority FIRST: Apply first the mapping and then infer the searched values";
 	public final static String LAST  = "Priority LAST: Infer values first and then apply the mapping";
-	public final static String ONLY  = "Priority ONLY: AJust apply the mapping";
+	public final static String ONLY  = "Priority ONLY: Just apply the mapping";
 	
 	private final static void print (String radix, boolean trace, String level){
 		if( trace ){
