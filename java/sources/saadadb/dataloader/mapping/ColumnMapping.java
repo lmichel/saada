@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.util.Messenger;
+import saadadb.util.RegExpMatcher;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.MappingMode;
 
@@ -26,7 +28,7 @@ public class ColumnMapping {
 	private Set<AttributeHandler> attributeHandlers =new TreeSet<AttributeHandler>();
 	private static final Pattern constPattern = Pattern.compile("^'(.*)'$");
 	private static final Pattern numPattern = Pattern.compile("^(?:(" + RegExp.NUMERIC + "))$");
-	public final String message; // used for logging
+	public String message; // used for logging
 	/**
 	 * when mode=keyword or expression
 	 */
@@ -229,6 +231,15 @@ public class ColumnMapping {
 	}
 
 	/**
+	 * This method avoid the caller to check first that te AH is not null before to get its unit
+	 * @return
+	 */
+	public String getUnit() {
+		AttributeHandler ah = this.getAttributeHandler();
+		return ((ah == null)? "": (ah.getUnit() == null)? "": ah.getUnit());
+	}
+
+	/**
 	 * @return
 	 */
 	public Set<AttributeHandler> getHandlers() {
@@ -278,5 +289,24 @@ public class ColumnMapping {
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
-
+	
+	/**
+	 * Only works in VALUE mode. Checks if then value look like numericUnit.
+	 * If yes, the Unit is set as unit for the attributeHandler and numeric as value
+	 */
+	public void extractUnit() {
+		if( this.mappingMode == MappingMode.VALUE) {
+			AttributeHandler ah = null;
+			for( AttributeHandler x : this.attributeHandlers ) { ah = x; break;}
+			RegExpMatcher rm = new RegExpMatcher(RegExp.NUMERIC + "(.*)", 1);
+			List<String> ms = rm.getMatches(ah.getValue());
+			if( ms != null ){
+				String unit = ms.get(0);
+				String v = ah.getValue().replace(unit, "");
+				ah.setUnit(unit);
+				ah.setValue(v);
+				this.message += " (unit " + unit + " extracted from the given value)";
+			}
+		}
+	}
 }

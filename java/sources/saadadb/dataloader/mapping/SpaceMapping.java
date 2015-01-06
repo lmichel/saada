@@ -78,10 +78,12 @@ public class SpaceMapping extends AxisMapping {
 		}
 		String s;
 		if( (s = tabArg.getSFov()) != null  ){
-			this.columnMapping.put("s_fov", new ColumnMapping(null, s, "-s_fov param"));
+			ColumnMapping cm = new ColumnMapping(null, s, "-sfov param");
+			cm.extractUnit();
+			this.columnMapping.put("s_fov", cm);
 		} 
 		if( (s = tabArg.getSRegion()) != null  ){
-			this.columnMapping.put("s_region", new ColumnMapping(null, s, "-s_fov param"));
+			this.columnMapping.put("s_region", new ColumnMapping(null, s, "-sregion param"));
 		} 
 
 	}
@@ -102,16 +104,9 @@ public class SpaceMapping extends AxisMapping {
 		 * One poserror parameter: error is supposed to be a circle
 		 */
 		if( av != null ) {
-			this.columnMapping.put("s_resolution", new ColumnMapping(this.errorUnit, av, "s_resolution param"));				
-//			/*
-//			 * Object name can be in '' or in ""
-//			 */
-//			if( (av.startsWith("'") && av.endsWith("'")) || (av.startsWith("\"") && av.endsWith("\"")) ) {
-//				av= av.substring(1, av.length() -1);
-//				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.VALUE, this.errorUnit, av, "s_resolution param"));				
-//			} else {
-//				this.columnMapping.put("s_resolution", new ColumnMapping(MappingMode.KEYWORD, this.errorUnit, av, "s_resolution param"));				
-//			}
+			ColumnMapping cm = new ColumnMapping(this.errorUnit, av, "sresolution param");				
+			cm.extractUnit();
+			this.columnMapping.put("s_resolution", cm);				
 		}
 	}
 	
@@ -122,60 +117,9 @@ public class SpaceMapping extends AxisMapping {
 	private void mapCoordSystem(ArgsParser tabArg) throws FatalException {
 		String s;
 		if( (s = tabArg.getCoordinateSystem()) != null  ){
-			this.columnMapping.put("system", new ColumnMapping(null, s, "-system param"));
+			ColumnMapping cm = new ColumnMapping(null, s, "-system param");
+			this.columnMapping.put("system", cm);
 		} 
-//
-//		String[] tabSys_eq ;
-//		tabSys_eq = tabArg.getCoordinateSystem();
-//		/*
-//		 * just a system, no equinox (galact e.g.)
-//		 */
-//		if( tabSys_eq.length == 1 ) {
-//			/*
-//			 * System can be given as a value enclosed in  "'" 
-//			 * or as a keyword name
-//			 */
-//			this.coordSystem.setEquinox("");
-//			this.coordSystem.setEquinox_value("");
-//			if( tabSys_eq[0].startsWith("'") ) {
-//				this.coordSystem.setSystem_value(tabSys_eq[0].replaceAll("'", ""));
-//			} else {
-//				this.coordSystem.setSystem(tabSys_eq[0]);
-//			}
-//		} else if( tabSys_eq.length == 2 ) {
-//			if( tabSys_eq[0].startsWith("'") ) {
-//				this.coordSystem.setSystem_value(tabSys_eq[0].replaceAll("'", ""));
-//			} else {
-//				this.coordSystem.setSystem(tabSys_eq[0]);
-//			}
-//			if( tabSys_eq[1].trim().endsWith("'") ) {
-//				this.coordSystem.setEquinox_value(tabSys_eq[1].replaceAll("'", ""));
-//			} else {
-//				this.coordSystem.setEquinox(tabSys_eq[1]);
-//			}
-//		} else{	
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "No cordinate system in the mapping. The loader  will try to detect it in the file.");
-//			this.coordSystem.setAutodedect();
-//		}
-//		
-//		if( priority == null ) {
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken first.");
-//			this.coordSystem.setPriority(PriorityMode.FIRST);
-//		} else if( priority == PriorityMode.ONLY ){			
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : only. The values you've specified'll be taken.");
-//			this.coordSystem.setPriority(PriorityMode.ONLY);
-//			if( this.coordSystem.getAutodedect() ) {
-//				Messenger.printMsg(Messenger.WARNING, "Coord system won't be set because it is required to be computed from mapping parameters, but mapping is not set.");
-//			}
-//		} else if(  priority == PriorityMode.FIRST ){			
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : first. The values you've specified'll be taken first.");
-//			this.coordSystem.setPriority(PriorityMode.FIRST);
-//		} else if( priority == PriorityMode.LAST){			
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Priority : last. The values you've specified'll be taken if there are not already defined in the file.");
-//			this.coordSystem.setPriority(PriorityMode.LAST);
-//		} else {			
-//			FatalException.throwNewException(SaadaException.UNSUPPORTED_MODE, "Unknown coordinates system mapping priority <" + priority + ">");
-//		}
 	}
 	
 	/**
