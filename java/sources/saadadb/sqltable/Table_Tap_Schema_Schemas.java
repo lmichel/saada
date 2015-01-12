@@ -59,8 +59,8 @@ public class Table_Tap_Schema_Schemas extends SQLTable {
 	/**
 	 * @throws AbortException
 	 */
-	public static void dropTable() throws AbortException {
-		Messenger.printMsg(Messenger.TRACE, "Drop table " + qtableName);
+	public static void dropTable() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Drop table " + Database.getWrapper().encapsTableName(qtableName));
 		SQLTable.dropTable(tableName);
 	}
 

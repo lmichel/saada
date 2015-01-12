@@ -870,6 +870,10 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 	}
 
+	@Override
+	public String encapsTableName(String tableName) {
+		return "`"+tableName+"`";
+	}
 	public static void main(String[] args) {
 		try {
 			ArgsParser ap = new ArgsParser(args);
