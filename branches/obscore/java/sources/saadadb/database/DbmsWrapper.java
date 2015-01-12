@@ -1380,6 +1380,10 @@ public abstract String getDBTypeFromVOTableType(String dataType, final int array
 	public void setFetchSize(Statement stmt, int size) throws SQLException {
 		stmt.setFetchSize(size);
 	}
+	
+	public String encapsTableName(String tableName) {
+		return tableName;
+	}
 	/*
 	 * Returns a map of SQL statement helping the setup of the relationships
 	 */
