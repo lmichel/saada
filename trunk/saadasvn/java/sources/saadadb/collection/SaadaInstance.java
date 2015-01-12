@@ -1267,7 +1267,7 @@ public abstract class SaadaInstance implements DMInterface {
 		/*
 		 * UrL case: no use of the download servlet
 		 */
-		if( (puc = this.getProduct_url_csa()).matches(RegExp.URL) ) {
+		if(  this.getProduct_url_csa() != null && (puc = this.getProduct_url_csa()).matches(RegExp.URL) ) {
 			return puc;
 		}
 		retour = "download?oid=" + this.oidsaada;
