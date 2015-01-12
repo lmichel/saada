@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import saadadb.database.Database;
+import saadadb.database.MysqlWrapper;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -22,15 +23,15 @@ import tap.metadata.TAPTable;
  *
  */
 public class SaadaTapMeta {
-/*
- * The TAPMetadata that is built for the Tap service
- */
-	protected TAPMetadata tapMeta; 
-	
+	/*
+	 * The TAPMetadata that is built for the Tap service
+	 */
+	protected TAPMetadata tapMeta;
+
 	/*
 	 * The columns that won't appear in the TAPMetadata
 	 */
-	protected ArrayList<String> columnFilters; // 
+	protected ArrayList<String> columnFilters; //
 
 	public SaadaTapMeta() throws SQLException, Exception {
 		tapMeta = new TAPMetadata();
@@ -63,31 +64,37 @@ public class SaadaTapMeta {
 	 * @throws TAPException
 	 */
 	protected void loadTapSchemas() throws TAPException {
-	//	System.out.println("Load tap meta");
+		// System.out.println("Load tap meta");
 		if (!tableExists("schemas")) {
-			throw new TAPException("Table 'SCHEMAS' does not exist");
+			throw new TAPException("Table 'schemas' does not exist");
 		}
 
 		try {
 			// System.out.println("load schema");
 			SQLLargeQuery query = new SQLLargeQuery();
-			ResultSet result = query.run("Select " + "SCHEMA_NAME, DESCRIPTION, UTYPE "
-					+ "from SCHEMAS");
+			ResultSet result;
+			try {
+				if (Database.getWrapper() instanceof MysqlWrapper) {
+					result = query.run("Select " + "schema_name, description, utype "
+							+ "from `schemas`");
+				} else {
+					result = query.run("Select " + "schema_name, description, utype "
+							+ "from schemas");
+				}
+			} catch (FatalException e) {
+				throw new TAPException("Could not get Database Wrapper", e);
+			}
 			TAPSchema schema;
-			
+
 			while (result.next()) {
-				schema = new TAPSchema(result.getString("SCHEMA_NAME"));
+				schema = new TAPSchema(result.getString("schema_name"));
 				schema.setDBName(Database.getDbname());
-				schema.setDescription(result.getString("DESCRIPTION"));
-				schema.setUtype(result.getString("UTYPE"));
-
+				schema.setDescription(result.getString("description"));
+				schema.setUtype(result.getString("utype"));
 				tapMeta.addSchema(schema);
-
-				// System.out.println("Schema : "+schema.getName());
 			}
 			query.close();
 		} catch (QueryException | SQLException e) {
-			// System.out.println("failed to load schema");
 			throw new TAPException(e.getMessage());
 		}
 	}
@@ -100,23 +107,20 @@ public class SaadaTapMeta {
 		if (!tableExists("tables")) {
 			throw new TAPException("Table 'TABLES' does not exist");
 		}
-		// System.out.println("load table");
 		TAPTable table;
 		try {
 			SQLLargeQuery query = new SQLLargeQuery();
 			ResultSet result = query.run("Select "
-					+ "SCHEMA_NAME, TABLE_NAME, TABLE_TYPE, DESCRIPTION, UTYPE " + "from tables");
+					+ "schema_name, table_name, table_type, description, utype " + "from tables");
 			while (result.next()) {
-				table = new TAPTable(result.getString("TABLE_NAME"));
+				table = new TAPTable(result.getString("table_name"));
 				table.setDBName(Database.getDbname());
-				table.setDescription(result.getString("DESCRIPTION"));
-				table.setType(result.getString("TABLE_TYPE"));
-				table.setUtype(result.getString("UTYPE"));
+				table.setDescription(result.getString("description"));
+				table.setType(result.getString("table_type"));
+				table.setUtype(result.getString("utype"));
 
-				String schemaName = result.getString("SCHEMA_NAME");
-
+				String schemaName = result.getString("schema_name");
 				tapMeta.getSchema(schemaName).addTable(table);
-				// System.out.println("Table : "+schemaName+"."+table.getName());
 			}
 			query.close();
 		} catch (QueryException | SQLException e) {
@@ -133,45 +137,44 @@ public class SaadaTapMeta {
 		if (!tableExists("columns")) {
 			throw new TAPException("Table 'COLUMNS' does not exist");
 		}
-		// System.out.println("load columns");
 		TAPColumn column;
 		try {
 			SQLLargeQuery query = new SQLLargeQuery();
 			ResultSet result = query
 					.run("Select "
-							+ "TABLE_NAME, COLUMN_NAME, DESCRIPTION, UNIT, UCD, UTYPE, DATATYPE, SIZE, PRINCIPAL, INDEXED, STD "
+							+ "table_name, column_name, description, unit, ucd, utype, datatype, size, principal, indexed, std "
 							+ "from columns");
 			while (result.next()) {
 				String tmp;
-				column = new TAPColumn(result.getString("COLUMN_NAME"));
-				column.setDescription(result.getString("DESCRIPTION"));
+				column = new TAPColumn(result.getString("column_name"));
+				column.setDescription(result.getString("description"));
 
-				tmp = result.getString("SIZE");
+				tmp = result.getString("size");
 				int size = -1;
 				try {
 					size = Integer.parseInt(tmp);
 				} catch (Exception e) {
 				}
-				column.setDatatype(result.getString("DATATYPE"), size);
+				column.setDatatype(result.getString("datatype"), size);
 
-				column.setUcd(result.getString("UCD"));
-				column.setUnit(result.getString("UNIT"));
-				column.setUtype(result.getString("UTYPE"));
+				column.setUcd(result.getString("ucd"));
+				column.setUnit(result.getString("unit"));
+				column.setUtype(result.getString("utype"));
 
-				tmp = result.getString("INDEXED");
+				tmp = result.getString("indexed");
 				if (!tmp.isEmpty() && tmp != null)
 					column.setIndexed(Database.getWrapper().getBooleanValue(tmp));
 
-				tmp = result.getString("PRINCIPAL");
+				tmp = result.getString("principal");
 				if (!tmp.isEmpty() && tmp != null)
 					column.setPrincipal(Database.getWrapper().getBooleanValue(tmp));
 
-				tmp = result.getString("STD");
+				tmp = result.getString("std");
 				if (!tmp.isEmpty() && tmp != null)
 					column.setStd(Database.getWrapper().getBooleanValue(tmp));
 
-				String[] schemaTableName = result.getString("TABLE_NAME").split("\\.");// [Schema].[Table]
-				
+				String[] schemaTableName = result.getString("table_name").split("\\.");// [Schema].[Table]
+
 				// Checks if the column should be ignored or not. (see tap.TapProperties.java & config/voconf.tap.properties)
 				if (!columnFilters.contains(column.getName().trim().toLowerCase())) {
 					tapMeta

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import saadadb.database.Database;
+import saadadb.database.MysqlWrapper;
 import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 import tap.db.DBConnection;
@@ -49,19 +50,22 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	@Override
 	public void startTransaction() throws DBException {
 		transactionMaker.beginTransaction();
-		// System.out
-		// .println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@TabSaadaDBConnection#startTransaction");
 	}
 
 	/**
 	 * Cancel the current transaction
-	 * NOT IMPLEMENTED YET
+	 * 
 	 */
 	@Override
 	public void cancelTransaction() throws DBException {
-		// TODO See Statement#cancelTransaction
-		Messenger
-				.printMsg(Messenger.DEBUG, "The query can't be canceled : Feature not implemented");
+		try {
+			transactionMaker.rollback();
+			Messenger.locateCode("Transaction canceled");
+		} catch (Exception e) {
+			Messenger.locateCode("Error while canceling transaction :" + e.getMessage());
+		}
+		// Messenger
+		// .printMsg(Messenger.DEBUG, "The query can't be canceled : Feature not implemented");
 	}
 
 	/**
@@ -75,17 +79,12 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 		} catch (Exception e) {
 			throw new DBException("Could not end transaction", e);
 		}
-		// System.out
-		// .println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@TabSaadaDBConnection#endTransaction");
-
 	}
 
 	@SuppressWarnings("finally")
 	@Override
 	public ResultSet executeQuery(String sqlQuery, adql.query.ADQLQuery adqlQuery)
 			throws DBException {
-		// System.out
-		// .println("===================================== TabSaadaDBConnection#executeQuery");
 		Messenger.locateCode("===================\nADQL:\t" + adqlQuery.toADQL() + "\nSQL:\t"
 				+ sqlQuery
 				+ "\n========================================================================\n"
@@ -140,9 +139,9 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 			try {
 				// Build ' "column name" datatype, ' String
 				fmt
-						.append("\"")
+						.append("")
 						.append(col.getDBName())
-						.append("\" ")
+						.append(" ")
 						.append(
 								Database.getWrapper().getDBTypeFromVOTableType(
 										col.getVotType().datatype,
@@ -160,7 +159,7 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 
 		try {
 			String sql = Database.getWrapper().getCreateTempoTable(
-					"\"" + table.getName() + "\"",
+					"" + table.getName() + "",
 					fmt.toString());
 			// SQLite needs the temporary table to be created explicitly as it checks if the table exists when compiling a prepared
 			// statement
@@ -173,9 +172,11 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 
 	/**
 	 * Insert the given rows in the Given TAPTable
+	 * @throws  
 	 */
 	@Override
 	public void insertRow(SavotTR row, TAPTable table) throws DBException {
+
 		// System.out.println("TabSaadaDBConnection#insertRow");
 		TDSet cells = row.getTDs();
 		Iterator<TAPColumn> it = table.getColumns();
@@ -186,14 +187,21 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 		int nb = 0;
 		// Get the Data to insert
 		// INSERT INTO TABLENAME ( COLNAME1, COLNAME2 ...) VALUES (?, ? ...)
-		StringBuffer sql = new StringBuffer("INSERT INTO \"")
-				.append(table.getName())
-				.append("\" (");
+		StringBuffer sql = new StringBuffer();
+		try {
+			sql.append("INSERT INTO ");
+			if (Database.getWrapper() instanceof MysqlWrapper) {
+				sql.append(Database.getTempodbName()).append(".");
+			}
+			sql.append(table.getName()).append(" (");
+		} catch (FatalException e) {
+			throw new DBException("Couldn't get tempo DB name: " + e.getMessage());
+		}
 		while (it.hasNext()) {
 			if (nb > 0)
 				sql.append(" ,");
 			col = it.next();
-			sql.append("\"").append(col.getName()).append("\"");
+			sql.append("").append(col.getName()).append(" ");
 			sqlValues.add(cells.getContent(nb));
 			columnDatatype.add(col.getVotType().datatype);
 			nb++;
@@ -206,12 +214,11 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 			sql.append("?");
 		}
 		sql.append(")");
-
 		/*
 		 * Get a PreparedStatement, fill it with values 
 		 */
 		try {
-			// System.out.println("PREPARE STATEMENT: " + sql.toString());
+
 			PreparedStatement statement = transactionMaker.getPreparedStatement(sql.toString());
 			// Fill the prepared statement with value
 			for (int i = 1; i < nb + 1; i++) {
@@ -286,27 +293,23 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	 */
 	@Override
 	public void dropTable(TAPTable table) throws DBException {
-		//System.out.println("TabSaadaDBConnection#dropTable");
-
 		try {
 			String sql = Database.getWrapper().getDropTempoTable(table.getName());
 			transactionMaker.executeUpdate(sql);
-			transactionMaker.endTransaction();
 		} catch (Exception e) {
 			throw new DBException("Failed to free the database Connection", e);
 		}
 	}
-/**
- * Close the transaction if the tapQuery has been executed. do nothing otherwise
- */
+
+	/**
+	 * Close the transaction if the tapQuery has been executed. do nothing otherwise
+	 */
 	@Override
 	public void close() throws DBException {
 		try {
 			transactionMaker.endTransaction();
 		} catch (Exception e) {
-			throw new DBException("Failed to end the transaction",e);
+			throw new DBException("Failed to end the transaction", e);
 		}
-	//	System.out.println("TabSaadaDBConnection#close");
 	}
-
 }

@@ -23,7 +23,7 @@ public class Table_Saada_VO_Resources extends SQLTable {
 	 */
 	public static  void createTable(SaadaDBConnector connector) throws Exception {
 		SQLTable.createTable("saada_vo_resources", "pk " + Database.getWrapper().getSerialToken() 
-				+ ", resource text, field_group text, nickname text , utype text, ucd text, type text DEFAULT 'char', arraysize " 
+				+ ", resource text, field_group text, nickname text , utype text, ucd text, type text , arraysize " //+ ", resource text, field_group text, nickname text , utype text, ucd text, type text DEFAULT 'char', arraysize " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '*', hidden boolean DEFAULT false, value " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '', expression " 
 				+ Database.getWrapper().getIndexableTextType() + " DEFAULT '', description " 

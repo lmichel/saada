@@ -66,6 +66,7 @@ jQuery.extend({
 		this.download = function() {
 			if( that.results.length >= 1 ) {
 				var url = that.results[0];
+				url=decodeURIComponent(url);
 				Location.changeLocation(url,"Download ZIPBALL");
 			} else {
 				Modalinfo.info("No ZIP archive available");

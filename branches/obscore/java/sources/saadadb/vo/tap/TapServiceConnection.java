@@ -11,6 +11,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import saadadb.database.Database;
+import saadadb.util.Messenger;
 import tap.ServiceConnection;
 import tap.TAPFactory;
 import tap.file.LocalTAPFileManager;
@@ -233,11 +234,13 @@ public class TapServiceConnection implements ServiceConnection<ResultSet> {
 		try {
 			TAPMetadata meta = new TAPMetadata();
 			meta = new SaadaTapMeta().getTAPMetadata();
-			if (!meta.isEmpty())
+			if (!meta.isEmpty()) {
 				metaDataAvailable = true;
+			}
 			return meta;
 		} catch (Exception e) {
 			metaDataAvailable = false;
+			Messenger.locateCode("Metadata exception : "+e.getMessage());
 			return null;
 		}
 	}
@@ -289,5 +292,4 @@ public class TapServiceConnection implements ServiceConnection<ResultSet> {
 		}
 		return null;
 	}
-
 }

@@ -27,7 +27,6 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.request.TapAdqlRequest;
-import uws.job.AbstractJob;
 
 /**
  * This class gathers some useful functions to build a TAP service.<BR />
@@ -96,7 +95,7 @@ public class TAPToolBox {
 			checkTAPParameters();
 		}
 
-		public TAPParameters(AbstractJob job) throws Exception {
+		/*public TAPParameters(AbstractJob job) throws Exception {
 			otherParameters = new HashMap<String,String>();
 
 			// Extract and identify each pair (key,value):
@@ -108,7 +107,7 @@ public class TAPToolBox {
 			// Check parameters:
 			checkTAPParameters();
 		}
-
+*/
 		protected void setTAPParameter(String key, String value) throws Exception {
 			// REQUEST case:
 			if (key.equalsIgnoreCase("request")){

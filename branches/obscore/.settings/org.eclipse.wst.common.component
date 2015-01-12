@@ -10,6 +10,9 @@
         <dependent-module archiveName="psqlgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/hahn/Documents/saadaTp/psql/web/WEB-INF/lib/psqlgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="saadamysqlgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/hahn/Documents/saadaTp/saadamysql/web/WEB-INF/lib/saadamysqlgenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="saadaObscore"/>
         <property name="java-output-path" value="/saadaObscore/build/classes"/>
     </wb-module>
