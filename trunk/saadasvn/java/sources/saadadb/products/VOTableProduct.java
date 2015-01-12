@@ -11,6 +11,8 @@ import saadadb.exceptions.AbortException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.prdconfiguration.ConfigurationEntry;
+import saadadb.prdconfiguration.ConfigurationTable;
 import saadadb.util.ChangeKey;
 import saadadb.util.DefineType;
 import saadadb.util.Messenger;
@@ -63,7 +65,7 @@ public class VOTableProduct extends File implements ProductFile {
 	public SavotTR currentTR;
 
 	public int tableCount = 0;
-	
+
 	private Product product;
 
 	private boolean onfirstline = true;
@@ -175,32 +177,79 @@ public class VOTableProduct extends File implements ProductFile {
 
 		AttributeHandler attribute;
 		ArrayList<String> kWIgnored = null;
-		if( this.product.configuration != null ) this.product.configuration.getMapping().getIgnoredAtt();
+		/*
+		 * Gte the list of ignored attributes and check whether they must be ignored or kept 
+		 */
+		boolean notIgnore = false;
+		ConfigurationEntry entryconf = null;
+		if( this.product.configuration != null ) {
+			entryconf = ((ConfigurationTable)(this.product.configuration)).getConfigurationEntry();
+			kWIgnored = entryconf.getMapping().getIgnoredAtt();
+			if( kWIgnored.contains("!") ) {
+				notIgnore = true;
+			}
+		}
+
 		String name = "";
 		for( int f=0 ; f<fields.getItemCount() ; f++ ) {
 			SavotField field = (SavotField) fields.getItemAt(f);
 			/*
-			 * Looks fiorst for a filed ID and takes the name if no id
+			 * Look first for a filed ID and takes the name if no id
 			 */
 			name = field.getId();
 			if (name == null || name.equals("")) {
 				name = field.getName();
 			}
-			if ( kWIgnored == null || !kWIgnored.contains(name)) {
-				attribute = new AttributeHandler(field);
-				if( this.product.configuration != null ) attribute.setCollname(this.product.configuration.getCollectionName());
-				attribute.setComment(getStandardDescription(field.getDescription()));
-				/*
-				 * Entry can be null when the product is just read to build a map
-				 */
-				if( entry != null ) {
-					Integer index = (Integer) entry.get(name);
-					typeUnit.put(index, attribute.getUnit());
-					typeEntry.put(index, attribute.getType());
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, " getKWEntry #" + index + " ("  + attribute.getNameorg() + "  " + attribute.getNameattr()+ " "  +attribute.getUnit() + " " +  attribute.getType() + " " + attribute.getUcd() + " " + attribute.getUtype() + ")");
+
+			if( kWIgnored != null ) {
+				boolean ignore = false;		
+				// ignore attributes must be kept :=)
+				if( notIgnore ) {
+					ignore = true;
+					for( String ign: kWIgnored) {
+						if( ign.equals("!")) {
+							continue;
+						} 
+						if( name.matches(ign) ) {
+							ignore = false;
+							break;
+						}
+					}
+				// ignore attributes must be ignored 
+				} else {
+					ignore = false;
+					for( String ign: kWIgnored) {
+						if( ign.equals("!")) {
+							continue;
+						} 
+						if( name.matches(ign) ) {
+							ignore = true;
+							break;
+						}
+					}					
 				}
-				tableAttributeHandlerEntry.put(attribute.getNameattr(), attribute);
+				
+				if( entryconf != null && ignore ){
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+name+" is ignored");
+					entryconf.addIgnoredCol(f);
+					continue;
+				}
 			}
+
+			attribute = new AttributeHandler(field);
+			if( this.product.configuration != null ) attribute.setCollname(this.product.configuration.getCollectionName());
+			attribute.setComment(getStandardDescription(field.getDescription()));
+			/*
+			 * Entry can be null when the product is just read to build a map
+			 */
+			if( entry != null ) {
+				Integer index = (Integer) entry.get(name);
+				typeUnit.put(index, attribute.getUnit());
+				typeEntry.put(index, attribute.getType());
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, " getKWEntry #" + index + " ("  + attribute.getNameorg() + "  " + attribute.getNameattr()+ " "  +attribute.getUnit() + " " +  attribute.getType() + " " + attribute.getUcd() + " " + attribute.getUtype() + ")");
+			}
+			tableAttributeHandlerEntry.put(attribute.getNameattr(), attribute);
+
 		}
 	}
 
@@ -240,7 +289,7 @@ public class VOTableProduct extends File implements ProductFile {
 		Messenger.printMsg(Messenger.WARNING, "Field <" + key + "> not found");
 		return null;
 	}
-	
+
 
 	/* 
 	 * Does nothing because Savot runs in streamng mode: no rewind possible
@@ -269,7 +318,8 @@ public class VOTableProduct extends File implements ProductFile {
 				return false;
 			}
 			else {
-				return true;
+				return false;
+			//	return true;
 			}
 		}
 	}
@@ -283,12 +333,19 @@ public class VOTableProduct extends File implements ProductFile {
 		TDSet td = currentTR.getTDSet();
 		// message = "N"+(tableCount+1)+" ";
 		for (int k = 0; k < td.getItemCount(); k++) {
-			if( k >= typeEntry.size() ) {
-				throw new NullPointerException("Line #" + tableCount + ": More <TD> elements than declared <FIELDS>");
-			}
+			// No longer relevant with the ignored attribute support
+//			if( k >= typeEntry.size() ) {
+//				throw new NullPointerException("Line #" + tableCount + ": More <TD> elements than declared <FIELDS>");
+//			}
 			String type = (String) typeEntry.get(new Integer(k));
 			String tdContent = td.getContent(k).trim();
 			Object obj = null;
+			/*
+			 * No type set for ignored attributes, they are read though
+			 */
+			if( type == null ){
+				type = "String";
+			}
 			/*
 			 * Il est des gens qui mettent NULL pour signifier qu'un champ n'est pas affect� au lieu de mettre un champs vide
 			 */
@@ -311,7 +368,7 @@ public class VOTableProduct extends File implements ProductFile {
 					if( tdContent == null)
 						obj = null;
 					else
-					obj = new Integer(tdContent);
+						obj = new Integer(tdContent);
 					break;
 				case DefineType.FIELD_DOUBLE:
 					String unit = (String) typeUnit.get(new Integer(k));
@@ -349,9 +406,7 @@ public class VOTableProduct extends File implements ProductFile {
 					obj = new Short(tdContent);
 					break;
 				case DefineType.FIELD_BOOLEAN:
-					boolean[] boo = new boolean[1];
-					boo[0] = Boolean.getBoolean(tdContent);
-					obj = boo;
+					obj = Boolean.getBoolean(tdContent);
 					break;
 				case DefineType.FIELD_BYTE:
 					obj = new Byte(tdContent);
@@ -362,10 +417,10 @@ public class VOTableProduct extends File implements ProductFile {
 				default:
 					obj = new Object();
 					break;		
+				}
+			} else {
+				obj = "";
 			}
-		} else {
-			obj = "";
-		}
 			line.add(obj);
 			// message += "<"+type+" / "+tdContent+">";
 		}
@@ -428,7 +483,7 @@ public class VOTableProduct extends File implements ProductFile {
 	public LinkedHashMap<String, AttributeHandler> createTableAttributeHandlerFromResourceDesc(){
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
 		String keyChanged = "";
-		
+
 		String system, equinox, id;
 		if (voTable.getDefinitions() == null|| voTable.getDefinitions().getCoosys() == null) {
 			system = "J2000";
@@ -441,7 +496,7 @@ public class VOTableProduct extends File implements ProductFile {
 			equinox = infoCooSys.getEquinox();
 			id = infoCooSys.getId();
 		}
-		
+
 		AttributeHandler attributeEquinox = new AttributeHandler();
 		attributeEquinox.setNameorg("EQUINOX");
 		keyChanged = ChangeKey.changeKey("EQUINOX");
@@ -456,7 +511,7 @@ public class VOTableProduct extends File implements ProductFile {
 			valueEquinox = valueEquinox.substring(indexJ + 1);
 		}
 		attributeEquinox.setValue(valueEquinox);
-		
+
 		AttributeHandler attributeSystem = new AttributeHandler();
 		attributeSystem.setNameorg("SYSTEM");
 		keyChanged = ChangeKey.changeKey("SYSTEM");
@@ -466,7 +521,7 @@ public class VOTableProduct extends File implements ProductFile {
 		attributeSystem.setComment(id);
 		attributeSystem.setType("String");
 		attributeSystem.setValue(system);
-		
+
 		AttributeHandler attributeResource = new AttributeHandler();
 		// String name = infoResource.getId();
 		String name = "Resource_Name";
@@ -478,7 +533,7 @@ public class VOTableProduct extends File implements ProductFile {
 		attributeResource.setComment(getStandardDescription(currentResource.getDescription()));
 		attributeResource.setType("String");
 		attributeResource.setValue(currentResource.getName());
-		
+
 		AttributeHandler attributeDescription = new AttributeHandler();
 		name = "Description_Name";
 		attributeDescription.setNameorg(name);
@@ -488,7 +543,7 @@ public class VOTableProduct extends File implements ProductFile {
 		if( this.product.configuration != null ) attributeDescription.setCollname(this.product.configuration.getCollectionName());
 		attributeDescription.setType("String");
 		attributeDescription.setValue(getStandardDescription(currentResource.getDescription()));
-		
+
 		AttributeHandler attributeTable = new AttributeHandler();
 		name = "Table_Name";
 		attributeTable.setNameorg(name);
@@ -517,13 +572,13 @@ public class VOTableProduct extends File implements ProductFile {
 
 
 
-						/* ######################################################
-						 * 
-						 * ATTRIBUTES, CONSTRUCTOR AND METHODE FOR THE NEW LOADER
-						 * 
-			
-						 *#######################################################*/
-	
+	/* ######################################################
+	 * 
+	 * ATTRIBUTES, CONSTRUCTOR AND METHODE FOR THE NEW LOADER
+	 * 
+
+	 *#######################################################*/
+
 	/**
 	 * This creator musn't be sed to load data but just to build a map of the porduct 
 	 * @param filename
@@ -544,14 +599,14 @@ public class VOTableProduct extends File implements ProductFile {
 			IgnoreException.throwNewException(SaadaException.VOTABLE_FORMAT, "File <" + filename + "> is not a VOTable");
 		}
 	}
-	
+
 	/**
 	 * @param product
 	 * @throws AbortException 
 	 * @throws AbortException 
 	 */
 	public VOTableProduct(Product product) throws Exception{
-		
+
 		super(product.dataPointer.localFileName);
 		this.product = product;
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The XML product configuration is starting...");
@@ -580,7 +635,7 @@ public class VOTableProduct extends File implements ProductFile {
 				 * Takes the first table with fields (then possibly with data)
 				 */
 				if( savotTable.getFields().getItemCount() > 0 ) {
-						if (Messenger.debug_mode)
+					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "Take table #" + m + " <" + savotTable.getName() + ">");
 					table_found = true;
 					break;
@@ -590,7 +645,7 @@ public class VOTableProduct extends File implements ProductFile {
 				IgnoreException.throwNewException(SaadaException.VOTABLE_FORMAT, "Cannot found table with data");
 				return;
 			}
-			
+
 		}
 		else {
 			for (int m = 0; m < currentResource.getTableCount(); m++) {
@@ -613,7 +668,7 @@ public class VOTableProduct extends File implements ProductFile {
 				}
 			}
 		}
-				//if it is defined
+		//if it is defined
 		fields = savotTable.getFields();
 		this.entry = this.getTableEntry();
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Creation of the tableAttributHandler...");
@@ -621,7 +676,7 @@ public class VOTableProduct extends File implements ProductFile {
 	}
 
 
-	
+
 
 
 	/**
@@ -630,7 +685,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 */
 	public  LinkedHashMap<String, AttributeHandler>  getParam(int num_table){
 		LinkedHashMap<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();		
-		
+
 		TableSet tableSet = currentResource.getTables();
 		if( num_table >= 0 && num_table < tableSet.getItemCount()) {
 			retour.putAll(this.getParam((SavotTable) tableSet.getItemAt(num_table)));
@@ -663,7 +718,7 @@ public class VOTableProduct extends File implements ProductFile {
 				param = group.getParams();
 				for(int j=0; j<param.getItemCount(); j++){
 					SavotParam savotParam = (SavotParam) param.getItemAt(j);
-					
+
 					AttributeHandler attributeParam = new AttributeHandler(savotParam);
 					String name = savotParam.getName();
 					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Params from group " + name + " ( " + attributeParam.getNameattr() + ")");
@@ -683,7 +738,7 @@ public class VOTableProduct extends File implements ProductFile {
 			int nb_ressources = resources.size();
 			for( int r=0 ; r<nb_ressources ; r++ ) {
 				currentResource = (SavotResource) voTable.getResources().getItemAt(r);
-				
+
 				for (int m = 0; m < currentResource.getTables().getItemCount(); m++) {
 					savotTable = (SavotTable) (currentResource.getTables().getItemAt(m));
 					this.product.tableAttributeHandler = new LinkedHashMap<String, AttributeHandler>();
@@ -700,10 +755,10 @@ public class VOTableProduct extends File implements ProductFile {
 						retour.put("#" + m + " " + savotTable.getId() + " (TABLE COLUMNS)"
 								, new ArrayList<AttributeHandler>(entr_att.values()));  
 					}
-	                /*
-                     * Just one table loaded right now
-                     */
-                    break;
+					/*
+					 * Just one table loaded right now
+					 */
+					break;
 				}
 			}
 			return retour;
@@ -712,7 +767,7 @@ public class VOTableProduct extends File implements ProductFile {
 			return null;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrameForTable()
 	 */
@@ -726,7 +781,7 @@ public class VOTableProduct extends File implements ProductFile {
 		SavotCoosys infoCooSys = null;
 		if( css != null && css.getItemCount() > 0) {
 			infoCooSys = (SavotCoosys) css.getItemAt(0);
-			
+
 		}
 		/*
 		 * Otherwise take this of the 
@@ -739,7 +794,7 @@ public class VOTableProduct extends File implements ProductFile {
 		}
 		space_frame = new SpaceFrame(infoCooSys, lhm);
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductFile#setSpaceFrame()
@@ -777,7 +832,7 @@ public class VOTableProduct extends File implements ProductFile {
 	 */
 	public static void main(String[] args ) {
 		try {
-//			VOProduct fp = new VOProduct("/home/michel/saada/deploy/TestBench1_5/015.load_xml_spec/data/vospectre015.xml");
+			//			VOProduct fp = new VOProduct("/home/michel/saada/deploy/TestBench1_5/015.load_xml_spec/data/vospectre015.xml");
 			VOTableProduct fp = new VOTableProduct("/home/michel/Desktop/vizier_votable.ecl.vot");
 			LinkedHashMap<String, ArrayList<AttributeHandler>> retour = fp.getProductMap(null);
 			System.out.println(fp.getName());
@@ -790,6 +845,6 @@ public class VOTableProduct extends File implements ProductFile {
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 		}
-			
+
 	}
 }
