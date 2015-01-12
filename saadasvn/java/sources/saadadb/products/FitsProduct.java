@@ -175,9 +175,13 @@ public class FitsProduct extends File implements ProductFile{
 			 * kWIgnored are porcessed in the case of a table loading but the method can bu called in others contexts such as the
 			 * Spectrum coordinate detection
 			 */
+			boolean notIgnore = false;
 			if( this.product != null && this.product.configuration instanceof  saadadb.prdconfiguration.ConfigurationTable  ) {
 				entryconf = ((ConfigurationTable)(this.product.configuration)).getConfigurationEntry();
 				kWIgnored = entryconf.getMapping().getIgnoredAtt();
+				if( kWIgnored.contains("!") ) {
+					notIgnore = true;
+				}
 			}
 			//Creates the new list which maps entry names formated in the standard of Saada to their objects modelling entry informations
 			AttributeHandler attribute;
@@ -218,19 +222,54 @@ public class FitsProduct extends File implements ProductFile{
 				attribute = new AttributeHandler();
 				//Sets the original name of this entry to this field in the attribute object
 				attribute.setNameorg(typeValue);
+				
 				if( kWIgnored != null ) {
-					boolean ignore = false;
-					for( String ign: kWIgnored) {
-						if( typeValue.matches(ign)) {
-							if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored (pattern: " + ign + ")");
-							ignore = true;
-							break;
+					boolean ignore = false;		
+					// ignore attributes must be kept :=)
+					if( notIgnore ) {
+						ignore = true;
+						for( String ign: kWIgnored) {
+							if( ign.equals("!")) {
+								continue;
+							} 
+							if( typeValue.matches(ign) ) {
+								ignore = false;
+								break;
+							}
 						}
+					// ignore attributes must be ignored 
+					} else {
+						ignore = false;
+						for( String ign: kWIgnored) {
+							if( ign.equals("!")) {
+								continue;
+							} 
+							if( typeValue.matches(ign) ) {
+								ignore = true;
+								break;
+							}
+						}					
 					}
 					if( entryconf != null && ignore ){
+						if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored");
 						entryconf.addIgnoredCol(j);
 						continue;
 					}
+
+//					
+//				if( kWIgnored != null ) {
+//					boolean ignore = false;
+//					for( String ign: kWIgnored) {
+//						if( typeValue.matches(ign)) {
+//							if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The column : "+typeValue+" is ignored (pattern: " + ign + ")");
+//							ignore = true;
+//							break;
+//						}
+//					}
+//					if( entryconf != null && ignore ){
+//						entryconf.addIgnoredCol(j);
+//						continue;
+//					}
 				}
 
 				//Transforms this original name according to the Saada standard
