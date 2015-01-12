@@ -126,7 +126,7 @@ abstract public class DbmsWrapper {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Populate DB " + test_base);
 			Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode())	;
-			loadSQLProcedures(stmt);	
+			loadSQLProcedures(stmt,connection ,test_base);	
 			/*
 			 * Create a table
 			 */
@@ -1285,15 +1285,55 @@ public abstract String getDBTypeFromVOTableType(String dataType, final int array
 
 	/**
 	 * Works with MySQl which can not CREATE or REPLACE a function
+	 * @param connection 
+	 * @param connection 
 	 * @return
 	 * @throws Exception 
 	 */
+	protected String[] removeProc(Connection connection, String dbName) throws Exception {
+		return new String[0];
+	}
 	protected String[] removeProc() throws Exception {
 		return new String[0];
 	}
 	/**
+	 * @param connection 
+	 * @param stmt 
+	 * @param connection 
 	 * @throws Exception
 	 */
+	public void loadSQLProcedures(Statement stmt, Connection connection, String dbName) throws Exception {
+		SQLTable.beginTransaction();
+		this.installLanguage();
+		connection.setAutoCommit(true);
+		String[] rp = this.removeProc(connection, dbName);
+		for( String p: rp) {
+			stmt.executeUpdate(p);
+			//SQLTable.addQueryToTransaction(p);
+		}
+		File bf = this.getProcBaseRef();
+		if( bf != null ) {
+			String[] fs = bf.list();
+			Messenger.printMsg(Messenger.TRACE, "Reading SQL proc files from " + bf.getAbsolutePath());
+			for( String f: fs ) {
+				if( f.endsWith(".sql") ) {
+					if (Messenger.debug_mode)
+						Messenger.printMsg(Messenger.DEBUG, "Reading  SQL file " + f);
+					BufferedReader br = new BufferedReader(new FileReader(bf.getAbsolutePath() + Database.getSepar() + f) );
+					String str;
+					StringBuffer sb = new StringBuffer();
+					while( (str = br.readLine()) != null) {
+						sb.append(str + "\n");
+					}
+					br.close();
+					stmt.executeUpdate(sb.toString());
+					//SQLTable.addQueryToTransaction(sb.toString());
+				}
+			}
+		}
+	//	SQLTable.commitTransaction();
+	}
+
 	public void loadSQLProcedures() throws Exception {
 		SQLTable.beginTransaction();
 		this.installLanguage();
@@ -1321,34 +1361,6 @@ public abstract String getDBTypeFromVOTableType(String dataType, final int array
 			}
 		}
 		SQLTable.commitTransaction();
-	}
-
-	public void loadSQLProcedures(Statement stmt) throws Exception {
-		File bf = this.getProcBaseRef();
-		if( bf != null ) {
-			this.installLanguage(stmt);
-			String[] rp = this.removeProc();
-			for( String p: rp) {
-				stmt.executeUpdate(p);
-				//SQLTable.addQueryToTransaction(p);
-			}
-			String[] fs = bf.list();
-			Messenger.printMsg(Messenger.TRACE, "Reading SQL proc files from " + bf.getAbsolutePath());
-			for( String f: fs ) {
-				if( f.endsWith(".sql") ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Reading  SQL file " + f);
-					BufferedReader br = new BufferedReader(new FileReader(bf.getAbsolutePath() + Database.getSepar() + f) );
-					String str;
-					StringBuffer sb = new StringBuffer();
-					while( (str = br.readLine()) != null) {
-						sb.append(str + "\n");
-					}
-					br.close();
-					stmt.executeUpdate(sb.toString());
-				}
-			}
-		}
 	}
 
 	/**

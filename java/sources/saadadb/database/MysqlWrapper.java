@@ -796,7 +796,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	 */
 	protected String[] removeProc() throws Exception {
 		SQLQuery sq = new SQLQuery("SHOW FUNCTION STATUS WHERE Db = '"
-				+ Database.getConnector().getDbname() + "'");
+				+Database.getConnector().getDbname() + "'");
 		ResultSet rs = sq.run();
 		ArrayList<String> retour = new ArrayList<String>();
 		while (rs.next()) {
@@ -805,7 +805,19 @@ public class MysqlWrapper extends DbmsWrapper {
 		sq.close();
 		return retour.toArray(new String[0]);
 	}
-
+	
+	public String[]  removeProc(Connection connection, String dbname) throws Exception {
+		Statement stmt = connection.createStatement(this.getDefaultScrollMode(), this.getDefaultConcurentMode());
+		ResultSet rs= stmt.executeQuery("SHOW FUNCTION STATUS WHERE Db = '" + dbname + "'");
+		ArrayList<String> retour = new ArrayList<String>();
+		while( rs.next() ) {
+			retour.add("DROP FUNCTION "+ rs.getString("Db") + "." + rs.getString("Name"));
+		}
+		stmt.close();
+		return retour.toArray(new String[0]);
+	
+	
+	}
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getConditionHelp()
 	 */
@@ -821,20 +833,6 @@ public class MysqlWrapper extends DbmsWrapper {
 		return helpItems;
 	}
 
-	public static void main(String[] args) {
-		try {
-			ArgsParser ap = new ArgsParser(args);
-			Messenger.debug_mode = true;
-			DbmsWrapper dbmswrapper = MysqlWrapper.getWrapper("localhost", "");
-			dbmswrapper.setAdminAuth("saadmin", ap.getPassword());
-			dbmswrapper.checkAdminPrivileges("/tmp", false);
-			dbmswrapper.setReaderAuth("reader", "");
-			dbmswrapper.checkReaderPrivileges();
-		} catch (Exception e) {
-			Messenger.printStackTrace(e);
-			System.err.println(e.getMessage());
-		}
-	}
 
 	@Override
 	public String getDBTypeFromVOTableType(
@@ -872,4 +870,18 @@ public class MysqlWrapper extends DbmsWrapper {
 		}
 	}
 
+	public static void main(String[] args) {
+		try {
+			ArgsParser ap = new ArgsParser(args);
+			Messenger.debug_mode = true;
+			DbmsWrapper dbmswrapper = MysqlWrapper.getWrapper("localhost", "");
+			dbmswrapper.setAdminAuth("root", ap.getPassword());
+			dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.setReaderAuth("reader", "");
+			dbmswrapper.checkReaderPrivileges();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			System.err.println(e.getMessage());
+		}
+	}
 }

@@ -55,7 +55,7 @@ public class TapToDBTransaction {
 	 * @throws DBException 
 	 */
 	public void beginTransaction() throws DBException {
-		try {
+		try {	
 			connection = Database.getConnector().getNewConnection();
 			connection.setAutoCommit(false);
 		} catch (Exception e) {
@@ -73,6 +73,7 @@ public class TapToDBTransaction {
 			insertStatements.add(currentStatement);
 			needNewStatement = true;
 		}
+		Messenger.locateCode("CRATE TABLE\n"+sql);
 		executeUpdate(sql);
 	}
 
@@ -84,9 +85,14 @@ public class TapToDBTransaction {
 		if (!sql.isEmpty() && sql != null) {
 			try {
 				//System.out.println("Execute Update : " + sql);
+				if(connection == null || connection.isClosed()) {
+					beginTransaction();
+				}
+					
 				connection.createStatement().executeUpdate(sql);
+				
 			} catch (SQLException e) {
-			throw new DBException("Failed to execute the Query");
+			throw new DBException("Failed to execute the Query:"+e.getMessage());
 			}
 		} else {
 			Messenger.locateCode("Can't execute Update, sql string is Null or empty");
@@ -101,7 +107,7 @@ public class TapToDBTransaction {
 	 */
 	public PreparedStatement getPreparedStatement(String sql) throws SQLException {
 		if (needNewStatement) {
-		//	System.out.println("Requesting new PreparedStatement to the connection");
+			//System.out.println("Requesting new PreparedStatement to the connection\n"+sql);
 			currentStatement = connection.prepareStatement(sql);
 			needNewStatement = false;
 		}
@@ -167,5 +173,15 @@ public class TapToDBTransaction {
 		// Spooler.getSpooler().give(connection);
 		if (connection != null && !connection.isClosed())
 			connection.close();
+	}
+	
+	/**
+	 * Rollback the current DB transaction
+	 * @throws Exception
+	 */
+	public void rollback() throws Exception {
+		if (connection != null && !connection.isClosed()) {
+			connection.rollback();
+		}
 	}
 }

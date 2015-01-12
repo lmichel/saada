@@ -48,6 +48,7 @@ public class CartRequest extends VORequest{
 
 	@Override
 	public void runQuery() throws Exception {
+
 		/*
 		 * This request run multiple and various queries which run by the formator because queries are
 		 * considered as product URIs

@@ -131,7 +131,6 @@ public class VOResource {
 			}
 			String group_name = ((SavotTD)(tdv.get(0))).getContent();
 			Set<UTypeHandler> guth = this.groups.get(group_name);
-			Messenger.printMsg(Messenger.TRACE, "TEST BON CODE");
 			
 			if( guth == null ) {
 				guth = new LinkedHashSet<UTypeHandler>();

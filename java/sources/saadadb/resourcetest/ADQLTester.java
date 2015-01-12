@@ -3,8 +3,8 @@ package saadadb.resourcetest;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.query.result.SaadaQLResultSet;
-import saadadb.vo.ADQLExecutor;
 import saadadb.vo.tap_old.TAPToolBox;
+import tap.ADQLExecutor;
 import adqlParser.parser.AdqlParser;
 
 public class ADQLTester {

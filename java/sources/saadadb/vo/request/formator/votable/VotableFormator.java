@@ -543,7 +543,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		link.setHref(Database.getUrl_root() + "/getinstance?oid=${" + key_field + "}");
 		links.addItem(link);
 		field = new SavotField();
-		field.setName("Saada Anchor");
+		field.setName("SaadaAnchor");
 		field.setUcd("meta.ref.url");
 		field.setDataType("char");
 		field.setArraySize("*");
