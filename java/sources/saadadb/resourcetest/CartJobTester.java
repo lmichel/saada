@@ -37,8 +37,8 @@ public class CartJobTester {
 		//lstParam.put("cart", "{\"EPIC_IMAGE\":{\"queries\":[{\"name\":\"query_1\",\"uri\":\"Select IMAGE From * In EPIC\nLimit 10\",\"relations\":[]}],\"files\":[]},\"CATALOGUE_ENTRY_CatalogueEntry\":{\"queries\":[{\"name\":\"query_2\",\"uri\":\"Select ENTRY From CatalogueEntry In CATALOGUE\nLimit 10\",\"relations\":[\"any-relations\"]}],\"files\":[]},\"CATALOGUE_FLATFILE\":{\"queries\":[{\"name\":\"query_3\",\"uri\":\"Select FLATFILE From * In CATALOGUE\nLimit 10\",\"relations\":[]}],\"files\":[]}}");
 		lstParam.put("format", "json");
 		lstParam.put("phase", "RUN");
-		CartJob cartJob = new CartJob(lstParam);
-		cartJob.work();
+//		CartJob cartJob = new CartJob(lstParam);
+//		cartJob.work();
 		Database.close();
 	}
 
