@@ -159,7 +159,17 @@ public class ClassMerger {
 	 * @throws Exception
 	 */
 	public static String getCastedSQLValue(AttributeHandler ahOrg, String finalType)throws Exception{
-		return getCastedSQLValue(ahOrg.getValue(), getDownCasting(ahOrg, finalType));
+		String retour =  getCastedSQLValue(ahOrg.getValue(), getDownCasting(ahOrg, finalType));
+		if( finalType.equals("boolean")){
+			String value = ahOrg.getValue();
+			// TODO make sure that works as expected in any case 
+			if( value.startsWith("t") || value.startsWith("T") ) {
+				retour =Database.getWrapper().getBooleanAsString(true);
+			} else {
+				retour =Database.getWrapper().getBooleanAsString(false);
+			}
+		}
+		return retour;
 	}
 
 	/**
