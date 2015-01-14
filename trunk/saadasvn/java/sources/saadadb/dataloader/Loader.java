@@ -17,7 +17,6 @@ import saadadb.prdconfiguration.ConfigurationDefaultHandler;
 import saadadb.products.DataResourcePointer;
 import saadadb.util.Messenger;
 import saadadb.util.RegExp;
-import sun.security.pkcs.ParsingException;
 
 /**
  * @author michel
