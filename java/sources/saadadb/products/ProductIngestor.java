@@ -669,7 +669,7 @@ public class ProductIngestor {
 		//this.saadaInstance.store(colwriter, buswriter);
 		this.saadaInstance.storeCollection(colwriter);
 		/*
-		 * The SQL line for business attribute is build without passing by the instance? 
+		 * The SQL line for business attributes is build without passing by the instance? 
 		 * That avoids a double cast on the values
 		 */
 		for(AttributeHandler ah: this.orderedBusinessAttributes) {
