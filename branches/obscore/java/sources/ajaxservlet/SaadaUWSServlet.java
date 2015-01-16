@@ -35,7 +35,6 @@ import uws.job.serializer.JSONSerializer;
 import uws.job.serializer.UWSSerializer;
 import uws.job.serializer.XMLSerializer;
 import uws.job.user.JobOwner;
-import uws.service.AbstractUWS;
 import uws.service.UWS;
 import uws.service.UWSFactory;
 import uws.service.UWSUrl;
