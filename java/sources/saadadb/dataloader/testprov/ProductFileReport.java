@@ -43,6 +43,7 @@ public class ProductFileReport {
 
 			ProductBuilder product = null;
 			DataFile df = SchemaMapper.getDataFileInstance(drp.getAbsolutePath(), mapping);
+
 			MappingReport report = null;
 			switch( Category.getCategory(ap.getCategory()) ) {
 			case Category.TABLE: product = new TableBuilder(df, mapping);
