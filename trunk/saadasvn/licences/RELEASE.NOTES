@@ -1,9 +1,13 @@
 -------------------------------------------------
-Version Saada1.8.0.build2
+Version Saada1.8.0.build8
 
 L. MICHEL
-March 2014
+January 2015
 -------------------------------------------------
+
+Saada 1.8.0.build8
+------------------
+Support of "!" as fort element of the ignore parameter (take instead of ignoring)
 
 Saada 1.8.0.build2
 ------------------
