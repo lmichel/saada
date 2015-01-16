@@ -19,7 +19,6 @@ import tap.metadata.TAPTypes;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 
 /**
  * 
@@ -246,7 +245,7 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 					break;
 				case "float":
 					if (isNullOrEmpty)
-						statement.setNull(i, Type.FLOAT);
+						statement.setNull(i, Types.FLOAT);
 					else
 						statement
 								.setFloat(
@@ -263,7 +262,7 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 					break;
 				case "double":
 					if (isNullOrEmpty)
-						statement.setNull(i, Type.DOUBLE);
+						statement.setNull(i, Types.DOUBLE);
 					else
 						statement.setDouble(
 								i,
