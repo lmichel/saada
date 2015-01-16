@@ -7,8 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.connector.ClientAbortException;
-
 import saadadb.database.Database;
 import saadadb.util.Messenger;
 import saadadb.vo.cart.CartJob;
@@ -204,7 +202,7 @@ public class CartBuilder extends SaadaUWSServlet {
 
 			} catch (UWSException ex) {
 				sendError(ex, req, user, uwsAction, resp);
-			} catch (ClientAbortException cae) {
+			} catch (Exception cae) {
 				logger.info("Request aborted by the user !");
 				logger.httpRequest(
 						req,
