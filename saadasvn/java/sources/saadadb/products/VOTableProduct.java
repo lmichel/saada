@@ -318,8 +318,7 @@ public class VOTableProduct extends File implements ProductFile {
 				return false;
 			}
 			else {
-				return false;
-			//	return true;
+				return true;
 			}
 		}
 	}
