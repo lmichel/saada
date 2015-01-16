@@ -14,13 +14,10 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.connector.ClientAbortException;
 
-import saadadb.util.Messenger;
 import uws.AcceptHeader;
 import uws.UWSException;
 import uws.UWSExceptionFactory;
@@ -38,6 +35,7 @@ import uws.job.serializer.JSONSerializer;
 import uws.job.serializer.UWSSerializer;
 import uws.job.serializer.XMLSerializer;
 import uws.job.user.JobOwner;
+import uws.service.AbstractUWS;
 import uws.service.UWS;
 import uws.service.UWSFactory;
 import uws.service.UWSUrl;
@@ -335,7 +333,7 @@ public abstract class SaadaUWSServlet extends SaadaServlet implements UWS, UWSFa
 
 		}catch(UWSException ex){
 			sendError(ex, req, user, uwsAction, resp);
-		}catch(ClientAbortException cae){
+		}catch(Exception cae){
 			logger.info("Request aborted by the user !");
 			logger.httpRequest(req, user, uwsAction, HttpServletResponse.SC_OK, "[Client abort => ClientAbortException]", null);
 		}catch(Throwable t){
