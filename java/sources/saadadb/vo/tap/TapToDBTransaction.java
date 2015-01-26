@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import ajaxservlet.json.GetMeta;
 import saadadb.database.Database;
 import saadadb.util.Messenger;
 import tap.db.DBException;
@@ -55,7 +56,7 @@ public class TapToDBTransaction {
 	 * @throws DBException 
 	 */
 	public void beginTransaction() throws DBException {
-		try {	
+		try {
 			connection = Database.getConnector().getNewConnection();
 			connection.setAutoCommit(false);
 		} catch (Exception e) {
@@ -73,7 +74,6 @@ public class TapToDBTransaction {
 			insertStatements.add(currentStatement);
 			needNewStatement = true;
 		}
-		Messenger.locateCode("CRATE TABLE\n"+sql);
 		executeUpdate(sql);
 	}
 
@@ -81,18 +81,17 @@ public class TapToDBTransaction {
 	 * Execute an ExecuteUpdate if the sql query is not empty
 	 * @param sql
 	 */
-	public void executeUpdate(String sql) throws DBException{
+	public void executeUpdate(String sql) throws DBException {
 		if (!sql.isEmpty() && sql != null) {
 			try {
-				//System.out.println("Execute Update : " + sql);
-				if(connection == null || connection.isClosed()) {
+
+				if (connection == null || connection.isClosed()) {
 					beginTransaction();
 				}
-					
+
 				connection.createStatement().executeUpdate(sql);
-				
-			} catch (SQLException e) {
-			throw new DBException("Failed to execute the Query:"+e.getMessage());
+			} catch (Exception e) {
+				throw new DBException(e.getMessage());
 			}
 		} else {
 			Messenger.locateCode("Can't execute Update, sql string is Null or empty");
@@ -107,7 +106,7 @@ public class TapToDBTransaction {
 	 */
 	public PreparedStatement getPreparedStatement(String sql) throws SQLException {
 		if (needNewStatement) {
-			//System.out.println("Requesting new PreparedStatement to the connection\n"+sql);
+			// System.out.println("Requesting new PreparedStatement to the connection\n"+sql);
 			currentStatement = connection.prepareStatement(sql);
 			needNewStatement = false;
 		}
@@ -119,18 +118,25 @@ public class TapToDBTransaction {
 	 * @throws SQLException
 	 */
 	public void commit() throws SQLException {
-	//	System.out.println("execute Insert Statements");
+		// System.out.println("execute Insert Statements");
 		if (currentStatement != null) {
 			insertStatements.add(currentStatement);
+		}
+		if (connection == null || connection.isClosed()) {
+			try {
+				beginTransaction();
+			} catch (DBException e) {
+				throw new SQLException("Failed to open a DB connetion: " + e.getMessage(), e);
+			}
 		}
 		for (PreparedStatement p : insertStatements) {
 			p.executeBatch();
 		}
-	//	System.out.println("execute TapQuery " + tapQuery);
+		// System.out.println("execute TapQuery " + tapQuery);
 		if (tapQuery != null && !tapQuery.isEmpty()) {
 			resultset = connection.createStatement().executeQuery(tapQuery);
 		}
-		//System.out.println("Commit");
+		// System.out.println("Commit");
 		connection.commit();
 		tapQueryExecuted = true;
 	}
@@ -151,9 +157,9 @@ public class TapToDBTransaction {
 		if (tapQueryExecuted) {
 			if (connection != null && !connection.isClosed())
 				connection.close();
-		} 
-		//else
-//			System.out.println("Not closing, there are still queries to process");
+		}
+		// else
+		// System.out.println("Not closing, there are still queries to process");
 	}
 
 	/**
@@ -169,12 +175,12 @@ public class TapToDBTransaction {
 	 * @throws Exception
 	 */
 	public void forceCloseTransaction() throws Exception {
-
+		Messenger.locateCode("FORCE CLOSE TRANSACTION:");
 		// Spooler.getSpooler().give(connection);
 		if (connection != null && !connection.isClosed())
 			connection.close();
 	}
-	
+
 	/**
 	 * Rollback the current DB transaction
 	 * @throws Exception

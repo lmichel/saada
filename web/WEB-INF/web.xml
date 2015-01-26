@@ -487,7 +487,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>TapService</servlet-name>
-    <url-pattern>/tapservice/*</url-pattern>
+    <url-pattern>/tap/*</url-pattern>
   </servlet-mapping>
    <!-- END OF DEBUG/TEST -->
 </web-app>

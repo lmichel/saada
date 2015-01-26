@@ -13,7 +13,6 @@ import uws.service.backup.DefaultUWSBackupManager;
 import uws.service.backup.UWSBackupManager;
 import adql.parser.QueryChecker;
 import adql.translator.ADQLTranslator;
-import adql.translator.SaadaSQLTranslator;
 
 public class TapFactory extends AbstractTAPFactory<ResultSet> {
 

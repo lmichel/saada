@@ -253,11 +253,11 @@ public abstract class SchemaMapper {
 		/*
 		 * Check the class name
 		 */
-		String message = "";
+		StringBuffer message = new StringBuffer();
 		if( !class_name.matches(RegExp.CLASSNAME) ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Class name must match " + RegExp.CLASSNAME);
 		} else if( !Database.getCachemeta().isNameAvailable(class_name, message) )  {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message.toString());
 		}
 
 		Messenger.printMsg(Messenger.TRACE,"Creation of the new class <" + class_name + ">");

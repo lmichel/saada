@@ -192,11 +192,11 @@ public class CollectionManager extends EntityManager {
 	 * @throws FatalException
 	 */
 	protected void create(String comment) throws FatalException  {
-		String message = "";
+		StringBuffer message= new StringBuffer();
 		if( !this.name.matches(RegExp.COLLNAME) ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Collection  name must match " + RegExp.COLLNAME);
 		} else if( !Database.getCachemeta().isNameAvailable(this.name, message) )  {
-			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, message.toString());
 		} else {
 			Messenger.setMaxProgress(2 + Category.NB_CAT);
 			Messenger.printMsg(Messenger.TRACE, "Create " + this.name);
