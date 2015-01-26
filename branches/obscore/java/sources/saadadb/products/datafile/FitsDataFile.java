@@ -856,7 +856,7 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	@Override
 	public  void mapAttributeHandler() {
-		System.out.println("@@@@@@@@@ Fits mapAttributeHandler");
+		//System.out.println("@@@@@@@@@ Fits mapAttributeHandler");
 		this.attributeHandlers = new LinkedHashMap<String, AttributeHandler>();
 		this.addFirstHDU();
 		int cat_prd = -1;
@@ -896,7 +896,7 @@ public final class FitsDataFile extends FSDataFile{
 				}
 			}
 		}
-		System.out.println("@@@@@@@@@ Fits mapAttributeHandler FINI");
+		//System.out.println("@@@@@@@@@ Fits mapAttributeHandler FINI");
 	}
 
 	/**
@@ -904,7 +904,7 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	public void addFirstHDU() {
 
-		System.out.println(" addFirstHDU" + this.attributeHandlers.size());
+		//System.out.println(" addFirstHDU" + this.attributeHandlers.size());
 		Header header = this.firstHeader.getHeader();
 		Cursor it = header.iterator();
 

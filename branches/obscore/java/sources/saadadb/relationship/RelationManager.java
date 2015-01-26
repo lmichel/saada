@@ -195,11 +195,11 @@ public class RelationManager extends  EntityManager {
 	 * @throws AbortException
 	 */
 	public void create() throws AbortException {
-		String message = "";
+		StringBuffer message = new StringBuffer() ;
 		if( !this.name.matches(RegExp.CLASSNAME) ) {
 			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation  name must match " + RegExp.CLASSNAME);
 		} else if( !Database.getCachemeta().isNameAvailable(this.name, message) )  {
-			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, message);
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, message.toString());
 		} else {
 			try {
 				Messenger.setMaxProgress(3);

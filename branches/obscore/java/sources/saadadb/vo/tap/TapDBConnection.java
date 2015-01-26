@@ -10,7 +10,10 @@ import java.util.Iterator;
 import saadadb.database.Database;
 import saadadb.database.MysqlWrapper;
 import saadadb.exceptions.FatalException;
+import saadadb.util.ChangeKey;
+import saadadb.util.DBUtils;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.enums.DBType;
 import tap.db.DBConnection;
 import tap.db.DBException;
 import tap.metadata.TAPColumn;
@@ -99,10 +102,10 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 		} catch (Exception e) {
 			try {
 				transactionMaker.forceCloseTransaction();
-				Messenger.locateCode("Connection to DB closed due to errors: " + e.getMessage());
+			//	Messenger.locateCode("Connection to DB closed due to errors: " + e.getMessage());
 			} finally {
 				throw new DBException(
-						"Failed to upload the table or execute the queries to the DB",
+						"Failed to upload the table or execute the queries to the DB: "+e.getMessage(),
 						e);
 			}
 		}
@@ -111,13 +114,11 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	@Override
 	public void createSchema(String schemaName) throws DBException {
 		// System.out.println("TabSaadaDBConnection#createSchema");
-
 	}
 
 	@Override
 	public void dropSchema(String schemaName) throws DBException {
 		// System.out.println("TabSaadaDBConnection#dropSchema");
-
 	}
 
 	/**
@@ -126,20 +127,25 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	 */
 	@Override
 	public void createTable(TAPTable table) throws DBException {
-		// System.out.println("TabSaadaDBConnection#createTable");
 
 		int NO_SIZE = TAPTypes.NO_SIZE; // NO_SIZE (-1) & STAR_SIZE (12345) are values used by the TAP service
 		// to determine if the arraysize of a field contains a * or nothing
 		int STAR_SIZE = TAPTypes.STAR_SIZE;
 		StringBuffer fmt = new StringBuffer("(");
+		StringBuffer message = new StringBuffer();
+
+		// check if the table we want to upload already exists in the DB
+		if (!Database.getCachemeta().isNameAvailable(table.getName(), message)) {
+			throw new DBException("table identifier '" + table.getName()
+					+ "' is a reserved word: " + message.toString());
+		}
 		Iterator<TAPColumn> it = table.getColumns();
 		while (it.hasNext()) {
 			TAPColumn col = it.next();
 			try {
 				// Build ' "column name" datatype, ' String
-				fmt
-						.append("")
-						.append(col.getDBName())
+				fmt.append("")
+				.append((col.getName()))
 						.append(" ")
 						.append(
 								Database.getWrapper().getDBTypeFromVOTableType(
@@ -155,17 +161,17 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 				fmt.append(", ");
 		}
 		fmt.append(")");
-
 		try {
-			String sql = Database.getWrapper().getCreateTempoTable(
-					"" + table.getName() + "",
-					fmt.toString());
+
+			String sql = Database.getWrapper().getCreateTempoTable(table.getName(), fmt.toString());
 			// SQLite needs the temporary table to be created explicitly as it checks if the table exists when compiling a prepared
 			// statement
 			transactionMaker.createTable(sql);
 		} catch (Exception e) {
 			throw new DBException("Unable to generate the table creation query for table '"
-					+ table.getName() + "'", e);
+					+ table.getName() + "' : " + e.getMessage(), e);
+			// throw new DBException("Unable to generate the table creation query for table '"
+			// + table.getName() + "'", e);
 		}
 	}
 
@@ -176,7 +182,6 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	@Override
 	public void insertRow(SavotTR row, TAPTable table) throws DBException {
 
-		// System.out.println("TabSaadaDBConnection#insertRow");
 		TDSet cells = row.getTDs();
 		Iterator<TAPColumn> it = table.getColumns();
 		TAPColumn col;
@@ -187,20 +192,17 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 		// Get the Data to insert
 		// INSERT INTO TABLENAME ( COLNAME1, COLNAME2 ...) VALUES (?, ? ...)
 		StringBuffer sql = new StringBuffer();
-		try {
-			sql.append("INSERT INTO ");
-			if (Database.getWrapper() instanceof MysqlWrapper) {
-				sql.append(Database.getTempodbName()).append(".");
+					sql.append("INSERT INTO ");
+			if (DBUtils.getDBType()==DBType.MYSQL) {
+				sql.append(DBUtils.getTempoDBName()).append(".");
 			}
 			sql.append(table.getName()).append(" (");
-		} catch (FatalException e) {
-			throw new DBException("Couldn't get tempo DB name: " + e.getMessage());
-		}
+		
 		while (it.hasNext()) {
 			if (nb > 0)
 				sql.append(" ,");
 			col = it.next();
-			sql.append("").append(col.getName()).append(" ");
+			sql.append("").append((col.getName())).append(" ");
 			sqlValues.add(cells.getContent(nb));
 			columnDatatype.add(col.getVotType().datatype);
 			nb++;
@@ -292,6 +294,7 @@ public class TapDBConnection implements DBConnection<ResultSet> {
 	 */
 	@Override
 	public void dropTable(TAPTable table) throws DBException {
+		Messenger.locateCode("Drop table : "+table.getName());
 		try {
 			String sql = Database.getWrapper().getDropTempoTable(table.getName());
 			transactionMaker.executeUpdate(sql);

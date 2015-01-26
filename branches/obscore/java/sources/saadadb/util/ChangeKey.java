@@ -46,6 +46,7 @@ public class ChangeKey {
     		return retour;
     }
 
+   
     public static String changeKeyHIERARCH(String key){
         String retour = key.replaceAll(" ","_");
         if( retour.equals(key) == false ) {

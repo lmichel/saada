@@ -1,6 +1,6 @@
 # This file can be put at the webapp root to indicate the saadadb name of the current application
 #saadadbname=saadasvn
-saadadbname=psql
+saadadbname=saadamysql
 #saadadbname=BENCH2_0_MSQL
 #saadadbname=SQLITE
 #urlroot=http://saada.unistra.fr/Saada
