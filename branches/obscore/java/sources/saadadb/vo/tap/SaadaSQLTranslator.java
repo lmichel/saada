@@ -201,10 +201,6 @@ public class SaadaSQLTranslator implements ADQLTranslator {
 			for (int i = 0; i < list.size(); i++) {
 				sql += ((i == 0) ? "" : (" " + list.getSeparator(i) + " "))
 						+ translate(list.get(i));
-				// sql += ((i == 0) ? "" : (""))
-				// + translate(list.get(i));
-				// System.out.println("class "+ list.get(i).getClass());
-
 			}
 		} finally {
 			inSelect = oldInSelect;
