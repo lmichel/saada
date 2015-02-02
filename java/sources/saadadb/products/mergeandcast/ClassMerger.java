@@ -27,8 +27,20 @@ import saadadb.util.SaadaConstant;
  */
 public class ClassMerger {
 	ProductBuilder productBuilder;
+	/**
+	 * avoid multiple Wrapper accesses
+	 */
+	public static final String ASCIINULL;
+	static {
+		String asciinull = "";
+		try {
+			asciinull = Database.getWrapper().getAsciiNull();
+		} catch(Exception e){
 
-
+		}
+		ASCIINULL = asciinull;
+	}
+	
 	public ClassMerger(ProductBuilder productBuilder) {
 		this.productBuilder = productBuilder;
 	}
@@ -125,7 +137,7 @@ public class ClassMerger {
 	public static String getCastedSQLValue(Object value, DownCasting downCasting) throws Exception{
 		String sValue  = value.toString();
 		if( sValue.equals("Infinity")          || sValue.equals("NaN") || value.equals("") ||
-			sValue.equals(SaadaConstant.NOTSET)|| sValue.equals(SaadaConstant.STRING) ||
+				sValue.equals(SaadaConstant.NOTSET)|| sValue.equals(SaadaConstant.STRING) ||
 				sValue.equalsIgnoreCase("NULL")|| sValue.equals("2147483647") || sValue.equals("9223372036854775807")) {
 			return Database.getWrapper().getAsciiNull();
 		}
@@ -146,7 +158,7 @@ public class ClassMerger {
 			return (sValue.startsWith("t") || sValue.startsWith("T"))? Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(sValue))
 					: Database.getWrapper().getBooleanAsString(false);
 		default:
-			return Database.getWrapper().getAsciiNull();
+			return ASCIINULL;
 		}
 
 	}
@@ -168,9 +180,11 @@ public class ClassMerger {
 			} else {
 				retour =Database.getWrapper().getBooleanAsString(false);
 			}
-		}
+		} 
 		return retour;
 	}
+
+
 
 	/**
 	 * return the down casting mode to be applied to the value of ahOrg for making its SQL expression 

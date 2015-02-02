@@ -526,7 +526,10 @@ public abstract class ProductBuilder {
 					}
 				}
 				if( mappingSingleHandler == null ){
-					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + ahname + " used to map the column " + colmunName + " does not exist");					
+					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + ahname + " used to map the column " + colmunName + " does not exist");					
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeUserMappingMsg("Attribute " + ahname + " used to map the column " + colmunName + " does not exist");
+					return retour;
 				}
 				/*
 				 * Build a ColumnExpressionSetter using tehe builder AH
@@ -567,7 +570,10 @@ public abstract class ProductBuilder {
 				return retour;
 				}
 			} else {
-				FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column mapping " + columnMapping + " not understood");									
+				//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column mapping " + columnMapping + " not understood");		
+				retour = new ColumnExpressionSetter(colmunName);
+				retour.completeUserMappingMsg("Column mapping " + columnMapping + " not understood");
+				return retour;
 			}
 		}
 		return null;

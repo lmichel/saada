@@ -11,7 +11,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.util.Messenger;
+import saadadb.vo.tap.formatters.SaadaResultSet2VotableFormatter;
 import tap.ServiceConnection;
 import tap.TAPFactory;
 import tap.file.LocalTAPFileManager;
@@ -62,12 +64,13 @@ public class TapServiceConnection implements ServiceConnection<ResultSet> {
 		};
 		properties = TapProperties.getProperties();
 		tapFactory = new TapFactory(this);
-		fileManager = new LocalTAPFileManager(new File("/home/hahn/tapfile"));
+		fileManager = new LocalTAPFileManager(new File(Repository.getVoreportsPath()));
 		logger = new TapLog();
 		
 		//Output Formats
 		formats = new ArrayList<OutputFormat<ResultSet>>();
-		formats.add(new ResultSet2VotableFormatter(this));
+		// Using overloaded class in order to do Saada specific formating
+		formats.add(new SaadaResultSet2VotableFormatter(this));
 		formats.add(new ResultSet2JsonFormatter(this));
 		formats.add(new ResultSet2TextFormatter(this));
 		/*
