@@ -35,7 +35,7 @@ import cds.savot.model.SavotParam;
  * 
  * 02/1014: constantValue Flag used by  {@link ColumnMapping}
  * 03/1014: Accessors give the existence of a valid value for the field unit value, ucd and utype
-
+ * 02/2015: Check the consistency of the value set in the object
  */
 public class AttributeHandler implements Serializable , Cloneable, CardDescriptor, Comparable{
 	static final DecimalFormat exp =  new DecimalFormat("0.00E00");
@@ -72,6 +72,14 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	 */
 	public boolean constantValue = false; 
 	public AttributeHandler(){}
+
+	public static final Pattern NUMERIC_PATTERN	= Pattern.compile("^" + RegExp.FITS_KEYWORD 
+			+ "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
+			+ ")|(?:" + RegExp.FITS_FLOAT_VAL
+			+ ")|(?:" + RegExp.FITS_INT_VAL
+			+ "))\\s*"
+			+ "((?:"  + RegExp.FITS_COMMENT + ")?)");
 
 	/**
 	 * Build the attribute handler from a SAVoT field
@@ -139,13 +147,6 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	 */
 	public AttributeHandler(HeaderCard card) {
 		String strcard = card.toString().trim();
-		String regexp = "^" + RegExp.FITS_KEYWORD 
-				+ "((?:"  + RegExp.FITS_STR_VAL 
-				+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
-				+ ")|(?:" + RegExp.FITS_FLOAT_VAL
-				+ ")|(?:" + RegExp.FITS_INT_VAL
-				+ "))\\s*"
-				+ "((?:"  + RegExp.FITS_COMMENT + ")?)";
 		/*
 		 * Preliminary test to discard trivial bad cards
 		 * save time and avoid un-relevant messages
@@ -153,19 +154,23 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		if( strcard.length() == 0 || strcard.indexOf("=") == -1 ||strcard.startsWith("HISTORY ") ||strcard.startsWith("COMMENT ")) {
 			return;
 		}
-		Pattern p = Pattern.compile(regexp);
-		Matcher m = p.matcher(strcard);
-		if( m.find() && m.groupCount() == 3 ) {
-			String key     = m.group(1).trim();
-			String value   = m.group(2).trim();
-			String comment = m.group(3).replaceFirst("/", "").trim();
+		card.getKey();
+		Matcher m = NUMERIC_PATTERN.matcher(strcard);
+//		if( m.find() && m.groupCount() == 3 ) {
+//			String key     = m.group(1).trim();
+//			String value   = m.group(2).trim();
+//			String comment = m.group(3).replaceFirst("/", "").trim();
+	    String key     =  card.getKey();
+	    String value   =  card.getValue();
+	    String comment =  card.getComment();
+
 			boolean is_not_string = true;
 			if( value.startsWith("'") ) {
 				is_not_string = false;
 			}
 			value = value.replaceAll("'", "");
 			/*
-			 * Penser a traiter le cas de value = "" avec un type num�rique
+			 * TODO Penser a traiter le cas de value = "" avec un type num�rique
 			 * Implementer les NaN
 			 */
 			if( key == null || key.equals("") || value == null  ) {
@@ -185,25 +190,21 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 			if( is_not_string && value.equals("T") ) {
 				this.setType("boolean");
 				this.value = "true";
-			}
-			else if( is_not_string && value.equals("F") ) {
+			} else if( is_not_string && value.equals("F") ) {
 				this.setType("boolean");
 				this.value = "false";
-			}
-			else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
+			} else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
 				this.setType("double");
-			}
-			else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
+			} else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
 				this.setType("int");
-			}
-			else  {
+			} else  {
 				this.setType("String");
 			}
-		}
-		else {
-			this.setNameorg("");
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
-		}
+//		}
+//		else {
+//			this.setNameorg("");
+//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
+//		}
 	}
 	//    public static void main(String[] args) {
 	//    AttributeHandler a = new AttributeHandler("HIERARCH ESO INS PATH        = '        '   / Optical path used. " );
@@ -394,16 +395,72 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		}
 	}
 
-	public void setValue(String value){
-		if(value != null){
-			this.value = value.trim();
-		}
-		this.numValue = SaadaConstant.DOUBLE;
-	}
 	public void setValue(double value){
 		this.numValue = value;
 		this.value = String.valueOf(value);
 	}
+	
+	/**
+	 * Check that the value represented by "value" is consistent with the type
+	 * Set as {@link SaadaConstant.STRING} otherwise
+	 * TODO This operation slow down the data loading, it should be made optional
+	 * @param value
+	 */
+	public final void setValue(String value) {
+		String tvalue = value.trim();
+		if( this.type.equals("float")) {
+			try { 
+				this.numValue = Float.parseFloat(tvalue);
+				this.value =  tvalue;
+			} catch(Exception e){
+				this.value =   SaadaConstant.STRING;
+				this.numValue = SaadaConstant.DOUBLE;
+			}
+		} else if( this.type.equals("double")) {
+			try { 
+				this.numValue = Double.parseDouble(tvalue);
+				this.value =  tvalue;
+				/*
+				 * PSQL does not support double < 1e-307
+				 */
+				if( this.numValue < 1E-100 ) {
+					this.numValue = 0;
+				}
+
+			} catch(Exception e){
+				this.value =   SaadaConstant.STRING;
+				this.numValue = SaadaConstant.DOUBLE;
+			}
+		}  else if( this.type.equals("short")) {
+			try { 
+				this.numValue = Short.parseShort(tvalue);
+				this.value =  tvalue;
+			} catch(Exception e){
+				this.value =   SaadaConstant.STRING;
+				this.numValue = SaadaConstant.DOUBLE;
+			}
+		}  else if( this.type.equals("int")) {
+			try { 
+				this.numValue = Integer.parseInt(tvalue);
+				this.value =  tvalue;
+			} catch(Exception e){
+				this.value =   SaadaConstant.STRING;
+				this.numValue = SaadaConstant.DOUBLE;
+			}
+		} else if( this.type.equals("long")) {
+			try { 
+				this.numValue = Long.parseLong(tvalue);
+				this.value =  tvalue;
+			} catch(Exception e){
+				this.value =   SaadaConstant.STRING;
+				this.numValue = SaadaConstant.DOUBLE;
+			}
+		} else {
+			this.value =  tvalue;
+			this.numValue = SaadaConstant.DOUBLE;
+		}
+	}
+
 
 
 	public String getNameorg(){
@@ -830,6 +887,12 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		}
 	}
 
+	public static void main( String[] args) {
+		AttributeHandler ah = new AttributeHandler();
+		ah.setType("double");
+		ah.setValue("1.89e-321");
+		System.out.println(ah + " " + ah.getNumValue());
+	}
 }
 
 
