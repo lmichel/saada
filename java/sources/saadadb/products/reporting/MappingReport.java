@@ -167,7 +167,12 @@ public class MappingReport {
 		for( ExtensionSetter es: this.getReportOnLoadedExtension()) {
 			fw.write(es + "\n");
 		}
+
 		Map<String, ColumnSetter> r = this.getReport();
+
+		fw.write("\n========= Signature\n");
+		fw.write("MD5 hash code " + this.builder.productIngestor.saadaInstance.contentsignature+" \n");
+
 		fw.write("\n========= Mapping report\n");
 		for( Entry<String, ColumnSetter> e:r.entrySet()){
 			fw.write(String.format("%20s",e.getKey()) + "     ");;

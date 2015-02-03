@@ -143,8 +143,7 @@ public class ProductIngestor {
 	}
 
 	/**
-	 * Populate native (business) attributes if the current instance
-	 * Checks for each field if a type conversion must be done
+	 * Compute the MD5 hash code with the loaded keywords
 	 * @throws Exception
 	 */
 	protected void setContentSignature() throws Exception {
