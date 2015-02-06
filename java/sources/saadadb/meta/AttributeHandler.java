@@ -163,7 +163,16 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	    String key     =  card.getKey();
 	    String value   =  card.getValue();
 	    String comment =  card.getComment();
+		/*
+		 * value can be null for cards with long comment?
+		 * e.g.  System.out.println("---------------\n" + card + "\n-----------------------\n");
 
+				ORIGIN  = 'ADC     '           / This spectrum is part of catalog 3114,         
+                        = ' generated at Astronomical Data Center, NASA/GSFC' /               
+		 */
+			if( value == null ){
+				value = "";
+			}
 			boolean is_not_string = true;
 			if( value.startsWith("'") ) {
 				is_not_string = false;
@@ -185,7 +194,6 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 			 */
 			this.setNameorg(key.replaceAll("'", " "));
 			this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
-			this.setValue(value);
 			this.setComment(comment);
 			if( is_not_string && value.equals("T") ) {
 				this.setType("boolean");
@@ -195,16 +203,21 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				this.value = "false";
 			} else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
 				this.setType("double");
+				this.setValue(value);
 			} else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
 				this.setType("int");
+				this.setValue(value);
 			} else  {
 				this.setType("String");
+				this.setValue(value);
 			}
 //		}
 //		else {
 //			this.setNameorg("");
 //			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
 //		}
+			
+			System.out.println(this);
 	}
 	//    public static void main(String[] args) {
 	//    AttributeHandler a = new AttributeHandler("HIERARCH ESO INS PATH        = '        '   / Optical path used. " );
@@ -423,8 +436,11 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				/*
 				 * PSQL does not support double < 1e-307
 				 */
-				if( this.numValue < 1E-100 ) {
+				if( (this.numValue > 0 && this.numValue < 1E-100) || (this.numValue < 0 && this.numValue > -1E-100) ) {
+					Messenger.debug_mode = true;
+					Messenger.printStackTop("change================" + value + " " + this.numValue);
 					this.numValue = 0;
+					this.value = "0";
 				}
 
 			} catch(Exception e){
