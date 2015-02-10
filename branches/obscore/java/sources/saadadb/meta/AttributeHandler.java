@@ -438,7 +438,6 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				 */
 				if( (this.numValue > 0 && this.numValue < 1E-100) || (this.numValue < 0 && this.numValue > -1E-100) ) {
 					Messenger.debug_mode = true;
-					Messenger.printStackTop("change================" + value + " " + this.numValue);
 					this.numValue = 0;
 					this.value = "0";
 				}
