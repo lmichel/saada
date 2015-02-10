@@ -871,7 +871,7 @@ public final class FitsDataFile extends FSDataFile{
 				hcard = (HeaderCard) it.next();
 				AttributeHandler attribute = new AttributeHandler(hcard);
 				if( !this.isCardAccepted(attribute)){
-					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute +" is ignored by user mapping");	
+					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute +" is ignored by user mapping or not valid");	
 					continue;
 				}
 				String name_org = attribute.getNameorg();
@@ -919,7 +919,7 @@ public final class FitsDataFile extends FSDataFile{
 			} 
 			AttributeHandler attribute = new AttributeHandler(hcard);
 			if( !this.isCardAccepted(attribute)){
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute+" is ignored by user maping");	
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute+" is ignored by user maping or not valid");	
 				continue;
 			}	
 			key = attribute.getNameorg();

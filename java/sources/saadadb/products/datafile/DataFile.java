@@ -378,6 +378,13 @@ public abstract class DataFile implements Enumeration {
 	 * @return
 	 */
 	protected boolean isCardAccepted(String cardName){
+		/*
+		 * Keywords like ORIGIN may have comments over multiple lines
+		 * That produces attribute handlers with no name
+		 */
+		if(cardName == null ||  cardName.length() == 0 ) {
+			return false;
+		}
 		for(String regex : this .attributeFilter){
 			if( cardName.matches(regex)){
 				return true;
