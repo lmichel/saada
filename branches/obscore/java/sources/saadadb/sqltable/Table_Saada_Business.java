@@ -81,7 +81,7 @@ public class Table_Saada_Business extends SQLTable {
 		 * The strange transaction policy is due to SQLITE which refuses to modify the schema within a transaction.
 		 */
 		SQLTable.addQueryToTransaction("DROP TABLE IF EXISTS " + tmpTable ) ;
-		SQLTable.createTable(tmpTable, sql, "oidsaada", false);
+		SQLTable.createTable(tmpTable, sql, null, false);
 		 
 		sql = "INSERT INTO " +  tmpTable + " SELECT oidsaada, obs_id, md5keysaada " ;
 		for (AttributeHandler ah: mapAh.values()) {

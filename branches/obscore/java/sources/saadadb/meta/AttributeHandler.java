@@ -217,7 +217,6 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 //			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
 //		}
 			
-			System.out.println(this);
 	}
 	//    public static void main(String[] args) {
 	//    AttributeHandler a = new AttributeHandler("HIERARCH ESO INS PATH        = '        '   / Optical path used. " );
@@ -420,7 +419,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	 * @param value
 	 */
 	public final void setValue(String value) {
-		String tvalue = value.trim();
+		String tvalue = ( value == null )?"": value.trim();
 		if( this.type.equals("float")) {
 			try { 
 				this.numValue = Float.parseFloat(tvalue);

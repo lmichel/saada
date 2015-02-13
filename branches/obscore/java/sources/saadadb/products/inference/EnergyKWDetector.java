@@ -199,7 +199,7 @@ public class EnergyKWDetector extends KWDetector {
 			this.em_binsSetter    = new ColumnWcsSetter("em_bins"   , "WCS.getNaxis(1)", this.projection);
 			this.em_unitSetter = new ColumnWcsSetter("em_unit", "WCS.getUnit(1)", this.projection);
 			this.em_unitSetter.calculateExpression();
-			String msg = "By WCS " + this.projection.getClass();
+			String msg = "By WCS " + this.projection.getClass().getSimpleName();
 			this.em_minSetter.completeDetectionMsg(msg);
 			this.em_maxSetter.completeDetectionMsg(msg);
 			this.em_binsSetter.completeDetectionMsg(msg);

@@ -1354,6 +1354,7 @@ public abstract class ProductBuilder {
 
 	/**
 	 * Returns a possible classname derived from the data file product name
+	 * size limited to 48
 	 * @return
 	 */
 	public String  possibleClassName() {
