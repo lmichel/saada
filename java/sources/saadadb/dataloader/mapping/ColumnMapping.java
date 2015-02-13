@@ -49,7 +49,6 @@ public class ColumnMapping {
 			ah.setNameorg(ColumnMapping.NUMERIC);
 			ah.setUnit(unit);
 			ah.setValue(value);
-			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 6" + ah);
 			this.attributeHandlers.add(ah);
 		} else if(this.mappingMode==MappingMode.EXPRESSION || mappingMode==MappingMode.KEYWORD){
 			//We have an expression with ONE keyword.
@@ -60,7 +59,6 @@ public class ColumnMapping {
 			System.out.println(RegExp.KEYWORD);
 			while(m.find())
 			{
-				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 1" + value +  " " + m.group(1).trim() + " " + m.groupCount());
 				AttributeHandler temp = new AttributeHandler();
 				temp.setNameattr(m.group(1).trim());
 				temp.setNameorg(m.group(1).trim());
@@ -70,8 +68,6 @@ public class ColumnMapping {
 			}
 			//When we are in "Attribute mode" we consider we're in an expression composed of only one Attribute
 			this.expression=value;
-			//System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 7" + ah);
-			//this.attributeHandlers.add(ah);
 		}else if( this.mappingMode != MappingMode.NOMAPPING) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "Mapping mode SQL not suported yet");
 		}
@@ -93,7 +89,6 @@ public class ColumnMapping {
 			ah.setValue(v);	
 			this.expression=v;
 			this.mappingMode = MappingMode.VALUE;
-			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 8" + ah);
 			this.attributeHandlers.add(ah);
 		} else if( isSingleKeyword(value) ){
 			this.mappingMode = MappingMode.KEYWORD;
@@ -101,7 +96,6 @@ public class ColumnMapping {
 			temp.setNameattr(value);
 			temp.setNameorg(value);
 			temp.setUnit(unit);
-			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 9" + temp);
 			this.attributeHandlers.add(temp);
 			this.expression=value;
 		} else {
@@ -112,7 +106,6 @@ public class ColumnMapping {
 			//We search for keywords in the expression, each keyword become an attribute
 			while(m.find())
 			{
-				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 2" + value +  " " + m.group(1).trim() + " " + m.groupCount());
 				AttributeHandler temp = new AttributeHandler();
 				temp.setNameattr(m.group(1).trim());
 				temp.setNameorg(m.group(1).trim());
@@ -146,7 +139,6 @@ public class ColumnMapping {
 				temp.setNameattr(s);
 				temp.setNameorg(s);
 				temp.setUnit(unit);
-				System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 4" + temp);
 				this.attributeHandlers.add(temp);
 				this.expression=s;
 			} else {
@@ -157,7 +149,6 @@ public class ColumnMapping {
 				ah.setNameattr(s);
 				ah.setNameorg(s);
 			}
-			System.out.println("ADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD 5" + ah);
 			this.attributeHandlers.add(ah);
 		}
 	}

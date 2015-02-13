@@ -131,14 +131,10 @@ public class ObservableKWDetector extends KWDetector {
 				this.unit.completeDetectionMsg("found in FITS comments or infos");
 				if( u.length() > 0 && !u.equalsIgnoreCase("count")) {					
 					this.calib.setByValue( "3", false);
-					this.calib.completeDetectionMsg("Infered from detected units");
 					this.ucd.setValue("phot.flux");
-					this.ucd.completeDetectionMsg("Infered from detected units");
 				} else {
 					this.calib.setByValue( "2", false);
-					this.calib.completeDetectionMsg("Infered from detected units");
 					this.ucd.setValue("phot.count");
-					this.ucd.completeDetectionMsg("Infered from detected units");
 				}
 			}
 		}		
