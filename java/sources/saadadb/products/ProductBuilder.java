@@ -476,7 +476,7 @@ public abstract class ProductBuilder {
 		 */
 		if ( columnMapping.notMapped())	{
 			retour = new ColumnExpressionSetter(colmunName);
-			retour.completeUserMappingMsg("No mapping");
+			retour.completeUserMappingMsg("-");
 			return retour;
 		/*
 		 * User mapping by value: return a "constant" ColumnExpressionSetter
@@ -1358,6 +1358,13 @@ public abstract class ProductBuilder {
 	 */
 	public String  possibleClassName() {
 		String ret = new File(this.dataFile.getName()).getName().split("\\.")[0].replaceAll("[^\\w]+", "_").toLowerCase();
+		/*
+		 * PSQL limits the table name to 64.
+		 * We take 48 because that is long enough
+		 */
+		if( ret.length() > 48 ){
+			ret = ret.substring(0, 48);
+		}
 		if( !ret.matches(RegExp.CLASSNAME) ) {
 			ret = "C_" + ret;
 		}
