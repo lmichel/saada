@@ -1385,7 +1385,8 @@ public abstract class ProductBuilder {
 	 * @param att
 	 */
 	private void traceReportOnAttRef(ColumnSetter att){		
-		Messenger.printMsg(Messenger.TRACE, att.toString());	
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, att.toString());	
 	}
 
 	/**
