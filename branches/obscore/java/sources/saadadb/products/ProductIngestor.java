@@ -243,7 +243,11 @@ public class ProductIngestor {
 					 * no conversion required, just take the values
 					 */
 				} else {
-					this.setUnconvertedCoordinatesAndRegion();
+					/*
+					 * Fails when pos are in sexa.
+					 */
+					//this.setUnconvertedCoordinatesAndRegion();
+					this.setConvertedCoordinatesAndRegion();
 				}
 				this.setXYZfields();
 				this.setFoVFields();
