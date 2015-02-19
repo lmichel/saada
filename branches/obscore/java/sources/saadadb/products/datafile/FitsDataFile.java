@@ -190,7 +190,6 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	@Override
 	public void bindBuilder(ProductBuilder builder) throws Exception{
-		System.out.println("@@@@@@@@@ FITS BndBuilder");
 		this.setBuilder(builder);
 		try {
 			this.firstHeader = fitsData.getHDU(0);

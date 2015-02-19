@@ -126,15 +126,6 @@ public class Loader extends SaadaProcess {
 		System.exit(1);		
 	}
 
-	/**
-	 * Just wrap {@link SchemaClassifierMapper#getProductClusters()} for convenience
-	 * @return
-	 * @throws Exception
-	 */
-	public Map<String, DataFileCluster> getProductClusters()  throws Exception{
-		return (new SchemaClassifierMapper(this, this.filesToBeLoaded, this.productMapping)).getProductClusters();
-	}
-
 
 	/**
 	 * @param args

@@ -140,10 +140,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 			Messenger.incrementeProgress();
 		}
 	}
-	/**
-	 * @param dataFiles
-	 * @param mapping
-	 * @throws Exception
+	/* (non-Javadoc)
+	 * @see saadadb.dataloader.SchemaMapper#ingestProductSet()
 	 */
 	@Override
 	public void ingestProductSet() throws Exception {
@@ -279,10 +277,6 @@ public class SchemaFusionMapper extends SchemaMapper {
 System.out.println("===========================================================");
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
 			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
-//			if( i>1 ) {
-//				System.out.println("@@@@@@@@@@@@@ BREAK");
-//				break;
-//			}
 			/*
 			 * Instantiate the builder at the first loop. The collection attribute mapping is done here
 			 * It will be applied for all data products
