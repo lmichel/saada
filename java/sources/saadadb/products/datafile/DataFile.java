@@ -385,6 +385,9 @@ public abstract class DataFile implements Enumeration {
 		if(cardName == null ||  cardName.length() == 0 ) {
 			return false;
 		}
+		if( cardName.equalsIgnoreCase("continue")) {
+			return false;
+		}
 		for(String regex : this .attributeFilter){
 			if( cardName.matches(regex)){
 				return true;

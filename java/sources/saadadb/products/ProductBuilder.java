@@ -163,6 +163,7 @@ public abstract class ProductBuilder {
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
 		this.metaClass = metaClass;
 		this.dataFile = dataFile;
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ");
 	}
 
 	/* (non-Javadoc)
@@ -314,6 +315,8 @@ public abstract class ProductBuilder {
 	 */
 	public void mapDataFile(DataFile dataFile) throws Exception{
 		Messenger.locateCode();
+		this.dataFile = dataFile;
+		this.dataFile.bindBuilder(this);
 		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
 		//	this.bindDataFile(dataFile);
 		this.mapCollectionAttributes();
@@ -325,7 +328,6 @@ public abstract class ProductBuilder {
 	public void mapDataFile() throws Exception{
 		Messenger.locateCode();
 		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
-		System.out.println("@@@@@@@@@@@@@@@@ mapDataFile " +this.getClass());
 		this.mapCollectionAttributes();
 	}
 
