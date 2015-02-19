@@ -116,7 +116,6 @@ public class SchemaFusionMapper extends SchemaMapper {
 			SQLTable.beginTransaction();
 			if( mapping.getCategory() == Category.TABLE) {	
 				EntryBuilder entr = ((TableBuilder) currentProductBuilder).entryBuilder;
-				System.out.println("@@@@@@@@@@@@ makeClassFusion " + entr.productAttributeHandler);
 				this.entryMapper = new SchemaFusionMapper(this.loader, entr);
 				this.entryMapper.currentClass = this.entryMapper.createClassFromProduct(ClassifierMode.CLASS_FUSION);	
 				SQLTable.beginTransaction();
@@ -274,7 +273,6 @@ public class SchemaFusionMapper extends SchemaMapper {
 		BufferedWriter  coltmpfile = new BufferedWriter(new FileWriter(coldumpfile));
 		String        loadedfile   = Repository.getTmpPath() + Database.getSepar()  + "saada_loaded_file.psql";
 		BufferedWriter loadedtmpfile = new BufferedWriter(new FileWriter(loadedfile));
-System.out.println("===========================================================");
 		for( int i=0 ; i<this.dataFiles.size()	 ; i++) {
 			DataFile file = this.getDataFileInstance(this.dataFiles.get(i));
 			/*
@@ -286,10 +284,8 @@ System.out.println("==========================================================="
 					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used for the whole data burst");
 				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 				this.currentProductBuilder.setMetaclass(this.currentClass);
-				System.out.println("========= NEW PORDUCT OK");
 			}	
 			this.currentProductBuilder.mapDataFile(file);
-			System.out.println("========= BIND PORDUCT OK");
 		
 			try {
 				Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  "> in data class " + this.currentClass);
