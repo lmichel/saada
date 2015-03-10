@@ -1303,8 +1303,7 @@ public abstract String getDBTypeFromVOTableType(String dataType, final int array
 	 * @throws Exception
 	 */
 	public void loadSQLProcedures(Statement stmt, Connection connection, String dbName) throws Exception {
-		SQLTable.beginTransaction();
-		this.installLanguage();
+		this.installLanguage(stmt);
 		connection.setAutoCommit(true);
 		String[] rp = this.removeProc(connection, dbName);
 		for( String p: rp) {
