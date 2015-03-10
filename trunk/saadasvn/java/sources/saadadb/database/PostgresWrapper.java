@@ -618,11 +618,11 @@ public class PostgresWrapper extends DbmsWrapper {
 	protected File getProcBaseRef() throws Exception {
 		String base_dir = System.getProperty("user.home") 
 		+ Database.getSepar() 
-		+ "Documents" 
-		+ Database.getSepar() 
+//		+ "Documents" 
+//		+ Database.getSepar() 
 		+ "workspace" 
 		+ Database.getSepar() 
-		+ "SaadaObscore"
+		+ "Saada1.7.0"
 		+ Database.getSepar() 
 		+ "sqlprocs" 
 		+ Database.getSepar() 
