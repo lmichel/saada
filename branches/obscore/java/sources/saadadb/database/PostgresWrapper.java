@@ -635,7 +635,7 @@ public class PostgresWrapper extends DbmsWrapper {
 	 */
 	@Override
 	protected File getProcBaseRef() throws Exception {
-		String base_dir = System.getProperty("user.home") + Database.getSepar() + "Documents"
+		String base_dir = System.getProperty("user.home") //+ Database.getSepar() + "Documents"
 				+ Database.getSepar() + "workspace" + Database.getSepar() + "SaadaObscore"
 				+ Database.getSepar() + "sqlprocs" + Database.getSepar() + "postgresql";
 		if (Messenger.debug_mode)
@@ -746,4 +746,6 @@ public class PostgresWrapper extends DbmsWrapper {
 			return datatype;
 		}
 	}
+	
+
 }
