@@ -16,9 +16,26 @@
 <link rel="stylesheet" type="text/css" href="http://obs-he-lm:8888/jsStuff/saadajsbasics/styles/basics.css" />
  -->
 
+<link rel="stylesheet" href="saadajsbasics/styleimports/themes/base/jquery.ui.all.css" />
+<link rel="stylesheet" href="jsimports/themes/default/style.css" />
+
 <script type="text/javascript" src="jsimports/jquery.js"></script>
+<script>var useDebugResources = true; var productionMode=true;</script>
 <script type="text/javascript" src="saadajsbasics/loader.js"></script>
-<script >resourceLoader.setCss([  
+<script type="text/javascript" src="javascript/packedLoader.js"></script>
+<script type="text/javascript">
+if( productionMode ) {
+	useDebugResources = false;
+    packedResourceLoader.setCss([         
+     "./min/packed/packedCSS.css"
+    ]);
+    packedResourceLoader.setScripts([  
+     "./min/packed/packedJS.js"
+      ]);
+    packedResourceLoader.loadAll();
+} else {
+    var useDebugResources = true;
+     resourceLoader.setCss([  
        "styles/global.css"
      , "styles/form.css"]);
      resourceLoader.setScripts([  
@@ -61,9 +78,8 @@
      ,"javascript/resize.js"  
        ]);
      resourceLoader.loadAll();
+}
      </script>
-
-
 
 	<style type="text/css">
 
