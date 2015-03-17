@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.io.File;
 
+import saadadb.collection.Category;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -52,6 +53,14 @@ public class MiscBuilder extends ProductBuilder{
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
 	}
+   
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.MISC;
+	}
+
 
 }
 

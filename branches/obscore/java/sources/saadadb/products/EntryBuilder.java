@@ -90,6 +90,14 @@ public class EntryBuilder extends ProductBuilder {
 		this.obs_idSetter = this.getSetterForMappedColumn("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
 	}
 	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.ENTRY;
+	}
+
+	
 	public void loadProductXX(long tableOid) throws Exception {
 		// Initializes the lines meter at 0
 		int line = 0;
