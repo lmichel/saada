@@ -780,7 +780,7 @@ public final class ArgsParser implements Serializable{
 	public String getUserKeyword(String user_kw) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-ukw")) {
-				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw)) {
+				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw + "=")) {
 					return getArgsValue(args[i+1]);
 				}
 			}
@@ -796,7 +796,7 @@ public final class ArgsParser implements Serializable{
 	public String getEntryUserKeyword(String user_kw) {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-eukw")) {
-				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw)) {
+				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw + "=")) {
 					return getArgsValue(args[i+1]);
 				}
 			}
