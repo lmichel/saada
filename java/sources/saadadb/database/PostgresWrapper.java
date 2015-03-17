@@ -24,7 +24,6 @@ import saadadb.newdatabase.NewSaadaDBTool;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
-import tap.metadata.TAPTypes;
 
 /**
  * @author laurentmichel
