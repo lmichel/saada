@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.io.File;
 
+import saadadb.collection.Category;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
@@ -62,4 +63,12 @@ public class SpectrumBuilder extends ProductBuilder {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.SPECTRUM;
+	}
+
 }

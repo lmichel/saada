@@ -2,6 +2,7 @@ package saadadb.products;
 
 import java.io.File;
 
+import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
@@ -47,5 +48,12 @@ public class FlatFileBuilder extends ProductBuilder {
 		this.productIngestor.bindInstanceToFile();
 	}
 	
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.FLATFILE;
+	}
 
 }

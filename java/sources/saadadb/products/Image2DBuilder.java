@@ -94,6 +94,13 @@ public class Image2DBuilder extends ProductBuilder {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.IMAGE;
+	}
+
 	
 //	/* (non-Javadoc)
 //	 * @see saadadb.products.ProductBuilder#setProductIngestor()

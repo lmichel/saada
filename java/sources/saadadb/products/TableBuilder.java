@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
@@ -89,6 +90,13 @@ public class TableBuilder extends ProductBuilder {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
 	}	
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#getCategory()
+	 */
+	public int getCategory(){
+		return Category.TABLE;
+	}
 
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getTableOid()
