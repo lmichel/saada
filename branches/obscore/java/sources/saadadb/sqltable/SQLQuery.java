@@ -70,6 +70,7 @@ public class SQLQuery {
 			// StackTraceElement [] se = (new Exception()).getStackTrace();
 			// for( int i=0 ; i<3 ; i++ ) System.out.println(se[i]);
 			// System.out.println("============= OPEN " + Spooler.getSpooler());
+			isSQLQueryClosed = false;
 			databaseConnection = Database.getConnection();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -106,6 +107,7 @@ public class SQLQuery {
 	public ResultSet run() throws QueryException {
 		try {
 			Messenger.dbAccess();
+			isSQLQueryClosed = false;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Select query: "
 						+ this.query);
@@ -204,7 +206,6 @@ public class SQLQuery {
 	// }
 	// }
 	public void close() throws QueryException {
-
 		if (!isSQLQueryClosed) {
 			nb_open--;
 			try {
