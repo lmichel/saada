@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
+import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
@@ -51,6 +53,14 @@ public class MappingReport {
 	/**
 	 * Build a map with all collection level value of the current instance.
 	 * Values are stored in AttributeHandler having the mapping mode into the comment field
+	 * @throws Exception
+	 */
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	/**
+	 * @return
 	 * @throws Exception
 	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
@@ -114,9 +124,15 @@ public class MappingReport {
 
 		retour.put("pol_states", this.builder.pol_statesSetter);
 		this.builder.pol_statesSetter.storedValue = si.pol_states;
+		/*
+		 * extended attributes
+		 */
+		Map<String , AttributeHandler> eatt = Database.getCachemeta().getAtt_extend(this.builder.getCategory());
+		for( String eattname: eatt.keySet()) {
+			ColumnExpressionSetter ces = this.builder.extended_attributesSetter.get(eattname);
+			retour.put(eattname, ces);
+			ces.storedValue = si.getFieldValue(eattname);
 
-		for( ColumnExpressionSetter eah: this.builder.extended_attributesSetter.values()){
-			retour.put(eah.getAttNameOrg(), eah);      	
 		}
 
 		for( Field f: si.getCollLevelPersisentFields() ){
@@ -134,6 +150,8 @@ public class MappingReport {
 				retour.put(fname, cs);
 			}
 		}
+		
+
 		return retour;
 	}
 
