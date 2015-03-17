@@ -102,7 +102,6 @@ public class Loader extends SaadaProcess {
 			 * with the collection and the data file/dir toload
 			 */
 			else {		
-				Database.init(ap.getDBName());
 				FileInputStream fis = new FileInputStream(Database.getRoot_dir() + Database.getSepar() + "config" + Database.getSepar() + config);
 				ObjectInputStream in = new ObjectInputStream(fis);
 				ArgsParser read_ap = (ArgsParser)in.readObject();
