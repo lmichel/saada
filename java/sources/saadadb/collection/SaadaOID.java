@@ -208,4 +208,12 @@ public abstract class SaadaOID {
 		MetaClass mc = Database.getCachemeta().getClass(class_name);
 		return ((long)((mc.getId() & 0xffff) | ((mc.getCollection_id() & 0x3f) << 16) | ((mc.getCategory() & 0xf) << 26))) << 32;
 	}
+	
+	public static String toString (long oid) {
+		String retour = "0X" + Long.toHexString(oid) + "\n"
+				+ "   category 0x" + SaadaOID.getCategoryNum(oid) + "\n"
+				+ " collection 0x" + SaadaOID.getCollectionNum(oid) + "\n"
+				+ "      class 0x" + SaadaOID.getClassNum(oid) + "\n";
+		return retour;
+	}
 }
