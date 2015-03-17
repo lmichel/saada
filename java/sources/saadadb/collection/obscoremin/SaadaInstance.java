@@ -150,7 +150,6 @@ public abstract class SaadaInstance implements DMInterface {
 	@SuppressWarnings("rawtypes")
 	public List<Field> getAllPersistentFields() {
 		ArrayList<Field> retour = new ArrayList<Field>();
-
 		Class cls = getClass();
 		Class _class = cls;
 		Vector<Class> vt_class = new Vector<Class>();
