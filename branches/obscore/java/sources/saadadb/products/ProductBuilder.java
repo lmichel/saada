@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
 import saadadb.collection.Category;
+import saadadb.database.Database;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.AxisMapping;
 import saadadb.dataloader.mapping.ColumnMapping;
@@ -163,7 +165,6 @@ public abstract class ProductBuilder {
 		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
 		this.metaClass = metaClass;
 		this.dataFile = dataFile;
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ");
 	}
 
 	/* (non-Javadoc)
@@ -206,6 +207,11 @@ public abstract class ProductBuilder {
 		return this.productAttributeHandler;
 	}
 
+	/**
+	 * @return
+	 */
+	public abstract int getCategory();
+	
 	/**
 	 * @return
 	 */
@@ -1049,34 +1055,10 @@ public abstract class ProductBuilder {
 	 */
 	public void mapIgnoredAndExtendedAttributes () throws Exception {
 		Messenger.locateCode();
-		//LinkedHashMap<String, String> mapped_extend_att = this.mapping.getExtenedAttMapping().getClass() getAttrExt();
-		Set<String> extendedAtt = this.mapping.getExtenedAttMapping().getColmunSet();
-		/*
-		 * Ignored attribute are discarded on the fly when data files are readout.
-		 * (see FITSProduct and VOProduct 
-		 * Only extended attr are mapped here
-		 */
-		for( String att_ext_name: extendedAtt ) {
-			ColumnMapping columnMapping = this.mapping.getExtenedAttMapping().getColumnMapping(att_ext_name);
-			/*
-			 * Attribute extends can be populated with constant values within "'"
-			 * or from read values
-			 */
-			if( columnMapping.byValue() ) {
-				this.extended_attributesSetter.put(att_ext_name , new ColumnExpressionSetter(columnMapping.getAttributeHandler().getValue()));//new ColumnExpressionSetter(columnMapping.getAttributeHandler(), ColumnSetMode.BY_VALUE, true, false));
-			}
-			/*
-			 * Flatfile have not tableAttributeHandler
-			 */
-			else if (this.productAttributeHandler != null ) {
-				String cm = (columnMapping.getAttributeHandler() != null)? columnMapping.getAttributeHandler().getNameattr(): null;
-				for( AttributeHandler ah : this.productAttributeHandler.values() ) {
-					if( ah.getNameattr().equals(cm)) {
-						this.extended_attributesSetter.put(att_ext_name,new ColumnExpressionSetter(ah.getNameattr(), ah));//new ColumnExpressionSetter( ah, ColumnSetMode.BY_KEYWORD, true, false));
-						break;
-					}
-				}
-			}
+		
+		Map<String , AttributeHandler> eatt = Database.getCachemeta().getAtt_extend(this.getCategory());
+		for( Entry<String , AttributeHandler> ea: eatt.entrySet()){
+			this.extended_attributesSetter.put(ea.getKey(), this.getSetterForMappedColumn(ea.getKey(),this.mapping.getExtenedAttMapping().getColumnMapping(ea.getKey())));
 		}
 	}
 
