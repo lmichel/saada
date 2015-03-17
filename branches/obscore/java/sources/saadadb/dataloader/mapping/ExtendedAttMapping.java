@@ -15,10 +15,10 @@ public class ExtendedAttMapping extends AxisMapping {
 	ExtendedAttMapping(ArgsParser ap, boolean entryMode) throws SaadaException{
 		super(ap,  Database.getCachemeta().getAtt_extend(Category.getCategory(ap.getCategory())).keySet().toArray(new String[0]), entryMode);		
 		
-		for( String s: this.attributeNames) {
-			String v =  ap.getUserKeyword(entryMode, s);
-			if( v != null ) {
-				this.columnMapping.put(s, new ColumnMapping(ap.getUnit(), v, s));
+		for( String attName: this.attributeNames) {
+			String mappingValue =  ap.getUserKeyword(entryMode, attName);
+			if( mappingValue != null ) {
+				this.columnMapping.put(attName, new ColumnMapping(null, mappingValue, attName));
 			}
 		}
 		this.completeColumns();

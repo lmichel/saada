@@ -11,7 +11,6 @@ public class ObservationMapping extends AxisMapping {
 		super(ap, new String[]{"obs_id", "calib_level", "obs_publisher_did", "obs_collection", "data_product_type", "facility_name", "instrument_name", "target_name"}, entryMode);
 		this.priority = PriorityMode.ONLY;
 		String s;
-		String[] ss;
 		if( (s = ap.getObsid(entryMode)) != null  ){
 			this.columnMapping.put("obs_id", new ColumnMapping(null, s, "obs_id"));
 		}
