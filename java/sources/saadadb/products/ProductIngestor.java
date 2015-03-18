@@ -17,6 +17,7 @@ import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
@@ -26,6 +27,7 @@ import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.products.setter.ColumnSingleSetter;
+import saadadb.query.parser.PositionParser;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.unit.Unit;
@@ -281,15 +283,25 @@ public class ProductIngestor {
 	}
 	/**
 	 * Take the position as it is
+	 * @throws Exception 
 	 */
-	protected void setUnconvertedCoordinatesAndRegion() {
+	protected void setUnconvertedCoordinatesAndRegion() throws Exception {
 
 		if( !this.product.s_regionSetter.isNotSet() ) {
 			this.product.s_regionSetter.setValue("Polygon " + Database.getAstroframe() + " " + this.product.s_regionSetter.getValue());
 			this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 		}
-		this.saadaInstance.s_ra = Double.parseDouble(this.product.s_raSetter.getValue());
-		this.saadaInstance.s_dec = Double.parseDouble(this.product.s_decSetter.getValue());
+		/*
+		 * Position parameters can be in decimal or sexadecimal. 
+		 */
+		try {
+			this.saadaInstance.s_ra = Double.parseDouble(this.product.s_raSetter.getValue());
+			this.saadaInstance.s_dec = Double.parseDouble(this.product.s_decSetter.getValue());
+		} catch(NumberFormatException e){
+			PositionParser pp = new PositionParser(this.product.s_raSetter.getValue() + " " + this.product.s_decSetter.getValue());
+			this.saadaInstance.s_ra = pp.getRa();
+			this.saadaInstance.s_dec = pp.getDec();
+		}
 	}
 
 	/**
