@@ -389,8 +389,6 @@ public final class EntryIngestor extends ProductIngestor {
 			int readCpt = 0 ;
 			String na = ah.getNameattr();
 			this. busTypeTable[classCpt] = ah.getType();
-			System.out.println("##################### " + classCpt + ah.getType());
-
 			for( AttributeHandler ah2: this.product.dataFile.entryAttributeHandlers.values()){
 				if( ah2.getNameattr().equals(na)){
 					this.busIndirectionTable[readCpt] = classCpt;
@@ -569,8 +567,6 @@ public final class EntryIngestor extends ProductIngestor {
 			int cpt = 0;
 			for( AttributeHandler ah: dataFile.entryAttributeHandlers.values()){
 				int index = this.busReverseIndirectionTable[cpt];
-				System.out.println("##################### " + (index + 3) + " " + this.busTypeTable[index]);
-
 				rowData[index + 3] =  ClassMerger.getCastedSQLValue(ah, this.busTypeTable[index]);
 				cpt++;
 			}
