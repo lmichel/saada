@@ -804,7 +804,7 @@ public class CacheMeta {
 	}
 
 	/**
-	 * @param id
+	 * @param probaKey
 	 * @return
 	 * @throws SaadaException 
 	 */
@@ -841,7 +841,7 @@ public class CacheMeta {
 	}
 
 	/**
-	 * @param id
+	 * @param probaKey
 	 * @return
 	 * @throws SaadaException 
 	 */
