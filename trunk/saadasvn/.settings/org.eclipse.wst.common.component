@@ -5,6 +5,9 @@
         <dependent-module archiveName="SQLITEgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/saada/deploy/TestBeds/version2_0/dbms_SQLITE/saadadb/SQLITE/web/WEB-INF/lib/SQLITEgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="Sqlite9generated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/Sqlite9/web/WEB-INF/lib/Sqlite9generated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/Saada1.7/build/classes"/>
         <property name="context-root" value="Saada1.7.0"/>
     </wb-module>
