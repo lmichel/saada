@@ -202,7 +202,7 @@ public class NewSaadaDBTool extends JFrame {
 					AdminComponent.getPlainLabel("<HTML><B>Your SaadaDB <I>" + form_panel.saadadb_name.getText() + "</I> has been created</B><BR>"
 							+ "You can now exit this tool and work with the new database<BR>"
 							+ "<UL><LI>Go to <I>" + form_panel.saadadb_home.getText() + "/" + form_panel.saadadb_name.getText() + "/bin</I></LI>"
-							+ "<LI>Run <I>saadadmintool</I></LI>"),
+							+ "<LI>Run <I>admintool</I></LI>"),
 							"Database Created",
 							JOptionPane.INFORMATION_MESSAGE);
 		} catch (Exception e) {
