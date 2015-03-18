@@ -1,0 +1,30 @@
+Visit Saada web [pages](http://saada.u-strasbg/fr)
+
+# You Have Data Files - Saada Makes your Database #
+
+
+
+  * **Saada transforms a set of heterogeneous FITS files or VOtables** of various categories (images, tables, spectra....) in a powerful database deployed on the Web. Databases are located on your host and stay independent of any external server. This job doesn’t require to write code.
+
+  * **Saada can mix data of various categories** in multiple collections. Data collections can be linked each to others making relevant browsing paths and allowing data-mining oriented queries (see the video)
+
+  * **Saada supports 4 VO services** (Spectra, images, sources and TAP) . Data collections can be published immediately after the deployment of the Web interface.
+
+
+# [Saada 1.6.0](http://saada.u-strasbg.fr/saada/spip.php?article220): released with 3 major improvements: #
+
+  * **No longer difficulties** with the installation of MySQL or PostgresQL by using SQLITE, an embedded database. The database server is replaced with a simple file used as database volume. Current tests show a good performance level even for middle sized database (read [more](http://saada.u-strasbg.fr/saada/spip.php?article233))
+
+  * TAP implementation**: SaadaDBs can be accessed by using the TAP VO protocol. Besides SaadaQL queries can thus be stated in ADQL and processed in asynchronous mode.**
+
+  * New web interface**: easy browsing, easy query setup, easy access to meta data, stay connected with the VO with SAMP**
+
+# WHAT TO DO WITH SAADA #
+
+  * **Build SQL tables** from your data file without writing any SQL code line.
+
+  * **Give your data** a **powerful web interface** to browse, select or export it.
+
+  * **Publish your data** collections to the **VO**
+
+  * **Link your data** together and enjoy **data ming** oriented queries
