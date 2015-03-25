@@ -47325,6 +47325,18 @@ jQuery.extend({
 							$('#orderby_asc').prop('checked',true);
 						}
 					}
+					/*
+					 * Set a desc sort by default on oidsaada in order to display first the latest data
+					 */
+					if( $("#orderby span").length == 0 ) {
+						that.setOrderBy("oidsaada");
+						$('#orderby_des').prop('checked',true);
+					}
+//					$("#orderby span").each(function() {
+//						if( $(this).text() == '' ) {
+//							$(this).text('oidsaada');
+//						}
+//					});
 					query = that.updateQuery();
 				} else {
 					that.notifyQueryUpdated(defaultquery);
@@ -50551,7 +50563,7 @@ console.log('=============== >  zipjobModel.js ');
  * It creates all MVC and bind some DOM node with relevant event handlers
  * 
  * @author michel
- * @version $Id: ready.js 877 2013-12-17 13:33:06Z laurent.mistahl $
+ * @version $Id$
  */
 var resultPaneView;
 var saadaqlView ;
