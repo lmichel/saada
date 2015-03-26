@@ -58,13 +58,20 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			RelationManager rm = new RelationManager(config);
+			if( emptyFirst ){
+				SQLTable.beginTransaction();
+				rm.empty();
+				SQLTable.commitTransaction();
+			}
 			SQLTable.beginTransaction();
 			rm.populateWithQuery();
 			SQLTable.commitTransaction();
-			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
-			SQLTable.beginTransaction();
-			ib.createIndexRelation();
-			SQLTable.commitTransaction();
+			if( indexAfter) {
+				IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
+				SQLTable.beginTransaction();
+				ib.createIndexRelation();
+				SQLTable.commitTransaction();
+			}
 			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
