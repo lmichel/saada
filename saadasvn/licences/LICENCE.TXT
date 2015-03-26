@@ -15,7 +15,7 @@
   *  along with SAADA; if not, write to the Free Software
   *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   *  
-  *  (c) Copyright 2003, 2013 L. MICHEL, H. NGUYEN NGOC, F.X. PINEEAU 
+  *  (c) Copyright 2003, 2015 L. MICHEL, H. NGUYEN NGOC, F.X. PINEAU 
   *                           CNES/Universite Louis Pasteur/CNRS
   * 
   *  FITSWCS  (c) Copyright 1996 Raymond L. Plante Mark Calabretta Jef Poskanser
