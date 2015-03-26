@@ -135,7 +135,6 @@ public class IndexBuilder extends SaadaProcess {
 				}
 			}
 			squery.close();
-			squery= new SQLLargeQuery();
 			if( noNull ) {
 				/*
 				 * Left JOIN takes ages without indexes
@@ -143,6 +142,7 @@ public class IndexBuilder extends SaadaProcess {
 				SQLTable.beginTransaction();
 				this.indexPrimaryoid();
 				SQLTable.commitTransaction();
+				squery= new SQLLargeQuery();
 				rs = squery.run(
 						Database.getWrapper().getNullLeftJoinSelect(colPrimary, "oidsaada"
 								, relationName, "oidprimary"));
@@ -150,8 +150,8 @@ public class IndexBuilder extends SaadaProcess {
 				while(rs.next()){
 					al.add(rs.getLong(1));
 				}
+				squery.close();
 			}
-			squery.close();
 			rs = null;
 			squery = null;
 		}
