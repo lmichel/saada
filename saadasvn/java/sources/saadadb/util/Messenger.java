@@ -18,7 +18,6 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.dialogs.AbortExceptionDialog;
 import saadadb.admintool.dialogs.FatalExceptionDialog;
@@ -317,6 +316,76 @@ public class Messenger implements Serializable{
 			Messenger.gui_label_output.setText(msg);
 		}
 	}
+
+	/**
+	 * Print out the top of the stack without the 2 first lines (getStackTrace and this.printStackTop)
+	 */
+	public static void printStackTop() {
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; i++) {
+	          System.out.println(elements[i]);
+	          if( i>5)break;
+	      }
+		}
+
+	/**
+	 * Print out the top of the stack. Worlk only in dubug mode
+	 */
+	public static void locateCode(){
+		if( debug_mode ){
+			String message = "";
+		      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+		      for(int i=2; i<elements.length; ) {
+		          message += " " + elements[i] + "";
+		          break;
+		      }
+		      printMsg(DEBUG, message);
+		}
+	}
+	/**
+	 * Print out the top of the stack with a additional message. Work only in debug mode
+	 * @param message
+	 */
+	public static void locateCode(String message){
+		/**
+		 * Print out the top of the stack. Worlk only in dubug mode
+		 */
+		if( debug_mode ){
+			String msg = message;
+		      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+		      for(int i=2; i<elements.length; ) {
+		    	  msg += " " + elements[i] + "";
+		          break;
+		      }
+		      printMsg(DEBUG, msg);
+		}
+	}
+	/**
+	 * Print out a stdout message with 7 top lines of the stack trace
+	 * @param msg
+	 */
+	public static void printStackTop(String additionnalMessage) {
+		System.out.println(additionnalMessage);
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; i++) {
+	          System.out.println("  " + elements[i]);
+	          if( i>7)break;
+	      }
+	      System.out.println("");
+		}
+	/**
+	 * Print out a debug message with location in the code
+	 * @param msg
+	 */
+	public static void printLocatedMsg(String msg) {
+		String message = msg;
+	      StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+	      for(int i=2; i<elements.length; ) {
+	          message += " " + elements[i] + "";
+	          break;
+	      }
+	      printMsg(DEBUG, message);
+		}
 
 	public static void setProgress(int val) {
 		if( Messenger.progress_bar != null && val < Messenger.progress_bar.getMaximum()) {
