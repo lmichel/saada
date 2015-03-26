@@ -747,9 +747,10 @@ public class ProductIngestor {
 			if( this.product.dataFile != null) {
 				CopyFile.copy(this.product.dataFile.getAbsolutePath(), reportFile + repname);
 				if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.product.dataFile.getAbsolutePath() + ">");
+					Messenger.printMsg(Messenger.TRACE, "File moved to " + reportFile + repname);
 					this.product.dataFile.delete();
+				} else {
+					Messenger.printMsg(Messenger.TRACE, "File copied to " + reportFile + repname);
 				}
 			}
 		}
