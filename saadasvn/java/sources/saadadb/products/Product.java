@@ -364,9 +364,10 @@ public class Product /*extends File*/ {
 						+ separ;
 			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), reportFile + repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.dataPointer.file.getAbsolutePath() + ">");
+				Messenger.printMsg(Messenger.TRACE, "File moved to " + reportFile + repname);
 				this.dataPointer.file.delete();
+			} else {
+				Messenger.printMsg(Messenger.TRACE, "File copied to " + reportFile + repname);
 			}
 		}
 		/*
