@@ -174,6 +174,7 @@ public class TransactionMaker {
 	private void execStatement(Statement stmt, String query) throws Exception {
 		Messenger.dbAccess();
 		if( !forced_mode ) {
+			connection.setAutoCommit(false);
 			stmt.executeUpdate(query);
 		} else {
 			connection.setAutoCommit(true);
@@ -198,6 +199,7 @@ public class TransactionMaker {
 	private void execStatement(PreparedStatement pstmt, String query) throws Exception {
 		Messenger.dbAccess();
 		if( !forced_mode ) {
+			connection.setAutoCommit(false);
 			pstmt.executeUpdate();
 		} else {
 			connection.setAutoCommit(true);
