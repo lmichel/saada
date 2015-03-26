@@ -176,7 +176,9 @@ public class DatabaseConnection {
 	 * @param autoCommit
 	 * @throws SQLException
 	 */
-	public void setAutoCommit(boolean autoCommit) throws SQLException{}
+	public void setAutoCommit(boolean autoCommit) throws SQLException{
+		this.connection.setAutoCommit(autoCommit);
+	}
 	
 	/**
 	 * Commit the current transaction
