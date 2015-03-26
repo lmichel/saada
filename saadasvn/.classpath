@@ -174,5 +174,6 @@
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_MSQL/saadadb/BENCH2_0_MSQL/class_mapping"/>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/versionObscore/distrib/Saada2.0/jtools/catalina-ant.jar"/>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_PSQL/saadadb/BENCH2_0_PSQL/class_mapping"/>
+	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/SEB/class_mapping"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
