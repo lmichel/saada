@@ -12,6 +12,7 @@ import java.sql.Statement;
 
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
+import saadadb.util.Messenger;
 
 /**
  * Wrapper for JDBC connection {@link Spooler}
@@ -114,6 +115,11 @@ public class DatabaseConnection {
 				,Database.getWrapper().getDefaultConcurentMode());
 		return this.statement;
 	}
+	/**
+	 * Used to upgrade the DB only
+	 * @return
+	 * @throws Exception
+	 */
 	public  Statement getUpdatableStatement() throws Exception{
 		this.status = WORKING;
 		this.connection.setAutoCommit(true);
@@ -176,7 +182,9 @@ public class DatabaseConnection {
 	 * @param autoCommit
 	 * @throws SQLException
 	 */
-	public void setAutoCommit(boolean autoCommit) throws SQLException{}
+	public void setAutoCommit(boolean autoCommit) throws SQLException{
+		this.connection.setAutoCommit(autoCommit);
+	}
 	
 	/**
 	 * Commit the current transaction

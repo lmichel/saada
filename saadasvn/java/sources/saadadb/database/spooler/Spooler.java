@@ -296,7 +296,6 @@ public class Spooler {
 		for( DatabaseConnection cr: connectionsReferences) s += cr.toShortString();
 		s += " [" + ((adminConnection == null)? "-": adminConnection.toShortString()) + "]";
 		return s;
-
 	}
 
 	/**
@@ -309,6 +308,7 @@ public class Spooler {
 				this.adminConnection = new DatabaseAdminConnection(-1, this.adminPassword);
 			} else {
 				this.adminConnection = this.connectionsReferences.get(0);
+				this.adminConnection.connection.setAutoCommit(false);
 			}
 		}		
 	}
