@@ -938,6 +938,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 			ps += "?";
 		}
 		ps += ")";
+		connection.setAutoCommit(false);		
 		PreparedStatement prep = connection.prepareStatement(ps);
 		/*
 		 * Maps file row in the prepared segment
@@ -971,6 +972,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 				prep.clearBatch();
 			}
 		}
+		br.close();
 		prep.executeBatch();
 		prep.close();
 		/*
