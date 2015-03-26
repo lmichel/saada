@@ -20,7 +20,7 @@ import saadadb.util.Messenger;
 public class ThreadRelationPopulate extends ThreadRelationCreate {
 	private static boolean emptyFirst = false;
 	private static  boolean indexAfter = true;
-	
+
 	public ThreadRelationPopulate(Frame frame, String taskTitle) {
 		super(frame, null, taskTitle);
 	}
@@ -39,14 +39,14 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			JCheckBox withIndex = new JCheckBox("Do you want to index the relation " + config.getNameRelation() + " after?");
 			withIndex.setSelected(indexAfter);
 			boolean retour = AdminComponent.showConfirmDialog(frame, "Do you want to proceed?", new Component[] {withEmpty, withIndex});
-			
+
 			if( retour ) {
 				emptyFirst = withEmpty.isSelected();
 				indexAfter = withIndex.isSelected();
 				return true;
-		      }
-		
-		      return false;
+			}
+
+			return false;
 		}
 	}
 
@@ -58,13 +58,20 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 		Cursor cursor_org = frame.getCursor();
 		try {
 			RelationManager rm = new RelationManager(config);
+			if( emptyFirst ){
+				SQLTable.beginTransaction();
+				rm.empty();
+				SQLTable.commitTransaction();
+			}
 			SQLTable.beginTransaction();
 			rm.populateWithQuery();
 			SQLTable.commitTransaction();
-			IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
-			SQLTable.beginTransaction();
-			ib.createIndexRelation();
-			SQLTable.commitTransaction();
+			if( indexAfter) {
+				IndexBuilder ib = new IndexBuilder(Repository.getIndexrelationsPath() + Database.getSepar(), config.getNameRelation());
+				SQLTable.beginTransaction();
+				ib.createIndexRelation();
+				SQLTable.commitTransaction();
+			}
 			Database.getCachemeta().reloadGraphical(frame, true);
 			SwingUtilities.invokeLater(new Runnable() 
 			{
@@ -75,7 +82,7 @@ public class ThreadRelationPopulate extends ThreadRelationCreate {
 			});
 		} catch (AbortException e) {			
 			Messenger.trapAbortException(e);
-			} catch (Exception ae) {			
+		} catch (Exception ae) {			
 			SQLTable.abortTransaction();
 			Messenger.printStackTrace(ae);
 			frame.setCursor(cursor_org);
