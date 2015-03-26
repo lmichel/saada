@@ -1,6 +1,7 @@
 package saadadb.sqltable;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -58,7 +59,7 @@ public class Table_Saada_Loaded_File {
 		}
 		String repository_name;
 		if( rep_name == null || rep_name.length() == 0 ) {
-			repository_name = getRepositoryname(prd.getName(), coll_name, category);
+			repository_name = getRepositoryname((new File(prd.getName())).getName(), coll_name, category);
 		}
 		else {
 			repository_name = rep_name;
