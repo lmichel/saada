@@ -992,26 +992,26 @@ public class SQLiteWrapper extends DbmsWrapper {
 			
 			
 			Messenger.debug_mode = true;
-			//DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 
-			Database.init("SEB");
-			Database.setAdminMode(null);
-			SQLTable.beginTransaction();
-			SQLTable.addQueryToTransaction("DELETE FROM EntCl_ConfigTable_1Entry");
-			SQLTable.commitTransaction();
-			System.out.println("COUOCU0 " + Spooler.getSpooler());
-			DatabaseConnection dbc = Database.getConnection();
-			System.out.println("COUOCU " + Spooler.getSpooler());
-			System.out.println("COUOCU2 " + Spooler.getSpooler());
-			Database.giveAdminConnection();
-			Database.getWrapper().storeTable(Database.getConnection(), "EntCl_ConfigTable_1Entry", -1, "/data/repository/SEB/tmp/bus1427300906129.psql");
-			Database.close();
-			System.exit(1);
-//			System.out.println(dbmswrapper.test_base);
-//			dbmswrapper.setAdminAuth("", "");
-//			System.out.println(dbmswrapper.test_base);
-//			dbmswrapper.checkAdminPrivileges("/tmp", false);
-//			dbmswrapper.setReaderAuth("", "");
-//			dbmswrapper.checkReaderPrivileges();
+			DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 
+//			Database.init("SEB");
+//			Database.setAdminMode(null);
+//			SQLTable.beginTransaction();
+//			SQLTable.addQueryToTransaction("DELETE FROM EntCl_ConfigTable_1Entry");
+//			SQLTable.commitTransaction();
+//			System.out.println("COUOCU0 " + Spooler.getSpooler());
+//			DatabaseConnection dbc = Database.getConnection();
+//			System.out.println("COUOCU " + Spooler.getSpooler());
+//			System.out.println("COUOCU2 " + Spooler.getSpooler());
+//			Database.giveAdminConnection();
+//			Database.getWrapper().storeTable(Database.getConnection(), "EntCl_ConfigTable_1Entry", -1, "/data/repository/SEB/tmp/bus1427300906129.psql");
+//			Database.close();
+//			System.exit(1);
+			System.out.println(dbmswrapper.test_base);
+			dbmswrapper.setAdminAuth("", "");
+			System.out.println(dbmswrapper.test_base);
+			dbmswrapper.checkAdminPrivileges("/tmp", false);
+			dbmswrapper.setReaderAuth("", "");
+			dbmswrapper.checkReaderPrivileges();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			System.err.println(e.getMessage());

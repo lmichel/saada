@@ -149,12 +149,16 @@ abstract public class DbmsWrapper {
 			tmpfile.close();
 
 			if( this.tsvLoadNotSupported() ) {
-				this.storeTable(connection, test_table, -1, tmp_filename) ;			
+				this.storeTable(connection, test_table, -1, tmp_filename) ;	
+				/*
+				 * SQLITE storeTable disables autoCommit
+				 */
+				connection.commit();
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
 					if (Messenger.debug_mode)
 						Messenger.printMsg(Messenger.DEBUG, "UPDATE " +str);				
-					stmt.executeUpdate(str);					
+					stmt.executeUpdate(str);	
 				}
 			}
 
@@ -257,7 +261,7 @@ abstract public class DbmsWrapper {
 		while( rs.next()) {
 			if( rs.getInt(1) != 3 ) {
 				reader_connection.close();
-				IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + rs.getRow() + "> return by SQL select.");
+				IgnoreException.throwNewException(SaadaException.CORRUPTED_DB, "Wrong row count: <" + rs.getInt(1) + "> return by SQL select.");
 			}
 			else {
 				Messenger.printMsg(Messenger.TRACE, "test table readout: 3 rows found: OK");
