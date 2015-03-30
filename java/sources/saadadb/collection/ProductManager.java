@@ -228,7 +228,7 @@ public class ProductManager extends EntityManager {
 					}
 					break;
 				}
-				rs.close();
+				squery.close();
 				//SQLTable.indexTable(ecoll_table, null);
 				tablesToIndex.add(ecoll_table);
 			}

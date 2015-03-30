@@ -215,8 +215,12 @@ public class Spooler {
 		DatabaseConnection retour;
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Get connection " + Spooler.getSpooler());
-		//Messenger.printStackTop();
+		boolean first = true;
 		while( (retour = this.getFirstFreeConnection()) == null ) {
+			if( first && !Database.getWrapper().supportConcurrentAccess()) {
+				Messenger.printStackTop("Spooler probably locked");
+				first = false;
+			}
 			Thread.sleep(WAIT_DELAY);
 		}
 		return retour;		
