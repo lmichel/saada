@@ -1018,6 +1018,7 @@ abstract public class DbmsWrapper {
 	 * @throws FatalException
 	 */
 	public abstract Map<String, String> getExistingIndex(DatabaseConnection connection, String table) throws FatalException;
+	
 	public Map<String, String> getExistingIndex(String table)throws Exception {
 		DatabaseConnection connection =  Database.getConnection();
 		Map<String, String> retour = getExistingIndex(connection, table);

@@ -112,7 +112,8 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws Exception
 	 */
 	public static boolean hasCapability(Capability capability) throws Exception {
-		ResultSet rs = (new SQLQuery()).run("SELECT * FROM "
+		SQLQuery query = new SQLQuery();
+		ResultSet rs = query.run("SELECT * FROM "
 				+ tableName 
 				+ " WHERE datatreepath = '" + capability.getDataTreePath() + "'"
 				+ " AND protocol = '" + capability.getProtocol() + "'"
@@ -122,7 +123,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 			retour = true;
 			break;
 		}
-		rs.close();
+		query.close();
 		return retour;
 	}
 	/**

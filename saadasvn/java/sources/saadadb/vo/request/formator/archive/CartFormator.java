@@ -221,8 +221,6 @@ public class CartFormator  extends QueryResultFormator{
 					oids.add(ors.getOId());
 				}
 				ors.close();
-				ors = null;
-
 				/*
 				 * If the query is apply on catalogue entries,a VOTable is generated and set as ZipENtryRef URI
 				 * Otherwise all data files returned by the query are appended to the ZIOP MAP

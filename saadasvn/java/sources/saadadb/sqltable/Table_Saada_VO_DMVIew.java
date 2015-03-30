@@ -103,7 +103,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 		while( rs.next() ) {
 			rs.updateLong(1, (new Qbox(new Coo(rs.getDouble(2), rs.getDouble(3)))).box());
 		}
-		rs.close();	
+		sqlquery.close();	
 	}
 
 	/**
@@ -124,10 +124,10 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 				+ " FROM " + vor.getName() 
 				+ " WHERE oidsaada >> 32 = " + mask  + " LIMIT 1");
 		while( rs.next() ) {
-			rs.close();
+			sqlquery.close();
 			return true;
 		}
-		rs.close();
+		sqlquery.close();
 		return false;
 	}
 	

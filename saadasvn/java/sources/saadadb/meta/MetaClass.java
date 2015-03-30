@@ -274,7 +274,7 @@ public class MetaClass extends MetaObject{
 		while(rs.next()) {
 			retour = rs.getInt(1);
 		}
-		rs.close();
+		squery.close();
 		return retour;
 	}
 
