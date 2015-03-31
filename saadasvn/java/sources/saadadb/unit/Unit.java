@@ -131,7 +131,7 @@ public class Unit {
 	static int DEBUG = 0;
 	static final private byte _e0 = 0x30 ;		// Unitless MKSA
 	static final private byte _m0 = 0x02 ;		// Unitless mag
-	static final private long _    = 0x0230303030303030L;	// Unitless
+	static final private long underScore    = 0x0230303030303030L;	// Unitless
 	static final private long _LOG = 0x8100000000000000L;	// Mag or Log (~02)
 	static final private long _log = 0x8000000000000000L;	// Log scale
 	static final private long _mag = 0x0100000000000000L;	// Mag scale
@@ -702,7 +702,7 @@ public class Unit {
 	 * @return	the representation of a unitless dimension.
 	 **/
 	static public long unitless() {
-		return(_);
+		return(underScore);
 	}
 
 	/** 
@@ -816,7 +816,7 @@ public class Unit {
 		if ((mksa&_LOG) != 0) throw new ArithmeticException
 		("****Unit: mag(" + symbol + ")") ;
 		value = -2.5*AstroMath.log(value);
-		if ((mksa == _) && (factor == 1)) {	// Now we've mag
+		if ((mksa == underScore) && (factor == 1)) {	// Now we've mag
 			mksa |= _mag;
 			if (symbol != null) symbol = "mag";
 		} else {
@@ -859,18 +859,18 @@ public class Unit {
 		int i = expo; 
 		double r = 1;
 		double v = 1; 
-		long u = _;
+		long u = underScore;
 		if ((mksa&(_log|_mag)) != 0) throw new ArithmeticException
 		("****Unit: can't power log[unit]: " + symbol );
 		while (i > 0) { 
 			r *= factor; v *= value; 
-			u += mksa; u -= _;  
+			u += mksa; u -= underScore;  
 			if ((u&0x8480808080808080L) != 0) error++;
 			i--; 
 		}
 		while (i < 0) { 
 			r /= factor; v /= value; 
-			u += _; u -= mksa;
+			u += underScore; u -= mksa;
 			if ((u&0x8480808080808080L) != 0) error++;
 			i++; 
 		}
@@ -908,7 +908,7 @@ public class Unit {
 		("****Unit: sqrt(" + symbol + ") is impossible");
 		value = Math.sqrt(value);
 		factor = Math.sqrt(factor);
-		mksa = (mksa+_)>>1;
+		mksa = (mksa+underScore)>>1;
 		/* Try to remove the squared edition */
 		if ((symbol != null) && (symbol.length()>1)) {
 			Parsing t = new Parsing(symbol);
@@ -935,7 +935,7 @@ public class Unit {
 	 * @return	true if unit has no associated dimension
 	 **/
 	public final boolean isUnitless () {
-		return((mksa&(~_log)) == _);
+		return((mksa&(~_log)) == underScore);
 	}
 
 	/** 
@@ -1264,8 +1264,8 @@ public class Unit {
 		if (((mksa&_abs)!=0) && (unit.factor != 1)) throw	// On a date
 		new ArithmeticException("****Unit.mult on a date!");
 		if (((mksa|unit.mksa)&_log) != 0) {
-			if ((mksa == _) && (factor == 1.)) ;
-			else if ((unit.mksa == _) && (unit.factor == 1.)) ;
+			if ((mksa == underScore) && (factor == 1.)) ;
+			else if ((unit.mksa == underScore) && (unit.factor == 1.)) ;
 			else throw new ArithmeticException
 			("****Unit: can't multiply logs: " + symbol + " x " + unit.symbol);
 		}
@@ -1273,13 +1273,13 @@ public class Unit {
 		 * except if one of the factors is unity.
 		 */
 		if ((offset!=0) || (unit.offset!=0)) {
-			if (mksa == _) offset = unit.offset;
-			else if (unit.mksa == _) ;
+			if (mksa == underScore) offset = unit.offset;
+			else if (unit.mksa == underScore) ;
 			else offset = 0;
 		}
 		v *= unit.value; 
 		r *= unit.factor;
-		u += unit.mksa; u -= _;
+		u += unit.mksa; u -= underScore;
 		if ((u&0x0c80808080808080L) != 0) throw new ArithmeticException
 		("****too large powers in: " + symbol + " x " + unit.symbol);
 		mksa = u;
@@ -1287,8 +1287,8 @@ public class Unit {
 		value  = v;
 		/* Decision for the new symbol */
 		if ((symbol != null) && (unit.symbol != null)) {
-			if ((unit.mksa == _) && (unit.factor == 1)) return;	// No unit ...
-			if ((     mksa == _) && (     factor == 1)) symbol = unit.symbol;
+			if ((unit.mksa == underScore) && (unit.factor == 1)) return;	// No unit ...
+			if ((     mksa == underScore) && (     factor == 1)) symbol = unit.symbol;
 			else if ((symbol.equals(unit.symbol)) && (factor == unit.factor))
 				symbol = toExpr(symbol) + "2" ;
 			else symbol = toExpr(symbol) + "." + toExpr(unit.symbol) ;
@@ -1306,8 +1306,8 @@ public class Unit {
 		if (((mksa&_abs)!=0) && (unit.factor != 1)) throw	// On a date
 		new ArithmeticException("****Unit.div  on a date!");
 		if (((mksa|unit.mksa)&_log) != 0) {
-			if ((mksa == _) && (factor == 1.)) ;
-			else if ((unit.mksa == _) && (unit.factor == 1.)) ;
+			if ((mksa == underScore) && (factor == 1.)) ;
+			else if ((unit.mksa == underScore) && (unit.factor == 1.)) ;
 			else throw new ArithmeticException
 			("****Unit: can't divide logs: " + symbol + " x " + unit.symbol);
 		}
@@ -1315,13 +1315,13 @@ public class Unit {
 		 * except if one of the factors is unity.
 		 */
 		if ((offset!=0) || (unit.offset!=0)) {
-			if (mksa == _) offset = unit.offset;
-			else if (unit.mksa == _) ;
+			if (mksa == underScore) offset = unit.offset;
+			else if (unit.mksa == underScore) ;
 			else offset = 0;
 		}
 		v /= unit.value; 
 		r /= unit.factor; 
-		u += _; u -= unit.mksa;
+		u += underScore; u -= unit.mksa;
 		if ((u&0x8c80808080808080L) != 0) throw new ArithmeticException
 		("****too large powers in: " + symbol + " / " + unit.symbol);
 		mksa = u;
@@ -1329,8 +1329,8 @@ public class Unit {
 		value  = v;
 		/* Decision for the new symbol */
 		if ((symbol != null) && (unit.symbol != null)) {
-			if ((unit.mksa == _) && (unit.factor == 1)) return;	// No unit ...
-			if ((     mksa == _) && (     factor == 1))
+			if ((unit.mksa == underScore) && (unit.factor == 1)) return;	// No unit ...
+			if ((     mksa == underScore) && (     factor == 1))
 				symbol = toExpr(unit.symbol) + "-1";
 			else if (symbol.equals(unit.symbol)) symbol = edf(factor);
 			else symbol = toExpr(symbol) + "/" + toExpr(unit.symbol) ;
@@ -1399,7 +1399,7 @@ public class Unit {
 		int i, s;
 
 		/* Initialize the Unit to unitless */
-		mksa = _; factor = 1.;
+		mksa = underScore; factor = 1.;
 		if (text.pos >= text.length) return(0);	// Unitless
 
 		if (DEBUG>0) System.out.println("....unit1(" + text + ")");
@@ -1552,7 +1552,7 @@ public class Unit {
 		int i, s;
 
 		/* Initialize the Unit to unitless */
-		mksa = _; 
+		mksa = underScore; 
 
 		if (DEBUG>0) System.out.print("....unitec(" + text + "): factor=");
 		//System.out.println("..unitec(0): edited=<" + edited + ">");
@@ -1673,7 +1673,7 @@ public class Unit {
 	 **/
 	public final void set () {	
 		symbol = null;	
-		mksa = _; factor = 1;
+		mksa = underScore; factor = 1;
 		value = 0./0.;			// NaN
 		offset = 0.;
 	}
@@ -2122,7 +2122,7 @@ public class Unit {
 		}
 
 		/* Check unitless -- edited as empty string */
-		if (mksa == _) return(0);
+		if (mksa == underScore) return(0);
 
 		/* Find the best symbol for the physical dimension */
 		if (option > 0) {
@@ -2314,7 +2314,7 @@ public class Unit {
 		if ((!Double.isNaN(value)) || (symlen == 0)) {
 			editValue(buf);
 		}
-		if ((mksa == _) && (factor == 1));
+		if ((mksa == underScore) && (factor == 1));
 		else if (!symb_edited) {
 			if (symlen > 0) buf.append(symbol) ;
 			else { buf.append('('); toSI(buf, 0); buf.append(')'); }
@@ -2436,7 +2436,7 @@ public class Unit {
 			editValue(b); 		// Value '1' not edited
 			if (b.length() == 0) b.append((mksa&_log)!=0 ? '0' : '1');
 		}
-		if ((mksa == _) && (factor == 1));
+		if ((mksa == underScore) && (factor == 1));
 		else if (!symb_edited) {
 			if (symbol != null) b.append(symbol) ;
 			else { b.append('('); toSI(b, 0); b.append(')'); }
