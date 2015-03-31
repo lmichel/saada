@@ -275,6 +275,8 @@ abstract public class DbmsWrapper {
 			Messenger.printMsg(Messenger.TRACE, "REGEXP  procedure seems to be OK");
 			break;
 		}
+
+		this.testExtraFunctions(stmt);
 		rs.close();
 
 		/*
@@ -284,6 +286,16 @@ abstract public class DbmsWrapper {
 		return true;
 	}
 
+	/**
+	 * Test some function specific to the DBMS
+	 * @param stmt
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean testExtraFunctions(Statement stmt) throws Exception{
+		return true;
+	}
+	
 	/**
 	 * @param name
 	 * @param password

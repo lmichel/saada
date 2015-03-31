@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.sqlite.SQLiteConfig;
@@ -171,6 +172,19 @@ public class SQLiteWrapper extends DbmsWrapper {
 			Messenger.printMsg(Messenger.DEBUG, "Create SQLITE test DB " +  test_base);
 		createDB(test_base);
 	}
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#testExtraFunctions(java.sql.Statement)
+	 */
+	public boolean testExtraFunctions(Statement stmt) throws Exception{
+		ResultSet rs = stmt.executeQuery("select sprintf('%3s', 'a'), sprintf('0x%03x', 5), sprintf('%08.4f', 233.35656)");
+		while( rs.next() ){
+			System.out.println(rs.getObject(1) + " " + rs.getObject(2)  + " " + rs.getObject(3));
+		}
+		rs.close();
+		return true;
+	}
+
 
 	/**
 	 * @return
@@ -990,6 +1004,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	public static void main(String[] args) {
 		try {
 			
+	    	Locale.setDefault(new Locale ("en", "US"));
 			
 			Messenger.debug_mode = true;
 			DbmsWrapper dbmswrapper = SQLiteWrapper.getWrapper("", ""); 

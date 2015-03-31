@@ -155,11 +155,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="graphics"/>
-	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqlite-jdbc-3.7.2.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-io-2.4.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -175,5 +170,6 @@
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/versionObscore/distrib/Saada2.0/jtools/catalina-ant.jar"/>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/dbms_PSQL/saadadb/BENCH2_0_PSQL/class_mapping"/>
 	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/SEB/class_mapping"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqlite-jdbc-3.8.7.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
