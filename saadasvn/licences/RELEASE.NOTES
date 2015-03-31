@@ -1,9 +1,16 @@
 -------------------------------------------------
-Version Saada1.8.build9
+Version Saada1.8.build10
 
 L. MICHEL
 March 2015
 -------------------------------------------------
+
+Saada 1.8.build10
+-----------------
+SQLITE locks fixed on the TAP deployment
+Add SQL function sprintf to SQLITE
+Uses SQLITE JDBC Driver 3.8.7
+
 Saada 1.8.build9
 ------------------
 The web interface displays data sorted by oidsaada (desc) i order to put the latest records on the top
