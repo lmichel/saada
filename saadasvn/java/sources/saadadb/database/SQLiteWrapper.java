@@ -23,17 +23,20 @@ import org.sqlite.SQLiteConfig;
 import saadadb.collection.Category;
 import saadadb.configuration.RelationConf;
 import saadadb.database.spooler.DatabaseConnection;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.HardwareDescriptor;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
 
+/**
+ * @author michel
+ * @version $Id$
+ *
+ */
 public class SQLiteWrapper extends DbmsWrapper {
 	private static String db_file;
 	private static boolean DEV_MODE = false;
