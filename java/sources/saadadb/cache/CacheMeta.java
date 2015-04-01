@@ -29,6 +29,7 @@ import saadadb.util.Messenger;
  * @author michel
  * 05/2011: add method getUCDs
  * 05/2011: add methods getRelationNamesStarting/Ending from/on  Class
+ * 03/2015: Check meta data consistency at class loading
  */
 public class CacheMeta {
 
@@ -231,6 +232,13 @@ public class CacheMeta {
 			MetaClass mc = null;
 			while ( rs.next() ) {
 				classname = rs.getString("name_class");
+				if( classname == null ){
+					Messenger.printMsg(Messenger.WARNING, "META DATA INCONSISTANCY");
+					Messenger.printMsg(Messenger.WARNING, "The " +  Category.explain(cat) + " class " + rs.getString("cname") 
+							       + " is declared in the table saada_class but has no description in saada_metaclass_" + str_cat);
+					Messenger.printMsg(Messenger.WARNING, "Remove it please");
+					continue;
+				}
 				if( !last_classname.equals(classname) ) {
 					/*
 					 * create the new meta class
