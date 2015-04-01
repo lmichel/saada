@@ -151,6 +151,10 @@ abstract public class DbmsWrapper {
 
 			if( this.tsvLoadNotSupported() ) {
 				this.storeTable(connection, test_table, -1, tmp_filename) ;			
+				/*
+				 * SQLITE storeTable disables autoCommit
+				 */
+				connection.commit();
 			} else {
 				for(String str: this.getStoreTable(test_table, -1, tmp_filename) ) {
 					if (Messenger.debug_mode)
