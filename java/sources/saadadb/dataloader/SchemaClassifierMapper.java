@@ -282,9 +282,6 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			for( int i=0 ; i<existing_classes.length ; i++ ) {
 				mc = Database.getCachemeta().getClass(existing_classes[i]);
 
-				System.out.println("@@@@@@@@@@@@@ " + mc.getName() + " " + requested_classname);				
-				System.out.println("@@@@@@@@@@@@@ " + mc.getCollection_name() + " " + mapping.getCollection());				
-				System.out.println("@@@@@@@@@@@@@ " + mc.getCategory() + " " + mapping.getCategory());		
 				boolean classFormatFound = false;
 				if(  mc.getCollection_name().equals(mapping.getCollection()) &&
 						mc.getCategory() == mapping.getCategory() ) {

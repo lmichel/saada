@@ -4,6 +4,9 @@ import hecds.LibLog;
 import hecds.wcs.Modeler;
 import hecds.wcs.descriptors.CardDescriptor;
 import hecds.wcs.descriptors.CardMap;
+import hecds.wcs.transformations.Projection;
+import hecds.wcs.types.AxeType;
+import hecds.wcs.types.CardFilters;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -186,8 +189,41 @@ public abstract class ProductBuilder {
 			 */
 			CardMap cm = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
 			LibLog.setLogger(new MessengerLogger());
-			this.wcsModeler = new Modeler(cm);			
+			this.wcsModeler = new Modeler(cm);	
+			this.completeEnergyWCS(cm);	
 			this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
+		}
+	}
+
+	/**
+	 * This is an experimental feature aiming at extracting missing WCS keywords from the user mapping parameters
+	 * 
+	 * @param cardMap cardMap sent to the WCS lib and possibly extended with synthetic keywords
+	 * @throws Exception
+	 */
+	private void completeEnergyWCS(CardMap cardMap ) throws Exception {
+		Projection projection = this.wcsModeler.getProjection(AxeType.SPECTRAL);
+		if( !projection.isUsable() ) {
+			ColumnMapping columnMapping;
+			for( int axeNum=1 ; axeNum<=4 ; axeNum++){
+				CardDescriptor fb = cardMap.get("CTYPE" + axeNum);
+				if( fb != null && fb.getValue().matches(CardFilters.SPECTRAL_CTYPE)){
+					String unitWK = "CUNIT" +	axeNum;
+					if( cardMap.get(unitWK) == null 
+							&& (columnMapping = this.mapping.getEnergyAxisMapping( ).getColumnMapping("em_unit")) != null 
+							&& columnMapping.byValue()) {
+						AttributeHandler ah = new AttributeHandler();
+						ah.setNameattr("-" + unitWK.toLowerCase());
+						ah.setNameorg(unitWK);
+						ah.setType("String");
+						ah.setValue(columnMapping.getValue());
+						cardMap.put(ah);
+						Messenger.printMsg(Messenger.TRACE, "Add user defined spectral unit (" + columnMapping.getValue() + ") to the WCS projection (axe #" + axeNum + ")");
+						System.out.println(projection);
+						this.wcsModeler = new Modeler(cardMap);	
+					}
+				}
+			}
 		}
 	}
 
@@ -211,7 +247,7 @@ public abstract class ProductBuilder {
 	 * @return
 	 */
 	public abstract int getCategory();
-	
+
 	/**
 	 * @return
 	 */
@@ -389,9 +425,9 @@ public abstract class ProductBuilder {
 		this.astroframeSetter.calculateExpression();
 		if( this instanceof EntryBuilder ){
 			String s = "";
-//			System.out.println("CHECK " + Integer.toHexString(this.productAttributeHandler.get("_e_d25").hashCode()) + " " + this.productAttributeHandler.get("_e_d25"));
-//			for( AttributeHandler ah: this.s_resolutionSetter.getExprAttributes()) 
-//				System.out.println(Integer.toHexString(ah.hashCode()) + " " +  ah);
+			//			System.out.println("CHECK " + Integer.toHexString(this.productAttributeHandler.get("_e_d25").hashCode()) + " " + this.productAttributeHandler.get("_e_d25"));
+			//			for( AttributeHandler ah: this.s_resolutionSetter.getExprAttributes()) 
+			//				System.out.println(Integer.toHexString(ah.hashCode()) + " " +  ah);
 		}
 		this.s_resolutionSetter.calculateExpression();
 		this.s_resolution_unitSetter.calculateExpression();
@@ -486,18 +522,18 @@ public abstract class ProductBuilder {
 			retour = new ColumnExpressionSetter(colmunName);
 			retour.completeUserMappingMsg("-");
 			return retour;
-		/*
-		 * User mapping by value: return a "constant" ColumnExpressionSetter
-		 * (no reference to any AH) 
-		 */
+			/*
+			 * User mapping by value: return a "constant" ColumnExpressionSetter
+			 * (no reference to any AH) 
+			 */
 		} else if( columnMapping.byValue() ){
 			retour = new ColumnExpressionSetter(colmunName, columnMapping.getValue());
 			retour.setUnit(columnMapping.getUnit());
 			retour.completeUserMappingMsg( columnMapping.message + "By " + columnMapping.getMode() + " " + columnMapping.getValue() + columnMapping.getUnit() + " " );
-		return retour;
-		/*
-		 * Mapped either by expression or keyword: use keywords which must be retrieved with the product AHS
-		 */
+			return retour;
+			/*
+			 * Mapped either by expression or keyword: use keywords which must be retrieved with the product AHS
+			 */
 		} else {
 			/*
 			 * Checks the consistency of the AH lits referenced by the mapping
@@ -513,7 +549,7 @@ public abstract class ProductBuilder {
 			if( columnMapping.byKeyword() ) {
 				if(  handlersReferencedByMapping.size() != 1){
 					FatalException.throwNewException(SaadaException.INTERNAL_ERROR
-						, "Column " + colmunName + " mapped by keyword: must reference one attribute");
+							, "Column " + colmunName + " mapped by keyword: must reference one attribute");
 				}
 				String ahname=null;
 				AttributeHandler mappingSingleHandler=null;			
@@ -575,7 +611,7 @@ public abstract class ProductBuilder {
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
 					retour.completeUserMappingMsg(columnMapping.message + "By " + columnMapping.getMode());
-				return retour;
+					return retour;
 				}
 			} else {
 				//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Column mapping " + columnMapping + " not understood");		
@@ -612,7 +648,6 @@ public abstract class ProductBuilder {
 			this.mapObservableAxe();
 			this.mapPolarizationAxe();
 			this.mapIgnoredAndExtendedAttributes();
-			System.out.println("@@@@@@@@@@@ OVER " + this.getClass().getName());
 		}
 	}
 
@@ -1055,7 +1090,7 @@ public abstract class ProductBuilder {
 	 */
 	public void mapIgnoredAndExtendedAttributes () throws Exception {
 		Messenger.locateCode();
-		
+
 		Map<String , AttributeHandler> eatt = Database.getCachemeta().getAtt_extend(this.getCategory());
 		for( Entry<String , AttributeHandler> ea: eatt.entrySet()){
 			this.extended_attributesSetter.put(ea.getKey(), this.getSetterForMappedColumn(ea.getKey(),this.mapping.getExtenedAttMapping().getColumnMapping(ea.getKey())));

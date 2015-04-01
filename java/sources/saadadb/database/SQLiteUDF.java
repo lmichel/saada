@@ -18,6 +18,9 @@ import saadadb.util.SaadaConstant;
  * They are embededd as SQL procedures with PSQL or MySQL
  * Parameter types are: INT FLOAT TEXT BLOB NULL
  *    That must be checked before to get the value because the transtypage could rise an exception 
+ *    
+ *  03/2015: new function sprintf 
+
  * 
  * @author michel
  * @version $Id$
@@ -406,7 +409,29 @@ public class SQLiteUDF {
 				}
 			}       
 		});
-		
+
+		/*
+		 * string format procedure
+		 */
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "loading procedure sprintf");
+		Function.create(conn, "sprintf", new Function() {
+			@Override
+			public void xFunc() throws SQLException {
+				int nba = args();
+				if( nba != 2 ) {
+					throw new SQLException("sprintf requires 2 parameters (one string and one either text, int or double");
+				}
+				if( value_type(0) != SQLITE_TEXT ) {result(0); return;}
+				switch(value_type(1)){
+				case SQLITE_FLOAT: result(String.format(value_text(0),  value_double(1))); break;
+				case SQLITE_INT  : result(String.format(value_text(0),  value_int(1))); break;
+				case SQLITE_TEXT : result(String.format(value_text(0),  value_text(1))); break;
+				default: throw new SQLException("2nd parameter must be either a text, an int ora double");
+				}
+			}       
+		});
+
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "User Defined Procedures loaded");
 	}

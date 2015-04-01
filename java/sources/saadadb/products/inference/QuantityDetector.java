@@ -1,11 +1,7 @@
 package saadadb.products.inference;
 
-import hecds.LibLog;
 import hecds.wcs.Modeler;
-import hecds.wcs.descriptors.CardDescriptor;
-import hecds.wcs.descriptors.CardMap;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -14,13 +10,10 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
-import saadadb.products.datafile.DataFile;
 import saadadb.products.ppknowledge.KnowledgeBase;
 import saadadb.products.ppknowledge.PipelineParser;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
-import saadadb.util.Messenger;
-import saadadb.util.MessengerLogger;
 
 public class QuantityDetector {
 	private final PipelineParser pipelineParser;
@@ -31,7 +24,6 @@ public class QuantityDetector {
 	private final SpaceKWDetector spaceKWDetector;
 	private final ObservationKWDetector observationKWDetector;
 	private final PolarizationKWDetector polarizationKWDetector;
-	private final ProductMapping productMapping;
 	public String detectionMessage;
 	protected Modeler wcsModeler;
 
@@ -51,7 +43,6 @@ public class QuantityDetector {
 		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, comments);
 		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers,this.wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers);
-		this.productMapping = productMapping;
 	}
 	/**
 	 * @param tableAttributeHandlers
@@ -72,7 +63,6 @@ public class QuantityDetector {
 		this.observationKWDetector  = new ObservationKWDetector(tableAttributeHandlers, entryAttributeHandlers, comments);
 		this.polarizationKWDetector = new PolarizationKWDetector(tableAttributeHandlers, this.wcsModeler, comments);
 		this.pipelineParser = KnowledgeBase.getParser(tableAttributeHandlers, entryAttributeHandlers);
-		this.productMapping = productMapping;
 	}
 
 	/*

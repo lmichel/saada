@@ -5,6 +5,7 @@ import healpix.core.HealpixIndex;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
+import java.util.Locale;
 
 import saadadb.cache.CacheManager;
 import saadadb.cache.CacheManagerRelationIndex;
@@ -31,6 +32,7 @@ import saadadb.vocabulary.enums.DispersionType;
  * @version $Id$
  * 01/2014: Add healpixIndex filed with its getter
  * 02/2014: Use of the spooler for the admin connections
+ * 03/2015: passage Locale ENG
  */
 public class Database {
 
@@ -53,6 +55,7 @@ public class Database {
 	 * @param db_name
 	 */
 	public static void init(String db_name) {
+    	Locale.setDefault(new Locale ("en", "US"));
 		if( Database.init_done == false ) {
 			Messenger.printMsg(Messenger.TRACE, "Initialization of SaadaDB <" + db_name + ">");
 			try{

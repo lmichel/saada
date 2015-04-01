@@ -112,7 +112,6 @@ public class SaadaProcess {
 				Messenger.printMsg(Messenger.TRACE, "Pended on user request");
 				synchronized (this) {
 					this.wait();	
-					System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@");
 					SaadaProcess.this.abortOnRequested()	;
 				}
 			} catch (Exception e) {

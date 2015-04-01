@@ -366,7 +366,6 @@ public class VOTableDataFile extends FSDataFile {
 				String key = e.getKey().split(" ")[0]; //take the first field #a.b
 				DataFileExtension value = e.getValue();
 				if( value.isDataTable()) {
-					System.out.println("@@@@@@@@@@@@@@@@ HEADER " +  value.attributeHandlers.size() + " " + e.getKey());
 					this.headerExtension = value;
 					this.dataExtension = null;
 					for( Entry<String,DataFileExtension> e2: this.productMap.entrySet() ) {
@@ -374,7 +373,6 @@ public class VOTableDataFile extends FSDataFile {
 						DataFileExtension value2 = e2.getValue();
 						if( value2.type == DataFileExtensionType.TABLE_COLUMNS && key2.equals(key)) {
 							this.dataExtension = value2;
-							System.out.println("@@@@@@@@@@@@@@@@ DATA " +  value2.attributeHandlers.size()+ " " + e2.getKey());
 						if (Messenger.debug_mode)
 								Messenger.printMsg(Messenger.DEBUG, "Take table header + data " + key + ", the first available");
 							break;

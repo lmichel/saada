@@ -56,7 +56,6 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
-		System.out.println("@@@@@@@@ SpaceKWDetector1 " + tableAttributeHandler.size());
 	}
 
 	/**
@@ -66,7 +65,6 @@ public class SpaceKWDetector extends KWDetector{
 	public SpaceKWDetector(Map<String, AttributeHandler> tableAttributeHandler
 			, Map<String, AttributeHandler> columnsAttributeHandler, Modeler wcsModeler, List<String> comments) throws SaadaException {
 		super(tableAttributeHandler, columnsAttributeHandler, wcsModeler.getProjection(AxeType.SPACE));
-		System.out.println("@@@@@@@@ SpaceKWDetector2 " + tableAttributeHandler.size() + " " +((columnsAttributeHandler != null)? columnsAttributeHandler.size(): "NULL"));
 	}
 
 	/**

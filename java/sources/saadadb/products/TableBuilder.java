@@ -36,7 +36,6 @@ public class TableBuilder extends ProductBuilder {
 	 */
 	public TableBuilder(DataFile dataFile, ProductMapping mapping, MetaClass metaClass) throws Exception{	
 		super(dataFile, mapping, metaClass);
-		System.out.println("@@@@@@@@@@@@@ build entry1");
 
 		this.entryBuilder = new EntryBuilder(this);
 		this.dataFile = dataFile;
@@ -63,7 +62,6 @@ public class TableBuilder extends ProductBuilder {
 	}	
 	public TableBuilder(DataFile dataFile, ProductMapping mapping) throws Exception{	
 		super(dataFile, mapping, null);
-		System.out.println("@@@@@@@@@@@@@ build entryé");
 
 		this.entryBuilder = new EntryBuilder(this);
 		this.dataFile = dataFile;

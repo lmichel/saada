@@ -37,6 +37,7 @@ import cds.astro.Qbox;
  * 07/2009: getInCircle uses QBOX for small cones and BOX + distance for larger ones 
  * 04/2012: Use qbox  i ADQL if columns are pos_ra/dec_csa
  * 11/2013: method setLocalBehavior invoked before to return a connection
+ * 03/2025: function testExtraFunctions added to checkreaderPrivilege
  */
 abstract public class DbmsWrapper {
 	protected static DbmsWrapper wrapper;
@@ -272,11 +273,23 @@ abstract public class DbmsWrapper {
 			break;
 		}
 		rs.close();
+		
+		this.testExtraFunctions(stmt);
 
 		/*
 		 * If something goes wrong an axception is risen
 		 */
 		reader_connection.close();
+		return true;
+	}
+
+	/**
+	 * Test some function specific to the DBMS
+	 * @param stmt
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean testExtraFunctions(Statement stmt) throws Exception{
 		return true;
 	}
 
