@@ -1,6 +1,8 @@
 package saadadb.sqltable;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.util.List;
@@ -52,7 +54,7 @@ public class Table_Saada_Metacat{
 	 * @throws AbortException
 	 * @throws SaadaException 
 	 */
-	public void updateUCDTable(int class_id) throws AbortException, SaadaException{
+	public void updateUCDTable(int class_id) throws Exception{
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Updating the UCD table " + this.tableName + " for class " + this.className);
 		/*
 		 * class_id is computed after everyhng is OK.
@@ -79,8 +81,8 @@ public class Table_Saada_Metacat{
 		String query;
 		for( AttributeHandler ah: att_handler){
 			query = "DELETE FROM " + this.tableName 
-			+ " WHERE class_id = " 
-			+ ah.getClassid() ;
+					+ " WHERE class_id = " 
+					+ ah.getClassid() ;
 			SQLTable.addQueryToTransaction(query,  this.tableName);
 			break;
 		}
@@ -89,37 +91,24 @@ public class Table_Saada_Metacat{
 	/**
 	 * @throws AbortException
 	 */
-	private void insertClassIntoUCDTable()throws SaadaException{   
+	private void insertClassIntoUCDTable()throws Exception{   
 		String dumpfile = Repository.getTmpPath() + Database.getSepar()  + this.tableName + ".psql";
-		try {
-			SQLQuery q = new SQLQuery("SELECT max(pk) FROM " + this.tableName );
-			ResultSet rs = q.run();
-			int k=0;
-			while( rs.next() ){
-				k = rs.getInt(1);
-				break;
-			}
-			q.close();
-			BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
-			for(AttributeHandler hdl: att_handler){
-				k++;
-				String s = hdl.getDumpLine(k) + "\n";
-				bustmpfile.write(s);
-			}
-			bustmpfile.close();
-			SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.tableName + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		SQLQuery q = new SQLQuery("SELECT max(pk) FROM " + this.tableName );
+		ResultSet rs = q.run();
+		int k=0;
+		while( rs.next() ){
+			k = rs.getInt(1);
+			break;
 		}
-//
-//
-//		for(int i=0 ; i<att_handler.size(); i++){
-//			AttributeHandler hdl = (att_handler.get(i));
-//			String query = "INSERT INTO " + this.tableName + " " + AttributeHandler.getInsertStatement() + "VALUES\n";
-//			query +=  hdl.getInsertValues(i);
-//			SQLTable.addQueryToTransaction(query, this.tableName);
-//		}
+		q.close();
+		BufferedWriter bustmpfile = new BufferedWriter(new FileWriter(dumpfile));
+		for(AttributeHandler hdl: att_handler){
+			k++;
+			String s = hdl.getDumpLine(k) + "\n";
+			bustmpfile.write(s);
+		}
+		bustmpfile.close();		
+		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.tableName + " -1 " + dumpfile.replaceAll("\\\\", "\\\\\\\\")) ;
 	}
 
 }
