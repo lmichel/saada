@@ -182,7 +182,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 	public boolean testExtraFunctions(Statement stmt) throws Exception{
 		ResultSet rs = stmt.executeQuery("select sprintf('%3s', 'a'), sprintf('0x%03x', 5), sprintf('%08.4f', 233.35656)");
 		while( rs.next() ){
-			System.out.println(rs.getObject(1) + " " + rs.getObject(2)  + " " + rs.getObject(3));
+			Messenger.printMsg(Messenger.TRACE, "sprintf seems to work: " + rs.getObject(1)  + " "+ rs.getObject(2)  + " " + rs.getObject(3));
 		}
 		rs.close();
 		return true;
@@ -899,9 +899,16 @@ public class SQLiteWrapper extends DbmsWrapper {
 		int line = 0;
 		while( (str = br.readLine()) != null ) {
 			line++;
+			/*
+			 * Adding a trailing \n in order to take in account lines ending with a \t
+			 * split("+", "+A+B+C").length = 4
+			 * split("+", "A+B+C+").length = 3
+			 */
+			str += "\n";
 			String fs[] = str.split("\\t");
-			if( fs.length != nb_col ) {
-				QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line + " number of values (" + fs.length + ") does not match the number of columns (" +  nb_col + ")");
+			int length = fs.length;
+			if( length != nb_col ) {
+				QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line + " number of values (" + length + ") does not match the number of columns (" +  nb_col + ")");
 			}
 			for( int i=0 ; i< nb_col; i++ ) {
 				if( "null".equals(fs[i]) )
