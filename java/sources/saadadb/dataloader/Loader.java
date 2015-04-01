@@ -359,4 +359,34 @@ public class Loader extends SaadaProcess {
 			}
 		}
 	}
+	
+
+	/**
+	 * returns a map of the data files clusters Each cluster contain all files with the same format. 
+	 * The key map is the format signature. The cluster (map value) is contained in a {@linkplain DataFileCluster} 
+	 * @return the cluster map
+	 * @throws Exception
+	 */
+	public Map<String, DataFileCluster> getProductClusters() throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Start to load data with these parameters " + this.tabArg);
+		/*
+		 * Build a configuration from paramaters or load a named configuration.
+		 */
+		this.setConfiguration();
+		/*
+		 * Build the list of product files possibly loaded
+		 */
+		/*
+		 * The file to load list can be set by the GUI via the setFile_to_load method.
+		 * In that case we don't set this list again
+		 */
+		if( this.filesToBeLoaded == null ) {
+			setCandidateFileList();
+		}
+		if( filesToBeLoaded.size() == 0 ) {
+			return null;
+		}
+		return (new SchemaClassifierMapper(this, this.filesToBeLoaded, this.productMapping)).getProductClusters();
+	}
+
 }

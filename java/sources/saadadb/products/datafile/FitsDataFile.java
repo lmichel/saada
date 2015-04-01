@@ -77,7 +77,6 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	public FitsDataFile(String name, ProductBuilder product) throws Exception{
 		super(name,product.mapping );
-		System.out.println("@@@@@@ FITS Const 1");
 		this.setBuilder(product);
 		this.fitsData = new Fits(getCanonicalPath()); 
 		this.getProductMap();
@@ -88,7 +87,6 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	public FitsDataFile(String name, ProductMapping mapping) throws Exception {
 		super(name, mapping);
-		System.out.println("@@@@@@ FITS Const 2");
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Reading FITS file " +name);
 		this.fitsData = new Fits(name);
