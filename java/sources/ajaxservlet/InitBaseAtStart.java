@@ -44,6 +44,7 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 			servletContext = event.getServletContext();
 			base_dir = servletContext.getRealPath("") + Database.getSepar();
 			app_dir = servletContext.getContextPath().replaceAll("/", "");
+			Repository.setVoreportsPath(base_dir);
 			Messenger.printMsg(Messenger.TRACE, "base_dir: " + base_dir);
 			Messenger.printMsg(Messenger.TRACE, "app_dir: " + app_dir);
 			Messenger.debug_mode = false;
