@@ -391,7 +391,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 
 	public void setUnit(String unit){
 		if(unit != null){
-			this.unit = unit.trim();
+			this.unit = unit.trim().replaceAll("\"",  "").replace("'",  "") ;
 		}
 		else {
 			this.unit = "";
