@@ -213,7 +213,7 @@ public abstract class ProductBuilder {
 							&& (columnMapping = this.mapping.getEnergyAxisMapping( ).getColumnMapping("em_unit")) != null 
 							&& columnMapping.byValue()) {
 						AttributeHandler ah = new AttributeHandler();
-						ah.setNameattr("-" + unitWK.toLowerCase());
+						ah.setNameattr("_" + unitWK.toLowerCase());
 						ah.setNameorg(unitWK);
 						ah.setType("String");
 						ah.setValue(columnMapping.getValue());
