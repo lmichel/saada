@@ -1272,6 +1272,8 @@ public abstract class ProductBuilder {
 		Messenger.locateCode();
 		AxisMapping mapping     = this.mapping.getEnergyAxisMapping();
 		ColumnMapping sc_col    = mapping.getColumnMapping("dispertion_column");
+		ColumnMapping emin_col    = mapping.getColumnMapping("em_min");
+		ColumnMapping emax_col    = mapping.getColumnMapping("em_max");
 
 		this.em_unitSetter   = this.getSetterForMappedColumn("em_unit", mapping.getColumnMapping("em_unit"));
 		this.em_res_powerSetter = this.getSetterForMappedColumn("em_res_power", mapping.getColumnMapping("em_res_power"));
@@ -1279,11 +1281,10 @@ public abstract class ProductBuilder {
 		this.em_minSetter = new ColumnExpressionSetter("em_min");
 		this.em_maxSetter = new ColumnExpressionSetter("em_max");
 
-		if( sc_col.notMapped() ){
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "No mapping given for the dispersion column");
-			return ;
-		} else
+		if( !(emin_col.notMapped() || emax_col.notMapped()) ) {
+			this.em_minSetter   = this.getSetterForMappedColumn("em_min", emin_col);
+			this.em_maxSetter   = this.getSetterForMappedColumn("em_max", emax_col);			
+		} else if( !sc_col.notMapped())
 			/*
 			 * The mapping gives numeric values for the spectral range
 			 */
@@ -1313,6 +1314,10 @@ public abstract class ProductBuilder {
 					}
 				}
 
+			} else {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "No mapping given for the dispersion column");
+				return ;				
 			}
 	}
 
