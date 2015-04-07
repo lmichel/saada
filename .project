@@ -35,6 +35,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>HeCDSsrc</name>
+			<type>2</type>
+			<location>/home/michel/workspace/HeCDS/src</location>
+		</link>
+		<link>
 			<name>hecds_src</name>
 			<type>2</type>
 			<location>/home/michel/workspace/HeCDS/src</location>

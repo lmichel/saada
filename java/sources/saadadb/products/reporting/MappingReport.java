@@ -21,6 +21,7 @@ import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.util.Version;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
@@ -167,6 +168,7 @@ public class MappingReport {
 
 		FileWriter fw = new FileWriter(reportName);
 		fw.write("====================================================\n");
+		fw.write("    Saada " + Version.getVersion() + " " + Version.date + "\n");
 		fw.write("    " + this.builder.dataFile.getName() + "\n");
 		fw.write("    " + (new Date()) + "\n");
 		fw.write("====================================================\n");

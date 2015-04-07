@@ -4,6 +4,7 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/tap"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/hecds"/>
+        <wb-resource deploy-path="/" source-path="/HeCDSsrc"/>
         <dependent-module archiveName="psqlgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/hahn/Documents/saadaTp/psql/web/WEB-INF/lib/psqlgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
