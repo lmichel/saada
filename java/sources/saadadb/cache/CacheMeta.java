@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -599,7 +600,13 @@ public class CacheMeta {
 			return ret;
 	}
 
-
+	/**
+	 * @param category
+	 * @return
+	 */
+	public  final Map<String,AttributeHandler>  getCollectionAttributeHandlers(int category){
+		return MetaCollection.getAttribute_handlers(category);
+	}
 	/**
 	 * @param name
 	 * @return
