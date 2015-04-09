@@ -54,7 +54,7 @@
 <!-- Target -->
    <TR>
     <TD>Target</TD>
-    <TD>targe_name</TD>
+    <TD>target_name</TD>
     <TD>meta.id;src</TD>
     <TD>Target.Name</TD>
     <TD>char</TD>
