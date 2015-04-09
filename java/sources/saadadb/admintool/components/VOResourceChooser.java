@@ -28,6 +28,7 @@ import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capability;
+import saadadb.vocabulary.enums.VoProtocol;
 
 public class VOResourceChooser extends JPanel 
 {
@@ -39,7 +40,7 @@ public class VOResourceChooser extends JPanel
 	private JList confList = new JList(new DefaultListModel());
 	private JXTable descriptionTable;
 	private DefaultTableModel dm;
-	private String selectedVOResource;
+	private VoProtocol selectedVOResource;
 	private int lastSelectedIndex;
 	private int componentType;
 	private Border selectedBorder;
@@ -119,10 +120,10 @@ public class VOResourceChooser extends JPanel
 		}
 		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
-			model.addElement(Capability.SIA);
-			model.addElement(Capability.SSA);
-			model.addElement(Capability.ConeSearch);
-			model.addElement(Capability.TAP);
+			model.addElement(VoProtocol.SIA);
+			model.addElement(VoProtocol.SSA);
+			model.addElement(VoProtocol.ConeSearch);
+			model.addElement(VoProtocol.TAP);
 		}
 	}
 	
@@ -167,7 +168,7 @@ public class VOResourceChooser extends JPanel
 	
 	public void setDescription()
 	{
-		selectedVOResource = confList.getSelectedValue().toString();
+		selectedVOResource = (VoProtocol) confList.getSelectedValue();
 		if (dm.getRowCount() > 0)
 		    for (int i = dm.getRowCount() - 1; i > -1; i--) 
 		    	dm.removeRow(i);
@@ -176,7 +177,7 @@ public class VOResourceChooser extends JPanel
 			VOResource currentVOResource = null;
 			try
 			{
-				currentVOResource = Database.getCachemeta().getVOResource(selectedVOResource);
+				currentVOResource = Database.getCachemeta().getVOResource(selectedVOResource.toString());
 				if( currentVOResource.getGroups() != null ) 
 				{
 					String[] groups = currentVOResource.groupNames();
@@ -211,7 +212,7 @@ public class VOResourceChooser extends JPanel
 		else if (this.componentType==VO_PUBLISHED_RESOURCES)
 		{
 			ArrayList<Capability> lc = new ArrayList<Capability>();
-			String protocol = selectedVOResource;
+			VoProtocol protocol = selectedVOResource;
 			try 
 			{
 				Table_Saada_VO_Capabilities.loadCapabilities(lc, protocol);
@@ -233,8 +234,7 @@ public class VOResourceChooser extends JPanel
 		}
 	}
 	
-	public String getSelectedVOResource() 
-	{
+	public VoProtocol getSelectedVOResource()  {
 		return selectedVOResource;
 	}
 }

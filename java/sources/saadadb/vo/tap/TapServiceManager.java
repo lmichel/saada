@@ -25,7 +25,7 @@
   *  Axis     (c) Copyright 2001,2004 The Apache Software Foundation.
   *  CDS      (c) Copyright 1999-2007 - Universite Louis Pasteur / CNRS
   ******************************************************************************/
-package saadadb.vo.tap_old;
+package saadadb.vo.tap;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -39,7 +39,6 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -68,6 +67,8 @@ public class TapServiceManager extends EntityManager {
 
 
 	static {
+		ignoreCollAttrs.add("content_signature");
+		ignoreCollAttrs.add("access_right");
 		ignoreCollAttrs.add("date_load");
 		ignoreCollAttrs.add("product_url_csa");
 		ignoreCollAttrs.add("sky_pixel_csa");

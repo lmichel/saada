@@ -19,6 +19,7 @@ import saadadb.admintool.utils.MyGBC;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capability;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -34,14 +35,14 @@ public class VOServiceItemSelector extends JPanel {
 	private AdminPanel tapServicePanel;
 	private VOServiceList resourceList;
 	private JTextArea descPanel;
-	private String protocol;
+	private VoProtocol protocol;
 	
 	/**
 	 * @param taskPanel
 	 * @param toActive
 	 * @throws Exception 
 	 */
-	public VOServiceItemSelector(AdminPanel tapServicePanel, String protocol, int[] allowedCategories) throws Exception {
+	public VOServiceItemSelector(AdminPanel tapServicePanel, VoProtocol protocol, int[] allowedCategories) throws Exception {
 		this.protocol = protocol;
 		this.tapServicePanel = tapServicePanel;
 		this.resourceList = new VOServiceList(this, protocol, allowedCategories);
@@ -114,10 +115,10 @@ public class VOServiceItemSelector extends JPanel {
 	public VOServiceList getResourceList() {
 		return resourceList;
 	}
-	public String getProtocol() {
+	public VoProtocol getProtocol() {
 		return this.protocol;
 	}
-	public void setProtocol(String protocol) {
+	public void setProtocol(VoProtocol protocol) {
 		this.protocol = protocol;
 		resourceList.setProtocol(protocol);
 		

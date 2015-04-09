@@ -25,6 +25,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
 import saadadb.vo.registry.Record;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -49,7 +50,7 @@ public class VOServiceListItem extends JPanel {
 	 * @param protocol
 	 * @throws SaadaException
 	 */
-	protected VOServiceListItem(DataTreePath dataTreePath, String protocol) throws SaadaException {
+	protected VOServiceListItem(DataTreePath dataTreePath, VoProtocol protocol) throws SaadaException {
 		this.capability = new Capability();
 		this.capability.setProtocol(protocol);
 		this.capability.setDataTreePath(dataTreePath);
@@ -96,7 +97,7 @@ public class VOServiceListItem extends JPanel {
 		this.label.setOpaque(false);
 		this.add(Box.createHorizontalStrut(10));
 		this.add(this.label);
-		if( !this.capability.getProtocol().equals(Capability.TAP )) {
+		if( this.capability.getProtocol() != VoProtocol.TAP ) {
 			addRegistryAnchor();
 		}
 		this.setBackground(UNSELECTED);

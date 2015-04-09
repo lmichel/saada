@@ -16,8 +16,9 @@ import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.sqltable.Table_Saada_VO_DMVIew;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap_old.DmServiceManager;
-import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vo.tap.DmServiceManager;
+import saadadb.vo.tap.TapServiceManager;
+import saadadb.vocabulary.enums.VoProtocol;
 
 public class ThreadDmViewPopulate extends CmdThread {
 	private VOResource vor;
@@ -93,7 +94,7 @@ public class ThreadDmViewPopulate extends CmdThread {
 			 */
 			Capability cpb = new Capability();
 			cpb.setDataTreePath(new DataTreePath("ivoa", vor.getName(), null));
-			cpb.setProtocol(Capability.TAP);
+			cpb.setProtocol(VoProtocol.TAP);
 			cpb.setDescription("Table of data matching  the DM " + vor.getName());
 			if( !Table_Saada_VO_Capabilities.hasCapability(cpb) ) {
 				SQLTable.beginTransaction();

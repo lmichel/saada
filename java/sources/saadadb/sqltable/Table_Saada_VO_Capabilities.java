@@ -16,6 +16,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 public class Table_Saada_VO_Capabilities extends SQLTable {
@@ -129,9 +130,9 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	/**
 	 * @throws AbortException
 	 */
-	public static void emptyTable(String protocol) throws AbortException {
+	public static void emptyTable(VoProtocol protocol) throws AbortException {
 		SQLTable.addQueryToTransaction("DELETE FROM " + tableName 
-				+ ((protocol != null && protocol.length()> 0 )? " WHERE protocol = '" + protocol + "'": ""));
+				+ (protocol != null  ) != null? " WHERE protocol = '" + protocol.toString() + "'": "");
 	}
 	/**
 	 * @throws FatalException
@@ -146,7 +147,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static  void loadCapabilities(Collection<Capability> capabilities, String protocol) throws Exception {
+	public static  void loadCapabilities(Collection<Capability> capabilities, VoProtocol protocol) throws Exception {
 		// avoid errors at first call
 		createTable();
 		Class c = Class.forName("saadadb.vo.registry.Capability");

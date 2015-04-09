@@ -7,7 +7,7 @@ package saadadb.vocabulary.enums;
  */
 public enum VoProtocol {
 	TAP,
-	SAI,
+	SIA,
 	SSA,
 	ConeSearch
 }

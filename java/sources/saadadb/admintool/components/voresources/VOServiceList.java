@@ -17,6 +17,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capability;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -30,14 +31,14 @@ public class VOServiceList extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private int[] allowedCategories;
 	private VOServiceItemSelector itemSelector;
-	private String protocol;
+	private VoProtocol protocol;
 	protected  ArrayList<VOServiceListItem> items = new ArrayList<VOServiceListItem>();
 
 	/**
 	 * @param taskPanel
 	 * @param toActive
 	 */
-	public VOServiceList(VOServiceItemSelector itemSelector, String protocol, int[] allowedCategories) {
+	public VOServiceList(VOServiceItemSelector itemSelector, VoProtocol protocol, int[] allowedCategories) {
 		this.allowedCategories = allowedCategories;
 		this.itemSelector = itemSelector;
 		this.protocol = protocol;
@@ -192,7 +193,7 @@ public class VOServiceList extends JPanel {
 	protected String getDescription() {
 		return this.itemSelector.getDescription();
 	}
-	public void setProtocol(String protocol) {
+	public void setProtocol(VoProtocol protocol) {
 		this.protocol = protocol;		
 	}
 	public void saveCapabilities() throws Exception {

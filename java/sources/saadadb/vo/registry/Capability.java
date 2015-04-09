@@ -4,6 +4,7 @@ import saadadb.admintool.utils.DataTreePath;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -17,15 +18,10 @@ import saadadb.exceptions.SaadaException;
  */
 public class Capability  {
 	private DataTreePath dataTreePath;
-	private String protocol;
+	private VoProtocol protocol;
 	private String accessURL;
 	private String description;
-	
-	public static final String TAP = "TAP";
-	public static final String SIA = "SIA";
-	public static final String SSA = "SSA";
-	public static final String ConeSearch = "ConeSearch";
-	
+		
 	/*
 	 * accessors
 	 */
@@ -52,10 +48,10 @@ public class Capability  {
 		String cla = ( f.length > 2 )? f[2]: null;
 		this.dataTreePath = new DataTreePath(col, cat, cla);
 	}
-	public String getProtocol() {
+	public VoProtocol getProtocol() {
 		return protocol;
 	}
-	public void setProtocol(String protocol) throws QueryException {
+	public void setProtocol(VoProtocol protocol) throws QueryException {
 		if( protocol== null ){
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "NULL protocol not allowed");
 		} else {
@@ -83,17 +79,30 @@ public class Capability  {
 		}
 	}
 	
+	/**
+	 * @throws QueryException
+	 */
 	public void setAccessURL() throws QueryException {
-		if( TAP.equals(this.protocol) ) {
+		switch (this.protocol) {
+		case TAP:
 			this.accessURL = Database.getUrl_root() + "/tap?";
+			break;
+		case SSA:
+			this.accessURL = Database.getUrl_root() + "/ssa?";
+			break;
+		case SIA:
+			this.accessURL = Database.getUrl_root() + "/sia?";
+			break;
+		case ConeSearch:
+			this.accessURL = Database.getUrl_root() + "/sia?";
+			break;
+		default:
+			break;
 		}
-		else if( SIA.equals(this.protocol) ) {
-			this.accessURL = Database.getUrl_root() + "/tap?";
-		}
-		
-		if( accessURL== null ){
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "NULL accessURL not allowed");
-		} 
+	}
+	
+	public String toString(){
+		return this.dataTreePath + " " + this.accessURL + " " + this.description;
 	}
 	
 	/*

@@ -25,6 +25,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Capability;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 public class SAPServicePanel extends TaskPanel {
@@ -32,7 +33,7 @@ public class SAPServicePanel extends TaskPanel {
 	private RunTaskButton runButton;
 	private VOServiceItemSelector itemSelector;
 	private String protocolID;
-	private String capName;
+	private VoProtocol capName;
 	private int[] allowedCategories;
 
 	public SAPServicePanel(AdminTool rootFrame, String ancestor, String protocolID) {
@@ -40,13 +41,13 @@ public class SAPServicePanel extends TaskPanel {
 		//super(rootFrame, TAP_PUBLISH, null, ancestor);
 		this.protocolID = protocolID;
 		if( this.protocolID.equals(AdminComponent.SIA_PUBLISH)) {
-			this.capName = Capability.SIA;
+			this.capName = VoProtocol.SIA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};			
 		} else if( this.protocolID.equals(AdminComponent.SSA_PUBLISH)) {
-			this.capName = Capability.SSA;
+			this.capName = VoProtocol.SSA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};	
 		} else  if( this.protocolID.equals(AdminComponent.CONESEARCH_PUBLISH)) {
-			this.capName = Capability.ConeSearch;
+			this.capName = VoProtocol.ConeSearch;
 			this.allowedCategories = new int[]{Category.ENTRY,Category.IMAGE, Category.SPECTRUM};	
 		}
 		itemSelector.setProtocol(capName);
@@ -102,7 +103,7 @@ public class SAPServicePanel extends TaskPanel {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
-						Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
+						Table_Saada_VO_Capabilities.emptyTable(VoProtocol.SIA);
 						SQLTable.commitTransaction();
 						showInfo(rootFrame, capName + "emptied");
 					} catch (SaadaException e) {

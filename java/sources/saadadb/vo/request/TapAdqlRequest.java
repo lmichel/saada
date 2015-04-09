@@ -13,6 +13,7 @@ import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.formator.json.TapAdqlJsonFormator;
 import saadadb.vo.request.formator.votable.TapAdqlVotableFormator;
 import saadadb.vo.request.query.AdqlQuery;
+import saadadb.vocabulary.enums.VoProtocol;
 import adqlParser.SaadaADQLQuery;
 
 /**
@@ -26,7 +27,7 @@ public class TapAdqlRequest extends VORequest {
 	private SaadaADQLQuery adqlQuery;
 
 	public TapAdqlRequest(String sessionID, String reportDir) {
-		super(new AdqlQuery(), Capability.TAP, "1.0", sessionID, reportDir);
+		super(new AdqlQuery(), VoProtocol.TAP, "1.0", sessionID, reportDir);
 	}
 
 	 /* (non-Javadoc)

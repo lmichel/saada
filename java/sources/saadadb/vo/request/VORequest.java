@@ -15,6 +15,7 @@ import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
 import saadadb.vo.request.formator.Formator;
 import saadadb.vo.request.query.VOQuery;
+import saadadb.vocabulary.enums.VoProtocol;
 
 /** * @version $Id$
 
@@ -57,6 +58,22 @@ public abstract class VORequest {
 		super();
 		this.voQuery = voQuery;
 		this.protocolName = protocolName;
+		this.protocolVersion = protocolVersion;
+		this.jobId = jobId;
+		this.reportDir = reportDir;
+	}
+	/**
+	 * @param voQuery
+	 * @param protocol
+	 * @param protocolVersion
+	 * @param jobId
+	 * @param reportDir
+	 */
+	public VORequest(VOQuery voQuery, VoProtocol protocol, String protocolVersion,
+			String jobId, String reportDir) {
+		super();
+		this.voQuery = voQuery;
+		this.protocolName = protocol.toString();
 		this.protocolVersion = protocolVersion;
 		this.jobId = jobId;
 		this.reportDir = reportDir;

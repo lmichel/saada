@@ -14,7 +14,8 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Capability;
-import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vo.tap.TapServiceManager;
+import saadadb.vocabulary.enums.VoProtocol;
 
 /**
  * SAve a list of capabilities: Use of a thread because this operation can take time to set DataLinks
@@ -64,7 +65,7 @@ public class ThreadSaveTAPCapabilities extends CmdThread {
 		TapServiceManager tsm = new TapServiceManager();
 		try {
 			SQLTable.beginTransaction();
-			Table_Saada_VO_Capabilities.emptyTable(Capability.TAP);
+			Table_Saada_VO_Capabilities.emptyTable(VoProtocol.TAP);
 			itemSelector.saveCapabilities();
 			SQLTable.commitTransaction();
 			

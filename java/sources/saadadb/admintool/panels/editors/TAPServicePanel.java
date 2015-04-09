@@ -35,6 +35,7 @@ import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
 import saadadb.vo.registry.Record;
 import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -78,7 +79,7 @@ public class TAPServicePanel extends EditPanel {
 	@Override
 	protected void setActivePanel() {
 		try {
-			itemSelector = new VOServiceItemSelector(this, Capability.TAP, null);
+			itemSelector = new VOServiceItemSelector(this, VoProtocol.TAP, null);
 		} catch (Exception e) {
 			showFatalError(rootFrame, e);
 		}
@@ -96,7 +97,7 @@ public class TAPServicePanel extends EditPanel {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
-						Table_Saada_VO_Capabilities.emptyTable(Capability.TAP);
+						Table_Saada_VO_Capabilities.emptyTable(VoProtocol.TAP);
 						tsm.remove(new ArgsParser(new String[]{"-remove=service"}));
 						SQLTable.commitTransaction();
 						showInfo(rootFrame, "Tap Service removed");
@@ -130,7 +131,7 @@ public class TAPServicePanel extends EditPanel {
 				TapServiceManager tsm = new TapServiceManager();
 				try {
 					SQLTable.beginTransaction();
-					Table_Saada_VO_Capabilities.emptyTable(Capability.TAP);
+					Table_Saada_VO_Capabilities.emptyTable(VoProtocol.TAP);
 					itemSelector.saveCapabilities();
 					SQLTable.commitTransaction();
 					

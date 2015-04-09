@@ -29,6 +29,7 @@ import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.vo.registry.Authority;
 import saadadb.vo.registry.Capability;
 import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vocabulary.enums.VoProtocol;
 
 
 /**
@@ -41,7 +42,7 @@ public class SAPServicePanel extends EditPanel {
 	private VOServiceItemSelector itemSelector;
 	private Authority authority;
 	private String protocolID;
-	private String capName;
+	private VoProtocol capName;
 	private int[] allowedCategories;
 
 	/**
@@ -52,13 +53,13 @@ public class SAPServicePanel extends EditPanel {
 		super(rootFrame, protocolID, null, ancestor, protocolID);
 		this.protocolID = protocolID;
 		if( this.protocolID.equals(AdminComponent.SIA_PUBLISH)) {
-			this.capName = Capability.SIA;
+			this.capName = VoProtocol.SIA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};			
 		} else if( this.protocolID.equals(AdminComponent.SSA_PUBLISH)) {
-			this.capName = Capability.SSA;
+			this.capName = VoProtocol.SSA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};	
 		} else  if( this.protocolID.equals(AdminComponent.CONESEARCH_PUBLISH)) {
-			this.capName = Capability.ConeSearch;
+			this.capName = VoProtocol.ConeSearch;
 			this.allowedCategories = new int[]{Category.ENTRY,Category.IMAGE, Category.SPECTRUM};	
 		}
 	}
@@ -69,13 +70,13 @@ public class SAPServicePanel extends EditPanel {
 	protected void setParam(Object param) {
 		this.protocolID = param.toString();;
 		if( this.protocolID.equals(AdminComponent.SIA_PUBLISH)) {
-			this.capName = Capability.SIA;
+			this.capName = VoProtocol.SIA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};			
 		} else if( this.protocolID.equals(AdminComponent.SSA_PUBLISH)) {
-			this.capName = Capability.SSA;
+			this.capName = VoProtocol.SSA;
 			this.allowedCategories = new int[]{Category.IMAGE, Category.SPECTRUM};	
 		} else  if( this.protocolID.equals(AdminComponent.CONESEARCH_PUBLISH)) {
-			this.capName = Capability.ConeSearch;
+			this.capName = VoProtocol.ConeSearch;
 			this.allowedCategories = new int[]{Category.ENTRY,Category.IMAGE, Category.SPECTRUM};	
 		}
 	}
@@ -121,7 +122,7 @@ public class SAPServicePanel extends EditPanel {
 					itemSelector.reset();
 					try {
 						SQLTable.beginTransaction();
-						Table_Saada_VO_Capabilities.emptyTable(Capability.SIA);
+						Table_Saada_VO_Capabilities.emptyTable(VoProtocol.SIA);
 						SQLTable.commitTransaction();
 						showInfo(rootFrame, capName + "emptied");
 					} catch (SaadaException e) {
