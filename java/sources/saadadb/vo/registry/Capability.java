@@ -58,6 +58,25 @@ public class Capability  {
 			this.protocol = protocol;
 		}
 	}
+	/**
+	 * @param protocol
+	 * @throws QueryException
+	 */
+	public void setProtocol(String protocol) throws QueryException {
+		if( protocol== null ){
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "NULL protocol not allowed");
+		} else if( protocol.equals(VoProtocol.SIA.toString())){
+			this.protocol = VoProtocol.SIA;
+		} else if( protocol.equals(VoProtocol.SSA.toString())){
+			this.protocol = VoProtocol.SSA;
+		} else if( protocol.equals(VoProtocol.ConeSearch.toString())){
+			this.protocol = VoProtocol.ConeSearch;
+		} else if( protocol.equals(VoProtocol.TAP.toString())){
+			this.protocol = VoProtocol.TAP;
+		} else {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Unkwon protocol: " + protocol);
+		}
+	}
 	public String getAccessURL() {
 		return accessURL;
 	}
@@ -102,7 +121,7 @@ public class Capability  {
 	}
 	
 	public String toString(){
-		return this.dataTreePath + " " + this.accessURL + " " + this.description;
+		return this.protocol + " " + this.dataTreePath + " " + this.accessURL + " " + this.description;
 	}
 	
 	/*
