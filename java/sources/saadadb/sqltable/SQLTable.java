@@ -427,7 +427,7 @@ public abstract class SQLTable {
 					Messenger.incrementeProgress();
 				}
 				DatabaseConnection connection = Spooler.getSpooler().getConnection();
-				Map<String, String> existing_index = Database.getWrapper().getExistingIndex(table);
+				Map<String, String> existing_index = Database.getWrapper().getExistingIndex(connection, table);
 				ResultSet rsColumns = Database.getWrapper().getTableColumns(connection, table);
 				while (rsColumns.next()) {
 					String columnName = rsColumns.getString("COLUMN_NAME");
