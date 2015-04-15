@@ -135,7 +135,7 @@ public class FieldShaker {
 			while (casesIt.hasNext()) { 
 				JSONObject cas = (JSONObject) casesIt.next();
 				String casName = (String) cas.get("name");
-				this.fooProducts.put(casName, new JsonDataFile(cas, 0));
+				this.fooProducts.put(casName, new JsonDataFile(cas, 0, new ProductMapping("Field Mapping", this.argsParser)));
 				this.reports.put(casName, new ArrayList<String>());
 			}
 		} catch (ParseException e) {
