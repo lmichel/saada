@@ -35,7 +35,7 @@ public class ExpressionShaker {
 		JSONParser parser = new JSONParser();  
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(path));  
 		this.jsonAhs = (JSONObject) jsonObject.get("fields");  
-		this.fooProduct = new JsonDataFile(this.jsonAhs, 0);
+		this.fooProduct = new JsonDataFile(this.jsonAhs, 0, null);
 
 	}
 	
