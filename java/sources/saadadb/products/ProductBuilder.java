@@ -540,16 +540,23 @@ public abstract class ProductBuilder {
 			 */
 			Set<AttributeHandler> handlersReferencedByMapping = columnMapping.getHandlers();
 			if( handlersReferencedByMapping == null || handlersReferencedByMapping.size() == 0 ){
-				FatalException.throwNewException(SaadaException.INTERNAL_ERROR
-						, "Column " + columnMapping + " mapped by keyword or expression must reference at least one attribute");
+				retour = new ColumnExpressionSetter(colmunName);
+				retour.completeUserMappingMsg("Column " + colmunName  + " = " + columnMapping.getExpression() + " mapped by keyword or expression must reference at least one attribute");
+				return retour;
+//
+//				FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+//						, "Column " + columnMapping + " mapped by keyword or expression must reference at least one attribute");
 			}
 			/*
 			 * By keyword: just one AH must be used
 			 */
 			if( columnMapping.byKeyword() ) {
 				if(  handlersReferencedByMapping.size() != 1){
-					FatalException.throwNewException(SaadaException.INTERNAL_ERROR
-							, "Column " + colmunName + " mapped by keyword: must reference one attribute");
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeUserMappingMsg("Column " + colmunName  + " = " + columnMapping.getExpression() + " mapped by keyword: must reference one attribute");
+//
+//					FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+//							, "Column " + colmunName + " mapped by keyword: must reference one attribute");
 				}
 				String ahname=null;
 				AttributeHandler mappingSingleHandler=null;			
