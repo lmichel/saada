@@ -79,7 +79,7 @@ public class SpaceMapping extends AxisMapping {
 		String s;
 		if( (s = tabArg.getSFov()) != null  ){
 			ColumnMapping cm = new ColumnMapping(null, s, "-sfov param");
-			cm.extractUnit();
+			//cm.extractUnit();
 			this.columnMapping.put("s_fov", cm);
 		} 
 		if( (s = tabArg.getSRegion()) != null  ){
@@ -104,8 +104,9 @@ public class SpaceMapping extends AxisMapping {
 		 * One poserror parameter: error is supposed to be a circle
 		 */
 		if( av != null ) {
-			ColumnMapping cm = new ColumnMapping(this.errorUnit, av, "sresolution param");				
-			cm.extractUnit();
+			ColumnMapping cm = new ColumnMapping(null, av, "-sresolution");				
+			//ColumnMapping cm = new ColumnMapping(this.errorUnit, av, "sresolution param");				
+			//cm.extractUnit();
 			this.columnMapping.put("s_resolution", cm);				
 		}
 	}
