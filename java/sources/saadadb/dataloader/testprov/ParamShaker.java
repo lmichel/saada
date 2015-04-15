@@ -49,6 +49,10 @@ public abstract class ParamShaker {
 	protected JsonDataFile fooProduct;
 	/** Current args parser read into the JSON modified during the test */
 	protected ArgsParser argsParser;
+	/**
+	 * Productr Mapping built from argsParser and used to build the product Builder
+	 */
+	protected ProductMapping productMapping;
 	/** List of Obscore fields of interest: theu are reported */
 	protected Set<String> paramsOfInterest;
 	/** Test report, one entry er test, and several  lines par entry*/
@@ -85,6 +89,7 @@ public abstract class ParamShaker {
 			params.add(s);
 		}		
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
+		this.productMapping = new ProductMapping("JSON First Mapping", this.argsParser);
 	}
 
 	/**
@@ -100,6 +105,7 @@ public abstract class ParamShaker {
 			params.add(s);
 		}		
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
+		this.productMapping = new ProductMapping("JSON Last Mapping", this.argsParser);
 	}
 	/**
 	 * @param param starts  with '-'
@@ -124,6 +130,7 @@ public abstract class ParamShaker {
 			params.add((String) jsa.get(i));
 		}	
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
+		this.productMapping = new ProductMapping("JSON Mapping", this.argsParser);
 
 	}
 
@@ -152,7 +159,7 @@ public abstract class ParamShaker {
 				break;
 			}
 		}
-		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0);
+		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0, this.productMapping);
 		//throw new Exception("Param " + name + " not found" );
 	}
 
@@ -172,7 +179,9 @@ public abstract class ParamShaker {
 		}  
 		params.add(Database.getDbname());  
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0);
+		this.productMapping = new ProductMapping("JSON  Mapping", this.argsParser);
+
+		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0, this.productMapping);
 	}
 
 	/**
@@ -303,18 +312,21 @@ public abstract class ParamShaker {
 	protected void process() throws Exception {
 		ProductBuilder product = null;
 		switch( Category.getCategory(argsParser.getCategory()) ) {
-		case Category.TABLE: product = new TableBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
+		case Category.TABLE: product = new TableBuilder(this.fooProduct, this.productMapping);
 		break;
-		case Category.MISC : product = new MiscBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
+		case Category.MISC : product = new MiscBuilder(this.fooProduct, this.productMapping);
 		break;
-		case Category.SPECTRUM: product = new SpectrumBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
+		case Category.SPECTRUM: product = new SpectrumBuilder(this.fooProduct, this.productMapping);
 		break;
-		case Category.IMAGE: product = new Image2DBuilder(this.fooProduct, new ProductMapping("mapping", this.argsParser));
+		case Category.IMAGE: product = new Image2DBuilder(this.fooProduct, this.productMapping);
 		break;
 		}
-		product.mapDataFile(this.fooProduct);
 		MappingReport mr = new MappingReport(product);
+
+		product.mapDataFile(this.fooProduct);
 		Map<String, ColumnSetter> r = mr.getReport();
+		
+		
 		Map<String, ColumnSetter> er = mr.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
