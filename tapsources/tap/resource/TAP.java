@@ -288,7 +288,6 @@ public class TAP<R> implements VOSIResource {
 
 		if (tapBaseURL == null)
 			setTAPBaseURL(request);
-
 		JobOwner owner = null;
 		String resourceName = null;
 
