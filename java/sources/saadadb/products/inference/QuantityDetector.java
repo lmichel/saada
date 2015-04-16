@@ -162,7 +162,7 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_fov"): retour;
 	}
-	public ColumnExpressionSetter getRegion() throws SaadaException{
+	public ColumnExpressionSetter getRegion() throws Exception{
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getRegion()).isNotSet() ){
 			return this.spaceKWDetector.getRegion();
