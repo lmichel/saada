@@ -118,7 +118,7 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 			positionField_entry.setEnable(true);
 		}
 		positionField_entry.setText(builder.toString());
-		positionError_entry.setText(ap.getPoserrorMapping(true), ap.getPoserrorUnit(true));
+		//positionError_entry.setText(ap.getPoserrorMapping(true), ap.getPoserrorUnit(true));
 		
 	}
 	@Override
@@ -127,8 +127,8 @@ public class VPSpaceEntryMappingPanel extends VPSpaceMappingPanel{
 		for(String s : ap.getPositionMapping(true)) {
 		    empty=false;
 		}
-		return super.fieldsEmpty(ap) && empty  &&	ap.getPoserrorMapping(true)==null && 
-				ap.getPoserrorUnit(true)==null;
+		return super.fieldsEmpty(ap) && empty  &&	ap.getPoserrorMapping(true)==null ;
+//				 &&ap.getPoserrorUnit(true)==null;
 
 	}
 	
