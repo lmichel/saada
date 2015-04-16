@@ -141,7 +141,7 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_dec"): retour;
 	}
-	public ColumnExpressionSetter getSpatialError() throws SaadaException{
+	public ColumnExpressionSetter getSpatialError() throws Exception{
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialError()).isNotSet() ){
 			return this.spaceKWDetector.getSpatialError();
