@@ -42,7 +42,7 @@ public class ColumnMapping {
 	 */
 	ColumnMapping(MappingMode mappingMode, String unit, String value, String message) throws FatalException{
 		this.mappingMode = mappingMode;
-		this.message = message;
+		this.appendMessage(message);
 		AttributeHandler ah = new AttributeHandler();
 		if( this.mappingMode == MappingMode.VALUE) {
 			ah.setNameattr(ColumnMapping.NUMERIC);
@@ -55,16 +55,12 @@ public class ColumnMapping {
 			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
 			Matcher m=keywordsPattern.matcher(value);
 			//We search for keywords in the expression, each keyword become an attribute
-			int cpt=1;
-			System.out.println(RegExp.KEYWORD);
-			while(m.find())
-			{
+			while(m.find()){
 				AttributeHandler temp = new AttributeHandler();
 				temp.setNameattr(m.group(1).trim());
 				temp.setNameorg(m.group(1).trim());
 				temp.setUnit(unit);
 				this.attributeHandlers.add(temp);
-				cpt++;
 			}
 			//When we are in "Attribute mode" we consider we're in an expression composed of only one Attribute
 			this.expression=value;
@@ -79,7 +75,7 @@ public class ColumnMapping {
 	 * @throws FatalException
 	 */
 	ColumnMapping(String unit, String value, String message) throws FatalException{
-		this.message = message;
+		this.appendMessage(message);
 		AttributeHandler ah = new AttributeHandler();
 		ah.setUnit(unit);	
 		String v;
@@ -122,7 +118,7 @@ public class ColumnMapping {
 	 * @throws FatalException
 	 */
 	ColumnMapping(String value, String message) throws FatalException{
-		this.message = message;
+		this.appendMessage(message);
 		AttributeHandler ah = new AttributeHandler();
 		String v;
 		if( (v = this.isConstant(value)) != null ) {
@@ -164,7 +160,7 @@ public class ColumnMapping {
 	 * @throws FatalException
 	 */
 	ColumnMapping(String unit, String[] values, String message ) throws FatalException{
-		this.message = message;
+		this.appendMessage(message);
 		this.mappingMode = (values == null)? MappingMode.NOMAPPING:  MappingMode.VALUE;
 		for( String s: values ) {
 			AttributeHandler ah = new AttributeHandler();
@@ -253,10 +249,12 @@ public class ColumnMapping {
 	 * @param message
 	 */
 	public void appendMessage(String message){
-		if(this.message.length() > 0){
-			this.message += message.trim();
+		if( message == null || message.length() == 0){
+			return;
+		} else	if(this.message.length() > 0){
+			this.message += message.trim() + "-";
 		} else {
-			this.message = message.trim();
+			this.message = message.trim() + "-";
 		}
 	}
 	
@@ -361,7 +359,7 @@ public class ColumnMapping {
 					String v = ah.getValue().replace(unit, "");
 					ah.setUnit(unit);
 					ah.setValue(v);
-					this.appendMessage("unit " + unit + " extracted from param " + ah.getNameorg());
+					this.appendMessage("unit " + unit + " extracted from param value");
 				}
 			}
 		}
