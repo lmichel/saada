@@ -28,7 +28,7 @@ public class ColumnMapping {
 	private static final Pattern constPattern = Pattern.compile(RegExp.QUOTED_EXPRESSION);
 	private static final Pattern numPattern = Pattern.compile(RegExp.NUMERIC_PARAM);
 	private static final Pattern numUnitPattern = Pattern.compile(RegExp.NUMERIC_UNIT_PARAM);
-	public String message; // used for logging
+	private String message =""; // used for logging
 	/**
 	 * when mode=keyword or expression
 	 */
@@ -248,6 +248,24 @@ public class ColumnMapping {
 	public MappingMode getMode() {
 		return mappingMode;
 	}
+	
+	/**
+	 * @param message
+	 */
+	public void appendMessage(String message){
+		if(this.message.length() > 0){
+			this.message += message.trim();
+		} else {
+			this.message = message.trim();
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	public String getMessage() {
+		return message;
+	}
 	/**
 	 * @return
 	 */
@@ -343,7 +361,7 @@ public class ColumnMapping {
 					String v = ah.getValue().replace(unit, "");
 					ah.setUnit(unit);
 					ah.setValue(v);
-					this.message += "unit " + unit + " extracted from param " + ah.getNameorg();
+					this.appendMessage("unit " + unit + " extracted from param " + ah.getNameorg());
 				}
 			}
 		}
