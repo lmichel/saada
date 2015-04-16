@@ -77,6 +77,7 @@ public class STC {
 		 * If frame not recognized: failed
 		 * TODO Vocabulary check
 		 */
+		if( lComps.size() == 0) return;
 		first = 	lComps.get(0);
 		if( !first.matches("-?\\d+(\\.\\d+)?") ) {
 			CooSysResolver cooSysResolver;
@@ -98,6 +99,7 @@ public class STC {
 		/*
 		 * Other elements must be vertex coordinates
 		 */
+		if( lComps.size() == 0) return;
 		int size = lComps.size();
 		if( (size  % 2) != 0  ){
 			this.message = "Number of coordinates (" +  size + ") must be even";
