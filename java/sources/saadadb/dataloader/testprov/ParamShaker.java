@@ -80,30 +80,48 @@ public abstract class ParamShaker {
 	 * Set all priorities to FIRST ion the arg parser
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected void setFirst() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
 		List<String> params = new ArrayList<String>();
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
-			s = s.replace("mapping=last", "mapping=first");
-			params.add(s);
-		}		
+			if( s.matches(".*mapping=.*") ) {
+				s = s.replace("mapping=last", "mapping=first");
+				jsa.set(i, s);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Set  " +s);
+				break;
+			}
+		}	
+		for( int i=0 ; i<jsa.size() ; i++ ){
+			params.add((String) jsa.get(i));
+		}	
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
-		this.productMapping = new ProductMapping("JSON First Mapping", this.argsParser);
+		this.productMapping = new ProductMapping("JSON Last Mapping", this.argsParser);
 	}
 
 	/**
 	 * Set all priorities to FISR ion the arg parser
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected void setLast() throws Exception{
 		JSONArray jsa = (JSONArray) jsonObject.get("parameters");
 		List<String> params = new ArrayList<String>();
 		for( int i=0 ; i<jsa.size() ; i++ ){
 			String s = (String) jsa.get(i);
-			s = s.replace("mapping=first", "mapping=last");
-			params.add(s);
-		}		
+			if( s.matches(".*mapping=.*") ) {
+				s = s.replace("mapping=first", "mapping=last");
+				jsa.set(i, s);
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Set  " +s);
+				break;
+			}
+		}	
+		for( int i=0 ; i<jsa.size() ; i++ ){
+			params.add((String) jsa.get(i));
+		}	
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 		this.productMapping = new ProductMapping("JSON Last Mapping", this.argsParser);
 	}
@@ -131,7 +149,6 @@ public abstract class ParamShaker {
 		}	
 		this.argsParser = new ArgsParser(params.toArray(new String[0]));
 		this.productMapping = new ProductMapping("JSON Mapping", this.argsParser);
-
 	}
 
 	/**
@@ -326,8 +343,6 @@ public abstract class ParamShaker {
 		product.mapDataFile(this.fooProduct);
 		Map<String, ColumnSetter> r = mr.getReport();
 		
-		
-		Map<String, ColumnSetter> er = mr.getEntryReport();
 		this.currentReport.add(this.argsParser.toString());
 		for( java.util.Map.Entry<String, ColumnSetter> e:r.entrySet()){
 			if( this.paramsOfInterest.contains(e.getKey())) {
