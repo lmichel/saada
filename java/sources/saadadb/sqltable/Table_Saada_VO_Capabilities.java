@@ -132,7 +132,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	 */
 	public static void emptyTable(VoProtocol protocol) throws AbortException {
 		SQLTable.addQueryToTransaction("DELETE FROM " + tableName 
-				+ (protocol != null  ) != null? " WHERE protocol = '" + protocol.toString() + "'": "");
+				+ ((protocol != null  )? " WHERE protocol = '" + protocol.toString() + "'": ""));
 	}
 	/**
 	 * @throws FatalException
