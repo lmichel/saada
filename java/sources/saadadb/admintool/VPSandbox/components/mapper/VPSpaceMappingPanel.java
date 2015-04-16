@@ -181,7 +181,7 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		    builder.append(s);
 		}
 		positionField.setText(builder.toString());
-		positionError.setText(ap.getPoserrorMapping(false), ap.getPoserrorUnit(false));
+		//positionError.setText(ap.getPoserrorMapping(false), ap.getPoserrorUnit(false));
 		
 	}
 
@@ -194,7 +194,7 @@ public class VPSpaceMappingPanel extends VPAxisPriorityPanel {
 		for(String s : ap.getPositionMapping(false)) {
 			empty=false;		
 			}
-		return empty &&	ap.getPoserrorMapping(false)==null && ap.getPoserrorUnit(false)==null;
+		return empty &&	ap.getPoserrorMapping(false)==null /*&& ap.getPoserrorUnit(false)==null */;
 
 	}
 }
