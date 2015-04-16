@@ -12,7 +12,6 @@ import saadadb.vocabulary.enums.MappingMode;
 import saadadb.vocabulary.enums.PriorityMode;
 
 public class SpaceMapping extends AxisMapping {
-    private String errorUnit;
 
 	/**
 	 * @param ap
@@ -78,8 +77,7 @@ public class SpaceMapping extends AxisMapping {
 		}
 		String s;
 		if( (s = tabArg.getSFov()) != null  ){
-			ColumnMapping cm = new ColumnMapping(null, s, "-sfov param");
-			//cm.extractUnit();
+			ColumnMapping cm = new ColumnMapping(s, "-sfov param");
 			this.columnMapping.put("s_fov", cm);
 		} 
 		if( (s = tabArg.getSRegion()) != null  ){
@@ -96,17 +94,11 @@ public class SpaceMapping extends AxisMapping {
 		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Set position error mapping");
 		
 		String av  = tabArg.getPoserrorMapping(this.entryMode);
-		this.errorUnit = tabArg.getPoserrorUnit(this.entryMode);
-		if( this.errorUnit != null ){
-			this.columnMapping.put("s_resolution_unit", new ColumnMapping(null, this.errorUnit, "s_resolution_unit param"));				
-		}
 		/*
 		 * One poserror parameter: error is supposed to be a circle
 		 */
 		if( av != null ) {
-			ColumnMapping cm = new ColumnMapping(null, av, "-sresolution");				
-			//ColumnMapping cm = new ColumnMapping(this.errorUnit, av, "sresolution param");				
-			//cm.extractUnit();
+			ColumnMapping cm = new ColumnMapping(av, "-sresolution");				
 			this.columnMapping.put("s_resolution", cm);				
 		}
 	}
@@ -122,21 +114,7 @@ public class SpaceMapping extends AxisMapping {
 			this.columnMapping.put("system", cm);
 		} 
 	}
-	
-	/**
-	 * @return
-	 */
-	public String getErrorUnit(){
-		return this.errorUnit;
-	}
-	/**
-	 * Error Unit can be set from the {@link ProductBuilder#mapCollectionPoserrorAttributes}
-	 * @param errorUnit
-	 */
-	public void setErrorUnit(String errorUnit){
-		this.errorUnit = errorUnit;
-	}
-	
+		
 	public static void main(String[] args) throws SaadaException {
 		Messenger.debug_mode = true;
 		SpaceMapping om = new SpaceMapping(new ArgsParser(new String[]{"-poserror=abc,eee"}), false);
