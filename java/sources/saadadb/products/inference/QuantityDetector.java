@@ -148,13 +148,6 @@ public class QuantityDetector {
 		} 
 		return (retour == null)?new ColumnExpressionSetter("s_resolution"): retour;
 	}
-	public ColumnExpressionSetter getSpatialErrorUnit() throws Exception{
-		ColumnExpressionSetter retour = null;
-		if( this.pipelineParser == null ||(retour = this.pipelineParser.getSpatialErrorUnit()).isNotSet() ){
-			return this.spaceKWDetector.getSpatialErrorUnit();
-		} 
-		return (retour == null)?new ColumnExpressionSetter("s_resolution_unit"): retour;
-	}
 	public ColumnExpressionSetter getfov() throws Exception{
 		ColumnExpressionSetter retour = null;
 		if( this.pipelineParser == null ||(retour = this.pipelineParser.getfov()).isNotSet() ){
