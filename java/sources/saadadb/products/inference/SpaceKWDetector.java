@@ -635,8 +635,15 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public ColumnExpressionSetter getSpatialError() throws SaadaException{
-		return (this.err_maj == null)? new ColumnExpressionSetter("s_resolution"): this.err_maj;
+	public ColumnExpressionSetter getSpatialError() throws Exception{
+		ColumnExpressionSetter retour = this.err_maj;
+		if( retour == null || retour.isNotSet() ){
+			retour = search("s_resolution", RegExp.ERROR_MAJ_UCD, RegExp.ERROR_MAJ_KW);
+		}
+		if( retour == null  || retour.isNotSet()){
+			retour = search("s_resolution", RegExp.ERROR_MIN_UCD, RegExp.ERROR_MIN_KW);
+		}
+		return retour;		
 	}
 		
 	/**
@@ -644,7 +651,7 @@ public class SpaceKWDetector extends KWDetector{
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getfov() throws Exception{
-		if( this.fov == null ){
+		if( this.fov == null  || this.fov.isNotSet()){
 			return search("s_fov", RegExp.FOV_UCD, RegExp.FOV_KW);
 		}
 		return fov;		
@@ -656,7 +663,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getRegion() throws Exception{
 		this.init();
-		if( this.region == null ){
+		if( this.region == null  || this.region.isNotSet()){
 			return search("s_region", RegExp.REGION_UCD, RegExp.REGION_KW);
 		}
 		return region;		
