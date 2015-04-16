@@ -3,7 +3,7 @@
  */
 package saadadb.command;
 
-import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vo.tap.TapServiceManager;
 
 /**
  * @author laurent
