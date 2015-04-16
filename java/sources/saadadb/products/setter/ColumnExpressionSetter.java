@@ -143,6 +143,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		this.settingMode = ColumnSetMode.BY_KEYWORD;
 		this.computingMode = INIT.SINGLE_ATTRIBUTE;
 		this.calculateExpressionFromAttributes(null);
+		this.setUnit(attr.getUnit());
 	}
 
 	/**
