@@ -11,8 +11,10 @@ import java.util.Map;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import saadadb.command.ArgsParser;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.ExtensionSetter;
 import saadadb.products.ProductBuilder;
@@ -64,16 +66,17 @@ public class JsonDataFile extends DataFile {
 	 * @param size
 	 * @throws Exception
 	 */
-	public JsonDataFile(JSONObject jsonObject, int size) throws Exception {
-		this(JsonKWSet.getInstance(jsonObject), size);
+	public JsonDataFile(JSONObject jsonObject, int size, ProductMapping productMapping) throws Exception {
+		this(JsonKWSet.getInstance(jsonObject), size, productMapping);
 	}
 
 	/**
 	 * @param keyWordBuilder
 	 * @param size
+	 * @throws SaadaException 
 	 */
-	public JsonDataFile(KeywordsBuilder keyWordBuilder, int size) {
-		super(null);
+	public JsonDataFile(KeywordsBuilder keyWordBuilder, int size, ProductMapping productMapping) throws Exception {
+		super(productMapping);
 		this.init(keyWordBuilder, size);
 	}
 
