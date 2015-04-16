@@ -110,7 +110,6 @@ public class SpaceKWDetector extends KWDetector{
 			ColumnExpressionSetter ahEq = search("equinox" , RegExp.FITS_EQUINOX_UCD, RegExp.FITS_EQUINOX_KW);
 			ColumnExpressionSetter ahEp = search("epoch"   , RegExp.FITS_EPOCH_UCD, RegExp.FITS_EPOCH_KW);
 
-			String message= "";
 			if( ah.isSet()) {
 				String sframe=ah.getSingleAttributeHandler().getNameorg();
 				if( ahEq.isSet()){
@@ -183,19 +182,6 @@ public class SpaceKWDetector extends KWDetector{
 						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
 				}
 			} 
-//			if( (status & FRAME_FOUND) == 0 ) {
-//				if (Messenger.debug_mode)
-//					Messenger.printMsg(Messenger.DEBUG, "No coosys detected");				
-//			} else  if( (status & POS_KW_FOUND) == 0 ) {
-//				lookForAstrometryInWCS();
-//				if( (status & POS_KW_FOUND) == 0 ) {
-//					detectKeywordsandInferFrame();				
-//				}
-//				if( (status & POS_KW_FOUND) == 0) {
-//					if (Messenger.debug_mode)
-//						Messenger.printMsg(Messenger.DEBUG, "No coordinate columns or KW detected");
-//				}	
-//			}
 			if( (status & FRAME_FOUND) != 0 && (status & POS_KW_FOUND) != 0) {
 				//this.lookForError();							
 			}
@@ -204,109 +190,6 @@ public class SpaceKWDetector extends KWDetector{
 			IgnoreException.throwNewException(SaadaException.METADATA_ERROR, e);
 		}
 		this.isInit = true;
-	}
-	/**
-	 * Look for the position in WCS keywords
-	 * @throws Exception 
-	 */
-	private void lookForAstrometryInWCSXXX() throws Exception {
-		if( (this.status & WCS_KW_FOUND) != 0 )
-			return;
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Searching spatial coordinates in WCS keywords");
-
-		if( this.projection != null &&  this.projection.isUsable() ){
-
-			ColumnExpressionSetter[] 	ascRange ;
-			ColumnExpressionSetter[] 	decRange ;
-			ColumnExpressionSetter  	resolution ;
-			//			center = this.wcsModel.getRadecCenter();
-			//			if( center[0].notSet() || center[1].notSet()  )  {
-			//				center = this.wcsModel.getGlonlatCenter();
-			//				if( center[0].notSet() || center[1].notSet()  )  {
-			//					center = this.wcsModel.getElonlatCenter();
-			//					if( center[0].notSet() || center[1].notSet()  )  {
-			//						Messenger.printMsg(Messenger.TRACE, "WCS projection not valid: can't find the center of the image");
-			//						return;
-			//					} else {
-			//						ascRange   = this.wcsModel.getElonRange();
-			//						decRange   = this.wcsModel.getElatRange();
-			//						resolution = this.wcsModel.getElonlatResolution();
-			//					}
-			//				} else {						
-			//					ascRange   = this.wcsModel.getGlonRange();
-			//					decRange   = this.wcsModel.getGlatRange();
-			//					resolution = this.wcsModel.getGlonlatResolution();
-			//				}	
-			//			}	else {
-			//				ascRange   = this.wcsModel.getRaRange();
-			//				decRange   = this.wcsModel.getDecRange();					
-			//				resolution = this.wcsModel.getRadecResolution();
-			//			}
-			ascRange = new ColumnExpressionSetter[]{
-					new ColumnWcsSetter("ra_min", "WCD.getMin(1)", projection),
-					new ColumnWcsSetter("ra_max", "WCD.getMax(1)", projection),
-			};
-			decRange = new ColumnExpressionSetter[]{
-					new ColumnWcsSetter("dec_min", "WCD.getMin(2)", projection),
-					new ColumnWcsSetter("dec_max", "WCD.getMax(2)", projection)
-			};
-			resolution = new ColumnWcsSetter("s_resol", "WCD.getResolution()", projection);
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " + this.ascension_kw.getValue() + " " + this.declination_kw.getValue() + " as image center");				
-			this.err_maj = resolution;
-			this.err_min = resolution;
-			this.err_angle = new ColumnExpressionSetter("err_angle");
-			this.err_angle.setByWCS("0", false);
-			double raMin = Double.parseDouble(ascRange[0].getValue());
-			double raMax = Double.parseDouble(ascRange[1].getValue());
-			double decMin = Double.parseDouble(decRange[0].getValue());
-			double decMax = Double.parseDouble(decRange[1].getValue());
-			AttributeHandler ah = new AttributeHandler();
-			ah.setNameattr("s_fov");
-			ah.setNameorg("s_fov");
-			ah.setUnit("deg");
-			ah.setUtype("Char.SpatialAxis.Coverage.Bounds.Extent.diameter");
-			double fov = Math.abs(raMax - raMin);
-			if( fov > 180 ) fov = 360 -fov;
-			if( Math.abs(decMax - decMin) < fov ){
-				fov = Math.abs(decMax - decMin);
-				ah.setValue(fov);
-				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-				this.fov = new ColumnExpressionSetter("s_fov", ah);
-				this.fov.completeDetectionMsg("smaller image size taken (height)");	
-				this.fov.setUnit("deg");
-			} else {
-				ah.setValue(fov);
-				//this.fov = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-				this.fov = new ColumnExpressionSetter("s_fov", ah);
-				this.fov.completeDetectionMsg("smaller image size taken (width)");														
-				this.fov.setUnit("deg");
-			}
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " +fov + " as fov");				
-			ah = new AttributeHandler();
-			ah.setNameattr("s_region");
-			ah.setNameorg("s_region");
-			ah.setUnit("deg");
-			ah.setUtype("Char.SpatialAxis.Coverage.Support.Area");
-			double[] pts = new double[8];
-			pts[0] = raMin; pts[1] = decMax; 
-			pts[2] = raMax; pts[3] = decMax; 
-			pts[4] = raMax; pts[5] = decMin; 
-			pts[6] = raMin; pts[7] = decMin; 
-			//this.region = new ColumnExpressionSetter(ah, ColumnSetMode.BY_WCS);
-			this.region = new ColumnExpressionSetter("s_region", ah);
-			this.region.completeDetectionMsg("Match the WCS rectangle");			
-			this.region.storedValue = pts;
-			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Take " + (pts.length/2)  + " points for the region");
-			this.status |= WCS_KW_FOUND;
-			this.status |= POS_KW_FOUND;
-
-		} else {
-			Messenger.printMsg(Messenger.DEBUG, "WCS keywords not found");				
-		}
 	}
 
 	/**
@@ -755,24 +638,14 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getSpatialError() throws SaadaException{
 		return (this.err_maj == null)? new ColumnExpressionSetter("s_resolution"): this.err_maj;
 	}
-	
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	public ColumnExpressionSetter getSpatialErrorUnit() throws Exception{
-		ColumnExpressionSetter retour = new ColumnExpressionSetter("s_resolution_unit", "arcsec");
-		retour.completeDetectionMsg("Talen by default");
-		return new ColumnExpressionSetter("s_resolution_unit");
-	}
-	
+		
 	/**
 	 * @return
 	 * @throws Exception 
 	 */
 	public ColumnExpressionSetter getfov() throws Exception{
 		if( this.fov == null ){
-			return new ColumnExpressionSetter("s_fov");
+			return search("s_fov", RegExp.FOV_UCD, RegExp.FOV_KW);
 		}
 		return fov;		
 	}
@@ -781,10 +654,10 @@ public class SpaceKWDetector extends KWDetector{
 	 * @return
 	 * @throws SaadaException
 	 */
-	public ColumnExpressionSetter getRegion() throws SaadaException{
+	public ColumnExpressionSetter getRegion() throws Exception{
 		this.init();
 		if( this.region == null ){
-			return new ColumnExpressionSetter("s_region");
+			return search("s_region", RegExp.REGION_UCD, RegExp.REGION_KW);
 		}
 		return region;		
 	}
