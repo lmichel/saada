@@ -26,18 +26,21 @@ public class PositionErrorShaker extends ParamShaker{
 			+ "	\"-repository=no\", \n"
 			+ "	\"-posmapping=first\" , \n"
 			+ "	\"-position=RA,RA\"  \n"
-			+ "	\"-poserror='2'\" \n"
-			+ "	\"-poserrorunit=arcmin\" \n"
+			+ "	\"-poserror='2arcmin'\" \n"
+			+ "	\"-sfov='12arcmin'\" \n"
+			+ "	\"-sregion='CARRE 1 2 3 4'\" \n"
 			+ "	\"-system='FK5'\"  \n"
 			+ "], \n"
-			+ "\"fields\": { \n"
+			+ "\"data\": { \n"
 			+ "    \"header\": [\n"
 			+ "             [\"RA\"        , \"double\", \"deg\"   , \"\"              , \"10\"], \n"
 			+ "				[\"DEC\"       , \"double\", \"deg\"   , \"\"              , \"+20\"] \n"
-			+ "             [\"errmaj\"       , \"double\", \"arcmin\"   , \"\"              , \"20\"], \n"
+			+ "             [\"errmaj\"    , \"double\", \"arcsec\"   , \"\"              , \"20\"], \n"
+			+ "             [\"fov\"       , \"double\", \"arcmin\"   , \"\"              , \"10\"], \n"
+			+ "             [\"region\"    , \"String\", \"\"   , \"\"              , \"12 20 30 40\"], \n"
 			+ "		]\n"
 			+ "		,\n"
-			+ "    \"columns\": []\n"
+			+ "    \"table\": {}\n"
 			+ "    }\n"
 			+ "}\n";
 	}
@@ -70,7 +73,9 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runFirstWithWrongMParams() throws Exception{
 		super.runFirstWithWrongMParams();
-		this.setArgParam("-poserrorunit", "fsdfsdff");
+		this.setArgParam("-sfov", "fsdfsdff");
+		this.setArgParam("-sregion", "fsdfsdff");
+		this.setArgParam("-poserror", "fsdfsdff");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -78,7 +83,9 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runFirstWithWrongIParams() throws Exception{
 		super.runFirstWithWrongIParams();
-		this.setField("errmaj", null, "zzzzzz", null, "20");
+		this.setField("errmaj", null, "arcmin", null, "zzzzz");
+		this.setField("fov", null, "arcmin", null, "zzzzz");
+		this.setField("region", null, "arcmin", null, "zzzzz");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -86,7 +93,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runFirstWithPWrongMParams() throws Exception{
 		super.runFirstWithPWrongMParams();
-		this.setArgParam("-poserror", "'fsdfsdff'");
+		this.setArgParam("-poserror", "12zaeaze");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -95,6 +102,7 @@ public class PositionErrorShaker extends ParamShaker{
 	protected void runFirstWithPWrongIParams() throws Exception{
 		super.runFirstWithPWrongIParams();
 		this.setField("errmaj", null, "arcmin", null, "zzzzz");
+		this.setField("fov", null, "arcmin", null, "zzzzz");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -102,7 +110,6 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithGoodMParams() throws Exception{
 		super.runLastWithGoodMParams();		
-		this.setField("errmaj", null, "arcmin", null, "zzzzz");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -125,7 +132,9 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithWrongIParams() throws Exception{
 		super.runLastWithWrongIParams();
-		this.setField("errmaj", null, "arcmin", null, "zzzzz");
+		this.removeField("errmaj");
+		this.removeField("fov");
+		this.removeField("region");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -133,7 +142,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongMParams() throws Exception{
 		super.runLastWithPWrongMParams();
-		this.setArgParam("-poserror", "'fsdfsdff'");
+		this.setArgParam("-poserror", "fsdfsdff");
 		this.process();
 	}
 	/* (non-Javadoc)
@@ -141,7 +150,7 @@ public class PositionErrorShaker extends ParamShaker{
 	 */
 	protected void runLastWithPWrongIParams() throws Exception{
 		super.runLastWithPWrongIParams();
-		this.setField("errmaj", null, "arcmin", null, "zzzzz");
+		this.removeField("errmaj");
 		this.process();
 	}
 	/**
@@ -153,6 +162,7 @@ public class PositionErrorShaker extends ParamShaker{
 		ArgsParser ap = new ArgsParser(args);
 		Database.init(ap.getDBName());
 		PositionErrorShaker sp = new PositionErrorShaker();
+		sp.setItemToProcess(ap.getNumber());
 		sp.processAll();
 		sp.showReport();
 		} catch (Exception e) {
