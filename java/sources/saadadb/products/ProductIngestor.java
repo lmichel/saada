@@ -23,6 +23,7 @@ import saadadb.generationclass.SaadaClassReloader;
 import saadadb.meta.AttributeHandler;
 import saadadb.products.inference.CooSysResolver;
 import saadadb.products.inference.Coord;
+import saadadb.products.inference.STC;
 import saadadb.products.inference.SpectralCoordinate;
 import saadadb.products.mergeandcast.ClassMerger;
 import saadadb.products.setter.ColumnSetter;
@@ -312,7 +313,6 @@ public class ProductIngestor {
 			Astrocoo acoo;
 			Astroframe af = new CooSysResolver(this.product.astroframeSetter.getValue()).getCooSys();
 			if( af != null ) {
-				String stc = "Polygon " + Database.getAstroframe();
 				double ra;
 				double dec;
 				if( this.product.s_raSetter == this.product.s_decSetter) {
@@ -331,14 +331,20 @@ public class ProductIngestor {
 				 * convert the region polygon
 				 */
 				if( !this.product.s_regionSetter.isNotSet() ) {
-					List<Double> pts = (List<Double>) this.product.s_regionSetter.storedValue;
-					for( int i=0 ; i<(pts.size()/2) ; i++ ) {
-						converted_coord = Coord.convert(af, new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
-						stc += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
+					STC stc = new STC(this.product.s_regionSetter.getValue());
+					if( stc.isValid() ){
+						String stcString = stc.getType() + " " + stc.getAstroFrame() + " ";
+						List<Double> pts = stc.getCoords();						
+						for( int i=0 ; i<(pts.size()/2) ; i++ ) {
+							converted_coord = Coord.convert(stc.getAstroFrame(), new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
+							stcString += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
+						}		
+						this.product.s_regionSetter.completeConversionMsg("Converted from " + stc.getAstroFrame() + " in " +  Database.getAstroframe());			
+						this.product.s_regionSetter.setValue(stcString);
+						this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
+					} else {
+						this.product.s_regionSetter.completeConversionMsg("Conv failed " + stc.message);
 					}
-					this.product.s_regionSetter.setValue(stc);
-					this.product.s_regionSetter.completeConversionMsg("Converted in " +  Database.getAstroframe());			
-					this.saadaInstance.setS_region(this.product.s_regionSetter.getValue());
 				}
 			} else {
 				this.product.s_raSetter.completeConversionMsg("Conv failed: no astroframe");
@@ -348,6 +354,7 @@ public class ProductIngestor {
 				this.saadaInstance.s_dec = Double.NaN;									
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			Messenger.printMsg(Messenger.TRACE, "Error while setting the position " + e.getMessage());
 			this.product.s_raSetter.completeConversionMsg("Conv failed " + e.getMessage());
 			this.product.s_decSetter.completeConversionMsg("Conv failed " + e.getMessage());
@@ -377,12 +384,12 @@ public class ProductIngestor {
 			if(this.product.s_fovSetter.isNotSet())
 				this.saadaInstance.setS_fov(Double.POSITIVE_INFINITY);
 			else {
-				String unit;
-				if( (unit = this.product.s_fovSetter.getUnit()).length() > 0 ) {
+				String unit = this.product.s_fovSetter.getUnit();
+				if( unit.length() > 0 ) {
 					if( "deg".equals(unit )) {
 						this.saadaInstance.setS_fov(Double.parseDouble(this.product.s_fovSetter.getValue()));
 					} else {
-						this.fovUnitConverter.convertFrom(new Unit(this.product.s_fovSetter.getValue() + this.product.s_fovSetter.getUnit()));
+						this.fovUnitConverter.convertFrom(new Unit(this.product.s_fovSetter.getValue() + unit));
 						this.product.s_fovSetter.setConvertedValue(this.fovUnitConverter.value, unit, this.fovUnitConverter.getUnit(), true);
 						this.saadaInstance.setS_fov(this.fovUnitConverter.value);
 					}
@@ -405,7 +412,7 @@ public class ProductIngestor {
 	 */
 	protected void setPosErrorFields() throws Exception {
 		try {
-			String error_unit = this.product.s_resolution_unitSetter.getValue();
+			String error_unit = this.product.s_resolutionSetter.getUnit();
 			if( !this.product.s_resolutionSetter.isNotSet() &&  error_unit != null &&  error_unit.length() > 0){
 				double maj_err=0, convert = -1;
 				/*
@@ -436,8 +443,8 @@ public class ProductIngestor {
 					this.saadaInstance.s_resolution = Double.parseDouble(this.product.s_resolutionSetter.getValue());
 				}
 			} else {
+				this.product.s_resolutionSetter.completeConversionMsg("Position error without unit");
 				if( this.numberOfCall == 0 ){
-					this.product.s_resolutionSetter.completeConversionMsg("Position error without unit");
 					Messenger.printMsg(Messenger.TRACE, "Position error not mapped or without unit: won't be set for this product");					
 				}
 			}
@@ -698,21 +705,21 @@ public class ProductIngestor {
 		String file_bus_sql = this.saadaInstance.oidsaada + "\t" + this.saadaInstance.obs_id + "\t" + this.saadaInstance.contentsignature;
 		for(AttributeHandler ah: this.orderedBusinessAttributes) {
 			file_bus_sql += "\t"  +  ClassMerger.getCastedSQLValue(ah, ah.getType().toString());
-//
-//			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") 
-//					|| val.equals(SaadaConstant.NOTSET)|| val.equals(SaadaConstant.STRING) ||
-//					val.equalsIgnoreCase("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
-//				file_bus_sql +=Database.getWrapper().getAsciiNull();
-//			} else {
-//				String type = ah.getType().toString();
-//				if( type.equals("char") || type.endsWith("String") ) {
-//					file_bus_sql += val.replaceAll("'", "");
-//				} else if( type.equals("boolean")  ) {
-//					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
-//				} else {
-//					file_bus_sql +=  val;
-//				}
-//			}
+			//
+			//			if( val.equals("Infinity") || val.equals("NaN") || val.equals("") 
+			//					|| val.equals(SaadaConstant.NOTSET)|| val.equals(SaadaConstant.STRING) ||
+			//					val.equalsIgnoreCase("NULL")|| val.equals("2147483647") || val.equals("9223372036854775807")) {
+			//				file_bus_sql +=Database.getWrapper().getAsciiNull();
+			//			} else {
+			//				String type = ah.getType().toString();
+			//				if( type.equals("char") || type.endsWith("String") ) {
+			//					file_bus_sql += val.replaceAll("'", "");
+			//				} else if( type.equals("boolean")  ) {
+			//					file_bus_sql += Database.getWrapper().getBooleanAsString(Boolean.parseBoolean(val));
+			//				} else {
+			//					file_bus_sql +=  val;
+			//				}
+			//			}
 		}
 		buswriter.write(file_bus_sql + "\n");
 	}
