@@ -30,9 +30,8 @@ import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_VO_Capabilities;
 import saadadb.util.Messenger;
 import saadadb.vo.registry.Authority;
-import saadadb.vo.registry.Capability;
 import saadadb.vo.registry.Record;
-import saadadb.vo.tap_old.TapServiceManager;
+import saadadb.vo.tap.TapServiceManager;
 import saadadb.vocabulary.enums.VoProtocol;
 
 
