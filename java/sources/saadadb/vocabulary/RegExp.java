@@ -29,11 +29,15 @@ public class RegExp {
 	/*
 	 * Regular expression used to filter command line parameters
 	 */
-	public static final String MAPPING  = "(?i)((only)|(first)|(last))";
-	public static final String CATEGORY = "(?i)" + Category.buildRegExp();
+	public static final String MAPPING             = "(?i)((only)|(first)|(last))";
+	public static final String CATEGORY            = "(?i)" + Category.buildRegExp();
 	public static final String ALLOWED_ERROR_UNITS = "(deg)|(arcmin)|(arcsec)|(mas)|(uas)";
-	public static final String REPOSITORY  = "(?i)((no)|(move))";
-	public static final String FOLLOWLINKS  = "(?i)((follow)|(ignore))";
+	public static final String REPOSITORY          = "(?i)((no)|(move))";
+	public static final String FOLLOWLINKS         = "(?i)((follow)|(ignore))";
+	public static final String QUOTED_EXPRESSION   = "^'(.*)'$";
+	public static final String NUMERIC_PARAM       = "^(?:(" + RegExp.NUMERIC + "))$";
+	public static final String NUMERIC_UNIT_PARAM  = "^(?:(" + RegExp.NUMERIC + ")(.*))$";
+	
 	/*
 	 * Regular expression used to filter input datafiles
 	 */
@@ -42,7 +46,8 @@ public class RegExp {
 	public static final String JSON_FILE = "(?i)(.*\\.json)$";
 	public static final String IMAGE_FILE   = "(?i)(.*(\\.(((gif)|(jpeg)|(jpg)|(png)|(tiff)|(bmp))))$";
 	public static final String[] PICT_FORMAT  = new String[]{"jpg",  "gif", "jpeg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
-
+	
+	
 
 	/*
 	 * Regular expression used to filter values read in  FITS files.
@@ -170,6 +175,11 @@ public class RegExp {
 	 */
 	public static final String FOV_KW  = "(?i)(fov.*)";
 	public static final String FOV_UCD = "(?i)(instr\\.fov)";
+	/**
+	 * Region
+	 */
+	public static final String REGION_KW  = "(?i)(.*region.*)";
+	public static final String REGION_UCD = "(?i)(obs\\.field)";
 
 	/**
 	 * Position kw
