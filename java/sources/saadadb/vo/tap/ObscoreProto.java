@@ -29,11 +29,11 @@ public class ObscoreProto {
 		System.out.println("=======================================");
 		VOResource vor = VOResource.getResource("Obscore");
 		List<UTypeHandler> uths = vor.getUTypeHandlers();
-		Set<String> ahnames = new TreeSet<String>();
+		Set<String> modelAhnames = new TreeSet<String>();
 		for(UTypeHandler uth: uths ){
 			if(uth.isMandatory()){
 				System.out.println(uth.getNickname() + uth.isMandatory());
-				ahnames.add(uth.getNickname());
+				modelAhnames.add(uth.getNickname());
 			} else {
 				System.out.println("==========false");
 			}
@@ -41,19 +41,19 @@ public class ObscoreProto {
 		System.out.println("=======================================");
 		Map<String, AttributeHandler> ahs = MetaCollection.getAttribute_handlers(Category.SPECTRUM);
 		for( AttributeHandler ah: ahs.values() ){
-			if( ahnames.contains( ah.getNameattr())) {
-				System.out.println( ah.getNameattr() + " connu");
+			if( modelAhnames.contains( ah.getNameattr())) {
+				System.out.println( ah.getNameattr() + " connu du model");
 			} else {
-				System .out.println(ah.getNameattr() + " inconnu");
+				System .out.println(ah.getNameattr() + " inconnu du model");
 			}
 		}
 		System.out.println("=======================================");
-		for( String uhn: ahnames){
+		for( String uhn: modelAhnames){
 			if( ahs.keySet().contains(uhn)) {
-				System.out.println( uhn + " connu");
+				System.out.println( uhn + " connu des coll");
 
 			}else {
-				System .out.println(uhn + " inconnu");
+				System .out.println(uhn + " inconnu des coll");
 			}
 
 		}
