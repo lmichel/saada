@@ -23,8 +23,7 @@ public class MiscBuilder extends ProductBuilder{
 	public MiscBuilder(DataFile file, ProductMapping mapping, MetaClass metaClass) throws SaadaException{	
 		super(file, mapping, metaClass );
 		try {
-			this.mapDataFile(dataFile);
-			this.dataFile.mapAttributeHandler();
+			this.bindDataFile(dataFile);
 			this.setQuantityDetector();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
@@ -35,7 +34,7 @@ public class MiscBuilder extends ProductBuilder{
 	public MiscBuilder(DataFile file, ProductMapping mapping) throws SaadaException{	
 		super(file, mapping, null );
 		try {
-			this.mapDataFile(dataFile);
+			this.bindDataFile(dataFile);
 			this.setQuantityDetector();
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
