@@ -77,9 +77,9 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-system") ;
 		allowedArgs.add("-position")     ;allowedArgs.add("-entry.position") ;
 		allowedArgs.add("-poserror")     ;allowedArgs.add("-entry.poserror") ;
-		allowedArgs.add("-sresolution")  ;allowedArgs.add("-entry.sresolution") ;
-		allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
-		allowedArgs.add("-sfov");
+		allowedArgs.add("-sresolution")  ;allowedArgs.add("-entry.sresolution") ; // like <VALUE>unit
+		// allowedArgs.add("-poserrorunit") ;allowedArgs.add("-entry.poserrorunit") ;
+		allowedArgs.add("-sfov"); // like <VALUE>unit
 		allowedArgs.add("-sregion");
 		/*
 		 * Energy Axe
@@ -944,21 +944,10 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
+
 	/**
-	 * returns a table with both position error values (KW or values) -poserror=KW_A,KW_D:
 	 * @return
 	 */
-	public String getPoserrorUnit(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-poserrorunit")) {
-				return getArgsValue(args[i]);
-			}
-			if( entry && args[i] .startsWith("-entry.poserrorunit")) {
-				return getArgsValue(args[i]);
-			}
-		}
-		return null;
-	}
 	public String getSFov() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-sfov")) {
@@ -967,6 +956,9 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
+	/**
+	 * @return
+	 */
 	public String getSRegion() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-sregion")) {
