@@ -129,7 +129,7 @@ public class PositionErrorMapperPanel extends PriorityPanel {
 			Messenger.trapFatalException(e);
 		}
 		setText(parser.getPoserrorMapping(forEntry));
-		setUnit(parser.getPoserrorUnit(forEntry));
+		//setUnit(parser.getPoserrorUnit(forEntry));
 	}
 	 
 
