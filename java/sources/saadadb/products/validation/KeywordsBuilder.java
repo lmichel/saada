@@ -45,8 +45,6 @@ public abstract class KeywordsBuilder {
 	 * @throws Exception
 	 */
 	public KeywordsBuilder(JSONObject jsonObject) throws Exception {
-		System.out.println(jsonObject);
-		System.out.println( jsonObject.get("header"));
 		this.headerKWs = buildAttributeHandler((JSONArray) jsonObject.get("header"));
 		JSONObject table = (JSONObject) jsonObject.get("table");
 		this.columnKWs = buildAttributeHandler((JSONArray) table.get("header"));
