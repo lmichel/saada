@@ -177,7 +177,24 @@ public abstract class ParamShaker {
 			}
 		}
 		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0, this.productMapping);
-		//throw new Exception("Param " + name + " not found" );
+	}
+	/**
+	 * @param name attribute to remove
+	 */
+	protected void removeField(String name) throws Exception{
+		JSONObject jso = (JSONObject) jsonObject.get("data");
+		JSONArray jsa = (JSONArray) jso.get("header");
+		int toTremove = -1;
+		for( int i=0 ; i<jsa.size() ; i++ ){
+			JSONArray jsah = (JSONArray) jsa.get(i);
+			if( ((String)(jsah.get(0))).equals(name) ) {
+				toTremove = i;
+				Messenger.printMsg(Messenger.TRACE, "Attribute " + name + " removed");
+				break;
+			}
+		}
+		if( toTremove != -1 ) jsa.remove(toTremove);
+		this.fooProduct = new JsonDataFile((JSONObject) jsonObject.get("data"), 0, this.productMapping);
 	}
 
 	/**
