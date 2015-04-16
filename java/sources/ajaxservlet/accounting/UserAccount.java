@@ -32,9 +32,9 @@ public class UserAccount implements Serializable {
 		/*
 		 * Init UWS quue of ZIP archives
 		 */
-		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Create UWS ZIP archive queue for session " + session_id);
 		this.reportDir = Repository.getUserReportsPath(sessionId);;
+		if (Messenger.debug_mode)
+			Messenger.printMsg(Messenger.DEBUG, "Create storage directory " + this.reportDir + " for session " + session_id);
 		/*
 		 * User report directory must not be deleted because it can be populated out of any session context
 		 * e.g. a TAP request will put query report on the behalf of a session ID (sent by cookie) but the 

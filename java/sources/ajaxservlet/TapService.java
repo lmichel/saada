@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.accounting.QueryContext;
+import ajaxservlet.accounting.UserTrap;
 import saadadb.util.Messenger;
 import saadadb.vo.tap.TapServiceConnection;
 import tap.TAPException;
