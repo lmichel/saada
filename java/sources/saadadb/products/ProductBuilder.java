@@ -91,7 +91,7 @@ public abstract class ProductBuilder {
 	/*
 	 * Space Axis
 	 */
-	public ColumnSetter s_resolution_unitSetter=new ColumnExpressionSetter("s_resolution_unit");
+//	public ColumnSetter s_resolution_unitSetter=new ColumnExpressionSetter("s_resolution_unit");
 	public ColumnSetter s_resolutionSetter=new ColumnExpressionSetter("s_resolution");
 	public ColumnSetter s_raSetter=new ColumnExpressionSetter("s_ra");
 	public ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
@@ -430,7 +430,7 @@ public abstract class ProductBuilder {
 			//				System.out.println(Integer.toHexString(ah.hashCode()) + " " +  ah);
 		}
 		this.s_resolutionSetter.calculateExpression();
-		this.s_resolution_unitSetter.calculateExpression();
+		//this.s_resolution_unitSetter.calculateExpression();
 		this.s_raSetter.calculateExpression();
 		this.s_decSetter.calculateExpression();
 		this.s_fovSetter.calculateExpression();
@@ -529,7 +529,7 @@ public abstract class ProductBuilder {
 		} else if( columnMapping.byValue() ){
 			retour = new ColumnExpressionSetter(colmunName, columnMapping.getValue());
 			retour.setUnit(columnMapping.getUnit());
-			retour.completeUserMappingMsg( columnMapping.message + "By " + columnMapping.getMode() + " " + columnMapping.getValue() + columnMapping.getUnit() + " " );
+			retour.completeUserMappingMsg( columnMapping.getMessage() + " By " + columnMapping.getMode() + "=" + columnMapping.getValue() + columnMapping.getUnit() + " " );
 			return retour;
 			/*
 			 * Mapped either by expression or keyword: use keywords which must be retrieved with the product AHS
@@ -579,14 +579,14 @@ public abstract class ProductBuilder {
 				if( mappingSingleHandler == null ){
 					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + ahname + " used to map the column " + colmunName + " does not exist");					
 					retour = new ColumnExpressionSetter(colmunName);
-					retour.completeUserMappingMsg("Attribute " + ahname + " used to map the column " + colmunName + " does not exist");
+					retour.completeUserMappingMsg("Attribute <" + ahname + "> used to map the column " + colmunName + " does not exist");
 					return retour;
 				}
 				/*
 				 * Build a ColumnExpressionSetter using tehe builder AH
 				 */
 				retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
-				retour.completeUserMappingMsg(columnMapping.message + "By " + columnMapping.getMode());
+				retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode());
 				return retour;
 				/*
 				 * By expression: multiple AHs are used
@@ -617,7 +617,7 @@ public abstract class ProductBuilder {
 					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
-					retour.completeUserMappingMsg(columnMapping.message + "By " + columnMapping.getMode());
+					retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode());
 					return retour;
 				}
 			} else {
@@ -1079,15 +1079,18 @@ public abstract class ProductBuilder {
 		 * Coo sys done in 2nd: can use position mapping to detect the coord system
 		 */
 		this.mapCollectionCooSysAttributes();
-		this.mapCollectionPosAttributes();
+		/*
+		 * Error must be mapped first because it is used by the fov with is processed in  
+		 */
 		this.mapCollectionPoserrorAttributes();
+		this.mapCollectionPosAttributes();
 		traceReportOnAttRef(astroframeSetter);
 		traceReportOnAttRef(s_raSetter);
 		traceReportOnAttRef(s_decSetter);
 		traceReportOnAttRef(s_regionSetter);
 		traceReportOnAttRef(s_fovSetter);
 		traceReportOnAttRef(s_resolutionSetter);
-		traceReportOnAttRef(s_resolution_unitSetter);
+	//	traceReportOnAttRef(s_resolution_unitSetter);
 	}
 
 	/**
@@ -1234,23 +1237,25 @@ public abstract class ProductBuilder {
 		case ONLY:			
 			PriorityMessage.only("Position resolution");
 			this.s_resolutionSetter = this.getSetterForMappedColumn("s_resolution", mapping.getColumnMapping("s_resolution"));
-			this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
+			//this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
 			break;
 
 		case FIRST:
 			PriorityMessage.first("Position resolution");
 			this.s_resolutionSetter = this.getSetterForMappedColumn("s_resolution", mapping.getColumnMapping("s_resolution"));
+//			this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
+//			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
+//				String msg = s_resolution_unitSetter.getUserMappingMsg();
+//				this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
+//				this.s_resolution_unitSetter.completeUserMappingMsg(msg);
+//			}
 			if( !this.isAttributeHandlerMapped(this.s_resolutionSetter) ) {
 				String msg = s_resolutionSetter.getUserMappingMsg();
 				this.s_resolutionSetter = this.quantityDetector.getSpatialError();
 				this.s_resolutionSetter.completeUserMappingMsg(msg);
 			}
-			this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
-			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
-				String msg = s_resolution_unitSetter.getUserMappingMsg();
-				this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
-				this.s_resolution_unitSetter.completeUserMappingMsg(msg);
-			}
+//			this.s_resolutionSetter.completeUserMappingMsg(s_resolution_unitSetter.getUserMappingMsg());
+//			this.s_resolutionSetter.completeDetectionMsg(s_resolution_unitSetter.getDetectionMsg());
 			break;
 
 		case LAST:
@@ -1261,12 +1266,14 @@ public abstract class ProductBuilder {
 				this.s_resolutionSetter = this.getSetterForMappedColumn("s_resolution", mapping.getColumnMapping("s_resolution"));
 				this.s_resolutionSetter.completeDetectionMsg(msg);
 			}
-			this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
-			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
-				String msg = s_resolution_unitSetter.getDetectionMsg();
-				this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
-				this.s_resolution_unitSetter.completeDetectionMsg(msg);
-			}
+//			this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
+//			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
+//				String msg = s_resolution_unitSetter.getDetectionMsg();
+//				this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
+//				this.s_resolution_unitSetter.completeDetectionMsg(msg);
+//			}
+//			this.s_resolutionSetter.completeUserMappingMsg(s_resolution_unitSetter.getUserMappingMsg());
+//			this.s_resolutionSetter.completeDetectionMsg(s_resolution_unitSetter.getDetectionMsg());
 			break;
 		}
 	}
