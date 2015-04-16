@@ -371,7 +371,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return the detection msg
 	 */
 	public String getDetectionMsg() {
-		return this.userMappingMsg.toString();
+		return this.detectionMsg.toString();
 	}
 	
 	/**
@@ -380,7 +380,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @return the conversion msg
 	 */
 	public String getConversionMsg() {
-		return this.userMappingMsg.toString();
+		return this.conversionMsg.toString();
 	}
 
 	/**
