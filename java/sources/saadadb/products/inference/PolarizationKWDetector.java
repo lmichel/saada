@@ -87,5 +87,4 @@ public class PolarizationKWDetector extends KWDetector {
 		}
 		return this.polStateSetter;
 	}
-
 }

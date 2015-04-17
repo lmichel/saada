@@ -162,10 +162,12 @@ public abstract class ProductBuilder {
 		/*
 		 * priority ref copied for convenience
 		 */
-		this.observationMappingPriority = conf.getObservationAxisMapping().getPriority();
-		this.spaceMappingPriority = conf.getSpaceAxisMapping().getPriority();
-		this.energyMappingPriority = conf.getEnergyAxisMapping().getPriority();
-		this.timeMappingPriority = conf.getTimeAxisMapping().getPriority();
+		this.observationMappingPriority  = conf.getObservationAxisMapping().getPriority();
+		this.spaceMappingPriority        = conf.getSpaceAxisMapping().getPriority();
+		this.energyMappingPriority       = conf.getEnergyAxisMapping().getPriority();
+		this.timeMappingPriority         = conf.getTimeAxisMapping().getPriority();
+		this.observableMappingPriority   = conf.getObservableAxisMapping().getPriority();
+		this.polarizationMappingPriority = conf.getPolarizationAxisMapping().getPriority();
 		this.metaClass = metaClass;
 		this.dataFile = dataFile;
 	}
@@ -1042,7 +1044,7 @@ public abstract class ProductBuilder {
 		AxisMapping mapping = this.mapping.getPolarizationAxisMapping();
 		this.setQuantityDetector();
 
-		switch(this.observableMappingPriority){
+		switch(this.polarizationMappingPriority){
 		case ONLY:			
 			PriorityMessage.only("Polarization");
 			this.pol_statesSetter = this.getSetterForMappedColumn("pol_states", mapping.getColumnMapping("pol_states"));

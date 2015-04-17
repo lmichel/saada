@@ -151,6 +151,11 @@ public class RegExp {
 	public static final String FACILITY_UCD     = "(?i)(.*instr\\.tel.*)";
 	public static final String FACILITY_KW      = "(?i)((facility)|(telescop))";
 	/**
+	 * Polarization keywords
+	 */
+	public static final String POLARIZATION_UCD = "(?i)((phys\\.polarization)|(.*stokes.*))";
+	public static final String POLARIZATION_KW  = "(?i)((pol)|(.*stokes.*))";
+	/**
 	 * Coordinate system
 	 */
 	public static final String ECL_SYSTEM = "(?i)(.*((ecl_FK5)|(ecliptic)))";
