@@ -586,7 +586,7 @@ public abstract class ProductBuilder {
 				 * Build a ColumnExpressionSetter using tehe builder AH
 				 */
 				retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
-				retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode());
+				retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode() + " " + ahname);
 				return retour;
 				/*
 				 * By expression: multiple AHs are used
