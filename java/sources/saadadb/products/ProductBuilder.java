@@ -614,7 +614,11 @@ public abstract class ProductBuilder {
 					}
 				}
 				if(missingAhs.length() > 0  ){
-					FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeUserMappingMsg("Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");
+					return retour;
+
+					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
 					retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode());
@@ -627,7 +631,6 @@ public abstract class ProductBuilder {
 				return retour;
 			}
 		}
-		return null;
 	}
 
 
