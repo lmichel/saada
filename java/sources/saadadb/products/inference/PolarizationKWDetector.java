@@ -13,6 +13,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.RegExp;
 
 /**
 
@@ -81,7 +82,10 @@ public class PolarizationKWDetector extends KWDetector {
 	 */
 	public ColumnExpressionSetter getPolarizationStates() throws Exception{
 		this.detectAxeParams();
-		return (this.polStateSetter == null)? new ColumnExpressionSetter("pol_states"): this.polStateSetter;
+		if( this.polStateSetter == null  || this.polStateSetter.isNotSet()){
+			this.polStateSetter = search("pol_states", RegExp.POLARIZATION_UCD, RegExp.POLARIZATION_KW);
+		}
+		return this.polStateSetter;
 	}
 
 }
