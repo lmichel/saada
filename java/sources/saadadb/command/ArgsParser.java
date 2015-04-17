@@ -112,7 +112,7 @@ public final class ArgsParser implements Serializable{
 		 * Polarization axis
 		 */
 		allowedArgs.add("-polarmapping") ;
-		allowedArgs.add("-polarstats") ;allowedArgs.add("-entry.polarstats") ;
+		allowedArgs.add("-polarstates") ;allowedArgs.add("-entry.polarstates") ;
 		/*
 		 * Other Axe
 		 */
