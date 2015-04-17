@@ -44,8 +44,8 @@ public class EnergyMapping extends AxisMapping {
 		String emin = tabArg.getEmin(entryMode);
 		String emax = tabArg.getEmax(entryMode);
 		if( emin != null && emax != null ) {
-			this.columnMapping.put("em_min", new ColumnMapping(null, "'" +emin + "'", "em_min"));
-			this.columnMapping.put("em_max", new ColumnMapping(null, "'" + emax + "'", "em_max"));
+			this.columnMapping.put("em_min", new ColumnMapping(null, emin, "em_min"));
+			this.columnMapping.put("em_max", new ColumnMapping(null, emax, "em_max"));
 		} else {
 			String sc_col = tabArg.getSpectralColumn();
 			if( sc_col != null ) {
@@ -60,8 +60,8 @@ public class EnergyMapping extends AxisMapping {
 					if( m.find() && m.groupCount() == 2 ) {
 						this.columnMapping.put("dispertion_column"
 								, new ColumnMapping(null, new String[]{m.group(1),m.group(2)}, "dispertion_column")) ;
-						this.columnMapping.put("em_min", new ColumnMapping(null, "'" + m.group(1) + "'", "em_min"));
-						this.columnMapping.put("em_max", new ColumnMapping(null, "'" + m.group(2) + "'", "em_max"));
+						this.columnMapping.put("em_min", new ColumnMapping(null, m.group(1), "em_min"));
+						this.columnMapping.put("em_max", new ColumnMapping(null, m.group(2), "em_max"));
 					} else {
 						FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The spectral range <" + sc_col + "> requires 2 values");
 					}
@@ -72,7 +72,7 @@ public class EnergyMapping extends AxisMapping {
 		}
 		String ebins = tabArg.getEBins(entryMode);
 		if( ebins != null ) {
-			this.columnMapping.put("em_bins", new ColumnMapping(null, "'" +ebins + "'", "em_bins"));		
+			this.columnMapping.put("em_bins", new ColumnMapping(null, ebins, "em_bins"));		
 		}
 	}
 
