@@ -33,6 +33,13 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
 			Spooler.getSpooler().close();
+			Enumeration<Driver> drivers = DriverManager.getDrivers();
+			while(drivers.hasMoreElements()) {
+				Driver d = drivers.nextElement();
+				Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
+				DriverManager.deregisterDriver(d);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -70,14 +77,6 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	}
 	public void sessionDestroyed(HttpSessionEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");   
-		try {
-	        Enumeration<Driver> drivers = DriverManager.getDrivers();
-	        while(drivers.hasMoreElements()) {
-	            DriverManager.deregisterDriver(drivers.nextElement());
-	        }
-	    } catch(Exception e) {
-			Messenger.printMsg(Messenger.ERROR, "Exception caught while deregistering JDBC drivers" + e.getMessage());
-	    }
 	}
 	
 
