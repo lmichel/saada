@@ -274,6 +274,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 			Messenger.printMsg(Messenger.TRACE, "Product file <" + current_prd + "> ingested, <OID = " + current_prd.getSaadainstance().getOid() + ">");
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
+			this.current_prd.close();
 		}	
 		loadedtmpfile.close();
 		coltmpfile.close();
