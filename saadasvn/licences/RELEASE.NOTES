@@ -1,9 +1,12 @@
 -------------------------------------------------
-Version Saada1.8.build10
+Version Saada1.8.build11
 
 L. MICHEL
-March 2015
+April 2015
 -------------------------------------------------
+Saada 1.8.build11
+-----------------
+SQLIte spooler failure when Tomcat reload the Webapp
 
 Saada 1.8.build10
 -----------------

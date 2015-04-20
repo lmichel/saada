@@ -29,15 +29,23 @@ import saadadb.util.RegExp;
 public class InitBaseAtStart  implements ServletContextListener , HttpSessionListener{
 	private String base_dir, app_dir;
 	ServletContext servletContext;
-	
+
 	public void contextDestroyed(ServletContextEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
 			/*
 			 * This method is alse called at starting time
 			 */
-			if( Database.getConnector() != null)
+			if( Database.getConnector() != null) {
 				Spooler.getSpooler().close();
+				Enumeration<Driver> drivers = DriverManager.getDrivers();
+				while(drivers.hasMoreElements()) {
+					Driver d = drivers.nextElement();
+					Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
+					DriverManager.deregisterDriver(d);
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,17 +81,20 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	public void sessionCreated(HttpSessionEvent event) {
 	}
 	public void sessionDestroyed(HttpSessionEvent event) {
-		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");   
-		try {
-	        Enumeration<Driver> drivers = DriverManager.getDrivers();
-	        while(drivers.hasMoreElements()) {
-	            DriverManager.deregisterDriver(drivers.nextElement());
-	        }
-	    } catch(Exception e) {
-			Messenger.printMsg(Messenger.ERROR, "Exception caught while deregistering JDBC drivers" + e.getMessage());
-	    }
+		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");    
+//		try {
+//			Database.close();
+//			Enumeration<Driver> drivers = DriverManager.getDrivers();
+//			while(drivers.hasMoreElements()) {
+//				Driver d = drivers.nextElement();
+//				Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
+//				DriverManager.deregisterDriver(d);
+//			}
+//		} catch(Exception e) {
+//			Messenger.printMsg(Messenger.ERROR, "Exception caught while deregistering JDBC drivers" + e.getMessage()); 
+//		}
 	}
-	
+
 
 	/**
 	 * Look at the file dbname.txt located at application root.
@@ -96,7 +107,7 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		private String db_name = null;
 		private String urlroot = null;
 		private String saadadbroot = null;
-		
+
 		LocalConfig()  throws Exception{
 			File f = new File(base_dir + "dbname.txt");
 			if( f.exists() ) {
