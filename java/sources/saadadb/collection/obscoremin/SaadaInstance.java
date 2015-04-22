@@ -916,7 +916,8 @@ public abstract class SaadaInstance implements DMInterface {
 			attr += "," + fieldlist[i].getName();
 		}
 		sql = "Insert into " + nametable + "(" + attr + ")" + " values ( "
-		+ this.oidsaada + ",'" + this.obs_id + "' ,'"
+		+ this.oidsaada + ",'" 
+		+ this.obs_id.replaceAll("'", "") + "' ,'"
 		+ this.contentsignature + "' ";
 		for (int i = 0; i < fieldlist.length; i++)  {
 			sql +=  ", " + this.getSQL(fieldlist[i]);
