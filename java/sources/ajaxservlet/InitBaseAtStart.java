@@ -28,7 +28,10 @@ import saadadb.vocabulary.RegExp;
 public class InitBaseAtStart  implements ServletContextListener , HttpSessionListener{
 	private String base_dir, app_dir;
 	ServletContext servletContext;
-	
+
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
+	 */
 	public void contextDestroyed(ServletContextEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
@@ -46,6 +49,9 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
+	 */
 	public void contextInitialized(ServletContextEvent event) {
 		try {
 			servletContext = event.getServletContext();
@@ -73,12 +79,18 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
+	 */
 	public void sessionCreated(HttpSessionEvent event) {
 	}
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionListener#sessionDestroyed(javax.servlet.http.HttpSessionEvent)
+	 */
 	public void sessionDestroyed(HttpSessionEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");   
 	}
-	
+
 
 	/**
 	 * Look at the file dbname.txt located at application root.
@@ -91,7 +103,7 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		private String db_name = null;
 		private String urlroot = null;
 		private String saadadbroot = null;
-		
+
 		LocalConfig()  throws Exception{
 			File f = new File(base_dir + "dbname.txt");
 			if( f.exists() ) {
