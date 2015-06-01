@@ -35,14 +35,18 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	public void contextDestroyed(ServletContextEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
-			Spooler.getSpooler().close();
-			Enumeration<Driver> drivers = DriverManager.getDrivers();
-			while(drivers.hasMoreElements()) {
-				Driver d = drivers.nextElement();
-				Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
-				DriverManager.deregisterDriver(d);
+			/*
+			 * This method is also called at starting time
+			 */
+			if( Database.getConnector() != null) {
+				Spooler.getSpooler().close();
+				Enumeration<Driver> drivers = DriverManager.getDrivers();
+				while(drivers.hasMoreElements()) {
+					Driver d = drivers.nextElement();
+					Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
+					DriverManager.deregisterDriver(d);
+				}
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
