@@ -34,6 +34,7 @@ import saadadb.util.Messenger;
  * @version $Id$
  *
  * 02/2014: Add the admin connection, with a lot of impact
+ * 06/2015: Support temporary database shutdown
  */
 public class Spooler { 
 	/**
@@ -48,6 +49,10 @@ public class Spooler {
 	 * Period of the main loop of the thread  controlling the consistency of the connection list (ms)
 	 */
 	public static final int CHECK_PERIOD = 200;
+	/**
+	 * Delay between 2 attempts of connection when the spooler is on error
+	 */
+	public static final int ONERROR_DELAY = 5000;
 	/**
 	 * Period of the spooler reporting (active in debug mode) (multiple of CHECK_PERIOD)
 	 */
@@ -73,7 +78,7 @@ public class Spooler {
 	private boolean spoolerIsRunning=false;
 	private boolean checkerIsRunning=false;
 	private boolean adminMode = false;
-	
+
 	/*************************************************************************
 	 * Singleton pattern:
 	 */
@@ -185,7 +190,8 @@ public class Spooler {
 	 * @throws SQLException
 	 */
 	public void close() throws Exception {
-		
+
+		Messenger.printMsg(Messenger.TRACE, "Stopping Spooler");
 		this.spoolerIsRunning = false;
 		int cpt = 0;
 		while( this.checkerIsRunning && cpt < 15) {
@@ -200,7 +206,6 @@ public class Spooler {
 			}
 			this.connectionsReferences = null;		
 		}
-		Messenger.printMsg(Messenger.TRACE, "Spooler stopped");
 	}
 
 	/**
@@ -417,6 +422,8 @@ public class Spooler {
 	 *
 	 */
 	class ListChecker implements Runnable {
+		private String  message;
+		private boolean onErrror = false;
 		@Override
 		public void run() {
 			checkerIsRunning = true;
@@ -428,18 +435,32 @@ public class Spooler {
 				try {
 					Thread.sleep(CHECK_PERIOD);	
 					completeConnectionsReferences();
-					if (Messenger.debug_mode) {
-						if( cpt > REPORT_PERIOD ){
-							Messenger.printMsg(Messenger.DEBUG, Spooler.this.toString());
-							cpt = 0;
-						}
-						cpt++;
+					message =  Spooler.this.toString();
+					/*
+					 * Notify when the db connection works again
+					 */
+					if( onErrror ){
+						Messenger.printMsg(Messenger.TRACE, "Spooler resumed: " + message);
+						onErrror = false;
 					}
+					/*
+					 * If a db connection error occurs: print out a notification and slow down the polling frequency
+					 */
 				} catch (Exception e) {
-					checkerIsRunning = false;	
-					spoolerIsRunning = false;
-					Messenger.printStackTrace(e);
-					break;
+					onErrror = true;
+					String se = e.toString();
+					if( Messenger.debug_mode || !message.equals(se)) {
+						message = se;
+						Messenger.printMsg(Messenger.ERROR, message);
+					}
+					try{ Thread.sleep(ONERROR_DELAY);} catch(Exception e2){}
+				}
+				if (Messenger.debug_mode) {
+					if( cpt > REPORT_PERIOD ){
+						Messenger.printMsg(Messenger.DEBUG, message);
+						cpt = 0;
+					}
+					cpt++;
 				}
 			}
 			if (Messenger.debug_mode)
@@ -456,10 +477,10 @@ public class Spooler {
 			System.out.println("0");
 			DatabaseConnection c = Spooler.getSpooler().getConnection();
 			c.close();
-//			System.out.println("1");
-//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
-//			System.out.println("2");
-//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
+			//			System.out.println("1");
+			//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
+			//			System.out.println("2");
+			//			Spooler.getSpooler().give(Spooler.getSpooler().getConnection());
 			SQLTable.beginTransaction();
 			Thread.sleep(100);
 			SQLTable.commitTransaction();

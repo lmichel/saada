@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 
 import saadadb.database.Database;
+import saadadb.util.Version;
 import ajaxservlet.SaadaServlet;
 
 /**
@@ -29,6 +30,7 @@ public class GetVersion extends SaadaServlet {
 			retour.put("dbname", Database.getDbname());
 			retour.put("dbms", Database.getWrapper().getDBMS());
 			retour.put("version", Database.version());
+			retour.put("date", Version.date);
 			JsonUtils.teePrint(response, retour.toJSONString());
 		} catch(Exception e){
 			reportJsonError(request, response, e);
