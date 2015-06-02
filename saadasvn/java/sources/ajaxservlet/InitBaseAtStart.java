@@ -25,6 +25,7 @@ import saadadb.util.RegExp;
  * It is declared in web.xml
  * @author michel
  * 01/2014: close JDBC connection when the context is destroyed
+ * 04/2015: unregister drivers when the context is destroyed
  */
 public class InitBaseAtStart  implements ServletContextListener , HttpSessionListener{
 	private String base_dir, app_dir;
@@ -34,7 +35,7 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		Messenger.printMsg(Messenger.TRACE, "ByeBye");
 		try {
 			/*
-			 * This method is alse called at starting time
+			 * This method is also called at starting time
 			 */
 			if( Database.getConnector() != null) {
 				Spooler.getSpooler().close();
@@ -82,17 +83,6 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	}
 	public void sessionDestroyed(HttpSessionEvent event) {
 		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");    
-//		try {
-//			Database.close();
-//			Enumeration<Driver> drivers = DriverManager.getDrivers();
-//			while(drivers.hasMoreElements()) {
-//				Driver d = drivers.nextElement();
-//				Messenger.printMsg(Messenger.TRACE, "Driver " + d + " unregistered");   
-//				DriverManager.deregisterDriver(d);
-//			}
-//		} catch(Exception e) {
-//			Messenger.printMsg(Messenger.ERROR, "Exception caught while deregistering JDBC drivers" + e.getMessage()); 
-//		}
 	}
 
 
