@@ -494,10 +494,10 @@ public final class ArgsParser implements Serializable{
 	 */
 	public String getObsid(boolean entry) {
 		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-name")  ){
+			if( !entry && (args[i].startsWith("-name")  ||  args[i].startsWith("-obsid")) ){
 				return getArgsValue(args[i]);
 			}
-			if( entry && args[i].startsWith("-entry.name") ){
+			if( entry && (args[i].startsWith("-entry.name")  || args[i].startsWith("-entry.obsid")) ){
 				return getArgsValue(args[i]);
 			}
 		}
