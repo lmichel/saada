@@ -57,6 +57,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-relation") ;
 		allowedArgs.add("-config") ;
 		allowedArgs.add("-filename") ;
+		allowedArgs.add("-filelist") ;
 		allowedArgs.add("-extension") ;
 		/*
 		 * Observation Axe
@@ -430,6 +431,19 @@ public final class ArgsParser implements Serializable{
 	public String getFilename() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-filename")) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns the data specified by the arg -filelist=.....
+	 * The arg value is assumed to be an ascii file containing a list of file to be loaded
+	 * @return
+	 */
+	public String getFilelist() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-filelist")) {
 				return getArgsValue(args[i]);
 			}
 		}
