@@ -1226,6 +1226,15 @@ public abstract class ProductBuilder {
 			}
 			break;
 		}
+		/*
+		 * Id the astroframe hasn't been discovered before, we take this inferred from the position keywords
+		 */
+		if( this.astroframeSetter.isNotSet() ){
+			ColumnExpressionSetter ces = this.quantityDetector.getFrame();
+			if( !ces.isNotSet() ){
+				this.astroframeSetter = ces;
+			}
+		}
 
 	}
 
@@ -1248,19 +1257,11 @@ public abstract class ProductBuilder {
 		case FIRST:
 			PriorityMessage.first("Position resolution");
 			this.s_resolutionSetter = this.getSetterForMappedColumn("s_resolution", mapping.getColumnMapping("s_resolution"));
-//			this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
-//			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
-//				String msg = s_resolution_unitSetter.getUserMappingMsg();
-//				this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
-//				this.s_resolution_unitSetter.completeUserMappingMsg(msg);
-//			}
 			if( !this.isAttributeHandlerMapped(this.s_resolutionSetter) ) {
 				String msg = s_resolutionSetter.getUserMappingMsg();
 				this.s_resolutionSetter = this.quantityDetector.getSpatialError();
 				this.s_resolutionSetter.completeUserMappingMsg(msg);
 			}
-//			this.s_resolutionSetter.completeUserMappingMsg(s_resolution_unitSetter.getUserMappingMsg());
-//			this.s_resolutionSetter.completeDetectionMsg(s_resolution_unitSetter.getDetectionMsg());
 			break;
 
 		case LAST:
@@ -1271,14 +1272,6 @@ public abstract class ProductBuilder {
 				this.s_resolutionSetter = this.getSetterForMappedColumn("s_resolution", mapping.getColumnMapping("s_resolution"));
 				this.s_resolutionSetter.completeDetectionMsg(msg);
 			}
-//			this.s_resolution_unitSetter = this.quantityDetector.getSpatialErrorUnit();
-//			if( !this.isAttributeHandlerMapped(this.s_resolution_unitSetter) ) {
-//				String msg = s_resolution_unitSetter.getDetectionMsg();
-//				this.s_resolution_unitSetter = this.getSetterForMappedColumn("s_resolution_unit", mapping.getColumnMapping("s_resolution_unit"));
-//				this.s_resolution_unitSetter.completeDetectionMsg(msg);
-//			}
-//			this.s_resolutionSetter.completeUserMappingMsg(s_resolution_unitSetter.getUserMappingMsg());
-//			this.s_resolutionSetter.completeDetectionMsg(s_resolution_unitSetter.getDetectionMsg());
 			break;
 		}
 	}

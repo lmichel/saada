@@ -442,6 +442,7 @@ public class ProductIngestor {
 					this.product.s_resolutionSetter.completeConversionMsg("no convertion");
 					this.saadaInstance.s_resolution = Double.parseDouble(this.product.s_resolutionSetter.getValue());
 				}
+			} else if( this.product.s_resolutionSetter.isNotSet()){
 			} else {
 				this.product.s_resolutionSetter.completeConversionMsg("Position error without unit");
 				if( this.numberOfCall == 0 ){
