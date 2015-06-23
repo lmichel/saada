@@ -1,7 +1,9 @@
 package saadadb.dataloader;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,6 +25,8 @@ import saadadb.vocabulary.enums.ClassifierMode;
  * Entry point for loading data files. Get the list of files, build the appropriate {@link SchemaMapper} and run it
  * @author michel
  * @version $Id$
+ * 
+ * 06/2015: possibility of giving the list of file to be loaded from an ASCII file
  */
 public class Loader extends SaadaProcess {
 
@@ -33,7 +37,7 @@ public class Loader extends SaadaProcess {
 	private ArrayList<String> filesToBeLoaded = null;
 
 	private ArgsParser tabArg;
-	
+
 	/**
 	 * Creator: init the loader and the database
 	 * @param args array of parameters
@@ -51,13 +55,12 @@ public class Loader extends SaadaProcess {
 		if( !Database.getConnector().isAdmin_mode() ) {
 			Database.setAdminMode(this.tabArg.getPassword());
 		}
-
 		if( debug ) {
 			this.tabArg.addDebugMode(true);
 			Messenger.switchDebugOn();
 		}
 	}
-	
+
 	/**
 	 * Creator init the loader and the database
 	 * @param args parser object
@@ -179,13 +182,13 @@ public class Loader extends SaadaProcess {
 	}
 
 	/**
-	 * @return
-	 * @throws AbortException 
+	 * Process the filename to update the list of file to load
+	 * filename can denote either a file , a directory or symblink
+	 * @param filename
+	 * @param filter
+	 * @throws Exception
 	 */
-	public void setCandidateFileList() throws Exception {
-		this.filesToBeLoaded = new ArrayList<String>();
-		String filename = this.tabArg.getFilename();
-		String filter = this.tabArg.getFilter();
+	private void validateFilename(String filename, String filter)throws Exception{		
 		if( filename ==  null || filename.equals("")) {
 			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "A file (or dir) name must be specified");
 		}
@@ -199,21 +202,22 @@ public class Loader extends SaadaProcess {
 		if( requested_file.isURL) {
 			this.filesToBeLoaded.add(requested_file.getAbsolutePath());
 			Messenger.printMsg(Messenger.TRACE, "One unique URL to process <" + requested_file.inputFileName + ">");							
-			
+
 		} else 	if( !requested_file.file.exists()  ) {
 			try {
 				/*
 				 * Just to see if the file is a double symbolic link
 				 */
-				if( !(new File(requested_file.file.getCanonicalPath())).exists() ) {
-					AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");	
+				String cp = requested_file.file.getCanonicalPath();
+				if( !(new File(cp)).exists() ) {
+					AbortException.throwNewException(SaadaException.MISSING_FILE, "link <" + requested_file.file.getAbsolutePath() + "> unresolved");	
 				} else {
-					// Something missing here?
+					this.filesToBeLoaded.add(cp);
 					return;
 				}
 			} catch (Exception e) {
+				AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");
 			}
-			AbortException.throwNewException(SaadaException.MISSING_FILE, "file or directory <" + requested_file.file.getAbsolutePath() + "> doesn't exist");							
 		}
 		/*
 		 * "filename" is a directory 
@@ -230,7 +234,7 @@ public class Loader extends SaadaProcess {
 			for( int i=0 ; i<dir_content.length ; i++ ) {	
 				DataResourcePointer candidate_file=null;
 				try {
-				candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+					candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
 				} catch(Exception e){
 					AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
 				}
@@ -260,6 +264,35 @@ public class Loader extends SaadaProcess {
 		else {
 			this.filesToBeLoaded.add(requested_file.getAbsolutePath());
 			Messenger.printMsg(Messenger.TRACE, "One unique file to process <" + requested_file.inputFileName + ">");							
+		}
+	}
+	/**
+	 * Extract the list of file to load from the command line parameters
+	 * -filelist is prioritary from -filename
+	 * @return
+	 * @throws Exception 
+	 */
+	public void setCandidateFileList() throws Exception {
+		this.filesToBeLoaded = new ArrayList<String>();
+		/*
+		 * First case: the file list is given as an ASCII file
+		 * Each file row can denote either a directory or a simple file
+		 */
+		String filelist = this.tabArg.getFilelist();
+		if( filelist != null ) {
+			BufferedReader br = new BufferedReader(new FileReader(filelist));
+			String s;
+			while( (s= br.readLine()) != null ){
+				String b = s.trim();
+				if( b.length() > 0 && !b.startsWith("#")) {
+					validateFilename(b, null);
+				}
+			}
+			br.close();
+		} else {
+			String filename = this.tabArg.getFilename();
+			String filter = this.tabArg.getFilter();
+			validateFilename(filename, filter);
 		}
 	}
 
@@ -349,7 +382,7 @@ public class Loader extends SaadaProcess {
 			File cf = new File(base_dir + Database.getSepar() + f);
 			if( cf.exists() && !cf.isDirectory() ) {
 				if( this.tabArg.getCategory() == Category.explain(Category.FLATFILE )||
-				f.matches(RegExp.FITS_FILE) || f.matches(RegExp.VOTABLE_FILE) || f.matches(RegExp.JSON_FILE)) {
+						f.matches(RegExp.FITS_FILE) || f.matches(RegExp.VOTABLE_FILE) || f.matches(RegExp.JSON_FILE)) {
 					this.addDataFile(base_dir + Database.getSepar() + f);
 				} else {
 					Messenger.printMsg(Messenger.TRACE, f + ": cannot be loaded because it does not look like a datafile (FITS or VOTable or JSON)");
@@ -359,7 +392,7 @@ public class Loader extends SaadaProcess {
 			}
 		}
 	}
-	
+
 
 	/**
 	 * returns a map of the data files clusters Each cluster contain all files with the same format. 
