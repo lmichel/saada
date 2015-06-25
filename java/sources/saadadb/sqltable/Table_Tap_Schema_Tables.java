@@ -122,7 +122,15 @@ public class Table_Tap_Schema_Tables extends SQLTable {
 	}
 
 	/**
-	 * Returns true if bale is already referenced in tap_schema_tables
+	 * Says if the "tables" table exist
+	 * TODO extends the test to the others tables of the TAP_SCHEMA
+	 * @return
+	 */
+	public static boolean doesTapShemaExist() {
+		return SQLTable.tableExist(tableName);
+	}
+	/**
+	 * Returns true if table is already referenced in tap_schema_tables
 	 * @param table
 	 * @return
 	 * @throws Exception
