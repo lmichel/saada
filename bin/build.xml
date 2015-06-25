@@ -613,7 +613,49 @@
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
+	<!--
+		remove the ObsTAP service
+	-->
+	<target name="vo.obstap.remove">   
+		<java classname="saadadb.command.ManageObsTapService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove=obscore"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
 	
+	<!--
+		remove one collection.category from the ObsTAP service
+		ant vo.obstap.collection.remove -Dcollection=... -Dcategory=... DBNAME
+	-->
+	<target name="vo.obstap.collection.remove">   
+		<java classname="saadadb.command.ManageObsTapService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-remove={collection}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+
+	<!--
+		add one collection.category to the ObsTAP service
+		ant vo.obstap.populate -Dcollection=... -Dcategory=... DBNAME
+	-->
+	<target name="vo.obstap.populate">   
+		<java classname="saadadb.command.ManageObsTapService" failonerror="true" fork="true">       
+			<classpath refid="saadadb.classpath"/>      
+			<arg value="-populate={collection}"/>      
+			<arg value="-category={category}"/>      
+			<arg value="-debug={debug}"/>      
+ 	 		<arg value="-password={password}"/>      
+			<arg value="${SAADA_DB_NAME}"/>  
+		</java>
+	</target>
+
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  Manage extended attributes
 	-->
