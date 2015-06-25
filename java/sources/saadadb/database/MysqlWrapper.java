@@ -247,10 +247,6 @@ public class MysqlWrapper extends DbmsWrapper {
 		return "";
 	}
 
-	@Override
-	public String dropTable(String table) {
-		return "DROP TABLE " + table;
-	}
 
 	/**
 	 * On Mysql, text type can neither be indexed nor used as primary key. So varchar(255) is used despite of 

@@ -211,11 +211,6 @@ public class PostgresWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String dropTable(String table) {
-		return "DROP TABLE " + table;
-	}
-
-	@Override
 	public String grantSelectToPublic(String table_name) {
 		return "GRANT select ON TABLE " + table_name + " TO PUBLIC";
 

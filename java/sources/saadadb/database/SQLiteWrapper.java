@@ -426,11 +426,6 @@ public class SQLiteWrapper extends DbmsWrapper {
 	}
 
 	@Override
-	public String dropTable(String table) {
-		return "DROP TABLE " + table;
-	}
-
-	@Override
 	public String getBooleanAsString(boolean val) {
 		if (val) {
 			return "1";

@@ -797,7 +797,15 @@ abstract public class DbmsWrapper {
 	/**
 	 * 
 	 */
-	public abstract String dropTable(String table) ;
+	public String dropTable(String table) {
+		return "DROP TABLE " + table;
+	}
+	/**
+	 * 
+	 */
+	public String dropView(String table) {
+		return "DROP VIEW " + table;
+	}
 
 	/**
 	 * @param table
