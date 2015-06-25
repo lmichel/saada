@@ -104,7 +104,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 	public static void removeCapability(Capability capability) throws AbortException, FatalException{
 		SQLTable.addQueryToTransaction("DELETE FROM " 
 				+ tableName 
-				+ "' WHERE datatreepath = '" + capability.getDataTreePath() 
+				+ " WHERE datatreepath = '" + capability.getDataTreePath() 
 				+ "' AND protocol = '" + capability.getProtocol() + "'");
 	}
 	/**
@@ -199,7 +199,7 @@ public class Table_Saada_VO_Capabilities extends SQLTable {
 			}
 		} catch(FatalException e) {
 			//Category not referenced: likely ObsCore
-		}
+		} 
 	}
 }
 
