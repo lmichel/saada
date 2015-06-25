@@ -73,6 +73,8 @@ public class Capability  {
 			this.protocol = VoProtocol.ConeSearch;
 		} else if( protocol.equals(VoProtocol.TAP.toString())){
 			this.protocol = VoProtocol.TAP;
+		} else if( protocol.equals(VoProtocol.ObsTAP.toString())){
+			this.protocol = VoProtocol.ObsTAP;
 		} else {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Unkwon protocol: " + protocol);
 		}
@@ -124,44 +126,4 @@ public class Capability  {
 		return this.protocol + " " + this.dataTreePath + " " + this.accessURL + " " + this.description;
 	}
 	
-	/*
-	@Override
-	public void create(ArgsParser ap) throws SaadaException {
-		readArgs(ap);
-
-	}
-	@Override
-	public void empty(ArgsParser ap) throws SaadaException {
-		readArgs(ap);
-
-	}
-	@Override
-	public void remove(ArgsParser ap) throws SaadaException {
-		readArgs(ap);
-
-	}
-	@Override
-	public void populate(ArgsParser ap) throws SaadaException {
-		readArgs(ap);
-
-	}
-	@Override
-	public void index(ArgsParser ap) throws SaadaException {}
-	@Override
-	public void comment(ArgsParser ap) throws SaadaException {
-		readArgs(ap);
-	}
-	/**
-	 * @param ap
-	 * @throws SaadaException
-	 *
-	private void readArgs(ArgsParser ap) throws SaadaException {
-		this.setDataTreePath(ap.getCollection());
-		this.setAccessURL(ap.getUrlroot());
-		this.setProtocol(ap.getProtocol());
-		this.setDescription(ap.getComment());
-	}
-	*/
-
-
 }
