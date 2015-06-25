@@ -3,6 +3,7 @@
  */
 package saadadb.command;
 
+import saadadb.database.Database;
 import saadadb.vo.tap.TapServiceManager;
 
 /**
@@ -23,6 +24,7 @@ public class ManageTapService extends ManageEntity {
 	 */
 	public static void main(String[] args)  {
 		processCommand(new ManageTapService(), args);
+		Database.close();
 	}
 
 	/* (non-Javadoc)
