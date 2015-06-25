@@ -14,6 +14,9 @@
         <dependent-module archiveName="Obscoregenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/Obscore/web/WEB-INF/lib/Obscoregenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="Viziergenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/Vizier/web/WEB-INF/lib/Viziergenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/saadaObscore/build/classes"/>
         <property name="context-root" value="SaadaObscore"/>
     </wb-module>

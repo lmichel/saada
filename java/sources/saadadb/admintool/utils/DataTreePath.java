@@ -39,6 +39,10 @@ public class DataTreePath {
 		}
 	}
 
+	/**
+	 * @param treePath
+	 * @throws QueryException
+	 */
 	public DataTreePath(TreePath treePath) throws QueryException {
 		if (treePath!=null)
 		{
@@ -111,13 +115,11 @@ public class DataTreePath {
 		return (this.isRoot==false && classe == null && category == null && collection != null);
 	}
 	
-	public boolean isRootOrCollectionLevel()
-	{
+	public boolean isRootOrCollectionLevel() {
 		return (this != null && (this.isCollectionLevel() || this.isRootLevel()));
 	}
 	
-	public boolean isCategorieOrClassLevel()
-	{
+	public boolean isCategorieOrClassLevel() {
 		return (this != null && (this.isCategoryLevel() || this.isClassLevel()));
 	}
 

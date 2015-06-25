@@ -257,7 +257,7 @@ $().ready(function() {
 	});
 	
 	$.getJSON("getversion", function(data) {
-		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + " on " + data.dbms);
+		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + "(" + data.date + ") on " + data.dbms);
 	});
 	
 	/*
