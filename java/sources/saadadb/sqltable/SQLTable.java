@@ -305,6 +305,31 @@ public abstract class SQLTable {
 			AbortException.throwNewException(SaadaException.DB_ERROR,e);
 		}
 	}
+	/**
+	 * @param table
+	 * @throws AbortException
+	 */
+	public static void dropView(String view) throws AbortException {
+		try {
+			if( Database.getWrapper().tableExist(view) ) {
+				/*
+				 * SQLIte ne supporte pas de Drop table dans une transaction
+				 */
+				if( !Database.getWrapper().supportDropTableInTransaction() ){
+					commitTransaction();
+					beginTransaction();
+				}
+				addQueryToTransaction(Database.getWrapper().dropView(view));		
+				if( !Database.getWrapper().supportDropTableInTransaction()) {
+					commitTransaction();
+					beginTransaction();
+				}
+			}
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+			AbortException.throwNewException(SaadaException.DB_ERROR,e);
+		}
+	}
 
 	/**
 	 * @param tableName
