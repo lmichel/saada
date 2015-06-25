@@ -219,7 +219,7 @@ public abstract class SQLTable {
 			AbortException.throwNewException(SaadaException.DB_ERROR, "Attempt to commit a transaction which has not been initiated");
 		}
 		else {
-			Messenger.printMsg(Messenger.TRACE, "Valid transaction (can take time)");
+			Messenger.printMsg(Messenger.TRACE, "Valid transaction (" + transaction_maker.getSize() + " queries:  can take time)");
 			transaction_maker.makeTransaction();
 		}
 		transaction_maker = null;			
