@@ -1,6 +1,7 @@
 package saadadb.vo.tap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,6 +56,11 @@ public class ObstapServiceManager extends EntityManager{
 			if( c.getDataTreePathString().equals(dataTreePath.toString()) ){
 				Messenger.printMsg(Messenger.TRACE, "Removing " + c.getDataTreePathString() + " from ObsTAP");
 				Table_Saada_VO_Capabilities.removeCapability(c);
+				/*
+				 * Commit to allow buildView to access newly stored capability (SQLITE)
+				 */
+				SQLTable.commitTransaction();
+				SQLTable.beginTransaction();
 				buildView();
 				return;
 			}
@@ -108,6 +114,11 @@ public class ObstapServiceManager extends EntityManager{
 		capability.setAccessURL(argsParser.toString());
 		Table_Saada_VO_Capabilities.addCapability(capability);
 		/*
+		 * Commit to allow buildView to access newly stored capability (SQLITE)
+		 */
+		SQLTable.commitTransaction();
+		SQLTable.beginTransaction();
+		/*
 		 * Build the SQL view
 		 */
 		buildView();
@@ -119,7 +130,7 @@ public class ObstapServiceManager extends EntityManager{
 	 */
 	private static void buildView() throws Exception {
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Buildin the Obstap view");
+			Messenger.printMsg(Messenger.DEBUG, "Building the Obstap view");
 		SQLTable.dropView(name);
 		SQLTable.addQueryToTransaction(ObstapServiceManager.getViewStatement());
 	}
@@ -156,7 +167,8 @@ public class ObstapServiceManager extends EntityManager{
 			 */
 			retour += getSelectStatement(Category.getCategory(category), ap) + " FROM " + c.getDataTreePath().getElements()[0] + "_" + c.getDataTreePath().getElements()[1];
 		}
-		return (retour.length() > 0 ? ("CREATE VIEW " + name + " AS "  + retour) : "");
+		return (retour.length() > 0 ? ("CREATE VIEW " + name + " AS "  + retour) 
+				: ("CREATE VIEW " + name + " AS "  + getSelectStatement()));
 	}
 	/**
 	 * returns an SQL statement doing an ObsTAP view for the category according to the ap parameters
@@ -213,6 +225,32 @@ public class ObstapServiceManager extends EntityManager{
 		return "SELECT " + Merger.getMergedCollection(sqlFields);
 	}
 
+	/**
+	 * returns an SQL statement doing a dummy ObsTAP view
+	 * @return 
+	 * @throws Exception
+	 */
+	private static String getSelectStatement() throws Exception{
+		if (Messenger.debug_mode)
+			Messenger.locateCode("Process no category  " );
+		/*
+		 * Vo model fields
+		 */
+		List<UTypeHandler> uths = VOResource.getResource(name).getUTypeHandlers();
+		/*
+		 * SQL fields used to build the view
+		 */
+		List<String> sqlFields = new ArrayList<String>();
+
+		for(UTypeHandler uth: uths ){
+			if(uth.isMandatory()){
+				String uhn = uth.getNickname();
+				sqlFields.add("NULL AS " + uhn);
+			} 
+		}
+		return "SELECT " + Merger.getMergedCollection(sqlFields);
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.command.EntityManager#create(saadadb.command.ArgsParser)
 	 */
@@ -248,7 +286,8 @@ public class ObstapServiceManager extends EntityManager{
 			/*
 			 * If collection is obscore the service OBSTAP is removed
 			 */
-			if( "obscore".equalsIgnoreCase(collection)){
+			if( "obscore".equalsIgnoreCase(collection) || "ivoa.obscore".equalsIgnoreCase(collection)){
+				Table_Tap_Schema_Tables.dropPublishedSchema("ivoa");
 				dropObstapCapability();
 			/*
 			 * Otherwise only the collection is removed from ObsTAP

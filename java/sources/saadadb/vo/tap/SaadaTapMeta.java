@@ -198,16 +198,17 @@ public class SaadaTapMeta {
 	protected boolean tableExists(String tableName) throws TAPException {
 
 		try {
-			DatabaseMetaData dbMeta;
-			DatabaseConnection con = Database.getConnection();
-			dbMeta = con.getMetaData();
-			ResultSet rs = dbMeta.getTables(null, null, tableName, null);
-			boolean result = false;
-			if (rs.next()) {
-				result = true;
-			}
-			Database.giveConnection(con);
-			return result;
+			return Database.getWrapper().tableExist(tableName);
+//			DatabaseMetaData dbMeta;
+//			DatabaseConnection con = Database.getConnection();
+//			dbMeta = con.getMetaData();
+//			ResultSet rs = dbMeta.getTables(null, null, tableName, null);
+//			boolean result = false;
+//			if (rs.next()) {
+//				result = true;
+//			}
+//			Database.giveConnection(con);
+//			return result;
 		} catch (Exception e) {
 			return false;
 		}

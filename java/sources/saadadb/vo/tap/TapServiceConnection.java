@@ -242,6 +242,7 @@ public class TapServiceConnection implements ServiceConnection<ResultSet> {
 			}
 			return meta;
 		} catch (Exception e) {
+			e.printStackTrace();
 			metaDataAvailable = false;
 			Messenger.locateCode("Metadata exception : "+e.getMessage());
 			return null;
