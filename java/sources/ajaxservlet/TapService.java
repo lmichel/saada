@@ -26,14 +26,14 @@ public class TapService extends SaadaServlet {
 	public void init(ServletConfig cfg) throws ServletException {
 		super.init();
 
-			TapServiceConnection connection;
-			try {
-				connection = new TapServiceConnection();
-				tap = new TAP(connection);
-				tap.init(cfg);
-			} catch (Exception e) {
-				throw new ServletException("Unable to Init TAP Service: "+e.getMessage(),e);
-			}
+		TapServiceConnection connection;
+		try {
+			connection = new TapServiceConnection();
+			tap = new TAP(connection);
+			tap.init(cfg);
+		} catch (Exception e) {
+			throw new ServletException("Unable to Init TAP Service: "+e.getMessage(),e);
+		}
 	}
 
 	@Override
@@ -41,12 +41,12 @@ public class TapService extends SaadaServlet {
 		printAccess(request, false);
 		LinkedHashMap<String, String>params=new LinkedHashMap<String, String>();
 		params=	(LinkedHashMap<String, String>) getFlatParameterMap(request);
-	
+
 		if(Messenger.debug_mode == true) {
-		for(Map.Entry<String, String>e : params.entrySet()) {
-			Messenger.locateCode("Key: "+e.getKey()+" | Value "+e.getValue());
+			for(Map.Entry<String, String>e : params.entrySet()) {
+				Messenger.locateCode("Key: "+e.getKey()+" | Value "+e.getValue());
+			}
 		}
-	}
 		tap.executeRequest(request, response);
 	}
 }
