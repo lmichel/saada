@@ -191,11 +191,13 @@
 		Must be used with sant or make sure catalina-ant.jar in the the ant.lib directory
 		./sant tomcat.[deploy|undeploy|reload|start|stop].safe -Durl=http://localhost:8080/manager -Dusername=saadmin -Dpassword=saadmin 	
 	-->
-    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/>
+	<!--
+    <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask" classpath="${SAADA_DB_HOME}/jtools/catalina-ant.jar"/>
     <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/>
     <taskdef name="reload"    classname="org.apache.catalina.ant.ReloadTask"/>
     <taskdef name="start"     classname="org.apache.catalina.ant.StartTask"/>
     <taskdef name="stop"      classname="org.apache.catalina.ant.StopTask"/>
+    -->
 	<target name="tomcat.start" depends="tomcat.war.build">
 		<jar destfile="${SAADA_DB_HOME}/lib/${SAADA_DB_NAME}.war" basedir="${SAADA_DB_HOME}/web/" />   		
              <deploy url="${url}" username="${username}" password="${password}"
