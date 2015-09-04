@@ -65,7 +65,6 @@ public class ClassMerger {
 			prd_to_merge.dataFile = new FitsDataFile(prd_to_merge);		
 			this.productBuilder.typeFile = "FITS";
 		} catch(Exception ef) {
-			System.out.println("@@@@@@@@@@@@@@@@ " + prd_to_merge.dataFile.getAbsolutePath());
 			ef.printStackTrace(System.out);
 			try {
 				prd_to_merge.dataFile = new VOTableDataFile(prd_to_merge);

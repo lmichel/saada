@@ -141,28 +141,34 @@ public final class FitsDataFile extends FSDataFile{
 			 * Once the extension found, we need to check that it has the good category
 			 * a BINTABLE for spectra and tables...
 			 */
-			BasicHDU bHDU = null;
+
 			if(  ext_num >= 0 ) {
 				boolean found = false;
 				for( DataFileExtension dfe: this.productMap.values()){
 					if( dfe.tableNum == ext_num && !dfe.isDataTable() ) {
 						found = true;
-						if(checkExtensionCategory(dfe, this.getProductCategory()) ){
+						/**
+						 * TABLE_COLUMNS extension reserved to access table data
+						 */
+						if( dfe.type == DataFileExtensionType.TABLE_COLUMNS){
+							continue;
+						} else 	if(checkExtensionCategory(dfe, this.getProductCategory()) ){
 							String msg = "Required extension : "+ this.productMapping.getExtension()+" found (number: " + ext_num + ")";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.GIVEN
 									, msg);
-							this.goodHeader = bHDU;
+							this.goodHeader =  (BasicHDU) dfe.resource;;
 							Messenger.printMsg(Messenger.TRACE, msg);							
 						} else if( this.productMapping.getCategory() == Category.SPECTRUM && checkExtensionCategory(dfe, Category.IMAGE) ){
-							this.goodHeader = bHDU;
+							this.goodHeader =  (BasicHDU) dfe.resource;;
 							String msg = "Take" + dfe.getSType()+ " HDU# " + ext_num +  " as spectral chanels";
 							this.extensionSetter = new ExtensionSetter(ext_num
 									, ExtensionSetMode.DETECTED
 									, msg);
 							Messenger.printMsg(Messenger.TRACE, msg);
 						} else {
-							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+this.productMapping.getExtension() + " has a wrong type: " + bHDU.getClass().getName());
+							IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE, "Required extension : "+this.productMapping.getExtension() 
+									+ " has a wrong type: " + dfe.resource.getClass().getName());
 						}
 					} 
 				}
