@@ -65,12 +65,10 @@ public class ClassMerger {
 			prd_to_merge.dataFile = new FitsDataFile(prd_to_merge);		
 			this.productBuilder.typeFile = "FITS";
 		} catch(Exception ef) {
-			ef.printStackTrace(System.out);
 			try {
 				prd_to_merge.dataFile = new VOTableDataFile(prd_to_merge);
 				this.productBuilder.typeFile = "VO";
 			} catch(Exception ev) {
-				ev.printStackTrace(System.out);
 				IgnoreException.throwNewException(SaadaException.FILE_FORMAT, "<" + dataFileToMerge + "> neither FITS nor VOTable");			
 			}
 		}
