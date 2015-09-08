@@ -193,6 +193,7 @@ public class ProductIngestor {
 		setField("instrument_name", this.product.instrument_nameSetter);
 		setField("facility_name"  , this.product.facility_nameSetter);
 		setField("obs_collection" , this.product.obs_collectionSetter);
+		setField("obs_publisher_did" , this.product.obs_publisher_didSetter);
 
 	}
 	/**

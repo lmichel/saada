@@ -100,13 +100,15 @@ public class ColumnMapping {
 			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
 			Matcher m=keywordsPattern.matcher(value);
 			//We search for keywords in the expression, each keyword become an attribute
-			while(m.find())
+			while(m.find() )
 			{
-				AttributeHandler temp = new AttributeHandler();
-				temp.setNameattr(m.group(1).trim());
-				temp.setNameorg(m.group(1).trim());
-				temp.setUnit(unit);
-				this.attributeHandlers.add(temp);
+				String match = m.group(1).trim();
+				if( !match.startsWith("'" )){
+						AttributeHandler temp = new AttributeHandler();
+						temp.setNameattr(match);
+						temp.setNameorg(match);
+						this.attributeHandlers.add(temp);
+				}
 			}
 			this.expression=value;
 		}
@@ -143,12 +145,15 @@ public class ColumnMapping {
 			Pattern keywordsPattern = Pattern.compile(RegExp.KEYWORD);
 			Matcher m=keywordsPattern.matcher(value);
 			//We search for keywords in the expression, each keyword become an attribute
-			while(m.find())
+			while(m.find() )
 			{
-				AttributeHandler temp = new AttributeHandler();
-				temp.setNameattr(m.group(1).trim());
-				temp.setNameorg(m.group(1).trim());
-				this.attributeHandlers.add(temp);
+				String match = m.group(1).trim();
+				if( !match.startsWith("'" )){
+						AttributeHandler temp = new AttributeHandler();
+						temp.setNameattr(match);
+						temp.setNameorg(match);
+						this.attributeHandlers.add(temp);
+				}
 			}
 			this.expression=value;
 		}
@@ -244,7 +249,7 @@ public class ColumnMapping {
 	public MappingMode getMode() {
 		return mappingMode;
 	}
-	
+
 	/**
 	 * @param message
 	 */
@@ -257,7 +262,7 @@ public class ColumnMapping {
 			this.message = message.trim() + "-";
 		}
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -364,7 +369,7 @@ public class ColumnMapping {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws FatalException {
 		ColumnMapping cm =new ColumnMapping("'13arcsec'", "");
 		System.out.println(cm);
@@ -372,5 +377,8 @@ public class ColumnMapping {
 		System.out.println(cm);
 		cm =new ColumnMapping("13", "");
 		System.out.println(cm);
+		cm =new ColumnMapping("strcat('ivo://vizier/', azerty)", "");
+		System.out.println(cm);
+		System.out.println(cm.attributeHandlers.size());
 	}
 }

@@ -41,7 +41,7 @@ public class ObservationMapping extends AxisMapping {
 	}
 
 	public static void main(String[] args) throws FatalException {
-		ObservationMapping om = new ObservationMapping(new ArgsParser(new String[]{"-name=abc,eee,'zere'"}), false);
-		System.out.println(om);
+		ObservationMapping om = new ObservationMapping(new ArgsParser(new String[]{"-publisherdid=strcat('ivo://aaaa:', ID)"}), false);
+		System.out.println(om.toString());
 	}
 }

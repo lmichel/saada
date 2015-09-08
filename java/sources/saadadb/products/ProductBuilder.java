@@ -726,6 +726,12 @@ public abstract class ProductBuilder {
 			break;
 		case LAST:
 			PriorityMessage.last("Observation");
+			this.obs_publisher_didSetter = this.quantityDetector.getObsPublisherDid();
+			if( !this.isAttributeHandlerMapped(this.obs_publisher_didSetter) ) {
+				message = this.obs_publisher_didSetter.getDetectionMsg();
+				this.obs_publisher_didSetter = getSetterForMappedColumn("obs_publisher_did", mapping.getColumnMapping("obs_publisher_did"));
+				this.obs_publisher_didSetter.completeDetectionMsg(message);
+			}
 			this.obs_collectionSetter = this.quantityDetector.getCollectionName();
 			if( !this.isAttributeHandlerMapped(this.obs_collectionSetter) ) {
 				message = this.obs_collectionSetter.getDetectionMsg();
@@ -760,6 +766,7 @@ public abstract class ProductBuilder {
 			this.obs_collectionSetter.completeDetectionMsg("Derived from Saada collection name");
 		}
 		traceReportOnAttRef(this.obs_idSetter);
+		traceReportOnAttRef(this.obs_publisher_didSetter);
 		traceReportOnAttRef(this.obs_collectionSetter);
 		traceReportOnAttRef(this.target_nameSetter);
 		traceReportOnAttRef(this.facility_nameSetter);

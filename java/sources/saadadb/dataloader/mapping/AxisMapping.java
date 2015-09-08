@@ -7,6 +7,7 @@ import java.util.Set;
 
 import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
+import saadadb.meta.AttributeHandler;
 import saadadb.products.ProductBuilder;
 import saadadb.vocabulary.enums.MappingMode;
 import saadadb.vocabulary.enums.PriorityMode;
@@ -96,6 +97,10 @@ public abstract class AxisMapping {
 		String retour = "Priority " + this.priority + "\n";
 		for( Entry<String, ColumnMapping> e: this.columnMapping.entrySet() ) {
 			retour += "Column " + e.getKey() + " " + e.getValue();
+			if( e.getValue().getHandlers() != null )
+			for( AttributeHandler ah: e.getValue().getHandlers() ) {
+				retour +=  "Ah " +ah;
+			}
 		}
 		return retour;
 	}
