@@ -331,11 +331,17 @@ public class ObstapServiceManager extends EntityManager{
 		}
 
 		String category = null;				
+		category = ap.getCategory();	
+		if( category == null) {
+			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "There is no valid category specified");
+		}
 		try {
-			category = ap.getCategory();			
 			publishCollection(collection, Category.getCategory(category), ap);
-		} catch (Exception e) {
+		} catch (SaadaException e) {
 			FatalException.throwNewException(SaadaException.DB_ERROR, e);
+		} catch( Exception e2){
+			Messenger.printStackTrace(e2);
+			FatalException.throwNewException(SaadaException.DB_ERROR, e2);			
 		}
 	}
 

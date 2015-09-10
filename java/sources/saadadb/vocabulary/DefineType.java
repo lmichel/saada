@@ -1,10 +1,12 @@
 package saadadb.vocabulary;  
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
@@ -70,11 +72,15 @@ public class DefineType {
 	protected static Map<String, String> collection_units;
 	protected static Map<String, String> coll_sdm_utypes;
 	private static boolean already_init = false;
+	/**
+	 * The column mapping may reference quantiies which neither constant nor attribute
+	 * They are listed in NO_COLUMN_ATTR
+	 */
+	public static final TreeSet<String> NO_COLUMN_ATTR = new TreeSet<String>();
 	/**Initializes this class for this use.
 	 * Use for the determining of the mappings integer.
 	 *@return void.
 	 */     
-
 
 	/**
 	 * @throws FatalException 
@@ -87,29 +93,17 @@ public class DefineType {
 			initCollUtypes();
 			initCollNameOrg();
 			initCollUnits();
+			initNoColumnAttr();
 			//appendObsCore();
 			already_init = true;
 
 		}
 	}
-
-	/**
-	 * @throws FatalException
-	 */
-	private static void appendObsCore() throws FatalException {
-		try {
-			VOResource vor = new VOResource(Database.getRoot_dir() + File.separator + "config" +  File.separator + "vodm.ObsCore.xml");
-			List<UTypeHandler> uths = vor.getUTypeHandlers();
-			for(UTypeHandler uth: uths ){
-				collection_ucds.put(uth.getNickname(), uth.getUcd());
-				collection_name_org.put(uth.getNickname(), uth.getNickname());
-				collection_units.put(uth.getNickname(), uth.getUnit());
-				coll_sdm_utypes.put(uth.getNickname(), uth.getUtype());
-			}
-		} catch (Exception e) {
-			FatalException.throwNewException(SaadaException.MISSING_FILE, e);
-		}
+	
+	public static void initNoColumnAttr() {
+		NO_COLUMN_ATTR.add("FICHIER");
 	}
+
 	/**Initializes this class for this use.
 	 * Use for the determining of the integer of java fields.
 	 *@return void.

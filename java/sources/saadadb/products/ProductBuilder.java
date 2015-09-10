@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.apache.axis.wsdl.symbolTable.DefinedType;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
@@ -43,9 +46,11 @@ import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnSetter;
 import saadadb.util.MD5Key;
+import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.util.MessengerLogger;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.DefineType;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.PriorityMode;
 
@@ -91,7 +96,7 @@ public abstract class ProductBuilder {
 	/*
 	 * Space Axis
 	 */
-//	public ColumnSetter s_resolution_unitSetter=new ColumnExpressionSetter("s_resolution_unit");
+	//	public ColumnSetter s_resolution_unitSetter=new ColumnExpressionSetter("s_resolution_unit");
 	public ColumnSetter s_resolutionSetter=new ColumnExpressionSetter("s_resolution");
 	public ColumnSetter s_raSetter=new ColumnExpressionSetter("s_ra");
 	public ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
@@ -545,9 +550,9 @@ public abstract class ProductBuilder {
 				retour = new ColumnExpressionSetter(colmunName);
 				retour.completeUserMappingMsg("Column " + colmunName  + " = " + columnMapping.getExpression() + " mapped by keyword or expression must reference at least one attribute");
 				return retour;
-//
-//				FatalException.throwNewException(SaadaException.INTERNAL_ERROR
-//						, "Column " + columnMapping + " mapped by keyword or expression must reference at least one attribute");
+				//
+				//				FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+				//						, "Column " + columnMapping + " mapped by keyword or expression must reference at least one attribute");
 			}
 			/*
 			 * By keyword: just one AH must be used
@@ -556,9 +561,9 @@ public abstract class ProductBuilder {
 				if(  handlersReferencedByMapping.size() != 1){
 					retour = new ColumnExpressionSetter(colmunName);
 					retour.completeUserMappingMsg("Column " + colmunName  + " = " + columnMapping.getExpression() + " mapped by keyword: must reference one attribute");
-//
-//					FatalException.throwNewException(SaadaException.INTERNAL_ERROR
-//							, "Column " + colmunName + " mapped by keyword: must reference one attribute");
+					//
+					//					FatalException.throwNewException(SaadaException.INTERNAL_ERROR
+					//							, "Column " + colmunName + " mapped by keyword: must reference one attribute");
 				}
 				String ahname=null;
 				AttributeHandler mappingSingleHandler=null;			
@@ -570,14 +575,33 @@ public abstract class ProductBuilder {
 					break;
 				}
 				/*
-				 * Identify this AH among those of the builder
+				 * The column mapping may reference quantiies which neither constant nor attribute
+				 * Their values must be computed here
 				 */
-				for( AttributeHandler ah: this.productAttributeHandler.values() ){
-					if( ah.isNamedLike(ahname)) {
-						mappingSingleHandler = ah;
-						break;
+				if( DefineType.NO_COLUMN_ATTR.contains(ahname) ) {						
+					if( ahname.equals("FICHIER")){
+						mappingSingleHandler = new AttributeHandler();
+						mappingSingleHandler.setNameattr(ahname);
+						mappingSingleHandler.setNameorg(ahname);
+						mappingSingleHandler.setValue(this.getName());
+						mappingSingleHandler.setType(ahname);
+					} else {
+						retour = new ColumnExpressionSetter(colmunName);
+						retour.completeUserMappingMsg("Processing of pseudo attributes [" + ahname + "] is not implemented yet");
+						return retour;							
 					}
+				} else {
+					/*
+					 * Identify this AH among those of the builder
+					 */
+					for( AttributeHandler ah: this.productAttributeHandler.values() ){
+						if( ah.isNamedLike(ahname)) {
+							mappingSingleHandler = ah;
+							break;
+						}
+					}				
 				}
+
 				if( mappingSingleHandler == null ){
 					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + ahname + " used to map the column " + colmunName + " does not exist");					
 					retour = new ColumnExpressionSetter(colmunName);
@@ -596,7 +620,7 @@ public abstract class ProductBuilder {
 			} else if( columnMapping.byExpression() ){
 				Map<String,AttributeHandler> handlersUsedByMapping=new LinkedHashMap<String, AttributeHandler>();
 				String ahname=null;
-				String missingAhs = "";
+				Set<String> missingAhs = new TreeSet<String>();
 				/*
 				 * identify all AHs referenced by the mapping among those of the builder
 				 * All AHs referenced by the mapping are checked in any case in order to get a complete list of missing attributes 
@@ -609,17 +633,39 @@ public abstract class ProductBuilder {
 							handlersUsedByMapping.put(ahname, builderAh);
 							found = true;
 							break;
-						}
+						} 
 					}
 					if( !found ) {
-						missingAhs += ah.getNameorg() + " ";						
+						missingAhs.add(ah.getNameorg());						
 					}
 				}
-				if(missingAhs.length() > 0  ){
-					retour = new ColumnExpressionSetter(colmunName);
-					retour.completeUserMappingMsg("Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");
-					return retour;
 
+				/*
+				 * The column mapping may reference quantiies which neither constant nor attribute
+				 * Their values must be computed here
+				 */
+				for( String ahn: missingAhs) {
+					if( DefineType.NO_COLUMN_ATTR.contains(ahn)) {
+						AttributeHandler fnAh = new AttributeHandler();
+						fnAh.setNameattr(ahn);
+						fnAh.setNameorg(ahn);
+						if( ahn.equals("FICHIER")){
+							fnAh.setValue(this.getName());
+							fnAh.setType("String");
+							handlersUsedByMapping.put(ahn, fnAh);	
+							missingAhs.remove(ahn);
+						} else {
+							retour = new ColumnExpressionSetter(colmunName);
+							retour.completeUserMappingMsg("Processing of pseudo attributes [" + ahn + "] is not implemented yet");
+							return retour;							
+						}
+
+					}
+				}
+				if( missingAhs.size() > 0  ){
+					retour = new ColumnExpressionSetter(colmunName);
+					retour.completeUserMappingMsg("Attributes [" + Merger.getMergedCollection(missingAhs) + "] used to map the column " + colmunName + " are missing");
+					return retour;
 					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
@@ -1102,7 +1148,7 @@ public abstract class ProductBuilder {
 		traceReportOnAttRef(s_regionSetter);
 		traceReportOnAttRef(s_fovSetter);
 		traceReportOnAttRef(s_resolutionSetter);
-	//	traceReportOnAttRef(s_resolution_unitSetter);
+		//	traceReportOnAttRef(s_resolution_unitSetter);
 	}
 
 	/**
