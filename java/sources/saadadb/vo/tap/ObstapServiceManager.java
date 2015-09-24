@@ -38,6 +38,7 @@ import saadadb.vocabulary.enums.VoProtocol;
  * 3) Building the view with UNIONs on collections registered in saada_vo_capability
  * @author michel
  *
+ * 09/2015: Support of cross references in the column definitions set with the -ukw parameter 
  */
 public class ObstapServiceManager extends EntityManager{
 	public static final String name = "obscore";
@@ -95,7 +96,7 @@ public class ObstapServiceManager extends EntityManager{
 		 */
 		for( Capability c: lc){
 			if( c.getDataTreePathString().equals(dataTreePath.toString()) ){
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, dataTreePath.toString() + " already published in ObsTAP");
+				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, dataTreePath.toString() + " already published in ObsTAP: remove it first");
 				return;
 			}
 		}
@@ -202,9 +203,17 @@ public class ObstapServiceManager extends EntityManager{
 				 */
 				if( (userVal = argsParser.getUserKeyword(uhn)) != null ) {
 					userVal = userVal.replaceAll("'",  "");
+					
 					if( uth.getType().equals("char")){
-						sqlFields.add("'" +  userVal + "' AS " + uhn);
+						/*
+						 * Look for other columns references in any String field
+						 */
+						userVal = Database.getWrapper().getStrcatOpWithVariables(userVal);
+						sqlFields.add( userVal + " AS " + uhn);
 					} else {
+						if( userVal.indexOf("$") > -1){
+							QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "User keywords (" + userVal + ") support inner references ($) only for string fields");
+						}
 						sqlFields.add( userVal + " AS " + uhn);
 					}
 				/*

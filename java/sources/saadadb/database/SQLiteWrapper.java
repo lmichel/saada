@@ -13,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -439,6 +440,18 @@ public class SQLiteWrapper extends DbmsWrapper {
 	 * @see saadadb.database.DbmsWrapper#getStrcatoP(java.lang.String, java.lang.String)
 	 */
 	public String getStrcatOp(String... args) {
+		String retour = "";
+		for (String arg : args) {
+			if (retour.length() != 0)
+				retour += "||";
+			retour += arg;
+		}
+		return retour;
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#getStrcatOp(java.util.Collection)
+	 */
+	public String getStrcatOp(Collection<String> args) {
 		String retour = "";
 		for (String arg : args) {
 			if (retour.length() != 0)

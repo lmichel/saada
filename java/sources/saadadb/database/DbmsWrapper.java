@@ -10,7 +10,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -26,6 +29,7 @@ import saadadb.query.region.request.Cone;
 import saadadb.query.region.request.Zone;
 import saadadb.sqltable.SQLTable;
 import saadadb.util.Messenger;
+import saadadb.util.RegExpMatcher;
 import cds.astro.Coo;
 import cds.astro.Qbox;
 
@@ -37,7 +41,8 @@ import cds.astro.Qbox;
  * 07/2009: getInCircle uses QBOX for small cones and BOX + distance for larger ones 
  * 04/2012: Use qbox  i ADQL if columns are pos_ra/dec_csa
  * 11/2013: method setLocalBehavior invoked before to return a connection
- * 03/2025: function testExtraFunctions added to checkreaderPrivilege
+ * 03/2015: function testExtraFunctions added to checkreaderPrivilege
+ * 09/2015: methods  getStrcatOp(Collection<String> args) and getStrcatOpWithVariables(String statement)
  */
 abstract public class DbmsWrapper {
 	protected static DbmsWrapper wrapper;
@@ -909,11 +914,47 @@ public abstract String getDBTypeFromVOTableType(String dataType, final int array
 	public abstract String getRegexpOp();
 
 	/**
-	 * @param arg1
-	 * @param arg2
+	 * returns an SQL statement merging all params which are interpreted as Strings
+	 * @param args
 	 * @return
 	 */
 	public abstract String getStrcatOp(String... args);
+	/**
+	 * returns an SQL statement merging all params items which are interpreted as Strings
+	 * @param args
+	 * @return
+	 */
+	public abstract String getStrcatOp(Collection<String> args);
+	
+	/**
+	 * Extract from statement all variables prefixed with $ and returns an SQL statement merging constant parts 
+	 * of the statement with the variables found
+	 * ex the stamement toto$obs_id-$target_name is trasnformed as 'toto'||obs_id||'-'||target_name for pSQL
+	 * @param statement SQL statement to parse
+	 * @return
+	 */
+	public String getStrcatOpWithVariables(String statement){
+		RegExpMatcher rem = new RegExpMatcher();
+		List<String> variables  = rem.extractVariables(statement);
+		if( variables == null || variables.size() == 0 ){
+			return "'" + statement + "'";
+		} else {
+			String tmp = statement;
+			for( String v: variables ){
+				tmp = tmp.replace(v, "@" + v + "@");
+			}
+			String[] fields = tmp.split("@");
+			List<String> nf = new ArrayList<String>();
+			for( String f: fields){
+				if( f.startsWith("$")){
+					nf.add(f.replace("$", ""));
+				} else {
+					nf.add("'" + f + "'");
+				}
+			}
+			return getStrcatOp(nf);
+		}
+	}
 	/**
 	 * @return
 	 */
