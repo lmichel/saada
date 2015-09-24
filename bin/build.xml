@@ -189,7 +189,8 @@
 	<!--
 		Web application management through Tomcat
 		Must be used with sant or make sure catalina-ant.jar in the the ant.lib directory
-		./sant tomcat.[deploy|undeploy|reload|start|stop].safe -Durl=http://localhost:8080/manager -Dusername=saadmin -Dpassword=saadmin 	
+		./sant tomcat.[deploy|undeploy|reload|start|stop].safe -Durl=http://localhost:8080/manager -Dusername=saadmin -Dpassword=saadmin 
+		must be used with sant or with the param  -Dant.library.dir="...../jtools	pointing on the location of tomcat-ant.jar
 	-->
     <taskdef name="deploy"    classname="org.apache.catalina.ant.DeployTask"/>
     <taskdef name="undeploy"  classname="org.apache.catalina.ant.UndeployTask"/>
