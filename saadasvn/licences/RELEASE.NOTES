@@ -1,9 +1,13 @@
 -------------------------------------------------
-Version Saada1.8.build12
+Version Saada1.8.build14
 
 L. MICHEL
 April 2015
 -------------------------------------------------
+Saada 1.8.build14
+-----------------
+Support +Inf values in VOTables
+
 Saada 1.8.build11
 -----------------
 SQLIte spooler failure when Tomcat reload the Webapp
