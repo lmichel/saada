@@ -387,7 +387,7 @@ public class VOTableProduct extends File implements ProductFile {
 							obj = "null";
 						}
 					} else {
-						if( tdContent.equalsIgnoreCase("null")) {
+						if( tdContent.equalsIgnoreCase("null") || tdContent.equalsIgnoreCase("+Inf")) {
 							obj = new Double(Double.POSITIVE_INFINITY);
 						}
 						else {
