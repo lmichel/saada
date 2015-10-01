@@ -199,16 +199,6 @@ public class SaadaTapMeta {
 
 		try {
 			return Database.getWrapper().tableExist(tableName);
-//			DatabaseMetaData dbMeta;
-//			DatabaseConnection con = Database.getConnection();
-//			dbMeta = con.getMetaData();
-//			ResultSet rs = dbMeta.getTables(null, null, tableName, null);
-//			boolean result = false;
-//			if (rs.next()) {
-//				result = true;
-//			}
-//			Database.giveConnection(con);
-//			return result;
 		} catch (Exception e) {
 			return false;
 		}

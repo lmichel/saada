@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
 import saadadb.database.spooler.Spooler;
+import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import ajaxservlet.formator.DefaultPreviews;
@@ -121,14 +122,15 @@ public class SaadaServlet extends HttpServlet {
 
 	/**
 	 * @param req
+	 * @throws FatalException 
 	 */
 	public static void printAccess(HttpServletRequest request, boolean force) {
+		try {
+			Database.updateCacheMeta();
+		} catch (Exception e) {
+			Messenger.printStackTrace(e);
+		}
 		if( force || Messenger.debug_mode == true) {
-			String full_url = request.getRequestURL().toString();
-			String queryString = request.getQueryString();   
-			if (queryString != null) {
-				full_url += "?"+queryString;
-			}		
 			Messenger.printMsg(Messenger.TRACE, accessMessage(request) );
 		}
 	}

@@ -16,6 +16,7 @@ import saadadb.database.Database;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.newdatabase.NewWebServer;
 import saadadb.products.datafile.DataResourcePointer;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
@@ -179,6 +180,7 @@ public class Loader extends SaadaProcess {
 			 */
 			(new SchemaClassifierMapper(this, this.filesToBeLoaded, this.productMapping)).ingestProductSet();
 		}
+		NewWebServer.deployGeneratedClasses();
 	}
 
 	/**

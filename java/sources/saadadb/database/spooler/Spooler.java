@@ -209,7 +209,7 @@ public class Spooler {
 	}
 
 	/**
-	 * Do not return while a free connection has not been found out
+	 * Do not return while a free connection has not been found
 	 * @return the first free connection.
 	 * @throws Exception
 	 */
@@ -221,12 +221,18 @@ public class Spooler {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Get connection " + Spooler.getSpooler());
 		boolean first = true;
+		boolean locked = false;
 		while( (retour = this.getFirstFreeConnection()) == null ) {
 			if( first && !Database.getWrapper().supportConcurrentAccess()) {
 				Messenger.printStackTop("Spooler probably locked");
 				first = false;
+				locked = true;
 			}
 			Thread.sleep(WAIT_DELAY);
+		}
+		if( locked ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Spooler unlocked");
 		}
 		return retour;		
 	}

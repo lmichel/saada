@@ -164,7 +164,7 @@ public class ObstapServiceManager extends EntityManager{
 				ap = new ArgsParser("");
 			}
 			/*
-			 * Add the SXQL statement specific for this collection.category
+			 * Add the SQL statement specific for this collection.category
 			 */
 			retour += getSelectStatement(Category.getCategory(category), ap) + " FROM " + c.getDataTreePath().getElements()[0] + "_" + c.getDataTreePath().getElements()[1];
 		}
@@ -296,6 +296,7 @@ public class ObstapServiceManager extends EntityManager{
 			 * If collection is obscore the service OBSTAP is removed
 			 */
 			if( "obscore".equalsIgnoreCase(collection) || "ivoa.obscore".equalsIgnoreCase(collection)){
+				Messenger.printMsg(Messenger.TRACE, "Removing Obscore from TAP_SCHEMA");
 				Table_Tap_Schema_Tables.dropPublishedSchema("ivoa");
 				dropObstapCapability();
 			/*
@@ -333,6 +334,7 @@ public class ObstapServiceManager extends EntityManager{
 		 */
 		try {
 			if( !Table_Tap_Schema_Tables.knowsTable("ivoa", name)) {
+				Messenger.printMsg(Messenger.TRACE, "Publishing Obscore in TAP_SCHEMA");
 				(new TapServiceManager()).populate(new ArgsParser(new String[]{"-populate=" + name}));
 			}
 		} catch (Exception e) {

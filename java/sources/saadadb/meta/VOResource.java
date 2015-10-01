@@ -41,6 +41,7 @@ import cds.savot.pull.SavotPullParser;
  * @author laurent
  * @version 07/2011 Make sure that position UCDs are set
  * 03/2012: Add meth  readClassMapping
+ * 09/2015: method getAttributeHandlerMap
  */
 public class VOResource {
 	private  String name;
@@ -144,13 +145,28 @@ public class VOResource {
 	}
 
 	/**
-	 * @return
+	 * @return the list of UTypeHandler corresponding the model
 	 */
 	public ArrayList<UTypeHandler> getUTypeHandlers() {
 		ArrayList<UTypeHandler> retour = new ArrayList<UTypeHandler>();
 		for( String g: this.getGroups().keySet() ) {
 			for(UTypeHandler uth: this.getGroups().get(g) ) {
 				retour.add(uth);
+			}	
+		}
+		return retour;
+	}
+	
+	/**
+	 * @return an AH map built from the list of UTypeHandler corresponding the model
+	 * @throws QueryException 
+	 */
+	public Map<String, AttributeHandler> getAttributeHandlerMap() throws QueryException {
+		Map<String, AttributeHandler> retour = new LinkedHashMap<String, AttributeHandler>();
+		for( String g: this.getGroups().keySet() ) {
+			for(UTypeHandler uth: this.getGroups().get(g) ) {
+				AttributeHandler ah = uth.getAttributeHandler();
+				retour.put(ah.getNameorg(), ah);
 			}	
 		}
 		return retour;

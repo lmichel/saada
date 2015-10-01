@@ -1,30 +1,30 @@
- /******************************************************************************
-  *  This file is part of SAADA 1.7.0
-  *
-  *  SAADA is free software; you can redistribute it and/or modify
-  *   it under the terms of the GNU General Public License as published by
-  *  the Free Software Foundation; either version 2 of the License, or
-  *  (at your option) any later version.
-  *
-  *  SAADA is distributed in the hope that it will be useful,
-  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  *  GNU General Public License for more details.
-  *
-  *  You should have received a copy of the GNU General Public License
-  *  along with SAADA; if not, write to the Free Software
-  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-  *  
-  *  (c) Copyright 2003, 2013 L. MICHEL, H. NGUYEN NGOC, F.X. PINEEAU 
-  *                           CNES/Universite Louis Pasteur/CNRS
-  * 
-  *  FITSWCS  (c) Copyright 1996 Raymond L. Plante Mark Calabretta Jef Poskanser
-  *           (c) Copyright 1991 1996 Free Software Foundation Inc.       
-  *  Sezam    (c) Copyright 2002-2003 Andre Schaaff Universite Louis Pasteur / CNRS
-  *  FITS tam (c) Copyright 1997-2008: Thomas McGlynn 1997-2007.
-  *  Axis     (c) Copyright 2001,2004 The Apache Software Foundation.
-  *  CDS      (c) Copyright 1999-2007 - Universite Louis Pasteur / CNRS
-  ******************************************************************************/
+/******************************************************************************
+ *  This file is part of SAADA 1.7.0
+ *
+ *  SAADA is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  SAADA is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with SAADA; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *  
+ *  (c) Copyright 2003, 2013 L. MICHEL, H. NGUYEN NGOC, F.X. PINEEAU 
+ *                           CNES/Universite Louis Pasteur/CNRS
+ * 
+ *  FITSWCS  (c) Copyright 1996 Raymond L. Plante Mark Calabretta Jef Poskanser
+ *           (c) Copyright 1991 1996 Free Software Foundation Inc.       
+ *  Sezam    (c) Copyright 2002-2003 Andre Schaaff Universite Louis Pasteur / CNRS
+ *  FITS tam (c) Copyright 1997-2008: Thomas McGlynn 1997-2007.
+ *  Axis     (c) Copyright 2001,2004 The Apache Software Foundation.
+ *  CDS      (c) Copyright 1999-2007 - Universite Louis Pasteur / CNRS
+ ******************************************************************************/
 package saadadb.vo.tap;
 
 import java.sql.ResultSet;
@@ -155,6 +155,7 @@ public class TapServiceManager extends EntityManager {
 			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "source_table");
 			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "target_table");
 			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Keys.tableName   , "TAP_SCHEMA", Table_Tap_Schema_Key_Columns.tableName, "key_id", "key_id");
+			Database.makeCacheVOObsolete();
 		} catch (SaadaException e) {
 			e.printStackTrace();
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);
@@ -173,7 +174,7 @@ public class TapServiceManager extends EntityManager {
 	public void empty(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
 	}
-	
+
 	@Override
 	public void rename(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
@@ -205,18 +206,20 @@ public class TapServiceManager extends EntityManager {
 			String toRemove = ap.getRemove();
 			if( toRemove.equalsIgnoreCase("service")) {
 				Messenger.printMsg(Messenger.TRACE, "Drop TAP service");
+				Messenger.printMsg(Messenger.TRACE,  "Remove from capabilities");
+				Table_Saada_VO_Capabilities.emptyTable(VoProtocol.TAP);
 				int missingTable = serviceExists();
 				if( missingTable == 0 ) {
-					FatalException.throwNewException(SaadaException.MISSING_RESOURCE, "No Tap service detected");
+					Messenger.printMsg(Messenger.TRACE,  "No Tap service detected");
+				} else {
+					Table_Tap_Schema_Keys.dropTable();
+					Table_Tap_Schema_Key_Columns.dropTable();
+					Table_Tap_Schema_Columns.dropTable();
+					Table_Tap_Schema_Tables.dropTable();
+					Table_Tap_Schema_Schemas.dropTable();
 				}
-				Table_Tap_Schema_Keys.dropTable();
-				Table_Tap_Schema_Key_Columns.dropTable();
-				Table_Tap_Schema_Columns.dropTable();
-				Table_Tap_Schema_Tables.dropTable();
-				Table_Tap_Schema_Schemas.dropTable();
-				Table_Saada_VO_Capabilities.emptyTable(VoProtocol.TAP);
-			}
-			else {
+				Database.makeCacheVOObsolete();
+			} else {
 				String[] sc = toRemove.split("\\.");
 				/*
 				 * One field: that is a request to unpublish a whole schema;
@@ -238,6 +241,7 @@ public class TapServiceManager extends EntityManager {
 				else {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "-empty must be like 'schema.table' or 'schema'");			
 				}
+				Database.makeCacheVOObsolete();
 
 			}
 		} catch (SaadaException e) {
@@ -338,6 +342,7 @@ public class TapServiceManager extends EntityManager {
 			}
 			Table_Tap_Schema_Tables.addTable(schema, table, description, null);
 			Table_Tap_Schema_Columns.addTable(schema, table, mah, false);
+			Database.makeCacheVOObsolete();
 		} catch (SaadaException e) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, e);
 		}catch (Exception e2) {
@@ -393,51 +398,51 @@ public class TapServiceManager extends EntityManager {
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 				+ "     xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">\n");
-              /*
-                 * Loop on schemas
-                 */
-                SQLQuery qschema = new SQLQuery();
-                ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
-                ArrayList<String> snl = new ArrayList<String>();
-                ArrayList<String> sdl = new ArrayList<String>();
-                while(rs_schema.next()) {
-                        snl.add(rs_schema.getString(1));
-                        sdl.add(rs_schema.getString(2));
-                }
-                qschema.close();
-                for( int i=0 ; i<snl.size() ; i++ ) {
-                        String schema_name = snl.get(i);
-                        String schema_desc = sdl.get(i);
-                        retour.append("<schema>\n");
-                        retour.append("    <name>" + schema_name + "</name>\n");
-                        if( schema_desc != null && schema_desc.length() > 0)
-                                retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
-                        /*
-                         * Loop on tables
-                         */
-                        SQLQuery qtables= new SQLQuery();
-                        ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
-                                        + " WHERE schema_name = '" + schema_name + "'");
-                        ArrayList<String> tnl = new ArrayList<String>();
-                        ArrayList<String> tnd = new ArrayList<String>();
-                        ArrayList<String> tnt = new ArrayList<String>();
-                        while(rs_tables.next()) {
-                                tnl.add(rs_tables.getString(1));
-                                tnd.add(rs_tables.getString(2));
-                                tnt.add(rs_tables.getString(3));
-                        }
-                        qtables.close();
-                        for( int j=0 ; j<tnt.size() ; j++ ) {
-                                String table_name = tnl.get(j);
-                                String table_desc = tnd.get(j);
-                                String table_type = tnt.get(j);
-                                retour .append(getXMLTable(table_name, table_desc, table_type));
-                        }
-                        retour.append("</schema>\n");
-                }
+		/*
+		 * Loop on schemas
+		 */
+		SQLQuery qschema = new SQLQuery();
+		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
+		ArrayList<String> snl = new ArrayList<String>();
+		ArrayList<String> sdl = new ArrayList<String>();
+		while(rs_schema.next()) {
+			snl.add(rs_schema.getString(1));
+			sdl.add(rs_schema.getString(2));
+		}
+		qschema.close();
+		for( int i=0 ; i<snl.size() ; i++ ) {
+			String schema_name = snl.get(i);
+			String schema_desc = sdl.get(i);
+			retour.append("<schema>\n");
+			retour.append("    <name>" + schema_name + "</name>\n");
+			if( schema_desc != null && schema_desc.length() > 0)
+				retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
+			/*
+			 * Loop on tables
+			 */
+			SQLQuery qtables= new SQLQuery();
+			ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
+					+ " WHERE schema_name = '" + schema_name + "'");
+			ArrayList<String> tnl = new ArrayList<String>();
+			ArrayList<String> tnd = new ArrayList<String>();
+			ArrayList<String> tnt = new ArrayList<String>();
+			while(rs_tables.next()) {
+				tnl.add(rs_tables.getString(1));
+				tnd.add(rs_tables.getString(2));
+				tnt.add(rs_tables.getString(3));
+			}
+			qtables.close();
+			for( int j=0 ; j<tnt.size() ; j++ ) {
+				String table_name = tnl.get(j);
+				String table_desc = tnd.get(j);
+				String table_type = tnt.get(j);
+				retour .append(getXMLTable(table_name, table_desc, table_type));
+			}
+			retour.append("</schema>\n");
+		}
 
-                retour.append("</vosi:tableset>\n");
-                return retour;
+		retour.append("</vosi:tableset>\n");
+		return retour;
 	}
 
 	/**

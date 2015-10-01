@@ -185,14 +185,19 @@
   		 </copy>
 	    --> 
 	</target>
+	
 	<!--
-		Does the tomcat re-deployement in the case of the application has already been deployed
+		Re-deploy the generated classes in tomcat in the case of the application has already been deployed
 	-->
 	<target name="check.webapps.dir" unless="file.exists">
 	    <available property="file.exists" file="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}"/>
 	</target>
-	<target name="tomcat.conditional.deploy" depends="check.webapps.dir, tomcat.deploy" if="${file.exists}"/>
-	
+	<target name="tomcat.deploy.generated" depends="check.webapps.dir" if="${file.exists}">
+		<echo>Make an archive with generated classes</echo>
+		<jar destfile="${SAADA_DB_HOME}/web/WEB-INF/lib/${SAADA_DB_NAME}generated.jar" basedir="${SAADA_DB_HOME}/class_mapping/" />
+		<echo>Copy this archive to the Web application</echo>
+  		<copy file="${SAADA_DB_HOME}/web/WEB-INF/lib/${SAADA_DB_NAME}generated.jar" todir="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}/WEB-INF/lib"/>  
+	</target>
 	
 	<!--
 		Web application management through Tomcat

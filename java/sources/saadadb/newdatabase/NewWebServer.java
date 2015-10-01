@@ -8,6 +8,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
 import saadadb.command.ArgsParser;
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
@@ -128,6 +129,35 @@ public class NewWebServer extends NewSaadaDB {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, e);
 		}
 	}
+	
+	/**
+	 * Deploy the generated classes in tomcat if the Webapp has already been deployed
+	 */
+	public static void deployGeneratedClasses() {
+		Messenger.printMsg(Messenger.TRACE, "Deploy the generated classes in tomcat if the Webapp has already been deployed");
+		Project p = new Project();
+		p.init();
+		ProjectHelper helper = ProjectHelper.getProjectHelper();
+		helper.parse(p, new File(Database.getRoot_dir() 
+				+ Database.getSepar() + "bin" 
+				+ Database.getSepar() + "build.xml" ));
+		p.executeTarget("tomcat.deploy.generated");
+	}
+	
+	/**
+	 * 
+	 */
+	public static void deployWebApp() {
+		Messenger.printMsg(Messenger.TRACE, "Redeploy the WebApp");
+		Project p = new Project();
+		p.init();
+		ProjectHelper helper = ProjectHelper.getProjectHelper();
+		helper.parse(p, new File(Database.getRoot_dir() 
+				+ Database.getSepar() + "bin" 
+				+ Database.getSepar() + "build.xml" ));
+		p.executeTarget("tomcat.deploy");
+	}
+	
 	/**
 	 * @param args
 	 * @throws FatalException 

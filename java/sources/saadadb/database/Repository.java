@@ -1,6 +1,7 @@
 package saadadb.database;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import saadadb.collection.Category;
@@ -16,6 +17,7 @@ import saadadb.util.Messenger;
  * @author michel
  * @version $Id$
  * 07/2011: method sweepReportDir + getUserReportsPath
+ * 09/2015: Management of files marking the obsolescence of either cache meta or cache VO
  */
 public class Repository {
 	private static String separ = System.getProperty("file.separator");
@@ -29,7 +31,11 @@ public class Repository {
 	public static final String EMBEDDEDDB     = "embeddeddb";
 	public static final String DMS     	      = "dms";
 	public static final String CONFIG     	  = "config";
+	public static final String OBSOLETE_CACHE = "reloadcache";
+	public static final String OBSOLETE_VO    = "reloadvo";
+
 	/*
+	public static final String CONFIG     	  = "config";
 	 * These fields are set into the accessors because the class can be used before the repository is created
 	 * We supposed the accessors to be called after the repository is created 
 	 */
@@ -40,6 +46,8 @@ public class Repository {
 	public static String EMBEDDEDDB_PATH     = null;
 	public static String DMS_PATH            = null;
 	public static String CONFIG_PATH         = null;
+	public static String OBSOLETE_CACHE_PATH = null;
+	public static String OBSOLETE_VO_PATH    = null;
 
 	/**
 	 * @return
@@ -147,6 +155,26 @@ public class Repository {
 		return CONFIG_PATH;
 	}
 	/**
+	 * @return
+	 */
+	public static final String getObsoleteCachePath() {
+		if( OBSOLETE_CACHE_PATH == null ) 
+			OBSOLETE_CACHE_PATH = getTmpPath() 
+			+ separ
+			+ OBSOLETE_CACHE ;		
+		return OBSOLETE_CACHE_PATH;
+	}
+	/**
+	 * @return
+	 */
+	public static final String getObsoleteVOPath() {
+		if( OBSOLETE_VO_PATH == null ) 
+			OBSOLETE_VO_PATH = getTmpPath() 
+			+ separ
+			+ OBSOLETE_VO ;		
+		return OBSOLETE_VO_PATH;
+	}
+	/**
 	 *  remove VO reports  older the 30000 sec
 	 * @throws DatabaseException 
 	 */
@@ -182,26 +210,62 @@ public class Repository {
 		}
 
 	}
-	
-
-//	/**
-//	 * Return the full path of the vignette file associated with the image si.
-//	 * @param si
-//	 * @return
-//	 * @throws SaadaException 
-//	 */
-//	public static String getVignettePath(ImageSaada si) throws SaadaException {
-//		return Database.getRepository()
-//		+ separ
-//		+ SaadaOID.getCollectionName(si.oidsaada)
-//		+ separ
-//		+ "IMAGE" 
-//		+ separ
-//		+ "JPEG"
-//		+ separ
-//		+ si.getVignetteName();
-//
-//	}			
+	/**
+	 * Create the file marking the cache meta has to be reloaded
+	 * @throws Exception
+	 */
+	public static final void markObsoleteCache() throws Exception{
+		File f = new File(getObsoleteCachePath());
+		if( !f.exists()){
+			f.createNewFile();
+		}
+	}
+	/**
+	 * Remove the file marking the cache meta has to be reloaded
+	 * @throws IOException
+	 */
+	public static final void dropObsoleteCache() throws IOException{
+		File f = new File(getObsoleteCachePath());
+		if( f.exists()){
+			f.delete();
+		}
+	}
+	/**
+	 * @return true if the file marking a cache meta modification exist
+	 * @throws IOException
+	 */
+	public static boolean  isMetaMarkedAsObsolete() throws IOException{
+		File f = new File(getObsoleteCachePath());
+		return f.exists();
+	}
+	/**
+	 * Create the file marking the cache VO has to be reloaded
+	 * @throws Exception
+	 */
+	public static final void markObsoleteVO() throws Exception{
+		File f = new File(getObsoleteVOPath());
+		if( !f.exists()){
+			f.createNewFile();
+		}
+	}
+	/**
+	 * Remove the file marking the cache VO has to be reloaded
+	 * @throws IOException
+	 */
+	public static final void dropObsoleteVO() throws IOException{
+		File f = new File(getObsoleteVOPath());
+		if( f.exists()){
+			f.delete();
+		}
+	}
+	/**
+	 * @return true if the file marking a cache VO modification exist
+	 * @throws IOException
+	 */
+	public static boolean  isVOMarkedAsObsolete() throws IOException{
+		File f = new File(getObsoleteVOPath());
+		return f.exists();
+	}
 
 	/**
 	 * @param org_file : Full path of the origin file

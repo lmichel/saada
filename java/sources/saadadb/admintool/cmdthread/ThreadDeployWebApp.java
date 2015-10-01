@@ -31,13 +31,7 @@ public class ThreadDeployWebApp extends CmdThread {
 		try {
 			frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 			NewWebServer.buildDBNameFile(Database.getRoot_dir(), Database.getName(), Database.getUrl_root());
-			Project p = new Project();
-			p.init();
-			ProjectHelper helper = ProjectHelper.getProjectHelper();
-			helper.parse(p, new File(Database.getRoot_dir() 
-					+ Database.getSepar() + "bin" 
-					+ Database.getSepar() + "build.xml" ));
-			p.executeTarget("tomcat.deploy");
+			NewWebServer.deployWebApp();
 			frame.setCursor(cursor_org);
 	
 			AdminComponent.showSuccess(frame, "Web interface successfully deployed");		

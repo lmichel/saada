@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import ajaxservlet.accounting.QueryContext;
 import ajaxservlet.accounting.UserTrap;
+import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.util.Messenger;
 import saadadb.vo.tap.TapServiceConnection;
 import tap.TAPException;
@@ -46,6 +48,17 @@ public class TapService extends SaadaServlet {
 			for(Map.Entry<String, String>e : params.entrySet()) {
 				Messenger.locateCode("Key: "+e.getKey()+" | Value "+e.getValue());
 			}
+		}
+		if( Database.isVOCacheObsolete()){
+			try {	
+				Messenger.printMsg(Messenger.TRACE, "New TAP connection");
+				TapServiceConnection connection = new TapServiceConnection();
+				tap = new TAP(connection);
+				tap.init(getServletConfig());
+				Database.setVOCacheAsReloaded();
+			} catch (Exception e) {
+				throw new ServletException("Unable to Init TAP Service: "+e.getMessage(),e);
+			}			
 		}
 		tap.executeRequest(request, response);
 	}

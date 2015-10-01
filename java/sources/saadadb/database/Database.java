@@ -3,6 +3,7 @@ package saadadb.database;
 import healpix.core.HealpixIndex;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.Locale;
@@ -50,6 +51,7 @@ public class Database {
 	 */
 	private static String localUrl_root = "";
 	private static HealpixIndex healpixIndex;
+	private static boolean META_OBSOLETE;
 
 	/**
 	 * @param db_name
@@ -74,8 +76,53 @@ public class Database {
 			 * Flag must be set here to avoid recursivity in cacheindex.getCache(20);
 			 */
 			Database.init_done = true;
+			Database.META_OBSOLETE = false;
 			cache.getCache(5000);
 		}
+	}
+	
+	/**
+	 * Relaod the cache meta if a marker  file exists in the repository
+	 * @throws Exception
+	 */
+	public static void updateCacheMeta() throws Exception {
+		Messenger.printMsg(Messenger.TRACE, "Reloading the cache meta");
+		if( Repository.isMetaMarkedAsObsolete() ){
+			cachemeta.reload(true);
+			Repository.dropObsoleteCache();
+		}
+	}
+	/**
+	 * Set in the repository the file marking the cache meta has to be reloaded
+	 * @throws Exception
+	 */
+	public static void makeCacheMetaObsolete() throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Cache meta must be reloaded");
+		Repository.markObsoleteCache();
+	}
+	
+	/**
+	 * Set in the repository the file marking the cache VO has to be reloaded
+	 * @throws Exception
+	 */
+	public static void makeCacheVOObsolete() throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Cache VO must be reloaded");
+		Repository.markObsoleteVO();
+	}
+	/**
+	 * Remove from the repository the file marking the cache VO has to be reloaded
+	 * @throws Exception
+	 */
+	public static void setVOCacheAsReloaded() throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Cache VO no longer needs to be reloaded");
+		Repository.dropObsoleteVO();
+	}
+	/**
+	 * @return true if the file marking the VO cache as obsolete does exist
+	 * @throws IOException
+	 */
+	public static boolean isVOCacheObsolete() throws IOException {
+		return Repository.isVOMarkedAsObsolete();
 	}
 
 	/**
