@@ -185,7 +185,15 @@
   		 </copy>
 	    --> 
 	</target>
-		
+	<!--
+		Does the tomcat re-deployement in the case of the application has already been deployed
+	-->
+	<target name="check.webapps.dir" unless="file.exists">
+	    <available property="file.exists" file="${TOMCAT_HOME}/webapps/${SAADA_DB_NAME}"/>
+	</target>
+	<target name="tomcat.conditional.deploy" depends="check.webapps.dir, tomcat.deploy" if="${file.exists}"/>
+	
+	
 	<!--
 		Web application management through Tomcat
 		Must be used with sant or make sure catalina-ant.jar in the the ant.lib directory
