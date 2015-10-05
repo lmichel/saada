@@ -77,6 +77,7 @@ public class ObstapServiceManager extends EntityManager{
 		Messenger.printMsg(Messenger.TRACE, "Removing the ObsTAP capability");
 		Table_Saada_VO_Capabilities.emptyTable(VoProtocol.ObsTAP);
 		SQLTable.dropView(name);
+		Database.makeCacheVOObsolete();
 	}
 	/**
 	 * Publish collection.category in the ObsTAP service.
@@ -134,6 +135,7 @@ public class ObstapServiceManager extends EntityManager{
 			Messenger.printMsg(Messenger.DEBUG, "Building the Obstap view");
 		SQLTable.dropView(name);
 		SQLTable.addQueryToTransaction(ObstapServiceManager.getViewStatement());
+		Database.makeCacheVOObsolete();
 	}
 
 	/**

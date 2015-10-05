@@ -148,7 +148,7 @@ public class NewWebServer extends NewSaadaDB {
 	 * 
 	 */
 	public static void deployWebApp() {
-		Messenger.printMsg(Messenger.TRACE, "Redeploy the WebApp");
+		Messenger.printMsg(Messenger.TRACE, "Deploy the WebApp");
 		Project p = new Project();
 		p.init();
 		ProjectHelper helper = ProjectHelper.getProjectHelper();
