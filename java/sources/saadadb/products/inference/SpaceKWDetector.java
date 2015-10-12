@@ -90,7 +90,7 @@ public class SpaceKWDetector extends KWDetector{
 			this.frameSetter    = new ColumnWcsSetter("astroframe", "WCS.getAstroFrame()", projection);
 			this.ascension_kw   = new ColumnWcsSetter("s_ra", "WCS.getCenter(1)", projection);
 			this.declination_kw = new ColumnWcsSetter("s_dec", "WCS.getCenter(2)", projection);
-			this.err_maj = new ColumnWcsSetter("s_resolution", "WCS.getWorldPixelSize()", projection);
+			this.err_maj        = new ColumnWcsSetter("s_resolution", "WCS.getWorldPixelSize()", projection);
 			this.err_maj.setUnit("deg");
 			this.status |= FRAME_FOUND;		
 			this.status |= POS_KW_FOUND;

@@ -187,48 +187,59 @@ public class TapLog implements TAPLog {
 
 	@Override
 	public void transactionStarted(DBConnection<?> connection) {
+		Messenger.printMsg(Messenger.TRACE, "Transaction started" );
 	}
 
 	@Override
 	public void transactionCancelled(DBConnection<?> connection) {
+		Messenger.printMsg(Messenger.TRACE, "Transaction cancelled" );
 	}
 
 	@Override
 	public void transactionEnded(DBConnection<?> connection) {
+		Messenger.printMsg(Messenger.TRACE, "Transaction ended" );
 	}
 
 	@Override
 	public void schemaCreated(DBConnection<?> connection, String schema) {
+		Messenger.printMsg(Messenger.TRACE,  "Schema " + schema + " created" );
 	}
 
 	@Override
 	public void schemaDropped(DBConnection<?> connection, String schema) {
+		Messenger.printMsg(Messenger.TRACE, "Schema " + schema + " dropped" );
 	}
 
 	@Override
 	public void tableCreated(DBConnection<?> connection, TAPTable table) {
+		Messenger.printMsg(Messenger.TRACE, "Table " + table + " created" );
 	}
 
 	@Override
 	public void tableDropped(DBConnection<?> connection, TAPTable table) {
+		Messenger.printMsg(Messenger.TRACE, "Table " + table + " dropped" );
 	}
 
 	@Override
 	public void rowsInserted(DBConnection<?> connection, TAPTable table, int nbInsertedRows) {
+		Messenger.printMsg(Messenger.TRACE, nbInsertedRows + " rows inserted in tabe " +  table);
 	}
 
 	@Override
 	public void sqlQueryExecuting(DBConnection<?> connection, String sql) {
+		Messenger.printMsg(Messenger.TRACE, "Executing query " + sql );
 
 	}
 
 	@Override
 	public void sqlQueryError(DBConnection<?> connection, String sql, Throwable t) {
+		Messenger.printMsg(Messenger.TRACE, "Error " + t + " in query " + sql  );
 
 	}
 
 	@Override
 	public void sqlQueryExecuted(DBConnection<?> connection, String sql) {
+		Messenger.printMsg(Messenger.TRACE, "Query executed: " + sql );
 
 	}
 

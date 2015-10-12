@@ -1,6 +1,5 @@
 package saadadb.products;
 
-import cds.astro.Coo;
 import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.products.inference.Coord;
 

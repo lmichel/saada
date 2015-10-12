@@ -312,7 +312,6 @@ public class SchemaClassifierMapper extends SchemaMapper {
 			 * If not found, a new class is created
 			 */
 			if( !class_found ) {
-				System.out.println(requested_classname + " " + mc.getCollection_name() +" " +mapping.getCollection() + " " +  Category.explain(mc.getCategory()) + " " + Category.explain(mapping.getCategory()));
 				Messenger.printMsg(Messenger.TRACE, "One class found (" 
 						+ mc.getName() + ") but associed with another collection (" + mc.getCollection_name() + ") or category (" + Category.explain(mc.getCategory()) + ")");
 				mc = this.createClassFromProduct(ClassifierMode.CLASSIFIER);

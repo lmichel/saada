@@ -101,27 +101,6 @@ public class Image2DBuilder extends ProductBuilder {
 		return Category.IMAGE;
 	}
 
-	
-//	/* (non-Javadoc)
-//	 * @see saadadb.products.ProductBuilder#setProductIngestor()
-//	 */
-//	@Override
-//	protected void setProductIngestor() throws Exception{
-//		if( this.productIngestor == null ){
-//			try{
-//				this.wcs = new Image2DCoordinate();
-//				this.wcs.setImage2DCoordinate(this.productAttributeHandler);
-//				Messenger.printMsg(Messenger.TRACE, "Valid WCS keywords found");
-//			}catch(Exception e){
-//				this.wcs = null;
-//				Messenger.printStackTrace(e);
-//				Messenger.printMsg(Messenger.WARNING, "No valid WCS keywords found: " + e.getMessage() + ": Coordinate and image size will not be set.");
-//				Messenger.printMsg(Messenger.WARNING, "No position found: Position will not be set for this product");
-//			}
-//			this.productIngestor = new ImageIngestor(this);
-//		}		
-//	}
-
 	/**
 	
 

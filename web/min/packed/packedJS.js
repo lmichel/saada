@@ -5926,6 +5926,7 @@ DataLink_mVc.prototype = {
 
 };
 
+
 console.log('=============== >  DataLink_v.js ');
 
 DataLink_mvC = function(view, model){
@@ -50553,7 +50554,7 @@ console.log('=============== >  zipjobModel.js ');
  * It creates all MVC and bind some DOM node with relevant event handlers
  * 
  * @author michel
- * @version $Id: ready.js 1050 2014-03-11 16:36:58Z laurent.mistahl $
+ * @version $Id$
  */
 var resultPaneView;
 var saadaqlView ;
@@ -50807,7 +50808,7 @@ $().ready(function() {
 	});
 	
 	$.getJSON("getversion", function(data) {
-		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + " on " + data.dbms);
+		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + "(" + data.date + ") on " + data.dbms);
 	});
 	
 	/*

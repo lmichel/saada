@@ -890,12 +890,12 @@ public abstract class ProductBuilder {
 			if( this.em_res_powerSetter.isNotSet()  ) {
 				message = em_res_powerSetter.getUserMappingMsg();
 				this.em_res_powerSetter = this.quantityDetector.getResPower();
-				this.em_res_powerSetter = this.quantityDetector.getEUnit();
+				this.em_res_powerSetter.completeUserMappingMsg(message);
 			}
 			if( this.em_binsSetter.isNotSet()  ) {
 				message = em_binsSetter.getUserMappingMsg();
 				this.em_binsSetter = this.quantityDetector.getEbins();
-				this.em_binsSetter = this.quantityDetector.getEUnit();
+				this.em_binsSetter.completeUserMappingMsg(message);
 			}
 			break;
 

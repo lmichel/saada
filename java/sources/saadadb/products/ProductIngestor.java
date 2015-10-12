@@ -554,9 +554,9 @@ public class ProductIngestor {
 				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 				if( !spectralCoordinate.convert() ) {
 					this.product.em_minSetter = new ColumnSingleSetter();
-					this.product.em_minSetter.completeConversionMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv failed");
+					this.product.em_minSetter.completeConversionMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv to m failed");
 					this.product.em_maxSetter = new ColumnSingleSetter();
-					this.product.em_maxSetter.completeConversionMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv failed");
+					this.product.em_maxSetter.completeConversionMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv to m failed");
 					this.product.em_res_powerSetter =  new ColumnSingleSetter();
 				} else {
 					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
@@ -584,6 +584,8 @@ public class ProductIngestor {
 			double t = this.saadaInstance.em_max;
 			this.saadaInstance.em_max = this.saadaInstance.em_min;
 			this.saadaInstance.em_min = t;
+		} else if( this.saadaInstance.em_max == this.saadaInstance.em_min ) {
+			this.product.em_res_powerSetter.setFailed("Cannot compute resoluton power from a range=0");			
 		}
 		setField("em_res_power", this.product.em_res_powerSetter);
 	}
@@ -823,7 +825,7 @@ public class ProductIngestor {
 	 * @throws FatalException
 	 */
 	protected void setField(String fieldName, ColumnSetter columnSetter) throws FatalException{
-		if(columnSetter.isNotSet() ){
+		if(columnSetter.isNotSet() || columnSetter.getValue() ==  SaadaConstant.NOTSET){
 			return;
 		}
 		String value = "";
@@ -847,7 +849,7 @@ public class ProductIngestor {
 		} catch (NoSuchFieldException e) {
 			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, this.saadaInstance.getClassName() + " " + e.getMessage());
 		} catch (Exception e) {
-			FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attribute " + fieldName 
+			Messenger.printMsg(Messenger.ERROR, "Attribute " + fieldName 
 					+ " can not be set with the KW  <" + columnSetter.getAttNameOrg()
 					+ "=" + value + ">");
 		}
