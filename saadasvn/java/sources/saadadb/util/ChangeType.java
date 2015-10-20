@@ -21,7 +21,6 @@ public class ChangeType{
 	public static final String[] tabTypeSQL       = {"A"     , "I"  , "J"  , "D"               , "E"    , "F"    , "L"      , "B"       };
 	public static final String[] tabSQLFromFits   = {"String", "int", "int", "double"          , "float", "float", "boolean", "byte"    };
 	public static final String[] tabSQLFromPSQL   = {""      , "int", "int", "double precision", "float", "float", "boolean", "smallint"};
-	public static final String[] tabSQLFromSybase = {""      , "int", "int", "double precision", "float", "float", "bit"    , "smallint"};
 
 	/**
 	 * @param type
@@ -39,46 +38,6 @@ public class ChangeType{
 	}
 
 
-	/**
-	 * @param typeJava
-	 * @return
-	 */
-	public static String getTypeSqlFromTypeJava_SYBASE(String typeJava){//sybase
-		if(typeJava.equals("short")){
-			return "smallint";
-		}else
-			if(typeJava.equals("class java.lang.Long") || typeJava.equals("long")){
-				return "numeric";
-			}else
-				if(typeJava.equals("class java.lang.Integer") || typeJava.equals("int")){
-					return "int";
-				}else
-					if(typeJava.equals("class java.lang.Byte") || typeJava.equals("byte")){
-						return "tinyint";
-					}else
-						if(typeJava.equals("class java.lang.Character")){
-							return "Character";
-						}else
-							if(typeJava.equals("char")){
-								return "char";
-							}else
-								if(typeJava.equals("boolean")){
-									return "bit";
-								}else
-									if(typeJava.equals("class java.lang.Float") || typeJava.equals("float")){
-										return "float";
-									}else
-										if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
-											return "double precision";
-										}else
-											if(typeJava.indexOf("String")>=0){
-												return "text";
-											}else
-												if(typeJava.indexOf("Date")>=0){
-													return "datetime";
-												}
-		return "";
-	}
 
 	/**
 	 * @param typeJava
