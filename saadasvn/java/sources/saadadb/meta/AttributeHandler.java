@@ -120,6 +120,12 @@ public class AttributeHandler implements Serializable , Cloneable{
 		if (type.equals("unsignedByte")) {
 			this.setType("int");
 		}
+		/*
+		 * Returned by SAVOT for boolean ??!!
+		 */
+		if (type.equals("bit")) {
+			this.setType("boolean");
+		}
 	}
 	/**
 	 * Build the attribute handler from a FITS header card
