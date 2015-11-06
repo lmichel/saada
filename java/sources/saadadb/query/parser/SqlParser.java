@@ -22,21 +22,18 @@ import Zql.ZqlParser;
  * @author pineau 
  */
 public final class SqlParser{
-	//public static final String number  = "[+,-]?[0-9]+[.]?[0-9]*([E,e][+,-]?[0-9]*)?";
 	
-	public static final  String no_attr =
-		 "((?:"  + RegExp.FITS_STR_VAL 
-		+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
-		+ ")|(?:" + RegExp.FITS_FLOAT_VAL
-		+ ")|(?:" + RegExp.FITS_INT_VAL
-		+ "))";
-	
+	/**
+	 * @param strQuery
+	 * @return
+	 * @throws QueryException
+	 */
 	public static final String[] getAttributes(String strQuery) throws QueryException{
 		String str = "select * from tab where "+strQuery+" ;exit;"; // To be parse by zql
 		List<String> myal = parse(str);
 		for(Iterator<String> it = myal.iterator();it.hasNext();){
 			str =it.next(); 
-		    if(str.matches(no_attr)){
+		    if(str.matches(RegExp.NO_ATTR)){
 		       it.remove();
 		    } 
 		}

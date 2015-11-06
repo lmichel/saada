@@ -250,4 +250,25 @@ public class RegExp {
 	//the above line has been modified on monday 13/10/14. this is the original: public static final String KEYWORD = "([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\\)\\s\\*\\-\\+,]+)|$)";//"([[_][a-z][A-Z][0-9]]+[^(])[ +-/\\*)]";
 	// 	([_a-zA-Z][_a-zA-Z0-9]*)(?:(?:[\)\s\*-\+]+)|$)
 	
+	/**
+	 * Used to detect SQL statements which are not attributes  
+	 */
+	public static final  String NO_ATTR =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
+			+ ")|(?:" + RegExp.FITS_FLOAT_VAL
+			+ ")|(?:" + RegExp.FITS_INT_VAL
+			+ "))";
+	/**
+	 * Used to detect boolean operands in a where statement
+	 */
+	public static final  String TRUE_OPERAND =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + "[T]{1}"
+			+ "))";
+	public static final  String FALSE_OPERAND =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + "[F]{1}"
+			+ "))";
+
 }

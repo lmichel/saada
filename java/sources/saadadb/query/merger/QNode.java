@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -113,6 +114,15 @@ public abstract class QNode {
 			}
 			this.where += where;
 		}
+		/*
+		 * In SaadaQL boolean operands are T & F. Thy muste be replaced with the values supported by DBMS
+		 */
+		try {
+			this.where = this.where.replaceAll(RegExp.TRUE_OPERAND, Database.getWrapper().getBooleanAsString(true))
+					.replaceAll(RegExp.FALSE_OPERAND, Database.getWrapper().getBooleanAsString(false));
+
+		} catch (FatalException e) {}
+
 	}
 
 	/**
