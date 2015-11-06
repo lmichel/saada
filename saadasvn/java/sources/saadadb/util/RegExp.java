@@ -185,14 +185,9 @@ public class RegExp {
 	/**
 	 * Used to detect boolean operands in a where statement
 	 */
-	public static final  String TRUE_OPERAND =
-			 "((?:"  + RegExp.FITS_STR_VAL 
-			+ ")|(?:" + "[T]{1}"
-			+ "))";
-	public static final  String FALSE_OPERAND =
-			 "((?:"  + RegExp.FITS_STR_VAL 
-			+ ")|(?:" + "[F]{1}"
-			+ "))";
+	public static final  String TRUE_OPERAND = "([\\s,=]?)T([\\s,=!]*)";
+
+	public static final  String FALSE_OPERAND = "([\\s,=]?)F([\\s,=!]*)";
 
 	
 	public static void main(String[] args) {
