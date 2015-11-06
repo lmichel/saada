@@ -7,6 +7,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.NativeSQLConstraint;
 import saadadb.query.constbuilders.SaadaQLConstraint;
+import saadadb.util.RegExp;
 
 /**
  * @author F.X. Pineau

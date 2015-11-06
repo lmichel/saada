@@ -173,7 +173,27 @@ public class RegExp {
 	public static final String SHORTCUT_DESKTOP = "(?i)^(bureau|desktop)$";
 	public static final String SHORTCUT_DOCUMENTS = "(?i)^documents?$";
 	public static final String SHORTCUT_DOWNLOADS = "(?i)^(downloads?|t.l.chargements?)$";
-	
+	/**
+	 * Used to detect SQL statements which are not attributes  
+	 */
+	public static final  String NO_ATTR =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + RegExp.FITS_BOOLEAN_VAL
+			+ ")|(?:" + RegExp.FITS_FLOAT_VAL
+			+ ")|(?:" + RegExp.FITS_INT_VAL
+			+ "))";
+	/**
+	 * Used to detect boolean operands in a where statement
+	 */
+	public static final  String TRUE_OPERAND =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + "[T]{1}"
+			+ "))";
+	public static final  String FALSE_OPERAND =
+			 "((?:"  + RegExp.FITS_STR_VAL 
+			+ ")|(?:" + "[F]{1}"
+			+ "))";
+
 	
 	public static void main(String[] args) {
 		String ra = "__raj2000";

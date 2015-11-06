@@ -540,6 +540,7 @@ public class Query extends Query_Report{
 			Database.gc();
 			return  result;
 		} catch(SaadaException e1) {
+			Messenger.printStackTrace(e1);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e1);
 			return null;
 		} catch(Exception e) {

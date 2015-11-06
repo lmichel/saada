@@ -13,6 +13,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.meta.VOResource;
 import saadadb.query.constbuilders.SaadaQLConstraint;
 import saadadb.query.parser.SelectFromIn;
+import saadadb.util.RegExp;
 
 public class Merger {
 	private final LinkedHashMap<String, CollectionQNode> collection_nodes;
@@ -188,7 +189,7 @@ public class Merger {
 		 */
 		else {
 			for( Entry<String, CollectionQNode>e: collection_nodes.entrySet()) {
-				retour =  e.getValue().getSQL(builders) ;
+				retour =  e.getValue().getSQL(builders);
 				break;
 			}	
 		}

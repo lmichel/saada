@@ -1,9 +1,13 @@
 -------------------------------------------------
-Version Saada1.8.build14
+Version Saada1.8.build15
 
 L. MICHEL
 April 2015
 -------------------------------------------------
+Saada 1.8.build15
+-----------------
+Support of boolean in SaadaQL (fix)
+
 Saada 1.8.build14
 -----------------
 Support +Inf values in VOTables
