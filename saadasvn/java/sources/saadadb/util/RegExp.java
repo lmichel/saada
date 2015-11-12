@@ -185,9 +185,9 @@ public class RegExp {
 	/**
 	 * Used to detect boolean operands in a where statement
 	 */
-	public static final  String TRUE_OPERAND = "([\\s,=]?)T([\\s,=!]*)";
+	public static final  String TRUE_OPERAND = "([\\s,=]+)T([\\s,=!]*)";
 
-	public static final  String FALSE_OPERAND = "([\\s,=]?)F([\\s,=!]*)";
+	public static final  String FALSE_OPERAND = "([\\s,=]+)F([\\s,=!]*)";
 
 	
 	public static void main(String[] args) {
