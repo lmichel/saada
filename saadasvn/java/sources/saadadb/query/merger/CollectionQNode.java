@@ -292,7 +292,7 @@ public class CollectionQNode extends QNode {
 				 */
 				for( Entry<String, ClassQNode>e: class_nodes.entrySet()) {
 					ClassQNode cqn = e.getValue();
-					cqn.set_of_selected_columns.setEitherColumns();
+					//cqn.set_of_selected_columns.setEitherColumns();
 					if( !both && cqn.set_of_selected_columns.hasOnlyCollectionColumns() ) {
 						cq.add(this.getCollectionSQL(cqn, cpt));
 					}
