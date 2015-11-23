@@ -6,6 +6,7 @@ import java.util.Map;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.query.executor.Query;
+import saadadb.query.result.OidsaadaResultSet;
 import saadadb.util.Messenger;
 
 public class TrueTester {
@@ -44,7 +45,7 @@ public class TrueTester {
 		try {
 		Database.init("ThreeXMMdr5");
 		Query q = new Query();
-
+		/*
 		q.runBasicQuery(getQuery(COLL, NOTHING, COLL));
 		q.runBasicQuery(getQuery(COLL, NOTHING, EITHER));
 		q.runBasicQuery(getQuery(COLL, COLL, COLL));
@@ -79,7 +80,10 @@ public class TrueTester {
 		q.runBasicQuery(getQuery(CLASS, EBOTH, COLL));
 		q.runBasicQuery(getQuery(CLASS, EBOTH, CLASS));		
 		q.runBasicQuery(getQuery(CLASS, EBOTH, EITHER));
-
+*/
+		String qs = "Select ENTRY From * In Enhanced WhereAttributeSaada {    namesaada = '3XMM J002636.4+103513'} Order By oidsaada desc Limit 100";		
+		OidsaadaResultSet osrs = q.runBasicQuery(qs);
+	//	while( osrs.next() ) osrs.getOId();
 
 		//q.runBasicQuery("Select ENTRY From CatalogueEntry In CATALOGUE WhereRelation {matchPattern { CatToFitParam,AssObjClass{SpectrumFitEntry},AssObjAttSaada{ _a_fit =T}}} Limit 100");
 		} catch (Exception e){
