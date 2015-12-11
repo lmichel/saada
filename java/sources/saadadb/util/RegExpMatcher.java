@@ -66,8 +66,6 @@ public class RegExpMatcher {
 			return null;
 		}
 		Matcher matcher = pattern.matcher(string);
-		System.out.println( matcher.matches());
-		System.out.println( matcher.groupCount());
 		if ( matcher.matches() && matcher.groupCount() >= this.expectedMatches) {
 			List<String>	retour = new ArrayList<String>();
 			for( int i=1 ; i<=matcher.groupCount() ; i++) {
