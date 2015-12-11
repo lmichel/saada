@@ -19,6 +19,7 @@ import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
 import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.util.Messenger;
+import saadadb.util.RegExpMatcher;
 import saadadb.util.SaadaConstant;
 import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.PriorityMode;
@@ -287,8 +288,21 @@ public class EnergyKWDetector extends KWDetector {
 				this.em_unitSetter = new ColumnExpressionSetter("em_unit", u);
 			} else {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "");
-				this.em_unitSetter = new ColumnExpressionSetter("em_unit");
+					System.out.println(this.em_maxSetter.getSingleAttributeHandler().getDescription().matches(RegExp.UNIT_IN_KW_COMMENT));
+					this.em_unitSetter = null;
+					RegExpMatcher rem = new RegExpMatcher(RegExp.UNIT_IN_KW_COMMENT, 1);
+					for(ColumnExpressionSetter ces: new ColumnExpressionSetter[] {this.em_maxSetter, this.em_minSetter}) {
+						List<String> m =rem.getMatches(ces.getSingleAttributeHandler().getDescription());
+						if( m != null ){
+							this.em_unitSetter = new ColumnExpressionSetter("em_unit", m.get(0));	
+							this.em_unitSetter.detectionMsg.append("Taken from comment of keyword " + ces.getSingleAttributeHandler().getNameorg());
+							break;
+						}
+					}
+					if( this.em_unitSetter == null) {
+						Messenger.printMsg(Messenger.DEBUG, "No unit found");
+						this.em_unitSetter = new ColumnExpressionSetter("em_unit");
+					}
 			}
 			return true;
 		}
