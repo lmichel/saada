@@ -85,7 +85,7 @@ public class SpaceKWDetector extends KWDetector{
 		 * look first in WCS
 		 */
 		if (Messenger.debug_mode)
-			Messenger.printMsg(Messenger.DEBUG, "Look in WCS KW");
+			Messenger.printMsg(Messenger.DEBUG, "Look at WCS KW");
 		if( this.projection != null && this.projection.isUsable() ){
 			this.frameSetter    = new ColumnWcsSetter("astroframe", "WCS.getAstroFrame()", projection);
 			this.ascension_kw   = new ColumnWcsSetter("s_ra", "WCS.getCenter(1)", projection);
@@ -596,8 +596,12 @@ public class SpaceKWDetector extends KWDetector{
 				}
 			}
 			return ascension_kw;
-		} else 
-			return new ColumnExpressionSetter("s_ra");
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("s_ra");
+			retour.completeDetectionMsg("No supported WCS - no simple keywords");
+			return retour;
+		}
+			
 	}
 
 	/**
@@ -607,8 +611,11 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getDeclination() throws SaadaException {
 		if( this.arePosColFound() )
 			return declination_kw;
-		else 
-			return new ColumnExpressionSetter("s_dec");
+		else  {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("s_dec");
+			retour.completeDetectionMsg("No supported WCS - no simple keywords");
+			return retour;
+		}
 	}
 
 	public boolean isFrameFound() throws SaadaException {

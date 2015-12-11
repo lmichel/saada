@@ -402,6 +402,7 @@ public abstract class ColumnSetter implements Cloneable {
 	public ColumnSetter setConvertedValue(double value, String unitOrg, String unitDest, boolean addMessage) {
 		if( addMessage ) this.completeConversionMsg("from " + unitOrg + " to "  + unitDest);
 		this.setValue(value, unitDest);
+		if( !Double.isFinite(value) ) this.settingMode = ColumnSetMode.NOT_SET;
 		return this;
 	}
 	/**
@@ -415,6 +416,7 @@ public abstract class ColumnSetter implements Cloneable {
 	public ColumnSetter setConvertedValue(String value, String unitOrg, String unitDest, boolean addMessage) {
 		if( addMessage ) this.completeConversionMsg("from " + unitOrg + " to "  + unitDest);
 		this.setValue(value);
+		if( value == null || value.length()== 0 || value.equals("NaN") ) this.settingMode = ColumnSetMode.NOT_SET;
 		return this;
 	}
 	

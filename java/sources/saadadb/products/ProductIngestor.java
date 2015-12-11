@@ -553,23 +553,26 @@ public class ProductIngestor {
 				spectralCoordinate.setOrgMin(Double.parseDouble(qdMin.getValue()));
 				spectralCoordinate.setOrgMax(Double.parseDouble(qdMax.getValue()));
 				if( !spectralCoordinate.convert() ) {
-					this.product.em_minSetter = new ColumnSingleSetter();
+					this.product.em_minSetter.setConvertedValue(SaadaConstant.DOUBLE, spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 					this.product.em_minSetter.completeConversionMsg("vorg="+spectralCoordinate.getOrgMin() + spectralCoordinate.getMappedUnit() + " Conv to m failed");
-					this.product.em_maxSetter = new ColumnSingleSetter();
+					this.product.em_maxSetter.setConvertedValue(SaadaConstant.DOUBLE, spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 					this.product.em_maxSetter.completeConversionMsg( "vorg="+spectralCoordinate.getOrgMax() + spectralCoordinate.getMappedUnit()+ " Conv to m failed");
-					this.product.em_res_powerSetter =  new ColumnSingleSetter();
+					this.product.em_res_powerSetter.setConvertedValue(SaadaConstant.DOUBLE, "", "", addMEssage);
+					this.product.em_res_powerSetter.completeConversionMsg( "No Energy range");
 				} else {
 					this.product.em_minSetter.setConvertedValue(spectralCoordinate.getConvertedMin(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 					this.product.em_maxSetter.setConvertedValue(spectralCoordinate.getConvertedMax(), spectralCoordinate.getMappedUnit(), spectralCoordinate.getFinalUnit(), addMEssage);
 				}
 			} else {
-				this.product.em_minSetter = new ColumnSingleSetter();
+				this.product.em_minSetter.setConvertedValue(SaadaConstant.DOUBLE, "", "", addMEssage);
 				this.product.em_minSetter.completeConversionMsg("No unit given, can not achieve the conversion ");
-				this.product.em_maxSetter = new ColumnSingleSetter();
+				this.product.em_maxSetter.setConvertedValue(SaadaConstant.DOUBLE, "", "", addMEssage);
 				this.product.em_maxSetter.completeConversionMsg("No unit given, can not achieve the conversion ");
-				this.product.em_res_powerSetter =  new ColumnSingleSetter();				
+				this.product.em_res_powerSetter.setConvertedValue(SaadaConstant.DOUBLE, "", "", addMEssage);
+				this.product.em_res_powerSetter.completeConversionMsg( "No Energy range");
 			}
-			if( !this.product.em_binsSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
+
+			if( !this.product.em_binsSetter.isNotSet() && !this.product.em_minSetter.isNotSet() && !this.product.em_maxSetter.isNotSet() && this.product.em_res_powerSetter.isNotSet() ) {
 				double v1  =  (this.product.em_minSetter.getNumValue() + this.product.em_maxSetter.getNumValue())/2.;
 				double v2  =  (this.product.em_maxSetter.getNumValue() - this.product.em_minSetter.getNumValue())/this.product.em_binsSetter.getNumValue();
 				this.product.em_res_powerSetter.setByValue(v1/v2, false);
@@ -580,12 +583,12 @@ public class ProductIngestor {
 		setField("em_max"    , this.product.em_maxSetter);
 		if(this.saadaInstance.em_max < this.saadaInstance.em_min){
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Reorder em_minj and em_max");
+				Messenger.printMsg(Messenger.DEBUG, "Reorder em_min and em_max");
 			double t = this.saadaInstance.em_max;
 			this.saadaInstance.em_max = this.saadaInstance.em_min;
 			this.saadaInstance.em_min = t;
 		} else if( this.saadaInstance.em_max == this.saadaInstance.em_min ) {
-			this.product.em_res_powerSetter.setFailed("Cannot compute resoluton power from a range=0");			
+			this.product.em_res_powerSetter.setFailed("Cannot compute resoluton power from a range=0 or NaN");			
 		}
 		setField("em_res_power", this.product.em_res_powerSetter);
 	}

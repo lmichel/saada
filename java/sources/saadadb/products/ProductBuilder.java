@@ -11,7 +11,6 @@ import hecds.wcs.types.CardFilters;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,8 +21,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import org.apache.axis.wsdl.symbolTable.DefinedType;
 
 import saadadb.collection.Category;
 import saadadb.database.Database;
