@@ -230,6 +230,11 @@ public final class FitsDataFile extends FSDataFile{
 			else {
 				ext_num = getHeaderNumber(this.productMapping.getExtension());
 			}
+
+			if( ext_num == 0 ){
+				IgnoreException.throwNewException(SaadaException.WRONG_RESOURCE
+						, "Extension : "+this.productMapping.getExtension() + " cannot not be request since it is the primary header.");
+			};
 			/*
 			 * Once the extension found, we need to check that it has the good category
 			 * a BINTABLE for spectra and tables...
@@ -932,13 +937,14 @@ public final class FitsDataFile extends FSDataFile{
 			//if the key is not the last one nor an ignored one nor a FITS comment then we can create and add an attributeHandler corresponding
 
 			//Sets this standardized name of this attribute to this field in the modelling object
-//			String value = hcard.getValue();
-//			attribute.setValue(value);
+			//			String value = hcard.getValue();
+			//			attribute.setValue(value);
 
 			String keyChanged = ChangeKey.renameDuplicateKey(this.attributeHandlers, attribute.getNameattr());
 			if( !keyChanged.equals(attribute.getNameattr())) {
 				attribute.setNameattr(keyChanged);
 			}
+
 			this.attributeHandlers.put(keyChanged, attribute);
 			attribute.setCollname(this.productMapping.getCollection());				
 			this.attMd5Tree.put(attribute.getNameorg(), attribute.getType());

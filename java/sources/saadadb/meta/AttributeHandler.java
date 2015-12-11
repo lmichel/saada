@@ -154,15 +154,22 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		if( strcard.length() == 0 || strcard.indexOf("=") == -1 ||strcard.startsWith("HISTORY ") ||strcard.startsWith("COMMENT ")) {
 			return;
 		}
-		card.getKey();
-		Matcher m = NUMERIC_PATTERN.matcher(strcard);
-//		if( m.find() && m.groupCount() == 3 ) {
-//			String key     = m.group(1).trim();
-//			String value   = m.group(2).trim();
-//			String comment = m.group(3).replaceFirst("/", "").trim();
-	    String key     =  card.getKey();
-	    String value   =  card.getValue();
-	    String comment =  card.getComment();
+		String key     =  card.getKey();
+		/*
+		 * Extract manulay HIERACH KW which bloack seprated lists
+		 */
+		if( key.startsWith("HIERARCH") ) {
+			String s =card.toString();
+			int pos = s.indexOf("=");
+			if( pos == -1 ) {
+				return;					
+			}else {
+				key = card.toString().substring(0 , pos).trim();
+			}
+		}
+
+		String value   =  card.getValue();
+		String comment =  card.getComment();
 		/*
 		 * value can be null for cards with long comment?
 		 * e.g.  System.out.println("---------------\n" + card + "\n-----------------------\n");
@@ -170,53 +177,53 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				ORIGIN  = 'ADC     '           / This spectrum is part of catalog 3114,         
                         = ' generated at Astronomical Data Center, NASA/GSFC' /               
 		 */
-			if( value == null ){
-				value = "";
-			}
-			boolean is_not_string = true;
-			if( value.startsWith("'") ) {
-				is_not_string = false;
-			}
-			value = value.replaceAll("'", "");
-			/*
-			 * TODO Penser a traiter le cas de value = "" avec un type num�rique
-			 * Implementer les NaN
-			 */
-			if( key == null || key.equals("") || value == null  ) {
-				this.setNameorg("");
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");
-			}
-			if( comment == null ) {
-				comment = "";
-			}
-			/*
-			 * "'" must be removed to avoid SQL errors
-			 */
-			this.setNameorg(key.replaceAll("'", " "));
-			this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
-			this.setComment(comment);
-			if( is_not_string && value.equals("T") ) {
-				this.setType("boolean");
-				this.value = "true";
-			} else if( is_not_string && value.equals("F") ) {
-				this.setType("boolean");
-				this.value = "false";
-			} else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
-				this.setType("double");
-				this.setValue(value);
-			} else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
-				this.setType("int");
-				this.setValue(value);
-			} else  {
-				this.setType("String");
-				this.setValue(value);
-			}
-//		}
-//		else {
-//			this.setNameorg("");
-//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
-//		}
-			
+		if( value == null ){
+			value = "";
+		}
+		boolean is_not_string = true;
+		if( value.startsWith("'") ) {
+			is_not_string = false;
+		}
+		value = value.replaceAll("'", "");
+		/*
+		 * TODO Penser a traiter le cas de value = "" avec un type num�rique
+		 * Implementer les NaN
+		 */
+		if( key == null || key.equals("") || value == null  ) {
+			this.setNameorg("");
+			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");
+		}
+		if( comment == null ) {
+			comment = "";
+		}
+		/*
+		 * "'" must be removed to avoid SQL errors
+		 */
+		this.setNameorg(key.replaceAll("'", " "));
+		this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
+		this.setComment(comment);
+		if( is_not_string && value.equals("T") ) {
+			this.setType("boolean");
+			this.value = "true";
+		} else if( is_not_string && value.equals("F") ) {
+			this.setType("boolean");
+			this.value = "false";
+		} else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
+			this.setType("double");
+			this.setValue(value);
+		} else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
+			this.setType("int");
+			this.setValue(value);
+		} else  {
+			this.setType("String");
+			this.setValue(value);
+		}
+		//		}
+		//		else {
+		//			this.setNameorg("");
+		//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
+		//		}
+
 	}
 	//    public static void main(String[] args) {
 	//    AttributeHandler a = new AttributeHandler("HIERARCH ESO INS PATH        = '        '   / Optical path used. " );
@@ -411,7 +418,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		this.numValue = value;
 		this.value = String.valueOf(value);
 	}
-	
+
 	/**
 	 * Check that the value represented by "value" is consistent with the type
 	 * Set as {@link SaadaConstant.STRING} otherwise
@@ -878,7 +885,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		if( this.type.equals("double") || this.type.equals("float")|| this.type.equals("int")|| this.type.equals("short")){
 			return Double.parseDouble(this.value);
 		}
-		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert a " + this.type + " in double");
+		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert " + this.nameorg + " as " + this.type + " in double");
 		return SaadaConstant.DOUBLE;
 	}
 
