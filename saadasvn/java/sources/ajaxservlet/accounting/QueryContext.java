@@ -25,7 +25,19 @@ public class QueryContext implements Serializable {
 	private int resultSize;
 	transient OidsaadaResultSet resultSet;
 	transient private DisplayFilter colfmtor;
-
+	/**
+	 * Dummy constructor allowing to override the class without executing the query at creation time
+	 */
+	public QueryContext() {
+		
+	}
+	/**
+	 * 
+	 * @param queryString
+	 * @param colfmtor
+	 * @param sessionId
+	 * @throws Exception
+	 */
 	public QueryContext( String queryString, DisplayFilter colfmtor, String sessionId) throws Exception {
 		this.queryString = queryString;
 		this.colfmtor = colfmtor;
