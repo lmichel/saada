@@ -35,6 +35,13 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 	private static final long TIMEOUT = 30000;
 
 	/**
+	 * Dummy constructor allowing to override the class without executing the query at creation time
+	 */
+	public OidsaadaResultSet() {
+		super();
+	}
+
+	/**
 	 * Nothing else than initialize fields
 	 * @param sqlQuery
 	 * @param patternKeySet

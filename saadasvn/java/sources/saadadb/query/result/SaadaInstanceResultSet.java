@@ -54,6 +54,14 @@ public class SaadaInstanceResultSet  {
 	protected int size = SaadaConstant.INT;
 	protected static final Pattern whereDetector = Pattern.compile(".*\\s+(where|order)\\s+.*", Pattern.CASE_INSENSITIVE);
 
+	
+	/**
+	 * Dummy constructor allowing to override the class without executing the query at creation time
+	 */
+	public SaadaInstanceResultSet() {
+		
+	}
+
 	/**
 	 * Nothing else than init params
 	 * @param instance
