@@ -98,7 +98,7 @@ public abstract class ColumnSetter implements Cloneable {
 	 * @param previousSetter
 	 */
 	public void completeUserMappingMsg(ColumnSetter previousSetter){
-		this.completeMessage(((previousSetter == null)? "Nou used": previousSetter.getUserMappingMsg())
+		this.completeMessage(((previousSetter == null)? "Not used": previousSetter.getUserMappingMsg())
 				, this.userMappingMsg);
 	}
 	/**

@@ -93,13 +93,13 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			this.result = String.valueOf(this.projection.getNaxis(2));
 			break;
 		case "getUnit(1)":
-			this.result = this.projection.descriptor.getWcsAxeDescriptor(1).unit;
+			this.result = this.projection.getDescriptor().getWcsAxeDescriptor(1).unit;
 			break;
 		case "getUnit(2)":
-			this.result = this.projection.descriptor.getWcsAxeDescriptor(2).unit;
+			this.result = this.projection.getDescriptor().getWcsAxeDescriptor(2).unit;
 			break;
 		case "getAstroFrame()":
-			this.result = this.projection.descriptor.getCoosys();
+			this.result = this.projection.getDescriptor().getCoosys();
 			break;
 		case "getWorldPixelSize()":
 			this.result = String.valueOf(this.projection.getWorldPixelSize());

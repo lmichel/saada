@@ -24,6 +24,8 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
+import saadadb.util.ChangeKey;
 import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
@@ -178,9 +180,9 @@ public final class ArgsParser implements Serializable{
 				if( arg.startsWith("-") ) {
 					int pos = arg.indexOf('=');
 					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
-							(pos >= 0  && !allowedArgs.contains(arg.substring(0, pos))))  {
+						(pos >= 0  && (!allowedArgs.contains(arg.substring(0, pos)) && !arg.startsWith("-wcs."))) )  {
 						msg += " <" + arg + ">";
-						if( pos >=0 ) System.out.println(arg.substring(0, pos));
+						//if( pos >=0 ) System.out.println(arg.substring(0, pos));
 					}
 				}
 			}			
@@ -1611,6 +1613,54 @@ public final class ArgsParser implements Serializable{
 		} else {
 			return PriorityMode.LAST;
 		}
+	}
+
+	/**
+	 * WCS param must be like -wcs.key=value. There in not check on the key format
+	 * The type is infered from the value format: 
+	 * in '' => string
+	 * true/false => boolean
+	 * For numeric value, integer is checked first and the double. If both fail the Strintg type is taken
+	 * If the same key is given several times, the last one is taken
+	 * @return  a list of attribute denoting the given WCS keywords
+	 */
+	public List<AttributeHandler> getWCS() {
+		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-wcs.")) {
+				String [] f = args[i].split("[\\.=]");
+				AttributeHandler ah = new AttributeHandler();
+				ah.setNameorg(f[1]);
+				ah.setNameattr(ChangeKey.changeKey(f[1]));
+				String value = getArgsValue(args[i]);
+				String type;
+				if( value.matches("'.*'")){
+					ah.setType("String");
+					ah.setValue(value.replaceAll("'", ""));						
+				} else if( "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+					ah.setType("boolean");
+					ah.setValue(value);						
+				} else {
+					try  {
+						Integer.parseInt(value);					
+						ah.setType("int");
+						ah.setValue(value);
+					} catch(Exception e) {
+						try  {
+							Double.parseDouble(value);					
+							ah.setType("double");
+							ah.setValue(value);
+						} catch(Exception e2) {
+							ah.setType("String");
+							ah.setValue(value);						
+						}
+						
+					}
+				}
+				retour.add(ah);
+			}
+		}
+		return retour;
 	}
 
 

@@ -8,6 +8,7 @@ import saadadb.command.ArgsParser;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.prdconfiguration.HeaderRef;
 import saadadb.products.FlatFileBuilder;
@@ -34,6 +35,7 @@ public class ProductMapping {
     private HeaderRef headerRef = new HeaderRef(0);
 	private ClassMapping classMapping;
 	private EntryMapping entryMapping;
+	public List<AttributeHandler> WCSInput; // user params given as -wcs.key=value 
 	/**
 	 * Available for the dataloader to store column index for any purpose
 	 */
@@ -59,6 +61,7 @@ public class ProductMapping {
 			this.entryMapping = new EntryMapping(name, ap); 
 		}
 		signature.addElement(this.stoeMapping.getSignature(), false);
+		WCSInput = ap.getWCS();
     } 
     /**
      * @param name
@@ -83,6 +86,7 @@ public class ProductMapping {
 		signature.addElement(this.extension, false);
 		signature.addElement(this.classMapping.toString(), false);
 		signature.addElement(this.stoeMapping.getSignature(), false);
+		WCSInput = ap.getWCS();
     }
  
     /**

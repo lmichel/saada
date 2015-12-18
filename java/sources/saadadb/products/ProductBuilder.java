@@ -192,44 +192,52 @@ public abstract class ProductBuilder {
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 			 */
 			CardMap cm = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
+			/*
+			 * Here cp.put(AH) where HA is read from the arg parser
+			 */
 			LibLog.setLogger(new MessengerLogger());
+			for( AttributeHandler ah: this.mapping.WCSInput){
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, "Add user WCS kyword " + ah);
+				cm.put(ah);
+			}
 			this.wcsModeler = new Modeler(cm);	
-			this.completeEnergyWCS(cm);	
+		//	this.completeEnergyWCS(cm);	
 			this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
 		}
 	}
 
-	/**
-	 * This is an experimental feature aiming at extracting missing WCS keywords from the user mapping parameters
-	 * 
-	 * @param cardMap cardMap sent to the WCS lib and possibly extended with synthetic keywords
-	 * @throws Exception
-	 */
-	private void completeEnergyWCS(CardMap cardMap ) throws Exception {
-		Projection projection = this.wcsModeler.getProjection(AxeType.SPECTRAL);
-		if( !projection.isUsable() ) {
-			ColumnMapping columnMapping;
-			for( int axeNum=1 ; axeNum<=4 ; axeNum++){
-				CardDescriptor fb = cardMap.get("CTYPE" + axeNum);
-				if( fb != null && fb.getValue().matches(CardFilters.SPECTRAL_CTYPE)){
-					String unitWK = "CUNIT" +	axeNum;
-					if( cardMap.get(unitWK) == null 
-							&& (columnMapping = this.mapping.getEnergyAxisMapping( ).getColumnMapping("em_unit")) != null 
-							&& columnMapping.byValue()) {
-						AttributeHandler ah = new AttributeHandler();
-						ah.setNameattr("_" + unitWK.toLowerCase());
-						ah.setNameorg(unitWK);
-						ah.setType("String");
-						ah.setValue(columnMapping.getValue());
-						cardMap.put(ah);
-						Messenger.printMsg(Messenger.TRACE, "Add user defined spectral unit (" + columnMapping.getValue() + ") to the WCS projection (axe #" + axeNum + ")");
-						System.out.println(projection);
-						this.wcsModeler = new Modeler(cardMap);	
-					}
-				}
-			}
-		}
-	}
+//	/**
+//	 * This is an experimental feature aiming at extracting missing WCS keywords from the user mapping parameters
+//	 * 
+//	 * @param cardMap cardMap sent to the WCS lib and possibly extended with synthetic keywords
+//	 * @throws Exception
+//	 */
+//	private void completeEnergyWCS(CardMap cardMap ) throws Exception {
+//		Projection projection = this.wcsModeler.getProjection(AxeType.SPECTRAL);
+//		if( !projection.isUsable() ) {
+//			ColumnMapping columnMapping;
+//			for( int axeNum=1 ; axeNum<=4 ; axeNum++){
+//				CardDescriptor fb = cardMap.get("CTYPE" + axeNum);
+//				if( fb != null && fb.getValue().matches(CardFilters.SPECTRAL_CTYPE)){
+//					String unitWK = "CUNIT" +	axeNum;
+//					if( cardMap.get(unitWK) == null 
+//							&& (columnMapping = this.mapping.getEnergyAxisMapping( ).getColumnMapping("em_unit")) != null 
+//							&& columnMapping.byValue()) {
+//						AttributeHandler ah = new AttributeHandler();
+//						ah.setNameattr("_" + unitWK.toLowerCase());
+//						ah.setNameorg(unitWK);
+//						ah.setType("String");
+//						ah.setValue(columnMapping.getValue());
+//						cardMap.put(ah);
+//						Messenger.printMsg(Messenger.TRACE, "Add user defined spectral unit (" + columnMapping.getValue() + ") to the WCS projection (axe #" + axeNum + ")");
+//						System.out.println(projection);
+//						this.wcsModeler = new Modeler(cardMap);	
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * Returns the list which maps attribute names formated in the standard of
@@ -872,10 +880,10 @@ public abstract class ProductBuilder {
 			PriorityMessage.first("Energy");
 			this.mapCollectionSpectralCoordinateFromMapping();
 			if( this.em_minSetter.isNotSet() || this.em_maxSetter.isNotSet() ) {
-				message = t_maxSetter.getUserMappingMsg();
+				message = em_maxSetter.getUserMappingMsg();
 				this.em_minSetter = this.quantityDetector.getEMin();
 				this.em_minSetter.completeUserMappingMsg(message);
-				message = t_maxSetter.getUserMappingMsg();
+				message = em_maxSetter.getUserMappingMsg();
 				this.em_maxSetter = this.quantityDetector.getEMax();				
 				this.em_maxSetter.completeUserMappingMsg(message);
 			}
@@ -906,7 +914,7 @@ public abstract class ProductBuilder {
 			ColumnExpressionSetter qdBins= this.quantityDetector.getEbins();
 			if( qdMin.isNotSet() || qdMax.isNotSet() ) {
 				this.em_minSetter = this.getSetterForMappedColumn("em_min", mapping.getColumnMapping("em_min"));
-				this.em_minSetter.completeDetectionMsg(qdMin);
+				this.em_minSetter.completeDetectionMsg(qdMin.getDetectionMsg());
 				this.em_maxSetter = this.getSetterForMappedColumn("em_max", mapping.getColumnMapping("em_max"));			
 				this.em_maxSetter.completeDetectionMsg(qdMax);
 			} else {
