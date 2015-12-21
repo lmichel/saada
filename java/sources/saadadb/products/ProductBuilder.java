@@ -4,9 +4,6 @@ import hecds.LibLog;
 import hecds.wcs.Modeler;
 import hecds.wcs.descriptors.CardDescriptor;
 import hecds.wcs.descriptors.CardMap;
-import hecds.wcs.transformations.Projection;
-import hecds.wcs.types.AxeType;
-import hecds.wcs.types.CardFilters;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -371,8 +368,34 @@ public abstract class ProductBuilder {
 		Messenger.locateCode();
 		this.dataFile = dataFile;
 		this.dataFile.bindBuilder(this);
-		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
+		this.obs_idSetter.resetMessages();
+		this.obs_collectionSetter.resetMessages();
+		this.obs_publisher_didSetter.resetMessages();
+		this.calib_levelSetter.resetMessages();
+		this.target_nameSetter.resetMessages();
+		this.facility_nameSetter.resetMessages();
+		this.instrument_nameSetter.resetMessages();
+		this.s_resolutionSetter.resetMessages();
+		this.s_raSetter.resetMessages();
+		this.s_decSetter.resetMessages();
+		this.s_fovSetter.resetMessages();
+		this.s_regionSetter.resetMessages();
+		this.astroframeSetter.resetMessages();
+		this.em_minSetter.resetMessages();
+		this.em_maxSetter.resetMessages();
+		this.em_binsSetter.resetMessages();
+		this.em_res_powerSetter.resetMessages();
+		this.em_unitSetter.resetMessages();
+		this.t_minSetter.resetMessages();
+		this.t_maxSetter.resetMessages();
+		this.t_exptimeSetter.resetMessages();
+		this.t_resolutionSetter.resetMessages();
+		this.o_ucdSetter.resetMessages();
+		this.o_unitSetter.resetMessages();
+		this.o_calib_statusSetter.resetMessages();
+		this.pol_statesSetter=new ColumnExpressionSetter("pol_states");
 		//	this.bindDataFile(dataFile);
+		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
 		this.mapCollectionAttributes();
 	}
 

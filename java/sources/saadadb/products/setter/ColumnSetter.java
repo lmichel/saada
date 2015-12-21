@@ -125,7 +125,15 @@ public abstract class ColumnSetter implements Cloneable {
 		this.conversionMsg = new StringBuffer(message);
 	}
 	
-
+	/**
+	 * Empty all messages: Used to avoid messages to be stacked when the sam setter 
+	 * is used for multiple products 
+	 */
+	public void resetMessages(){
+		this.detectionMsg = new StringBuffer("");
+		this.conversionMsg = new StringBuffer("");
+		this.userMappingMsg = new StringBuffer("");
+	}
 	
 	
 	/**

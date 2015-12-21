@@ -1633,7 +1633,6 @@ public final class ArgsParser implements Serializable{
 				ah.setNameorg(f[1]);
 				ah.setNameattr(ChangeKey.changeKey(f[1]));
 				String value = getArgsValue(args[i]);
-				String type;
 				if( value.matches("'.*'")){
 					ah.setType("String");
 					ah.setValue(value.replaceAll("'", ""));						
