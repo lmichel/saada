@@ -508,8 +508,8 @@ abstract public class DbmsWrapper {
 		+ ", " + size 
 		+ ", " + prefix + "s_ra"
 		+ ", " + prefix + "s_dec"
-		+ ", " + prefix + "size_alpha_csa"
-		+ ", " + prefix + "size_delta_csa)";
+		+ ", " + prefix + "s_fov"
+		+ ", " + prefix + "s_fov)";
 	}
 
 	/**

@@ -94,7 +94,7 @@ public class AhValueFinder {
 		 ===============================================================
 		 */
 		String value = "";
-		System.out.println("Expression= '" + query + "'");
+		//System.out.println("Expression= '" + query + "'");
 		if (!query.isEmpty() || extractor.getParamSize() > 0) {
 			/*
 			 * There is an Expression or params
@@ -102,14 +102,14 @@ public class AhValueFinder {
 
 			// if (constant) {
 			if (!arithmetic) {
-				System.out.println("Is a constant expression");
+				//System.out.println("Is a constant expression");
 				// Constant expression (as a fixed string),
 				value = query;
 			} else {
 				/*
 				 * Expression is not constant
 				 */
-				System.out.println("Expression has been given");
+				//System.out.println("Expression has been given");
 
 				// Build an AhMap containing all possible AH
 				LinkedHashMap<String, AttributeHandler> possibleAh = new LinkedHashMap<String, AttributeHandler>();
@@ -123,7 +123,7 @@ public class AhValueFinder {
 				while(it.hasNext()) {
 					AttributeHandler tmp = it.next();
 					usedAh.put(tmp.getNameattr(), tmp);
-					System.out.println(("..."));
+					//System.out.println(("..."));
 				}
 				// if the used ahmap is empty -> then it s an exception
 				if (usedAh == null || usedAh.size() == 0) {
@@ -152,16 +152,16 @@ public class AhValueFinder {
 					if (tmp.isEmpty()) {
 						// It just a mapping
 						isASimpleMapping = true;
-						System.out.println("Expression is a simple mapping");
+						//System.out.println("Expression is a simple mapping");
 					}
 				}
 				boolean canCompute = true;
 				for (Map.Entry<String, AttributeHandler> e : usedAh.entrySet()) {
-					System.out.println("Used AH\t'" + e.getValue().getNameattr() + "' value: " + e.getValue().getValue());
+					//System.out.println("Used AH\t'" + e.getValue().getNameattr() + "' value: " + e.getValue().getValue());
 					String eValue = e.getValue().getValue();
 					if (eValue.equals("NaN") || eValue.equalsIgnoreCase("null") || eValue.equalsIgnoreCase("NotSet")
 							|| checkIfMaxValue(eValue, e.getValue().getType())) {
-						System.out.println("Value = NaN or null, can't compute");
+						//System.out.println("Value = NaN or null, can't compute");
 						canCompute = false;
 						break;
 					}
@@ -203,13 +203,13 @@ public class AhValueFinder {
 		 * No expression or param has been given
 		 */
 		else {
-			System.out.println("No expresion given");
+		//	System.out.println("No expresion given");
 
 			// Use currentUh's utype and ucd to find
 			// a match in utypeMap or ucdMap
 			String searchResult = findStaticMatch(currentUh.getUtype(), currentUh.getUcd());
 			if (searchResult != null) {
-				System.out.println("Static search found a match");
+				//System.out.println("Static search found a match");
 				value = searchResult;
 			} else {
 				// Build an AhMap containing all possible AH
@@ -234,11 +234,11 @@ public class AhValueFinder {
 				}
 				if (matched) {
 					value = fillAhWithValue(tmpCurrentAh).getValue();
-					System.out.println("The manual search found a match for ucd/utype <" + ucd + "/" + utype + ">: " + value);
+					//System.out.println("The manual search found a match for ucd/utype <" + ucd + "/" + utype + ">: " + value);
 					// Creates an Ah similar to tmpCurrentAh so a unit check can be performed later
 					return buildAttributeHandlerFromAh(tmpCurrentAh, value);
 				} else {
-					System.out.println("No AttributeHandler has been found for ucd/utype: <" + ucd + "/" + utype + ">");
+					//System.out.println("No AttributeHandler has been found for ucd/utype: <" + ucd + "/" + utype + ">");
 				}
 			}
 			// if the browsing returned something, get the value of the Ah
@@ -289,11 +289,11 @@ public class AhValueFinder {
 	 * @throws Exception
 	 */
 	protected String findStaticMatch(String utype, String ucd) throws Exception {
-		System.out.println("Looking for a static match");
+		//System.out.println("Looking for a static match");
 		String cUtype = removePrefix(utype);
 		String cUcd = removePrefix(ucd);
-		System.out.println("Utype " + cUtype);
-		System.out.println("Ucd " + cUcd);
+		//System.out.println("Utype " + cUtype);
+		//System.out.println("Ucd " + cUcd);
 
 		if (cUcd.equalsIgnoreCase("STC_CoordRefFrame")) {
 			// TODO should not be done like this
@@ -445,7 +445,7 @@ public class AhValueFinder {
 		if (cUtype.equalsIgnoreCase("CoordSys.SpaceFrame.Name")) {
 			return Database.getAstroframe().name;
 		}
-		System.out.println("No static match for ucd/utype : '" + cUcd + "/" + cUtype + "'");
+		//System.out.println("No static match for ucd/utype : '" + cUcd + "/" + cUtype + "'");
 		return "";
 	}
 
@@ -457,7 +457,7 @@ public class AhValueFinder {
 	 * @return
 	 */
 	protected ArrayList<AttributeHandler> buildAhMapforExpression(LinkedHashMap<String, AttributeHandler> baseMap) {
-		System.out.println("Expression for extractor: " + query);
+		//System.out.println("Expression for extractor: " + query);
 		AttributeHandlerExtractor ahExt = new AttributeHandlerExtractor(query, baseMap);
 		List<AttributeHandler> ahMap = new LinkedList<AttributeHandler>();
 
@@ -526,15 +526,15 @@ public class AhValueFinder {
 			int collectionNum = SaadaOID.getCollectionNum(saada.oidsaada);
 			switch (category) {
 			case Category.SPECTRUM:
-				System.out.println("Loading spectrum atributes handlers");
+				//System.out.println("Loading spectrum atributes handlers");
 				colAttrMap = Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_spectrum();
 				break;
 			case Category.IMAGE:
-				System.out.println("Loading image atributes handlers");
+				//System.out.println("Loading image atributes handlers");
 				colAttrMap = Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_image();
 				break;
 			case Category.ENTRY:
-				System.out.println("Loading entry attributes Handlers");
+				//System.out.println("Loading entry attributes Handlers");
 				colAttrMap = Database.getCachemeta().getCollection(collectionNum).getAttribute_handlers_entry();
 				break;
 			default:
@@ -636,7 +636,7 @@ public class AhValueFinder {
 	 * @throws Exception 
 	 */
 	public void setUtypeHandler(UTypeHandler uh) throws Exception {
-		System.out.println("New UtypeHandler set : " + uh.getNickname());
+		//System.out.println("New UtypeHandler set : " + uh.getNickname());
 		this.currentUh = uh;
 		// resetDefaultParams();
 		extractor = new Extractor();

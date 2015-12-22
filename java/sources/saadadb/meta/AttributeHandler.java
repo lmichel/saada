@@ -886,8 +886,11 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		 * Take care strange FITS number formats such as 123-311
 		 * which are taken as string
 		 */
-		
+
 		if( this.type.equals("String") ) {
+			if( this.value == null ) {
+				return SaadaConstant.DOUBLE;
+			}
 			double retour = Double.NaN;
 			try {
 				retour = Double.parseDouble(this.value);
@@ -900,12 +903,20 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				} else if( sv.length == 2) {
 					if( sv[0].length() == 0 ) {
 					} else {
-						retour = Double.parseDouble(sv[0] + "E-" +  sv[1]);
+						try {
+							retour = Double.parseDouble(sv[0] + "E-" +  sv[1]);
+						}  catch (Exception e1) {
+							retour =  SaadaConstant.DOUBLE;
+						}
 					}
 				} else if( sv.length == 3) {
 					if( sv[0].length() != 0 ) {
 					} else {
-						retour = Double.parseDouble("-" + sv[1] + "E-" +  sv[2]);
+						try {
+							retour = Double.parseDouble("-" + sv[1] + "E-" +  sv[2]);
+						}  catch (Exception e1) {
+							retour =  SaadaConstant.DOUBLE;
+						}
 					}
 				}
 			}
