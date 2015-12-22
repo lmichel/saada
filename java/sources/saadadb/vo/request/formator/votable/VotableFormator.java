@@ -454,11 +454,9 @@ public abstract class VotableFormator extends QueryResultFormator {
 			aHResult = valueFinder.compute();
 			val = aHResult.getValue();
 			// Tests if there is a need for CDATA encapsulation
-			boolean unitOk;
 			//Check if the units are matching
-			unitOk = checkIfUnitsMatch(uhd, aHResult);
+			checkIfUnitsMatch(uhd, aHResult);
 			//If unitOk = false, should proceed to a conversion here
-			System.out.println("=====================================================================Final VALUE: " + aHResult.getValue());
 			if (uhd.getType().equalsIgnoreCase("string") || uhd.getType().equalsIgnoreCase("char") && !val.isEmpty()) {
 				cdata = true;
 			}

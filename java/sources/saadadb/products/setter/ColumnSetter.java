@@ -410,7 +410,7 @@ public abstract class ColumnSetter implements Cloneable {
 	public ColumnSetter setConvertedValue(double value, String unitOrg, String unitDest, boolean addMessage) {
 		if( addMessage ) this.completeConversionMsg("from " + unitOrg + " to "  + unitDest);
 		this.setValue(value, unitDest);
-		if( !Double.isFinite(value) ) this.settingMode = ColumnSetMode.NOT_SET;
+		if( Double.isNaN(value) || Double.isInfinite(value)) this.settingMode = ColumnSetMode.NOT_SET;
 		return this;
 	}
 	/**

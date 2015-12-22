@@ -882,8 +882,37 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 
 	@Override
 	public double getDoubleValue() throws Exception {
+		/**
+		 * Take care strange FITS number formats such as 123-311
+		 * which are taken as string
+		 */
+		
+		if( this.type.equals("String") ) {
+			double retour = Double.NaN;
+			try {
+				retour = Double.parseDouble(this.value);
+			} catch (NumberFormatException e) {
+				String[] sv = this.value.trim().toString().split("-");
+				if("-Infinity".equals(this.value.trim()) ) {
+					retour = 0;
+				} else if( sv.length == 1) {
+					return Double.NaN;
+				} else if( sv.length == 2) {
+					if( sv[0].length() == 0 ) {
+					} else {
+						retour = Double.parseDouble(sv[0] + "E-" +  sv[1]);
+					}
+				} else if( sv.length == 3) {
+					if( sv[0].length() != 0 ) {
+					} else {
+						retour = Double.parseDouble("-" + sv[1] + "E-" +  sv[2]);
+					}
+				}
+			}
+			return retour;			
+		}
 		if( this.type.equals("double") || this.type.equals("float")|| this.type.equals("int")|| this.type.equals("short")){
-			return Double.parseDouble(this.value);
+			return  Double.parseDouble(this.value);
 		}
 		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Cannot convert " + this.nameorg + " as " + this.type + " in double");
 		return SaadaConstant.DOUBLE;

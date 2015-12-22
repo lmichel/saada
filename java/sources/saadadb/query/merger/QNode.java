@@ -115,7 +115,7 @@ public abstract class QNode {
 			this.where += where;
 		}
 		/*
-		 * In SaadaQL boolean operands are T & F. Thy muste be replaced with the values supported by DBMS
+		 * In SaadaQL boolean operands are T & F. Thy must be replaced with the values supported by DBMS
 		 */
 		try {
 			this.where = this.where.replaceAll(RegExp.TRUE_OPERAND, Database.getWrapper().getBooleanAsString(true))
