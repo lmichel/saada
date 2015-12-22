@@ -1,6 +1,7 @@
 package saadadb.products.reporting;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -166,7 +167,13 @@ public class MappingReport {
 		String reportName = directory +  File.separator + this.builder.dataFile.getName() + ".txt";
 		Messenger.printMsg(Messenger.TRACE, "Write report in " + reportName);
 
-		FileWriter fw = new FileWriter(reportName);
+		FileWriter fw;
+		try {
+			fw = new FileWriter(reportName);
+		} catch(FileNotFoundException e){
+			reportName = "/data/repository/Obscore/tmp/report/" +  File.separator + this.builder.dataFile.getName() + ".txt";
+			fw = new FileWriter(reportName);
+		}
 		fw.write("====================================================\n");
 		fw.write("     Saada " + Version.getVersion() + " " + Version.date + "\n");
 		fw.write("      File " + this.builder.dataFile.getName() + "\n");

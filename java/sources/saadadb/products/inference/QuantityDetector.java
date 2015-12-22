@@ -1,6 +1,7 @@
 package saadadb.products.inference;
 
 import hecds.wcs.Modeler;
+import hecds.wcs.transformations.spatial.SpatialProjection;
 
 import java.util.List;
 import java.util.Map;
@@ -170,6 +171,86 @@ public class QuantityDetector {
 		return this.spaceKWDetector.arePosColFound();
 	}
 
+	/**
+	 * @return the CTYPE1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSType1() throws Exception {
+		return this.spaceKWDetector.getWCSType1();
+	}
+
+	/**
+	 * @return the CTYPE2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSType2() throws Exception {
+		return this.spaceKWDetector.getWCSType2();
+	}
+	/**
+	 * @return the CRPIX1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrpix1() throws Exception {
+		return this.spaceKWDetector.getWCSCrpix1();
+	}
+	/**
+	 * @return the CRPIX2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrpix2() throws Exception {
+		return this.spaceKWDetector.getWCSCrpix2();
+	}
+	/**
+	 * @return the CRVAL1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrval1() throws Exception {
+		return this.spaceKWDetector.getWCSCrval1();
+	}
+
+	/**
+	 * @return the CRVAL2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrval2() throws Exception {
+		return this.spaceKWDetector.getWCSCrval2();
+	}
+
+	/**
+	 * @return the CD11 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD11() throws Exception {
+		return this.spaceKWDetector.getWCSCD11();
+	}
+	/**
+	 * @return the CD12 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD12() throws Exception {
+		return this.spaceKWDetector.getWCSCD12();
+	}
+	/**
+	 * @return the CD22 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD21() throws Exception {
+		return this.spaceKWDetector.getWCSCD21();
+	}
+	/**
+	 * @return the CD22 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD22() throws Exception {
+		return this.spaceKWDetector.getWCSCD22();
+	}
+	/**
+	 * @return the CROTA WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCROTA() throws Exception {
+		return this.spaceKWDetector.getWCSCROTA();
+	}
 	/*
 	 * Energy axis
 	 */

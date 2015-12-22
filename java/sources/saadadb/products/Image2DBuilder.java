@@ -4,27 +4,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaOID;
-import saadadb.collection.obscoremin.ImageSaada;
-import saadadb.collection.obscoremin.SaadaInstance;
-import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.dataloader.mapping.ColumnMapping;
 import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
-import saadadb.generationclass.SaadaClassReloader;
-import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.datafile.JsonDataFile;
-import saadadb.products.inference.Coord;
-import saadadb.products.inference.Image2DCoordinate;
+import saadadb.products.setter.ColumnExpressionSetter;
+import saadadb.products.setter.ColumnSetter;
 import saadadb.util.ImageUtils;
 import saadadb.util.Messenger;
-import saadadb.vocabulary.enums.PriorityMode;
 
 /**
  * This class redefines method specific in 2D images during their collection
@@ -39,11 +31,20 @@ import saadadb.vocabulary.enums.PriorityMode;
  * @version $Id$
  */
 public class Image2DBuilder extends ProductBuilder {
-	boolean load_vignette = true;
-	/** * @version $Id$
+	boolean load_vignette = true;	
+	
+	ColumnSetter wcs_crpix1Setter=new ColumnExpressionSetter("WCS_CRPIX1");
+	ColumnSetter wcs_crpix2Setter=new ColumnExpressionSetter("WCS_CRPIX2");
+	ColumnSetter wcs_ctype1Setter=new ColumnExpressionSetter("WCS_CTYPE1");
+	ColumnSetter wcs_ctype2Setter=new ColumnExpressionSetter("WCS_CTYPE2");
+	ColumnSetter wcs_val1Setter=new ColumnExpressionSetter("WCS_VAL1");
+	ColumnSetter wcs_val2Setter=new ColumnExpressionSetter("WCS_VAL2");
+	ColumnSetter wcs_crotaSetter=new ColumnExpressionSetter("WCS_CROTA");
+	ColumnSetter wcs_d1_1Setter=new ColumnExpressionSetter("WCS_D1_1");
+	ColumnSetter wcs_d1_2Setter=new ColumnExpressionSetter("WCS_D1_2");
+	ColumnSetter wcs_d2_1Setter=new ColumnExpressionSetter("WCS_D2_1");
+	ColumnSetter wcs_d2_2Setter=new ColumnExpressionSetter("WCS_D2_1");
 
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -81,6 +82,11 @@ public class Image2DBuilder extends ProductBuilder {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
 	}
+	/**
+	 * @param file
+	 * @param mapping
+	 * @throws SaadaException
+	 */
 	public Image2DBuilder(DataFile file, ProductMapping mapping) throws SaadaException{		
 		super(file, mapping, null);
 		if( mapping != null )
@@ -93,6 +99,17 @@ public class Image2DBuilder extends ProductBuilder {
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		}
 	}
+	
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#setProductIngestor()
+	 */
+	protected void setProductIngestor() throws Exception{
+		if( this.productIngestor == null ){
+			this.productIngestor = new ImageIngestor(this);
+		}		
+	}
+
 	
 	/* (non-Javadoc)
 	 * @see saadadb.products.ProductBuilder#getCategory()
@@ -166,4 +183,38 @@ public class Image2DBuilder extends ProductBuilder {
 		this.productIngestor.saadaInstance.setVignetteFile();
 	}
 
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#mapDataFile(saadadb.products.datafile.DataFile)
+	 */
+	public void mapDataFile(DataFile dataFile) throws Exception{
+		this.wcs_crpix1Setter.resetMessages();
+		this.wcs_crpix2Setter.resetMessages();
+		this.wcs_ctype1Setter.resetMessages();
+		this.wcs_ctype2Setter.resetMessages();
+		this.wcs_val1Setter.resetMessages();
+		this.wcs_val2Setter.resetMessages();
+		this.wcs_crotaSetter.resetMessages();
+		this.wcs_d1_1Setter.resetMessages();
+		this.wcs_d1_2Setter.resetMessages();
+		this.wcs_d2_1Setter.resetMessages();
+		this.wcs_d2_2Setter.resetMessages();
+		super.mapDataFile(dataFile);
+	}
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#mapCollectionPosAttributes()
+	 */
+	protected void mapCollectionPosAttributes() throws Exception {
+		super.mapCollectionPosAttributes();
+		this.wcs_crpix1Setter = this.quantityDetector.getWCSCrpix1();
+		this.wcs_crpix2Setter = this.quantityDetector.getWCSCrpix2();
+		this.wcs_ctype1Setter = this.quantityDetector.getWCSType1();
+		this.wcs_ctype2Setter = this.quantityDetector.getWCSType2();
+		this.wcs_val1Setter   = this.quantityDetector.getWCSCrval1();
+		this.wcs_val2Setter   = this.quantityDetector.getWCSCrval2();
+		this.wcs_crotaSetter  = this.quantityDetector.getWCSCROTA();
+		this.wcs_d1_1Setter   = this.quantityDetector.getWCSCD11();
+		this.wcs_d1_2Setter   = this.quantityDetector.getWCSCD12();
+		this.wcs_d2_1Setter   = this.quantityDetector.getWCSCD21();
+		this.wcs_d2_2Setter   = this.quantityDetector.getWCSCD22();
+	}
 }

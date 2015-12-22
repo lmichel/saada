@@ -146,7 +146,7 @@ public abstract class ProductBuilder {
 	public MetaClass metaClass;
 	public ProductIngestor productIngestor;	
 	/** sed by subclasses */
-	protected Image2DCoordinate wcs;
+	//protected Image2DCoordinate wcs;
 	public Modeler wcsModeler;
 
 	/**

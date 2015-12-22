@@ -1,6 +1,7 @@
 package saadadb.products.inference;
 
 import hecds.wcs.Modeler;
+import hecds.wcs.transformations.spatial.SpatialProjection;
 import hecds.wcs.types.AxeType;
 
 import java.util.LinkedHashMap;
@@ -94,6 +95,7 @@ public class SpaceKWDetector extends KWDetector{
 			this.err_maj.setUnit("deg");
 			this.status |= FRAME_FOUND;		
 			this.status |= POS_KW_FOUND;
+			this.status |= WCS_KW_FOUND;
 			/*
 			 * The region is stored as a string in the value field and as a List<Double> in the storedValue field
 			 * That is not the standard purpose of storedValue but that avoids useless conversion String <> List
@@ -190,22 +192,6 @@ public class SpaceKWDetector extends KWDetector{
 			IgnoreException.throwNewException(SaadaException.METADATA_ERROR, e);
 		}
 		this.isInit = true;
-	}
-
-	/**
-	 * Search for the position error either in WCS or in the keyword
-	 * @throws Exception
-	 */
-	private void searchError() throws SaadaException {
-		if( this.errorSearched ) {
-			return;
-		}
-		try{
-			this.errorSearched = true;
-			//this.lookForAstrometryInWCS();
-			this.lookForError();	
-		} catch (Exception e) {}
-
 	}
 
 	/**
@@ -675,5 +661,211 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		return region;		
 	}
+	
+	/**
+	 * @return the CTYPE1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSType1() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_CTYPE1", "String");
+			setter.setValue(((SpatialProjection)(this.projection)).getCtype1Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
 
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CTYPE1");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+
+	/**
+	 * @return the CTYPE2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSType2() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_CTYPE2", "String");
+			setter.setValue(((SpatialProjection)(this.projection)).getCtype1Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CTYPE2");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CRPIX1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrpix1() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_CRPIX1", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCrpix1Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CRPIX1");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CRPIX2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrpix2() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_CRPIX2", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCrpix2Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CRPIX2");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CRVAL1 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrval1() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_VAL1", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCrval1Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_VAL1");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+
+	/**
+	 * @return the CRVAL2 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCrval2() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_VAL2", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCrval2Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_VAL2");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+
+	/**
+	 * @return the CD11 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD11() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_D1_1", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCd11Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D1_1");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CD12 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD12() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_D1_2", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCd12Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D1_2");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CD22 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD21() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_D2_1", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCd21Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D2_1");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CD22 WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCD22() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_D2_2", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getCd22Val());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D2_2");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+	/**
+	 * @return the CROTA WCS value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getWCSCROTA() throws Exception {
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			ColumnExpressionSetter setter = getWCSSetter("WCS_CROTA", "double");
+			setter.setValue(((SpatialProjection)(this.projection)).getRotaVal());
+			setter.completeDetectionMsg("Read from WCS");
+			return setter;
+
+		} else {
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CROTA");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+	}
+
+	/**
+	 * Build a column setter used to extract WCD keywords from WCS header
+	 * @param colName
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
+	private ColumnExpressionSetter getWCSSetter(String colName, String type) throws Exception{
+		AttributeHandler ah = new AttributeHandler();
+		ah.setNameattr(colName);
+		ah.setNameorg(colName);
+		ah.setType(type);
+		return new ColumnExpressionSetter(colName, ah);
+
+	}
 }
