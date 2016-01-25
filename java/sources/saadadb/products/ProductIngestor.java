@@ -355,7 +355,8 @@ public class ProductIngestor {
 				this.saadaInstance.s_dec = Double.NaN;									
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+//			System.exit(1);
 			Messenger.printMsg(Messenger.TRACE, "Error while setting the position " + e.getMessage());
 			this.product.s_raSetter.completeConversionMsg("Conv failed " + e.getMessage());
 			this.product.s_decSetter.completeConversionMsg("Conv failed " + e.getMessage());

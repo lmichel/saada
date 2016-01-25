@@ -960,6 +960,21 @@ public final class ArgsParser implements Serializable{
 		}
 		return null;
 	}
+	/** return the unit of the psitional errors
+	 * @return
+	 */
+	public String getPoserrorUnit(boolean entry) {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( !entry &&  args[i] .startsWith("-poserrorunit")) {
+				return getArgsValue(args[i]);
+			}
+			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresolution="))) {
+				return getArgsValue(args[i]);
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * @return

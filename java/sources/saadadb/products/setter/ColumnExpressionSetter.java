@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import net.objecthunter.exp4j.function.Function;
+import saadadb.api.SaadaDB;
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
@@ -720,7 +721,11 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 
 	@Override
 	public double getNumValue() {
-		return Double.valueOf(this.result);
+		if( this.isNotSet() ){
+			return SaadaConstant.DOUBLE;
+		} else {
+			return Double.valueOf(this.result);
+		}
 	}
 
 	@Override

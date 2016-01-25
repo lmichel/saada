@@ -68,4 +68,21 @@ public class DBUtils {
 			return "";
 		}
 	}
+	
+	/**
+	 * In some cases, WCS contains very small number, supported by Java but not by the DBMS
+	 * @param value
+	 * @return a value DBMS compatible
+	 */
+	public static double getSmallDouble(double value){
+		if( value > 0 && value < 1e-300 ) {
+			return 1e-300;
+		}
+		else if( value < 0 && value > -1e-300 ) {
+			return -1e-300;
+		} else {
+			return value;
+		}
+
+	}
 }

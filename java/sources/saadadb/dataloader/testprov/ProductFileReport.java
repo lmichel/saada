@@ -1,20 +1,14 @@
 package saadadb.dataloader.testprov;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import saadadb.collection.Category;
+import saadadb.collection.ClassManager;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
-import saadadb.database.Repository;
+import saadadb.dataloader.Loader;
 import saadadb.dataloader.SchemaMapper;
 import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.meta.AttributeHandler;
-import saadadb.products.ExtensionSetter;
 import saadadb.products.Image2DBuilder;
 import saadadb.products.MiscBuilder;
 import saadadb.products.ProductBuilder;
@@ -22,13 +16,26 @@ import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.DataResourcePointer;
-import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.reporting.MappingReport;
 import saadadb.products.reporting.TableMappingReport;
-import saadadb.products.setter.ColumnSetter;
+import saadadb.sqltable.SQLTable;
 
 public class ProductFileReport {
 
+	private static void loadProduct(String[] args) throws Exception {	
+		ArgsParser ap = new ArgsParser(args);
+		String classe =  ap.getClassName();
+		if( Database.getCachemeta().classExists(classe)) {
+			Database.setAdminMode(null);
+			SQLTable.beginTransaction();
+			new ClassManager(classe).remove(ap);
+			SQLTable.commitTransaction();
+			Database.getCachemeta().reload(true);
+		}
+
+		new Loader(args).load();
+
+	}
 	/**
 	 * @param args
 	 */
@@ -62,6 +69,7 @@ public class ProductFileReport {
 			product.mapDataFile();
 			report.writeCompleteReport(df.getParent() + File.separator + "report" + File.separator, ap);
 
+			loadProduct(args);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

@@ -15,6 +15,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnWcsSetter;
 import saadadb.query.parser.PositionParser;
+import saadadb.util.DBUtils;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 import cds.astro.Astroframe;
@@ -774,7 +775,7 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getWCSCD11() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
 			ColumnExpressionSetter setter = getWCSSetter("WCS_D1_1", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCd11Val());
+			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd11Val()));
 			setter.completeDetectionMsg("Read from WCS");
 			return setter;
 
@@ -791,7 +792,7 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getWCSCD12() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
 			ColumnExpressionSetter setter = getWCSSetter("WCS_D1_2", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCd12Val());
+			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd12Val()));
 			setter.completeDetectionMsg("Read from WCS");
 			return setter;
 
@@ -808,7 +809,7 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getWCSCD21() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
 			ColumnExpressionSetter setter = getWCSSetter("WCS_D2_1", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCd21Val());
+			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd21Val()));
 			setter.completeDetectionMsg("Read from WCS");
 			return setter;
 
@@ -825,7 +826,7 @@ public class SpaceKWDetector extends KWDetector{
 	public ColumnExpressionSetter getWCSCD22() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
 			ColumnExpressionSetter setter = getWCSSetter("WCS_D2_2", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCd22Val());
+			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd22Val()));
 			setter.completeDetectionMsg("Read from WCS");
 			return setter;
 
