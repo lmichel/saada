@@ -284,8 +284,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 					Messenger.printMsg(Messenger.DEBUG, "Build the builder which will be used for the whole data burst");
 				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 				this.currentProductBuilder.setMetaclass(this.currentClass);
-			}	
-			this.currentProductBuilder.mapDataFile(file);
+				this.currentProductBuilder.mapDataFile(file);
+			}	 else {
+				this.currentProductBuilder.bindDataFile(file);
+				this.currentProductBuilder.updateAttributeHandlerValues();
+			}
+			//this.currentProductBuilder.mapDataFile(file);
 		
 			try {
 				Messenger.printMsg(Messenger.TRACE, "ingest product <" + this.currentProductBuilder.getName() +  "> in data class " + this.currentClass);

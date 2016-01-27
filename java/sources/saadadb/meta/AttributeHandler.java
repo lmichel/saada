@@ -882,12 +882,14 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 
 	@Override
 	public double getDoubleValue() throws Exception {
+		if( this.value == null || "NULL".equals(this.value) || "null".equalsIgnoreCase(this.value)){
+			return SaadaConstant.DOUBLE;
+		}
 		/**
 		 * Take care strange FITS number formats such as 123-311
 		 * which are taken as string
 		 */
-
-		if( this.type.equals("String") ) {
+		else if( this.type.equals("String") ) {
 			if( this.value == null ) {
 				return SaadaConstant.DOUBLE;
 			}

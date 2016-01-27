@@ -148,6 +148,11 @@ public abstract class ProductBuilder {
 	/** sed by subclasses */
 	//protected Image2DCoordinate wcs;
 	public Modeler wcsModeler;
+	/*
+	 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
+	 */
+	public CardMap cardMap ;
+
 
 	/**
 	 * Constructor. This is a product constructor for the new loader.
@@ -188,7 +193,7 @@ public abstract class ProductBuilder {
 			/*
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 			 */
-			CardMap cm = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
+			cardMap = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
 			/*
 			 * Here cp.put(AH) where HA is read from the arg parser
 			 */
@@ -196,9 +201,9 @@ public abstract class ProductBuilder {
 			for( AttributeHandler ah: this.mapping.WCSInput){
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Add user WCS kyword " + ah);
-				cm.put(ah);
+				cardMap.put(ah);
 			}
-			this.wcsModeler = new Modeler(cm);	
+			this.wcsModeler = new Modeler(cardMap);	
 		//	this.completeEnergyWCS(cm);	
 			this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
 		}
@@ -863,11 +868,11 @@ public abstract class ProductBuilder {
 			String expression = "";
 			ColumnExpressionSetter cs;
 			if( !(cs = quantityDetector.getFacilityName()).isNotSet() ) {
-				expression += cs.getValue();
+				expression += cs.getExpression();
 			}
 			if( !(cs = quantityDetector.getTargetName()).isNotSet() ){
-				if( expression.length() >= 0 ) expression += " [";
-				expression += cs.getValue() + "]";
+				if( expression.length() >= 0 ) expression += "' ['";
+				expression += cs.getExpression() + "']'";
 			}
 			if( expression.length() > 0 ) {
 				if (Messenger.debug_mode)
