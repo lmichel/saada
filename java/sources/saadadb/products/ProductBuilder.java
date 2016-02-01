@@ -871,8 +871,8 @@ public abstract class ProductBuilder {
 				expression += cs.getExpression();
 			}
 			if( !(cs = quantityDetector.getTargetName()).isNotSet() ){
-				if( expression.length() >= 0 ) expression += "' ['";
-				expression += cs.getExpression() + "']'";
+				if( expression.length() >= 0 ) expression += ",' [',";
+				expression += cs.getExpression() + ",']'";
 			}
 			if( expression.length() > 0 ) {
 				if (Messenger.debug_mode)
