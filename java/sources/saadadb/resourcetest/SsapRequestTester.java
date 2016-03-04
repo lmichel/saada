@@ -35,7 +35,7 @@ public class SsapRequestTester {
 			Messenger.printMsg(Messenger.TRACE, "  " + ps[0] + " = " +  ps[1]);
 		}
 	//	SSAPRequest request = new SSAPRequest("NoSession", "/home/michel/Desktop");
-		SSAPRequest request = new SSAPRequest("NoSession", "/home/hahn/Desktop");
+		SSAPRequest request = new SSAPRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
 		request.setResponseFilePath("SSAP");
 		request.processRequest(pmap);

@@ -353,6 +353,7 @@ public abstract class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void bindDataFile(DataFile dataFile) throws Exception{
+		Messenger.printMsg(Messenger.TRACE, "Builder bound with " + dataFile.getName());
 		Messenger.locateCode();
 		if( dataFile != null)	this.dataFile = dataFile;
 		if( this.dataFile instanceof FitsDataFile ) {

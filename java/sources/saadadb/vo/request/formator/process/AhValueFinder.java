@@ -175,6 +175,9 @@ public class AhValueFinder {
 							ces = new ColumnExpressionSetter(currentUh.getNickname(), simpleMappingAh, arithmetic);
 							ces.calculateExpression();
 							value = ces.getExpressionResult();
+							if( value.startsWith("download?")){
+								value = Database.getUrl_root() + "/" + value;
+							}
 						} catch (Exception e) {
 							value = "";
 						}

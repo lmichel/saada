@@ -93,7 +93,7 @@ public class ClassMerger {
 					old_att.mergeAttribute(new_att);
 				} else {
 					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Add attribute <" + new_att.getNameattr() + ">");
+						Messenger.printMsg(Messenger.DEBUG, "Attribute <" + new_att + "> added to class by the merger");
 					tableAttributeHandler_org.put(new_att.getNameattr(), new_att);
 				}
 			}
@@ -116,12 +116,12 @@ public class ClassMerger {
 			AttributeHandler new_att = it.next();
 			AttributeHandler old_att = null;
 			if( (old_att = this.productBuilder.productAttributeHandler.get(new_att.getNameorg())) != null ||
-					(old_att = this.productBuilder.productAttributeHandler.get(new_att.getNameattr())) != null	) {
+				(old_att = this.productBuilder.productAttributeHandler.get(new_att.getNameattr())) != null	) {
 				old_att.mergeAttribute(new_att);
 			} else {
 				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Add attribute <" + new_att.getNameorg() + ">");
-				this.productBuilder.productAttributeHandler.put(new_att.getNameorg(), new_att);
+					Messenger.printMsg(Messenger.DEBUG, "Attribute <" + new_att + "> added to class by the merger");
+				this.productBuilder.productAttributeHandler.put(new_att.getNameattr(), new_att);
 			}
 		}
 		this.productBuilder.setFmtsignature();
