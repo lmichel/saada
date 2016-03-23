@@ -49,7 +49,6 @@ public final class ArgsParser implements Serializable{
 	public static final Set<String> allowedArgs;
 	static {
 		allowedArgs = new TreeSet<String>();
-		allowedArgs.add("-debug") ;
 		allowedArgs.add("-number") ;
 		allowedArgs.add("-classifier") ;
 		allowedArgs.add("-coldef") ;
@@ -138,6 +137,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-force") ;
 		allowedArgs.add("-debug") ;
 		allowedArgs.add("-silent") ;
+		allowedArgs.add("-whispering") ;
 		allowedArgs.add("-comment") ;
 		allowedArgs.add("-command") ;
 		allowedArgs.add("-password") ;
@@ -189,6 +189,7 @@ public final class ArgsParser implements Serializable{
 			this.setSilentMode();
 			this.setDebugMode();
 			this.setContinueMode();
+			Messenger.initWhisperingMode(this);
 			if( msg.length() > 0 ) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The following parametres are not understood: " + msg);	
 			}
@@ -1484,6 +1485,8 @@ public final class ArgsParser implements Serializable{
 		}
 		Messenger.silent_mode = false;
 	}
+	
+	
 	/**
 	 * Returns the -force flag
 	 */
@@ -1501,6 +1504,19 @@ public final class ArgsParser implements Serializable{
 	public boolean getSilentMode() {
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-silent")) {
+				return true;
+			}
+		}
+		return  false;		
+	}
+	
+	/**
+	 * Returns the -whispering flag This is a special log mode where the number 
+	 * of messages decreases along of the processing 
+	 */
+	public boolean getWhisperingMode() {
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-whispering")) {
 				return true;
 			}
 		}

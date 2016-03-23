@@ -34,7 +34,6 @@ import saadadb.meta.MetaClass;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.FitsDataFile;
 import saadadb.products.datafile.VOTableDataFile;
-import saadadb.products.inference.Image2DCoordinate;
 import saadadb.products.inference.QuantityDetector;
 import saadadb.products.setter.ColumnExpressionSetter;
 import saadadb.products.setter.ColumnRowSetter;
@@ -161,7 +160,7 @@ public abstract class ProductBuilder {
 	 * @throws FatalException 
 	 */
 	public ProductBuilder(DataFile dataFile, ProductMapping conf, MetaClass metaClass) throws SaadaException{		
-		Messenger.printMsg(Messenger.TRACE, "New Builder for " + dataFile.getName());
+		Messenger.printMsg(Messenger.INFO, "New Builder for " + dataFile.getName());
 		this.mapping = conf;
 		/*
 		 * priority ref copied for convenience
@@ -204,42 +203,9 @@ public abstract class ProductBuilder {
 				cardMap.put(ah);
 			}
 			this.wcsModeler = new Modeler(cardMap);	
-		//	this.completeEnergyWCS(cm);	
 			this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
 		}
 	}
-
-//	/**
-//	 * This is an experimental feature aiming at extracting missing WCS keywords from the user mapping parameters
-//	 * 
-//	 * @param cardMap cardMap sent to the WCS lib and possibly extended with synthetic keywords
-//	 * @throws Exception
-//	 */
-//	private void completeEnergyWCS(CardMap cardMap ) throws Exception {
-//		Projection projection = this.wcsModeler.getProjection(AxeType.SPECTRAL);
-//		if( !projection.isUsable() ) {
-//			ColumnMapping columnMapping;
-//			for( int axeNum=1 ; axeNum<=4 ; axeNum++){
-//				CardDescriptor fb = cardMap.get("CTYPE" + axeNum);
-//				if( fb != null && fb.getValue().matches(CardFilters.SPECTRAL_CTYPE)){
-//					String unitWK = "CUNIT" +	axeNum;
-//					if( cardMap.get(unitWK) == null 
-//							&& (columnMapping = this.mapping.getEnergyAxisMapping( ).getColumnMapping("em_unit")) != null 
-//							&& columnMapping.byValue()) {
-//						AttributeHandler ah = new AttributeHandler();
-//						ah.setNameattr("_" + unitWK.toLowerCase());
-//						ah.setNameorg(unitWK);
-//						ah.setType("String");
-//						ah.setValue(columnMapping.getValue());
-//						cardMap.put(ah);
-//						Messenger.printMsg(Messenger.TRACE, "Add user defined spectral unit (" + columnMapping.getValue() + ") to the WCS projection (axe #" + axeNum + ")");
-//						System.out.println(projection);
-//						this.wcsModeler = new Modeler(cardMap);	
-//					}
-//				}
-//			}
-//		}
-//	}
 
 	/**
 	 * Returns the list which maps attribute names formated in the standard of
@@ -353,7 +319,7 @@ public abstract class ProductBuilder {
 	 * @throws SaadaException
 	 */
 	public void bindDataFile(DataFile dataFile) throws Exception{
-		Messenger.printMsg(Messenger.TRACE, "Builder bound with " + dataFile.getName());
+		Messenger.printMsg(Messenger.INFO, "Builder bound with " + dataFile.getName());
 		Messenger.locateCode();
 		if( dataFile != null)	this.dataFile = dataFile;
 		if( this.dataFile instanceof FitsDataFile ) {
@@ -401,7 +367,7 @@ public abstract class ProductBuilder {
 		this.o_calib_statusSetter.resetMessages();
 		this.pol_statesSetter=new ColumnExpressionSetter("pol_states");
 		//	this.bindDataFile(dataFile);
-		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
+		Messenger.printMsg(Messenger.INFO, this.getClass().getName() + " maps the data file " + this.getName());
 		this.mapCollectionAttributes();
 	}
 
@@ -410,7 +376,7 @@ public abstract class ProductBuilder {
 	 */
 	public void mapDataFile() throws Exception{
 		Messenger.locateCode();
-		Messenger.printMsg(Messenger.TRACE, this.getClass().getName() + " map the data file " + this.getName());
+		Messenger.printMsg(Messenger.INFO, this.getClass().getName() + " maps the data file " + this.getName());
 		this.mapCollectionAttributes();
 	}
 
@@ -462,6 +428,9 @@ public abstract class ProductBuilder {
 		this.calib_levelSetter.calculateExpression();
 		this.target_nameSetter.calculateExpression();
 		this.facility_nameSetter.calculateExpression();
+		if( this.productAttributeHandler.get("_instrume") != null ) {
+			int x=9;
+		}
 		this.instrument_nameSetter.calculateExpression();
 		this.astroframeSetter.calculateExpression();
 		if( this instanceof EntryBuilder ){
@@ -867,24 +836,35 @@ public abstract class ProductBuilder {
 
 		if( this.obs_idSetter.isNotSet() ) {
 			String expression = "";
-			ColumnExpressionSetter cs;
-			if( !(cs = quantityDetector.getFacilityName()).isNotSet() ) {
-				expression += cs.getExpression();
-			}
-			if( !(cs = quantityDetector.getTargetName()).isNotSet() ){
-				if( expression.length() >= 0 ) expression += ",' [',";
-				expression += cs.getExpression() + ",']'";
-			}
-			if( expression.length() > 0 ) {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Build the obs_id with both facility_name and target_name");
+			ColumnExpressionSetter csf = quantityDetector.getFacilityName(), cst = quantityDetector.getTargetName();
+			if( csf.isSet() && cst.isSet()){
+				csf.calculateExpression();
+				String csfv = csf.getValue();
+				cst.calculateExpression();
+				String cstv = cst.getValue();
+				if(cstv.length() > 0  && csfv.length() > 0) {
+					expression = cstv + " [" + csfv + "]";
+				} else if(cstv.length() > 0  && csfv.length() == 0) {
+					expression = cstv;
+				} else if(cstv.length() == 0  && csfv.length() > 0) {
+					expression = "[" + csfv + "]";
+				} else {
+					expression = this.dataFile.getName();
+				}
+				expression = (csf.getValue().length() > 0)? (csf.getValue() + " [" + cst.getValue() + "]"): cst.getValue();
+				this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);
+			} else if( csf.isSet() && cst.isNotSet()){
+				csf.calculateExpression();
+				expression = csf.getValue();
+				this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);				
+			} else if( csf.isNotSet() && cst.isSet()){
+				cst.calculateExpression();
+				expression = cst.getValue();
+				this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);				
 			} else {
-				if (Messenger.debug_mode)
-					Messenger.printMsg(Messenger.DEBUG, "Build the obs_id with the filename");
-				expression = this.dataFile.getName();
+				this.obs_idSetter = new ColumnExpressionSetter("obs_id",  this.dataFile.getName());				
 			}
 			String message = this.obs_idSetter .getUserMappingMsg();
-			this.obs_idSetter = new ColumnExpressionSetter("obs_id", expression);
 			this.obs_idSetter.completeDetectionMsg(message);
 		}
 		this.traceReportOnAttRef(this.obs_idSetter);

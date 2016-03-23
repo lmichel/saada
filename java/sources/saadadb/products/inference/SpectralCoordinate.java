@@ -175,7 +175,7 @@ public class SpectralCoordinate{
 	 */
 	public boolean convert(){
 		if( this.getMappedUnit() == null || this.getMappedUnit().equals(SaadaConstant.STRING) ){
-			Messenger.printMsg(Messenger.TRACE, "No spectral unit found: cannot achieve the conversion");
+				Messenger.printMsg(Messenger.TRACE, "No spectral unit found: cannot achieve the conversion");
 			return false;
 		} else{
 			return this.convert(this.getMappedUnit(), this.orgMin, this.orgMax);

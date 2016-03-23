@@ -213,7 +213,18 @@ public class AdminTool extends BaseFrame {
 //				activePanel(AdminComponent.PROCESS_PANEL);
 //				activePanel.setDataTreePath(new DataTreePath("collection" + x, "CATEGORY", "classe" + x));
 //				activePanel.setCurrentTask("Au Boulot");
-				activePanel(AdminComponent.NEW_MAPPER);
+				//activePanel(AdminComponent.NEW_MAPPER);
+				try {
+					Database.getCachemeta().reloadGraphical(AdminTool.this, true);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {   
+								try {
+									(AdminTool.this).metaDataTree.synchronizeAllCategoryNodes();
+								} catch (SaadaException e) {}
+						}
+					});
+
+				} catch (FatalException e) {}
 			}
 		});
 		c.gridx = 0;

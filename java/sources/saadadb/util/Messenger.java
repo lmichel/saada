@@ -55,6 +55,14 @@ public class Messenger implements Serializable{
 
 	public static final int CONTINUE = 0;
 	public static final int ABORT = 2;
+	/**
+	 * Messages are allowed to be printed out when true
+	 */
+	private static boolean TALKATIVE = true;
+	/**
+	 * Messages are always allowed to be printed out when true
+	 */
+	private static boolean WHISPERING_MODE=false;
 
 	public static boolean debug_mode=false;
 	public static boolean silent_mode=false;
@@ -390,16 +398,42 @@ public class Messenger implements Serializable{
 		 * Print out the message on various media
 		 */
 		if( (Messenger.silent_mode && level == ERROR) || 
-				(Messenger.silent_mode == false && (Messenger.debug_mode == true || 
-						(Messenger.debug_mode == false && level != -1))) ){
+			(Messenger.silent_mode == false && (Messenger.debug_mode == true || 
+			(Messenger.debug_mode  == false && level != -1))) ){
 			if( level != -1 ) {
 				Messenger.printMsgInGui(msg);
 			}
-			Messenger.output.println(string + msg);
-			Messenger.output.flush();
+			if( level == INFO || (!WHISPERING_MODE || TALKATIVE) ) {
+				Messenger.output.println(string + msg);
+				Messenger.output.flush();
+			}
 		}
 	}
 
+	/**
+	 * Set the WHISPERING_MODE to on whether args contains the -whispering parameter
+	 * @param args command parameter
+	 */
+	public static void initWhisperingMode(ArgsParser args) {
+		if( args.getWhisperingMode() ){
+			WHISPERING_MODE = true;
+		}
+	}
+	
+	/**
+	 * Allow messages to be displayed 
+	 */
+	public static void whisperingOn(){
+		Messenger.printMsg(INFO, "Whispering mode switched on");
+		TALKATIVE = false;
+	}
+	/**
+	 * Deny  message printing 
+	 */
+	public static void whisperingOff(){
+		Messenger.printMsg(INFO, "Whispering mode switched off");
+		TALKATIVE = true;
+	}
 	/**
 	 * @param msg
 	 */

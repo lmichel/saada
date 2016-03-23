@@ -56,6 +56,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 	 * @throws Exception
 	 */
 	public void makeClassFusion() throws Exception {	
+		Messenger.whisperingOff();
 		Messenger.printMsg(Messenger.TRACE, "Update class <" + this.mapping.getClassName()+ ">");
 		/*
 		 * Build a set of attributes handlers matching all product to ingest
@@ -82,6 +83,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 					i--;
 					this.currentProductBuilder = null;
 				}
+				Messenger.whisperingOn();
 			} else {
 				/*
 				 * AbortException rose of file type not recognized
@@ -241,21 +243,25 @@ public class SchemaFusionMapper extends SchemaMapper {
 		/*
 		 * Update or build the class modeling the set of products to load
 		 */
+		Messenger.printMsg(Messenger.INFO, "Analysing the product set to build a class covering all items");
 		SQLTable.beginTransaction();
 		this.makeClassFusion();
 		SQLTable.commitTransaction();
 
 		/*
 		 * Ingest all files
-		 */
-		
+		 */		
+		Messenger.printMsg(Messenger.INFO, "Loading data");
 		this.storeAllDataFilesByBurst() ;
+		Messenger.whisperingOff();
+
 	}
 	
 	/**
 	 * @throws Exception
 	 */
 	protected void storeAllDataFilesByBurst() throws Exception {
+		Messenger.whisperingOff();
 	
 		Messenger.printMsg(Messenger.TRACE, "Start to ingest data in blob mode");
 		this.currentProductBuilder = null;
@@ -285,10 +291,12 @@ public class SchemaFusionMapper extends SchemaMapper {
 				this.currentProductBuilder = this.mapping.getNewProductBuilderInstance(file, this.currentClass);
 				this.currentProductBuilder.setMetaclass(this.currentClass);
 				this.currentProductBuilder.mapDataFile(file);
+				Messenger.whisperingOn();
 			}	 else {
-				this.currentProductBuilder.bindDataFile(file);
+				//this.currentProductBuilder.bindDataFile(file);
+				this.currentProductBuilder.mapDataFile(file);
 				this.currentProductBuilder.updateAttributeHandlerValues();
-			}
+			} 
 			//this.currentProductBuilder.mapDataFile(file);
 		
 			try {
@@ -302,7 +310,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 					continue;
 				}
 			}
-			Messenger.printMsg(Messenger.TRACE, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
+			Messenger.printMsg(Messenger.INFO, "Product file <" + currentProductBuilder + "> ingested, <OID = " + currentProductBuilder.getActualOidsaada() + ">");
 			this.processUserRequest();
 			Messenger.incrementeProgress();
 		}	
@@ -312,6 +320,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		/*
 		 * Store the dump table
 		 */
+		Messenger.printMsg(Messenger.INFO, "Loading data into the DB");
 		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + ecoll_table + " -1 " + coldumpfile);
 		SQLTable.addQueryToTransaction("LOADTSVTABLE " + this.currentClass.getName() + " -1 " + busdumpfile);

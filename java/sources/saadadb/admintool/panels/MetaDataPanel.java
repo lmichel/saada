@@ -295,7 +295,28 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 			}
 		} 
 	}
+	
+	/**
+	 * Full tree refresh
+	 * @param collname
+	 * @param category
+	 * @throws SaadaException
+	 */
+	public void synchronizeAllCategoryNodes() throws SaadaException {
+		CacheMeta cm = Database.getCachemeta();
+		String[] colls = cm.getCollection_names();
+		/*
+		 * Loop on collections
+		 */
+		for (int k = 0; k < colls.length; k++) {
+			for( String cat: Category.NAMES) {
+				this.synchronizeCategoryNodes(colls[k], cat);
+			}
+		}
 
+	}
+
+	
 	/**
 	 * @param collname
 	 * @param category
