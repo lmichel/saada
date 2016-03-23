@@ -247,6 +247,7 @@ public class SchemaFusionMapper extends SchemaMapper {
 		SQLTable.beginTransaction();
 		this.makeClassFusion();
 		SQLTable.commitTransaction();
+		Messenger.whisperingOff();
 
 		/*
 		 * Ingest all files
