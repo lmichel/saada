@@ -4,7 +4,7 @@
 <DESCRIPTION>Saada VO service mapping</DESCRIPTION>
 <INFO name="ObsCore11" value="OK"/>
 <TABLE name="Results">
- <PARAM name="dm" value="ObsCore" datatype="char" arraysize="*" />
+ <PARAM name="dm" value="ObsCore11" datatype="char" arraysize="*" />
  <FIELD name="group" datatype="char" arraysize="*" />
  <FIELD name="name" datatype="char" arraysize="*" />
  <FIELD name="ucd" datatype="char" arraysize="*" />
@@ -259,7 +259,8 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Number of elements along the first spatial axes</TD>
-   </TR>
+     <TD>1</TD>
+  </TR>
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_xel2</TD>
@@ -271,6 +272,7 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Number of elements along the second spatial axes</TD>
+    <TD>1</TD>
    </TR>
    <!--  --> 
    <TR>
@@ -377,6 +379,7 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Number of elements along the time axes</TD>
+    <TD>1</TD>
    </TR>
    <!--  --> 
    <TR>
@@ -483,6 +486,7 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Number of elements along the spectral axes</TD>
+    <TD>1</TD>
    </TR>
    <!--  --> 
 
@@ -592,6 +596,7 @@
     <TD>false</TD>
     <TD>null</TD>
     <TD>Number of elements along the polarization axes</TD>
+    <TD>1</TD>
    </TR>
    <!--  --> 
 
