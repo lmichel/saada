@@ -5,7 +5,6 @@ package saadadb.query.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.query.constbuilders.OrderByConstraint;
@@ -41,6 +40,19 @@ public final class OrderBy{
 	public OrderBy(String strQuery, SelectFromIn sfi) throws QueryException {
 		this.parse(strQuery);
 		this.sfi = sfi;
+	}
+	
+	/**
+	 * Default order by (ordr by oidsaada desc)
+	 * @param sfi
+	 * @throws QueryException
+	 */
+	public OrderBy( SelectFromIn sfi) throws QueryException {
+		this.strMatch = "Order By oidsaada desc";
+		this.theStatement = "oidsaada";
+		this.attr = "oidsaada";
+		this.sfi = sfi;
+		this.isDesc = true;
 	}
 	
 	public static final String   getSyntax (){return syntax       ;}

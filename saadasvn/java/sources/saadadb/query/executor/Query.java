@@ -58,7 +58,7 @@ public class Query extends Query_Report{
 	private WhereRelation       wrClause;	
 	private Limit               limitClause ;
 	private OrderBy             obClause;
-	private AttributeFilter      afClause;
+	private AttributeFilter     afClause;
 
 	private String query_string;
 	private long index_owner_key;
@@ -103,6 +103,12 @@ public class Query extends Query_Report{
 	 */
 	public WherePosition getWpClause() {
 		return wpClause;
+	}
+	/**
+	 * @return
+	 */
+	public WhereRelation getWrClause() {
+		return wrClause;
 	}
 
 	/**
@@ -358,6 +364,14 @@ public class Query extends Query_Report{
 			Messenger.printMsg(Messenger.ERROR, "In query " + this.query_string);
 			QueryException.throwNewException(SaadaException.SYNTAX_ERROR, "No all the query has been parsed!! There is still: \"" + strQtemp.trim() + "\".\nCheck it to find the error!");
 		}
+		/*
+		 * For the default order by when there is a limt, otherwise, 
+		 * the result depends on the limit value or it can change from one query execution to another
+		 * to be checked
+		if( this.limitClause != null && this.obClause == null ){
+			this.obClause = new OrderBy(this.sfiClause);			
+		}
+		*/
 	}
 
 	/**

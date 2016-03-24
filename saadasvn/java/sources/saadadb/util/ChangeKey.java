@@ -107,7 +107,6 @@ public class ChangeKey {
 	 if( !key.toLowerCase().equals(modified_key )) {
 		 Messenger.printMsg(Messenger.WARNING, "Attribute " + key + " already exist: renamed as " 
 				 + modified_key);
-		 
 	 }
 	 return modified_key;
  }

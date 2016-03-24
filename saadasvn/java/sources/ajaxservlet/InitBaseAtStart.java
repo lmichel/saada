@@ -13,6 +13,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import ajaxservlet.accounting.UserAccount;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.database.spooler.Spooler;
@@ -82,6 +83,10 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 	public void sessionCreated(HttpSessionEvent event) {
 	}
 	public void sessionDestroyed(HttpSessionEvent event) {
+		UserAccount account = (UserAccount)( event.getSession().getAttribute("account"));
+		try {
+			account.destroySession();
+		} catch (Exception e) {Messenger.printMsg(Messenger.ERROR, e.toString());}
 		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");    
 	}
 

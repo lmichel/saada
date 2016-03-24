@@ -2,7 +2,7 @@
 <VOTABLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xmlns:http://www.ivoa..net/xml/VOTable-1.1.xsd" version="1.1">
 <RESOURCE type="VO Protocol Result Description">
 <DESCRIPTION>Saada VO service mapping</DESCRIPTION>
-<INFO name="ObsCore" value="OK"/>
+<INFO name="ObsCore11" value="OK"/>
 <TABLE name="Results">
  <PARAM name="dm" value="ObsCore" datatype="char" arraysize="*" />
  <FIELD name="group" datatype="char" arraysize="*" />
@@ -247,6 +247,32 @@
     <TD>Estimated size of the covered region as the diameter of a containing circle</TD>
     <TD>1</TD>
    </TR>
+   <!--  1.1 add-on  -->
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_xel1</TD>
+    <TD>meta.number</TD>
+    <TD>Char.SpatialAxis.numBins1</TD>
+    <TD>long</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Number of elements along the first spatial axes</TD>
+   </TR>
+   <TR>
+    <TD>SpatialAxis</TD>
+    <TD>s_xel2</TD>
+    <TD>meta.number</TD>
+    <TD>Char.SpatialAxis.numBins2</TD>
+    <TD>long</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Number of elements along the second spatial axes</TD>
+   </TR>
+   <!--  --> 
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_region</TD>
@@ -260,7 +286,7 @@
     <TD>Region covered in STC or ADQL</TD>
     <TD>1</TD>
    </TR>
-  <TR>
+   <TR>
     <TD>SpatialAxis</TD>
     <TD>s_resolution</TD>
     <TD>pos.angResolution</TD>
@@ -339,6 +365,20 @@
     <TD>Temporal resolution FWHM</TD>
     <TD>1</TD>
    </TR>
+   <!--  1.1 add-on  -->
+   <TR>
+    <TD>TimeAxis</TD>
+    <TD>t_xel</TD>
+    <TD>meta.number</TD>
+    <TD>Char.TimeAxis.numBins</TD>
+    <TD>long</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Number of elements along the time axes</TD>
+   </TR>
+   <!--  --> 
    <TR>
     <TD>TimeAxis</TD>
     <TD>t_calib_status</TD>
@@ -431,6 +471,21 @@
     <TD>Resolution power min value on spectral axis</TD>
     <TD>1</TD>
    </TR>
+   <!--  1.1 add-on  -->
+   <TR>
+    <TD>SpectralAxis</TD>
+    <TD>em_xel</TD>
+    <TD>meta.number</TD>
+    <TD>Char.Spectral.numBins</TD>
+    <TD>long</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Number of elements along the spectral axes</TD>
+   </TR>
+   <!--  --> 
+
    <TR>
     <TD>SpectralAxis</TD>
     <TD>em_resolPower_max</TD>
@@ -525,6 +580,21 @@
     <TD>List of polarization states measured in this data set</TD>
     <TD>1</TD>
    </TR>
+   <!--  1.1 add-on  -->
+   <TR>
+    <TD>PolarizationAxis</TD>
+    <TD>pol_xel</TD>
+    <TD>meta.number</TD>
+    <TD>Char.PolarizationAxis.numBins</TD>
+    <TD>long</TD>
+    <TD>1</TD>
+    <TD></TD>
+    <TD>false</TD>
+    <TD>null</TD>
+    <TD>Number of elements along the polarization axes</TD>
+   </TR>
+   <!--  --> 
+
 <!-- Provenance -->
    <TR>
     <TD>Provenance</TD>

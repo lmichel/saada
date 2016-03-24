@@ -123,7 +123,7 @@ public class ConeSearchQuery extends VOQuery {
 			QueryException.throwNewException("ERROR","No position parameters given");			
 		}
 		if( pos1 != null ) pos += pos1;
-		if( pos2 != null ) pos += pos2;
+		if( pos2 != null ) pos += " " + pos2;
 		try {
 			PositionParser pp = new PositionParser(pos);
 			posRa  = pp.getRa(); 
@@ -131,6 +131,7 @@ public class ConeSearchQuery extends VOQuery {
 			protocolParams.put("ra", Double.toString(posRa));
 			protocolParams.put("dec", Double.toString(posDec));
 		} catch (Exception e) {
+			e.printStackTrace();
 			QueryException.throwNewException("ERROR",   "Unrecognized format for position parameter :" + pos);
 		}
 		/*
