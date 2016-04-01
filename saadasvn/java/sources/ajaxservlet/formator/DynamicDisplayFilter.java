@@ -173,7 +173,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			result.add(lbl);
 		}
 		for (String val : columns_constcol) {
-			if( !isDirective(val) ) {
+			if( !isDirective(val) || val.equals("oidsaada")) {
 				continue;
 			}
 			result.add(val);
