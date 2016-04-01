@@ -227,8 +227,8 @@ jQuery
 		};
 		this.fireShowVignette = function(oid, title) {
 //			Modalinfo.dataPanel('Preview of ' + title,
-//					"<img class=vignette src='getvignette?oid=" + oid
-//					+ "'>");
+//			"<img class=vignette src='getvignette?oid=" + oid
+//			+ "'>");
 			Modalinfo.dataPanel('Vignette of ' + title
 					, "<img class=vignette src='getvignette?oid=" + oid + "'>"
 					, 'getvignette?oid=' + oid);
@@ -323,12 +323,77 @@ jQuery
 				table += "<div class='detaildata'></div>";
 			}
 
-//			if ($('#detaildiv').length == 0) {
-//			$(document.documentElement)
-//			.append(
-//			"<div id=detaildiv style='width: 99%; display: none;'></div>");
-//			}
-			//Modalpanel.open(table);
+			
+			 var content = {
+						header: {
+						    histo: {
+						      prev: "resultPaneView.fireShowPreviousRecord()",
+						      next: "resultPaneView.fireShowNextRecord()"
+						    },
+						    title: {
+						      label: jsdata.title 
+						    },
+						    icon: {
+						      classIcon: "printer",
+						      handler: "print('simplemodal-container')"
+						    }
+						  },
+						  chapters: []
+			 }
+			 
+			content.chapters.push({
+					id: "ClassLevel",
+					label: "Class Level Data - (Read in input files)",
+					data:  {
+						"aoColumns" : jsdata.classlevel.aoColumns,
+						"aaData" : jsdata.classlevel.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+
+			content.chapters.push({
+					id: "CollLevel",
+					label: "Collection Level Data - (Set by Saada)",
+					data:  {
+						"aoColumns" : jsdata.collectionlevel.aoColumns,
+						"aaData" : jsdata.collectionlevel.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+			
+			for (var i = 0; i < jsdata.relations.length; i++) {
+				var relation= jsdata.relations[i];
+				console.log(JSON.stringify(relation))
+				content.chapters.push({
+					id: "Relation" + relation,
+					label: "Linked Data (relation "+ relation + ")",
+					//url:  "getobject?relation=" + relation,
+					url:  "getobject",
+					params: {
+						oid: oid,
+						relation: relation
+					},
+					searchable: true,
+				});
+				
+//				var relation= jsdata.relations[i];
+//				if( relation == panelToOpen) {
+//					numPanelToOpen = i+2;
+//				}
+//				table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
+//				+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
+//				table += "<div class='detaildata'></div>";
+			}
+			 ModalResult.resultPanel(content, null, "white", true);
+			
+			return;
+
 			Modalinfo.dataPanel("Source Detail" , table, null, "white");
 			/*
 			 * Click on relation relation title bars: 
@@ -461,100 +526,127 @@ jQuery
 					+ jsdata.collectionLevel.name + "."
 					+ jsdata.collectionLevel.category + "</i>";
 			}
-			table += '<h2> ' + histo + ' DETAIL <span>' + title
-			+ '</span></h2>';
-			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-			table += "</div>";
+//			table += '<h2> ' + histo + ' DETAIL <span>' + title
+//			+ '</span></h2>';
+//			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
+//			table += "</div>";
 
-			if (jsdata.classLevel != null) {
-				table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-				table += "</div>";
-			}
+//			if (jsdata.classLevel != null) {
+//			table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
+//			table += "</div>";
+//			}
 
-			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
-				table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
-				table += "</div>";
-			}
+//			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
+//			table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
+//			table += "</div>";
+//			}
 
-			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
-				table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
-				table += "</div>";
-			}
+//			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
+//			table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
+//			table += "</div>";
+//			}
 
-			if ($('#detaildiv').length == 0) {
-				$(document.documentElement)
-				.append(
-				"<div id=detaildiv style='width: 99%; display: none;'></div>");
-			}
-			Modalpanel.open(table);
-			$('#detailtable').dataTable(
-					{
+//			if ($('#detaildiv').length == 0) {
+//			$(document.documentElement)
+//			.append(
+//			"<div id=detaildiv style='width: 99%; display: none;'></div>");
+//			}
+			//Modalpanel.open(table);
+//			$('#detailtable').dataTable(
+//			{
+//			"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
+//			"aaData" : jsdata.collectionLevel.attributes.aaData,
+//			"sDom" : '<"top"f>rt',
+//			"bPaginate" : false,
+//			"aaSorting" : [],
+//			"bSort" : false,
+//			"bFilter" : true,
+//			"bAutoWidth" : true
+//			});
+
+			var content = {
+					header: {
+						histo: {
+							prev: "resultPaneView.fireShowPreviousRecord()",
+							next: "resultPaneView.fireShowNextRecord()"
+						},
+						title: {
+							label: title 
+						},
+						icon: {
+							classIcon: "printer",
+							handler: "print('simplemodal-container')"
+						}
+					},
+					chapters: []
+			};
+
+			if (jsdata.classLevel != null) 
+				content.chapters.push({
+					id: "ClassLevel",
+					label: "Class Level Attributes - (Read in input files)",
+					data:  {
+						"aoColumns" : jsdata.classLevel.attributes.aoColumns,
+						"aaData" : jsdata.classLevel.attributes.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+			if (jsdata.collectionLevel != null) 
+				content.chapters.push({
+					id: "CollLevel",
+					label: "Collection Level Attributes - (Set by Saada)",
+					data:  {
 						"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
-						"aaData" : jsdata.collectionLevel.attributes.aaData,
-						"sDom" : '<"top"f>rt',
-						"bPaginate" : false,
-						"aaSorting" : [],
-						"bSort" : false,
-						"bFilter" : true,
-						"bAutoWidth" : true
-					});
-			if (jsdata.classLevel != null) {
-				$('#detailmappedtable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.classLevel.attributes.aoColumns,
-							"aaData" : jsdata.classLevel.attributes.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
-			}
+						"aaData" : jsdata.collectionLevel.attributes.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+
 			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
-				$('#startingmetatable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.collectionLevel.startingRelations.aoColumns,
-							"aaData" : jsdata.collectionLevel.startingRelations.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
-			}
-			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
-				$('#endingmetatable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.collectionLevel.endingRelations.aoColumns,
-							"aaData" : jsdata.collectionLevel.endingRelations.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
+				content.chapters.push({
+					id: "StartRel",
+					label: "Relationships Starting From this dData Collection",
+					data:  {
+						"aoColumns" : jsdata.collectionLevel.startingRelations.aoColumns,
+						"aaData" : jsdata.collectionLevel.startingRelations.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
 			}
 
-			Modalpanel.resize();
-			jQuery(".detaildata").each(function(i) {
-				if (i > 0) {
-					$(this).hide();
-				}
-			});
+			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
+				content.chapters.push({
+					id: "EndRem",
+					label: "Relationships Ending To this Data Collection",
+					data:  {
+						"aoColumns" : jsdata.collectionLevel.endingRelations.aoColumns,
+						"aaData" : jsdata.collectionLevel.endingRelations.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+
+			}
+			ModalResult.resultPanel(content, null, "white", true);
 		};
 		this.displayResult = function(dataJSONObject) {
 		};
@@ -571,16 +663,16 @@ jQuery
 				for (var i = 0; i < ahs.length; i++) {
 					headCells += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
 				}
-				
+
 				table +=  "<thead><tr>" + headCells + "</tr></thead>";
 				table +=  "<tfoot><tr>" + headCells + "</tr></tfoot>";				
 				table +=
-					 "<tbody>"
+					"<tbody>"
 					+ "<tr><td colspan="
 					+ i
 					+ " class=\"dataTables_empty\">Loading data from server</td></tr>"
 					+ "</tbody>";
-				
+
 				table += "</table>";
 				$("#resultpane").html(table);
 
@@ -623,16 +715,91 @@ jQuery
 				/*
 				 * Connect the table with the DB
 				 */
+				var options = {
+						"aLengthMenu": [5, 10, 25, 50, 100],
+						"bServerSide" : true,
+						"bProcessing" : true,
+						"aaSorting" : [],
+						"pagingType" : "simple",
+						"bSort" : false,
+						"bFilter" : false,
+						//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
+						//	"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
+						"sAjaxSource" : "nextpage"
+//							"fnDrawCallback": function() {
+//							var width = $(this).width();
+//							console.log($(this).width());
+//							var wa = new Array();
+//							$(this).find('thead').remove();
+//							$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
+//							$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
+//							$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
+//							}
+//							"fnInitComplete": function(oSettings, json) {
+//							that.fixedHeader.fnUpdate();
+//							} 
+							// , "bPaginate": false
+				};
+				var positions = [
+				                 { "name": "pagination",
+				                	 "pos": "top-left"
+				                 },
+				                 { "name": "length",
+				                	 "pos": "top-center"
+				                 },
+				                 { "name": "information",
+				                	 "pos": "top-right"
+				                 },
+				                 { "name": "pagination",
+				                	 "pos": "bottom-left"
+				                 },
+				                 { "name": "length",
+				                	 "pos": "bottom-center"
+				                 },
+				                 { "name": "information",
+				                	 "pos": "bottom-right"
+				                 },
+				                 { "name" : '<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>',
+				                	 "pos": "top-center"
+				                 },
+				                 { "name" : '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>',
+				                	 "pos": "top-center"
+				                 },
+				                 { "name" : '<a id="ColumnSelector" class="dl_cart" title="Column selector"></a>',
+				                	 "pos": "top-center"
+				                 },
+				                 { "name" : Printer.getSmallPrintButton("resultpane") ,
+				                	 "pos": "top-center"
+				                 }				              	
+				                 ];
+				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
+					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+						"pos" : "top-center"})
+				}
+
+				var datatable = CustomDataTable.create("datatable", options, positions);			
+				$('#datatable_wrapper').css("overflow", "inherit");
+				var columnSelector = function(states){
+					for( var n=0 ; n<states.length ; n++){
+						var column = datatable.api().column( n);
+						column.visible( states[n].selected);						
+					}
+				}
+				$('#ColumnSelector').click(function() {
+					NodeFilter.create(globalTreePath[0] + globalTreePath[1] + globalTreePath[2], ahs, columnSelector);
+				});
+				return;
+/////////////////////////////////////////////////////////////////////////////////////////
 				// p: change page
-			//	$('.fixedHeader').remove();
+				//	$('.fixedHeader').remove();
 				var iconBar = '&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>'	
-				            + '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
-				            + Printer.getSmallPrintButton("resultpane")
-				;
+					+ '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
+					+ Printer.getSmallPrintButton("resultpane")
+					;
 				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
 					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>';
 				}
-				
+
 				var  oTable = $('#datatable').dataTable({
 					"aLengthMenu": [5, 10, 25, 50, 100],
 					"bServerSide" : true,
@@ -643,7 +810,7 @@ jQuery
 					//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 					"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 					"sAjaxSource" : "nextpage"
-//					"fnDrawCallback": function() {
+//						"fnDrawCallback": function() {
 //						var width = $(this).width();
 //						console.log($(this).width());
 //						var wa = new Array();
@@ -651,25 +818,25 @@ jQuery
 //						$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
 //						$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
 //						$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
-//					}
-//				    "fnInitComplete": function(oSettings, json) {
+//						}
+//						"fnInitComplete": function(oSettings, json) {
 //						that.fixedHeader.fnUpdate();
-//				    } 
-				// , "bPaginate": false
+//						} 
+						// , "bPaginate": false
 				});
-			//	this.fixedHeader = new FixedHeader( oTable );
+				//	this.fixedHeader = new FixedHeader( oTable );
 
 
 			}
 			$('#resultpane div.dataTables_length').append(iconBar);
-			$('div .bottom').appendTo('#pouet1');
+			//$('div .bottom').appendTo('#pouet1');
 			that.fireStoreHisto(query);
 			//this.fixedHeader.fnUpdate();
-	    	/*
-	    	 * Images are loaded asynchronously and they can change the column width.*
-	    	 * There is no way to trigger this kind of event to update FixHeader.
-	    	 * Les do it a couple of seconds later
-	    	 */
+			/*
+			 * Images are loaded asynchronously and they can change the column width.*
+			 * There is no way to trigger this kind of event to update FixHeader.
+			 * Les do it a couple of seconds later
+			 */
 			//setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
 
 		};

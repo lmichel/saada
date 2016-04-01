@@ -16,6 +16,7 @@ resourceLoader = function() {
 	                , "WebSamp"
 	                , "KWConstraint"
 	                , "AttachedData_v.js", "VizierKeywords_v.js","OrderBy_v.js", "ConeSearch_v.js", "ConstList_v.js", "FieldList_v.js", "Sorter_v.js"
+	                , "NodeFilter_v.js"
 	                , "DataLink"
 	                , "ConstQEditor"
 	                , "QueryTextEditor"
@@ -47,7 +48,7 @@ resourceLoader = function() {
 	                  ];
 	var import_css = ["themes/base/jquery.ui.all.css"
 	                  , "layout-default-latest.css"
-	                  , "datatable.css"
+	                  , "jquery.dataTables.css"
 	                  , "simplemodal.css"
 	                  ];
 

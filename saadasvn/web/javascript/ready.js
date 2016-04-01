@@ -268,78 +268,8 @@ $().ready(function() {
 
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 	
-	Processing.show("Loading Data Tree");
-	$.getJSON("getmeta", {query: "datatree" }, function(data) {
-		Processing.hide();
-		if( Processing.jsonError(data, "Cannot make data tree") ) {
-			return;
-		}
-		dataTree = $("div#treedisp").jstree({
-			"json_data"   : data , 
-			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
+	DataTree.init();
 
-				"drop_finish" : function (data) {
-					var parent = data.r;
-					var treepath = data.o.attr("id").split('.');
-					if( treepath.length < 2 ) {
-						Modalinfo.info("Query can only be applied on one data category or one data class");
-					}
-					else {
-						while(parent.length != 0  ) {
-							resultPaneView.fireSetTreePath(treepath);	
-							if(parent.attr('id') == "resultpane" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							else if(parent.attr('id') == "showquerymeta" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireShowMetaNode(treepath);	
-								return;
-							}
-
-//							else if(parent.attr('id') == "displayfilter" ) {
-//							setTitlePath(treepath);
-//							resultPaneView.fireTreeNodeEvent(treepath);	
-//							filterManagerView.fireShowFilterManager(treepath);	
-//							return;
-//							}
-
-							else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-								saadaqlView.fireTreeNodeEvent(treepath);	
-								sapView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							parent = parent.parent();
-						}
-					}
-				}
-			},
-			// Node sorting by DnD blocked
-			"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-			}
-		}); // end of jstree
-//		dataTree.bind("select_node.jstree", function (e, data) {
-//		Modalinfo.info(data);
-//		});
-		dataTree.bind("dblclick.jstree", function (e, data) {
-			var node = $(e.target).closest("li");
-			var id = node[0].id; //id of the selected node					
-			var treepath = id.split('.');
-			if( treepath.length < 2 ) {
-				Modalinfo.info("Query can only be applied on one data category or one data class");
-			}
-			else {
-				Processing.show("Open node " + getTreePathAsKey());
-				resultPaneView.fireSetTreePath(treepath);	
-				setTitlePath(treepath);
-				resultPaneView.fireTreeNodeEvent(treepath);	
-				Processing.hide();
-			}
-		});
-	}); // end of ajax
-
-	Location.confirmBeforeUnlaod();
+	//PageLocation.confirmBeforeUnlaod();		
 	Out.setdebugModeFromUrl();
 });

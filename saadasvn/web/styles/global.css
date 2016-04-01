@@ -791,7 +791,7 @@ div#externaltools {
 	margin-left: 150px;
 	margin-top: 0px;
 	border-width: 0px;
-	background: #F5F5F5
+	/*background: #F5F5F5*/
 }
 
 /*************************************************************************
@@ -1092,7 +1092,7 @@ a.cart {
 	width: 0px;
 	overflow: visible;
 	padding: 16px 0px 16px 38px;
-	background: transparent url(../images/groscaddy.png) center left
+	background: transparent url(../images/cart_38.png) center left
 		no-repeat;
 }
 
@@ -1124,7 +1124,7 @@ a.dl_samp {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_ivoa.png) center left no-repeat;
+	background: transparent url(../images/ivoa_23.png) center left no-repeat;
 }
 
 a:hover.dl_samp {
@@ -1165,7 +1165,7 @@ a.dl_download {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_download.png) center left
+	background: transparent url(../images/download_23.png) center left
 		no-repeat;
 }
 
@@ -1207,7 +1207,7 @@ a.dl_cart {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_cart.png) center left no-repeat;
+	background: transparent url(../images/cart_23.png) center left no-repeat;
 }
 
 a.dl_cart_added {
@@ -1215,7 +1215,7 @@ a.dl_cart_added {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_cart.png) center left no-repeat;
+	background: transparent url(../images/cart_23.png) center left no-repeat;
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
@@ -1271,7 +1271,7 @@ a.dl_info {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_info.png) center left no-repeat;
+	background: transparent url(../images/info_23.png) center left no-repeat;
 }
 
 a:hover.dl_info {
@@ -1291,7 +1291,7 @@ a.dl_detail {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_detail.png) center left
+	background: transparent url(../images/source_detail_23.png) center left
 		no-repeat;
 }
 
