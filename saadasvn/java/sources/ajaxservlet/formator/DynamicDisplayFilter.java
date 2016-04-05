@@ -257,7 +257,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(si.namesaada);
 
 			} else if ("Detail".equals(speField)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 
 			} else if ("Plot".equals(speField)) {
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));

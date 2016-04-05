@@ -19,6 +19,10 @@ var booleansupported = false;
  */
 var layoutPane;
 
+var queryView;
+var nativeConstraintEditor;
+var posConstraintEditor;
+
 $().ready(function() {
 	Out.setdebugModeFromUrl();	
 
@@ -267,6 +271,13 @@ $().ready(function() {
 	$('#showquerymeta').click(function(){Modalinfo.info("No meta data available yet");});
 
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
+	
+	MetadataSource.init({getMetaTable: "getmeta"})
+	 queryView = QueryConstraintEditor.queryTextEditor({ parentDivId: 'texttab', defaultQuery: ''});	   		    
+	 posConstraintEditor = QueryConstraintEditor.posConstraintEditor({ parentDivId: 'postab', formName:'simpleposcolumns',  queryView: queryView
+			, frames: ['ICRS', 'GALACTIC', 'FK5'], urls: {sesameURL: "sesame", uploadURL: "uploadposlist"}} );
+	 nativeConstraintEditor = QueryConstraintEditor.nativeConstraintEditor({parentDivId: 'kwtab', getMetaUrl: "getmeta", queryView: queryView});
+		//qce.fireSetTreepath(new DataTreePath({nodekey:'node', schema: 'schema', table: 'table', tableorg: 'schema.table'}));
 	
 	DataTree.init();
 

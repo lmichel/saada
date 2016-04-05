@@ -224,7 +224,7 @@ Serializable {
 								counterpart, 64));
 					break;
 					default:
-						result.add("<span>"+ Database.getCache().getObject(counterpart).getNameSaada()+ " " + (DefaultPreviews.getDetailLink(counterpart, null))+ "</span>");
+						result.add("<span>"+ Database.getCache().getObject(counterpart).getNameSaada()+ " " + (DefaultPreviews.getDetailLink(counterpart, "ClassLevel"))+ "</span>");
 					}
 					break;
 				default:

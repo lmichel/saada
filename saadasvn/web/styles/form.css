@@ -4,9 +4,10 @@
 }	
 	
 div#saadaqltab div {
-	display: block;
+/*	display: block;
 	float: left;
 	overflow: auto;
+	*/
 }
 
 div#saptab div {
@@ -33,7 +34,7 @@ div#saptab div {
 }
 
 .querytab, .formquerytab {
-	height: 260px;
+	height: 100%;
 }
 
 #saadaqltab {

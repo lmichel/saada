@@ -97,14 +97,14 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				retour.add("<a  class=dl_ivoa onclick=WebSamp_mVc.fireSendVoreport(\"" + instance.getOid() + "\");'></a>");
 			}
 			else if( "Access".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel")
 						+ DefaultPreviews.getInfoLink(oidsaada)
 						+ DefaultPreviews.getDLLink(oidsaada, false)
 						+ DefaultPreviews.getCartLink(oidsaada)
 						+ DefaultPreviews.getSpecSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));

@@ -39,7 +39,7 @@ jQuery
 			$("#resultpane").html();
 			var mode = $("input[@name=qlang]:checked").val();
 			if (mode == 'saadaql') {
-				that.fireSaadaQLQueryEvent($('#saadaqltext').val());
+				that.fireSaadaQLQueryEvent(queryView.getQuery());
 			} else if (mode == 'sap') {
 				sapView.fireSubmitQueryEvent();
 			} else {
@@ -239,16 +239,16 @@ jQuery
 
 		this.fireExpendForm= function() {
 			var height = $(window).height() ;
-			var icon = $('#formexpender').css("background-image");
-			if( icon.match("screen_up") != null ) {
-				$('#formexpender').css("background-image", "url(images/screen_down.png)");
+			var label = $('#formexpender').attr("value");
+			if( label == "Refine Query" ) {
+				$('#formexpender').attr("value", "Hide Query");				
 				$('#formexpender').attr("title", "Expend query form");
-				height='10%';
+				height='90%';
 			}
 			else {
-				$('#formexpender').css("background-image", "url(images/screen_up.png)");
-				$('#formexpender').attr("title", "Minimize query form");
-				height='90%';
+				$('#formexpender').attr("value", "Refine Query");				
+				$('#formexpender').attr("title", "Hide query form");
+				height='10%';
 			}
 			layoutPane.sizePane("south", height);
 			//	$("div#accesspane").trigger("resize",[ height]);		
@@ -269,129 +269,133 @@ jQuery
 				return;
 			}
 
-			var table = '';
-			var histo = '';
+//			var table = '';
+//			var histo = '';
 
 
-			if (limit != 'NoHisto') {
-				if (limit != 'MaxLeft') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
-				} else {
-					histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				}
-				if (limit != 'MaxRight') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
-				} else {
-					histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
-				}
-			} else {
-				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
-			}
-			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
-			//table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
-			table += '<h3> ' + histo  + jsdata.title + '<span>'
-			+ '</span></h3>';
+//			if (limit != 'NoHisto') {
+//			if (limit != 'MaxLeft') {
+//			histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
+//			} else {
+//			histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+//			}
+//			if (limit != 'MaxRight') {
+//			histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
+//			} else {
+//			histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+//			}
+//			} else {
+//			histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+//			histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+//			}
+//			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
+//			//table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
+//			table += '<h3> ' + histo  + jsdata.title + '<span>'
+//			+ '</span></h3>';
 
-			if (jsdata.links.length > 0) {
-				table += "<div style='overflow: hidden;border-width: 0;'>";
-				for (var i = 0; i < jsdata.links.length; i++) {
-					table += '<span>' + jsdata.links[i] + '</span><br>';
-				}
-				table += "</div>";
-			}
-			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');;\"> <img src=\"images/tdown.png\"> Native Data </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-			table += "</div>";
+//			if (jsdata.links.length > 0) {
+//			table += "<div style='overflow: hidden;border-width: 0;'>";
+//			for (var i = 0; i < jsdata.links.length; i++) {
+//			table += '<span>' + jsdata.links[i] + '</span><br>';
+//			}
+//			table += "</div>";
+//			}
+//			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');;\"> <img src=\"images/tdown.png\"> Native Data </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
+//			table += "</div>";
 
-			table += "<h4 id=\"mapped\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mapped\');\"> <img src=\"images/tright.png\"> Mapped Data </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-			table += "</div>";
+//			table += "<h4 id=\"mapped\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mapped\');\"> <img src=\"images/tright.png\"> Mapped Data </h4>";
+//			table += "<div class='detaildata'>";
+//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
+//			table += "</div>";
 
 			/*
 			 * relation panels
 			 */
+//			for (var i = 0; i < jsdata.relations.length; i++) {
+//			var relation= jsdata.relations[i];
+//			if( relation == panelToOpen) {
+//			numPanelToOpen = i+2;
+//			}
+//			table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
+//			+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
+//			table += "<div class='detaildata'></div>";
+//			}
+
+
+			var content = {
+					header: {
+						histo: {
+							prev: "resultPaneView.fireShowPreviousRecord()",
+							next: "resultPaneView.fireShowNextRecord()"
+						},
+						title: {
+							label: jsdata.title 
+						},
+						icon: {
+							classIcon: "printer",
+							handler: "print('simplemodal-container')"
+						}
+					},
+					chapters: []
+			}
+
+			content.chapters.push({
+				id: "ClassLevel",
+				label: "Data Read in the Input file - (class level data)",
+				data:  {
+					"aoColumns" : jsdata.classlevel.aoColumns,
+					"aaData" : jsdata.classlevel.aaData
+				},
+				params: {
+					oid: oid
+				},
+				searchable: true,
+			});
+
+			content.chapters.push({
+				id: "CollLevel",
+				label: "Data Set by Saada - (collection level data)",
+				data:  {
+					"aoColumns" : jsdata.collectionlevel.aoColumns,
+					"aaData" : jsdata.collectionlevel.aaData
+				},
+				params: {
+					oid: oid
+				},
+				searchable: true,
+			});
+			var chapterToOpen;
 			for (var i = 0; i < jsdata.relations.length; i++) {
 				var relation= jsdata.relations[i];
+				var chapter = {
+						id: "Relation" + relation,
+						label: "Linked Data (relation "+ relation + ") <a id=" + relation + " title='Get relation info' class='dl_info' onclick='event.stopPropagation(); resultPaneView.fireGetRelationInfo(&quot;" + relation + "&quot;);'></A>",
+						//url:  "getobject?relation=" + relation,
+						url:  "getobject",
+						params: {
+							oid: oid,
+							relation: relation
+						},
+						searchable: true,
+				};
+				content.chapters.push(chapter);
+
 				if( relation == panelToOpen) {
-					numPanelToOpen = i+2;
-				}
-				table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
-				+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
-				table += "<div class='detaildata'></div>";
+					chapterToOpen = chapter;
+				} 
+			}
+			ModalResult.resultPanel(content, null, "white", true);
+			if(panelToOpen == "ClassLevel"){
+				chapterToOpen = content.chapters[0];
+			} else if(panelToOpen == "CollLevel"){
+				chapterToOpen = content.chapters[1];
+			}
+			if( chapterToOpen != null ){
+				ModalResult.openChapterPanel(chapterToOpen); 
 			}
 
-			
-			 var content = {
-						header: {
-						    histo: {
-						      prev: "resultPaneView.fireShowPreviousRecord()",
-						      next: "resultPaneView.fireShowNextRecord()"
-						    },
-						    title: {
-						      label: jsdata.title 
-						    },
-						    icon: {
-						      classIcon: "printer",
-						      handler: "print('simplemodal-container')"
-						    }
-						  },
-						  chapters: []
-			 }
-			 
-			content.chapters.push({
-					id: "ClassLevel",
-					label: "Class Level Data - (Read in input files)",
-					data:  {
-						"aoColumns" : jsdata.classlevel.aoColumns,
-						"aaData" : jsdata.classlevel.aaData
-					},
-					params: {
-						oid: "oid"
-					},
-					searchable: true,
-				});
-
-			content.chapters.push({
-					id: "CollLevel",
-					label: "Collection Level Data - (Set by Saada)",
-					data:  {
-						"aoColumns" : jsdata.collectionlevel.aoColumns,
-						"aaData" : jsdata.collectionlevel.aaData
-					},
-					params: {
-						oid: "oid"
-					},
-					searchable: true,
-				});
-			
-			for (var i = 0; i < jsdata.relations.length; i++) {
-				var relation= jsdata.relations[i];
-				console.log(JSON.stringify(relation))
-				content.chapters.push({
-					id: "Relation" + relation,
-					label: "Linked Data (relation "+ relation + ")",
-					//url:  "getobject?relation=" + relation,
-					url:  "getobject",
-					params: {
-						oid: oid,
-						relation: relation
-					},
-					searchable: true,
-				});
-				
-//				var relation= jsdata.relations[i];
-//				if( relation == panelToOpen) {
-//					numPanelToOpen = i+2;
-//				}
-//				table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
-//				+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
-//				table += "<div class='detaildata'></div>";
-			}
-			 ModalResult.resultPanel(content, null, "white", true);
-			
 			return;
 
 			Modalinfo.dataPanel("Source Detail" , table, null, "white");
@@ -717,6 +721,7 @@ jQuery
 				 */
 				var options = {
 						"aLengthMenu": [5, 10, 25, 50, 100],
+						"pageLength": 15,
 						"bServerSide" : true,
 						"bProcessing" : true,
 						"aaSorting" : [],
@@ -725,7 +730,8 @@ jQuery
 						"bFilter" : false,
 						//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 						//	"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-						"sAjaxSource" : "nextpage"
+						"sAjaxSource" : "nextpage",
+							"sServerMethod": "POST"
 //							"fnDrawCallback": function() {
 //							var width = $(this).width();
 //							console.log($(this).width());
@@ -759,23 +765,24 @@ jQuery
 				                 { "name": "information",
 				                	 "pos": "bottom-right"
 				                 },
+				                 { "name" : '<a id="ColumnSelector" class="dl_column" title="Column selector"></a>',
+				                	 "pos": "top-center"
+				                 },
 				                 { "name" : '<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>',
 				                	 "pos": "top-center"
 				                 },
 				                 { "name" : '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>',
 				                	 "pos": "top-center"
-				                 },
-				                 { "name" : '<a id="ColumnSelector" class="dl_cart" title="Column selector"></a>',
-				                	 "pos": "top-center"
-				                 },
-				                 { "name" : Printer.getSmallPrintButton("resultpane") ,
-				                	 "pos": "top-center"
-				                 }				              	
+				                 }
 				                 ];
 				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
 					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
 						"pos" : "top-center"})
 				}
+				positions.push({ "name" : Printer.getSmallPrintButton("resultpane") ,
+               	 "pos": "top-center"
+                });				              	
+
 
 				var datatable = CustomDataTable.create("datatable", options, positions);			
 				$('#datatable_wrapper').css("overflow", "inherit");

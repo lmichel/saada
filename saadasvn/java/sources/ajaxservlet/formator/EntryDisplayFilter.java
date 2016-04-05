@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.collection.EntrySaada;
@@ -93,7 +94,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			if( "Access".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 //			else if( "Aladin".equals(s)) {
 //				retour.add("<a href='javascript:void(0);' title='Marks this source on Aladin view' class=aladinsmall onclick='sampView.firePointatSky(" + instance.getPos_ra_csa() + "," + instance.getPos_dec_csa() + ");'></a>");
@@ -175,26 +176,62 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 	protected void setRelations() {
 		setRelations(Category.ENTRY);
 	}
-	
-	/* (non-Javadoc)
-	 * @see ajaxservlet.formator.DefaultDisplayFilter#getJSONString()
-	 */
+
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"ENTRY\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Access\", \"Position\", \"Error (arcsec)\", \"Name\"],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "ENTRY");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Access");	
+		jsa.add("Position");	
+		jsa.add("Error (arcsec)");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_entry().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+//	/* (non-Javadoc)
+//	 * @see ajaxservlet.formator.DefaultDisplayFilter#getJSONString()
+//	 */
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"ENTRY\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Access\", \"Position\", \"Error (arcsec)\", \"Name\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
 
 }

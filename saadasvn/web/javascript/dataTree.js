@@ -1,7 +1,7 @@
 DataTree = function () {
 	var cache = new Object;
 
-	this.init = function() {
+	var init = function() {
 
 		Processing.show("Loading Data Tree");
 		$.getJSON("getmeta", {query: "datatree" }, function(jsdata) {

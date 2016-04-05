@@ -20,7 +20,9 @@ resourceLoader = function() {
 	                , "DataLink"
 	                , "ConstQEditor"
 	                , "QueryTextEditor"
-	                , "domain.js"];
+	                , "domain.js"
+	                , "HipsExplorer_v.js"	  
+	                ];
 	var local_min_js = ["basics.js"
 	                    , "WebSamp"
 	                    , "DataLink"
@@ -29,6 +31,7 @@ resourceLoader = function() {
 	                 "jquery.simplemodal.js",
 	                 "jquery.alerts.js",
 	                 "jquery.dataTables.js",
+	                 "aladin.js",
 	                 "FixedHeader.js",
 	                 "jquery.prints.js",
 	                 "jquery.tooltip.js",
@@ -50,6 +53,11 @@ resourceLoader = function() {
 	                  , "layout-default-latest.css"
 	                  , "jquery.dataTables.css"
 	                  , "simplemodal.css"
+	                  , "aladin.min.css"
+	                  , "/bootstrap/bootstrap.css"
+	                  , "/bootstrap/bootstrap.css.map"
+	                  ,"foundationicon/foundation-icons.css"
+
 	                  ];
 
 	var css = new Array();// global list of CSS to load

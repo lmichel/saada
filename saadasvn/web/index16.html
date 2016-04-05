@@ -104,26 +104,23 @@ if( productionMode ) {
 				<span class=pagetitle>TITLE</span> <span class=pagetitlepath
 					id=titlepath></span>
 			</div>
-			<div id=externaltools>
-				<a href="javascript:void(0);" title="Database description"
-					onclick='resultPaneView.fireOpenDescription();' id='opendesc'><span>about</span></a>
-					
-				</a>&nbsp; <a href="javascript:void(0);" class="formexpender"
-					title="Expand query form"
-					onclick='resultPaneView.fireExpendForm();' id='formexpender'></a> 
-										<!-- 
-					
-				<a
-					href="javascript:void(0);" id=displayfilter
-					title="Edit display filter" class='displayfilter'
-					onclick='filterManagerView.fireShowFilterManager(globalTreePath);'></a>
-					-
-				<a href="javascript:void(0);" id=showquerymeta title='Show Metadata'
-					class=question></a>
-					--> <a href="javascript:void(0);"
-					title='Open the shopping cart' class=cart
-					onclick='cartView.fireOpenCart();' id=zipbutton></a> 
-					<a id="sampIndicator" onclick="WebSamp_mVc.fireJustConnect();" class="sampOff" href="#" title="SampStatus"></a>
+			<div id=externaltools
+				style='height: 32px; position: absolute; left: 0px'>
+				<a class="bookmark" href="javascript:void(0);"
+					title="Get the database description"
+					style="left: 0px; position: absolute; top: 0px;"
+					onclick="resultPaneView.fireOpenDescription();"></a> 
+				<input
+					id="formexpender" class="button" type="button" value="Refine Query"
+					style="border-radius: 5px 5px 5px 5px; background-color: lightblue; height: 100%; left: 42px; position: absolute; top: 0px; width: 100px"
+					title="Open the query editor panel"
+					onclick='resultPaneView.fireExpendForm();'> 
+				<a  href="javascript:void(0);" title='Open the shopping cart'
+					class=cart onclick='cartView.fireOpenCart();' id=zipbutton
+					style="left: 145px; position: absolute; top: 0px;"></a> 
+				<a  id="sampIndicator" onclick="WebSamp_mVc.fireJustConnect();"
+					class="sampOff" href="#" title="SampStatus"
+					style="position: absolute; top: 0px; left: 193px"></a>
 			</div>
 		</div>
 		<!--  
@@ -215,6 +212,7 @@ if( productionMode ) {
 							</li>
 						</ul>
 						<div id="postab" class=queryformtab>
+						<!-- 
 							<div id="coordgetter">
 								<div id="coordform">
 									<div id=cf1 style="background: white;">
@@ -246,8 +244,11 @@ if( productionMode ) {
 								<span class=help>List of searched positions</span>
 								<div id="CoordList"></div>
 							</div>
+							-->
 						</div>
-						<div id="kwtab" class=queryformtab>
+						
+						<div id="kwtab" class=queryformtab style="width: 100%">
+						<!-- 
 							<div id="kwtab1">
 								<div style="background: white;">
 									<span class=help>Available Keywords<br />
@@ -279,6 +280,8 @@ if( productionMode ) {
 									</div>
 								</div>
 							</div>
+															-->
+							
 						</div>
 						<div id="ucdtab" class=queryformtab>
 							<div id="ucdtab1">
@@ -291,7 +294,6 @@ if( productionMode ) {
 									<span class=help>Drag and Drop UCD to the list of active
 										constraints</span>
 								</div>
-
 							</div>
 							<div id="ucdtab2">
 								<div style="background: white;">
@@ -338,8 +340,10 @@ if( productionMode ) {
 								<div id=patternlist style="float: none;"></div>
 							</div>
 						</div>
-						<div id="texttab"  class=queryformtab>
+						<div id="texttab"  class=queryformtab style="width: 100%;">
+						<!-- 
 							<textarea id=saadaqltext></textarea>
+						-->
 						</div>
 					</div>
 					<!--

@@ -267,20 +267,27 @@ a.histoleft {
 	width: 0px;
 	overflow: visible;
 	padding: 0 0 0 24px;
-	background: transparent url(../images/histoleft.png) bottom left
+	background: transparent url(../images/back_enabled.jpg) bottom left
 		no-repeat;
 }
 
 a:hover.histoleft {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.5;
+	filter: alpha(opacity = 50);
 	opacity: 0.5;
 }
 
 a:active.histoleft {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.8;
+	filter: alpha(opacity = 50);
 	opacity: 0.8;
+}
+a.greyhistoleft {
+	display: inline-block;
+	height: 24px;
+	width: 0px;
+	overflow: visible;
+	padding: 0 0 0 24px;
+	background: transparent url(../images/back_enabled.jpg) bottom left
+		no-repeat;
 }
 
 a.historight {
@@ -289,20 +296,28 @@ a.historight {
 	width: 0px;
 	overflow: visible;
 	padding: 0 0 0 24px;
-	background: transparent url(../images/historight.png) bottom left
+	background: transparent url(../images/forward_enabled.jpg) bottom left
 		no-repeat;
 }
 
 a:hover.historight {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.5;
+	filter: alpha(opacity = 50);
 	opacity: 0.5;
 }
 
 a:active.historight {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.8;
+	filter: alpha(opacity = 50);
 	opacity: 0.8;
+}
+
+a.greyhistoright {
+	display: inline-block;
+	height: 24px;
+	width: 0px;
+	overflow: visible;
+	padding: 0 0 0 24px;
+	background: transparent url(../images/forward_enabled.jpg) bottom left
+		no-repeat;
 }
 
 a.simbad {
@@ -937,7 +952,7 @@ div#formpane {
 	overflow: hidden;
 	border-width: 0px;
 	padding: 5px;
-	height: 267px;
+	height: 300px;
 
 	/* No margin or border allowed */
 }
@@ -1093,6 +1108,14 @@ a.cart {
 	overflow: visible;
 	padding: 16px 0px 16px 38px;
 	background: transparent url(../images/cart_38.png) center left
+		no-repeat;
+}
+a.bookmark {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 16px 0px 16px 38px;
+	background: transparent url(../images/bookmark_38.png) center left
 		no-repeat;
 }
 
@@ -1291,7 +1314,7 @@ a.dl_detail {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/source_detail_23.png) center left
+	background: transparent url(../images/detail_23.png) center left
 		no-repeat;
 }
 
@@ -1312,7 +1335,7 @@ a.dl_header {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_header.png) center left
+	background: transparent url(../images/header_23.png) center left
 		no-repeat;
 }
 
@@ -1333,7 +1356,7 @@ a.dl_sources {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_sources.png) center left
+	background: transparent url(../images/entries_23.png) center left
 		no-repeat;
 }
 
@@ -1344,6 +1367,27 @@ a:hover.dl_sources {
 }
 
 a:active.dl_sources {
+	filter: alpha(opacity =   50);
+	-moz-opacity: 0.8;
+	opacity: 0.8;
+}
+
+a.dl_column {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0px 9px 23px;
+	background: transparent url(../images/column_23.png) center left
+		no-repeat;
+}
+
+a:hover.dl_column {
+	filter: alpha(opacity =   50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
+
+a:active.dl_column {
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;

@@ -98,7 +98,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getAladinSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));

@@ -41,6 +41,7 @@ public class SpecialFieldFormatter {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
 			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
+			//return ("<span>" + pos + "</span>");
 		}
 		return null;
 	}
@@ -49,6 +50,7 @@ public class SpecialFieldFormatter {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(((Position) saadai).getPos_ra_csa(), ((Position) saadai).getPos_dec_csa());
 			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
+			//return ("<span>" + pos + "[&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
 		}
 		return null;
 	}
@@ -81,8 +83,9 @@ public class SpecialFieldFormatter {
 		long oid = saadai.getOid();
 		switch( cat ) {
 		case Category.SPECTRUM:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getAladinLiteLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getSpecSAMP(oid);
@@ -91,18 +94,18 @@ public class SpecialFieldFormatter {
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid);
 		case Category.TABLE:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getSourcesLink(oid)
 			+ DefaultPreviews.getInfoLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getTopcatSAMP(oid);
 		case Category.ENTRY:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getHeaderLink(oid)
-			+ DefaultPreviews.getSkyAtSAMP(oid);
+			+ DefaultPreviews.getAladinLiteLink(oid);
 		default: 			
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getInfoLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)

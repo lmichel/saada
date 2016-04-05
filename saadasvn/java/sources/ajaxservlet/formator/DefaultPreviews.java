@@ -37,7 +37,7 @@ abstract public class DefaultPreviews {
 	 */
 	public static final String getHeaderLink(long oid) throws SaadaException {
 		EntrySaada si =  (EntrySaada) Database.getCache().getObject(oid);
-		return "<a title='Get the table header' class=dl_header onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\");'></A>";
+		return "<a title='Get the table header' class=dl_header onclick='resultPaneView.fireShowRecord(\"" + si.getOidtable() + "\", \"ClassLevel\");'></A>";
 	}
 	public static final String  getDetailLink(long oid, String panelToOpen) throws SaadaException {
 		String panarg = (panelToOpen == null )? "null": "\"" + panelToOpen + "\"";
@@ -61,6 +61,11 @@ abstract public class DefaultPreviews {
 		} else {
 			return "<a class=dl_cart title=\"Add the product file to the  cart\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
 		}
+	}
+	public static final String getAladinLiteLink(long oid) throws SaadaException {
+		Position si =  (Position) Database.getCache().getObject(oid);
+		return "<a title='Send position to Aladin Lite' class='dl_aladin' onclick='event.preventDefault() ; ModalAladin.aladinExplorer({ target: &quot;" 
+				+ DefaultFormats.getHMSCoord(si.getPos_ra_csa(), si.getPos_dec_csa()) +  "&quot; , fov: 0.5, title: &quot;" + si.getNameSaada() + "&quot;}, []);;'></a>";
 	}
 	public static final String getDLLink(long oid, boolean dlWithRelations) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
