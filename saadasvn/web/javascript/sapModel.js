@@ -24,19 +24,10 @@ jQuery.extend({
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(treepath){
-			if( treepath.length == 3 ){
-				collection = treepath[0];
-				category = treepath[1];
-			}
-			else if ( treepath.length == 2 ){
-				collection = treepath[0];
-				category = treepath[1];
-			}
-			else {
-				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: sadaqlModel.js");
-				return;
-			}
+		this.processTreeNodeEvent = function(){
+			var category = globalTreePath.category;
+			var collection = globalTreePath.collection;
+
 			$("#siapscope").html("Service scope: Not Set");
 			if( category == 'IMAGE' ) {
 				$("#saptab").tabs({

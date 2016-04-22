@@ -31,28 +31,28 @@ jQuery.extend({
 		/*
 		 * Event processing
 		 */
-		this.setTreePath = function(treepath){
-			treePath = treepath;
-		}
-		this.processSaadaQLTreeNodeEvent = function(treepath){
-			var query;
-			if( treepath.length == 3 ){
-				query = "Select " + treepath[1] + ' From ' + treepath[2] + ' In ' + treepath[0];
-			}
-			else if ( treepath.length == 2 ){
-				collection = treepath[0];
-				query = "Select " + treepath[1] + ' From * In ' + treepath[0];
-			}
-			else {
-				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: processTreeNodeEvent.js)");
-				return;
-			}
-			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
-				query += '\nLimit ' + $("#qlimit").val();
-			}
-
-			that.processSaadaQLQueryEvent(query);
-		}
+//		this.setTreePath = function(treepath){
+//			treePath = treepath;
+//		}
+//		this.processSaadaQLTreeNodeEvent = function(treepath){
+//			var query;
+//			if( treepath.length == 3 ){
+//				query = "Select " + treepath[1] + ' From ' + treepath[2] + ' In ' + treepath[0];
+//			}
+//			else if ( treepath.length == 2 ){
+//				collection = treepath[0];
+//				query = "Select " + treepath[1] + ' From * In ' + treepath[0];
+//			}
+//			else {
+//				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: processTreeNodeEvent.js)");
+//				return;
+//			}
+//			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
+//				query += '\nLimit ' + $("#qlimit").val();
+//			}
+//
+//			that.processSaadaQLQueryEvent(query);
+//		}
 
 		this.processSaadaQLQueryEvent = function(query){
 			current_query = query;
@@ -81,7 +81,7 @@ jQuery.extend({
 						$('#showquerymeta').unbind('click');
 						$('#showquerymeta').click(function(){resultPaneView.fireShowMeta();});
 						that.notifyTableInitDone(dataJSONObject, query);
-						setTitlePath(treePath);
+//						setTitlePath(treePath);
 					}
 				});
 			}

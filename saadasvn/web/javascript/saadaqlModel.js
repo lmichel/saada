@@ -34,37 +34,17 @@ jQuery.extend({
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(treepath, andsubmit, defaultquery){
-			var params;
-			var table;
-			if( treepath.length == 3 ){
-				collection = treepath[0];
-				category = treepath[1];
-				classe = treepath[2];
-				params = {query: "ah", name:  classe };
-				table = classe;
-			}
-			else if ( treepath.length == 2 ){
-				collection = treepath[0];
-				category = treepath[1];
-				classe = '*'; 
-				params = {query: "ah", name:  collection + '.' +category };
-				table = collection + '.' +category;
-			}
-			else {
-				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
-				return;
-			}
-			nativeConstraintEditor.fireSetTreepath(new DataTreePath({nodekey:'node', schema: collection, table: table, tableorg: table}));
-
+		this.processTreeNodeEvent = function(andsubmit, defaultquery){
+			nativeConstraintEditor.fireSetTreepath(globalTreePath);
+			var md = MetadataSource.relations;
 			var disabled = new Array();
 			var selected = 0;
-			if( category == 'TABLE' ||  category == 'MISC'||  category == 'FLATFILE') {
+			if( globalTreePath.category == 'TABLE' ||  globalTreePath.category == 'MISC'||  globalTreePath.category == 'FLATFILE') {
 				disabled[disabled.length] = 0;
 				selected = 1;
 			}
 			//if( jsondata.relations == null || jsondata.relations.length == 0 ) {
-				disabled[disabled.length] = 3;
+			//	disabled[disabled.length] = 3;
 			//}
 			//if( with_ucd == false ) {
 				disabled[disabled.length] = 2;					
@@ -73,9 +53,18 @@ jQuery.extend({
 				disabled: disabled,
 				selected: selected
 			});
-			queryView.reset("Select " + category + " From " + classe + " In " + collection);
-			return;
+			queryView.reset("Select " + globalTreePath.category + " From " + globalTreePath.getClassname() + " In " + globalTreePath.schema);
+			if( andsubmit == true ) {
+				resultPaneView.fireSubmitQueryEvent();
+			}
+			if( md.relations != null ) {
+				for( i=0 ; i<md.relations.length ; i++ ) {
+					relations[md.relations[i].name] = md.relations[i];
+				}
+			}
 
+			return;
+///////////////////////////////
 			Processing.show("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
 				Processing.hide();

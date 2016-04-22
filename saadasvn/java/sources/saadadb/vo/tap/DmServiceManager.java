@@ -42,6 +42,7 @@ public class DmServiceManager extends EntityManager {
 			}
 			Table_Saada_VO_DMVIew.createTable(vor);		
 		} catch (Exception e) {
+			e.printStackTrace();
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
 	}

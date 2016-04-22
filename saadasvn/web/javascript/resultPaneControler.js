@@ -55,7 +55,7 @@ jQuery.extend({
 					model.sampBroadcast();				
 				},
 				controlSetTreePath : function(treepath){
-					model.setTreePath(treepath);
+					//model.setTreePath(treepath);
 				}
 
 		}

@@ -124,11 +124,10 @@ public class TapServiceManager extends EntityManager {
 			Table_Tap_Schema_Columns.addTable("TAP_SCHEMA", Table_Tap_Schema_Key_Columns.tableName, Table_Tap_Schema_Key_Columns.attMap, true);
 
 
-			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Schemas.tableName, "TAP_SCHEMA", Table_Tap_Schema_Tables.tableName, "schema_name", "schema_name");
-			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Columns.tableName, "table_name", "table_name");
-			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "source_table");
-			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName ,"TAP_SCHEMA",  Table_Tap_Schema_Keys.tableName, "table_name"   , "target_table");
-			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Keys.tableName   , "TAP_SCHEMA", Table_Tap_Schema_Key_Columns.tableName, "key_id", "key_id");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Schemas.tableName, "TAP_SCHEMA" , Table_Tap_Schema_Tables.tableName     , "schema_name", "schema_name");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName , "TAP_SCHEMA" , Table_Tap_Schema_Columns.tableName    , "table_name" , "table_name");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Tables.tableName , "TAP_SCHEMA" , Table_Tap_Schema_Keys.tableName       , "table_name" , "from_table");
+			Table_Tap_Schema_Keys.addSaadaJoin("TAP_SCHEMA", Table_Tap_Schema_Keys.tableName   , "TAP_SCHEMA" , Table_Tap_Schema_Key_Columns.tableName, "key_id"     , "key_id");
 		} catch (SaadaException e) {
 			e.printStackTrace();
 			QueryException.throwNewException(SaadaException.DB_ERROR, e);

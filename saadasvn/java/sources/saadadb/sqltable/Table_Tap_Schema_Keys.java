@@ -22,6 +22,10 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	public static final LinkedHashMap<String, AttributeHandler> attMap;
 	public static final String tableName = "keys";
 	public static final String qtableName;
+	/**
+	 * Counter used to make sure that each join has a different key
+	 */
+	private static int keyNum=1;
 
 	static {
 		String tn  = null;
@@ -81,8 +85,9 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	}
 
 	/**
-	 * Make a fromTable <> targetTable join on fromKey/targetKey.
+	 * @param fromSchema
 	 * @param fromTable
+	 * @param targetSchema
 	 * @param targetTable
 	 * @param fromKey
 	 * @param targetKey
@@ -91,9 +96,11 @@ public class Table_Tap_Schema_Keys extends SQLTable {
 	public static void addSaadaJoin(String fromSchema,String fromTable, String targetSchema, String targetTable, String fromKey, String targetKey) throws AbortException {
 		String fns = fromSchema + "." + fromTable;
 		String fnt = targetSchema + "." + targetTable;
+		String key = fromTable + "_" + (keyNum++);
+
 		SQLTable.addQueryToTransaction("INSERT INTO " + qtableName + " VALUES (?, ?, ?, ?, ?)"
-				, new Object[]{fromTable, fns, fnt , "Standard join", "null"});
-		Table_Tap_Schema_Key_Columns.addSaadaJoin(fromTable,fromKey, targetKey );
+				, new Object[]{key, fns, fnt , "Standard join", "null"});
+		Table_Tap_Schema_Key_Columns.addSaadaJoin(key, fromKey, targetKey );
 	}
 
 	/**

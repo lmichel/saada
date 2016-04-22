@@ -99,7 +99,8 @@ public class InFunction extends ADQLFunction {
 	
 	@Override
 	public String getName() {
-		return notIn?"NOT IN":"IN";
+		//@@@@ added by LM
+		return leftOp + " " + (notIn?"NOT IN":"IN");
 	}
 
 	@Override

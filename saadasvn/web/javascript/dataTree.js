@@ -70,9 +70,9 @@ DataTree = function () {
 							, false);   
 					$("a#" + id).click(function(){							
 						var tp  = $(this).attr("id").split('_DoT_');
-						resultPaneView.fireSetTreePath(tp);	
+						//resultPaneView.fireSetTreePath(tp);	
 						resultPaneView.fireTreeNodeEvent(tp);
-						setTitlePath(tp);
+						//setTitlePath(tp);
 					});
 					/*
 					 * Loop on classes
@@ -97,7 +97,7 @@ DataTree = function () {
 							var tp  = $(this).attr("id").split('_DoT_');
 							resultPaneView.fireSetTreePath(tp);	
 							resultPaneView.fireTreeNodeEvent(tp);
-							setTitlePath(tp);
+							//setTitlePath(tp);
 							});
 						$("a#" + cid + " ins").remove();
 						$("img#" + cid).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});

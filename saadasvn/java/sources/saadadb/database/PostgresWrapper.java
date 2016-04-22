@@ -279,8 +279,8 @@ public class PostgresWrapper extends DbmsWrapper {
 		else if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
 			return "float8";
 		}
-		else if(typeJava.indexOf("String")>=0){
-			return "text";
+		else if(typeJava.indexOf("String")>=0 || typeJava.equalsIgnoreCase("region")){
+			return "VARCHAR";
 		}
 		else if(typeJava.indexOf("Date")>=0){
 			return "date";

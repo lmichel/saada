@@ -18,6 +18,8 @@ jQuery
 			listeners.push(list);
 		};
 		this.fireTreeNodeEvent = function(treepath) {
+			setGlobalTreePath(treepath);
+console.log(JSON.stringify(globalTreePath));
 			var mode = $("input[@name=qlang]:checked").val();
 			var runSaadaQL = false;
 			if (mode == 'saadaql') {
@@ -31,8 +33,8 @@ jQuery
 			} else if (mode == 'tap') {
 				runTAP = true;
 			}
-			saadaqlView.fireTreeNodeEvent(treepath, runSaadaQL);
-			sapView.fireTreeNodeEvent(treepath);
+			saadaqlView.fireTreeNodeEvent(runSaadaQL);
+			sapView.fireTreeNodeEvent();
 		};
 
 		this.fireSubmitQueryEvent = function() {
@@ -46,9 +48,9 @@ jQuery
 				Modalinfo.info('Unknown query mode:' + mode);
 			}
 		};
-		this.fireSetTreePath = function(treepath) {
+		this.fireSetTreePath = function() {
 			$.each(listeners, function(i) {
-				listeners[i].controlSetTreePath(treepath);
+				listeners[i].controlSetTreePath();
 			});
 		};
 		this.fireHisto = function(direction) {

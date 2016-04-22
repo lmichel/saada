@@ -67,34 +67,39 @@ var units =  [
               , {id: 'Time_msec', text: "msec"}
               , {id: 'Time_nsec', text: "nsec"}
               ];
-function setTitlePath(treepath) {
-	globalTreePath = treepath;
 
-	$('#titlepath').html('<i>');
-	for( var i=0 ; i<treepath.length  ; i++ ) {
-		if( i > 0 ) $('#titlepath').append('&gt;');
-		$('#titlepath').append(treepath[i]);
-	}
+DataTreePath.prototype.getClassname = function(){
+	return (this.table.match(/.*\..*/))? "*": this.table;
 }
-
-var globalTreePath = new Array();
-function setTitlePath(treepath) {
-	globalTreePath = treepath;
-
-	$('#titlepath').html('<i>');
-	for( var i=0 ; i<treepath.length  ; i++ ) {
-		if( i > 0 ) $('#titlepath').append('&gt;');
-		$('#titlepath').append(treepath[i]);
+/**
+ * @param treepath array of treepath elements
+ */
+function setGlobalTreePath(treepath) {
+	var title;
+	var table;
+	var collection;
+	if( treepath.length == 3 ){
+		collection = treepath[0];
+		var category = treepath[1];
+		var classe = treepath[2];
+		table = classe;
+		title = collection + '&gt;' + category + '&gt;' + table;
 	}
+	else if ( treepath.length == 2 ){
+		collection = treepath[0];
+		category = treepath[1];
+		classe = '*'; 
+		params = {query: "ah", name:  collection + '.' +category };
+		table = collection + '.' +category;
+		title = collection + '&gt;' + category;
+	}
+	globalTreePath = new DataTreePath({nodekey:table, schema: collection, table: table, tableorg: table});
+	globalTreePath.category = category;
+	$('#titlepath').html(title);
 }
 
 function getTreePathAsKey() {
-	var retour = '';
-	for( var i=0 ; i<globalTreePath.length  ; i++ ) {
-		if( i > 0 )retour += '_';
-		retour += globalTreePath[i];
-	}
-	return retour;
+	return globalTreePath.nodekey;
 }
 
 function switchArrow(id) {

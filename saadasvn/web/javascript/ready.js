@@ -19,6 +19,8 @@ var booleansupported = false;
  */
 var layoutPane;
 
+var globalTreePath = new Array();
+
 var queryView;
 var nativeConstraintEditor;
 var posConstraintEditor;
