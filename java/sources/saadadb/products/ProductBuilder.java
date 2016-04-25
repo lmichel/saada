@@ -428,17 +428,8 @@ public abstract class ProductBuilder {
 		this.calib_levelSetter.calculateExpression();
 		this.target_nameSetter.calculateExpression();
 		this.facility_nameSetter.calculateExpression();
-		if( this.productAttributeHandler.get("_instrume") != null ) {
-			int x=9;
-		}
 		this.instrument_nameSetter.calculateExpression();
 		this.astroframeSetter.calculateExpression();
-		if( this instanceof EntryBuilder ){
-			String s = "";
-			//			System.out.println("CHECK " + Integer.toHexString(this.productAttributeHandler.get("_e_d25").hashCode()) + " " + this.productAttributeHandler.get("_e_d25"));
-			//			for( AttributeHandler ah: this.s_resolutionSetter.getExprAttributes()) 
-			//				System.out.println(Integer.toHexString(ah.hashCode()) + " " +  ah);
-		}
 		this.s_resolutionSetter.calculateExpression();
 		//this.s_resolution_unitSetter.calculateExpression();
 		this.s_raSetter.calculateExpression();

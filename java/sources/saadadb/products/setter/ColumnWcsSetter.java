@@ -65,6 +65,12 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 	 * @see saadadb.products.setter.ColumnExpressionSetter#calculateExpression()
 	 */
 	public void calculateExpression() throws Exception{
+		if( !this.projection.containsValidValues()){
+			this.settingMode = ColumnSetMode.NOT_SET;
+			this.completeDetectionMsg(this.projection + " has no valid values");				
+			this.result = null;
+			return;
+		}
 		String ef = this.expression.replace(Prefix,  "");
 		switch( ef ) {
 		case "getMin(1)":

@@ -13,6 +13,7 @@ import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
 import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.ColumnSetMode;
 
 /**
@@ -289,7 +290,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 		} catch (Exception e) {
 			this.result = SaadaConstant.STRING;
 			//this.settingMode = ColumnSetMode.NOT_SET;
-			this.completeConversionMsg("Exp failed: " + e.getMessage());
+			this.completeConversionMsg("Exp failed: " + e);
 		}
 	}
 
@@ -312,8 +313,14 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				} else {
 					AttributeHandlerExtractor ahExtractor = new AttributeHandlerExtractor(expression, attributes);
 					this.exprAttributes = ahExtractor.extractAH();
+					/*
+					 * If no AH: the expression has been computed: It is now a constant expression
+					 */
+					if( this.exprAttributes.size() == 0 ){
+						this.arithmeticExpression = false;
+					}
 					this.expression=ahExtractor.expression;
-					if( this.arithmeticExpression ) {
+					if(  this.arithmeticExpression ) {
 						if(  !this.expression.trim().equals(this.lastExpressionEvaluated)) {
 							this.lastExpressionEvaluated = this.expression.trim();
 							this.wrapper = new ExpressionWrapper(expression, exprAttributes,numericFunctionList);
@@ -379,7 +386,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
 				 */
 				for(int i=0;i<args.length;i++) {
-					if( (args[i].startsWith("\"") || args[i].startsWith("'"))) {
+					if( args[i].startsWith("\"") || args[i].startsWith("'") || args[i].matches(RegExp.NUMERIC) ) {
 						values[i]=args[i].replaceAll("[\"']", "");
 					} else
 						IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be quoted strings or keywords");
@@ -410,7 +417,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 					attributeFound = false;
 					args[i]=args[i].trim();
 					//If between quote, it's not an AH
-					if(!(args[i].startsWith("\"") || args[i].startsWith("'"))) {
+					if(!(args[i].startsWith("\"") || args[i].startsWith("'") || args[i].matches(RegExp.NUMERIC))) {
 						for(AttributeHandler ah : this.stringFunctionArgumentsList) {
 							if( ah.isNamedLike(args[i])) {
 								attributeFound=true;
@@ -430,7 +437,7 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 				 * For each argument, we delete the quotes, if there is no quotes, this is an invalid argument
 				 */
 				for(int i=0;i<args.length;i++) {
-					if( (args[i].startsWith("\"") || args[i].startsWith("'"))) {
+					if( args[i].startsWith("\"") || args[i].startsWith("'") || args[i].matches(RegExp.NUMERIC)) {
 						values[i]=args[i].replaceAll("[\"']", "");
 					} else
 						IgnoreException.throwNewException(IgnoreException.WRONG_PARAMETER, "The String function arguments must be quoted strings or keywords");
@@ -828,8 +835,18 @@ MULTI_ATTRIBUTE,
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
+		
+		ces = new ColumnExpressionSetter("name", "strcat('1', '2', 'a', 'b')", null, true);
+		System.out.println(" compiled: " + ces);
+		ces.calculateExpression();
+		System.out.println(" comptued: " + ces);
 
 		ces = new ColumnExpressionSetter("name","12+ strcat('1', '2')", null, true);
+		System.out.println(" compiled: " + ces);
+		ces.calculateExpression();
+		System.out.println(" comptued: " + ces);
+		
+		ces = new ColumnExpressionSetter("name","substring('abcdefg', 1, 4)", null, true);
 		System.out.println(" compiled: " + ces);
 		ces.calculateExpression();
 		System.out.println(" comptued: " + ces);
