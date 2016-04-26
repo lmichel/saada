@@ -256,9 +256,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	protected void writeBeginingVOTable() {
 		SavotVOTable votable = new SavotVOTable();
 		
-		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.1");
+		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.2");
 		votable.setXmlnsxsi("http://www.w3.org/2001/XMLSchema-instance");
-		votable.setVersion("1.1");
+		votable.setVersion("1.2");
 		writer.writeDocumentHead(votable);
 
 		String description = "<![CDATA[\nSaadaDB:\n" 

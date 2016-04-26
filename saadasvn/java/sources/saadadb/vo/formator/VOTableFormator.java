@@ -25,14 +25,12 @@ import cds.savot.model.FieldRefSet;
 import cds.savot.model.FieldSet;
 import cds.savot.model.GroupSet;
 import cds.savot.model.InfoSet;
-import cds.savot.model.LinkSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotCoosys;
 import cds.savot.model.SavotField;
 import cds.savot.model.SavotFieldRef;
 import cds.savot.model.SavotGroup;
 import cds.savot.model.SavotInfo;
-import cds.savot.model.SavotLink;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotResource;
 import cds.savot.model.SavotTD;
@@ -399,7 +397,7 @@ public abstract class VOTableFormator extends VOResultFormator {
 	protected void writeBeginingVOTable() {
 		SavotVOTable votable = new SavotVOTable();
 		votable.setXmlnsxsi("http://www.w3.org/2001/XMLSchema-instance");
-		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.1");
+		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.2");
 		writer.writeDocumentHead(votable);
 		
 		CoosysSet coosysSet = new CoosysSet();
@@ -684,8 +682,9 @@ public abstract class VOTableFormator extends VOResultFormator {
 	
 	/**
 	 * @param length
+	 * @throws Exception 
 	 */
-	protected void writeDMFieldsAndGroups(int length) {
+	protected void writeDMFieldsAndGroups(int length) throws Exception {
 		
 		GroupSet groupSet = new GroupSet();		
 		fieldSet_dm = new FieldSet();

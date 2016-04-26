@@ -25,7 +25,7 @@
     <TD>Observation</TD>
     <TD>dataproduct_type</TD>
     <TD>meta.id</TD>
-    <TD>obscore:Obs.dataProductType</TD>
+    <TD>obscore:ObsDataset.dataProductType</TD>
     <TD>VARCHAR</TD>
     <TD>1</TD>
     <TD></TD>
@@ -38,7 +38,7 @@
     <TD>Observation</TD>
     <TD>calib_level</TD>
     <TD>meta.code;obs.calib</TD>
-    <TD>obscore:Obs.calibLevel</TD>
+    <TD>obscore:ObsDataset.calibLevel</TD>
     <TD>int</TD>
     <TD>1</TD>
     <TD></TD>
@@ -252,7 +252,7 @@
     <TD>SpatialAxis</TD>
     <TD>s_xel1</TD>
     <TD>meta.number</TD>
-    <TD>obscoreChar.SpatialAxis.numBins1</TD>
+    <TD>obscore:Char.SpatialAxis.numBins1</TD>
     <TD>long</TD>
     <TD>1</TD>
     <TD></TD>
@@ -265,7 +265,7 @@
     <TD>SpatialAxis</TD>
     <TD>s_xel2</TD>
     <TD>meta.number</TD>
-    <TD>obscoreChar.SpatialAxis.numBins2</TD>
+    <TD>obscore:Char.SpatialAxis.numBins2</TD>
     <TD>long</TD>
     <TD>1</TD>
     <TD></TD>
@@ -278,7 +278,7 @@
    <TR>
     <TD>SpatialAxis</TD>
     <TD>s_region</TD>
-    <TD>phys.angArea;obs</TD>
+    <TD>phys.outline;obs.field</TD>
     <TD>obscore:Char.SpatialAxis.Coverage.Support.Area</TD>
     <TD>region</TD>
     <TD>1</TD>
@@ -292,7 +292,7 @@
     <TD>SpatialAxis</TD>
     <TD>s_resolution</TD>
     <TD>pos.angResolution</TD>
-    <TD>obscore:Char.SpatialAxis.Resolution.refval</TD>
+    <TD>obscore:Char.SpatialAxis.Resolution.Refval.value</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>arcsec</TD>
@@ -332,7 +332,7 @@
     <TD>TimeAxis</TD>
     <TD>t_min</TD>
     <TD>time.start;obs.exposure</TD>
-    <TD>obscore:Char.TimeAxis.Coverage.Bounds.Limits.Interval.StartTime</TD>
+    <TD>obscore:Char.TimeAxis.Coverage.Bounds.Limits.StartTime</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>d</TD>
@@ -345,7 +345,7 @@
     <TD>TimeAxis</TD>
     <TD>t_max</TD>
     <TD>time.end;obs.exposure</TD>
-    <TD>obscore:Char.TimeAxis.Coverage.Bounds.Limits.Interval.StopTime</TD>
+    <TD>obscore:Char.TimeAxis.Coverage.Bounds.Limits.StopTime</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>d</TD>
@@ -371,7 +371,7 @@
     <TD>TimeAxis</TD>
     <TD>t_resolution</TD>
     <TD>time.resolution</TD>
-    <TD>obscore:Char.TimeAxis.Resolution.refval</TD>
+    <TD>obscore:Char.TimeAxis.Resolution.Refval.value</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>s</TD>
@@ -385,7 +385,7 @@
     <TD>TimeAxis</TD>
     <TD>t_xel</TD>
     <TD>meta.number</TD>
-    <TD>Char.TimeAxis.numBins</TD>
+    <TD>obscore:Char.TimeAxis.numBins</TD>
     <TD>long</TD>
     <TD>1</TD>
     <TD></TD>
@@ -439,7 +439,7 @@
     <TD>SpectralAxis</TD>
     <TD>em_min</TD>
     <TD>em.wl;stat.min</TD>
-    <TD>obscore:Char.SpectralAxis.Coverage.Bounds.Limits.Interval.LoLim</TD>
+    <TD>obscore:Char.SpectralAxis.Coverage.Bounds.Limits.LoLimit</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>m</TD>
@@ -452,7 +452,7 @@
     <TD>SpectralAxis</TD>
     <TD>em_max</TD>
     <TD>em.wl;stat.max</TD>
-    <TD>obscore:Char.SpectralAxis.Coverage.Bounds.Limits.Interval.HiLim</TD>
+    <TD>obscore:Char.SpectralAxis.Coverage.Bounds.Limits.HiLimit</TD>
     <TD>double</TD>
     <TD>1</TD>
     <TD>m</TD>
@@ -492,7 +492,7 @@
     <TD>SpectralAxis</TD>
     <TD>em_xel</TD>
     <TD>meta.number</TD>
-    <TD>Char.Spectral.numBins</TD>
+    <TD>obscore:Char.SpectralAxis.numBins</TD>
     <TD>long</TD>
     <TD>1</TD>
     <TD></TD>
@@ -573,7 +573,7 @@
     <TD>ObservableAxis</TD>
     <TD>o_calib_status</TD>
     <TD>meta.code.qual</TD>
-    <TD>obscore:Char.ObservableAxis.calibStatus</TD>
+    <TD>obscore:Char.ObservableAxis.calibrationStatus</TD>
     <TD>char</TD>
     <TD>-1</TD>
     <TD></TD>

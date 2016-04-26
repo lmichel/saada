@@ -86,7 +86,8 @@ public class InitBaseAtStart  implements ServletContextListener , HttpSessionLis
 		UserAccount account = (UserAccount)( event.getSession().getAttribute("account"));
 		try {
 			account.destroySession();
-		} catch (Exception e) {Messenger.printMsg(Messenger.ERROR, e.toString());}
+		} catch (Exception e) {e.printStackTrace();
+		Messenger.printMsg(Messenger.ERROR, e.toString());}
 		Messenger.printMsg(Messenger.TRACE, "Session " + event.getSession().getId() + " destroyed");    
 	}
 
