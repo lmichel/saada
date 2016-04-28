@@ -23,6 +23,7 @@ var globalTreePath = new Array();
 
 var queryView;
 var nativeConstraintEditor;
+var patternConstraintEditor;
 var posConstraintEditor;
 
 $().ready(function() {
@@ -275,10 +276,14 @@ $().ready(function() {
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 	
 	MetadataSource.init({getMetaTable: "getmeta"})
-	 queryView = QueryConstraintEditor.queryTextEditor({ parentDivId: 'texttab', defaultQuery: ''});	   		    
-	 posConstraintEditor = QueryConstraintEditor.posConstraintEditor({ parentDivId: 'postab', formName:'simpleposcolumns',  queryView: queryView
+	queryView = QueryConstraintEditor.queryTextEditor({ parentDivId: 'texttab', defaultQuery: ''});	   		    
+	posConstraintEditor = QueryConstraintEditor.posConstraintEditor({ parentDivId: 'postab', formName:'simpleposcolumns',  queryView: queryView
 			, frames: ['ICRS', 'GALACTIC', 'FK5'], urls: {sesameURL: "sesame", uploadURL: "uploadposlist"}} );
-	 nativeConstraintEditor = QueryConstraintEditor.nativeConstraintEditor({parentDivId: 'kwtab', getMetaUrl: "getmeta", queryView: queryView});
+	
+	nativeConstraintEditor = QueryConstraintEditor.nativeConstraintEditor({parentDivId: 'kwtab', getMetaUrl: "getmeta", queryView: queryView});
+	
+	patternConstraintEditor = QueryConstraintEditor.matchPatternEditor({parentDivId: 'patterntab',formName: 'matchPattern',queryView: queryView});
+	
 		//qce.fireSetTreepath(new DataTreePath({nodekey:'node', schema: 'schema', table: 'table', tableorg: 'schema.table'}));
 	
 	DataTree.init();

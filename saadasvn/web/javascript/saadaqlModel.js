@@ -36,6 +36,7 @@ jQuery.extend({
 		 */
 		this.processTreeNodeEvent = function(andsubmit, defaultquery){
 			nativeConstraintEditor.fireSetTreepath(globalTreePath);
+			patternConstraintEditor.fireSetTreepath(globalTreePath);
 			var md = MetadataSource.relations;
 			var disabled = new Array();
 			var selected = 0;
