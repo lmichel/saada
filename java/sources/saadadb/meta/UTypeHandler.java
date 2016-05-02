@@ -194,9 +194,16 @@ public class UTypeHandler {
 		retour.setNameattr(ChangeKey.changeKey(this.nickname));
 		retour.setUcd(this.ucd);
 		retour.setUtype(this.utype);
-		if( this.type.equals("char") && this.arraysize == -1 ) {
+		/*
+		 * The value for array data are made with concatenation of individual values.
+		 * Which always are strings
+		 */
+		if( this.arraysize != 1 ){
 			retour.setType("String");
 		}
+//		if( this.type.equals("char") && this.arraysize == -1 ) {
+//			retour.setType("String");
+//		}
 		else {
 			retour.setType(this.type);
 		}
