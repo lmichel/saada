@@ -113,13 +113,17 @@ public class SSAPQuery extends VOQuery {
 				QueryException.throwNewException("OVERFLOW",
 						"Angular SIZE should be between 0 and 1");
 			}
+			/*
+			 * SaadaQL works in Arcmin
+			 */
+			size *= 60;
 			if (cooPos.length() == 0) {
 				QueryException
 						.throwNewException("ERROR",
 								"Cone search size given without position: makes no sense");
 			}
 			queryString += "\nWherePosition{isInCircle(\"" + cooPos + "\","
-					+ value + ",J2000," + cooSys + ")}";
+					+ size + ",J2000," + cooSys + ")}";
 
 		} else if (cooPos.length() > 0) {
 			QueryException.throwNewException("ERROR",
