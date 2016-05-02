@@ -79,7 +79,7 @@ public class Extractor {
 		} else {
 			query = "";
 		}
-		System.out.println("Query : "+query);
+		//System.out.println("Query : "+query);
 	}
 	
 	/**
