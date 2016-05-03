@@ -234,6 +234,9 @@ public class SSAPQuery extends VOQuery {
 		// ===========================================================================
 
 		value = this.queryParams.get("top");
+		if( value == null ){
+			value = this.queryParams.get("maxrec");
+		}
 		if (value != null) {
 			try {
 				int top = Integer.parseInt(value);
