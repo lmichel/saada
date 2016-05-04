@@ -22,7 +22,7 @@ public class SsapVotableFormator extends VotableFormator {
 
 	public SsapVotableFormator() throws QueryException {
 		setDataModel("SSA");
-		limit = 100000;
+		limit = 10000;
 		protocolN = "SSAP";
 		protocolV = "1.1";
 		this.infoMap.put("SERVICE_PROTOCOL", new infoEntry(this.protocolV,
