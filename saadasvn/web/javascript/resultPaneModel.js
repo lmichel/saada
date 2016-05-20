@@ -300,6 +300,9 @@ jQuery.extend({
 				Modalinfo.iframePanel(url, 'DL VOTable');
 			}
 		};
+		this.downloadVOTableURL = function() {
+			return "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=votable";
+		}
 		this.downloadFITS = function() {
 			var url = "getqueryreport?query=" + escape(current_query) + "&protocol=auto&format=fits";
 			Modalinfo.iframePanel(url, 'DL FITS');

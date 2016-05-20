@@ -19,7 +19,6 @@ jQuery
 		};
 		this.fireTreeNodeEvent = function(treepath) {
 			setGlobalTreePath(treepath);
-console.log(JSON.stringify(globalTreePath));
 			var mode = $("input[@name=qlang]:checked").val();
 			var runSaadaQL = false;
 			if (mode == 'saadaql') {
@@ -33,7 +32,7 @@ console.log(JSON.stringify(globalTreePath));
 			} else if (mode == 'tap') {
 				runTAP = true;
 			}
-			saadaqlView.fireTreeNodeEvent(runSaadaQL);
+			saadaqlView.fireTreeNodeEvent(runSaadaQL, true);
 			sapView.fireTreeNodeEvent();
 		};
 
@@ -68,7 +67,6 @@ console.log(JSON.stringify(globalTreePath));
 
 		this.fireSaadaQLQueryEvent = function(query) {
 			$("#resultpane").html();
-
 			$.each(listeners, function(i) {
 				listeners[i].controlSaadaQLQueryEvent(query);
 			});
@@ -100,11 +98,7 @@ console.log(JSON.stringify(globalTreePath));
 					return;
 				}
 				else {
-					retour = "relation: " + relation + "\n";
-					$.each(jsdata, function(k, v) {
-						retour += k + ": " + v  + "\n";
-					});
-					Modalinfo.info(retour, "Relation Info");
+					Modalinfo.infoObject(jsdata, "Relation Info");
 				}
 			});
 		};	
@@ -125,7 +119,17 @@ console.log(JSON.stringify(globalTreePath));
 			$.each(listeners, function(i) {
 				listeners[i].controlDownloadVOTable();
 			});
-		};
+		};		
+		
+		this.getDownloadVOTableURL = function() {
+			var retour;
+			$.each(listeners, function(i) {
+				retour = listeners[i].controlDownloadVOTableURL();
+				return;
+			});
+			return retour;
+		}
+
 		this.fireDownloadFITS = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
 				Modalinfo.info("No data selection");
@@ -179,6 +183,16 @@ console.log(JSON.stringify(globalTreePath));
 			$.each(listeners, function(i) {
 				listeners[i].controlShowMeta();
 			});
+		};
+		this.fireShowMetaCollection = function(treepath) {
+			$.getJSON("getmeta", {query: "collection", name:treepath }, function(data) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get collection description") ) {
+					return;
+				} else {
+					Modalinfo.infoObject(data, "Collection Description")
+				}
+				});
 		};
 		this.fireShowMetaNode = function(treepath) {
 			$.each(listeners, function(i) {
@@ -270,61 +284,6 @@ console.log(JSON.stringify(globalTreePath));
 			if( Processing.jsonError(jsdata, "") ) {
 				return;
 			}
-
-//			var table = '';
-//			var histo = '';
-
-
-//			if (limit != 'NoHisto') {
-//			if (limit != 'MaxLeft') {
-//			histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
-//			} else {
-//			histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-//			}
-//			if (limit != 'MaxRight') {
-//			histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
-//			} else {
-//			histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
-//			}
-//			} else {
-//			histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-//			histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
-//			}
-//			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
-//			//table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
-//			table += '<h3> ' + histo  + jsdata.title + '<span>'
-//			+ '</span></h3>';
-
-//			if (jsdata.links.length > 0) {
-//			table += "<div style='overflow: hidden;border-width: 0;'>";
-//			for (var i = 0; i < jsdata.links.length; i++) {
-//			table += '<span>' + jsdata.links[i] + '</span><br>';
-//			}
-//			table += "</div>";
-//			}
-//			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');;\"> <img src=\"images/tdown.png\"> Native Data </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-//			table += "</div>";
-
-//			table += "<h4 id=\"mapped\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mapped\');\"> <img src=\"images/tright.png\"> Mapped Data </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-//			table += "</div>";
-
-			/*
-			 * relation panels
-			 */
-//			for (var i = 0; i < jsdata.relations.length; i++) {
-//			var relation= jsdata.relations[i];
-//			if( relation == panelToOpen) {
-//			numPanelToOpen = i+2;
-//			}
-//			table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
-//			+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
-//			table += "<div class='detaildata'></div>";
-//			}
-
 
 			var content = {
 					header: {
@@ -505,18 +464,18 @@ console.log(JSON.stringify(globalTreePath));
 
 			if (limit != 'NoHisto') {
 				if (limit != 'MaxLeft') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
+					histo += '<a id="qhistoleft" href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
 				} else {
-					histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+					histo += '<a id="qhistoleft" class="histoleft shaded" onclick="return false;"></a>';
 				}
 				if (limit != 'MaxRight') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
+					histo += '<a id="qhistoright"  href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
 				} else {
-					histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+					histo += '<a id="qhistoright" class="historight shaded" onclick="return false;"></a>';
 				}
 			} else {
-				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+				histo += '<a id="qhistoleft" class="histoleft shaded" onclick="return false;"></a>';
+				histo += '<a id="qhistoleft" class="historight shaded" onclick="return false;"></a>';
 			}
 			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
 
@@ -532,51 +491,6 @@ console.log(JSON.stringify(globalTreePath));
 					+ jsdata.collectionLevel.name + "."
 					+ jsdata.collectionLevel.category + "</i>";
 			}
-//			table += '<h2> ' + histo + ' DETAIL <span>' + title
-//			+ '</span></h2>';
-//			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-//			table += "</div>";
-
-//			if (jsdata.classLevel != null) {
-//			table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-//			table += "</div>";
-//			}
-
-//			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
-//			table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
-//			table += "</div>";
-//			}
-
-//			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
-//			table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
-//			table += "<div class='detaildata'>";
-//			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
-//			table += "</div>";
-//			}
-
-//			if ($('#detaildiv').length == 0) {
-//			$(document.documentElement)
-//			.append(
-//			"<div id=detaildiv style='width: 99%; display: none;'></div>");
-//			}
-			//Modalpanel.open(table);
-//			$('#detailtable').dataTable(
-//			{
-//			"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
-//			"aaData" : jsdata.collectionLevel.attributes.aaData,
-//			"sDom" : '<"top"f>rt',
-//			"bPaginate" : false,
-//			"aaSorting" : [],
-//			"bSort" : false,
-//			"bFilter" : true,
-//			"bAutoWidth" : true
-//			});
 
 			var content = {
 					header: {
@@ -730,23 +644,8 @@ console.log(JSON.stringify(globalTreePath));
 						"pagingType" : "simple",
 						"bSort" : false,
 						"bFilter" : false,
-						//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-						//	"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
 						"sAjaxSource" : "nextpage",
 							"sServerMethod": "POST"
-//							"fnDrawCallback": function() {
-//							var width = $(this).width();
-//							console.log($(this).width());
-//							var wa = new Array();
-//							$(this).find('thead').remove();
-//							$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
-//							$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
-//							$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
-//							}
-//							"fnInitComplete": function(oSettings, json) {
-//							that.fixedHeader.fnUpdate();
-//							} 
-							// , "bPaginate": false
 				};
 				var positions = [
 				                 { "name": "pagination",
@@ -770,14 +669,14 @@ console.log(JSON.stringify(globalTreePath));
 				                 { "name" : '<a id="ColumnSelector" class="dl_column" title="Column selector"></a>',
 				                	 "pos": "top-center"
 				                 },
-				                 { "name" : '<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>',
+				                 { "name" : '<a href=' + resultPaneView.getDownloadVOTableURL() + ' title="Download the current selection in a VOTable" class="dl_download" download></a>',
 				                	 "pos": "top-center"
 				                 },
 				                 { "name" : '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>',
 				                	 "pos": "top-center"
 				                 }
 				                 ];
-				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
+				if( globalTreePath.category == "ENTRY" || globalTreePath.category == "IMAGE"|| globalTreePath.category == "SPECTRUM"){
 					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
 						"pos" : "top-center"})
 				}
@@ -795,59 +694,10 @@ console.log(JSON.stringify(globalTreePath));
 					}
 				}
 				$('#ColumnSelector').click(function() {
-					NodeFilter.create(globalTreePath[0] + globalTreePath[1] + globalTreePath[2], ahs, columnSelector);
+					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
 				});
 				return;
-/////////////////////////////////////////////////////////////////////////////////////////
-				// p: change page
-				//	$('.fixedHeader').remove();
-				var iconBar = '&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>'	
-					+ '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
-					+ Printer.getSmallPrintButton("resultpane")
-					;
-				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
-					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>';
-				}
-
-				var  oTable = $('#datatable').dataTable({
-					"aLengthMenu": [5, 10, 25, 50, 100],
-					"bServerSide" : true,
-					"bProcessing" : true,
-					"aaSorting" : [],
-					"bSort" : false,
-					"bFilter" : false,
-					//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-					"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-					"sAjaxSource" : "nextpage"
-//						"fnDrawCallback": function() {
-//						var width = $(this).width();
-//						console.log($(this).width());
-//						var wa = new Array();
-//						$(this).find('thead').remove();
-//						$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
-//						$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
-//						$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
-//						}
-//						"fnInitComplete": function(oSettings, json) {
-//						that.fixedHeader.fnUpdate();
-//						} 
-						// , "bPaginate": false
-				});
-				//	this.fixedHeader = new FixedHeader( oTable );
-
-
 			}
-			$('#resultpane div.dataTables_length').append(iconBar);
-			//$('div .bottom').appendTo('#pouet1');
-			that.fireStoreHisto(query);
-			//this.fixedHeader.fnUpdate();
-			/*
-			 * Images are loaded asynchronously and they can change the column width.*
-			 * There is no way to trigger this kind of event to update FixHeader.
-			 * Les do it a couple of seconds later
-			 */
-			//setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
-
 		};
 		this.updateFixedHeader = function() {
 			alert(this.fixedHeader);
@@ -882,18 +732,18 @@ console.log(JSON.stringify(globalTreePath));
 			var result = '';
 			$("#qhistocount").html((ptr + 1) + "/" + length);
 			if (length <= 1) {
-				result += '<img src="images/histoleft-grey.png">';
-				result += '<img src="images/historight-grey.png">';
+				result += '<a id="qhistoleft" title="Previous query" class="shaded histoleft  shaded" onclick="return false;"></a>';
+				result += '<a id="qhistoright" title="Previous query" class="shaded historight" onclick="return false;"></a>';
 			} else {
 				if (ptr > 0) {
 					result += '<a id="qhistoleft" title="Previous query" class=histoleft onclick="resultPaneView.fireHisto(\'previous\');"></a>';
 				} else {
-					result += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+					result += '<a id="qhistoleft" title="Previous query" class="histoleft  shaded" onclick="return false;"></a>';
 				}
 				if (ptr < (length - 1)) {
 					result += '<a id="qhistoright" title="Next query" class=historight onclick="resultPaneView.fireHisto(\'next\');"></a>';
 				} else {
-					result += '<img src="images/historight-grey.png">';
+					result += '<a id="qhistoright" title="Previous query" class="historight  shaded" onclick="return false;"></a>';
 				}
 			}
 			$('#histoarrows').html('');

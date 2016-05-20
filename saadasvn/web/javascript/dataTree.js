@@ -30,7 +30,7 @@ DataTree = function () {
 						,true);  
 				$("a#" + node.attr.id).before("<img title='Click to get the description of the collection' class=infoanchor id='" + node.attr.id + "' src='images/metadata.png'></img>");
 				$("a#" + node.attr.id + " ins").remove();
-				$("img#" + node.attr.id).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id"));});
+				$("img#" + node.attr.id).click(function(){resultPaneView.fireShowMetaCollection($(this).attr("id"));});
 				/*
 				 * Loop on categories
 				 */
@@ -106,6 +106,9 @@ DataTree = function () {
 				}
 
 			}
+			layoutPane.sizePane("west", $("#treedisp").width()) ;
+			layoutPane.sizePane("south", '10%') ;
+
 			return
 
 			dataTree = $("div#treedisp").jstree({
@@ -153,6 +156,7 @@ DataTree = function () {
 				// Node sorting by DnD blocked
 				"crrm" : {"move" : {"check_move" : function (m) {return false; }}
 				}
+				
 			}); // end of jstree
 //			dataTree.bind("select_node.jstree", function (e, data) {
 //			Modalinfo.info(data);

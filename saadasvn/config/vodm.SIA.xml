@@ -55,7 +55,7 @@
 						<TD></TD>
 						<TD>int</TD>
 						<TD>1</TD>
-						<TD></TD>
+						<TD>byte</TD>
 						<TD>false</TD>
 						<TD></TD>
 						<TD>estimated size of the encoded image in bytes</TD>
@@ -82,7 +82,7 @@
 						<TD>Dataset.Length</TD>
 						<TD>long</TD>
 						<TD>1</TD>
-						<TD></TD>
+						<TD>byte</TD>
 						<TD>false</TD>
 						<TD>x</TD>
 						<TD></TD>
@@ -119,7 +119,7 @@
 						<TD>RA</TD>
 						<TD>POS_EQ_RA_MAIN</TD>
 						<TD></TD>
-						<TD>double</TD>
+						<TD>float8</TD>
 						<TD>1</TD>
 						<TD>deg</TD>
 						<TD>false</TD>
@@ -132,7 +132,7 @@
 						<TD>DEC</TD>
 						<TD>POS_EQ_DEC_MAIN</TD>
 						<TD></TD>
-						<TD>double</TD>
+						<TD>float8</TD>
 						<TD>1</TD>
 						<TD>deg</TD>
 						<TD>false</TD>
@@ -291,7 +291,7 @@
 						<TD>BandPass_RefValue</TD>
 						<TD>VOX:BandPass_RefValue</TD>
 						<TD></TD>
-						<TD>double</TD>
+						<TD>float8</TD>
 						<TD>1</TD>
 						<TD></TD>
 						<TD>false</TD>
@@ -299,20 +299,6 @@
 						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
 						<TD>3</TD>
 					</TR>
-					<TR>
-						<TD>Bandpass</TD>
-						<TD>BandPass_RefValue</TD>
-						<TD>VOX:BandPass_RefValue</TD>
-						<TD></TD>
-						<TD>double</TD>
-						<TD>1</TD>
-						<TD></TD>
-						<TD>false</TD>
-						<TD></TD>
-						<TD>Characteristic (reference) frequency, wavelength, or energy for the bandpass model</TD>
-						<TD>3</TD>
-					</TR>
-
 				</TABLEDATA>
 			</DATA>
 		</TABLE>

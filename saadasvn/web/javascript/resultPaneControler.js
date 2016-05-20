@@ -39,6 +39,9 @@ jQuery.extend({
 				controlDownloadVOTable: function(){
 					model.downloadVOTable();				
 				},
+				controlDownloadVOTableURL: function(){
+					return model.downloadVOTableURL();				
+				},
 				controlDownloadFITS: function(){
 					model.downloadFITS();				
 				},

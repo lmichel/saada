@@ -198,14 +198,26 @@ public class AdminTool extends BaseFrame {
 		c.weightx = 1;
 		c.weighty = 1;
 		leftPanel.add(metaDataTree,c);
-		currentProcess = new LoadBarButton("Current Process");
-		currentProcess.btn.setToolTipText("Display the console panel connected on the current asynchronous process");
+		currentProcess = new LoadBarButton("Reload cache");
+		currentProcess.btn.setToolTipText("Reload the MetaData Cache");
 		currentProcess.btn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int x = (int)(Math.random() * 10);
-				activePanel(AdminComponent.PROCESS_PANEL);
-				activePanel.setDataTreePath(new DataTreePath("collection" + x, "CATEGORY", "classe" + x));
-				activePanel.setCurrentTask("Au Boulot");
+//				int x = (int)(Math.random() * 10);
+//				activePanel(AdminComponent.PROCESS_PANEL);
+//				activePanel.setDataTreePath(new DataTreePath("collection" + x, "CATEGORY", "classe" + x));
+//				activePanel.setCurrentTask("Au Boulot");
+				try {
+					Database.getCachemeta().reloadGraphical(AdminTool.this, true);
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {   
+								try {
+									(AdminTool.this).metaDataTree.synchronizeAllCategoryNodes();
+								} catch (SaadaException e) {}
+						}
+					});
+
+				} catch (FatalException e) {}
+
 			}
 		});
 		c.gridx = 0;

@@ -15,23 +15,18 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -50,8 +45,6 @@ import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.meta.MetaCollection;
-import saadadb.query.executor.Query;
 import saadadb.util.Messenger;
 
 /**
@@ -301,6 +294,26 @@ public class MetaDataPanel extends JPanel implements DragGestureListener,  DragS
 				model.insertNodeInto(new DefaultMutableTreeNode(classes[cl]), categoryNode, categoryNode.getChildCount());
 			}
 		} 
+	}
+
+	/**
+	 * Full tree refresh
+	 * @param collname
+	 * @param category
+	 * @throws SaadaException
+	 */
+	public void synchronizeAllCategoryNodes() throws SaadaException {
+		CacheMeta cm = Database.getCachemeta();
+		String[] colls = cm.getCollection_names();
+		/*
+		 * Loop on collections
+		 */
+		for (int k = 0; k < colls.length; k++) {
+			for( String cat: Category.NAMES) {
+				this.synchronizeCategoryNodes(colls[k], cat);
+			}
+		}
+
 	}
 
 	/**

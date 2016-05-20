@@ -129,7 +129,7 @@
      <TD>RA</TD>
      <TD>pos.eq.ra;meta.main</TD>
      <TD></TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
 	 <TD>false</TD>
@@ -142,7 +142,7 @@
      <TD>DEC</TD>
      <TD>pos.eq.dec;meta.main</TD>
      <TD></TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
 	 <TD>false</TD>

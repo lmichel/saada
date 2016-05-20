@@ -8,7 +8,7 @@ jQuery.extend({
 		/**
 		 * who is listening to us?
 		 */
-		var listeners = new Array();
+		var listeners ;
 		/*
 		 * What we have to store and play with
 		 */
@@ -29,12 +29,12 @@ jQuery.extend({
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
-			listeners.push(list);
+			listener = list;
 		};
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(andsubmit, defaultquery){
+		this.processTreeNodeEvent = function(andsubmit, newTreeNode){
 			nativeConstraintEditor.fireSetTreepath(globalTreePath);
 			patternConstraintEditor.fireSetTreepath(globalTreePath);
 			var md = MetadataSource.relations;
@@ -44,12 +44,15 @@ jQuery.extend({
 				disabled[disabled.length] = 0;
 				selected = 1;
 			}
-			//if( jsondata.relations == null || jsondata.relations.length == 0 ) {
-			//	disabled[disabled.length] = 3;
-			//}
-			//if( with_ucd == false ) {
-				disabled[disabled.length] = 2;					
-			//}
+			/*
+			 * If the event has been initiated from the data tree, the history pointer is
+			 * set the end of the query list
+			 */
+			if(  newTreeNode ) {
+				histoQueryPtr = (histoQuery.length - 1);
+			}
+			disabled[disabled.length] = 2;					
+
 			$("#saadaqltab").tabs({
 				disabled: disabled,
 				selected: selected
@@ -360,16 +363,22 @@ jQuery.extend({
 		};
 
 		this.processStoreHisto = function(query) {
+			console.log( histoQueryPtr  + " "+  histoQuery.length)
+			/*
+			 * Do not store if the query has not change
+			 */
 			if( histoQuery.length > 0 && histoQuery[histoQuery.length-1].query == query ) {
 				return;
 			}
+			/*
+			 * Do not not store if a previous query is submitted again
+			 */
+			if( histoQueryPtr > -1 && histoQueryPtr != (histoQuery.length - 1) ) {
+				this.setTitle();
+				return;
+			}
 			histoQueryPtr = histoQuery.length;
-			if( classe != '*') {
-				histoQuery[histoQuery.length] = {query: query , treepath:[collection,category,classe]};
-			}
-			else {
-				histoQuery[histoQuery.length] = {query: query , treepath:[collection,category]};
-			}
+			histoQuery[histoQuery.length] = {query: query , treepath: jQuery.extend({}, globalTreePath) };
 
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
 		};
@@ -384,35 +393,37 @@ jQuery.extend({
 					return;
 				}
 				histoQueryPtr++;
-				that.processTreeNodeEvent(histoQuery[histoQueryPtr].treepath, false, histoQuery[histoQueryPtr].query);
-			}
-			else {
+			} else {
 				if( histoQueryPtr < 1) {
 					return;
 				}
 				histoQueryPtr--;
-				that.processTreeNodeEvent(histoQuery[histoQueryPtr].treepath, false,  histoQuery[histoQueryPtr].query);
 			}
+			
+			this.processTreeNodeEvent(false, false);
+			queryView.reset(histoQuery[histoQueryPtr].query);
+			$("#saadaqltab").tabs({
+				selected: 4
+			});
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
 		};
 
+		this.setTitle = function(){
+			globalTreePath = jQuery.extend({}, histoQuery[histoQueryPtr].treepath);
+			$('#titlepath').html(globalTreePath.title);
+
+		};
 		/*
 		 * Listener notifications
 		 */
 		this.notifyInitDone = function(){
-			$.each(listeners, function(i){
-				listeners[i].isInit(attributesHandlers, relations, queriableUCDs);
-			});
+			listener.isInit(attributesHandlers, relations, queriableUCDs);
 		};
 		this.notifyCoordDone = function(key, constr){
-			$.each(listeners, function(i){
-				listeners[i].coordDone(key, constr);
-			});
+			listener.coordDone(key, constr);
 		};
 		this.notifyQueryUpdated= function(query) {
-			$.each(listeners, function(i){
-				listeners[i].queryUpdated(query);
-			});
+			listener.queryUpdated(query);
 		};
 
 	}

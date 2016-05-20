@@ -15,11 +15,11 @@ jQuery.extend({
 		var results='';
 
 		this.init = function(xmlSummary) {
-	       // Out.info((new XMLSerializer()).serializeToString(xmlSummary));
-	        /*
-	         * The pair Chrome 15 and after and Jquery 1.7 do not support NS in XML
-	         * parsing. We must feed the find() function selector including both NS an no NS filed names
-	         */
+			// Out.info((new XMLSerializer()).serializeToString(xmlSummary));
+			/*
+			 * The pair Chrome 15 and after and Jquery 1.7 do not support NS in XML
+			 * parsing. We must feed the find() function selector including both NS an no NS filed names
+			 */
 			var xmlRoot = $(xmlSummary).find('uws\\:job, job');
 			this.jobId = xmlRoot.find('uws\\:jobId, jobId').text();
 			this.phase = xmlRoot.find('uws\\:phase, phase').text();
@@ -32,44 +32,56 @@ jQuery.extend({
 				that.results[that.results.length] = $(this).attr("xlink:href");
 			});
 		};
-		
+
 		that.init(xmlSummary);
 
 		this.kill = function() {
-			$.ajax({
-				type: 'DELETE',
-			    dataType: "xml",
-				url: "cart/zipper/" + that.jobId,
-				success: function(xmljob, status) {
-					Modalinfo.info("Job " +  that.jobId + " killed");
-					//that.refresh();
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					Modalinfo.info("Zipjob kill failed: Error " +  xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
-				}
-			});
+			if( that.jobId != '' ) {
+				var url = "cart/zipper/" + that.jobId;
+				that.jobId = '';
+				that.results = [];
+				that.phase = 'nojob';
+				$.ajax({
+					type: 'DELETE',
+					dataType: "xml",
+					url: url,
+					success: function(xmljob, status) {
+						Out.info("Job " +  url + " killed");
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						Modalinfo.info("Zipjob kill failed: Error " +  xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
+					}
+				});
+			}
 		};
 		this.refresh = function() {
-			$.ajax({
-			    dataType: "xml",
-				type: 'GET',
-				url: "cart/zipper/" + that.jobId,
-				success: function(xmljob, status) {Out.info("refresh cart job success");that.init(xmljob);},
-				error: function(xhr, ajaxOptions, thrownError) {
-					Modalinfo.info("Zipjob refresh failed: Error " + xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
-				}
-			});
+			if( that.jobId != '' ) {
+				$.ajax({
+					dataType: "xml",
+					type: 'GET',
+					url: "cart/zipper/" + that.jobId,
+					success: function(xmljob, status) {
+						Out.info("refresh cart job success");
+						that.init(xmljob);
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+						that.jobId = '';
+						that.results = [];
+						Modalinfo.info("Zipjob refresh failed: Error " + xhr.status + "\n" + xhr  + "\n" +ajaxOptions + "\n" + thrownError);
+					}
+				});
+			}
 //			$.get("datapack/zipper/" + that.jobId
-//				, function(data) {that.init(data);}
-//			    , "xml") ;
+//			, function(data) {that.init(data);}
+//			, "xml") ;
 		};
 		this.download = function() {
 			if( that.results.length >= 1 ) {
 				var url = that.results[0];
-				Location.changeLocation(url,"Download ZIPBALL");
+				PageLocation.changeLocation(url,"Download ZIPBALL");
 			} else {
 				Modalinfo.info("No ZIP archive available");
 			}
- 		};
+		};
 	}
 });

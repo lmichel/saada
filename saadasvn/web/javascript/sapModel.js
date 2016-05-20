@@ -26,7 +26,7 @@ jQuery.extend({
 		 */
 		this.processTreeNodeEvent = function(){
 			var category = globalTreePath.category;
-			var collection = globalTreePath.collection;
+			var collection = globalTreePath.schema;
 
 			$("#siapscope").html("Service scope: Not Set");
 			if( category == 'IMAGE' ) {
@@ -53,8 +53,7 @@ jQuery.extend({
 			}
 			else {
 				$("#saptab").tabs({
-					disabled: [1,2],
-				    selected: 0
+					disabled: [0, 1,2],
 				});
 				$("#siapscope").html("Service scope: Not Set");
 				$("#ssapscope").html("Service scope: Not Set");
@@ -66,6 +65,8 @@ jQuery.extend({
 		 * SIAP Event processing
 		 */
 		this.buildSIAPUrl= function(){
+			var category = globalTreePath.category;
+			var collection = globalTreePath.schema;
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -102,7 +103,8 @@ jQuery.extend({
 		this.processSIAPQueryEvent= function(){
 			var url = this.buildSIAPUrl();
 			if( url){
-				Modalinfo.openIframePanel(url, 'SIAP Result');
+				PageLocation.changeLocation(url);
+				//Modalinfo.openIframePanel(url, 'SIAP Result');
 			}
 		};
 		this.processSIAPSampEvent= function(){
@@ -115,6 +117,9 @@ jQuery.extend({
 		 * SSAP Event processing
 		 */
 		this.buildSSAPUrl= function(){
+			var category = globalTreePath.category;
+			var collection = globalTreePath.schema;
+
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -152,7 +157,8 @@ jQuery.extend({
 		this.processSSAPQueryEvent= function(){
 			var url = this.buildSSAPUrl();
 			if( url){
-				Modalinfo.openIframePanel(url, 'SSA Result');
+				PageLocation.changeLocation(url);
+				//Modalinfo.openIframePanel(url, 'SSA Result');
 			}
 		};
 		this.processSSAPSampEvent= function(){
@@ -166,6 +172,9 @@ jQuery.extend({
 		 * CS Event processing
 		 */
 		this.buildCSUrl= function(){
+			var category = globalTreePath.category;
+			var collection = globalTreePath.schema;
+
 			if( !collection ) {
 				Modalinfo.info("No data collection has been selected");
 				return;				
@@ -196,7 +205,8 @@ jQuery.extend({
 		this.processCSQueryEvent= function(){
 			var url = this.buildCSUrl();
 			if( url){
-				Modalinfo.openIframePanel(url, 'SCS Result');
+				PageLocation.changeLocation(url);
+				//Modalinfo.openIframePanel(url, 'SCS Result');
 			}
 		};
 		this.processCSSampEvent= function(){

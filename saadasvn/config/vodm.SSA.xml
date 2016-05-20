@@ -103,7 +103,7 @@
      <TD>Char_SpaCovLocVal</TD>
      <TD>pos.eq</TD>
      <TD>ssa:Char.SpatialAxis.Coverage.Location.Value</TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>2</TD>
      <TD></TD>
      <TD>false</TD>
@@ -116,7 +116,7 @@
      <TD>Char_SpaCovBouExt</TD>
      <TD>instr.fov</TD>
      <TD>ssa:Char.SpatialAxis.Coverage.Bounds.Extent</TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
      <TD>false</TD>
@@ -129,7 +129,7 @@
      <TD>Char_SpeCovLocVal</TD>
      <TD>instr.bandpass</TD>
      <TD>ssa:Char.SpectralAxis.Coverage.Location.Value</TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
      <TD>false</TD>
@@ -142,7 +142,7 @@
      <TD>Char_SpeCovBouExt</TD>
      <TD>instr.bandwidth</TD>
      <TD>ssa:Char.SpectralAxis.Coverage.Bounds.Extent</TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
      <TD>false</TD>
@@ -155,7 +155,7 @@
      <TD>Char_TimCovLocVal</TD>
      <TD>time.epoch</TD>
      <TD>ssa:Char.TimeAxis.Coverage.Location.Value</TD>
-     <TD>double</TD>
+     <TD>float8</TD>
      <TD>1</TD>
      <TD></TD>
      <TD>false</TD>

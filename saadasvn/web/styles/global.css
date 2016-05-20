@@ -176,7 +176,7 @@ a.accept {
 	width: 0px;
 	overflow: visible;
 	padding: 4px 0 4px 90px;
-	background: transparent url(../images/submit.png) bottom left no-repeat;
+	background: transparent url(../images/submit_90.png) bottom left no-repeat;
 	vertical-align: middle;
 }
 
@@ -259,6 +259,10 @@ a:active.add {
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
+}
+
+a.shaded {
+	-webkit-filter: grayscale(100%); 
 }
 
 a.histoleft {
@@ -952,7 +956,7 @@ div#formpane {
 	overflow: hidden;
 	border-width: 0px;
 	padding: 5px;
-	height: 300px;
+	height: 320px;
 
 	/* No margin or border allowed */
 }
@@ -1110,6 +1114,15 @@ a.cart {
 	background: transparent url(../images/cart_38.png) center left
 		no-repeat;
 }
+a.cart-title {
+    height: 30PX;
+    width: 38px;
+    overflow: visible;
+    padding: 12px 23px 12px 23px;
+    /* background: transparent url(../images/groscaddy.png) center left no-repeat; */
+    background: transparent url(../images/cart_38.png) center left no-repeat;
+    margin-right: 1px;
+}
 a.bookmark {
 	display: inline-block;
 	width: 0px;
@@ -1230,7 +1243,7 @@ a.dl_cart {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/cart_23.png) center left no-repeat;
+	background: transparent url(../images/cart_full_23.png) center left no-repeat;
 }
 
 a.dl_cart_added {
@@ -1238,7 +1251,7 @@ a.dl_cart_added {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/cart_23.png) center left no-repeat;
+	background: transparent url(../images/cart_full_23.png) center left no-repeat;
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;

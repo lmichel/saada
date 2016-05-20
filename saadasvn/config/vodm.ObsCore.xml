@@ -26,8 +26,8 @@
     <TD>dataproduct_type</TD>
     <TD>meta.id</TD>
     <TD>obscore:ObsDataset.dataProductType</TD>
-    <TD>VARCHAR</TD>
-    <TD>1</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
     <TD></TD>
     <TD>false</TD>
     <TD>null</TD>

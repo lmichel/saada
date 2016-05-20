@@ -5,8 +5,8 @@ jQuery.extend({
 		 * listen to the view
 		 */
 		var vlist = {
-				controlTreeNodeEvent : function(treepath, andsubmit, defaultQuery){
-					model.processTreeNodeEvent(treepath, andsubmit, defaultQuery);
+				controlTreeNodeEvent : function(andsubmit, newTreeNode){
+					model.processTreeNodeEvent(andsubmit, newTreeNode);
 				},
 				controlAttributeEvent: function(uidraggable){
 					model.processAttributeEvent(uidraggable);
@@ -43,7 +43,10 @@ jQuery.extend({
 				},
 				controlDisplayHisto: function() {
 					model.displayHisto();
-				}
+				}, 
+				controlTitleEvent: function() {
+					model.setTitle();
+				}, 
 		}
 		view.addListener(vlist);
 

@@ -233,7 +233,6 @@ public class SQLJTable extends JXTable {
 	 */
 	public void setModel(String sql) throws QueryException{
 		SQLQuery squery = new SQLQuery();
-
 		ResultSet resultSet = squery.run(sql);
 		this.setModel(new ResultSetTableModel(resultSet, this));
 		int columnCount = this.getColumnCount();          
@@ -315,6 +314,13 @@ public class SQLJTable extends JXTable {
 	 */
 	public DataTreePath getDataTreePath() {
 		return dataTreePath;
+	}
+	
+	/**
+	 * @param dataTreePath
+	 */
+	public void setDataTrePath(DataTreePath dataTreePath){
+		this.dataTreePath = dataTreePath;
 	}
 
 	/**

@@ -2,7 +2,7 @@ jQuery.extend({
 
 	CartModel: function(nodekey, description){
 
-		var listeners = new Array();
+		var listeners;
 		var that = this;
 
 		var cartData = {};
@@ -12,7 +12,7 @@ jQuery.extend({
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
-			listeners.push(list);
+			listener = list;
 		};
 		this.addJobResult = function(nodekey, jobid) {
 			var entry;
@@ -33,6 +33,7 @@ jQuery.extend({
 				}
 				cartData[nodekey].queries[i] = {name: name, uri: query, relations: []};			
 			}
+			this.killArchiveBuilding();
 		};
 		this.removeJobResult = function(nodekey, jobid) {
 			var entry;
@@ -49,11 +50,13 @@ jQuery.extend({
 						if( queries.length == 0 && entry.files.length == 0 ) {
 							delete cartData[nodekey];
 						}
+						this.killArchiveBuilding();
 						return;
 					}
 				}
 				Modalinfo.info("Job " + nodekey + "." + jobid+ " not found in from the cart", "input Error");
 			}			
+			that.killArchiveBuilding();
 		};
 		this.addUrl = function(name, oid) {
 			var entry;
@@ -71,7 +74,9 @@ jQuery.extend({
 					}
 				}
 				cartData[nodekey].files[i] = {name: name, uri: oid, relations: []};			
-			}			
+			}	
+			that.killArchiveBuilding();
+
 		};
 		this.removeUrl = function(nodekey, url) {
 			var entry;
@@ -84,14 +89,15 @@ jQuery.extend({
 					if( files[i].uri == url ) {
 						files.splice(i,1);
 						if( files.length == 0 && entry.queries.length == 0 ) {
-
 							delete cartData[nodekey];
 						}		
+						this.killArchiveBuilding();
 						return;
 					}
 				}
 				Modalinfo.info("URL not found in from the cart", "input Error");
 			}						
+			this.killArchiveBuilding();
 		};
 
 		this.cleanCart = function(tokenArray) {
@@ -116,7 +122,8 @@ jQuery.extend({
 					}
 				}
 			}
-			that.notifyCartCleaned();
+			this.killArchiveBuilding();
+			this.notifyCartCleaned();
 		};
 
 		this.changeName= function(nodekey, dataType, rowNum, newName) {
@@ -126,7 +133,8 @@ jQuery.extend({
 			else {
 				cartData[nodekey].files[rowNum].name = newName;
 			}
-			that.notifyCartCleaned();			
+			this.killArchiveBuilding();
+			this.notifyCartCleaned();			
 		};
 
 		this.setRelations = function(nodekey, dataType, uri, checked) {
@@ -143,20 +151,17 @@ jQuery.extend({
 				if( files[i].uri == uri ) {
 					files[i].relations = relValue;
 					Out.info("Relations set to "  + checked + " in " + dataType  + "/" + dataType + "/" +  uri);
+					this.killArchiveBuilding();
 					return;
 				}
 			}
 		};
 
 		this.notifyCartCleaned = function() {
-			$.each(listeners, function(i){
-				listeners[i].isCartCleaned(cartData);
-			});			
+			listener.isCartCleaned(cartData);
 		};
 		this.notifyCartOpen = function() {
-			$.each(listeners, function(i){
-				listeners[i].isInit(cartData);
-			});			
+			listener.isInit(cartData);
 		};
 
 		this.startArchiveBuilding = function() {

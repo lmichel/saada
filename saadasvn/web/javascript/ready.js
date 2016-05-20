@@ -19,7 +19,10 @@ var booleansupported = false;
  */
 var layoutPane;
 
-var globalTreePath = new Array();
+/*
+ * instance of DataTreePath: {nodekey:table, schema: collection, table: table, tableorg: table, category}
+ */
+var globalTreePath ;
 
 var queryView;
 var nativeConstraintEditor;
@@ -85,8 +88,8 @@ $().ready(function() {
 	$("#saptab").tabs();
 	$("#saptab").tabs({
 		unselect : true,
-		selected: 0,
-		disabled: [1,2]
+		//selected: 0,
+		disabled: [0, 1,2]
 	});
 	$("#saptab").hide();
 	/*

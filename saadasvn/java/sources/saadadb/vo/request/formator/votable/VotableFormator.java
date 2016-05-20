@@ -213,7 +213,7 @@ public abstract class VotableFormator extends  QueryResultFormator {
 								("".equals(uth.getUcd())      || sf.getUcd().equals(uth.getUcd()))	    &&
 								("".equals(uth.getNickname()) || sf.getName().equals(uth.getNickname()))) {
 							SavotFieldRef fieldRef = new SavotFieldRef();
-							fieldRef.setRef(sf.getRef());
+							fieldRef.setRef(sf.getId());
 							fieldRefSet.addItem(fieldRef);
 						}
 					}
@@ -343,27 +343,27 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 * Set housekeeping fields
 	 */
 	protected void writeHousekeepingFieldAndGroup() {
-		fieldSet_housekeeping = new FieldSet();		
-		/*
-		 * Param used by Aladin to order the response tree
-		 *
-		 * <PARAM name="SORTORDER" datatype="char" arraysize="*" value="TonNomDeChampPourLesSurvey SpectralAxis.coverage.Location" />
-		 */
-		ParamSet paramSet = new ParamSet();
-		SavotParam param = new SavotParam();
-		param.setName("SORTORDER");
-		param.setDataType("char");
-		param.setArraySize("*");
-		/*
-		 * Param specifying order criteria for Aladin
-		 * take the utype SpectralAxis.coverage.location.coord.ScalarCoordinate.Value
-		 * as second criterium.
-		 */
-		param.setValue("SaadaOID SpatialAxis_covloc SpectralAxiscovloccoorScalVal");
-		paramSet.addItem(param);
-		writer.writeParam(paramSet);
-		writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
-		writer.writeField(fieldSet_housekeeping);
+//		fieldSet_housekeeping = new FieldSet();		
+//		/*
+//		 * Param used by Aladin to order the response tree
+//		 *
+//		 * <PARAM name="SORTORDER" datatype="char" arraysize="*" value="TonNomDeChampPourLesSurvey SpectralAxis.coverage.Location" />
+//		 */
+//		ParamSet paramSet = new ParamSet();
+//		SavotParam param = new SavotParam();
+//		param.setName("SORTORDER");
+//		param.setDataType("char");
+//		param.setArraySize("*");
+//		/*
+//		 * Param specifying order criteria for Aladin
+//		 * take the utype SpectralAxis.coverage.location.coord.ScalarCoordinate.Value
+//		 * as second criterium.
+//		 */
+//		param.setValue("SaadaOID SpatialAxis_covloc SpectralAxiscovloccoorScalVal");
+//		paramSet.addItem(param);
+//		writer.writeParam(paramSet);
+//		writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
+//		writer.writeField(fieldSet_housekeeping);
 	}
 
 	/**
@@ -371,8 +371,8 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	 * @throws SaadaException
 	 */
 	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
-		addTD(Long.toString(obj.getOid()));
-		addCDataTD(obj.getNameSaada().replaceAll("#", ""));
+//		addTD(Long.toString(obj.getOid()));
+//		addCDataTD(obj.getNameSaada().replaceAll("#", ""));
 	}
 
 

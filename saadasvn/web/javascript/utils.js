@@ -95,6 +95,7 @@ function setGlobalTreePath(treepath) {
 	}
 	globalTreePath = new DataTreePath({nodekey:table, schema: collection, table: table, tableorg: table});
 	globalTreePath.category = category;
+	globalTreePath.title = title;
 	$('#titlepath').html(title);
 }
 

@@ -72,10 +72,12 @@ abstract public class DefaultPreviews {
 		String url = si.getDownloadURL(true);
 		if( dlWithRelations ) url += "&withrel=true";
 		if( SaadaServlet.secureDownlad ) {
-			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  onclick='window.open(\"" + url + "\", \"preview\");'></A>";
+			//return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  onclick='window.open(\"" + url + "\", \"preview\");'></A>";
+			return "<a title='Download the product file (restricted)' target='_blank' class=dl_securedownload  href='" + url + "' download></A>";
 
 		} else {
-			return "<a title='Download the product file' target='_blank' class=dl_download  onclick='Modalinfo.iframePanel(\"" + url + "\", \"preview\");'></A>";
+			//return "<a title='Download the product file' target='_blank' class=dl_download  onclick='Modalinfo.iframePanel(\"" + url + "\", \"preview\");'></A>";
+			return "<a title='Download the product file' target='_blank' class=dl_download href='" + url + "' download></A>";
 		}
 	}
 

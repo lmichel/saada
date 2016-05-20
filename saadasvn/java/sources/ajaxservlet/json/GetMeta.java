@@ -76,11 +76,18 @@ public class GetMeta extends SaadaServlet {
 				rd = request.getRequestDispatcher("aharray");		
 				rd.forward(request, response);			
 			}
+			else if( "collection".equals(query)) {
+				JSONObject retour = new JSONObject();
+				retour.put("name", name);
+				retour.put("description", Database.getCachemeta().getCollection(name).getDescription());
+				JsonUtils.teePrint(out,retour.toJSONString());
+			}
 			else if( "relation".equals(query)) {
 				MetaRelation mr = Database.getCachemeta().getRelation(name);
 				ArrayList<String> qls = mr.getQualifier_names();
 				JSONObject jsrelation = new JSONObject();
 				jsrelation.put("name", name);
+				jsrelation.put("description", mr.getDescription());
 				jsrelation.put("starting_collection", mr.getPrimary_coll());
 				jsrelation.put("starting_category", Category.explain(mr.getPrimary_category()));
 				jsrelation.put("ending_collection", mr.getSecondary_coll());
@@ -114,6 +121,9 @@ public class GetMeta extends SaadaServlet {
 	 */
 	private void processJsrAhRequest(HttpServletRequest request, HttpServletResponse response) throws Exception{
 		String name = request.getParameter("table");
+		if( name == null ){
+			 name = request.getParameter("nodekey");
+		}
 		processAhRequest(request, response, name);
 	}
 	/**

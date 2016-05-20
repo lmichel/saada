@@ -8,88 +8,65 @@ jQuery.extend({
 		/**
 		 * who is listening to us?
 		 */
-		var listeners = new Array();
+		var listener ;
 		/**
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
-			listeners.push(list);
+			listener = list;
 		};
 
-		this.fireTreeNodeEvent = function(treepath, andsubmit, defaultQuery){
-			$.each(listeners, function(i){
-				listeners[i].controlTreeNodeEvent(treepath, andsubmit, defaultQuery);
-			});
+		this.fireTreeNodeEvent = function(andsubmit, newTreeNode){
+			listener.controlTreeNodeEvent(andsubmit, newTreeNode);
 		};
 		this.fireAttributeEvent = function(uidraggable){
-			$.each(listeners, function(i){
-				listeners[i].controlAttributeEvent(uidraggable);
-			});
+			listener.controlAttributeEvent(uidraggable);
 		};
 		this.fireOrderByEvent = function(uidraggable){
-			$.each(listeners, function(i){
-				listeners[i].controlOrderByEvent(uidraggable);
-			});
+			listener.controlOrderByEvent(uidraggable);
 		};
 		this.fireSortColumnEvent = function(nameattr, sens){
-			$.each(listeners, function(i){
-				listeners[i].controlSortColumnEvent(nameattr, sens);
-			});
+			listener.controlSortColumnEvent(nameattr, sens);
 		};
 		this.fireOrderByParameters= function() {
 			var retour = null;
-			$.each(listeners, function(i){
-				retour = listeners[i].controlOrderByParameters();
-			});
+			retour = listener.controlOrderByParameters();
 			return retour;
 		};
 
 		this.fireOIDTableEvent = function(oidtable){
-			$.each(listeners, function(i){
-				listeners[i].controlOIDTableEvent(oidtable);
-			});
+			listener.controlOIDTableEvent(oidtable);
 		};
 		this.fireUCDEvent = function(uidraggable){
-			$.each(listeners, function(i){
-				listeners[i].controlUCDEvent(uidraggable);
-			});
+			listener.controlUCDEvent(uidraggable);
 		};
 		this.fireInputCoordEvent = function(){
 			if( $("#coordval").val() == '' || $("#radiusval").val() == '' ) {
 				Modalinfo.info("Both position and radius must be given");
 				return;
 			}
-			$.each(listeners, function(i){
-				listeners[i].controlInputCoord($("#coordval").val(), $("#radiusval").val());
-			});
+			listener.controlInputCoord($("#coordval").val(), $("#radiusval").val());
 		};
 		this.fireUpdateQueryEvent = function(){
-			$.each(listeners, function(i){
-				listeners[i].controlUpdateQueryEvent();
-			});
+			listener.controlUpdateQueryEvent();
 		};
 		this.fireSelectRelationEvent = function(relation){
-			$.each(listeners, function(i){
-				listeners[i].controlSelectRelationEvent(relation);
-			});
+			listener.controlSelectRelationEvent(relation);
 		};
 		this.fireHisto = function(direction){
 			$("#saadaqltab").tabs({
 				selected: 4
 			});				
-			$.each(listeners, function(i){
-				listeners[i].controlHisto(direction);
-			});
+			listener.controlHisto(direction);
 		};
 		this.fireStoreHisto = function(query){
-			$.each(listeners, function(i){
-				listeners[i].controlStoreHisto(query);
-			});
+			listener.controlStoreHisto(query);
 		};
 		this.fireDisplayHisto = function(){
-			$.each(listeners, function(i){
-				listeners[i].controlDisplayHisto();
-			});
+			listener.controlDisplayHisto();
+		};
+		this.fireTitleEvent = function(){
+			listener.controlTitleEvent();
 		};
 		this.showProgressStatus = function(){
 			Modalinfo.info("Job in progress");
