@@ -87,7 +87,7 @@ public class VOResource {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public VOResource(String configfile) throws Exception {
-		Messenger.printMsg(Messenger.DEBUG, "Loading DM file <" + configfile + ">");
+		Messenger.printMsg(Messenger.TRACE, "Loading DM file <" + configfile + ">");
 		SavotPullParser parser = new SavotPullParser(configfile, SavotPullEngine.ROWREAD);	
 		/*
 		 * Requested to init Savot

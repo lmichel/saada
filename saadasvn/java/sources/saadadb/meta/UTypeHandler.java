@@ -463,7 +463,7 @@ public class UTypeHandler {
 		+ "\nucd: " + ucd
 		+ "\nrequ_level: " + requ_level
 		+ "\ntype: " + type
-		+ "\nunit: " + type
+		+ "\nunit: " + unit
 		+ "\narraysize: " + arraysize
 		+ "\ncomment: " + comment
 		+ "\nhidden: " + hidden;
