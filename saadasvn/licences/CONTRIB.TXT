@@ -20,3 +20,5 @@ N. Nussbaum		        (LPATC/Unistra 2013) 	Web site design
 F. Valence 		        (LPATC/Unistra 2013) 	Web site design
 J-B. Potier 		    (CESE Strasbourg 2013) 	Web page edition and testing
 J. Rybak 		        (ENSEIIE Strasbourg 2013) Admintool improvement, VO Interface
+N. Hahn 	            (UTBM 2014/15)            VO services update
+P. Kobersi              (ENSEIIE Strasbourg 2015) Web interface Widgets

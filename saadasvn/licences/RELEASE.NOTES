@@ -1,9 +1,14 @@
 -------------------------------------------------
-Version Saada1.8.build15
+Version Saada1.9
 
 L. MICHEL
 April 2015
 -------------------------------------------------
+Saada 1.9.build1
+-----------------
+General upgrade of the Web interface
+Improvement of VO services
+
 Saada 1.8.build15
 -----------------
 Support of boolean in SaadaQL (fix)
