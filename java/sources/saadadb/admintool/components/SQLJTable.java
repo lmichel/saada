@@ -311,6 +311,13 @@ public class SQLJTable extends JXTable {
 	}
 
 	/**
+	 * @param dataTreePath
+	 */
+	public void setDataTrePath(DataTreePath dataTreePath){
+		this.dataTreePath = dataTreePath;
+	}
+
+	/**
 	 * @return Returns the panel_type.
 	 */
 	public int getPanel_type() {

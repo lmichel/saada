@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.ChangeKey;
@@ -266,14 +267,17 @@ public class UTypeHandler {
 	 * Returns a Savot field compliant with a VOTable
 	 * @return
 	 */
-	public SavotField getSavotField(int rank) {
+	public SavotField getSavotField(int rank)throws Exception  {
 		SavotField field = new SavotField();
 		field.setName(nickname); 
 		field.setUtype(utype);
 		if( this.ucd != null && this.ucd.length() > 0 ) {
 			field.setUcd(this.ucd);
 		}
-		field.setDataType(this.type);
+		/*
+		 * We consider Votable datatypes similar to Java type: true for supported types but not for all datatypes
+		 */
+		field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(this.type));
 		field.setUnit(this.unit);
 		if( this.arraysize > 1 ) {
 			field.setArraySize(Integer.toString(this.arraysize));								
@@ -284,7 +288,7 @@ public class UTypeHandler {
 		if( this.comment != null && this.comment.length() > 0 ) {
 			field.setDescription(this.comment);
 		}	
-		field.setRef(this.nickname + "_" + rank);				
+		//field.setRef(this.nickname + "_" + rank);				
 		field.setId(this.nickname + "_" + rank);				
 		if( this.isHidden() ) {
 			field.setType("hidden");
@@ -488,7 +492,7 @@ public class UTypeHandler {
 		+ "\nucd: " + ucd
 		+ "\nrequ_level: " + requ_level
 		+ "\ntype: " + type
-		+ "\nunit: " + type
+		+ "\nunit: " + unit
 		+ "\narraysize: " + arraysize
 		+ "\ncomment: " + comment
 		+ "\nhidden: " + hidden

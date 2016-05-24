@@ -45,7 +45,7 @@ public class Table_Saada_VO_DMVIew extends SQLTable {
 		String createStmt = "oidsaada " + Database.getWrapper().getSQLTypeFromJava("long")
 		+ ", sky_pixel_csa " + Database.getWrapper().getSQLTypeFromJava("long");
 		for( UTypeHandler uth: vor.getUTypeHandlers()) {
-			createStmt += ", " + uth.getNickname() + " " + Database.getWrapper().getSQLTypeFromJava(uth.getAttributeHandler().getType());
+			createStmt += ", " + uth.getNickname() + " " + Database.getWrapper().getNormalizedSQLType(uth.getAttributeHandler().getType());
 		}
 		SQLTable.createTable(vor.getName()
 				,createStmt

@@ -136,6 +136,7 @@ public class MetaDataEditorPanel extends TaskPanel {
 						tPanel.add(getHelpLabel(HelpDesk.METADATA_EDITOR), c);
 					}
 					else {
+						productTable.setDataTrePath(dataTreePath);
 						productTable.setModel(sqlQuery);
 					}
 				} catch (QueryException e) {

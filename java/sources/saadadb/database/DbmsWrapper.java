@@ -841,7 +841,6 @@ abstract public class DbmsWrapper {
 
 	public abstract boolean getBooleanValue(Object rsval);
 
-
 	/**
 	 * @param type
 	 * @return
@@ -856,6 +855,94 @@ abstract public class DbmsWrapper {
 	 */
 	public abstract String getJavaTypeFromSQL( String type) throws FatalException ;
 
+	public  String getADQLType( String type){
+		String ltype = type.toLowerCase();
+		if( ltype.equals("text") || ltype.equals("char") || ltype.equals("string") || ltype.equals("varchar")){
+			return "adql:VARCHAR";
+		} else if( ltype.equals("int") || ltype.equals("integer") || ltype.equals("int4")){
+			return "adql:INTEGER";
+		} else if( ltype.equals("long") || ltype.equals("int")){
+			return "adql:BIGINT";
+		}  else if( ltype.equals("double") || ltype.equals("float8")){
+			return "adql:DOUBLE";
+		}  else if( ltype.equals("float") || ltype.equals("float4")){
+			return "adql:FLOAT";
+		}  else if( ltype.equals("region")){
+			return "adql:REGION";
+		} else {
+			return "adql:" + type;
+
+		}
+	}
+
+	/**
+	 * @param typeSQL
+	 * @return
+	 * @throws FatalException
+	 */
+	public String getVotableDataTypeFromAnyType( String typeSQL) throws FatalException {
+		if(typeSQL.equals("int2")){
+			return "short";
+		}
+		else if(typeSQL.equals("long") || typeSQL.equals("int8")){
+			return "long";
+		}
+		else if(typeSQL.equals("int") || typeSQL.equals("int4")){
+			return "int";
+		}
+		else if(typeSQL.equals("smallint")){
+			return "byte";
+		}
+		else if(typeSQL.equals("character") || typeSQL.equals("character(1)") || typeSQL.equals("bpchar")){
+			return "char";
+		}
+		else if(typeSQL.equals("bool")){
+			return "boolean";
+		}
+		else if(typeSQL.equals("float8") || typeSQL.equals("numeric")){
+			return "double";
+		}
+		else if(typeSQL.equals("text") || typeSQL.startsWith("character(")){
+			return "char";
+		}
+		else if(typeSQL.equals("date")){
+			return "Date";
+		}
+		else if(typeSQL.equals("float4")){
+			return "float";
+		}
+		else {
+			return "char";
+		}
+
+	}
+	/**
+	 * This method infer the SQL type matching the parameter type
+	 * @param type input type
+	 * @return
+	 * @throws FatalException
+	 */
+	public  String getNormalizedSQLType( String type) throws FatalException {
+		System.out.println("@@@@@@@@@@ " + type);
+		if(type.equalsIgnoreCase("clob")){
+			return "varchar";
+		} else if(type.equalsIgnoreCase("text")){
+			return "varchar";
+		} else if(type.equalsIgnoreCase("varchar")){
+			return "varchar";
+		} else if(type.equalsIgnoreCase("bigint")){
+			return "bigint";
+		} else if(type.equalsIgnoreCase("float8")){
+			return "float8";
+		} else if(type.equalsIgnoreCase("float4")){
+			return "float4";
+		} else if(type.equalsIgnoreCase("integer")){
+			return "integer";
+		} else {
+			return getSQLTypeFromJava(type);
+		}
+	}
+
 	/**
 	 * Retuns the Database column type for the given VOtable type from the given parameters
 	 * NOTE : The parameters NO_SIZE and STAR_SIZE allow the detection of specials case of the arraySize parameter
@@ -866,7 +953,7 @@ abstract public class DbmsWrapper {
 	 * @param STAR_SIZE The value corresponding to the star (*)
 	 * @return
 	 */
-public abstract String getDBTypeFromVOTableType(String dataType, final int arraySize, final int NO_SIZE, final int STAR_SIZE);
+     public abstract String getDBTypeFromVOTableType(String dataType, final int arraySize, final int NO_SIZE, final int STAR_SIZE);
 	
 	/**
 	 * Query example PSQL

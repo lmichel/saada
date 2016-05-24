@@ -47,7 +47,7 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 		ah.setNameattr("datatype"); ah.setNameattr("datatype"); ah.setType("String"); ah.setComment("ADQL datatype as in section 2.5");
 		attMap.put("datatype", ah);
 		ah = new AttributeHandler();
-		ah.setNameattr("size"); ah.setNameattr("size"); ah.setType("String"); ah.setComment("length of variable length datatypes");
+		ah.setNameattr("size"); ah.setNameattr("size"); ah.setType("int"); ah.setComment("length of variable length datatypes");
 		attMap.put("size", ah);
 		ah = new AttributeHandler();
 		ah.setNameattr("principal"); ah.setNameattr("principal"); ah.setType("int"); ah.setComment("a principal column; 1 means true, 0 means false");
@@ -97,6 +97,9 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 		if( mi != null )colIndexed =  mi.values();
 		for( AttributeHandler ah: attMap.values()) {
 			String colName = ah.getNameattr();
+			if( colName.startsWith("_") || colName.equalsIgnoreCase("size")){
+				colName = "\"" + colName + "\"";
+			}
 			int indexed = 0;
 			if( colIndexed != null ) for( String col : colIndexed ) {
 				if( col.equals(colName) ) {
@@ -105,13 +108,13 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 				}
 			}
 			String type;
-			Integer size = null;
+			int size = -1;
 			/*
 			 * Type can be either in SQL or in  Java.
 			 * Let's try Java first
 			 */
 			try {
-				type = Database.getWrapper().getSQLTypeFromJava(ah.getType() ) ;
+				type = Database.getWrapper().getADQLType(ah.getType() ) ;
 				/*
 				 * Conversion failed: must be a native SQL type
 				 */
@@ -124,7 +127,7 @@ public class Table_Tap_Schema_Columns extends SQLTable {
 			Matcher m;
 			if( (m = sqlTypePattern.matcher(type)).find() && m.groupCount() == 2) {
 				type = m.group(1);
-				size = new Integer(m.group(2));
+				size = Integer.parseInt(m.group(2));
 			}
 			SQLTable.addQueryToTransaction("INSERT INTO " + tableName + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 					, new Object[]{fn, colName, ah.getComment() , ah.getUnit(), ah.getUcd(), ah.getUtype()

@@ -316,7 +316,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 								&& ("".equals(uth.getUcd()) || sf.getUcd().equals(uth.getUcd()))
 								&& ("".equals(uth.getNickname()) || sf.getName().equals(uth.getNickname()))) {
 							SavotFieldRef fieldRef = new SavotFieldRef();
-							fieldRef.setRef(sf.getRef());
+							fieldRef.setRef(sf.getId());
 							fieldRefSet.addItem(fieldRef);
 						}
 					}
@@ -363,9 +363,9 @@ public abstract class VotableFormator extends QueryResultFormator {
 	protected void writeBeginingVOTable() throws Exception {
 		SavotVOTable votable = new SavotVOTable();
 
-		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.1");
+		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.2");
 		votable.setXmlnsxsi("http://www.w3.org/2001/XMLSchema-instance");
-		votable.setVersion("1.1");
+		votable.setVersion("1.2");
 		writer.writeDocumentHead(votable);
 
 		String description = "<![CDATA[\nSaadaDB:\n" + "   name : " + Database.getDbname() + "\n" + "   url  : " + Database.getUrl_root()
@@ -479,28 +479,28 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @throws Exception
 	 */
 	protected void writeHousekeepingFieldAndGroup() throws Exception {
-		fieldSet_housekeeping = new FieldSet();
-		/*
-		 * Param used by Aladin to order the response tree
-		 * 
-		 * <PARAM name="SORTORDER" datatype="char" arraysize="*"
-		 * value="TonNomDeChampPourLesSurvey SpectralAxis.coverage.Location" />
-		 */
-		ParamSet paramSet = new ParamSet();
-		SavotParam param = new SavotParam();
-		param.setName("SORTORDER");
-		param.setDataType("char");
-		param.setArraySize("*");
-		/*
-		 * Param specifying order criteria for Aladin take the utype
-		 * SpectralAxis.coverage.location.coord.ScalarCoordinate.Value as second
-		 * criterium.
-		 */
-		param.setValue("SaadaOID SpatialAxis_covloc SpectralAxiscovloccoorScalVal");
-		paramSet.addItem(param);
-		writer.writeParam(paramSet);
-		writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
-		writer.writeField(fieldSet_housekeeping);
+//		fieldSet_housekeeping = new FieldSet();
+//		/*
+//		 * Param used by Aladin to order the response tree
+//		 * 
+//		 * <PARAM name="SORTORDER" datatype="char" arraysize="*"
+//		 * value="TonNomDeChampPourLesSurvey SpectralAxis.coverage.Location" />
+//		 */
+//		ParamSet paramSet = new ParamSet();
+//		SavotParam param = new SavotParam();
+//		param.setName("SORTORDER");
+//		param.setDataType("char");
+//		param.setArraySize("*");
+//		/*
+//		 * Param specifying order criteria for Aladin take the utype
+//		 * SpectralAxis.coverage.location.coord.ScalarCoordinate.Value as second
+//		 * criterium.
+//		 */
+//		param.setValue("SaadaOID SpatialAxis_covloc SpectralAxiscovloccoorScalVal");
+//		paramSet.addItem(param);
+//		writer.writeParam(paramSet);
+//		writeSaadaLinksMetaReferences("SaadaOID", fieldSet_housekeeping);
+//		writer.writeField(fieldSet_housekeeping);
 	}
 
 	/**
@@ -508,8 +508,8 @@ public abstract class VotableFormator extends QueryResultFormator {
 	 * @throws SaadaException
 	 */
 	protected void writeHouskeepingData(SaadaInstance obj) throws SaadaException {
-		addTD(Long.toString(obj.oidsaada));
-		addCDataTD(obj.obs_id.replaceAll("#", ""));
+//		addTD(Long.toString(obj.oidsaada));
+//		addCDataTD(obj.obs_id.replaceAll("#", ""));
 	}
 
 	/**
