@@ -28,12 +28,11 @@ resourceLoader = function() {
 	                    , "WebSamp"
 	                    , "DataLink"
 	                    , "domain.js"];
-	var imp_js = [   "ui/jquery-ui.js",
+	var imp_js = [   "ui/minified/jquery-ui.min.js",
 	                 "jquery.simplemodal.js",
 	                 "jquery.alerts.js",
 	                 "jquery.dataTables.js",
 	                 "aladin.js",
-	                 "FixedHeader.js",
 	                 "jquery.prints.js",
 	                 "jquery.tooltip.js",
 	                 "jquery.form.js",
@@ -50,14 +49,14 @@ resourceLoader = function() {
 	var local_css  = ["basics.css"
 	                  , "domain.css"
 	                  ];
-	var import_css = ["themes/base/jquery.ui.all.css"
+	var import_css = ["themes/base/minified/jquery-ui.min.css"
 	                  , "layout-default-latest.css"
 	                  , "jquery.dataTables.css"
 	                  , "simplemodal.css"
 	                  , "aladin.min.css"
-	                  , "/bootstrap/bootstrap.css"
-	                  , "/bootstrap/bootstrap.css.map"
-	                  ,"foundationicon/foundation-icons.css"
+	                  , "bootstrap/bootstrap.css"
+	                  , "bootstrap/bootstrap.css.map"
+	                  , "foundationicon/foundation-icons.css"
 
 	                  ];
 

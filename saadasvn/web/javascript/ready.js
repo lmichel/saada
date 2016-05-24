@@ -26,12 +26,11 @@ var globalTreePath ;
 
 var queryView;
 var nativeConstraintEditor;
-var patternConstraintEditor;
+//var patternConstraintEditor;
 var posConstraintEditor;
 
 $().ready(function() {
 	Out.setdebugModeFromUrl();	
-
 	base_url = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + window.location.pathname;
 	/*
 	 * layout plugin, requires JQuery 1.7 or higher
@@ -50,11 +49,7 @@ $().ready(function() {
 	resultPaneView           = new $.ResultPaneView();
 	new $.ResultPaneControler(resultPaneModel, resultPaneView);
 
-	var patternModel      = new $.PatternModel();
-	var patternView       = new $.PatternView();
-	new $.PatternControler(patternModel, patternView);
-
-	var saadaqlModel      = new $.SaadaQLModel(patternModel);
+	var saadaqlModel      = new $.SaadaQLModel(null);
 	saadaqlView           = new $.SaadaQLView();
 	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
@@ -67,10 +62,6 @@ $().ready(function() {
 	sapView            = new $.SapView();
 	new $.SapControler(sapModel, sapView);
 
-	var filterManagerModel       = new $.FilterManagerModel();
-	filterManagerView            = new $.FilterManagerView();
-	new $.FilterManagerControler(filterManagerModel, filterManagerView);
-
 	var cartModel       = new $.CartModel();
 	cartView            = new $.CartView();
 	new $.CartControler(cartModel, cartView);
@@ -79,13 +70,12 @@ $().ready(function() {
 	 * Query form setup
 	 * Create tabs to switch between SAADAQL and TAP forms
 	 */
-	$("#saadaqltab").tabs();
+	//$("#saadaqltab").tabs();
 	$("#saadaqltab").tabs({
 		selected: 4,
 		disabled: [0,1,2,3]
 	});
-
-	$("#saptab").tabs();
+	//$("#saptab").tabs();
 	$("#saptab").tabs({
 		unselect : true,
 		//selected: 0,
@@ -122,50 +112,7 @@ $().ready(function() {
 		}
 
 	});
-	/*
-	 * Drop area for individual constraints on KWs
-	 */
-	$("#ConstraintsList").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireAttributeEvent(ui.draggable);		
-		}
-	});
-	$("#orderby").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireOrderByEvent(ui.draggable);		
-		}
-	});
-	$("#UCDConstraintsList").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireUCDEvent(ui.draggable);		
-		}
-	});
-	$("#patternconst").droppable({
-		drop: function(event, ui){
-			patternView.fireAttributeEvent(ui.draggable);		
-		}
-	});
-	$("#patterncardqual" ).sortable({
-		revert: "true"
-	});
-	$("#patternatt" ).sortable({
-		revert: "true"
-	});
-	$("#fspefieldsdrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireSpeFieldEvent(ui.draggable);		
-		}
-	});
-	$("#fnativedrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireNativeEvent(ui.draggable);		
-		}
-	});
-	$("#frelationsdrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireRelationsEvent(ui.draggable);		
-		}
-	});
+
 	/*
 	 * Coordinates input
 	 */

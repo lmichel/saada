@@ -76,7 +76,7 @@ h4 {
 
 .help {
 	color: DimGray;
-	font-style: italic;
+	/*font-style: italic;*/
 }
 
 .strong {
@@ -1452,3 +1452,27 @@ input.include_relation {
 .nojob {
 	color: gray;
 }
+
+/*
+ * Landing page styles
+ */
+ ul.landing{
+ margin: 0; padding: 0px;margin: auto; width: 70%; height: 100%;}
+ 
+ div.landing-left{
+ width: 50%; height: 100%; float: left;}
+ 
+div.landing-right{
+ width: 50%; height: 100%; float: right;}
+ 
+ li.landing{
+ padding: 0; height: 200px; list-style-type: none;}
+ 
+ i.landing{
+ width: 120px; height: 60px; margin: 5px 10px 130px 0 ;  display: block; float: left; border-radius: 5px; border: 3px solid; border-color: #5BC0DE}
+ 
+ h3.landing{
+ color: #5BC0DE;
+ }
+ p.landing{
+ font-size: large; !important}
