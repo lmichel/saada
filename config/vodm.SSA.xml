@@ -67,7 +67,7 @@
     <TD>ssa:Access.Size</TD>
     <TD>long</TD>
     <TD>1</TD>
-    <TD>kbytes</TD>
+    <TD>byte</TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Estimated dataset size</TD>

@@ -77,7 +77,7 @@
     <TD></TD>
     <TD>int</TD>
     <TD>1</TD>
-    <TD>kbytes</TD>
+    <TD>byte</TD>
     <TD>F</TD>
     <TD></TD>
     <TD>Size of the image in kilo bytes</TD>
