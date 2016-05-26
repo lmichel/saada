@@ -189,7 +189,7 @@ public class VORegistryPanel extends EditPanel {
 		curLogo = new JTextField(20);;
 
 		cp = new SimpleTextForm("Curation"
-				,new String[] {"Pubisher", "Name", "Loge URL"}
+				,new String[] {"Pubisher", "Name", "Logo URL"}
 				,new Component[]{curPublisher, curName, curLogo});
 		editorPanel.add(cp, emc);
 		emc.newRow();
