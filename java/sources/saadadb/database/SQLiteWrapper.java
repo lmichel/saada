@@ -530,14 +530,18 @@ public class SQLiteWrapper extends DbmsWrapper {
 							+ "> does not exist");
 				return null;
 			}
-			DatabaseMetaData dm = connection.getMetaData();
-			ResultSet resultat = dm.getIndexInfo(
-					null,
-					null,
-					searched_table.toLowerCase(),
-					false,
-					false);
 			HashMap<String, String> retour = new HashMap<String, String>();
+			DatabaseMetaData dm = connection.getMetaData();
+			ResultSet resultat =null;			
+			/*
+			 * When there is no index, SQLITE getIndexInfo genrates an unsane query which rise an error
+			 * See JDBC3DatabaseMetaData l 1482
+			 */
+			try{
+				resultat = dm.getIndexInfo(null, null, searched_table.toLowerCase(), false, false);
+			} catch(Exception se){
+				return retour;
+			}
 			while (resultat.next()) {
 				String col = resultat.getObject("COLUMN_NAME").toString();
 				String iname = resultat.getObject("INDEX_NAME").toString();
