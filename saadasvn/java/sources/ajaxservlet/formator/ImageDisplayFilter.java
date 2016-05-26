@@ -208,6 +208,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		jso.put("ucd.show", "false");
 		jso.put("ucd.query", "false");
 		jsa = new JSONArray();
+		jsa.add("Plot");
 		jsa.add("Access");	
 		jsa.add("Position");	
 		jsa.add("Size (deg)");	
