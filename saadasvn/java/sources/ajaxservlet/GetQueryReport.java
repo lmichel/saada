@@ -18,16 +18,16 @@ import saadadb.vo.request.SaadaqlRequest;
 
 /**
  * Servlet implementation class GetQueryReport
-  * @version $Id$
-*/
+ * @version $Id$
+ */
 public class GetQueryReport extends SaadaServlet implements Servlet {
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public GetQueryReport() {
-    }
+	/**
+	 * Default constructor. 
+	 */
+	public GetQueryReport() {
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -52,7 +52,7 @@ public class GetQueryReport extends SaadaServlet implements Servlet {
 			String model = req.getParameter("model");
 
 			int limit  = 10000;
-	
+
 			if( query == null || query.length() == 0 ) {
 				this.getErrorPage(req, res, " Missing query parameter");
 			}
@@ -65,29 +65,23 @@ public class GetQueryReport extends SaadaServlet implements Servlet {
 					limit = 10000;
 				}
 			}
-				
+
 			Map<String, String> pmap = new LinkedHashMap<String, String>();
 			pmap.put("query", query);
 			pmap.put("limit", Integer.toString(limit));
 			if( model != null ){
 				pmap.put("model", model);
 			}
-//				/*
-//				 * QueryFileReport executes the query again. That can be avoided by looking in the user session for 
-//				 * the oids matching that query.
-//				 */
-//				QueryFileReport qfr = new QueryFileReport(protoc, datamodel, query, format);
-//				qfr.getQueryReport(res, limit);
-				String dir = UserTrap.getUserAccount(req).getReportDir();
-				String fn = "Saadaql";
-				SaadaqlRequest request = new SaadaqlRequest( UserTrap.getUserAccount(req).getSessionID(), dir);
-				request.addFormator((format != null)? format: "votable");
-				request.setResponseFilePath(fn);
-				request.processRequest(pmap);		
-				downloadProduct(req, res, request.getResponseFilePath()[0]);
+			String dir = UserTrap.getUserAccount(req).getReportDir();
+			String fn = "Saadaql";
+			SaadaqlRequest request = new SaadaqlRequest( UserTrap.getUserAccount(req).getSessionID(), dir);
+			request.addFormator((format != null)? format: "votable");
+			request.setResponseFilePath(fn);
+			request.processRequest(pmap);		
+			downloadProduct(req, res, request.getResponseFilePath()[0]);
 
 		} catch (Exception e) {
 			this.getErrorPage(req, res, e);
 		}
-}
+	}
 }

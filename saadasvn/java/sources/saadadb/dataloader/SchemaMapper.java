@@ -26,6 +26,7 @@ import saadadb.sqltable.Table_Saada_Data;
 import saadadb.sqltable.UCDTableHandler;
 import saadadb.util.MD5Key;
 import saadadb.util.Messenger;
+import saadadb.util.RegExp;
 
 public abstract class SchemaMapper {
 
@@ -180,9 +181,22 @@ public abstract class SchemaMapper {
 			break;
 		}
 		if( classname == null || classname.length() == 0 ) {
-			classname = prefixe 
-			+ standardSybase + "_"
-			+ this.configuration.getNameProduct() ;
+			classname = new File(this.current_prd.getName()).getName().split("\\.")[0].replaceAll("[^\\w]+", "_").toLowerCase();
+			/*
+			 * PSQL limits the table name to 64.
+			 * We take 48 because that is long enough
+			 */
+			if( classname.length() > 48 ){
+				classname = classname.substring(0, 48);
+			}
+			if( !classname.matches(RegExp.CLASSNAME) ) {
+				classname = "C_" + classname;
+			}
+
+			classname = prefixe + "_" + classname;
+//			classname = prefixe 
+//			+ standardSybase + "_"
+//			+ this.configuration.getNameProduct() ;
 		}
 		SQLTable.lockTable("saada_class");
 		SQLQuery squery = new SQLQuery();
