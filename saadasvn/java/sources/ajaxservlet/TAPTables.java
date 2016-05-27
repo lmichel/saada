@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import saadadb.database.Database;
+import saadadb.util.Messenger;
 import saadadb.vo.tap.TapServiceManager;
 
 /**
@@ -23,9 +24,12 @@ public class TAPTables extends SaadaServlet {
 		res.setContentType("text/xml");
 		PrintWriter pw = res.getWriter();
 
-		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		pw.println("<?xml-stylesheet type=\"text/xsl\" href=\""+Database.getUrl_root()+"/styles/tables.xsl\"?>");
-		pw.println(TapServiceManager.getXMLTables());
+		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+		pw.println("<?xml-stylesheet type=\"text/xsl\" href=\""+Database.getUrl_root()+"/styles/tables.xsl\"?>\n");
+		String retour = TapServiceManager.getXMLTables().toString();
+		Messenger.printMsg(Messenger.TRACE, retour.length() + " bytes sent");
+		pw.print(retour);
+		pw.flush();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
