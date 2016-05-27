@@ -171,7 +171,7 @@
 						<TD>Scale</TD>
 						<TD>VOX:Image_Scale</TD>
 						<TD></TD>
-						<TD>double</TD>
+						<TD>float8</TD>
 						<TD>-1</TD>
 						<TD>deg</TD>
 						<TD>false</TD>

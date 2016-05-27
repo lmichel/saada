@@ -22,14 +22,46 @@ public final class WhereRelation{
 	private static final String syntax   = "WhereRelation { matchPattern [...] }";
 	private static final String inSecStat = "[^\\{\\}]+(?:[^\\{\\}]+\\{[^\\{\\}]+\\})*";    // iPOURAIS ETRE AFFINER "FORMATRELATION" plus eventuellement...
 	private static final String inStatSimple = MATCH_PATTERN + FacWS + WHERE_CLAUSE_LD + FacWS + "(" + inSecStat + ")" + FacWS + WHERE_CLAUSE_RD ;
-	private static final String inStat       = "(?:" + inStatSimple + FacWS + ")*(?:" + inStatSimple + ")" ;
+	//private static final String inStat       = "(?:" + inStatSimple + FacWS + ")*(?:" + inStatSimple + ")" ;
+	private static final String inStat       = "(?:" + inStatSimple + FacWS + ")(?:[\\s,]*" + inStatSimple + ")*" ;
 	private static final String regex = WHERE_RELATION + FacWS + WHERE_CLAUSE_LD + FacWS + inStat + FacWS + WHERE_CLAUSE_RD ;
 	private static final Pattern pattern = Pattern.compile(regex);
 
 	private String strMatch;
 	private MatchPattern[] patterns;
 	private VOResource vor;
-	
+//	public static void main(String[] args) throws SaadaException {
+//		System.out.println(regex);
+//		Matcher m = pattern.matcher("Select ENTRY From TRUC In MACHIN"
+//			+ "	WhereRelation {\n"
+//			+ "  matchPattern {\n"
+//			+ "    relation1\n"
+//			+ "  },  matchPattern {\n"
+//			+ "    relation1\n"
+//			+ "  },  matchPattern {\n"
+//			+ "    relation1,\n"
+//			+ "     Cardinality > 0\n"
+//			+ "  },  matchPattern {\n"
+//			+ "    relation1\n"
+//			+ "  }\n"
+//			+ "}\n");
+//		if(m.find()){
+//			List<MatchPattern> al = new ArrayList<MatchPattern>();
+//			String strMatch = m.group(0);
+//			Matcher m2 = Pattern.compile(inStatSimple).matcher(m.group(0));
+//			while(m2.find()){
+//				al.add(new MatchPattern(m2.group(1), null));	
+//				System.out.println(m2.group(1));	
+//			}
+//			if(al.size()>0){
+//				System.out.println("ccc");
+//				//this.patterns = al.toArray(new MatchPattern[0]);
+//			}
+//			else{System.out.println("In WhereRelation... Humm... I don't understand! This is a regex error not supposed to happen!");}
+//		} else {
+//			System.out.println("match pas");
+//		}
+//	}
 	public WhereRelation(String strQuery, VOResource vor) throws SaadaException{
 		this.vor = vor;
 		this.parse(strQuery);

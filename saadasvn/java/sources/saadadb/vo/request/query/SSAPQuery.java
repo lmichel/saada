@@ -92,7 +92,14 @@ public class SSAPQuery extends VOQuery {
 		value = this.queryParams.get("size");
 		if( value != null ) {
 			try {
-				size = Double.parseDouble(value);
+				/*
+				 * Rectangular region are not supported, take the first size
+				 */
+				String[] sides  = value.split(",");
+				if( sides.length > 1 && !sides[0].equals(sides[1])) {
+					Messenger.printMsg(Messenger.WARNING, "Rectangular search region are not supported,  take a square with size=" + sides[0]);
+				}
+				size = Double.parseDouble(sides[0]);
 				protocolParams.put("size", Double.toString(size));
 			} catch (NumberFormatException nfe) {
 				QueryException.throwNewException("ERROR",  nfe);
@@ -103,7 +110,7 @@ public class SSAPQuery extends VOQuery {
 			if( cooPos.length() == 0 ) {
 				QueryException.throwNewException("ERROR",  "Cone search size given without position: make no sense");			
 			}
-			queryString  += "\nWherePosition{isInCircle(\"" + cooPos + "\"," + value + ",J2000," + cooSys + ")}";
+			queryString  += "\nWherePosition{isInCircle(\"" + cooPos + "\"," + size + ",J2000," + cooSys + ")}";
 
 		}
 		else if( cooPos.length() > 0 ) {

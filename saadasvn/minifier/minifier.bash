@@ -42,6 +42,8 @@ js_array_org=("basics.js" \
 	                "Sorter_v.js" \
 	                "NodeFilter_v.js" \
 	                "DataLink" \
+	                "Segment.js" \
+	                "RegionEditor" \
 	                "ConstQEditor" \
 	                "QueryTextEditor" \	  
 	                "Pattern_v.js"	 \  

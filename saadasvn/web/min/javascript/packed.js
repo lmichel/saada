@@ -6780,10 +6780,14 @@ ConeSearch_mVc.prototype = {
 				if (that.editor) {
 					dv = that.editor.getDefaultValue();
 				}
-				Modalinfo.region(handler, dv
+				if( dv == null ) {
+					Modalinfo.info("Please, define first a search position before to edit a region", "No Target Defined")
+				} else {
+					Modalinfo.region(handler, dv
 						// , [84.24901652054093, -5.640882748140112,83.34451837951998,
 						// -6.103216341255678,83.60897420186223, -4.553808802262613]
-				);
+					);
+				}
 			});
 		},
 		setUploadForm : function() {
@@ -9496,6 +9500,1851 @@ DataLink_mvC = function(view, model){
 
 console.log('=============== >  DataLink_c.js ');
 
+function Segment(polygoneNodes /*canvas*/)
+{
+	var alfa;
+	var beta;	
+	var node = [];
+	node = polygoneNodes;
+	var nodesegmentos;
+
+	this.IsCursorOn = function(x,y)
+	{
+		var result;
+		
+		//crear los segmentos:
+		nodesegmentos = NumSegment(node);
+		
+		//si es un rectangulo
+		if(seg = IsRectangle(x,y))
+		{
+			//calcular la distancia
+			result = Distance(seg,x,y);
+			return result;
+		}			
+			
+	};
+	
+	//funcion para saber si se crea el rectangulo
+	function IsRectangle(coorx, coory)	
+	{	
+		
+		var x = parseInt(coorx);
+		var y = parseInt(coory);
+		var nodeXtremity = {};			
+		
+		var xa,xb,ya,yb;				
+		
+		for(var i in nodesegmentos)
+		{				
+			var xmin, xmax;
+			var ymin, ymax;
+			
+			xa = node[nodesegmentos[i].A].cx;
+			ya = node[nodesegmentos[i].A].cy;			
+			xb = node[nodesegmentos[i].B].cx;
+			yb = node[nodesegmentos[i].B].cy;
+					
+			xmin = (parseInt(xa) > parseInt(xb) )? xb:xa;
+			xmax = (parseInt(xa) > parseInt(xb) )? xa:xb;
+			
+			ymin = (parseInt(ya) > parseInt(yb) )? yb:ya;
+			ymax = (parseInt(ya) > parseInt(yb) )? ya:yb;
+
+			if(x >= xmin && x <= xmax)
+			{				
+				if(y >= ymin && y <= ymax )
+				{
+					seg = {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};
+					if( ( dis = Distance(seg,x,y) ) != -1)
+					{
+					return {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};	
+					}
+					
+				}
+			}
+			if(xmax === xmin)
+			{
+				if(y >= ymin && y <= ymax )
+				{
+					seg = {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};
+					if( ( dis = Distance(seg,x,y) ) != -1)
+					{
+					return {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};	
+					}
+				}
+			}
+			if(ymin === ymax)
+			{	
+				if(x > xmin && x < xmax)
+				{
+					seg = {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};
+					if( ( dis = Distance(seg,x,y) ) != -1)
+					{
+					return {xA:xa, yA:ya, xB:xb, yB:yb, segmento:i};	
+					}	
+				}				
+			}
+		}	
+	}
+
+	//funcion para calcular la distancia del punto M(x,y) de los segmentos: A(xa,ya) y B(xb,yb)
+	function Distance(seg,x,y)
+	{
+		//console.log('puedes calcular distancia');	
+		var recta;
+		var distancia;
+		
+		var h,v;
+		
+		if((v = Vertical(seg, x)) != -1)
+		{
+			return {flag: "vertical", segmento: seg};
+			
+		}else if((h = Horizontale(seg, y)) != -1)
+		{		
+			return {flag: "horizontal", segmento: seg};
+		}
+		else if(v == -1 && h == -1)
+		{
+			
+			var alfa = CalculerAlfa(seg);
+			var beta = Beta(seg);			
+			
+			recta = Math.abs( ( (alfa * parseInt(x)) + parseInt(y) + beta) );
+			distancia = (recta / Math.sqrt(((alfa * alfa)+1)));
+			
+			//if(distancia <= 3 && distancia >= 0)
+			if(distancia <= 2 && distancia >= 0)
+			{
+				return {flag: "distancia", segmento: seg, alfa: alfa, beta: beta};
+			}
+		}
+
+		return -1;
+		
+	}
+	
+	//function para crear los segmentos a partir de los nodos
+	function NumSegment(array)
+	{
+		var numsegmentos = []; //variable para almacenar el numero de segmentos
+		var temp; //variable para contar los nodos "i"
+		var segmentoini, segmentofin;
+		
+		//recorrer los nodos
+		for(var i in array)
+		{
+			if(segmentoini == undefined)
+			{
+				segmentoini = i;
+			}			
+			else if(segmentofin == undefined)
+			{
+				segmentofin = i;
+			}				
+			
+			//almacenar segmentos
+			if(segmentoini != undefined && segmentofin != undefined)
+			{
+				numsegmentos.push
+				({
+					A: segmentoini,
+					B: segmentofin
+				});
+				
+				segmentoini = segmentofin;
+				segmentofin = undefined;
+			}
+			
+			if(parseInt(node.length - 1) == i)
+			{				
+				numsegmentos.push
+				({
+					A: (node.length -1),
+					B: 0
+				});
+			}
+			
+		}				
+		return numsegmentos;
+	}
+	
+	//dibujar el segmento
+	function DrawnLine()
+	{
+		context.beginPath();
+		context.moveTo(125,158);
+		context.lineTo(250,158);
+	
+		
+		context.moveTo(250,158);		
+		context.lineTo(250,100);
+		
+		context.moveTo(250,100);		
+		context.lineTo(125,158);
+		
+		context.stroke();
+		context.closePath();		
+		
+		for(var i in node)
+		{
+			context.beginPath();
+			context.arc(node[i].cx,node[i].cy,5, 0, Math.PI * 2,true);
+			context.fillStyle = "blue";
+		    context.fill();
+			context.stroke();
+			context.closePath();
+		}
+	}
+	
+	//Obtener el valor alfa
+	function CalculerAlfa(seg)
+	{		
+		alfa = -((seg.yB - seg.yA) / (seg.xB - seg.xA));
+		
+		return alfa;
+	}
+	
+	//Obtener el valor beta
+	function Beta(seg)
+	{		
+		beta = -(alfa *  seg.xA)- seg.yA;
+		
+		return beta;
+	}
+	
+	//Calcular la distancia de un segmento horizontal
+	function Horizontale(seg, y)
+	{
+		var horizontal;
+		var coory = parseInt(y);
+		
+		horizontal = Math.abs(seg.yA - coory);
+		
+		if(horizontal <= 1 && horizontal >= 0)		
+			return horizontal;
+			else
+				return -1;	
+	}
+	
+	//Calcular la distancia de un segmento vertical
+	function Vertical(seg, x)
+	{
+		var vertical;
+		var coorx = parseInt(x);
+		vertical =  Math.abs(seg.xA - coorx);				
+		
+		if(vertical <= 1 && vertical >= 0)		
+		return vertical;
+		else
+			return -1;		
+	}
+
+	//intersertion de segments
+	this.Itersection = function(nodeselected,status)
+	{
+		var numseg = NumSegment(node);
+		var lastseg = numseg.length - 2;
+		var firstnode = 0;
+		var dx,dy;		
+		var d=-1;
+		
+		nodeselected = parseInt(nodeselected);
+		
+		if(status === false)
+		{
+			
+			if(numseg.length > 3)
+			{
+				if(nodeselected != 0)
+				{
+					xa1 = node[numseg[lastseg].A].cx;
+					ya1 = node[numseg[lastseg].A].cy;			
+					xb2 = node[numseg[lastseg].B].cx;
+					yb2 = node[numseg[lastseg].B].cy;
+					var nodenumberA =  parseInt(numseg[lastseg].A); 
+					var nodenumberB =  parseInt(numseg[lastseg].B);
+					
+					for(var i in numseg)
+					{					
+						xa3 = node[numseg[i].A].cx;
+						ya3 = node[numseg[i].A].cy;			
+						xb4 = node[numseg[i].B].cx;
+						yb4 = node[numseg[i].B].cy;						
+						
+						d = distance(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4);									
+						
+						if( d != -1)
+						{
+							//  ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+							dx = ((xa3-xb4)*(xa1*yb2-ya1*xb2)-(xa1-xb2)*(xa3*yb4-ya3*xb4))/d;
+							//   ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+							dy = ((ya3-yb4)*(xa1*yb2-ya1*xb2)-(ya1-yb2)*(xa3*yb4-ya3*xb4))/d; 
+																																										
+							var resultado = ResultadoSegmento(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4 , dx , dy);									
+							
+							//si es diferente de nulo hay una interseccion
+							if(resultado != -1)
+							{
+								if(i != (numseg.length -1))
+								{
+									if(xb4 != xa1 && yb4 != ya1)
+									{
+										//if(xa1 != xa3 && ya1 != ya3)
+											return { x1:xa1, y1:ya1 , x2:xb2 , y2:yb2 , seginit:lastseg, segfin:i, nA:nodenumberA, nB:nodenumberB};
+									}
+										
+								}													
+							}					
+						}
+					
+					}
+				}
+				else if(nodeselected === 0)
+				{
+					xa1 = node[numseg[firstnode].A].cx;
+					ya1 = node[numseg[firstnode].A].cy;			
+					xb2 = node[numseg[firstnode].B].cx;
+					yb2 = node[numseg[firstnode].B].cy;
+					var nodenumberA =  parseInt(numseg[firstnode].A); 
+					var nodenumberB =  parseInt(numseg[firstnode].B);
+					
+					//invertir el orden de los segmentos
+					numseg.reverse();
+					
+					for(var i in numseg)
+					{												
+						if(i != 0)
+						{
+
+							xa3 = node[numseg[i].A].cx;
+							ya3 = node[numseg[i].A].cy;			
+							xb4 = node[numseg[i].B].cx;
+							yb4 = node[numseg[i].B].cy;						
+							
+							d = distance(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4);									
+							
+							if( d != -1)
+							{
+								//  ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+								dx = ((xa3-xb4)*(xa1*yb2-ya1*xb2)-(xa1-xb2)*(xa3*yb4-ya3*xb4))/d;
+								//   ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+								dy = ((ya3-yb4)*(xa1*yb2-ya1*xb2)-(ya1-yb2)*(xa3*yb4-ya3*xb4))/d; 
+																																											
+								var resultado = ResultadoSegmento(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4 , dx , dy);									
+								
+								//si es diferente de -1 hay una interseccion
+								if(resultado != -1)
+								{
+									if(i != (numseg.length -1))
+									{
+										if(xb2 != xa3 && yb2 != ya3)
+										{
+											return { x1:xa1, y1:ya1 , x2:xb2 , y2:yb2 , seginit:lastseg, segfin:i, nA:nodenumberA, nB:nodenumberB};
+										}
+											
+									}													
+								}					
+							}
+						}					
+					
+					}
+				}
+			}
+		}
+		else if(status)
+		{
+			var seg1 ={} , seg2 = {};
+			var option;
+			var resseg = [];
+			
+			if(numseg.length > 3)
+			{				
+				if(nodeselected === 0)
+				{
+					//segmento 1
+					seg1.xA = node.length - 1;
+					seg1.xB = nodeselected;
+					//segmento 2
+					seg2.xA = nodeselected;
+					seg2.xB = nodeselected + 1;
+				}
+				else if(nodeselected === (node.length - 1) )
+				{
+					//segmento 1
+					seg1.xA = nodeselected - 1;
+					seg1.xB = nodeselected;
+					//segmento 2
+					seg2.xA = nodeselected;
+					seg2.xB = 0;
+				}
+				else
+				{
+					//segmento 1
+					seg1.xA = nodeselected - 1;
+					seg1.xB = nodeselected;
+					//segmento 2
+					seg2.xA = nodeselected;
+					seg2.xB = nodeselected + 1;
+				}														
+				
+				for(var i in numseg)
+				{																			
+					if(parseInt(numseg[i].A) === seg1.xA && parseInt(numseg[i].B) == seg1.xB)
+					{
+						continue;
+						//console.log('algo');
+						
+					}else if(parseInt(numseg[i].A) === seg2.xA && parseInt(numseg[i].B) == seg2.xB)
+					{
+						continue;
+					}
+					else
+					{	
+							//comparar con el segmento 1						
+							xa1 = node[seg1.xA].cx;
+							ya1 = node[seg1.xA].cy;			
+							xb2 = node[seg1.xB].cx;
+							yb2 = node[seg1.xB].cy;
+							
+							xa3 = node[numseg[i].A].cx;
+							ya3 = node[numseg[i].A].cy;			
+							xb4 = node[numseg[i].B].cx;
+							yb4 = node[numseg[i].B].cy;
+							
+							d = distance(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4);												
+							
+							
+							if(d != -1)
+							{
+								//((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+								dx = ((xa3-xb4)*(xa1*yb2-ya1*xb2)-(xa1-xb2)*(xa3*yb4-ya3*xb4))/d;
+								//((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+								dy = ((ya3-yb4)*(xa1*yb2-ya1*xb2)-(ya1-yb2)*(xa3*yb4-ya3*xb4))/d; 
+																																											
+								var resultado = ResultadoSegmento(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4 , dx , dy);
+								
+								//si es diferente de -1 hay una interseccion
+								if(resultado != -1)
+								{									
+										if(xa1 != xb4 && ya1 != yb4)
+										{											
+											resseg.push
+											(
+												{
+													x1:xa1,												
+													y1:ya1 , 
+													x2:xb2 , 
+													y2:yb2
+												}
+											);
+										}																							
+								}				
+							}							
+							
+							//comparar con el segmento 2							
+							xa1 = node[seg2.xA].cx;
+							ya1 = node[seg2.xA].cy;			
+							xb2 = node[seg2.xB].cx;
+							yb2 = node[seg2.xB].cy;
+							
+							d = distance(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4);												
+							
+							if(d != -1)
+							{
+								//((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+								dx = ((xa3-xb4)*(xa1*yb2-ya1*xb2)-(xa1-xb2)*(xa3*yb4-ya3*xb4))/d;
+								//((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+								dy = ((ya3-yb4)*(xa1*yb2-ya1*xb2)-(ya1-yb2)*(xa3*yb4-ya3*xb4))/d; 
+																																											
+								var resultado = ResultadoSegmento(xa1,ya1,xb2,yb2,xa3,ya3,xb4,yb4 , dx , dy);
+								
+								//si es diferente de -1 hay una interseccion
+								if(resultado != -1)
+								{
+										if(xa1 != xb4 && ya1 != yb4)
+										{											
+											resseg.push
+											(
+												{
+													x1:xa1,												
+													y1:ya1 , 
+													x2:xb2 , 
+													y2:yb2
+												}
+											);
+										}																							
+								}				
+							}							
+						
+						if(resseg.length > 1)
+						{
+							return resseg;
+						}						
+					}
+				}				
+			}						
+		}
+			
+			return -1;
+	};	
+	
+	function distance(x1,y1, x2,y2, x3,y3, x4,y4)
+	{
+		// (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4)
+		var d = ((x1-x2)*(y3-y4)) - ((y1-y2)*(x3-x4));
+		
+		if (d == 0)
+		{
+		 return -1;
+		} 			 
+		else
+		{
+		 return d; 
+		} 	
+	}
+	
+	function ResultadoSegmento(x1,y1,x2,y2,x3,y3,x4,y4 , x , y)
+	{
+		//valida que los segmentos no sean verticales
+		if (y < Math.min(y1,y2) || y > Math.max(y1,y2)) return -1;
+		if (y < Math.min(y3,y4) || y > Math.max(y3,y4)) return -1;
+		
+		//valida que los segmentos no sean paralelos
+		if (x < Math.min(x1,x2) || x > Math.max(x1,x2)) return -1;
+		if (x < Math.min(x3,x4) || x > Math.max(x3,x4)) return -1;
+		
+		return 2;
+	}
+};
+
+console.log('=============== >  Segment.js ');
+
+/**
+ * Model processing the draw canvas
+ * 
+ * Author Gerardo Irvin Campos yah
+ */
+function RegionEditor_Mvc(canvas, canvaso, aladin){
+
+	this.node = [];	
+	this.canvas = canvas[0];
+	this.canvaso = canvaso[0];
+	this.context = this.canvas.getContext('2d');
+	this.contexto = this.canvaso.getContext('2d');
+	//this.aladin parameters:
+	this.aladin = aladin;	
+	this.overlay = null;
+	this.skyPositions = null;
+
+}
+
+RegionEditor_Mvc.prototype = {
+
+		DrawNode: function (data){
+			for(var i in data)
+			{
+				this.context.beginPath();
+				this.context.arc(data[i].cx, data[i].cy, data[i].r, 0, Math.PI * 2,true);     	      
+				this.context.fillStyle = "blue";
+				this.context.fill();
+				this.context.stroke();	 
+				this.context.closePath();	  
+			} 	     
+		},
+
+		//Drawn Line
+		DrawnLine: function (startingNode,x,y,result) {
+			if(result != null)
+			{					
+				this.context.beginPath();
+				this.context.lineCap="round";
+
+				for(i in this.node)
+				{
+					if(this.node[result.N] == i)
+						this.context.moveTo(this.node[result.N].cx,this.node[result.N].cy);
+
+					this.context.lineTo(this.node[i].cx,this.node[i].cy);				
+				}					
+
+				this.context.closePath(); 
+				this.context.strokeStyle = 'lime';
+				// this.context.lineWidth = 3;
+				this.context.stroke();	
+			}
+			else
+			{
+				this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);		
+				this.context.beginPath();
+				this.context.lineCap="round";
+				this.context.moveTo(this.node[startingNode].cx,this.node[startingNode].cy);		
+				this.context.lineTo(x,y);
+				this.context.closePath(); 
+				this.context.strokeStyle = 'lime';
+				//this.context.lineWidth = 3;
+				this.context.stroke();
+			}
+		},
+
+		//this.Redrawn line and this.node
+		Redrawn : function (result)
+		{				
+			this.CanvasUpdate();
+			for(var i in this.node)
+			{
+				this.context.beginPath();
+				this.context.arc(this.node[i].cx, this.node[i].cy, this.node[i].r, 0, Math.PI * 2,true);     	      
+				this.context.fillStyle = "red";
+				this.context.fill();
+				this.context.stroke();	 
+				this.context.closePath();	        	    
+			} 		
+
+			this.DrawnLine(0,0,0,result);
+		},	
+
+		//Clean the this.canvas
+		CanvasUpdate : function ()
+		{
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.contexto.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.contexto.drawImage(this.canvas, 0, 0);
+		},
+
+		//Convert a Array to Object
+		ArrayToObject: function (data)
+		{
+			NodeTemp = [];
+			for(i in data)
+			{
+				NodeTemp.push
+				(
+						{
+							cx: data[i][0] ,
+							cy: data[i][1],
+							r:5
+						}
+				);
+			}
+
+			this.node=[];
+			this.node = NodeTemp;
+		},
+
+		//Fuction pour obtenir le hautor du polygon
+		GetHeight: function (array)
+		{		
+			var Ramax = null, Ramin = null;
+			var finaltemp;
+			var largeur;
+
+			for(i in array)
+			{
+				temp = array[i][0];        	
+
+				if(Ramax == null)
+				{
+					Ramax = temp;
+				}
+				else if(temp >= Ramax)
+				{
+					Ramax = temp;
+				}
+
+				if(Ramin == null)
+				{
+					Ramin = temp;
+				}
+				else if(temp <= Ramin )
+				{
+					Ramin = temp;
+				}
+			}
+
+			largeur = (Ramax -Ramin);
+
+			if(largeur > 180)
+			{
+				largeur = 360 - largeur;
+			}
+
+			return { ramax: Ramax, ramin: Ramin , largeur: largeur  };
+		},
+
+		//function pour obtenir le numero de segment et construir un segment
+		NumeroSegmen : function ()
+		{	
+			var TotalNodes = this.node.length;		
+			var segmentoini, segmentofin;	
+			var total = [];
+
+			for(var j=0; j<this.node.length; j++)
+			{
+				if(segmentoini == undefined)
+					segmentoini = j;
+				else if(segmentofin == undefined){
+					segmentofin = j; 
+				}
+
+				if(segmentoini != undefined && segmentofin != undefined)
+				{
+					total.push
+					({
+						A: segmentoini,
+						B: segmentofin
+					});
+
+					segmentoini = segmentofin;
+					segmentofin = undefined;
+				}
+			}
+
+			total.push
+			({
+				A: (this.node.length  - 1),
+				B: 0
+			});
+
+			//console.log('total: ' + total.length);
+			return total;
+		},
+
+		//function pour obtenir le hauteur de un polygone
+		GetWidth: function (array)
+		{		
+			var Decmax = null, Decmin = null;	
+			var temp;
+			var width;
+
+			for(i in array)
+			{
+				temp = (array[i][1]);        	
+
+				if(Decmax == null)
+				{
+					Decmax = temp;
+				}
+				else if(temp >= Decmax)
+				{
+					Decmax = temp;
+				}
+
+				if(Decmin == null)
+				{
+					Decmin = temp;
+				}
+				else if(temp <= Decmin )
+				{
+					Decmin = temp;
+				}
+			}
+
+			width = (Decmax - Decmin);
+
+			if(width > 180)
+			{
+				width = 360 - width;
+				//console.log('width 360');
+			}
+
+			return { decmax: Decmax, decmin: Decmin , width: width  };
+		},
+
+		//function para crear una grafica en el this.canvas
+		DrawGrafic: function (canvas1)
+		{
+			var canvasgraf =  canvas1;
+			var ancho = canvasgraf.width;
+			var alto = canvasgraf.height;
+
+			var contextGrafic = canvasgraf.getContext('2d');
+			var contador = 20;
+			var contador2 = 20;
+
+			//console.log("ancho: " + ancho);
+			//console.log("alto: " + alto);
+
+			for(var i =0; i < alto ; i++)
+			{
+
+				this.contextGrafic.beginPath();
+
+				if(i === 0)
+				{
+					this.contextGrafic.moveTo( i + 20 , 10);
+					this.contextGrafic.lineTo( i + 20, alto);
+					this.contextGrafic.fillStyle="black";
+					this.contextGrafic.font = "bold 8px sans-serif";
+					this.contextGrafic.fillText("0",i + 15 , 20);
+				}
+				else 
+				{
+					this.contextGrafic.moveTo( i + contador , 20);
+					this.contextGrafic.lineTo( i + contador , alto);
+					this.contextGrafic.fillStyle="black";
+					this.contextGrafic.font = "bold 8px sans-serif";
+					this.contextGrafic.fillText(i,(i+contador)-3 , 20);
+				}
+
+				this.contextGrafic.closePath(); 
+				this.contextGrafic.strokeStyle = 'yellow';
+				//this.context.lineWidth = 3;
+				this.contextGrafic.stroke();	
+
+				contador = parseInt( contador + 20);
+
+			}
+
+			for(var i =0; i < ancho ; i++)
+			{
+
+				this.contextGrafic.beginPath();
+				this.contextGrafic.lineCap="round";
+
+				if(i === 0)
+				{
+					this.contextGrafic.moveTo( 12 , i + 20 );
+					this.contextGrafic.lineTo( ancho , i + 20);	
+				}
+				else 
+				{
+					this.contextGrafic.moveTo( 12  , 0 + contador2);
+					this.contextGrafic.lineTo( ancho , 0 + contador2);
+					this.contextGrafic.font = "bold 8px sans-serif";		     
+					this.contextGrafic.fillStyle="black";
+					this.contextGrafic.fillText(i, 3, (0+ contador2)+3);
+				}
+
+				this.contextGrafic.closePath(); 
+				this.contextGrafic.strokeStyle = 'brown';
+				//this.context.lineWidth = 3;
+				this.contextGrafic.stroke();	
+				contador2 = parseInt( contador2 + 20);	    	       
+			}  
+		},
+
+		isEmpty: function()
+		{
+			if(this.node.length == 0)
+				return true;		
+			else
+				return false;
+		},
+
+		//function que permet de ajouter this.nodes
+		addNode: function(x, y,startingNode,polygonestatus)
+		{					
+			if(polygonestatus)
+			{
+				var newNode = {};
+				var lastnode = {};
+				var position = parseInt(startingNode[0].position);
+
+				newNode.cx = startingNode[0].cx;
+				newNode.cy = startingNode[0].cy;
+				newNode.r = startingNode[0].r;
+
+				if(this.node.length === position)
+				{				
+					lastnode.cx = this.node[(this.node.length -1)].cx;
+					lastnode.cy = this.node[(this.node.length -1)].cy;
+					lastnode.r = 5;
+
+					//agregar el nodo
+					this.node.splice((this.node.length -1), 1 , lastnode,newNode);				
+				}
+				else
+				{
+					lastnode.cx = this.node[startingNode[0].position].cx;
+					lastnode.cy = this.node[startingNode[0].position].cy;
+					lastnode.r = 5;
+
+					//agregar el nodo
+					this.node.splice(startingNode[0].position, 1 ,newNode, lastnode);
+				}														
+				this.Redrawn(0);
+			}
+			else
+			{
+				var flag = typeof(startingNode);
+				if(flag != "object")
+				{
+					if(startingNode == 0 && this.node.length > 1)
+					{		
+						this.node.unshift
+						(
+								{
+									cx: x,
+									cy: y,
+									r: 5,	                            
+								}
+						);
+					}
+					else
+					{
+						this.node.push
+						(
+								{
+									cx: x,
+									cy: y,
+									r: 5            
+								}
+						);
+					}
+					this.DrawNode(this.node);
+				}	
+				else
+				{
+
+					if(startingNode != undefined /*&& startingNode.B != undefined*/)
+					{					
+						var addnode ={};
+						var preview ={};					
+
+						preview.cx = startingNode.segmento.xA;
+						preview.cy = startingNode.segmento.yA;
+						preview.r = 5;
+
+						addnode.cx = x;
+						addnode.cy = y;
+						addnode.r = 5;
+
+						this.node.splice(startingNode.segmento.segmento, 1 , preview , addnode);
+						var renode =  this.node;
+						this.Redrawn(0);
+
+					}
+				}			          		         
+			}
+
+			//console.log('this.node add: ' + this.node.length);        
+		},
+
+		//function que permet obtener le numero de this.node
+		getNode: function(x,y)
+		{
+			var dx=0 , dy=0;
+			var result = 0;
+
+			for(var i in this.node)
+			{	             
+				dx = x - this.node[i].cx;
+				dy = y - this.node[i].cy;  
+				//var result =Math.sqrt(dx * dx + dy * dy);
+				var result = dx * dx + dy * dy;
+
+				if(result <= 25)
+				{	    
+					//console.log('i: ' + i);
+					return i;	
+				}
+			}
+			return -1;
+		},
+
+		//function pour obtenir les deux this.nodes qui forme un segment
+		getSegment: function(clickedNode)
+		{		
+			var pointA=0 ,pointB=0;
+
+			if(clickedNode == 0)
+			{		
+				//console.log('nodo 0');
+				pointA = (parseInt(clickedNode) +1);
+				pointB = (this.node.length -1);
+			}
+			else if(clickedNode == (this.node.length -1))
+			{			
+				//console.log('nodo final:' + (this.node.length -1));
+				pointA = parseInt((this.node.length -1) -1);
+				pointB = 0;			
+			}
+			else if(clickedNode != 0 && clickedNode != (this.node.length -1))
+			{	
+				//console.log('otro this.node');
+				pointA = (parseInt(clickedNode)+1);
+				pointB = (parseInt(clickedNode)-1);			
+			}
+			return {A :pointA, B:pointB, N:clickedNode};
+		},
+
+		//function pour effacer le this.canvas
+		canvasUpdate: function()
+		{		
+			this.contexto.drawImage(this.canvas, 0, 0);
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);		
+		},
+
+		//function pour diseigner les lignes
+		drawHashline: function(startingNode,x,y)
+		{						
+			this.DrawnLine(startingNode,x,y);	   	   					
+		},	
+
+		//function pour effacer un ligne
+		CleanLine: function()
+		{	
+			//this.contexto.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+
+		//function pour savoire si un this.node es un extemite
+		isExtremity: function(clickedNode)
+		{
+			if(clickedNode == 0 || clickedNode == (this.node.length -1))
+			{		
+				return true;								
+			}				
+			return false;
+
+		},
+
+		//function que permet de fermer un polygon
+		closePolygone: function(clickedNode , startingNode)
+		{		
+			if(clickedNode == startingNode)
+			{
+				return false;	
+			}
+			else if(clickedNode == 0 && startingNode == (this.node.length -1))
+			{		
+				for(var i in this.node)
+				{
+					this.context.beginPath();
+					this.context.arc(this.node[i].cx, this.node[i].cy, this.node[i].r, 0, Math.PI * 2,true);     	      
+					this.context.fillStyle = "red";
+					this.context.fill();
+					this.context.stroke();	 
+					this.context.closePath();	  		        
+				}  
+				return true;
+			}
+			else if(clickedNode == (this.node.length -1) && startingNode == 0 )
+			{			
+				for(var i in this.node)
+				{
+					this.context.beginPath();
+					this.context.arc(this.node[i].cx, this.node[i].cy, this.node[i].r, 0, Math.PI * 2,true);     	      
+					this.context.fillStyle = "red";
+					this.context.fill();
+					this.context.stroke();	 
+					this.context.closePath();	  		        
+				} 
+				return true;
+			}			
+			return false;
+		},
+
+		//function pour bouger un this.node et ses deux segments de le poligone
+		Drag: function(clickedNode, x,y,result)
+		{
+			var segmentfirst;
+			var segmentlast;
+			var flag;
+			var resultado = [];								
+
+			//set new values
+			this.node[clickedNode].cx = x;
+			this.node[clickedNode].cy = y;	
+
+			this.node[result.N].cx = x;
+			this.node[result.N].cy = y;					
+
+			this.Redrawn(result);		
+		},
+
+		//function pour garder les valeur de alafin lite et les convertir en valeurs de this.canvas("pixel")
+		almacenar: function()
+		{			
+			//console.log('mesage this.almacenar');
+			//console.log('this.skyPositions: ' + this.skyPositions);
+			if(this.skyPositions != null)
+			{
+				//console.log('this.skyPositions' + this.skyPositions);
+				//console.log('this.node' + this.node);					
+				this.node = [];
+				this.skyPositions.pop();
+
+				for (var k=0; k<this.skyPositions.length; k++) 
+				{
+					this.node.push(this.aladin.world2pix
+							(
+									this.skyPositions[k][0], 
+									this.skyPositions[k][1]								
+							));								
+				}	
+
+				this.ArrayToObject(this.node);
+
+				//console.log('this.node: ' + typeof(this.node));
+				/*for(i in this.node)
+				{	
+					console.log('i : ' + i);
+					console.log('this.node x: ' + this.node[i].cx);
+					console.log('this.node y: ' + this.node[i].cy);				
+				}*/
+
+				this.Redrawn(this.node);	
+			}
+
+		},		
+
+		//function pour effacer le poligone de this.aladin lite quand passe a mode edition
+		DeleteOverlay :  function()
+		{
+			if (this.overlay != null) 
+			{			 	      
+				//console.log('this.skyPositions: ' + this.skyPositions);
+				//console.log('A: ' + typeof(A));
+				this.overlay.addFootprints(A.polygon(this.skyPositions));
+				this.overlay.removeAll();
+				this.overlay.overlays = [];
+				//console.log('this.overlay' + this.overlay);			           
+			}	        	 
+		},
+
+		//function pour obtenir les valeurs de le polygon et creer le polygon en adalin lite
+		recuperar: function()
+		{
+			/*
+			 * When the position are set from outside, the node remains empty while there is edition action.
+			 *  So if the user want to get back the polygoene without editing it, we have to cancel this method
+			 */
+			if( this.node && this.node.length == 0 && this.skyPositions && this.skyPositions.length > 0 ) {
+				return ;
+			}
+			//console.log('this.node1: ' + this.node.length);
+
+			//console.log('this.node.length: ' + this.node.length);
+			this.skyPositions = [];		 
+			for (var k=0; k<this.node.length; k++) {
+				//this.skyPositions.push(this.aladin.pix2world(this.node[k][0], this.node[k][1]));
+				this.skyPositions.push(this.aladin.pix2world(this.node[k].cx, this.node[k].cy));
+			};
+			//finalthis.node
+			if (this.overlay==null) {
+				this.overlay = A.graphicOverlay({color: 'red'});
+				this.aladin.addOverlay(this.overlay);
+			}
+			this.overlay.removeAll();	       
+			this.overlay.addFootprints(A.polygon(this.skyPositions));
+		},
+
+		//function pour obtenir les valeurs de le polygon et creer le polygon en adalin lite
+		setPolygon: function(points)
+		{
+			this.skyPositions = [];		 
+			for( var k=0 ; k<points.length ; k++){
+				this.skyPositions.push(points[k]);			
+			}
+			if (this.overlay==null) {
+				this.overlay = A.graphicOverlay({color: 'red'});
+				this.aladin.addOverlay(this.overlay);
+			}
+			this.overlay.removeAll();	  
+			this.overlay.addFootprints(A.polygon(this.skyPositions));
+			this.PolygonCenter();
+		},
+		setOverlay: function(points)
+		{
+			if (this.overlay==null) {
+				this.overlay = A.graphicOverlay({color: 'red'});
+				this.aladin.addOverlay(this.overlay);
+			}
+			this.overlay.removeAll();	  
+		},
+		//function pour effacer le poligone de this.canvas
+		CleanPoligon: function()
+		{
+			this.CanvasUpdate();
+			this.node = [];
+			this.skyPositions= [];
+			//console.log('this.node delete: ' + this.node.length);		
+		},
+
+		//trouver le polygon en adalin lite si on se trouve en otre part du universe
+		PolygonCenter: function()
+		{		
+			var Height = this.GetHeight(this.skyPositions);		
+			var width = this.GetWidth(this.skyPositions);
+			if( Height.largeur == 0 || width.largeur == 0 ) {
+				return;
+			}
+			var center = {};
+			center.ra = ((Height.ramax +  Height.ramin)/2);
+			center.dec =  ((width.decmax + width.decmin)/2);
+			this.aladin.gotoPosition(center.ra, center.dec);
+			this.aladin.setZoom( (width.width + Height.largeur) );
+		},
+
+		//effacer un this.node de le polygone si se trouve sûr autre this.node
+		RemoveNode: function(nodevalue,status)
+		{
+			var index = this.node[nodevalue];
+
+			if(this.node.length >= 4)
+			{			
+				this.node.splice(nodevalue,1);
+				if(status)
+				{
+					this.DrawNode(this.node);
+				}else
+				{
+					this.Redrawn(0);
+				}
+
+			}
+		},
+
+		//function pour obtenir le this.node initial et final du polygon
+		GetXYNode: function(x,y)
+		{
+			var nodes={};        
+
+			for(var i in this.node)
+			{	         
+				//console.log('this.nodenum:  ' + i);
+				//console.log('cx: ' + this.node[i].cx);
+				//console.log('cy: ' + this.node[i].cy);
+				dx = x - this.node[i].cx;
+				dy = y - this.node[i].cy;  
+				//var result =Math.sqrt(dx * dx + dy * dy);
+				var result = dx * dx + dy * dy;
+
+				if(result <= 25)
+				{	                	
+					if(nodes.a == undefined)
+					{
+						nodes.a = i;
+					}
+					else 
+					{
+						nodes.b = i;
+					}            		            		
+				}                      
+			}
+
+			return nodes;
+		},
+
+		//metodo que debuelve el numero de nodos del poligono
+		GetNodelength: function()
+		{
+			return this.node;
+		},
+
+		//crear la grafica
+		createGrafic: function(parametre)
+		{
+			this.DrawGrafic(parametre);
+		},
+
+		//indicar cuando serrar poligono
+		cuadradoIndicador: function(x,y)
+		{	
+			this.context.beginPath();
+			this.context.fillRect(x,y,10,10);     	      
+			this.context.fillStyle = "red";
+			this.context.fill();
+			this.context.stroke();	 
+			this.context.closePath();
+		},
+
+		stokeNode: function(nodeposition)
+		{
+			if(nodeposition != undefined) 
+				var stocknode = [];
+				stocknode.push
+				({
+					position: nodeposition,
+					cx:this.node[nodeposition].cx,
+					cy:this.node[nodeposition].cy,
+					r:5
+				});
+
+				return stocknode;
+			
+		},
+		getSkyPositions: function() {
+			return this.skyPositions;
+		}
+}
+console.log('=============== >  RegionEditor_m.js ');
+
+/**
+ * Manager of the view of the region editor
+ * 
+ * Author Gerardo Irvin Campos yah
+ */ 
+function RegionEditor_mVc(parentDivId, handler, points){
+	this.parentDivId = parentDivId;
+	this.drawCanvas = null; // canvas where the polygon is drawn
+	this.drawContext = null;
+	this.lineCanvas = null; // canvas where the moving lines are drawn
+	this.lineContext = null;
+	this.controller = null;
+	this.points = points; // Initial values
+	this.clientHandler = (handler == null) ? function(){Modalinfo.info("No client handler registered");}: handler;
+} 
+
+RegionEditor_mVc.prototype = {
+		init: function (data){
+			// création instance d'Aladin lite
+			$('#' + this.parentDivId).append('<div id="' + this.parentDivId + '_aladin" style="width: 390px; height: 320px;"></div><div id="' + this.parentDivId + '_button"></div>');
+				this.aladin = $.aladin('#' + this.parentDivId + '_aladin'
+					, {showControl: true, 
+				      //fov: 0.55, 
+				     // target: "orion", 
+				      cooFrame: "ICRS", 
+				      survey: "P/DSS2/color", 
+				      showFullscreenControl: false, 
+				      showFrame: false, 
+				      showGotoControl: false});
+			//this.aladin.setImageSurvey("P/XMM/PN/color");
+			this.aladin.setImageSurvey("P/DSS2/color");
+			
+			this.parentDiv = this.aladin.getParentDiv();
+			$('#' + this.parentDivId).css("position", "relative");
+			// création du canvas pour éditeur régions
+			/*
+			 * Be cautious: the canvas context must be taken before the canvas is appended to the parent div, otherwise the geometry is wrong. 
+			 */
+			this.lineCanvas = $("<canvas id='RegionCanvasTemp' class='editor-canvas'></canvas>");
+			this.lineCanvas[0].width = this.parentDiv.width();
+			this.lineCanvas[0].height = this.parentDiv.height();
+			this.lineContext = this.lineCanvas[0].getContext('2d');	        
+			this.parentDiv.append(this.lineCanvas);
+			this.lineCanvas.css('z-index', '100');
+			this.lineCanvas.css('position', 'absolute');
+			this.lineCanvas.hide(); 
+
+			/*
+			 * Canvas pour les traces temporaires
+			 */
+			this.drawCanvas = $("<canvas id='RegionCanvas' class='editor-canvas'></canvas>");
+			this.drawCanvas[0].width = this.parentDiv.width();
+			this.drawCanvas[0].height = this.parentDiv.height();
+			this.drawContext = this.drawCanvas[0].getContext('2d');
+			this.parentDiv.append(this.drawCanvas);
+			this.drawCanvas.css('z-index', '100');
+			this.drawCanvas.css('position', 'absolute');
+			this.drawCanvas.hide(); 
+
+
+			this.controller = new RegionEditor_mvC({ "points": this.points, "handler": this.clientHandler, "canvas": this.drawCanvas, "canvaso": this.lineCanvas, "aladin": this.aladin});
+			/*
+			 * The controller function is wrapped in a function in order to make it working in the context of the controller object
+			 * and not of he HTML widget
+			 */
+			var that = this;
+			this.drawCanvas[0].addEventListener('mousedown', function(event) {that.controller.mouseDown(event);}, false);
+			this.drawCanvas[0].addEventListener('mousemove',  function(event) {that.controller.mouseMove(event);}, false);
+			this.drawCanvas[0].addEventListener('mouseup', function(event) { that.controller.mouseUp(event);}, false);
+
+			/*----crear botones con jquery----*/
+			var divButtons = $("<div id='RegionButtons' style=' width:"+ this.parentDiv.width() +'px' +" ';' '><div/>").appendTo("#" + this.parentDivId + "_button");        
+			divButtons.css('background', 'gray');//'height:' "+ 200 +'px' +"';'
+			divButtons.css('height', '70px');
+
+			this.browseBtn = $("<input type='button' id='edit' value='Browse' />");
+			divButtons.append(this.browseBtn);
+			this.browseBtn.css('margin-top','10px');
+			this.browseBtn.css('margin-left','5px');
+			this.browseBtn.attr('disabled', 'disabled');
+			this.browseBtn.click(function() {        	 
+				that.controller.recuperar();   
+				that.setBrowseMode();
+			});
+
+			this.editBtn = $("<input type='button' id='edit' value='Edit' />");
+			divButtons.append(this.editBtn);
+			this.editBtn.css('margin-top','10px');
+			this.editBtn.css('margin-left','5px');
+			var that = this;
+			this.editBtn.click(function() {        	 
+				that.setEditMode();
+				that.controller.DeleteOverlay()
+				that.lineContext.clearRect(0, 0, that.lineCanvas[0].width, that.lineCanvas[0].height);            
+				that.drawContext.clearRect(0, 0, that.drawCanvas[0].width, that.drawCanvas[0].height);
+				that.controller.almacenar();	       
+			});
+
+
+			this.centerBtn = $("<input type='button' id='edit' value='Center' />");
+			divButtons.append(this.centerBtn);
+			this.centerBtn.css('margin-top','10px');
+			this.centerBtn.css('margin-left','5px');
+			this.centerBtn.click(function() {        	 
+				that.controller.PolygonCenter();
+			});
+
+			this.effacerBtn = $("<input type='button' id='edit' value='clear' />");
+			divButtons.append(this.effacerBtn);
+			this.effacerBtn.css('margin-top','10px');
+			this.effacerBtn.css('margin-left','5px');
+			this.effacerBtn.click(function() {        	 
+				that.controller.CleanPoligon();
+			});
+			this.setBrowseMode();
+
+			var buttonSet = $("<input type='button' id='edit' value='Accept' />");
+			divButtons.append(buttonSet);
+			buttonSet.css('margin-top','10px');
+			buttonSet.css('margin-left','5px');
+			buttonSet.css('font-weight',' bold');
+			buttonSet.click(function() {
+				that.controller.recuperar();  
+				that.setBrowseMode();
+				that.controller.invokeHandler(true);
+			});
+			this.posField = $("<br><input type='text' id='position' size=24 />");
+			divButtons.append(this.posField);
+			this.posField.css('margin-top','10px');
+			this.posField.css('margin-left','5px');
+			this.posField.keyup(function(e){
+				if(e.keyCode == 13){
+					var pos = $(this).val().replace(/:/g , " ");
+					that.posField.val(pos);
+					that.aladin.gotoObject(pos);
+					$(this).val(pos);
+					that.aladin.gotoObject(pos);
+				}
+			});
+
+		},
+		/**
+		 * Operate the drawing removal from outside 
+		 */
+		clean: function() {
+			this.controller.CleanPoligon();				
+			this.setEditMode();
+			this.controller.DeleteOverlay()
+			this.lineContext.clearRect(0, 0, this.lineCanvas[0].width, this.lineCanvas[0].height);            
+			this.drawContext.clearRect(0, 0, this.drawCanvas[0].width, this.drawCanvas[0].height);
+			this.controller.almacenar();	       
+			this.controller.recuperar();   
+			this.setBrowseMode();
+
+		},
+		/**
+		 * Initalize the darw with the default parameter. If points contains a region, it is drawn, 
+		 * if it just contain a position, AladinLite is centered on that position
+		 * @param points  object denoting the initial value of the polygone : {type: ... value:} type is format of the 
+		 * value (saadaql or array) and value is the data string wich will be parsed
+		 */
+		setInitialValue: function (points){
+			/*
+			 * Set the region passed by the client if it exists
+			 */
+			this.points = points;
+			this.controller.CleanPoligon();
+			if( this.points ){
+				var pts = [];
+				/*
+				 * Extract region or position from SaadaQL statement
+				 */
+				if( this.points.type == "saadaql") {
+					var s = /"(.*)"/.exec(this.points.value);
+					if( s.length != 2 ) {
+						Modalinfo.error(this.points.value + " does not look like a SaadaQL statment");
+						return;
+					} else {
+						if( this.points.value.startsWith("isInRegion")) {
+							var ss = s[1].split(/[\s,;]/);
+							for( var i=0 ; i<ss.length ; i++ ) {
+								pts.push(parseFloat(ss[i]));
+							}
+						} else {
+							var pos = s[1].replace(/:/g , " ");
+							this.posField.val(pos);
+							this.aladin.setZoom(0.55);
+							this.aladin.gotoObject(pos);
+						}
+					}
+				} else if (this.points.type == "array") {
+					pts = this.points.value;
+				} else {
+					Modalinfo.error("Polygone format " + points.type + " not understood");
+					return;
+				}
+
+				this.setBrowseMode();
+				this.controller.DeleteOverlay()
+				this.controller.setPoligon(pts);
+			}
+			/*
+			 * Fix for the errors when we open a new region editor
+			 */
+			var that = this;
+	           setTimeout(function() {
+                   that.aladin.increaseZoom();
+                   that.aladin.decreaseZoom();
+                   }, 500);
+
+		},
+		setBrowseMode: function() {
+			this.editBtn.removeAttr('disabled');
+			this.browseBtn.attr('disabled', 'disabled');   
+			this.effacerBtn.attr('disabled', 'disabled');                      
+			this.lineCanvas.hide();
+			this.drawCanvas.hide();
+		},
+		setEditMode: function() {
+			this.browseBtn.removeAttr('disabled');
+			this.editBtn.attr('disabled', 'disabled');   
+			this.effacerBtn.removeAttr('disabled');                
+			this.lineCanvas.show();
+			this.drawCanvas.show();
+		},
+
+}
+
+
+console.log('=============== >  RegionEditor_v.js ');
+
+/**
+ * Controller handling the user actions in connection with the model 
+ * 
+ *  params = {canvas,canvaso, aladin}
+ * 
+ * Author Gerardo Irvin Campos yah
+ */
+function /**
+ * @author michel
+ *
+ */
+RegionEditor_mvC(params){
+	//this.poligone =  new poligoneCreate(params.canvas, params.canvaso, params.aladin);
+	this.poligone =  new RegionEditor_Mvc(params.canvas, params.canvaso, params.aladin);
+
+	this.canvas = params.canvas; 	
+	this.clientHandler = params.handler;
+	this.startingNode= -1; 
+	this.buttondown = false; 
+	this.closed = false;	
+	this.movestart = false;
+	this.startdrag = false;
+	this.drag = null;
+	this.result = -1;
+	this.stokeNode;
+	var that = this;
+}
+
+RegionEditor_mvC.prototype = {
+		getStatus: function() {
+			 return "startingNode=" 
+			        +this.startingNode + " buttondown=" 
+			  		+ this.buttondown+ " closed=" 
+			  		+ this.closed+ " movestart=" 
+			  		+ this.movestart + " startdrag=" 
+			  		+ this.startdrag + " drag=" 
+			  		+ this.drag  + " result=" 
+			  		+ this.result + " stokeNode=" 
+			  		+ this.stokeNode
+			  		;
+		},
+		/**
+		 * TODO to be implemented
+		 */
+		checkPolygon : function(points) {
+			return true;
+		},
+		/**
+		 * 
+		 */
+		mouseDown : function(event) {
+			var clickedNode = -1;
+			var clickedSegment = -1;
+			var x = parseInt(event.pageX) - parseInt( this.canvas.offset().left).toFixed(1);
+			var y = parseInt(event.pageY) - parseInt( this.canvas.offset().top).toFixed(1);
+					
+			//pregunta si el pologono esta vacio
+			if( this.poligone.isEmpty()) 
+			{
+				this.poligone.addNode(x,y);			 
+			}
+			//obtener segmento
+			
+			//comenzar el this.drag del nodo		
+			else if(this.closed == true && (clickedNode = this.poligone.getNode(x,y)) != -1)
+			{
+				//console.log('start this.drag');
+				//console.log('clickedNode: ' + clickedNode);
+				this.result = this.poligone.getSegment(clickedNode);
+				this.stokeNode = this.poligone.stokeNode(clickedNode);
+				this.startdrag = true;		
+				this.drag = clickedNode;
+				this.startingNode = clickedNode;		
+				this.canvas.css('cursor','move');
+			}
+			//pregunta si el espacio presionado es un nodo 
+			else if((clickedNode = this.poligone.getNode(x,y)) != -1 )
+			{
+				//pregunta si es una extremidad
+				if(this.poligone.isExtremity(clickedNode) /*poligono abierto*/) 
+				{			
+					//pregunta estas abierto
+					if(this.closed == true)
+					{
+						this.startingNode = -1;
+						this.buttondown = false;	
+					}
+					else
+					{
+						this.startingNode = clickedNode;
+						this.buttondown = true;					
+						this.closed = false;
+					}
+				}							
+			} 		
+			
+			//saber si estoy sobre un segmento
+			if(this.closed && clickedNode == -1)
+			{						
+				var node = this.poligone.GetNodelength();	
+						
+				var Segmentos = new Segment(node);	
+				var option = Segmentos.IsCursorOn(x,y);
+				
+				if(option != undefined)
+				{
+					if(option.flag == "vertical")
+					{
+						//console.log("option: " + option.flag);
+						this.poligone.addNode(x, y, option);
+					}
+					else if(option.flag == "horizontal")
+					{
+						//console.log("option: " + option.flag);
+						this.poligone.addNode(x, y, option);
+					}
+					else if(option.flag == "distancia")
+					{
+						//console.log("option: " + option.flag);
+						this.poligone.addNode(x, y, option);
+					}
+				}						
+			
+			}
+			
+		},
+		/**
+		 * 
+		 */
+		mouseMove : function(event) {
+			var x = parseInt(event.pageX) - parseInt( this.canvas.offset().left).toFixed(1);
+			var y = parseInt(event.pageY) - parseInt( this.canvas.offset().top).toFixed(1);
+			//console.log("mouse move " + this.getStatus());
+			//pregunta si el nodo fue presionado y si es un nodo
+			if(this.buttondown == true  && this.startingNode != -1 )
+			{
+				//console.log ('this.drag');
+				//console.log ('this.startingNode' + this.startingNode);
+				this.movestart = true;
+				this.poligone.drawHashline(this.startingNode,x,y,this.result);		
+			}		
+			else if(this.startdrag)
+			{
+				this.poligone.Drag(this.drag, x, y , this.result);
+				
+				//console.log('this.startdrag move');		
+			}
+			
+//			var h2x = document.getElementById("idcoor");
+//			h2x.innerHTML = 'X coords: '+x+', Y coords: '+y;
+		},
+		
+		mouseUp: function(event) {
+			var clickedNode = -1;
+			var x = parseInt(event.pageX) - parseInt( this.canvas.offset().left).toFixed(1);
+			var y = parseInt(event.pageY) - parseInt( this.canvas.offset().top).toFixed(1);		
+		//pregunta nodo es presionado y es si es un nodo
+			if(this.buttondown == true && (clickedNode = this.poligone.getNode(x,y)) != -1 )
+			{		
+				//pregunta si es un extremo
+				if( this.poligone.isExtremity(clickedNode) == false) 
+				{				
+					this.poligone.CleanLine();				
+					this.buttondown = false;
+				}	
+				
+				//console.log('clickedNode: ' + clickedNode + ' this.startingNode: ' +  this.startingNode);
+				if(this.poligone.closePolygone(clickedNode , this.startingNode) == true)
+				{
+					//console.log('this.closed polygon');					
+					this.buttondown = false;	
+					this.closed = true;
+					this.invokeHandler(false);
+				
+					//console.log('clickedNode: ' + clickedNode + ' this.startingNode: ' +  this.startingNode);							
+				}
+			} 
+			
+			if(this.closed == true && (finalnode = this.poligone.GetXYNode(x, y) ) != null)			
+			{
+				if(finalnode.a != undefined && finalnode.b != undefined)
+				{
+					//console.log('finalnode a: ' + finalnode.a + ' finalnode b: ' + finalnode.b);
+					
+					if(this.startingNode ==  finalnode.a)
+						this.poligone.RemoveNode(finalnode.a,false);
+					else if(this.startingNode ==  finalnode.b)
+						this.poligone.RemoveNode(finalnode.b,false);
+				}			
+			}
+					
+			if(this.buttondown == true && this.movestart == true)
+			{		
+				if( clickedNode == this.startingNode && (clickedNode = this.poligone.getNode(x,y) != -1) )
+				//if((clickedNode = this.poligone.getNode(x,y)) != -1)
+				{											
+					this.buttondown = false;		
+					this.movestart = false;	
+					this.poligone.CleanLine();							
+				}				
+				else
+				{						
+						this.poligone.addNode(x,y,this.startingNode);
+						this.buttondown = false;		
+						this.movestart = false;	
+						
+						var nodos = this.poligone.GetNodelength();					
+						var Segmentos = new Segment(nodos);	
+						var temp;
+						
+						var inter = Segmentos.Itersection(this.startingNode,false);
+						
+						if(inter != -1 && inter != undefined)
+						{			
+							//poligono abierto = true
+							if(this.startingNode != 0)
+								this.poligone.RemoveNode(inter.nB,true);
+							else
+								this.poligone.RemoveNode(inter.nA,true);
+							
+							this.poligone.CleanLine();
+						}												
+				}			
+				
+			}
+			else if(this.buttondown == true && this.movestart == false)
+			{			
+				this.buttondown = false;		
+				this.movestart = false;	
+			}
+			
+			if(this.startdrag == true)
+			{
+				//console.log('this.startdrag fin');
+				this.startdrag = false;
+				this.canvas.css('cursor','default');
+				
+				//stoke le numero de noeud appuyer
+				//this.startingNode;			
+				
+				var nodos = this.poligone.GetNodelength();					
+				var Segmentos = new Segment(nodos);	
+				var inter = Segmentos.Itersection(this.startingNode,true);			
+				if(inter != -1 && inter != undefined)
+				{						
+					this.poligone.RemoveNode(this.startingNode, false);
+					this.poligone.addNode(x, y, this.stokeNode,true);
+					//console.log(inter.length);
+				}
+			}
+			this.poligone.canvasUpdate();
+		},
+		
+		almacenar : function()
+		{
+			this.poligone.almacenar();
+		},
+		
+		recuperar : function()
+		{
+			this.poligone.recuperar();
+		},
+		
+		DeleteOverlay : function() {
+			this.poligone.DeleteOverlay();
+		},
+		
+		CleanPoligon : function(){
+			this.poligone.CleanPoligon();
+			this.closed = false;
+		},
+		
+		PolygonCenter : function(){
+			this.poligone.PolygonCenter();
+		},
+	
+		CreateGrafic : function(canvas){
+			this.poligone.createGrafic(this.canvas);
+		},
+		
+		show : function() {
+			console.log(this.poligone.getSkyPositions());
+			alert(this.poligone.getSkyPositions());
+		},
+		/**
+		 * Set the polygone with points. Points is a simple array. It must have at 
+		 * least 6 values (3pts) and an even number of points
+		 * @param points  [a,b,c,.....]
+		 * @returns {Boolean} true if the polygone is OK
+		 */
+		setPoligon : function(points) {
+			if( !points || (points.length%2) != 0 || points.length < 6 ) {
+				return false;
+			} else {
+				var x = [];
+				for(var i=0 ; i<(points.length/2) ; i++){
+					x[x.length] = [points[2*i], points[(2*i)+1]];
+				}
+				this.poligone.setPolygon(x);
+				this.closed = true;
+				this.invokeHandler(false);
+				return true;
+			}
+		},
+		/**
+		 * Call the client handler when the polygine is close or when the user click on accept
+		 * The data passed to the user handler look like that:
+		    {isReady: true,             // true if the polygone is closed
+		    userAction: userAction,     // handler called after the user have clicked on Accept
+		    region : {
+		        format: "array2dim",    // The only one suported yet [[x, y]....]
+		        points: this.poligone.skyPositions  // array with structire matching the format
+		        size: {x: , y:} // regiosn size in deg
+		        }
+		 */
+		invokeHandler : function(userAction){
+			if( this.closed || ( this.poligone.node == undefined || this.poligone.node.length == 0) ){
+				/*
+				 * Compute the region size in degrees
+				 */
+				for( var p=0 ; p<this.poligone.skyPositions.length ; p++ ) {
+					for( var q=(p+1) ; q<this.poligone.skyPositions.length ; q++ ) {
+						var x = Math.abs(this.poligone.skyPositions[p][0] - this.poligone.skyPositions[q][0]);
+						if( x > 180 )x = 360 - x; 
+						var y = Math.abs(this.poligone.skyPositions[p][1] - this.poligone.skyPositions[q][1]);
+						if( y > 180 )y = 360 - y; 
+					}
+				}
+				this.clientHandler({isReady: true
+					, userAction: userAction
+					, region : {format: "array2dim"
+						       , points: this.poligone.skyPositions
+							   , size: {x: x, y: y}}});
+			} else {
+				Modalinfo.error("Polygon not closed");
+			}
+		}
+}
+
+console.log('=============== >  RegionEditor_c.js ');
+
 /**
  * ConstQEditor_Mvc: Model of the constraint query editor
  * 
@@ -11304,7 +13153,8 @@ QueryTextEditor_Mvc.prototype = {
 			}
 		},
 		buildQuery: function() {
-			this.query =  this.buildWhereConstraint("\nWherePosition"         , ","  , this.posConst)
+			this.query =  
+			  this.buildWhereConstraint("\nWherePosition"         , ","  , this.posConst)
 			+ this.buildWhereConstraint("\nWhereAttributeSaada"   , "AND", this.colConst)
 			+ this.buildWhereConstraint("\nWhereUCD"              , "AND", this.ucdConst)
 			+ this.buildWhereConstraint("\nWhereRelation"         , " "  , this.relConst)

@@ -374,7 +374,6 @@ public class Query extends Query_Report{
 				Messenger.printMsg(Messenger.DEBUG, "Add order by oidsaada desc");
 			this.obClause = new OrderBy(this.sfiClause);			
 		}
-		
 	}
 
 	/**

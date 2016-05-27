@@ -425,6 +425,17 @@
     <servlet-name>SecureDownload</servlet-name>
     <url-pattern>/securedownload</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <description></description>
+    <display-name>UploadPosList</display-name>
+    <servlet-name>UploadPosList</servlet-name>
+    <servlet-class>ajaxservlet.UploadPosList</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UploadPosList</servlet-name>
+    <url-pattern>/uploadposlist</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <description></description>
     <display-name>ZipDownload</display-name>
