@@ -368,10 +368,13 @@ public class Query extends Query_Report{
 		 * For the default order by when there is a limt, otherwise, 
 		 * the result depends on the limit value or it can change from one query execution to another
 		 * to be checked
+		 */
 		if( this.limitClause != null && this.obClause == null ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Add order by oidsaada desc");
 			this.obClause = new OrderBy(this.sfiClause);			
 		}
-		*/
+		
 	}
 
 	/**
