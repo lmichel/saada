@@ -5,6 +5,9 @@
         <dependent-module archiveName="ThreeXMMdr5generated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//data/3xmm/saadadb/ThreeXMMdr5/web/WEB-INF/lib/ThreeXMMdr5generated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="Astericsgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/Asterics/web/WEB-INF/lib/Astericsgenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="Saada1.7"/>
         <property name="java-output-path" value="/Saada1.7/build/classes"/>
     </wb-module>

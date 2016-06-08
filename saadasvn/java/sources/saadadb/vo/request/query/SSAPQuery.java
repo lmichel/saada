@@ -130,7 +130,7 @@ public class SSAPQuery extends VOQuery {
 
 		value = this.queryParams.get("time");
 		if( value != null ) {
-			Messenger.printMsg(Messenger.WARNING, "Time constraint not porcessed yet");
+			Messenger.printMsg(Messenger.WARNING, "Time constraint not processed yet");
 		}
 
 		value = this.queryParams.get("top");

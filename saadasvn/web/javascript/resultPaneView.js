@@ -676,6 +676,7 @@ jQuery
 				                	 "pos": "top-center"
 				                 }
 				                 ];
+
 				if( globalTreePath.category == "ENTRY" || globalTreePath.category == "IMAGE"|| globalTreePath.category == "SPECTRUM"){
 					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
 						"pos" : "top-center"})

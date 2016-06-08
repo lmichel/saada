@@ -264,9 +264,9 @@
 	
 	<!--
 		Empty one collection
-		USAGE ant collection.emty -Dname={name} -Dcategory={category}
+		USAGE ant collection.empty -Dname={name} -Dcategory={category}
 	-->
-	<target name="collection.emty" >
+	<target name="collection.empty" >
     	<java  classname="saadadb.command.ManageCollection" fork="true"  failonerror="true"  >
 			<classpath refid="saadadb.classpath"/>
 			<arg value="-empty=${name}"/>
@@ -295,9 +295,9 @@
 		
 		<!--
 			Empty one class
-			USAGE ant class.emty -Dname={name}
+			USAGE ant class.empty -Dname={name}
 		-->
-		<target name="class.emty" >
+		<target name="class.empty" >
 	    	<java  classname="saadadb.command.ManageClass" fork="true"  failonerror="true"  >
 				<classpath refid="saadadb.classpath"/>
 				<arg value="-empty=${name}"/>
@@ -334,7 +334,7 @@
 	</target>
 	
 	<!--
-		Emty the relation given as parameter
+		empty the relation given as parameter
 		USAGE ant relation.empty -Dname={relation name}
 		Both join tables and Saada indexes are flushed
 	-->	
@@ -455,7 +455,7 @@
 		if the -links parameter valus is "follow", all product targeted by links of the product to remove will be removed too.
 		If the -noindex is set to true, indexes are not rebuilt after the poduct deletion
 		WARNING: This task can generate huge transactions
-		WARNING: If you want to empty a class or collection use the collection.emty or class.empty tasks preferably.
+		WARNING: If you want to empty a class or collection use the collection.empty or class.empty tasks preferably.
 		
 		USAGE ant product.remove -Dremove=oid1,oid2,oid3  -Dnoindex=true -Dlinks=follow
 		      ant product.remove "-Dremove=Select MISC From * In Starting WhereAttributeSaada{namesaada='Pedro'}"  -Dnoindex=true -Dlinks=follow
@@ -584,7 +584,7 @@
 	<target name="vo.tap.create">   
 		<java classname="saadadb.command.ManageTapService" failonerror="false" fork="true">       
 			<classpath refid="saadadb.classpath"/>      
-			<arg value="-remove=service"/>      
+			<arg value="-create=service"/>      
 			<arg value="-debug={debug}"/>      
 			<arg value="${SAADA_DB_NAME}"/>
 		</java>	

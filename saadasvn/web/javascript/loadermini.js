@@ -5,7 +5,10 @@
  * 
  * This class is a JS singleton.
  */
-resourceLoader = function() {
+resourceMiniLoader = function() {
+	
+	if( !productionMode )
+		return;
 	/*
 	 * JS directories and files
 	 */

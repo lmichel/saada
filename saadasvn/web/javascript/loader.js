@@ -18,6 +18,8 @@ resourceLoader = function() {
 	                , "AttachedData_v.js", "VizierKeywords_v.js","OrderBy_v.js", "ConeSearch_v.js", "ConstList_v.js", "FieldList_v.js", "Sorter_v.js"
 	                , "NodeFilter_v.js"
 	                , "DataLink"
+	                , "RegionEditor"
+	                , "Segment.js"
 	                , "QueryTextEditor"	  
 	                , "ConstQEditor"
 	                , "Pattern_v.js"	  
