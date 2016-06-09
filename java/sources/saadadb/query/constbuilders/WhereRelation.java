@@ -22,7 +22,8 @@ public final class WhereRelation{
 	private static final String syntax   = "WhereRelation { matchPattern [...] }";
 	private static final String inSecStat = "[^\\{\\}]+(?:[^\\{\\}]+\\{[^\\{\\}]+\\})*";    // iPOURAIS ETRE AFFINER "FORMATRELATION" plus eventuellement...
 	private static final String inStatSimple = MATCH_PATTERN + FacWS + WHERE_CLAUSE_LD + FacWS + "(" + inSecStat + ")" + FacWS + WHERE_CLAUSE_RD ;
-	private static final String inStat       = "(?:" + inStatSimple + FacWS + ")*(?:" + inStatSimple + ")" ;
+	//private static final String inStat       = "(?:" + inStatSimple + FacWS + ")*(?:" + inStatSimple + ")" ;
+	private static final String inStat       = "(?:" + inStatSimple + FacWS + ")(?:[\\s,]*" + inStatSimple + ")*" ;
 	private static final String regex = WHERE_RELATION + FacWS + WHERE_CLAUSE_LD + FacWS + inStat + FacWS + WHERE_CLAUSE_RD ;
 	private static final Pattern pattern = Pattern.compile(regex);
 
