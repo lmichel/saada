@@ -154,7 +154,7 @@ public class Spooler {
 	}
 
 	/**
-	 * Check the max number of connections which can be open, and take this n umber to limit the buffer size.
+	 * Check the max number of connections which can be open, and take this number to limit the buffer size.
 	 * All connections are closed after
 	 * @throws FatalException 
 	 * 
@@ -163,7 +163,17 @@ public class Spooler {
 		ArrayList<DatabaseConnection> crs = new ArrayList<DatabaseConnection>();
 		int i;
 		for( i=0 ; i<this.maxConnections ; i++) {
-			DatabaseConnection cr = new DatabaseConnection(i);
+			DatabaseConnection cr = null;
+			try {
+				cr = new DatabaseConnection(i);
+			} catch(Exception e){
+				if( i > 0 ){
+					Messenger.printMsg(Messenger.WARNING, "Nb of reader connections limited to " + crs.size());
+					break;
+				} else {
+					FatalException.throwNewException(SaadaException.DB_ERROR, "No available reader connections ");
+				}
+			}
 			if( !cr.isFree() ) {
 				break;
 			} else {
