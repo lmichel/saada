@@ -16,8 +16,8 @@ jQuery.extend({
 			listener = list;
 		};
 
-		this.fireTreeNodeEvent = function(andsubmit, newTreeNode){
-			listener.controlTreeNodeEvent(andsubmit, newTreeNode);
+		this.fireTreeNodeEvent = function(andsubmit, newTreeNode, limit){
+			listener.controlTreeNodeEvent(andsubmit, newTreeNode, limit);
 		};
 		this.fireAttributeEvent = function(uidraggable){
 			listener.controlAttributeEvent(uidraggable);

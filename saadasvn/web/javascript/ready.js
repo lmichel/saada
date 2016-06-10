@@ -101,17 +101,6 @@ $().ready(function() {
 	$('.sapglu').click(function() {
 		sapView.fireSubmitGluEvent();
 	});
-	$("#qlimit").keyup(function(event) {
-		if( $("#qlimit").val() == '' || $("#qlimit").val().match(/^[0-9]+$/) ) {
-			saadaqlView.fireUpdateQueryEvent();
-		}
-		else {
-			Modalinfo.info('The result limit must be a positive integer value' );
-			$("#qlimit").val(100);
-			return false;
-		}
-
-	});
 
 	/*
 	 * Coordinates input
@@ -235,6 +224,18 @@ $().ready(function() {
 	patternConstraintEditor = QueryConstraintEditor.matchPatternEditor({parentDivId: 'patterntab',formName: 'matchPattern',queryView: queryView});
 	
 		//qce.fireSetTreepath(new DataTreePath({nodekey:'node', schema: 'schema', table: 'table', tableorg: 'schema.table'}));
+	$("#qlimit").keyup(function(event) {
+		var v =  $("#qlimit").val();
+		if( v == '' || v.match(/^[0-9]+$/) ) {
+			queryView.fireAddConstraint("Merged", "limit", [v]);
+		}
+		else {
+			Modalinfo.info('The result limit must be a positive integer value' );
+			$("#qlimit").val(100);
+			return false;
+		}
+
+	});
 	
 	DataTree.init();
 

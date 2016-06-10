@@ -108,8 +108,6 @@ DataTree = function () {
 							//setTitlePath(tp);
 							});
 							***************************/
-						$("a#" + cid + " ins").remove();
-						$("img#" + cid).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
 					}
 				}
 
@@ -129,6 +127,9 @@ DataTree = function () {
 					resultPaneView.fireTreeNodeEvent(tp);
 					//setTitlePath(tp);
 					});
+				$("a#" + classNodeIds[n] + " ins").remove();
+				$("img#" + classNodeIds[n]).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
+
 			}
 			layoutPane.sizePane("west", $("#treedisp").width()) ;
 			layoutPane.sizePane("south", '10%') ;

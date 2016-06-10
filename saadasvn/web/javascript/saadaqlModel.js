@@ -34,7 +34,7 @@ jQuery.extend({
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(andsubmit, newTreeNode){
+		this.processTreeNodeEvent = function(andsubmit, newTreeNode, limit){
 			nativeConstraintEditor.fireSetTreepath(globalTreePath);
 			patternConstraintEditor.fireSetTreepath(globalTreePath);
 			var md = MetadataSource.relations;
@@ -58,6 +58,10 @@ jQuery.extend({
 				selected: selected
 			});
 			queryView.reset("Select " + globalTreePath.category + " From " + globalTreePath.getClassname() + " In " + globalTreePath.schema);
+			if(limit != null) {
+				queryView.fireAddConstraint("Merged", "limit", [limit]);
+			}
+
 			if( andsubmit == true ) {
 				resultPaneView.fireSubmitQueryEvent();
 			}

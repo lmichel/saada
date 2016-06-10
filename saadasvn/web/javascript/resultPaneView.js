@@ -32,7 +32,7 @@ jQuery
 			} else if (mode == 'tap') {
 				runTAP = true;
 			}
-			saadaqlView.fireTreeNodeEvent(runSaadaQL, true);
+			saadaqlView.fireTreeNodeEvent(runSaadaQL, true, $('#qlimit').val());
 			sapView.fireTreeNodeEvent();
 		};
 

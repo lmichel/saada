@@ -5,8 +5,8 @@ jQuery.extend({
 		 * listen to the view
 		 */
 		var vlist = {
-				controlTreeNodeEvent : function(andsubmit, newTreeNode){
-					model.processTreeNodeEvent(andsubmit, newTreeNode);
+				controlTreeNodeEvent : function(andsubmit, newTreeNode, limit){
+					model.processTreeNodeEvent(andsubmit, newTreeNode, limit);
 				},
 				controlAttributeEvent: function(uidraggable){
 					model.processAttributeEvent(uidraggable);
