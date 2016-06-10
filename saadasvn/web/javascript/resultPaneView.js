@@ -676,10 +676,13 @@ jQuery
 				                	 "pos": "top-center"
 				                 }
 				                 ];
-
 				if( globalTreePath.category == "ENTRY" || globalTreePath.category == "IMAGE"|| globalTreePath.category == "SPECTRUM"){
-					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+					var rootUrl = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + "/" + window.location.pathname.split( '/' )[1] + "/";
+
+					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_aladin" onclick="ModalAladin.aladinExplorer({ swarm: &quot;' + rootUrl  + resultPaneView.getDownloadVOTableURL() + '&quot;, title:&quot;NoTarget&quot;}, []);"></a>',
 						"pos" : "top-center"})
+						positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+							"pos" : "top-center"})
 				}
 				positions.push({ "name" : Printer.getSmallPrintButton("resultpane") ,
                	 "pos": "top-center"

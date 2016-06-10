@@ -3,9 +3,9 @@ DataTree = function () {
 
 	var init = function() {
 
-		Processing.show("Loading Data Tree");
+		Processing.show("Building the Data Tree");
 		$.getJSON("getmeta", {query: "datatree" }, function(jsdata) {
-			Processing.hide();
+			var classNodeIds = [];
 			if( Processing.jsonError(jsdata, "Cannot make data tree") ) {
 				return;
 			}
@@ -18,6 +18,7 @@ DataTree = function () {
 				var node = data[n];
 				var treepath = node.attr.id.split('.');
 				var children =node.children;
+				Processing.show("collection " + node.attr.id);
 				
 				if( children.length == 0 ) continue;
 
@@ -37,6 +38,8 @@ DataTree = function () {
 				var cparent = $("#" + node.attr.id);
 				for( var c=0 ; c<children.length ; c++){
 					var child = children[c];
+					Processing.show("category " + child.data);
+
 					var ctreepath = child.attr.id.split('.');
 					var id = child.attr.id.replace(/\./g, '_DoT_');
 					var title;
@@ -83,7 +86,9 @@ DataTree = function () {
 					for( var d=0 ; d<classes.length ; d++){
 						var classe = classes[d];
 						var ctreepath = classe.attr.id.split('.');
-						var cid = classe.attr.id.replace(/\./g, '_DoT_')
+						Processing.show("classe " + classe.attr.id);
+
+						var cid = classe.attr.id.replace(/\./g, '_DoT_');
 						$("div#treedisp").jstree("create_node"
 								, parent
 								, false
@@ -92,22 +97,42 @@ DataTree = function () {
 									"attr" :{"id":cid}}
 								,false
 								,true);   
+						classNodeIds.push(cid);
+						/****************************
 						$("a#" + cid).before("<img 'Click to get the description' class=infoanchor id='" + cid + "' src='images/metadata.png'></img>");
+						
 						$("a#" + cid).click(function(){	
 							var tp  = $(this).attr("id").split('_DoT_');
 							resultPaneView.fireSetTreePath(tp);	
 							resultPaneView.fireTreeNodeEvent(tp);
 							//setTitlePath(tp);
 							});
+							***************************/
 						$("a#" + cid + " ins").remove();
 						$("img#" + cid).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
 					}
-
 				}
 
 			}
+			/*
+			 * Inserting the meta node after the tree is complete is quite more faster the doing it while the tre building
+			 */
+			Processing.show("Inserting metadata anchors");
+			for(var n=0 ; n<classNodeIds.length ; n++) {
+				console.log(classNodeIds[n])
+				var node = $("a#" + classNodeIds[n]);
+				node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
+				
+				node.click(function(){	
+					var tp  = $(this).attr("id").split('_DoT_');
+					resultPaneView.fireSetTreePath(tp);	
+					resultPaneView.fireTreeNodeEvent(tp);
+					//setTitlePath(tp);
+					});
+			}
 			layoutPane.sizePane("west", $("#treedisp").width()) ;
 			layoutPane.sizePane("south", '10%') ;
+			Processing.hide();
 
 			return
 
@@ -181,7 +206,7 @@ DataTree = function () {
 	
 	this.init2 = function() {
 
-		Processing.show("Loading Data Tree");
+		Processing.show("Loading Data Tree II");
 		$.getJSON("getmeta", {query: "datatree" }, function(data) {
 			Processing.hide();
 			if( Processing.jsonError(data, "Cannot make data tree") ) {
