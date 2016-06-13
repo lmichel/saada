@@ -1,6 +1,7 @@
 DataTree = function () {
 	var cache = new Object;
-
+	var jsDataTree;
+	var loadedNodes = {};
 	var init = function() {
 
 		Processing.show("Building the Data Tree");
@@ -9,6 +10,7 @@ DataTree = function () {
 			if( Processing.jsonError(jsdata, "Cannot make data tree") ) {
 				return;
 			}
+			jsDataTree = jsdata
 			dataTree = $("div#treedisp").jstree();
 			/*
 			 * Loop on collections
@@ -18,7 +20,6 @@ DataTree = function () {
 				var node = data[n];
 				var treepath = node.attr.id.split('.');
 				var children =node.children;
-				Processing.show("collection " + node.attr.id);
 				
 				if( children.length == 0 ) continue;
 
@@ -38,8 +39,6 @@ DataTree = function () {
 				var cparent = $("#" + node.attr.id);
 				for( var c=0 ; c<children.length ; c++){
 					var child = children[c];
-					Processing.show("category " + child.data);
-
 					var ctreepath = child.attr.id.split('.');
 					var id = child.attr.id.replace(/\./g, '_DoT_');
 					var title;
@@ -72,63 +71,34 @@ DataTree = function () {
 							, null
 							, false);   
 					$("a#" + id).click(function(){							
-						var tp  = $(this).attr("id").split('_DoT_');
-						//resultPaneView.fireSetTreePath(tp);	
-						resultPaneView.fireTreeNodeEvent(tp);
-						//setTitlePath(tp);
-					});
-					/*
-					 * Loop on classes
-					 */
-					var classes =child.children;
-					var parent = $("#" + id);
-
-					for( var d=0 ; d<classes.length ; d++){
-						var classe = classes[d];
-						var ctreepath = classe.attr.id.split('.');
-						Processing.show("classe " + classe.attr.id);
-
-						var cid = classe.attr.id.replace(/\./g, '_DoT_');
-						$("div#treedisp").jstree("create_node"
-								, parent
-								, false
-								, {"data" : {"icon":"images/blank.png", "attr":{"id": cid, "title": "Click to display the content of this data class"}, "title" : classe.data},
-									"state": "closed",
-									"attr" :{"id":cid}}
-								,false
-								,true);   
-						classNodeIds.push(cid);
-						/****************************
-						$("a#" + cid).before("<img 'Click to get the description' class=infoanchor id='" + cid + "' src='images/metadata.png'></img>");
-						
-						$("a#" + cid).click(function(){	
-							var tp  = $(this).attr("id").split('_DoT_');
-							resultPaneView.fireSetTreePath(tp);	
+						var id  = $(this).attr("id");
+						var tp = id.split('_DoT_');
+						if( loadedNodes[id] != null ) {
+							/*
+							 * The timeout is to give time to the progress popup to be displayed
+							 * Otherwise, the jsDataTree keeps all browser resources and the interface seems to be crashed
+							 */
+							Processing.show("Inserting " + loadedNodes[id].children.length +  " class nodes. Can make you interface like frozen.");
+							setTimeout(function(){
+								loadClasse(id, loadedNodes[id].children);
+							    loadedNodes[id] = null;
+							    Processing.hide();
+							    resultPaneView.fireTreeNodeEvent(tp);
+							    }, 500);
+						} else {
 							resultPaneView.fireTreeNodeEvent(tp);
-							//setTitlePath(tp);
-							});
-							***************************/
+						}
+					});				
+					/*
+					 * If there are more than 10 classes, they will be displayed once the user opens the node.
+					 * That avoid the data tree to take too long to be built
+					 */
+					if( child.children.length > 10 ) {
+						loadedNodes[id] = child;
+					} else if( child.children.length > 0 ) {
+						loadClasse(id, child.children);
 					}
 				}
-
-			}
-			/*
-			 * Inserting the meta node after the tree is complete is quite more faster the doing it while the tre building
-			 */
-			Processing.show("Inserting metadata anchors");
-			for(var n=0 ; n<classNodeIds.length ; n++) {
-				console.log(classNodeIds[n])
-				var node = $("a#" + classNodeIds[n]);
-				node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
-				
-				node.click(function(){	
-					var tp  = $(this).attr("id").split('_DoT_');
-					resultPaneView.fireSetTreePath(tp);	
-					resultPaneView.fireTreeNodeEvent(tp);
-					//setTitlePath(tp);
-					});
-				$("a#" + classNodeIds[n] + " ins").remove();
-				$("img#" + classNodeIds[n]).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
 
 			}
 			layoutPane.sizePane("west", $("#treedisp").width()) ;
@@ -137,155 +107,48 @@ DataTree = function () {
 
 			return
 
-			dataTree = $("div#treedisp").jstree({
-				"json_data"   : data , 
-				"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-				"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-
-					"drop_finish" : function (data) {
-						var parent = data.r;
-						var treepath = data.o.attr("id").split('.');
-						if( treepath.length < 2 ) {
-							Modalinfo.info("Query can only be applied on one data category or one data class");
-						}
-						else {
-							while(parent.length != 0  ) {
-								resultPaneView.fireSetTreePath(treepath);	
-								if(parent.attr('id') == "resultpane" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								else if(parent.attr('id') == "showquerymeta" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireShowMetaNode(treepath);	
-									return;
-								}
-
-//								else if(parent.attr('id') == "displayfilter" ) {
-//								setTitlePath(treepath);
-//								resultPaneView.fireTreeNodeEvent(treepath);	
-//								filterManagerView.fireShowFilterManager(treepath);	
-//								return;
-//								}
-
-								else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-									saadaqlView.fireTreeNodeEvent(treepath);	
-									sapView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								parent = parent.parent();
-							}
-						}
-					}
-				},
-				// Node sorting by DnD blocked
-				"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-				}
-				
-			}); // end of jstree
-//			dataTree.bind("select_node.jstree", function (e, data) {
-//			Modalinfo.info(data);
-//			});
-			dataTree.bind("dblclick.jstree", function (e, data) {
-				var node = $(e.target).closest("li");
-				var id = node[0].id; //id of the selected node					
-				var treepath = id.split('.');
-				if( treepath.length < 2 ) {
-					Modalinfo.info("Query can only be applied on one data category or one data class");
-				}
-				else {
-					Processing.show("Open node " + getTreePathAsKey());
-					resultPaneView.fireSetTreePath(treepath);	
-					setTitlePath(treepath);
-					resultPaneView.fireTreeNodeEvent(treepath);	
-					Processing.hide();
-				}
-			});
 		}); // end of ajax
 	}
 	
-	this.init2 = function() {
-
-		Processing.show("Loading Data Tree II");
-		$.getJSON("getmeta", {query: "datatree" }, function(data) {
-			Processing.hide();
-			if( Processing.jsonError(data, "Cannot make data tree") ) {
-				return;
-			}
-			console.log(JSON.stringify(data));
-			dataTree = $("div#treedisp").jstree({
-				"json_data"   : data , 
-				"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-				"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-
-					"drop_finish" : function (data) {
-						var parent = data.r;
-						var treepath = data.o.attr("id").split('.');
-						if( treepath.length < 2 ) {
-							Modalinfo.info("Query can only be applied on one data category or one data class");
-						}
-						else {
-							while(parent.length != 0  ) {
-								resultPaneView.fireSetTreePath(treepath);	
-								if(parent.attr('id') == "resultpane" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								else if(parent.attr('id') == "showquerymeta" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireShowMetaNode(treepath);	
-									return;
-								}
-
-//								else if(parent.attr('id') == "displayfilter" ) {
-//								setTitlePath(treepath);
-//								resultPaneView.fireTreeNodeEvent(treepath);	
-//								filterManagerView.fireShowFilterManager(treepath);	
-//								return;
-//								}
-
-								else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-									saadaqlView.fireTreeNodeEvent(treepath);	
-									sapView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								parent = parent.parent();
-							}
-						}
-					}
-				},
-				// Node sorting by DnD blocked
-				"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-				}
-			}); // end of jstree
-//			dataTree.bind("select_node.jstree", function (e, data) {
-//			Modalinfo.info(data);
-//			});
-			dataTree.bind("dblclick.jstree", function (e, data) {
-				var node = $(e.target).closest("li");
-				var id = node[0].id; //id of the selected node					
-				var treepath = id.split('.');
-				if( treepath.length < 2 ) {
-					Modalinfo.info("Query can only be applied on one data category or one data class");
-				}
-				else {
-					Processing.show("Open node " + getTreePathAsKey());
-					resultPaneView.fireSetTreePath(treepath);	
-					setTitlePath(treepath);
-					resultPaneView.fireTreeNodeEvent(treepath);	
-					Processing.hide();
-				}
-			});
-		}); // end of ajax
+	loadClasse = function(parentId, jsonClassDescription){
+		var parent = $("#" + parentId);
+		var classNodeIds = [];
+		for( var d=0 ; d<jsonClassDescription.length ; d++){
+			var classe = jsonClassDescription[d];
+			var ctreepath = classe.attr.id.split('.');
+			var cid = classe.attr.id.replace(/\./g, '_DoT_');
+			$("div#treedisp").jstree("create_node"
+					, parent
+					, false
+					, {"data" : {"icon":"images/blank.png", "attr":{"id": cid, "title": "Click to display the content of this data class"}, "title" : classe.data},
+						"state": "closed",
+						"attr" :{"id":cid}}
+					,false
+					,true);   
+			classNodeIds.push(cid);
+		}
+		/*
+		 * Inserting the meta node after the tree is complete is quite more faster the doing it while the tre building
+		 */
+		for(var n=0 ; n<classNodeIds.length ; n++) {
+			console.log(classNodeIds.length)
+			var node = $("a#" + classNodeIds[n]);
+			node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
+			
+			node.click(function(){	
+				var tp  = $(this).attr("id").split('_DoT_');
+				resultPaneView.fireSetTreePath(tp);	
+				resultPaneView.fireTreeNodeEvent(tp);
+				//setTitlePath(tp);
+				});
+			$("a#" + classNodeIds[n] + " ins").remove();
+			$("img#" + classNodeIds[n]).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
+		}
 	}
-
 	/**
 	 * 
 	 */
 	var pblc = {};
-	pblc.init2 = init2;
 	pblc.init = init;
 	return pblc;
 }();
