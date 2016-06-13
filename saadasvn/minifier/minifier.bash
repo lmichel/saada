@@ -75,16 +75,18 @@ js_local_array=(
      )
 
 # Imported from .# Imported from JSRESOURCES/.../jsimports
-js_import_array=(	 "jquery.simplemodal.js"  \
+js_import_array=(	 
+     "jquery.simplemodal.js"  \
 	 "jquery.alerts.js"  \
 	 "jquery.dataTables.js"  \
      "aladin.js"  \
      "jquery.prints.js"  \
      "jquery.tooltip.js"  \
      "jquery.form.js" \
-      "jquery.layout-latest.js"\
-      "jquery.jstree.js"
-      )
+     "jquery.layout-latest.js"\
+     "jquery.jeditable.js"\
+     "jquery.jstree.js"
+     )
 
              
 #
