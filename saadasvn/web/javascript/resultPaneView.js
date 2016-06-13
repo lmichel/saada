@@ -41,6 +41,11 @@ jQuery
 			var mode = $("input[@name=qlang]:checked").val();
 			if (mode == 'saadaql') {
 				that.fireSaadaQLQueryEvent(queryView.getQuery());
+				$('#formexpender').attr("value", "Refine Query");				
+				$('#formexpender').attr("title", "Hide query form");
+				height='10%';
+				layoutPane.sizePane("south", height);
+
 			} else if (mode == 'sap') {
 				sapView.fireSubmitQueryEvent();
 			} else {
@@ -637,7 +642,7 @@ jQuery
 				 */
 				var options = {
 						"aLengthMenu": [5, 10, 25, 50, 100],
-						"pageLength": 15,
+						"pageLength": 5,
 						"bServerSide" : true,
 						"bProcessing" : true,
 						"aaSorting" : [],
@@ -645,7 +650,7 @@ jQuery
 						"bSort" : false,
 						"bFilter" : false,
 						"sAjaxSource" : "nextpage",
-							"sServerMethod": "POST"
+						"sServerMethod": "POST"
 				};
 				var positions = [
 				                 { "name": "pagination",
