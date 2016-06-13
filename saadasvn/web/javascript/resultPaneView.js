@@ -694,8 +694,15 @@ jQuery
 				var columnSelector = function(states){
 					for( var n=0 ; n<states.length ; n++){
 						var column = datatable.api().column( n);
-						column.visible( states[n].selected);						
+						/*
+						 * Do not redraw fore each columns, takes hours...
+						 */
+						column.visible( states[n].selected, false);						
 					}
+					/*
+					 * Redraw now
+					 */
+					datatable.api().columns.adjust().draw( false ); 
 				}
 				$('#ColumnSelector').click(function() {
 					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
