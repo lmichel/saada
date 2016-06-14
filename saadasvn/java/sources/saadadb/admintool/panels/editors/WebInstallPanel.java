@@ -13,7 +13,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-
 import saadadb.admintool.AdminTool;
 import saadadb.admintool.cmdthread.CmdThread;
 import saadadb.admintool.cmdthread.ThreadDeployWebApp;
@@ -29,6 +28,7 @@ import saadadb.database.InstallParamValidator;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
+import saadadb.newdatabase.NewWebServer;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_SaadaDB;
 import saadadb.util.Messenger;
@@ -106,9 +106,17 @@ public class WebInstallPanel extends EditPanel {
 					SQLTable.beginTransaction();
 					Table_SaadaDB.changeURL(dirUrl.getText());
 					SQLTable.commitTransaction();
+					/*
+					 * Update the current application
+					 */
+					Database.getConnector().setUrl_root(dirUrl.getText());
+					/*
+					 * Update the curret web application
+					 */
+					NewWebServer.buildDBNameFile(Database.getRoot_dir(), Database.getDbname(), dirUrl.getText());
 					CmdThread ct = new ThreadDeployWebApp(WebInstallPanel.this.rootFrame, "Deploy Webapp");
 					ct.run();
-				} catch (AbortException e) {
+				} catch (Exception e) {
 					showFatalError(rootFrame, e);
 				}
 				Database.init(Database.getName());

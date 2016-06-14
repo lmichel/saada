@@ -227,6 +227,7 @@ public class SaadaServlet extends HttpServlet {
 		} else  {
 			res.setContentType("application/octet-stream");
 		}
+		System.out.println(s_product + " " + res.getContentType());
 		res.setHeader("Content-Disposition", "inline; filename=\""+ fileName + "\"");
 		res.setHeader("Content-Length"     , Long.toString(f.length()));
 		res.setHeader("Last-Modified"      , (new Date(f.lastModified())).toString());

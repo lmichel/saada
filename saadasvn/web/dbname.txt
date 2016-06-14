@@ -1,7 +1,7 @@
 # This file can be put at the webapp root to indicate the saadadb name of the current application
 #saadadbname=saadasvn
-#saadadbname=ThreeXMMdr5
-saadadbname=Asterics
+saadadbname=ThreeXMMdr5
+#saadadbname=Asterics
 #urlroot=http://saada.unistra.fr/saadasvn
 urlroot=http://obs-he-lm:8888/Saada1.7
 #securedownload=true
