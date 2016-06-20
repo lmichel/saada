@@ -111,7 +111,7 @@ public class WebInstallPanel extends EditPanel {
 					 */
 					Database.getConnector().setUrl_root(dirUrl.getText());
 					/*
-					 * Update the curret web application
+					 * Update the current web application
 					 */
 					NewWebServer.buildDBNameFile(Database.getRoot_dir(), Database.getDbname(), dirUrl.getText());
 					CmdThread ct = new ThreadDeployWebApp(WebInstallPanel.this.rootFrame, "Deploy Webapp");

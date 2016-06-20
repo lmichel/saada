@@ -1420,6 +1420,7 @@ ModalAladin = function(){
 	colorMap["service_3"] = {bg:"yellow", fg : "black"}; 
 	var initialTarget;
 	var initialFoV;
+	var initialSwarm=null;
 
 	/**
 	 * Starts Aladin in an hidden panel
@@ -1653,9 +1654,25 @@ ModalAladin = function(){
 		aladin.gotoObject(initialTarget);
 	}
 	/**
-	 * type json: {"dec":-12.18401,"name":"2XMM J181905.3-121102","description":"[0002A] NASA\/IPAC Extragalactic Database","ra":274.7721},
+	 * position { target: '13:05:44.90+17:53:28.9', fov: 0.016, title:'3XMM J130544.8+175328'} or
+	 *          { swarm: 'http:/something....',title:'3XMM J130544.8+175328'}
+	 * services : [{type: 'json', name: 'ACDS', url: 'http://xcatdb.unistra.fr/3xmmdr5//getarchesdetail/acdslinks?oid=581249378845461815&mode=aladinlite'}, {type: 'json', name: 'Photometric points', url: 'http://xcatdb.unistra.fr/3xmmdr5/getarchesxmatchpoints?oid=581249378845461815'}, {type: 'votable', name: 'Cluster components', url: 'http://xcatdb.unistra.fr/3xmmdr5/download?oid=294989349005558113'}]
+	 * 
 	 */
 	var aladinExplorer = function(position, services) {
+		initialSwarm=null;
+		if( position.swarm != null && position.swarm.indexOf("localhost") != -1 ){
+			Modalinfo.info("Aladin Lite cannot operate services running on localhost<br>It can only work with services accessible from the CDS server", "Access denied");
+			return;
+		} 
+		if( services != null ){
+			for(var s=0 ; s<services.length ; s++ ){
+				if( s.url.indexOf("localhost") != -1 ){
+					Modalinfo.info("Aladin Lite cannot operate services running on localhost<br>It can only work with services accessible from the CDS server", "Access denied");
+					return;
+				} 			
+			}
+		}
 		ModalAladin.init();	
 		showSidePanel();
 		aladin.removeLayers();
@@ -1672,18 +1689,72 @@ ModalAladin = function(){
 					closeHandler();
 				}
 		});
+		var RaDec ;
 		aladin.setImageSurvey('http://alasky.u-strasbg.fr/2MASS/J');
-		aladin.gotoObject(position.target);
-		aladin.setZoom(position.fov);
-		initialTarget = position.target;
-		initialFov = position.fov;
-		var RaDec = aladin.getRaDec();
-		var that = this;
-		theS.html("");
 		/*
 		 * Insert target anchor
 		 */
+		theS.html("");
 		theS.append("<p id='service_target' title='Show&center/hide the target' class='datahelp' style='cursor: pointer;'>Target</p>");
+		/*
+		 * The ref prosition is given as a simple position
+		 */
+		if( position.target != undefined ) {
+			aladin.gotoObject(position.target);
+			aladin.setZoom(position.fov);
+			initialTarget = position.target;
+			initialFov = position.fov;
+			RaDec = aladin.getRaDec();
+			addServices(position, services, theS, RaDec);		
+		} else if( position.swarm != undefined ) {
+			console.log(position.swarm);
+			Processing.showWithTO("Fetching Data", 5000);
+			var cat = A.catalogFromURL(position.swarm, {name: 'Swarm', sourceSize:8, shape: 'plus', color: 'red', onClick:"showTable", }
+			, function(sources) {
+				/*
+				 * Defines the field enclising the data selection
+				 * which is supposed to be smaller that 180deg along RA
+				 */
+				var raMin = 1000 ; raMax = -1;
+				var decMin = 90 ; decMax = -90;
+				for( var s=0 ; s<sources.length ; s++){
+					source = sources[s];
+					if( source.ra > raMax)  raMax = source.ra;
+					if( source.ra < raMin) raMin = source.ra;
+					if( source.dec > decMax) decMax = source.dec;
+					if( source.dec < decMin) decMin = source.dec;
+				}
+				var decFov = decMax - decMin
+				var decCenter = (decMax + decMin)/2;
+				/*
+				 * Takes the smallest fov along of RA
+				 */
+				var raFov = Math.abs(raMin - raMax);
+				if( raFov > 180 ) raFov = 360 - raFov;
+				var raCenter = (raMax + raMin)/2;
+				if( Math.abs(raMax - raCenter) > 90 ) raCenter += 180;
+				if( raCenter > 360 ) raCenter -= 360;
+				var fov = (decFov > raFov)? decFov: raFov;
+				aladin.gotoRaDec(raCenter , decCenter);
+				aladin.setZoom(fov);
+				RaDec = aladin.getRaDec();
+				initialTarget = (decCenter > 0)? (raCenter + " +" +  decCenter): (raCenter + " -" +  decCenter);
+				initialFov = fov;
+				initialSwarm = position.swarm
+				Processing.hide();
+				addServices(position, services, theS, RaDec);		
+				});
+			aladin.addCatalog(cat);
+			var caller = $("#service_target");
+			caller.attr("class", "selecteddatahelp");
+			caller.css("color", colorMap['target'].fg);
+			caller.css("background-color", colorMap['target'].bg);
+		}
+	}
+	/**
+	 * Add all service but the targer (internal use)
+	 */
+	var addServices = function(position, services, theS, RaDec) {
 		/*
 		 * Insert user services
 		 */
@@ -1694,7 +1765,8 @@ ModalAladin = function(){
 			$("#" + id).data(services[s]);
 		}
 		/*
-		 * Activate user services
+		 * Activate user services. Must be done before inserting standards services
+		 * which are served by specific methods
 		 */
 		$("#" + divInfoSider + " p").click(function(){
 			var caller = $(this);
@@ -1705,7 +1777,7 @@ ModalAladin = function(){
 				caller.attr("class", "datahelp");
 				for( var c=0 ; c<aladin.view.catalogs.length ; c++) {
 					// a surveiller console.log(c + " " + aladin.view.catalogs[c].name + " "  + data.name)
-					if( aladin.view.catalogs[c].name == "Target" || aladin.view.catalogs[c].name.startsWith(data.name))  {
+					if( aladin.view.catalogs[c].name == "Target" || aladin.view.catalogs[c].name == "Swarm" ||aladin.view.catalogs[c].name.startsWith(data.name))  {
 						aladin.view.catalogs.splice(c, 1);
 						aladin.view.mustClearCatalog = true;
 						aladin.view.requestRedraw(); 
@@ -1718,18 +1790,43 @@ ModalAladin = function(){
 				caller.attr("class", "selecteddatahelp");
 				caller.css("color", color.fg);
 				caller.css("background-color", color.bg);
-
+				/*
+				 *  popup target
+				 */
 				if( caller.attr("id") == 'service_target'){
 					caller.css("color", color.fg);
 					caller.css("background-color", color.bg);
-					var cat = A.catalog({name: "Target"});
-					aladin.gotoObject(initialTarget);
-					//aladin.setZoom(position.fov);
-					aladin.addCatalog(cat);
-					cat.addSources([A.marker(RaDec[0], RaDec[1], {popupTitle: position.title, /*popupDesc: ''*/})]);
+					/*
+					 * target is an URL: reload the catalog
+					 */
+					if( initialSwarm != null ){
+						Processing.showWithTO("Fetching Data", 5000);
+						aladin.gotoObject(initialTarget);
+						var cat = A.catalogFromURL(position.swarm
+								, {name: 'Swarm', sourceSize:8, shape: 'plus', color: 'red', onClick:"showTable", }
+								, function(){Processing.hide();});
+						aladin.addCatalog(cat);
+					/*
+					 * Otherewise, juste show the position 
+					 */
+					} else {
+						var cat = A.catalog({name: "Target"});
+						aladin.gotoObject(initialTarget);
+						aladin.addCatalog(cat);
+						cat.addSources([A.marker(RaDec[0], RaDec[1], {popupTitle: position.title, /*popupDesc: ''*/})]);
+					}
+				/*
+				 *  Other user service: consider fisrt the VOTable which can be read by AL
+				 */
 				} else	if( data.type == 'votable') {
-					var cat = A.catalogFromURL(data.url, {name: data.name, sourceSize:8, shape: 'plus', color: data.color.bg, onClick:"showTable"});
+					Processing.showWithTO("Fetching Data", 5000);
+					var cat = A.catalogFromURL(data.url
+							, {name: data.name, sourceSize:8, shape: 'plus', color: data.color.bg, onClick:"showTable"}
+							, function(){Processing.hide();});
 					aladin.addCatalog(cat);
+				/*
+				 * Then consider JSON files for which the catalog point mustr be created one by one to feed AL
+				 */
 				} else {
 					$.getJSON(data.url, function(jsondata) {
 						Processing.hide();
@@ -1764,6 +1861,7 @@ ModalAladin = function(){
 		theS.append("<p id='" + id + "' title='Show/hide NED sources' class='datahelp' style='cursor: pointer;' "
 				+ "onclick='ModalAladin.displayNedCatalog();'>NED</p>");
 		$("#" + id).data({name: 'NED'});
+
 		/*
 		 * Adding Vizier selector
 		 */
@@ -1846,12 +1944,11 @@ ModalAladin = function(){
 		/*
 		 * Display DSS color by default
 		 */
-		this.displaySelectedHips("DSS2 optical HEALPix survey, color (R=red[~0.6um]/G=average/B=blue[~0.4um])"
+		displaySelectedHips("DSS2 optical HEALPix survey, color (R=red[~0.6um]/G=average/B=blue[~0.4um])"
 				, "http://alasky.u-strasbg.fr/DSS/DSSColor"
 				, "equatorial"
 				, 9
 				, "jpeg");
-				
 	}
 	/**
 	 * 
@@ -2554,6 +2651,12 @@ Processing  = function() {
 		show(message);
 		setTimeout('$("#saadaworking").css("display", "none");$("#saadaworkingContent").css("display", "none");', 500);		
 	};
+	var showWithTO = function(message, timeout){
+		Out.debug("PROCESSSING (show and hide) " + message);
+		show(message +" (automatically closed after " + (timeout/1000.) + "s)");
+		setTimeout('$("#saadaworking").css("display", "none");$("#saadaworkingContent").css("display", "none");', timeout);		
+	};
+
 	var show = function (message) {
 		/*
 		 * String is, duplcated because if it comes from aJSON.stringify, the content of the JSON object may be altered
@@ -2608,6 +2711,7 @@ Processing  = function() {
 	pblc.hide   = hide;
 	pblc.closeIfNoChange   = closeIfNoChange;
 	pblc.jsonError   = jsonError;
+	pblc.showWithTO = showWithTO;
 	pblc.showAndHide = showAndHide;
 	return pblc;
 }();
@@ -13574,6 +13678,7 @@ Pattern_mVc.prototype = {
 		},	
 		fireSetRelations: function(relations){
 			this.relations = {};
+			$("#relationSelector").html("");
 			$("#relationSelector").append('<option>---------</option>');
 			$("#relationDescriptor").html('');
 			for( var r=0 ; r<relations.length ; r++){ 
@@ -15298,15 +15403,17 @@ console.log('=============== >  utils.js ');
 
 DataTree = function () {
 	var cache = new Object;
-
+	var jsDataTree;
+	var loadedNodes = {};
 	var init = function() {
 
-		Processing.show("Loading Data Tree");
+		Processing.show("Building the Data Tree");
 		$.getJSON("getmeta", {query: "datatree" }, function(jsdata) {
-			Processing.hide();
+			var classNodeIds = [];
 			if( Processing.jsonError(jsdata, "Cannot make data tree") ) {
 				return;
 			}
+			jsDataTree = jsdata
 			dataTree = $("div#treedisp").jstree();
 			/*
 			 * Loop on collections
@@ -15367,197 +15474,84 @@ DataTree = function () {
 							, null
 							, false);   
 					$("a#" + id).click(function(){							
-						var tp  = $(this).attr("id").split('_DoT_');
-						//resultPaneView.fireSetTreePath(tp);	
-						resultPaneView.fireTreeNodeEvent(tp);
-						//setTitlePath(tp);
-					});
-					/*
-					 * Loop on classes
-					 */
-					var classes =child.children;
-					var parent = $("#" + id);
-
-					for( var d=0 ; d<classes.length ; d++){
-						var classe = classes[d];
-						var ctreepath = classe.attr.id.split('.');
-						var cid = classe.attr.id.replace(/\./g, '_DoT_')
-						$("div#treedisp").jstree("create_node"
-								, parent
-								, false
-								, {"data" : {"icon":"images/blank.png", "attr":{"id": cid, "title": "Click to display the content of this data class"}, "title" : classe.data},
-									"state": "closed",
-									"attr" :{"id":cid}}
-								,false
-								,true);   
-						$("a#" + cid).before("<img 'Click to get the description' class=infoanchor id='" + cid + "' src='images/metadata.png'></img>");
-						$("a#" + cid).click(function(){	
-							var tp  = $(this).attr("id").split('_DoT_');
-							resultPaneView.fireSetTreePath(tp);	
+						var id  = $(this).attr("id");
+						var tp = id.split('_DoT_');
+						if( loadedNodes[id] != null ) {
+							/*
+							 * The timeout is to give time to the progress popup to be displayed
+							 * Otherwise, the jsDataTree keeps all browser resources and the interface seems to be crashed
+							 */
+							Processing.show("Inserting " + loadedNodes[id].children.length +  " class nodes. Can make you interface like frozen.");
+							setTimeout(function(){
+								loadClasse(id, loadedNodes[id].children);
+							    loadedNodes[id] = null;
+							    Processing.hide();
+							    resultPaneView.fireTreeNodeEvent(tp);
+							    }, 500);
+						} else {
 							resultPaneView.fireTreeNodeEvent(tp);
-							//setTitlePath(tp);
-							});
-						$("a#" + cid + " ins").remove();
-						$("img#" + cid).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
+						}
+					});				
+					/*
+					 * If there are more than 10 classes, they will be displayed once the user opens the node.
+					 * That avoid the data tree to take too long to be built
+					 */
+					if( child.children.length > 10 ) {
+						loadedNodes[id] = child;
+					} else if( child.children.length > 0 ) {
+						loadClasse(id, child.children);
 					}
-
 				}
 
 			}
 			layoutPane.sizePane("west", $("#treedisp").width()) ;
 			layoutPane.sizePane("south", '10%') ;
+			Processing.hide();
 
 			return
 
-			dataTree = $("div#treedisp").jstree({
-				"json_data"   : data , 
-				"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-				"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-
-					"drop_finish" : function (data) {
-						var parent = data.r;
-						var treepath = data.o.attr("id").split('.');
-						if( treepath.length < 2 ) {
-							Modalinfo.info("Query can only be applied on one data category or one data class");
-						}
-						else {
-							while(parent.length != 0  ) {
-								resultPaneView.fireSetTreePath(treepath);	
-								if(parent.attr('id') == "resultpane" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								else if(parent.attr('id') == "showquerymeta" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireShowMetaNode(treepath);	
-									return;
-								}
-
-//								else if(parent.attr('id') == "displayfilter" ) {
-//								setTitlePath(treepath);
-//								resultPaneView.fireTreeNodeEvent(treepath);	
-//								filterManagerView.fireShowFilterManager(treepath);	
-//								return;
-//								}
-
-								else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-									saadaqlView.fireTreeNodeEvent(treepath);	
-									sapView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								parent = parent.parent();
-							}
-						}
-					}
-				},
-				// Node sorting by DnD blocked
-				"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-				}
-				
-			}); // end of jstree
-//			dataTree.bind("select_node.jstree", function (e, data) {
-//			Modalinfo.info(data);
-//			});
-			dataTree.bind("dblclick.jstree", function (e, data) {
-				var node = $(e.target).closest("li");
-				var id = node[0].id; //id of the selected node					
-				var treepath = id.split('.');
-				if( treepath.length < 2 ) {
-					Modalinfo.info("Query can only be applied on one data category or one data class");
-				}
-				else {
-					Processing.show("Open node " + getTreePathAsKey());
-					resultPaneView.fireSetTreePath(treepath);	
-					setTitlePath(treepath);
-					resultPaneView.fireTreeNodeEvent(treepath);	
-					Processing.hide();
-				}
-			});
 		}); // end of ajax
 	}
 	
-	this.init2 = function() {
-
-		Processing.show("Loading Data Tree");
-		$.getJSON("getmeta", {query: "datatree" }, function(data) {
-			Processing.hide();
-			if( Processing.jsonError(data, "Cannot make data tree") ) {
-				return;
-			}
-			console.log(JSON.stringify(data));
-			dataTree = $("div#treedisp").jstree({
-				"json_data"   : data , 
-				"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-				"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
-
-					"drop_finish" : function (data) {
-						var parent = data.r;
-						var treepath = data.o.attr("id").split('.');
-						if( treepath.length < 2 ) {
-							Modalinfo.info("Query can only be applied on one data category or one data class");
-						}
-						else {
-							while(parent.length != 0  ) {
-								resultPaneView.fireSetTreePath(treepath);	
-								if(parent.attr('id') == "resultpane" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								else if(parent.attr('id') == "showquerymeta" ) {
-									setTitlePath(treepath);
-									resultPaneView.fireShowMetaNode(treepath);	
-									return;
-								}
-
-//								else if(parent.attr('id') == "displayfilter" ) {
-//								setTitlePath(treepath);
-//								resultPaneView.fireTreeNodeEvent(treepath);	
-//								filterManagerView.fireShowFilterManager(treepath);	
-//								return;
-//								}
-
-								else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-									saadaqlView.fireTreeNodeEvent(treepath);	
-									sapView.fireTreeNodeEvent(treepath);	
-									return;
-								}
-								parent = parent.parent();
-							}
-						}
-					}
-				},
-				// Node sorting by DnD blocked
-				"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-				}
-			}); // end of jstree
-//			dataTree.bind("select_node.jstree", function (e, data) {
-//			Modalinfo.info(data);
-//			});
-			dataTree.bind("dblclick.jstree", function (e, data) {
-				var node = $(e.target).closest("li");
-				var id = node[0].id; //id of the selected node					
-				var treepath = id.split('.');
-				if( treepath.length < 2 ) {
-					Modalinfo.info("Query can only be applied on one data category or one data class");
-				}
-				else {
-					Processing.show("Open node " + getTreePathAsKey());
-					resultPaneView.fireSetTreePath(treepath);	
-					setTitlePath(treepath);
-					resultPaneView.fireTreeNodeEvent(treepath);	
-					Processing.hide();
-				}
-			});
-		}); // end of ajax
+	loadClasse = function(parentId, jsonClassDescription){
+		var parent = $("#" + parentId);
+		var classNodeIds = [];
+		for( var d=0 ; d<jsonClassDescription.length ; d++){
+			var classe = jsonClassDescription[d];
+			var ctreepath = classe.attr.id.split('.');
+			var cid = classe.attr.id.replace(/\./g, '_DoT_');
+			$("div#treedisp").jstree("create_node"
+					, parent
+					, false
+					, {"data" : {"icon":"images/blank.png", "attr":{"id": cid, "title": "Click to display the content of this data class"}, "title" : classe.data},
+						"state": "closed",
+						"attr" :{"id":cid}}
+					,false
+					,true);   
+			classNodeIds.push(cid);
+		}
+		/*
+		 * Inserting the meta node after the tree is complete is quite more faster the doing it while the tre building
+		 */
+		for(var n=0 ; n<classNodeIds.length ; n++) {
+			console.log(classNodeIds.length)
+			var node = $("a#" + classNodeIds[n]);
+			node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
+			
+			node.click(function(){	
+				var tp  = $(this).attr("id").split('_DoT_');
+				resultPaneView.fireSetTreePath(tp);	
+				resultPaneView.fireTreeNodeEvent(tp);
+				//setTitlePath(tp);
+				});
+			$("a#" + classNodeIds[n] + " ins").remove();
+			$("img#" + classNodeIds[n]).click(function(){resultPaneView.fireShowMetaNode($(this).attr("id").split('_DoT_'));	});
+		}
 	}
-
 	/**
 	 * 
 	 */
 	var pblc = {};
-	pblc.init2 = init2;
 	pblc.init = init;
 	return pblc;
 }();
@@ -16042,7 +16036,7 @@ jQuery
 			} else if (mode == 'tap') {
 				runTAP = true;
 			}
-			saadaqlView.fireTreeNodeEvent(runSaadaQL, true);
+			saadaqlView.fireTreeNodeEvent(runSaadaQL, true, $('#qlimit').val());
 			sapView.fireTreeNodeEvent();
 		};
 
@@ -16051,6 +16045,11 @@ jQuery
 			var mode = $("input[@name=qlang]:checked").val();
 			if (mode == 'saadaql') {
 				that.fireSaadaQLQueryEvent(queryView.getQuery());
+				$('#formexpender').attr("value", "Refine Query");				
+				$('#formexpender').attr("title", "Hide query form");
+				height='10%';
+				layoutPane.sizePane("south", height);
+
 			} else if (mode == 'sap') {
 				sapView.fireSubmitQueryEvent();
 			} else {
@@ -16647,7 +16646,7 @@ jQuery
 				 */
 				var options = {
 						"aLengthMenu": [5, 10, 25, 50, 100],
-						"pageLength": 15,
+						"pageLength": 5,
 						"bServerSide" : true,
 						"bProcessing" : true,
 						"aaSorting" : [],
@@ -16655,7 +16654,7 @@ jQuery
 						"bSort" : false,
 						"bFilter" : false,
 						"sAjaxSource" : "nextpage",
-							"sServerMethod": "POST"
+						"sServerMethod": "POST"
 				};
 				var positions = [
 				                 { "name": "pagination",
@@ -16687,8 +16686,12 @@ jQuery
 				                 }
 				                 ];
 				if( globalTreePath.category == "ENTRY" || globalTreePath.category == "IMAGE"|| globalTreePath.category == "SPECTRUM"){
-					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+					var rootUrl = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + "/" + window.location.pathname.split( '/' )[1] + "/";
+
+					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_aladin" onclick="ModalAladin.aladinExplorer({ swarm: &quot;' + rootUrl  + resultPaneView.getDownloadVOTableURL() + '&quot;, title:&quot;NoTarget&quot;}, []);"></a>',
 						"pos" : "top-center"})
+						positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+							"pos" : "top-center"})
 				}
 				positions.push({ "name" : Printer.getSmallPrintButton("resultpane") ,
                	 "pos": "top-center"
@@ -16700,8 +16703,15 @@ jQuery
 				var columnSelector = function(states){
 					for( var n=0 ; n<states.length ; n++){
 						var column = datatable.api().column( n);
-						column.visible( states[n].selected);						
+						/*
+						 * Do not redraw fore each columns, takes hours...
+						 */
+						column.visible( states[n].selected, false);						
 					}
+					/*
+					 * Redraw now
+					 */
+					datatable.api().columns.adjust().draw( false ); 
 				}
 				$('#ColumnSelector').click(function() {
 					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
@@ -17347,7 +17357,7 @@ jQuery.extend({
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(andsubmit, newTreeNode){
+		this.processTreeNodeEvent = function(andsubmit, newTreeNode, limit){
 			nativeConstraintEditor.fireSetTreepath(globalTreePath);
 			patternConstraintEditor.fireSetTreepath(globalTreePath);
 			var md = MetadataSource.relations;
@@ -17371,6 +17381,10 @@ jQuery.extend({
 				selected: selected
 			});
 			queryView.reset("Select " + globalTreePath.category + " From " + globalTreePath.getClassname() + " In " + globalTreePath.schema);
+			if(limit != null) {
+				queryView.fireAddConstraint("Merged", "limit", [limit]);
+			}
+
 			if( andsubmit == true ) {
 				resultPaneView.fireSubmitQueryEvent();
 			}
@@ -17762,8 +17776,8 @@ jQuery.extend({
 			listener = list;
 		};
 
-		this.fireTreeNodeEvent = function(andsubmit, newTreeNode){
-			listener.controlTreeNodeEvent(andsubmit, newTreeNode);
+		this.fireTreeNodeEvent = function(andsubmit, newTreeNode, limit){
+			listener.controlTreeNodeEvent(andsubmit, newTreeNode, limit);
 		};
 		this.fireAttributeEvent = function(uidraggable){
 			listener.controlAttributeEvent(uidraggable);
@@ -17926,8 +17940,8 @@ jQuery.extend({
 		 * listen to the view
 		 */
 		var vlist = {
-				controlTreeNodeEvent : function(andsubmit, newTreeNode){
-					model.processTreeNodeEvent(andsubmit, newTreeNode);
+				controlTreeNodeEvent : function(andsubmit, newTreeNode, limit){
+					model.processTreeNodeEvent(andsubmit, newTreeNode, limit);
 				},
 				controlAttributeEvent: function(uidraggable){
 					model.processAttributeEvent(uidraggable);
@@ -19142,17 +19156,6 @@ $().ready(function() {
 	$('.sapglu').click(function() {
 		sapView.fireSubmitGluEvent();
 	});
-	$("#qlimit").keyup(function(event) {
-		if( $("#qlimit").val() == '' || $("#qlimit").val().match(/^[0-9]+$/) ) {
-			saadaqlView.fireUpdateQueryEvent();
-		}
-		else {
-			Modalinfo.info('The result limit must be a positive integer value' );
-			$("#qlimit").val(100);
-			return false;
-		}
-
-	});
 
 	/*
 	 * Coordinates input
@@ -19276,6 +19279,18 @@ $().ready(function() {
 	patternConstraintEditor = QueryConstraintEditor.matchPatternEditor({parentDivId: 'patterntab',formName: 'matchPattern',queryView: queryView});
 	
 		//qce.fireSetTreepath(new DataTreePath({nodekey:'node', schema: 'schema', table: 'table', tableorg: 'schema.table'}));
+	$("#qlimit").keyup(function(event) {
+		var v =  $("#qlimit").val();
+		if( v == '' || v.match(/^[0-9]+$/) ) {
+			queryView.fireAddConstraint("Merged", "limit", [v]);
+		}
+		else {
+			Modalinfo.info('The result limit must be a positive integer value' );
+			$("#qlimit").val(100);
+			return false;
+		}
+
+	});
 	
 	DataTree.init();
 

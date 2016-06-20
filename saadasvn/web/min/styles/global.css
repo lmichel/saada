@@ -1457,7 +1457,7 @@ input.include_relation {
  * Landing page styles
  */
  ul.landing{
- margin: 0; padding: 0px;margin: auto; width: 70%; height: 100%;}
+ margin: 0; padding: 0px;margin: auto; width: 80%; height: 100%;}
  
  div.landing-left{
  width: 50%; height: 100%; float: left;}
