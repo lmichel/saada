@@ -135,7 +135,9 @@ public class SchemaFusionMapper extends SchemaMapper {
 			}
 			this.loader.processUserRequest();
 			Messenger.incrementeProgress();
-		}
+		}					
+		this.current_prd.close();
+
 	}
 	/**
 	 * @param products
@@ -188,6 +190,8 @@ public class SchemaFusionMapper extends SchemaMapper {
 			}
 
 			this.loadProduct();	
+			this.current_prd.close();
+			
 			if( (i%commit_frequency) == 0 ) {
 				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "COMMIT at product #" + i);
 				SQLTable.commitTransaction();

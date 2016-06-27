@@ -432,8 +432,10 @@ public class Database {
 	 *  Wrapper for the garbage collector: can enable/disable any explicit callback to the gc
 	 */
 	public static void gc() {
-		if( GC_MODE) 
+		if( GC_MODE) {
+			Messenger.printMsg(Messenger.TRACE, "GC called on request");
 			System.gc();
+		}
 	}
 	/*
 	 * Must never be invoked: Exist just to make Servlet code passing the compilation in Saada
