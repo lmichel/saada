@@ -146,6 +146,16 @@ public class Table_Saada_Loaded_File {
 		SQLTable.addQueryToTransaction("DELETE FROM saada_loaded_file WHERE classname = '" + classname + "'");
 	}
 	/**
+	 * Rename all references to the class classe as newName
+	 * @param classe
+	 * @param newName
+	 * @throws AbortException
+	 */
+	public static void renameClass(String classe, String newName) throws AbortException {
+		SQLTable.addQueryToTransaction("UPDATE saada_loaded_file SET classname = '" + newName + "' WHERE classname ='" + classe + "'");		
+	}
+
+	/**
 	 * Append a suffix (.inst#) to the filename in the repository so that products
 	 * with the same filename are not overidden
 	 * @param prd_name

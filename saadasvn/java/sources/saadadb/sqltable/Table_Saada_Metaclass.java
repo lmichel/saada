@@ -36,4 +36,16 @@ public abstract class Table_Saada_Metaclass extends SQLTable{
 		SQLTable.addQueryToTransaction("DELETE FROM " + table_name + " WHERE name_class ='" + classe + "'", table_name);
 		
 	}
+	
+	/**
+	 * Rename all references to the class classe as newName
+	 * @param classe
+	 * @param newName
+	 * @throws AbortException
+	 */
+	public static void renameClass(String classe, String newName) throws FatalException {
+		String table_name = "saada_metaclass_" + Database.getCachemeta().getClass(classe).getCategory_name().toLowerCase();	
+		SQLTable.addQueryToTransaction("UPDATE " + table_name + " SET name_class = '" + newName + "' WHERE name_class ='" + classe + "'");		
+	}
+
 }

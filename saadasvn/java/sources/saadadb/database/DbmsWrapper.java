@@ -1336,6 +1336,15 @@ abstract public class DbmsWrapper {
 	 * @throws Exception 
 	 */
 	public abstract String renameColumn(String table, String column, String newName) throws  Exception ;
+	
+	/**
+	 * Return the SQL statement renaming a table
+	 * @param table
+	 * @param newName
+	 * @return
+	 * @throws Exception
+	 */
+	public abstract String renameTable(String table, String newName) ;
 
 	/**
 	 * Thank to MySQL we have to manage our own temporary tables. Their names must be recorded and available to

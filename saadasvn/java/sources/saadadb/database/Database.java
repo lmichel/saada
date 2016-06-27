@@ -37,6 +37,7 @@ import cds.astro.Qbox;
  */
 public class Database {
 
+	private static boolean GC_MODE = false;
 	private static String separ = File.separator;
 	private static SaadaDBConnector connector;
 
@@ -414,12 +415,25 @@ public class Database {
 	public static String getSepar() {
 		return separ;
 	}
+	/**
+	 * 
+	 */
+	public static void switchGCOff(){
+		GC_MODE=true;
+	}
+	/**
+	 * 
+	 */
+	public static void switchGCOn(){
+		GC_MODE=false;
+	}
 
 	/**
 	 *  Wrapper for the garbage collector: can enable/disable any explicit callback to the gc
 	 */
 	public static void gc() {
-		//@@@ System.gc();
+		if( GC_MODE) 
+			System.gc();
 	}
 	/*
 	 * Must never be invoked: Exist just to make Servlet code passing the compilation in Saada

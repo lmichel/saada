@@ -536,6 +536,12 @@ public class PostgresWrapper extends DbmsWrapper {
 	public  String renameColumn(String table, String column, String newName) throws QueryException {
 		return "ALTER TABLE " + table + " RENAME COLUMN  " + column + " TO " + newName;
 	}
+	
+	@Override
+	public String renameTable(String table, String newName) {
+		return "ALTER TABLE " + table + " RENAME TO " + newName;
+	}
+
 	@Override
 	public String getDropTempoTable(String table_name) throws FatalException{
 		return "";

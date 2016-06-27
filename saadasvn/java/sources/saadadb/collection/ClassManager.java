@@ -8,9 +8,12 @@ import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
+import saadadb.generationclass.GenerationClassProduct;
+import saadadb.meta.VocabularyValidator;
 import saadadb.relationship.RelationManager;
 import saadadb.sqltable.SQLTable;
 import saadadb.sqltable.Table_Saada_Class;
+import saadadb.sqltable.Table_Saada_Loaded_File;
 import saadadb.sqltable.Table_Saada_Metaclass;
 import saadadb.util.Messenger;
 
@@ -41,8 +44,35 @@ public class ClassManager extends EntityManager{
 	
 	@Override
 	public void rename(ArgsParser ap) throws SaadaException {
-		Messenger.printMsg(Messenger.ERROR, "Not implemented for classes");
-	}
+		/*
+		 * New name is given be -name=.. parameter which returns a string array
+		 */
+		String newName = ap.getNameComponents()[0];	
+		StringBuffer report = new StringBuffer();
+		if( !Database.getCachemeta().classExists(name) ) {
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "Class " + name + " does not exist");
+		}
+		if( !VocabularyValidator.checkClassOrRelationName(newName, report)) {
+			AbortException.throwNewException(SaadaException.WRONG_PARAMETER, report.toString());
+		}
+		//SQLTable.beginTransaction();
+		Table_Saada_Class.renameClass(name, newName);
+		Table_Saada_Loaded_File.renameClass(name, newName);
+		Table_Saada_Metaclass.renameClass(name, newName);
+		if( !Database.getWrapper().supportDropTableInTransaction() ) {
+			SQLTable.commitTransaction();
+			SQLTable.beginTransaction();
+		}
+		Database.getWrapper().renameTable(name, newName);
+		try {
+			GenerationClassProduct.renameJavaClass(Database.getRoot_dir() + "/class_mapping" , name, newName);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//SQLTable.commitTransaction();
+	}	
 
 	@Override
 	public void empty(ArgsParser ap) throws SaadaException {	

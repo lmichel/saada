@@ -319,7 +319,15 @@ public class SQLiteWrapper extends DbmsWrapper {
 		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, "CSQLite can't drop a colmun table");
 		return null;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see saadadb.database.DbmsWrapper#renameTable(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public String renameTable(String table, String newName) {
+		return "ALTER TABLE " + table + " RENAME TO " + newName;
+	}
+	
 	@Override
 	public void cleanUp() throws SQLException {
 

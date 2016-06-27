@@ -83,6 +83,7 @@ public class ArgsParser implements Serializable{
 							!args[i].startsWith("-oids") &&
 							!args[i].startsWith("-force") &&
 							!args[i].startsWith("-debug") &&
+							!args[i].startsWith("-gc") &&
 							!args[i].startsWith("-silent") &&
 							!args[i].startsWith("-comment") &&
 							!args[i].startsWith("-command") &&
@@ -914,6 +915,22 @@ public class ArgsParser implements Serializable{
 				}
 				else {
 					Messenger.switchDebugOn();
+				}
+				return;
+			}
+		}
+	}
+	public void setGCMode() {
+		//Messenger.debug_mode = false;		
+		for( int i=0 ; i<args.length ; i++ ) {
+			if( args[i] .startsWith("-gc")) {
+				String param = getArgsValue(args[i]);
+				if( "off".equalsIgnoreCase(param) || "false".equalsIgnoreCase(param)
+						|| "no".equalsIgnoreCase(param) || param == null || param.length() == 0) {
+					Database.switchGCOff();
+				}
+				else {
+					Database.switchGCOn();
 				}
 				return;
 			}

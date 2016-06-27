@@ -12,7 +12,10 @@ package saadadb.generationclass;
  * E-Mail: nguyen@saadadb.u-strasbg.fr</p>
  */
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
@@ -136,7 +139,7 @@ public class GenerationClassProduct{
 	 * @throws SaadaException
 	 * @throws IOException
 	 */
-	public static void buildJavaClass(LinkedHashMap<String, AttributeHandler> classHeader, String classpath, String classname, String superclass)throws Exception{
+	public static final void buildJavaClass(LinkedHashMap<String, AttributeHandler> classHeader, String classpath, String classname, String superclass)throws Exception{
 		File nameFile = new File(classpath+separ+classname+".java");
 		FileWriter writer = new FileWriter(nameFile, false);
 		createImport(writer);
@@ -168,51 +171,19 @@ public class GenerationClassProduct{
 		Database.gc();
 		Compile.compileItWithAnt(Database.getRoot_dir(), classname);
 	}
-	
-	public static void main(String[] args ) throws Exception{
-		Database.init("Napoli");
-		AttributeHandler ah = new AttributeHandler();
-		ah.setNameattr("field1"	);
-		ah.setNameorg("field1"	);
-		ah.setType("String"	);
-
-		//SaadaClassReloader.forReloadedName("generated.Napoli.essai");				
-
-		LinkedHashMap<String, AttributeHandler> classHeader = new LinkedHashMap<String, AttributeHandler>();
-		classHeader.put(ah.getNameattr(), ah);
-		buildJavaClass(classHeader, Database.getRoot_dir() + "/class_mapping" , "essai", "IMAGEUserColl");
-		System.out.println("@@@@@ avant load " +SaadaClassReloader.reloadGeneratedClass("essai").getDeclaredFields().length);;				
-		//Object o = SaadaClassReloader.forGeneratedName("essai").newInstance();
 		
-		AttributeHandler ah2 = new AttributeHandler();
-		ah2.setNameattr("field2"	);
-		ah2.setNameorg("field2"	);
-		ah2.setType("String"	);
-		classHeader.put(ah2.getNameattr(), ah2);
-		//o = null;System.gc();
-		buildJavaClass(classHeader, Database.getRoot_dir()  + "/class_mapping", "essai", "IMAGEUserColl");
-		Class cl = SaadaClassReloader.reloadGeneratedClass("essai");
-		System.out.println("@@@@@ apres load " + (Object)cl + " " + cl.getDeclaredFields().length);
-		cl = SaadaClassReloader.forGeneratedName("essai");
-		System.out.println("@@@@@ apres load " + (Object)cl + " " + cl.getDeclaredFields().length);
-//System.exit(1);
-		SQLTable.beginTransaction();
-		CollectionManager cm = new CollectionManager("AIPWFI");
-		cm.empty(new ArgsParser(new String[]{"-collection=AIPWFI", "-category=image"}));
-		SQLTable.commitTransaction();
-		Database.getCachemeta().reload(true);
-		Loader dl = new Loader(new String[]{"-collection=AIPWFI", "-category=image", "-novignette"
-		, "-filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/AIP_XMM/1ES0102-72-I-BB_Ic_Iwp_ESO845-971-set_26.fits"
-		, "-repository=no",  "-novignette",  "-classfusion=WFIImage","-ukw", "PGM=AIPWFI", "Napoli"});
-		dl.load();
-		dl = new Loader(new String[]{"-collection=AIPWFI", "-category=image", "-novignette"
-				, "-filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/BLOX/A1882_B.ALLF.swarp.fits"
-				, "-repository=no",  "-novignette", "-classfusion=WFIImage","-ukw", "PGM=BLOX", "Napoli"});
-		dl.load();
-//		[07/05/11 15:51:33]   TRACE: Start to load data with these parameters ArgsParser(-collection=AIPWFI -filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/AIP_XMM -repository=no -classfusion=WFIImage -category=image -ukw PGM=AIPWFI Napoli )
-//		[07/05/11 15:52:55]   TRACE: Start to load data with these parameters ArgsParser(-collection=AIPWFI -filename=/Users/laurentmichel/IVOANaples/data/wfi_iap/images/BLOX -repository=no -classfusion=WFIImage -category=image -ukw PGM=BOX Napoli )
-		Database.close();
-
+	public static final void renameJavaClass(String classpath, String classname , String newName)throws Exception{
+		File nameFile = new File(classpath+separ+classname+".java");
+		BufferedReader br = new BufferedReader(new FileReader(nameFile));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(classpath+separ+newName+".java"));
+		String buff;
+		while( (buff = br.readLine()) != null  ){
+			bw.write(buff.replaceAll(classname, newName)+ "\n");
+		}
+		bw.close();
+		br.close();
+		nameFile.delete();
+		Compile.compileItWithAnt(Database.getRoot_dir(), newName);
 	}
 	
 }

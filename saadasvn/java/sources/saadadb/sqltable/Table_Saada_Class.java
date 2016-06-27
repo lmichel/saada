@@ -74,6 +74,17 @@ public abstract  class Table_Saada_Class extends SQLTable {
 	}
 
 	/**
+	 * Rename all references to the class classe as newName
+	 * @param classe
+	 * @param newName
+	 * @throws AbortException
+	 */
+	public static void renameClass(String classe, String newName) throws AbortException {
+		SQLTable.addQueryToTransaction("UPDATE saada_class SET name = '" + newName + "' WHERE name ='" + classe + "'", "saada_class");		
+		SQLTable.addQueryToTransaction("UPDATE saada_class SET associate_class = '" + newName + "' WHERE associate_class ='" + classe + "'", "saada_class");		
+	}
+
+	/**
 	 * @param name_class
 	 * @param collection_id
 	 * @param category

@@ -707,6 +707,11 @@ public class MysqlWrapper extends DbmsWrapper {
 	}
 
 	@Override
+	public String renameTable(String table, String newName) {
+		return "RENAME TABLE " + table + " TO " + newName;
+	}
+
+	@Override
 	public Set<String> getReferencedTempTable() {
 		return recorded_tmptbl;
 	}

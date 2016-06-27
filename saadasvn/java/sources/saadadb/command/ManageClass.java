@@ -22,7 +22,7 @@ public class ManageClass extends ManageEntity {
 
 	@Override
 	public void usage() {
-		System.out.println("USAGE: java ManageCclass -[empty|remove]=class_name [-force] SaadaDB_Name");
+		System.out.println("USAGE: java ManageClass -[empty|remove|rename]=class_name [-name=newname] [-force] SaadaDB_Name");
 		System.exit(1);						
 	}
 
