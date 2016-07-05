@@ -157,7 +157,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			int numCol = -1;
 			for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
 				String cn = rsmd.getColumnName(i);
-				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby_oidsaada")|| cn.equalsIgnoreCase("native_oidsaada")) {
+				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby")|| cn.equalsIgnoreCase("native_oidsaada")) {
 					numCol = i;
 					break;
 				}
