@@ -172,7 +172,9 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 		jso.put("ucd.show", "false");
 		jso.put("ucd.query", "false");
 		jsa = new JSONArray();
+		jsa.add("Preview");	
 		jsa.add("Access");	
+		jsa.add("Name");	
 		jso.put("specialField", jsa);
 		jsr  = new JSONObject();
 		jsr.put("query", new JSONArray());
