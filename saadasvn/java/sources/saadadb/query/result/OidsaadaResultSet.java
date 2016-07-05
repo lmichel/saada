@@ -145,8 +145,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 				}
 				cpt++;
 			}
-		}
-		else {
+		} else {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Execute SQL query: " + this.sqlQuery.getQuery());
 			ResultSet rs = sqlQuery.run();
 			ResultSetMetaData rsmd = rs.getMetaData();
@@ -158,20 +157,20 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			int numCol = -1;
 			for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
 				String cn = rsmd.getColumnName(i);
-				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada") ) {
+				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby_oidsaada")|| cn.equalsIgnoreCase("native_oidsaada")) {
 					numCol = i;
 					break;
 				}
 			}
-			if( numCol == -1 ){
-				for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
-					String cn = rsmd.getColumnName(i);
-					if( cn.equalsIgnoreCase("orderby") ) {
-						numCol = i;
-						break;
-					}	
-				}
-			}
+//			if( numCol == -1 ){
+//				for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
+//					String cn = rsmd.getColumnName(i);
+//					if( cn.equalsIgnoreCase("orderby") ) {
+//						numCol = i;
+//						break;
+//					}	
+//				}
+//			}
 			if( numCol == -1 ){
 				SaadaException.throwNewException(SaadaException.INTERNAL_ERROR, "Column matching oidsaada not found in query: " + sqlQuery.getQuery());
 			}
