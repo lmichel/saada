@@ -1097,7 +1097,7 @@ System.out.println(result);
 				jj_consume_token(DOT);
 				col2 = TableName();
 				System.out.println("#ColumnReference col2 "+col2);
-				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa")) {
+				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa") || col1.equalsIgnoreCase("tap_schema")) {
 					col1 = col2; 
 					System.out.println("#ColumnReference Patch : new col 1 "+col1);
 				} else {
