@@ -1074,7 +1074,7 @@ public class AdqlParser implements AdqlParserConstants {
 			case DOT:
 				jj_consume_token(DOT);
 				col2 = TableName();
-				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa")) {
+				if( Database.getCachemeta().collectionExists(col1) || col1.equalsIgnoreCase("ivoa")|| col1.equalsIgnoreCase("tap_schema")) {
 					col1 = col2; 
 				} else {
 					col1 += "."+col2;
