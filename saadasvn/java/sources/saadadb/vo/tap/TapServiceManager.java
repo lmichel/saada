@@ -428,8 +428,8 @@ public class TapServiceManager extends EntityManager {
 		retour.append("        <name>" + table_name + "</name>\n");
 		if( table_desc != null && table_desc.length() > 0)			
 			retour.append("        <description><![CDATA[" + table_desc + "]]></description>\n");
-		if( table_type != null && table_type.length() > 0)			
-			retour.append("        <type>" + table_type + "</type>\n");
+//		if( table_type != null && table_type.length() > 0)			
+//			retour.append("        <type>" + table_type + "</type>\n");
 		/*
 		 * Loop on columns
 		 */
@@ -456,7 +456,8 @@ public class TapServiceManager extends EntityManager {
 			if( v != null ) {
 				Object v2 = rs_columns.getObject(8);
 				if( v2 != null ) {
-					retour.append("            <dataType xsi:type=\"vod:TAPType\" arraysize=\"" + v2 + "\">" + v );		
+					String sv2 = v2.toString();
+					retour.append("            <dataType xsi:type=\"vod:TAPType\" arraysize=\"" + ((sv2.equals("-1"))?"*":sv2) + "\">" + v.toString().replaceAll("adql:",  "") );		
 				} else {
 					retour.append("            <dataType xsi:type=\"vod:TAPType\" >" + v );							
 				}

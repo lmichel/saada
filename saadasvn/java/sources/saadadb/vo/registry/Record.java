@@ -89,8 +89,8 @@ public class Record {
 		retour.append(Database.getUrl_root() + "/tap\n");
 		retour.append("    </accessURL>\n");
 		retour.append("  </interface>\n");
-		retour.append("  <dataModel ivo-id=\"ivo://ivoa.net/std/ObsCore/v1.0\">Obscore 1.0</dataModel>\n");
-		retour.append("  <dataModel ivo-id=\"ivo://ivoa.net/std/ObsCore/v1.1\">Obscore 1.1</dataModel>\n");
+		//retour.append("  <dataModel ivo-id=\"ivo://ivoa.net/std/ObsCore/v1.0\">Obscore 1.0</dataModel>\n");
+		retour.append("  <dataModel ivo-id=\"ivo://ivoa.net/std/ObsCore#core-1.1\">Obscore 1.1</dataModel>\n");
 		retour.append("  <dataModel ivo-id=\"ivo://ivoa.net/std/RegTAP/vor\">Registry 1.0</dataModel>\n");
 		retour.append("  <language>\n");
 		retour.append("    <name>ADQL</name>\n");
