@@ -6,8 +6,11 @@ package saadadb.vo.tap;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import saadadb.admintool.utils.DataTreePath;
@@ -15,7 +18,6 @@ import saadadb.collection.Category;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
-import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
@@ -36,10 +38,11 @@ import saadadb.vo.registry.Capability;
 
 /**
  * @author laurent
- *
+ * 07/2016: Add foreign keys in /tables resource
  */
 public class TapServiceManager extends EntityManager {
 	public final static Set<String> ignoreCollAttrs = new LinkedHashSet<String>();
+	public static final String FKEYS_QUERY = "SELECT k.from_table, k.target_table, kc.from_column, kc.target_column FROM keys as k NATURAL JOIN key_columns as kc";
 
 
 	static {
@@ -146,7 +149,7 @@ public class TapServiceManager extends EntityManager {
 	public void empty(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
 	}
-	
+
 	@Override
 	public void rename(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for TAP service manager");
@@ -363,54 +366,55 @@ public class TapServiceManager extends EntityManager {
 	 * @throws Exception
 	 */
 	public static StringBuffer getXMLTables() throws Exception{	
+		Map<String, List<ForeignKey>> foreignKeyMap = getForeignKeys();
 		StringBuffer retour = new StringBuffer("<vosi:tableset xmlns:vosi=\"http://www.ivoa.net/xml/VOSITables/v1.0\"\n" 
 				+ "     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 				+ "     xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">\n");
-              /*
-                 * Loop on schemas
-                 */
-                SQLQuery qschema = new SQLQuery();
-                ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
-                ArrayList<String> snl = new ArrayList<String>();
-                ArrayList<String> sdl = new ArrayList<String>();
-                while(rs_schema.next()) {
-                        snl.add(rs_schema.getString(1));
-                        sdl.add(rs_schema.getString(2));
-                }
-                qschema.close();
-                for( int i=0 ; i<snl.size() ; i++ ) {
-                        String schema_name = snl.get(i);
-                        String schema_desc = sdl.get(i);
-                        retour.append("<schema>\n");
-                        retour.append("    <name>" + schema_name + "</name>\n");
-                        if( schema_desc != null && schema_desc.length() > 0)
-                                retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
-                        /*
-                         * Loop on tables
-                         */
-                        SQLQuery qtables= new SQLQuery();
-                        ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
-                                        + " WHERE schema_name = '" + schema_name + "'");
-                        ArrayList<String> tnl = new ArrayList<String>();
-                        ArrayList<String> tnd = new ArrayList<String>();
-                        ArrayList<String> tnt = new ArrayList<String>();
-                        while(rs_tables.next()) {
-                                tnl.add(rs_tables.getString(1));
-                                tnd.add(rs_tables.getString(2));
-                                tnt.add(rs_tables.getString(3));
-                        }
-                        qtables.close();
-                        for( int j=0 ; j<tnt.size() ; j++ ) {
-                                String table_name = tnl.get(j);
-                                String table_desc = tnd.get(j);
-                                String table_type = tnt.get(j);
-                                retour .append(getXMLTable(table_name, table_desc, table_type));
-                        }
-                        retour.append("</schema>\n");
-                }
+		/*
+		 * Loop on schemas
+		 */
+		SQLQuery qschema = new SQLQuery();
+		ResultSet rs_schema = qschema.run("SELECT schema_name, description FROM " + Table_Tap_Schema_Schemas.qtableName);
+		ArrayList<String> snl = new ArrayList<String>();
+		ArrayList<String> sdl = new ArrayList<String>();
+		while(rs_schema.next()) {
+			snl.add(rs_schema.getString(1));
+			sdl.add(rs_schema.getString(2));
+		}
+		qschema.close();
+		for( int i=0 ; i<snl.size() ; i++ ) {
+			String schema_name = snl.get(i);
+			String schema_desc = sdl.get(i);
+			retour.append("<schema>\n");
+			retour.append("    <name>" + schema_name + "</name>\n");
+			if( schema_desc != null && schema_desc.length() > 0)
+				retour.append("    <description><![CDATA[" + schema_desc + "]]></description>\n");
+			/*
+			 * Loop on tables
+			 */
+			SQLQuery qtables= new SQLQuery();
+			ResultSet rs_tables = qtables.run("SELECT table_name, description, table_type FROM " + Table_Tap_Schema_Tables.tableName
+					+ " WHERE schema_name = '" + schema_name + "'");
+			ArrayList<String> tnl = new ArrayList<String>();
+			ArrayList<String> tnd = new ArrayList<String>();
+			ArrayList<String> tnt = new ArrayList<String>();
+			while(rs_tables.next()) {
+				tnl.add(rs_tables.getString(1));
+				tnd.add(rs_tables.getString(2));
+				tnt.add(rs_tables.getString(3));
+			}
+			qtables.close();
+			for( int j=0 ; j<tnt.size() ; j++ ) {
+				String table_name = tnl.get(j);
+				String table_desc = tnd.get(j);
+				String table_type = tnt.get(j);
+				retour .append(getXMLTable(table_name, table_desc, table_type, foreignKeyMap));
+			}
+			retour.append("</schema>\n");
+		}
 
-                retour.append("</vosi:tableset>\n");
-                return retour;
+		retour.append("</vosi:tableset>\n");
+		return retour;
 	}
 
 	/**
@@ -422,14 +426,14 @@ public class TapServiceManager extends EntityManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public static StringBuffer getXMLTable(String table_name, String table_desc, String table_type) throws Exception{	
+	public static StringBuffer getXMLTable(String table_name, String table_desc, String table_type,  Map<String, List<ForeignKey>> foreignKeyMap) throws Exception{	
 		StringBuffer retour = new StringBuffer();
 		retour.append("    <table>\n");
 		retour.append("        <name>" + table_name + "</name>\n");
 		if( table_desc != null && table_desc.length() > 0)			
 			retour.append("        <description><![CDATA[" + table_desc + "]]></description>\n");
-//		if( table_type != null && table_type.length() > 0)			
-//			retour.append("        <type>" + table_type + "</type>\n");
+		//		if( table_type != null && table_type.length() > 0)			
+		//			retour.append("        <type>" + table_type + "</type>\n");
 		/*
 		 * Loop on columns
 		 */
@@ -437,8 +441,9 @@ public class TapServiceManager extends EntityManager {
 		ResultSet rs_columns = qcolumns.run("SELECT * FROM " + Table_Tap_Schema_Columns.tableName 
 				+ " WHERE table_name = '" + table_name + "'");
 		while(rs_columns.next()) {
+			String col_name = rs_columns.getString(2);
 			retour.append("        <column>\n");
-			retour.append("            <name>" + rs_columns.getString(2) + "</name>\n");
+			retour.append("            <name>" + col_name + "</name>\n");
 			retour.append("            <description><![CDATA[" + rs_columns.getString(3) + "]]></description>\n");
 			Object v = rs_columns.getObject(4);
 			if( v != null ) {
@@ -466,11 +471,38 @@ public class TapServiceManager extends EntityManager {
 			retour.append("        </column>\n");				
 		}
 		qcolumns.close();
+		List<ForeignKey> sfk;
+		if( (sfk = foreignKeyMap.get(table_name)) != null ){
+			for( ForeignKey fk: sfk) {
+				retour.append("    <foreignKey><targetTable>"  + fk.targetTable + "</targetTable><fkColumn><fromColumn>"  + fk.fromColumn + "</fromColumn><targetColumn>"  + fk.targetColumn + "</targetColumn></fkColumn></foreignKey>\n");
+			}
+		}
 		retour.append("    </table>\n");
 		return retour;
 	}
 
-
+	/**
+	 * Return a map of foreign key descriptor
+	 * @return
+	 * @throws Exception
+	 */
+	private static Map<String, List<ForeignKey>> getForeignKeys() throws Exception {
+		Map<String, List<ForeignKey>> retour = new HashMap<String, List<ForeignKey>>();
+		SQLQuery fkcolumns= new SQLQuery();
+		ResultSet rs = fkcolumns.run(FKEYS_QUERY);
+		while( rs.next()){
+			String fromTable  = rs.getString(1);
+			ForeignKey fk = new TapServiceManager().new ForeignKey(rs.getString(1), rs.getString(2),rs.getString(3),rs.getString(4));
+			List<ForeignKey> sfk;
+			if( (sfk = retour.get(fromTable)) == null ) {
+				sfk = new ArrayList<ForeignKey>();
+				retour.put(rs.getString(1), sfk);	
+			}
+			sfk.add(fk)	;
+		}
+		return retour;
+	}
+	//<foreignKey><targetTable>basti.chemical</targetTable><fkColumn><fromColumn>id_chemical</fromColumn><targetColumn>id_chemical</targetColumn></fkColumn></foreignKey>
 	/**
 	 * republish all TAP tables declared in the saada_vo_capabilities table.
 	 * All previous table published are first removed except those of the ivoa schema.
@@ -544,5 +576,26 @@ public class TapServiceManager extends EntityManager {
 				SQLTable.commitTransaction();
 			}
 		}
+	}
+
+	/**
+	 * Inner class decribing table join keys
+	 * @author michel
+	 *
+	 */
+	class ForeignKey{
+		public String fromTable;
+		public String targetTable;
+		public String fromColumn;
+		public String targetColumn;
+		public ForeignKey(String fromTable, String targetTable,
+				String fromColumn, String targetColumn) {
+			super();
+			this.fromTable = fromTable;
+			this.targetTable = targetTable;
+			this.fromColumn = fromColumn;
+			this.targetColumn = targetColumn;
+		}
+
 	}
 }
