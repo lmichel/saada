@@ -19,7 +19,7 @@ public class VoProperties {
 		int trp = 3600;
 		int ted = 3600;
 		int tol = 10000;
-		int thl = 10000;
+		int thl = 30000;
 		TAP_retentionPeriod = trp;
 		TAP_executionDuration = ted;
 		TAP_outputLimit = tol;
