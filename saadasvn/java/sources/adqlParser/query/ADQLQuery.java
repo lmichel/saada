@@ -606,7 +606,7 @@ public class ADQLQuery implements ADQLObject {
 			sql += "\nORDER BY "+orderList;
 		
 	// LIMIT part:
-		sql += (limit > NO_LIMIT)?("\nLIMIT "+limit):"";
+		sql += "\nLIMIT " + ((limit <0 || limit > NO_LIMIT)? NO_LIMIT: limit);
 		
 		return sql + (end?";":"");
 	}
