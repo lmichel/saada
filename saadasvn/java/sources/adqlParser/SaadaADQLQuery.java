@@ -133,7 +133,9 @@ public class SaadaADQLQuery extends ADQLQuery {
 				sql += "\nORDER BY "+orderList;
 			
 			// LIMIT:
-			if (limit != NO_LIMIT)
+			if( limit < 0 || limit > NO_LIMIT)
+				sql += "\nLimit "+NO_LIMIT;
+			else
 				sql += "\nLimit "+limit;
 			
 			if (end)

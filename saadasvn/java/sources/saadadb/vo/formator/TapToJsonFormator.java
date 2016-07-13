@@ -18,6 +18,7 @@ import saadadb.query.result.SaadaQLResultSet;
 import saadadb.util.Messenger;
 import saadadb.vo.ADQLExecutor;
 import saadadb.vo.SaadaQLExecutor;
+import saadadb.vo.VoProperties;
 import adqlParser.parser.ParseException;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLOperand;
@@ -63,9 +64,9 @@ public class TapToJsonFormator extends  VOResultFormator {
 	 */
 	public void processVOQuery(String queryStr, OutputStream out, int limit, boolean saadaQL) throws Exception {
 		try {
-			if( limit <= 0 || limit > 10000 ) {
-				Messenger.printMsg(Messenger.WARNING, "Limit limited to 10000 for display");
-				this.limit = 10000;
+			if( limit <= 0 || limit > VoProperties.TAP_outputLimit ) {
+				Messenger.printMsg(Messenger.WARNING, "output Limit set to " + VoProperties.TAP_outputLimit );
+				this.limit = VoProperties.TAP_outputLimit;
 			}
 			else {
 				this.limit = limit;				

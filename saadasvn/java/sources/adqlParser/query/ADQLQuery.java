@@ -3,6 +3,7 @@ package adqlParser.query;
 import java.util.Iterator;
 import java.util.Vector;
 
+import saadadb.vo.VoProperties;
 import adqlParser.parser.AdqlParser;
 import adqlParser.parser.ParseException;
 import adqlParser.parser.SQLTranslator;
@@ -41,7 +42,7 @@ public class ADQLQuery implements ADQLObject {
 	protected int limit;
 	
 	/** Special value of the attribute {@link ADQLQuery#limit} which means there is no limit. */
-	public static final int NO_LIMIT = -1;
+	public static final int NO_LIMIT = VoProperties.TAP_hardLimit;
 	
 	/** A tool to translate this query in the good SQL dialect. */
 	protected SQLTranslator translator = new SQLTranslator();
