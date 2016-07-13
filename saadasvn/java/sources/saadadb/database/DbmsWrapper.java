@@ -888,7 +888,7 @@ abstract public class DbmsWrapper {
 		else if(typeSQL.equals("bool")){
 			return "boolean";
 		}
-		else if(typeSQL.equals("float8") || typeSQL.equals("numeric")){
+		else if(typeSQL.equals("float8") || typeSQL.equals("numeric")|| typeSQL.equals("double")){
 			return "double";
 		}
 		else if(typeSQL.equals("text") || typeSQL.startsWith("character(")){
