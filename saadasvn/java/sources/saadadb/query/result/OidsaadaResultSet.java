@@ -15,6 +15,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.relationship.KeyIndex;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vo.VoProperties;
 
 /** * @version $Id$
 
@@ -32,7 +33,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 	private ArrayList<Long> oids = new ArrayList<Long>();
 	private LinkedHashMap<String, ArrayList<Object>> resultmap = new LinkedHashMap<String, ArrayList<Object>>() ;
 	private boolean withComputedColumns = false;
-	private static final long TIMEOUT = 30000;
+	private static final long TIMEOUT = 1000*VoProperties.TAP_executionDuration;
 
 	/**
 	 * Dummy constructor allowing to override the class without executing the query at creation time
@@ -157,7 +158,8 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			int numCol = -1;
 			for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
 				String cn = rsmd.getColumnName(i);
-				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby")|| cn.equalsIgnoreCase("native_oidsaada")) {
+				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby_oidsaada")|| 
+					cn.equalsIgnoreCase("orderby") || cn.equalsIgnoreCase("native_oidsaada")) {
 					numCol = i;
 					break;
 				}
