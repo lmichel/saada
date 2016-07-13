@@ -78,9 +78,9 @@ public class ADQLExecutor {
 //(new Exception()).printStackTrace();			
 		if (limit > -1)
 			query.setLimit(limit);
-		if( limit <= 0 || limit > 50000) {
-			Messenger.printMsg(Messenger.WARNING, "ADQL result limited to 50000");
-			query.setLimit(50000);
+		if( limit <= 0 || limit > VoProperties.TAP_hardLimit) {
+			Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + VoProperties.TAP_hardLimit);
+			query.setLimit(VoProperties.TAP_hardLimit);
 		}
 		query_result = new ADQLResultSet(query.runQuery(), dbConsistency.getColumnsMeta());
 		
