@@ -175,6 +175,8 @@ public abstract class VotableFormator extends  QueryResultFormator {
 		SavotParam sp = new SavotParam();
 		sp.setId("Error");
 		sp.setName("Error");
+		sp.setDataType("char");
+		sp.setArraySize("*");
 		sp.setValue(protectSpecialCharacters(e.toString()));
 		paramSet.addItem(sp);	
 		writer.writeParam(paramSet);
