@@ -27,7 +27,7 @@ public class TAPAvailability extends SaadaServlet {
 
 		pw.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		pw.println("<?xml-stylesheet type=\"text/xsl\" href=\""+Database.getUrl_root()+"/styles/uws.xsl\"?>");
-		pw.println("<vosi:availability xmlns:vosi=\"http://www.ivoa.net/xml/Availability/v0.4\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">");
+		pw.println("<vosi:availability xmlns:vosi=\"http://www.ivoa.net/xml/VOSIAvailability/v1.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\">");
         try {
         	if (Database.getDbname() != null && Database.getDbname().trim().length() > 0)
         		if (Spooler.getSpooler().isRunning())
