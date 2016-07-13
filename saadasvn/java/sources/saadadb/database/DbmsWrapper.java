@@ -853,7 +853,9 @@ abstract public class DbmsWrapper {
 		}  else if( ltype.equals("double") || ltype.equals("float8")){
 			return "adql:DOUBLE";
 		}  else if( ltype.equals("float") || ltype.equals("float4")){
-			return "adql:FLOAT";
+			return "adql:REAL";
+		}  else if( ltype.equals("bool") || ltype.equals("boolean")){
+			return "adql:BOOLEAN";
 		}  else if( ltype.equals("region")){
 			return "adql:REGION";
 		} else {
@@ -897,6 +899,9 @@ abstract public class DbmsWrapper {
 		}
 		else if(typeSQL.equals("float4")){
 			return "float";
+		}
+		else if(typeSQL.equals("boolean") || typeSQL.equals("bool")){
+			return "boolean";
 		}
 		else {
 			return "char";
