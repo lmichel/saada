@@ -39,7 +39,7 @@ public class ADQLTester {
 //		exec.
 //		exec.
 		//for( int i=0 ; i<100 ; i++ )
-		TAPToolBox.executeTAPQuery(queryStr, true, "votable", -1, "/tmp", "reportNameRoot.xml");
+		TAPToolBox.executeTAPQuery(queryStr, true, "votable", 2, "/tmp", "reportNameRoot.xml");
 		Database.close();
 		System.exit(1);
 
