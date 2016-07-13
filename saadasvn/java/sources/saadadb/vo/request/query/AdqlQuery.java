@@ -12,6 +12,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.VoProperties;
 import saadadb.vo.tap.TAPToolBox;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.SaadaDBConsistency;
@@ -24,7 +25,6 @@ import adqlParser.parser.QueryBuilderTools;
  * @version 07/2011
  */
 public class AdqlQuery extends VOQuery {
-	private static final int DEFAULTSIZE = 100000;
 	private ADQLResultSet resultSet = null;
 	private SaadaADQLQuery adqlQuery;
 	private int limit;
@@ -73,7 +73,7 @@ public class AdqlQuery extends VOQuery {
 		}
 		String l = queryParams.get("limit");
 		if( l == null ||l.length() == 0 ) {
-			limit = DEFAULTSIZE;
+			limit = VoProperties.TAP_outputLimit;
 		}
 		else {
 			try {
@@ -88,47 +88,26 @@ public class AdqlQuery extends VOQuery {
 
 	@Override
 	public void runQuery() throws Exception {		
-//		try {
-			SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
-			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryString).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
-			if(Messenger.debug_mode) parse.enable_tracing();
-			adqlQuery = (SaadaADQLQuery)parse.Query();
-			
-//			System.out.println("@@@@@@@@@@@@@@@@@@ " + limit + " " + adqlQuery.getLimit());			
-//			(new Exception()).printStackTrace();			
+		SaadaDBConsistency dbConsistency = new SaadaDBConsistency();
+		AdqlParser parse = new AdqlParser(new ByteArrayInputStream(TAPToolBox.setBooleanInContain(queryString).getBytes()), null, dbConsistency, new SaadaQueryBuilderTools(dbConsistency));
+		if(Messenger.debug_mode) parse.enable_tracing();
+		adqlQuery = (SaadaADQLQuery)parse.Query();
 
-			
-//			if (adqlQuery.getLimit() > -1)
-//				adqlQuery.setLimit(limit);
-			if( adqlQuery.getLimit() <= 0 || limit > DEFAULTSIZE) {
-				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
-				adqlQuery.setLimit(DEFAULTSIZE);
-			}
-			this.limit = adqlQuery.getLimit();
-			resultSet = new ADQLResultSet(adqlQuery.runQuery(), dbConsistency.getColumnsMeta());
-
-			if(resultSet == null) {
-				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
-			}
-//		} catch( adqlParser.parser.ParseException e) {
-//			DefaultDBConsistency dbConsistency = new DefaultDBConsistency();
-//			AdqlParser parse = new AdqlParser(new ByteArrayInputStream(queryString.getBytes()), null, dbConsistency, QueryBuilderTools());
-//			adqlQuery = (SaadaADQLQuery)parse.Query();
-//
-//			if (limit > -1)
-//				adqlQuery.setLimit(limit);
-//			if( limit <= 0 || limit > DEFAULTSIZE) {
-//				Messenger.printMsg(Messenger.WARNING, "ADQL result limited to " + DEFAULTSIZE);
-//				adqlQuery.setLimit(DEFAULTSIZE);
-//			}
-//			resultSet = new ADQLResultSet(adqlQuery.runQuery(), null);
-//
-//			if(resultSet == null) {
-//				QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
-//			}
-//
+//		int finalLimit = adqlQuery.getLimit();
+//		if( finalLimit <= 0 || finalLimit > VoProperties.TAP_outputLimit) {
+//			finalLimit = VoProperties.TAP_outputLimit;
 //		}
+//		if( this.limit >= 0 && limit < finalLimit){
+//			finalLimit = this.limit;
+//		}
+//		adqlQuery.setLimit(finalLimit);
+//		this.limit = finalLimit;
 
+		resultSet = new ADQLResultSet(adqlQuery.runQuery(), dbConsistency.getColumnsMeta());
+
+		if(resultSet == null) {
+			QueryException.throwNewException(SaadaException.DB_ERROR, "No query result !");
+		}
 	}
 
 	private QueryBuilderTools QueryBuilderTools() {
