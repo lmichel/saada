@@ -70,7 +70,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	public void buildDataResponse( ) throws Exception {
 		this.initWriter();
 		this.writeBeginingVOTable();
-
+		/*
+		 * Writing infos befiore table. Could be at the  end  but this feature is not supported by TapLint
+		 */
 		InfoSet infoSet = new InfoSet();
 		for(Entry<String, String> e: this.infoMap.entrySet()) {		
 			SavotInfo info = new SavotInfo();
@@ -82,7 +84,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 				info.setValue(e.getValue());		
 			infoSet.addItem(info);
 		}
+
 		this.writer.writeInfo(infoSet);
+
 
 		this.table = new SavotTable();
 		this.table.setName("Results");
@@ -91,6 +95,23 @@ public abstract class VotableFormator extends  QueryResultFormator {
 		this.writeMetaData();
 		this.writeData();
 		this.writer.writeTableEnd();
+		
+		/*
+		 * If the result is truncated, put an INFI at the resource end
+		 * We couln't know before
+		 */
+		infoSet = new InfoSet();
+		for(Entry<String, String> e: this.infoMap.entrySet()) {		
+			if( e.getKey().equals("QUERY_STATUS") && e.getValue().equals("OVERFLOW") ) {
+				SavotInfo info = new SavotInfo();
+				info.setName("QUERY_STATUS");
+				info.setValue("OVERFLOW");		
+				infoSet.addItem(info);
+				this.writer.writeInfo(infoSet);
+				break;
+			}
+		}
+
 		this.writer.writeResourceEnd();
 		/*
 		 * Add tables with linked data
@@ -256,9 +277,9 @@ public abstract class VotableFormator extends  QueryResultFormator {
 	protected void writeBeginingVOTable() {
 		SavotVOTable votable = new SavotVOTable();
 		
-		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.2");
+		votable.setXmlns("http://www.ivoa.net/xml/VOTable/v1.3");
 		votable.setXmlnsxsi("http://www.w3.org/2001/XMLSchema-instance");
-		votable.setVersion("1.2");
+		votable.setVersion("1.3");
 		writer.writeDocumentHead(votable);
 
 		String description = "<![CDATA[\nSaadaDB:\n" 

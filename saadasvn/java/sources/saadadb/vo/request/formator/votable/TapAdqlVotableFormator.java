@@ -6,6 +6,7 @@ package saadadb.vo.request.formator.votable;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaInstance;
@@ -17,12 +18,15 @@ import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.query.result.ADQLResultSet;
 import saadadb.util.Messenger;
+import saadadb.vo.VoProperties;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLOperand;
 import adqlParser.query.ADQLTable;
 import cds.savot.model.FieldSet;
+import cds.savot.model.InfoSet;
 import cds.savot.model.SavotField;
+import cds.savot.model.SavotInfo;
 import cds.savot.model.SavotTR;
 import cds.savot.model.TDSet;
 
@@ -36,7 +40,7 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	private SaadaADQLQuery adqlQuery;
 
 	public TapAdqlVotableFormator() throws QueryException {
-		limit = 10000;
+		this.limit = 1000;
 		protocolName = "TAP1.0";
 		this.infoMap.put("LANGUAGE", "ADQL");
 
@@ -57,11 +61,26 @@ public class TapAdqlVotableFormator extends VotableFormator {
 	protected void writeData() throws Exception {
 		writer.writeDataBegin();
 		writer.writeTableDataBegin();
+		try {
+			this.limit = Integer.parseInt(this.protocolParams.get("limit"));
+		} catch(Exception e){
+			this.limit = VoProperties.TAP_outputLimit;
+		}
+		if( this.limit <0 || this.limit >VoProperties.TAP_outputLimit ){
+			this.limit  = VoProperties.TAP_outputLimit; 
+		}
+		InfoSet infoSet = new InfoSet();
 		if(adqlResultSet != null) {
 			int i = 0 ; 
 			long start = System.currentTimeMillis() ;
 			while(adqlResultSet.next()) {
-				if (this.limit > 0 && i >= this.limit){
+				if (this.limit >= 0 && i >= this.limit){
+					for(Entry<String, String> e: this.infoMap.entrySet()) {		
+						if( e.getKey().equals("QUERY_STATUS")) {
+							e.setValue("OVERFLOW");
+							break;
+						}
+					}
 					Messenger.printMsg(Messenger.TRACE, "result truncated to " + i);
 					break;
 				}
@@ -107,13 +126,6 @@ public class TapAdqlVotableFormator extends VotableFormator {
 				Object val = adqlResultSet.getObject(colname);
 				// replace oid with DL URL for data produc files
 				boolean formated = false;
-				if( colname.equals("oidsaada")) {
-					long oid = Long.parseLong(val.toString());
-					if( SaadaOID.getCategoryNum(oid) != Category.ENTRY ) {
-						formated = true;
-						val = new String(Database.getUrl_root() + "/getproduct?oid=" + val);
-					}
-				}
 				// write the value in a TD element:
 				if (val != null){
 					if( formated || sf.getDataType().equals("char"))
@@ -203,8 +215,9 @@ public class TapAdqlVotableFormator extends VotableFormator {
 							f.setName(col.toString());								
 					}
 					f.setRef(f.getName()+"_"+cpt);
-				}else
+				} else {
 					f.setName("???");
+				}
 				f.setDataType("char");
 				f.setArraySize("*");
 			} else {
@@ -215,13 +228,6 @@ public class TapAdqlVotableFormator extends VotableFormator {
 						Messenger.printMsg(Messenger.DEBUG, "found DM field " + meta.getNameorg());
 				}
 				f = (uth == null)?(new UTypeHandler(meta)).getSavotField(cpt): uth.getSavotField(cpt);
-				/*
-				 * oidsaada could be replaced with download URLs
-				 */
-				if(meta.getNameattr().equals("oidsaada")) {
-					f.setDataType("char");
-					f.setArraySize("*");					
-				}
 			}
 
 			dataModelFieldSet.addItem(f);
