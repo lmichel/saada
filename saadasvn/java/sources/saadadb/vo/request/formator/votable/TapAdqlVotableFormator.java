@@ -199,8 +199,10 @@ public class TapAdqlVotableFormator extends VotableFormator {
 		while(it.hasNext()){
 			AttributeHandler meta = it.next();
 			SavotField f = null;
+			/*
+			 * If field not found in result set , look for meta data in the query handler
+			 */
 			if (meta == null && adqlQuery != null){
-
 				f = new SavotField();
 				if (adqlQuery != null){
 					ADQLOperand col = adqlQuery.getColumn(indCol);
