@@ -15,6 +15,7 @@ import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import saadadb.vo.ADQLExecutor;
 import saadadb.vo.SaadaQLExecutor;
+import saadadb.vo.VoProperties;
 import adqlParser.parser.ParseException;
 import adqlParser.query.ADQLColumn;
 import adqlParser.query.ADQLOperand;
@@ -69,7 +70,13 @@ public class TapToVOTableFormator extends VOTableFormator {
 	 */
     public void processVOQuery(String queryStr, OutputStream out, int limit, boolean saadaQL) throws Exception {
     	try {
-    		this.limit = limit;
+			if( limit < 0 || limit > VoProperties.TAP_outputLimit ) {
+				Messenger.printMsg(Messenger.WARNING, "output Limit set to " + VoProperties.TAP_outputLimit );
+				this.limit = VoProperties.TAP_outputLimit;
+			}
+			else {
+				this.limit = limit;				
+			}
     		adqlQuery = !saadaQL;
     		this.queryString = queryStr;
     		
