@@ -165,7 +165,7 @@ public class ProductManager extends EntityManager {
 
 
 		Messenger.printMsg(Messenger.TRACE, "Remove " + this.oids.size() + " data from " + SaadaOID.getTreePath(this.oids.get(0)));
-		SQLQuery squery = new SQLQuery();
+		SQLQuery squery;
 		try {
 			this.setDataTreeLocation();
 			this.processUserRequest();

@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import saadadb.database.spooler.Spooler;
+import ajaxservlet.formator.DisplayFilter;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.util.Messenger;
-import ajaxservlet.formator.DisplayFilter;
 
 /**
  * @author laurentmichel
