@@ -233,7 +233,7 @@ public class Spooler {
 		boolean first = true;
 		while( (retour = this.getFirstFreeConnection()) == null ) {
 			if( first && !Database.getWrapper().supportConcurrentAccess()) {
-				Messenger.printStackTop("Spooler probably locked");
+				Messenger.printStackTop("Spooler probably locked: " + this);
 				first = false;
 			}
 			Thread.sleep(WAIT_DELAY);
