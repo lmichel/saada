@@ -12,6 +12,7 @@ import saadadb.api.SaadaLink;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -165,7 +166,7 @@ public class ProductManager extends EntityManager {
 
 
 		Messenger.printMsg(Messenger.TRACE, "Remove " + this.oids.size() + " data from " + SaadaOID.getTreePath(this.oids.get(0)));
-		SQLQuery squery = new SQLQuery();
+		//SQLQuery squery = new SQLQuery();
 		try {
 			this.setDataTreeLocation();
 			this.processUserRequest();
@@ -218,7 +219,7 @@ public class ProductManager extends EntityManager {
 				this.processUserRequest();
 				SQLTable.dropTableIndex(ecoll_table, null);
 				SQLTable.addQueryToTransaction("DELETE FROM " + ecoll_table + " WHERE oidtable IN " + in_stm, coll_table);
-				squery = new SQLQuery();
+				SQLQuery squery = new SQLQuery();
 				ResultSet rs = squery.run("SELECT count(oidsaada) FROM " + ecoll_table);
 				while( rs.next() ) {
 					if( rs.getInt(1) == 0 ) {
@@ -257,6 +258,7 @@ public class ProductManager extends EntityManager {
 			 */
 			if( !classe.equals("FLATFILE")) {
 				this.processUserRequest();
+				System.out.println(Spooler.getSpooler());
 				SQLTable.dropTableIndex(classe, null);
 				SQLTable.addQueryToTransaction("DELETE FROM  " + classe + " WHERE oidsaada IN " +in_stm, classe);
 				//SQLTable.indexTable(classe, null);
@@ -267,7 +269,13 @@ public class ProductManager extends EntityManager {
 			 * and the collection level data
 			 */
 			this.processUserRequest();
+			if( !Database.getWrapper().supportDropTableInTransaction() ) {
+				SQLTable.commitTransaction();
+			}
 			SQLTable.dropTableIndex(coll_table, null);
+			if( !Database.getWrapper().supportDropTableInTransaction() ) {
+				SQLTable.beginTransaction();
+			}
 			SQLTable.addQueryToTransaction("DELETE FROM " + coll_table + " WHERE oidsaada IN  " + in_stm, coll_table);
 			//SQLTable.indexTable(coll_table, null);
 			tablesToIndex.add(coll_table);
@@ -281,7 +289,7 @@ public class ProductManager extends EntityManager {
 				/*
 				 * Files with a full path have been loaded with the "keep" repository name. They musn't be removed
 				 */
-				squery = new SQLQuery();
+				SQLQuery squery = new SQLQuery();
 				ResultSet rs = squery.run("SELECT repositoryname FROM saada_loaded_file WHERE oidsaada IN "  + in_stm );
 				while( rs.next() ) {
 					this.processUserRequest();
