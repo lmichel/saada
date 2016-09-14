@@ -34,7 +34,7 @@
  *
  * The job can be killed a any time by sending a DELETE HTTP request to saadadburl/JOBID
  *  
- * WARNING 1: The cart management is HTTP session AWARE. WEB browser must have coolkies enable. In any other case
+ * WARNING 1: The cart management is HTTP session AWARE. WEB browser must have coolkies enable. In any other cases
  * you have to make sure your client properly handle sessions (e.g. see  --keep-session-cookies option for wget).
  * The way to do so depends on the technology you are using (servlet, CGI, php....)
  * 

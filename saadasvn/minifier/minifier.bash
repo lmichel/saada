@@ -41,6 +41,7 @@ js_array_org=("basics.js" \
 	                "FieldList_v.js" \
 	                "Sorter_v.js" \
 	                "NodeFilter_v.js" \
+	                "HipsExplorer_v.js" \
 	                "DataLink" \
 	                "Segment.js" \
 	                "RegionEditor" \
@@ -52,6 +53,8 @@ js_array_org=("basics.js" \
 	                )
 	                
 # Imported from ../web/javascript
+
+
 js_local_array=(	 
      "utils.js"  \
 	 "dataTree.js"  \
@@ -170,6 +173,8 @@ for item in ${js_basic_array[@]}
 		echo "console.log('=============== > " $item "');" >> $packedJS
 		echo "" >> $packedJS
 	done
+
+
 for item in ${js_local_array[@]}
 	do
 	    #cp ../web/javascript/$item $minDir/javascript
