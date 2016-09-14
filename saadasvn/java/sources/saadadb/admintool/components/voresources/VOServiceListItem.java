@@ -124,7 +124,7 @@ public class VOServiceListItem extends JPanel {
 							null
 							, capability.getProtocol() + " Registry Record"
 							, capability.getProtocol() + "Registry." + Database.getDbname() + "." + capability.getDataTreePath() + ".xml"
-							,(new Record()).getRecord(capability).toString())).open(SQLJTable.DMVIEW_PANEL);
+							,(new Record()).getRegistryRecord(capability).toString())).open(SQLJTable.DMVIEW_PANEL);
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}

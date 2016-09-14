@@ -193,7 +193,7 @@ public class TAPServicePanel extends EditPanel {
 							rootFrame
 							, "TAP Registry Record"
 							, Database.getDbname() + "_TAPRegistry.xml"
-							,(new Record()).getTAPRecord().toString())).open(SQLJTable.DMVIEW_PANEL);
+							,(new Record()).getTAPRegistryRecord().toString())).open(SQLJTable.DMVIEW_PANEL);
 				} catch (QueryException e) {
 					Messenger.trapQueryException(e);
 				}

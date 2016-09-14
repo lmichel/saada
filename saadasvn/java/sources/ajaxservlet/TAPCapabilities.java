@@ -30,7 +30,7 @@ public class TAPCapabilities extends SaadaServlet {
 		
 		PrintWriter pw = res.getWriter();
 		try {
-			pw.println((new Record()).getTAPRecord().toString());
+			pw.println((new Record()).getTAPCapabilities().toString());
 		} catch (QueryException e) {
 			e.printStackTrace();
 		}
