@@ -758,12 +758,12 @@ public class ProductIngestor {
 			 * In case of FooProduct or SQL table
 			 */
 			if( this.product.dataFile != null) {
-				CopyFile.copy(this.product.dataFile.getAbsolutePath(), reportFile + repname);
+				CopyFile.copy(this.product.dataFile.getAbsolutePath(), /*reportFile +*/ repname);
 				if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
-					Messenger.printMsg(Messenger.TRACE, "File moved to " + reportFile + repname);
+					Messenger.printMsg(Messenger.TRACE, "File moved to " + /*reportFile +*/ repname);
 					this.product.dataFile.delete();
 				} else {
-					Messenger.printMsg(Messenger.TRACE, "File copied to " + reportFile + repname);
+					Messenger.printMsg(Messenger.TRACE, "File copied to " + /*reportFile +*/ repname);
 				}
 			}
 		}
