@@ -81,12 +81,12 @@ public class Table_Saada_Loaded_File {
 
 	/**
 	 * Record the file in the saada_loaded_file table and returns the filename 
-	 *  used by the repository. if rep_name is null, a name is derived from the porduct name. 
-	 *  Rep_name is take otherwise loadedfilewriter
+	 *  used by the repository. if rep_name is null, a name is derived from the product name. 
+	 *  Rep_name is taken otherwise.
 	 *  Store the query into the 
-	 * @param prd
-	 * @param rep_name
-	 * @param loadedfilewriter
+	 * @param prd data  product
+	 * @param rep_name file path of the repository copy of the data file
+	 * @param loadedfilewriter SQL text file writer for recording loaded files 
 	 * @return
 	 * @throws Exception
 	 */
@@ -113,7 +113,7 @@ public class Table_Saada_Loaded_File {
 			repository_name = rep_name;
 		}
 		
-		String 		sql =
+		String sql =
 			  prd.getName() + "\t"
 			+ prd.getSaadainstance().getOid() + "\t"
 			+ repository_name + "\t"
