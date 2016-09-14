@@ -20,30 +20,33 @@ import saadadb.vo.VoProperties;
  */
 public class Record {
 	private Authority authority;
-	private static final String header;
+	private static final String CAPABILITY_HEADER;
+	private static final String REGISTRY_HEADER;
 
 	static {
-		header = "<vosi:capabilities \n" 
+		CAPABILITY_HEADER = "<vosi:capabilities \n" 
 			+ "xmlns:vosi=\"http://www.ivoa.net/xml/VOSICapabilities/v1.0\" \n"
 			+ "xmlns:ri=\"http://www.ivoa.net/xml/RegistryInterface/v1.0\" \n"
-//			+ "xmlns:cs=\"http://www.ivoa.net/xml/ConeSearch/v1.0\" \n"
-//			//+ "xmlns:osn=\"http://www.ivoa.net/xml/OpenSkyNode/v0.2\" \n"
-//			+ "xmlns:sia=\"http://www.ivoa.net/xml/SIA/v1.0\" \n"
-//			+ "xmlns:sla=\"http://www.ivoa.net/xml/SLA/v0.2\" \n"
-//			+ "xmlns:ssa=\"http://www.ivoa.net/xml/SSA/v0.4\" \n"
-//			+ "xmlns:tsa=\"http://www.ivoa.net/xml/TSA/v0.2\" \n"
 			+ "xmlns:vg=\"http://www.ivoa.net/xml/VORegistry/v1.0\" \n"
-//			+ "xmlns:vr=\"http://www.ivoa.net/xml/VOResource/v1.0\" \n"
 			+ "xmlns:vs=\"http://www.ivoa.net/xml/VODataService/v1.1\" \n"
 			+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
 			+ "xmlns:tr=\"http://www.ivoa.net/xml/TAPRegExt/v1.0\" \n"
 			+ "xmlns:vod=\"http://www.ivoa.net/xml/VODataService/v1.1\" \n"
-//			+ "created=\"2007-05-21T00:00:00\" \n"
-//			+ "status=\"active\" \n"
-//			+ "updated=\"2007-05-21T00:00:00\" \n"
 			+ "xsi:schemaLocation=\"http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0 http://www.ivoa.net/xml/VORegistry/v1.0\" \n"
-//			+ "xsi:type=\"vg:Authority\""
 			+ ">\n";
+		
+		
+		REGISTRY_HEADER = "<ri:Resource xmlns:ri=\"http://www.ivoa.net/xml/RegistryInterface/v1.0\" \n"
+				+ "xmlns:tr=\"http://www.ivoa.net/xml/TAPRegExt/v1.0\" \n"
+				+ "xmlns:vg=\"http://www.ivoa.net/xml/VORegistry/v1.0\" \n"
+				+ " xmlns:vr=\"http://www.ivoa.net/xml/VOResource/v1.0\" \n"
+				+ " xmlns:vs=\"http://www.ivoa.net/xml/VODataService/v1.0\" \n"
+				+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
+				+ " created=\"2015-02-02T14:00:00\" \n"
+				+ " status=\"active\" \n"
+				+ " updated=\"2015-09-17T12:20:00\" \n"
+				+ " xsi:schemaLocation=\"http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VODataService/v1.0 http://www.ivoa.net/xml/VODataService/v1.0\" \n"
+				+ " xsi:type=\"vs:CatalogService\">   \n"  ;
 	}
 
 	/**
@@ -59,11 +62,31 @@ public class Record {
 	 * @return
 	 * @throws QueryException
 	 */
-	public String getRecord(Capability capability) throws QueryException {
+	public String getRegistryRecord(Capability capability) throws QueryException {
 		String protocol = capability.getProtocol();
 		try {
 			if( Capability.TAP.equals(protocol)) {
-				return getTAPRecord().toString();
+				return getTAPRegistryRecord().toString();
+			} else if( Capability.SIA.equals(protocol)) {
+				return getSIARecord(capability).toString();
+
+			} else if( Capability.SSA.equals(protocol)) {
+				return getSSARecord(capability).toString();
+
+			} else if( Capability.ConeSearch.equals(protocol)) {
+				return getCSRecord(capability).toString();
+			}
+		} catch (Exception e) {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, e);
+		}
+		QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Not registry record available for protocol " + protocol);
+		return null;
+	}
+	public String getCapabilities(Capability capability) throws QueryException {
+		String protocol = capability.getProtocol();
+		try {
+			if( Capability.TAP.equals(protocol)) {
+				return getTAPCapabilities().toString();
 			} else if( Capability.SIA.equals(protocol)) {
 				return getSIARecord(capability).toString();
 
@@ -83,11 +106,27 @@ public class Record {
 	/**
 	 * @return
 	 */
-	public StringBuffer getTAPRecord() {
+	public StringBuffer getTAPCapabilities() {
 		StringBuffer retour = new StringBuffer();
-		retour.append(header);
-		//retour.append(this.authority.getXML());
-		
+		retour.append(CAPABILITY_HEADER);
+		addTapCapabilities(retour);
+		retour.append("</vosi:capabilities>\n"); 
+
+		return retour;
+	}
+	public StringBuffer getTAPRegistryRecord() {
+		StringBuffer retour = new StringBuffer();
+		retour.append(REGISTRY_HEADER);
+		retour.append(this.authority.getXML());
+		addTapCapabilities(retour);
+		retour.append("</ri:Resource>\n"); 
+		return retour;
+	}
+
+	/**
+	 * @param retour
+	 */
+	private void addTapCapabilities(StringBuffer retour){
 		retour.append("<capability standardID=\"ivo://ivoa.net/std/TAP\" xsi:type=\"tr:TableAccess\">\n");
 		//retour.append("<capability standardID=\"ivo://ivoa.net/std/TAP\">\n");
 		retour.append("  <interface role=\"std\" xsi:type=\"vs:ParamHTTP\">\n");
@@ -149,15 +188,11 @@ public class Record {
 		retour.append("    <accessURL use=\"full\">" + Database.getUrl_root() + "/tap/tables</accessURL>\n");
 		retour.append("  </interface>\n");
 		retour.append("</capability>\n");
-		retour.append("</vosi:capabilities>\n"); 
-
-		return retour;
 	}
-
 	public StringBuffer getSIARecord(Capability capability) throws Exception {
 		String url = Database.getUrl_root() + "/siaservice?collection=["  + capability.getDataTreePath().collection + "]&withrel=true&";
 		StringBuffer retour = new StringBuffer();
-		retour.append(header);
+		retour.append(CAPABILITY_HEADER);
 		retour.append(this.authority.getXML());
 		retour.append(this.filterTemplate("reg.template.sia.xml", url, capability));
 		retour.append("</vosi:capabilities>\n"); 
@@ -207,7 +242,7 @@ public class Record {
 
 	public StringBuffer getSSARecord(Capability capability){
 		StringBuffer retour = new StringBuffer();
-		retour.append(header);
+		retour.append(CAPABILITY_HEADER);
 		retour.append(this.authority.getXML());
 		retour.append("</vosi:capabilities>\n"); 
 		return retour;
@@ -215,7 +250,7 @@ public class Record {
 	}
 	public StringBuffer getCSRecord(Capability capability){
 		StringBuffer retour = new StringBuffer();
-		retour.append(header);
+		retour.append(CAPABILITY_HEADER);
 		retour.append(this.authority.getXML());
 		retour.append("</vosi:capabilities>\n"); 
 		return retour;
