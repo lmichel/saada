@@ -305,8 +305,9 @@ public class Product /*extends File*/ {
 	/**
 	 * This method builds a SaadaInstance and stores it into the ASCII files
 	 * It is used for all data categories except for entries where the SaadaInstance step is skipped
-	 * @param colwriter : file where are store collection level attributes
-	 * @param buswfriter: file where are store class level attributes
+	 * @param colwriter : SQL file where are store collection level attributes
+	 * @param buswfriter: SQL file where are store class level attributes
+	 * @param loadedfilewriter: SQL file where are stored all loaded files
 	 * @throws Exception
 	 */
 	public void loadValue(BufferedWriter colwriter, BufferedWriter buswriter, BufferedWriter loadedfilewriter) throws Exception  {
@@ -384,7 +385,7 @@ public class Product /*extends File*/ {
 	/**
 	 * Copy the product file into the repository and append the query updating the  
 	 * Table_Saada_Loaded_File table to loadedfilewriter
-	 * @param loadedfilewriter
+	 * @param loadedfilewriter: SQL file where are stored all loaded files
 	 * @throws Exception
 	 */
 	public void storeCopyFileInRepository(BufferedWriter loadedfilewriter) throws Exception {
@@ -402,11 +403,7 @@ public class Product /*extends File*/ {
 		if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.COPY || 
 			this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE) {
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this, null, loadedfilewriter);
-			String reportFile = Database.getRepository() 
-						+ separ + this.getConfiguration().getCollectionName() 
-						+ separ + Category.explain(this.getConfiguration().getCategorySaada()) 
-						+ separ;
-			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), reportFile + repname);
+			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), /*reportFile +*/ repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.dataPointer.file.getAbsolutePath() + ">");
