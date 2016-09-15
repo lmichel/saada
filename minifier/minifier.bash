@@ -166,8 +166,6 @@ minifySet  "../web/jsimports"    \
      "jquery.layout-latest.js"   
 
 
-minifySet "../web/userscripts"\
-	"local.js"
 	
 minifySet  "../web/javascript"\
 	 "utils.js"  \
