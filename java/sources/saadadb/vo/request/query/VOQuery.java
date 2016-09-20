@@ -34,11 +34,6 @@ public abstract class VOQuery {
 		if( params == null ) {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameter given to the Query");
 		}
-		for(String mpd: mandatoryDataParams) {
-			if( params.get(mpd) == null && params.get(mpd.toUpperCase() ) == null ) {
-				QueryException.throwNewException("ERROR", "No parameter " +  mpd.toUpperCase() + " given to the Query");
-			}			
-		}
 		metaQuery = false;
 		Messenger.printMsg(Messenger.TRACE, "Data query");
 
@@ -54,6 +49,16 @@ public abstract class VOQuery {
 			 */
 			this.protocolParams.put(k.toLowerCase(), params.get(k));
 		}
+		/*
+		 * Protocol params are set before to check the mandatoryDataParams, so that when the exception is raised, 
+		 * the error response, which needs the protocolParams,  can be formatted  
+		 */
+		for(String mpd: mandatoryDataParams) {
+			if( params.get(mpd) == null && params.get(mpd.toUpperCase() ) == null ) {
+				QueryException.throwNewException("ERROR", "No parameter " +  mpd.toUpperCase() + " given to the Query");
+			}			
+		}
+
 	}
 
 	/**
