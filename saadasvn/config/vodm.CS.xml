@@ -127,7 +127,7 @@
     <TR>
      <TD>char.ConsSearch</TD>
      <TD>RA</TD>
-     <TD>pos.eq.ra;meta.main</TD>
+     <TD>POS_EQ_RA_MAIN</TD>
      <TD></TD>
      <TD>float8</TD>
      <TD>1</TD>
@@ -140,7 +140,7 @@
     <TR>
      <TD>char.ConsSearch</TD>
      <TD>DEC</TD>
-     <TD>pos.eq.dec;meta.main</TD>
+     <TD>POS_EQ_DEC_MAIN</TD>
      <TD></TD>
      <TD>float8</TD>
      <TD>1</TD>
