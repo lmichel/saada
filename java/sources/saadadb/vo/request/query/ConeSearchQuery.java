@@ -144,6 +144,8 @@ public class ConeSearchQuery extends VOQuery {
 		}
 		if ( size < 0.0) {
 			QueryException.throwNewException("ERROR","SIZE must be greater than 0.0 ");
+		} else	if( size > 10 ){
+			QueryException.throwNewException("ERROR","SIZE is limited to 10 deg");
 		}					
 		protocolParams.put("size", value);
 		size *= 60;
