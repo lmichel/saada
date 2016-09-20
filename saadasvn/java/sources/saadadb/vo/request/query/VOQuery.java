@@ -50,7 +50,7 @@ public abstract class VOQuery {
 			this.protocolParams.put(k.toLowerCase(), params.get(k));
 		}
 		/*
-		 * Protocol parals are set before to check the mandatoryDataParams, so that when the exception is raised, 
+		 * Protocol params are set before to check the mandatoryDataParams, so that when the exception is raised, 
 		 * the error response, which needs the protocolParams,  can be formatted  
 		 */
 		for(String mpd: mandatoryDataParams) {
