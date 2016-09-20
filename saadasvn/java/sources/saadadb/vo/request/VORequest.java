@@ -252,7 +252,7 @@ public abstract class VORequest {
 			Formator fmter = esf.getValue();
 			Messenger.printMsg(Messenger.TRACE, "Build Error Response file " + fmter.getResponseFilePath() + " due to " + e);
 			try {
-				fmter.setProtocolParams(voQuery.getProtocolParams());
+				fmter.setProtocolParams(this.voQuery.getProtocolParams());
 				fmter.buildErrorResponse(e);
 			} catch(Exception e2) {
 				try {
@@ -303,7 +303,8 @@ public abstract class VORequest {
 			try {
 				this.voQuery.close();
 			} catch (Exception e1) {
-				Messenger.printStackTrace(e1);
+				// Execption raised on close when the query cannot be executed
+				//Messenger.printStackTrace(e1);
 			}
 		}
 		SQLTable.dropTmpTables();
