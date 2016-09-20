@@ -64,7 +64,7 @@ public abstract class QueryResultFormator implements Formator{
 		this.oids = oids;
 		this.resultSize = oids.size();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#setResultSet(saadadb.query.result.SaadaInstanceResultSet)
 	 */
@@ -76,61 +76,65 @@ public abstract class QueryResultFormator implements Formator{
 	 */
 	public void setProtocolParams(Map<String, String> fmtParams) throws Exception{
 		this.protocolParams = fmtParams;
-		String rel, coll, cat;
+		String rel, coll, cat=null;
 		if( (coll = fmtParams.get("collection")) == null ) {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "No collection  in formator parameters");
 		}
-		if( (cat = fmtParams.get("category")) == null ) {
-			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "No category in formator parameters");
-		}
 		/*
-		 * Check relations to be include. They must exist in the collection/category
+		 * The category is set by the protocol : no mandatory
 		 */
-		if( (rel = fmtParams.get("relations")) != null ) {
-			if( ! this.supportResponseInRelation() ) {
-				QueryException.throwNewException(SaadaException.WRONG_PARAMETER, this.getClass() + " Does not support relations in relations");				
-			}
-			// Extract relation list
-			String[] rls = rel.split("(,|;|:| )");
-			boolean all = false;
-			// Look for the any flag
-			for( String r: rls) {
-				if( r.toLowerCase().startsWith("any-") ) {
-					all = true;
-					break;
+		if( (cat = fmtParams.get("category")) == null ) {
+			//QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "No category in formator parameters");
+			//}
+			/*
+			 * Check relations to be include. They must exist in the collection/category
+			 */
+			if( (rel = fmtParams.get("relations")) != null ) {
+				if( ! this.supportResponseInRelation() ) {
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, this.getClass() + " Does not support relations in relations");				
 				}
-			}
-			// Get all candidate relations
-			String[] drls = Database.getCachemeta().getRelationNamesStartingFromColl(coll, Category.getCategory(cat));
-			// Take all if flag "any" is set
-			if( all ) {
-				for( String dr: drls ) {
-					if (Messenger.debug_mode)
-						Messenger.printMsg(Messenger.DEBUG, "Add relation \"" + dr + "\" in response");
-					this.relationsToInclude.add(dr);							
-					this.hasExtensions = true;
-				}
-			}
-			// Match existing relations with requested relations
-			else {
-				for( String r: rls ) {
-					boolean found = false;
-					for( String dr: drls ) {
-						if( dr.equals(r)) {
-							found = true;
-							break;
-						}
+				// Extract relation list
+				String[] rls = rel.split("(,|;|:| )");
+				boolean all = false;
+				// Look for the any flag
+				for( String r: rls) {
+					if( r.toLowerCase().startsWith("any-") ) {
+						all = true;
+						break;
 					}
-					if( !found ) {
-						QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation " + r + " does not existe in " + coll + "_" + cat);					
-					} else {
+				}
+				// Get all candidate relations
+				String[] drls = Database.getCachemeta().getRelationNamesStartingFromColl(coll, Category.getCategory(cat));
+				// Take all if flag "any" is set
+				if( all ) {
+					for( String dr: drls ) {
 						if (Messenger.debug_mode)
-							Messenger.printMsg(Messenger.DEBUG, "Add relation " + r + " in response");
-						this.relationsToInclude.add(r);
+							Messenger.printMsg(Messenger.DEBUG, "Add relation \"" + dr + "\" in response");
+						this.relationsToInclude.add(dr);							
 						this.hasExtensions = true;
 					}
 				}
+				// Match existing relations with requested relations
+				else {
+					for( String r: rls ) {
+						boolean found = false;
+						for( String dr: drls ) {
+							if( dr.equals(r)) {
+								found = true;
+								break;
+							}
+						}
+						if( !found ) {
+							QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Relation " + r + " does not existe in " + coll + "_" + cat);					
+						} else {
+							if (Messenger.debug_mode)
+								Messenger.printMsg(Messenger.DEBUG, "Add relation " + r + " in response");
+							this.relationsToInclude.add(r);
+							this.hasExtensions = true;
+						}
+					}
 
+				}
 			}
 		}
 	}
@@ -265,7 +269,7 @@ public abstract class QueryResultFormator implements Formator{
 	 * @throws Exception 
 	 */
 	protected abstract void writeDMFieldsAndGroups() throws Exception ;
-	
+
 	/**
 	 * Only used for ADQL formators, does nothing orherwise
 	 * @param adqlResultSet
