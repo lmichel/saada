@@ -19,6 +19,7 @@ import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.database.Repository;
 import saadadb.util.Messenger;
+import saadadb.vo.tap.SaadaJob;
 import ajaxservlet.accounting.UserTrap;
 
 /**
@@ -66,6 +67,7 @@ public class Download extends SaadaServlet {
 				}
 				String ext    = request.getParameter("ext");
 				String report = request.getParameter("report");
+				String jobreport = request.getParameter("jobreport");
 				if( soid != null  ) {
 					oid = Long.parseLong(soid);
 					SaadaInstance si = Database.getCache().getObject(oid);
@@ -117,6 +119,10 @@ public class Download extends SaadaServlet {
 						}
 					}
 					downloadProduct(request, response, product_path);
+					return;
+				} else if( jobreport != null ) { 
+					downloadProduct(request, response, UserTrap.getUserAccount(request).getJobReportDir() + jobreport);
+					Repository.cleanUpReportDir();
 					return;
 				} else if( report != null ) { 
 					downloadProduct(request, response, UserTrap.getUserAccount(request).getReportDir() +report);
