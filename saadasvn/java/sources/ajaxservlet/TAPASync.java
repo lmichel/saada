@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ajaxservlet.accounting.UserAccount;
 import saadadb.database.Database;
 import saadadb.util.Messenger;
 import saadadb.vo.tap.SaadaJob;
@@ -37,7 +38,9 @@ public class TAPASync extends SaadaServlet {
 				private static final long serialVersionUID = 1L;
 
 				public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
-					return request.getSession().getId();
+					System.out.println("extractUserId");
+					return UserAccount.ASYNC_TAP_JOB_DIR;
+					//return request.getSession().getId();
 				}
 			});
 			uws.setXsltURL(Database.getUrl_root()+"/styles/uws.xsl");
