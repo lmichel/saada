@@ -63,7 +63,7 @@ $().ready(function() {
 	new $.SapControler(sapModel, sapView);
 
 	var cartModel       = new $.CartModel();
-	cartView            = new $.CartView();
+	cartView            = new $.CartView();	
 	new $.CartControler(cartModel, cartView);
 
 	/*********************************************************************************************
@@ -115,7 +115,6 @@ $().ready(function() {
 	 */
 	$("#relationselect").change(function() {
 		$("#relationselect option:selected").each(function () {
-			console.log($(this).text());
 			var text = $(this).text();
 			if( !text.startsWith("--") ) {
 				saadaqlView.fireSelectRelationEvent(text);
