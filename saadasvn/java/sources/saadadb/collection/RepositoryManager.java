@@ -44,6 +44,19 @@ public class RepositoryManager {
 	 * @throws FatalException
 	 */
 	protected static final void removeFile(String filename, String collection, int category) throws FatalException {
+		/*
+		 * Remove the vignettes in any cases
+		 */
+		if( category == Category.IMAGE ) {	
+			String filepath = Database.getRepository() 
+			+ Database.getSepar() + collection
+			+ Database.getSepar() + Category.explain(category)
+			+ Database.getSepar() + "JPEG"
+			+ Database.getSepar() ;
+			removeFile(filepath  + (new File(filename)).getName() +".jpg");
+
+		}
+
 		if( filename.indexOf(Database.getSepar()) != -1 ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Removing a file <" + filename + "> not stored within the repository is not allowed");
@@ -58,13 +71,6 @@ public class RepositoryManager {
 			+ Database.getSepar() + Category.explain(category)
 			+ Database.getSepar() ;
 			removeFile(filepath + filename);
-			if( category == Category.IMAGE ) {
-				int pos;
-				if( (pos = filepath.lastIndexOf(".")) != -1  ) {
-					filepath = filepath + "JPEG" + Database.getSepar() + filepath.substring(0, pos) + ".jpg";
-					removeFile(filepath);
-				}
-			}
 		}
 	}
 
@@ -86,7 +92,22 @@ public class RepositoryManager {
 			String[] fns = ((new File(path)).list());
 			if( fns != null ) {
 				for( String fn: fns ){
-					removeFile(fn, collection, category);
+					File f = new File(path + fn);
+					if( !f.isDirectory()) f.delete();
+				}
+			}
+			if( category == Category.IMAGE ) {
+				path = Database.getRepository() 
+						+ Database.getSepar() + collection
+						+ Database.getSepar() + Category.explain(category)
+						+ Database.getSepar() + "JPEG"
+						+ Database.getSepar();
+				fns = ((new File(path)).list());
+				if( fns != null ) {
+					for( String fn: fns ){
+						File f = new File(path + fn);
+						if( !f.isDirectory()) f.delete();
+					}
 				}
 			}
 
