@@ -29,10 +29,11 @@ import uws.job.Result;
 public class SaadaJob extends AbstractJob {
 	private static final long serialVersionUID = 1L;
 	private final String owner;
+	private  String id;
 	private static int globalCounter = 0;
 	private int localCounter; // counter used to avoid duplication of job ids or vo reports
 	private final String reportNameRoot;
-	
+	private static final Pattern ROOTJOB_PATTERN = Pattern.compile("FROM\\s+(" + RegExp.CLASSNAME + ")[\\s;]?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 	/**
 	 * @param lstParam
 	 * @throws UWSException
@@ -40,6 +41,8 @@ public class SaadaJob extends AbstractJob {
 	public SaadaJob(Map<String, String> lstParam) throws UWSException {
 		super(lstParam);
 		this.owner = lstParam.get("owner");
+		System.out.println("owner" + this.owner);
+
 		globalCounter++;
 		reportNameRoot ="TAPResult" + "_"+getJobId();
 	}
@@ -52,6 +55,7 @@ public class SaadaJob extends AbstractJob {
 	public SaadaJob(String ownerID, Map<String, String> lstParam) throws UWSException {
 		super(ownerID, lstParam);
 		this.owner = lstParam.get("owner");
+		System.out.println("owner" + this.owner);
 		globalCounter++;
 		reportNameRoot ="TAPResult" + "_"+getJobId();
 	}
@@ -67,6 +71,7 @@ public class SaadaJob extends AbstractJob {
 	public SaadaJob(String jobName, String userId, long maxDuration, Date destructTime, Map<String, String> lstParam) throws UWSException {
 		super(jobName, userId, maxDuration, destructTime, lstParam);
 		this.owner = lstParam.get("owner");
+		System.out.println("owner" + this.owner);
 		globalCounter++;
 		reportNameRoot ="TAPResult" + "_"+getJobId();
 	}
@@ -76,6 +81,8 @@ public class SaadaJob extends AbstractJob {
 	 * @see uws.job.AbstractJob#generateJobId()
 	 */
 	public String generateJobId(){
+		System.out.println("couco");
+		try{
 		String rootJobName = "saadajob";
 		String query = additionalParameters.get("query");
 		/*
@@ -86,16 +93,20 @@ public class SaadaJob extends AbstractJob {
 			query = additionalParameters.get("QUERY");
 		}
 		if( query != null ) {
-			Pattern p = Pattern.compile("FROM\\s+(" + RegExp.CLASSNAME + ")[\\s;]?", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-			Matcher m = p.matcher(query);
+			Matcher m = ROOTJOB_PATTERN.matcher(query);
 			if( m.find()  ) {
 				rootJobName = m.group(1).trim();
 				if( rootJobName.length() > 32 ) {
 					rootJobName = rootJobName.substring(0, 32);
 				}
 			}
-		}		
-		return  (this.localCounter) + "_" + rootJobName;
+		}
+		this.id = (this.localCounter) + "_" + rootJobName	;	
+		System.out.println(this.id);
+		return  this.id;
+		}catch (Exception e) {
+           e.printStackTrace();		}
+		return null;
 	}
 	
 	@Override
@@ -130,7 +141,7 @@ public class SaadaJob extends AbstractJob {
 		if (ue.getHttpErrorCode() == UWSException.INTERNAL_SERVER_ERROR){
 			String errorFileName = "UWSERROR_Job"+getJobId()+"_"+System.currentTimeMillis()+".txt";
 			try{
-				String errorURL = Database.getUrl_root()+"/getproduct?report="+errorFileName;
+				String errorURL = Database.getUrl_root()+"/getproduct?jobreport="+errorFileName;
 				UWSToolBox.publishErrorSummary(this, ue, ErrorType.FATAL, errorURL,Repository.getUserReportsPath(this.owner), errorFileName);
 			}catch(IOException ioe){
 				throw new UWSException(UWSException.INTERNAL_SERVER_ERROR, ioe, "Error while writing the error file for the job N°"+getJobId()+" !");
@@ -167,13 +178,13 @@ public class SaadaJob extends AbstractJob {
 				throw new InterruptedException();
 			
 			// Update the job description and status:
-			addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension(params.format)));
+			addResult(new Result("Result", Database.getUrl_root()+"/getproduct?jobreport="+reportNameRoot + QueryResultFormator.getFormatExtension(params.format)));
 			
 			if(params.format.equalsIgnoreCase("json")) {
 				TAPToolBox.executeTAPQuery(params.query, params.lang.equals("SaadaQL"), "votable", params.maxrec, Repository.getUserReportsPath(owner), reportNameRoot);
 				if (thread.isInterrupted())
 					throw new InterruptedException();
-				addResult(new Result("Result", Database.getUrl_root()+"/getproduct?report="+reportNameRoot + QueryResultFormator.getFormatExtension("votable")));
+				addResult(new Result("Result", Database.getUrl_root()+"/getproduct?jobreport="+reportNameRoot + QueryResultFormator.getFormatExtension("votable")));
 			}
 		}catch(UWSException ue){
 			throw ue;
@@ -184,4 +195,7 @@ public class SaadaJob extends AbstractJob {
 		}
 	}
 
+	public String toString() {
+		return (this.owner + " " + this.id);
+	}
 }
