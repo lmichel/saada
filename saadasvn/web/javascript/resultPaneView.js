@@ -601,7 +601,8 @@ jQuery
 				table += "</table>";
 				$("#resultpane").html(table);
 
-				var orderParams = saadaqlView.fireOrderByParameters();
+				var orderParams = nativeConstraintEditor.getOrderBy();
+
 				$('#datatable th').each(function() {
 					var att = $(this).text();
 					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link'  && att != 'Plot') {
@@ -620,7 +621,8 @@ jQuery
 							ah = {nameorg: att, nameattr: att};
 						}
 						var s = new Sorter_mVc($(this), $(this).parent(), ah, saadaqlView.fireSortColumnEvent);
-						s.draw();
+						s.draw();							
+
 						if( att == 'Access' && orderParams.nameattr == 'oidsaada') {
 							s.activeArrow(orderParams.asc);
 						} else if( att == 'Detail'  && orderParams.nameattr == 'oidsaada') {

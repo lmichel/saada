@@ -8,7 +8,7 @@ jQuery.extend({
 		/**
 		 * who is listening to us?
 		 */
-		var listeners ;
+		var listener ;
 		/*
 		 * What we have to store and play with
 		 */
@@ -31,6 +31,9 @@ jQuery.extend({
 		this.addListener = function(list){
 			listener = list;
 		};
+		this.getListener = function(){
+			return listener;
+		}
 		/*
 		 * Event processing
 		 */
@@ -40,6 +43,17 @@ jQuery.extend({
 			var md = MetadataSource.relations;
 			var disabled = new Array();
 			var selected = 0;
+			var that = this;
+			attributesHandlers = new Array();
+			MetadataSource.getTableAtt(
+					globalTreePath
+					, function() {
+						var ahm = MetadataSource.ahMap(globalTreePath);
+						for( var i=0 ; i<ahm.length ; i++){
+							attributesHandlers[ahm[i].nameattr] = ahm[i]; 			
+						}
+					});
+
 			if( globalTreePath.category == 'TABLE' ||  globalTreePath.category == 'MISC'||  globalTreePath.category == 'FLATFILE') {
 				disabled[disabled.length] = 0;
 				selected = 1;
@@ -61,6 +75,8 @@ jQuery.extend({
 			if(limit != null) {
 				queryView.fireAddConstraint("Merged", "limit", [limit]);
 			}
+			nativeConstraintEditor.fireOrderBy("oidsaada", true)
+			//this.sortColumn("oidsaada", "desc");
 
 			if( andsubmit == true ) {
 				resultPaneView.fireSubmitQueryEvent();
@@ -221,34 +237,42 @@ jQuery.extend({
 				m.notifyInitDone();
 
 			} else {
-				$("#orderby").each(function() {
-					$(this).html('');
+				$("#kwtab_orderby").each(function() {
+					$(this).val('');
 					orderby = null;
 				});
 
 			}
 		};
 		this.sortColumn= function(nameattr, sens) {
+			nativeConstraintEditor.fireOrderBy(nameattr, (sens == "desc"));
+			resultPaneView.fireSubmitQueryEvent();
+			return ;
+
 			if( sens != null ) {
-				this.setOrderBy(nameattr);		
+				$("#kwtab_orderby").val(nameattr);
+
 				if( sens == 'asc' ) {
-					$('#orderby_asc').prop('checked',true);
+					$('#kwtab_orderasc').prop('checked',true);
 				} else {			
-					$('#orderby_des').prop('checked',true);
+					$('#kwtab_orderdesc').prop('checked',true);
 				}
+				//this.setOrderBy(nameattr);	
+
 			} else {
-				this.setOrderBy(null);		
+				$("#kwtab_orderby").val("");
+				//this.setOrderBy(null);		
 			}
 			this.updateQuery();
 			resultPaneView.fireSubmitQueryEvent();
 		};
-		this.getOrderByParameters = function() {
-			var nameattr ='';;
-			$("#orderby span").each(function() {
-				nameattr = $(this).text();
-			});
-			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
-		};
+//		this.getOrderByParameters = function() {
+//			var nameattr ='';;
+//			$("#kwtab_orderby").each(function() {
+//				nameattr = $(this).text();
+//			});
+//			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
+//		};
 		this.processOIDTableEvent= function(oidtable){
 			var ah = attributesHandlers["oidtable"];
 			if( ah != undefined) {
@@ -295,63 +319,63 @@ jQuery.extend({
 			patternModel.initRelation(relations[relation]);
 		};
 
-		this.updateQuery = function() {
-			/*
-			 * Query can not be updated while category/class/collection are not set
-			 */
-			if( typeof category == 'undefined' ) {
-				return ;
-			}
-			var query = "Select " + category + " From " + classe + " In " + collection ;
-			var cq = "";
-			$("#CoordList span").each(function() {
-				if( cq.length > 0 ) cq += ",\n";
-				cq +=  '    ' + $(this).text();
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWherePosition { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#ConstraintsList div").each(function() {
-				cq +=  '    ' + editors[$(this).attr('id')].getADQL(false) ;
-				if( cq.length > 50 ) cq += '\n';
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWhereAttributeSaada { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#UCDConstraintsList div").each(function() {
-				cq +=  '    ' + ucdeditors[$(this).attr('id')].getADQL(false) ;
-				if( cq.length > 50 ) cq += '\n';
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWhereUCD { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#patternlist input").each(function() {
-				if( cq.length > 0 ) cq += "\n";
-				cq += unescape($(this).val());
-			});
-			if( cq.length > 0 ) {
-				query += "\nWhereRelation { \n" + cq + "\n    }";
-			}
-
-			$("#orderby span").each(function() {
-				query += "\nOrder By " + $(this).text();
-				if( $("input[name=sens]:checked").attr("value") == 'des' ) {
-					query += " desc";
-				}
-			});
-
-			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
-				query += '\nLimit ' + $("#qlimit").val();
-			}
-
-			that.notifyQueryUpdated(query);
-		};
+//		this.updateQuery = function() {
+//			/*
+//			 * Query can not be updated while category/class/collection are not set
+//			 */
+//			if( typeof category == 'undefined' ) {
+//				return ;
+//			}
+//			var query = "Select " + category + " From " + classe + " In " + collection ;
+//			var cq = "";
+//			$("#CoordList span").each(function() {
+//				if( cq.length > 0 ) cq += ",\n";
+//				cq +=  '    ' + $(this).text();
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWherePosition { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#ConstraintsList div").each(function() {
+//				cq +=  '    ' + editors[$(this).attr('id')].getADQL(false) ;
+//				if( cq.length > 50 ) cq += '\n';
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWhereAttributeSaada { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#UCDConstraintsList div").each(function() {
+//				cq +=  '    ' + ucdeditors[$(this).attr('id')].getADQL(false) ;
+//				if( cq.length > 50 ) cq += '\n';
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWhereUCD { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#patternlist input").each(function() {
+//				if( cq.length > 0 ) cq += "\n";
+//				cq += unescape($(this).val());
+//			});
+//			if( cq.length > 0 ) {
+//				query += "\nWhereRelation { \n" + cq + "\n    }";
+//			}
+//
+//			$("#kwtab_orderby").each(function() {
+//				query += "\nOrder By " + $(this).val();
+//				if( $("input[name=sens]:checked").attr("value") == 'des' ) {
+//					query += " desc";
+//				}
+//			});
+//
+//			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
+//				query += '\nLimit ' + $("#qlimit").val();
+//			}
+//
+//			that.notifyQueryUpdated(query);
+//		};
 
 		this.processRemoveFirstAndOr = function(key) {
 			delete editors[key];
@@ -367,7 +391,6 @@ jQuery.extend({
 		};
 
 		this.processStoreHisto = function(query) {
-			console.log( histoQueryPtr  + " "+  histoQuery.length)
 			/*
 			 * Do not store if the query has not change
 			 */
