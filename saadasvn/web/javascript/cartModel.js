@@ -2,7 +2,7 @@ jQuery.extend({
 
 	CartModel: function(nodekey, description){
 
-		var listeners;
+		var listener;
 		var that = this;
 
 		var cartData = {};

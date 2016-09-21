@@ -131,7 +131,6 @@ DataTree = function () {
 		 * Inserting the meta node after the tree is complete is quite more faster the doing it while the tre building
 		 */
 		for(var n=0 ; n<classNodeIds.length ; n++) {
-			console.log(classNodeIds.length)
 			var node = $("a#" + classNodeIds[n]);
 			node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
 			
