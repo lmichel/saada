@@ -45,7 +45,7 @@ public class TAPASync extends SaadaServlet {
 			});
 			uws.setXsltURL(Database.getUrl_root()+"/styles/uws.xsl");
 			uws.addJobList(new JobList<SaadaJob>("async"));
-		}catch(UWSException ex){
+		} catch(UWSException ex){
 			throw new ServletException(ex);
 		}
 	} 
