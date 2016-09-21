@@ -8,6 +8,7 @@ import saadadb.compat.Files;
 import saadadb.database.Repository;
 import saadadb.util.Messenger;
 import saadadb.util.WorkDirectory;
+import saadadb.vo.tap.SaadaJob;
 import ajaxservlet.formator.FilterBase;
 import ajaxservlet.formator.FilterKeys;
 import ajaxservlet.formator.StoredFilter;
@@ -23,7 +24,9 @@ public class UserAccount implements Serializable {
 	protected QueryContext                  queryContext;
 	protected HashMap<String, StoredFilter> userfilters;
 	private String 							reportDir;
+	private String 							jobReportDir;
 	public static final String              cartDirectory = "cartBuilder";
+	public static final String ASYNC_TAP_JOB_DIR = "AsyncJobs";
 	
 	UserAccount(String session_id) throws Exception {
 		this.sessionId = session_id;
@@ -35,6 +38,7 @@ public class UserAccount implements Serializable {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Create UWS ZIP archive queue for session " + session_id);
 		this.reportDir = Repository.getUserReportsPath(sessionId);;
+		this.jobReportDir = Repository.getVoreportsPath() + File.separator + ASYNC_TAP_JOB_DIR + File.separator;
 		/*
 		 * User report directory must not be deleted because it can be populated out of any session context
 		 * e.g. a TAP request will put query report on the behalf of a session ID (sent by cookie) but the 
@@ -54,6 +58,12 @@ public class UserAccount implements Serializable {
 	 */
 	public String getReportDir() {
 		return this.reportDir;
+	}
+	/**
+	 * @return
+	 */
+	public String getJobReportDir() {
+		return this.jobReportDir;
 	}
 
 	/**
