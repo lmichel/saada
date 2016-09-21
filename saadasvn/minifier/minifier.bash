@@ -61,9 +61,6 @@ js_local_array=(
 	 "resultPaneModel.js"  \
      "resultPaneView.js"  \
      "resultPaneControler.js"  \
-     "kwconstraintModel.js"  \
-     "kwconstraintView.js"  \
-     "kwconstraintControler.js"  \
      "saadaqlModel.js"  \
      "saadaqlView.js"  \
      "saadaqlControler.js" \
