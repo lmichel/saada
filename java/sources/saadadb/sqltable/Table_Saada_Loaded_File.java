@@ -49,6 +49,12 @@ public class Table_Saada_Loaded_File {
 		String category = Category.explain(cdh.getCategory());
 		String class_name;
 		/*
+		 * prd name can be either a filename or a full path.
+		 * We need to work with the filename, not the path
+		 */
+		String prdname = (new File(prd.getName())).getName();
+
+		/*
 		 * No class for flatfiles
 		 */
 		if( mc == null ) {
@@ -59,14 +65,14 @@ public class Table_Saada_Loaded_File {
 		}
 		String repository_name;
 		if( rep_name == null || rep_name.length() == 0 ) {
-			repository_name = getRepositoryname((new File(prd.getName())).getName(), coll_name, category);
+			repository_name = getRepositoryname(prdname, coll_name, category);
 		}
 		else {
 			repository_name = rep_name;
 		}
 
 		String 		sql = "insert into saada_loaded_file  values('" 
-			+ prd.getName() + "','"
+			+ prdname + "','"
 			+ prd.getActualOidsaada() + "','"
 			+ repository_name + "','"
 			+ coll_name + "','"
