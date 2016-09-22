@@ -202,6 +202,12 @@ public class Repository {
 		CopyFile.copy(org_file, reportFile + dest_file);
 	}
 
+	/**
+	 * @param org_file : Full path of the origin file
+	 * @param dest_file : name of the destination file
+	 * @param oidsaada
+	 * @throws Exception
+	 */
 	public static void storeDataFile(String org_file,String dest_file, long oidsaada) throws Exception {
 		String reportFile = Database.getRepository() 
 		+ separ + SaadaOID.getCollectionName(oidsaada) 
