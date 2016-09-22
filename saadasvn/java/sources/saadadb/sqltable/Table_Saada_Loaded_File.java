@@ -97,24 +97,27 @@ public class Table_Saada_Loaded_File {
 		String category = Category.explain(cdh.getCategorySaada());
 		String class_name;
 		/*
+		 * prd name can be either a filename or a full path.
+		 * We need to work with the filename, not the path
+		 */
+		String prdname = (new File(prd.getName())).getName();
+		/*
 		 * No class for flatfiles
 		 */
 		if( mc == null ) {
 			class_name = "FLATFILEUserColl";
-		}
-		else {
+		} else {
 			class_name = mc.getName();
 		}
 		String repository_name;
 		if( rep_name == null || rep_name.length() == 0 ) {
-			repository_name = getRepositoryname(prd.getName(), coll_name, category);
-		}
-		else {
+			repository_name = getRepositoryname(prdname, coll_name, category);
+		} else {
 			repository_name = rep_name;
 		}
-		
+
 		String sql =
-			  prd.getName() + "\t"
+			  prdname + "\t"
 			+ prd.getSaadainstance().getOid() + "\t"
 			+ repository_name + "\t"
 			+ coll_name + "\t"
@@ -180,18 +183,18 @@ public class Table_Saada_Loaded_File {
 				return prd_name;
 			}
 			/*
-			 * Same file name already recorded : add .inst# after the name
+			 * Same file name already recorded : add .inst# before the name
 			 */
 			else {
 				squery.close();
 				SQLQuery squery2 = new SQLQuery();
-				rs = squery2.run("select count(filename) from saada_loaded_file where collection = '" 
+				ResultSet rs2 = squery2.run("select count(filename) from saada_loaded_file where collection = '" 
 						+ coll + "' and category = '" 
 						+ cat  + "' and  repositoryname like '" 
 						+ "inst%." + prd_name + "'");
 				int num =0;
-				if( rs.next() ) {
-					num = rs.getInt(1);
+				if( rs2.next() ) {
+					num = rs2.getInt(1);
 				    squery2.close();
 					return "inst" + (num+1) + "." + prd_name;
 				}
