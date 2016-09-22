@@ -202,6 +202,14 @@ public class Repository {
 		CopyFile.copy(org_file, reportFile + dest_file);
 	}
 
+	public static void storeDataFile(String org_file,String dest_file, long oidsaada) throws Exception {
+		String reportFile = Database.getRepository() 
+		+ separ + SaadaOID.getCollectionName(oidsaada) 
+		+ separ + SaadaOID.getCategoryName(oidsaada) 
+		+ separ;
+		CopyFile.copy(org_file, reportFile + dest_file);
+	}
+
 	/**
 	 * Remove from the repository the directory tree of the collection coll
 	 * @param coll: collection to remove
