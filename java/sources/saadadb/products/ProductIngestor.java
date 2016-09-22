@@ -750,20 +750,17 @@ public class ProductIngestor {
 		if( this.product.mapping.getRepositoryMode() == RepositoryMode.COPY || 
 				this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE) {
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this.product, null);
-			String reportFile = Database.getRepository() 
-					+ File.separator + this.product.mapping.getCollection() 
-					+ File.separator + Category.explain(this.product.mapping.getCategory()) 
-					+ File.separator;
 			/*
 			 * In case of FooProduct or SQL table
 			 */
 			if( this.product.dataFile != null) {
-				CopyFile.copy(this.product.dataFile.getAbsolutePath(), /*reportFile +*/ repname);
+				Repository.storeDataFile(this.product.dataFile.getAbsolutePath(), repname, this.saadaInstance.oidsaada);
+				//CopyFile.copy(this.product.dataFile.getAbsolutePath(), /*reportFile +*/ repname);
 				if( this.product.mapping.getRepositoryMode() == RepositoryMode.MOVE ) {
-					Messenger.printMsg(Messenger.TRACE, "File moved to " + /*reportFile +*/ repname);
+					Messenger.printMsg(Messenger.TRACE, "File moved to repository " + /*reportFile +*/ repname);
 					this.product.dataFile.delete();
 				} else {
-					Messenger.printMsg(Messenger.TRACE, "File copied to " + /*reportFile +*/ repname);
+					Messenger.printMsg(Messenger.TRACE, "File copied to repository " + /*reportFile +*/ repname);
 				}
 			}
 		}
