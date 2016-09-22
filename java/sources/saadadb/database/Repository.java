@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import saadadb.collection.Category;
+import saadadb.collection.SaadaOID;
 import saadadb.compat.Files;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
@@ -281,6 +282,20 @@ public class Repository {
 		+ separ;
 		CopyFile.copy(org_file, reportFile + dest_file);
 	}
+	/**
+	 * @param org_file : Full path of the origin file
+	 * @param dest_file : name of the destination file
+	 * @param oidsaada
+	 * @throws Exception
+	 */
+	public static void storeDataFile(String org_file,String dest_file, long oidsaada) throws Exception {
+		String reportFile = Database.getRepository() 
+		+ separ + SaadaOID.getCollectionName(oidsaada) 
+		+ separ + SaadaOID.getCategoryName(oidsaada) 
+		+ separ;
+		CopyFile.copy(org_file, reportFile + dest_file);
+	}
+
 
 	/**
 	 * Remove from the repository the directory tree of the collection coll
