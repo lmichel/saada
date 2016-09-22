@@ -16,6 +16,7 @@ import saadadb.collection.Position;
 import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.IgnoreException;
@@ -402,7 +403,12 @@ public class Product /*extends File*/ {
 		 */
 		if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.COPY || 
 			this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE) {
+			/*
+			 * Return a file name. 
+			 */
+			
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this, null, loadedfilewriter);
+			Repository.storeDataFile(this.dataPointer.file.getAbsolutePath(), repname, this.saadainstance.getOid());
 			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), /*reportFile +*/ repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
 				if (Messenger.debug_mode)
