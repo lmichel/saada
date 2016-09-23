@@ -245,7 +245,8 @@ jQuery.extend({
 			}
 		};
 		this.sortColumn= function(nameattr, sens) {
-			nativeConstraintEditor.fireOrderBy(nameattr, (sens == "desc"));
+			console.log("@@@@@@@@@@@@@@@ " + sens + " " + (!(sens == "asc")))
+			nativeConstraintEditor.fireOrderBy(nameattr, !(sens == "asc"));
 			resultPaneView.fireSubmitQueryEvent();
 			return ;
 

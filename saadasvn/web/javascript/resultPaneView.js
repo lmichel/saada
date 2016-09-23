@@ -615,6 +615,8 @@ jQuery
 							ah = {nameorg: 'Name', nameattr: 'namesaada'};
 						} else if( att == 'Position' ) {
 							ah = {nameorg: 'Position', nameattr: 'pos_ra_csa'};
+						} else if( att == 'Size (deg)' ) {
+							ah = {nameorg: 'Size (deg)', nameattr: 'size_alpha_csa'};
 						} else if( att.startsWith('Error ') ) {
 							ah = {nameorg: att, nameattr: 'error_maj_csa'};
 						} else {
