@@ -62,6 +62,7 @@ public abstract class ImageUtils {
 			int bin_size = 256;
 			int[] size;
 			int ww, hh, nbit;
+			System.out.println(productFile);
 			FitsProduct fp = (FitsProduct) productFile;
 			Object img_pixels= fp.getImagePixels();
 			nbit = fp.getBitPIx();
