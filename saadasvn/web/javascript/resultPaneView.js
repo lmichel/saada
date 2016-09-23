@@ -14,6 +14,11 @@ jQuery
 		/**
 		 * add a listener to this view
 		 */
+		/**
+		 * Position of the datatable panel
+		 */
+		this.scrollLeft = 0
+		this.scrollPaneSelector = ".custom-dt";
 		this.addListener = function(list) {
 			listeners.push(list);
 		};
@@ -599,10 +604,8 @@ jQuery
 					+ "</tbody>";
 
 				table += "</table>";
-				$("#resultpane").html(table);
-
-				var orderParams = nativeConstraintEditor.getOrderBy();
-
+				$("#resultpane").html(table);			
+				var that = this;
 				$('#datatable th').each(function() {
 					var att = $(this).text();
 					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link'  && att != 'Plot') {
@@ -622,9 +625,14 @@ jQuery
 						} else {
 							ah = {nameorg: att, nameattr: att};
 						}
-						var s = new Sorter_mVc($(this), $(this).parent(), ah, saadaqlView.fireSortColumnEvent);
-						s.draw();							
+						
+						var orderParams = nativeConstraintEditor.getOrderBy();
 
+						var s = new Sorter_mVc($(this), $(this).parent(), ah
+								, saadaqlView.fireSortColumnEvent
+								, function(scrollLeft){that.scrollLeft = scrollLeft;});
+						s.setScrollPaneSelector(that.scrollPaneSelector);
+						s.draw();		
 						if( att == 'Access' && orderParams.nameattr == 'oidsaada') {
 							s.activeArrow(orderParams.asc);
 						} else if( att == 'Detail'  && orderParams.nameattr == 'oidsaada') {
@@ -697,8 +705,11 @@ jQuery
                	 "pos": "top-center"
                 });				              	
 
+				var datatable = CustomDataTable.create("datatable", options, positions);		
+				datatable.on( 'draw.dt', function () {
+				    $(that.scrollPaneSelector).scrollLeft(that.scrollLeft); 
+				} );
 
-				var datatable = CustomDataTable.create("datatable", options, positions);			
 				$('#datatable_wrapper').css("overflow", "inherit");
 				var columnSelector = function(states){
 					for( var n=0 ; n<states.length ; n++){
@@ -715,7 +726,9 @@ jQuery
 				}
 				$('#ColumnSelector').click(function() {
 					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
-				});
+				});	
+				
+
 				return;
 			}
 		};
