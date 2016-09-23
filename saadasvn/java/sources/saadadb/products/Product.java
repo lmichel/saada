@@ -409,7 +409,7 @@ public class Product /*extends File*/ {
 			
 			repname = Table_Saada_Loaded_File.recordLoadedFile(this, null, loadedfilewriter);
 			Repository.storeDataFile(this.dataPointer.file.getAbsolutePath(), repname, this.saadainstance.getOid());
-			CopyFile.copy(this.dataPointer.file.getAbsolutePath(), /*reportFile +*/ repname);
+			//CopyFile.copy(this.dataPointer.file.getAbsolutePath(), /*reportFile +*/ repname);
 			if( this.configuration.getRepository_mode() == ConfigurationDefaultHandler.MOVE ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "Remove input file <" + this.dataPointer.file.getAbsolutePath() + ">");
