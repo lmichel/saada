@@ -12,6 +12,7 @@ import saadadb.collection.Category;
 import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.Repository;
+import saadadb.database.spooler.Spooler;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.FatalException;
 import saadadb.exceptions.QueryException;
@@ -98,6 +99,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 		/*
 		 * Compute the key (likely no longer useful)
 		 */
+		squery = new SQLQuery();
 		rs = squery.run("SELECT max(pk) from " + meta_table_name);
 		int max_key=0;
 		while( rs.next() ) {
