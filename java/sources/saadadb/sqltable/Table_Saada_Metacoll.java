@@ -98,6 +98,7 @@ public class Table_Saada_Metacoll extends SQLTable {
 		/*
 		 * Compute the key (likely no longer useful)
 		 */
+		squery = new SQLQuery();
 		rs = squery.run("SELECT max(pk) from " + meta_table_name);
 		int max_key=0;
 		while( rs.next() ) {
