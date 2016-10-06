@@ -134,7 +134,6 @@ jQuery.extend({
 			queriableUCDs = new Array();
 			relations = new Array();
 			var params;
-console.log("processShowFilterManager");
 			if (globalTreePath.length == 3) {
 				collection = globalTreePath[0];
 				category = globalTreePath[1];
@@ -190,7 +189,6 @@ console.log("processShowFilterManager");
 		};
 
 		this.processInitExisting = function() {
-			console.log("processInitExisting");
 
 			var param = "cat=" + category + "&coll=" + collection + "&saadaclass=" + classe;
 			var sfname, nname;

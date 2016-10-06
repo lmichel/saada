@@ -76,11 +76,18 @@ public class GetMeta extends SaadaServlet {
 				rd = request.getRequestDispatcher("aharray");		
 				rd.forward(request, response);			
 			}
+			else if( "collection".equals(query)) {
+				JSONObject retour = new JSONObject();
+				retour.put("name", name);
+				retour.put("description", Database.getCachemeta().getCollection(name).getDescription());
+				JsonUtils.teePrint(out,retour.toJSONString());
+			}
 			else if( "relation".equals(query)) {
 				MetaRelation mr = Database.getCachemeta().getRelation(name);
 				ArrayList<String> qls = mr.getQualifier_names();
 				JSONObject jsrelation = new JSONObject();
 				jsrelation.put("name", name);
+				jsrelation.put("description", mr.getDescription());
 				jsrelation.put("starting_collection", mr.getPrimary_coll());
 				jsrelation.put("starting_category", Category.explain(mr.getPrimary_category()));
 				jsrelation.put("ending_collection", mr.getSecondary_coll());
@@ -91,130 +98,159 @@ public class GetMeta extends SaadaServlet {
 				}
 				jsrelation.put("qualifiers", jsq);
 				JsonUtils.teePrint(out,jsrelation.toJSONString());
-			}
-			else if( "ah".equals(query)) {
-				String[] nodes = name.split("\\.");
-				int category;
-				String collection;
-				MetaClass mc= null;
-				/*
-				 * data node like collection.category
-				 */
-				if( nodes.length == 2 ) {
-					category = Category.getCategory(nodes[1]);
-					collection = nodes[0];
-				}
-				/*
-				 * data node like classname
-				 */				
-				else if( nodes.length == 1 ) {
-					mc = Database.getCachemeta().getClass(nodes[0]);
-					category = mc.getCategory();
-					collection = mc.getCollection_name();
-				}
-				else {				
-					reportJsonError(request, response, "Query badly formed (" + nodes.length + " nodes)");
-					return;
-				}
-				DisplayFilter colfmtor;
-				switch(category) {
-				case Category.TABLE :			
-					colfmtor = new TableDisplayFilter(collection);
-					colfmtor.setMetaClass(mc);
-					break;
-				case Category.ENTRY :		
-					colfmtor = new EntryDisplayFilter(collection);
-					colfmtor.setMetaClass(mc);
-					break;
-				case Category.IMAGE :		
-					colfmtor = new ImageDisplayFilter(collection);
-					colfmtor.setMetaClass(mc);
-					break;
-				case Category.SPECTRUM :		
-					colfmtor = new SpectrumDisplayFilter(collection);
-					colfmtor.setMetaClass(mc);
-					break;
-				case Category.MISC :		
-					colfmtor = new MiscDisplayFilter(collection);
-					colfmtor.setMetaClass(mc);
-					break;
-				case Category.FLATFILE :		
-					colfmtor = new FlatfileDisplayFilter(collection);
-					colfmtor.setMetaClass(null);
-					break;
-				default :
-					reportJsonError(request, response, "category \"" + Category.explain(category) + "\" not supported");
-					return ;
-				}
-				JSONObject retour = new JSONObject();
-				retour.put("collection", collection);
-				retour.put("category", Category.explain(category));
-
-				String[] cls = Database.getCachemeta().getClassesOfCollection(collection, category);
-				JSONArray array = new JSONArray();
-				for( String cl: cls) {
-					array.add(cl);
-				}
-				retour.put("classes", array);
-
-				array = new JSONArray();
-				for( AttributeHandler col: colfmtor.getQueriableColumns()) {
-					array.add(JsonUtils.JsonSerialize(col));						
-				}
-				retour.put("attributes", array);
-
-				array = new JSONArray();
-				String[] rns = Database.getCachemeta().getRelationNamesStartingFromColl(collection, category);
-				for( String rn: rns ){
-					MetaRelation mr = Database.getCachemeta().getRelation(rn);
-					ArrayList<String> qls = mr.getQualifier_names();
-					JSONObject jsrelation = new JSONObject();
-					jsrelation.put("name", rn);
-					jsrelation.put("ending_collection", mr.getSecondary_coll());
-					jsrelation.put("ending_category", Category.explain(mr.getSecondary_category()));
-					JSONArray jsq  = new JSONArray();
-					for( String q: qls) {
-						jsq.add(q);						
-					}
-					jsrelation.put("qualifiers", jsq);
-					array.add(jsrelation);
-				}					
-				retour.put("relations", array);
-				/*
-				 * Append the list of queriable UCDS at both class and collection level
-				 */
-				if( mc == null ) {
-					AttributeHandler[] qahs = Database.getCachemeta().getUCDs(collection, category, true);
-					array = new JSONArray();
-					for( AttributeHandler col: qahs) {
-						array.add(JsonUtils.JsonSerialize(col));						
-					}
-				}
-				// collection level UCD not suported by the query engine
-				else {
-					//						for( AttributeHandler col: Database.getCachemeta().getCollection(collection).getUCDs(category, true) ) {
-					//							array.add(JsonUtils.JsonSerialize(col));						
-					//						}
-					for( AttributeHandler col: mc.getUCDFields(true) ) {
-						array.add(JsonUtils.JsonSerialize(col));						
-					}
-
-
-				}
-				retour.put("queriableucds", array);
-				/*
-				 * Push the JSon object into the stream
-				 */
-				JsonUtils.teePrint(response, retour.toJSONString());
-			}
-			else {
-				reportJsonError(request, response, "request " + query  + " unsupported");
+			} else if( "ah".equals(query)) {
+				processAhRequest(request, response, name);
+			} else {
+				processJsrAhRequest(request, response);
 				return;
 			}
-
-		}catch( Exception e ) {
+		} catch( Exception e ) {
 			reportJsonError(request, response, e);
 		}
+	}
+	/**
+	 * get attributehandlers from a query compliant with the jsResource data cache
+	 * Params like {nodekey:'node', schema: treepath[0], table: treepath[1], tableorg: 'schema.table'}
+	 * node: unused
+	 * schema: collection: unused
+	 * table: either collection.category or classname
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	private void processJsrAhRequest(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		String name = request.getParameter("table");
+		if( name == null ){
+			 name = request.getParameter("nodekey");
+		}
+		processAhRequest(request, response, name);
+	}
+	/**
+	 * get AttributeHandler with old style client (before jsresource)
+	 * @param request
+	 * @param response
+	 */
+	@SuppressWarnings("unchecked")
+	private void processAhRequest(HttpServletRequest request, HttpServletResponse response, String name) throws Exception{
+		String[] nodes = name.split("\\.");
+		int category;
+		String collection;
+		MetaClass mc= null;
+		/*
+		 * data node like collection.category
+		 */
+		if( nodes.length == 2 ) {
+			category = Category.getCategory(nodes[1]);
+			collection = nodes[0];
+		}
+		/*
+		 * data node like classname
+		 */				
+		else if( nodes.length == 1 ) {
+			if ( Database.getCachemeta().classExists(nodes[0]) ){
+				mc = Database.getCachemeta().getClass(nodes[0]);
+				category = mc.getCategory();
+				collection = mc.getCollection_name();
+			} else {
+				category =  Category.getCategory(request.getParameter("table"));
+				collection = request.getParameter("schema");
 
+			}
+		}
+		else {				
+			reportJsonError(request, response, "Query badly formed (" + nodes.length + " nodes)");
+			return;
+		}
+		DisplayFilter colfmtor;
+		switch(category) {
+		case Category.TABLE :			
+			colfmtor = new TableDisplayFilter(collection);
+			colfmtor.setMetaClass(mc);
+			break;
+		case Category.ENTRY :		
+			colfmtor = new EntryDisplayFilter(collection);
+			colfmtor.setMetaClass(mc);
+			break;
+		case Category.IMAGE :		
+			colfmtor = new ImageDisplayFilter(collection);
+			colfmtor.setMetaClass(mc);
+			break;
+		case Category.SPECTRUM :		
+			colfmtor = new SpectrumDisplayFilter(collection);
+			colfmtor.setMetaClass(mc);
+			break;
+		case Category.MISC :		
+			colfmtor = new MiscDisplayFilter(collection);
+			colfmtor.setMetaClass(mc);
+			break;
+		case Category.FLATFILE :		
+			colfmtor = new FlatfileDisplayFilter(collection);
+			colfmtor.setMetaClass(null);
+			break;
+		default :
+			reportJsonError(request, response, "category \"" + Category.explain(category) + "\" not supported");
+			return ;
+		}
+		JSONObject retour = new JSONObject();
+		retour.put("collection", collection);
+		retour.put("category", Category.explain(category));
+
+		String[] cls = Database.getCachemeta().getClassesOfCollection(collection, category);
+		JSONArray array = new JSONArray();
+		for( String cl: cls) {
+			array.add(cl);
+		}
+		retour.put("classes", array);
+
+		array = new JSONArray();
+		for( AttributeHandler col: colfmtor.getQueriableColumns()) {
+			array.add(JsonUtils.JsonSerialize(col));						
+		}
+		retour.put("attributes", array);
+
+		array = new JSONArray();
+		String[] rns = Database.getCachemeta().getRelationNamesStartingFromColl(collection, category);
+		for( String rn: rns ){
+			MetaRelation mr = Database.getCachemeta().getRelation(rn);
+			ArrayList<String> qls = mr.getQualifier_names();
+			JSONObject jsrelation = new JSONObject();
+			jsrelation.put("name", rn);
+			jsrelation.put("ending_collection", mr.getSecondary_coll());
+			jsrelation.put("ending_category", Category.explain(mr.getSecondary_category()));
+			JSONArray jsq  = new JSONArray();
+			for( String q: qls) {
+				jsq.add(q);						
+			}
+			jsrelation.put("qualifiers", jsq);
+			array.add(jsrelation);
+		}					
+		retour.put("relations", array);
+		/*
+		 * Append the list of queriable UCDS at both class and collection level
+		 */
+		if( mc == null ) {
+			AttributeHandler[] qahs = Database.getCachemeta().getUCDs(collection, category, true);
+			array = new JSONArray();
+			for( AttributeHandler col: qahs) {
+				array.add(JsonUtils.JsonSerialize(col));						
+			}
+		}
+		// collection level UCD not suported by the query engine
+		else {
+			//						for( AttributeHandler col: Database.getCachemeta().getCollection(collection).getUCDs(category, true) ) {
+			//							array.add(JsonUtils.JsonSerialize(col));						
+			//						}
+			for( AttributeHandler col: mc.getUCDFields(true) ) {
+				array.add(JsonUtils.JsonSerialize(col));						
+			}
+
+
+		}
+		retour.put("queriableucds", array);
+		/*
+		 * Push the JSon object into the stream
+		 */
+		JsonUtils.teePrint(response, retour.toJSONString());		
 	}
 }

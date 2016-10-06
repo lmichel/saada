@@ -76,7 +76,7 @@ h4 {
 
 .help {
 	color: DimGray;
-	font-style: italic;
+	/*font-style: italic;*/
 }
 
 .strong {
@@ -176,7 +176,7 @@ a.accept {
 	width: 0px;
 	overflow: visible;
 	padding: 4px 0 4px 90px;
-	background: transparent url(../images/submit.png) bottom left no-repeat;
+	background: transparent url(../images/submit_90.png) bottom left no-repeat;
 	vertical-align: middle;
 }
 
@@ -261,26 +261,37 @@ a:active.add {
 	opacity: 0.8;
 }
 
+a.shaded {
+	-webkit-filter: grayscale(100%); 
+}
+
 a.histoleft {
 	display: inline-block;
 	height: 24px;
 	width: 0px;
 	overflow: visible;
 	padding: 0 0 0 24px;
-	background: transparent url(../images/histoleft.png) bottom left
+	background: transparent url(../images/back_enabled.jpg) bottom left
 		no-repeat;
 }
 
 a:hover.histoleft {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.5;
+	filter: alpha(opacity = 50);
 	opacity: 0.5;
 }
 
 a:active.histoleft {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.8;
+	filter: alpha(opacity = 50);
 	opacity: 0.8;
+}
+a.greyhistoleft {
+	display: inline-block;
+	height: 24px;
+	width: 0px;
+	overflow: visible;
+	padding: 0 0 0 24px;
+	background: transparent url(../images/back_enabled.jpg) bottom left
+		no-repeat;
 }
 
 a.historight {
@@ -289,20 +300,28 @@ a.historight {
 	width: 0px;
 	overflow: visible;
 	padding: 0 0 0 24px;
-	background: transparent url(../images/historight.png) bottom left
+	background: transparent url(../images/forward_enabled.jpg) bottom left
 		no-repeat;
 }
 
 a:hover.historight {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.5;
+	filter: alpha(opacity = 50);
 	opacity: 0.5;
 }
 
 a:active.historight {
-	filter: alpha(opacity =   50);
-	-moz-opacity: 0.8;
+	filter: alpha(opacity = 50);
 	opacity: 0.8;
+}
+
+a.greyhistoright {
+	display: inline-block;
+	height: 24px;
+	width: 0px;
+	overflow: visible;
+	padding: 0 0 0 24px;
+	background: transparent url(../images/forward_enabled.jpg) bottom left
+		no-repeat;
 }
 
 a.simbad {
@@ -791,7 +810,7 @@ div#externaltools {
 	margin-left: 150px;
 	margin-top: 0px;
 	border-width: 0px;
-	background: #F5F5F5
+	/*background: #F5F5F5*/
 }
 
 /*************************************************************************
@@ -937,7 +956,7 @@ div#formpane {
 	overflow: hidden;
 	border-width: 0px;
 	padding: 5px;
-	height: 267px;
+	height: 320px;
 
 	/* No margin or border allowed */
 }
@@ -1092,7 +1111,24 @@ a.cart {
 	width: 0px;
 	overflow: visible;
 	padding: 16px 0px 16px 38px;
-	background: transparent url(../images/groscaddy.png) center left
+	background: transparent url(../images/cart_38.png) center left
+		no-repeat;
+}
+a.cart-title {
+    height: 30PX;
+    width: 38px;
+    overflow: visible;
+    padding: 12px 23px 12px 23px;
+    /* background: transparent url(../images/groscaddy.png) center left no-repeat; */
+    background: transparent url(../images/cart_38.png) center left no-repeat;
+    margin-right: 1px;
+}
+a.bookmark {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 16px 0px 16px 38px;
+	background: transparent url(../images/bookmark_38.png) center left
 		no-repeat;
 }
 
@@ -1124,7 +1160,7 @@ a.dl_samp {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_ivoa.png) center left no-repeat;
+	background: transparent url(../images/ivoa_23.png) center left no-repeat;
 }
 
 a:hover.dl_samp {
@@ -1165,7 +1201,7 @@ a.dl_download {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_download.png) center left
+	background: transparent url(../images/download_23.png) center left
 		no-repeat;
 }
 
@@ -1207,7 +1243,7 @@ a.dl_cart {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_cart.png) center left no-repeat;
+	background: transparent url(../images/cart_full_23.png) center left no-repeat;
 }
 
 a.dl_cart_added {
@@ -1215,7 +1251,7 @@ a.dl_cart_added {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_cart.png) center left no-repeat;
+	background: transparent url(../images/cart_full_23.png) center left no-repeat;
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.5;
 	opacity: 0.5;
@@ -1271,7 +1307,7 @@ a.dl_info {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_info.png) center left no-repeat;
+	background: transparent url(../images/info_23.png) center left no-repeat;
 }
 
 a:hover.dl_info {
@@ -1291,7 +1327,7 @@ a.dl_detail {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_detail.png) center left
+	background: transparent url(../images/detail_23.png) center left
 		no-repeat;
 }
 
@@ -1312,7 +1348,7 @@ a.dl_header {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_header.png) center left
+	background: transparent url(../images/header_23.png) center left
 		no-repeat;
 }
 
@@ -1333,7 +1369,7 @@ a.dl_sources {
 	width: 0px;
 	overflow: visible;
 	padding: 9px 0px 9px 23px;
-	background: transparent url(../images/dl_sources.png) center left
+	background: transparent url(../images/entries_23.png) center left
 		no-repeat;
 }
 
@@ -1344,6 +1380,27 @@ a:hover.dl_sources {
 }
 
 a:active.dl_sources {
+	filter: alpha(opacity =   50);
+	-moz-opacity: 0.8;
+	opacity: 0.8;
+}
+
+a.dl_column {
+	display: inline-block;
+	width: 0px;
+	overflow: visible;
+	padding: 9px 0px 9px 23px;
+	background: transparent url(../images/column_23.png) center left
+		no-repeat;
+}
+
+a:hover.dl_column {
+	filter: alpha(opacity =   50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
+
+a:active.dl_column {
 	filter: alpha(opacity =   50);
 	-moz-opacity: 0.8;
 	opacity: 0.8;
@@ -1395,3 +1452,27 @@ input.include_relation {
 .nojob {
 	color: gray;
 }
+
+/*
+ * Landing page styles
+ */
+ ul.landing{
+ margin: 0; padding: 0px;margin: auto; width: 80%; height: 100%;}
+ 
+ div.landing-left{
+ width: 50%; height: 100%; float: left;}
+ 
+div.landing-right{
+ width: 50%; height: 100%; float: right;}
+ 
+ li.landing{
+ padding: 0; height: 200px; list-style-type: none;}
+ 
+ i.landing{
+ width: 120px; height: 60px; margin: 5px 10px 130px 0 ;  display: block; float: left; border-radius: 5px; border: 3px solid; border-color: #5BC0DE}
+ 
+ h3.landing{
+ color: #5BC0DE;
+ }
+ p.landing{
+ font-size: large; !important}

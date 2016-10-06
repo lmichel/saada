@@ -19,9 +19,18 @@ var booleansupported = false;
  */
 var layoutPane;
 
+/*
+ * instance of DataTreePath: {nodekey:table, schema: collection, table: table, tableorg: table, category}
+ */
+var globalTreePath ;
+
+var queryView;
+var nativeConstraintEditor;
+//var patternConstraintEditor;
+var posConstraintEditor;
+
 $().ready(function() {
 	Out.setdebugModeFromUrl();	
-
 	base_url = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + window.location.pathname;
 	/*
 	 * layout plugin, requires JQuery 1.7 or higher
@@ -40,11 +49,7 @@ $().ready(function() {
 	resultPaneView           = new $.ResultPaneView();
 	new $.ResultPaneControler(resultPaneModel, resultPaneView);
 
-	var patternModel      = new $.PatternModel();
-	var patternView       = new $.PatternView();
-	new $.PatternControler(patternModel, patternView);
-
-	var saadaqlModel      = new $.SaadaQLModel(patternModel);
+	var saadaqlModel      = new $.SaadaQLModel(null);
 	saadaqlView           = new $.SaadaQLView();
 	new $.SaadaQLControler(saadaqlModel, saadaqlView);
 
@@ -57,29 +62,24 @@ $().ready(function() {
 	sapView            = new $.SapView();
 	new $.SapControler(sapModel, sapView);
 
-	var filterManagerModel       = new $.FilterManagerModel();
-	filterManagerView            = new $.FilterManagerView();
-	new $.FilterManagerControler(filterManagerModel, filterManagerView);
-
 	var cartModel       = new $.CartModel();
-	cartView            = new $.CartView();
+	cartView            = new $.CartView();	
 	new $.CartControler(cartModel, cartView);
 
 	/*********************************************************************************************
 	 * Query form setup
 	 * Create tabs to switch between SAADAQL and TAP forms
 	 */
-	$("#saadaqltab").tabs();
+	//$("#saadaqltab").tabs();
 	$("#saadaqltab").tabs({
 		selected: 4,
 		disabled: [0,1,2,3]
 	});
-
-	$("#saptab").tabs();
+	//$("#saptab").tabs();
 	$("#saptab").tabs({
 		unselect : true,
-		selected: 0,
-		disabled: [1,2]
+		//selected: 0,
+		disabled: [0, 1,2]
 	});
 	$("#saptab").hide();
 	/*
@@ -101,61 +101,7 @@ $().ready(function() {
 	$('.sapglu').click(function() {
 		sapView.fireSubmitGluEvent();
 	});
-	$("#qlimit").keyup(function(event) {
-		if( $("#qlimit").val() == '' || $("#qlimit").val().match(/^[0-9]+$/) ) {
-			saadaqlView.fireUpdateQueryEvent();
-		}
-		else {
-			Modalinfo.info('The result limit must be a positive integer value' );
-			$("#qlimit").val(100);
-			return false;
-		}
 
-	});
-	/*
-	 * Drop area for individual constraints on KWs
-	 */
-	$("#ConstraintsList").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireAttributeEvent(ui.draggable);		
-		}
-	});
-	$("#orderby").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireOrderByEvent(ui.draggable);		
-		}
-	});
-	$("#UCDConstraintsList").droppable({
-		drop: function(event, ui){
-			saadaqlView.fireUCDEvent(ui.draggable);		
-		}
-	});
-	$("#patternconst").droppable({
-		drop: function(event, ui){
-			patternView.fireAttributeEvent(ui.draggable);		
-		}
-	});
-	$("#patterncardqual" ).sortable({
-		revert: "true"
-	});
-	$("#patternatt" ).sortable({
-		revert: "true"
-	});
-	$("#fspefieldsdrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireSpeFieldEvent(ui.draggable);		
-		}
-	});
-	$("#fnativedrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireNativeEvent(ui.draggable);		
-		}
-	});
-	$("#frelationsdrop").droppable({
-		drop: function(event, ui){
-			filterManagerView.fireRelationsEvent(ui.draggable);		
-		}
-	});
 	/*
 	 * Coordinates input
 	 */
@@ -169,7 +115,6 @@ $().ready(function() {
 	 */
 	$("#relationselect").change(function() {
 		$("#relationselect option:selected").each(function () {
-			console.log($(this).text());
 			var text = $(this).text();
 			if( !text.startsWith("--") ) {
 				saadaqlView.fireSelectRelationEvent(text);
@@ -257,7 +202,7 @@ $().ready(function() {
 	});
 	
 	$.getJSON("getversion", function(data) {
-		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + "(" + data.date + ") on " + data.dbms);
+		$('#saadaLogo').attr("title", data.dbname + " database build with Saada " + data.version + " on " + data.dbms);
 	});
 	
 	/*
@@ -268,78 +213,31 @@ $().ready(function() {
 
 	$("[name=qlang]").filter("[value=\"saadaql\"]").attr("checked","checked");
 	
-	Processing.show("Loading Data Tree");
-	$.getJSON("getmeta", {query: "datatree" }, function(data) {
-		Processing.hide();
-		if( Processing.jsonError(data, "Cannot make data tree") ) {
-			return;
+	MetadataSource.init({getMetaTable: "getmeta"})
+	queryView = QueryConstraintEditor.queryTextEditor({ parentDivId: 'texttab', defaultQuery: ''});	   		    
+	posConstraintEditor = QueryConstraintEditor.posConstraintEditor({ parentDivId: 'postab', formName:'simpleposcolumns',  queryView: queryView
+			, frames: ['ICRS', 'GALACTIC', 'FK5'], urls: {sesameURL: "sesame", uploadURL: "uploadposlist"}} );
+	
+	nativeConstraintEditor = QueryConstraintEditor.nativeConstraintEditor({parentDivId: 'kwtab', getMetaUrl: "getmeta", queryView: queryView});
+	
+	patternConstraintEditor = QueryConstraintEditor.matchPatternEditor({parentDivId: 'patterntab',formName: 'matchPattern',queryView: queryView});
+	
+		//qce.fireSetTreepath(new DataTreePath({nodekey:'node', schema: 'schema', table: 'table', tableorg: 'schema.table'}));
+	$("#qlimit").keyup(function(event) {
+		var v =  $("#qlimit").val();
+		if( v == '' || v.match(/^[0-9]+$/) ) {
+			queryView.fireAddConstraint("Merged", "limit", [v]);
 		}
-		dataTree = $("div#treedisp").jstree({
-			"json_data"   : data , 
-			"plugins"     : [ "themes", "json_data", "dnd", "crrm", "ui"],
-			"dnd"         : {"drop_target" : "#resultpane,#saadaqltab,#saptab,#taptab,#showquerymeta",
+		else {
+			Modalinfo.info('The result limit must be a positive integer value' );
+			$("#qlimit").val(100);
+			return false;
+		}
 
-				"drop_finish" : function (data) {
-					var parent = data.r;
-					var treepath = data.o.attr("id").split('.');
-					if( treepath.length < 2 ) {
-						Modalinfo.info("Query can only be applied on one data category or one data class");
-					}
-					else {
-						while(parent.length != 0  ) {
-							resultPaneView.fireSetTreePath(treepath);	
-							if(parent.attr('id') == "resultpane" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							else if(parent.attr('id') == "showquerymeta" ) {
-								setTitlePath(treepath);
-								resultPaneView.fireShowMetaNode(treepath);	
-								return;
-							}
+	});
+	
+	DataTree.init();
 
-//							else if(parent.attr('id') == "displayfilter" ) {
-//							setTitlePath(treepath);
-//							resultPaneView.fireTreeNodeEvent(treepath);	
-//							filterManagerView.fireShowFilterManager(treepath);	
-//							return;
-//							}
-
-							else if( parent.attr('id') == "saadaqltab" || parent.attr('id') == "saptab" || parent.attr('id') == "taptab") {
-								saadaqlView.fireTreeNodeEvent(treepath);	
-								sapView.fireTreeNodeEvent(treepath);	
-								return;
-							}
-							parent = parent.parent();
-						}
-					}
-				}
-			},
-			// Node sorting by DnD blocked
-			"crrm" : {"move" : {"check_move" : function (m) {return false; }}
-			}
-		}); // end of jstree
-//		dataTree.bind("select_node.jstree", function (e, data) {
-//		Modalinfo.info(data);
-//		});
-		dataTree.bind("dblclick.jstree", function (e, data) {
-			var node = $(e.target).closest("li");
-			var id = node[0].id; //id of the selected node					
-			var treepath = id.split('.');
-			if( treepath.length < 2 ) {
-				Modalinfo.info("Query can only be applied on one data category or one data class");
-			}
-			else {
-				Processing.show("Open node " + getTreePathAsKey());
-				resultPaneView.fireSetTreePath(treepath);	
-				setTitlePath(treepath);
-				resultPaneView.fireTreeNodeEvent(treepath);	
-				Processing.hide();
-			}
-		});
-	}); // end of ajax
-
-	Location.confirmBeforeUnlaod();
+	//PageLocation.confirmBeforeUnlaod();		
 	Out.setdebugModeFromUrl();
 });

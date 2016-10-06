@@ -13,12 +13,12 @@ jQuery.extend({
 		/**
 		 * who is listening to us?
 		 */
-		var listeners = new Array();
+		var listener;
 		/**
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
-			listeners.push(list);
+			listener = list;
 		};
 
 		this.fireAddJobResult = function(element, query) {
@@ -27,116 +27,73 @@ jQuery.extend({
 				Processing.show("Selection " + getTreePathAsKey() + " added to the cart");
 				element.attr('class', 'dl_cart_added');
 				Out.info("add " + getTreePathAsKey() + " <> " + query);
-				$.each(listeners, function(i){
-					listeners[i].controlAddJobResult(getTreePathAsKey(), query);
-				});
+				listener.controlAddJobResult(getTreePathAsKey(), query);
 			} else {
 				Processing.show("Selection " + getTreePathAsKey() + " remove from the cart");
 				element.attr('class', 'dl_cart');
-				$.each(listeners, function(i){
-					listeners[i].controlRemoveJobResult(getTreePathAsKey(), query);
-				});
+				listener.controlRemoveJobResult(getTreePathAsKey(), query);
 			}
-			this.resetJobControl();
+			this.fireCheckArchiveCompleted();
 			setTimeout('Processing.hide();', 1000);
-//			Out.info(element.attr('class'));
-//			Modalinfo.info("Query result  added to the cart");
-//			$.each(listeners, function(i){
-//				listeners[i].controlAddJobResult(getTreePathAsKey(), query);
-//			});
 		};
 		this.fireRemoveJobResult = function(nodekey, jobid) {
 			Out.info("remove " + nodekey() + " <> " + jobid);
-			
-			$.each(listeners, function(i){
-				listeners[i].controlRemoveJobResult(nodekey, jobid);
-			});
-			this.resetJobControl();
+			listener.controlRemoveJobResult(nodekey, jobid);
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireAddUrl = function(element, name, oid) {
 			var elementClass = element.attr('class');
 			if( elementClass == 'dl_cart' || elementClass == 'dl_securecart') {
 				element.attr('class', elementClass + '_added');
 				Out.info("add " + name + " <> " + oid);
-				$.each(listeners, function(i){
-					listeners[i].controlAddUrl(name, oid);
-				});
-			}
-			else {
+				listener.controlAddUrl(name, oid);
+			} else {
 				element.attr('class', elementClass.replace('_added', ''));
-				$.each(listeners, function(i){
-					listeners[i].controlRemoveUrl(getTreePathAsKey(), oid);
-				});
-				this.resetJobControl();
+				listener.controlRemoveUrl(getTreePathAsKey(), oid);
 			}
-//
-//			Modalinfo.info("File  " + name + " added to the cart");
-//			$.each(listeners, function(i){
-//				listeners[i].controlAddUrl(name, oid);
-//			});
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireRemoveUrl = function(nodekey, url) {
 			Out.info("removeURL " + nodekey() + " <> " + jobid);
-
-			$.each(listeners, function(i){
-				listeners[i].controlRemoveUrl(nodekey, url);
-			});
-			this.resetJobControl();
+			listener.controlRemoveUrl(nodekey, url);
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireOpenCart = function() {			
-			$.each(listeners, function(i){
-				listeners[i].controlOpenCart();
-			});
+			listener.controlOpenCart();
 		};
 		this.fireCleanCart = function(tokens) {
-			$.each(listeners, function(i){
-				listeners[i].controleCleanCart(tokens);
-			});
-			this.resetJobControl();
+			listener.controleCleanCart(tokens);
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireStartArchiveBuilding = function() {
-			$.each(listeners, function(i){
-				listeners[i].controlStartArchiveBuilding();
-			});
+			listener.controlStartArchiveBuilding();
 		};
 		this.fireKillArchiveBuilding = function() {
-			$.each(listeners, function(i){
-				listeners[i].controlKillArchiveBuilding();
-			});
+			listener.controlKillArchiveBuilding();
 		};
 		this.fireArchiveDownload = function() {			
-			$.each(listeners, function(i){
-				listeners[i].controlArchiveDownload();
-			});
+			listener.controlArchiveDownload();
 		};
 		this.fireGetJobPhase = function() {
 			var retour='';
-			$.each(listeners, function(i){
-				retour = listeners[i].controlGetJobPhase();
-			});
+			retour = listener.controlGetJobPhase();
 			return retour;
 		};
 		this.fireChangeName = function(nodekey, dataType, rowNum, newName){
-			$.each(listeners, function(i){
-				listeners[i].controlChangeName(nodekey, dataType, rowNum, newName);
-			});			
+			listener.controlChangeName(nodekey, dataType, rowNum, newName);
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireSetRelations= function(nodekey, dataType, uri, checked) {
-			$.each(listeners, function(i){
-				listeners[i].controlSetRelations(nodekey, dataType, uri, checked);
-			});			
+			listener.controlSetRelations(nodekey, dataType, uri, checked);
+			this.fireCheckArchiveCompleted();
 		};
 		this.fireDelegateCartDownload= function() {
-			$.each(listeners, function(i){
-				listeners[i].controlDelegateCartDownload();
-			});			
+			listener.controlDelegateCartDownload();
 		};
 		
 		this.resetJobControl= function() {
 			Out.info("resetJobControl");
-			$.each(listeners, function(i){
-				listeners[i].controlResetZipjob();
-			});			
+			listener.controlResetZipjob();
 			$('.cart').css("border", "0px");
 			$('#detaildiv_download').attr("disabled", true);
 			$('#detaildiv_submit').removeAttr("disabled");
@@ -152,6 +109,8 @@ jQuery.extend({
 			queriespan.text(phase);
 			if( phase == 'nojob') {
 				$('.cart').css("border", "0px");
+				$('#detaildiv_submit').removeAttr("disabled");
+				$('#detaildiv_download').attr("disabled", true);
 			}
 			else if( phase == 'EXECUTING') {
 				$('.cart').css("border", "2px solid orange");
@@ -166,7 +125,6 @@ jQuery.extend({
 				$('.cart').css("border", "2px solid red");
 			}
 		};    
-
 
 		this.initForm = function(cartData) {
 			$('#detaildiv').remove();
@@ -185,12 +143,13 @@ jQuery.extend({
 			}
 
 			var table = '';
-			var phase = that.fireGetJobPhase();
+			//var phase = that.fireGetJobPhase();
 
 			//table += '<h2><img src="images/groscaddy.png"> Shopping Cart</h2>';
 			table += '<div id=table_div></div>';
-			table += "<h4 id=\"cartjob\" class='detailhead'> <img src=\"images/tdown.png\">Processing status</h4>";
-			table += '<br><span>Current Job Status</span> <span id=cartjob_phase class="' + phase.toLowerCase() + '">' + phase + '</span><BR>';
+			table += "<p id=\"cartjob\" class='chapter'> <img src=\"images/tdown.png\">Processing status</p>";
+			//table += '<span>Current Job Status</span> <span id=cartjob_phase class="' + phase.toLowerCase() + '">' + phase + '</span><BR>';
+			table += '<br><span>Current Job Status</span> <span id=cartjob_phase class=""></span><BR>';
 			table += "<span>Manage Content</span> <input type=button id=detaildiv_clean value='Remove Unselected Items'>";			
 			table += "<input type=button id=detaildiv_cleanall value='Remove All Items'><br>";			
 			table += "<span>Manage Job</span> <input type=button id=detaildiv_submit value='Start Processing'>";	
@@ -201,7 +160,7 @@ jQuery.extend({
 			table += "<br><span>Get the Result</span> <input type=button id=detaildiv_download value='Download Cart' disabled='disabled'>";			
 
 			//Modalpanel.open(table);
-			Modalinfo.dataPanel('<img src="images/groscaddy.png"> Shopping Cart' , table, null, "white");
+			Modalinfo.dataPanel('<a class="cart-title" href="#"></a> Shopping Cart' , table, null, "white");
 			that.setTableDiv(cartData);
 
 			$('#detaildiv_clean').click( function() {
@@ -214,17 +173,21 @@ jQuery.extend({
 			} );
 			$('#detaildiv_cleanall').click( function() {
 				that.fireCleanCart("");
-				modalbox.close();
-				$(".dl_cart_added").attr("class","dl_cart");
+				Modalinfo.close($(this).parent().attr("id"));
+				//$(".dl_cart_added").attr("class","dl_cart");
 				return false;
 			} );
 			$('#detaildiv_submit').click( function() {
+				aborted = false;
 				that.fireStartArchiveBuilding();
 				return false;
 			} );
 			$('#detaildiv_abort').click( function() {
-				that.fireKillArchiveBuilding();
-				that.fireCheckArchiveCompleted();
+				if (aborted == false) {
+					aborted = true;
+					that.fireKillArchiveBuilding();
+					that.fireCheckArchiveCompleted();
+				}
 				return false;
 			} );
 
@@ -233,7 +196,7 @@ jQuery.extend({
 				$('.zip').css("border", "0px");
 				return false;
 			} );
-			//Modalpanel.resize();
+			this.fireCheckArchiveCompleted();
 		};
 
 		this.setTableDiv= function(cartData) {
@@ -250,15 +213,15 @@ jQuery.extend({
 				return;
 			}
 			for( var nodekey in cartData) {
-				var tableId = "folder_" + nodekey;
-				table += "<h4 id=\"mappedmeta\" class='detailhead'> <img src=\"images/tdown.png\">Node  " + nodekey + " </h4>";
+				var tableId = "folder_" + nodekey.replace(/\./g, '_DoT_');;
+				table += "<p id=\"mappedmeta\" class='chapter'> <img src=\"images/tdown.png\">Node  " + nodekey + " </p>";
 				table += "<div class='detaildata'>";
 				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"0\"  id=\"" + tableId +"\" class=\"display\"></table>";
 				table += "</div>";
 			}
 			$('#table_div').html(table);
 			for( var nodekey in cartData) {
-				var tableId = "folder_" + nodekey;
+				var tableId = "folder_" + nodekey.replace(/\./g, '_DoT_');;
 				var folder = cartData[nodekey];
 				var aaData = new Array();
 				var cb = "<INPUT TYPE=CHECKBOX name=\"" + nodekey + " url\" class=\"include_relation\" />";
@@ -274,29 +237,33 @@ jQuery.extend({
 					                         , cb
 					                         , "<span>" + folder.files[i].name + "</span>", folder.files[i].uri];
 				}
-				folderTables[folderTables.length] = $('#' + tableId).dataTable(
-						{
-							"aoColumns" : [{sTitle: "Keep/Discard"}, {sTitle: "Data Source"},{sTitle: "Include Linked Data"},{sTitle: "Resource Name"},{sTitle: "Resource URI"}],
-							"aaData" : aaData,
-							"bPaginate" : false,
-							"bInfo" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : false,
-							"bAutoWidth" : true,
-							"bDestroy": true
-						});
+				
+				
+				var options = {
+						"aoColumns" : [{sTitle: "Keep/Discard"}, {sTitle: "Data Source"},{sTitle: "Include Linked Data"},{sTitle: "Resource Name"},{sTitle: "Resource URI"}],
+						"aaData" : aaData,
+						"bPaginate" : false,
+						"bInfo" : false,
+						"aaSorting" : [],
+						"bSort" : false,
+						"bFilter" : false,
+						"bAutoWidth" : true,
+						"bDestroy": true
+				}
+				
+				folderTables[folderTables.length] = CustomDataTable.create(tableId, options);
 				/* Apply the jEditable handlers to the table */
 				$('span', folderTables[folderTables.length-1].fnGetNodes()).editable( 
 						function(data) {
-							return data.replace(/[^\w]/g, "_");
+							var retour = data.replace(/[^\w\.]/g, "_");
+							return  (retour != '')? retour: 'NoName';
 						},
 						{        
 							"callback": function( sValue, settings ) {
 								var oTable = folderTables[settings["numTable"]];
 								var node = $(this).parent().get(0);
 								var aPos = oTable.fnGetPosition( node );
-								var nodekey = $(node).parents("table").attr("id").replace("folder_", "");
+								var nodekey = $(node).parents("table").attr("id").replace("folder_", "").replace(/_DoT_/g, '.');
 								cartView.fireChangeName(nodekey, oTable.fnGetData( aPos[0] )[1], aPos[0], sValue);
 							},
 							"height": "1.33em", 
@@ -306,12 +273,14 @@ jQuery.extend({
 				);
 				$('#' + tableId + ' input.include_relation').click(
 						function(e){
-							cartView.fireSetRelations($(this).parents("table").attr("id").replace("folder_", "")
+							cartView.fireSetRelations($(this).parents("table").attr("id").replace("folder_", "").replace(/_DoT_/g, '.')
 									, $(this).parents("tr").find('td:nth-child(2)').text()
 									, $(this).parents("tr").find('td:nth-child(5)').text()
 									, $(this).is(':checked'));
+							
 						});
-			}	
+			}
+			Modalinfo.center();
 		}
 	}
 });

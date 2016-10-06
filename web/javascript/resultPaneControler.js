@@ -39,6 +39,9 @@ jQuery.extend({
 				controlDownloadVOTable: function(){
 					model.downloadVOTable();				
 				},
+				controlDownloadVOTableURL: function(){
+					return model.downloadVOTableURL();				
+				},
 				controlDownloadFITS: function(){
 					model.downloadFITS();				
 				},
@@ -55,7 +58,7 @@ jQuery.extend({
 					model.sampBroadcast();				
 				},
 				controlSetTreePath : function(treepath){
-					model.setTreePath(treepath);
+					//model.setTreePath(treepath);
 				}
 
 		}

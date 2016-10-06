@@ -8,7 +8,7 @@ jQuery.extend({
 		/**
 		 * who is listening to us?
 		 */
-		var listeners = new Array();
+		var listener ;
 		/*
 		 * What we have to store and play with
 		 */
@@ -29,29 +29,66 @@ jQuery.extend({
 		 * add a listener to this view
 		 */
 		this.addListener = function(list){
-			listeners.push(list);
+			listener = list;
 		};
+		this.getListener = function(){
+			return listener;
+		}
 		/*
 		 * Event processing
 		 */
-		this.processTreeNodeEvent = function(treepath, andsubmit, defaultquery){
-			var params;
-			if( treepath.length == 3 ){
-				collection = treepath[0];
-				category = treepath[1];
-				classe = treepath[2];
-				params = {query: "ah", name:  classe };
+		this.processTreeNodeEvent = function(andsubmit, newTreeNode, limit){
+			nativeConstraintEditor.fireSetTreepath(globalTreePath);
+			patternConstraintEditor.fireSetTreepath(globalTreePath);
+			var md = MetadataSource.relations;
+			var disabled = new Array();
+			var selected = 0;
+			var that = this;
+			attributesHandlers = new Array();
+			MetadataSource.getTableAtt(
+					globalTreePath
+					, function() {
+						var ahm = MetadataSource.ahMap(globalTreePath);
+						for( var i=0 ; i<ahm.length ; i++){
+							attributesHandlers[ahm[i].nameattr] = ahm[i]; 			
+						}
+					});
+
+			if( globalTreePath.category == 'TABLE' ||  globalTreePath.category == 'MISC'||  globalTreePath.category == 'FLATFILE') {
+				disabled[disabled.length] = 0;
+				selected = 1;
 			}
-			else if ( treepath.length == 2 ){
-				collection = treepath[0];
-				category = treepath[1];
-				classe = '*'; 
-				params = {query: "ah", name:  collection + '.' +category };
+			/*
+			 * If the event has been initiated from the data tree, the history pointer is
+			 * set the end of the query list
+			 */
+			if(  newTreeNode ) {
+				histoQueryPtr = (histoQuery.length - 1);
 			}
-			else {
-				Modalinfo.info( treepath.length + " Query can only be applied on one data category or one data class (should never happen here: saadaqlModel.js");
-				return;
+			disabled[disabled.length] = 2;					
+
+			$("#saadaqltab").tabs({
+				disabled: disabled,
+				selected: selected
+			});
+			queryView.reset("Select " + globalTreePath.category + " From " + globalTreePath.getClassname() + " In " + globalTreePath.schema);
+			if(limit != null) {
+				queryView.fireAddConstraint("Merged", "limit", [limit]);
 			}
+			nativeConstraintEditor.fireOrderBy("oidsaada", true)
+			//this.sortColumn("oidsaada", "desc");
+
+			if( andsubmit == true ) {
+				resultPaneView.fireSubmitQueryEvent();
+			}
+			if( md.relations != null ) {
+				for( i=0 ; i<md.relations.length ; i++ ) {
+					relations[md.relations[i].name] = md.relations[i];
+				}
+			}
+
+			return;
+///////////////////////////////
 			Processing.show("Fetching meta data");
 			$.getJSON("getmeta", params, function(jsondata) {
 				Processing.hide();
@@ -132,6 +169,18 @@ jQuery.extend({
 							$('#orderby_asc').prop('checked',true);
 						}
 					}
+					/*
+					 * Set a desc sort by default on oidsaada in order to display first the latest data
+					 */
+					if( $("#orderby span").length == 0 ) {
+						that.setOrderBy("oidsaada");
+						$('#orderby_des').prop('checked',true);
+					}
+//					$("#orderby span").each(function() {
+//						if( $(this).text() == '' ) {
+//							$(this).text('oidsaada');
+//						}
+//					});
 					query = that.updateQuery();
 				} else {
 					that.notifyQueryUpdated(defaultquery);
@@ -188,34 +237,43 @@ jQuery.extend({
 				m.notifyInitDone();
 
 			} else {
-				$("#orderby").each(function() {
-					$(this).html('');
+				$("#kwtab_orderby").each(function() {
+					$(this).val('');
 					orderby = null;
 				});
 
 			}
 		};
 		this.sortColumn= function(nameattr, sens) {
+			console.log("@@@@@@@@@@@@@@@ " + sens + " " + (!(sens == "asc")))
+			nativeConstraintEditor.fireOrderBy(nameattr, !(sens == "asc"));
+			resultPaneView.fireSubmitQueryEvent();
+			return ;
+
 			if( sens != null ) {
-				this.setOrderBy(nameattr);		
+				$("#kwtab_orderby").val(nameattr);
+
 				if( sens == 'asc' ) {
-					$('#orderby_asc').prop('checked',true);
+					$('#kwtab_orderasc').prop('checked',true);
 				} else {			
-					$('#orderby_des').prop('checked',true);
+					$('#kwtab_orderdesc').prop('checked',true);
 				}
+				//this.setOrderBy(nameattr);	
+
 			} else {
-				this.setOrderBy(null);		
+				$("#kwtab_orderby").val("");
+				//this.setOrderBy(null);		
 			}
 			this.updateQuery();
 			resultPaneView.fireSubmitQueryEvent();
 		};
-		this.getOrderByParameters = function() {
-			var nameattr ='';;
-			$("#orderby span").each(function() {
-				nameattr = $(this).text();
-			});
-			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
-		};
+//		this.getOrderByParameters = function() {
+//			var nameattr ='';;
+//			$("#kwtab_orderby").each(function() {
+//				nameattr = $(this).text();
+//			});
+//			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
+//		};
 		this.processOIDTableEvent= function(oidtable){
 			var ah = attributesHandlers["oidtable"];
 			if( ah != undefined) {
@@ -262,63 +320,63 @@ jQuery.extend({
 			patternModel.initRelation(relations[relation]);
 		};
 
-		this.updateQuery = function() {
-			/*
-			 * Query can not be updated while category/class/collection are not set
-			 */
-			if( typeof category == 'undefined' ) {
-				return ;
-			}
-			var query = "Select " + category + " From " + classe + " In " + collection ;
-			var cq = "";
-			$("#CoordList span").each(function() {
-				if( cq.length > 0 ) cq += ",\n";
-				cq +=  '    ' + $(this).text();
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWherePosition { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#ConstraintsList div").each(function() {
-				cq +=  '    ' + editors[$(this).attr('id')].getADQL(false) ;
-				if( cq.length > 50 ) cq += '\n';
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWhereAttributeSaada { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#UCDConstraintsList div").each(function() {
-				cq +=  '    ' + ucdeditors[$(this).attr('id')].getADQL(false) ;
-				if( cq.length > 50 ) cq += '\n';
-			}); 
-			if( cq.length > 0 ) {
-				query += "\nWhereUCD { \n" + cq + "}";
-			}
-
-			cq = "";
-			$("#patternlist input").each(function() {
-				if( cq.length > 0 ) cq += "\n";
-				cq += unescape($(this).val());
-			});
-			if( cq.length > 0 ) {
-				query += "\nWhereRelation { \n" + cq + "\n    }";
-			}
-
-			$("#orderby span").each(function() {
-				query += "\nOrder By " + $(this).text();
-				if( $("input[name=sens]:checked").attr("value") == 'des' ) {
-					query += " desc";
-				}
-			});
-
-			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
-				query += '\nLimit ' + $("#qlimit").val();
-			}
-
-			that.notifyQueryUpdated(query);
-		};
+//		this.updateQuery = function() {
+//			/*
+//			 * Query can not be updated while category/class/collection are not set
+//			 */
+//			if( typeof category == 'undefined' ) {
+//				return ;
+//			}
+//			var query = "Select " + category + " From " + classe + " In " + collection ;
+//			var cq = "";
+//			$("#CoordList span").each(function() {
+//				if( cq.length > 0 ) cq += ",\n";
+//				cq +=  '    ' + $(this).text();
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWherePosition { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#ConstraintsList div").each(function() {
+//				cq +=  '    ' + editors[$(this).attr('id')].getADQL(false) ;
+//				if( cq.length > 50 ) cq += '\n';
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWhereAttributeSaada { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#UCDConstraintsList div").each(function() {
+//				cq +=  '    ' + ucdeditors[$(this).attr('id')].getADQL(false) ;
+//				if( cq.length > 50 ) cq += '\n';
+//			}); 
+//			if( cq.length > 0 ) {
+//				query += "\nWhereUCD { \n" + cq + "}";
+//			}
+//
+//			cq = "";
+//			$("#patternlist input").each(function() {
+//				if( cq.length > 0 ) cq += "\n";
+//				cq += unescape($(this).val());
+//			});
+//			if( cq.length > 0 ) {
+//				query += "\nWhereRelation { \n" + cq + "\n    }";
+//			}
+//
+//			$("#kwtab_orderby").each(function() {
+//				query += "\nOrder By " + $(this).val();
+//				if( $("input[name=sens]:checked").attr("value") == 'des' ) {
+//					query += " desc";
+//				}
+//			});
+//
+//			if( $("#qlimit").val().match(/^[0-9]+$/) ) {
+//				query += '\nLimit ' + $("#qlimit").val();
+//			}
+//
+//			that.notifyQueryUpdated(query);
+//		};
 
 		this.processRemoveFirstAndOr = function(key) {
 			delete editors[key];
@@ -334,16 +392,21 @@ jQuery.extend({
 		};
 
 		this.processStoreHisto = function(query) {
+			/*
+			 * Do not store if the query has not change
+			 */
 			if( histoQuery.length > 0 && histoQuery[histoQuery.length-1].query == query ) {
 				return;
 			}
+			/*
+			 * Do not not store if a previous query is submitted again
+			 */
+			if( histoQueryPtr > -1 && histoQueryPtr != (histoQuery.length - 1) ) {
+				this.setTitle();
+				return;
+			}
 			histoQueryPtr = histoQuery.length;
-			if( classe != '*') {
-				histoQuery[histoQuery.length] = {query: query , treepath:[collection,category,classe]};
-			}
-			else {
-				histoQuery[histoQuery.length] = {query: query , treepath:[collection,category]};
-			}
+			histoQuery[histoQuery.length] = {query: query , treepath: jQuery.extend({}, globalTreePath) };
 
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
 		};
@@ -358,35 +421,37 @@ jQuery.extend({
 					return;
 				}
 				histoQueryPtr++;
-				that.processTreeNodeEvent(histoQuery[histoQueryPtr].treepath, false, histoQuery[histoQueryPtr].query);
-			}
-			else {
+			} else {
 				if( histoQueryPtr < 1) {
 					return;
 				}
 				histoQueryPtr--;
-				that.processTreeNodeEvent(histoQuery[histoQueryPtr].treepath, false,  histoQuery[histoQueryPtr].query);
 			}
+			
+			this.processTreeNodeEvent(false, false);
+			queryView.reset(histoQuery[histoQueryPtr].query);
+			$("#saadaqltab").tabs({
+				selected: 4
+			});
 			resultPaneView.updateQueryHistoCommands(histoQuery.length, histoQueryPtr);
 		};
 
+		this.setTitle = function(){
+			globalTreePath = jQuery.extend({}, histoQuery[histoQueryPtr].treepath);
+			$('#titlepath').html(globalTreePath.title);
+
+		};
 		/*
 		 * Listener notifications
 		 */
 		this.notifyInitDone = function(){
-			$.each(listeners, function(i){
-				listeners[i].isInit(attributesHandlers, relations, queriableUCDs);
-			});
+			listener.isInit(attributesHandlers, relations, queriableUCDs);
 		};
 		this.notifyCoordDone = function(key, constr){
-			$.each(listeners, function(i){
-				listeners[i].coordDone(key, constr);
-			});
+			listener.coordDone(key, constr);
 		};
 		this.notifyQueryUpdated= function(query) {
-			$.each(listeners, function(i){
-				listeners[i].queryUpdated(query);
-			});
+			listener.queryUpdated(query);
 		};
 
 	}

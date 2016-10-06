@@ -14,10 +14,16 @@ jQuery
 		/**
 		 * add a listener to this view
 		 */
+		/**
+		 * Position of the datatable panel
+		 */
+		this.scrollLeft = 0
+		this.scrollPaneSelector = ".custom-dt";
 		this.addListener = function(list) {
 			listeners.push(list);
 		};
 		this.fireTreeNodeEvent = function(treepath) {
+			setGlobalTreePath(treepath);
 			var mode = $("input[@name=qlang]:checked").val();
 			var runSaadaQL = false;
 			if (mode == 'saadaql') {
@@ -31,24 +37,29 @@ jQuery
 			} else if (mode == 'tap') {
 				runTAP = true;
 			}
-			saadaqlView.fireTreeNodeEvent(treepath, runSaadaQL);
-			sapView.fireTreeNodeEvent(treepath);
+			saadaqlView.fireTreeNodeEvent(runSaadaQL, true, $('#qlimit').val());
+			sapView.fireTreeNodeEvent();
 		};
 
 		this.fireSubmitQueryEvent = function() {
 			$("#resultpane").html();
 			var mode = $("input[@name=qlang]:checked").val();
 			if (mode == 'saadaql') {
-				that.fireSaadaQLQueryEvent($('#saadaqltext').val());
+				that.fireSaadaQLQueryEvent(queryView.getQuery());
+				$('#formexpender').attr("value", "Refine Query");				
+				$('#formexpender').attr("title", "Hide query form");
+				height='10%';
+				layoutPane.sizePane("south", height);
+
 			} else if (mode == 'sap') {
 				sapView.fireSubmitQueryEvent();
 			} else {
 				Modalinfo.info('Unknown query mode:' + mode);
 			}
 		};
-		this.fireSetTreePath = function(treepath) {
+		this.fireSetTreePath = function() {
 			$.each(listeners, function(i) {
-				listeners[i].controlSetTreePath(treepath);
+				listeners[i].controlSetTreePath();
 			});
 		};
 		this.fireHisto = function(direction) {
@@ -66,7 +77,6 @@ jQuery
 
 		this.fireSaadaQLQueryEvent = function(query) {
 			$("#resultpane").html();
-
 			$.each(listeners, function(i) {
 				listeners[i].controlSaadaQLQueryEvent(query);
 			});
@@ -98,11 +108,7 @@ jQuery
 					return;
 				}
 				else {
-					retour = "relation: " + relation + "\n";
-					$.each(jsdata, function(k, v) {
-						retour += k + ": " + v  + "\n";
-					});
-					Modalinfo.info(retour, "Relation Info");
+					Modalinfo.infoObject(jsdata, "Relation Info");
 				}
 			});
 		};	
@@ -123,7 +129,17 @@ jQuery
 			$.each(listeners, function(i) {
 				listeners[i].controlDownloadVOTable();
 			});
-		};
+		};		
+		
+		this.getDownloadVOTableURL = function() {
+			var retour;
+			$.each(listeners, function(i) {
+				retour = listeners[i].controlDownloadVOTableURL();
+				return;
+			});
+			return retour;
+		}
+
 		this.fireDownloadFITS = function(query) {
 			if($("#datatable") == undefined ||  $("#datatable").html() == null ) {
 				Modalinfo.info("No data selection");
@@ -178,6 +194,16 @@ jQuery
 				listeners[i].controlShowMeta();
 			});
 		};
+		this.fireShowMetaCollection = function(treepath) {
+			$.getJSON("getmeta", {query: "collection", name:treepath }, function(data) {
+				Processing.hide();
+				if( Processing.jsonError(data, "get collection description") ) {
+					return;
+				} else {
+					Modalinfo.infoObject(data, "Collection Description")
+				}
+				});
+		};
 		this.fireShowMetaNode = function(treepath) {
 			$.each(listeners, function(i) {
 				listeners[i].controlShowMetaNode(treepath);
@@ -227,8 +253,8 @@ jQuery
 		};
 		this.fireShowVignette = function(oid, title) {
 //			Modalinfo.dataPanel('Preview of ' + title,
-//					"<img class=vignette src='getvignette?oid=" + oid
-//					+ "'>");
+//			"<img class=vignette src='getvignette?oid=" + oid
+//			+ "'>");
 			Modalinfo.dataPanel('Vignette of ' + title
 					, "<img class=vignette src='getvignette?oid=" + oid + "'>"
 					, 'getvignette?oid=' + oid);
@@ -239,16 +265,16 @@ jQuery
 
 		this.fireExpendForm= function() {
 			var height = $(window).height() ;
-			var icon = $('#formexpender').css("background-image");
-			if( icon.match("screen_up") != null ) {
-				$('#formexpender').css("background-image", "url(images/screen_down.png)");
+			var label = $('#formexpender').attr("value");
+			if( label == "Refine Query" ) {
+				$('#formexpender').attr("value", "Hide Query");				
 				$('#formexpender').attr("title", "Expend query form");
-				height='10%';
+				height='90%';
 			}
 			else {
-				$('#formexpender').css("background-image", "url(images/screen_up.png)");
-				$('#formexpender').attr("title", "Minimize query form");
-				height='90%';
+				$('#formexpender').attr("value", "Refine Query");				
+				$('#formexpender').attr("title", "Hide query form");
+				height='10%';
 			}
 			layoutPane.sizePane("south", height);
 			//	$("div#accesspane").trigger("resize",[ height]);		
@@ -269,66 +295,80 @@ jQuery
 				return;
 			}
 
-			var table = '';
-			var histo = '';
-
-
-			if (limit != 'NoHisto') {
-				if (limit != 'MaxLeft') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
-				} else {
-					histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				}
-				if (limit != 'MaxRight') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
-				} else {
-					histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
-				}
-			} else {
-				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+			var content = {
+					header: {
+						histo: {
+							prev: "resultPaneView.fireShowPreviousRecord()",
+							next: "resultPaneView.fireShowNextRecord()"
+						},
+						title: {
+							label: jsdata.title 
+						},
+						icon: {
+							classIcon: "printer",
+							handler: "print('simplemodal-container')"
+						}
+					},
+					chapters: []
 			}
-			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
-			//table += '<h2> ' + histo + ' DETAIL <span>' + jsdata.title
-			table += '<h3> ' + histo  + jsdata.title + '<span>'
-			+ '</span></h3>';
 
-			if (jsdata.links.length > 0) {
-				table += "<div style='overflow: hidden;border-width: 0;'>";
-				for (var i = 0; i < jsdata.links.length; i++) {
-					table += '<span>' + jsdata.links[i] + '</span><br>';
-				}
-				table += "</div>";
-			}
-			table += "<h4 id=\"native\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'native\');;\"> <img src=\"images/tdown.png\"> Native Data </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-			table += "</div>";
+			content.chapters.push({
+				id: "ClassLevel",
+				label: "Data Read in the Input file - (class level data)",
+				data:  {
+					"aoColumns" : jsdata.classlevel.aoColumns,
+					"aaData" : jsdata.classlevel.aaData
+				},
+				params: {
+					oid: oid
+				},
+				searchable: true,
+			});
 
-			table += "<h4 id=\"mapped\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mapped\');\"> <img src=\"images/tright.png\"> Mapped Data </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-			table += "</div>";
-
-			/*
-			 * relation panels
-			 */
+			content.chapters.push({
+				id: "CollLevel",
+				label: "Data Set by Saada - (collection level data)",
+				data:  {
+					"aoColumns" : jsdata.collectionlevel.aoColumns,
+					"aaData" : jsdata.collectionlevel.aaData
+				},
+				params: {
+					oid: oid
+				},
+				searchable: true,
+			});
+			var chapterToOpen;
 			for (var i = 0; i < jsdata.relations.length; i++) {
 				var relation= jsdata.relations[i];
+				var chapter = {
+						id: "Relation" + relation,
+						label: "Linked Data (relation "+ relation + ") <a id=" + relation + " title='Get relation info' class='dl_info' onclick='event.stopPropagation(); resultPaneView.fireGetRelationInfo(&quot;" + relation + "&quot;);'></A>",
+						//url:  "getobject?relation=" + relation,
+						url:  "getobject",
+						params: {
+							oid: oid,
+							relation: relation
+						},
+						searchable: true,
+				};
+				content.chapters.push(chapter);
+
 				if( relation == panelToOpen) {
-					numPanelToOpen = i+2;
-				}
-				table += "<h4 id=" + relation + " class='detailhead'> <img id=" + relation + " src=\"images/tright.png\"> Relation " + relation 
-				+ "&nbsp;<a id=" + relation + " title='Get info the relation' class=dl_info href='javascript:void(0)'></A></h4>";
-				table += "<div class='detaildata'></div>";
+					chapterToOpen = chapter;
+				} 
+			}
+			ModalResult.resultPanel(content, null, "white", true);
+			if(panelToOpen == "ClassLevel"){
+				chapterToOpen = content.chapters[0];
+			} else if(panelToOpen == "CollLevel"){
+				chapterToOpen = content.chapters[1];
+			}
+			if( chapterToOpen != null ){
+				ModalResult.openChapterPanel(chapterToOpen); 
 			}
 
-//			if ($('#detaildiv').length == 0) {
-//			$(document.documentElement)
-//			.append(
-//			"<div id=detaildiv style='width: 99%; display: none;'></div>");
-//			}
-			//Modalpanel.open(table);
+			return;
+
 			Modalinfo.dataPanel("Source Detail" , table, null, "white");
 			/*
 			 * Click on relation relation title bars: 
@@ -434,18 +474,18 @@ jQuery
 
 			if (limit != 'NoHisto') {
 				if (limit != 'MaxLeft') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
+					histo += '<a id="qhistoleft" href="javascript:void(0);" onclick="resultPaneView.fireShowPreviousRecord();" class=histoleft></a>';
 				} else {
-					histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+					histo += '<a id="qhistoleft" class="histoleft shaded" onclick="return false;"></a>';
 				}
 				if (limit != 'MaxRight') {
-					histo += '<a href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
+					histo += '<a id="qhistoright"  href="javascript:void(0);" onclick="resultPaneView.fireShowNextRecord();" class=historight></a>';
 				} else {
-					histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+					histo += '<a id="qhistoright" class="historight shaded" onclick="return false;"></a>';
 				}
 			} else {
-				histo += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
-				histo += '<a id="qhistoright"><img src="images/historight-grey.png"></a>';
+				histo += '<a id="qhistoleft" class="histoleft shaded" onclick="return false;"></a>';
+				histo += '<a id="qhistoleft" class="historight shaded" onclick="return false;"></a>';
 			}
 			histo += "<div style='display: inline; float: right'>" + Printer.getPrintButton("simplemodal-container") + "</div>";
 
@@ -461,100 +501,82 @@ jQuery
 					+ jsdata.collectionLevel.name + "."
 					+ jsdata.collectionLevel.category + "</i>";
 			}
-			table += '<h2> ' + histo + ' DETAIL <span>' + title
-			+ '</span></h2>';
-			table += "<h4 id=\"mappedmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'mappedmeta\');\"> <img src=\"images/tdown.png\"> Description of Mapped Keywords </h4>";
-			table += "<div class='detaildata'>";
-			table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailtable\" class=\"display\"></table>";
-			table += "</div>";
 
-			if (jsdata.classLevel != null) {
-				table += "<h4 id=\"nativemeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'nativemeta\');\"> <img src=\"images/tright.png\">  Description of  Native Data </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"detailmappedtable\" class=\"display\"></table>";
-				table += "</div>";
-			}
+			var content = {
+					header: {
+						histo: {
+							prev: "resultPaneView.fireShowPreviousRecord()",
+							next: "resultPaneView.fireShowNextRecord()"
+						},
+						title: {
+							label: title 
+						},
+						icon: {
+							classIcon: "printer",
+							handler: "print('simplemodal-container')"
+						}
+					},
+					chapters: []
+			};
 
-			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
-				table += "<h4 id=\"startingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'startingmeta\');\"> <img src=\"images/tright.png\"> Relationships starting from it </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"startingmetatable\" class=\"display\"></table>";
-				table += "</div>";
-			}
-
-			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
-				table += "<h4 id=\"endingmeta\" class='detailhead' onclick=\"$(this).next('.detaildata').slideToggle(500); switchArrow(\'endingmeta\');\"> <img src=\"images/tright.png\"> Relationships ending at it </h4>";
-				table += "<div class='detaildata'>";
-				table += "<table width=99% cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"endingmetatable\" class=\"display\"></table>";
-				table += "</div>";
-			}
-
-			if ($('#detaildiv').length == 0) {
-				$(document.documentElement)
-				.append(
-				"<div id=detaildiv style='width: 99%; display: none;'></div>");
-			}
-			Modalpanel.open(table);
-			$('#detailtable').dataTable(
-					{
+			if (jsdata.classLevel != null) 
+				content.chapters.push({
+					id: "ClassLevel",
+					label: "Class Level Attributes - (Read in input files)",
+					data:  {
+						"aoColumns" : jsdata.classLevel.attributes.aoColumns,
+						"aaData" : jsdata.classLevel.attributes.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+			if (jsdata.collectionLevel != null) 
+				content.chapters.push({
+					id: "CollLevel",
+					label: "Collection Level Attributes - (Set by Saada)",
+					data:  {
 						"aoColumns" : jsdata.collectionLevel.attributes.aoColumns,
-						"aaData" : jsdata.collectionLevel.attributes.aaData,
-						"sDom" : '<"top"f>rt',
-						"bPaginate" : false,
-						"aaSorting" : [],
-						"bSort" : false,
-						"bFilter" : true,
-						"bAutoWidth" : true
-					});
-			if (jsdata.classLevel != null) {
-				$('#detailmappedtable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.classLevel.attributes.aoColumns,
-							"aaData" : jsdata.classLevel.attributes.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
-			}
+						"aaData" : jsdata.collectionLevel.attributes.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+
 			if (jsdata.collectionLevel.startingRelations.aaData.length > 0) {
-				$('#startingmetatable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.collectionLevel.startingRelations.aoColumns,
-							"aaData" : jsdata.collectionLevel.startingRelations.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
-			}
-			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
-				$('#endingmetatable')
-				.dataTable(
-						{
-							"aoColumns" : jsdata.collectionLevel.endingRelations.aoColumns,
-							"aaData" : jsdata.collectionLevel.endingRelations.aaData,
-							"sDom" : '<"top"f>rt',
-							"bPaginate" : false,
-							"aaSorting" : [],
-							"bSort" : false,
-							"bFilter" : true,
-							"bAutoWidth" : true
-						});
+				content.chapters.push({
+					id: "StartRel",
+					label: "Relationships Starting From this dData Collection",
+					data:  {
+						"aoColumns" : jsdata.collectionLevel.startingRelations.aoColumns,
+						"aaData" : jsdata.collectionLevel.startingRelations.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
 			}
 
-			Modalpanel.resize();
-			jQuery(".detaildata").each(function(i) {
-				if (i > 0) {
-					$(this).hide();
-				}
-			});
+			if (jsdata.collectionLevel.endingRelations.aaData.length > 0) {
+				content.chapters.push({
+					id: "EndRem",
+					label: "Relationships Ending To this Data Collection",
+					data:  {
+						"aoColumns" : jsdata.collectionLevel.endingRelations.aoColumns,
+						"aaData" : jsdata.collectionLevel.endingRelations.aaData
+					},
+					params: {
+						oid: "oid"
+					},
+					searchable: true,
+				});
+
+			}
+			ModalResult.resultPanel(content, null, "white", true);
 		};
 		this.displayResult = function(dataJSONObject) {
 		};
@@ -571,20 +593,19 @@ jQuery
 				for (var i = 0; i < ahs.length; i++) {
 					headCells += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
 				}
-				
+
 				table +=  "<thead><tr>" + headCells + "</tr></thead>";
 				table +=  "<tfoot><tr>" + headCells + "</tr></tfoot>";				
 				table +=
-					 "<tbody>"
+					"<tbody>"
 					+ "<tr><td colspan="
 					+ i
 					+ " class=\"dataTables_empty\">Loading data from server</td></tr>"
 					+ "</tbody>";
-				
-				table += "</table>";
-				$("#resultpane").html(table);
 
-				var orderParams = saadaqlView.fireOrderByParameters();
+				table += "</table>";
+				$("#resultpane").html(table);			
+				var that = this;
 				$('#datatable th').each(function() {
 					var att = $(this).text();
 					if( !att.startsWith('Rel ')  && att != 'Gallery'  && att != 'DL Link'  && att != 'Plot') {
@@ -597,13 +618,21 @@ jQuery
 							ah = {nameorg: 'Name', nameattr: 'namesaada'};
 						} else if( att == 'Position' ) {
 							ah = {nameorg: 'Position', nameattr: 'pos_ra_csa'};
+						} else if( att == 'Size (deg)' ) {
+							ah = {nameorg: 'Size (deg)', nameattr: 'size_alpha_csa'};
 						} else if( att.startsWith('Error ') ) {
 							ah = {nameorg: att, nameattr: 'error_maj_csa'};
 						} else {
 							ah = {nameorg: att, nameattr: att};
 						}
-						var s = new Sorter_mVc($(this), $(this).parent(), ah, saadaqlView.fireSortColumnEvent);
-						s.draw();
+						
+						var orderParams = nativeConstraintEditor.getOrderBy();
+
+						var s = new Sorter_mVc($(this), $(this).parent(), ah
+								, saadaqlView.fireSortColumnEvent
+								, function(scrollLeft){that.scrollLeft = scrollLeft;});
+						s.setScrollPaneSelector(that.scrollPaneSelector);
+						s.draw();		
 						if( att == 'Access' && orderParams.nameattr == 'oidsaada') {
 							s.activeArrow(orderParams.asc);
 						} else if( att == 'Detail'  && orderParams.nameattr == 'oidsaada') {
@@ -623,55 +652,85 @@ jQuery
 				/*
 				 * Connect the table with the DB
 				 */
-				// p: change page
-			//	$('.fixedHeader').remove();
-				var iconBar = '&nbsp;<a title="Download the current selection in a VOTable" class="dl_download" onclick="resultPaneView.fireDownloadVOTable();"></a>'	
-				            + '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>'
-				            + Printer.getSmallPrintButton("resultpane")
-				;
-				if( globalTreePath[1] == "ENTRY" || globalTreePath[1] == "IMAGE"|| globalTreePath[1] == "SPECTRUM"){
-					iconBar += '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>';
+				var options = {
+						"aLengthMenu": [5, 10, 25, 50, 100],
+						"pageLength": 5,
+						"bServerSide" : true,
+						"bProcessing" : true,
+						"aaSorting" : [],
+						"pagingType" : "simple",
+						"bSort" : false,
+						"bFilter" : false,
+						"sAjaxSource" : "nextpage",
+						"sServerMethod": "POST"
+				};
+				var positions = [
+				                 { "name": "pagination",
+				                	 "pos": "top-left"
+				                 },
+				                 { "name": "length",
+				                	 "pos": "top-center"
+				                 },
+				                 { "name": "information",
+				                	 "pos": "top-right"
+				                 },
+				                 { "name": "pagination",
+				                	 "pos": "bottom-left"
+				                 },
+				                 { "name": "length",
+				                	 "pos": "bottom-center"
+				                 },
+				                 { "name": "information",
+				                	 "pos": "bottom-right"
+				                 },
+				                 { "name" : '<a id="ColumnSelector" class="dl_column" title="Column selector"></a>',
+				                	 "pos": "top-center"
+				                 },
+				                 { "name" : '<a href=' + resultPaneView.getDownloadVOTableURL() + ' title="Download the current selection in a VOTable" class="dl_download" download></a>',
+				                	 "pos": "top-center"
+				                 },
+				                 { "name" : '<a class="dl_cart" title="Add the current selection to the cart" onclick="cartView.fireAddJobResult($(this), \'' + escape(query) + '\');"></a>',
+				                	 "pos": "top-center"
+				                 }
+				                 ];
+				if( globalTreePath.category == "ENTRY" || globalTreePath.category == "IMAGE"|| globalTreePath.category == "SPECTRUM"){
+					var rootUrl = "http://" + window.location.hostname +  (location.port?":"+location.port:"") + "/" + window.location.pathname.split( '/' )[1] + "/";
+
+					positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_aladin" onclick="ModalAladin.aladinExplorer({ swarm: &quot;' + rootUrl  + resultPaneView.getDownloadVOTableURL() + '&quot;, title:&quot;NoTarget&quot;}, []);"></a>',
+						"pos" : "top-center"})
+						positions.push({"name": '<a title="Send the entry selection to SAMP client" class="dl_samp" onclick="resultPaneView.fireSampVOTable();"></a>',
+							"pos" : "top-center"})
 				}
+				positions.push({ "name" : Printer.getSmallPrintButton("resultpane") ,
+               	 "pos": "top-center"
+                });				              	
+
+				var datatable = CustomDataTable.create("datatable", options, positions);		
+				datatable.on( 'draw.dt', function () {
+				    $(that.scrollPaneSelector).scrollLeft(that.scrollLeft); 
+				} );
+
+				$('#datatable_wrapper').css("overflow", "inherit");
+				var columnSelector = function(states){
+					for( var n=0 ; n<states.length ; n++){
+						var column = datatable.api().column( n);
+						/*
+						 * Do not redraw fore each columns, takes hours...
+						 */
+						column.visible( states[n].selected, false);						
+					}
+					/*
+					 * Redraw now
+					 */
+					datatable.api().columns.adjust().draw( false ); 
+				}
+				$('#ColumnSelector').click(function() {
+					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
+				});	
 				
-				var  oTable = $('#datatable').dataTable({
-					"aLengthMenu": [5, 10, 25, 50, 100],
-					"bServerSide" : true,
-					"bProcessing" : true,
-					"aaSorting" : [],
-					"bSort" : false,
-					"bFilter" : false,
-					//"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-					"sDom": '<"top"pfli>rt<"bottom"pfli<"clear">>',
-					"sAjaxSource" : "nextpage"
-//					"fnDrawCallback": function() {
-//						var width = $(this).width();
-//						console.log($(this).width());
-//						var wa = new Array();
-//						$(this).find('thead').remove();
-//						$(this).find('tfoot').find('th').each(function(){wa.push($(this).width() + 2); console.log($(this).width());});
-//						$('#pouet').html("<table cellpadding=0; cellspacing=0;  class='display dataTable' style='border: 1px solid black; width: " + width + "px;'><thead>" + $("#resultpane tfoot").html() + "</thead></table>");
-//						$('#pouet th').each(function(index){$(this).width(wa[index]); $(this).css('border', '1px solid black');});
-//					}
-//				    "fnInitComplete": function(oSettings, json) {
-//						that.fixedHeader.fnUpdate();
-//				    } 
-				// , "bPaginate": false
-				});
-			//	this.fixedHeader = new FixedHeader( oTable );
 
-
+				return;
 			}
-			$('#resultpane div.dataTables_length').append(iconBar);
-			$('div .bottom').appendTo('#pouet1');
-			that.fireStoreHisto(query);
-			//this.fixedHeader.fnUpdate();
-	    	/*
-	    	 * Images are loaded asynchronously and they can change the column width.*
-	    	 * There is no way to trigger this kind of event to update FixHeader.
-	    	 * Les do it a couple of seconds later
-	    	 */
-			//setTimeout(function (){that.fixedHeader.fnUpdate()}, 2000);
-
 		};
 		this.updateFixedHeader = function() {
 			alert(this.fixedHeader);
@@ -706,18 +765,18 @@ jQuery
 			var result = '';
 			$("#qhistocount").html((ptr + 1) + "/" + length);
 			if (length <= 1) {
-				result += '<img src="images/histoleft-grey.png">';
-				result += '<img src="images/historight-grey.png">';
+				result += '<a id="qhistoleft" title="Previous query" class="shaded histoleft  shaded" onclick="return false;"></a>';
+				result += '<a id="qhistoright" title="Previous query" class="shaded historight" onclick="return false;"></a>';
 			} else {
 				if (ptr > 0) {
 					result += '<a id="qhistoleft" title="Previous query" class=histoleft onclick="resultPaneView.fireHisto(\'previous\');"></a>';
 				} else {
-					result += '<a id="qhistoleft"><img src="images/histoleft-grey.png"></a>';
+					result += '<a id="qhistoleft" title="Previous query" class="histoleft  shaded" onclick="return false;"></a>';
 				}
 				if (ptr < (length - 1)) {
 					result += '<a id="qhistoright" title="Next query" class=historight onclick="resultPaneView.fireHisto(\'next\');"></a>';
 				} else {
-					result += '<img src="images/historight-grey.png">';
+					result += '<a id="qhistoright" title="Previous query" class="historight  shaded" onclick="return false;"></a>';
 				}
 			}
 			$('#histoarrows').html('');

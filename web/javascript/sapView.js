@@ -71,8 +71,8 @@ jQuery.extend({
 
 		this.fireDisplayHisto = function(){
 			var result = '';
-			result += '<img src="images/histoleft-grey.png">';
-			result += '<img src="images/historight-grey.png">';	
+			result += '<a id="qhistoleft" title="Previous query" class="shaded histoleft  shaded" onclick="return false;"></a>';
+			result += '<a id="qhistoright" title="Previous query" class="shaded historight" onclick="return false;"></a>';
 			$('#histoarrows').html('');
 			$('#histoarrows').html(result);
 		};
