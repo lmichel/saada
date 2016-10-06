@@ -8,21 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import saadadb.dataloader.mapping.ProductMapping;
-import saadadb.exceptions.AbortException;
-import saadadb.exceptions.IgnoreException;
-import saadadb.exceptions.SaadaException;
-import saadadb.meta.AttributeHandler;
-import saadadb.products.ExtensionSetter;
-import saadadb.products.ProductBuilder;
-import saadadb.util.ChangeKey;
-import saadadb.util.Messenger;
-import saadadb.util.SaadaConstant;
-import saadadb.vocabulary.DefineType;
-import saadadb.vocabulary.enums.DataFileExtensionType;
-import saadadb.vocabulary.enums.ExtensionSetMode;
 import cds.astro.Astrocoo;
-import cds.savot.model.DataBinaryReader;
+import cds.savot.binary.DataBinaryReader;
 import cds.savot.model.FieldSet;
 import cds.savot.model.GroupSet;
 import cds.savot.model.ParamSet;
@@ -38,6 +25,20 @@ import cds.savot.model.SavotVOTable;
 import cds.savot.model.TDSet;
 import cds.savot.pull.SavotPullEngine;
 import cds.savot.pull.SavotPullParser;
+import saadadb.dataloader.mapping.ProductMapping;
+import saadadb.exceptions.AbortException;
+import saadadb.exceptions.IgnoreException;
+import saadadb.exceptions.SaadaException;
+import saadadb.meta.AttributeHandler;
+import saadadb.products.ExtensionSetter;
+import saadadb.products.ProductBuilder;
+import saadadb.util.ChangeKey;
+import saadadb.util.Messenger;
+import saadadb.util.SaadaConstant;
+import saadadb.vocabulary.DefineType;
+import saadadb.vocabulary.enums.DataFileExtensionType;
+import saadadb.vocabulary.enums.ExtensionSetMode;
+
 
 /**
  * New VOTable interface multi extension and multitable

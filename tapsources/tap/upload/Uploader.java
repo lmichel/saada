@@ -34,7 +34,7 @@ import tap.metadata.TAPSchema;
 import tap.metadata.TAPTable;
 import tap.metadata.TAPTypes;
 import tap.metadata.VotType;
-import cds.savot.model.DataBinaryReader;
+import cds.savot.binary.DataBinaryReader;
 import cds.savot.model.FieldSet;
 import cds.savot.model.SavotBinary;
 import cds.savot.model.SavotField;

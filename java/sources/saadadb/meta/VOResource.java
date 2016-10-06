@@ -121,7 +121,7 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			List<Object> tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			List<SavotTD> stdv = new ArrayList<SavotTD>();
 			for (Object o : tdv) {
 				stdv.add((SavotTD)o);
@@ -613,7 +613,7 @@ public class VOResource {
 				break;
 			}
 			TDSet tds = currentTR.getTDSet();
-			List<Object> tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "Class mapping <" + configfile + "> badly formated at <TR> #" + cpt); 
 				return null;
