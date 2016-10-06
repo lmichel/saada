@@ -819,8 +819,8 @@ public final class FitsDataFile extends FSDataFile{
 		}
 		if( this.productMap.size() == 1) {
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "Mo extension, take just the 1HDU");
-			return;
+				Messenger.printMsg(Messenger.DEBUG, "No extension, take just the 1HDU");
+			//return;
 		}
 		DataFileExtension dfe=null;
 		switch (category) {
@@ -927,7 +927,8 @@ public final class FitsDataFile extends FSDataFile{
 			} 
 			AttributeHandler attribute = new AttributeHandler(hcard);
 			if( !this.isCardAccepted(attribute)){
-				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute+" is ignored by user maping or not valid");	
+				if( Messenger.debug_mode && attribute.getNameorg().length() > 0 ) 
+					Messenger.printMsg(Messenger.DEBUG, "The key : "+attribute+" is ignored by user maping or not valid");	
 				continue;
 			}	
 			key = attribute.getNameorg();
@@ -1036,7 +1037,7 @@ public final class FitsDataFile extends FSDataFile{
 		if( FitsDataFile.isImage(this.goodHeader)) {
 			int[] size=  ((ImageHDU)this.goodHeader).getAxes();				
 			retour[0] = size[size.length - 1];
-			retour[1] = size[size.length - 2];
+			retour[1] = (size.length > 1)?size[size.length - 2]: 1;
 			return retour;
 		}
 		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
@@ -1096,7 +1097,7 @@ public final class FitsDataFile extends FSDataFile{
 			ImageHDU himage = ((ImageHDU)this.goodHeader);
 			size = himage.getAxes();
 			ww = size[size.length - 1];
-			hh = size[size.length - 2];
+			hh = (size.length > 1)?size[size.length - 2]: 1;
 			return himage.getTiler().getTile(new int[size.length], size);
 		}
 		else if( FitsDataFile.isTileCompressedImage(this.goodHeader) ) {
