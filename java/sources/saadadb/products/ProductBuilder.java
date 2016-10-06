@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -192,7 +193,7 @@ public abstract class ProductBuilder {
 			/*
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 			 */
-			cardMap = new CardMap(new HashSet<CardDescriptor>(this.productAttributeHandler.values()));
+			cardMap = new CardMap(new LinkedHashSet<CardDescriptor>(this.productAttributeHandler.values()));
 			/*
 			 * Here cp.put(AH) where HA is read from the arg parser
 			 */
