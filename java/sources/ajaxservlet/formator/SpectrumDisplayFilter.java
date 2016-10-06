@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
@@ -42,7 +43,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		datatable_columns.add("Detail");
 */		datatable_columns.add("Position");
 		datatable_columns.add("Name");
-		datatable_columns.add("Energy Range (" + Database.getSpect_unit() + ")");
+		datatable_columns.add("Range (" + Database.getSpect_unit() + ")");
 	}
 
 	@Override
@@ -97,14 +98,14 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 				retour.add("<a  class=dl_ivoa onclick=WebSamp_mVc.fireSendVoreport(\"" + instance.oidsaada + "\");'></a>");
 			}
 			else if( "Access".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null)
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel")
 						+ DefaultPreviews.getInfoLink(oidsaada)
 						+ DefaultPreviews.getDLLink(oidsaada, false)
 						+ DefaultPreviews.getCartLink(oidsaada)
 						+ DefaultPreviews.getSpecSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
@@ -112,9 +113,9 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 			else if( "Position".equals(s)) {
 				retour.add(sff.getPos());
 			}
-			else if( s.startsWith("Energy Range") ) {
+			else if( s.startsWith("Range") ) {
 				retour.add(DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) );
-			} 
+			}
 			else if( "Name".equals(s)) {
 				retour.add(instance.obs_id);
 			}
@@ -181,8 +182,9 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
 				instance = (SpectrumSaada) Database.getCache().getObject(oidsaada);
+				SpecialFieldFormatter sfm = new SpecialFieldFormatter(instance);
 				retour.add("Position " + DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
-				retour.add("Energy Range " + DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) + " " + Database.getSpect_unit());
+				retour.add("Range " + DefaultFormats.getString(instance.em_min) + " - " + DefaultFormats.getString(instance.em_max) + " " + Database.getSpect_unit());
 				retour.addAll(super.getLinks());
 			}
 		} catch (Exception e) {}
@@ -195,22 +197,58 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.SPECTRUM);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"SPECTRUM\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Access\", \"Position\", \"Name\", \"Energy Range (" + Database.getSpect_unit() + ")\",\"time range\" ],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "SPECTRUM");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Access");	
+		jsa.add("Position");	
+		jsa.add("Range (" + Database.getSpect_unit() + ")");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_spectra().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"SPECTRUM\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Access\", \"Position\", \"Name\", \"Range (" + Database.getSpect_unit() + ")\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
 
 }

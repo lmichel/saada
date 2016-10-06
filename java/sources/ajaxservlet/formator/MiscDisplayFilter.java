@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
-import saadadb.collection.obscoremin.MiscSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -21,6 +21,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.util.ChangeKey;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author laurentmichel
@@ -78,7 +79,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 
 	@Override
 	public List<String> getRow(Object obj, int rank) throws Exception {
-		MiscSaada instance = (MiscSaada) Database.getCache().getObject(oidsaada);
+		SaadaInstance instance = Database.getCache().getObject(oidsaada);
 		if( instance.getCategory() != Category.MISC) {
 			QueryException.throwNewException(SaadaException.METADATA_ERROR
 					, "ENTRY object expected (not " + Category.explain( instance.getCategory()) +")");
@@ -86,7 +87,7 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 		List<String> retour = new ArrayList<String>();
 		for( String s: datatable_columns) {
 			 if( "Detail".equals(s)) {
-					retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+					retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
@@ -167,24 +168,60 @@ public class MiscDisplayFilter extends DefaultDisplayFilter {
 	protected void setRelations() {
 		setRelations(Category.MISC);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"MISC\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Access\", \"Name\"],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "MISC");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Access");	
+//		jsa.add("Position");	
+//		jsa.add("Error (arcsec)");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_misc().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"MISC\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Access\", \"Name\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
 
 
 }

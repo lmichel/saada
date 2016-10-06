@@ -1,12 +1,11 @@
 package ajaxservlet.formator;
 
 import saadadb.collection.Category;
-import saadadb.collection.obscoremin.EntrySaada;
-import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.collection.obscoremin.TableSaada;
 import saadadb.collection.obscoremin.WCSSaada;
+import saadadb.exceptions.FatalException;
 import saadadb.util.Messenger;
 
 /**
@@ -23,7 +22,7 @@ public class NativeAttributesProvider {
 		cat = si.getCategory();
 	}
 	
-	public String getNativeAttr(String attr_name) {
+	public String getNativeAttr(String attr_name) throws FatalException {
 		switch (cat) {
 		case Category.ENTRY:
 			return getEntryNative(attr_name);
@@ -44,16 +43,18 @@ public class NativeAttributesProvider {
 	}
 	
 	public String getPosNative(String attr_name) {
-		if (attr_name.compareTo("s_ra") == 0) {
-			return DefaultFormats.getString(saadai.s_ra);
-		} else if (attr_name.compareTo("s_ra") == 0) {
+		if (attr_name.compareTo("pos_ra_csa") == 0) {
 			return DefaultFormats.getString(saadai.s_ra);
 		
-		} else if (attr_name.compareTo("healpix_csa") == 0) {
+		} else if (attr_name.compareTo("sky_pixel_csa") == 0) {
 			return DefaultFormats.getString(saadai.healpix_csa);
 		
-		} else if (attr_name.compareTo("s_resolution") == 0) {
+		} else if (attr_name.compareTo("error_maj_csa") == 0) {
 			return DefaultFormats.getString(saadai.s_resolution);
+		
+		} else if (attr_name.compareTo("error_min_csa") == 0) {
+			return DefaultFormats.getString(saadai.s_resolution);
+		
 		}
 		
 		return null;
@@ -62,7 +63,6 @@ public class NativeAttributesProvider {
 	public String getSINative(String attr_name) {
 		if (attr_name.compareTo("oidsaada") == 0) {
 			return DefaultFormats.getString(saadai.oidsaada);
-				
 		} else if (attr_name.compareTo("contentsignature") == 0) {
 			return DefaultFormats.getString(saadai.contentsignature);
 		
@@ -79,42 +79,43 @@ public class NativeAttributesProvider {
 		return null;
 	}
 	
-	public String getWCSNative(String attr_name) {
+	public String getWCSNative(String attr_name) throws FatalException {
+		WCSSaada wcsInstance = (WCSSaada)saadai;
 		if (attr_name.compareTo("crpix1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).crpix1_csa);
+			return DefaultFormats.getString(wcsInstance.crpix1_csa);
 			
 		} else if (attr_name.compareTo("crpix2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).crpix2_csa);
+			return DefaultFormats.getString(wcsInstance.crpix2_csa);
 		
 		} else if (attr_name.compareTo("ctype1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).ctype1_csa);
+			return DefaultFormats.getString(wcsInstance.ctype1_csa);
 		
 		} else if (attr_name.compareTo("ctype2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).ctype2_csa);
+			return DefaultFormats.getString(wcsInstance.ctype2_csa);
 		
 		} else if (attr_name.compareTo("cd1_1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).cd1_1_csa);
+			return DefaultFormats.getString(wcsInstance.cd1_1_csa);
 		
 		} else if (attr_name.compareTo("cd1_2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).cd1_2_csa);
+			return DefaultFormats.getString(wcsInstance.cd1_2_csa);
 		
 		} else if (attr_name.compareTo("cd2_1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).cd2_1_csa);
+			return DefaultFormats.getString(wcsInstance.cd2_1_csa);
 		
 		} else if (attr_name.compareTo("cd2_2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).cd2_2_csa);
+			return DefaultFormats.getString(wcsInstance.cd2_2_csa);
 		
 		} else if (attr_name.compareTo("crota_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).crota_csa);
+			return DefaultFormats.getString(wcsInstance.crota_csa);
 		
 		} else if (attr_name.compareTo("crval1_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).crval1_csa);
+			return DefaultFormats.getString(wcsInstance.crval1_csa);
 		
 		} else if (attr_name.compareTo("crval2_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).crval2_csa);
+			return DefaultFormats.getString(wcsInstance.crval2_csa);
 		
 		} else if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString(((WCSSaada)saadai).getAccess_url());
+			return DefaultFormats.getString(wcsInstance.getDownloadURL(true));
 		}
 		
 		return null;
@@ -124,77 +125,62 @@ public class NativeAttributesProvider {
 		String result = this.getPosNative(attr_name);
 		if (result != null) return result;
 		if (attr_name.compareTo("oidtable") == 0) {
-			return DefaultFormats.getString(((EntrySaada)saadai).oidtable);
+			return DefaultFormats.getString(saadai.getOIdtable());
 		}
 		return null;
 	}
 	
-	public String getFlatfileNative(String attr_name) {
-		String result = this.getSINative(attr_name);
-		if (result != null) return result;
-		if (attr_name.compareTo("access_url") == 0) {
-			return DefaultFormats.getString((saadai).getAccess_url());
-		}
-		return null;
-	}
-	
-	public String getImageNative(String attr_name) {
-		String result = this.getWCSNative(attr_name);
-		if (result != null) return result;
-		if (attr_name.compareTo("s_fov") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).s_fov);
-		} else if (attr_name.compareTo("size_delta_csa") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).s_fov);
-		} else if (attr_name.compareTo("naxis1") == 0) {
-			return DefaultFormats.getString(((ImageSaada)saadai).naxis1);
-		}
-		return null;
-	}
-	
-	public String getMiscNative(String attr_name) {
-		String result = this.getSINative(attr_name);
-		if (result != null) return result;
-		if (attr_name.compareTo("access_url") == 0) {
-			return DefaultFormats.getString(saadai.getAccess_url());
-		}
-		return null;
-	}
-	
-	public String getSpectrumNative(String attr_name) {
-		String result = this.getWCSNative(attr_name);
-		if (result != null) return result;
-		if (attr_name.compareTo("e_min") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).em_min);
-		
-		} else if (attr_name.compareTo("e_max") == 0) {
-			return DefaultFormats.getString(((SpectrumSaada)saadai).em_max);
-		
-//		} else if (attr_name.compareTo("x_type_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_type_csa);
-//		
-//		} else if (attr_name.compareTo("x_unit_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_unit_csa);
-		
-//		} else if (attr_name.compareTo("x_naxis_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_naxis_csa);
-		
-//		} else if (attr_name.compareTo("x_colname_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_colname_csa);
-		
-//		} else if (attr_name.compareTo("x_max_org_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).x_max_org_csa);
-//		
-//		} else if (attr_name.compareTo("em_unit_csa") == 0) {
-//			return DefaultFormats.getString(((SpectrumSaada)saadai).em_unit_csa);
-		}
-		return null;
-	}
-	
-	public String getTableNative(String attr_name) {
+	public String getFlatfileNative(String attr_name) throws FatalException {
 		String result = this.getSINative(attr_name);
 		if (result != null) return result;
 		if (attr_name.compareTo("product_url_csa") == 0) {
-			return DefaultFormats.getString(saadai.getAccess_url());
+			return DefaultFormats.getString((saadai).getDownloadURL(true));
+		}
+		return null;
+	}
+	
+	public String getImageNative(String attr_name) throws FatalException {
+		String result = this.getWCSNative(attr_name);
+		if (result != null) return result;
+		if (attr_name.compareTo("size_alpha_csa") == 0) {
+			return DefaultFormats.getString(saadai.getS_fov());
+		} else if (attr_name.compareTo("size_delta_csa") == 0) {
+			return DefaultFormats.getString(saadai.getS_fov());
+		} 
+		return null;
+	}
+	
+	public String getMiscNative(String attr_name) throws FatalException {
+		String result = this.getSINative(attr_name);
+		if (result != null) return result;
+		if (attr_name.compareTo("product_url_csa") == 0) {
+			return DefaultFormats.getString(saadai.getDownloadURL(true));
+		}
+		return null;
+	}
+	
+	public String getSpectrumNative(String attr_name) throws FatalException {
+		SpectrumSaada spectrumInstance = (SpectrumSaada)saadai;
+		String result = this.getWCSNative(attr_name);
+		if (result != null) return result;
+		if (attr_name.compareTo("x_min_csa") == 0) {
+			return DefaultFormats.getString(spectrumInstance.em_min);
+		
+		} else if (attr_name.compareTo("x_max_csa") == 0) {
+			return DefaultFormats.getString(spectrumInstance.em_max);
+		
+		}
+		
+		return null;
+	}
+	
+	public String getTableNative(String attr_name) throws FatalException {
+		TableSaada tableInstance = (TableSaada)saadai;
+
+		String result = this.getSINative(attr_name);
+		if (result != null) return result;
+		if (attr_name.compareTo("product_url_csa") == 0) {
+			return DefaultFormats.getString(((TableSaada)saadai).getDownloadURL(true));
 		} else if (attr_name.compareTo("nb_rows_csa") == 0) {
 			return DefaultFormats.getString(((TableSaada)saadai).nb_rows_csa);
 		}

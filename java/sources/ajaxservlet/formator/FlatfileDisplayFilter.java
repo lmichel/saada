@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
-import saadadb.collection.obscoremin.FlatfileSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -76,7 +76,7 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 
 	@Override
 	public List<String> getRow(Object obj, int rank) throws Exception {
-		FlatfileSaada instance = (FlatfileSaada) Database.getCache().getObject(oidsaada);
+		SaadaInstance instance = Database.getCache().getObject(oidsaada);
 		if( instance.getCategory() != Category.FLATFILE) {
 			QueryException.throwNewException(SaadaException.METADATA_ERROR
 					, "ENTRY object expected (not " + Category.explain( instance.getCategory()) +")");
@@ -137,12 +137,12 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 	 * @see ajaxservlet.formator.DefaultDisplayFilter#getLinks()
 	 */
 	public List<String> getLinks() {
-		FlatfileSaada instance;
+		SaadaInstance instance;
 		List<String> retour = new ArrayList<String>();
 
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
-				instance = (FlatfileSaada) Database.getCache().getObject(oidsaada);
+				instance =  Database.getCache().getObject(oidsaada);
 				retour.add("<a class=download href='" + instance.getDownloadURL(true) + "'></A>");
 			}
 		} catch (FatalException e) {}
@@ -153,23 +153,59 @@ public class FlatfileDisplayFilter extends DefaultDisplayFilter {
 	protected void setRelations() {
 		setRelations(Category.FLATFILE);
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"FLATFILE\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Preview\", \"Access\", \"Name\"],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "FLATFILE");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Preview");	
+		jsa.add("Access");	
+		jsa.add("Name");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_flatfile().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"FLATFILE\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Preview\", \"Access\", \"Name\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
 
 }

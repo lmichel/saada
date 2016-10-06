@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
@@ -160,22 +161,61 @@ public class TableDisplayFilter extends DefaultDisplayFilter implements Serializ
 		setRelations(Category.TABLE);
 	}
 	
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"TABLE\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Access\", \"Table\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"TABLE\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Access\", \"Table\"],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "TABLE");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Access");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_table().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+//	{
+//		 "saadaclass": "Cadel_3dhst", "collection": ["Deep"],"category": "TABLE"
+//	,"relationship": {"show": [],"query": ["Any-Relation"]},"ucd.show": "false","ucd
+//	.query": "false","specialField": ["Access", "Table"],"collections": {"show": ["X
+//	CAT_OBSID","XCAT_INSTRUME","XCAT_OBJECT","namesaada"],"query": [""]}}
 
 }

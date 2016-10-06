@@ -1,7 +1,6 @@
 package ajaxservlet.formator;
 
 import saadadb.collection.Category;
-import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.exceptions.SaadaException;
 
@@ -39,11 +38,8 @@ public class SpecialFieldFormatter {
 	public String getPos() {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
-			if( pos.startsWith("Not") ){
-				return pos;
-			} else {
-				return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
-			}
+			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\" onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a></span>");
+			//return ("<span>" + pos + "</span>");
 		}
 		return null;
 	}
@@ -52,13 +48,14 @@ public class SpecialFieldFormatter {
 		if ((cat == Category.ENTRY) || (cat == Category.IMAGE) || (cat == Category.SPECTRUM)) {
 			String pos = DefaultFormats.getHMSCoord(saadai.s_ra, saadai.s_dec);
 			return ("<span>" + pos + " <a title=\"Open Simbad Tooltip\"  onclick='resultPaneView.overPosition(\""+pos+"\");'>(s)</a> [&#177; "+ DefaultFormats.getString(saadai.s_resolution) +"]</span>");
+			//return ("<span>" + pos + "[&#177; "+ DefaultFormats.getString(((Position) saadai).getError_maj_csa()) +"]</span>");
 		}
 		return null;
 	}
 
 	public String getSize() {
 		if (cat == Category.IMAGE) {
-			return (DefaultFormats.getString(((ImageSaada) saadai).s_fov) + " x " + DefaultFormats.getString(((ImageSaada) saadai).s_fov));
+			return (DefaultFormats.getString(saadai.getS_fov()));
 		}
 		return null;
 	}
@@ -84,8 +81,9 @@ public class SpecialFieldFormatter {
 		long oid = saadai.oidsaada;
 		switch( cat ) {
 		case Category.SPECTRUM:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getAladinLiteLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getSpecSAMP(oid);
@@ -94,18 +92,18 @@ public class SpecialFieldFormatter {
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid);
 		case Category.TABLE:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getSourcesLink(oid)
 			+ DefaultPreviews.getInfoLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)
 			+ DefaultPreviews.getTopcatSAMP(oid);
 		case Category.ENTRY:
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getHeaderLink(oid)
-			+ DefaultPreviews.getSkyAtSAMP(oid);
+			+ DefaultPreviews.getAladinLiteLink(oid);
 		default: 			
-			return DefaultPreviews.getDetailLink(oid, null)
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getInfoLink(oid)
 			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
 			+ DefaultPreviews.getCartLink(oid)

@@ -12,7 +12,6 @@ import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.EntrySaada;
 import saadadb.collection.obscoremin.SaadaInstance;
-import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
 import saadadb.meta.AttributeHandler;
@@ -24,7 +23,7 @@ import saadadb.util.SaadaConstant;
 
 
 /**
- * Used to handle to apply a JSON filter (StoredFilter) to a specific Saada object instance
+ * Used to handle to appaly a JSON filter (StoredFilter) to a specific Saada obkect instance
  * 
  * @author Clémentine Frère
  *  * @version $Id$
@@ -172,7 +171,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			result.add(lbl);
 		}
 		for (String val : columns_constcol) {
-			if( !isDirective(val) ) {
+			if( !isDirective(val) || val.equals("oidsaada")) {
 				continue;
 			}
 			result.add(val);
@@ -256,7 +255,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(si.obs_id);
 
 			} else if ("Detail".equals(speField)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 
 			} else if ("Plot".equals(speField)) {
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
@@ -275,7 +274,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 						.oidtable));
 
 			} else if ("Error (arcsec)".equals(speField)) {
-				double e = ((EntrySaada) si).s_resolution;
+				double e = si.getS_fov();
 				if (e == SaadaConstant.DOUBLE) {
 					retour.add(DefaultFormats.getString(e));
 				} else {
@@ -285,11 +284,10 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			} else if ("Preview".equals(speField)) {
 				retour.add(DefaultPreviews.getFlatfilePreview(oidsaada, 64));
 
-			} else if ( speField.startsWith("Energy Range") ) {
+			} else if ( speField.startsWith("Range") ) {
 				retour.add(DefaultFormats.getString(si.em_min) + " - " + DefaultFormats.getString(si.em_max) );
-			} else if ( speField.startsWith("time range") ) {
-				retour.add(DefaultFormats.getDateRangeFromMJD(si.t_min, si.t_max) );
-			} else if ( speField.startsWith("Gallery") ) {
+			}
+			else if ( speField.startsWith("Gallery") ) {
 				retour.add(Long.toString(oidsaada) );
 			}
 		}
@@ -326,7 +324,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 					retour.add(DefaultPreviews.getFlatfilePreview(counterpart, 64));
 				break;
 				default :
-					//retour.add("<span>"+ instance.namesaada+ " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
+					//retour.add("<span>"+ instance.getNameSaada() + " " + (DefaultPreviews.getDetailLink(counterpart, rel)) + "</span>");
 					retour.add("<span>" + nbcounter + " links</span> " + DefaultPreviews.getDetailLink(oidsaada, rel));
 				}
 				break;

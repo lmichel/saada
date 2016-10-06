@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
-import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.database.Database;
 import saadadb.exceptions.FatalException;
@@ -82,7 +82,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 
 	@Override
 	public List<String> getRow(Object obj, int rank) throws Exception {
-		ImageSaada instance = (ImageSaada) Database.getCache().getObject(oidsaada);
+		SaadaInstance instance =  Database.getCache().getObject(oidsaada);
 		if( instance.getCategory() != Category.IMAGE) {
 			QueryException.throwNewException(SaadaException.METADATA_ERROR
 					, "ENTRY object expected (not " + Category.explain( instance.getCategory()) +")");
@@ -98,7 +98,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getAladinSAMP(oidsaada));
 			}
 			else if( "Detail".equals(s)) {
-				retour.add(DefaultPreviews.getDetailLink(oidsaada, null));
+				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 			else if( "DL Link".equals(s)) {
 				retour.add(DefaultPreviews.getDLLink(oidsaada, false));
@@ -107,7 +107,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 				retour.add(sff.getPos());
 			}
 			else if( "Size (deg)".equals(s)) {
-				retour.add(DefaultFormats.getString(instance.s_fov) + " x " + DefaultFormats.getString(instance.s_fov) );
+				retour.add(DefaultFormats.getString(instance.getS_fov()) );
 			}
 			else if( "Name".equals(s)) {
 				retour.add(instance.obs_id);
@@ -169,14 +169,14 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 	 * @see ajaxservlet.formator.DefaultDisplayFilter#getLinks()
 	 */
 	public List<String> getLinks() throws Exception {
-		ImageSaada instance;
+		SaadaInstance instance;
 		List<String> retour = new ArrayList<String>();
 
 		try {
 			if( oidsaada != SaadaConstant.LONG) {
-				instance = (ImageSaada) Database.getCache().getObject(oidsaada);
+				instance = Database.getCache().getObject(oidsaada);
 				retour.add(DefaultFormats.getHMSCoord(instance.s_ra, instance.s_dec) );
-				retour.add(DefaultFormats.getString(instance.s_fov) + " x " + DefaultFormats.getString(instance.s_fov) + "Deg");
+				retour.add(DefaultFormats.getString(instance.getS_fov()) + "Deg");
 				retour.add(DefaultPreviews.getImageVignette(oidsaada, 64));
 				retour.addAll(super.getLinks());
 			}
@@ -190,22 +190,60 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		this.setRelations(Category.IMAGE);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String getRawJSON() {
-		String result = "";
-		result += "{ \"collection\": [\"Any-Collection\"],";
-		result += "\"category\": \"IMAGE\",";
-		result += "\"relationship\": {";
-		result += "\"show\": [\"Any-Relation\"],";
-		result += "\"query\": [\"Any-Relation\"]";
-		result += "},";
-		result += "\"ucd.show\": \"false\",";
-		result += "\"ucd.query\": \"false\",";
-		result += "\"specialField\": [\"Plot\", \"Access\", \"Position\", \"Name\", \"Size (deg)\"],";
-		result += "\"collections\": {";
-		result += "\"show\": [],";
-		result += "\"query\": []}}";
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "IMAGE");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Plot");
+		jsa.add("Access");	
+		jsa.add("Position");	
+		jsa.add("Size (deg)");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_image().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
 		
-		return result;
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
 	}
+
+	
+//	public String getRawJSON() {
+//		String result = "";
+//		result += "{ \"collection\": [\"Any-Collection\"],";
+//		result += "\"category\": \"IMAGE\",";
+//		result += "\"relationship\": {";
+//		result += "\"show\": [\"Any-Relation\"],";
+//		result += "\"query\": [\"Any-Relation\"]";
+//		result += "},";
+//		result += "\"ucd.show\": \"false\",";
+//		result += "\"ucd.query\": \"false\",";
+//		result += "\"specialField\": [\"Plot\", \"Access\", \"Position\", \"Name\", \"Size (deg)\"],";
+//		result += "\"collections\": {";
+//		result += "\"show\": [],";
+//		result += "\"query\": []}}";
+//		
+//		return result;
+//	}
 
 }

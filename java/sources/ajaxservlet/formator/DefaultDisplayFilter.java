@@ -223,7 +223,7 @@ Serializable {
 								counterpart, 64));
 					break;
 					default:
-						result.add("<span>"+ Database.getCache().getObject(counterpart).obs_id+ " " + (DefaultPreviews.getDetailLink(counterpart, null))+ "</span>");
+						result.add("<span>"+ Database.getCache().getObject(counterpart).obs_id + " " + (DefaultPreviews.getDetailLink(counterpart, "ClassLevel"))+ "</span>");
 					}
 					break;
 				default:
@@ -242,11 +242,12 @@ Serializable {
 		if (oidsaada != SaadaConstant.LONG) {
 			try {
 				SaadaInstance si = Database.getCache().getObject(oidsaada);
-				String pos =  DefaultFormats.getHMSCoord(si.s_ra, si.s_dec);
+				String pos = "";
+				pos = DefaultFormats.getHMSCoord(si.s_ra, si.s_dec);
 				String cat =  SaadaOID.getCategoryName(oidsaada);
 				if( cat.equals("ENTRY")) cat = "TABLE ENTRY"; 
 				return cat + "  <i>"
-						+ Database.getCache().getObject(oidsaada) .obs_id
+						+ Database.getCache().getObject(oidsaada).obs_id
 						+ "</i> - " 
 						+ pos;
 			} catch (FatalException e) {
