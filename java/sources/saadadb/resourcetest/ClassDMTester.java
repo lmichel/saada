@@ -186,4 +186,10 @@ public class ClassDMTester extends SaadaInstance {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public long getOIdtable() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
