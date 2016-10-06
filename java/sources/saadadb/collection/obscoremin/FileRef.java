@@ -4,6 +4,7 @@ import saadadb.collection.Category;
 import saadadb.database.Database;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -196,6 +197,10 @@ public class FileRef extends SaadaInstance {
 	@Override
 	public void setO_calib_status(String status) {
 		this.o_calib_status = status;
+	}
+	@Override
+	public long getOIdtable() {
+		return SaadaConstant.LONG;
 	}
 
 }

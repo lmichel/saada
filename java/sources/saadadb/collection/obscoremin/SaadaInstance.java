@@ -1563,6 +1563,7 @@ public abstract class SaadaInstance implements DMInterface {
 	public abstract String getAccess_url() ;
 	public abstract void   setDate_load(long time)  ;
 	public abstract long   getDate_load() ;
+	public abstract long   getOIdtable() ;
 
 	/**
 	 * Attempt to re-build the loader configuration from the class description stored in saada_class table.

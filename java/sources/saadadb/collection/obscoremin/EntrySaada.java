@@ -73,13 +73,14 @@ public class EntrySaada extends SaadaInstance {
 		return null;
 	}
 
+	public long   getOIdtable() {
+		return this.oidtable;
+	}
 
 
 	@Override
 	public void setAccess_url(String name) throws AbortException {
 	}
-
-
 
 	@Override
 	public String getAccess_url() {
