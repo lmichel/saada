@@ -73,7 +73,7 @@ public class DisplayFilterFactory {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "Not found, take the global one");
 		FilterBase.init(false);
-		sf = FilterBase.get(coll, cat);
+		sf = FilterBase.getVisibleColumnsFilter(coll, cat);
 		if (sf != null) {
 			return new DynamicClassDisplayFilter(sf, coll, saadaclass);
 		}
@@ -119,7 +119,7 @@ public class DisplayFilterFactory {
 		if (sf != null) {
 			return sf;
 		}
-		return  FilterBase.get(coll, cat);
+		return  FilterBase.getVisibleColumnsFilter(coll, cat);
 	}
 	
 	/**
@@ -130,6 +130,6 @@ public class DisplayFilterFactory {
 	 * @throws FatalException
 	 */
 	public static String getDefaultJSON(String cat) throws QueryException, FatalException {
-			return FilterBase.getDefaultJSON(cat);
+			return FilterBase.getVisibleJSONDisplayFilter(cat);
 	}
 }

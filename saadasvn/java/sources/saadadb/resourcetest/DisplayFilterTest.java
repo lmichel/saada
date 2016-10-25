@@ -36,9 +36,9 @@ public class DisplayFilterTest {
 		sf.store(FilterBase.filterDirectory + File.separator + "df." +sf.getTreepath() + ".json");
 		
 		FilterBase.init(false);
-		sf = FilterBase.get("ACDS", "ENTRY");
+		sf = FilterBase.getVisibleColumnsFilter("ACDS", "ENTRY");
 		System.out.println(sf);
-		sf = FilterBase.get("ACDS", "ENTRY", "arch_0011AEntry");
+		sf = FilterBase.getVisibleColumnsFilter("ACDS", "ENTRY", "arch_0011AEntry");
 		System.out.println(sf);
 		Database.close();
 	}

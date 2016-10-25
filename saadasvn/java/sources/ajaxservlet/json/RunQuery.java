@@ -1,6 +1,7 @@
 package ajaxservlet.json;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,9 @@ import ajaxservlet.accounting.UserAccount;
 import ajaxservlet.accounting.UserTrap;
 import ajaxservlet.formator.DisplayFilter;
 import ajaxservlet.formator.DisplayFilterFactory;
+import ajaxservlet.formator.DynamicClassDisplayFilter;
+import ajaxservlet.formator.FilterBase;
+import ajaxservlet.formator.StoredFilter;
 
 /** * @version $Id$
 
@@ -55,18 +59,48 @@ public class RunQuery extends SaadaServlet {
 				UserAccount ac = UserTrap.getUserAccount(request);
 //			    QueryContext qc = ac.getQueryContext();
 //			    if( qc != null ) qc.closeQuery();;
-				DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,ac);
-				ac.setQueryContext(new QueryContext(query, colfmtor, ac.getSessionID()));
+				//DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,ac);
+				FilterBase.init(false);
+				
+				
 				JSONObject jo = new JSONObject();
 				jo.put("query", query);
 				jo.put("treepath", treepath);
+				
+				StoredFilter sf = FilterBase.getColumnFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */);				
+				DisplayFilter colfmtor = new DynamicClassDisplayFilter(sf, qs[5], qs[3]);
+				/*
+				 * Add the constrained field to the filter
+				 */
+				ac.setQueryContext(new QueryContext(query, colfmtor, ac.getSessionID()));
+				Set<String>constCols = colfmtor.getConstrainedColumns();
 				JSONArray jsa = new JSONArray();
-				for( String col: colfmtor.getDisplayedColumns()) {
+				for( String col: colfmtor.getVisibleColumns()) {
 					JSONObject jo2 = new JSONObject();
 					jo2.put("name", col);
 					jsa.add(jo2);
 				}
-				jo.put("attributes",jsa);
+				jo.put("columns",jsa);
+				
+				sf = FilterBase.getVisibleColumnsFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */);				
+				colfmtor = new DynamicClassDisplayFilter(sf, qs[5], qs[3]);
+
+				jsa = new JSONArray();
+				for( String col: colfmtor.getVisibleColumns()) {
+					JSONObject jo2 = new JSONObject();
+					jo2.put("name", col);
+					jsa.add(jo2);
+				}
+				jo.put("visibles",jsa);
+				jsa = new JSONArray();
+				for( String col: constCols){
+					JSONObject jo2 = new JSONObject();
+					jo2.put("name", col);
+					jsa.add(jo2);					
+				}
+				jo.put("constrained",jsa);
+				
+				
 				JsonUtils.teePrint(response,jo.toJSONString());
 			} else {
 				reportJsonError(request, response, "Query badly formed");

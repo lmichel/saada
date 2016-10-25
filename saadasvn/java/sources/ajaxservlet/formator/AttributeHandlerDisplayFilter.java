@@ -51,7 +51,7 @@ public class AttributeHandlerDisplayFilter implements DisplayFilter {
 	public void setMetaClass(MetaClass mc) {
 	}
 
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		LinkedHashSet<String> retour = new LinkedHashSet<String>();
 		retour.addAll(datatable_columns);
 		return retour;
@@ -111,7 +111,16 @@ public class AttributeHandlerDisplayFilter implements DisplayFilter {
 		
 	}
 	
-	public String getRawJSON() {
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	public String getVisibleJSONDisplayFilter() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	public String getJSONDisplayFilter() {
 		return null;
 	}
 

@@ -81,7 +81,7 @@ public class QueryContext implements Serializable {
 		return resultSet.getPage(start, length);
 	}	
 	public Set<String> getColumns() {
-		return colfmtor.getDisplayedColumns();
+		return colfmtor.getVisibleColumns();
 	}
 	public Set<String> getConstrainedColumns() {
 		return colfmtor.getConstrainedColumns();

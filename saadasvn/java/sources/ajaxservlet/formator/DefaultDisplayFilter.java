@@ -176,7 +176,7 @@ Serializable {
 		}
 	}
 
-	abstract public Set<String> getDisplayedColumns();
+	abstract public Set<String> getVisibleColumns();
 
 	abstract public Set<AttributeHandler> getQueriableColumns()
 	throws FatalException;

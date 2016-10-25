@@ -132,7 +132,7 @@ DataTree = function () {
 		 */
 		for(var n=0 ; n<classNodeIds.length ; n++) {
 			var node = $("a#" + classNodeIds[n]);
-			node.before("<img 'Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
+			node.before("<img title='Click to get the description' class=infoanchor id='" + classNodeIds[n] + "' src='images/metadata.png'></img>");
 			
 			node.click(function(){	
 				var tp  = $(this).attr("id").split('_DoT_');

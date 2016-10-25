@@ -123,7 +123,7 @@ public class JSAttributeHandlers extends SaadaServlet implements Servlet {
 			JSONArray ahcols = new JSONArray();
 			AttributeHandlerDisplayFilter ahdf = new AttributeHandlerDisplayFilter();
 			for( AttributeHandler ah: colfmtor.getQueriableColumns()) {
-				for( String ahc: ahdf.getDisplayedColumns()) {
+				for( String ahc: ahdf.getVisibleColumns()) {
 					JSONObject jc = new JSONObject();
 					jc.put("sTitle", ahc);
 					ahcols.add(jc);

@@ -58,7 +58,7 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 	}
 
 	@Override
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		LinkedHashSet<String> retour = new LinkedHashSet<String>();
 		for( String ec: datatable_columns) {
 			if( !ignored_keywords.contains(ec)) {
@@ -156,7 +156,16 @@ public class InstanceDisplayFilter extends DefaultDisplayFilter {
 
 	}
 
-	public String getRawJSON() {
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	public String getVisibleJSONDisplayFilter() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayableJSONFilter()
+	 */
+	public String getJSONDisplayFilter() {
 		return null;
 	}
 }

@@ -59,7 +59,7 @@ public class GetFilter extends SaadaServlet {
 			String coll = request.getParameter("coll");
 			String saadaclass = request.getParameter("saadaclass");
 			DisplayFilter colfmtor = DisplayFilterFactory.getFilter(coll, cat, saadaclass, request);
-			JsonUtils.teePrint(response, colfmtor.getRawJSON());
+			JsonUtils.teePrint(response, colfmtor.getVisibleJSONDisplayFilter());
 		} catch (Exception e) {
 			this.reportJsonError(request, response, e);
 		}

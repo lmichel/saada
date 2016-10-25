@@ -75,7 +75,6 @@ jQuery.extend({
 					},
 					success: function(json){			
 						Processing.hide();
-//						Modalinfo.info(treePath)
 						dataJSONObject = json;
 						$('#data_processing').attr("visiblity", "hidden");
 						$('#showquerymeta').unbind('click');
@@ -158,7 +157,7 @@ jQuery.extend({
 		}
 
 		this.processShowSources= function(oid){
-			Processing.show("Get Object detail");
+			Processing.show("Get catalogue sources");
 			$.getJSON("getobject", {target: "sources", oid: oid }, function(data) {
 				Processing.hide();
 				if( Processing.jsonError(data, "get catalogue sources") ) {
@@ -166,9 +165,10 @@ jQuery.extend({
 				}
 				else {
 					jsdata = data;
-					saadaqlView.fireTreeNodeEvent(jsdata.treepath.split('.'), false, jsdata.query);	
-					sapView.fireTreeNodeEvent(jsdata.treepath.split('.'));	
-					setTitlePath(jsdata.treepath.split('.'));
+					tpa = jsdata.treepath.split('.');
+					setGlobalTreePath(tpa);
+					saadaqlView.fireTreeNodeEvent(tpa, false, jsdata.query);	
+					sapView.fireTreeNodeEvent(tpa);	
 					that.notifyTableInitDone(jsdata);	
 					/*
 					 * should be done in the async callback intiated by saadaqlView.fireTreeNodeEvent

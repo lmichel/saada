@@ -151,7 +151,7 @@ public class GetObject extends SaadaServlet {
 				jo.put("primary_oid", soid);
 
 				JSONArray ja = new JSONArray();
-				for( String c: colform.getDisplayedColumns() ) {
+				for( String c: colform.getVisibleColumns() ) {
 					JSONObject jl = new JSONObject();
 					jl.put("sTitle", c);
 					ja.add(jl);

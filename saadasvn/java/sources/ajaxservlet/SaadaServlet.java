@@ -72,7 +72,7 @@ public class SaadaServlet extends HttpServlet {
 	 * @param account
 	 * @param e
 	 */
-	public void getErrorPage(HttpServletRequest req, HttpServletResponse res, Exception e) {
+	void getErrorPage(HttpServletRequest req, HttpServletResponse res, Exception e) {
 		try {
 			res.getOutputStream().println(DefaultPreviews.getErrorDiv(e));
 		} catch (Exception e1) {
@@ -86,7 +86,7 @@ public class SaadaServlet extends HttpServlet {
 	 * @param res
 	 * @param msg
 	 */
-	public void getErrorPage(HttpServletRequest req, HttpServletResponse res, String msg) {
+	void getErrorPage(HttpServletRequest req, HttpServletResponse res, String msg) {
 		try {
 			Messenger.printMsg(Messenger.ERROR, msg);			
 			res.setContentType("text/html");

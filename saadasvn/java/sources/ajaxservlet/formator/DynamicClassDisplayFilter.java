@@ -50,8 +50,8 @@ public class DynamicClassDisplayFilter extends DynamicDisplayFilter {
 	/* (non-Javadoc)
 	 * @see ajaxservlet.formator.DynamicDisplayFilter#getDisplayedColumns()
 	 */
-	public Set<String> getDisplayedColumns() {
-		Set<String> result = super.getDisplayedColumns();
+	public Set<String> getVisibleColumns() {
+		Set<String> result = super.getVisibleColumns();
 		for (String val : columns_natcla) {
 			if( !isDirective(val) ) {
 				continue;
@@ -109,6 +109,9 @@ public class DynamicClassDisplayFilter extends DynamicDisplayFilter {
 		retour += "\n";
 		retour += "       Ucds " ;
 		for( AttributeHandler s :columns_ucds ) retour += s.getNameorg() + " " ;
+		retour += "\n";
+		retour += "       Constrained columns " ;
+		for( String s: columns_constcol ) retour += s + " " ;
 		retour += "\n";
 		retour += "  Relations " ;
 		for( String s :columns_rel ) retour += s + " " ;

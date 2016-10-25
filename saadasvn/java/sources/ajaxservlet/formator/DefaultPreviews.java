@@ -12,7 +12,7 @@ import saadadb.exceptions.SaadaException;
 import ajaxservlet.SaadaServlet;
 
 abstract public class DefaultPreviews {
-	public static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
+	private static final String[] disp_formats = new String[]{"gif", "jpeg", "jpg", "png", "tiff", "bmp", "GIF", "JPEG", "JPG", "PNG", "TIFF", "BMP"};
 
 	/** * @version $Id$
 
@@ -21,7 +21,7 @@ abstract public class DefaultPreviews {
 	 * @return
 	 * @throws FatalException
 	 */
-	public static final String getImageVignette(long oid, int size) throws FatalException {
+	static final String getImageVignette(long oid, int size) throws FatalException {
 		String url =  "getvignette?oid=" + oid;
 		return "<A border=0 TITLE='Show real size' onclick='resultPaneView.fireShowVignette(\"" 
 		+ oid + "\", \"" 
@@ -43,10 +43,10 @@ abstract public class DefaultPreviews {
 		String panarg = (panelToOpen == null )? "null": "\"" + panelToOpen + "\"";
 		return "<a title='Get the detail of that data' class=dl_detail onclick='resultPaneView.fireShowRecord(\"" + oid + "\", " + panarg + ");'></A>";
 	}
-	public static final String getSourcesLink(long oid) throws SaadaException {
+	static final String getSourcesLink(long oid) throws SaadaException {
 		return "<a title='Get all catalogue sources' class=dl_sources  onclick='resultPaneView.fireShowSources(\"" + oid + "\");'></A>";
 	}
-	public static final String getInfoLink(long oid) throws SaadaException {
+	static final String getInfoLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
 		if( SaadaServlet.secureDownlad ) {
 			return "<a title='Get info about the product file' class=dl_info onclick='resultPaneView.fireGetProductInfo(\"" + si.getDownloadURL(true) + "\");'></A>";
@@ -54,7 +54,7 @@ abstract public class DefaultPreviews {
 			return "<a title='Get info about the product file' class=dl_info  onclick='resultPaneView.fireGetProductInfo(\"" + si.getDownloadURL(true) + "\");'></A>";
 		}
 	}
-	public static final String getCartLink(long oid) throws SaadaException {
+	static final String getCartLink(long oid) throws SaadaException {
 		SaadaInstance si =  Database.getCache().getObject(oid);
 		if( SaadaServlet.secureDownlad ) {
 		    return "<a class=dl_securecart title=\"Add the product file to the  cart\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
@@ -62,7 +62,7 @@ abstract public class DefaultPreviews {
 			return "<a class=dl_cart title=\"Add the product file to the  cart\" onclick='cartView.fireAddUrl($(this),\"" + si.getNameSaada() + "\", \"" + oid + "\");'></A>";
 		}
 	}
-	public static final String getAladinLiteLink(long oid) throws SaadaException {
+	static final String getAladinLiteLink(long oid) throws SaadaException {
 		Position si =  (Position) Database.getCache().getObject(oid);
 		return "<a title='Send position to Aladin Lite' class='dl_aladin' onclick='event.preventDefault() ; ModalAladin.aladinExplorer({ target: &quot;" 
 				+ DefaultFormats.getHMSCoord(si.getPos_ra_csa(), si.getPos_dec_csa()) +  "&quot; , fov: 0.5, title: &quot;" + si.getNameSaada() + "&quot;}, []);;'></a>";
@@ -87,7 +87,7 @@ abstract public class DefaultPreviews {
 	 * @return
 	 * @throws FatalException
 	 */
-	public static final String getFlatfilePreview(long oid, int size) throws FatalException {
+	static final String getFlatfilePreview(long oid, int size) throws FatalException {
 		FlatfileSaada fi = (FlatfileSaada) Database.getCache().getObject(oid);
 		String sp;
 		try {
@@ -131,12 +131,12 @@ abstract public class DefaultPreviews {
 		return "no preview";
 	}
 
-	public static String getSpecSAMP(long oid) {
+	static String getSpecSAMP(long oid) {
 		return ("<a  title='Send a spectra to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 				+ oid + "\");'></a>");
 	}
 
-	public static String getTopcatSAMP(long oid) throws FatalException {
+	static String getTopcatSAMP(long oid) throws FatalException {
 		if( SaadaServlet.secureDownlad ) {
 			return ("<a  title='Send a VOTable to SAMP (restricted)'  class=dl_securesamp onclick='WebSamp_mVc.fireSendOid(\"" 
 					+  oid + "\");'></a>");
@@ -146,12 +146,12 @@ abstract public class DefaultPreviews {
 		}
 	}
 
-	public static String getAladinSAMP(long oid){
+	static String getAladinSAMP(long oid){
 		return ("<a title='Send an image to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 				+ oid + "\");'></a>");
 	}
 	
-	public static String getSkyAtSAMP(long oid) throws FatalException{
+	static String getSkyAtSAMP(long oid) throws FatalException{
 		Position si =  (Position)(Database.getCache().getObject(oid));
 		return ("<a title='Send a position to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendSkyat(" 
 				+ si.getPos_ra_csa() + ", " + si.getPos_dec_csa() + ");'></a>");

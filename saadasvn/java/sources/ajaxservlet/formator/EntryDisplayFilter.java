@@ -45,7 +45,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 
 
 	@Override
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		LinkedHashSet<String> retour = new LinkedHashSet<String>();
 		retour.addAll(datatable_columns);
 		for( String ec: extatt_columns.keySet()) {
@@ -177,8 +177,11 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		setRelations(Category.ENTRY);
 	}
 
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
 	@SuppressWarnings("unchecked")
-	public String getRawJSON() {
+	public String getVisibleJSONDisplayFilter() {
 		JSONObject jso  = new JSONObject();
 		jso.put("saadaclass", "*");
 		JSONArray jsa = new JSONArray();
@@ -212,6 +215,48 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		return jso.toJSONString();
 
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	@SuppressWarnings("unchecked")
+	public String getJSONDisplayFilter() {
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "ENTRY");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Access");	
+		jsa.add("Position");	
+		jsa.add("Error (arcsec)");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_entry().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Coll-Att");
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
+		
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
+	}
+	
 
 //	/* (non-Javadoc)
 //	 * @see ajaxservlet.formator.DefaultDisplayFilter#getJSONString()

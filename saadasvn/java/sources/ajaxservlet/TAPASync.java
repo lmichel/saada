@@ -38,7 +38,6 @@ public class TAPASync extends SaadaServlet {
 				private static final long serialVersionUID = 1L;
 
 				public String extractUserId(UWSUrl urlInterpreter, HttpServletRequest request) throws UWSException {
-					System.out.println("extractUserId");
 					return UserAccount.ASYNC_TAP_JOB_DIR;
 					//return request.getSession().getId();
 				}

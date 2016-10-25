@@ -66,7 +66,7 @@ public interface DisplayFilter {
 	 * A column can be a merge of attributes or a URL (DL link e.g.)
 	 * @return
 	 */
-	public Set<String> getDisplayedColumns() ;
+	public Set<String> getVisibleColumns() ;
 	/**
 	 * Returns a map of the columns constrained by the query. 
 	 * These columns are appended to the filter after the construction si completed
@@ -133,6 +133,17 @@ public interface DisplayFilter {
 	 */
 	public List<String> getLinks() throws Exception ;
 	
-	public String getRawJSON() ;
+	/**
+	 * 
+	 * @return a JSON filter listing the columns to be displayed
+	 */
+	public String getVisibleJSONDisplayFilter() ;
+	/**
+	 * 
+	 * @return a JSON filter listing the columns possibly displayed
+	 */
+	public String getJSONDisplayFilter() ;
+	
+
 
 }

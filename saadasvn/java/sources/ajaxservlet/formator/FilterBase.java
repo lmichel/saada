@@ -22,7 +22,8 @@ import saadadb.util.WorkDirectory;
  */
 
 public class FilterBase {
-	private static HashMap<String, StoredFilter> filters;
+	private static HashMap<String, StoredFilter> visiblesFilters;
+	private static HashMap<String, StoredFilter> columnsFilters;
 	public static final String filterDirectory = Database.getRepository() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
 	private static boolean loaded = false;
 	private static long lastInit = 0;
@@ -60,7 +61,8 @@ public class FilterBase {
 		if (!loaded || force || (tc -lastInit) > INIT_PERIOD ) {
 			Messenger.printMsg(Messenger.TRACE, "Init filter base");
 			lastInit = tc;
-			filters = new HashMap<String, StoredFilter>();
+			visiblesFilters = new HashMap<String, StoredFilter>();
+			columnsFilters = new HashMap<String, StoredFilter>();
 			FileReader fr;
 			StoredFilter sf;
 			String cat, coll;
@@ -68,7 +70,8 @@ public class FilterBase {
 
 			WorkDirectory.validWorkingDirectory(filterDirectory);
 			File rootdir = new File(filterDirectory);
-			FilterBase.initDefaultsFilter();
+			FilterBase.initVisibleDisplayFilter();
+			FilterBase.initDefaultFilter();
 			String path = rootdir.getAbsolutePath();
 			String[] list = rootdir.list();
 			Messenger.printMsg(Messenger.TRACE, "Load filters from " + rootdir.getAbsolutePath());
@@ -80,11 +83,11 @@ public class FilterBase {
 						tmp = new File(path + Database.getSepar() + filename);
 						fr = new FileReader(tmp);
 						sf = new StoredFilter(fr);
-						FilterBase.filters.put(sf.getTreepath(), sf);
+						FilterBase.visiblesFilters.put(sf.getTreepath(), sf);
 					}
 				}
 			} 
-			if (FilterBase.filters.size() > 0) {
+			if (FilterBase.visiblesFilters.size() > 0) {
 				Messenger.printMsg(Messenger.TRACE, "Init FilterBase : done.");
 				loaded = true;
 			}
@@ -103,16 +106,16 @@ public class FilterBase {
 	 * @param cat
 	 * @return
 	 */
-	public static StoredFilter get(String coll, String cat) {
+	public static StoredFilter getVisibleColumnsFilter(String coll, String cat) {
 		StoredFilter result = null;
 		String keys = coll+"."+cat;
-		result = filters.get(keys);
+		result = visiblesFilters.get(keys);
 
 		if (result == null) {
 			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No filter matching key " + keys + " found: take the default " + defkeys);
-			result = filters.get(defkeys);
+			result = visiblesFilters.get(defkeys);
 		}
 		return result;
 	}
@@ -127,15 +130,61 @@ public class FilterBase {
 	 * @param saadaclass
 	 * @return
 	 */
-	public static StoredFilter get(String coll, String cat, String saadaclass) {
+	public static StoredFilter getVisibleColumnsFilter(String coll, String cat, String saadaclass) {
 
 		StoredFilter result = null;
 		String keys = coll+"."+cat + "." + saadaclass;
-		result = filters.get(keys);
+		result = visiblesFilters.get(keys);
 
 		if (result == null) {
-			String defkeys = FilterKeys.ANY_COLLECTION+cat;
-			result = filters.get(defkeys);
+			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
+			result = visiblesFilters.get(defkeys);
+		}
+		return result;
+	}
+
+	/**
+	 * provides the displayable filter corresponding to the
+	 * given category & collection (or the
+	 * FilterKeys.ANY_COLLECTION one if it doesn't exist)
+	 * 
+	 * @param coll
+	 * @param cat
+	 * @return
+	 */
+	public static StoredFilter getColumnFilter(String coll, String cat) {
+		StoredFilter result = null;
+		String keys = coll+"."+cat;
+		result = columnsFilters.get(keys);
+
+		if (result == null) {
+			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "No filter matching key " + keys + " found: take the default " + defkeys);
+			result = columnsFilters.get(defkeys);
+		}
+		return result;
+	}
+	
+	/**
+	 * provides the displayable filter corresponding to the
+	 * given category, collection and class (or the
+	 * FilterKeys.ANY_COLLECTION one if it doesn't exist)
+	 * 
+	 * @param coll
+	 * @param cat
+	 * @param saadaclass
+	 * @return
+	 */
+	public static StoredFilter getColumnFilter(String coll, String cat, String saadaclass) {
+
+		StoredFilter result = null;
+		String keys = coll+"."+cat + "." + saadaclass;
+		result = columnsFilters.get(keys);
+
+		if (result == null) {
+			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
+			result = columnsFilters.get(defkeys);
 		}
 		return result;
 	}
@@ -146,54 +195,104 @@ public class FilterBase {
 	 * add the given filter to the base
 	 * @param sf
 	 */
-	public static void addFilter(StoredFilter sf) {
+	public static void addVisibleDisplayFilter(StoredFilter sf) {
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
 		String kw = coll+"."+cat;
-		FilterBase.filters.put(kw, sf);
+		FilterBase.visiblesFilters.put(kw, sf);
+	}
+
+	/**
+	 * add the given filter for displayable columns to the base
+	 * @param sf
+	 */
+	public static void addDisplayFilter(StoredFilter sf) {
+		String coll = sf.getFirstCollection();
+		String cat = sf.getCategory();
+		String kw = coll+"."+cat;
+		FilterBase.columnsFilters.put(kw, sf);
 	}
 
 
 	/** 
-	 * creates the default filters 
+	 * creates the default display filters 
 	 * (first initialization)
 	 * 
 	 * @throws QueryException
 	 * @throws FatalException
 	 */
-	private static void initDefaultsFilter() throws Exception {
+	private static void initVisibleDisplayFilter() throws Exception {
 
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("IMAGE")));
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("ENTRY")));
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("FLATFILE")));
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("MISC")));
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("TABLE")));
-		FilterBase.addFilter(new StoredFilter(getDefaultJSON("SPECTRUM")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("IMAGE")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("ENTRY")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("FLATFILE")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("MISC")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("TABLE")));
+		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("SPECTRUM")));
+
+	}
+	/**
+	 * @throws Exception
+	 */
+	private static void initDefaultFilter() throws Exception {
+
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("IMAGE")));
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("ENTRY")));
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("FLATFILE")));
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("MISC")));
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("TABLE")));
+		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("SPECTRUM")));
 
 	}
 
 	/**
-	 * provides the JSONString of the default
+	 * provides the JSON String of the default
 	 * filter from the given category
-	 * 
 	 * @param cat
 	 * @return
 	 * @throws QueryException
 	 * @throws FatalException
 	 */
-	public static String getDefaultJSON(String cat) throws QueryException, FatalException {
+	public static String getVisibleJSONDisplayFilter(String cat) throws QueryException, FatalException {
 		if ("TABLE".equals(cat)) {
-			return new TableDisplayFilter(null).getRawJSON();
+			return new TableDisplayFilter(null).getVisibleJSONDisplayFilter();
 		} else if ("ENTRY".equals(cat)) {
-			return new EntryDisplayFilter(null).getRawJSON();
+			return new EntryDisplayFilter(null).getVisibleJSONDisplayFilter();
 		} else if ("IMAGE".equals(cat)) {
-			return new ImageDisplayFilter(null).getRawJSON();
+			return new ImageDisplayFilter(null).getVisibleJSONDisplayFilter();
 		} else if ("SPECTRUM".equals(cat)) {
-			return new SpectrumDisplayFilter(null).getRawJSON();
+			return new SpectrumDisplayFilter(null).getVisibleJSONDisplayFilter();
 		} else if ("MISC".equals(cat)) {
-			return new MiscDisplayFilter(null).getRawJSON();
+			return new MiscDisplayFilter(null).getVisibleJSONDisplayFilter();
 		} else if ("FLATFILE".equals(cat)) {
-			return new FlatfileDisplayFilter(null).getRawJSON();
+			return new FlatfileDisplayFilter(null).getVisibleJSONDisplayFilter();
+		} else {
+			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
+		}
+		return null;
+	}
+
+	/**
+	 * provides the JSON String of the default displayable
+	 * filter from the given category
+	 * @param cat
+	 * @return
+	 * @throws QueryException
+	 * @throws FatalException
+	 */
+	public static String getJSONDisplayFilter(String cat) throws QueryException, FatalException {
+		if ("TABLE".equals(cat)) {
+			return new TableDisplayFilter(null).getJSONDisplayFilter();
+		} else if ("ENTRY".equals(cat)) {
+			return new EntryDisplayFilter(null).getJSONDisplayFilter();
+		} else if ("IMAGE".equals(cat)) {
+			return new ImageDisplayFilter(null).getJSONDisplayFilter();
+		} else if ("SPECTRUM".equals(cat)) {
+			return new SpectrumDisplayFilter(null).getJSONDisplayFilter();
+		} else if ("MISC".equals(cat)) {
+			return new MiscDisplayFilter(null).getJSONDisplayFilter();
+		} else if ("FLATFILE".equals(cat)) {
+			return new FlatfileDisplayFilter(null).getJSONDisplayFilter();
 		} else {
 			QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "Category does not exist");
 		}

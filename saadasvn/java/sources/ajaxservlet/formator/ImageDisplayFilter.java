@@ -45,7 +45,7 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 	}
 
 	@Override
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		LinkedHashSet<String> retour = new LinkedHashSet<String>();
 		retour.addAll(datatable_columns);
 		for( String ec: extatt_columns.keySet()) {
@@ -191,8 +191,11 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		this.setRelations(Category.IMAGE);
 	}
 	
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
 	@SuppressWarnings("unchecked")
-	public String getRawJSON() {
+	public String getVisibleJSONDisplayFilter() {
 		JSONObject jso  = new JSONObject();
 		jso.put("saadaclass", "*");
 		JSONArray jsa = new JSONArray();
@@ -220,6 +223,47 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		for( String v: Database.getCachemeta().getAtt_extend_image().keySet() ){
 			jsa.add(v);
 		}
+		jsa.add("Any-Class-Att");
+		jsr.put("show", jsa);
+		
+		jso.put("collections", jsr);
+		return jso.toJSONString();
+
+	}
+
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	@SuppressWarnings("unchecked")
+	public String getJSONDisplayFilter() {
+		JSONObject jso  = new JSONObject();
+		jso.put("saadaclass", "*");
+		JSONArray jsa = new JSONArray();
+		jsa.add("Any-Collection");		
+		jso.put("collection", jsa);
+		jso.put("category", "IMAGE");
+		JSONObject jsr  = new JSONObject();
+		jsa = new JSONArray();
+		jsa.add("Any-Relation");	
+		jsr.put("show", jsa);
+		jsr.put("query", jsa);
+		jso.put("relationship", jsr);
+		jso.put("ucd.show", "false");
+		jso.put("ucd.query", "false");
+		jsa = new JSONArray();
+		jsa.add("Plot");
+		jsa.add("Access");	
+		jsa.add("Position");	
+		jsa.add("Size (deg)");	
+		jso.put("specialField", jsa);
+		jsr  = new JSONObject();
+		jsr.put("query", new JSONArray());
+		jsa = new JSONArray();
+		jsa.add("namesaada");
+		for( String v: Database.getCachemeta().getAtt_extend_image().keySet() ){
+			jsa.add(v);
+		}
+		jsa.add("Any-Coll-Att");
 		jsa.add("Any-Class-Att");
 		jsr.put("show", jsa);
 		

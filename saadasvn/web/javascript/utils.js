@@ -112,3 +112,18 @@ function switchArrow(id) {
 	}
 }
 
+ColumnFilterCache = function(){
+	var cache = {};
+	
+	var storeFilter = function (key, columnToBeDisplayed){
+		cache[key] = columnToBeDisplayed;
+	}
+	var getFilter = function (key){
+		return cache[key];
+	}
+	
+	var pblc = {};
+	pblc.storeFilter = storeFilter;
+	pblc.getFilter = getFilter;
+	return pblc;
+}();

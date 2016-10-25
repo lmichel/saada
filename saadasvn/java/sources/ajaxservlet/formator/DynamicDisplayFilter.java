@@ -139,7 +139,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 	 * returns a set of strings containing the titles
 	 * of the columns to be displayed by the filter
 	 */
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		LinkedHashSet<String> result = new LinkedHashSet<String>();
 		for (String val : columns_specialf) {
 			result.add(val);
@@ -293,7 +293,9 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				retour.add(Long.toString(oidsaada) );
 			}
 		}
-
+		/*
+		 * Relationships
+		 */
 		for (String rel : columns_rel) {
 			if( !isDirective(rel) ) {
 				continue;
@@ -436,7 +438,10 @@ public class DynamicDisplayFilter implements DisplayFilter {
 			this.columns_ucds.add(ah);
 	}
 
-	public String getRawJSON() {
+	public String getVisibleJSONDisplayFilter() {
+		return sf.getRawJSON();
+	}
+	public String getJSONDisplayFilter() {
 		return sf.getRawJSON();
 	}
 

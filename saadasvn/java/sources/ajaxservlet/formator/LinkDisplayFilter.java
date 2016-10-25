@@ -40,14 +40,14 @@ public class LinkDisplayFilter extends DefaultDisplayFilter {
 		collformator = DisplayFilterFactory.getFilter(this.relation.getSecondary_coll()
 				, Category.explain(this.relation.getSecondary_category()), "*", request);
 		quals = Database.getCachemeta().getRelation(relation).getQualifier_names();
-		datatable_columns.addAll(collformator.getDisplayedColumns());
+		datatable_columns.addAll(collformator.getVisibleColumns());
 		for( String q: quals) {
 			datatable_columns.add(q);			
 		}
 	}
 
 	@Override
-	public Set<String> getDisplayedColumns() {
+	public Set<String> getVisibleColumns() {
 		return datatable_columns;
 	}
 	/* (non-Javadoc)
@@ -91,7 +91,16 @@ public class LinkDisplayFilter extends DefaultDisplayFilter {
 
 	}
 
-	public String getRawJSON() {
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	public String getVisibleJSONDisplayFilter() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see ajaxservlet.formator.DisplayFilter#getDisplayJSONFilter()
+	 */
+	public String getJSONDisplayFilter() {
 		return null;
 	}
 

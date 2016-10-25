@@ -61,10 +61,10 @@ public class GetMeta extends SaadaServlet {
 	}
 	@SuppressWarnings("unchecked")
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		printAccess(request, true);
 		String query = request.getParameter("query");
 		String name = request.getParameter("name");
 		RequestDispatcher rd = null;
-		printAccess(request, true);
 		try {
 			response.setContentType("application/json");
 			ServletOutputStream out = response.getOutputStream();
@@ -148,9 +148,15 @@ public class GetMeta extends SaadaServlet {
 		 * data node like classname
 		 */				
 		else if( nodes.length == 1 ) {
-			mc = Database.getCachemeta().getClass(nodes[0]);
-			category = mc.getCategory();
-			collection = mc.getCollection_name();
+			if ( Database.getCachemeta().classExists(nodes[0]) ){
+				mc = Database.getCachemeta().getClass(nodes[0]);
+				category = mc.getCategory();
+				collection = mc.getCollection_name();
+			} else {
+				category =  Category.getCategory(request.getParameter("table"));
+				collection = request.getParameter("schema");
+
+			}
 		}
 		else {				
 			reportJsonError(request, response, "Query badly formed (" + nodes.length + " nodes)");

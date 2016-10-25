@@ -248,13 +248,8 @@ jQuery
 							relation);
 				});
 			}
-			// $('#detaildiv').animate({scrollTop:
-			// $('#detaildiv').height()}, 800);
 		};
 		this.fireShowVignette = function(oid, title) {
-//			Modalinfo.dataPanel('Preview of ' + title,
-//			"<img class=vignette src='getvignette?oid=" + oid
-//			+ "'>");
 			Modalinfo.dataPanel('Vignette of ' + title
 					, "<img class=vignette src='getvignette?oid=" + oid + "'>"
 					, 'getvignette?oid=' + oid);
@@ -294,7 +289,6 @@ jQuery
 			if( Processing.jsonError(jsdata, "") ) {
 				return;
 			}
-
 			var content = {
 					header: {
 						histo: {
@@ -587,11 +581,13 @@ jQuery
 				/*
 				 * Get table columns
 				 */
-				var ahs = dataJSONObject["attributes"];
+				var columns = dataJSONObject["columns"];
+				var visibles = dataJSONObject["visibles"];
+				var constrained = dataJSONObject["constrained"];
 				var table = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"1\"  id=\"datatable\" class=\"display\">";
 				var headCells = "";
-				for (var i = 0; i < ahs.length; i++) {
-					headCells += "<th nowrap style='width: auto;'>" + ahs[i].name + "</th>";
+				for (var i = 0; i < columns.length; i++) {
+					headCells += "<th nowrap style='width: auto;'>" + columns[i].name + "</th>";
 				}
 
 				table +=  "<thead><tr>" + headCells + "</tr></thead>";
@@ -715,7 +711,7 @@ jQuery
 					for( var n=0 ; n<states.length ; n++){
 						var column = datatable.api().column( n);
 						/*
-						 * Do not redraw fore each columns, takes hours...
+						 * Do not redraw for each columns, takes hours...
 						 */
 						column.visible( states[n].selected, false);						
 					}
@@ -725,10 +721,27 @@ jQuery
 					datatable.api().columns.adjust().draw( false ); 
 				}
 				$('#ColumnSelector').click(function() {
-					NodeFilter.create(globalTreePath.nodekey, ahs, columnSelector);
+					NodeFilter.createColumnFilter(globalTreePath.nodekey, columns, visibles, columnSelector);
 				});	
-				
-
+				/*
+				 * Create or update the filter
+				 */
+				var states = NodeFilter.getFilter(globalTreePath.nodekey);
+				/*
+				 * New filter: rules are given by the server
+				 */
+				if( states == undefined ) {
+					states = NodeFilter.createFilter(globalTreePath.nodekey, columns, visibles.concat(constrained));
+				/*
+				 * Existing filter: keep it but add the constrained columns given by the server
+				 */
+				} else {
+					states = NodeFilter.updatesFilter(globalTreePath.nodekey, constrained);
+				}
+				/*
+				 * Apply the column filter
+				 */
+				columnSelector(states);
 				return;
 			}
 		};
