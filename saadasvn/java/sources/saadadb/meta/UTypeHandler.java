@@ -170,7 +170,7 @@ public class UTypeHandler {
 		this.arraysize = arraysize;
 		this.encodeName("");
 	}
-	
+
 	/**
 	 * Returns an attribute handler matching the instance parameters
 	 * @throws QueryException 
@@ -194,7 +194,7 @@ public class UTypeHandler {
 		retour.setComment(this.comment);
 		return retour;
 	}	
-	
+
 	/**
 	 * @param req_level
 	 */
@@ -238,7 +238,7 @@ public class UTypeHandler {
 				}
 				else {
 					name += meta_comp[i].substring(0,3);
-					
+
 				}
 			}
 			this.nickname = name;
@@ -258,14 +258,21 @@ public class UTypeHandler {
 		}
 		/*
 		 * We consider Votable datatypes similar to Java type: true for supported types but not for all datatypes
+		 * CLOBs are interpreted as Strings
 		 */
-		field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(this.type));
-		field.setUnit(this.unit);
-		if( this.arraysize > 1 ) {
-			field.setArraySize(Integer.toString(this.arraysize));								
-		}
-		else if( this.arraysize == -1 ) {
+		if( this.type.equalsIgnoreCase("CLOB")){
+			field.setUnit(this.unit);
+			field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(""));
 			field.setArraySize("*");								
+		} else {
+			field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(this.type));
+			field.setUnit(this.unit);
+			if( this.arraysize > 1 ) {
+				field.setArraySize(Integer.toString(this.arraysize));								
+			}
+			else if( this.arraysize == -1 ) {
+				field.setArraySize("*");								
+			}
 		}
 		if( this.comment != null && this.comment.length() > 0 ) {
 			field.setDescription(this.comment);
@@ -289,7 +296,7 @@ public class UTypeHandler {
 		}
 		return field;
 	}
-	
+
 	/**
 	 * @param value
 	 * @param meta
@@ -315,7 +322,7 @@ public class UTypeHandler {
 		param.setValue(value.toString());
 		return param;
 	}
-	
+
 	/**
 	 * @return Returns the arraysize.
 	 */
@@ -347,15 +354,15 @@ public class UTypeHandler {
 	public boolean isMandatory() {
 		return ( this.requ_level == MANDATORY ) ;
 	}
-	
+
 	public boolean isRequested() {
 		return ( this.requ_level == RECOMMENDED ) ;
 	}
-	
+
 	public boolean isOptional() {
 		return ( this.requ_level == OPTIONAL ) ;
 	}
-	
+
 	/**
 	 * @return Returns the type.
 	 */
@@ -455,18 +462,18 @@ public class UTypeHandler {
 		}
 		return false;
 	}
-	
+
 	public String toString() {
 		return nickname
-		+ "\nutype: " + utype
-		+ "\nvalue: " + value
-		+ "\nucd: " + ucd
-		+ "\nrequ_level: " + requ_level
-		+ "\ntype: " + type
-		+ "\nunit: " + unit
-		+ "\narraysize: " + arraysize
-		+ "\ncomment: " + comment
-		+ "\nhidden: " + hidden;
+				+ "\nutype: " + utype
+				+ "\nvalue: " + value
+				+ "\nucd: " + ucd
+				+ "\nrequ_level: " + requ_level
+				+ "\ntype: " + type
+				+ "\nunit: " + unit
+				+ "\narraysize: " + arraysize
+				+ "\ncomment: " + comment
+				+ "\nhidden: " + hidden;
 	}
 
 }
