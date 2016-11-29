@@ -22,6 +22,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.MetaClass;
 import saadadb.meta.MetaCollection;
 import saadadb.util.ChangeKey;
+import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
 /**
@@ -253,6 +254,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		jsr.put("show", jsa);
 		
 		jso.put("collections", jsr);
+		Messenger.printStackTop("@@@ " + jso.toJSONString());
 		return jso.toJSONString();
 
 	}

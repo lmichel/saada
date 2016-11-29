@@ -22,7 +22,15 @@ import saadadb.util.WorkDirectory;
  */
 
 public class FilterBase {
+	/**
+	 * Map of the filters defining the columns to be displayed 
+	 * This filters can be set in REP/config/userfilters
+	 */
 	private static HashMap<String, StoredFilter> visiblesFilters;
+	/**
+	 * Map of the filters defining the columns possibly displayed
+	 * Those filter are hard-coded in  the CATEGORYDisplayFilter classes 
+	 */
 	private static HashMap<String, StoredFilter> columnsFilters;
 	public static final String filterDirectory = Database.getRepository() + Database.getSepar() + "config" + Database.getSepar() + "userfilters";
 	private static boolean loaded = false;
@@ -46,7 +54,10 @@ public class FilterBase {
 
 
 	/**
-	 * create the defaults filters files and
+	 * Create the filter maps
+	 * Both maps are set with default values hard-coded in the CATEGORYDysplayFilter classes
+	 * visible filters (filters defining visible columns) can be overridden with filters read out
+	 * from the repository
 	 * add all the existing filters in the
 	 * given folder using loadFilters
 	 * 
@@ -65,13 +76,19 @@ public class FilterBase {
 			columnsFilters = new HashMap<String, StoredFilter>();
 			FileReader fr;
 			StoredFilter sf;
-			String cat, coll;
 			File tmp;
-
+			/*
+			 * Init both column and visible filters with the default filters hard-coded
+			 * in the CATEGORYDysplayFilter classes
+			 */
+			FilterBase.initVisibleFilters();
+			FilterBase.initColumnFilters();
+			/*
+			 * Read visible filters with those read into the repository.
+			 * Visible filters define the columns to be displayed
+			 */
 			WorkDirectory.validWorkingDirectory(filterDirectory);
 			File rootdir = new File(filterDirectory);
-			FilterBase.initVisibleDisplayFilter();
-			FilterBase.initDefaultFilter();
 			String path = rootdir.getAbsolutePath();
 			String[] list = rootdir.list();
 			Messenger.printMsg(Messenger.TRACE, "Load filters from " + rootdir.getAbsolutePath());
@@ -83,6 +100,7 @@ public class FilterBase {
 						tmp = new File(path + Database.getSepar() + filename);
 						fr = new FileReader(tmp);
 						sf = new StoredFilter(fr);
+						System.out.println("@@@@@@@@@@@@@@@@ loading " + filename + " " + sf.getTreepath());
 						FilterBase.visiblesFilters.put(sf.getTreepath(), sf);
 					}
 				}
@@ -180,10 +198,12 @@ public class FilterBase {
 
 		StoredFilter result = null;
 		String keys = coll+"."+cat + "." + saadaclass;
+		System.out.println("@@@@@@@@@@@@@ getColumnFilter 1 " + keys);
 		result = columnsFilters.get(keys);
 
 		if (result == null) {
 			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
+			System.out.println("@@@@@@@@@@@@@ getColumnFilter " + defkeys);
 			result = columnsFilters.get(defkeys);
 		}
 		return result;
@@ -206,7 +226,7 @@ public class FilterBase {
 	 * add the given filter for displayable columns to the base
 	 * @param sf
 	 */
-	public static void addDisplayFilter(StoredFilter sf) {
+	public static void addColumnFilter(StoredFilter sf) {
 		String coll = sf.getFirstCollection();
 		String cat = sf.getCategory();
 		String kw = coll+"."+cat;
@@ -221,7 +241,7 @@ public class FilterBase {
 	 * @throws QueryException
 	 * @throws FatalException
 	 */
-	private static void initVisibleDisplayFilter() throws Exception {
+	private static void initVisibleFilters() throws Exception {
 
 		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("IMAGE")));
 		FilterBase.addVisibleDisplayFilter(new StoredFilter(getVisibleJSONDisplayFilter("ENTRY")));
@@ -234,14 +254,14 @@ public class FilterBase {
 	/**
 	 * @throws Exception
 	 */
-	private static void initDefaultFilter() throws Exception {
+	private static void initColumnFilters() throws Exception {
 
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("IMAGE")));
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("ENTRY")));
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("FLATFILE")));
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("MISC")));
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("TABLE")));
-		FilterBase.addDisplayFilter(new StoredFilter(getJSONDisplayFilter("SPECTRUM")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("IMAGE")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("ENTRY")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("FLATFILE")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("MISC")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("TABLE")));
+		FilterBase.addColumnFilter(new StoredFilter(getJSONDisplayFilter("SPECTRUM")));
 
 	}
 
