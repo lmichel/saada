@@ -100,7 +100,6 @@ public class FilterBase {
 						tmp = new File(path + Database.getSepar() + filename);
 						fr = new FileReader(tmp);
 						sf = new StoredFilter(fr);
-						System.out.println("@@@@@@@@@@@@@@@@ loading " + filename + " " + sf.getTreepath());
 						FilterBase.visiblesFilters.put(sf.getTreepath(), sf);
 					}
 				}
@@ -151,12 +150,18 @@ public class FilterBase {
 	public static StoredFilter getVisibleColumnsFilter(String coll, String cat, String saadaclass) {
 
 		StoredFilter result = null;
-		String keys = coll+"."+cat + "." + saadaclass;
+		String keys = coll+"."+cat ;
+		if( saadaclass.length() > 0 && !saadaclass.equals("*")){
+			keys +=  "." + saadaclass;
+		}
 		result = visiblesFilters.get(keys);
-
 		if (result == null) {
-			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
-			result = visiblesFilters.get(defkeys);
+			keys = coll+"."+cat;
+			result = visiblesFilters.get(keys);
+		}
+		if (result == null) {
+			keys = FilterKeys.ANY_COLLECTION + "." + cat;
+			result = visiblesFilters.get(keys);
 		}
 		return result;
 	}
@@ -197,14 +202,19 @@ public class FilterBase {
 	public static StoredFilter getColumnFilter(String coll, String cat, String saadaclass) {
 
 		StoredFilter result = null;
-		String keys = coll+"."+cat + "." + saadaclass;
-		System.out.println("@@@@@@@@@@@@@ getColumnFilter 1 " + keys);
+		String keys = coll+"."+cat ;
+		if( saadaclass.length() > 0 && !saadaclass.equals("*")){
+			keys +=  "." + saadaclass;
+		}
 		result = columnsFilters.get(keys);
+		if (result == null) {
+			keys = coll+"."+cat;
+			result = columnsFilters.get(keys);
+		}
 
 		if (result == null) {
-			String defkeys = FilterKeys.ANY_COLLECTION + "." + cat;
-			System.out.println("@@@@@@@@@@@@@ getColumnFilter " + defkeys);
-			result = columnsFilters.get(defkeys);
+			keys = FilterKeys.ANY_COLLECTION + "." + cat;
+			result = columnsFilters.get(keys);
 		}
 		return result;
 	}

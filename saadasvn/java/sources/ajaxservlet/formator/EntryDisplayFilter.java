@@ -254,9 +254,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 		jsr.put("show", jsa);
 		
 		jso.put("collections", jsr);
-		Messenger.printStackTop("@@@ " + jso.toJSONString());
 		return jso.toJSONString();
-
 	}
 	
 
