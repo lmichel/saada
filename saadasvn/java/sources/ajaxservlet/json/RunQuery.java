@@ -79,7 +79,7 @@ public class RunQuery extends SaadaServlet {
 				//			    QueryContext qc = ac.getQueryContext();
 				//			    if( qc != null ) qc.closeQuery();;
 				//DisplayFilter colfmtor = DisplayFilterFactory.getFilter(qs[5] /* col */, qs[1]/* cat */, qs[3]/* class */,ac);
-				FilterBase.init(true);
+				FilterBase.init(false);
 
 
 				JSONObject jo = new JSONObject();
