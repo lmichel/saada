@@ -165,7 +165,7 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getTMax() throws SaadaException {
 		return new ColumnExpressionSetter("t_max");
 	}
-	public ColumnExpressionSetter getExpTime() throws SaadaException {
+	public ColumnExpressionSetter getExpTime() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("t_exptime");
 	}
 	public ColumnExpressionSetter getTResolution() {

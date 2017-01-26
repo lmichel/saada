@@ -25,11 +25,15 @@ public class KnowledgeBase {
 	static {
 		pipelineIdentifiers = new HashSet<String>();
 		pipelineIdentifiers.add("ORIGIN");
+		pipelineIdentifiers.add("INSTRUME");
 
 		parserMap = new LinkedHashMap<PipelineKey, Class>();
 		parserMap.put(new PipelineKey("ORIGIN", ".*GrenobleOut.*"), Grenoble.class);
+		parserMap.put(new PipelineKey("INSTRUME", "GMOS-.*"), GMOS.class);
 	}
 	/**
+	 * Returns a PipelineParser if one of the attributeHanders matches one entry of the parserMap.
+	 * This method is called by the external peer. 
 	 * @param attributesHandlers
 	 * @return
 	 */
