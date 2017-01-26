@@ -1,7 +1,7 @@
 package saadadb.products.inference;
 
 import hecds.wcs.Modeler;
-import hecds.wcs.transformations.fxspatial.SpatialProjection;
+import hecds.wcs.transformations.spatial.SpatialProjection;
 import hecds.wcs.types.AxeType;
 
 import java.util.LinkedHashMap;
