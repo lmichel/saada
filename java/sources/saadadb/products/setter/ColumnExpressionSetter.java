@@ -707,12 +707,17 @@ public class ColumnExpressionSetter extends ColumnSetter implements Cloneable{
 //
 	@Override
 	public void setValue(String value) {
+		if( this.settingMode == ColumnSetMode.BY_KEYWORD ) {
+			this.singleAttributeHandler.setValue(value);
+		}
 		this.result=value;
 	}
 
 	@Override
 	public void setValue(double value) {
-
+		if( this.settingMode == ColumnSetMode.BY_KEYWORD ) {
+			this.singleAttributeHandler.setValue(value);
+		}
 		this.result=String.valueOf(value);	
 	}
 

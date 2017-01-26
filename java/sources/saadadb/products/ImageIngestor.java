@@ -21,7 +21,6 @@ public class ImageIngestor extends ProductIngestor {
 		super.setSpaceFields();
 		ImageSaada image = (ImageSaada)this.saadaInstance;		
 		Image2DBuilder product = (Image2DBuilder)this.product;
-
 		image.crval1_csa = product.wcs_val1Setter.getNumValue();
 		image.crval2_csa = product.wcs_val2Setter.getNumValue();
 		image.crpix1_csa = product.wcs_crpix1Setter.getNumValue();

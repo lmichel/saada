@@ -102,6 +102,13 @@ public class SpecialFieldFormatter {
 			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getHeaderLink(oid)
 			+ DefaultPreviews.getAladinLiteLink(oid);
+		case Category.IMAGE:
+			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
+			+ DefaultPreviews.getInfoLink(oid)
+			+ DefaultPreviews.getDLLink(oid, dlWithRelations)
+			+ DefaultPreviews.getCartLink(oid)
+			+ DefaultPreviews.getAladinSAMP(oid)
+			+ DefaultPreviews.getFovSAMP(oid);
 		default: 			
 			return DefaultPreviews.getDetailLink(oid, "ClassLevel")
 			+ DefaultPreviews.getInfoLink(oid)

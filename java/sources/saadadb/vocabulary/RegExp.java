@@ -227,8 +227,8 @@ public class RegExp {
 	public static final String FITS_EPOCH_UCD    = "(?i)(time.epoch)";
 	/** http://www.aanda.org/articles/aa/full/2006/05/aa3818-05/table1.html */
 	public static final String FITS_CTYPE_SPECT = "(?i)(((FREQ)|(ENER)|(WAVN)|(VRAD)|(WAVE)|(VOPT)|(ZOPT)|(AWAV)|(VELO)|(BETA)).*)";
-	public static final String FITS_CTYPE_ASC   = "(?i)(((RA--)|(GLON)|(ELON)).*)";
-	public static final String FITS_CTYPE_DEC   = "(?i)(((DEC-)|(GLAT)|(ELAT)).*)";
+	public static final String FITS_CTYPE_ASC   = "(?i)(((RA--)|(GLON)|(ELON)|(Solar-X)).*)";
+	public static final String FITS_CTYPE_DEC   = "(?i)(((DEC-)|(GLAT)|(ELAT)|(Solar-Y)).*)";
 	public static final String FITS_EQUINOX     = "(?i)(EQUINOX)";
 	
 	public static final String OBSERVABLE_UNIT_KW = "(?i)((BUNIT)|(.*flux.*unit)|(.*dispersion.*unit))";

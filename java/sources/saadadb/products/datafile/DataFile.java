@@ -23,7 +23,6 @@ import saadadb.products.Image2DBuilder;
 import saadadb.products.ProductBuilder;
 import saadadb.products.SpectrumBuilder;
 import saadadb.products.TableBuilder;
-import saadadb.products.inference.QuantityDetector;
 import saadadb.util.Messenger;
 import saadadb.vocabulary.RegExp;
 
@@ -158,7 +157,7 @@ public abstract class DataFile implements Enumeration {
 	 */
 	public DataFileExtension getFirstSpectralExtension() {
 		/*
-		 * Look first for an extension named SPECRUM
+		 * Look first for an extension named SPECTRUM
 		 */
 		for( DataFileExtension dfe: this.productMap.values() ) {
 			if( (dfe.isImage() || dfe.isDataTable()) && dfe.tableName.equalsIgnoreCase("spectrum")) {
@@ -179,6 +178,18 @@ public abstract class DataFile implements Enumeration {
 						return dfe;
 					}
 				}
+				/*
+				 * Detection specific for GMOS spectra from Gemini. 
+				 * FITs header are too much obfuscated to be analysed properly 
+				 */
+				for( AttributeHandler ah: dfe.attributeHandlers ) {
+					if( ah.getNameorg().equals("INSTRUME") && ah.getValue().startsWith("GMOS-")){
+						if (Messenger.debug_mode)
+							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " is a GEMINI/GMOS spectraum");
+						return dfe;
+					}
+				}
+				
 			}
 		}
 		/*

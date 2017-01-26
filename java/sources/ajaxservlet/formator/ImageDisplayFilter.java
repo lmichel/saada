@@ -210,12 +210,12 @@ public class ImageDisplayFilter extends DefaultDisplayFilter {
 		jsa.add("Plot");
 		jsa.add("Access");	
 		jsa.add("Position");	
-		jsa.add("Size (deg)");	
 		jso.put("specialField", jsa);
 		jsr  = new JSONObject();
 		jsr.put("query", new JSONArray());
 		jsa = new JSONArray();
-		jsa.add("namesaada");
+		jsa.add("obs_id");
+		jsa.add("s_fov");
 		for( String v: Database.getCachemeta().getAtt_extend_image().keySet() ){
 			jsa.add(v);
 		}

@@ -276,14 +276,21 @@ public class UTypeHandler {
 		}
 		/*
 		 * We consider Votable datatypes similar to Java type: true for supported types but not for all datatypes
+		 * CLOBs are interpreted as Strings
 		 */
-		field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(this.type));
-		field.setUnit(this.unit);
-		if( this.arraysize > 1 ) {
-			field.setArraySize(Integer.toString(this.arraysize));								
-		}
-		else if( this.arraysize == -1 ) {
+		if( this.type.equalsIgnoreCase("CLOB")){
+			field.setUnit(this.unit);
+			field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(""));
 			field.setArraySize("*");								
+		} else {
+			field.setDataType(Database.getWrapper().getVotableDataTypeFromAnyType(this.type));
+			field.setUnit(this.unit);
+			if( this.arraysize > 1 ) {
+				field.setArraySize(Integer.toString(this.arraysize));								
+			}
+			else if( this.arraysize == -1 ) {
+				field.setArraySize("*");								
+			}
 		}
 		if( this.comment != null && this.comment.length() > 0 ) {
 			field.setDescription(this.comment);

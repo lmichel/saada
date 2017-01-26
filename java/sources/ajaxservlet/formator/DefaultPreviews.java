@@ -149,7 +149,15 @@ abstract public class DefaultPreviews {
 		return ("<a title='Send an image to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendOid(\"" 
 				+ oid + "\");'></a>");
 	}
-	
+
+	public static String getFovSAMP(long oid) throws FatalException{
+		String region =   (Database.getCache().getObject(oid)).getS_region();
+
+		return ("<a title='" + region + "'  class=dl_stc onclick='WebSamp_mVc.fireSendAladinScript(\"" + region + "\");'></a>");
+	}
+
+//	WebSamp_mVc.fireSendAladinScript
+//	<a title="Polygon ICRS UNKNOWNREFPOS SPHERICAL2 48.08864682613741 -43.34294001968425 48.04499151548045 -45.25890768286587 50.76739411109153 -45.25886082596674 50.72361221832557 -43.34289619542031 (click to plot)" class="dl_stc" href="#"></a>
 	public static String getSkyAtSAMP(long oid) throws FatalException{
 		SaadaInstance si =  (Database.getCache().getObject(oid));
 		return ("<a title='Send a position to SAMP'  class=dl_samp onclick='WebSamp_mVc.fireSendSkyat(" 

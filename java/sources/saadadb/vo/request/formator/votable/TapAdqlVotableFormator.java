@@ -16,6 +16,7 @@ import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.meta.VOResource;
 import saadadb.query.result.ADQLResultSet;
+import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.query.ADQLColumn;
@@ -230,6 +231,11 @@ public class TapAdqlVotableFormator extends VotableFormator {
 		}
 		writer.writeField(dataModelFieldSet);
 
+	}
+	@Override
+	public void setResultSet(SaadaInstanceResultSet saadaInstanceResultSet) throws QueryException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -77,6 +77,8 @@ public class Image2DBuilder extends ProductBuilder {
 		try {
 			this.bindDataFile(dataFile);
 			this.setQuantityDetector();
+		} catch (SaadaException e) {
+			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
 		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			IgnoreException.throwNewException(SaadaException.FILE_FORMAT, e);
@@ -216,5 +218,33 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d1_2Setter   = this.quantityDetector.getWCSCD12();
 		this.wcs_d2_1Setter   = this.quantityDetector.getWCSCD21();
 		this.wcs_d2_2Setter   = this.quantityDetector.getWCSCD22();
+		
+		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
+
 	}
+
+	/* (non-Javadoc)
+	 * @see saadadb.products.ProductBuilder#calculateAllExpressions()
+	 */
+	protected void calculateAllExpressions() throws Exception {
+		Messenger.locateCode();
+		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
+		super.calculateAllExpressions();
+		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
+		this.wcs_crpix1Setter.calculateExpression();
+		this.wcs_crpix2Setter.calculateExpression();
+		this.wcs_ctype1Setter.calculateExpression();
+		this.wcs_ctype2Setter.calculateExpression();
+		this.wcs_val1Setter.calculateExpression();
+		this.wcs_val2Setter.calculateExpression();
+		this.wcs_crotaSetter.calculateExpression();
+		this.wcs_d1_1Setter.calculateExpression();
+		this.wcs_d1_2Setter.calculateExpression();
+		this.wcs_d2_1Setter.calculateExpression();
+		this.wcs_d2_2Setter.calculateExpression();		
+		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
+
+
+	}
+
 }

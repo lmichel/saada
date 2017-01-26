@@ -91,7 +91,7 @@ public class DMImplementer {
 			}
 			TDSet tds = currentTR.getTDSet();
 			@SuppressWarnings("rawtypes")
-			List<Object> tdv = tds.getItems();
+			List<SavotTD> tdv = tds.getItems();
 			if( tdv.size() != 2 ) {
 				FatalException.throwNewException(SaadaException.FILE_FORMAT, "DM file <" + mappingfilepath + "> badly formated at <TR> #" + cpt); 
 				return ;

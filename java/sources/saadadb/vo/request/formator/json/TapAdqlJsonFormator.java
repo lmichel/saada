@@ -18,6 +18,7 @@ import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.meta.UTypeHandler;
 import saadadb.query.result.ADQLResultSet;
+import saadadb.query.result.SaadaInstanceResultSet;
 import saadadb.util.Messenger;
 import adqlParser.SaadaADQLQuery;
 import adqlParser.query.ADQLColumn;
@@ -150,5 +151,10 @@ public class TapAdqlJsonFormator extends JsonFormator {
 			}
 			indCol++;
 		}
+	}
+	@Override
+	public void setResultSet(SaadaInstanceResultSet saadaInstanceResultSet) throws QueryException {
+		// TODO Auto-generated method stub
+		
 	}
 }
