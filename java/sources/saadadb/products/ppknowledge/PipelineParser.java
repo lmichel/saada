@@ -54,13 +54,24 @@ public abstract class PipelineParser {
 			return new ColumnExpressionSetter(key);
 		} else {
 			ColumnExpressionSetter cs = new ColumnExpressionSetter(key);
-			cs.setByWCS(ah.getValue(), false);
+			cs.setByKeyword(key, false);
 			cs.setUnit(ah.getUnit());
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			return cs;
 		}
 	}
 	
+	protected ColumnExpressionSetter getColmumnSetter(String key, String ahName) throws Exception{
+		AttributeHandler ah = this.getAttributeHandler(ahName);
+		if( ah == null ){
+			return new ColumnExpressionSetter(key);
+		} else {
+			ColumnExpressionSetter cs = new ColumnExpressionSetter(key, ah);
+			cs.completeDetectionMsg("Issued from the knowledge base");
+			return cs;
+		}
+	}
+
 	/**
 	 * @param key: supposed to be a nameOrg
 	 * @return
@@ -99,16 +110,16 @@ public abstract class PipelineParser {
 	public ColumnExpressionSetter getCalibLevel() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("calib_level");
 	}
-	public ColumnExpressionSetter getTargetName() throws SaadaException {
+	public ColumnExpressionSetter getTargetName() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("target_name");
 	}
-	public ColumnExpressionSetter getFacilityName() throws SaadaException {
+	public ColumnExpressionSetter getFacilityName() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("facility_name");
 	}
 	public ColumnExpressionSetter getExposureName() throws SaadaException {
 		return new ColumnExpressionSetter("exposure_name");
 	}
-	public ColumnExpressionSetter getInstrumentName() throws SaadaException {
+	public ColumnExpressionSetter getInstrumentName() throws SaadaException, Exception {
 		return new ColumnExpressionSetter("instrument_name");
 	}
 	public ColumnExpressionSetter getObsIdComponents() throws SaadaException {

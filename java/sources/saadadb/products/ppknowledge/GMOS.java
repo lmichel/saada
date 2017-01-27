@@ -21,10 +21,11 @@ public class GMOS extends PipelineParser {
 	}
 
 	@Override
-	public ColumnExpressionSetter getTargetName() throws SaadaException {
+	public ColumnExpressionSetter getTargetName() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getTargetName: read knowledge base");
-		return this.getColmumnSetter("OBJECT");
+		return this.getColmumnSetter("target_name", "OBJECT");
+
 	}
 	@Override
 	public ColumnExpressionSetter getCalibLevel() throws Exception {
@@ -34,7 +35,7 @@ public class GMOS extends PipelineParser {
 				Messenger.printMsg(Messenger.DEBUG, "getCalibLevel: read knowledge base");
 			retour = 3;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("calib_level");
-			cs.setByWCS(String.valueOf(retour), false);
+			cs.setByValue(String.valueOf(retour), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			cs.storedValue = 3;
 			return cs;
@@ -43,16 +44,16 @@ public class GMOS extends PipelineParser {
 		}
 	}
 	@Override
-	public ColumnExpressionSetter getFacilityName() throws SaadaException {
+	public ColumnExpressionSetter getFacilityName() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getFacilityName: read knowledge base");
-		return this.getColmumnSetter("TELESCOP");
+		return this.getColmumnSetter("facility_name", "TELESCOP");
 	}
 	@Override
-	public ColumnExpressionSetter getInstrumentName() throws SaadaException {
+	public ColumnExpressionSetter getInstrumentName() throws Exception {
 		if (Messenger.debug_mode)
 			Messenger.printMsg(Messenger.DEBUG, "getInstrumentName: read knowledge base");
-		return this.getColmumnSetter("INSTRUME");
+		return this.getColmumnSetter("instrument_name", "INSTRUME");
 	}
 
 	@Override
@@ -64,9 +65,8 @@ public class GMOS extends PipelineParser {
 			retour = 4126.81;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_min");
 			cs.setUnit("nm");
-			cs.setByWCS(String.valueOf(retour), false);
+			cs.setByValue(String.valueOf(retour), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
-			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
@@ -82,9 +82,8 @@ public class GMOS extends PipelineParser {
 			retour = 7081.17;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_max");
 			cs.setUnit("nm");
-			cs.setByWCS(String.valueOf(retour), false);
+			cs.setByValue(String.valueOf(retour), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
-			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
@@ -110,7 +109,7 @@ public class GMOS extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
-			cs.setByWCS(getStringValue("DATE-OBS") + " " + (getStringValue("TIME-OBS")), false);
+			cs.setByValue(getStringValue("DATE-OBS") + " " + (getStringValue("TIME-OBS")), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			return cs;
 		} catch (Exception e) {
@@ -127,7 +126,7 @@ public class GMOS extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
-			cs.setByWCS(getStringValue("EXPTIME"), false);
+			cs.setByValue(getStringValue("EXPTIME"), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			cs.setUnit("s");
 			return cs;
