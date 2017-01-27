@@ -64,9 +64,8 @@ public class GMOS extends PipelineParser {
 			retour = 4126.81;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_min");
 			cs.setUnit("nm");
-			cs.setByWCS(String.valueOf(retour), false);
+			cs.setByValue(String.valueOf(retour), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
-			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
@@ -82,9 +81,8 @@ public class GMOS extends PipelineParser {
 			retour = 7081.17;
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("em_max");
 			cs.setUnit("nm");
-			cs.setByWCS(String.valueOf(retour), false);
+			cs.setByValue(String.valueOf(retour), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
-			// avoid multiple String<>double conversions
 			cs.storedValue = retour;
 			return cs;
 		} catch (Exception e) {
@@ -110,7 +108,7 @@ public class GMOS extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
-			cs.setByWCS(getStringValue("DATE-OBS") + " " + (getStringValue("TIME-OBS")), false);
+			cs.setByValue(getStringValue("DATE-OBS") + " " + (getStringValue("TIME-OBS")), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			return cs;
 		} catch (Exception e) {
@@ -127,7 +125,7 @@ public class GMOS extends PipelineParser {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "getTMin: read knowledge base");
 			ColumnExpressionSetter cs = new ColumnExpressionSetter("t_min");
-			cs.setByWCS(getStringValue("EXPTIME"), false);
+			cs.setByValue(getStringValue("EXPTIME"), false);
 			cs.completeDetectionMsg("Issued from the knowledge base");
 			cs.setUnit("s");
 			return cs;
