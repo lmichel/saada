@@ -10,39 +10,85 @@
 # A Part of the resources are local to 3XMM and the others are copied from jsresources
 #
 
-##########################
+#-----------------------------------------------------------
 # Script Resources
-#########################      
-outputDir="../web/min/packed" # directory where both packed JS and CSS are stored 
-packedCSS=$outputDir/packedCSS.css    # name of the file containing the packed CSS
-packedJS=$outputDir/packedJS.js       # name of the file containing the packed JS
-imageDir="../web/images"      # Directory from where the 3XMM images must be copied 
-imageOutput="../web/min/images" # Directory where the 3XMM images must be copied 
+#-----------------------------------------------------------   
+outputDir="../web/min/packed"      # directory where both packed JS and CSS are stored 
+packedCSS=$outputDir/packedCSS.css # name of the file containing the packed CSS
+packedJS=$outputDir/packedJS.js    # name of the file containing the packed JS
+imageDir="../web/images"           # Directory from where the 3XMM images must be copied 
+imageOutput="../web/min/images"    # Directory where the 3XMM images must be copied 
 iconsOutput="../web/min/icons" 
+jsbasics="../web/saadajsbasics"    # Location of resources copied from the JSRESOURCE project
+jsbasicsorg="/home/michel/workspace/jsresources/WebContent/saadajsbasics/"    # Location of resources in the JSRESOURCE project
+
+#----------------------------------------------------------
+# List of used jsresources JS objects
 #
-# List of jsresources JS objects
 # MVC template for names:
 #    Files without a js suffix are related to the MVC pattern.
 #    There are actually 3 files *_m/v/c.js 
-#
-js_array_org=("basics.js"
-	          "WebSamp"
-	          "KWConstraint"
-	          "AttachedData_v.js"
-	          "VizierKeywords_v.js"
-	          "OrderBy_v.js"
-	          "ConeSearch_v.js"
-	          "ConstList_v.js"
-	          "FieldList_v.js"
-	          "Sorter_v.js"
-	          "DataLink"
-	          "ConstQEditor"
-	          "QueryTextEditor"
-	          "domain.js")
-          
-##########################
-# Script Functions
-#########################      
+
+# Imported from JSRESOURCES/.../javascript
+js_array_org=("basics.js" \
+	                "WebSamp" \
+	                "KWConstraint" \
+	                "AttachedData_v.js" \
+	                "VizierKeywords_v.js" \
+	                 "OrderBy_v.js" \
+	                "ConeSearch_v.js" \
+	                "ConstList_v.js" \
+	                "FieldList_v.js" \
+	                "Sorter_v.js" \
+	                "NodeFilter_v.js" \
+	                "HipsExplorer_v.js" \
+	                "DataLink" \
+	                "Segment.js" \
+	                "RegionEditor" \
+	                "ConstQEditor" \
+	                "QueryTextEditor" \	  
+	                "Pattern_v.js"	 \  
+	                "domain.js" \
+	                "HipsExplorer_v.js"	  
+	                )
+	                
+# Imported from ../web/javascript
+
+
+js_local_array=(	 
+     "utils.js"  \
+	 "dataTree.js"  \
+	 "resultPaneModel.js"  \
+     "resultPaneView.js"  \
+     "resultPaneControler.js"  \
+     "saadaqlModel.js"  \
+     "saadaqlView.js"  \
+     "saadaqlControler.js" \
+     "cartView.js"  \
+     "cartControler.js"  \
+     "cartModel.js"  \
+     "sapView.js"  \
+     "sapControler.js"  \
+     "sapModel.js"  \
+     "zipjobModel.js"  \
+     "ready.js"  
+     )
+
+# Imported from .# Imported from JSRESOURCES/.../jsimports
+js_import_array=(	 
+     "jquery.simplemodal.js"  \
+	 "jquery.alerts.js"  \
+	 "jquery.dataTables.js"  \
+     "aladin.js"  \
+     "jquery.prints.js"  \
+     "jquery.tooltip.js"  \
+     "jquery.form.js" \
+     "jquery.layout-latest.js"\
+     "jquery.jeditable.js"\
+     "jquery.jstree.js"
+     )
+
+             
 #
 # Build the real list of jsresources JS files by applying the MVC template for names
 #
@@ -59,156 +105,81 @@ do
 	fi
 done
 
-#
-# function compiling a set of js files to the packed file
-# The compiled files are stored in the global output dir
-# USAGE: minifySet jsfiledir file1 file2 ....
-# jsfiledir: dir where JS files are
-#
-js_array=() # list of packed js files
-function minifySet(){
-	inputDir=$1
-	shift
-	fileList=("$@")
-	for item in "${fileList[@]}"
+#---------------------------------------------------------------------------------------------
+#  saadajsbasics  cleaning an update     
+# 
+echo "Clean min directory"
+minDir=../web/min/
+rm -Rf $minDir/*
+
+echo "Create directories"
+mkdir $minDir/jsimports 
+mkdir $minDir/jsimports/ui 
+mkdir $minDir/jsimports/ui/minified 
+
+echo "Get JQUERY UI minified elements"
+cp -R $jsbasicsorg/jsimports/ui/minified/* $minDir/jsimports/ui/minified
+
+packedJS=$minDir/jsimports/packed.js
+
+echo "Build $packedJS"
+for item in ${js_import_array[@]}
 	do
-		echo compiling $inputDir/${item} to $outputDir/${item}
-		#
-		# Closure compilation is commented whiole the validation phase
-    	#java -jar compiler.jar --js $inputDir/${item} --js_output_file $outputDir/${item} || exit 1
-    	cp $inputDir/${item}  $outputDir/${item} || exit 1
-    	# Store an ordered list of minified files
-    	js_array[${#js_array[@]}]=$item
-	done
-}
-#
-# merge all minified JS files within the  packed JS file
-# Minified files are removed after to be merged
-# a log message is appended ato the JS code to follow the loading pporcess in the console
-#
-function  pack() {
-	rm -f $outputFile
-	for item in "${js_array[@]}"
-	do 
-		echo pack $outputDir/$item to $packedJS
-		cat $outputDir/$item >> $packedJS || exit 1
+	    #cp $jsbasicsorg/jsimports/$item $minDir/jsimports		
+	    cat $jsbasicsorg/jsimports/$item >> $packedJS || exit 1
 		echo "" >> $packedJS
 		echo "console.log('=============== > " $item "');" >> $packedJS
 		echo "" >> $packedJS
-		rm $outputDir/$item
 	done
-}	
-#
-# merge a set CSS files within the  packed CSS file
-# USAGE: packCSS cssfiledir file1 file2 ....
-# cssfiledir: dir where CSS files are
-#
-function  packCSS() {
-	inputDir=$1
-	shift
-	fileList=("$@")
-	for item in "${fileList[@]}"
+
+echo "get JSRESOURCES styles"
+mkdir $minDir/styleimports 
+mkdir $minDir/styleimports/themes 
+mkdir $minDir/styleimports/themes/base 
+mkdir $minDir/styleimports/themes/base/minified
+cp -R  $jsbasicsorg/styleimports/themes/base/minified/* $minDir/styleimports/themes/base/minified
+cp -R  $jsbasicsorg/styleimports/fonts                  $minDir/styleimports
+cp -R  $jsbasicsorg/images/                             $minDir/
+cp -R  $jsbasicsorg/icons                               $minDir/icons
+cp -R  ../web/images/*                                  $minDir/images
+
+cp -R $jsbasicsorg/styleimports/bootstrap      $minDir/styleimports/
+cp -R $jsbasicsorg/styleimports/foundationicon $minDir/styleimports/
+
+cp -R $jsbasicsorg/styleimports/layout-default-latest.css $minDir/styleimports/
+cp -R $jsbasicsorg/styleimports/jquery.dataTables.css     $minDir/styleimports/
+cp -R $jsbasicsorg/styleimports/simplemodal.css           $minDir/styleimports/
+cp -R $jsbasicsorg/styleimports/aladin.min.css            $minDir/styleimports/
+
+mkdir $minDir/styles 
+cp $jsbasicsorg/styles/basics.css $minDir/styles
+cp $jsbasicsorg/styles/domain.css $minDir/styles
+cp ../web/styles/global.css       $minDir/styles
+cp ../web/styles/form.css         $minDir/styles
+
+
+mkdir $minDir/javascript 
+packedJS=$minDir/javascript/packed.js
+echo "Build $packedJS"
+
+for item in ${js_basic_array[@]}
 	do
-		echo pack $inputDir/$item to $outputDir/packedCSS.css
-		echo "/**** $inputDir/$item **********************************/ " >> $outputDir/packedCSS.css
- 		cat $inputDir/$item >> $outputDir/packedCSS.css || exit 1
+	    #cp $jsbasicsorg/javascript/$item $minDir/javascript		
+	    cat $jsbasicsorg/javascript/$item >> $packedJS || exit 1
+		echo "" >> $packedJS
+		echo "console.log('=============== > " $item "');" >> $packedJS
+		echo "" >> $packedJS
 	done
-}	
-
-##########################
-# Script Job
-#########################      
-
-rm -f  > $packedCSS	
-echo "=========== Pack CSS files"
 
 
- 
-# packCSS "../web/jsimports/themes/default"\
-# "style.css"
- 
-packCSS "../web/saadajsbasics/styleimports/"\
-	                   "layout-default-latest.css"\
-	                  "datatable.css"\
-	                  "simplemodal.css"    
-
-packCSS "../web/saadajsbasics/styles/"\
-	                   "basics.css"    
-
-	
-packCSS "../web/styles"\
-    "global.css" \
-    "form.css" 
-
-
-
-echo "=========== Minify JS files"
-rm -f $packedJS
-minifySet "../web/saadajsbasics/javascript"   \
-    ${js_basic_array[@]} 
-
-minifySet "../web/saadajsbasics/jsimports/ui"   \
-         "jquery-ui.js"
-	                 
-minifySet "../web/saadajsbasics/jsimports"   \
-	      "jquery.simplemodal.js"\
-	      "jquery.alerts.js"\
-	      "jquery.dataTables.js"\
-	      "FixedHeader.js"\
-	      "jquery.prints.js"\
-	      "jquery.tooltip.js"\
-	      "jquery.form.js"
-	                 
-minifySet  "../web/jsimports"    \
-     "jquery.jstree.js"  \
-     "jquery.jsonSuggest-2.js"  \
-     "jquery.jeditable.js"     \
-     "jquery.layout-latest.js"   
-
-
-	
-minifySet  "../web/javascript"\
-	 "utils.js"  \
-	 "resultPaneModel.js"  \
-     "resultPaneView.js"  \
-     "resultPaneControler.js"  \
-     "kwconstraintModel.js"  \
-     "kwconstraintView.js"  \
-     "kwconstraintControler.js"  \
-     "ucdconstraintModel.js"  \
-     "ucdconstraintView.js" \
-     "ucdconstraintControler.js"\
-     "saadaqlModel.js"  \
-     "saadaqlView.js"  \
-     "saadaqlControler.js" \
-     "filterManagerModel.js"\
-     "filterManagerView.js"\
-     "filterManagerControler.js"\
-     "patternModel.js"\
-     "patternView.js"\
-     "patternControler.js"\
-     "jobModel.js"  \
-     "jobView.js"  \
-     "jobControler.js"  \
-     "jobDictionnary.js"  \
-     "cartView.js"  \
-     "cartControler.js"  \
-     "cartModel.js"  \
-     "sapView.js"  \
-     "sapControler.js"  \
-     "sapModel.js"  \
-     "zipjobModel.js"  \
-     "ready.js"  \
-     "resize.js"
-
-
-echo "=========== Pack JS files"
-pack 
-
-echo "=========== Copy images"
-cp $imageDir/*    $imageOutput"/" || exit 1
-
-cp ../web/saadajsbasics/icons/* $iconsOutput
-echo "=========== Packing is over"
-exit
+for item in ${js_local_array[@]}
+	do
+	    #cp ../web/javascript/$item $minDir/javascript
+	    cat ../web/javascript/$item >> $packedJS || exit 1
+		echo "" >> $packedJS
+		echo "console.log('=============== > " $item "');" >> $packedJS
+		echo "" >> $packedJS
+	done
+echo "Done"
+exit 0
 
