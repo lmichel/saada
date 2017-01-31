@@ -90,7 +90,7 @@ public class Messenger implements Serializable{
 				}
 				else {
 					// on commence par changer l'encodage  
-					PrintStream ps = new PrintStream(new FileOutputStream(log_file) ,true,"ISO-8859-1"); 
+					PrintStream ps = new PrintStream(new FileOutputStream(log_file, true) ,true,"ISO-8859-1"); 
 					Messenger.output = ps;
 					Messenger.logfile = log_file;
 				}
