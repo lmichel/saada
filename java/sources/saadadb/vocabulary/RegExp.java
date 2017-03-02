@@ -110,7 +110,7 @@ public class RegExp {
 	public static final String SPEC_BAND_UCD     = "(?i)(em\\.wl)";
 	public static final String SPEC_RESPOWER_UCD = "(?i)((instr\\.dispersion)|(spect\\.resolution))";
 	public static final String SPEC_RESPOWER_KW  = "(?i)((power)|(res)|(spres)|(r))";
-	public static final String UNIT_IN_KW_COMMENT  = "(?i)(?:.*(?:(?:wavelength)|(?:dispersion))\\s.*((?:A)|(?:Angstrom))(?:(?:\\s.*)|$))";
+	public static final String UNIT_IN_KW_COMMENT  = "(?i)(?:(?:.*(?:(?:wavelength)|(?:dispersion))\\s.*((?:A)|(?:Angstrom))(?:(?:\\s.*)|$))|(?:\\s*angstr.*))";
 	
 	/*
 	 * TIme axis column names

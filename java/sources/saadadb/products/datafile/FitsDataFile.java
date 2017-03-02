@@ -850,6 +850,12 @@ public final class FitsDataFile extends FSDataFile{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, msg);
 			return;			
+		/*
+		 * In case of spectrum, we always consider that the 1st HDU may be a spectrum (Vizier) 
+		 */
+		} else if( category == Category.SPECTRUM ) {
+			this.goodHeader = this.firstHeader;
+			return;
 		}
 		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}

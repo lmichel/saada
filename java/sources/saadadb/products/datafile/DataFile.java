@@ -172,7 +172,7 @@ public abstract class DataFile implements Enumeration {
 		for( DataFileExtension dfe: this.productMap.values() ) {
 			if( dfe.isImage() ) {
 				for( AttributeHandler ah: dfe.attributeHandlers ) {
-					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT)){
+					if( ah.getNameorg().startsWith("CTYP") && ah.getValue().matches(RegExp.FITS_CTYPE_SPECT) || ah.getValue().matches(RegExp.UNIT_IN_KW_COMMENT) ){
 						if (Messenger.debug_mode)
 							Messenger.printMsg(Messenger.DEBUG, "Extension #" + dfe.tableNum + " has spectral WCS");
 						return dfe;
@@ -180,7 +180,7 @@ public abstract class DataFile implements Enumeration {
 				}
 				/*
 				 * Detection specific for GMOS spectra from Gemini. 
-				 * FITs header are too much obfuscated to be analysed properly 
+				 * FITs header are too much obfuscated to be analyzed properly 
 				 */
 				for( AttributeHandler ah: dfe.attributeHandlers ) {
 					if( ah.getNameorg().equals("INSTRUME") && ah.getValue().startsWith("GMOS-")){
