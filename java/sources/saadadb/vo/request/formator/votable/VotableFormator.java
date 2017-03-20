@@ -139,7 +139,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 		table.setDescription("data_desc");
 
 		writer.writeTableBegin(table);
-		writeMetaData();
+		this.writeMetaData();
 		writer.writeTableEnd();
 		writer.writeResourceEnd();
 		writer.writeDocumentEnd();
@@ -290,8 +290,14 @@ public abstract class VotableFormator extends QueryResultFormator {
 		for (String group_name : groups) {
 			UTypeHandler[] uths = dataModel.getGroupUtypeHandlers(group_name);
 			for (UTypeHandler uth : uths) {
-				// System.out.println("uth type: "+uth.getType());
-				if (uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue())) {
+				/*
+				 * Space frame is common for the whole database: it must be set as a param (ignored as fields)
+				 * Other DM fields without default values are take as fields
+				 */
+				if (  !(uth.getUtype().equals("CoordSys.SpaceFrame.Equinox") || uth.getUcd().equalsIgnoreCase("VOX:STC_CoordEquinox") ||
+						uth.getUtype().equals("CoordSys.SpaceFrame.Name") || uth.getUcd().equalsIgnoreCase("VOX:STC_CoordRefFrame")	) 
+						&&
+						uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue()) ){
 					dataModelFieldSet.addItem(uth.getSavotField(cpt++));
 				}
 			}
@@ -309,7 +315,15 @@ public abstract class VotableFormator extends QueryResultFormator {
 			paramSet = new ParamSet();
 			UTypeHandler[] uths = dataModel.getGroupUtypeHandlers(group_name);
 			for (UTypeHandler uth : uths) {
-				if (uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue())) {
+				/*
+				 * Space frame is common for the whole database: it must be set as a params (ignored as fields)
+				 * Other DM fields without default values are take as fields
+				 */
+				if (uth.getUtype().equals("CoordSys.SpaceFrame.Name") || uth.getUcd().equalsIgnoreCase("VOX:STC_CoordRefFrame")) {
+					paramSet.addItem(uth.getSavotParam(Database.getCoord_sys(), ""));
+				} else if (uth.getUtype().equals("CoordSys.SpaceFrame.Equinox") || uth.getUcd().equalsIgnoreCase("VOX:STC_CoordEquinox") ) {
+					paramSet.addItem(uth.getSavotParam(Database.getCoord_equi(), ""));
+				} else	if (uth.getValue().length() == 0 || "null".equalsIgnoreCase(uth.getValue())) {
 					for (Object f : dataModelFieldSet.getItems()) {
 						sf = (SavotField) f;
 						if (("".equals(uth.getUtype()) || sf.getUtype().equals(uth.getUtype()))
@@ -334,10 +348,6 @@ public abstract class VotableFormator extends QueryResultFormator {
 																	* )
 																	*/) {
 					paramSet.addItem(uth.getSavotParam(Integer.toString(oids.size()), ""));
-				} else if (uth.getUtype().equals("CoordSys.SpaceFrame.Name")) {
-					paramSet.addItem(uth.getSavotParam(Database.getCoord_sys(), ""));
-				} else if (uth.getUtype().equals("CoordSys.SpaceFrame.Equinox")) {
-					paramSet.addItem(uth.getSavotParam(Database.getCoord_equi(), ""));
 				} else {
 					paramSet.addItem(uth.getSavotParam(uth.getValue(), ""));
 				}
