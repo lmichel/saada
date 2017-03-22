@@ -1,7 +1,7 @@
 package saadadb.products.inference;
 
 import hecds.wcs.Modeler;
-import hecds.wcs.transformations.spatial.SpatialProjection;
+import hecds.wcs.transformations.fxspatial.SpatialProjection;
 import hecds.wcs.types.AxeType;
 
 import java.util.LinkedHashMap;
@@ -37,7 +37,7 @@ public class SpaceKWDetector extends KWDetector{
 	private ColumnExpressionSetter err_min = new  ColumnExpressionSetter("err_min");
 	private ColumnExpressionSetter err_maj= new  ColumnExpressionSetter("s_resolution");
 	private ColumnExpressionSetter err_angle= new  ColumnExpressionSetter("err_angle");
-	private ColumnExpressionSetter fov;
+	private ColumnExpressionSetter fov, sizeRA, sizeDEC;
 	private ColumnExpressionSetter region;
 	//private Astroframe frame = null;
 	private ColumnExpressionSetter frameSetter = null;
@@ -104,6 +104,8 @@ public class SpaceKWDetector extends KWDetector{
 			 */
 			this.region = new ColumnWcsSetter("s_region", "WCS.getWorldPixelRegion()", projection);
 			this.fov = new ColumnWcsSetter("s_fov", "WCS.getFieldOfView()", projection);
+			this.sizeRA = new ColumnWcsSetter("size_alpha_csa", "WCS.getSizeRA()", projection);
+			this.sizeDEC = new ColumnWcsSetter("size_delta_csa", "WCS.getSizeDEC()", projection);
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
@@ -650,6 +652,36 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		return fov;		
 	}
+
+	/**
+	 * Return the column setter giving the image size following the roight ascencion axis
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getSizeRA() throws Exception{
+		if( this.sizeRA == null  || this.sizeRA.isNotSet()){
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("size_alpha_csa");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+		return sizeRA;		
+	}
+	
+	/**
+	 * Return the column setter giving the image size following the declination axis
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getSizeDEC() throws Exception{
+		if( this.sizeDEC == null  || this.sizeDEC.isNotSet()){
+			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("size_delta_csa");
+			retour.completeDetectionMsg("No supported WCS");
+			return retour;
+		}
+		return sizeDEC;		
+	}
+
+	
 	/**
 	 * The value returned contain just a list of point. The coord system must be added later.
 	 * @return

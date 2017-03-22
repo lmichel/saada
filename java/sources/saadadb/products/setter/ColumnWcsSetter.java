@@ -72,6 +72,7 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			return;
 		}
 		String ef = this.expression.replace(Prefix,  "");
+		double c1, c2 , d1, d2;
 		switch( ef ) {
 		case "getMin(1)":
 			this.result = String.valueOf(this.projection.getMin(1));
@@ -129,11 +130,23 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			this.storedValue = sv;
 			break;
 		case "getFieldOfView()":
-			double c1 = this.projection.getCenter(1);
-			double c2 = this.projection.getCenter(2);
-			double d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c1);
-			double d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
+			c1 = this.projection.getCenter(1);
+			c2 = this.projection.getCenter(2);
+			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c1);
+			d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
 			this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
+			this.unit = "deg";
+			break;
+		case "getSizeRA()":
+			c2 = this.projection.getCenter(2);
+			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c2);
+			this.result =  Double.toString(d1);
+			this.unit = "deg";
+			break;
+		case "getSizeDEC()":
+			c1 = this.projection.getCenter(1);
+			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(2) , c1, this.projection.getMax(2), c1);
+			this.result =  Double.toString(d1);
 			this.unit = "deg";
 			break;
 		case "getStokes()":
