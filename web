@@ -1,0 +1,513 @@
+<html>
+<head>
+<title>Saada1.7.0.beta</title>
+<LINK REL="icon" HREF="image/saada.ico" TYPE="images/ico" />
+<LINK REL="SHORTCUT ICON" HREF="images/saada.ico" />
+
+
+	
+<!-- <link rel="stylesheet" type="text/css" href="styles/global.css" />
+<link rel="stylesheet" type="text/css" href="styles/form.css" /> 
+<link rel="stylesheet" type="text/css" href="styleimports/themes/base/jquery.ui.all.css" />
+<link rel="stylesheet" type="text/css" href="styles/simplemodal.css" />
+<link rel="stylesheet" type="text/css" href="styleimports/datatable.css" />
+<link rel="stylesheet" type="text/css" href="styleimports/layout-default-latest.css" />
+<link rel="stylesheet" type="text/css" href="saadajsbasics/styles/basics.css" />
+<link rel="stylesheet" type="text/css" href="http://obs-he-lm:8888/jsStuff/saadajsbasics/styles/basics.css" />
+ -->
+
+<link rel="stylesheet" href="saadajsbasics/styleimports/themes/base/jquery.ui.all.css" />
+<link rel="stylesheet" href="jsimports/themes/default/style.css" />
+
+<script type="text/javascript" src="jsimports/jquery.js"></script>
+<script>var useDebugResources = true; var productionMode=true;</script>
+<script type="text/javascript" src="saadajsbasics/loader.js"></script>
+<script type="text/javascript" src="javascript/packedLoader.js"></script>
+<script type="text/javascript" src="userscripts/local.js"></script>
+
+<script type="text/javascript">
+if( productionMode ) {
+	useDebugResources = false;
+    packedResourceLoader.setCss([         
+     "./min/packed/packedCSS.css"
+    ]);
+    packedResourceLoader.setScripts([  
+     "./min/packed/packedJS.js"
+      ]);
+    packedResourceLoader.loadAll();
+} else {
+    var useDebugResources = true;
+     resourceLoader.setCss([  
+       "styles/global.css"
+     , "styles/form.css"]);
+     resourceLoader.setScripts([  
+      "jsimports/jquery.jstree.js"  
+     ,"jsimports/jquery.jsonSuggest-2.js"  
+     ,"jsimports/jquery.jeditable.js"   
+     ,"jsimports/jquery.layout-latest.js"   
+     ,"userscripts/local.js"
+     ,"javascript/utils.js"
+     ,"javascript/resultPaneModel.js"  
+     ,"javascript/resultPaneView.js"  
+     ,"javascript/resultPaneControler.js"  
+     ,"javascript/kwconstraintModel.js"  
+     ,"javascript/kwconstraintView.js"  
+     ,"javascript/kwconstraintControler.js"  
+     ,"javascript/ucdconstraintModel.js"  
+     ,"javascript/ucdconstraintView.js"  
+     ,"javascript/ucdconstraintControler.js"  
+     ,"javascript/saadaqlModel.js"  
+     ,"javascript/saadaqlView.js"  
+     ,"javascript/saadaqlControler.js"  
+     ,"javascript/filterManagerModel.js"
+     ,"javascript/filterManagerView.js"
+     ,"javascript/filterManagerControler.js"
+     ,"javascript/patternModel.js"
+     ,"javascript/patternView.js"
+     ,"javascript/patternControler.js"
+     ,"javascript/jobModel.js"  
+     ,"javascript/jobView.js"  
+     ,"javascript/jobControler.js"  
+     ,"javascript/jobDictionnary.js"  
+     ,"javascript/cartView.js"  
+     ,"javascript/cartControler.js"  
+     ,"javascript/cartModel.js"  
+     ,"javascript/sapView.js"  
+     ,"javascript/sapControler.js"  
+     ,"javascript/sapModel.js"  
+     ,"javascript/zipjobModel.js"  
+     ,"javascript/ready.js"  
+     ,"javascript/resize.js"  
+       ]);
+     resourceLoader.loadAll();
+}
+     </script>
+
+	<style type="text/css">
+
+	.pane {
+		display:	none; /* will appear when layout inits */
+	}
+	</style>
+
+
+</head>
+<body>
+<div id=superwrapper>
+		<!--  
+		BANNIERE
+		-->
+		<div id=banner class="levelonediv">
+			&nbsp;<a href="http://saada.u-strasbg.fr" title="Saada home page"
+				target="_blank" class=logo id=saadaLogo></a> &nbsp;&nbsp;
+			<div id=pagetitle style='width: 100%'>
+				<span class=pagetitle>TITLE</span> <span class=pagetitlepath
+					id=titlepath></span>
+			</div>
+			<div id=externaltools>
+				<a href="javascript:void(0);" title="Database description"
+					onclick='resultPaneView.fireOpenDescription();' id='opendesc'><span>about</span>
+				</a>&nbsp; <a href="javascript:void(0);" class="formexpender"
+					title="Expand query form"
+					onclick='resultPaneView.fireExpendForm();' id='formexpender'></a> <a
+					href="javascript:void(0);" id=displayfilter
+					title="Edit display filter" class='displayfilter'
+					onclick='filterManagerView.fireShowFilterManager(globalTreePath);'></a>
+				<a href="javascript:void(0);" id=showquerymeta title='Show Metadata'
+					class=question></a> <a href="javascript:void(0);"
+					title='Open the shopping cart' class=cart
+					onclick='cartView.fireOpenCart();' id=zipbutton></a>
+					<a id="sampIndicator" onclick="WebSamp_mVc.fireJustConnect();" class="sampOff" href="#" title="SampStatus"></a>
+				<div style="width: 100%; height: 1px; background: silver"></div>
+			</div>
+		</div>
+		<!--  
+			DATA ACCES PANEL
+		-->
+		<div id="accesspane">			
+			<!-- 
+				NORTH data result
+			 -->
+			<div id="resultpane" class="pane ui-layout-center" >				
+<!-- 			    <div id='pouet1' style='width: 100%; height: 32px; background-color: red;'></div>
+			    <div id='pouet' style='width: 100%; height: 32px; background-color: red;'></div>
+			    <div id='resultpanedata' style='height: 50%; width: 100%; overflow-y: auto;overflow-x: visible;' >
+			
+ -->				<h2 class=help>&nbsp;What to do now?</h2>
+				<ul>
+					<li class=help style="font-size: large;"><b>Double click </b> on a data node <img src="images/dataNode.png"/> to display its content.</li>
+					<li class=help style="font-size: large;"><b>Drop a data node </b> on the meta icon <a href="javascript:void(0);" id=showquerymeta title='Show Metadata' class=question></a>
+					to know more about the data selection</li>
+					<li class=help style="font-size: large;"><b>Click on the filter icon</b> <a href="javascript:void(0);" id=displayfilter title="Edit display filter" class='displayfilter' ></a>
+					to set up columns to be displayed</li>
+					<li class=help style="font-size: large;"><b>Click on the query form expander icon</b> <a href="javascript:void(0);" class=formexpender ></a>
+					to expand or collapse the query form</li>
+					<li class=help style="font-size: large;"><b>Click on the cart icon</b> <a href="javascript:void(0);"  class=cart ></a> to manage the content of the shoppping cart</li>
+					<li class=help style="font-size: large;"><b>Drop a data node </b> on the query area below <img src="images/queryForm.png"/> to setup a query on that data collection</li>
+				</ul>
+<!-- 			</div>
+ -->			
+			</div>
+			<!-- 
+				SOUTH panel query form
+			 -->
+			<div id="formframe" class="pane ui-layout-south">
+				<div id=formpanemenu
+					style="float: left; text-align: center; width: 91; border-style: hidden;">
+					<div
+						style="text-align: center; padding: 5px; border-style: hidden;">
+						<a href="javascript:void(0);" class=accept id=submitquery
+							title='Execute the query in the current mode'></a>
+						<hr>
+					</div>
+					<div
+						style="text-align: left; text-align: center; border-style: hidden;">
+						<span class=help>Result Limit</span><br>
+						<center>
+							<input type=text id='qlimit' class=numinputvalue
+								style="font-size: small; font-family: Arial, Helvetica, sans-serif;"
+								value='100'>
+						</center>
+					</div>
+					<div
+						style="text-align: left; text-align: center; border-style: hidden;">
+						<span id=qhistocount class=help>-/-</span><br> <span
+							id=histoarrows><img src="images/histoleft-grey.png"><img
+							src="images/historight-grey.png"> </span>
+						<HR>
+					</div>
+					<div style="text-align: left; padding: 5px; border-style: hidden;">
+						<span class=help>Query Mode</span><br> <input
+							class=langswitch type="radio" name="qlang" id="saadaqllang"
+							value="saadaql" checked><span>SaadaQL</span><br />
+						<!--  input class=langswitch type="radio" name="qlang" id="taplang" value="tap"><span>TAP</span><br /> -->
+						<input class=langswitch type="radio" name="qlang" id="saplang"
+							value="sap"><span>S*AP</span>
+						<hr>
+					</div>
+				</div>
+
+				<div id="formpane">
+					<!--
+						SAADAQL Editor 
+					 -->
+					<div id="saadaqltab" class=querytab>
+						<ul>
+							<li><a href="#postab"><span>Position</span>
+							</a>
+							</li>
+							<li><a href="#kwtab"><span>Const on Keywords</span>
+							</a>
+							</li>
+							<li><a href="#ucdtab"><span>UCD based Const </span>
+							</a>
+							</li>
+							<li><a href="#patterntab"><span>Pattern</span>
+							</a>
+							</li>
+							<li><a href="#texttab"><span>Plain Text Query</span>
+							</a>
+							</li>
+						</ul>
+						<div id="postab" class=queryformtab>
+							<div id="coordgetter">
+								<div id="coordform">
+									<div id=cf1 style="background: white;">
+										<div class="widgetlabel" style="width: 7em;">
+											<span>Coord/Name</span>
+										</div>
+										<input type=text id=coordval class=coordinputvalue
+											style="font-size: small; font-family: Arial, Helvetica, sans-serif;">
+										<a href="javascript:void(0);" class=sesame id=sesame></a> <br>
+										<div class="widgetlabel" style="width: 7em;">
+											<span>Radius (arcmin)</span>
+										</div>
+										<input type=text id='radiusval' class=numinputvalue
+											style="font-size: small; font-family: Arial, Helvetica, sans-serif;"
+											value='1'> <a href="javascript:void(0);"
+											class=accept_small id=submitdirect></a> <a
+											href="javascript:void(0);" class=add
+											title='Add the current positon to the query'
+											onclick='saadaqlView.fireInputCoordEvent();'></a>
+									</div>
+									<div id=cf2 style="background: white;">
+										<span class=help>Click on the blue arrow or hit return
+											in text field <br>to add the position to the list <br>or
+											click on submit to run the query</span>
+									</div>
+								</div>
+							</div>
+							<div id="listpos">
+								<span class=help>List of searched positions</span>
+								<div id="CoordList"></div>
+							</div>
+						</div>
+						<div id="kwtab" class=queryformtab>
+							<div id="kwtab1">
+								<div style="background: white;">
+									<span class=help>Available Keywords<br />
+									</span>
+								</div>
+								<div id="meta"></div>
+								<div style="background-color: white;">
+									<span class=help>Drag and Drop keywords to the list of
+										active constraints</span>
+								</div>
+
+							</div>
+							<div id="kwtab2">
+								<div style="background: white;">
+									<span class=help>Active Constraints<br />
+									</span>
+								</div>
+								<div id="ConstraintsList" class='SortableConstraintsList'></div>
+								<div style="background-color: white; width: 336px;">
+									<span style="height: 18;" class=typomsg></span>
+								</div>
+								<div id='obtab2'>
+									<div id="orderby" class='SortableConstraintsList'></div>
+									<div style="background: white;">
+										<span class=help>&nbsp;Order By<br />
+										</span> <input  id="orderby_asc" type="radio" name=sens value="asc" checked> <span
+											class=help>Asc</span> <input id="orderby_des" type="radio" name=sens
+											value="des"> <span class=help>Des</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="ucdtab" class=queryformtab>
+							<div id="ucdtab1">
+								<div style="background: white;">
+									<span class=help>Available UCDs<br />
+									</span>
+								</div>
+								<div id="ucdmeta"></div>
+								<div style="background-color: white;">
+									<span class=help>Drag and Drop UCD to the list of active
+										constraints</span>
+								</div>
+
+							</div>
+							<div id="ucdtab2">
+								<div style="background: white;">
+									<span class=help>Active Constraints<br />
+									</span>
+								</div>
+								<div id="UCDConstraintsList"></div>
+								<div style="background-color: white; width: 336px;">
+									<span class=ucdtypomsg></span>
+								</div>
+							</div>
+						</div>
+
+						<div id="patterntab" class=queryformtab>
+							<div id="patternbox1">
+								<div style="height: 26px; background: white; float: none;">
+									<span class=help>Relationship(s):</span> <select
+										id=relationselect style="font-size: small;"><option>----</option>
+									</select>
+								</div>
+								<div id=patterncardqual style="float: none;"></div>
+								<span class=help><br />Counterpart Class</span> <select
+									id=cpclassselect
+									style="font-size: small; font-family: Arial, Helvetica, sans-serif;">
+									<option>----</option>
+								</select>
+								<div id=patternatt style="float: none; overflow: auto;"></div>
+								<span class=help>Drag and Drop keywords to the center
+									frame</span>
+							</div>
+							<div id="patternbox2">
+								<span class=help>Pattern under Construction</span> <a
+									id=acceptpattern class=add href="javascript:void(0);"
+									title="click to add the pattern to the query"></a>
+								<div id=patternconst style="float: none;"></div>
+								<span class=help style="text-align: center;">Click on the
+									submit button above to <br>add the pattern to the query </span> <br>
+								<span class=typomsg></span>
+							</div>
+							<div id="patternbox3">
+								<div style="background-color: white; height: 24; float: none;">
+									<span class=help>Active Patterns</span>
+								</div>
+								<div id=patternlist style="float: none;"></div>
+							</div>
+						</div>
+						<div id="texttab"  class=queryformtab>
+							<textarea id=saadaqltext></textarea>
+						</div>
+					</div>
+					<!--
+						S*AP Editor 
+					 -->
+					<div id="saptab" class=querytab>
+						<ul>
+							<li><a href="#csp"><span>Cone Search</span>
+							</a>
+							</li>
+							<li><a href="#siap"><span>SIAP</span>
+							</a>
+							</li>
+							<li><a href="#ssap"><span>SSAP</span>
+							</a>
+							</li>
+						</ul>
+						<div id="csp" class=queryformtab>
+							<div style="background: white;">
+								<div style="background: white;">
+									<span class=help id=csscope>Service Scope: Not Set</span>
+								</div>
+								<br>
+
+								<div style="background: white; float: left;">
+									<table border=0>
+										<tr>
+											<td><span>Target</span>
+											</td>
+											<td><input type=text id=cscoordval class=coordinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;">
+												<span class=help>in J2000</span></td>
+											<td> <a	href="javascript:void(0);" class=sesame></a></td>
+										</tr>
+										<tr>
+											<td><span>Radius</span>
+											</td>
+											<td><input type=text id=csradiusdval class=numinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;"
+												value='0.1'> <span class=help>in deg.
+													(&lt;1.0)</span></td>
+											<td><a title="Send the entry selection to SAMP client" 
+										        class="dl_samp" onclick="sapView.fireSubmitSampEvent();">
+										        </a><span>Send the query result to a SAMP client</span>
+										    </td>
+										</tr>
+									</table>
+  						       </div>
+ 						    </div>
+						</div>
+						<div id="siap" class=queryformtab>
+							<div style="background: white;">
+								<div style="background: white;">
+									<span class=help id=siapscope>Service Scope: Not Set</span>
+								</div>
+								<br>
+
+								<div style="background: white; float: left;">
+									<table border=0>
+										<tr>
+											<td><span>Target</span>
+											</td>
+											<td><input type=text id=siapcoordval
+												class=coordinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;">
+												<span class=help>in J2000</span> </td>
+											<td><a
+												href="javascript:void(0);" class=sesame></a></td>
+										</tr>
+										<tr>
+											<td><span>Radius</span>
+											</td>
+											<td><input type=text id=siapradiusdval
+												class=numinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;"
+												value='0.1'> <span class=help>in deg.
+													(&lt;1.0)</span></td>
+													<td><input type=checkbox
+										value=siapcutout><span>Returns image cutouts
+										matching the ROI</span></td>
+										</tr>
+										<tr>
+											<td><span>Mode</span>
+											</td>
+											<td><select id=siapintersect
+												style="font-size: small; font-family: Arial, Helvetica, sans-serif;">
+													<option>COVERS</option>
+													<option>ENCLOSED</option>
+													<option>CENTER</option>
+													<option>INTERSECT</option>
+											</select></td>
+													<td><a title="Send the entry selection to SAMP client" 
+										class="dl_samp" onclick="sapView.fireSubmitSampEvent();">
+										</a><span>Send the query result to a SAMP client</span></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div id="ssap" class=queryformtab>
+							<div style="background: white;">
+								<div style="background: white;">
+									<span class=help id=ssapscope>Service Scope: Not Set</span>
+								</div>
+								<br>
+
+								<div style="background: white; float: left;">
+									<table border=0>
+										<tr>
+											<td><span>Target</span>
+											</td>
+											<td><input type=text id=ssapcoordval
+												class=coordinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;">
+												<span class=help>in J2000</span></td>
+											<td><a href="javascript:void(0);" class=sesame></a></td>
+										</tr>
+										<tr>
+											<td><span>Radius</span>
+											</td>
+											<td><input type=text id=ssapradiusdval
+												class=numinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;"
+												value='0.1'> <span class=help>in deg.
+													(&lt;1.0)</span></td>
+											<td><a title="Send the entry selection to SAMP client" 
+										class="dl_samp" onclick="sapView.fireSubmitSampEvent();">
+										</a><span>Send the query result to a SAMP client</span></td>
+										</tr>
+										<tr>
+											<td><span>Band</span>
+											</td>
+											<td><input type=text id=ssapbandmin class=numinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;">
+												/ <input type=text id=ssapbandmax class=numinputvalue
+												style="font-family: Arial, Helvetica, sans-serif; font-size: small;">
+												</td><td>
+												<select id=ssapunit
+												style="font-size: small; font-family: Arial, Helvetica, sans-serif;">
+													<option>Channel</option>
+													<option>eV</option>
+													<option>keV</option>
+													<option>MeV</option>
+													<option>GeV</option>
+													<option>TeV</option>
+													<option>Angstroem</option>
+													<option>nm</option>
+													<option>um</option>
+													<option>mm</option>
+													<option>cm</option>
+													<option>m</option>
+													<option>km</option>
+													<option>Hz</option>
+													<option>MHz</option>
+													<option>GHz</option>
+											</select></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div> <!-- End of #formframe -->
+
+			</div>
+			<!--
+			DATATREE Panel 
+			 -->
+			<div id="treepane" class="pane ui-layout-west">
+				<div id="treedisp"></div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</Html>

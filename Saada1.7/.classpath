@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="sources"/>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/axis.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.astro.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.savot.common.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.savot.model.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.savot.pull.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.savot.sax.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/cds.savot.writer.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-discovery-0.2.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-fileupload-1.2.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-logging-1.0.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/fits.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/jaxrpc.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/jconn2.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/json_simple-1.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/jTDS2.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/kxml2-min.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/log4j-1.2.8.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/md5.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/mysql-connector-java-5.1.7-bin.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/postgresql-8.2-511.jdbc3.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/saaj.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/uws3.1.jar" sourcepath="/ObsCore/sources">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/wsdl4j-1.5.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/zql.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/jtools/ant.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/swingx-all-1.6.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/icons.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="graphics">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/commons-io-2.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/healpix.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/versionObscore/distrib/Saada2.0/jtools/ant-launcher.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/versionObscore/distrib/Saada2.0/jtools/catalina-ant.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/sqlite-jdbc-3.8.7.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-oracle">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/Asterics/class_mapping">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v6.0"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
