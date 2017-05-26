@@ -30,7 +30,7 @@ import adqlParser.query.ComparisonOperator;
 public class SmartJoin {
 
 	/** List of columns which can be found either in class or collection of a SaadaDB. */
-	public final static String[] MIXED_COLUMNS = new String[]{"oidsaada", "namesaada"};
+	public final static String[] MIXED_COLUMNS = new String[]{"oidsaada", "obs_id"};
 
 	protected CacheMeta cache;
 

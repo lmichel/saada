@@ -111,7 +111,7 @@ public class DynamicDisplayFilter implements DisplayFilter {
 				/*
 				 * Avoid duplicate column
 				 */
-				if( na.equals("namesaada") ) {
+				if( na.equals("obs_id") ) {
 					for( String sf: columns_specialf) {
 						if( sf.equals("Name") || sf.equals(na)){
 							alreadyHere = true;

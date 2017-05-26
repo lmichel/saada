@@ -221,7 +221,7 @@ public class SpectrumDisplayFilter extends DefaultDisplayFilter {
 		jsr  = new JSONObject();
 		jsr.put("query", new JSONArray());
 		jsa = new JSONArray();
-		jsa.add("namesaada");
+		jsa.add("obs_id");
 		for( String v: Database.getCachemeta().getAtt_extend_spectra().keySet() ){
 			jsa.add(v);
 		}

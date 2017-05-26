@@ -436,6 +436,7 @@ public abstract class ProductBuilder {
 		this.s_raSetter.calculateExpression();
 		this.s_decSetter.calculateExpression();
 		this.s_fovSetter.calculateExpression();
+
 		this.s_regionSetter.calculateExpression();
 		this.em_minSetter.calculateExpression(this.dataFile);
 		this.em_maxSetter.calculateExpression(this.dataFile);
@@ -697,7 +698,6 @@ public abstract class ProductBuilder {
 			this.mapSpaceAxe();
 			this.mapEnergyAxe();
 			this.mapTimeAxe();
-			//System.exit(1);
 			this.mapObservableAxe();
 			this.mapPolarizationAxe();
 			this.mapIgnoredAndExtendedAttributes();
@@ -1223,9 +1223,9 @@ public abstract class ProductBuilder {
 		switch(this.spaceMappingPriority){
 		case ONLY:			
 			PriorityMessage.only("Position");
-			this.s_raSetter = this.getSetterForMappedColumn("s_ra", mapping.getColumnMapping("s_ra"));
-			this.s_decSetter = this.getSetterForMappedColumn("s_dec", mapping.getColumnMapping("s_dec"));
-			this.s_fovSetter = this.getSetterForMappedColumn("s_fov", mapping.getColumnMapping("s_fov"));
+			this.s_raSetter     = this.getSetterForMappedColumn("s_ra", mapping.getColumnMapping("s_ra"));
+			this.s_decSetter    = this.getSetterForMappedColumn("s_dec", mapping.getColumnMapping("s_dec"));
+			this.s_fovSetter    = this.getSetterForMappedColumn("s_fov", mapping.getColumnMapping("s_fov"));
 			this.s_regionSetter = this.getSetterForMappedColumn("s_region", mapping.getColumnMapping("s_region"));
 			break;
 

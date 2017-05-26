@@ -1556,6 +1556,7 @@ public final class FitsDataFile extends FSDataFile{
 	 */
 	@Override
 	public Map<String, DataFileExtension> getProductMap() throws Exception {
+
 		if( this.productMap == null ) {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "Build product map");
@@ -1565,6 +1566,7 @@ public final class FitsDataFile extends FSDataFile{
 			 * Some file crash javafits when running the while loop
 			 */
 			for( int i=0 ; i<=fitsData.getNumberOfHDUs() ; i++ ) {
+
 				//while( (bHDU = fits_data.getHDU(i))  != null) {
 				bHDU = fitsData.getHDU(i);
 				if( bHDU == null ) {

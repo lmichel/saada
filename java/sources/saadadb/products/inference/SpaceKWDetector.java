@@ -37,7 +37,8 @@ public class SpaceKWDetector extends KWDetector{
 	private ColumnExpressionSetter err_min = new  ColumnExpressionSetter("err_min");
 	private ColumnExpressionSetter err_maj= new  ColumnExpressionSetter("s_resolution");
 	private ColumnExpressionSetter err_angle= new  ColumnExpressionSetter("err_angle");
-	private ColumnExpressionSetter fov, sizeRA, sizeDEC;
+	private ColumnExpressionSetter fov, sizeRA, sizeDEC ;
+	private ColumnExpressionSetter naxis1, naxis2, ctype1, ctype2;
 	private ColumnExpressionSetter region;
 	//private Astroframe frame = null;
 	private ColumnExpressionSetter frameSetter = null;
@@ -106,6 +107,8 @@ public class SpaceKWDetector extends KWDetector{
 			this.fov = new ColumnWcsSetter("s_fov", "WCS.getFieldOfView()", projection);
 			this.sizeRA = new ColumnWcsSetter("size_alpha_csa", "WCS.getSizeRA()", projection);
 			this.sizeDEC = new ColumnWcsSetter("size_delta_csa", "WCS.getSizeDEC()", projection);
+			this.naxis1 =  new ColumnWcsSetter("naxis1", "WCS.getNaxis(1)", projection);
+			this.naxis2 =  new ColumnWcsSetter("naxis1", "WCS.getNaxis(2)", projection);
 		} else {
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "No valid WCS");
@@ -887,7 +890,7 @@ public class SpaceKWDetector extends KWDetector{
 	}
 
 	/**
-	 * Build a column setter used to extract WCD keywords from WCS header
+	 * Build a column setter to be used to extract keywords from WCS header
 	 * @param colName
 	 * @param type
 	 * @return
@@ -899,6 +902,5 @@ public class SpaceKWDetector extends KWDetector{
 		ah.setNameorg(colName);
 		ah.setType(type);
 		return new ColumnExpressionSetter(colName, ah);
-
 	}
 }
