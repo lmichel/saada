@@ -44,6 +44,8 @@ public class Image2DBuilder extends ProductBuilder {
 	ColumnSetter wcs_d1_2Setter=new ColumnExpressionSetter("WCS_D1_2");
 	ColumnSetter wcs_d2_1Setter=new ColumnExpressionSetter("WCS_D2_1");
 	ColumnSetter wcs_d2_2Setter=new ColumnExpressionSetter("WCS_D2_1");
+	ColumnSetter size_alpha_csaSetter=new ColumnExpressionSetter("size_alpha_csa");
+	ColumnSetter size_delta_csaSetter=new ColumnExpressionSetter("size_delta_csaSetter");
 
 	private static final long serialVersionUID = 1L;
 
@@ -200,6 +202,8 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d1_2Setter.resetMessages();
 		this.wcs_d2_1Setter.resetMessages();
 		this.wcs_d2_2Setter.resetMessages();
+		this.size_alpha_csaSetter.resetMessages();
+		this.size_delta_csaSetter.resetMessages();
 		super.mapDataFile(dataFile);
 	}
 	/* (non-Javadoc)
@@ -218,9 +222,9 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d1_2Setter   = this.quantityDetector.getWCSCD12();
 		this.wcs_d2_1Setter   = this.quantityDetector.getWCSCD21();
 		this.wcs_d2_2Setter   = this.quantityDetector.getWCSCD22();
+		this.size_alpha_csaSetter = this.quantityDetector.getSizeRA();
+		this.size_delta_csaSetter = this.quantityDetector.getSizeDEC();
 		
-		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
-
 	}
 
 	/* (non-Javadoc)
@@ -242,7 +246,9 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d1_2Setter.calculateExpression();
 		this.wcs_d2_1Setter.calculateExpression();
 		this.wcs_d2_2Setter.calculateExpression();		
-		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
+		this.size_alpha_csaSetter.calculateExpression();
+		this.size_delta_csaSetter.calculateExpression();
+		System.out.println("@@@@@@@@@@@@@@@@ " + this.size_alpha_csaSetter);
 
 
 	}

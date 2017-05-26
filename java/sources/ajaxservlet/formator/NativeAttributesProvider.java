@@ -66,7 +66,7 @@ public class NativeAttributesProvider {
 		} else if (attr_name.compareTo("contentsignature") == 0) {
 			return DefaultFormats.getString(saadai.contentsignature);
 		
-		} else if (attr_name.compareTo("namesaada") == 0) {
+		} else if (attr_name.compareTo("obs_id") == 0) {
 			return DefaultFormats.getString(saadai.obs_id);
 		
 		} else if (attr_name.compareTo("date_load") == 0) {

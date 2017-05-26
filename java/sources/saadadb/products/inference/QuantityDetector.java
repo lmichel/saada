@@ -172,6 +172,22 @@ public class QuantityDetector {
 	}
 
 	/**
+	 * @return the size_alpha_csa value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getSizeRA() throws Exception{
+		return this.spaceKWDetector.getSizeRA();
+	}
+
+	/**
+	 * @return the size_delta_csa value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getSizeDEC() throws Exception{
+		return this.spaceKWDetector.getSizeDEC();
+	}
+
+	/**
 	 * @return the CTYPE1 WCS value if available
 	 * @throws Exception 
 	 */

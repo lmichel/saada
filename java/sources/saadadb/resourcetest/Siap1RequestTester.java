@@ -7,6 +7,7 @@ import saadadb.exceptions.FatalException;
 import saadadb.exceptions.SaadaException;
 import saadadb.util.Messenger;
 import saadadb.vo.request.SIAP2Request;
+import saadadb.vo.request.SIAPRequest;
 
 /**
  * Run a SIAP quey
@@ -22,7 +23,7 @@ import saadadb.vo.request.SIAP2Request;
  * @author laurent
  *
  */
-public class Siap2RequestTester {
+public class Siap1RequestTester {
 
 	/**
 	 * @param args
@@ -43,9 +44,9 @@ public class Siap2RequestTester {
 		}
 		//TODO Change ile PATH
 		//SIAPRequest request = new SIAPRequest("NoSession", "/home/michel/Desktop");
-		SIAP2Request request = new SIAP2Request("NoSession", "/home/michel/Desktop");
+		SIAPRequest request = new SIAPRequest("NoSession", "/home/michel/Desktop");
 		request.addFormator("votable");
-		request.setResponseFilePath("SIAP2");
+		request.setResponseFilePath("SIAP");
 		request.processRequest(pmap);
 		Database.close();
 
