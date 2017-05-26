@@ -851,9 +851,9 @@ public final class FitsDataFile extends FSDataFile{
 				Messenger.printMsg(Messenger.DEBUG, msg);
 			return;			
 		/*
-		 * In case of spectrum, we always consider that the 1st HDU may be a spectrum (Vizier) 
+		 * In case of spectrum or image, we always consider that the 1st HDU may be a spectrum (Vizier) 
 		 */
-		} else if( category == Category.SPECTRUM ) {
+		} else if( category == Category.SPECTRUM || category == Category.IMAGE ) {
 			this.goodHeader = this.firstHeader;
 			return;
 		}
