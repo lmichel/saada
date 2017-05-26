@@ -855,7 +855,7 @@ public final class FitsDataFile extends FSDataFile{
 		 */
 		} else if( category == Category.SPECTRUM || category == Category.IMAGE ) {
 			this.goodHeader = this.firstHeader;
-			return;
+			return;   
 		}
 		IgnoreException.throwNewException(SaadaException.MISSING_RESOURCE, "Can't find a " + Category.explain(category) + " header");
 	}
