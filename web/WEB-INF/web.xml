@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
   <display-name>SAADA_DB_NAME</display-name>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
@@ -164,7 +164,7 @@
     <servlet-name>SiaService</servlet-name>
     <url-pattern>/siaservice</url-pattern>
   </servlet-mapping>
-    <servlet>
+  <servlet>
     <description></description>
     <display-name>Sia2Service</display-name>
     <servlet-name>Sia2Service</servlet-name>
@@ -234,78 +234,6 @@
     <servlet-name>ConeSearch</servlet-name>
     <url-pattern>/conesearch</url-pattern>
   </servlet-mapping>
-<!--
-  <servlet>
-    <display-name>TAPService</display-name>
-    <servlet-name>TAPService</servlet-name>
-    <servlet-class>ajaxservlet.TAPService</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPService</servlet-name>
-    <url-pattern>/tap</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <display-name>TAPSync</display-name>
-    <servlet-name>TAPSync</servlet-name>
-    <servlet-class>ajaxservlet.TAPSync</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPSync</servlet-name>
-    <url-pattern>/tap/sync</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <display-name>TAPASync</display-name>
-    <servlet-name>TAPASync</servlet-name>
-    <servlet-class>ajaxservlet.TAPASync</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPASync</servlet-name>
-    <url-pattern>/tap/async/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <display-name>TAPAvailability</display-name>
-    <servlet-name>TAPAvailability</servlet-name>
-    <servlet-class>ajaxservlet.TAPAvailability</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPAvailability</servlet-name>
-    <url-pattern>/tap/availability</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <display-name>TAPTables</display-name>
-    <servlet-name>TAPTables</servlet-name>
-    <servlet-class>ajaxservlet.TAPTables</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPTables</servlet-name>
-    <url-pattern>/tap/tables</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <display-name>TAP capabilities</display-name>
-    <servlet-name>TAPCapabilities</servlet-name>
-    <servlet-class>ajaxservlet.TAPCapabilities</servlet-class>
-    <init-param>
-      <param-name>capabilities</param-name>
-      <param-value>ivo://ivoa.net/std/VOSI#capabilities</param-value>
-    </init-param>
-    <init-param>
-      <param-name>availability</param-name>
-      <param-value>ivo://ivoa.net/std/VOSI#availability</param-value>
-    </init-param>
-    <init-param>
-      <param-name></param-name>
-      <param-value>ivo://ivoa.net/std/TAP</param-value>
-    </init-param>
-    <init-param>
-      <param-name>tables</param-name>
-      <param-value>ivo://ivoa.net/std/VOSI#tables</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>TAPCapabilities</servlet-name>
-    <url-pattern>/tap/capabilities</url-pattern>
-  </servlet-mapping>
-  -->
   <servlet>
     <description></description>
     <display-name>SiteDesc</display-name>
@@ -317,7 +245,6 @@
     <servlet-name>SiteDesc</servlet-name>
     <url-pattern>/sitedesc</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <description></description>
     <display-name>JSAttributeHandlers</display-name>
@@ -398,7 +325,7 @@
     <servlet-name>ZipAsync</servlet-name>
     <url-pattern>/datapack/*</url-pattern>
   </servlet-mapping>
-   <servlet>
+  <servlet>
     <description></description>
     <display-name>CartBuilder</display-name>
     <servlet-name>CartBuilder</servlet-name>
@@ -478,8 +405,7 @@
     <servlet-name>GetVersion</servlet-name>
     <url-pattern>/getversion</url-pattern>
   </servlet-mapping>
-  <!-- DEBUG / TESTS -->
-   <servlet>
+  <servlet>
     <description></description>
     <display-name>TapService</display-name>
     <servlet-name>TapService</servlet-name>
@@ -489,5 +415,4 @@
     <servlet-name>TapService</servlet-name>
     <url-pattern>/tap/*</url-pattern>
   </servlet-mapping>
-   <!-- END OF DEBUG/TEST -->
 </web-app>
