@@ -83,7 +83,7 @@ public abstract class QueryResultFormator implements Formator{
 		/*
 		 * The category is set by the protocol : no mandatory
 		 */
-		if( (cat = fmtParams.get("category")) == null ) {
+		if( (cat = fmtParams.get("category")) != null ) {
 			//QueryException.throwNewException(SaadaException.WRONG_PARAMETER, "No category in formator parameters");
 			//}
 			/*
@@ -91,7 +91,7 @@ public abstract class QueryResultFormator implements Formator{
 			 */
 			if( (rel = fmtParams.get("relations")) != null ) {
 				if( ! this.supportResponseInRelation() ) {
-					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, this.getClass() + " Does not support relations in relations");				
+					QueryException.throwNewException(SaadaException.WRONG_PARAMETER, this.getClass() + " Does not support relations in responses");				
 				}
 				// Extract relation list
 				String[] rls = rel.split("(,|;|:| )");
