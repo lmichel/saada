@@ -14,6 +14,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.relationship.KeyIndex;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
+import saadadb.vo.VoProperties;
 
 /** * @version $Id$
 
@@ -31,7 +32,14 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 	private ArrayList<Long> oids = new ArrayList<Long>();
 	private LinkedHashMap<String, ArrayList<Object>> resultmap = new LinkedHashMap<String, ArrayList<Object>>() ;
 	private boolean withComputedColumns = false;
-	private static final long TIMEOUT = 30000;
+	private static final long TIMEOUT = 1000*VoProperties.TAP_executionDuration;
+
+	/**
+	 * Dummy constructor allowing to override the class without executing the query at creation time
+	 */
+	public OidsaadaResultSet() {
+		super();
+	}
 
 	/**
 	 * Nothing else than initialize fields
@@ -43,6 +51,11 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 	public OidsaadaResultSet(String sqlQuery, KeyIndex patternKeySet, int limit, boolean with_computed_column) throws Exception {
 		super(null, sqlQuery, patternKeySet, limit, SaadaConstant.INT);
 		withComputedColumns = with_computed_column ;
+
+		/*
+		 * this.init() can eventually be removed, the query will then be executed
+		 * when calling either this.size(), this.next() orthis.getOid(int)
+		 */
 		this.init();
 	}
 
@@ -113,10 +126,10 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 					break;				
 				}	
 
-//				if(  (cpt2 % 10000) == 0 ) {
-//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, cpt + " match /" + cpt2 
-//							+ " checked " + hs.size());
-//				}				
+				//				if(  (cpt2 % 10000) == 0 ) {
+				//					if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, cpt + " match /" + cpt2 
+				//							+ " checked " + hs.size());
+				//				}				
 				cpt2++;
 			}
 			sqlQuery.close();
@@ -132,15 +145,41 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 				}
 				cpt++;
 			}
-		}
-		else {
+		} else {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Execute SQL query: " + this.sqlQuery.getQuery());
 			ResultSet rs = sqlQuery.run();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			/*
+			 * In theory, the oidsaada should be in the first column, in in some case it is not
+			 * e.g. "Select ENTRY From * In Enhanced WhereAttributeSaada {    namesaada = '3XMM J002636.4+103513'} Order By oidsaada desc Limit 100"
+			 * To prevent a mis-interpretation, we check the real position of that column
+			 */
+			int numCol = -1;
+			for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
+				String cn = rsmd.getColumnName(i);
+				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby_oidsaada")|| 
+					cn.equalsIgnoreCase("orderby") || cn.equalsIgnoreCase("native_oidsaada")) {
+					numCol = i;
+					break;
+				}
+			}
+//			if( numCol == -1 ){
+//				for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
+//					String cn = rsmd.getColumnName(i);
+//					if( cn.equalsIgnoreCase("orderby") ) {
+//						numCol = i;
+//						break;
+//					}	
+//				}
+//			}
+			if( numCol == -1 ){
+				SaadaException.throwNewException(SaadaException.INTERNAL_ERROR, "Column matching oidsaada not found in query: " + sqlQuery.getQuery());
+			}
 			initResultmap(rs);
 			int cpt = 1;
 			long start = System.currentTimeMillis();
 			while( rs.next() ) {
-				long oid = rs.getLong(1);
+				long oid = rs.getLong(numCol);
 				if( withComputedColumns ) {
 					for( String k: keys) {
 						resultmap.get(k).add(rs.getObject(k));
@@ -166,7 +205,7 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			sqlQuery.close();
 		}
 
-		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, oids.size() + "oids selected");
+		if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, oids.size() + " oids selected");
 		/*
 		 * Don't need it anymore, save memory
 		 */

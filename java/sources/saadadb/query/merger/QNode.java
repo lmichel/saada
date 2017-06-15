@@ -115,14 +115,13 @@ public abstract class QNode {
 			this.where += where;
 		}
 		/*
-		 * In SaadaQL boolean operands are T & F. Thy must be replaced with the values supported by DBMS
+		 * In SaadaQL boolean operands are T & F. Thy muste be replaced with the values supported by DBMS
 		 */
 		try {
-			this.where = this.where.replaceAll(RegExp.TRUE_OPERAND, Database.getWrapper().getBooleanAsString(true))
-					.replaceAll(RegExp.FALSE_OPERAND, Database.getWrapper().getBooleanAsString(false));
+			this.where = this.where.replaceAll(RegExp.TRUE_OPERAND, "$1" + Database.getWrapper().getBooleanAsString(true) + "$2")
+					               .replaceAll(RegExp.FALSE_OPERAND, "$1" + Database.getWrapper().getBooleanAsString(false) + "$2");
 
 		} catch (FatalException e) {}
-
 	}
 
 	/**
@@ -208,7 +207,7 @@ public abstract class QNode {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(QNode.insertAlias("WHERE ( obs_id - 2*(_z)) > 0 + R_MAG", new String[]{"_z"}, "POUET"));
+		System.out.println(QNode.insertAlias("WHERE ( namesaada - 2*(_z)) > 0 + R_MAG", new String[]{"_z"}, "POUET"));
 	}
 	public void insertAliases() {
 		this.where = insertAlias(this.where, new String[]{"_qwery"}, this.name);

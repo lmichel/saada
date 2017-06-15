@@ -59,7 +59,7 @@ class ColumunSelectDef {
 	public String getSQLColumnDef(String table_name) {
 		if( this.mode == STANDARD ) {
 			if( "coord".equals(sqlcolname)) {
-				return table_name + ".s_ra  as ascension, " + table_name  + ".s_dec as declination";					
+				return table_name + ".pos_ra_csa  as ascension, " + table_name  + ".pos_dec_csa as declination";					
 			}
 			else {
 				return table_name + "." + sqlcolname + " as " + resultcolname;

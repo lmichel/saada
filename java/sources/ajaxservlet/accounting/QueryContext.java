@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import ajaxservlet.formator.DisplayFilter;
+import saadadb.collection.SaadaOID;
 import saadadb.exceptions.QueryException;
 import saadadb.meta.AttributeHandler;
 import saadadb.query.executor.Query;

@@ -109,7 +109,7 @@ public final class WherePosition{
 	 * @throws SaadaException
 	 */
 	public SaadaQLConstraint getSaadaQLConstraint() throws QueryException, Exception {
-		return new NativeSQLConstraint(this.getSqlConstraint(),new String[]{"s_ra", "s_dec"});
+		return new NativeSQLConstraint(this.getSqlConstraint(),new String[]{"pos_ra_csa", "pos_dec_csa"});
 	}
 	
 	public static void main(String[] args) throws Exception {

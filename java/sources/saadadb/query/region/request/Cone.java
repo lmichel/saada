@@ -1,9 +1,9 @@
 package saadadb.query.region.request;
 
+import cds.astro.Astroframe;
+import saadadb.query.region.triangule.Point;
 import healpix.core.HealpixIndex;
 import healpix.core.base.set.LongRangeSet;
-import saadadb.query.region.triangule.Point;
-import cds.astro.Astroframe;
 
 /**
  * Class representing a Cone by the center and the rayon

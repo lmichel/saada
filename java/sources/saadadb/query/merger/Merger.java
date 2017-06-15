@@ -181,7 +181,6 @@ public class Merger {
 				//@@@ parenthesis removed
 				retour += "\n" + e.getValue().getSQL(builders) + "\n   " ;
 			}
-			
 			retour =  "SELECT "+ select + " FROM (\n" + retour  + "\n) AS tcoll";
 		}
 		/*
@@ -189,7 +188,7 @@ public class Merger {
 		 */
 		else {
 			for( Entry<String, CollectionQNode>e: collection_nodes.entrySet()) {
-				retour =  e.getValue().getSQL(builders) ;
+				retour =  e.getValue().getSQL(builders);
 				break;
 			}	
 		}

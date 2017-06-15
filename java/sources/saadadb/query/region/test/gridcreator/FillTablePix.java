@@ -5,6 +5,11 @@ import healpix.tools.SpatialVector;
 
 import java.sql.ResultSet;
 
+import ajaxservlet.IsAlive;
+
+import cds.astro.Astroframe;
+import cds.astro.Coo;
+
 import saadadb.database.Database;
 import saadadb.database.spooler.DatabaseConnection;
 import saadadb.database.spooler.Spooler;

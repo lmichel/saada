@@ -26,21 +26,32 @@ public class OrderByConstraint extends SaadaQLConstraint{
 	 * @throws Exception
 	 */
 	public String applyScope(String attr) throws SaadaException{
-		System.out.println(this.sfi);
 		String [] listClass = this.sfi.getListClass();
 		String [] listColl = this.sfi.getListColl();
 		if( attr.startsWith("_") ){
 			if( listClass == null || listClass.length == 0 ) {
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER
-						, "Order by: No class given althouth the ordering parammeter " + attr + "  is at class level");
+						, "Order by: No class given althouth the ordering parameter " + attr + "  is at class level");
 			}
+			this.takeByClass();
 			return listClass[0] + "." + attr;
 		} else {
 			if( listColl == null || listColl.length == 0 ) {
 				QueryException.throwNewException(SaadaException.WRONG_PARAMETER
-						, "Order by: No collection given althouth the ordering parammeter " + attr + "  is at collection level");
+						, "Order by: No collection given althouth the ordering parameter " + attr + "  is at collection level");
 			}
-			return  Database.getCachemeta().getCollectionTableName(listColl[0], sfi.getCatego()) + "." + attr;			
+			if( attr.equals("oidsaada") || attr.equals("namesaada")) {
+				if( listClass.length == 1 && !listClass[0].equals("*")){
+					this.takeByClass();
+					return listClass[0] + "." + attr;
+				} else {
+					this.takeByCollection();
+					return  Database.getCachemeta().getCollectionTableName(listColl[0], sfi.getCatego()) + "." + attr;	
+				}				
+			} else {
+				this.takeByCollection();
+				return  Database.getCachemeta().getCollectionTableName(listColl[0], sfi.getCatego()) + "." + attr;	
+			}
 		}
 	}
 }

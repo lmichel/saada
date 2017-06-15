@@ -1,6 +1,7 @@
 package saadadb.query.parser;
 
 
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +25,7 @@ public final class OrderBy{
 	public static final int ON_COLL  = 2;
 	public static final int BOTH     = 3;//for oidsaada, md5keysaada, ..;
 	
-    public  static final String[] specialKey = {"oidsaada","obs_id"};
+    public  static final String[] specialKey = {"oidsaada","namesaada"};
 	private static final String regex = SaadaQLRegex.ORDER_BY + SaadaQLRegex.ReqWS + "(" + SaadaQLRegex.ATTRIBUTE + ")(" + SaadaQLRegex.ORDER_BY_OPTION + ")";//"(\\s+"+option+")?" ;
 	private static final Pattern pattern = Pattern.compile(regex);
 	
@@ -53,7 +54,7 @@ public final class OrderBy{
 		this.sfi = sfi;
 		this.isDesc = true;
 	}
-
+	
 	public static final String   getSyntax (){return syntax       ;}
 	public final String getStrMatch     (){return this.strMatch    ;}
 	public final String getTheStatement (){return this.theStatement;}

@@ -292,7 +292,7 @@ public class CollectionQNode extends QNode {
 				 */
 				for( Entry<String, ClassQNode>e: class_nodes.entrySet()) {
 					ClassQNode cqn = e.getValue();
-					cqn.set_of_selected_columns.setEitherColumns();
+					//cqn.set_of_selected_columns.setEitherColumns();
 					if( !both && cqn.set_of_selected_columns.hasOnlyCollectionColumns() ) {
 						cq.add(this.getCollectionSQL(cqn, cpt));
 					}
@@ -343,7 +343,7 @@ public class CollectionQNode extends QNode {
 			where_class = "\n   WHERE "  +where_class;
 		}
 		where_class = insertAlias(where_class, cqn.getBusinessAttributesHandlers().keySet().toArray(new String[0]), cqn.name)	;
-		where_class = insertAlias(where_class, new String[]{"oidsaada", "obs_id"}, cqn.name)	;
+		where_class = insertAlias(where_class, new String[]{"oidsaada", "namesaada"}, cqn.name)	;
 		return "  SELECT " + saadadb.util.Merger.getMergedArray(new String[]{"oidsaada", select_class}) 
 		+  "\n   FROM " + cqn.name + " " + where_class ;
 	}

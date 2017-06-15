@@ -6,8 +6,7 @@ import java.util.regex.Pattern;
 import saadadb.database.DbmsWrapper;
 import saadadb.exceptions.QueryException;
 import saadadb.exceptions.SaadaException;
-import saadadb.products.inference.Coord;
-import saadadb.util.Messenger;
+import saadadb.products.inference.Coord;import saadadb.util.Messenger;
 import saadadb.util.PositionList;
 import saadadb.vocabulary.RegExp;
  

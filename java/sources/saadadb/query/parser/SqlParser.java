@@ -21,13 +21,8 @@ import Zql.ZqlParser;
  * Made a long time ago...
  * @author pineau 
  */
-public final class SqlParser{
+public final class SqlParser{	
 	
-	/**
-	 * @param strQuery
-	 * @return
-	 * @throws QueryException
-	 */
 	public static final String[] getAttributes(String strQuery) throws QueryException{
 		String str = "select * from tab where "+strQuery+" ;exit;"; // To be parse by zql
 		List<String> myal = parse(str);
@@ -124,6 +119,7 @@ public final class SqlParser{
 	        strTab[i] = strTab[i].replaceAll("a_","_");
 		//System.out.println("Attribut detecte par parsing sql: "+strTab[i]);
 	    }
+
 	    return strTab;
 	}
 }

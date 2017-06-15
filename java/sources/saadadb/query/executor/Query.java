@@ -58,7 +58,7 @@ public class Query extends Query_Report{
 	private WhereRelation       wrClause;	
 	private Limit               limitClause ;
 	private OrderBy             obClause;
-	private AttributeFilter      afClause;
+	private AttributeFilter     afClause;
 
 	private String query_string;
 	private long index_owner_key;
@@ -103,6 +103,12 @@ public class Query extends Query_Report{
 	 */
 	public WherePosition getWpClause() {
 		return wpClause;
+	}
+	/**
+	 * @return
+	 */
+	public WhereRelation getWrClause() {
+		return wrClause;
 	}
 
 	/**
@@ -362,11 +368,12 @@ public class Query extends Query_Report{
 		 * For the default order by when there is a limt, otherwise, 
 		 * the result depends on the limit value or it can change from one query execution to another
 		 * to be checked
+		 */
 		if( this.limitClause != null && this.obClause == null ){
+			if (Messenger.debug_mode)
+				Messenger.printMsg(Messenger.DEBUG, "Add order by oidsaada desc");
 			this.obClause = new OrderBy(this.sfiClause);			
 		}
-		*/
-
 	}
 
 	/**
@@ -537,7 +544,6 @@ public class Query extends Query_Report{
 			if (Messenger.debug_mode)
 				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");
 			OidsaadaResultSet result = this.getOids(sql_query, epopTab);
-			
 			this.isDone();
 			Database.getCacheindex().freeIndexes(this.index_owner_key);
 			time.stop();
@@ -550,7 +556,7 @@ public class Query extends Query_Report{
 			Database.gc();
 			return  result;
 		} catch(SaadaException e1) {
-			e1.printStackTrace();
+			Messenger.printStackTrace(e1);
 			QueryException.throwNewException(SaadaException.DB_ERROR, e1);
 			return null;
 		} catch(Exception e) {
@@ -674,7 +680,7 @@ public class Query extends Query_Report{
 
 
 			if (Messenger.debug_mode)
-				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");	
+				Messenger.printMsg(Messenger.DEBUG, "SQL QUERY: "+sql_query+"\n");
 			SaadaInstanceResultSet result = this.getInstances(si, sql_query, epopTab);
 			this.isDone();
 			Database.getCacheindex().freeIndexes(this.index_owner_key);

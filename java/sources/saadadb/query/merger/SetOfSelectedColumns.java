@@ -34,6 +34,7 @@ public class SetOfSelectedColumns {
 	public void forceJoin() {
 		force_join = true;
 	}
+	
 	/**
 	 * @param result_column_name
 	 * @param coldef
@@ -42,12 +43,13 @@ public class SetOfSelectedColumns {
 	public void addSelectedColumn(String result_column_name, ColumunSelectDef coldef) {
 		String sqlcolname = coldef.getSqlcolname();
 		if( sqlcolname.equals("oidsaada") ) {
-			return;
+			select_either.put(result_column_name, coldef);
+			//return;
 		}
 		else if( sqlcolname.startsWith("_")  ) {
 			select_class.put(result_column_name, coldef);
 		}
-		else if( sqlcolname.equals("obs_id") ) {
+		else if( sqlcolname.equals("namesaada") ) {
 			select_either.put(result_column_name, coldef);
 		}
 		else {
@@ -83,7 +85,7 @@ public class SetOfSelectedColumns {
 	 * @return
 	 */
 	public boolean hasOnlyCollectionColumns() {
-		if( !force_join && select_class.size() == 0 ) {
+		if( !force_join && select_class.size() == 0  && select_either.size() == 0) {
 			return true;
 		}
 		else {
@@ -166,4 +168,20 @@ public class SetOfSelectedColumns {
 		}
 		return retour;
 	} 
+	
+	public String toString() {
+		String retour = "CLASS " ;
+		for( String k: select_class.keySet()){
+			retour += k + " " ;
+		}
+		retour = "\n COLL " ;
+		for( String k: select_collection.keySet()){
+			retour += k + " " ;
+		}
+		retour = "\n EITHER " ;
+		for( String k: select_either.keySet()){
+			retour += k + " " ;
+		}
+		return retour;
+	}
 }

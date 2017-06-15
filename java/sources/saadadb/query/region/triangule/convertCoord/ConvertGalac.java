@@ -2,8 +2,6 @@ package saadadb.query.region.triangule.convertCoord;
 
 
 
-
-
 import java.util.ArrayList;
 
 import saadadb.query.region.triangule.Point;

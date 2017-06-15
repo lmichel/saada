@@ -18,7 +18,6 @@ import saadadb.query.region.triangule.Polygone;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
 import saadadb.vocabulary.RegExp;
-
 /**
  * @author michel
  * 01/2014: Region processing.
@@ -48,7 +47,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 		this.coordEquinox = cE ;
 		this.coordSystem  = cS ;
 		this.computeRaDecR();		
-		this.sqlcolnames = new String[]{"s_ra", "s_dec"};
+		this.sqlcolnames = new String[]{"pos_ra_csa", "pos_dec_csa"};
 		this.where = this.computeSqlConstraint("");
 	}
 
