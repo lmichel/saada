@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ public final class ArgsParser implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String name; // used to name the file where the parameters could be saved
-	private String[] args;
+	private List<String> args;
 	public static final Set<String> allowedArgs;
 	static {
 		allowedArgs = new TreeSet<String>();
@@ -163,20 +164,24 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-unit") ;
 		allowedArgs.add("-ucd") ;
 		allowedArgs.add("-utype") ;
+	}	
+	
+	public ArgsParser(String[] args) throws FatalException {
+		this(Arrays.asList(args));
 	}
 	/**
 	 * @param args
 	 * @throws FatalException
 	 */
-	public ArgsParser(String[] args) throws FatalException {
-		if( args == null || args.length == 0 ) {
+	public ArgsParser(List<String> args) throws FatalException {
+		if( args == null || args.size() == 0 ) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameters given");
-		}
-		else {
+		} else {
 			this.args = args;
+
 			String msg="";
-			for( int i=0 ; i<args.length ; i++ ) {
-				String arg = args[i];
+			for( int i=0 ; i<args.size() ; i++ ) {
+				String arg = args.get(i);
 				if( arg.startsWith("-") ) {
 					int pos = arg.indexOf('=');
 					if( (pos == -1 && !allowedArgs.contains(arg))  || // param without =
@@ -223,7 +228,7 @@ public final class ArgsParser implements Serializable{
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "No parameters given");
 		}
 		else {
-			this.args = args;
+			this.args = Arrays.asList(args);
 			String msg="";
 			for( int i=0 ; i<args.length ; i++ ) {
 				String arg = args[i];
@@ -258,7 +263,7 @@ public final class ArgsParser implements Serializable{
 		/*
 		 * DB name is supposed to be the last parameter
 		 */
-		return this.matches(args[args.length - 1], "database name", RegExp.DBNAME);
+		return this.matches(args.get(args.size() - 1), "database name", RegExp.DBNAME);
 	}
 
 	/**
@@ -267,11 +272,11 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public ClassifierMode getMappingType()  {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-classifier")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-classifier")) {
 				return ClassifierMode.CLASSIFIER;
 			}
-			else if( args[i] .startsWith("-classfusion")) {
+			else if( args.get(i) .startsWith("-classfusion")) {
 				return ClassifierMode.CLASS_FUSION;
 			}
 		}
@@ -284,9 +289,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException 
 	 */
 	public String getNumber() throws FatalException  {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-number")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-number")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -300,9 +305,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException 
 	 */
 	public String getClassName() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-classifier") ||  args[i] .startsWith("-classfusion")) {
-				String ret = this.matches(getArgsValue(args[i]), "-classifier/classfusion", RegExp.CLASSNAME);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-classifier") ||  args.get(i) .startsWith("-classfusion")) {
+				String ret = this.matches(getArgsValue(args.get(i)), "-classifier/classfusion", RegExp.CLASSNAME);
 				if( ret.matches(RegExp.FORBIDDEN_CLASSNAME)) {
 					FatalException.throwNewException(SaadaException.WRONG_PARAMETER, ret + ": Forbidden class name");					
 				}
@@ -319,9 +324,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getColdef() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-coldef")) {
-				String [] retour =  getArgsValue(args[i]).split(":");
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-coldef")) {
+				String [] retour =  getArgsValue(args.get(i)).split(":");
 				if( retour.length == 2 ) {
 					return retour;
 				}
@@ -339,9 +344,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getCategory() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-category")) {
-				return this.matches(getArgsValue(args[i]), "-category", RegExp.CATEGORY);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-category")) {
+				return this.matches(getArgsValue(args.get(i)), "-category", RegExp.CATEGORY);
 			}
 		}
 		return null;
@@ -353,9 +358,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getCollection() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-collection")) {
-				return this.matches(getArgsValue(args[i]), "-collection", RegExp.COLLNAME);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-collection")) {
+				return this.matches(getArgsValue(args.get(i)), "-collection", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -367,9 +372,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getRelation() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-relation")) {
-				return this.matches(getArgsValue(args[i]), "-relation", RegExp.COLLNAME);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-relation")) {
+				return this.matches(getArgsValue(args.get(i)), "-relation", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -381,9 +386,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getType() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-type")) {
-				return this.matches(getArgsValue(args[i]), "-type", JavaTypeUtility.ATTREXTENDTYPES);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-type")) {
+				return this.matches(getArgsValue(args.get(i)), "-type", JavaTypeUtility.ATTREXTENDTYPES);
 			}
 		}
 		return null;
@@ -394,9 +399,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getUnit() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-unit")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-unit")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -407,9 +412,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getUcd() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-ucd")) {
-				return this.matches(getArgsValue(args[i]), "-ucd", RegExp.UCD);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-ucd")) {
+				return this.matches(getArgsValue(args.get(i)), "-ucd", RegExp.UCD);
 			}
 		}
 		return null;
@@ -419,9 +424,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getUtype() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-utype")) {
-				return this.matches(getArgsValue(args[i]), "-utype", RegExp.UTYPE);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-utype")) {
+				return this.matches(getArgsValue(args.get(i)), "-utype", RegExp.UTYPE);
 			}
 		}
 		return null;
@@ -432,9 +437,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getFilename() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-filename")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-filename")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -445,9 +450,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getFilelist() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-filelist")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-filelist")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -458,9 +463,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getConfig() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-config")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-config")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -471,9 +476,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getExtension() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-extension")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-extension")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -483,9 +488,9 @@ public final class ArgsParser implements Serializable{
 	 * OBSERVATION parameters
 	 */
 	public PriorityMode getObsMappingPriority() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-obsmapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-obsmapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
@@ -495,12 +500,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getNameComponents(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && (args[i].startsWith("-name") || args[i].startsWith("-obsid")) ){
-				return getArgsValue(args[i]).split(",");
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && (args.get(i).startsWith("-name") || args.get(i).startsWith("-obsid")) ){
+				return getArgsValue(args.get(i)).split(",");
 			}
-			if( entry && (args[i].startsWith("-ename") || args[i].startsWith("-entry.obsid")) ){
-				return getArgsValue(args[i]).split(",");
+			if( entry && (args.get(i).startsWith("-ename") || args.get(i).startsWith("-entry.obsid")) ){
+				return getArgsValue(args.get(i)).split(",");
 			}
 		}
 		return new String[0];
@@ -510,12 +515,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getObsid(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && (args[i].startsWith("-name")  ||  args[i].startsWith("-obsid")) ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && (args.get(i).startsWith("-name")  ||  args.get(i).startsWith("-obsid")) ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && (args[i].startsWith("-entry.name")  || args[i].startsWith("-entry.obsid")) ){
-				return getArgsValue(args[i]);
+			if( entry && (args.get(i).startsWith("-entry.name")  || args.get(i).startsWith("-entry.obsid")) ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -526,12 +531,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getObscollection(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-obscollection")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-obscollection")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.obscollection") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.obscollection") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -541,12 +546,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getFacility(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-facility")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-facility")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.facility") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.facility") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -556,12 +561,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getInstrument(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-instrument")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-instrument")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.instrument") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.instrument") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -571,12 +576,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getTarget(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-target")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-target")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.target") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.target") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -585,9 +590,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getPublisherdid() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if(  args[i].startsWith("-publisherdid")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if(  args.get(i).startsWith("-publisherdid")  ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -596,9 +601,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getProductType() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if(  args[i].startsWith("-producttype")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if(  args.get(i).startsWith("-producttype")  ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -610,9 +615,9 @@ public final class ArgsParser implements Serializable{
 	 */
 	public int getCalibLevel() throws FatalException {
 		int retour ;
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i].startsWith("-caliblevel")  ){
-				String vs = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i).startsWith("-caliblevel")  ){
+				String vs = getArgsValue(args.get(i));
 				try {
 					retour =  Integer.parseInt(vs);
 					if( retour < 0 || retour > 3 ) {
@@ -632,53 +637,53 @@ public final class ArgsParser implements Serializable{
 	 * TIME
 	 */
 	public PriorityMode getTimeMappingPriority() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-timemapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-timemapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
 	}
 	public String getTmin(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-tmin")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-tmin")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.tmin") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.tmin") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
 	}	
 	public String getTmax(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-tmax")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-tmax")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.tmax") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.tmax") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
 	}	
 	public String getExpTime(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-exptime")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-exptime")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.exptime") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.exptime") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
 	}
 	public String getTResol(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-tresol")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-tresol")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.tresol") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.tresol") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -687,42 +692,42 @@ public final class ArgsParser implements Serializable{
 	 * Observable
 	 */
 	public PriorityMode getObservableMappingPriority() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-observablemapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-observablemapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
 	}
 	public String getOucd(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-oucd")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-oucd")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.oucd") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.oucd") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
 	}	
 	public String getOunit(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-ounit")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-ounit")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.ounit") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.ounit") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
 	}	
 	public String getOcalibstatus(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-ocalibstatus")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-ocalibstatus")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.ocalibstatus") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.ocalibstatus") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -731,20 +736,20 @@ public final class ArgsParser implements Serializable{
 	 * Polarization
 	 */
 	public PriorityMode getPolarMappingPriority() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-polarmapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-polarmapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
 	}
 	public String getPolarStates(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i].startsWith("-polarstates")  ){
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i).startsWith("-polarstates")  ){
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i].startsWith("-entry.polarstates") ){
-				return getArgsValue(args[i]);
+			if( entry && args.get(i).startsWith("-entry.polarstates") ){
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -755,14 +760,14 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getIgnoredAttributes(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
+		for( int i=0 ; i<args.size() ; i++ ) {
 			if( entry){
-				if( args[i] .startsWith("-eignore") ||  args[i] .startsWith("-entry.ignore")) {
-					return getArgsValue(args[i]).split(",");
+				if( args.get(i) .startsWith("-eignore") ||  args.get(i) .startsWith("-entry.ignore")) {
+					return getArgsValue(args.get(i)).split(",");
 				}
 			} else {
-				if( args[i] .startsWith("-ignore")) {
-					return getArgsValue(args[i]).split(",");
+				if( args.get(i) .startsWith("-ignore")) {
+					return getArgsValue(args.get(i)).split(",");
 				}
 			}
 		}
@@ -774,14 +779,14 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getAttributeFilter(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
+		for( int i=0 ; i<args.size() ; i++ ) {
 			if( entry){
-				if( args[i] .startsWith("-efilter") ||  args[i] .startsWith("-entry.filter")) {
-					return getArgsValue(args[i]).split(",");
+				if( args.get(i) .startsWith("-efilter") ||  args.get(i) .startsWith("-entry.filter")) {
+					return getArgsValue(args.get(i)).split(",");
 				}
 			} else {
-				if( args[i] .startsWith("-filter")) {
-					return getArgsValue(args[i]).split(",");
+				if( args.get(i) .startsWith("-filter")) {
+					return getArgsValue(args.get(i)).split(",");
 				}
 			}
 		}
@@ -795,10 +800,10 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getUserKeyword(String user_kw) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-ukw")) {
-				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw + "=")) {
-					return getArgsValue(args[i+1]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-ukw")) {
+				if( i <= (args.size() -2) && args.get(i+1) .startsWith(user_kw + "=")) {
+					return getArgsValue(args.get(i+1));
 				}
 			}
 		}
@@ -811,10 +816,10 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getEntryUserKeyword(String user_kw) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-eukw")) {
-				if( i <= (args.length -2) && args[i+1] .startsWith(user_kw + "=")) {
-					return getArgsValue(args[i+1]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-eukw")) {
+				if( i <= (args.size() -2) && args.get(i+1) .startsWith(user_kw + "=")) {
+					return getArgsValue(args.get(i+1));
 				}
 			}
 		}
@@ -836,9 +841,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public PriorityMode getSysMappingPriority() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-sysmapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-sysmapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
@@ -849,9 +854,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getCoordinateSystem() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-system")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-system")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -863,9 +868,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public PriorityMode getPositionMappingPriority() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-posmapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-posmapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
@@ -876,9 +881,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getPositionMapping(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-position")) {
-				String av = getArgsValue(args[i]) ;
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i) .startsWith("-position")) {
+				String av = getArgsValue(args.get(i)) ;
 				/*
 				 * Object name are in '' or n ""
 				 */
@@ -891,7 +896,7 @@ public final class ArgsParser implements Serializable{
 					 * Only one parameter which is not an object: Can only be
 					 * a keywords with both position (e.g.1:2:3 +3:4:5)
 					 */
-					String[] ret = getArgsValue(args[i]).split(",");
+					String[] ret = getArgsValue(args.get(i)).split(",");
 					if( ret.length == 1 ) {
 						return (new String[]{ret[0], ret[0]});						
 					}
@@ -903,8 +908,8 @@ public final class ArgsParser implements Serializable{
 					}
 				}
 			}
-			if( entry &&  args[i] .startsWith("-entry.position")) {
-				String av = getArgsValue(args[i]) ;
+			if( entry &&  args.get(i) .startsWith("-entry.position")) {
+				String av = getArgsValue(args.get(i)) ;
 				/*
 				 * Object name are in '' or n ""
 				 */
@@ -917,7 +922,7 @@ public final class ArgsParser implements Serializable{
 					 * Only one parameter which is not an object: Can only be
 					 * a keywords with both position (e.g.1:2:3 +3:4:5)
 					 */
-					String[] ret = getArgsValue(args[i]).split(",");
+					String[] ret = getArgsValue(args.get(i)).split(",");
 					if( ret.length == 1 ) {
 						return (new String[]{ret[0], ret[0]});						
 					}
@@ -939,9 +944,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public PriorityMode getPoserrorMappingPriority() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-poserrormapping=")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-poserrormapping=")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
@@ -951,12 +956,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getPoserrorMapping(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && (args[i] .startsWith("-poserror=") || args[i] .startsWith("-sresolution=")) ) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && (args.get(i) .startsWith("-poserror=") || args.get(i) .startsWith("-sresolution=")) ) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresolution="))) {
-				return getArgsValue(args[i]);
+			if( entry && (args.get(i).startsWith("-entry.poserror=") || args.get(i) .startsWith("-entry.sresolution="))) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -965,12 +970,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getPoserrorUnit(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry &&  args[i] .startsWith("-poserrorunit")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry &&  args.get(i) .startsWith("-poserrorunit")) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && (args[i].startsWith("-entry.poserror=") || args[i] .startsWith("-entry.sresolution="))) {
-				return getArgsValue(args[i]);
+			if( entry && (args.get(i).startsWith("-entry.poserror=") || args.get(i) .startsWith("-entry.sresolution="))) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -981,9 +986,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getSFov() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-sfov")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-sfov")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -992,9 +997,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getSRegion() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-sregion")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-sregion")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -1006,9 +1011,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public PriorityMode getSpectralMappingPriority() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-spcmapping")) {
-				return  getPriority(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-spcmapping")) {
+				return  getPriority(args.get(i));
 			}
 		}
 		return PriorityMode.LAST;		
@@ -1019,9 +1024,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getSpectralUnit() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-spcunit")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-spcunit")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;		
@@ -1032,9 +1037,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getSpectralColumn() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-spccolumn")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-spccolumn")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;		
@@ -1044,12 +1049,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getEmin(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-emin")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i) .startsWith("-emin")) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i] .startsWith("-entry.emin")) {
-				return getArgsValue(args[i]);
+			if( entry && args.get(i) .startsWith("-entry.emin")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -1059,12 +1064,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getEmax(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-emax")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i) .startsWith("-emax")) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i] .startsWith("-entry.emax")) {
-				return getArgsValue(args[i]);
+			if( entry && args.get(i) .startsWith("-entry.emax")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -1075,12 +1080,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getEBins(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( !entry && args[i] .startsWith("-ebins")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( !entry && args.get(i) .startsWith("-ebins")) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i] .startsWith("-entry.ebins")) {
-				return getArgsValue(args[i]);
+			if( entry && args.get(i) .startsWith("-entry.ebins")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -1091,12 +1096,12 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getSpectralResPower(boolean entry) {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-spcrespower")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-spcrespower")) {
+				return getArgsValue(args.get(i));
 			}
-			if( entry && args[i] .startsWith("-entry.spcrespower")) {
-				return getArgsValue(args[i]);
+			if( entry && args.get(i) .startsWith("-entry.spcrespower")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;		
@@ -1107,9 +1112,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getComment() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-comment")) {
-				return getArgsValue(args[i].replaceAll("[\\\"']", ""));
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-comment")) {
+				return getArgsValue(args.get(i).replaceAll("[\\\"']", ""));
 			}
 		}
 		return null;		
@@ -1120,9 +1125,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getCommand() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-command")) {
-				return getArgsValue(args[i].replaceAll("[\\\"']", ""));
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-command")) {
+				return getArgsValue(args.get(i).replaceAll("[\\\"']", ""));
 			}
 		}
 		return null;		
@@ -1133,9 +1138,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getPassword() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-password")) {
-				return getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-password")) {
+				return getArgsValue(args.get(i));
 			}
 		}
 		return null;
@@ -1148,9 +1153,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException 
 	 */
 	public String getCreate() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-create")) {
-				return this.matches(getArgsValue(args[i]), "-create", RegExp.COLLNAME);	
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-create")) {
+				return this.matches(getArgsValue(args.get(i)), "-create", RegExp.COLLNAME);	
 			}
 		}
 		return null;		
@@ -1162,9 +1167,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException 
 	 */
 	public String getEmpty() throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-empty")) {
-				return this.matches(getArgsValue(args[i]), "-empty", RegExp.COLLNAME);	
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-empty")) {
+				return this.matches(getArgsValue(args.get(i)), "-empty", RegExp.COLLNAME);	
 			}
 		}
 		return null;		
@@ -1175,9 +1180,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getRemove() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-remove")) {
-				return getArgsValue(args[i]);	
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-remove")) {
+				return getArgsValue(args.get(i));	
 			}
 		}
 		return null;		
@@ -1188,9 +1193,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getIndex() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-index")) {
-				return getArgsValue(args[i]);	
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-index")) {
+				return getArgsValue(args.get(i));	
 			}
 		}
 		return null;		
@@ -1201,9 +1206,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getPopulate() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-populate")) {
-				return getArgsValue(args[i]);	
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-populate")) {
+				return getArgsValue(args.get(i));	
 			}
 		}
 		return null;		
@@ -1216,9 +1221,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public RepositoryMode getRepository()  throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-repository")) {
-				String v = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-repository")) {
+				String v = getArgsValue(args.get(i));
 				if( v.equalsIgnoreCase("no")) {
 					return RepositoryMode.KEEP;
 				} else if( v.equalsIgnoreCase("copy") ) {
@@ -1239,9 +1244,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getLinks()  throws FatalException {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-links")) {
-				return this.matches(getArgsValue(args[i]), "-links", RegExp.FOLLOWLINKS);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-links")) {
+				return this.matches(getArgsValue(args.get(i)), "-links", RegExp.FOLLOWLINKS);							
 			}
 		}
 		return null;		
@@ -1253,9 +1258,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getFilter()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-filter=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-filter=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1267,9 +1272,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getIf()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-if=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-if=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1281,9 +1286,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getof()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-of=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-of=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1293,9 +1298,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getUrlroot() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-urlroot=")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-urlroot=")) {
+				String param = getArgsValue(args.get(i));
 				if( param.matches(RegExp.URL)) {
 					return param;
 				} else {
@@ -1311,9 +1316,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getBasedir() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-basedir=")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-basedir=")) {
+				String param = getArgsValue(args.get(i));
 				File f = (new File(param));
 				if( f.exists() && f.isDirectory() ) {
 					return param;
@@ -1330,9 +1335,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getRepdir() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-repdir=")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-repdir=")) {
+				String param = getArgsValue(args.get(i));
 				File f = (new File(param));
 				if( f.exists() && f.isDirectory() ) {
 					return param;
@@ -1349,9 +1354,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getRename() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-rename=")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-rename=")) {
+				String param = getArgsValue(args.get(i));
 				if( param.matches(RegExp.DBNAME)) {
 					return param;
 				} else {
@@ -1366,9 +1371,9 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public String getNewname() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-newname=")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-newname=")) {
+				String param = getArgsValue(args.get(i));
 				if( param.matches(RegExp.DBNAME)) {
 					return param;
 				}
@@ -1385,8 +1390,8 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public boolean isNolog() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-nolog")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-nolog")) {
 				return true;
 			}
 		}
@@ -1398,8 +1403,8 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public boolean isNoindex() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-noindex")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-noindex")) {
 				return true;
 			}
 		}
@@ -1411,8 +1416,8 @@ public final class ArgsParser implements Serializable{
 	 * @throws FatalException
 	 */
 	public boolean isNovignette() throws FatalException   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-novignette")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-novignette")) {
 				return true;
 			}
 		}
@@ -1424,9 +1429,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public long[] getOids() throws Exception{
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-oids")) {
-				String[] soids =  getArgsValue(args[i]).split("[,;]");
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-oids")) {
+				String[] soids =  getArgsValue(args.get(i)).split("[,;]");
 				long retour[] = new long[soids.length];
 				for( int j=0 ; j<soids.length ; j++ ) {
 					retour[j] = Long.parseLong(soids[j]);
@@ -1442,9 +1447,9 @@ public final class ArgsParser implements Serializable{
 	 */
 	public void setDebugMode() {
 		Messenger.debug_mode = false;		
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-debug")) {
-				String param = getArgsValue(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-debug")) {
+				String param = getArgsValue(args.get(i));
 				if( "off".equalsIgnoreCase(param) || "false".equalsIgnoreCase(param)
 						|| "no".equalsIgnoreCase(param) || param == null || param.length() == 0) {
 					Messenger.switchDebugOff();
@@ -1461,8 +1466,8 @@ public final class ArgsParser implements Serializable{
 	 * Switch on debug mode is the arg debug is found
 	 */
 	public void setContinueMode() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-continue")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-continue")) {
 				Messenger.printMsg(Messenger.TRACE, "Continue mode on");
 				Messenger.ALWAYS_IGNORE = true;
 				return;
@@ -1475,8 +1480,8 @@ public final class ArgsParser implements Serializable{
 	 * Switch on debug mode is the arg debug is found
 	 */
 	public void setSilentMode() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-silent")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-silent")) {
 				Messenger.switchDebugOff();
 				Messenger.silent_mode = true;
 				Messenger.printMsg(Messenger.TRACE, "Silent mode on");
@@ -1491,8 +1496,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -force flag
 	 */
 	public boolean getDebugMode() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-debug")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-debug")) {
 				return true;
 			}
 		}
@@ -1502,8 +1507,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -force flag
 	 */
 	public boolean getSilentMode() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-silent")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-silent")) {
 				return true;
 			}
 		}
@@ -1515,8 +1520,8 @@ public final class ArgsParser implements Serializable{
 	 * of messages decreases along of the processing 
 	 */
 	public boolean getWhisperingMode() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-whispering")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-whispering")) {
 				return true;
 			}
 		}
@@ -1527,8 +1532,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -force flag
 	 */
 	public boolean getForce() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-force")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-force")) {
 				return true;
 			}
 		}
@@ -1538,8 +1543,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -build flag
 	 */
 	public boolean getBuild() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-build")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-build")) {
 				return true;
 			}
 		}
@@ -1549,8 +1554,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -all flag
 	 */
 	public boolean getAll() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-all")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-all")) {
 				return true;
 			}
 		}
@@ -1560,8 +1565,8 @@ public final class ArgsParser implements Serializable{
 	 * Returns the -continue flag
 	 */
 	public boolean getContinue() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-continue")) {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-continue")) {
 				return true;
 			}
 		}
@@ -1572,9 +1577,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getQuery()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-query=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-query=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1585,9 +1590,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getFrom()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-from=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-from=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1597,9 +1602,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getTo()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-to=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-to=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1608,9 +1613,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String getProtocol()   {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-protocol=")) {
-				return getArgsValue(args[i]);							
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-protocol=")) {
+				return getArgsValue(args.get(i));							
 			}
 		}
 		return null;		
@@ -1621,9 +1626,9 @@ public final class ArgsParser implements Serializable{
 	 * @return
 	 */
 	public String[] getQualifiers() {
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-qualifiers=")) {
-				return getArgsValue(args[i]).split("[,;]");
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-qualifiers=")) {
+				return getArgsValue(args.get(i)).split("[,;]");
 			}
 		}
 		return new String[0];
@@ -1657,13 +1662,13 @@ public final class ArgsParser implements Serializable{
 	 */
 	public List<AttributeHandler> getWCS() {
 		List<AttributeHandler> retour = new ArrayList<AttributeHandler>();
-		for( int i=0 ; i<args.length ; i++ ) {
-			if( args[i] .startsWith("-wcs.")) {
-				String [] f = args[i].split("[\\.=]");
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-wcs.")) {
+				String [] f = args.get(i).split("[\\.=]");
 				AttributeHandler ah = new AttributeHandler();
 				ah.setNameorg(f[1]);
 				ah.setNameattr(ChangeKey.changeKey(f[1]));
-				String value = getArgsValue(args[i]);
+				String value = getArgsValue(args.get(i));
 				if( value.matches("'.*'")){
 					ah.setType("String");
 					ah.setValue(value.replaceAll("'", ""));						
@@ -1767,7 +1772,7 @@ public final class ArgsParser implements Serializable{
 		int cpt=0;
 		for( String arg: this.args) {
 			int pos = arg.indexOf('=');
-			if( cpt == (this.args.length - 1) ) break;
+			if( cpt == (this.args.size() - 1) ) break;
 			String pname = arg.substring(0, pos+1).trim().replaceAll("-", "");
 			retour.put(pname, ArgsParser.getArgsValue(arg));
 			cpt++;
@@ -1780,7 +1785,11 @@ public final class ArgsParser implements Serializable{
 	 * @return Returns the args.
 	 */
 	public String[] getArgs() {
-		return args;
+		String[] retour = new String[args.size()];
+		for( int i=0 ; i<args.size() ; i++) {
+			retour[i] = args.get(i);
+		}
+		return retour;
 	}
 
 	public String[] addDebugMode(boolean debug_mode) {
@@ -1792,8 +1801,8 @@ public final class ArgsParser implements Serializable{
 		else {
 			al.add("-debug=off");			
 		}
-		for( int i=0 ; i<args.length ; i++ ) {
-			al.add(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			al.add(args.get(i));
 		}
 		al.add(Database.getDbname());
 		return al.toArray(new String[0]);
@@ -1820,12 +1829,16 @@ public final class ArgsParser implements Serializable{
 		if( noindex ) {
 			al.add("-noindex");			
 		}
-		for( int i=0 ; i<args.length ; i++ ) {
-			al.add(args[i]);
+		for( int i=0 ; i<args.size() ; i++ ) {
+			al.add(args.get(i));
 		}
 		al.add(Database.getDbname());
-		args = al.toArray(new String[0]);
-		return args;
+		args = al;
+		String[] retour = new String[args.size()];
+		for( int i=0 ; i<args.size() ; i++) {
+			retour[i] = args.get(i);
+		}
+		return retour;
 	}
 
 	/**
@@ -1905,6 +1918,52 @@ public final class ArgsParser implements Serializable{
 		}
 		bw.close();
 	}
+	
+	/**
+	 * Replace the original parameters with those of argsToBeMerged
+	 * Prepend the parameter list with those which are only in argsToBeMerged
+	 * Only works with -(e)ukw [st] and -* parameters
+	 * @param argsToBeMerged
+	 */
+	public void mergeArgParsers(String[] argsToBeMerged){
+		ArrayList<String> newParams = new ArrayList<String>();
+		for( int i=0 ; i<argsToBeMerged.length ; i++){
+			String atbm = argsToBeMerged [i];
+			if( atbm.startsWith("-") ) {
+				String[] arg = atbm.split("=");
+				boolean found = false;
+				for( int li=0 ; li<args.size() ; li++){
+					String[] larg = args.get(li).split("=");
+					if( larg[0].equals(arg[0])){
+						args.set(li, atbm);
+						/*
+						 * ukw are followed with an affectation statement keyword=value
+						 * Both params must be set
+						 * if the orginal args have a ukw with keyword=value, we will get an inconstancy
+						 */
+						if( args.get(li).equals("-ukw") || args.get(li).equals("-eukw")) {
+							args.set(++li, argsToBeMerged[++i]);
+						}
+						found = true;
+						break;
+					}
+				}
+				if( !found ) {
+					newParams.add(atbm);
+					if( arg[0].equals("-ukw") || arg[0].equals("-eukw")) {
+						newParams.add(argsToBeMerged[++i]);
+					}
+				} 
+
+			}
+		}	
+		if( newParams.size() != 0 ){
+			for( String arg: args){
+				newParams.add(arg);
+			}
+			this.args = newParams;
+		}
+	}
 
 	/**
 	 * Read the fullPath file and built an new ArgsParser instance
@@ -1947,6 +2006,7 @@ public final class ArgsParser implements Serializable{
 		JSONObject jsonObject = (JSONObject)parser.parse(new FileReader(fileName));  
 		return getArgsParserFromJson((JSONArray) jsonObject.get("parameters"), fileName, dbName);  
 	}
+	
 	/**
 	 * Extract the parameters from JSON array an return a new instance of ArgsParser
 	 * Json array must be like 
@@ -1966,6 +2026,7 @@ public final class ArgsParser implements Serializable{
 	 */
 	public static ArgsParser getArgsParserFromJson(JSONArray parameters, String fileName,String dbName) throws Exception{
 		List<String> params = new ArrayList<String>();
+		@SuppressWarnings("unchecked")
 		Iterator<String> iterator = parameters.iterator();  
 		while (iterator.hasNext()) {  
 			params.add(iterator.next());  
@@ -1973,5 +2034,33 @@ public final class ArgsParser implements Serializable{
 		params.add("-filename=" + fileName);
 		params.add(dbName);
 		return new ArgsParser(params.toArray(new String[0]));
+	}
+	
+	public static void main(String[] args) throws FatalException, IOException{
+		ArgsParser ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1", "aaaa"});
+		ap.mergeArgParsers(new String[]{});
+		System.out.println(ap);
+
+		ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1", "aaaa"});
+		ap.mergeArgParsers(new String[]{"-collection=col2", "-category=cat2", "bbbs"});
+		System.out.println(ap);
+
+		ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1", "aaaa"});
+		ap.mergeArgParsers(new String[]{"-category=cat2", "bbbs"});
+		System.out.println(ap);
+
+		ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1", "aaaa"});
+		ap.mergeArgParsers(new String[]{"-filename=fn2", "bbbs"});
+		System.out.println(ap);
+
+
+		ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1", "aaaa"});
+		ap.mergeArgParsers(new String[]{"-ukw", "a2=b2"});
+		System.out.println(ap);
+
+		ap = new ArgsParser(new String[]{"-collection=col1", "-category=cat1","-ukw", "a1=b1", "aaaa"});
+		ap.mergeArgParsers(new String[]{"-ukw", "a2=b2"});
+		System.out.println(ap);
+
 	}
 }
