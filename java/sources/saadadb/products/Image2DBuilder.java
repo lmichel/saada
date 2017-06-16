@@ -211,6 +211,8 @@ public class Image2DBuilder extends ProductBuilder {
 	 */
 	protected void mapCollectionPosAttributes() throws Exception {
 		super.mapCollectionPosAttributes();
+		this.wcsModeler.updateValues();
+
 		this.wcs_crpix1Setter = this.quantityDetector.getWCSCrpix1();
 		this.wcs_crpix2Setter = this.quantityDetector.getWCSCrpix2();
 		this.wcs_ctype1Setter = this.quantityDetector.getWCSType1();
@@ -232,9 +234,7 @@ public class Image2DBuilder extends ProductBuilder {
 	 */
 	protected void calculateAllExpressions() throws Exception {
 		Messenger.locateCode();
-		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
 		super.calculateAllExpressions();
-		System.out.println("@@@@@@@@@@@@@@@@ " + this.wcs_val1Setter);
 		this.wcs_crpix1Setter.calculateExpression();
 		this.wcs_crpix2Setter.calculateExpression();
 		this.wcs_ctype1Setter.calculateExpression();
@@ -248,9 +248,5 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d2_2Setter.calculateExpression();		
 		this.size_alpha_csaSetter.calculateExpression();
 		this.size_delta_csaSetter.calculateExpression();
-		System.out.println("@@@@@@@@@@@@@@@@ " + this.size_alpha_csaSetter);
-
-
 	}
-
 }
