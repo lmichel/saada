@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="Saada1.7">
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/sources"/>
         <wb-resource deploy-path="/" source-path="/web"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/java/sources"/>
         <dependent-module archiveName="Astericsgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/Asterics/web/WEB-INF/lib/Astericsgenerated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>

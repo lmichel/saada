@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="sources"/>
+	<classpathentry kind="src" path="java/sources"/>
 	<classpathentry kind="lib" path="/home/michel/saada/deploy/TestBeds/version2_0/distrib/Saada1.7.0.beta/dbtemplate/lib/axis.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
