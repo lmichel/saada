@@ -1,22 +1,21 @@
 package saadadb.command;
 
-import saadadb.collection.ProductManager;
 import saadadb.database.Database;
 
 
-public class RecomputeProjections extends ManageEntity{
+public class ManageProjectionUpdate extends ManageEntity{
 	
 	/**
 	 * 
 	 */
-	public RecomputeProjections() {
-		manager = new ProjectComputer(); 
+	public ManageProjectionUpdate() {
+		manager = new ProjectionUpdater(); 
 	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args)  {
-		processCommand(new RecomputeProjections(), args);
+		processCommand(new ManageProjectionUpdate(), args);
 		Database.close();
 	}
 
