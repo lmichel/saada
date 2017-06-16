@@ -96,7 +96,7 @@ public abstract class ProductBuilder {
 	public ColumnSetter s_decSetter=new ColumnExpressionSetter("s_dec");
 	public ColumnSetter s_fovSetter=new ColumnExpressionSetter("s_fov");
 	public ColumnSetter s_regionSetter=new ColumnExpressionSetter("s_region");
-	public ColumnSetter astroframeSetter=new ColumnExpressionSetter("astroframe");
+	public ColumnSetter astroframeSetter=new ColumnExpressionSetter("system");
 	public PriorityMode spaceMappingPriority = PriorityMode.LAST;
 
 	/*
@@ -929,7 +929,7 @@ public abstract class ProductBuilder {
 				this.em_unitSetter = qdUnit;
 			}
 			if( qdRPow.isNotSet()  ) {
-				this.em_res_powerSetter = this.getSetterForMappedColumn("em_respower", mapping.getColumnMapping("em_res_power"));
+				this.em_res_powerSetter = this.getSetterForMappedColumn("em_res_power", mapping.getColumnMapping("em_res_power"));
 				this.em_res_powerSetter.completeDetectionMsg(qdRPow);
 			} else {
 				this.em_res_powerSetter = qdRPow;
