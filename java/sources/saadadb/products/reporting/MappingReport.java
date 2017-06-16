@@ -126,6 +126,8 @@ public class MappingReport {
 
 		retour.put("pol_states", this.builder.pol_statesSetter);
 		this.builder.pol_statesSetter.storedValue = si.pol_states;
+		
+		
 		/*
 		 * extended attributes
 		 */
@@ -136,7 +138,9 @@ public class MappingReport {
 			ces.storedValue = si.getFieldValue(eattname);
 
 		}
-
+		/*
+		 * Take sub class attributes
+		 */
 		for( Field f: si.getCollLevelPersisentFields() ){
 			String fname = f.getName();
 			if( retour.get(fname) == null ){
