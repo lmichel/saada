@@ -74,6 +74,39 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 		String ef = this.expression.replace(Prefix,  "");
 		double c1, c2 , d1, d2;
 		switch( ef ) {
+		case "CD11":
+			this.result = String.valueOf(this.projection.getCd11Val());
+			break;
+		case "CD12":
+			this.result = String.valueOf(this.projection.getCd12Val());
+			break;
+		case "CD21":
+			this.result = String.valueOf(this.projection.getCd21Val());
+			break;
+		case "CD22":
+			this.result = String.valueOf(this.projection.getCd22Val());
+			break;
+		case "CRPIX1":
+			this.result = String.valueOf(this.projection.getCrpix1Val());
+			break;
+		case "CRPIX2":
+			this.result = String.valueOf(this.projection.getCrpix2Val());
+			break;
+		case "CTYPE1":
+			this.result = String.valueOf(this.projection.getCtype1Val());
+			break;
+		case "CTYPE2":
+			this.result = String.valueOf(this.projection.getCtype2Val());
+			break;
+		case "CRVAL1":
+			this.result = String.valueOf(this.projection.getCrval1Val());
+			break;
+		case "CRVAL2":
+			this.result = String.valueOf(this.projection.getCrval2Val());
+			break;
+		case "CROTA":
+			this.result = String.valueOf(this.projection.getRotaVal());
+			break;			
 		case "getMin(1)":
 			this.result = String.valueOf(this.projection.getMin(1));
 			break;
