@@ -704,11 +704,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSType1() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_CTYPE1", "String");
-			setter.setValue(((SpatialProjection)(this.projection)).getCtype1Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("ctype1_csa", "WCS.CTYPE1", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CTYPE1");
 			retour.completeDetectionMsg("No supported WCS");
@@ -722,11 +718,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSType2() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_CTYPE2", "String");
-			setter.setValue(((SpatialProjection)(this.projection)).getCtype1Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("ctype2_csa", "WCS.CTYPE2", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CTYPE2");
 			retour.completeDetectionMsg("No supported WCS");
@@ -739,11 +731,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCrpix1() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_CRPIX1", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCrpix1Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("crpix1_csa", "WCS.CRPIX1", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CRPIX1");
 			retour.completeDetectionMsg("No supported WCS");
@@ -756,11 +744,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCrpix2() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_CRPIX2", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCrpix2Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("crpix2_csa", "WCS.CRPIX2", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CRPIX2");
 			retour.completeDetectionMsg("No supported WCS");
@@ -773,11 +757,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCrval1() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_VAL1", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCrval1Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("crval1_csa", "WCS.CRVAL1", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_VAL1");
 			retour.completeDetectionMsg("No supported WCS");
@@ -791,11 +771,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCrval2() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_VAL2", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getCrval2Val());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("crval2_csa", "WCS.CRVAL2", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_VAL2");
 			retour.completeDetectionMsg("No supported WCS");
@@ -809,11 +785,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCD11() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_D1_1", "double");
-			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd11Val()));
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("cd1_1_csa", "WCS.CD11", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D1_1");
 			retour.completeDetectionMsg("No supported WCS");
@@ -826,11 +798,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCD12() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_D1_2", "double");
-			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd12Val()));
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("cd1_2_csa", "WCS.CD12", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D1_2");
 			retour.completeDetectionMsg("No supported WCS");
@@ -843,11 +811,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCD21() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_D2_1", "double");
-			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd21Val()));
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("cd2_1_csa", "WCS.CD21", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D2_1");
 			retour.completeDetectionMsg("No supported WCS");
@@ -860,11 +824,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCD22() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_D2_2", "double");
-			setter.setValue(DBUtils.getSmallDouble(((SpatialProjection)(this.projection)).getCd22Val()));
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("cd2_2_csa", "WCS.CD22", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_D2_2");
 			retour.completeDetectionMsg("No supported WCS");
@@ -877,11 +837,7 @@ public class SpaceKWDetector extends KWDetector{
 	 */
 	public ColumnExpressionSetter getWCSCROTA() throws Exception {
 		if(  (status & WCS_KW_FOUND) > 0 ) {
-			ColumnExpressionSetter setter = this.getWCSSetter("WCS_CROTA", "double");
-			setter.setValue(((SpatialProjection)(this.projection)).getRotaVal());
-			setter.completeDetectionMsg("Read from WCS");
-			return setter;
-
+			return  new ColumnWcsSetter("crota_csa", "WCS.CROTA", projection);
 		} else {
 			ColumnExpressionSetter  retour =  new ColumnExpressionSetter("WCS_CROTA");
 			retour.completeDetectionMsg("No supported WCS");
