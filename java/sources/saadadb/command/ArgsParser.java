@@ -148,6 +148,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-rename");
 		allowedArgs.add("-newname");
 		allowedArgs.add("-nolog") ;
+		allowedArgs.add("-nop") ;
 		allowedArgs.add("-noindex") ;
 		allowedArgs.add("-novignette") ;
 		allowedArgs.add("-query") ;
@@ -1392,6 +1393,18 @@ public final class ArgsParser implements Serializable{
 	public boolean isNolog() throws FatalException   {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-nolog")) {
+				return true;
+			}
+		}
+		return false;		
+	}
+	/**
+	 * @return
+	 * @throws FatalException
+	 */
+	public boolean isNop() throws FatalException   {
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-nop")) {
 				return true;
 			}
 		}
