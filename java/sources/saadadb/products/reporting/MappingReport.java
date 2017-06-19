@@ -51,24 +51,24 @@ public class MappingReport {
 		}
 	}
 
+	/**
+	 * return the transient Saada instance built for populating the report
+	 * @return
+	 * @throws Exception
+	 */
+	public SaadaInstance getReportInstance() throws Exception {
+		this.builder.updateAttributeHandlerValues();
+		this.builder.productIngestor.bindInstanceToFile();
+		return this.builder.productIngestor.saadaInstance;		
+	}
 
 	/**
 	 * Build a map with all collection level value of the current instance.
 	 * Values are stored in AttributeHandler having the mapping mode into the comment field
 	 * @throws Exception
 	 */
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	/**
-	 * @return
-	 * @throws Exception
-	 */
 	public Map<String, ColumnSetter> getReport() throws Exception {
-		this.builder.updateAttributeHandlerValues();
-		this.builder.productIngestor.bindInstanceToFile();
-		SaadaInstance si = this.builder.productIngestor.saadaInstance;
+		SaadaInstance si = getReportInstance();
 
 		Map<String, ColumnSetter> retour = new LinkedHashMap<String, ColumnSetter>();
 		retour.put("obs_id", this.builder.obs_idSetter);

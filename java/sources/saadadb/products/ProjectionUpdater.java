@@ -1,9 +1,10 @@
 package saadadb.products;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,79 +30,94 @@ import saadadb.products.setter.ColumnSetter;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.sqltable.SQLQuery;
+import saadadb.sqltable.SQLTable;
 import saadadb.util.Merger;
 import saadadb.util.Messenger;
 
-public class ProjectionUpdater extends EntityManager{
-	private Set<Long> oids ;
+/**
+ * This class process the re-computing of the collection attributes of a set of
+ * loaded products Cannot be applied to TABLEs Only the
+ * {@link EntityManager#populate(ArgsParser)} method is implemented Keywords
+ * listed in {@link unSetableAttributes} are not updated The data loader
+ * parameters used by default are those stored in the saada_class when the class
+ * has been created They can be overidden by the params given to the command and
+ * listed on {@link allowedArgs} If the the param -nop is present, a report
+ * combining both old and new value is printed out
+ * 
+ * @author michel
+ *
+ */
+public class ProjectionUpdater extends EntityManager {
+	private Set<Long> oids;
 	private static Set<String> unSetableAttributes;
 	private static Set<String> allowedArgs;
 	/*
 	 * Command line parameters to be used to redo the mapping
 	 */
 	private String[] newArgs;
-	private boolean writeMode = false; 
+	private boolean writeMode = false;
 
-	static{
+	static {
 		unSetableAttributes = new TreeSet<>();
 		unSetableAttributes.add("oidsaada");
 		unSetableAttributes.add("repository_location");
 		unSetableAttributes.add("date_load");
 		unSetableAttributes.add("access_url");
-		
+
 		allowedArgs = new TreeSet<>();
-		allowedArgs.add("-obsmapping") ; 
-		allowedArgs.add("-name")          ; allowedArgs.add("-obsid") ;
-		allowedArgs.add("-ename")         ;
-		allowedArgs.add("-obscollection") ;
-		allowedArgs.add("-facility")      ; 
-		allowedArgs.add("-instrument")    ; 
-		allowedArgs.add("-target")        ; 
-		allowedArgs.add("-caliblevel") ;
-		allowedArgs.add("-publisherdid") ;
+		allowedArgs.add("-obsmapping");
+		allowedArgs.add("-name");
+		allowedArgs.add("-obsid");
+		allowedArgs.add("-ename");
+		allowedArgs.add("-obscollection");
+		allowedArgs.add("-facility");
+		allowedArgs.add("-instrument");
+		allowedArgs.add("-target");
+		allowedArgs.add("-caliblevel");
+		allowedArgs.add("-publisherdid");
 		/*
 		 * Space Axe
 		 */
-		allowedArgs.add("-posmapping") ;
-		allowedArgs.add("-system") ;
-		allowedArgs.add("-position")     ;
-		allowedArgs.add("-poserror")     ;
-		allowedArgs.add("-sresolution")  ;
-		allowedArgs.add("-sfov"); 
+		allowedArgs.add("-posmapping");
+		allowedArgs.add("-system");
+		allowedArgs.add("-position");
+		allowedArgs.add("-poserror");
+		allowedArgs.add("-sresolution");
+		allowedArgs.add("-sfov");
 		allowedArgs.add("-sregion");
 		/*
 		 * Energy Axe
 		 */
-		allowedArgs.add("-spcmapping") ;
-		allowedArgs.add("-spcunit")    ;
-		allowedArgs.add("-spccolumn")  ;
-		allowedArgs.add("-emin")	   ;
-		allowedArgs.add("-emax")	   ;
-		allowedArgs.add("-ebins")      ;
-		allowedArgs.add("-emax")	   ;
+		allowedArgs.add("-spcmapping");
+		allowedArgs.add("-spcunit");
+		allowedArgs.add("-spccolumn");
+		allowedArgs.add("-emin");
+		allowedArgs.add("-emax");
+		allowedArgs.add("-ebins");
+		allowedArgs.add("-emax");
 		allowedArgs.add("-spcrespower");
-
 		/*
 		 * Time Axe
 		 */
-		allowedArgs.add("-timemapping") ;
-		allowedArgs.add("-tmin")      ;
-		allowedArgs.add("-tmax")      ;
-		allowedArgs.add("-exptime")   ;
-		allowedArgs.add("-tresol")    ;
+		allowedArgs.add("-timemapping");
+		allowedArgs.add("-tmin");
+		allowedArgs.add("-tmax");
+		allowedArgs.add("-exptime");
+		allowedArgs.add("-tresol");
 		/*
 		 * Observable Axe
 		 */
-		allowedArgs.add("-observablemapping") ;
-		allowedArgs.add("-oucd")         ;
-		allowedArgs.add("-ounit")        ;
-		allowedArgs.add("-ocalibstatus") ;
+		allowedArgs.add("-observablemapping");
+		allowedArgs.add("-oucd");
+		allowedArgs.add("-ounit");
+		allowedArgs.add("-ocalibstatus");
 		/*
 		 * Polarization axis
 		 */
-		allowedArgs.add("-polarmapping") ;
-		allowedArgs.add("-polarstates") ;
+		allowedArgs.add("-polarmapping");
+		allowedArgs.add("-polarstates");
 	}
+
 	@Override
 	public void create(ArgsParser ap) throws SaadaException {
 		Messenger.printMsg(Messenger.ERROR, "Not implemented for products");
@@ -133,44 +149,56 @@ public class ProjectionUpdater extends EntityManager{
 	}
 
 	/**
-	 * Extract from the command parameters those which must be used 
-	 * to override the params initially used to update the projections 
+	 * Extract from the command parameters those which must be used to override
+	 * the params initially used to update the projections
+	 * 
 	 * @param ap
 	 */
-	private void mergeArgs(ArgsParser ap){
+	private void mergeArgs(ArgsParser ap) {
 		String[] args = ap.getArgs();
 		List<String> newArgArray = new ArrayList<String>();
-		for( int i=0 ; i<args.length ; i++  ) {
-			String arg = args[i].split("=")[0];
-			if( allowedArgs.contains(arg)){
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			String argName = arg.split("=")[0];
+			/*
+			 * Keywords starting with -wcs are unlimited
+			 */
+			if (allowedArgs.contains(argName) || argName.startsWith("-wcs.")) {
 				newArgArray.add(arg);
-				if( arg.equals("-ukw") || arg.equals("-eukw")) {
+				if (argName.equals("-ukw") || argName.equals("-eukw")) {
 					newArgArray.add(args[++i]);
 				}
 			}
 		}
-		this.newArgs = new String[newArgArray.size()];	
-		for( int i=0 ; i<newArgArray.size() ; i++  ) {
+		this.newArgs = new String[newArgArray.size()];
+		for (int i = 0; i < newArgArray.size(); i++) {
 			this.newArgs[i] = newArgArray.get(i);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see saadadb.command.EntityManager#populate(saadadb.command.ArgsParser)
+	 */
 	@Override
 	public void populate(ArgsParser ap) throws SaadaException {
 		try {
 			String query = ap.getPopulate().trim();
+			this.writeMode = ( ap.isNop())? false:true;
 			this.mergeArgs(ap);
 			/*
 			 * The populate param can be SaadaQL query....
 			 */
-			if( query.startsWith("Select")) {
+			if (query.startsWith("Select")) {
 				computeProjections(query);
 				/*
 				 * Or a list of oids
 				 */
 			} else {
-				String[] soids =  query.split("[,;]");
+				String[] soids = query.split("[,;]");
 				long oids[] = new long[soids.length];
-				for( int j=0 ; j<soids.length ; j++ ) {
+				for (int j = 0; j < soids.length; j++) {
 					oids[j] = Long.parseLong(soids[j]);
 				}
 				computeProjections(oids);
@@ -183,6 +211,7 @@ public class ProjectionUpdater extends EntityManager{
 
 	/**
 	 * Set the OIDs to be processed from the query result
+	 * 
 	 * @param query
 	 * @throws SaadaException
 	 */
@@ -190,15 +219,15 @@ public class ProjectionUpdater extends EntityManager{
 		try {
 			Query q = new Query();
 			OidsaadaResultSet rs = q.runBasicQuery(query);
-			Messenger.printMsg(Messenger.TRACE, "Update projections for OIDs returned by " +query);
+			Messenger.printMsg(Messenger.TRACE, "Update projections for OIDs returned by " + query);
 			this.oids = new TreeSet<Long>();
-			while(rs.next()) {
+			while (rs.next()) {
 				this.oids.add(rs.getOId());
 			}
-			computeProjections();			
-		} catch(AbortException e ) {
+			computeProjections();
+		} catch (AbortException e) {
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
-		} catch(Exception e ) {
+		} catch (Exception e) {
 			Messenger.printStackTrace(e);
 			AbortException.throwNewException(SaadaException.DB_ERROR, e);
 		}
@@ -207,16 +236,17 @@ public class ProjectionUpdater extends EntityManager{
 
 	/**
 	 * Set the OIDs to be processed from the list given as param
+	 * 
 	 * @param oids
 	 * @throws SaadaException
 	 */
 	public final void computeProjections(long[] oids) throws Exception {
 		this.oids = new TreeSet<Long>();
-		for( long oid: oids) {
+		for (long oid : oids) {
 			this.oids.add(oid);
 
 		}
-		computeProjections();				
+		computeProjections();
 	}
 
 	/**
@@ -270,6 +300,7 @@ public class ProjectionUpdater extends EntityManager{
 		 */
 		String[] lp = null;
 		boolean starting = true;
+		int cpt = 0;
 		for( Long oid: this.oids ) {
 			newClasse = SaadaOID.getClassName(oid);
 			/*
@@ -325,73 +356,81 @@ public class ProjectionUpdater extends EntityManager{
 				case Category.MISC : product = new MiscBuilder(df, mapping);
 				report = new MappingReport(product);
 				break;
-				case Category.SPECTRUM: product = new SpectrumBuilder(df, new ProductMapping("mapping", ap));
+				case Category.SPECTRUM: product = new SpectrumBuilder(df, mapping);
 				report = new MappingReport(product);
 				break;
-				case Category.IMAGE: product = new Image2DBuilder(df, new ProductMapping("mapping", ap));
+				case Category.IMAGE: product = new Image2DBuilder(df, mapping);
 				report = new MappingReport(product);
 				break;
 				}
+				/*
+				 * Extract the modified Saada instance
+				 */
 				product.mapDataFile();
-				Map<String, ColumnSetter> r = report.getReport();
-				ArrayList<String> fieldStatements = new ArrayList<String>();
+				SaadaInstance newInstance = report.getReportInstance();
+				/*
+				 * Restore attributes which cannot be changed
+				 */
+				newInstance.oidsaada = saadaInstance.oidsaada;
+				newInstance.setRepository_location(saadaInstance.getRepository_location());
+				newInstance.setDate_load(saadaInstance.getDate_load());
+				newInstance.setAccess_url(saadaInstance.getAccess_url());
+				newInstance.setAccess_format(saadaInstance.getAccess_format());
+				newInstance.setObs_collection(collection);
+				product.productIngestor.setContentSignature();
 				
-				for( String key: r.keySet()){
-					System.out.print(key + " " );
-				}
-				System.out.println("");
-				for( Entry<String, ColumnSetter> e:r.entrySet()){
-					String key = e.getKey();
-					if( !unSetableAttributes.contains(key)) {
-						ColumnSetter cs = e.getValue();
-						AttributeHandler ah = attMap.get(cs.getAttNameAtt().toLowerCase());
-						if( ah != null ) {
-							String newVal = cs.getValue().trim();
-
-							if( !writeMode ){
-								Object o;
-								String orgVal = ((o = saadaInstance.getFieldValue(cs.getAttNameAtt()))  == null)? null: o.toString();
-								//if( !newVal.equals(orgVal) &&  !(newVal.equals("NotSet") && (orgVal == null || orgVal.equals("null") || orgVal.equals("NaN"))) )
-									System.out.println(cs.getAttNameAtt() + " = " + newVal + " (" + orgVal + ")");
-
-							} else
-								if( ah.getType().equals("String")) {
-									fieldStatements.add(cs.getAttNameAtt() + " = '" + newVal + "'");
-								} else {
-									fieldStatements.add(cs.getAttNameAtt() + " = " + newVal );
-									String query = "UPDATE " + collection + "_" + category + " SET " + Merger.getMergedCollection(fieldStatements) + " WHERE oidsaada = " + oid;
-									System.out.println(query + "\n==================================================");
-								}
-						}	
+				if( !writeMode ){
+					System.out.println("==========  " + saadaInstance.obs_id + " ==============");
+					for( Entry<String, AttributeHandler> entry: attMap.entrySet()){		
+						System.out.println(entry.getKey() + "\t " + newInstance.getFieldValue(entry.getKey())  + " \t (former: " + saadaInstance.getFieldValue(entry.getKey()) + ")");
 					}
+					System.out.println("========================");
+				} else {
+
+					ArrayList<String> fieldStatements = new ArrayList<String>();
+					for( Entry<String, AttributeHandler> entry: attMap.entrySet()){		
+						String key = entry.getKey();
+						AttributeHandler ah = entry.getValue();
+						Object o;
+						String val = ((o = newInstance.getFieldValue(key)) == null)? "NULL": o.toString();
+						fieldStatements.add(key + " = " + Database.getWrapper().getSQLvalue(val,  ah.getType()) + " ");
+					}
+					String query = "UPDATE " + collection + "_" + category + " SET " + Merger.getMergedCollection(fieldStatements) + " WHERE oidsaada = " + oid + "\n";
+					SQLTable.addQueryToTransaction(query);
+					if( cpt > 0 && (cpt%1000) == 0){
+						SQLTable.commitTransaction();
+						SQLTable.beginTransaction();
+					}
+					cpt++;
+					
 				}
 			}
 		}
 	}
-
-
 
 	/**
 	 * Check that all oids are from the same collection/category/class.
+	 * 
 	 * @throws AbortException
 	 */
 	private void checkOidList() throws AbortException {
-		long mask =0;
-		for( long oid: this.oids) {
+		long mask = 0;
+		for (long oid : this.oids) {
 			mask = oid >> 48;
 		}
 
-		for( long oid: oids) {
+		for (long oid : oids) {
 			try {
 				Database.getCache().getObject(oid);
 			} catch (Exception e) {
-				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "No object with oid = " + oid + " found");
+				AbortException.throwNewException(SaadaException.WRONG_PARAMETER,
+						"No object with oid = " + oid + " found");
 			}
-			if( (oid >> 48) != mask ) {
-				AbortException.throwNewException(SaadaException.WRONG_PARAMETER, "OIDs to be removed are not all from the same collection/category/class");
+			if ((oid >> 48) != mask) {
+				AbortException.throwNewException(SaadaException.WRONG_PARAMETER,
+						"OIDs to be removed are not all from the same collection/category/class");
 			}
 		}
 	}
-
 
 }
