@@ -180,6 +180,21 @@ public class QuantityDetector {
 	}
 
 	/**
+	 * @return the naxis1 value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getNaxis1() throws Exception{
+		return this.spaceKWDetector.getNaxis1();
+	}
+	/**
+	 * @return the naxis2 value if available
+	 * @throws Exception 
+	 */
+	public ColumnExpressionSetter getNaxis2() throws Exception{
+		return this.spaceKWDetector.getNaxis2();
+	}
+
+	/**
 	 * @return the size_delta_csa value if available
 	 * @throws Exception 
 	 */

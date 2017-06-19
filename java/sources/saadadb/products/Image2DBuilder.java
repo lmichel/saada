@@ -44,6 +44,8 @@ public class Image2DBuilder extends ProductBuilder {
 	ColumnSetter wcs_d1_2Setter=new ColumnExpressionSetter("WCS_D1_2");
 	ColumnSetter wcs_d2_1Setter=new ColumnExpressionSetter("WCS_D2_1");
 	ColumnSetter wcs_d2_2Setter=new ColumnExpressionSetter("WCS_D2_1");
+	ColumnSetter naxis1=new ColumnExpressionSetter("NAXIS1");
+	ColumnSetter naxis2=new ColumnExpressionSetter("NAXIS2");
 	ColumnSetter size_alpha_csaSetter=new ColumnExpressionSetter("size_alpha_csa");
 	ColumnSetter size_delta_csaSetter=new ColumnExpressionSetter("size_delta_csaSetter");
 
@@ -204,6 +206,9 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d2_2Setter.resetMessages();
 		this.size_alpha_csaSetter.resetMessages();
 		this.size_delta_csaSetter.resetMessages();
+		this.naxis1.resetMessages();
+		this.naxis2.resetMessages();
+
 		super.mapDataFile(dataFile);
 	}
 	/* (non-Javadoc)
@@ -226,6 +231,8 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d2_2Setter   = this.quantityDetector.getWCSCD22();
 		this.size_alpha_csaSetter = this.quantityDetector.getSizeRA();
 		this.size_delta_csaSetter = this.quantityDetector.getSizeDEC();
+		this.naxis1 = this.quantityDetector.getNaxis1();
+		this.naxis2 = this.quantityDetector.getNaxis2();
 		
 	}
 
@@ -248,5 +255,7 @@ public class Image2DBuilder extends ProductBuilder {
 		this.wcs_d2_2Setter.calculateExpression();		
 		this.size_alpha_csaSetter.calculateExpression();
 		this.size_delta_csaSetter.calculateExpression();
+		this.naxis1.calculateExpression();
+		this.naxis2.calculateExpression();
 	}
 }

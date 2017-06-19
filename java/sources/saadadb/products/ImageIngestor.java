@@ -34,6 +34,8 @@ public class ImageIngestor extends ProductIngestor {
 		image.crota_csa  = product.wcs_crotaSetter.getNumValue();
 		image.size_alpha_csa = product.size_alpha_csaSetter.getNumValue();
 		image.size_delta_csa = product.size_delta_csaSetter.getNumValue();
+		image.naxis1 = (int) product.naxis1.getNumValue();
+		image.naxis2 = (int) product.naxis2.getNumValue();
 	}
 
 }

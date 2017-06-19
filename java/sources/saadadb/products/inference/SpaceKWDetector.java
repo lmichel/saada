@@ -683,6 +683,34 @@ public class SpaceKWDetector extends KWDetector{
 		}
 		return sizeDEC;		
 	}
+	
+	/**
+	 * Return the column setter giving the naxis1
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getNaxis1() throws Exception{
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			return this.naxis1;
+		}
+		ColumnExpressionSetter  retour =  new ColumnExpressionSetter("NAXIS1");
+		retour.completeDetectionMsg("No supported WCS");
+		return retour;
+	}
+
+	/**
+	 * Return the column setter giving the naxis2
+	 * @return
+	 * @throws Exception
+	 */
+	public ColumnExpressionSetter getNaxis2() throws Exception{
+		if(  (status & WCS_KW_FOUND) > 0 ) {
+			return this.naxis2;
+		}
+		ColumnExpressionSetter  retour =  new ColumnExpressionSetter("NAXIS2");
+		retour.completeDetectionMsg("No supported WCS");
+		return retour;
+	}
 
 	
 	/**
