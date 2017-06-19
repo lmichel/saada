@@ -849,6 +849,30 @@ abstract public class DbmsWrapper {
 	public abstract String getSQLTypeFromJava( String type) throws FatalException ;
 
 	/**
+	 * Returned value formated in a way to be used in a writing SQL statement 
+	 * @param value
+	 * @param type
+	 * @return
+	 */
+	public String getSQLvalue(String value, String type) {
+		/*
+		 * "NULL and "2147483647" matches util.SaadaConstant.INT/STRING 
+		 * which belong to default values applied for Saada objects
+		 */
+		if( value.equals("Infinity") || value.equals("NaN") || value.equals("") || 
+				value.equals("NULL")|| value.equals("2147483647") || value.equals("9223372036854775807")) {
+			return "NULL";
+		} else {
+			if( type.equals("char") || type.endsWith("String") ) {
+				return "'" + value.replaceAll("'", "") + "'";
+			} else if( type.equals("boolean")  ) {
+				return this.getBooleanAsString(Boolean.parseBoolean(value));
+			} else {
+				return  value;
+			}
+		}
+	}
+	/**
 	 * @param type
 	 * @return
 	 * @throws FatalException 
