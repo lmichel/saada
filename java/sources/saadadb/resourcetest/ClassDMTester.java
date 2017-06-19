@@ -192,4 +192,10 @@ public class ClassDMTester extends SaadaInstance {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public String getAccess_format() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
