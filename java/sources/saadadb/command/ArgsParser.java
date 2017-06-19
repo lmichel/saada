@@ -1669,7 +1669,7 @@ public final class ArgsParser implements Serializable{
 	 * The type is infered from the value format: 
 	 * in '' => string
 	 * true/false => boolean
-	 * For numeric value, integer is checked first and the double. If both fail the Strintg type is taken
+	 * For numeric value, integer is checked first and the double. If both fail the String type is taken
 	 * If the same key is given several times, the last one is taken
 	 * @return  a list of attribute denoting the given WCS keywords
 	 */
