@@ -86,6 +86,11 @@ public class EntrySaada extends SaadaInstance {
 	public String getAccess_url() {
 		return null;
 	}
+	
+	@Override
+	public String getAccess_format() {
+		return null;
+	}
 
 	@Override
 	public void setDate_load(long time) {

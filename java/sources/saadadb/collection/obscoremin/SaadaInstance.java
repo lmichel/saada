@@ -1562,6 +1562,7 @@ public abstract class SaadaInstance implements DMInterface {
 	public abstract void   setO_calib_status(String status);
 	public abstract void   setAccess_url(String name)throws AbortException  ;
 	public abstract String getAccess_url() ;
+	public abstract String getAccess_format() ;
 	public abstract void   setDate_load(long time)  ;
 	public abstract long   getDate_load() ;
 	public abstract long   getOIdtable() ;

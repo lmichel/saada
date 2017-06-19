@@ -57,6 +57,10 @@ public class FileRef extends SaadaInstance {
 	public String getAccess_url() {
 		return access_url;
 	}
+	@Override
+	public String getAccess_format() {
+		return null;
+	}
 	/* (non-Javadoc)
 	 * @see saadadb.collection.obscoremin.SaadaInstance#setDate_load(long)
 	 */
