@@ -496,13 +496,13 @@
 		Some attributes cannot be overriden: oidsaada, access_url/format, date_load
 		WARNING: This task can generate huge transactions
 		
-		USAGE ant projection.update  -Dpopulate=oid1,oid2,oid3  -Dnoindex=true -Dlinks=follow
+		USAGE ant projection.update  -Dpopulate=oid1,oid2,oid3  
 		      ant projection.update "-Dpopulate=Select IMAGE From * In Starting WhereAttributeSaada{namesaada='Pedro'}" 
 	-->
 	<target name="projection.update">
     	<java fork="true"  classname="saadadb.command.ManageProjectionUpdate" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
-	  		<arg value="populate=${populate}"/>
+	  		<arg value="-populate=${populate}"/>
 	  		<arg value="-debug=${debug}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
