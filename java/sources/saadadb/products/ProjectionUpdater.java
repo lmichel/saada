@@ -1,8 +1,6 @@
 package saadadb.products;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
-import generated.Vizier.tranche4;
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
@@ -27,7 +24,6 @@ import saadadb.meta.AttributeHandler;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.DataResourcePointer;
 import saadadb.products.reporting.MappingReport;
-import saadadb.products.setter.ColumnSetter;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
 import saadadb.sqltable.SQLQuery;
