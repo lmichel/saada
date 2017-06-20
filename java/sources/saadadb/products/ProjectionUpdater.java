@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import generated.Vizier.tranche4;
 import saadadb.collection.Category;
 import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
@@ -313,6 +314,7 @@ public class ProjectionUpdater extends EntityManager {
 				ResultSet rs = query.run();
 				while( rs.next() ) {
 					params = rs.getString("description").trim().replace("ArgsParser(", "");
+					Messenger.printMsg(Messenger.TRACE, "Class " + classe + " created with the following parameters " + params);
 					if( params.endsWith(")") ) params = params.substring(0, params.length()-1);		
 					lp = params.split(" ");
 					break;
@@ -339,6 +341,7 @@ public class ProjectionUpdater extends EntityManager {
 				}
 				ArgsParser ap = new ArgsParser(lp);
 				ap.mergeArgParsers(newArgs);
+				Messenger.printMsg(Messenger.TRACE, "Parameters used fo the update: " + ap);
 				/*
 				 * Compute the new projection values
 				 */
