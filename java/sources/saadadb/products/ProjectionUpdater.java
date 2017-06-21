@@ -375,7 +375,6 @@ public class ProjectionUpdater extends EntityManager {
 				newInstance.setDate_load(saadaInstance.getDate_load());
 				newInstance.setAccess_url(saadaInstance.getAccess_url());
 				newInstance.setAccess_format(saadaInstance.getAccess_format());
-				newInstance.setObs_collection(collection);
 				product.productIngestor.setContentSignature();
 				
 				if( !writeMode ){
