@@ -280,8 +280,8 @@
     <TD>s_region</TD>
     <TD>phys.outline;obs.field</TD>
     <TD>obscore:Char.SpatialAxis.Coverage.Support.Area</TD>
-    <TD>region</TD>
-    <TD>1</TD>
+    <TD>char</TD>
+    <TD>-1</TD>
     <TD></TD>
     <TD>false</TD>
     <TD>null</TD>
