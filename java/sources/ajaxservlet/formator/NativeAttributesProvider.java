@@ -43,7 +43,7 @@ public class NativeAttributesProvider {
 	}
 	
 	public String getPosNative(String attr_name) {
-		if (attr_name.compareTo("pos_ra_csa") == 0) {
+		if (attr_name.compareTo("s_ra") == 0) {
 			return DefaultFormats.getString(saadai.s_ra);
 		
 		} else if (attr_name.compareTo("sky_pixel_csa") == 0) {

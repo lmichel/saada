@@ -925,12 +925,12 @@ public class Query extends Query_Report{
 		Query q = new Query();
 		//		q.runQuery("Select ENTRY From * In *");
 		//		q.runQuery("Select ENTRY From UCDTester1_UCDTagged1Entry  In UCDTester1");
-		//		q.runQuery("Select ENTRY From UCDTester1_UCDTagged1Entry  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > pos_ra_csa }");
-		//		q.runQuery("Select ENTRY From *  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > pos_ra_csa }");
+		//		q.runQuery("Select ENTRY From UCDTester1_UCDTagged1Entry  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > s_ra }");
+		//		q.runQuery("Select ENTRY From *  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > s_ra }");
 		//		q.runQuery("Select ENTRY From *  In UCDTester1 WherePosition{ isInBox(\"M34\",0.1,J2000,FK5)}");
 		//		q.runQuery("Select ENTRY From *  In UCDTester1 WherePosition{ isInCircle(\"M34\",0.1,J2000,FK5)}");
 		//		q.runQuery("Select ENTRY From *  In UCDTester1 WherePosition{ isInCircle(\"M33\",0.1,J2000,FK5) isInBox(\"M34\",0.1,J2000,FK5)}");
-		//		q.runQuery("Select ENTRY From UCDTester1_UCDTagged1Entry  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > pos_ra_csa } WherePosition{ isInCircle(\"M33\",0.1,J2000,FK5) isInBox(\"M34\",0.1,J2000,FK5)}");
+		//		q.runQuery("Select ENTRY From UCDTester1_UCDTagged1Entry  In UCDTester1 WhereAttributeSaada{ _c1t1c1_sansu > s_ra } WherePosition{ isInCircle(\"M33\",0.1,J2000,FK5) isInBox(\"M34\",0.1,J2000,FK5)}");
 		//		q.runQuery("Select ENTRY From *  In UCDTester1 WhereUCD{ [num.unit] > 2000 [km/s]}");
 		//      q.runQuery("Select ENTRY From *  In UCDTester1 WhereUCD{ [num.unit] > 2000 [km/s] and [string.alphanum.wounit] > 3000 [km/s]}");
 		//SaadaQLResultSet srs = q.runQuery("Select ENTRY From * In SpectroscopicSample WhereDM {[r.Magnitude] > 0 [none] }");
@@ -958,7 +958,7 @@ public class Query extends Query_Report{
 		//			System.out.println(ah);
 		//		}
 		//		srs = q.runQuery("Select SPECTRUM From EPICSpectrum In XMMData", true);
-		//		srs = q.runADQLQuery("SELECT oidsaada, namesaada FROM EPICSpectrum WHERE pos_ra_csa > 8 AND \"_naxis\" > 0;", "", false);
+		//		srs = q.runADQLQuery("SELECT oidsaada, namesaada FROM EPICSpectrum WHERE s_ra > 8 AND \"_naxis\" > 0;", "", false);
 		srs = q.runQuery("Select SPECTRUM From * In SpectroscopicSample WherePosition{isInCircle(\"06:14:13.12 70:52:02.7\",6.0,J2000,FK5)} WhereAttributeSaada{350.0 BETWEEN x_min_csa  AND  x_max_csa OR 900.0 BETWEEN x_min_csa  AND  x_max_csa OR (x_min_csa < 350.0 and  x_max_csa  >900.0)}");
 		//srs = q.runQuery("Select SPECTRUM From EpicSrcSpect In EPIC WherePosition{isInCircle(\"12 12\",10800.0,J2000,FK5)} Limit 1000", "", false);
 		System.out.println("NB COLUMNS = "+srs.getCol_names().size());

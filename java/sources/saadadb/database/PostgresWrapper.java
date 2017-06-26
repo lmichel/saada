@@ -363,7 +363,7 @@ public class PostgresWrapper extends DbmsWrapper {
 			set_to_update += keys[i] + " = " + values[i];
 		}
 		// e.g.: UPDATE saada_metacoll_table SET ass_error = a.pk FROM saada_metacoll_table a WHERE a.name_coll =
-		// saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 'pos_ra_csa';
+		// saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 's_ra';
 		return "UPDATE " + table_to_update + " SET " + set_to_update + " FROM " + table_to_join
 				+ " WHERE " + join_criteria + " AND " + select_criteria;
 	}

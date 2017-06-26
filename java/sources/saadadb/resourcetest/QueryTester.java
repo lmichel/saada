@@ -442,7 +442,7 @@ public class QueryTester {
 	public static String[] testFX(){
 		String[] queries = new String[1];
 		queries[0] = "Select ENTRY From * In * WhereUType{ [ChAxis.ObsyLoc] >-100 }";
-		queries[0] = "Select ENTRY From XID212Entry In Azerty  WhereAttributeSaada{ pos_ra_csa>-999} WhereAttributeClass{ _xra != 0} WhereUType{ [ChAxis.ObsyLoc] >-100 } Order By _xra limit 10";
+		queries[0] = "Select ENTRY From XID212Entry In Azerty  WhereAttributeSaada{ s_ra>-999} WhereAttributeClass{ _xra != 0} WhereUType{ [ChAxis.ObsyLoc] >-100 } Order By _xra limit 10";
 		queries[0] = "Select ENTRY From * In * WhereUCD{ [em.IR] > 0 } ";
 		queries[0] = "Select SPECTRUM From * In GalacticPlaneSurvey ";
 		queries[0] += "WhereRelation {";
@@ -468,10 +468,10 @@ public class QueryTester {
 		queries[0] = "Select ENTRY From * In * Order By oidsaada limit 10";
 		queries[0] = "Select ENTRY From SimpleVOtableEntry In Collection0 WhereAttributeClass{ _r < 100000 } Order By oidsaada limit 10";
 		queries[0] = "Select ENTRY From SimpleVOtableEntry In Collection0 WhereAttributeClass{ _r < 100000 }\n"
-			+"WhereAttributeSaada{pos_ra_csa > -200} Order By pos_dec_csa limit 10";
-		queries[0] = "Select ENTRY From * In * Order By pos_ra_csa limit 20";
+			+"WhereAttributeSaada{s_ra > -200} Order By s_dec limit 10";
+		queries[0] = "Select ENTRY From * In * Order By s_ra limit 20";
 
-		queries[0] = "Select ENTRY From SimpleVOtableEntry In Collection0 WhereAttributeClass{ _r < 100000 } Order By pos_ra_csa\n";
+		queries[0] = "Select ENTRY From SimpleVOtableEntry In Collection0 WhereAttributeClass{ _r < 100000 } Order By s_ra\n";
 		queries[0] = "Select ENTRY From * In * WhereUCD{ [pos.pm.dec] != -2000 [arcsec/s] }";
 
 		queries[0] = "Select ENTRY From * In Azerty WhereAttributeSaada{ possss_ra_csa>0} WherePosition{isInCircle(\"4:12:01 +03:00:00\",0.5,J2000,FK5)  }  ";

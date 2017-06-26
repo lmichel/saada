@@ -63,10 +63,10 @@ public abstract class SaadaQLConstraint {
 	 * @return
 	 */
 	public static  String getPositionResultColName(String colname) {
-		if( colname.equals("pos_ra_csa")) {
+		if( colname.equals("s_ra")) {
 			return "ascension";
 		}
-		else if( colname.equals("pos_dec_csa")) {
+		else if( colname.equals("s_dec")) {
 			return "declination";
 		}
 		return null;

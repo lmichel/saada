@@ -127,8 +127,8 @@ public class SigmaKDTree extends KDTree<HasKCoo> {
 //				try {
 //					Position p1 = (Position) Database.getCache().getObject(target.getOidsaada());
 //					Position p2 = (Position) Database.getCache().getObject(src.getOidsaada());
-//					Coo c = new Coo(p1.getPos_ra_csa(), p1.getPos_dec_csa());
-//					System.out.println("@@@@@ Distance arcmin " + 60*c.distance(new Coo(p2.getPos_ra_csa(), p2.getPos_dec_csa())));
+//					Coo c = new Coo(p1.gets_ra(), p1.gets_dec());
+//					System.out.println("@@@@@ Distance arcmin " + 60*c.distance(new Coo(p2.gets_ra(), p2.gets_dec())));
 //				} catch (FatalException e1) {
 //					e1.printStackTrace();
 //				}

@@ -306,7 +306,7 @@ public class MysqlWrapper extends DbmsWrapper {
 			set_to_update += ka + keys[i] + " = " + values[i];
 		}
 		// e.g.: "UPDATE saada_metacoll_table JOIN saada_metacoll_table as a ON a.name_coll = saada_metacoll_table.name_coll SET
-		// saada_metacoll_table.ass_error = a.pk WHERE a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 'pos_ra_csa';
+		// saada_metacoll_table.ass_error = a.pk WHERE a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 's_ra';
 		return "UPDATE " + table_to_update + "  JOIN " + table_to_join + " ON " + join_criteria
 				+ " SET " + set_to_update + " WHERE " + select_criteria;
 	}

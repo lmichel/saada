@@ -757,7 +757,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 		// select i.oidsaada, p.oidsaada, i.oidsaada >> 32, p.oidsaada >> 32, null, null, null, null, null
 		// from datacube_image as i, pixtable_entry as p
 		// e.g.: UPDATE saada_metacoll_table SET ass_error = a.pk FROM saada_metacoll_table a WHERE a.name_coll =
-		// saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 'pos_ra_csa';
+		// saada_metacoll_table.name_coll AND a.name_attr = 'error_ra_csa' AND saada_metacoll_table.name_attr = 's_ra';
 		// return "UPDATE " + table_to_update + " SET " + set_to_update + " FROM " + table_to_join + " WHERE " + join_criteria + " AND " +
 		// select_criteria;
 		/*		UPDATE customer_detail SET customer_id = (SELECT customer_id FROM

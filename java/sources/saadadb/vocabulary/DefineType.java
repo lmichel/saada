@@ -134,8 +134,8 @@ public class DefineType {
 			collection_ucds.put("date_load" , "time.processing");
 			collection_ucds.put("product_url_csa", "meta.file"); 
 			collection_ucds.put("nb_rows_csa"    , "meta.number");
-			//collection_ucds.put("pos_ra_csa"     , "pos.eq.ra;meta.main");
-			//collection_ucds.put("pos_dec_csa"    , "pos.eq.dec;meta.main");
+			//collection_ucds.put("s_ra"     , "pos.eq.ra;meta.main");
+			//collection_ucds.put("s_dec"    , "pos.eq.dec;meta.main");
 			collection_ucds.put("error_maj_csa"   , "stat.error;phys.size");
 			collection_ucds.put("error_min_csa"   , "stat.error;phys.size");
 			collection_ucds.put("error_angle_csa"  , "stat.error;pos.posAng");
@@ -290,8 +290,8 @@ public class DefineType {
 	public static void initCollUnits(){
 		if( collection_units == null ) {
 			collection_units = new  HashMap<String, String>();
-		//	collection_units.put("pos_ra_csa"     , "deg");
-		//	collection_units.put("pos_dec_csa"    , "deg");
+		//	collection_units.put("s_ra"     , "deg");
+		//	collection_units.put("s_dec"    , "deg");
 		//	collection_units.put("error_maj_csa"   , "deg");
 		//	collection_units.put("error_min_csa"    , "deg");
 		//	collection_units.put("error_angle_csa"  , "deg");
@@ -333,8 +333,8 @@ public class DefineType {
 			coll_sdm_utypes.put("x_min_org_csa", "SpectralAxis.Coverage.Bounds.Start");
 			coll_sdm_utypes.put("x_max_org_csa", "SpectralAxis.Coverage.Bounds.Stop");
 			coll_sdm_utypes.put("x_colname_csa", "Dataset.SpectralAxis");
-			coll_sdm_utypes.put("pos_ra_csa", "Spectrum.Target.Pos");
-			coll_sdm_utypes.put("pos_dec_csa", "Spectrum.Target.Pos");
+			coll_sdm_utypes.put("s_ra", "Spectrum.Target.Pos");
+			coll_sdm_utypes.put("s_dec", "Spectrum.Target.Pos");
 			
 			coll_sdm_utypes.put("dataproduct_type","Obs.dataProductType");
 			coll_sdm_utypes.put("calib_level","Obs.calibLevel");

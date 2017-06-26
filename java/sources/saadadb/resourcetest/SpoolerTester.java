@@ -22,7 +22,7 @@ import saadadb.util.Messenger;
  *
  */
 public class SpoolerTester {
-	public static final String q = "SELECT oidsaada, ACDS_ENTRY.pos_ra_csa as coord_pos_ra_csa, ACDS_ENTRY.pos_dec_csa as coord_pos_dec_csa "
+	public static final String q = "SELECT oidsaada, ACDS_ENTRY.s_ra as coord_s_ra, ACDS_ENTRY.s_dec as coord_s_dec "
 		+ " FROM ACDS_ENTRY "
 		+ "  WHERE ("
 		+ " ( (abs( degrees((2*asin( sqrt( (@1-ACDS_ENTRY.pos_x_csa)*(@1-ACDS_ENTRY.pos_x_csa)+(@2-ACDS_ENTRY.pos_y_csa)*(@2-ACDS_ENTRY.pos_y_csa)+(0.5099412522922848-ACDS_ENTRY.pos_z_csa)*(0.5099412522922848-ACDS_ENTRY.pos_z_csa) )/2))))< 0.016666666666666666))) ";

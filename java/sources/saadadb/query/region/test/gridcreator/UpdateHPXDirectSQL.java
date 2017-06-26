@@ -26,14 +26,14 @@ public class UpdateHPXDirectSQL {
 		long tpsdepart=System.currentTimeMillis();
 		Database.init(bddName);
 		SQLQuery sqlq = new SQLQuery();
-		String query = "SELECT pos_ra_csa,pos_dec_csa FROM "+tableName+";";
+		String query = "SELECT s_ra,s_dec FROM "+tableName+";";
 		ResultSet rs = sqlq.run(query);
 
 		SQLTable.beginTransaction();
 		while (rs.next()){
 			int ligne=rs.getRow();
-			double ra=rs.getDouble("pos_ra_csa");
-			double dec=rs.getDouble("pos_dec_csa");
+			double ra=rs.getDouble("s_ra");
+			double dec=rs.getDouble("s_dec");
 			SpatialVector sv = new SpatialVector(ra,dec);
 			HealpixIndex hi8 = new HealpixIndex(256);
 			HealpixIndex hi10 = new HealpixIndex(1024);

@@ -32,7 +32,7 @@ public class MergerTest extends TestCase {
 		SaadaQLConstraint q3;
 		LinkedHashMap<String, SaadaQLConstraint>	builders;
 		try {
-			q1 = new NativeSQLConstraint("isinbox(pos_ra_csa, pos_dec_csa,size,size, 23.462541666666667,30.66016666666666)", new String[]{"pos_ra_csa", "pos_dec_csa"}) ;    
+			q1 = new NativeSQLConstraint("isinbox(s_ra, s_dec,size,size, 23.462541666666667,30.66016666666666)", new String[]{"s_ra", "s_dec"}) ;    
 			q1 = new NativeSQLConstraint("oidsaada = 0", new String[]{"oidsaada"}) ;    
 			q1 = new UCDField("num.unit",  ">" , "2000", "km/s");
 			builders = new LinkedHashMap<String, SaadaQLConstraint>();
@@ -62,7 +62,7 @@ public class MergerTest extends TestCase {
 			
 			System.exit(1);
 
-			q1 = new NativeSQLConstraint("_c1t1c1_sansu > pos_ra_csa", new String[]{"pos_ra_csa", "_c1t1c1_sansu"}) ;    
+			q1 = new NativeSQLConstraint("_c1t1c1_sansu > s_ra", new String[]{"s_ra", "_c1t1c1_sansu"}) ;    
 			q2 = new UCDField("num.unit",  ">" , "2000", "km/s");
 
 			

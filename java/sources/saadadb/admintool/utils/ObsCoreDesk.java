@@ -27,13 +27,13 @@ public class ObsCoreDesk {
 			return getConstant(Category.explain(metaClass.getCategory())) ;
 		} else if( "s_ra".equalsIgnoreCase(fieldName)  ) {
 			if( category == Category.IMAGE || category == Category.SPECTRUM  || category == Category.ENTRY) {
-				return "pos_ra_csa";
+				return "s_ra";
 			} else {
 				return "";
 			}
 		} else if( "s_dec".equalsIgnoreCase(fieldName)  ) {
 			if( category == Category.IMAGE || category == Category.SPECTRUM  || category == Category.ENTRY) {
-				return "pos_dec_csa";
+				return "s_dec";
 			} else {
 				return "";
 			}
@@ -41,38 +41,38 @@ public class ObsCoreDesk {
 			if( category == Category.IMAGE  ) {				
 				return Database.getWrapper().getStrcatOp(
 				  "'POLYGON " + Database.getCooSys() + "' "
-				, " " +  Database.getWrapper().castToString("(pos_ra_csa - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa - size_delta_csa/2)") 
-				, " " +  Database.getWrapper().castToString("(pos_ra_csa - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa + size_delta_csa/2)") 
-				, " " +  Database.getWrapper().castToString("(pos_ra_csa + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa + size_delta_csa/2)") 
-				, " " +  Database.getWrapper().castToString("(pos_ra_csa + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(pos_dec_csa - size_delta_csa/2)")) ;
+				, " " +  Database.getWrapper().castToString("(s_ra - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(s_dec - size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(s_ra - size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(s_dec + size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(s_ra + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(s_dec + size_delta_csa/2)") 
+				, " " +  Database.getWrapper().castToString("(s_ra + size_alpha_csa/2)"), " " + Database.getWrapper().castToString("(s_dec - size_delta_csa/2)")) ;
 			} else if( category == Category.SPECTRUM ||  category == Category.ENTRY ) {
 				return Database.getWrapper().getStrcatOp(
 						  "'POSITION " + Database.getCooSys() + "' "
-						, " " +  Database.getWrapper().castToString("pos_ra_csa"), " " + Database.getWrapper().castToString("pos_dec_csa"));
+						, " " +  Database.getWrapper().castToString("s_ra"), " " + Database.getWrapper().castToString("s_dec"));
 			} else {
 				return "";
 			}
 		} else if( "s_ra_min".equalsIgnoreCase(fieldName)  ) {
 			if(category == Category.IMAGE ) {
-				return "pos_ra_csa - size_alpha_csa/2";
+				return "s_ra - size_alpha_csa/2";
 			} else {
 				return "";
 			}
 		} else if( "s_ra_max".equalsIgnoreCase(fieldName)  ) {
 			if(category == Category.IMAGE ) {
-				return "pos_ra_csa + size_alpha_csa/2";
+				return "s_ra + size_alpha_csa/2";
 			} else {
 				return "";
 			}
 		} else if( "s_dec_min".equalsIgnoreCase(fieldName)  ) {
 			if(category == Category.IMAGE ) {
-				return "pos_dec_csa - size_delta_csa/2";
+				return "s_dec - size_delta_csa/2";
 			} else {
 				return "";
 			}
 		} else if( "s_dec_max".equalsIgnoreCase(fieldName)  ) {
 			if( category == Category.IMAGE ) {
-				return "pos_dec_csa + size_delta_csa/2";
+				return "s_dec + size_delta_csa/2";
 			} else {
 				return "";
 			}

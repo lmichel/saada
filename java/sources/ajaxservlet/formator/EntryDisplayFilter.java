@@ -96,7 +96,7 @@ public class EntryDisplayFilter extends DefaultDisplayFilter {
 				retour.add(DefaultPreviews.getDetailLink(oidsaada, "ClassLevel"));
 			}
 //			else if( "Aladin".equals(s)) {
-//				retour.add("<a href='javascript:void(0);' title='Marks this source on Aladin view' class=aladinsmall onclick='sampView.firePointatSky(" + instance.getPos_ra_csa() + "," + instance.getPos_dec_csa() + ");'></a>");
+//				retour.add("<a href='javascript:void(0);' title='Marks this source on Aladin view' class=aladinsmall onclick='sampView.firePointatSky(" + instance.gets_ra() + "," + instance.gets_dec() + ");'></a>");
 //			}
 			else if( "Table Header".equals(s)) {
 				retour.add(DefaultPreviews.getHeaderLink(instance.getOIdtable()));

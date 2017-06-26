@@ -32,7 +32,7 @@ public class MakeAJS {
 		SQLQuery sq = new SQLQuery("SELECT oidsaada\n"
 				+ " FROM WideFieldData_IMAGE \n"
 				+ " WHERE boxoverlaps(" + si.s_ra + "," + si.s_dec + ", " + si.s_resolution 
-				+ ", WideFieldData_IMAGE.pos_ra_csa, WideFieldData_IMAGE.pos_dec_csa, WideFieldData_IMAGE.size_alpha_csa, WideFieldData_IMAGE.size_delta_csa) limit 1000\n");
+				+ ", WideFieldData_IMAGE.s_ra, WideFieldData_IMAGE.s_dec, WideFieldData_IMAGE.size_alpha_csa, WideFieldData_IMAGE.size_delta_csa) limit 1000\n");
 		ResultSet rs = sq.run();
 		String retour = "";		
 		while( rs.next() ) {

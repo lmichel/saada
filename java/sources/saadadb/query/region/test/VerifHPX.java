@@ -76,8 +76,8 @@ public class VerifHPX {
 
 
 		while (rs.next()){
-			double ra=rs.getDouble("pos_ra_csa");
-			double dec=rs.getDouble("pos_dec_csa");
+			double ra=rs.getDouble("s_ra");
+			double dec=rs.getDouble("s_dec");
 			long hpx8 = rs.getLong("healpix8");
 			long hpx10 = rs.getLong("healpix10");
 			long hpx12 = rs.getLong("healpix_csa");

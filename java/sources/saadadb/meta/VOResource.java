@@ -383,10 +383,10 @@ public class VOResource {
 			 * Make sure that position UCDs are set
 			 */
 			if( ah.getUcd() == null || ah.getUcd().length() == 0 ) {
-				if( ah.getNameattr().equals("pos_ra_csa")){
+				if( ah.getNameattr().equals("s_ra")){
 					ah.setUcd("pos.eq.ra;meta.main");
 				}
-				else if( ah.getNameattr().equals("pos_dec_csa")){
+				else if( ah.getNameattr().equals("s_dec")){
 					ah.setUcd("pos.eq.dec;meta.main");
 				}
 				else if( ah.getNameattr().equals("error_maj_csa")){

@@ -60,14 +60,14 @@ public class HealpixSetter {
 
 		SQLQuery sqlq = new SQLQuery();
 		String nf =  "AND healpix_csa IS NULL";
-		ResultSet rs = sqlq.run("SELECT oidsaada, pos_ra_csa, pos_dec_csa FROM " 
+		ResultSet rs = sqlq.run("SELECT oidsaada, s_ra, s_dec FROM " 
 				+ tableName 
-				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf);
+				+ " WHERE s_ra IS NOT NULL AND s_dec IS NOT NULL " + nf);
 		int cpt = 0;
 		boolean tOpen = false;
 		while (rs.next()){
-			double ra     = rs.getDouble("pos_ra_csa");
-			double dec    = rs.getDouble("pos_dec_csa");
+			double ra     = rs.getDouble("s_ra");
+			double dec    = rs.getDouble("s_dec");
 			long oidsaada = rs.getLong("oidsaada");
 			if( cpt == 0 ) {
 				SQLTable.beginTransaction();
@@ -124,11 +124,11 @@ public class HealpixSetter {
 		String nf =  "AND healpix_csa IS NULL";
 		ResultSet rs = stmt.executeQuery("SELECT * FROM " 
 				+ tableName 
-				+ " WHERE pos_ra_csa IS NOT NULL AND pos_dec_csa IS NOT NULL " + nf + " limit " + COMMIT_FREQUENCY);
+				+ " WHERE s_ra IS NOT NULL AND s_dec IS NOT NULL " + nf + " limit " + COMMIT_FREQUENCY);
 		int cpt = 0;
 		while (rs.next()){
-			double ra     = rs.getDouble("pos_ra_csa");
-			double dec    = rs.getDouble("pos_dec_csa");
+			double ra     = rs.getDouble("s_ra");
+			double dec    = rs.getDouble("s_dec");
 			rs.updateLong("healpix_csa", healpixIndex.vec2pix_nest(new SpatialVector(ra,dec)));
 			rs.updateRow();
 			cpt++;

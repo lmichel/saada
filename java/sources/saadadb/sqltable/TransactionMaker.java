@@ -304,16 +304,16 @@ public class TransactionMaker {
 			SQLTable.beginTransaction();
 			SQLTable.addQueryToTransaction("DROP TRIGGER LocalPSF_secclass");
 			SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE tempo_LocalPSF(oidprimary int8, oidsecondary int8, dec float8, lambda float8, ra float8)");
-			SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE p AS SELECT DataCube_IMAGE.oidsaada as oidsaada, pos_dec_csa, pos_ra_csa, product_url_csa, wl_max FROM DataCube_IMAGE");
+			SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE p AS SELECT DataCube_IMAGE.oidsaada as oidsaada, s_dec, s_ra, product_url_csa, wl_max FROM DataCube_IMAGE");
 			SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE s AS SELECT PSF_IMAGE.oidsaada as oidsaada, product_url_csa FROM PSF_IMAGE");
-			SQLTable.addQueryToTransaction("INSERT INTO tempo_LocalPSF(oidprimary, oidsecondary, dec, lambda, ra) SELECT p.oidsaada, s.oidsaada, p.pos_dec_csa, p.wl_max, p.pos_ra_csa  FROM p CROSS JOIN s WHERE substrfff(p.product_url_csa, 3) = substr(s.product_url_csa, 3)");
+			SQLTable.addQueryToTransaction("INSERT INTO tempo_LocalPSF(oidprimary, oidsecondary, dec, lambda, ra) SELECT p.oidsaada, s.oidsaada, p.s_dec, p.wl_max, p.s_ra  FROM p CROSS JOIN s WHERE substrfff(p.product_url_csa, 3) = substr(s.product_url_csa, 3)");
 			SQLTable.commitTransaction();
 		} catch(Exception e){}
 		SQLTable.beginTransaction();
 		SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE tempo_LocalPSF(oidprimary int8, oidsecondary int8, dec float8, lambda float8, ra float8)");
-		SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE p AS SELECT DataCube_IMAGE.oidsaada as oidsaada, pos_dec_csa, pos_ra_csa, product_url_csa, wl_max FROM DataCube_IMAGE");
+		SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE p AS SELECT DataCube_IMAGE.oidsaada as oidsaada, s_dec, s_ra, product_url_csa, wl_max FROM DataCube_IMAGE");
 		SQLTable.addQueryToTransaction("CREATE TEMPORARY TABLE s AS SELECT PSF_IMAGE.oidsaada as oidsaada, product_url_csa FROM PSF_IMAGE");
-		SQLTable.addQueryToTransaction("INSERT INTO tempo_LocalPSF(oidprimary, oidsecondary, dec, lambda, ra) SELECT p.oidsaada, s.oidsaada, p.pos_dec_csa, p.wl_max, p.pos_ra_csa  FROM p CROSS JOIN s WHERE substr(p.product_url_csa, 3) = substr(s.product_url_csa, 3)");
+		SQLTable.addQueryToTransaction("INSERT INTO tempo_LocalPSF(oidprimary, oidsecondary, dec, lambda, ra) SELECT p.oidsaada, s.oidsaada, p.s_dec, p.wl_max, p.s_ra  FROM p CROSS JOIN s WHERE substr(p.product_url_csa, 3) = substr(s.product_url_csa, 3)");
 		SQLTable.commitTransaction();
 		Database.close();
 
