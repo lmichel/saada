@@ -915,7 +915,6 @@ abstract public class DbmsWrapper {
 	 * @throws FatalException
 	 */
 	public  String getNormalizedSQLType( String type) throws FatalException {
-		System.out.println("@@@@@@@@@@ " + type);
 		if(type.equalsIgnoreCase("clob")){
 			return "varchar";
 		} else if(type.equalsIgnoreCase("text")){
