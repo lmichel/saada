@@ -321,7 +321,7 @@ public class MysqlWrapper extends DbmsWrapper {
 		else if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
 			return "double precision";
 		}
-		else if(typeJava.indexOf("String")>=0){
+		else if(typeJava.indexOf("String")>=0 || typeJava.equalsIgnoreCase("region") || typeJava.equalsIgnoreCase("clob")){
 			return "varchar(255)";
 		}
 		else if(typeJava.indexOf("Date")>=0){

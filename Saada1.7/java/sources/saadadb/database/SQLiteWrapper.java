@@ -641,7 +641,7 @@ public class SQLiteWrapper extends DbmsWrapper {
 		else if(typeJava.equals("class java.lang.Double") || typeJava.equals("double")){
 			return "float8";
 		}
-		else if(typeJava.indexOf("String")>=0){
+		else if(typeJava.indexOf("String")>=0 || typeJava.equalsIgnoreCase("region") || typeJava.equalsIgnoreCase("clob")){
 			return "text";
 		}
 		else if(typeJava.indexOf("Date")>=0){
