@@ -83,7 +83,7 @@ public class PositionList {
 						break;
 					}
 				/*
-				 * The Position Parser can throw an exception either if it cannot resolve the name of if there is an extra field in the inputr String
+				 * The Position Parser can throw an exception either if it cannot resolve the name of if there is an extra field in the input String
 				 * If this field can be parsed as a double, we take it as an error in arcmin 
 				 */
 				} catch(SaadaException e){
