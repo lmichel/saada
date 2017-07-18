@@ -22,6 +22,7 @@ import cds.astro.Astroframe;
 public class PositionList {
 	private ArrayList<Double> ras = new ArrayList<Double>();
 	private ArrayList<Double> decs= new ArrayList<Double>();
+	private ArrayList<Double> errors= new ArrayList<Double>();
 	public static final int MAX_POSTIONS = 100;
 	
 	/**
@@ -33,7 +34,7 @@ public class PositionList {
 	 */
 	public PositionList(String position, Astroframe astroFrame, boolean single) throws QueryException{
 		PositionParser pp = new PositionParser(position, astroFrame);
-		this.addPos(pp.getRa(), pp.getDec());	
+		this.addPos(pp.getRa(), pp.getDec(), SaadaConstant.DOUBLE);	
 	}
 	public PositionList(String[] positions, Astroframe astroFrame) throws QueryException{
 		if( positions.length < 2 ) {
@@ -43,7 +44,7 @@ public class PositionList {
 		}
 		for( int i=0 ; i<(positions.length)/2 ; i++ ) {
 			PositionParser pp = new PositionParser(positions[2*i] + " " + positions[(2*i) + 1], astroFrame);
-			this.addPos(pp.getRa(), pp.getDec());	
+			this.addPos(pp.getRa(), pp.getDec(), SaadaConstant.DOUBLE);	
 		}
 
 	}
@@ -73,20 +74,39 @@ public class PositionList {
 				if( line.startsWith("#") || line.length() == 0 ) {
 					continue;
 				}
-				PositionParser pp = new PositionParser(line, astroFrame);
-				this.addPos(pp.getRa(), pp.getDec());
-				if( this.size() >= MAX_POSTIONS ) {
-					Messenger.printMsg(Messenger.TRACE, "Build position truncated to  " + MAX_POSTIONS);
-					break;
+				PositionParser pp = null;
+				try {
+					pp = new PositionParser(line, astroFrame);
+					this.addPos(pp.getRa(), pp.getDec(), SaadaConstant.DOUBLE);
+					if( this.size() >= MAX_POSTIONS ) {
+						Messenger.printMsg(Messenger.TRACE, "Build position truncated to  " + MAX_POSTIONS);
+						break;
+					}
+				/*
+				 * The Position Parser can throw an exception either if it cannot resolve the name of if there is an extra field in the inputr String
+				 * If this field can be parsed as a double, we take it as an error in arcmin 
+				 */
+				} catch(SaadaException e){
+					int pos = line.lastIndexOf(" ");
+					if( pos > 0 ) {
+						pp = new PositionParser(line.substring(0, pos));
+						double error = Double.parseDouble(line.substring(pos));
+						this.addPos(pp.getRa(), pp.getDec(),error);
+					/*
+					 * Name can likely not be resolved
+					 */
+					} else {
+						QueryException.throwNewException(SaadaException.FILE_FORMAT, e.getContext());						
+					}
 				}
 			}
 			bf.close();
 		} catch(SaadaException e){
 			Messenger.printStackTrace(e);
-			QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line_num);
+			QueryException.throwNewException(SaadaException.FILE_FORMAT, e.getContext());
 		} catch(Exception e){
 			Messenger.printStackTrace(e);
-			QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line_num);
+			QueryException.throwNewException(SaadaException.FILE_FORMAT, "Error at line " + line_num + ": " + e.getMessage());
 		} finally {
 			if( bf != null )
 				try {
@@ -95,9 +115,10 @@ public class PositionList {
 			
 		}
 	}
-	private void addPos(double ra, double dec){
+	private void addPos(double ra, double dec, double error){
 		ras.add(ra);
 		decs.add(dec);
+		errors.add(error);
 	}
 	public int size() {
 		return ras.size();
