@@ -22,7 +22,7 @@ import cds.astro.Astroframe;
 public class PositionList {
 	private ArrayList<Double> ras = new ArrayList<Double>();
 	private ArrayList<Double> decs= new ArrayList<Double>();
-	private ArrayList<Double> errors= new ArrayList<Double>();
+	private ArrayList<Double> radius= new ArrayList<Double>();
 	public static final int MAX_POSTIONS = 100;
 	
 	/**
@@ -118,7 +118,7 @@ public class PositionList {
 	private void addPos(double ra, double dec, double error){
 		ras.add(ra);
 		decs.add(dec);
-		errors.add(error);
+		radius.add(error);
 	}
 	public int size() {
 		return ras.size();
@@ -128,6 +128,9 @@ public class PositionList {
 	}
 	public double getDec(int pos) {
 		return decs.get(pos);
+	}
+	public double getRadius(int pos) {
+		return radius.get(pos);
 	}
 }
 
