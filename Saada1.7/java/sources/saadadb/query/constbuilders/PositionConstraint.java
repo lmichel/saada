@@ -18,6 +18,7 @@ import saadadb.query.region.triangule.Polygone;
 import saadadb.util.Messenger;
 import saadadb.util.PositionList;
 import saadadb.util.RegExp;
+import saadadb.util.SaadaConstant;
 
 /**
  * @author michel
@@ -30,7 +31,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 	private String coordEquinox; // J1950 ou J2000
 	private String coordSystem;  // FK4 ou FK5 ou Glactic ou ICRS
 	private PositionList positions;
-	private double r  ;
+	private double radius  ; // search radius in arcmin
 
 	/**
 	 * @param op
@@ -67,12 +68,12 @@ public class PositionConstraint extends SaadaQLConstraint{
 			String [] coos = this.position.split("[\\s,;]+");
 			this.positions = new PositionList(coos, Coord.getAstroframe(this.coordSystem,this.coordEquinox));
 		} else {
-			this.r = Double.parseDouble(this.size);
+			this.radius = Double.parseDouble(this.size);
 			Pattern pattern = Pattern.compile("\\s*poslist\\s*:\\s*(" + RegExp.FILEPATH + ")");
 			/*
 			 * Size expressed in minute is more conveniant
 			 */
-			this.r /= 60;
+			this.radius /= 60;
 			Matcher m = pattern.matcher(this.position);
 			/*
 			 * List of positions
@@ -135,7 +136,7 @@ public class PositionConstraint extends SaadaQLConstraint{
 			//System.out.println(r.getGnuplotScript());
 		} else {
 			if(this.operator.equals("isInBox")) {
-				r/= 2.0;
+				radius /= 2.0;
 			}
 
 			int s = this.positions.size();
@@ -150,7 +151,14 @@ public class PositionConstraint extends SaadaQLConstraint{
 					QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION,"IsInBox operation not supported");   			
 				}
 				else if(this.operator.equals("isInCircle")){
-					retour += DbmsWrapper.getIsInCircleConstraint(pos, this.positions.getRa(i), this.positions.getDec(i), r);
+					double localRadius = this.positions.getRadius(i);
+					if( localRadius == SaadaConstant.DOUBLE){
+						localRadius = radius;
+					} else {
+						localRadius /= 60;
+
+					}
+					retour += DbmsWrapper.getIsInCircleConstraint(pos, this.positions.getRa(i), this.positions.getDec(i), localRadius);
 				}
 				else {
 					QueryException.throwNewException(SaadaException.SYNTAX_ERROR,"Operator keyWord \""+this.operator+"\" not supported!");   
