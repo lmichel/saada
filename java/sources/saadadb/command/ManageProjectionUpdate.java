@@ -22,7 +22,7 @@ public class ManageProjectionUpdate extends ManageEntity{
 
 	@Override
 	public void usage() {
-		System.out.println("USAGE: java ManageProduct -populate=[oid1,...oidn or query]  SaadaDB_Name");
+		System.out.println("USAGE: java ManageProjectionUpdate -populate=[oid1,...oidn or query]  SaadaDB_Name");
 		System.exit(1);						
 	}
 	

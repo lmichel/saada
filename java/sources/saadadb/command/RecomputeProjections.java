@@ -1,6 +1,5 @@
 package saadadb.command;
 
-import saadadb.collection.ProductManager;
 import saadadb.database.Database;
 
 
