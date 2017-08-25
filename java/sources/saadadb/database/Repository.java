@@ -34,6 +34,8 @@ public class Repository {
 	public static final String CONFIG     	  = "config";
 	public static final String OBSOLETE_CACHE = "reloadcache";
 	public static final String OBSOLETE_VO    = "reloadvo";
+	public static final String MOC_DIR        = "MOC";
+	public static final String MOC_NAME       = "MOC_collection.fits";
 
 	/*
 	public static final String CONFIG     	  = "config";
@@ -95,6 +97,54 @@ public class Repository {
 			VOREPORTS_PATH = null;
 		}
 	}
+	
+	/**
+	 * Return the full path for the data of category in collection
+	 * @param collection
+	 * @param category
+	 * @return
+	 * @throws FatalException
+	 */
+	public static final String getCollectionPath(String collection , int category) throws FatalException {
+		return  Database.getRepository()
+		+ separ + collection
+		+ separ + Category.explain(category) 
+		+ separ;
+	}
+	/**
+	 * Return the name of the MOC directory for the images of the collection.
+	 * The directory availability is not checked
+	 * @param collection
+	 * @return
+	 * @throws FatalException
+	 */
+	public static final String getMocDirectory(String collection) throws FatalException{
+		return getCollectionPath(collection, Category.IMAGE) + MOC_DIR;
+	}
+	
+	/**
+	 * Return the path of the MOC for the images of the collection.
+	 * The file availability is not checked
+	 * @param collection
+	 * @return
+	 * @throws FatalException
+	 */
+	public static final String getMocCollectionMocPath(String collection) throws FatalException{
+		return getCollectionPath(collection, Category.IMAGE) + MOC_DIR + separ + MOC_NAME;
+	}
+	
+	/**
+	 * Remove the whole content of the MOC directory of the images of the collection
+	 * @throws FatalException 
+	 */
+	public static final void sweepMocDir(String collection) throws FatalException {
+		Messenger.printMsg(Messenger.TRACE, "Sweeping MOC dir of collection " + collection);
+		String[] content = (new File(getMocDirectory(collection))).list();
+		for( String c: content) {
+			Files.deleteFile(getVoreportsPath() + File.separator + c);
+		}
+	}
+	
 	/**
 	 * @return
 	 */

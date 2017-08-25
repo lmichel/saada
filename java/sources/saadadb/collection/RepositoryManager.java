@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import saadadb.database.Database;
+import saadadb.database.Repository;
 import saadadb.exceptions.FatalException;
+import saadadb.exceptions.SaadaException;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
 
@@ -54,9 +56,9 @@ public class RepositoryManager {
 		}
 		else {
 			String filepath = Database.getRepository() 
-			+ Database.getSepar() + collection
-			+ Database.getSepar() + Category.explain(category)
-			+ Database.getSepar() ;
+					+ Database.getSepar() + collection
+					+ Database.getSepar() + Category.explain(category)
+					+ Database.getSepar() ;
 			removeFile(filepath + filename);
 			if( category == Category.IMAGE ) {
 				int pos;
@@ -80,9 +82,9 @@ public class RepositoryManager {
 		}
 		else {
 			String path = Database.getRepository() 
-			+ Database.getSepar() + collection
-			+ Database.getSepar() + Category.explain(category)
-			+ Database.getSepar() ;
+					+ Database.getSepar() + collection
+					+ Database.getSepar() + Category.explain(category)
+					+ Database.getSepar() ;
 			String[] fns = ((new File(path)).list());
 			if( fns != null ) {
 				for( String fn: fns ){
@@ -130,15 +132,14 @@ public class RepositoryManager {
 	 * @throws FatalException
 	 * @throws SQLException
 	 */
-	protected static final void emptyClass(String classe) throws Exception {
+	protected static final void emptyClass(String classe) throws SaadaException {
 		try {
 			int category  = Database.getCachemeta().getClass(classe).getCategory();
 			String coll   = Database.getCachemeta().getClass(classe).getCollection_name();
 			if( category == Category.ENTRY ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, "There is never file in the repository mathing the category ENTRY");
-			}
-			else {
+			} else {
 
 				SQLQuery squery = new SQLQuery();
 				ResultSet rs = squery.run("SELECT repositoryname FROM saada_loaded_file WHERE classname = '" + classe + "'", new String[]{"saada_loaded_file"});
@@ -148,8 +149,32 @@ public class RepositoryManager {
 				}
 				squery.close();
 			}		
-		}catch(Exception e) {
-			Messenger.printMsg(Messenger.ERROR, e.getMessage());
+		} catch(Exception e) {
+			FatalException.throwNewException(SaadaException.FILE_ACCESS, e);		
 		}
 	}
+
+	/**
+	 * Check whether the MOC dir for the images of the collection exists and is a directory.
+	 * Create it otherwise
+	 * @param collection
+	 * @throws Exception
+	 */
+	protected static final void checkMocDirectory(String collection) throws SaadaException {
+		try {
+			Repository.getCollectionPath(collection, Category.IMAGE);
+			File newDir = new File( Repository.getMocDirectory(collection));
+			if( newDir.exists()) {
+				if( newDir.isFile() ){
+					newDir.delete();
+					newDir.mkdir();
+				}
+			} else {
+				newDir.mkdir();			
+			}
+		} catch (Exception e) {
+			FatalException.throwNewException(SaadaException.FILE_ACCESS, e);		
+		}
+	}
+
 }
