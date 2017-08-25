@@ -42,7 +42,7 @@
     <TD>3</TD>
     <TD>access_format</TD>
   </TR>
-  <!-- TR>
+  <TR>
     <TD>Access</TD>
     <TD>DataLink</TD>
     <TD>VOX:Image_AccessReference</TD>
@@ -55,7 +55,7 @@
     <TD>URL used to access (download) dataset</TD>
     <TD>3</TD>
 <TD>access_url</TD>
-  </TR -->
+  </TR>
    <TR>
     <TD>Access</TD>
     <TD>Access_TTL</TD>
