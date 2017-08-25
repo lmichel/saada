@@ -507,6 +507,35 @@
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
+	
+	<!--
+		Create a MOC for the images of a collection (can take a lot of time)
+		
+		USAGE ant moc.create  -Dcollection=collection  
+	-->
+	<target name="moc.create">
+    	<java fork="true"  classname="saadadb.command.ManageMoc" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-create=${collection}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+
+	<!--
+		Remove the MOC for the images of a collection (can take a lot of time)
+		
+		USAGE ant moc.remove  -Dcollection=collection  
+	-->
+	<target name="moc.remove">
+    	<java fork="true"  classname="saadadb.command.ManageMoc" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-remove=${collection}"/>
+	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		VO business
 -->	
