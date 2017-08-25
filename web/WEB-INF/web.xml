@@ -134,6 +134,18 @@
     <servlet-name>GetVignette</servlet-name>
     <url-pattern>/getvignette</url-pattern>
   </servlet-mapping>
+  
+   <servlet>
+    <description></description>
+    <display-name>Moc</display-name>
+    <servlet-name>Moc</servlet-name>
+    <servlet-class>ajaxservlet.Moc</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Moc</servlet-name>
+    <url-pattern>/moc</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <description></description>
     <display-name>Download</display-name>
