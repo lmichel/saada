@@ -69,7 +69,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/Moc.jar">
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/Moc.jar" sourcepath="/MOC/MocSrc.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -120,11 +120,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/icons.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/healpix.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -209,8 +204,21 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/commons-io-2.4.jar"/>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/uws4.1.jar"/>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/savot.jar"/>
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/commons-io-2.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/uws4.1.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/savot.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/healpix.essentials.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
