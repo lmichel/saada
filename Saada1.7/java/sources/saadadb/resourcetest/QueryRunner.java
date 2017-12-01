@@ -9,7 +9,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import saadadb.api.SaadaLink;
+import saadadb.collection.EntrySaada;
 import saadadb.collection.SaadaInstance;
+import saadadb.collection.SaadaOID;
 import saadadb.command.ArgsParser;
 import saadadb.database.Database;
 import saadadb.meta.AttributeHandler;
@@ -30,12 +32,6 @@ public class QueryRunner {
 			ap = new ArgsParser(args);
 			Database.init(ap.getDBName());
 			String query = ap.getQuery();
-			Connection large_connection = DriverManager.getConnection(Database.getConnector().getJdbc_url(),Database.getConnector().getJdbc_reader(), Database.getConnector().getJdbc_reader_password());
-			Statement _stmts =large_connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
-//			 _stmts.executeUpdate("pragma cache_size=4000"); 
-//			 _stmts.executeUpdate("pragma page_size=4096"); 
-			 large_connection.close();
-
 			Messenger.printMsg(Messenger.TRACE, "Processing query " + query);
 			Query q = new Query();
 //			SaadaQLResultSet srs = q.runQuery(query);
@@ -56,11 +52,12 @@ public class QueryRunner {
 			while( ors.next()) {
 				//System.out.println(ors.getOId());
 				cpt++;
-				SaadaInstance si = Database.getCache().getObject(ors.getOId());		
-				System.out.println(si.getNameSaada());
+				EntrySaada si = (EntrySaada) Database.getCache().getObject(ors.getOId());		
+				System.out.println(si.getNameSaada() + " " + si.pos_ra_csa + " " + si.pos_dec_csa);
 				for(AttributeHandler ah: constrained_attr) {
-					System.out.println(" ATT " + ah.getNameorg() + " " + si.getFieldValue(ah.getNameattr()));
+					System.out.print (ah.getNameorg() + "=" + si.getFieldValue(ah.getNameattr()) + " ");
 				}
+				System.out.println(" " );
 				for( Entry<String, CounterpartSelector> e: q.getMatchingCounterpartQueries().entrySet()) {
 					String rel_name = e.getKey();
 					CounterpartSelector cp_val = e.getValue();
@@ -69,7 +66,7 @@ public class QueryRunner {
 					for( SaadaLink sl:mcp ) {
 						long cpoid = sl.getEndindOID();
 						SaadaInstance cp = Database.getCache().getObject(cpoid);
-						System.out.print("      Name <" + cp.getFieldValue("namesaada") + "> " + cp.getFieldValueByUCD("meta.record", false));
+						System.out.print("      Name <" + cp.getFieldValue("namesaada") + "> ");
 						for( String q2: cp_val.getQualif_query().keySet()) {
 							System.out.print(" " + q2 + "=" + sl.getQualifierValue(q2) );
 						}

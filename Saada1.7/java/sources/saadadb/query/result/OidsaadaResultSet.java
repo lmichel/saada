@@ -85,6 +85,22 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 		if( patternKeySet != null && whereDetector.matcher(this.sqlQuery.getQuery()).find() ) {
 			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "Execute SQL query: " + this.sqlQuery.getQuery());
 			ResultSet rs = sqlQuery.run();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			/*
+			 * In theory, the oidsaada should be in the first column, in in some case it is not
+			 * e.g. "Select ENTRY From * In Enhanced WhereAttributeSaada {    namesaada = '3XMM J002636.4+103513'} Order By oidsaada desc Limit 100"
+			 * To prevent a mis-interpretation, we check the real position of that column
+			 */
+			int numCol = -1;
+			for( int i=1 ; i<=rsmd.getColumnCount() ; i++) {
+				String cn = rsmd.getColumnName(i);
+				if( cn.equals("oidsaada") || cn.endsWith(".oidsaada")  || cn.equalsIgnoreCase("orderby_oidsaada")|| 
+					cn.equalsIgnoreCase("orderby") || cn.equalsIgnoreCase("native_oidsaada")) {
+					numCol = i;
+					break;
+				}
+			}
+
 			initResultmap(rs);
 			/*
 			 * Cross match oids of both result set
@@ -98,9 +114,8 @@ public class OidsaadaResultSet extends SaadaInstanceResultSet{
 			Set<Long> hs = patternKeySet.getSELECTEDKeySet();
 			patternKeySet = null;
 			long start = System.currentTimeMillis();
-
 			while( rs.next() ) {
-				long oid = rs.getLong(1);
+				long oid = rs.getLong(numCol);
 				//if( patternKeySet.hasDichotoKey(oid, true) != -1 ) {
 				if( hs.contains(oid)  ) {
 					oids.add(oid);

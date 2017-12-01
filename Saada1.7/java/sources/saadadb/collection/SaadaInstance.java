@@ -372,6 +372,8 @@ public abstract class SaadaInstance implements DMInterface {
 	 */
 	public SaadaRelation getStartingRelation(String rel_name) throws FatalException {
 		String names[] = this.getStartingRelationNames();
+		System.out.println(names);
+
 		for( int i=0 ; i<names.length ; i++ ) {
 			if( names[i].toString().equals(rel_name) ) {
 				return new SaadaRelation(rel_name);
