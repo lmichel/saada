@@ -148,6 +148,7 @@ public final class ArgsParser implements Serializable{
 		allowedArgs.add("-rename");
 		allowedArgs.add("-newname");
 		allowedArgs.add("-nolog") ;
+		allowedArgs.add("-logfile") ;
 		allowedArgs.add("-nop") ;
 		allowedArgs.add("-noindex") ;
 		allowedArgs.add("-novignette") ;
