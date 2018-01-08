@@ -195,6 +195,7 @@ public final class ArgsParser implements Serializable{
 			this.setSilentMode();
 			this.setDebugMode();
 			this.setContinueMode();
+			this.setLogFile();
 			Messenger.initWhisperingMode(this);
 			if( msg.length() > 0 ) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The following parametres are not understood: " + msg);	
@@ -245,6 +246,7 @@ public final class ArgsParser implements Serializable{
 			this.setSilentMode();
 			this.setDebugMode();
 			this.setContinueMode();
+			this.setLogFile();
 			if( msg.length() > 0 ) {
 				FatalException.throwNewException(SaadaException.WRONG_PARAMETER, "The following parametres are not understood: " + msg);	
 			}
@@ -1470,6 +1472,20 @@ public final class ArgsParser implements Serializable{
 				else {
 					Messenger.switchDebugOn();
 				}
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * redirect all log messages to a file
+	 */
+	public void setLogFile() {
+		Messenger.debug_mode = false;		
+		for( int i=0 ; i<args.size() ; i++ ) {
+			if( args.get(i) .startsWith("-logfile")) {
+				String param = getArgsValue(args.get(i));
+				Messenger.openLog(param);
 				return;
 			}
 		}
