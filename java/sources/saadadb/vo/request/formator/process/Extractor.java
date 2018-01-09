@@ -51,7 +51,6 @@ public class Extractor {
 		if (semiIndex != -1) {
 			// this is the query for the expressionColumnsetter
 			query = untreatedExp.substring(0, semiIndex);
-			System.out.println("expression for columnSetter:: " + query);
 			untreatedExp = untreatedExp.replace(query + ";", "");
 			extractParameters(untreatedExp);
 			computeParams();
@@ -105,7 +104,6 @@ public class Extractor {
 				}
 				ps = tmp.split("=");
 				if (ps.length == 2 && !ps[0].trim().isEmpty() && !ps[1].trim().isEmpty()) {
-					System.out.println("param: " + ps[0] + "/" + ps[1]);
 					params.put(ps[0], ps[1]);
 				} else {
 					SaadaException.throwNewException(SaadaException.WRONG_PARAMETER, "Parameter '" + ps[0]
@@ -139,7 +137,7 @@ public class Extractor {
 				} else if (val.equalsIgnoreCase("false")) {
 					this.arithmetic = false;
 				}
-				System.out.println("param arithmetic found, value = " + arithmetic);
+				//System.out.println("param arithmetic found, value = " + arithmetic);
 				break;
 			case "":
 				break;
