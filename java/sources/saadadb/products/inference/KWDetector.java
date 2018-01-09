@@ -134,7 +134,7 @@ public abstract class KWDetector {
 	protected ColumnExpressionSetter searchByUcd(String fieldName, String ucd_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
-			msg =  "Search by UCD /" + ucd_regexp + "/";
+			msg =  "Search  " + fieldName + " by UCD /" + ucd_regexp + "/";
 
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd_regexp)){
@@ -166,7 +166,7 @@ public abstract class KWDetector {
 		AttributeHandler ah2 =  null;
 		List<ColumnExpressionSetter> retour = new ArrayList<ColumnExpressionSetter>();
 		if( Messenger.debug_mode ) 
-			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
+			msg = "Search " + fieldName1 + " and " + fieldName2 + " by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd1_regexp) ){
 				ah1 = ah;
@@ -204,7 +204,7 @@ public abstract class KWDetector {
 	protected ColumnExpressionSetter searchByName(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
-			msg = "Search by NAME /" + colname_regexp + "/";
+			msg = "Search " + fieldName + " by NAME /" + colname_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
@@ -233,7 +233,7 @@ public abstract class KWDetector {
 		AttributeHandler ah2 =  null;
 		List<ColumnExpressionSetter> retour = new ArrayList<ColumnExpressionSetter>();
 		if( Messenger.debug_mode ) 
-			msg = "Search by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
+			msg = "Search  " + fieldName1 + " and " + fieldName2 + " by NAMES /" + colname1_regexp + "/ followed by /" + colname2_regexp + "/";
 		for( AttributeHandler ah: this.tableAttributeHandler.values()) {
 			if( ah.isNameMatch(colname1_regexp)){
 				ah1 = ah;
@@ -269,7 +269,7 @@ public abstract class KWDetector {
 	protected ColumnExpressionSetter searchColumnsByUcd(String fieldName, String ucd_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
-			msg =  "Search column by UCD /" + ucd_regexp + "/";
+			msg =  "Search column " + fieldName + " by UCD /" + ucd_regexp + "/";
 
 		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd_regexp)){
@@ -301,7 +301,7 @@ public abstract class KWDetector {
 		AttributeHandler ah2 =  null;
 		List<ColumnExpressionSetter> retour = new ArrayList<ColumnExpressionSetter>();
 		if( Messenger.debug_mode ) 
-			msg = "Search by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
+			msg = "Search  " + fieldName1 +  " and " + fieldName2 + " by UCDs /" + ucd1_regexp + "/ followed by /" + ucd2_regexp + "/";
 		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 			if( ah.getUcd().matches(ucd1_regexp) ){
 				ah1 = ah;
@@ -338,7 +338,7 @@ public abstract class KWDetector {
 	protected ColumnExpressionSetter searchColumnsByName(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
-			msg = "Search column by NAME /" + colname_regexp + "/";
+			msg = "Search column " + fieldName + " by NAME /" + colname_regexp + "/";
 		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 			if( ah.getNameorg().matches(colname_regexp) || ah.getNameattr().matches(colname_regexp)){
 				if( Messenger.debug_mode ) 
@@ -364,7 +364,7 @@ public abstract class KWDetector {
 	protected ColumnExpressionSetter searchColumnsByDescription(String fieldName, String colname_regexp) throws Exception {
 		String msg = "";
 		if( Messenger.debug_mode ) 
-			msg = "Search column by DESCRIPTION /" + colname_regexp + "/";
+			msg = "Search column " + fieldName + " by DESCRIPTION /" + colname_regexp + "/";
 		for( AttributeHandler ah: this.entryAttributeHandler.values()) {
 			if( ah.getComment().matches(colname_regexp) ){
 				if( Messenger.debug_mode ) 
