@@ -25,6 +25,7 @@ import saadadb.sqltable.SQLQuery;
 import saadadb.util.ChangeKey;
 import saadadb.util.Messenger;
 import cds.savot.model.ParamSet;
+import cds.savot.model.SavotField;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotResource;
 import cds.savot.model.SavotTD;
@@ -186,6 +187,22 @@ public class VOResource {
 		}
 		return null;
 	}
+	/**
+	 * Add the obscore fields to the current model
+	 */
+	public void addObscoreFields() {
+		Set<UTypeHandler> uths = new LinkedHashSet<UTypeHandler>();
+		/*
+		 * Add obscore fields 
+		 */
+		Map<String, AttributeHandler> mah = Database.getCachemeta().getObscoreAttributeHandlers();
+		for( Entry<String, AttributeHandler> entry: mah.entrySet()){
+			AttributeHandler ah = entry.getValue();
+			uths.add(new UTypeHandler(ah, ah.getNameattr()));
+		}
+		this.groups.put("Obscore", uths);
+	}
+	
 	/**
 	 * @param name
 	 * @return
