@@ -67,8 +67,16 @@ public class UTypeHandler {
 		this.unit      = ah.getUnit();
 		this.comment   = ah.getComment();
 		this.requ_level  = MANDATORY;
-		//TODO UtypeHandler(AttributeHandler) -> this.expression=""??
+		// By default we assumes that the attribute handler refer to a database field
 		this.expression="";
+	}
+	/**
+	 * @param std
+	 * @throws Exception
+	 */
+	public UTypeHandler(AttributeHandler ah, String expression) {
+		this(ah);
+		this.expression=expression;
 	}
 
 	/**
