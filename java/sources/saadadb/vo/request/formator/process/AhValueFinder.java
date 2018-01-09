@@ -206,8 +206,6 @@ public class AhValueFinder {
 		 * No expression or param has been given
 		 */
 		else {
-		//	System.out.println("No expresion given");
-
 			// Use currentUh's utype and ucd to find
 			// a match in utypeMap or ucdMap
 			String searchResult = findStaticMatch(currentUh.getUtype(), currentUh.getUcd());
