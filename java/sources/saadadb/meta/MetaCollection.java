@@ -249,6 +249,23 @@ public class MetaCollection extends MetaObject {
 	}
 
 	/**
+	 * returns a map of the AHs matching the Obscore model
+	 */
+	public static  final Map<String,AttributeHandler> getObscoreAttributeHandlers(){
+		@SuppressWarnings("unchecked")
+		HashMap<String, AttributeHandler> retour = (HashMap<String, AttributeHandler>)(MetaCollection.getAttribute_handlers_flatfile().clone());
+		retour.remove("oidsaada");
+		retour.remove("contentsignature");
+		retour.remove("access_right");
+		retour.remove("healpix_csa");
+		retour.remove("pos_x_csa");
+		retour.remove("pos_y_csa");
+		retour.remove("pos_z_csa");
+		retour.remove("date_load");
+		retour.remove("repository_location");
+		return retour;
+	}
+	/**
 	 * return AttributeHandlers with UCDs
 	 * @param category : serached category
 	 * @param queriable_only : returns only queriables AH if true

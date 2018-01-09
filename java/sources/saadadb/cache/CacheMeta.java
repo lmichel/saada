@@ -608,6 +608,12 @@ public class CacheMeta {
 		return MetaCollection.getAttribute_handlers(category);
 	}
 	/**
+	 * returns a map of the AHs matching the Obscore model
+	 */
+	public  final Map<String,AttributeHandler>  getObscoreAttributeHandlers(){
+		return MetaCollection.getObscoreAttributeHandlers();
+	}
+    /**
 	 * @param name
 	 * @return
 	 * @throws SaadaException
