@@ -1,15 +1,15 @@
 package saadadb.vo.request.formator.votable;
 
-import saadadb.collection.obscoremin.ImageSaada;
-import saadadb.database.Database;
-import saadadb.exceptions.QueryException;
-import saadadb.meta.AttributeHandler;
-import saadadb.query.result.SaadaInstanceResultSet;
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotOption;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotValues;
+import saadadb.collection.obscoremin.ImageSaada;
+import saadadb.database.Database;
+import saadadb.exceptions.QueryException;
+import saadadb.meta.AttributeHandler;
+import saadadb.query.result.SaadaInstanceResultSet;
 
 /**
  * @author laurent
@@ -19,7 +19,8 @@ public class SiapVotableFormator extends VotableFormator {
 
 
 	public SiapVotableFormator() throws QueryException {
-		setDataModel("SIA");
+		this.setDataModel("SIA");
+		this.dataModel.addObscoreFields();
 		limit = 100;
 		protocolN = "SIAP";
 		protocolV="1.0";
@@ -39,206 +40,6 @@ public class SiapVotableFormator extends VotableFormator {
 		this.saadaInstanceResultSet = saadaInstanceResultSet;
 	}
 
-
-	
-
-	/* (non-Javadoc)
-	 * @see saadadb.vo.request.formator.votable.VOTableFormator#writeDMData(saadadb.collection.SaadaInstance)
-	 */
-//	@Override
-	/*protected void writeRowData(SaadaInstance si) throws Exception {
-		ImageSaada obj = (ImageSaada)( si) ;
-		String download_url;
-		String url;
-		String targetfile;
-		if( this.getProtocolParam("mode").equalsIgnoreCase("cutout") ) {
-			ProductMapping cdh = obj.getLoaderConfig();
-			targetfile = "tile_" + ((new Date()).getTime()) + ".fits";
-			String targetpath = Repository.getVoreportsPath() + Database.getSepar() + targetfile ;
-			ImageUtils.buildTileFile(obj.s_ra, obj.s_dec
-					, Double.parseDouble(this.getProtocolParam("size_ra"))
-					, Double.parseDouble(this.getProtocolParam("size_dec"))
-					, obj.getRepository_location(), cdh, targetpath);
-			download_url = Database.getUrl_root() + "/getproduct?report=" + targetfile;
-			url = Database.getUrl_root() + "/getproduct?reports=" + targetfile;
-		} else {
-			url = obj.getURL(true);
-			download_url = obj.getDownloadURL(true);			
-		}
-		for( Object f: dataModelFieldSet.getItems()) {
-			String val="";
-			boolean cdata;
-			SavotField sf = (SavotField)f;
-			String ucd = sf.getUcd();
-			String utype = sf.getUtype();
-			String id = sf.getId();
-			System.out.println(sf.getName()+" UCD: "+sf.getUcd());
-			cdata = false;
-			if( ucd.equalsIgnoreCase("Target.Pos")) {
-				val = obj.s_ra + " " + obj.s_dec;	
-			}
-			else if( utype.equalsIgnoreCase("Char.SpatialAxis.Coverage.Location.Value")) {
-				val = obj.s_ra + " " + obj.s_dec;
-			}
-			else if( utype.equalsIgnoreCase("Access.Reference") || ucd.equalsIgnoreCase("VOX:Image_AccessReference") ) {
-				String format = this.getProtocolParam("format");
-				cdata = true;
-				if( "text/html".equals(format)) {
-					val = url;
-				} else {
-					val = download_url;
-				}
-			}
-			else if( ucd.equalsIgnoreCase("VOX:Image_FileSize") ) {
-				val = String.valueOf(((new File(obj.getRepository_location())).length()));					
-			}
-			else if( ucd.equalsIgnoreCase("VOX:STC_CoordRefFrame") ) {
-				try {
-					val = obj.getFieldString("_radecsys");
-				} catch(Exception e) {
-					val = "";
-				}
-			}
-			else if( utype.equalsIgnoreCase("Access.Format") || ucd.equalsIgnoreCase("VOX:Image_Format") ) {
-				cdata = true;
-				val = obj.getMimeType();
-			}
-			else if( utype.equalsIgnoreCase("DataID.Title") || ucd.equalsIgnoreCase("VOX:Image_Title") ) {
-				cdata = true;
-				val = obj.obs_id;
-			}
-			else if( id.equalsIgnoreCase("LinktoPixels")) {
-				cdata = true;
-				val = obj.getURL(true);
-			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_RA_MAIN") ){
-				val = Double.toString(obj.s_ra);
-			}
-			else if( ucd.equalsIgnoreCase("POS_EQ_DEC_MAIN") ){
-				val = Double.toString(obj.s_dec);
-			}
-			else if( ucd.equalsIgnoreCase("VOX:Image_Naxes") ){
-				val = "2";
-			}
-			else if( ucd.equalsIgnoreCase("VOX:Image_Naxis") ){
-				val = obj.naxis1 + " " + obj.naxis2;
-			}
-			else if( ucd.equalsIgnoreCase("VOX:Image_Scale") ){
-				val = (obj.s_fov / obj.naxis1) + " "
-				+ (obj.s_fov / obj.naxis2);
-			}
-			else if( ucd.equalsIgnoreCase("VOX:WCS_CoordProjection") ) {
-				val = obj.ctype1_csa;
-				// RA---TAN -> TAN e.g.
-				if( val != null && val.length() > 3 ) {
-					val = val.substring(val.length() - 3);
-				}
-			}
-			else if( ucd.equalsIgnoreCase("VOX:WCS_CoordRefValue") ) {
-				val = obj.crval1_csa + " " + obj.crval2_csa;
-			}
-			else if( ucd.equalsIgnoreCase("VOX:WCS_CDMatrix") ) {
-				val = obj.cd1_1_csa + " " + obj.cd1_2_csa + " " + obj.cd2_1_csa + " " + obj.cd2_2_csa;
-			}
-			else if(ucd.equalsIgnoreCase("INST_ID")){
-				cdata =true;
-				val= obj.instrument_name;
-			}
-			else if(ucd.equalsIgnoreCase("VOX:STC_CoordEquinox")){
-				try {
-					val = String.valueOf(Database.getAstroframe().getEpoch());
-				} catch(Exception e) {
-					val = "";
-				}	
-			}
-			else if(ucd.equalsIgnoreCase("VOX:WCS_CoordRefPixel")){
-				val = obj.crpix1_csa + " "+obj.crpix2_csa;
-			}
-			else if(ucd.equalsIgnoreCase("VOX:BandPass_RefValue")){
-				val = String.val	ueOf((obj.em_min+obj.em_max)/2);
-			}
-			else if(ucd.equalsIgnoreCase("VOX:BandPass_HiLimit")){
-				val = String.valueOf(obj.em_max);
-			}
-			else if(ucd.equalsIgnoreCase("VOX:BandPass_LoLimit")){
-				val = String.valueOf(obj.em_min);
-			}
-			else if(ucd.equalsIgnoreCase("VOX:Image_AccessReference")){
-				cdata=true;
-				val = obj.access_url;
-			}
-			else if(ucd.equalsIgnoreCase("VOX:Image_AccessRefTTL")){
-				val = "86400";
-			}
-			else if(ucd.equalsIgnoreCase("VOX:Image_FileSize")){
-				val = String.valueOf(obj.access_estsize);
-			}
-			//else if(ucd.equalsIgnoreCase("VOX:BandPass_ID")){
-				//TODO ADD BandPass_ID
-			//}
-			//else if (ucd.equalsIgnoreCase("VOX:BandPass_Unit")){
-				//TODO Add BandPass_Unit
-			//}
-			else if (ucd.equalsIgnoreCase("VOX:ImageMJDateObs")){
-				val =String.valueOf(obj.t_min);
-			}
-			else if (ucd.equalsIgnoreCase("VOX:Image_PixFlags")){
-				val = "C";
-			}
-			else {
-				//Tries to find a match in its extended attributes
-				val = lookForAMatch(obj, sf);
-			}
-			
-			//Add CDATA encapsulation if needed
-			if( cdata ) {
-				addCDataTD(val);
-			} else {
-				addTD(val);
-			}
-		
-		}
-	}
-		*/	
-			/*//Old
-			 * Utypes have an higher priority than UCDs: there are checked first
-			 */
-		/*	else if( utype != null && utype.length() > 0 ){
-				AttributeHandler ah  = obj.getFieldByUtype(sf.getUtype(), false);
-				if( ah == null ) {
-					val = "";					
-				} else {
-					Object v = obj.getFieldValue(ah.getNameattr());
-					if( ah.getType().equals("String")) {
-						cdata = true;
-						val = v.toString();
-					} else {
-						val = v.toString();
-					}
-				}	
-			} else if( ucd != null && ucd.length() > 0 ){
-				AttributeHandler ah  = obj.getFieldByUCD(sf.getUcd(), false);
-				if( ah == null ) {
-					val = "";					
-				} else {
-					Object v = obj.getFieldValue(ah.getNameattr());
-					if( ah.getType().equals("String")) {
-						cdata = true;
-						val = v.toString();
-					} else {
-						val = v.toString();
-					}
-				}
-			}	
-			if( cdata ) {
-				addCDataTD(val);
-			} else {
-				addTD(val);
-			}
-		}
-	}
-*/
-	
 	
 	@Override
 	protected AttributeHandler getAttr_extended(String name) throws Exception{
