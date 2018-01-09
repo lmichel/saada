@@ -2,6 +2,7 @@ package saadadb.vo.request.formator.votable;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import saadadb.api.SaadaLink;
@@ -302,6 +303,7 @@ public abstract class VotableFormator extends QueryResultFormator {
 				}
 			}
 		}
+				
 		writer.writeField(dataModelFieldSet);
 		/*
 		 * Arrange fields and DM params in groups
@@ -457,13 +459,11 @@ public abstract class VotableFormator extends QueryResultFormator {
 		for (Object f : dataModelFieldSet.getItems()) {
 			SavotField sf = (SavotField) f;
 			uhd = this.dataModel.getUTypeHandler(sf.getName());
-
 			String val = "";
 			boolean cdata = false;
 			valueFinder.setUtypeHandler(uhd);
 			aHResult = valueFinder.compute();
 			val = aHResult.getValue();
-			// Tests if there is a need for CDATA encapsulation
 			//Check if the units are matching
 			checkIfUnitsMatch(uhd, aHResult);
 			//If unitOk = false, should proceed to a conversion here
