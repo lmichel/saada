@@ -9,6 +9,7 @@ import java.util.Map;
 
 import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SaadaInstance;
+import saadadb.command.ArgsParser;
 import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.Repository;
@@ -111,23 +112,23 @@ public class Table_Saada_Metacoll extends SQLTable {
 		attributeHandler.setLevel('E');		
 		SQLTable.addQueryToTransaction(
 				"INSERT INTO " + meta_table_name + " VALUES ("
-				+ max_key + ", '"
-				+ attributeHandler.getLevel() + "', "
-				+ "null , '"
-				+ str_cat + "UserColl" + "', '"
-				+ attributeHandler.getNameattr() + "', '"
-				+ attributeHandler.getType() + "', '" 
-				+ attributeHandler.getNameorg() + "', '"
-				+ attributeHandler.getUcd() + "', '"
-				+ attributeHandler.getUtype() + "', '"
-				+ attributeHandler.getVo_dm() + "', "
-				+ "null,"
-				+ Database.getWrapper().getBooleanAsString(true) + ", '"
-				+ attributeHandler.getUnit()+ "', '"
-				+  Database.getWrapper().getEscapeQuote(attributeHandler.getComment()) + " ', '"
-				+ "Generic', "
-				+ "-1,"
-				+ "null)");
+						+ max_key + ", '"
+						+ attributeHandler.getLevel() + "', "
+						+ "null , '"
+						+ str_cat + "UserColl" + "', '"
+						+ attributeHandler.getNameattr() + "', '"
+						+ attributeHandler.getType() + "', '" 
+						+ attributeHandler.getNameorg() + "', '"
+						+ attributeHandler.getUcd() + "', '"
+						+ attributeHandler.getUtype() + "', '"
+						+ attributeHandler.getVo_dm() + "', "
+						+ "null,"
+						+ Database.getWrapper().getBooleanAsString(true) + ", '"
+						+ attributeHandler.getUnit()+ "', '"
+						+  Database.getWrapper().getEscapeQuote(attributeHandler.getComment()) + " ', '"
+						+ "Generic', "
+						+ "-1,"
+						+ "null)");
 	}
 
 	/**
@@ -299,19 +300,28 @@ public class Table_Saada_Metacoll extends SQLTable {
 				 */
 			} else {
 				ah = new AttributeHandler();
-				ah.setNameorg(DefineType.getCollection_name_org().get(fname));
-				if( ah.getNameorg().length() == 0 ) {
-					ah.setNameorg(fname);
+				String norg = DefineType.getCollection_name_org().get(fname);
+				String desc = "Attribute managed by Saada";
+				/*
+				 * The description of the Obcore columns have take as name org in DefineType.
+				 * The test below detect this case and then keep name_org = name_attr and take name_org as description 
+				 */
+				if( norg == null || norg.length() == 0 ){
+					norg = fname;
+				} else if( norg.split("\\s+").length > 2){
+					desc = norg;
+					norg = fname;
 				}
+				ah.setNameorg(norg);
 				ah.setNameattr(fname);
 				ah.setType(ftype);
 				ah.setQueriable(true);
 				ah.setCollname("Generic");
 				ah.setUcd(DefineType.getCollection_ucds().get(fname));
 				ah.setUnit(DefineType.getCollection_units().get(fname));
-				ah.setComment("Attribute managed by Saada");
+				ah.setComment(desc);
 				ah.setUtype(DefineType.getColl_sdm_utypes().get(fname));
-				ah.setLevel('N');						
+				ah.setLevel('N');	
 			} 
 			/*
 			 * Add specific utype for spectra, the only category supporting a model yet.
@@ -323,26 +333,26 @@ public class Table_Saada_Metacoll extends SQLTable {
 			}
 
 			String dumpline = max_key + "\t"
-			+ ah.getLevel() + "\t"
-			+ Database.getWrapper().getAsciiNull() + "\t"
-			///						+ "\\N\t" 
-			+ str_cat + "UserColl" + "\t"
-			+ ah.getNameattr() + "\t"
-			+ ah.getType() + "\t" 
-			+ ah.getNameorg() + "\t"
-			+ ah.getUcd() + "\t"
-			+ ah.getUtype() + "\t"
-			+ ah.getVo_dm() + "\t"
-			+ Database.getWrapper().getAsciiNull() + "\t"
-			///						+ "\\N\t"
-			+ Database.getWrapper().getBooleanAsString(true) + "\t"
-			+ ah.getUnit()+ "\t"
-			+ ah.getComment() + " \t"
-			//						+ coll_name + "\t"
-			//						+ num_coll + "\t"
-			+ "Generic\t"
-			+ "-1\t"
-			+Database.getWrapper().getAsciiNull();
+					+ ah.getLevel() + "\t"
+					+ Database.getWrapper().getAsciiNull() + "\t"
+					///						+ "\\N\t" 
+					+ str_cat + "UserColl" + "\t"
+					+ ah.getNameattr() + "\t"
+					+ ah.getType() + "\t" 
+					+ ah.getNameorg() + "\t"
+					+ ah.getUcd() + "\t"
+					+ ah.getUtype() + "\t"
+					+ ah.getVo_dm() + "\t"
+					+ Database.getWrapper().getAsciiNull() + "\t"
+					///						+ "\\N\t"
+					+ Database.getWrapper().getBooleanAsString(true) + "\t"
+					+ ah.getUnit()+ "\t"
+					+ ah.getComment() + " \t"
+					//						+ coll_name + "\t"
+					//						+ num_coll + "\t"
+					+ "Generic\t"
+					+ "-1\t"
+					+Database.getWrapper().getAsciiNull();
 			///						+ "\\N";
 			bustmpfile.write(dumpline + "\n");
 			max_key++;
@@ -372,28 +382,39 @@ public class Table_Saada_Metacoll extends SQLTable {
 		}
 	}
 
+	/**
+	  Update the description of the column at collection level.
+	  Should be called once if all column description are "Attribute managed by Saada"
+	  This command can be called from ant
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args ) throws Exception{
-//		Database.init("Obscore");
-//		SQLTable.beginTransaction();
-//		buildCollectionDump(Category.TABLE, "/dev/null");
+		//		Database.init("Obscore");
+		//		SQLTable.beginTransaction();
+		//		buildCollectionDump(Category.TABLE, "/dev/null");
 		Messenger.debug_mode =true;
-		Database.init("saadaObscore");
-		Database.setAdminMode(null);
-		SQLTable.beginTransaction();
-		//dropTable("VizierData_IMAGE");
-		dropTable("VizierData_SPECTRUM");
-		SQLTable.commitTransaction();
-		Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		SQLTable.beginTransaction();
-		
-		//SQLTable.addQueryToTransaction("DELETE FROM saada_metacoll_image");
-		SQLTable.addQueryToTransaction("DELETE FROM saada_metacoll_spectrum");
-		SQLTable.commitTransaction();
-		Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		
-		SQLTable.beginTransaction();
-		addCollectionForCategory("VizierData", Category.SPECTRUM);
-		SQLTable.commitTransaction();
+		ArgsParser ap = new ArgsParser(args);
+		Database.init(ap.getDBName());
+
+		for( int catnum : new int[]{Category.FLATFILE, Category.MISC, Category.TABLE, Category.ENTRY, Category.SPECTRUM, Category.IMAGE}){
+			String cat = Category.explain(catnum);
+			Messenger.printMsg(Messenger.TRACE, "Update meta collection for " + cat);
+			Database.setAdminMode(null);
+			SQLTable.beginTransaction();
+			dropTable("VizierData_" + cat);
+			SQLTable.commitTransaction();
+			Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			SQLTable.beginTransaction();
+
+			SQLTable.addQueryToTransaction("DELETE FROM saada_metacoll_" + cat);
+			SQLTable.commitTransaction();
+			Messenger.printMsg(Messenger.DEBUG, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+			SQLTable.beginTransaction();
+			addCollectionForCategory("VizierData", Category.getCategory(cat));
+			SQLTable.commitTransaction();
+		}
 		Database.close();
 	}
 }

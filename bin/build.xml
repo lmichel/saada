@@ -46,7 +46,7 @@
 
 <!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	  The following tasks are supposed to be used by any operator (even the beginners)
-	  They can be called by script wrapping the ant command
+	  They can be called by scripts wrapping the ant command
 -->
 
 	<!-- 
@@ -90,7 +90,21 @@
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
  	</target>
-	
+
+	<!--
+	  Update the description of the column at collection level.
+	  Should be called once if all column description are "Attribute managed by Saada"
+	--> 
+ 	<target name="update.meta.coll">
+    	<java fork="true"  classname="saadadb.sqltable.Table_Saada_Metacoll">
+      		<classpath refid="saadadb.classpath"/>
+   	    	<jvmarg value="${jvm_initial_size}" />
+  			<jvmarg value="${jvm_max_size}" />
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+ 	</target>
+
+
 	<!--
 	  compile saadadb.jar
 	--> 
