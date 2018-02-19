@@ -192,8 +192,8 @@ public class Extractor {
 	}
 	public String toString() {
 		return "Extactor: expression: " + expression
-		+ "query: " + query
-		+ "arithmetic: " + arithmetic;
+		+ " query: " + query
+		+ " arithmetic: " + arithmetic;
 	}
 
 

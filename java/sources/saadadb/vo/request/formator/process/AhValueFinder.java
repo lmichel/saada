@@ -106,6 +106,7 @@ public class AhValueFinder {
 				// Constant expression (as a fixed string),
 				value = query;
 			} else {
+				System.out.println("@@@@@@@@@@@@@ " + query);
 				/*
 				 * Expression is not constant
 				 */
@@ -114,24 +115,45 @@ public class AhValueFinder {
 				// Build an AhMap containing all possible AH
 				LinkedHashMap<String, AttributeHandler> possibleAh = new LinkedHashMap<String, AttributeHandler>();
 				possibleAh.putAll(getAllPossibleAH());
+				
+				System.out.print("@@@@@  possibleAh "  );
+				for( String k: possibleAh.keySet()){
+					System.out.print(k + " ");
+				}
+				System.out.println();
 
 				// Analyse the expression to get a map of the Used AH
 				LinkedHashMap<String, AttributeHandler> usedAh = new LinkedHashMap<String, AttributeHandler>();
 				// usedAh.putAll(buildAhMapforExpression(possibleAh));
 				ArrayList<AttributeHandler> ahList = buildAhMapforExpression(possibleAh);
+				
+				System.out.println("@@@@@@@@@@ TMION " + possibleAh.get("t_min"));
+				System.out.println("@@@@@  ahList "  );
+				for( AttributeHandler ah: ahList){
+					System.out.print(ah + " ");
+				}
+				System.out.println();
+
 				Iterator<AttributeHandler> it = ahList.iterator();
 				while(it.hasNext()) {
 					AttributeHandler tmp = it.next();
 					usedAh.put(tmp.getNameattr(), tmp);
 					//System.out.println(("..."));
 				}
+
+				System.out.print("@@@@@  usedAh "  );
+				for( String k: usedAh.keySet()){
+					System.out.print(k + " ");
+				}
+				System.out.println();
+
 				// if the used ahmap is empty -> then it s an exception
 				if (usedAh == null || usedAh.size() == 0) {
 					// Throws an exception, something is not normal
 					// TODO Add a proper exception
 					FatalException.throwNewException(
 							SaadaException.METADATA_ERROR,
-							"Wrong paramaters: No attribute handler can be found in Expression" + extractor);
+							"Wrong paramaters: No attribute handler can be found in Expression " + extractor);
 				}
 
 				// Fill the used AH with values (by using SaadaInstance and/or
@@ -644,7 +666,8 @@ public class AhValueFinder {
 		extractor.setExpression(currentUh.getExpression());
 		arithmetic = extractor.getArithmetic();
 		query = extractor.getQuery();
-		// extract();
+		System.out.println("@@@@@@@@@@ setUtypeHandler " + uh);
+		System.out.println("@@@@@@@@@@ extractor " + extractor);
 	}
 
 	public static void main(String[] args) throws Exception {
