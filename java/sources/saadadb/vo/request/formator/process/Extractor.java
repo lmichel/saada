@@ -190,4 +190,11 @@ public class Extractor {
 	public int getParamSize() {
 		return params.size();
 	}
+	public String toString() {
+		return "Extactor: expression: " + expression
+		+ "query: " + query
+		+ "arithmetic: " + arithmetic;
+	}
+
+
 }
