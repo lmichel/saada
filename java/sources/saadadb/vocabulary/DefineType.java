@@ -69,6 +69,7 @@ public class DefineType {
 	protected static Map<String, Integer> nameField;
 	protected static Map<String, String> collection_ucds;
 	protected static Map<String, String> collection_name_org;
+	protected static Map<String, String> obscore_name_org;
 	protected static Map<String, String> collection_units;
 	protected static Map<String, String> coll_sdm_utypes;
 	private static boolean already_init = false;
@@ -92,6 +93,7 @@ public class DefineType {
 			initCollUCDs();
 			initCollUtypes();
 			initCollNameOrg();
+			initObscoreNameOrg();
 			initCollUnits();
 			initNoColumnAttr();
 			//appendObsCore();
@@ -283,6 +285,38 @@ public class DefineType {
 			collection_name_org.put("instrument_name","Name of the instrument used for this observation");
 			
 		}
+	}	
+	
+	public static void initObscoreNameOrg(){
+		if( obscore_name_org == null ) {
+			obscore_name_org = new  HashMap<String, String>();
+			obscore_name_org.put("dataproduct_type","Logical data product type (image ect.)");
+			obscore_name_org.put("calib_level","Calibration level {0, 1, 2, 3}");
+			obscore_name_org.put("obs_publisher_did","Dataset identifier given by the publisher");
+			obscore_name_org.put("access_url","URL used to access (download) dataset");
+			obscore_name_org.put("access_format","File content format");
+			obscore_name_org.put("access_estsize","Estimated size of dataset in kilo bytes");
+			obscore_name_org.put("target_name","Astronomical object observed, if any");
+			obscore_name_org.put("s_ra","Central right ascension, ICRS");
+			obscore_name_org.put("s_dec","Central declination, ICRS");
+			obscore_name_org.put("s_fov","Diameter (bounds) of the covered region");
+			obscore_name_org.put("s_region","Region covered as specified in STC or ADQL");
+			obscore_name_org.put("s_resolution","Spatial resolution of data as FWHM");
+			obscore_name_org.put("t_min","Start time in MJD");
+			obscore_name_org.put("t_max","Stop time in MJD");
+			obscore_name_org.put("t_exptime","Total exposure time");
+			obscore_name_org.put("t_resolution","Temporal resolution FWHM");
+			obscore_name_org.put("em_min","Start in spectral coordinates (Should be in meter)");
+			obscore_name_org.put("em_max","Stop in spectral coordinates (Should be in meter)");
+			obscore_name_org.put("em_res_power","Spectral resolving power");
+			obscore_name_org.put("o_ucd","UCD of observable (e.g  phot.flux.density)");
+			obscore_name_org.put("o_calib_status", "Level of calibration for the observable coordinate ");
+			obscore_name_org.put("o_unit", "Units used for the observable values");
+			obscore_name_org.put("pol_states","List of polarization states or NULL if not aplicable");
+			obscore_name_org.put("facility_name","Name of the facility used for this observation");
+			obscore_name_org.put("instrument_name","Name of the instrument used for this observation");
+			
+		}
 	}
 	/**
 	 * 
@@ -465,6 +499,14 @@ public class DefineType {
 	public static Map<String, String> getCollection_name_org() throws FatalException {
 		init();
 		return collection_name_org;
+	}
+	/**
+	 * @return Returns the collection_name_org.
+	 * @throws FatalException 
+	 */
+	public static Map<String, String> getObscore_name_org() throws FatalException {
+		init();
+		return obscore_name_org;
 	}
 
 	/**
