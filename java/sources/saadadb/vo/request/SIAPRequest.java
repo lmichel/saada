@@ -22,7 +22,7 @@ public class SIAPRequest extends VOParameterRequest {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.VORequest#addVotableFormator()
 	 */
-	protected void addVotableFormator() throws QueryException {
+	protected void addVotableFormator() throws Exception {
 		this.formators.put("votable", new SiapVotableFormator());
 	}
 }

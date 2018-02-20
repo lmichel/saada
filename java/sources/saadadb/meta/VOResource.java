@@ -189,8 +189,9 @@ public class VOResource {
 	}
 	/**
 	 * Add the obscore fields to the current model
+	 * @throws FatalException 
 	 */
-	public void addObscoreFields() {
+	public void addObscoreFields() throws FatalException {
 		Set<UTypeHandler> uths = new LinkedHashSet<UTypeHandler>();
 		/*
 		 * Add obscore fields 

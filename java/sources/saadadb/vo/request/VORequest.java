@@ -85,7 +85,7 @@ public abstract class VORequest {
 	 * @param format : can be fits, fir, xml, vot. votable text, txt, cs or json
 	 * @throws QueryException thrown if the format is not recognized or if it is not supported
 	 */
-	public void addFormator(String format) throws QueryException {
+	public void addFormator(String format) throws Exception {
 		if( "fits".equalsIgnoreCase(format) || "fit".equalsIgnoreCase(format) ) {
 			this.addFitsFormator();
 		}
@@ -135,8 +135,9 @@ public abstract class VORequest {
 	}
 	/**
 	 * @throws QueryException
+	 * @throws Exception 
 	 */
-	protected void addVotableFormator() throws QueryException {
+	protected void addVotableFormator() throws QueryException, Exception {
 		QueryException.throwNewException(SaadaException.UNSUPPORTED_OPERATION, this.getClass() + " does not support VOTable reponse");
 	}
 	/**

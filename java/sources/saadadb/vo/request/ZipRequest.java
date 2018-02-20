@@ -38,7 +38,7 @@ public class ZipRequest extends VORequest {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.VORequest#addFormator(java.lang.String)
 	 */
-	public void addFormator(String format) throws QueryException {
+	public void addFormator(String format) throws Exception {
 		if( this.formators.size() == 0 ) {
 			super.addFormator(format);
 		}

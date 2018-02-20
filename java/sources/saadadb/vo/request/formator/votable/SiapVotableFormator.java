@@ -18,7 +18,7 @@ import saadadb.query.result.SaadaInstanceResultSet;
 public class SiapVotableFormator extends VotableFormator {
 
 
-	public SiapVotableFormator() throws QueryException {
+	public SiapVotableFormator() throws Exception {
 		this.setDataModel("SIA");
 		this.dataModel.addObscoreFields();
 		limit = 100;

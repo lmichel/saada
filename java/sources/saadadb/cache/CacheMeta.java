@@ -609,8 +609,9 @@ public class CacheMeta {
 	}
 	/**
 	 * returns a map of the AHs matching the Obscore model
+	 * @throws FatalException 
 	 */
-	public  final Map<String,AttributeHandler>  getObscoreAttributeHandlers(){
+	public  final Map<String,AttributeHandler>  getObscoreAttributeHandlers() throws FatalException{
 		return MetaCollection.getObscoreAttributeHandlers();
 	}
     /**

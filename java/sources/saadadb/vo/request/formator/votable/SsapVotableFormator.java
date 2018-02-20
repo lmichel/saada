@@ -16,7 +16,7 @@ import saadadb.query.result.SaadaInstanceResultSet;
  */
 public class SsapVotableFormator extends VotableFormator {
 
-	public SsapVotableFormator() throws QueryException {
+	public SsapVotableFormator() throws Exception {
 		this.setDataModel("SSA");
 		this.dataModel.addObscoreFields();
 		limit = 10000;
