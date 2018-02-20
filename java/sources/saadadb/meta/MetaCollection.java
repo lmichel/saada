@@ -17,6 +17,7 @@ import saadadb.exceptions.SaadaException;
 import saadadb.generationclass.SaadaClassReloader;
 import saadadb.sqltable.SQLQuery;
 import saadadb.util.Messenger;
+import saadadb.vocabulary.DefineType;
 
 /** * @version $Id$
 
@@ -250,19 +251,16 @@ public class MetaCollection extends MetaObject {
 
 	/**
 	 * returns a map of the AHs matching the Obscore model
+	 * @throws FatalException 
 	 */
-	public static  final Map<String,AttributeHandler> getObscoreAttributeHandlers(){
-		@SuppressWarnings("unchecked")
-		HashMap<String, AttributeHandler> retour = (HashMap<String, AttributeHandler>)(MetaCollection.getAttribute_handlers_flatfile().clone());
-		retour.remove("oidsaada");
-		retour.remove("contentsignature");
-		retour.remove("access_right");
-		retour.remove("healpix_csa");
-		retour.remove("pos_x_csa");
-		retour.remove("pos_y_csa");
-		retour.remove("pos_z_csa");
-		retour.remove("date_load");
-		retour.remove("repository_location");
+	public static  final Map<String,AttributeHandler> getObscoreAttributeHandlers() throws FatalException{
+		Map<String,AttributeHandler> retour = new LinkedHashMap<String,AttributeHandler>();
+		for(String obscoreField: DefineType.getObscore_name_org().keySet()) {
+			AttributeHandler ah = MetaCollection.getAttribute_handlers_image().get(obscoreField);
+				if( ah != null ){
+					retour.put(obscoreField, ah);	
+				}
+		}
 		return retour;
 	}
 	/**
