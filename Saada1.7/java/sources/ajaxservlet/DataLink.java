@@ -11,14 +11,9 @@ import java.util.Map.Entry;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Response;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import saadadb.api.SaadaLink;
 import saadadb.collection.Category;
@@ -26,8 +21,6 @@ import saadadb.collection.SaadaInstance;
 import saadadb.collection.SaadaOID;
 import saadadb.database.Database;
 import saadadb.meta.MetaRelation;
-import saadadb.query.result.OidsaadaResultSet;
-import ajaxservlet.json.JsonUtils;
 
 
 /**

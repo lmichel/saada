@@ -51,7 +51,7 @@
 
 	<!-- 
 	  Load data
-	  USAGE: ant data.load -Dcollection={collection} -Dfilename={filename} -Dconfig={config} -Drepository={no|move|copy} -Dindex={true|false}
+	  USAGE: ant data.load -Dcollection={collection} -category=${category} -Dfilename={filename} -Dconfig={config} -Drepository={no|move|copy} -Dindex={true|false}
 	-->
 	
   	<target name="data.load">
@@ -61,7 +61,8 @@
   			<jvmarg value="${jvm_max_size}" />
             <arg value="-collection=${collection}"/>
             <arg value="-filename=${filename}"/>
-            <arg value="-config=${config}"/>
+            <arg value="-config=${config}"/>            
+	    <arg value="-category=${category}"/>
             <arg value="-repository=${repository}"/>
             <arg value="-noindex=${noindex}"/>
 	  		<arg value="-debug=${debug}"/>
