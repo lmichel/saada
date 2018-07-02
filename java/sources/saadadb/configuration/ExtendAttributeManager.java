@@ -106,7 +106,7 @@ public class ExtendAttributeManager extends EntityManager {
 		}
 		String category = ap.getCategory();
 		int catnum = Category.getCategory(category);
-		//String oldName = ap.getRename();
+
 		String newName = ap.getNewname();
 		if ( name == null || !name.matches( RegExp.EXTATTRIBUTE)) {
 			FatalException.throwNewException(SaadaException.WRONG_PARAMETER, name + ": Value not allowed for attribute name, must match " + RegExp.EXTATTRIBUTE );			
@@ -121,7 +121,7 @@ public class ExtendAttributeManager extends EntityManager {
 		/*
 		 * Attribute handler of the old/new column
 		 */
-		AttributeHandler oldah = MetaCollection.getAttribute_handlers_flatfile().get(name);
+		AttributeHandler oldah = MetaCollection.getAttribute_handlers(catnum).get(name);
 		AttributeHandler newah = (AttributeHandler) oldah.clone();
 		newah.setNameattr(newName);
 		newah.setNameorg(newName);
