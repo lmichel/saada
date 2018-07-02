@@ -205,7 +205,7 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-category")) {
 				String retour = getArgsValue(args[i]);
-				return (retour.length() == 0)? "": this.matches(retour, "-ucd", RegExp.CATEGORY);
+				return (retour.length() == 0)? "": this.matches(retour, "-category", RegExp.CATEGORY);
 			}
 		}
 		return null;
@@ -220,7 +220,7 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-collection")) {
 				String retour = getArgsValue(args[i]);
-				return (retour.length() == 0)? "": this.matches(retour, "-ucd", RegExp.COLLNAME);
+				return (retour.length() == 0)? "": this.matches(retour, "-collection", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -235,7 +235,7 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-relation")) {
 				String retour = getArgsValue(args[i]);
-				return (retour.length() == 0)? "": this.matches(retour, "-ucd", RegExp.COLLNAME);
+				return (retour.length() == 0)? "": this.matches(retour, "-relation", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -250,7 +250,7 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-type")) {
 				String retour = getArgsValue(args[i]);
-				return (retour.length() == 0)? "": this.matches(retour, "-ucd",  JavaTypeUtility.ATTREXTENDTYPES);
+				return (retour.length() == 0)? "": this.matches(retour, "-type",  JavaTypeUtility.ATTREXTENDTYPES);
 			}
 		}
 		return null;
@@ -290,7 +290,7 @@ public class ArgsParser implements Serializable{
 		for( int i=0 ; i<args.length ; i++ ) {
 			if( args[i] .startsWith("-utype")) {
 				String retour = getArgsValue(args[i]);
-				return (retour.length() == 0)? "": this.matches(retour, "-ucd", RegExp.UTYPE);
+				return (retour.length() == 0)? "": this.matches(retour, "-utype", RegExp.UTYPE);
 			}
 		}
 		return null;
