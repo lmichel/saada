@@ -364,7 +364,8 @@ public final class ArgsParser implements Serializable{
 	public String getCollection() throws FatalException {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-collection")) {
-				return this.matches(getArgsValue(args.get(i)), "-collection", RegExp.COLLNAME);
+				String retour = getArgsValue(args.get(i));
+				return (retour.length() == 0)? "": this.matches(retour, "-collection", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -378,7 +379,8 @@ public final class ArgsParser implements Serializable{
 	public String getRelation() throws FatalException {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-relation")) {
-				return this.matches(getArgsValue(args.get(i)), "-relation", RegExp.COLLNAME);
+				String retour = getArgsValue(args.get(i));
+				return (retour.length() == 0)? "": this.matches(retour, "-relation", RegExp.COLLNAME);
 			}
 		}
 		return null;
@@ -392,7 +394,8 @@ public final class ArgsParser implements Serializable{
 	public String getType() throws FatalException {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-type")) {
-				return this.matches(getArgsValue(args.get(i)), "-type", JavaTypeUtility.ATTREXTENDTYPES);
+				String retour = getArgsValue(args.get(i));
+				return (retour.length() == 0)? "": this.matches(retour, "-type", JavaTypeUtility.ATTREXTENDTYPES);
 			}
 		}
 		return null;
@@ -418,7 +421,8 @@ public final class ArgsParser implements Serializable{
 	public String getUcd() throws FatalException {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-ucd")) {
-				return this.matches(getArgsValue(args.get(i)), "-ucd", RegExp.UCD);
+				String retour = getArgsValue(args.get(i));
+				return (retour.length() == 0)? "": this.matches(retour, "-ucd", RegExp.UCD);
 			}
 		}
 		return null;
@@ -430,7 +434,8 @@ public final class ArgsParser implements Serializable{
 	public String getUtype() throws FatalException {
 		for( int i=0 ; i<args.size() ; i++ ) {
 			if( args.get(i) .startsWith("-utype")) {
-				return this.matches(getArgsValue(args.get(i)), "-utype", RegExp.UTYPE);
+				String retour = getArgsValue(args.get(i));
+				return (retour.length() == 0)? "": this.matches(retour, "-utype", RegExp.UTYPE);
 			}
 		}
 		return null;
