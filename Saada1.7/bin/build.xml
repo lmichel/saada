@@ -660,15 +660,15 @@
 	<target name="extended.attribute.rename">   
 		<java classname="saadadb.command.ManageExtendedAttributes" failonerror="true" fork="true">       
 			<classpath refid="saadadb.classpath"/>      
-			<arg value="-rename={name}"/>      
-			<arg value="-newname={newname}"/>      
-			<arg value="-category={category}"/>      
- 			<arg value="-comment={comment}"/>              				<name name="${SAADA_HOME}/dbtemplate/lib/saadadb.jar"/>
- 			<arg value="-unit={unit}"/>      
- 	 		<arg value="-ucd={ucd}"/>      
- 	 		<arg value="-utype={utype}"/>      
-			<arg value="-debug={debug}"/>      
- 	 		<arg value="-password={password}"/>      
+			<arg value="-rename=${name}"/>      
+			<arg value="-newname=${newname}"/>      
+			<arg value="-category=${category}"/>      
+ 			<arg value="-comment=${comment}"/>      
+ 			<arg value="-unit=${unit}"/>      
+ 	 		<arg value="-ucd=${ucd}"/>      
+ 	 		<arg value="-utype=${utype}"/>      
+			<arg value="-debug=${debug}"/>      
+ 	 		<arg value="-password=${password}"/>      
 			<arg value="${SAADA_DB_NAME}"/>  
 		</java>
 	</target>
