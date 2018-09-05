@@ -494,10 +494,19 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	public String getValue(){
 		return this.value;
 	}
+	public void trimValue(){
+		this.value = this.value.trim();
+	}
+	public String getTrimedValue(){
+		return this.value.trim();
+	}
 	public double getNumValue(){
 		return this.numValue;
 	}
 
+	/* (non-Javadoc)
+	 * @see hecds.wcs.descriptors.CardDescriptor#getUcd()
+	 */
 	public String getUcd(){
 		return this.ucd;
 	}
