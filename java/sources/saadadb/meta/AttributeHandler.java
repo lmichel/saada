@@ -153,7 +153,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		if( strcard.length() == 0 || strcard.indexOf("=") == -1 ||strcard.startsWith("HISTORY ") ||strcard.startsWith("COMMENT ")) {
 			return;
 		}
-		String key     =  card.getKey();
+		String key =  card.getKey();
 		/*
 		 * Extract manulay HIERACH KW which bloack seprated lists
 		 */
@@ -166,69 +166,70 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 				key = card.toString().substring(0 , pos).trim();
 			}
 		}
-
-		String value   =  card.getValue();
-		String comment =  card.getComment();
 		/*
-		 * value can be null for cards with long comment?
-		 * e.g.  System.out.println("---------------\n" + card + "\n-----------------------\n");
+		 * Value of WAT cards must be kept not trimmed because they can be
+		 * merged to build longer strings/ fits.tam does the trim by default, so do it by hand
+		 */
+		if( key.startsWith("WAT")) {
+			this.parseIrafCard(card);
+		} else {
+			String value   =  card.getValue();
+			String comment =  card.getComment();
+			/*
+			 * value can be null for cards with long comment?
+			 * e.g.  System.out.println("---------------\n" + card + "\n-----------------------\n");
 
 				ORIGIN  = 'ADC     '           / This spectrum is part of catalog 3114,         
                         = ' generated at Astronomical Data Center, NASA/GSFC' /               
-		 */
-		if( value == null ){
-			value = "";
+			 */
+			if( value == null ){
+				value = "";
+			}
+			boolean isNotString = true;
+			if( value.startsWith("'") ) {
+				isNotString = false;
+			}
+			value = value.replaceAll("'", "");
+			/*
+			 * TODO Penser a traiter le cas de value = "" avec un type numerique
+			 * Implementer les NaN
+			 */
+			if( key == null || key.equals("") || value == null  ) {
+				this.setNameorg("");
+				if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");
+			}
+			if( comment == null ) {
+				comment = "";
+			}
+			/*
+			 * "'" must be removed to avoid SQL errors
+			 */
+			this.setNameorg(key.replaceAll("'", " "));
+			this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
+			this.setComment(comment);
+			if( isNotString && value.equals("T") ) {
+				this.setType("boolean");
+				this.value = "true";
+			} else if( isNotString && value.equals("F") ) {
+				this.setType("boolean");
+				this.value = "false";
+			} else if( isNotString && value.matches(RegExp.FITS_FLOAT_VAL) ) {
+				this.setType("double");
+				this.setValue(value);
+			} else if( isNotString && value.matches(RegExp.FITS_INT_VAL) ) {
+				this.setType("int");
+				this.setValue(value);
+			} else  {
+				this.setType("String");
+				this.setValue(value);
+			}
 		}
-		boolean is_not_string = true;
-		if( value.startsWith("'") ) {
-			is_not_string = false;
-		}
-		value = value.replaceAll("'", "");
-		/*
-		 * TODO Penser a traiter le cas de value = "" avec un type num�rique
-		 * Implementer les NaN
-		 */
-		if( key == null || key.equals("") || value == null  ) {
-			this.setNameorg("");
-			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");
-		}
-		if( comment == null ) {
-			comment = "";
-		}
-		/*
-		 * "'" must be removed to avoid SQL errors
-		 */
-		this.setNameorg(key.replaceAll("'", " "));
-		this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
-		this.setComment(comment);
-		if( is_not_string && value.equals("T") ) {
-			this.setType("boolean");
-			this.value = "true";
-		} else if( is_not_string && value.equals("F") ) {
-			this.setType("boolean");
-			this.value = "false";
-		} else if( is_not_string && value.matches(RegExp.FITS_FLOAT_VAL) ) {
-			this.setType("double");
-			this.setValue(value);
-		} else if( is_not_string && value.matches(RegExp.FITS_INT_VAL) ) {
-			this.setType("int");
-			this.setValue(value);
-		} else  {
-			this.setType("String");
-			this.setValue(value);
-		}
-		//		}
-		//		else {
-		//			this.setNameorg("");
-		//			if( Messenger.debug_mode ) Messenger.printMsg(Messenger.DEBUG, "FITS card <" + strcard + "> can not be interpreted: ignored");  
-		//		}
-
 	}
-	//    public static void main(String[] args) {
-	//    AttributeHandler a = new AttributeHandler("HIERARCH ESO INS PATH        = '        '   / Optical path used. " );
-	//    System.out.println(a.getNameorg());
-	//    }    public AttributeHandler(){}
 
+	/**
+	 * @param rs
+	 * @throws FatalException
+	 */
 	public AttributeHandler(ResultSet rs) throws FatalException{
 		if( rs != null ){
 			try{
@@ -281,6 +282,40 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		}
 	}	 
 
+	/**
+	 * Parse by hand WAT card because those card's values must not be trimmed 
+	 * in order to keep consistent when they are merged 
+	 * @param stringCard
+	 */
+	private void  parseIrafCard(final HeaderCard card){
+		String stringCard = card.toString();
+		final int id1 = stringCard.indexOf('=');
+		final int lgth = stringCard.length();
+		if( id1 > 0 ) {
+			String key = stringCard.substring(0, id1).trim();
+			this.setNameorg(key.replaceAll("'", " "));
+			this.setNameattr(ChangeKey.changeKeyHIERARCH(ChangeKey.changeKey(key)));
+			int id2 = stringCard.lastIndexOf('/');
+			if( id2 == -1){
+				id2 = lgth ;
+			}
+			if( id1 <= (lgth-2)) {
+				String desc;
+				this.value = stringCard.substring(id1+1, id2).replaceAll("'", "");
+				if( this.value.startsWith(" ")) {
+					this.value = this.value.substring(1);
+				}
+				if( id2 <= (lgth-2)) {
+					desc = stringCard.substring(id2+1).trim();
+				} else {
+					desc = "";
+				}
+				this.setComment(desc);				
+				this.setType("String");
+				return;
+			}
+		}
+	}
 	/**
 	 * Build a name acceptable as Java field name or SQL column name from UCD
 	 * @param ucd
@@ -425,7 +460,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 	 * @param value
 	 */
 	public final void setValue(String value) {
-		String tvalue = ( value == null )?"": value.trim();
+		String tvalue = ( value == null )?"": value;
 		if( this.type.equals("float")) {
 			try { 
 				this.numValue = Float.parseFloat(tvalue);
@@ -491,9 +526,16 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 		return this.nameattr;
 	}
 
-	public String getValue(){
+
+	public String getUntrimmedValue(){
 		return this.value;
 	}
+	public String getValue(){
+		return this.value.trim();
+	}
+	/* (non-Javadoc)
+	 * @see hecds.wcs.descriptors.CardDescriptor#trimValue()
+	 */
 	public void trimValue(){
 		this.value = this.value.trim();
 	}
@@ -764,7 +806,7 @@ public class AttributeHandler implements Serializable , Cloneable, CardDescripto
 			 */
 			else if( this.format.startsWith("http://")) {
 				return "<A HREF=\"" + this.format.replaceAll("\\$", URLEncoder.encode(value.toString(), "iso-8859-1"))
-						+ "\">" + value + "</A>";
+				+ "\">" + value + "</A>";
 			}
 			else {
 				return this.format.replaceAll("\\$", URLEncoder.encode(value.toString(), "iso-8859-1"));
