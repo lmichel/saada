@@ -104,6 +104,7 @@ public class DefineType {
 	
 	public static void initNoColumnAttr() {
 		NO_COLUMN_ATTR.add("FICHIER");
+		NO_COLUMN_ATTR.add("FICHIER_PRE");
 	}
 
 	/**Initializes this class for this use.
