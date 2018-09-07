@@ -8,6 +8,7 @@ import hecds.wcs.descriptors.CardMap;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -581,6 +582,12 @@ public abstract class ProductBuilder {
 						mappingSingleHandler.setNameorg(ahname);
 						mappingSingleHandler.setValue(this.getName());
 						mappingSingleHandler.setType(ahname);
+					} else if( ahname.equals("FICHIER_PRE")){
+						mappingSingleHandler = new AttributeHandler();
+						mappingSingleHandler.setNameattr(ahname);
+						mappingSingleHandler.setNameorg(ahname);
+						mappingSingleHandler.setValue(this.getNamePrefix());
+						mappingSingleHandler.setType(ahname);
 					} else {
 						retour = new ColumnExpressionSetter(colmunName);
 						retour.completeUserMappingMsg("Processing of pseudo attributes [" + ahname + "] is not implemented yet");
@@ -635,11 +642,11 @@ public abstract class ProductBuilder {
 						missingAhs.add(ah.getNameorg());						
 					}
 				}
-
 				/*
 				 * The column mapping may reference quantiies which neither constant nor attribute
 				 * Their values must be computed here
 				 */
+				ArrayList<String> toRemove = new ArrayList<>();
 				for( String ahn: missingAhs) {
 					if( DefineType.NO_COLUMN_ATTR.contains(ahn)) {
 						AttributeHandler fnAh = new AttributeHandler();
@@ -649,7 +656,12 @@ public abstract class ProductBuilder {
 							fnAh.setValue(this.getName());
 							fnAh.setType("String");
 							handlersUsedByMapping.put(ahn, fnAh);	
-							missingAhs.remove(ahn);
+							toRemove.add(ahn);
+						} else if( ahn.equals("FICHIER_PRE")){
+							fnAh.setValue(this.getNamePrefix());
+							fnAh.setType("String");
+							handlersUsedByMapping.put(ahn, fnAh);	
+							toRemove.add(ahn);
 						} else {
 							retour = new ColumnExpressionSetter(colmunName);
 							retour.completeUserMappingMsg("Processing of pseudo attributes [" + ahn + "] is not implemented yet");
@@ -658,11 +670,13 @@ public abstract class ProductBuilder {
 
 					}
 				}
-				if( missingAhs.size() > 0  ){
+				for( String ahtrm: toRemove ){
+					missingAhs.remove(ahtrm);
+				}
+				if( !missingAhs.isEmpty()  ){
 					retour = new ColumnExpressionSetter(colmunName);
 					retour.completeUserMappingMsg("Attributes [" + Merger.getMergedCollection(missingAhs) + "] used to map the column " + colmunName + " are missing");
 					return retour;
-					//FatalException.throwNewException(SaadaException.INTERNAL_ERROR, "Attributes [" + missingAhs + "] used to map the column " + colmunName + " are missing");										
 				} else {
 					retour = new ColumnExpressionSetter(colmunName, columnMapping.getExpression(), handlersUsedByMapping, true);					
 					retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode());
@@ -825,10 +839,10 @@ public abstract class ProductBuilder {
 		 * Uses the config first
 		 */
 		this.obs_idSetter = this.getSetterForMappedColumn("obs_id", mapping.getObservationAxisMapping().getColumnMapping("obs_id"));
-
 		if( this.obs_idSetter.isNotSet() ) {
 			String expression = "";
-			ColumnExpressionSetter csf = quantityDetector.getFacilityName(), cst = quantityDetector.getTargetName();
+			ColumnExpressionSetter csf = quantityDetector.getFacilityName();
+			ColumnExpressionSetter cst = quantityDetector.getTargetName();
 			if( csf.isSet() && cst.isSet()){
 				csf.calculateExpression();
 				String csfv = csf.getValue();
@@ -856,7 +870,7 @@ public abstract class ProductBuilder {
 			} else {
 				this.obs_idSetter = new ColumnExpressionSetter("obs_id",  this.dataFile.getName());				
 			}
-			String message = this.obs_idSetter .getUserMappingMsg();
+			String message = this.obs_idSetter.getUserMappingMsg();
 			this.obs_idSetter.completeDetectionMsg(message);
 		}
 		this.traceReportOnAttRef(this.obs_idSetter);
@@ -1421,6 +1435,27 @@ public abstract class ProductBuilder {
 	public String getName() {
 		return (this.dataFile == null)? "Foo": this.dataFile.getName();
 	}
+	
+	/**
+	 * @return the data file name without extension
+	 */
+	public String getNamePrefix() {
+		String[] fns = this.dataFile.getName().split("\\.");
+		String result = fns[0];
+		for( int i=1 ; i<fns.length ; i++){
+			String fn = "." + fns[i];
+			if( !fn.equalsIgnoreCase("gz") && !fn.equalsIgnoreCase("txt") 
+					&& !fn.equalsIgnoreCase("cvs") && !fn.equalsIgnoreCase("pdf") 
+					&& !fn.matches(RegExp.FITS_FILE) && !fn.matches(RegExp.VOTABLE_FILE) 
+					&& !fn.matches(RegExp.JSON_FILE) && !fn.matches(RegExp.IMAGE_FILE) ) {
+				result += "." +  fns[i];
+			} else {
+				break;
+			}
+		}
+		return result ;
+	}
+
 	/**
 	 * @return
 	 * @throws IOException
