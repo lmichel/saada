@@ -3,6 +3,7 @@ package saadadb.products.setter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import saadadb.exceptions.IgnoreException;
 import saadadb.exceptions.SaadaException;
@@ -22,6 +23,7 @@ public class DictionaryStringFunction {
 	public static final String SUBSTRING = "substring";
 	public static final String STRCAT = "strcat";
 	public static final String GETCOOSYS = "getCoosys";
+	public static final String SPLIT = "split";
 	
 	/**
 	 * This Map represent the dictionary "Index", in other words it lists every function contain by this class 
@@ -38,6 +40,7 @@ public class DictionaryStringFunction {
 				+ "the end of this string or up to endIndex");
 		index.put(STRCAT, "Concatenates all parameters in one string");
 		index.put(GETCOOSYS, "Extract a coosys from the string");
+		index.put(SPLIT, "Split the string and take the right component");
 	}
 	/**
 	 * Execute the function corresponding to the String parameter with the specified arguments.
@@ -64,12 +67,12 @@ public class DictionaryStringFunction {
 		case MJD:
 			if(functionArgs.length!=1)
 				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 1 parameter");
-			result=MJD(functionArgs[0]);
+			result=MJD_IMPL(functionArgs[0]);
 			break;
 		case SUBSTRING:
 			if(functionArgs.length!=3)
 				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 3 parameter");
-			result = SUBSTRING(functionArgs[0],Integer.parseInt(functionArgs[1]), Integer.parseInt(functionArgs[2]));
+			result = SUBSTRING_IMPL(functionArgs[0],Integer.parseInt(functionArgs[1]), Integer.parseInt(functionArgs[2]));
 			break;
 		case LOWERCASE:
 			if(functionArgs.length!=1)
@@ -82,12 +85,17 @@ public class DictionaryStringFunction {
 			result=functionArgs[0].toUpperCase();
 			break;
 		case STRCAT:
-			result = STRCAT(functionArgs);
+			result = STRCAT_IMPL(functionArgs);
 			break;
 		case GETCOOSYS:
 			if(functionArgs.length < 1)
 				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 1 parameter at least");
-			result = GETCOOSYS(functionArgs);
+			result = GETCOOSYS_IMPL(functionArgs);
+			break;
+		case SPLIT:
+			if(functionArgs.length != 3)
+				IgnoreException.throwNewException(SaadaException.WRONG_PARAMETER, "Must have 3 parameters");
+			result = SPLIT_IMPL(functionArgs[0], functionArgs[1], Integer.parseInt(functionArgs[2]));
 			break;
 		default:
 			//If we reach this point, we didn't find any corresponding function
@@ -98,11 +106,11 @@ public class DictionaryStringFunction {
 
 	}
 	
-	public static final String SUBSTRING(String string, int start, int stop) throws Exception
+	public static final String SUBSTRING_IMPL(String string, int start, int stop) throws Exception
 	{
 		return string.substring(start, stop) ;
 	}
-	public static final String STRCAT(String[] strings) throws Exception
+	public static final String STRCAT_IMPL(String[] strings) throws Exception
 	{
 		/* 
 		 * Do  not use Merger because it must ignore empty trimed string (SQL query generation)
@@ -114,7 +122,7 @@ public class DictionaryStringFunction {
 		return retour.toString();
 	}
 
-	public static final String MJD(String args) throws Exception
+	public static final String MJD_IMPL(String args) throws Exception
 	{
 		return DateUtils.getMJD(args);
 	}
@@ -124,7 +132,7 @@ public class DictionaryStringFunction {
 	 * @return
 	 * @throws Exception
 	 */
-	public static final String GETCOOSYS(String[] args) throws Exception
+	public static final String GETCOOSYS_IMPL(String[] args) throws Exception
 	{
 		String sys = args[0];
 		List<String> fls = new ArrayList<String>();
@@ -152,8 +160,22 @@ public class DictionaryStringFunction {
 			fls.add(",");
 			fls.add(args[2]);
 		}
-		return STRCAT(fls.toArray(new String[0]));
+		return STRCAT_IMPL(fls.toArray(new String[0]));
 	}
+	
+	public static final String SPLIT_IMPL(String string, String separator, int pos) throws Exception
+	{
+		if( pos < 0 ) {
+			return string;
+		}
+		String[] components = string.split(Pattern.quote(separator));
+		if( components.length > pos){
+			return components[pos];
+		} else {
+			return string;
+		}
+	}
+
 	
 	public static void main(String[] args)
 	{
@@ -162,7 +184,11 @@ public class DictionaryStringFunction {
 			System.out.println(exec("MJD",new String[]{"2014-06-12"}));
 			System.out.println(exec("MJD",new String[]{"2014-12-06"}));
 			System.out.println(exec("MJD",new String[]{"12-06-2014"}));
-			System.out.println(exec("MJD",new String[]{"plop"}));
+			
+			System.out.println(exec("split",new String[]{"plop.plup", ".", "0"}));
+			System.out.println(exec("split",new String[]{"plop.plup", ".", "1"}));
+			System.out.println(exec("split",new String[]{"plop.plup", ".", "2"}));
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
