@@ -206,5 +206,7 @@ public class StringFunctionExtractor {
 		}
 		s = new StringFunctionExtractor("strcat(_tmin, 'eeee://sqdsqd/', _tmax) +XXX('_tmin', 'eeee', '_tmax')");
 		System.out.println(s+ "\n");	
+		s = new StringFunctionExtractor("split(_tmin, '_', 2)");
+		System.out.println(s+ "\n");	
 	}
 }
