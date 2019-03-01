@@ -32,7 +32,7 @@ public class DateUtils {
 			af.set(Integer.parseInt(input));
 			retour= Double.toString(af.getMJD());
 		} else {
-			af.set(input);
+			af.set(formatStringDate(formatStringDate(input)));
 			retour= Double.toString(af.getMJD());
 		}
 		if(needQuotes)
@@ -55,12 +55,32 @@ public class DateUtils {
 			af.set(Integer.parseInt(input));
 			return af.getMJD();
 		} else {
-			af.set(input);
+			af.set(formatStringDate(input));
 			return af.getMJD();
 		}
 		} catch(Exception e){
 			return SaadaConstant.LONG;
 		}
+	}
+	
+	/**
+	 * Check whether the stringDate is like DD/MM/YY. in this case, it is reformatted 
+	 * as DD/MM/20YY
+	 * @param stringDate
+	 * @return
+	 */
+	public static String formatStringDate(String stringDate){
+		String[] xp = stringDate.split("/");
+		if( xp.length == 3 ){
+			String le = xp[xp.length - 1];
+			if( le.length() == 2){
+				le = "20" + le;
+				xp[xp.length - 1]  = le;
+				return Merger.getMergedArray("/", xp);
+			} 
+		}
+		return stringDate;
+
 	}
 	
 	/**
@@ -84,5 +104,10 @@ public class DateUtils {
 			}
 		}
 		
+	}
+
+	public static void main(String[] args) throws Exception{
+		String x = "01/01/12";
+		System.out.println(DateUtils.getMJD(x));
 	}
 }
