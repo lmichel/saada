@@ -115,15 +115,15 @@ public class MetaClass extends MetaObject{
 	 */
 	public void checkForInstances() throws Exception{
 		SQLQuery squery = new SQLQuery();
-		ResultSet rs = squery.run("Select filename from saada_loaded_file where classname = '" + name + "' limit 1");
+		//ResultSet rs = squery.run("Select filename from saada_loaded_file where classname = '" + name + "' limit 1");
+		ResultSet rs = squery.run("Select oidsaada from " + name + " limit 1");
 		/*
 		 * WHile there is no statistic management
 		 */
 		this.has_instances = false;
 		while( rs.next() ) {
 			this.has_instances = true;
-			squery.close();
-			return;
+			break;
 		}
 		squery.close();
 	}
