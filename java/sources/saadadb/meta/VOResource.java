@@ -142,7 +142,6 @@ public class VOResource {
 			guth.add(uth);			
 			cpt++;
 		}while( (currentTR = parser.getNextTR()) != null );
-
 	}
 
 	/**
@@ -202,6 +201,22 @@ public class VOResource {
 			uths.add(new UTypeHandler(ah, ah.getNameattr()));
 		}
 		this.groups.put("Obscore", uths);
+	}
+	/**
+	 * Add the obscore fields to the current model
+	 * @throws FatalException 
+	 */
+	public void addExtendedFields(int category) throws FatalException {
+		Set<UTypeHandler> uths = new LinkedHashSet<UTypeHandler>();
+		/*
+		 * Add obscore fields 
+		 */
+		Map<String, AttributeHandler> mah = Database.getCachemeta().getAtt_extend(category);
+		for( Entry<String, AttributeHandler> entry: mah.entrySet()){
+			AttributeHandler ah = entry.getValue();
+			uths.add(new UTypeHandler(ah, ah.getNameattr()));
+		}
+		this.groups.put("Extended", uths);
 	}
 	
 	/**
