@@ -4,6 +4,7 @@ import java.io.File;
 
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotParam;
+import saadadb.collection.Category;
 import saadadb.collection.obscoremin.SpectrumSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
@@ -19,6 +20,7 @@ public class SsapVotableFormator extends VotableFormator {
 	public SsapVotableFormator() throws Exception {
 		this.setDataModel("SSA");
 		this.dataModel.addObscoreFields();
+		this.dataModel.addExtendedFields(Category.SPECTRUM);
 		limit = 10000;
 		protocolN = "SSAP";
 		protocolV = "1.1";

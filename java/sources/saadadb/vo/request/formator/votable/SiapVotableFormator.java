@@ -1,10 +1,13 @@
 package saadadb.vo.request.formator.votable;
 
+import org.apache.jasper.tagplugins.jstl.core.Catch;
+
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotOption;
 import cds.savot.model.SavotParam;
 import cds.savot.model.SavotValues;
+import saadadb.collection.Category;
 import saadadb.collection.obscoremin.ImageSaada;
 import saadadb.database.Database;
 import saadadb.exceptions.QueryException;
@@ -21,6 +24,7 @@ public class SiapVotableFormator extends VotableFormator {
 	public SiapVotableFormator() throws Exception {
 		this.setDataModel("SIA");
 		this.dataModel.addObscoreFields();
+		this.dataModel.addExtendedFields(Category.IMAGE);
 		limit = 100;
 		protocolN = "SIAP";
 		protocolV="1.0";
