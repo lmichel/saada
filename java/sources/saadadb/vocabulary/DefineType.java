@@ -294,6 +294,7 @@ public class DefineType {
 			obscore_name_org.put("dataproduct_type","Logical data product type (image ect.)");
 			obscore_name_org.put("calib_level","Calibration level {0, 1, 2, 3}");
 			obscore_name_org.put("obs_publisher_did","Dataset identifier given by the publisher");
+			obscore_name_org.put("obs_collection","Name of the data collection ");
 			obscore_name_org.put("access_url","URL used to access (download) dataset");
 			obscore_name_org.put("access_format","File content format");
 			obscore_name_org.put("access_estsize","Estimated size of dataset in kilo bytes");
