@@ -381,7 +381,8 @@ public abstract class SchemaMapper {
 	 * @throws Exception
 	 */
 	public static DataFile getDataFileInstance(String fullPath, ProductMapping productMapping) throws Exception {
-		if( fullPath.matches(RegExp.FITS_FILE) ) {
+		
+		if( FitsDataFile.isFitsFile(fullPath) ) {		 
 			return(new FitsDataFile(fullPath, productMapping));
 		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
 			return(new VOTableDataFile(fullPath, productMapping));

@@ -2,11 +2,7 @@ package saadadb.admintool.cmdthread;
 
 import java.awt.Cursor;
 import java.awt.Frame;
-import java.io.File;
 import java.util.Map;
-
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 
 import saadadb.admintool.components.AdminComponent;
 import saadadb.database.Database;

@@ -22,7 +22,6 @@ import saadadb.products.setter.ColumnSingleSetter;
 import saadadb.vocabulary.RegExp;
 
 public class productReport {
-
 	/**
 	 * @param args
 	 */
@@ -39,7 +38,8 @@ public class productReport {
 			} else if (ap.getFilename().matches(RegExp.FITS_FILE)) {
 				df = new FitsDataFile(ap.getFilename(), (ProductMapping)null);
 			} else {
-				throw new Exception("Ni VOTABLE NI FITS");
+				df = new FitsDataFile(ap.getFilename(), (ProductMapping)null);
+				//throw new Exception("Ni VOTABLE NI FITS");
 			}
 			switch (Category.getCategory(ap.getCategory())) {
 			case Category.TABLE:

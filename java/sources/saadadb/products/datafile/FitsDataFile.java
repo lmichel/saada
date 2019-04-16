@@ -4,7 +4,11 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.ColorModel;
 import java.awt.image.MemoryImageSource;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,6 +43,7 @@ import saadadb.util.JavaTypeUtility;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 import saadadb.util.TileRiceDecompressor;
+import saadadb.vocabulary.RegExp;
 import saadadb.vocabulary.enums.DataFileExtensionType;
 import saadadb.vocabulary.enums.ExtensionSetMode;
 
@@ -1653,6 +1658,28 @@ public final class FitsDataFile extends FSDataFile{
 	@Override
 	public String getName() {
 		return this.file.getName();
+	}
+	
+	/**
+	 * returns true if the FITS file has a correct fits suffix or 
+	 * if its content starts with SIMPLE = T
+	 * 
+	 * @param filePath full file path
+	 * @return true if the file looks like a FITS file
+	 * @throws IOException
+	 */
+	public static final boolean isFitsFile(String filePath) throws IOException{
+		File file = new File(filePath);
+		if( !file.exists() ) {
+			return false;
+		} else if( filePath.matches(RegExp.FITS_FILE) ) {
+			return true;
+		} else {
+			BufferedReader brTest = new BufferedReader(new FileReader(filePath));
+			String firstLine = brTest .readLine();
+			brTest.close();
+		    return firstLine.matches("^SIMPLE\\s+=\\s+T.*");
+		}
 	}
 
 }
