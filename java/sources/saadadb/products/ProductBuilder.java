@@ -195,7 +195,6 @@ public abstract class ProductBuilder {
 			 * The WCS modeler is external to Saada, it works with CardDescripors instead of AttributeHandler
 			 */
 			cardMap = new CardMap(new LinkedHashSet<CardDescriptor>(this.productAttributeHandler.values()));
-			System.out.println(cardMap.keySet().size());
 			/*
 			 * Here cp.put(AH) where HA is read from the arg parser
 			 */

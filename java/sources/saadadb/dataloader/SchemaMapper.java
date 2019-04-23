@@ -363,7 +363,7 @@ public abstract class SchemaMapper {
 	 * @throws Exception
 	 */
 	public DataFile getDataFileInstance(String fullPath) throws Exception {
-		if( fullPath.matches(RegExp.FITS_FILE) ) {
+		if( FitsDataFile.isFitsFile(fullPath) ) {
 			return(new FitsDataFile(fullPath, this.mapping));
 		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
 			return(new VOTableDataFile(fullPath, this.mapping));
