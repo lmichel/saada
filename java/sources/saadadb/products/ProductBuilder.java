@@ -205,7 +205,7 @@ public abstract class ProductBuilder {
 					Messenger.printMsg(Messenger.DEBUG, "Add user WCS kyword " + ah);
 				cardMap.put(ah);
 			}
-			this.wcsModeler = new Modeler(cardMap);	
+			this.wcsModeler = new Modeler(this.cardMap);	
 			this.quantityDetector = new QuantityDetector(this.productAttributeHandler, null, this.mapping, this.wcsModeler);
 		}
 	}
