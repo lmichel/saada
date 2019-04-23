@@ -1,7 +1,5 @@
 package saadadb.vo.request.formator.votable;
 
-import org.apache.jasper.tagplugins.jstl.core.Catch;
-
 import cds.savot.model.OptionSet;
 import cds.savot.model.ParamSet;
 import cds.savot.model.SavotOption;

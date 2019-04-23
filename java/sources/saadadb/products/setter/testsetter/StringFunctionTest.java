@@ -11,7 +11,7 @@ public class StringFunctionTest {
 
 	private String funcName;
 	private String args[];
-	private String log;
+	private String log="";
 	
 	public StringFunctionTest()
 	{
@@ -82,12 +82,34 @@ public class StringFunctionTest {
 	
 	}
 	
+	private void splitsTest()
+	{
+		String result=null;
+
+		funcName="split";
+		args = new String[]{ "V8410ph_IUE.fits", "_", "0"};
+		try {
+			result=DictionaryStringFunction.exec(funcName, args);
+			System.out.println("=========== " + result);
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO Auto-generated catch block
+			log+="invalidArgumentsTest test succeed (Exception exec)\n";
+		}
+		if(result!=null)
+		{
+			log+="invalidArgumentsTest test failed\n";
+		}
+	
+	}
+	
 	
 	public void allTest()
 	{
 		validFunctionArgsTest();
 		invalidFunctionTest();
 		invalidArgumentsTest();
+		splitsTest();
 		System.out.println(log);
 	}
 	
