@@ -1,5 +1,6 @@
 package saadadb.dataloader;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -381,16 +382,21 @@ public abstract class SchemaMapper {
 	 * @throws Exception
 	 */
 	public static DataFile getDataFileInstance(String fullPath, ProductMapping productMapping) throws Exception {
-		
-		if( FitsDataFile.isFitsFile(fullPath) ) {		 
-			return(new FitsDataFile(fullPath, productMapping));
-		} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
-			return(new VOTableDataFile(fullPath, productMapping));
-		} else if( fullPath.matches(RegExp.JSON_FILE) ) {
-			return(new JsonDataFile(fullPath, productMapping));
+
+		if( (new File(fullPath)).exists()) {
+			if( FitsDataFile.isFitsFile(fullPath) ) {		 
+				return(new FitsDataFile(fullPath, productMapping));
+			} else if( fullPath.matches(RegExp.VOTABLE_FILE) ) {
+				return(new VOTableDataFile(fullPath, productMapping));
+			} else if( fullPath.matches(RegExp.JSON_FILE) ) {
+				return(new JsonDataFile(fullPath, productMapping));
+			} else {
+				return(new AnyFile(fullPath, productMapping));
+			}	
 		} else {
-			return(new AnyFile(fullPath, productMapping));
-		}		
+			AbortException.throwNewException(SaadaException.FILE_ACCESS, "can't access " + fullPath);
+			return null;
+		}
 	}
 	
 	/**
