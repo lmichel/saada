@@ -1,0 +1,136 @@
+====================================================
+     Saada 2.0.build42 23/04/19 10:00
+      File f002.fit
+ Processed Thu Jun 13 09:55:27 CEST 2019
+====================================================
+
+========= User parameters
+ArgsParser(
+    -filename=/home/michel/Desktop/datasample/vizier/f002.fit 
+    -obscollection='VIII/6' 
+    -repository=no 
+    -obsmapping=first 
+    -polarmapping=first 
+    -posmapping=first 
+    -spcmapping=first 
+    -timemapping=first 
+    -name=im_VIII_6_ 
+    -target=OBJECT 
+    -tmin=DATE
+    -OBS 
+    -spcunit='Hz' 
+    -instrument=INSTRUME 
+    -facility=TELESCOP 
+    -ukw bib_reference='1985AJ.....90.2540C' 
+    -ukw has_wcs='7' 
+    -ukw has_wcs='7' 
+    -category=image 
+    -collection=Foo 
+    -debug=on Vizier )
+
+========= Keywords read
+HEADER 1 SIMPLE(_simple,boolean,,,,true,)
+HEADER 2 BITPIX(_bitpix,int,,,,16,)
+HEADER 3 NAXIS(_naxis,int,,,,4,)
+HEADER 4 NAXIS1(_naxis1,int,,,,512,)
+HEADER 5 NAXIS2(_naxis2,int,,,,512,)
+HEADER 6 NAXIS3(_naxis3,int,,,,1,)
+HEADER 7 NAXIS4(_naxis4,int,,,,1,)
+HEADER 8 EXTEND(_extend,boolean,,,,true,TABLES FOLLOWING MAIN IMAGE)
+HEADER 9 BLOCKED(_blocked,boolean,,,,true,TAPE MAY BE BLOCKED)
+HEADER 10 OBJECT(_object,String,,,,N 23.3,SOURCE  NAME)
+HEADER 11 TELESCOP(_telescop,String,,,,300 FOOT,)
+HEADER 12 INSTRUME(_instrume,String,,,,4FEED 21,)
+HEADER 13 OBSERVER(_observer,String,,,,,)
+HEADER 14 DATE-OBS(_date_obs,String,,,, 6/10/83,OBSERVATION START DATE DD/MM/YY)
+HEADER 15 DATE-MAP(_date_map,String,,,,09/11/85,DATE OF LAST PROCESSING DD/MM/YY)
+HEADER 16 BSCALE(_bscale,double,,,,3.52842612726E-05,REAL = TAPE * BSCALE + BZERO)
+HEADER 17 BZERO(_bzero,double,,,,1.05329322815E+00,)
+HEADER 18 BUNIT(_bunit,String,,,,JY,UNITS OF FLUX)
+HEADER 19 EPOCH(_epoch,double,,,,1.950000000E+03,EPOCH OF RA DEC)
+HEADER 20 BLANK(_blank,int,,,,-32768,BLANKED PIXEL TAPE VALUE)
+HEADER 21 DATAMAX(_datamax,double,,,,2.209205627E+00,MAX PIXEL VALUE)
+HEADER 22 DATAMIN(_datamin,double,,,,-1.026191711E-01,MIN PIXEL VALUE)
+HEADER 23 CTYPE1(_ctype1,String,,,,RA---SIN,)
+HEADER 24 CRVAL1(_crval1,double,,,,0.00000000000E+00,)
+HEADER 25 CDELT1(_cdelt1,double,,,,-3.333333492E-02,)
+HEADER 26 CRPIX1(_crpix1,double,,,,2.570000000E+02,)
+HEADER 27 CROTA1(_crota1,double,,,,0.000000000E+00,)
+HEADER 28 CTYPE2(_ctype2,String,,,,DEC--SIN,)
+HEADER 29 CRVAL2(_crval2,double,,,,6.50000000000E+00,)
+HEADER 30 CDELT2(_cdelt2,double,,,,3.333333492E-02,)
+HEADER 31 CRPIX2(_crpix2,double,,,,1.000000000E+00,)
+HEADER 32 CROTA2(_crota2,double,,,,0.000000000E+00,)
+HEADER 33 CTYPE3(_ctype3,String,,,,FREQ,)
+HEADER 34 CRVAL3(_crval3,double,,,,1.40000000000E+09,)
+HEADER 35 CDELT3(_cdelt3,double,,,,1.000000000E+00,)
+HEADER 36 CRPIX3(_crpix3,double,,,,1.000000000E+00,)
+HEADER 37 CROTA3(_crota3,double,,,,0.000000000E+00,)
+HEADER 38 CTYPE4(_ctype4,String,,,,STOKES,)
+HEADER 39 CRVAL4(_crval4,double,,,,1.00000000000E+00,)
+HEADER 40 CDELT4(_cdelt4,double,,,,1.000000000E+00,)
+HEADER 41 CRPIX4(_crpix4,double,,,,1.000000000E+00,)
+HEADER 42 CROTA4(_crota4,double,,,,0.000000000E+00,)
+HEADER 43 ORIGIN(_origin,String,,,,AIPSNRAO1 CONVEX 6.0     15JAN88,)
+HEADER 44 DATE(_date,String,,,,15/09/87,FILE WRITTEN ON DD/MM/YY)
+
+========= Loaded extensions
+Extension #0 DETECTED Take IMAGE of HDU# 0 as data extension for IMAGE
+
+========= Signature
+MD5 hash code d41d8cd98f00b204e9800998ecf8427e 
+
+========= Mapping report
+              obs_id     USER:- DETE:- CONV:- storedValue=300 FOOT [N 23.3] 
+   obs_publisher_did     USER:- DETE:- CONV:- 
+         calib_level     USER:- DETE:- CONV:- 
+      obs_collection     USER:obs_collection- By VALUE=VIII/6  DETE:- CONV:- storedValue=VIII/6 
+         target_name     USER:target_name-By KEYWORD OBJECT DETE:- CONV:- storedValue=N 23.3 
+       facility_name     USER:facility_name-By KEYWORD TELESCOP DETE:- CONV:- storedValue=300 FOOT 
+     instrument_name     USER:instrument_name-By KEYWORD INSTRUME DETE:- CONV:- storedValue=4FEED 21 
+                s_ra     USER:- DETE:- CONV:from FK5(J2000.0) to ICRS storedValue=0.0 
+               s_dec     USER:- DETE:- CONV:from FK5(J2000.0) to ICRS storedValue=6.500000000000001 
+        s_resolution     USER:- DETE:- CONV:from deg to arcsec storedValue=0.0 
+               s_fov     USER:- DETE:- CONV:- storedValue=0.0 
+            s_region     USER:- DETE:- CONV:Converted from ICRS in ICRS storedValue=Polygon ICRS  0.0 6.500000000000001  0.0 6.500000000000001  0.0 6.500000000000001  0.0 6.500000000000001  
+              system     USER:- DETE:- CONV:- storedValue=null 
+              em_min     USER:- DETE:By WCS SpectralProjection CONV:from Hz to m storedValue=0.2141375 
+              em_max     USER:- DETE:By WCS SpectralProjection CONV:from Hz to m storedValue=0.2141375 
+        em_res_power     USER:- DETE:- CONV:Cannot compute resoluton power from a range=0 or NaN storedValue=NaN 
+             em_unit     USER:em_unit- By VALUE=Hz  DETE:- CONV:- storedValue=Hz 
+               t_min     USER:t_min-By KEYWORD DATE-OBS DETE:- CONV:from String to mjd storedValue=82020.0 
+               t_max     USER:- DETE:- CONV:- 
+           t_exptime     USER:- DETE:- CONV:- 
+        t_resolution     USER:- DETE:- CONV:- 
+               o_ucd     USER:- DETE:Infered from detected units, Infered from detected units, Value taken by default since the dispersion axis is set CONV:- storedValue=phot.count 
+              o_unit     USER:- DETE:kw BUNIT detected by name, found in keywords CONV:- storedValue=JY 
+      o_calib_status     USER:- DETE:Infered from detected units, Infered from detected units CONV:- storedValue=3 
+          pol_states     USER:- DETE:Taken from WCS pixel_value=1 CONV:- storedValue=I 
+               ESSAI     USER:- DETE:- CONV:- 
+      size_alpha_csa     USER:- DETE:- CONV:- storedValue=0.0 
+      size_delta_csa     USER:- DETE:- CONV:- storedValue=0.0 
+              naxis1     USER:- DETE:- CONV:- storedValue=512 
+              naxis2     USER:- DETE:- CONV:- storedValue=512 
+          crpix1_csa     USER:- DETE:- CONV:- storedValue=257.0 
+          crpix2_csa     USER:- DETE:- CONV:- storedValue=1.0 
+          ctype1_csa     USER:- DETE:- CONV:- storedValue=RA---SIN 
+          ctype2_csa     USER:- DETE:- CONV:- storedValue=DEC--SIN 
+           cd1_1_csa     USER:- DETE:- CONV:- storedValue=0.0 
+           cd1_2_csa     USER:- DETE:- CONV:- storedValue=0.0 
+           cd2_1_csa     USER:- DETE:- CONV:- storedValue=0.0 
+           cd2_2_csa     USER:- DETE:- CONV:- storedValue=0.0 
+           crota_csa     USER:- DETE:- CONV:- storedValue=0.0 
+          crval1_csa     USER:- DETE:- CONV:- storedValue=0.0 
+          crval2_csa     USER:- DETE:- CONV:- storedValue=6.5 
+           date_load     USER:- DETE:- CONV:- storedValue=1560412527767 
+ repository_location     USER:- DETE:- CONV:- storedValue=NULL 
+          access_url     USER:- DETE:- CONV:- storedValue=download?oid=9223372036854775807 
+       access_format     USER:- DETE:- CONV:- storedValue=application/fits 
+      access_estsize     USER:- DETE:- CONV:- storedValue=541440 
+            oidsaada     USER:- DETE:- CONV:- storedValue=9223372036854775807 
+    contentsignature     USER:- DETE:- CONV:- storedValue=d41d8cd98f00b204e9800998ecf8427e 
+        access_right     USER:- DETE:- CONV:- storedValue=X 
+         healpix_csa     USER:- DETE:- CONV:- storedValue=5113705468 
+           pos_x_csa     USER:- DETE:- CONV:- storedValue=0.9935718556765875 
+           pos_y_csa     USER:- DETE:- CONV:- storedValue=0.0 
+           pos_z_csa     USER:- DETE:- CONV:- storedValue=0.11320321376790672 
