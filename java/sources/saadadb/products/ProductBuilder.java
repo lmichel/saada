@@ -612,7 +612,7 @@ public abstract class ProductBuilder {
 					return retour;
 				}
 				/*
-				 * Build a ColumnExpressionSetter using tehe builder AH
+				 * Build a ColumnExpressionSetter using the builder AH
 				 */
 				retour = new ColumnExpressionSetter(colmunName, mappingSingleHandler);
 				retour.completeUserMappingMsg(columnMapping.getMessage() + "By " + columnMapping.getMode() + " " + ahname);
