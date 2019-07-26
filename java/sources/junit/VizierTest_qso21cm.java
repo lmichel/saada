@@ -7,36 +7,34 @@ import org.junit.Test;
 
 import saadadb.dataloader.testprov.ProductFileReport;
 
-public class VizierTest_f002 {
-	static final String fileName = "f002.fit";
+public class VizierTest_qso21cm {
+	static final String fileName = "qso21cm.fits";
 	static final String dirName =  "/home/michel/Desktop/datasample/vizier/";
 	
 	
 	static final String[] args = {
 			"-filename=" + ReportUtils.getFilename(dirName, fileName),
-					"-obscollection='VIII/6'",
+					"-collection=Foo",
+					"-category=image",
+					"-obscollection='TEST'",
+					"-classfusion=im_TEST",
+					"-noindex",
 					"-repository=no",
 					"-obsmapping=first",
 					"-polarmapping=first",
 					"-posmapping=first",
 					"-spcmapping=first",
 					"-timemapping=first",
-					"-name=im_VIII_6_",
-					"-target=OBJECT",
-					"-tmin=DATE-OBS",
-					"-spcunit='Hz'",
+					"-name=im_TEST_qso21cm.fits",
+					"-position='274.86061408,38.7504962'",
+					"-system='ICRS'",
+					"-target='QSO J1819+3845'",
+					"-tmin='54969'",
+					"-spcrespower='Infinity'",
 					"-instrument=INSTRUME",
-					"-facility=TELESCOP",
-					"-ukw",
-					"bib_reference='1985AJ.....90.2540C'",
-					"-ukw",
-					"has_wcs='7'",
-					"-ukw",
-					"has_wcs='7'",
-					"-category=image",
-					"-collection=Foo",
-					"-debug=on",
+					"-polarstates=POL",
 					"Vizier"
+
 	         };
 	static final String reportDir = ReportUtils.getReportFilename(dirName, fileName);
 	static final String reportRefDir = ((new File(".")).getAbsolutePath()) + "/java/sources/junit/reports/" + fileName + ".txt";

@@ -1,0 +1,146 @@
+====================================================
+     Saada 2.0.build43 13/06/19 10:00
+      File qso21cm.fits
+ Processed Fri Jul 26 11:07:09 CEST 2019
+====================================================
+
+========= User parameters
+ArgsParser(
+    -filename=/home/michel/Desktop/datasample/vizier/qso21cm.fits 
+    -collection=Foo 
+    -category=image 
+    -obscollection='TEST' 
+    -classfusion=im_TEST 
+    -noindex 
+    -repository=no 
+    -obsmapping=first 
+    -polarmapping=first 
+    -posmapping=first 
+    -spcmapping=first 
+    -timemapping=first 
+    -name=im_TEST_qso21cm.fits 
+    -position='274.86061408,38.7504962' 
+    -system='ICRS' 
+    -target='QSO J1819+3845' 
+    -tmin='54969' 
+    -spcrespower='Infinity' 
+    -instrument=INSTRUME 
+    -polarstates=POL Vizier )
+
+========= Keywords read
+HEADER 1 SIMPLE(_simple,boolean,,,,true,)
+HEADER 2 BITPIX(_bitpix,int,,,,32,)
+HEADER 3 NAXIS(_naxis,int,,,,3,)
+HEADER 4 NAXIS1(_naxis1,int,,,,950,)
+HEADER 5 NAXIS2(_naxis2,int,,,,950,)
+HEADER 6 NAXIS3(_naxis3,int,,,,1,)
+HEADER 7 MAPTYP(_maptyp,String,,,,MAP,)
+HEADER 8 POL(_pol,String,,,,I,)
+HEADER 9 BSCALE(_bscale,double,,,,0.1186953E-09,REAL = TAPE *BSCALE + BZERO)
+HEADER 10 BZERO(_bzero,double,,,,0.0,)
+HEADER 11 BUNIT(_bunit,String,,,,JY/BEAM,)
+HEADER 12 DATE(_date,String,,,,12/08/14,)
+HEADER 13 ORIGIN(_origin,String,,,,DWINGELOO (NL)  PGM=NMAP(6.27),)
+HEADER 14 EPOCH(_epoch,double,,,,2000.000,EPOCH OF MAP)
+HEADER 15 INSTRUME(_instrume,String,,,,WSRT,)
+HEADER 16 CRVAL1(_crval1,double,,,,274.8606,REF. PIXEL RIGHT ASCENSION (DEGREES))
+HEADER 17 CRPIX1(_crpix1,double,,,,476.0000,REF. PIXEL HOR. INDEX, LL=(1,1))
+HEADER 18 CDELT1(_cdelt1,double,,,,-0.00146484,RA INCREMENT (DEGREES))
+HEADER 19 CTYPE1(_ctype1,String,,,,RA---NCP,)
+HEADER 20 CRVAL2(_crval2,double,,,,38.75047,REF. PIXEL DECLINATION (DEGREES))
+HEADER 21 CRPIX2(_crpix2,double,,,,476.0000,REF. PIXEL VERT. INDEX, LL=(1,1))
+HEADER 22 CDELT2(_cdelt2,double,,,,0.00146484,DEC INCREMENT (DEGREES))
+HEADER 23 CTYPE2(_ctype2,String,,,,DEC--NCP,)
+HEADER 24 CRVAL3(_crval3,int,,,,1381896294,FREQUENCY (HERTZ))
+HEADER 25 CRPIX3(_crpix3,double,,,,1.0,)
+HEADER 26 CDELT3(_cdelt3,int,,,,71852687,CHANNEL SEPARATION (HERTZ))
+HEADER 27 CRESL3(_cresl3,int,,,,71852687,BANDWIDTH (HERTZ))
+HEADER 28 CTYPE3(_ctype3,String,,,,FREQ,)
+HEADER 29 OBJECT(_object,String,,,,J1819+3845,)
+HEADER 30 DATE-OBS(_date_obs,double,,,,2009.350,)
+HEADER 31 BANDW(_bandw,int,,,,71852687,TOTAL BANDWIDTH OF OBS(HERTZ))
+HEADER 32 VEL(_vel,double,,,,0.0000000,CENTRE VELOCITY (M/S))
+HEADER 33 PCRA(_pcra,double,,,,274.8606,POINTING CENTRE R.A. (DEG))
+HEADER 34 PCDEC(_pcdec,double,,,,38.75047,POINTING CENTRE DEC (DEG))
+HEADER 35 NBLANK(_nblank,int,,,,0,NUMBER OF UNDEF. VALUES)
+HEADER 36 BLGRAD(_blgrad,String,,,,GAUSSIAN,TAPER TYPE)
+HEADER 37 UVGRID(_uvgrid,String,,,,EXP*SINC,CONVOLUTION TYPE)
+HEADER 38 CORGRID(_corgrid,int,,,,1,CORRECT FOR CONVOLUTION)
+HEADER 39 CLIP(_clip,int,,,,0,CLIPPING DONE)
+HEADER 40 SUBTR(_subtr,int,,,,1,SOURCE SUBTRACTION)
+HEADER 41 DATTYP(_dattyp,String,,,,NORMAL,DATA TYPE)
+HEADER 42 UVCDT(_uvcdt,String,,,,NORMAL,UV COORDINATE TYPE)
+HEADER 43 DEBEAM(_debeam,int,,,,0,DE-BEAM COUNT)
+HEADER 44 DATAMAX(_datamax,double,,,,0.127448,MAX. INTENSITY)
+HEADER 45 DATAMIN(_datamin,double,,,,-0.1120480E-03,MIN. INTENSITY)
+HEADER 46 NINTF(_nintf,int,,,,146880,TOTAL INTERFEROMETERS)
+HEADER 47 NFREQ(_nfreq,int,,,,1,TOTAL # OF FREQUENCY POINTS)
+HEADER 48 NOISE(_noise,double,,,,0.1636212E-04,NOISE IN MAP)
+HEADER 49 NORM(_norm,int,,,,3463669,NORM. FACTOR IN FFT)
+HEADER 50 FFTRA(_fftra,int,,,,2048,FFT SIZE IN R.A.)
+HEADER 51 FFTDEC(_fftdec,int,,,,2048,FFT SIZE IN DEC.)
+HEADER 52 SETNR(_setnr,int,,,,0,# OF SET.)
+HEADER 53 INSECT(_insect,int,,,,1728,INPUT SECTORS.)
+HEADER 54 INPTS(_inpts,int,,,,67240096,INPUT POINTS.)
+HEADER 55 MAPLAB(_maplab,String,,,,429496729*,LABEL OF THIS MAP)
+
+========= Loaded extensions
+Extension #0 DETECTED Take IMAGE of HDU# 0 as data extension for IMAGE
+
+========= Signature
+MD5 hash code d41d8cd98f00b204e9800998ecf8427e 
+
+========= Mapping report
+              obs_id     USER:- DETE:- CONV:- storedValue=J1819+3845 
+   obs_publisher_did     USER:- DETE:- CONV:- 
+         calib_level     USER:- DETE:- CONV:- 
+      obs_collection     USER:obs_collection- By VALUE=TEST  DETE:- CONV:- storedValue=TEST 
+         target_name     USER:target_name- By VALUE=QSO J1819+3845  DETE:- CONV:- storedValue=QSO J1819+3845 
+       facility_name     USER:- DETE:- CONV:- 
+     instrument_name     USER:instrument_name-By KEYWORD INSTRUME DETE:- CONV:- storedValue=WSRT 
+                s_ra     USER:-position param- By VALUE=274.86061408deg  DETE:- CONV:from ICRS(Ep=JNaN) to ICRS storedValue=274.86061408 
+               s_dec     USER:-position param- By VALUE=38.7504962deg  DETE:- CONV:from ICRS(Ep=JNaN) to ICRS storedValue=38.7504962 
+        s_resolution     USER:- DETE:- CONV:- 
+               s_fov     USER:- DETE:- CONV:- 
+            s_region     USER:- DETE:- CONV:- 
+              system     USER:-system param- By VALUE=ICRS  DETE:- CONV:- storedValue=null 
+              em_min     USER:- DETE:By WCS SpectralProjection CONV:from Hz to m storedValue=0.21694283521973176 
+              em_max     USER:- DETE:By WCS SpectralProjection CONV:from Hz to m storedValue=0.21694283521973176 
+        em_res_power     USER:em_res_power- By VALUE=Infinity  DETE:- CONV:Cannot compute resoluton power from a range=0 or NaN storedValue=NaN 
+             em_unit     USER:- DETE:By WCS SpectralProjection CONV:- storedValue=Hz 
+               t_min     USER:t_min- By VALUE=54969  DETE:- CONV:from String to mjd storedValue=54969.0 
+               t_max     USER:- DETE:- CONV:- 
+           t_exptime     USER:- DETE:- CONV:- 
+        t_resolution     USER:- DETE:- CONV:- 
+               o_ucd     USER:- DETE:Infered from detected units, Infered from detected units, Value taken by default since the dispersion axis is set CONV:- storedValue=phot.count 
+              o_unit     USER:- DETE:kw BUNIT detected by name, found in keywords CONV:- storedValue=JY/BEAM 
+      o_calib_status     USER:- DETE:Infered from detected units, Infered from detected units CONV:- storedValue=3 
+          pol_states     USER:pol_states-By KEYWORD POL DETE:- CONV:- storedValue=I 
+               ESSAI     USER:- DETE:- CONV:- 
+      size_alpha_csa     USER:- DETE:- CONV:- storedValue=NaN 
+      size_delta_csa     USER:- DETE:- CONV:- storedValue=NaN 
+              naxis1     USER:- DETE:- CONV:- storedValue=0 
+              naxis2     USER:- DETE:- CONV:- storedValue=0 
+          crpix1_csa     USER:- DETE:- CONV:- storedValue=NaN 
+          crpix2_csa     USER:- DETE:- CONV:- storedValue=NaN 
+          ctype1_csa     USER:- DETE:- CONV:- storedValue=NotSet 
+          ctype2_csa     USER:- DETE:- CONV:- storedValue=NotSet 
+           cd1_1_csa     USER:- DETE:- CONV:- storedValue=NaN 
+           cd1_2_csa     USER:- DETE:- CONV:- storedValue=NaN 
+           cd2_1_csa     USER:- DETE:- CONV:- storedValue=NaN 
+           cd2_2_csa     USER:- DETE:- CONV:- storedValue=NaN 
+           crota_csa     USER:- DETE:- CONV:- storedValue=NaN 
+          crval1_csa     USER:- DETE:- CONV:- storedValue=NaN 
+          crval2_csa     USER:- DETE:- CONV:- storedValue=NaN 
+           date_load     USER:- DETE:- CONV:- storedValue=1564132029740 
+ repository_location     USER:- DETE:- CONV:- storedValue=NULL 
+          access_url     USER:- DETE:- CONV:- storedValue=download?oid=9223372036854775807 
+       access_format     USER:- DETE:- CONV:- storedValue=application/fits 
+      access_estsize     USER:- DETE:- CONV:- storedValue=3617280 
+            oidsaada     USER:- DETE:- CONV:- storedValue=9223372036854775807 
+    contentsignature     USER:- DETE:- CONV:- storedValue=d41d8cd98f00b204e9800998ecf8427e 
+        access_right     USER:- DETE:- CONV:- storedValue=X 
+         healpix_csa     USER:- DETE:- CONV:- storedValue=3928426658 
+           pos_x_csa     USER:- DETE:- CONV:- storedValue=0.06608071374282329 
+           pos_y_csa     USER:- DETE:- CONV:- storedValue=-0.7770744437855113 
+           pos_z_csa     USER:- DETE:- CONV:- storedValue=0.6259302262126963 
