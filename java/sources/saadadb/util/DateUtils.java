@@ -29,7 +29,11 @@ public class DateUtils {
 			af.set(Double.parseDouble(input));
 			retour= Double.toString(af.getMJD());
 		} else if( input.matches(RegExp.FITS_INT_VAL) ) {
-			af.set(Integer.parseInt(input));
+			/*
+			 * Astrotime fails to convert int -> mjd (e.g.54969 => 40345)
+			 * To fix this we force to operate with double
+			 */
+			af.set(Double.parseDouble(input));
 			retour= Double.toString(af.getMJD());
 		} else {
 			af.set(formatStringDate(formatStringDate(input)));
@@ -52,7 +56,11 @@ public class DateUtils {
 			af.set(Double.parseDouble(input));
 			return af.getMJD();
 		} else if( input.matches(RegExp.FITS_INT_VAL) ) {
-			af.set(Integer.parseInt(input));
+			/*
+			 * Astrotime fails to convert int -> mjd (e.g.54969 => 40345)
+			 * To fix this we force to operate with double
+			 */
+			af.set(Double.parseDouble(input));
 			return af.getMJD();
 		} else {
 			af.set(formatStringDate(input));
