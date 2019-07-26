@@ -36,10 +36,8 @@ public class ProductFileReport {
 		new Loader(args).load();
 
 	}
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	
+	public static void process(String[] args) {
 		// TODO Auto-generated method stub
 		try {
 			ArgsParser ap = new ArgsParser(args);
@@ -75,6 +73,13 @@ public class ProductFileReport {
 		} finally {
 			Database.close();
 		}
+	}
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		process(args);
+
 		System.exit(1);
 	}
 }
