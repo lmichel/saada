@@ -723,7 +723,9 @@ public class MysqlWrapper extends DbmsWrapper {
 	protected File getProcBaseRef() throws Exception {
 		String base_dir = System.getProperty("user.home") 
 		+ Database.getSepar() 
-		+ "workspace" 
+		+ "gitRepositories" 
+		+ Database.getSepar() 
+		+ "Saada1.7.0"
 		+ Database.getSepar() 
 		+ "Saada1.7"
 		+ Database.getSepar() 

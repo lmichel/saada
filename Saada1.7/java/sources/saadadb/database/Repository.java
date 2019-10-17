@@ -159,7 +159,7 @@ public class Repository {
 	 * Remove the whole content of the report dir
 	 */
 	public static final void sweepReportDir() {
-		Messenger.printMsg(Messenger.TRACE, "Sweeping report dir");
+		Messenger.printMsg(Messenger.TRACE, "Sweeping report dir " + getVoreportsPath());
 		String[] content = (new File(getVoreportsPath())).list();
 		for( String c: content) {
 			Files.deleteFile(getVoreportsPath() + File.separator + c);
