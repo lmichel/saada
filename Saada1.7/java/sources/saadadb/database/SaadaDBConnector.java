@@ -477,6 +477,11 @@ public class SaadaDBConnector extends DefaultHandler {
 					Messenger.printMsg(Messenger.DEBUG, this.jdbc_url + " takes MYSQL wrapper");
 				this.wrapper = MysqlWrapper.getWrapper(this.jdbc_driver, this.jdbc_url);
 			}
+			else if( this.jdbc_url.startsWith("jdbc:mariadb") ) {
+				if (Messenger.debug_mode)
+					Messenger.printMsg(Messenger.DEBUG, this.jdbc_url + " takes MARIADB wrapper");
+				this.wrapper = MariadbWrapper.getWrapper(this.jdbc_driver, this.jdbc_url);
+			}
 			else if( this.jdbc_url.startsWith("jdbc:sqlite") ) {
 				if (Messenger.debug_mode)
 					Messenger.printMsg(Messenger.DEBUG, this.jdbc_url + " takes SQLITE wrapper");

@@ -209,7 +209,7 @@ public class NewSaadaDBTool extends JFrame {
 			Messenger.printStackTrace(e);
 			this.setCursor(cursor_org);
 			JOptionPane.showMessageDialog(this,
-					"SaadaDB Creation failed: " + e,
+				"SaadaDB Creation failed: " + e,
 					"Creation Error",
 					JOptionPane.ERROR_MESSAGE);
 		}

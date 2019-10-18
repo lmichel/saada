@@ -44,7 +44,7 @@ public class MysqlWrapper extends DbmsWrapper {
 	 * @param port_or_url
 	 * @throws ClassNotFoundException
 	 */
-	private MysqlWrapper(String server_or_driver, String port_or_url) throws ClassNotFoundException {
+	public MysqlWrapper(String server_or_driver, String port_or_url) throws ClassNotFoundException {
 		super(false);
 		test_base = "testbasededonnees";
 		test_table = "TableTest";
@@ -74,6 +74,12 @@ public class MysqlWrapper extends DbmsWrapper {
 		return "MySQL";
 	}
 
+	/**
+	 * @param server_or_url
+	 * @param port_or_url
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
 	public static DbmsWrapper getWrapper(String server_or_url, String port_or_url) throws ClassNotFoundException {
 		if( wrapper != null ) {
 			return wrapper; 

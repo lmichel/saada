@@ -41,6 +41,7 @@ import saadadb.configuration.CollectionAttributeExtend;
 import saadadb.database.Database;
 import saadadb.database.DbmsWrapper;
 import saadadb.database.InstallParamValidator;
+import saadadb.database.MariadbWrapper;
 import saadadb.database.MysqlWrapper;
 import saadadb.database.PostgresWrapper;
 import saadadb.database.SQLiteWrapper;
@@ -68,7 +69,7 @@ public class FormPanel extends JPanel {
 	protected JTextField saadadb_home = new JTextField(32);
 	protected JTextField saadadb_rep = new JTextField(32);
 
-	protected JComboBox dbms_combo = new JComboBox(new String[]{"SQLite", "Postgres", "MySQL"});
+	protected JComboBox dbms_combo = new JComboBox(new String[]{"SQLite", "Postgres", "MySQL", "MariaDB"});
 	/*
 	 * Mysql on windows does not recognize localhost
 	 */
@@ -445,6 +446,9 @@ public class FormPanel extends JPanel {
 			}
 			else if( dbms_combo.getSelectedItem().toString().equalsIgnoreCase("mysql") ){
 				dbmswrapper = MysqlWrapper.getWrapper(dbms_server.getText().trim(), dbms_port.getText().trim()); 
+			}
+			else if( dbms_combo.getSelectedItem().toString().equalsIgnoreCase("mariadb") ){
+				dbmswrapper = MariadbWrapper.getWrapper(dbms_server.getText().trim(), dbms_port.getText().trim()); 
 			}
 			else if( dbms_combo.getSelectedItem().toString().equalsIgnoreCase("sqlite") ){
 				dbmswrapper = SQLiteWrapper.getWrapper(dbms_server.getText().trim(), dbms_port.getText().trim()); 
