@@ -50,6 +50,16 @@ public class MariadbWrapper extends MysqlWrapper {
 		}
 	}
 
+	@Override
+	public String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
+		return  new String[] {
+				//"LOCK TABLE " + table_name + " WRITE",
+				"ALTER TABLE " + table_name + " DISABLE KEYS",
+				"LOAD DATA LOCAL INFILE '" + table_file.replaceAll("\\\\", "\\\\\\\\") + "' INTO TABLE "  +  table_name,
+				"ALTER TABLE " + table_name + " ENABLE KEYS"};
+
+	}
+
 	/* (non-Javadoc)
 	 * @see saadadb.database.DbmsWrapper#getDBMS()
 	 */
