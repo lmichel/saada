@@ -49,6 +49,14 @@ public class MariadbWrapper extends MysqlWrapper {
 			}
 		}
 	}
+	
+    /**
+     * restore the default command 
+     */
+	@Override
+	public String [] getPrimaryRelationshipIndex(String relationName) {
+		return new String[]{"CREATE INDEX " + relationName + "_oidprimary ON " + relationName + "(oidprimary)"};
+	}
 
 	@Override
 	public String[] getStoreTable(String table_name, int ncols, String table_file) throws Exception {
