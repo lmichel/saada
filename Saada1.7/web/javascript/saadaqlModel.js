@@ -245,35 +245,16 @@ jQuery.extend({
 			}
 		};
 		this.sortColumn= function(nameattr, sens) {
-			console.log("@@@@@@@@@@@@@@@ " + sens + " " + (!(sens == "asc")))
-			nativeConstraintEditor.fireOrderBy(nameattr, !(sens == "asc"));
+			if(sens == "asc")  {
+				nativeConstraintEditor.orderByView.setAsc()
+			} else {
+				nativeConstraintEditor.orderByView.setDesc()
+			}
+			nativeConstraintEditor.fireOrderBy(nameattr);
 			resultPaneView.fireSubmitQueryEvent();
 			return ;
-
-			if( sens != null ) {
-				$("#kwtab_orderby").val(nameattr);
-
-				if( sens == 'asc' ) {
-					$('#kwtab_orderasc').prop('checked',true);
-				} else {			
-					$('#kwtab_orderdesc').prop('checked',true);
-				}
-				//this.setOrderBy(nameattr);	
-
-			} else {
-				$("#kwtab_orderby").val("");
-				//this.setOrderBy(null);		
-			}
-			this.updateQuery();
-			resultPaneView.fireSubmitQueryEvent();
 		};
-//		this.getOrderByParameters = function() {
-//			var nameattr ='';;
-//			$("#kwtab_orderby").each(function() {
-//				nameattr = $(this).text();
-//			});
-//			return {nameattr: nameattr, asc: ($('#orderby_asc').prop('checked') == true) };
-//		};
+
 		this.processOIDTableEvent= function(oidtable){
 			var ah = attributesHandlers["oidtable"];
 			if( ah != undefined) {
