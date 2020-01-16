@@ -20,7 +20,7 @@ imageDir="../web/images"           # Directory from where the 3XMM images must b
 imageOutput="../web/min/images"    # Directory where the 3XMM images must be copied 
 iconsOutput="../web/min/icons" 
 jsbasics="../web/saadajsbasics"    # Location of resources copied from the JSRESOURCE project
-jsbasicsorg="/home/michel/workspace/jsresources/WebContent/saadajsbasics/"    # Location of resources in the JSRESOURCE project
+jsbasicsorg="/home/michel/gitRepositories/jsresources/WebContent/saadajsbasics/"    # Location of resources in the JSRESOURCE project
 
 #----------------------------------------------------------
 # List of used jsresources JS objects
@@ -48,6 +48,7 @@ js_array_org=("basics.js" \
 	                "ConstQEditor" \
 	                "QueryTextEditor" \	  
 	                "Pattern_v.js"	 \  
+	                "ModalAladin.js"	 \  
 	                "domain.js" \
 	                "HipsExplorer_v.js"	  
 	                )
