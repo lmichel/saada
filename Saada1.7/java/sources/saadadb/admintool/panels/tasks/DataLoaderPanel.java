@@ -150,7 +150,7 @@ public class DataLoaderPanel extends TaskPanel {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 			map.put("params", ap);
 			
-			if( selectedFiles != null && selectedFiles.size() > 0 ) {
+			if( selectedFiles != null && !selectedFiles.isEmpty()  ) {
 				map.put("filelist", selectedFiles);
 			}
 			return map;

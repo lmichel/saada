@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import saadadb.collection.Category;
@@ -202,18 +203,20 @@ public class Loader extends SaadaProcess {
 		 * "filename" is a directory 
 		 */ 
 		else if( requested_file.file.isDirectory() ) {
-			String[] dir_content = requested_file.file.list();
-			this.filesToLoad = new ArrayList<DataResourcePointer>(dir_content.length);
-			if( dir_content.length == 0 ) {
+			List<File> dir_content = requested_file.getOrderedDirContent(true);
+
+			//this.filesToLoad = new ArrayList<DataResourcePointer>(dir_content.length);
+			if( dir_content.isEmpty() ) {
 				Messenger.printMsg(Messenger.TRACE, "Directory <" + requested_file.file.getAbsolutePath() + "> is empty");		
 				return;
 			}
 			Messenger.printMsg(Messenger.TRACE, "Reading directory <" + requested_file.file.getAbsolutePath() + ">");							
 			int cpt = 0;
-			for( int i=0 ; i<dir_content.length ; i++ ) {	
+			int globalCpt=0;
+			for( File dataFile: dir_content) {
 				DataResourcePointer candidate_file=null;
 				try {
-				candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dir_content[i]);
+				candidate_file = new DataResourcePointer(requested_file.file.getAbsolutePath() + System.getProperty("file.separator") + dataFile.getName());
 				} catch(Exception e){
 					AbortException.throwNewException(SaadaException.FILE_ACCESS, e);
 				}
@@ -225,14 +228,16 @@ public class Loader extends SaadaProcess {
 					cpt++;				
 				}
 				/*
-				 * Do not proceed recursively: just files are taken
+				 * DataResourcePointer makes sure that dataFile is a file
+				 * Filter the name
 				 */
-				else if( !candidate_file.file.isDirectory() && this.validCandidateFile(dir_content[i], filter)) {
+				else if( this.validCandidateFile(dataFile.getName(), filter)) {
 					this.filesToLoad.add(candidate_file);
 					cpt++;
 				}
+				globalCpt++;
 				if( (cpt% 5000) == 0 ){
-					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.length + " file validated (" + (i+1-cpt) + " rejected)");
+					Messenger.printMsg(Messenger.TRACE, cpt + "/" + dir_content.size() + " file validated (" + (globalCpt - cpt) + " rejected)");
 				}
 			}
 			Messenger.printMsg(Messenger.TRACE, cpt + " candidate files found in directory <" + requested_file.inputFileName + ">");

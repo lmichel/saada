@@ -549,8 +549,7 @@ public class DataFileChooser extends JDialog {
 	public ArrayList<String> getSelectedDataFiles() {
 		if( current_dir == null  ) {
 			return null;
-		}
-		else {
+		} else {
 			ArrayList<String>  retour = new ArrayList<String>();
 			DefaultListModel dlm = ((DefaultListModel)files.getModel());
 			int[] selected_indices = files.getSelectedIndices();
@@ -569,7 +568,6 @@ public class DataFileChooser extends JDialog {
 					if(fn.length() > 0 ) {
 						retour.add(fn);
 					}
-					//					}
 				}
 			}
 			/*

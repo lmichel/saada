@@ -60,7 +60,7 @@ public class ThreadLoadData extends CmdThread {
 	public void runCommand() {
 		try {
 			Loader loader = new Loader(ap.getArgs());
-			if( fileList != null && fileList.size() > 0 ) {
+			if( this.fileList != null && !this.fileList.isEmpty() ) {
 				loader.setFilesToLoad(fileList);
 			}
 			loader.load();

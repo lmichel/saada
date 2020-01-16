@@ -8,6 +8,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 import saadadb.database.Database;
 import saadadb.database.Repository;
@@ -132,6 +136,43 @@ public class DataResourcePointer {
 			Messenger.printMsg(Messenger.TRACE, "delete tempo file " + this.file.getAbsolutePath());
 			this.file.delete();
 		}
+	}
+	
+	/**
+	 * return a sorted list of file (just files, no dirs) contained in this.file 
+	 * when it is a directory.
+	 * The returned list just contain one file otherwise
+	 * @see junit.DataResourcePointerTester
+	 * @param timeAsc: Sort by ascending last modification date if true
+	 * @return: a List of sorted files
+	 */
+	public List<File> getOrderedDirContent(boolean timeAsc){
+		List<File> retour = new ArrayList<File>();
+		if( this.isURL || ! this.file.isDirectory()) {
+			retour.add(this.file);
+		} else {
+			File[] files = this.file.listFiles();
+            if( timeAsc ) {
+            	Arrays.sort(files, new Comparator<File>() {
+            		public int compare(File f1, File f2) {
+            			return Long.compare(f1.lastModified(), f2.lastModified());
+			    	}
+            	});
+            } else {
+            	Arrays.sort(files, new Comparator<File>() {
+            		public int compare(File f1, File f2) {
+            			return Long.compare(f2.lastModified(), f1.lastModified());
+			    	}
+            	});
+            	
+            }
+			for( File sortedFile:files) {
+				if( sortedFile.isFile()){
+					retour.add(sortedFile);
+				}
+			}
+		}
+		return retour;
 	}
 
 	/**
