@@ -169,6 +169,7 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
 			this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
 			this.unit = "deg";
+
 			break;
 		case "getSizeRA()":
 			c2 = this.projection.getCenter(2);

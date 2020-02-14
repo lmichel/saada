@@ -13,17 +13,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/Obscore/class_mapping">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/Vizier/class_mapping">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/Desktop/ADASS2008/saadadbs/AZERTY/class_mapping">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
@@ -124,7 +114,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/fits.jar">
+	<classpathentry kind="lib" path="/home/michel/libsForEclipse/Obscore/fits.jar" sourcepath="/home/michel/libsForEclipse/Obscore/fits_src.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
