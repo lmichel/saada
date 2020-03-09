@@ -335,7 +335,7 @@ public class ProductIngestor {
 						String stcString = stc.getType() + " " + stc.getAstroFrame() + " ";
 						List<Double> pts = stc.getCoords();						
 						for( int i=0 ; i<(pts.size()/2) ; i++ ) {
-							converted_coord = Coord.convert(stc.getAstroFrame(), new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
+							converted_coord = Coord.convert(af, new double[]{pts.get(2*i), pts.get((2*i) + 1)}, Database.getAstroframe());
 							stcString += " " + converted_coord[0] + " " + converted_coord[1] + " " ;
 						}		
 						this.product.s_regionSetter.completeConversionMsg("Converted from " + stc.getAstroFrame() + " in " +  Database.getAstroframe());			
