@@ -151,7 +151,7 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 		case "getWorldPixelRegion()":
 			List<List<Double>> tempo = this.projection.getWorldBoundaries();
 			StringBuffer sb = new StringBuffer();
-			List<Double> sv = new ArrayList<Double>();
+			List<Double> sv = new ArrayList<>();
 			for( List<Double> cl: tempo){
 				for( Double ci: cl){
 					sb.append(Double.toString(ci));
@@ -167,7 +167,8 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			c2 = this.projection.getCenter(2);
 			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c1);
 			d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
-			this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
+			//this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
+			this.result =  Double.toString(Math.sqrt((d1*d1) + (d2*d2)));
 			this.unit = "deg";
 
 			break;
