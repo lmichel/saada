@@ -164,10 +164,9 @@ public final class ColumnWcsSetter extends ColumnExpressionSetter {
 			break;
 		case "getFieldOfView()":
 			c1 = this.projection.getCenter(1);
+			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c1, this.projection.getMax(1), c1);
 			c2 = this.projection.getCenter(2);
-			d1 = cds.astro.Astrocoo.distance(this.projection.getMin(1) , c2, this.projection.getMax(1), c1);
-			d2 = cds.astro.Astrocoo.distance(c1, this.projection.getMin(2), c1, this.projection.getMax(2));
-			//this.result =  (d1 > d2)?Double.toString(d2): Double.toString(d1);
+			d2 = cds.astro.Astrocoo.distance(c2, this.projection.getMin(2), c2, this.projection.getMax(2));
 			this.result =  Double.toString(Math.sqrt((d1*d1) + (d2*d2)));
 			this.unit = "deg";
 
