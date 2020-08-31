@@ -1,4 +1,4 @@
-package saadadb.products;
+package saadadb.products.updaters;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -21,6 +21,10 @@ import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
 import saadadb.meta.AttributeHandler;
+import saadadb.products.Image2DBuilder;
+import saadadb.products.MiscBuilder;
+import saadadb.products.ProductBuilder;
+import saadadb.products.SpectrumBuilder;
 import saadadb.products.datafile.DataFile;
 import saadadb.products.datafile.DataResourcePointer;
 import saadadb.products.reporting.MappingReport;

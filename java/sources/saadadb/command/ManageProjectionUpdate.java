@@ -1,7 +1,7 @@
 package saadadb.command;
 
 import saadadb.database.Database;
-import saadadb.products.ProjectionUpdater;
+import saadadb.products.updaters.ProjectionUpdater;
 
 
 public class ManageProjectionUpdate extends ManageEntity{
