@@ -147,7 +147,7 @@ public class ProductIngestor {
 	 * Compute the MD5 hash code with the loaded keywords
 	 * @throws Exception
 	 */
-	protected void setContentSignature() throws Exception {
+	public void setContentSignature() throws Exception {
 		String md5Value = "";
 		if( this.product.metaClass != null ) {
 			String[] fn = this.product.metaClass.getAttribute_names();
