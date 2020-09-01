@@ -514,10 +514,27 @@
 		      ant projection.update "-Dpopulate=Select IMAGE From * In Starting WhereAttributeSaada{namesaada='Pedro'}" 
 	-->
 	<target name="projection.update">
-    	<java fork="true"  classname="saadadb.command.ManageProjectionUpdate" failonerror="true" >
+    	<java fork="true"  classname="saadadb.command.updatersManageProjectionUpdate" failonerror="true" >
       		<classpath refid="saadadb.classpath"/>
 	  		<arg value="-populate=${populate}"/>
 	  		<arg value="-debug=${debug}"/>
+            <arg value="${SAADA_DB_NAME}"/>
+    	</java> 
+  	</target> 
+	<!-- 
+		USAGE ant projection.update  -Dpopulate=my_collection  
+		      ant projection.update  -Dpopulate=all -Dcategory=image
+		      ant projection.update  -Dpopulate=all -Dcategory=image
+		      ant projection.update  -Dpopulate=all -Dcategory=image -Dnop=-nop
+	
+	-->
+	<target name="fov.update">
+    	<java fork="true"  classname="saadadb.command.ManageFoVUpdate" failonerror="true" >
+      		<classpath refid="saadadb.classpath"/>
+	  		<arg value="-populate=${populate}"/>
+	  		<arg value="-category=${category}"/>
+	  		<arg value="-debug=${debug}"/>
+	  		<arg value="${nop}"/>
             <arg value="${SAADA_DB_NAME}"/>
     	</java> 
   	</target> 
