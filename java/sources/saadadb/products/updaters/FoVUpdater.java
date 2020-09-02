@@ -1,38 +1,18 @@
 package saadadb.products.updaters;
 
-import java.io.File;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
 import saadadb.collection.Category;
-import saadadb.collection.SaadaOID;
 import saadadb.collection.obscoremin.SaadaInstance;
 import saadadb.command.ArgsParser;
 import saadadb.command.EntityManager;
 import saadadb.database.Database;
-import saadadb.database.Repository;
-import saadadb.dataloader.SchemaMapper;
-import saadadb.dataloader.mapping.ProductMapping;
 import saadadb.exceptions.AbortException;
 import saadadb.exceptions.SaadaException;
-import saadadb.meta.AttributeHandler;
-import saadadb.products.Image2DBuilder;
-import saadadb.products.MiscBuilder;
-import saadadb.products.ProductBuilder;
-import saadadb.products.SpectrumBuilder;
-import saadadb.products.datafile.DataFile;
-import saadadb.products.datafile.DataResourcePointer;
-import saadadb.products.reporting.MappingReport;
 import saadadb.query.executor.Query;
 import saadadb.query.result.OidsaadaResultSet;
-import saadadb.sqltable.SQLQuery;
 import saadadb.sqltable.SQLTable;
-import saadadb.util.Merger;
 import saadadb.util.Messenger;
 import saadadb.util.SaadaConstant;
 
@@ -48,11 +28,6 @@ import saadadb.util.SaadaConstant;
  */
 public class FoVUpdater extends EntityManager {
 	private Set<Long> oids;
-	private static Set<String> allowedArgs;
-	/*
-	 * Command line parameters to be used to redo the mapping
-	 */
-	private String[] newArgs;
 	private boolean writeMode = false;
 
 
