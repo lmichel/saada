@@ -74,7 +74,7 @@ resourceLoader = function() {
 		async: false, 
 		dataType: "text",
 		error: function(data) {
-			baseUrl = "http://obs-he-lm:8888/jsresources/";
+			baseUrl = "http://obas-dev-lm:8888/jsresources/";
 			console.log("Try " + baseUrl + " as jsresource base URL");
 			$.ajax({
 				url: baseUrl + 'saadajsbasics/loader.js',

@@ -78,6 +78,9 @@ public class GetQueryReport extends SaadaServlet implements Servlet {
 			request.addFormator((format != null)? format: "votable");
 			request.setResponseFilePath(fn);
 			request.processRequest(pmap);		
+			System.out.println("============================");
+			res.setHeader("Access-Control-Allow-Origin", "*");
+
 			downloadProduct(req, res, request.getResponseFilePath()[0]);
 
 		} catch (Exception e) {

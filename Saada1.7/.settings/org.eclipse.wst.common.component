@@ -11,6 +11,9 @@
         <dependent-module archiveName="ThreeXMMdr7generated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//data/3xmmdr7/saadadb/ThreeXMMdr7/web/WEB-INF/lib/ThreeXMMdr7generated.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="gbotgenerated.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib//home/michel/Desktop/ADASS2008/saadadbs/gbot/web/WEB-INF/lib/gbotgenerated.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/Saada1.7/build/classes"/>
         <property name="context-root" value="Saada1.7"/>
     </wb-module>
