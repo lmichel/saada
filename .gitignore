@@ -1,0 +1,10 @@
+/build/
+*~
+packed*
+*.class
+.settings
+.project
+.classpath
+/bin/
+packedjs
+packedcss
