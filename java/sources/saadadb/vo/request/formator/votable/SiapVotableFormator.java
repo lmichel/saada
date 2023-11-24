@@ -31,6 +31,7 @@ public class SiapVotableFormator extends VotableFormator {
 	/* (non-Javadoc)
 	 * @see saadadb.vo.request.formator.Formator#supportResponseInRelation()
 	 */
+	@Override
 	public boolean supportResponseInRelation() {
 		return true;
 	}

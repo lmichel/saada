@@ -923,7 +923,7 @@ abstract public class DbmsWrapper {
 		else if(typeSQL.equals("bool")){
 			return "boolean";
 		}
-		else if(typeSQL.equals("float8") || typeSQL.equals("numeric")){
+		else if(typeSQL.equals("float8") || typeSQL.equals("numeric") || typeSQL.equals("float") || typeSQL.equals("double")){
 			return "double";
 		}
 		else if(typeSQL.equals("text") || typeSQL.startsWith("character(")){
@@ -947,7 +947,6 @@ abstract public class DbmsWrapper {
 	 * @throws FatalException
 	 */
 	public  String getNormalizedSQLType( String type) throws FatalException {
-		System.out.println("@@@@@@@@@@ " + type);
 		if(type.equalsIgnoreCase("clob")){
 			return "varchar";
 		} else if(type.equalsIgnoreCase("text")){
